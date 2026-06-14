@@ -9,6 +9,7 @@ import streamlit as st
 from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
 from src.logger import save_interaction
+from src.feedback import save_feedback
 
 
 st.set_page_config(
@@ -24,6 +25,12 @@ st.info(
     "A INNA é uma educadora financeira. Ela não recomenda investimentos "
     "nem substitui um profissional certificado."
 )
+
+if "last_response" not in st.session_state:
+    st.session_state.last_response = None
+
+if "last_payload" not in st.session_state:
+    st.session_state.last_payload = None
 
 with st.form("financial_form"):
     nome = st.text_input("Seu nome", value="Ronaldo")
@@ -92,27 +99,63 @@ if submitted:
 
     save_interaction(payload, response)
 
+    st.session_state.last_payload = payload
+    st.session_state.last_response = response
+
+if st.session_state.last_response:
+    response = st.session_state.last_response
+
     st.success("Diagnóstico gerado com sucesso!")
 
     col1, col2, col3 = st.columns(3)
 
     col1.metric(
         "Saldo estimado",
-        f"R$ {diagnosis['saldo_estimado']:.2f}",
+        f"R$ {response['saldo_estimado']:.2f}",
     )
 
     col2.metric(
         "Score financeiro",
-        f"{diagnosis['score_financeiro']}/100",
+        f"{response['score_financeiro']}/100",
     )
 
     col3.metric(
         "Risco",
-        diagnosis["nivel_risco"],
+        response["nivel_risco"],
     )
 
     st.write("### Diagnóstico")
-    st.write(diagnosis["diagnostico"])
+    st.write(response["diagnostico"])
 
     st.write("### Plano de ação de 30 dias")
-    st.write(ai_plan)
+    st.write(response["plano_30_dias"])
+
+    st.divider()
+
+    st.write("### Feedback")
+    st.caption("Sua avaliação ajuda a melhorar a INNA e validar o projeto.")
+
+    with st.form("feedback_form"):
+        util = st.radio(
+            "Essa resposta foi útil?",
+            ["Sim", "Não"],
+            horizontal=True,
+        )
+
+        comentario = st.text_area(
+            "Comentário opcional",
+            placeholder="Exemplo: o plano ficou claro, faltou mais detalhe, gostei da explicação...",
+        )
+
+        feedback_submitted = st.form_submit_button("Enviar feedback")
+
+    if feedback_submitted:
+        save_feedback(
+            nome=response["nome"],
+            util=util,
+            comentario=comentario,
+            score_financeiro=response["score_financeiro"],
+            nivel_risco=response["nivel_risco"],
+        )
+
+        st.success("Feedback registrado com sucesso. Obrigado por ajudar a evoluir a INNA!")
