@@ -18,11 +18,11 @@ st.set_page_config(
 )
 
 st.title("📊 Dashboard — INNA Financial Coach AI")
-st.subheader("Métricas de diagnósticos, riscos e feedbacks salvos no PostgreSQL")
+st.subheader("Analytics financeiro, feedbacks e validação com usuários via PostgreSQL")
 
 st.info(
     "Este dashboard lê dados diretamente do PostgreSQL local. "
-    "Depois, essa mesma estrutura poderá ser migrada para Supabase ou OCI PostgreSQL."
+    "Ele será usado para validar uso real, métricas de hackathon e evolução futura para Supabase ou OCI."
 )
 
 
@@ -36,6 +36,10 @@ def load_table(query: str) -> pd.DataFrame:
     except Exception as error:
         st.error(f"Erro ao carregar dados do PostgreSQL: {error}")
         return pd.DataFrame()
+
+
+if st.button("🔄 Atualizar dados"):
+    st.rerun()
 
 
 diagnosticos_df = load_table("""
@@ -76,144 +80,293 @@ feedbacks_df = load_table("""
 
 if diagnosticos_df.empty:
     st.warning("Ainda não existem diagnósticos registrados no PostgreSQL.")
-else:
-    total_diagnosticos = len(diagnosticos_df)
-    score_medio = diagnosticos_df["score_financeiro"].mean()
-    saldo_medio = diagnosticos_df["saldo_estimado"].mean()
+    st.stop()
 
+
+diagnosticos_df["data_hora"] = pd.to_datetime(
+    diagnosticos_df["data_hora"],
+    errors="coerce",
+)
+
+if not feedbacks_df.empty:
+    feedbacks_df["data_hora"] = pd.to_datetime(
+        feedbacks_df["data_hora"],
+        errors="coerce",
+    )
+
+
+st.divider()
+
+st.write("## 🔎 Filtros")
+
+col_filter1, col_filter2, col_filter3 = st.columns(3)
+
+with col_filter1:
+    nomes_disponiveis = ["Todos"] + sorted(
+        diagnosticos_df["nome"].dropna().unique().tolist()
+    )
+    filtro_nome = st.selectbox("Filtrar por usuário", nomes_disponiveis)
+
+with col_filter2:
+    riscos_disponiveis = ["Todos"] + sorted(
+        diagnosticos_df["nivel_risco"].dropna().unique().tolist()
+    )
+    filtro_risco = st.selectbox("Filtrar por risco", riscos_disponiveis)
+
+with col_filter3:
     if feedbacks_df.empty:
-        total_feedbacks = 0
-        taxa_util = 0
+        feedbacks_disponiveis = ["Todos"]
     else:
-        total_feedbacks = len(feedbacks_df)
-        feedbacks_positivos = feedbacks_df[feedbacks_df["util"] == "Sim"].shape[0]
-        taxa_util = (feedbacks_positivos / total_feedbacks) * 100 if total_feedbacks > 0 else 0
+        feedbacks_disponiveis = ["Todos"] + sorted(
+            feedbacks_df["util"].dropna().unique().tolist()
+        )
 
-    col1, col2, col3, col4 = st.columns(4)
+    filtro_feedback = st.selectbox("Filtrar por feedback", feedbacks_disponiveis)
 
-    col1.metric("Total de diagnósticos", total_diagnosticos)
-    col2.metric("Score médio", f"{score_medio:.1f}/100")
-    col3.metric("Saldo médio estimado", f"R$ {saldo_medio:.2f}")
-    col4.metric("Feedback útil", f"{taxa_util:.1f}%")
 
-    st.divider()
+diagnosticos_filtrados = diagnosticos_df.copy()
+feedbacks_filtrados = feedbacks_df.copy()
 
-    col_risco, col_feedback = st.columns(2)
+if filtro_nome != "Todos":
+    diagnosticos_filtrados = diagnosticos_filtrados[
+        diagnosticos_filtrados["nome"] == filtro_nome
+    ]
 
-    with col_risco:
-        st.write("### Distribuição por nível de risco")
+    if not feedbacks_filtrados.empty:
+        feedbacks_filtrados = feedbacks_filtrados[
+            feedbacks_filtrados["nome"] == filtro_nome
+        ]
 
-        risco_counts = diagnosticos_df["nivel_risco"].value_counts()
+if filtro_risco != "Todos":
+    diagnosticos_filtrados = diagnosticos_filtrados[
+        diagnosticos_filtrados["nivel_risco"] == filtro_risco
+    ]
+
+    if not feedbacks_filtrados.empty:
+        feedbacks_filtrados = feedbacks_filtrados[
+            feedbacks_filtrados["nivel_risco"] == filtro_risco
+        ]
+
+if filtro_feedback != "Todos" and not feedbacks_filtrados.empty:
+    feedbacks_filtrados = feedbacks_filtrados[
+        feedbacks_filtrados["util"] == filtro_feedback
+    ]
+
+
+st.divider()
+
+st.write("## 📌 Indicadores principais")
+
+total_diagnosticos = len(diagnosticos_filtrados)
+usuarios_unicos = diagnosticos_filtrados["nome"].nunique()
+score_medio = diagnosticos_filtrados["score_financeiro"].mean()
+saldo_medio = diagnosticos_filtrados["saldo_estimado"].mean()
+
+if feedbacks_filtrados.empty:
+    total_feedbacks = 0
+    taxa_util = 0
+else:
+    total_feedbacks = len(feedbacks_filtrados)
+    feedbacks_positivos = feedbacks_filtrados[
+        feedbacks_filtrados["util"] == "Sim"
+    ].shape[0]
+    taxa_util = (feedbacks_positivos / total_feedbacks) * 100 if total_feedbacks > 0 else 0
+
+col1, col2, col3, col4, col5 = st.columns(5)
+
+col1.metric("Diagnósticos", total_diagnosticos)
+col2.metric("Usuários únicos", usuarios_unicos)
+col3.metric("Score médio", f"{score_medio:.1f}/100" if total_diagnosticos > 0 else "0/100")
+col4.metric("Saldo médio", f"R$ {saldo_medio:.2f}" if total_diagnosticos > 0 else "R$ 0.00")
+col5.metric("Feedback útil", f"{taxa_util:.1f}%")
+
+st.divider()
+
+
+col_left, col_right = st.columns(2)
+
+with col_left:
+    st.write("## ⚠️ Distribuição por risco")
+
+    if diagnosticos_filtrados.empty:
+        st.warning("Nenhum diagnóstico encontrado para os filtros selecionados.")
+    else:
+        risco_counts = diagnosticos_filtrados["nivel_risco"].value_counts()
         st.bar_chart(risco_counts)
 
         risco_table = risco_counts.reset_index()
         risco_table.columns = ["nivel_risco", "quantidade"]
         st.dataframe(risco_table, use_container_width=True)
 
-    with col_feedback:
-        st.write("### Feedbacks dos usuários")
+with col_right:
+    st.write("## 👍 Feedbacks")
 
-        if feedbacks_df.empty:
-            st.warning("Ainda não existem feedbacks registrados.")
-        else:
-            feedback_counts = feedbacks_df["util"].value_counts()
-            st.bar_chart(feedback_counts)
+    if feedbacks_filtrados.empty:
+        st.warning("Nenhum feedback encontrado para os filtros selecionados.")
+    else:
+        feedback_counts = feedbacks_filtrados["util"].value_counts()
+        st.bar_chart(feedback_counts)
 
-            feedback_table = feedback_counts.reset_index()
-            feedback_table.columns = ["feedback", "quantidade"]
-            st.dataframe(feedback_table, use_container_width=True)
+        feedback_table = feedback_counts.reset_index()
+        feedback_table.columns = ["feedback", "quantidade"]
+        st.dataframe(feedback_table, use_container_width=True)
 
-    st.divider()
 
-    col_score, col_saldo = st.columns(2)
+st.divider()
 
-    with col_score:
-        st.write("### Evolução dos scores")
+col_score, col_saldo = st.columns(2)
 
-        score_chart = diagnosticos_df[["id", "score_financeiro"]].set_index("id")
+with col_score:
+    st.write("## 📈 Evolução dos scores")
+
+    if diagnosticos_filtrados.empty:
+        st.warning("Sem dados para evolução de score.")
+    else:
+        score_chart = diagnosticos_filtrados[["id", "score_financeiro"]].set_index("id")
         st.line_chart(score_chart)
 
-    with col_saldo:
-        st.write("### Evolução do saldo estimado")
+with col_saldo:
+    st.write("## 💵 Evolução do saldo estimado")
 
-        saldo_chart = diagnosticos_df[["id", "saldo_estimado"]].set_index("id")
+    if diagnosticos_filtrados.empty:
+        st.warning("Sem dados para evolução de saldo.")
+    else:
+        saldo_chart = diagnosticos_filtrados[["id", "saldo_estimado"]].set_index("id")
         st.line_chart(saldo_chart)
 
-    st.divider()
 
-    st.write("### Filtros")
+st.divider()
 
-    col_filter1, col_filter2 = st.columns(2)
+col_rank, col_risco_score = st.columns(2)
 
-    with col_filter1:
-        riscos_disponiveis = ["Todos"] + sorted(diagnosticos_df["nivel_risco"].dropna().unique().tolist())
-        filtro_risco = st.selectbox("Filtrar por risco", riscos_disponiveis)
+with col_rank:
+    st.write("## 🏆 Ranking de usuários por diagnósticos")
 
-    with col_filter2:
-        nomes_disponiveis = ["Todos"] + sorted(diagnosticos_df["nome"].dropna().unique().tolist())
-        filtro_nome = st.selectbox("Filtrar por nome", nomes_disponiveis)
+    ranking_usuarios = (
+        diagnosticos_df.groupby("nome")
+        .agg(
+            total_diagnosticos=("id", "count"),
+            score_medio=("score_financeiro", "mean"),
+            saldo_medio=("saldo_estimado", "mean"),
+        )
+        .reset_index()
+        .sort_values(by="total_diagnosticos", ascending=False)
+    )
 
-    diagnosticos_filtrados = diagnosticos_df.copy()
+    ranking_usuarios["score_medio"] = ranking_usuarios["score_medio"].round(1)
+    ranking_usuarios["saldo_medio"] = ranking_usuarios["saldo_medio"].round(2)
 
-    if filtro_risco != "Todos":
-        diagnosticos_filtrados = diagnosticos_filtrados[
-            diagnosticos_filtrados["nivel_risco"] == filtro_risco
-        ]
+    st.dataframe(ranking_usuarios, use_container_width=True)
 
-    if filtro_nome != "Todos":
-        diagnosticos_filtrados = diagnosticos_filtrados[
-            diagnosticos_filtrados["nome"] == filtro_nome
-        ]
+with col_risco_score:
+    st.write("## 📊 Score médio por risco")
 
-    st.divider()
+    score_por_risco = (
+        diagnosticos_df.groupby("nivel_risco")
+        .agg(
+            quantidade=("id", "count"),
+            score_medio=("score_financeiro", "mean"),
+            saldo_medio=("saldo_estimado", "mean"),
+        )
+        .reset_index()
+    )
 
-    st.write("### Últimos diagnósticos")
+    score_por_risco["score_medio"] = score_por_risco["score_medio"].round(1)
+    score_por_risco["saldo_medio"] = score_por_risco["saldo_medio"].round(2)
 
-    colunas_diagnostico = [
-        "id",
-        "data_hora",
-        "nome",
-        "renda_mensal",
-        "saldo_estimado",
-        "score_financeiro",
-        "nivel_risco",
-        "objetivo",
-    ]
+    st.dataframe(score_por_risco, use_container_width=True)
 
+
+st.divider()
+
+st.write("## 🧾 Últimos diagnósticos")
+
+colunas_diagnostico = [
+    "id",
+    "data_hora",
+    "nome",
+    "renda_mensal",
+    "saldo_estimado",
+    "comprometimento_renda_percentual",
+    "score_financeiro",
+    "nivel_risco",
+    "objetivo",
+]
+
+if diagnosticos_filtrados.empty:
+    st.warning("Nenhum diagnóstico encontrado.")
+else:
     st.dataframe(
         diagnosticos_filtrados[colunas_diagnostico].tail(20),
         use_container_width=True,
     )
 
-    st.divider()
 
-    st.write("### Últimos feedbacks")
+st.divider()
 
-    if feedbacks_df.empty:
-        st.warning("Nenhum feedback registrado ainda.")
+st.write("## 💬 Últimos feedbacks")
+
+if feedbacks_filtrados.empty:
+    st.warning("Nenhum feedback encontrado.")
+else:
+    colunas_feedback = [
+        "id",
+        "data_hora",
+        "nome",
+        "util",
+        "comentario",
+        "score_financeiro",
+        "nivel_risco",
+    ]
+
+    st.dataframe(
+        feedbacks_filtrados[colunas_feedback].tail(20),
+        use_container_width=True,
+    )
+
+
+st.divider()
+
+st.write("## 🗣️ Comentários recebidos")
+
+if feedbacks_filtrados.empty or "comentario" not in feedbacks_filtrados.columns:
+    st.caption("Ainda não há comentários preenchidos.")
+else:
+    comentarios = feedbacks_filtrados["comentario"].dropna()
+    comentarios = comentarios[comentarios.astype(str).str.strip() != ""]
+
+    if comentarios.empty:
+        st.caption("Ainda não há comentários preenchidos.")
     else:
-        colunas_feedback = [
-            "id",
-            "data_hora",
-            "nome",
-            "util",
-            "comentario",
-            "score_financeiro",
-            "nivel_risco",
-        ]
+        for comentario in comentarios.tail(10):
+            st.markdown(f"> {comentario}")
 
-        st.dataframe(
-            feedbacks_df[colunas_feedback].tail(20),
-            use_container_width=True,
-        )
 
-        st.write("### Comentários recebidos")
+st.divider()
 
-        comentarios = feedbacks_df["comentario"].dropna()
-        comentarios = comentarios[comentarios.astype(str).str.strip() != ""]
+st.write("## 🧠 Leitura executiva")
 
-        if comentarios.empty:
-            st.caption("Ainda não há comentários preenchidos.")
-        else:
-            for comentario in comentarios.tail(5):
-                st.markdown(f"> {comentario}")
+if total_diagnosticos == 0:
+    st.warning("Ainda não há dados suficientes para análise executiva.")
+else:
+    risco_mais_comum = diagnosticos_filtrados["nivel_risco"].mode()
+
+    if not risco_mais_comum.empty:
+        risco_mais_comum = risco_mais_comum.iloc[0]
+    else:
+        risco_mais_comum = "Indefinido"
+
+    st.markdown(
+        f"""
+        **Resumo da base atual:**
+
+        - Foram gerados **{total_diagnosticos} diagnósticos** nos filtros selecionados.
+        - Existem **{usuarios_unicos} usuários únicos** na base filtrada.
+        - O **score financeiro médio** é de **{score_medio:.1f}/100**.
+        - O **saldo médio estimado** é de **R$ {saldo_medio:.2f}**.
+        - O nível de risco mais comum é **{risco_mais_comum}**.
+        - A taxa de feedback útil é de **{taxa_util:.1f}%**.
+
+        Esses dados ajudam a validar se a INNA está gerando valor real para os usuários.
+        """
+    )
