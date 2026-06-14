@@ -42,7 +42,7 @@ def build_financial_diagnosis(data: dict) -> dict:
     if score >= 75:
         risco = "Baixo"
     elif score >= 50:
-        risco = "Médio"
+        risco = "Medio"
     else:
         risco = "Alto"
 

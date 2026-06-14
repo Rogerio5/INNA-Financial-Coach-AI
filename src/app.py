@@ -10,6 +10,7 @@ from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
 from src.logger import save_interaction
 from src.feedback import save_feedback
+from src.repository import save_diagnostico_db
 
 
 st.set_page_config(
@@ -98,6 +99,12 @@ if submitted:
     }
 
     save_interaction(payload, response)
+
+    try:
+        save_diagnostico_db(payload, response)
+        st.success("Diagnóstico salvo no PostgreSQL com sucesso.")
+    except Exception as error:
+        st.error(f"Erro ao salvar diagnóstico no PostgreSQL: {error}")
 
     st.session_state.last_payload = payload
     st.session_state.last_response = response
