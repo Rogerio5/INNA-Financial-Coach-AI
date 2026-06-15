@@ -382,6 +382,8 @@ Resultado validado:
 2 passed
 ```
 
+---
+
 ## 🤖 Modo Mock e Gemini Real
 
 O projeto possui dois modos de execução.
