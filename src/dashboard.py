@@ -4,6 +4,8 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT_DIR))
 
+from datetime import date
+
 import pandas as pd
 import streamlit as st
 from sqlalchemy import text
@@ -99,6 +101,32 @@ st.divider()
 
 st.write("## 🔎 Filtros")
 
+min_data = diagnosticos_df["data_hora"].min()
+max_data = diagnosticos_df["data_hora"].max()
+
+if pd.isna(min_data) or pd.isna(max_data):
+    data_inicio = date.today()
+    data_fim = date.today()
+else:
+    data_inicio = min_data.date()
+    data_fim = max_data.date()
+
+col_data1, col_data2 = st.columns(2)
+
+with col_data1:
+    filtro_data_inicio = st.date_input(
+        "Data inicial",
+        value=data_inicio,
+        format="DD/MM/YYYY",
+    )
+
+with col_data2:
+    filtro_data_fim = st.date_input(
+        "Data final",
+        value=data_fim,
+        format="DD/MM/YYYY",
+    )
+
 col_filter1, col_filter2, col_filter3 = st.columns(3)
 
 with col_filter1:
@@ -126,6 +154,20 @@ with col_filter3:
 
 diagnosticos_filtrados = diagnosticos_df.copy()
 feedbacks_filtrados = feedbacks_df.copy()
+
+inicio_periodo = pd.to_datetime(filtro_data_inicio)
+fim_periodo = pd.to_datetime(filtro_data_fim) + pd.Timedelta(days=1)
+
+diagnosticos_filtrados = diagnosticos_filtrados[
+    (diagnosticos_filtrados["data_hora"] >= inicio_periodo)
+    & (diagnosticos_filtrados["data_hora"] < fim_periodo)
+]
+
+if not feedbacks_filtrados.empty:
+    feedbacks_filtrados = feedbacks_filtrados[
+        (feedbacks_filtrados["data_hora"] >= inicio_periodo)
+        & (feedbacks_filtrados["data_hora"] < fim_periodo)
+    ]
 
 if filtro_nome != "Todos":
     diagnosticos_filtrados = diagnosticos_filtrados[
