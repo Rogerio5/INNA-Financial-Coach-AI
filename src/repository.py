@@ -26,6 +26,8 @@ def save_diagnostico_db(payload: dict, response: dict) -> None:
         )
 
         session.add(registro)
+        session.flush()
+        return registro.id
 
 
 def save_feedback_db(

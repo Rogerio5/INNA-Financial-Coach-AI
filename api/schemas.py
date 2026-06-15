@@ -13,6 +13,7 @@ class FinancialInput(BaseModel):
 
 
 class FinancialResponse(BaseModel):
+    id: int | None = None
     nome: str
     saldo_estimado: float
     comprometimento_renda_percentual: float

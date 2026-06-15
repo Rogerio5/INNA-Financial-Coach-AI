@@ -7,8 +7,7 @@ sys.path.append(str(ROOT_DIR))
 import streamlit as st
 import requests
 
-from src.api_client import gerar_diagnostico_api, enviar_feedback_api
-from src.pdf_report import gerar_relatorio_pdf
+from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_relatorio_pdf_api
 
 
 st.set_page_config(
@@ -146,14 +145,23 @@ if st.session_state.last_response:
 
     st.divider()
 
-    pdf_bytes = gerar_relatorio_pdf(response)
+    diagnostico_id = response.get("id")
 
-    st.download_button(
-        label="📄 Baixar relatório em PDF",
-        data=pdf_bytes,
-        file_name=f"relatorio_inna_{response['nome'].replace(' ', '_').lower()}.pdf",
-        mime="application/pdf",
-    )
+    if diagnostico_id:
+        try:
+            pdf_bytes = baixar_relatorio_pdf_api(diagnostico_id)
+
+            st.download_button(
+                label="📄 Baixar relatório em PDF",
+                data=pdf_bytes,
+                file_name=f"relatorio_inna_{response['nome'].replace(' ', '_').lower()}_{diagnostico_id}.pdf",
+                mime="application/pdf",
+            )
+
+        except Exception as error:
+            st.warning(f"Não foi possível baixar o relatório pela API: {error}")
+    else:
+        st.warning("Relatório PDF indisponível: diagnóstico ainda não possui ID retornado pela API.")
 
     st.divider()
 

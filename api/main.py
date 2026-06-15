@@ -48,7 +48,8 @@ def gerar_diagnostico(payload: FinancialInput):
         "plano_30_dias": ai_plan,
     }
 
-    save_diagnostico_db(payload_dict, response)
+    diagnostico_id = save_diagnostico_db(payload_dict, response)
+    response["id"] = diagnostico_id
 
     return response
 
