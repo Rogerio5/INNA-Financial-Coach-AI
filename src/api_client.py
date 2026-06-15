@@ -47,3 +47,17 @@ def baixar_relatorio_pdf_api(diagnostico_id: int) -> bytes:
     response.raise_for_status()
 
     return response.content
+
+
+def buscar_historico_usuario_api(nome: str, limit: int = 10) -> list[dict]:
+    url = f"{API_BASE_URL}/diagnosticos/usuario/{nome}"
+
+    response = requests.get(
+        url,
+        params={"limit": limit},
+        timeout=30,
+    )
+
+    response.raise_for_status()
+
+    return response.json()

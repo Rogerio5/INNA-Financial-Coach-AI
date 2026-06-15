@@ -141,3 +141,38 @@ def get_diagnostico_by_id_db(diagnostico_id: int) -> dict | None:
             "diagnostico": item.diagnostico,
             "plano_30_dias": item.plano_30_dias,
         }
+
+
+def list_diagnosticos_by_nome_db(nome: str, limit: int = 20) -> list[dict]:
+    init_db()
+
+    with get_db_session() as session:
+        registros = (
+            session.query(DiagnosticoFinanceiro)
+            .filter(DiagnosticoFinanceiro.nome.ilike(f"%{nome}%"))
+            .order_by(DiagnosticoFinanceiro.id.desc())
+            .limit(limit)
+            .all()
+        )
+
+        return [
+            {
+                "id": item.id,
+                "data_hora": item.data_hora,
+                "nome": item.nome,
+                "renda_mensal": item.renda_mensal,
+                "gastos_fixos": item.gastos_fixos,
+                "gastos_variaveis": item.gastos_variaveis,
+                "dividas_mensais": item.dividas_mensais,
+                "reserva_atual": item.reserva_atual,
+                "objetivo": item.objetivo,
+                "saldo_estimado": item.saldo_estimado,
+                "comprometimento_renda_percentual": item.comprometimento_renda_percentual,
+                "meses_reserva_estimados": item.meses_reserva_estimados,
+                "score_financeiro": item.score_financeiro,
+                "nivel_risco": item.nivel_risco,
+                "diagnostico": item.diagnostico,
+                "plano_30_dias": item.plano_30_dias,
+            }
+            for item in registros
+        ]

@@ -13,6 +13,7 @@ from src.gemini_client import generate_ai_plan
 from src.pdf_report import gerar_relatorio_pdf
 from src.repository import (
     get_diagnostico_by_id_db,
+    list_diagnosticos_by_nome_db,
     list_diagnosticos_db,
     list_feedbacks_db,
     save_diagnostico_db,
@@ -105,3 +106,11 @@ def baixar_relatorio_diagnostico(diagnostico_id: int):
             "Content-Disposition": f'attachment; filename="{filename}"'
         },
     )
+
+
+@app.get("/diagnosticos/usuario/{nome}", response_model=list[DiagnosticoItem])
+def listar_diagnosticos_por_usuario(
+    nome: str,
+    limit: int = Query(default=20, ge=1, le=100),
+):
+    return list_diagnosticos_by_nome_db(nome=nome, limit=limit)

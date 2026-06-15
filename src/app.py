@@ -7,7 +7,7 @@ sys.path.append(str(ROOT_DIR))
 import streamlit as st
 import requests
 
-from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_relatorio_pdf_api
+from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_relatorio_pdf_api, buscar_historico_usuario_api
 
 
 st.set_page_config(
@@ -203,3 +203,84 @@ if st.session_state.last_response:
 
         except Exception as error:
             st.error(f"Erro ao enviar feedback pela API: {error}")
+
+
+st.divider()
+
+st.write("## 📚 Histórico individual")
+
+st.caption(
+    "Consulte diagnósticos anteriores pelo nome do usuário. "
+    "Essa área usa a FastAPI para buscar dados salvos no PostgreSQL."
+)
+
+with st.form("historico_form"):
+    nome_historico = st.text_input(
+        "Nome para buscar histórico",
+        value="Ronaldo",
+    )
+
+    limite_historico = st.number_input(
+        "Quantidade máxima de registros",
+        min_value=1,
+        max_value=20,
+        value=10,
+        step=1,
+    )
+
+    buscar_historico = st.form_submit_button("Buscar histórico")
+
+if buscar_historico:
+    try:
+        historico = buscar_historico_usuario_api(
+            nome=nome_historico,
+            limit=int(limite_historico),
+        )
+
+        if not historico:
+            st.warning("Nenhum diagnóstico encontrado para esse nome.")
+        else:
+            st.success(f"{len(historico)} diagnóstico(s) encontrado(s).")
+
+            historico_ordenado = sorted(
+                historico,
+                key=lambda item: item["id"],
+            )
+
+            score_data = {
+                item["id"]: item["score_financeiro"]
+                for item in historico_ordenado
+            }
+
+            st.write("### Evolução do score")
+            st.line_chart(score_data)
+
+            st.write("### Diagnósticos encontrados")
+
+            for item in historico:
+                with st.expander(
+                    f"ID {item['id']} — {item['nome']} — Score {item['score_financeiro']}/100 — Risco {item['nivel_risco']}"
+                ):
+                    st.write(f"**Saldo estimado:** R$ {item['saldo_estimado']:.2f}")
+                    st.write(f"**Comprometimento da renda:** {item['comprometimento_renda_percentual']:.2f}%")
+                    st.write(f"**Meses de reserva:** {item['meses_reserva_estimados']:.2f}")
+                    st.write(f"**Objetivo:** {item.get('objetivo', '')}")
+
+                    st.write("**Diagnóstico:**")
+                    st.write(item["diagnostico"])
+
+                    try:
+                        pdf_antigo = baixar_relatorio_pdf_api(item["id"])
+
+                        st.download_button(
+                            label=f"📄 Baixar PDF do diagnóstico {item['id']}",
+                            data=pdf_antigo,
+                            file_name=f"relatorio_inna_{item['nome'].replace(' ', '_').lower()}_{item['id']}.pdf",
+                            mime="application/pdf",
+                            key=f"download_pdf_historico_{item['id']}",
+                        )
+                    except Exception as error:
+                        st.warning(f"Não foi possível gerar PDF do histórico: {error}")
+
+    except Exception as error:
+        st.error(f"Erro ao buscar histórico pela API: {error}")
