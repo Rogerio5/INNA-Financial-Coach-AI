@@ -8,6 +8,7 @@ import streamlit as st
 import requests
 
 from src.api_client import gerar_diagnostico_api, enviar_feedback_api
+from src.pdf_report import gerar_relatorio_pdf
 
 
 st.set_page_config(
@@ -142,6 +143,17 @@ if st.session_state.last_response:
     st.write("### Plano de ação de 30 dias")
     plano_formatado = response["plano_30_dias"].replace("$", "\\$")
     st.markdown(plano_formatado)
+
+    st.divider()
+
+    pdf_bytes = gerar_relatorio_pdf(response)
+
+    st.download_button(
+        label="📄 Baixar relatório em PDF",
+        data=pdf_bytes,
+        file_name=f"relatorio_inna_{response['nome'].replace(' ', '_').lower()}.pdf",
+        mime="application/pdf",
+    )
 
     st.divider()
 
