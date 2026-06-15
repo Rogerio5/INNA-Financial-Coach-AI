@@ -135,7 +135,9 @@ if st.session_state.last_response:
     st.write(response["diagnostico"])
 
     st.write("### Plano de ação de 30 dias")
-    st.write(response["plano_30_dias"])
+
+    plano_formatado = response["plano_30_dias"].replace("$", "\$")
+    st.markdown(plano_formatado)
 
     st.divider()
 

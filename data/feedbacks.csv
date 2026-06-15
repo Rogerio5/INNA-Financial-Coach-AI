@@ -5,3 +5,8 @@ data_hora,nome,util,comentario,score_financeiro,nivel_risco
 2026-06-14T19:47:06,Ronaldo,Sim,ótimo,70,Médio
 2026-06-14T20:07:33,Silvio,Sim,Obrigado pela informação,60,Medio
 2026-06-14T20:13:05,Silvio,Sim,"Obrigado, Muito bom a Inna",80,Baixo
+2026-06-14T20:47:07,Teste Gemini Real,Sim,Excelente e forneceu as informações necessárias,80,Baixo
+2026-06-14T20:55:02,Teste Feedback Gemini,Sim,Perfeito,60,Medio
+2026-06-14T20:57:53,Teste Feedback Direto,Sim,Salvou pelo feedback.py,80,Baixo
+2026-06-14T21:01:50,Rômulo,Sim,Gostei da orientação,70,Medio
+2026-06-14T21:12:19,Ronaldo S,Sim,Gostei,60,Medio
