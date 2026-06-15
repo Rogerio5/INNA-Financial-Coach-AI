@@ -106,3 +106,36 @@ def list_feedbacks_db(limit: int = 50) -> list[dict]:
             }
             for item in registros
         ]
+
+
+def get_diagnostico_by_id_db(diagnostico_id: int) -> dict | None:
+    init_db()
+
+    with get_db_session() as session:
+        item = (
+            session.query(DiagnosticoFinanceiro)
+            .filter(DiagnosticoFinanceiro.id == diagnostico_id)
+            .first()
+        )
+
+        if item is None:
+            return None
+
+        return {
+            "id": item.id,
+            "data_hora": item.data_hora,
+            "nome": item.nome,
+            "renda_mensal": item.renda_mensal,
+            "gastos_fixos": item.gastos_fixos,
+            "gastos_variaveis": item.gastos_variaveis,
+            "dividas_mensais": item.dividas_mensais,
+            "reserva_atual": item.reserva_atual,
+            "objetivo": item.objetivo,
+            "saldo_estimado": item.saldo_estimado,
+            "comprometimento_renda_percentual": item.comprometimento_renda_percentual,
+            "meses_reserva_estimados": item.meses_reserva_estimados,
+            "score_financeiro": item.score_financeiro,
+            "nivel_risco": item.nivel_risco,
+            "diagnostico": item.diagnostico,
+            "plano_30_dias": item.plano_30_dias,
+        }

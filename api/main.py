@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query, Response
 
 from api.schemas import (
     DiagnosticoItem,
@@ -10,7 +10,9 @@ from api.schemas import (
 )
 from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
+from src.pdf_report import gerar_relatorio_pdf
 from src.repository import (
+    get_diagnostico_by_id_db,
     list_diagnosticos_db,
     list_feedbacks_db,
     save_diagnostico_db,
@@ -77,3 +79,28 @@ def listar_diagnosticos(limit: int = Query(default=50, ge=1, le=200)):
 @app.get("/feedbacks", response_model=list[FeedbackItem])
 def listar_feedbacks(limit: int = Query(default=50, ge=1, le=200)):
     return list_feedbacks_db(limit=limit)
+
+
+@app.get("/diagnosticos/{diagnostico_id}/relatorio")
+def baixar_relatorio_diagnostico(diagnostico_id: int):
+    diagnostico = get_diagnostico_by_id_db(diagnostico_id)
+
+    if diagnostico is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Diagnóstico não encontrado.",
+        )
+
+    pdf_bytes = gerar_relatorio_pdf(diagnostico)
+
+    nome = str(diagnostico.get("nome", "usuario"))
+    nome_arquivo = nome.strip().lower().replace(" ", "_")
+    filename = f"relatorio_inna_{nome_arquivo}_{diagnostico_id}.pdf"
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"'
+        },
+    )
