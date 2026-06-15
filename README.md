@@ -1,4 +1,3 @@
-@'
 # INNA Financial Coach AI
 
 ## 💰 Educadora Financeira com IA Generativa, PostgreSQL e Dashboard Analítico
