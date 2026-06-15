@@ -5,12 +5,9 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT_DIR))
 
 import streamlit as st
+import requests
 
-from src.financial_engine import build_financial_diagnosis
-from src.gemini_client import generate_ai_plan
-from src.logger import save_interaction
-from src.feedback import save_feedback
-from src.repository import save_diagnostico_db
+from src.api_client import gerar_diagnostico_api, enviar_feedback_api
 
 
 st.set_page_config(
@@ -32,6 +29,7 @@ if "last_response" not in st.session_state:
 
 if "last_payload" not in st.session_state:
     st.session_state.last_payload = None
+
 
 with st.form("financial_form"):
     nome = st.text_input("Seu nome", value="Ronaldo")
@@ -78,6 +76,7 @@ with st.form("financial_form"):
 
     submitted = st.form_submit_button("Gerar diagnóstico com a INNA")
 
+
 if submitted:
     payload = {
         "nome": nome,
@@ -89,25 +88,30 @@ if submitted:
         "objetivo": objetivo,
     }
 
-    diagnosis = build_financial_diagnosis(payload)
-    ai_plan = generate_ai_plan(payload, diagnosis)
-
-    response = {
-        **diagnosis,
-        "nome": nome,
-        "plano_30_dias": ai_plan,
-    }
-
-    save_interaction(payload, response)
-
     try:
-        save_diagnostico_db(payload, response)
-        st.success("Diagnóstico salvo no PostgreSQL com sucesso.")
-    except Exception as error:
-        st.error(f"Erro ao salvar diagnóstico no PostgreSQL: {error}")
+        with st.spinner("Chamando a API da INNA e gerando diagnóstico com IA..."):
+            response = gerar_diagnostico_api(payload)
 
-    st.session_state.last_payload = payload
-    st.session_state.last_response = response
+        st.session_state.last_payload = payload
+        st.session_state.last_response = response
+
+        st.success("Diagnóstico gerado e salvo via FastAPI com sucesso!")
+
+    except requests.exceptions.ConnectionError:
+        st.error(
+            "Não foi possível conectar na FastAPI. "
+            "Confirme se a API está rodando em http://127.0.0.1:8000."
+        )
+
+    except requests.exceptions.Timeout:
+        st.error("A API demorou muito para responder. Tente novamente.")
+
+    except requests.exceptions.HTTPError as error:
+        st.error(f"Erro HTTP ao chamar a API: {error}")
+
+    except Exception as error:
+        st.error(f"Erro inesperado ao gerar diagnóstico: {error}")
+
 
 if st.session_state.last_response:
     response = st.session_state.last_response
@@ -132,11 +136,11 @@ if st.session_state.last_response:
     )
 
     st.write("### Diagnóstico")
-    st.write(response["diagnostico"])
+    diagnostico_formatado = response["diagnostico"].replace("$", "\\$")
+    st.markdown(diagnostico_formatado)
 
     st.write("### Plano de ação de 30 dias")
-
-    plano_formatado = response["plano_30_dias"].replace("$", "\$")
+    plano_formatado = response["plano_30_dias"].replace("$", "\\$")
     st.markdown(plano_formatado)
 
     st.divider()
@@ -159,12 +163,23 @@ if st.session_state.last_response:
         feedback_submitted = st.form_submit_button("Enviar feedback")
 
     if feedback_submitted:
-        save_feedback(
-            nome=response["nome"],
-            util=util,
-            comentario=comentario,
-            score_financeiro=response["score_financeiro"],
-            nivel_risco=response["nivel_risco"],
-        )
+        feedback_payload = {
+            "nome": response["nome"],
+            "util": util,
+            "comentario": comentario,
+            "score_financeiro": response["score_financeiro"],
+            "nivel_risco": response["nivel_risco"],
+        }
 
-        st.success("Feedback registrado com sucesso. Obrigado por ajudar a evoluir a INNA!")
+        try:
+            enviar_feedback_api(feedback_payload)
+            st.success("Feedback registrado via FastAPI com sucesso. Obrigado por ajudar a evoluir a INNA!")
+
+        except requests.exceptions.ConnectionError:
+            st.error(
+                "Não foi possível conectar na FastAPI para enviar o feedback. "
+                "Confirme se a API está rodando."
+            )
+
+        except Exception as error:
+            st.error(f"Erro ao enviar feedback pela API: {error}")
