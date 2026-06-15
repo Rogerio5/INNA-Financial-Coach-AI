@@ -20,3 +20,16 @@ class FinancialResponse(BaseModel):
     nivel_risco: str
     diagnostico: str
     plano_30_dias: str
+
+
+class FeedbackInput(BaseModel):
+    nome: str = Field(default="Usuário Demo")
+    util: str = Field(default="Sim")
+    comentario: str = Field(default="")
+    score_financeiro: int = Field(ge=0, le=100)
+    nivel_risco: str = Field(default="Medio")
+
+
+class FeedbackResponse(BaseModel):
+    status: str
+    message: str
