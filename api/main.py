@@ -1,14 +1,21 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 
 from api.schemas import (
+    DiagnosticoItem,
     FeedbackInput,
+    FeedbackItem,
     FeedbackResponse,
     FinancialInput,
     FinancialResponse,
 )
 from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
-from src.repository import save_diagnostico_db, save_feedback_db
+from src.repository import (
+    list_diagnosticos_db,
+    list_feedbacks_db,
+    save_diagnostico_db,
+    save_feedback_db,
+)
 
 
 app = FastAPI(
@@ -60,3 +67,13 @@ def registrar_feedback(payload: FeedbackInput):
         "status": "success",
         "message": "Feedback registrado com sucesso no PostgreSQL.",
     }
+
+
+@app.get("/diagnosticos", response_model=list[DiagnosticoItem])
+def listar_diagnosticos(limit: int = Query(default=50, ge=1, le=200)):
+    return list_diagnosticos_db(limit=limit)
+
+
+@app.get("/feedbacks", response_model=list[FeedbackItem])
+def listar_feedbacks(limit: int = Query(default=50, ge=1, le=200)):
+    return list_feedbacks_db(limit=limit)

@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, Field
 
 
@@ -33,3 +34,32 @@ class FeedbackInput(BaseModel):
 class FeedbackResponse(BaseModel):
     status: str
     message: str
+
+
+class DiagnosticoItem(BaseModel):
+    id: int
+    data_hora: datetime
+    nome: str
+    renda_mensal: float
+    gastos_fixos: float
+    gastos_variaveis: float
+    dividas_mensais: float
+    reserva_atual: float
+    objetivo: str | None
+    saldo_estimado: float
+    comprometimento_renda_percentual: float
+    meses_reserva_estimados: float
+    score_financeiro: int
+    nivel_risco: str
+    diagnostico: str
+    plano_30_dias: str
+
+
+class FeedbackItem(BaseModel):
+    id: int
+    data_hora: datetime
+    nome: str
+    util: str
+    comentario: str | None
+    score_financeiro: int
+    nivel_risco: str
