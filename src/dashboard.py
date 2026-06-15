@@ -127,6 +127,28 @@ with col_data2:
         format="DD/MM/YYYY",
     )
 
+st.write("### Atalhos de período")
+
+meses_disponiveis = ["Todos"]
+
+if "data_hora" in diagnosticos_df.columns:
+    meses_unicos = (
+        diagnosticos_df["data_hora"]
+        .dropna()
+        .dt.to_period("M")
+        .astype(str)
+        .sort_values()
+        .unique()
+        .tolist()
+    )
+
+    meses_disponiveis += meses_unicos
+
+filtro_mes = st.selectbox(
+    "Filtrar por mês",
+    meses_disponiveis,
+)
+
 col_filter1, col_filter2, col_filter3 = st.columns(3)
 
 with col_filter1:
@@ -168,6 +190,16 @@ if not feedbacks_filtrados.empty:
         (feedbacks_filtrados["data_hora"] >= inicio_periodo)
         & (feedbacks_filtrados["data_hora"] < fim_periodo)
     ]
+
+if filtro_mes != "Todos":
+    diagnosticos_filtrados = diagnosticos_filtrados[
+        diagnosticos_filtrados["data_hora"].dt.to_period("M").astype(str) == filtro_mes
+    ]
+
+    if not feedbacks_filtrados.empty:
+        feedbacks_filtrados = feedbacks_filtrados[
+            feedbacks_filtrados["data_hora"].dt.to_period("M").astype(str) == filtro_mes
+        ]
 
 if filtro_nome != "Todos":
     diagnosticos_filtrados = diagnosticos_filtrados[
@@ -318,6 +350,41 @@ with col_risco_score:
 
     st.dataframe(score_por_risco, use_container_width=True)
 
+
+st.divider()
+
+st.write("## 📤 Exportar dados filtrados")
+
+col_export1, col_export2 = st.columns(2)
+
+with col_export1:
+    csv_diagnosticos = diagnosticos_filtrados.to_csv(
+        index=False,
+        encoding="utf-8-sig",
+    )
+
+    st.download_button(
+        label="⬇️ Baixar diagnósticos filtrados CSV",
+        data=csv_diagnosticos,
+        file_name="inna_diagnosticos_filtrados.csv",
+        mime="text/csv",
+    )
+
+with col_export2:
+    if feedbacks_filtrados.empty:
+        st.caption("Sem feedbacks filtrados para exportar.")
+    else:
+        csv_feedbacks = feedbacks_filtrados.to_csv(
+            index=False,
+            encoding="utf-8-sig",
+        )
+
+        st.download_button(
+            label="⬇️ Baixar feedbacks filtrados CSV",
+            data=csv_feedbacks,
+            file_name="inna_feedbacks_filtrados.csv",
+            mime="text/csv",
+        )
 
 st.divider()
 
