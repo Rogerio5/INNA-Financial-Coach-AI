@@ -23,8 +23,8 @@ st.title("📊 Dashboard — INNA Financial Coach AI")
 st.subheader("Analytics financeiro, feedbacks e validação com usuários via PostgreSQL")
 
 st.info(
-    "Este dashboard lê dados diretamente do PostgreSQL local. "
-    "Ele será usado para validar uso real, métricas de hackathon e evolução futura para Supabase ou OCI."
+    "Este dashboard lê dados diretamente do PostgreSQL configurado no projeto, podendo ser local ou Neon. "
+    "Ele será usado para validar uso real, métricas de hackathon e evolução futura."
 )
 
 
