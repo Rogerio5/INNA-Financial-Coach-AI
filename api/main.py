@@ -29,10 +29,21 @@ app = FastAPI(
 
 
 @app.get("/")
-def health_check():
+def root():
     return {
         "status": "ok",
         "message": "INNA Financial Coach AI API is running",
+    }
+
+
+
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "ok",
+        "app": "INNA Financial Coach AI",
+        "message": "API online e pronta para receber requisições."
     }
 
 
@@ -114,12 +125,3 @@ def listar_diagnosticos_por_usuario(
     limit: int = Query(default=20, ge=1, le=100),
 ):
     return list_diagnosticos_by_nome_db(nome=nome, limit=limit)
-
-
-@app.get("/health")
-def health_check():
-    return {
-        "status": "ok",
-        "app": "INNA Financial Coach AI",
-        "message": "API online e pronta para receber requisições."
-    }
