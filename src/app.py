@@ -7,7 +7,7 @@ sys.path.append(str(ROOT_DIR))
 import streamlit as st
 import requests
 
-from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_relatorio_pdf_api, buscar_historico_usuario_api
+from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_relatorio_pdf_api, buscar_historico_usuario_api, verificar_api_online
 
 
 st.set_page_config(
@@ -17,6 +17,14 @@ st.set_page_config(
 )
 
 st.title("💰 INNA Financial Coach AI")
+
+if not verificar_api_online():
+    st.error(
+        "A API da INNA está offline. "
+        "Abra outro terminal e rode: python -m uvicorn api.main:app --reload --port 8000"
+    )
+    st.stop()
+
 st.subheader("Diagnóstico financeiro com IA e plano de ação de 30 dias")
 
 st.info(
@@ -232,7 +240,7 @@ with st.form("historico_form"):
 
 if buscar_historico:
     try:
-        historico = buscar_historico_usuario_api(
+        historico = buscar_historico_usuario_api, verificar_api_online(
             nome=nome_historico,
             limit=int(limite_historico),
         )
