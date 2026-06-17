@@ -84,8 +84,10 @@ def baixar_relatorio_pdf_api(diagnostico_id: int) -> bytes:
             "Não foi possível baixar o relatório PDF pela API da INNA."
         ) from error
 
-
 def buscar_historico_usuario_api(nome: str, limit: int = 10) -> list[dict]:
+    """
+    Busca o histórico individual de diagnósticos de um usuário pela API.
+    """
     try:
         response = requests.get(
             f"{API_BASE_URL}/diagnosticos/usuario/{nome}",
@@ -94,8 +96,5 @@ def buscar_historico_usuario_api(nome: str, limit: int = 10) -> list[dict]:
         )
         response.raise_for_status()
         return response.json()
-
     except requests.RequestException as error:
-        raise RuntimeError(
-            "Não foi possível buscar o histórico do usuário na API da INNA."
-        ) from error
+        raise RuntimeError(f"Erro ao buscar histórico pela API: {error}") from error
