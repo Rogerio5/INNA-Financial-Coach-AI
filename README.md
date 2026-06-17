@@ -1,10 +1,116 @@
 # INNA Financial Coach AI
 
-## 💰 Educadora Financeira com IA Generativa, FastAPI, PostgreSQL e Dashboard Analítico
+## 💰 Educadora Financeira com IA Generativa, FastAPI, PostgreSQL, Neon, Render e Dashboard Analítico
 
 A **INNA Financial Coach AI** é uma aplicação inteligente de educação financeira que ajuda pessoas a entenderem sua situação financeira, receberem um diagnóstico personalizado e seguirem um plano de ação simples de 30 dias com apoio de IA Generativa.
 
 O projeto nasceu como evolução da **Inna AI Copilot Multichannel**, com foco em hackathons, validação com usuários, portfólio profissional e possível monetização.
+
+A solução combina **Streamlit**, **FastAPI**, **Google Gemini**, **PostgreSQL/Neon**, **Render**, **PDF**, **histórico individual**, **feedback de usuários** e **dashboard analítico online**.
+
+---
+
+## 🌐 Demo Online
+
+O projeto INNA Financial Coach AI está publicado em ambiente online utilizando **Render** para os serviços da aplicação e **Neon PostgreSQL** como banco de dados em nuvem.
+
+### 🔗 Links de produção
+
+**App principal — Streamlit**
+
+https://inna-app-streamlit.onrender.com
+
+**API / Swagger — FastAPI**
+
+https://inna-api.onrender.com/docs
+
+**Health Check da API**
+
+https://inna-api.onrender.com/health
+
+**Dashboard analítico — Streamlit**
+
+https://inna-dashboard-streamlit.onrender.com
+
+---
+
+## 🚀 Arquitetura em Produção
+
+```text
+Usuário
+↓
+Streamlit App online — Render
+↓
+FastAPI online — Render
+↓
+Google Gemini
+↓
+Neon PostgreSQL
+↓
+Dashboard analítico online — Render
+```
+
+### Fluxo online validado
+
+```text
+Streamlit online
+↓
+FastAPI online
+↓
+Gemini
+↓
+Neon PostgreSQL
+↓
+PDF / Histórico / Feedback / Dashboard
+```
+
+---
+
+## ✅ Status da Versão Online
+
+* App principal publicado no Render
+* API FastAPI publicada no Render
+* Dashboard analítico publicado no Render
+* Banco PostgreSQL online configurado no Neon
+* Integração com Google Gemini ativa
+* Diagnóstico financeiro funcionando online
+* Plano de ação de 30 dias gerado por IA
+* Histórico individual funcionando online
+* Geração de relatório PDF funcionando online
+* Feedback dos usuários salvo no banco online
+* Dashboard lendo métricas reais do Neon PostgreSQL
+* API Swagger pública e funcional
+* Health Check online validado
+
+---
+
+## 🧪 Validação em Produção
+
+A versão online foi validada com o fluxo completo:
+
+```text
+Streamlit online
+↓
+FastAPI online
+↓
+Gemini
+↓
+Neon PostgreSQL
+↓
+Dashboard online
+```
+
+Testes realizados em produção:
+
+* `GET /health` retornando status online
+* `POST /diagnostico` salvando diagnóstico no Neon
+* `GET /diagnosticos` listando diagnósticos salvos
+* `GET /diagnosticos/usuario/{nome}` buscando histórico individual
+* `GET /feedbacks` listando feedbacks enviados
+* PDF gerado a partir de diagnóstico salvo
+* Dashboard online exibindo indicadores, gráficos, ranking e feedbacks
+* Streamlit online consumindo a API online
+* FastAPI online conectada ao Neon PostgreSQL
 
 ---
 
@@ -20,6 +126,7 @@ Elas têm dificuldade para responder perguntas como:
 * Tenho reserva suficiente?
 * Qual primeiro passo devo tomar?
 * Como transformar minha situação financeira em um plano simples?
+* Como acompanhar minha evolução financeira ao longo do tempo?
 
 ---
 
@@ -34,8 +141,11 @@ A aplicação entrega:
 * Classificação de risco financeiro
 * Plano de ação de 30 dias com Google Gemini
 * Registro de feedback do usuário
-* Persistência em PostgreSQL
+* Persistência em PostgreSQL/Neon
+* Histórico individual por usuário
+* Relatório PDF
 * Dashboard analítico com dados reais
+* Exportação CSV de dados filtrados
 * API FastAPI pronta para integrações futuras
 
 ---
@@ -44,18 +154,28 @@ A aplicação entrega:
 
 * Formulário de diagnóstico financeiro com Streamlit
 * Streamlit consumindo a FastAPI
-* API FastAPI com endpoints de diagnóstico, feedback e consulta
+* API FastAPI com endpoints de diagnóstico, feedback, histórico, PDF e consultas
 * Cálculo de renda, gastos, dívidas, reserva e saldo estimado
 * Cálculo de comprometimento da renda
 * Cálculo de meses estimados de reserva
 * Score financeiro de 0 a 100
 * Classificação de risco: Baixo, Medio ou Alto
 * Plano de ação de 30 dias gerado com Google Gemini
+* Fallback seguro caso a IA esteja indisponível
 * Modo Mock para testes sem consumir API de IA
-* Persistência de diagnósticos em PostgreSQL
-* Persistência de feedbacks em PostgreSQL
-* Dashboard analítico conectado ao PostgreSQL
+* Persistência de diagnósticos em PostgreSQL/Neon
+* Persistência de feedbacks em PostgreSQL/Neon
+* Histórico individual por usuário
+* Geração de relatório PDF
+* Dashboard analítico conectado ao PostgreSQL/Neon
+* Filtro por data no dashboard
+* Filtro por mês no dashboard
+* Exportação CSV dos dados filtrados
+* Health Check da API
+* Tratamento amigável de erro quando a API estiver offline
 * Testes automatizados com pytest
+* Deploy online com Render
+* Banco PostgreSQL online com Neon
 
 ---
 
@@ -69,11 +189,15 @@ A INNA funciona como uma **plataforma de diagnóstico e acompanhamento financeir
 * Regras financeiras simples
 * API backend
 * Banco de dados relacional
+* Histórico financeiro
+* Relatório PDF
 * Feedback de usuários
 * Dashboard de métricas
 * Linguagem acessível
 * Segurança contra recomendação indevida de investimentos
 * Possibilidade futura de integração com Telegram, Gmail, WhatsApp, n8n, React ou mobile
+
+O diferencial principal é que a INNA não apenas responde perguntas. Ela calcula indicadores, classifica risco, gera plano personalizado, salva histórico e permite acompanhar evolução por meio de dashboard.
 
 ---
 
@@ -90,7 +214,7 @@ FastAPI
 ↓
 Google Gemini
 ↓
-PostgreSQL
+PostgreSQL / Neon
 ↓
 Dashboard Analítico
 ```
@@ -101,11 +225,13 @@ Dashboard Analítico
 2. O Streamlit envia os dados para a FastAPI.
 3. A FastAPI calcula o diagnóstico financeiro.
 4. A FastAPI chama o Gemini para gerar o plano de ação de 30 dias.
-5. A FastAPI salva o diagnóstico no PostgreSQL.
-6. O usuário envia feedback pela interface.
-7. O Streamlit envia o feedback para a FastAPI.
-8. A FastAPI salva o feedback no PostgreSQL.
-9. O dashboard lê os dados reais do banco e exibe métricas.
+5. A FastAPI salva o diagnóstico no PostgreSQL/Neon.
+6. O usuário pode baixar um relatório PDF.
+7. O usuário pode consultar histórico individual.
+8. O usuário envia feedback pela interface.
+9. O Streamlit envia o feedback para a FastAPI.
+10. A FastAPI salva o feedback no PostgreSQL/Neon.
+11. O dashboard lê os dados reais do banco e exibe métricas.
 
 ### Benefício da arquitetura
 
@@ -118,6 +244,7 @@ Essa separação deixa o projeto mais próximo de uma aplicação real, permitin
 * Gmail
 * Aplicativo mobile
 * Dashboard externo
+* Integrações corporativas
 
 ---
 
@@ -130,6 +257,7 @@ Essa separação deixa o projeto mais próximo de uma aplicação real, permitin
 * Google Gemini API
 * SQLAlchemy
 * PostgreSQL
+* Neon PostgreSQL
 * Pydantic
 * python-dotenv
 * Uvicorn
@@ -140,13 +268,22 @@ Essa separação deixa o projeto mais próximo de uma aplicação real, permitin
 * Streamlit
 * Pandas
 * Dashboard com gráficos e métricas
-* CSV como log complementar
+* Exportação CSV
+* ReportLab para PDF
+
+### Deploy e Cloud
+
+* Render
+* Neon PostgreSQL
+* GitHub
 
 ### Qualidade
 
 * Pytest
 * Estrutura modular
-* Separação entre app, API, engine financeiro, banco, feedback e dashboard
+* Separação entre app, API, engine financeiro, banco, feedback, PDF e dashboard
+* Health Check
+* Tratamento de erro para API offline
 
 ---
 
@@ -178,13 +315,17 @@ inna-financial-coach-ai/
 │   ├── gemini_client.py
 │   ├── logger.py
 │   ├── models.py
+│   ├── pdf_report.py
 │   ├── prompts.py
 │   └── repository.py
 ├── tests/
 │   ├── conftest.py
+│   ├── test_api_health.py
 │   └── test_financial_engine.py
 ├── .env.example
 ├── .gitignore
+├── .python-version
+├── runtime.txt
 ├── LICENSE
 ├── README.md
 └── requirements.txt
@@ -207,13 +348,17 @@ FastAPI chama o Google Gemini
 ↓
 Gemini cria plano de ação de 30 dias
 ↓
-FastAPI salva diagnóstico no PostgreSQL
+FastAPI salva diagnóstico no PostgreSQL/Neon
+↓
+Usuário baixa relatório PDF
+↓
+Usuário consulta histórico individual
 ↓
 Usuário envia feedback pelo Streamlit
 ↓
 Streamlit envia feedback para a FastAPI
 ↓
-FastAPI salva feedback no PostgreSQL
+FastAPI salva feedback no PostgreSQL/Neon
 ↓
 Dashboard lê dados reais do banco
 ```
@@ -242,7 +387,12 @@ Score < 50   → Alto risco
 
 ## 🗄️ Banco de Dados
 
-O projeto utiliza **PostgreSQL local** com SQLAlchemy.
+O projeto utiliza **PostgreSQL** com SQLAlchemy.
+
+Ambientes suportados:
+
+* PostgreSQL local para desenvolvimento
+* Neon PostgreSQL para produção online
 
 Tabelas principais:
 
@@ -284,7 +434,9 @@ Armazena:
 
 ## 📈 Dashboard Analítico
 
-O dashboard lê dados diretamente do PostgreSQL e apresenta:
+O dashboard lê dados diretamente do PostgreSQL configurado no projeto, podendo ser local ou Neon.
+
+Ele apresenta:
 
 * Total de diagnósticos
 * Usuários únicos
@@ -300,6 +452,16 @@ O dashboard lê dados diretamente do PostgreSQL e apresenta:
 * Últimos feedbacks
 * Comentários recebidos
 * Leitura executiva da base
+* Filtro por data
+* Filtro por mês
+* Exportação CSV dos diagnósticos filtrados
+* Exportação CSV dos feedbacks filtrados
+
+Dashboard online:
+
+```text
+https://inna-dashboard-streamlit.onrender.com
+```
 
 ---
 
@@ -309,19 +471,48 @@ A FastAPI disponibiliza os seguintes endpoints:
 
 ```text
 GET  /
+GET  /health
 POST /diagnostico
 POST /feedback
 GET  /diagnosticos
 GET  /feedbacks
+GET  /diagnosticos/{diagnostico_id}/relatorio
+GET  /diagnosticos/usuario/{nome}
 ```
 
 ### `GET /`
 
-Verifica se a API está funcionando.
+Rota inicial da API.
+
+Exemplo:
+
+```text
+https://inna-api.onrender.com
+```
+
+### `GET /health`
+
+Verifica se a API está online.
+
+Exemplo:
+
+```text
+https://inna-api.onrender.com/health
+```
+
+Exemplo de resposta:
+
+```json
+{
+  "status": "ok",
+  "app": "INNA Financial Coach AI",
+  "message": "API online e pronta para receber requisições."
+}
+```
 
 ### `POST /diagnostico`
 
-Gera diagnóstico financeiro, chama o Gemini, salva no PostgreSQL e retorna a resposta completa.
+Gera diagnóstico financeiro, chama o Gemini, salva no PostgreSQL/Neon e retorna a resposta completa.
 
 Exemplo de payload:
 
@@ -341,6 +532,7 @@ Exemplo de resposta:
 
 ```json
 {
+  "id": 1,
   "nome": "Ronaldo",
   "saldo_estimado": 600,
   "comprometimento_renda_percentual": 80,
@@ -354,7 +546,7 @@ Exemplo de resposta:
 
 ### `POST /feedback`
 
-Registra feedback do usuário no PostgreSQL.
+Registra feedback do usuário no PostgreSQL/Neon.
 
 Exemplo de payload:
 
@@ -379,27 +571,59 @@ Exemplo de resposta:
 
 ### `GET /diagnosticos`
 
-Lista diagnósticos salvos no PostgreSQL.
+Lista diagnósticos salvos no PostgreSQL/Neon.
 
-Exemplo:
+Exemplo local:
 
 ```text
 http://127.0.0.1:8000/diagnosticos?limit=10
 ```
 
+Exemplo online:
+
+```text
+https://inna-api.onrender.com/diagnosticos?limit=10
+```
+
 ### `GET /feedbacks`
 
-Lista feedbacks salvos no PostgreSQL.
+Lista feedbacks salvos no PostgreSQL/Neon.
 
-Exemplo:
+Exemplo local:
 
 ```text
 http://127.0.0.1:8000/feedbacks?limit=10
 ```
 
+Exemplo online:
+
+```text
+https://inna-api.onrender.com/feedbacks?limit=10
+```
+
+### `GET /diagnosticos/{diagnostico_id}/relatorio`
+
+Gera relatório PDF de um diagnóstico salvo.
+
+Exemplo:
+
+```text
+https://inna-api.onrender.com/diagnosticos/1/relatorio
+```
+
+### `GET /diagnosticos/usuario/{nome}`
+
+Busca o histórico individual de diagnósticos por nome.
+
+Exemplo:
+
+```text
+https://inna-api.onrender.com/diagnosticos/usuario/Ronaldo?limit=10
+```
+
 ---
 
-## ⚙️ Como Rodar o Projeto
+## ⚙️ Como Rodar o Projeto Localmente
 
 ### 1. Clone o repositório
 
@@ -456,7 +680,11 @@ STREAMLIT_HOST=localhost
 STREAMLIT_PORT=8504
 STREAMLIT_BASE_URL=http://localhost:8504
 
+# Banco local
 DATABASE_URL=postgresql://postgres:sua_senha_aqui@localhost:5432/inna_db
+
+# Banco Neon em produção
+# DATABASE_URL=postgresql://neondb_owner:sua_senha@seu-host-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 
 DATA_DIR=data
 INTERACTIONS_LOG_FILE=data/interacoes.csv
@@ -474,7 +702,7 @@ Atenção: nunca envie o arquivo `.env` para o GitHub.
 
 ---
 
-## ▶️ Rodar API FastAPI
+## ▶️ Rodar API FastAPI Localmente
 
 A API precisa ficar rodando para que o Streamlit consiga consumir os endpoints.
 
@@ -488,9 +716,15 @@ Acesse a documentação automática:
 http://127.0.0.1:8000/docs
 ```
 
+Health Check local:
+
+```text
+http://127.0.0.1:8000/health
+```
+
 ---
 
-## ▶️ Rodar Interface Streamlit
+## ▶️ Rodar Interface Streamlit Localmente
 
 Em outro terminal, com a API já rodando:
 
@@ -506,7 +740,7 @@ http://localhost:8504
 
 ---
 
-## 📊 Rodar Dashboard
+## 📊 Rodar Dashboard Localmente
 
 ```bash
 streamlit run src/dashboard.py --server.port 8505
@@ -529,7 +763,7 @@ pytest
 Resultado validado:
 
 ```text
-2 passed
+3 passed
 ```
 
 ---
@@ -557,36 +791,114 @@ GEMINI_API_KEY=sua_chave_real
 
 ---
 
+## ☁️ Deploy Online
+
+O projeto está publicado usando:
+
+* Render para FastAPI
+* Render para Streamlit principal
+* Render para Dashboard
+* Neon PostgreSQL para banco online
+
+### Serviços publicados
+
+```text
+inna-api
+inna-app-streamlit
+inna-dashboard-streamlit
+```
+
+### Comandos de produção
+
+FastAPI:
+
+```bash
+python -m uvicorn api.main:app --host 0.0.0.0 --port $PORT
+```
+
+Streamlit principal:
+
+```bash
+streamlit run src/app.py --server.port $PORT --server.address 0.0.0.0
+```
+
+Dashboard:
+
+```bash
+streamlit run src/dashboard.py --server.port $PORT --server.address 0.0.0.0
+```
+
+### Variáveis de ambiente principais
+
+Serviço `inna-api`:
+
+```env
+APP_ENV=production
+INNA_MOCK_MODE=false
+GEMINI_API_KEY=sua_chave_gemini
+GEMINI_MODEL=gemini-2.5-flash-lite
+DATABASE_URL=sua_url_neon
+API_BASE_URL=https://inna-api.onrender.com
+PYTHON_VERSION=3.12.1
+```
+
+Serviço `inna-app-streamlit`:
+
+```env
+APP_ENV=production
+API_BASE_URL=https://inna-api.onrender.com
+INNA_MOCK_MODE=false
+PYTHON_VERSION=3.12.1
+```
+
+Serviço `inna-dashboard-streamlit`:
+
+```env
+APP_ENV=production
+DATABASE_URL=sua_url_neon
+PYTHON_VERSION=3.12.1
+```
+
+---
+
 ## ✅ Validação Técnica Atual
 
-O projeto já foi validado localmente com:
+O projeto já foi validado localmente e online com:
 
 * Streamlit consumindo FastAPI
 * FastAPI gerando diagnóstico financeiro
 * FastAPI chamando Gemini real
-* FastAPI salvando diagnósticos no PostgreSQL
-* FastAPI salvando feedbacks no PostgreSQL
-* Dashboard lendo dados reais do PostgreSQL
+* FastAPI salvando diagnósticos no PostgreSQL/Neon
+* FastAPI salvando feedbacks no PostgreSQL/Neon
+* Dashboard lendo dados reais do PostgreSQL/Neon
+* Endpoint `GET /health` funcionando
 * Endpoint `POST /diagnostico` funcionando
 * Endpoint `POST /feedback` funcionando
 * Endpoint `GET /diagnosticos` funcionando
 * Endpoint `GET /feedbacks` funcionando
+* Endpoint `GET /diagnosticos/usuario/{nome}` funcionando
+* Endpoint `GET /diagnosticos/{id}/relatorio` funcionando
+* Relatório PDF funcionando online
+* Histórico individual funcionando online
+* Feedback funcionando online
 * Testes automatizados passando com pytest
 
 ---
 
 ## ✅ Status Atual do MVP
 
-* App Streamlit funcionando
-* API FastAPI funcionando
+* App Streamlit funcionando localmente e online
+* API FastAPI funcionando localmente e online
+* Dashboard funcionando localmente e online
 * Gemini real integrado
-* PostgreSQL validado
-* Diagnósticos salvos no banco
-* Feedbacks salvos no banco
-* Dashboard lendo dados reais
-* Streamlit consumindo API
+* Neon PostgreSQL validado
+* Diagnósticos salvos no banco online
+* Feedbacks salvos no banco online
+* Dashboard lendo dados reais online
+* Streamlit consumindo API online
 * Testes automatizados passando
 * Projeto publicado no GitHub
+* Deploy online concluído no Render
 
 ---
 
@@ -594,14 +906,16 @@ O projeto já foi validado localmente com:
 
 Próximas evoluções planejadas:
 
+* Melhorar página inicial e experiência visual
+* Criar documentação com prints do sistema online
+* Criar vídeo demo curto
 * Autenticação de usuários
-* Histórico individual por usuário
-* Exportação de relatório em PDF
-* Deploy online
-* Supabase ou PostgreSQL gerenciado
+* Área individual por usuário
+* Evolução comparativa do score financeiro
+* RAG com base de conhecimento financeira
+* Embeddings e busca vetorial com pgvector no Neon
 * Integração com n8n
 * Integração com WhatsApp, Telegram ou Gmail
-* RAG com base de conhecimento financeira
 * Agentes especializados com LangChain ou CrewAI
 * Alertas automáticos e recomendações recorrentes
 * Métricas de produto e validação com usuários reais
@@ -630,7 +944,7 @@ O projeto utiliza dados fictícios para demonstração, aprendizado e validaçã
 
 A **INNA Financial Coach AI** é um MVP pensado para hackathons, portfólio profissional, validação com usuários e evolução comercial.
 
-Ela transforma dados financeiros simples em diagnóstico, plano de ação e acompanhamento com IA Generativa, usando uma arquitetura moderna com Streamlit, FastAPI, Gemini, PostgreSQL e dashboard analítico.
+Ela transforma dados financeiros simples em diagnóstico, plano de ação, histórico, relatório PDF e acompanhamento com IA Generativa, usando uma arquitetura moderna com Streamlit, FastAPI, Gemini, Neon PostgreSQL, Render e dashboard analítico.
 
 ---
 
@@ -647,3 +961,6 @@ Ela transforma dados financeiros simples em diagnóstico, plano de ação e acom
 * Dados
 * Automação
 * Cloud
+* APIs
+* PostgreSQL
+* Deploy
