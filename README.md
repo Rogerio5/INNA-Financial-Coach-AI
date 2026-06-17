@@ -902,6 +902,37 @@ O projeto já foi validado localmente e online com:
 
 ---
 
+## 🖼️ Evidências Visuais
+
+### App principal online
+![App online](docs/prints/app-online.png)
+
+### Diagnóstico gerado
+![Diagnóstico online](docs/prints/diagnostico-online.png)
+
+### Relatório PDF gerado
+![PDF online](docs/prints/pdf-online.png)
+
+### Histórico individual funcionando
+![Histórico online](docs/prints/historico-online.png)
+
+### API Swagger
+![Swagger online](docs/prints/swagger-online.png)
+
+### Dashboard analítico
+![Dashboard online](docs/prints/dashboard-online.png)
+
+### Dashboard com dados, feedbacks e leitura executiva
+![Dashboard dados online](docs/prints/dashboard-dados-online.png)
+
+### Serviços no Render
+![Serviços no Render](docs/prints/render-servicos.png)
+
+### Banco Neon PostgreSQL
+![Neon dados](docs/prints/neon-dados.png)
+
+---
+
 ## 🛣️ Roadmap
 
 Próximas evoluções planejadas:
