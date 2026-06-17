@@ -240,7 +240,7 @@ with st.form("historico_form"):
 
 if buscar_historico:
     try:
-        historico = buscar_historico_usuario_api, verificar_api_online(
+        historico = buscar_historico_usuario_api(
             nome=nome_historico,
             limit=int(limite_historico),
         )
