@@ -105,10 +105,6 @@ Semana 4 — Revisar o progresso e manter uma rotina simples.
 
 
 def gerar_diagnostico_pelo_payload(payload: dict) -> dict:
-    """
-    Gera o diagnóstico diretamente dentro da API, sem chamar a própria URL online.
-    Isso evita travamento, demora e mensagens duplicadas do Telegram.
-    """
     financial_input = FinancialInput(**payload)
     payload_dict = financial_input.model_dump()
 
