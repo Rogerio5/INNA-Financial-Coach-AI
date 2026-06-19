@@ -27,6 +27,15 @@ LANGUAGE_OPTIONS = {
     "🇸🇦 العربية": "ar",
 }
 
+CURRENCY_BY_LANG = {
+    "pt": {"prefix": "R$ ", "suffix": "", "style": "br"},
+    "en": {"prefix": "US$ ", "suffix": "", "style": "us"},
+    "es": {"prefix": "€ ", "suffix": "", "style": "br"},
+    "ru": {"prefix": "", "suffix": " ₽", "style": "ru"},
+    "fr": {"prefix": "€ ", "suffix": "", "style": "fr"},
+    "ar": {"prefix": "SAR ", "suffix": "", "style": "us"},
+}
+
 START_MESSAGES = {
     "pt": "💰 Oi! Eu sou a INNA, sua educadora financeira com IA.\n\nVou te ajudar com perguntas simples, uma por vez.\nNão precisa colocar R$, só o número.\n\nPrimeiro, como posso te chamar?",
     "en": "💰 Hi! I'm INNA, your AI financial educator.\n\nI'll help you with simple questions, one at a time.\nNo need to type currency symbols, just numbers.\n\nFirst, what should I call you?",
@@ -94,14 +103,48 @@ def to_float(text: str) -> float:
     return float(text)
 
 
-def format_money(value) -> str:
+def format_money(value, lang: str = "pt") -> str:
     try:
         number = float(value)
-        formatted = f"{number:,.2f}"
-        formatted = formatted.replace(",", "X").replace(".", ",").replace("X", ".")
-        return f"R$ {formatted}"
+        currency = CURRENCY_BY_LANG.get(lang, CURRENCY_BY_LANG["pt"])
+        style = currency["style"]
+
+        if style == "us":
+            formatted = f"{number:,.2f}"
+        elif style == "ru":
+            formatted = f"{number:,.2f}"
+            formatted = formatted.replace(",", " ").replace(".", ",")
+        elif style == "fr":
+            formatted = f"{number:,.2f}"
+            formatted = formatted.replace(",", " ").replace(".", ",")
+        else:
+            formatted = f"{number:,.2f}"
+            formatted = formatted.replace(",", "X").replace(".", ",").replace("X", ".")
+
+        return f"{currency['prefix']}{formatted}{currency['suffix']}"
     except Exception:
-        return "R$ 0,00"
+        currency = CURRENCY_BY_LANG.get(lang, CURRENCY_BY_LANG["pt"])
+        return f"{currency['prefix']}0,00{currency['suffix']}"
+
+
+def format_currency_mentions(text: str, lang: str = "pt") -> str:
+    """
+    Converte valores no texto como R$ 21700.00 para a moeda do idioma escolhido.
+    Não faz conversão cambial, apenas formatação visual.
+    """
+    def replace_match(match):
+        raw_value = match.group(1)
+        try:
+            if "," in raw_value:
+                number = float(raw_value.replace(".", "").replace(",", "."))
+            else:
+                number = float(raw_value)
+            return format_money(number, lang)
+        except Exception:
+            return match.group(0)
+
+    return re.sub(r"R\$\s*([0-9]+(?:\.[0-9]{2})?)", replace_match, text)
+
 
 
 def format_currency_mentions(text: str) -> str:
@@ -121,7 +164,7 @@ def format_currency_mentions(text: str) -> str:
     return re.sub(r"R\$\s*([0-9]+(?:\.[0-9]{2})?)", replace_match, text)
 
 
-def resposta_curta(resultado: dict) -> str:
+def resposta_curta(resultado: dict, lang: str = "pt") -> str:
     diagnostico = resultado.get("diagnostico", "")
     diagnostico = format_currency_mentions(diagnostico)
 
@@ -132,7 +175,7 @@ def resposta_curta(resultado: dict) -> str:
 💰 Diagnóstico INNA
 
 👤 Nome: {resultado.get("nome")}
-💵 Saldo estimado: {format_money(resultado.get("saldo_estimado"))}
+💵 Saldo estimado: {format_money(resultado.get("saldo_estimado"), lang)}
 📊 Score financeiro: {resultado.get("score_financeiro")}/100
 ⚠️ Nível de risco: {resultado.get("nivel_risco")}
 
@@ -358,7 +401,7 @@ def process_telegram_update(update: dict):
             )
 
             resultado = gerar_diagnostico_pelo_payload(payload)
-            send_telegram_message(chat_id, resposta_curta(resultado))
+            send_telegram_message(chat_id, resposta_curta(resultado, session.get("lang", "pt")))
 
             USER_SESSIONS.pop(chat_id, None)
 
