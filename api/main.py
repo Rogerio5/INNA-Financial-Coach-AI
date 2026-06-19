@@ -1,3 +1,4 @@
+from api.telegram_webhook import router as telegram_router
 from fastapi import FastAPI, HTTPException, Query, Response
 
 from api.schemas import (
@@ -125,3 +126,6 @@ def listar_diagnosticos_por_usuario(
     limit: int = Query(default=20, ge=1, le=100),
 ):
     return list_diagnosticos_by_nome_db(nome=nome, limit=limit)
+
+
+app.include_router(telegram_router)
