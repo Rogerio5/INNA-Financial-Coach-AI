@@ -17,6 +17,7 @@ router = APIRouter(prefix="/telegram", tags=["telegram"])
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 USER_SESSIONS = {}
+USER_LAST_LANG = {}
 PROCESSED_UPDATES = set()
 
 LANGUAGE_OPTIONS = {
@@ -462,6 +463,30 @@ def get_lang_from_session(session: dict | None) -> str:
     return session.get("lang", "pt")
 
 
+def get_chat_lang(chat_id: int, session: dict | None = None) -> str:
+    if session and session.get("lang"):
+        return session.get("lang", "pt")
+    return USER_LAST_LANG.get(chat_id, "pt")
+
+
+def get_help_message(lang: str) -> str:
+    messages = {
+        "pt": "💰 INNA ajuda você a organizar sua vida financeira.\n\nComandos:\n/start - Começar atendimento\n/idioma - Trocar idioma\n/cancelar - Cancelar atendimento",
+        "en_us": "💰 INNA helps you organize your financial life.\n\nCommands:\n/start - Start service\n/idioma - Change language\n/cancelar - Cancel service",
+        "en_gb": "💰 INNA helps you organise your financial life.\n\nCommands:\n/start - Start service\n/idioma - Change language\n/cancelar - Cancel service",
+        "es": "💰 INNA te ayuda a organizar tu vida financiera.\n\nComandos:\n/start - Empezar atención\n/idioma - Cambiar idioma\n/cancelar - Cancelar atención",
+        "ru": "💰 INNA помогает организовать финансовую жизнь.\n\nКоманды:\n/start - Начать\n/idioma - Сменить язык\n/cancelar - Отменить",
+        "fr": "💰 INNA vous aide à organiser votre vie financière.\n\nCommandes :\n/start - Commencer\n/idioma - Changer de langue\n/cancelar - Annuler",
+        "ar": "💰 تساعدك INNA على تنظيم حياتك المالية.\n\nالأوامر:\n/start - بدء الخدمة\n/idioma - تغيير اللغة\n/cancelar - إلغاء الخدمة",
+        "de": "💰 INNA hilft dir, dein finanzielles Leben zu organisieren.\n\nBefehle:\n/start - Starten\n/idioma - Sprache ändern\n/cancelar - Abbrechen",
+        "ro": "💰 INNA te ajută să îți organizezi viața financiară.\n\nComenzi:\n/start - Începe\n/idioma - Schimbă limba\n/cancelar - Anulează",
+        "uk": "💰 INNA допомагає організувати фінансове життя.\n\nКоманди:\n/start - Почати\n/idioma - Змінити мову\n/cancelar - Скасувати",
+        "ch": "💰 INNA hilft dir, dein finanzielles Leben zu organisieren.\n\nBefehle:\n/start - Starten\n/idioma - Sprache ändern\n/cancelar - Abbrechen",
+        "it": "💰 INNA ti aiuta a organizzare la tua vita finanziaria.\n\nComandi:\n/start - Iniziare\n/idioma - Cambiare lingua\n/cancelar - Annullare",
+    }
+    return messages.get(lang, messages["pt"])
+
+
 def send_telegram_message(chat_id: int, text: str, reply_markup: dict | None = None):
     if not TELEGRAM_BOT_TOKEN:
         print("TELEGRAM_BOT_TOKEN não configurado.")
@@ -753,13 +778,21 @@ def process_telegram_update(update: dict):
     text = text.strip()
 
     if text in ["/start", "/idioma", "/language"]:
-        USER_SESSIONS[chat_id] = {"step": "idioma"}
-        start_language_flow(chat_id)
+        lang = get_chat_lang(chat_id, USER_SESSIONS.get(chat_id))
+        USER_SESSIONS[chat_id] = {"step": "idioma", "lang": lang}
+        start_language_flow(chat_id, lang)
+        return
+
+    if text in ["/help", "/ajuda"]:
+        session = USER_SESSIONS.get(chat_id)
+        lang = get_chat_lang(chat_id, session)
+        send_telegram_message(chat_id, get_help_message(lang))
         return
 
     if text in ["/cancelar", "/cancel"]:
         session = USER_SESSIONS.get(chat_id)
-        lang = get_lang_from_session(session)
+        lang = get_chat_lang(chat_id, session)
+        USER_LAST_LANG[chat_id] = lang
         USER_SESSIONS.pop(chat_id, None)
         send_telegram_message(chat_id, get_text(lang, "cancel"), remove_keyboard())
         return
@@ -767,8 +800,9 @@ def process_telegram_update(update: dict):
     session = USER_SESSIONS.get(chat_id)
 
     if not session:
-        USER_SESSIONS[chat_id] = {"step": "idioma"}
-        start_language_flow(chat_id, auto=True)
+        lang = get_chat_lang(chat_id)
+        USER_SESSIONS[chat_id] = {"step": "idioma", "lang": lang}
+        start_language_flow(chat_id, lang, auto=True)
         return
 
     step = session.get("step")
@@ -782,6 +816,7 @@ def process_telegram_update(update: dict):
 
             session["lang"] = LANGUAGE_OPTIONS.get(text, "pt")
             lang = session["lang"]
+            USER_LAST_LANG[chat_id] = lang
             session["step"] = "nome"
 
             send_telegram_message(
@@ -884,6 +919,7 @@ def process_telegram_update(update: dict):
             resultado = gerar_diagnostico_pelo_payload(payload, lang)
             send_telegram_message(chat_id, resposta_curta(resultado, lang))
 
+            USER_LAST_LANG[chat_id] = lang
             USER_SESSIONS.pop(chat_id, None)
 
     except ValueError:
