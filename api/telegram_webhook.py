@@ -92,13 +92,43 @@ def remove_keyboard() -> dict:
 
 
 def to_float(text: str) -> float:
-    text = text.strip()
-    text = text.replace("R$", "").replace("r$", "").strip()
+    """
+    Converte valores digitados pelo usuário em número.
 
+    Aceita exemplos:
+    20000
+    20.000,00
+    $20000
+    $20.000,00
+    US$20000
+    R$20000
+    €20000
+    SAR 20000
+    20000 ₽
+    """
+    text = text.strip()
+
+    # Remove símbolos e nomes comuns de moedas.
+    text = re.sub(
+        r"(R\$|US\$|\$|€|₽|SAR|BRL|USD|EUR|RUB)",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    # Mantém apenas números, ponto, vírgula e sinal negativo.
+    text = re.sub(r"[^0-9,\.\-]", "", text)
+
+    if not text:
+        raise ValueError("Valor vazio")
+
+    # Formato brasileiro/europeu: 20.000,00
     if "," in text:
         text = text.replace(".", "").replace(",", ".")
     else:
-        text = text.replace(",", "")
+        # Formato americano: 20,000.00 ou número simples: 20000
+        if text.count(".") > 1:
+            text = text.replace(".", "")
 
     return float(text)
 
