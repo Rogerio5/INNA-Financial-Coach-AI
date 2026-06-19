@@ -72,13 +72,35 @@ def to_float(text: str) -> float:
 
 def format_money(value) -> str:
     try:
-        return f"R$ {float(value):.2f}".replace(".", ",")
+        number = float(value)
+        formatted = f"{number:,.2f}"
+        formatted = formatted.replace(",", "X").replace(".", ",").replace("X", ".")
+        return f"R$ {formatted}"
     except Exception:
         return "R$ 0,00"
 
 
+def format_currency_mentions(text: str) -> str:
+    """
+    Converte valores como R$ 21700.00 para R$ 21.700,00 dentro do texto.
+    """
+    def replace_match(match):
+        raw_value = match.group(1)
+        try:
+            number = float(raw_value.replace(".", "").replace(",", ".") if "," in raw_value else raw_value)
+            formatted = f"{number:,.2f}"
+            formatted = formatted.replace(",", "X").replace(".", ",").replace("X", ".")
+            return f"R$ {formatted}"
+        except Exception:
+            return match.group(0)
+
+    return re.sub(r"R\$\s*([0-9]+(?:\.[0-9]{2})?)", replace_match, text)
+
+
 def resposta_curta(resultado: dict) -> str:
     diagnostico = resultado.get("diagnostico", "")
+    diagnostico = format_currency_mentions(diagnostico)
+
     if len(diagnostico) > 350:
         diagnostico = diagnostico[:350].rstrip() + "..."
 
