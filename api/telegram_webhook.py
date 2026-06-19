@@ -182,9 +182,17 @@ def process_telegram_update(update: dict):
     session = USER_SESSIONS.get(chat_id)
 
     if not session:
+        USER_SESSIONS[chat_id] = {"step": "idioma"}
         send_telegram_message(
             chat_id,
-            "Oi! Para começar seu diagnóstico financeiro, envie /start.",
+            "💰 Oi! Eu sou a INNA, sua educadora financeira com IA.\n\n"
+            "Vou te ajudar a organizar seu dinheiro com perguntas simples.\n\n"
+            "🌍 Primeiro, escolha o idioma / Choose your language:",
+            keyboard([
+                ["🇧🇷 Português", "🇺🇸 English"],
+                ["🇪🇸 Español", "🇷🇺 Русский"],
+                ["🇫🇷 Français", "🇸🇦 العربية"],
+            ]),
         )
         return
 
