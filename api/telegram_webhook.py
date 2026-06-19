@@ -27,6 +27,30 @@ LANGUAGE_OPTIONS = {
     "🇸🇦 العربية": "ar",
 }
 
+START_MESSAGES = {
+    "pt": "💰 Oi! Eu sou a INNA, sua educadora financeira com IA.\n\nVou te ajudar com perguntas simples, uma por vez.\nNão precisa colocar R$, só o número.\n\nPrimeiro, como posso te chamar?",
+    "en": "💰 Hi! I'm INNA, your AI financial educator.\n\nI'll help you with simple questions, one at a time.\nNo need to type currency symbols, just numbers.\n\nFirst, what should I call you?",
+    "es": "💰 ¡Hola! Soy INNA, tu educadora financiera con IA.\n\nTe ayudaré con preguntas simples, una por vez.\nNo necesitas escribir símbolos de moneda, solo números.\n\nPrimero, ¿cómo puedo llamarte?",
+    "ru": "💰 Привет! Я INNA, ваш финансовый помощник с ИИ.\n\nЯ помогу вам простыми вопросами, шаг за шагом.\nНе нужно писать символ валюты, только число.\n\nСначала скажите, как мне к вам обращаться?",
+    "fr": "💰 Bonjour ! Je suis INNA, votre éducatrice financière avec IA.\n\nJe vais vous aider avec des questions simples, une par une.\nPas besoin d’écrire le symbole de monnaie, seulement le nombre.\n\nD’abord, comment puis-je vous appeler ?",
+    "ar": "💰 مرحبًا! أنا INNA، مساعدتك المالية بالذكاء الاصطناعي.\n\nسأساعدك بأسئلة بسيطة، خطوة بخطوة.\nلا تحتاج إلى كتابة رمز العملة، فقط الرقم.\n\nأولًا، كيف يمكنني مناداتك؟",
+}
+
+
+ASK_INCOME_MESSAGES = {
+    "pt": "Prazer, {nome}! 😊\n\nQuanto você ganha por mês?\nExemplo: 3000",
+    "en": "Nice to meet you, {nome}! 😊\n\nHow much do you earn per month?\nExample: 3000",
+    "es": "¡Mucho gusto, {nome}! 😊\n\n¿Cuánto ganas por mes?\nEjemplo: 3000",
+    "ru": "Приятно познакомиться, {nome}! 😊\n\nСколько вы зарабатываете в месяц?\nПример: 3000",
+    "fr": "Enchanté, {nome} ! 😊\n\nCombien gagnez-vous par mois ?\nExemple : 3000",
+    "ar": "تشرفت بمعرفتك، {nome}! 😊\n\nكم تكسب شهريًا؟\nمثال: 3000",
+}
+
+
+def get_lang_message(messages: dict, lang: str, **kwargs) -> str:
+    template = messages.get(lang, messages["pt"])
+    return template.format(**kwargs)
+
 
 def send_telegram_message(chat_id: int, text: str, reply_markup: dict | None = None):
     if not TELEGRAM_BOT_TOKEN:
@@ -202,12 +226,10 @@ def process_telegram_update(update: dict):
         if step == "idioma":
             session["lang"] = LANGUAGE_OPTIONS.get(text, "pt")
             session["step"] = "nome"
+            lang = session.get("lang", "pt")
             send_telegram_message(
                 chat_id,
-                "💰 Oi! Eu sou a INNA, sua educadora financeira com IA.\n\n"
-                "Vou te ajudar com perguntas simples, uma por vez.\n"
-                "Não precisa colocar R$, só o número.\n\n"
-                "Primeiro, como posso te chamar?",
+                get_lang_message(START_MESSAGES, lang),
                 remove_keyboard(),
             )
 
@@ -218,9 +240,10 @@ def process_telegram_update(update: dict):
 
             session["nome"] = text
             session["step"] = "renda"
+            lang = session.get("lang", "pt")
             send_telegram_message(
                 chat_id,
-                f"Prazer, {text}! 😊\n\nQuanto você ganha por mês?\nExemplo: 3000",
+                get_lang_message(ASK_INCOME_MESSAGES, lang, nome=text),
             )
 
         elif step == "renda":
