@@ -789,6 +789,12 @@ def process_telegram_update(update: dict):
         send_telegram_message(chat_id, get_help_message(lang))
         return
 
+    if text in ["/help", "/ajuda"]:
+        session = USER_SESSIONS.get(chat_id)
+        lang = get_chat_lang(chat_id, session)
+        send_telegram_message(chat_id, get_help_message(lang))
+        return
+
     if text in ["/cancelar", "/cancel"]:
         session = USER_SESSIONS.get(chat_id)
         lang = get_chat_lang(chat_id, session)
