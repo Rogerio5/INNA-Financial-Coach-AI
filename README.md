@@ -995,3 +995,49 @@ Ela transforma dados financeiros simples em diagnóstico, plano de ação, hist�
 * APIs
 * PostgreSQL
 * Deploy
+
+## Bot Telegram Multilíngue
+
+A INNA também funciona pelo Telegram, integrada à FastAPI online por meio de webhook.  
+O bot conduz o usuário por perguntas simples, identifica o idioma escolhido e formata os valores conforme a moeda associada ao país/idioma.
+
+### Funcionalidades do Telegram
+
+- Atendimento guiado por perguntas simples
+- Seleção de idioma no início da conversa
+- Formatação de moedas por idioma/país
+- Diagnóstico financeiro salvo na base online
+- Resposta resumida no Telegram
+- Plano completo disponível pelo app web, dashboard e relatório PDF
+- Comandos `/start`, `/idioma`, `/help` e `/cancelar`
+- Descrição multilíngue configurada no perfil do bot via Telegram Bot API
+
+### Idiomas e moedas disponíveis
+
+- Português Brasil — BRL / R$
+- English US — USD / US$
+- English UK — GBP / £
+- Español — EUR / €
+- Deutsch — EUR / €
+- Français — EUR / €
+- Italiano — EUR / €
+- Русский — RUB / ₽
+- العربية — SAR
+- Română — RON
+- Українська — UAH / ₴
+- Schweiz — CHF
+
+### Arquitetura do Telegram
+
+Telegram  
+↓  
+Webhook FastAPI online  
+↓  
+https://inna-api.onrender.com/telegram/webhook  
+↓  
+Motor financeiro + Gemini  
+↓  
+Neon PostgreSQL  
+↓  
+Dashboard / App Web / PDF  
+
