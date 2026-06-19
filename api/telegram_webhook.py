@@ -1,8 +1,13 @@
 import os
-import requests
-from fastapi import APIRouter, Request
-from dotenv import load_dotenv
 
+import requests
+from dotenv import load_dotenv
+from fastapi import APIRouter, BackgroundTasks, Request
+
+from api.schemas import FinancialInput
+from src.financial_engine import build_financial_diagnosis
+from src.gemini_client import generate_ai_plan
+from src.repository import save_diagnostico_db
 
 load_dotenv()
 
@@ -10,9 +15,8 @@ router = APIRouter(prefix="/telegram", tags=["telegram"])
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-
 USER_SESSIONS = {}
-
+PROCESSED_UPDATES = set()
 
 LANGUAGE_OPTIONS = {
     "🇧🇷 Português": "pt",
@@ -102,33 +106,36 @@ Semana 4 — Revisar o progresso e manter uma rotina simples.
 
 def gerar_diagnostico_pelo_payload(payload: dict) -> dict:
     """
-    Chama o endpoint /diagnostico da própria API da INNA.
-
-    Isso reaproveita o fluxo já validado:
-    motor financeiro + Gemini + Neon + retorno padronizado.
+    Gera o diagnóstico diretamente dentro da API, sem chamar a própria URL online.
+    Isso evita travamento, demora e mensagens duplicadas do Telegram.
     """
-    base_url = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
+    financial_input = FinancialInput(**payload)
+    payload_dict = financial_input.model_dump()
 
-    response = requests.post(
-        f"{base_url}/diagnostico",
-        json=payload,
-        timeout=90,
-    )
-    response.raise_for_status()
-    return response.json()
+    diagnosis = build_financial_diagnosis(payload_dict)
+    ai_plan = generate_ai_plan(payload_dict, diagnosis)
+
+    response = {
+        **diagnosis,
+        "nome": payload_dict["nome"],
+        "objetivo": payload_dict["objetivo"],
+        "plano_30_dias": ai_plan,
+    }
+
+    diagnostico_id = save_diagnostico_db(payload_dict, response)
+    response["id"] = diagnostico_id
+
+    return response
 
 
-@router.post("/webhook")
-async def telegram_webhook(request: Request):
-    update = await request.json()
-
+def process_telegram_update(update: dict):
     message = update.get("message", {})
     chat = message.get("chat", {})
     chat_id = chat.get("id")
     text = message.get("text", "")
 
     if not chat_id:
-        return {"ok": True}
+        return
 
     text = text.strip()
 
@@ -143,7 +150,7 @@ async def telegram_webhook(request: Request):
                 ["🇫🇷 Français", "🇸🇦 العربية"],
             ]),
         )
-        return {"ok": True}
+        return
 
     if text in ["/cancelar", "/cancel"]:
         USER_SESSIONS.pop(chat_id, None)
@@ -152,7 +159,7 @@ async def telegram_webhook(request: Request):
             "Atendimento cancelado. Para começar de novo, envie /start.",
             remove_keyboard(),
         )
-        return {"ok": True}
+        return
 
     session = USER_SESSIONS.get(chat_id)
 
@@ -161,7 +168,7 @@ async def telegram_webhook(request: Request):
             chat_id,
             "Oi! Para começar seu diagnóstico financeiro, envie /start.",
         )
-        return {"ok": True}
+        return
 
     step = session.get("step")
 
@@ -179,6 +186,10 @@ async def telegram_webhook(request: Request):
             )
 
         elif step == "nome":
+            if len(text) < 2:
+                send_telegram_message(chat_id, "Me diga um nome simples para eu te chamar.")
+                return
+
             session["nome"] = text
             session["step"] = "renda"
             send_telegram_message(
@@ -187,7 +198,11 @@ async def telegram_webhook(request: Request):
             )
 
         elif step == "renda":
-            session["renda_mensal"] = to_float(text)
+            renda = to_float(text)
+            if renda <= 0:
+                raise ValueError
+
+            session["renda_mensal"] = renda
             session["step"] = "gastos_fixos"
             send_telegram_message(
                 chat_id,
@@ -197,7 +212,11 @@ async def telegram_webhook(request: Request):
             )
 
         elif step == "gastos_fixos":
-            session["gastos_fixos"] = to_float(text)
+            gastos_fixos = to_float(text)
+            if gastos_fixos < 0:
+                raise ValueError
+
+            session["gastos_fixos"] = gastos_fixos
             session["step"] = "gastos_variaveis"
             send_telegram_message(
                 chat_id,
@@ -207,7 +226,11 @@ async def telegram_webhook(request: Request):
             )
 
         elif step == "gastos_variaveis":
-            session["gastos_variaveis"] = to_float(text)
+            gastos_variaveis = to_float(text)
+            if gastos_variaveis < 0:
+                raise ValueError
+
+            session["gastos_variaveis"] = gastos_variaveis
             session["step"] = "dividas"
             send_telegram_message(
                 chat_id,
@@ -217,7 +240,11 @@ async def telegram_webhook(request: Request):
             )
 
         elif step == "dividas":
-            session["dividas_mensais"] = to_float(text)
+            dividas = to_float(text)
+            if dividas < 0:
+                raise ValueError
+
+            session["dividas_mensais"] = dividas
             session["step"] = "reserva"
             send_telegram_message(
                 chat_id,
@@ -227,7 +254,11 @@ async def telegram_webhook(request: Request):
             )
 
         elif step == "reserva":
-            session["reserva_atual"] = to_float(text)
+            reserva = to_float(text)
+            if reserva < 0:
+                raise ValueError
+
+            session["reserva_atual"] = reserva
             session["step"] = "objetivo"
             send_telegram_message(
                 chat_id,
@@ -295,5 +326,21 @@ async def telegram_webhook(request: Request):
             "Ocorreu um erro ao processar sua mensagem. Tente novamente em alguns instantes.",
         )
 
-    return {"ok": True}
 
+@router.post("/webhook")
+async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
+    update = await request.json()
+    update_id = update.get("update_id")
+
+    if update_id in PROCESSED_UPDATES:
+        return {"ok": True, "duplicate": True}
+
+    if update_id is not None:
+        PROCESSED_UPDATES.add(update_id)
+
+        if len(PROCESSED_UPDATES) > 1000:
+            PROCESSED_UPDATES.clear()
+
+    background_tasks.add_task(process_telegram_update, update)
+
+    return {"ok": True}
