@@ -98,3 +98,18 @@ def buscar_historico_usuario_api(nome: str, limit: int = 10) -> list[dict]:
         return response.json()
     except requests.RequestException as error:
         raise RuntimeError(f"Erro ao buscar histórico pela API: {error}") from error
+
+
+def enviar_relatorio_email(diagnostico_id: int, email: str):
+    url = f"{API_BASE_URL}/diagnosticos/{diagnostico_id}/enviar-email"
+
+    response = requests.post(
+        url,
+        json={"email": email},
+        timeout=60,
+    )
+
+    if response.status_code >= 400:
+        raise RuntimeError(response.text)
+
+    return response.json()

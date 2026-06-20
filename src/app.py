@@ -7,7 +7,7 @@ sys.path.append(str(ROOT_DIR))
 import streamlit as st
 import requests
 
-from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_relatorio_pdf_api, buscar_historico_usuario_api, verificar_api_online
+from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_relatorio_pdf_api, buscar_historico_usuario_api, verificar_api_online, enviar_relatorio_email
 
 
 st.set_page_config(
@@ -168,6 +168,28 @@ if st.session_state.last_response:
 
         except Exception as error:
             st.warning(f"Não foi possível baixar o relatório pela API: {error}")
+
+    st.markdown("### 📧 Receber relatório por e-mail")
+
+    if diagnostico_id:
+        email_destino = st.text_input(
+            "Digite seu e-mail para receber o relatório PDF:",
+            placeholder="seuemail@gmail.com",
+            key=f"email_destino_{diagnostico_id}",
+        )
+
+        if st.button("📧 Enviar relatório por e-mail", key=f"btn_email_{diagnostico_id}"):
+            if not email_destino or "@" not in email_destino or "." not in email_destino:
+                st.warning("Digite um e-mail válido.")
+            else:
+                try:
+                    enviar_relatorio_email(diagnostico_id, email_destino)
+                    st.success("Relatório enviado por e-mail com sucesso!")
+                except Exception as error:
+                    st.error(f"Erro ao enviar relatório por e-mail: {error}")
+    else:
+        st.info("Gere um diagnóstico salvo para liberar o envio por e-mail.")
+
     else:
         st.warning("Relatório PDF indisponível: diagnóstico ainda não possui ID retornado pela API.")
 
