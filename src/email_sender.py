@@ -1,8 +1,7 @@
 
+import base64
 import os
-import smtplib
-from email.message import EmailMessage
-from email.utils import formataddr
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -15,33 +14,39 @@ def send_diagnostico_email(
     pdf_bytes: bytes,
     filename: str = "relatorio-inna.pdf",
 ) -> None:
-    gmail_user = os.getenv("GMAIL_USER")
-    gmail_app_password = os.getenv("GMAIL_APP_PASSWORD")
-    from_name = os.getenv("GMAIL_FROM_NAME", "INNA Financial Coach AI")
-
-    if not gmail_user or not gmail_app_password:
-        raise RuntimeError(
-            "GMAIL_USER e GMAIL_APP_PASSWORD precisam estar configurados no ambiente."
-        )
-
-    msg = EmailMessage()
-    msg["From"] = formataddr((from_name, gmail_user))
-    msg["To"] = to_email
-    msg["Subject"] = subject
-
-    msg.set_content(body)
-
-    msg.add_attachment(
-        pdf_bytes,
-        maintype="application",
-        subtype="pdf",
-        filename=filename,
+    resend_api_key = os.getenv("RESEND_API_KEY")
+    email_from = os.getenv(
+        "EMAIL_FROM",
+        "INNA Financial Coach AI <onboarding@resend.dev>",
     )
 
-    # Gmail SMTP usando STARTTLS na porta 587
-    with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as smtp:
-        smtp.ehlo()
-        smtp.starttls()
-        smtp.ehlo()
-        smtp.login(gmail_user, gmail_app_password)
-        smtp.send_message(msg)
+    if not resend_api_key:
+        raise RuntimeError("RESEND_API_KEY precisa estar configurada no ambiente.")
+
+    pdf_base64 = base64.b64encode(pdf_bytes).decode("utf-8")
+
+    payload = {
+        "from": email_from,
+        "to": [to_email],
+        "subject": subject,
+        "text": body,
+        "attachments": [
+            {
+                "filename": filename,
+                "content": pdf_base64,
+            }
+        ],
+    }
+
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {resend_api_key}",
+            "Content-Type": "application/json",
+        },
+        json=payload,
+        timeout=30,
+    )
+
+    if response.status_code >= 400:
+        raise RuntimeError(f"Erro Resend: {response.status_code} - {response.text}")
