@@ -73,8 +73,8 @@ APP_TRANSLATIONS = {
         "history_empty": "Nenhum diagnóstico encontrado para esse nome.",
         "feedback_help": "Sua avaliação ajuda a melhorar a INNA e validar o projeto.",
         "feedback_question": "Essa resposta foi útil?",
-        "yes": tr("yes"),
-        "no": tr("no"),
+        "yes": "Sim",
+        "no": "Não",
         "history_help": "Consulte diagnósticos anteriores pelo nome do usuário. Essa área usa a FastAPI para buscar dados salvos no PostgreSQL.",
     },
     "en_us": {
@@ -758,7 +758,14 @@ if st.session_state.last_response:
                 st.warning(tr("email_invalid"))
             else:
                 try:
-                    enviar_relatorio_email(diagnostico_id, email_destino)
+                    currency_info = CURRENCY_BY_LANG.get(app_lang, CURRENCY_BY_LANG["pt"])
+                    enviar_relatorio_email(
+                        diagnostico_id,
+                        email_destino,
+                        idioma=app_lang,
+                        moeda=currency_info["moeda"],
+                        simbolo_moeda=currency_info["simbolo"],
+                    )
                     st.success(tr("email_success"))
                 except Exception as error:
                     st.error(f"{tr('email_error')}: {error}")
