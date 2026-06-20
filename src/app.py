@@ -781,7 +781,7 @@ if st.session_state.last_response:
 
     with st.form("feedback_form"):
         util = st.radio(
-            "Essa resposta foi útil?",
+            tr("feedback_question"),
             [tr("yes"), tr("no")],
             horizontal=True,
         )
@@ -818,12 +818,9 @@ if st.session_state.last_response:
 
 st.divider()
 
-st.write("## 📚 Histórico individual")
+st.write("## 📚 " + tr("history_title").replace("### ", ""))
 
-st.caption(
-    "Consulte diagnósticos anteriores pelo nome do usuário. "
-    "Essa área usa a FastAPI para buscar dados salvos no PostgreSQL."
-)
+st.caption(tr("history_help"))
 
 with st.form("historico_form"):
     nome_historico = st.text_input(
