@@ -46,11 +46,11 @@ Dados do usuario:
 - Objetivo financeiro: {objetivo}
 - Idioma obrigatório da resposta: {idioma_nome}
 - Moeda obrigatória: {moeda} ({simbolo_moeda})
-- Renda mensal: R$ {renda:.2f}
-- Gastos fixos: R$ {gastos_fixos:.2f}
-- Gastos variaveis: R$ {gastos_variaveis:.2f}
-- Dividas mensais: R$ {dividas:.2f}
-- Reserva atual: R$ {reserva:.2f}
+- Renda mensal: {simbolo_moeda} {renda:.2f} ({moeda})
+- Gastos fixos: {simbolo_moeda} {gastos_fixos:.2f} ({moeda})
+- Gastos variaveis: {simbolo_moeda} {gastos_variaveis:.2f} ({moeda})
+- Dividas mensais: {simbolo_moeda} {dividas:.2f} ({moeda})
+- Reserva atual: {simbolo_moeda} {reserva:.2f} ({moeda})
 
 Diagnostico calculado:
 - Saldo estimado: R$ {saldo:.2f}
@@ -67,6 +67,15 @@ Regras importantes:
 - Responda obrigatoriamente no idioma informado.
 - Use a moeda informada nos valores financeiros.
 - Não misture português com outro idioma.
+- Se o idioma for Deutsch, escreva tudo em alemão.
+- Se o idioma for English US ou English UK, escreva tudo em inglês.
+- Se o idioma for Español, escreva tudo em espanhol.
+- Se o idioma for Français, escreva tudo em francês.
+- Se o idioma for Italiano, escreva tudo em italiano.
+- Se o idioma for Română, escreva tudo em romeno.
+- Se o idioma for Українська, escreva tudo em ucraniano.
+- Se o idioma for Русский, escreva tudo em russo.
+- Se o idioma for العربية, escreva tudo em árabe.
 - Explique prioridades de forma pratica.
 - Organize em 4 semanas, com apenas 1 objetivo e 2 acoes curtas por semana.
 - Evite textos longos.

@@ -71,3 +71,6 @@ class FeedbackItem(BaseModel):
 
 class EmailRequest(BaseModel):
     email: str
+    idioma: str = Field(default="pt")
+    moeda: str = Field(default="BRL")
+    simbolo_moeda: str = Field(default="R$")
