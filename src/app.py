@@ -71,6 +71,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Quantidade máxima de registros",
         "history_button": "Buscar histórico",
         "history_empty": "Nenhum diagnóstico encontrado para esse nome.",
+        "feedback_help": "Sua avaliação ajuda a melhorar a INNA e validar o projeto.",
+        "feedback_question": "Essa resposta foi útil?",
+        "yes": tr("yes"),
+        "no": tr("no"),
+        "history_help": "Consulte diagnósticos anteriores pelo nome do usuário. Essa área usa a FastAPI para buscar dados salvos no PostgreSQL.",
     },
     "en_us": {
         "title": "💰 INNA Financial Coach AI",
@@ -110,6 +115,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Maximum number of records",
         "history_button": "Search history",
         "history_empty": "No diagnosis found for this name.",
+        "feedback_help": "Your feedback helps improve INNA and validate the project.",
+        "feedback_question": "Was this answer useful?",
+        "yes": "Yes",
+        "no": "No",
+        "history_help": "Search previous diagnoses by user name. This area uses FastAPI to retrieve data saved in PostgreSQL.",
     },
     "en_gb": {
         "title": "💰 INNA Financial Coach AI",
@@ -149,6 +159,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Maximum number of records",
         "history_button": "Search history",
         "history_empty": "No diagnosis found for this name.",
+        "feedback_help": "Your feedback helps improve INNA and validate the project.",
+        "feedback_question": "Was this answer useful?",
+        "yes": "Yes",
+        "no": "No",
+        "history_help": "Search previous diagnoses by user name. This area uses FastAPI to retrieve data saved in PostgreSQL.",
     },
     "es": {
         "title": "💰 INNA Financial Coach AI",
@@ -188,6 +203,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Número máximo de registros",
         "history_button": "Buscar historial",
         "history_empty": "No se encontró ningún diagnóstico para ese nombre.",
+        "feedback_help": "Tu evaluación ayuda a mejorar INNA y validar el proyecto.",
+        "feedback_question": "¿Esta respuesta fue útil?",
+        "yes": "Sí",
+        "no": "No",
+        "history_help": "Consulta diagnósticos anteriores por nombre de usuario. Esta área usa FastAPI para buscar datos guardados en PostgreSQL.",
     },
     "de": {
         "title": "💰 INNA Financial Coach AI",
@@ -227,6 +247,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Maximale Anzahl von Einträgen",
         "history_button": "Verlauf suchen",
         "history_empty": "Keine Diagnose für diesen Namen gefunden.",
+        "feedback_help": "Deine Bewertung hilft, INNA zu verbessern und das Projekt zu validieren.",
+        "feedback_question": "War diese Antwort hilfreich?",
+        "yes": "Ja",
+        "no": "Nein",
+        "history_help": "Suche frühere Diagnosen nach Benutzername. Dieser Bereich nutzt FastAPI, um gespeicherte Daten aus PostgreSQL abzurufen.",
     },
     "fr": {
         "title": "💰 INNA Financial Coach AI",
@@ -266,6 +291,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Nombre maximum d’enregistrements",
         "history_button": "Rechercher l’historique",
         "history_empty": "Aucun diagnostic trouvé pour ce nom.",
+        "feedback_help": "Votre avis aide à améliorer INNA et à valider le projet.",
+        "feedback_question": "Cette réponse était-elle utile ?",
+        "yes": "Oui",
+        "no": "Non",
+        "history_help": "Consultez les diagnostics précédents par nom d’utilisateur. Cette zone utilise FastAPI pour récupérer les données enregistrées dans PostgreSQL.",
     },
     "it": {
         "title": "💰 INNA Financial Coach AI",
@@ -305,6 +335,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Numero massimo di record",
         "history_button": "Cerca cronologia",
         "history_empty": "Nessuna diagnosi trovata per questo nome.",
+        "feedback_help": "La tua valutazione aiuta a migliorare INNA e a validare il progetto.",
+        "feedback_question": "Questa risposta è stata utile?",
+        "yes": "Sì",
+        "no": "No",
+        "history_help": "Consulta le diagnosi precedenti per nome utente. Quest’area usa FastAPI per cercare dati salvati in PostgreSQL.",
     },
     "ro": {
         "title": "💰 INNA Financial Coach AI",
@@ -344,6 +379,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Număr maxim de înregistrări",
         "history_button": "Caută istoricul",
         "history_empty": "Nu a fost găsit niciun diagnostic pentru acest nume.",
+        "feedback_help": "Evaluarea ta ajută la îmbunătățirea INNA și la validarea proiectului.",
+        "feedback_question": "A fost util acest răspuns?",
+        "yes": "Da",
+        "no": "Nu",
+        "history_help": "Consultă diagnosticele anterioare după numele utilizatorului. Această zonă folosește FastAPI pentru datele salvate în PostgreSQL.",
     },
     "uk": {
         "title": "💰 INNA Financial Coach AI",
@@ -383,6 +423,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Максимальна кількість записів",
         "history_button": "Шукати історію",
         "history_empty": "Діагностику для цього імені не знайдено.",
+        "feedback_help": "Ваш відгук допомагає покращити INNA та перевірити проєкт.",
+        "feedback_question": "Ця відповідь була корисною?",
+        "yes": "Так",
+        "no": "Ні",
+        "history_help": "Перегляньте попередні діагностики за ім’ям користувача. Цей розділ використовує FastAPI для пошуку даних у PostgreSQL.",
     },
     "ru": {
         "title": "💰 INNA Financial Coach AI",
@@ -422,6 +467,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Максимальное количество записей",
         "history_button": "Искать историю",
         "history_empty": "Диагностика для этого имени не найдена.",
+        "feedback_help": "Ваш отзыв помогает улучшить INNA и подтвердить проект.",
+        "feedback_question": "Был ли этот ответ полезен?",
+        "yes": "Да",
+        "no": "Нет",
+        "history_help": "Просмотрите предыдущие диагностики по имени пользователя. Этот раздел использует FastAPI для поиска данных в PostgreSQL.",
     },
     "ar": {
         "title": "💰 INNA Financial Coach AI",
@@ -461,6 +511,11 @@ APP_TRANSLATIONS = {
         "history_limit": "الحد الأقصى لعدد السجلات",
         "history_button": "البحث في السجل",
         "history_empty": "لم يتم العثور على تشخيص لهذا الاسم.",
+        "feedback_help": "تساعد ملاحظاتك في تحسين INNA والتحقق من المشروع.",
+        "feedback_question": "هل كانت هذه الإجابة مفيدة؟",
+        "yes": "نعم",
+        "no": "لا",
+        "history_help": "ابحث عن التشخيصات السابقة حسب اسم المستخدم. يستخدم هذا القسم FastAPI لجلب البيانات المحفوظة في PostgreSQL.",
     },
     "ch": {
         "title": "💰 INNA Financial Coach AI",
@@ -500,6 +555,11 @@ APP_TRANSLATIONS = {
         "history_limit": "Maximale Anzahl von Einträgen",
         "history_button": "Verlauf suchen",
         "history_empty": "Keine Diagnose für diesen Namen gefunden.",
+        "feedback_help": "Deine Bewertung hilft, INNA zu verbessern und das Projekt zu validieren.",
+        "feedback_question": "War diese Antwort hilfreich?",
+        "yes": "Ja",
+        "no": "Nein",
+        "history_help": "Suche frühere Diagnosen nach Benutzername. Dieser Bereich nutzt FastAPI, um gespeicherte Daten aus PostgreSQL abzurufen.",
     },
 }
 
@@ -710,12 +770,12 @@ if st.session_state.last_response:
     st.divider()
 
     st.write(tr("feedback_title"))
-    st.caption("Sua avaliação ajuda a melhorar a INNA e validar o projeto.")
+    st.caption(tr("feedback_help"))
 
     with st.form("feedback_form"):
         util = st.radio(
             "Essa resposta foi útil?",
-            ["Sim", "Não"],
+            [tr("yes"), tr("no")],
             horizontal=True,
         )
 
