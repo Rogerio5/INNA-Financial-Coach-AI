@@ -188,6 +188,29 @@ def translate_risk_level(risk: str, lang: str) -> str:
 
 
 
+
+
+def format_money_by_currency(value, symbol="R$", currency="BRL") -> str:
+    try:
+        number = float(str(value).replace(",", "."))
+    except Exception:
+        number = 0.0
+
+    if currency in ["USD", "GBP"]:
+        return f"{symbol}{number:,.2f}"
+
+    if currency == "CHF":
+        formatted = f"{number:,.2f}".replace(",", "'")
+        return f"{symbol} {formatted}"
+
+    if currency in ["EUR", "BRL", "RON", "UAH", "RUB"]:
+        formatted = f"{number:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        return f"{symbol} {formatted}"
+
+    formatted = f"{number:,.2f}"
+    return f"{symbol} {formatted}"
+
+
 def build_localized_diagnosis_text(payload: dict, diagnosis: dict) -> str:
     lang = payload.get("idioma", "pt")
     moeda = payload.get("moeda", "BRL")
