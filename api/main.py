@@ -64,6 +64,9 @@ def gerar_diagnostico(payload: FinancialInput):
     response = {
         **diagnosis,
         "nome": payload_dict["nome"],
+        "idioma": payload_dict.get("idioma", "pt"),
+        "moeda": payload_dict.get("moeda", "BRL"),
+        "simbolo_moeda": payload_dict.get("simbolo_moeda", "R$"),
         "plano_30_dias": ai_plan,
     }
 

@@ -509,6 +509,23 @@ app_lang = st.sidebar.selectbox(
     format_func=lambda key: APP_LANG_LABELS[key],
 )
 
+
+CURRENCY_BY_LANG = {
+    "pt": {"moeda": "BRL", "simbolo": "R$"},
+    "en_us": {"moeda": "USD", "simbolo": "US$"},
+    "en_gb": {"moeda": "GBP", "simbolo": "£"},
+    "es": {"moeda": "EUR", "simbolo": "€"},
+    "de": {"moeda": "EUR", "simbolo": "€"},
+    "fr": {"moeda": "EUR", "simbolo": "€"},
+    "it": {"moeda": "EUR", "simbolo": "€"},
+    "ro": {"moeda": "RON", "simbolo": "RON"},
+    "uk": {"moeda": "UAH", "simbolo": "₴"},
+    "ru": {"moeda": "RUB", "simbolo": "₽"},
+    "ar": {"moeda": "SAR", "simbolo": "SAR"},
+    "ch": {"moeda": "CHF", "simbolo": "CHF"},
+}
+
+
 def tr(key: str) -> str:
     return APP_TRANSLATIONS.get(app_lang, APP_TRANSLATIONS["pt"]).get(
         key,
@@ -580,6 +597,8 @@ with st.form("financial_form"):
 
 
 if submitted:
+    currency_info = CURRENCY_BY_LANG.get(app_lang, CURRENCY_BY_LANG["pt"])
+
     payload = {
         "nome": nome,
         "renda_mensal": renda_mensal,
@@ -588,6 +607,9 @@ if submitted:
         "dividas_mensais": dividas_mensais,
         "reserva_atual": reserva_atual,
         "objetivo": objetivo,
+        "idioma": app_lang,
+        "moeda": currency_info["moeda"],
+        "simbolo_moeda": currency_info["simbolo"],
     }
 
     try:

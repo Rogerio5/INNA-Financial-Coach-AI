@@ -1,3 +1,19 @@
+
+LANGUAGE_NAME_BY_CODE = {
+    "pt": "Português Brasil",
+    "en_us": "English US",
+    "en_gb": "English UK",
+    "es": "Español",
+    "de": "Deutsch",
+    "fr": "Français",
+    "it": "Italiano",
+    "ro": "Română",
+    "uk": "Українська",
+    "ru": "Русский",
+    "ar": "العربية",
+    "ch": "Deutsch Schweiz",
+}
+
 from google import genai
 
 from src.config import GEMINI_API_KEY, GEMINI_MODEL, INNA_MOCK_MODE
@@ -23,11 +39,13 @@ def build_financial_prompt(payload: dict, diagnosis: dict) -> str:
     return f"""
 Voce e a INNA, uma educadora financeira digital.
 
-Crie um plano de acao de 30 dias, curto, direto, seguro e educativo para a pessoa abaixo.
+Crie um plano de acao de 30 dias no idioma informado, curto, direto, seguro e educativo para a pessoa abaixo.
 
 Dados do usuario:
 - Nome: {nome}
 - Objetivo financeiro: {objetivo}
+- Idioma obrigatório da resposta: {idioma_nome}
+- Moeda obrigatória: {moeda} ({simbolo_moeda})
 - Renda mensal: R$ {renda:.2f}
 - Gastos fixos: R$ {gastos_fixos:.2f}
 - Gastos variaveis: R$ {gastos_variaveis:.2f}
@@ -46,6 +64,9 @@ Regras importantes:
 - Nao prometa rentabilidade.
 - Nao substitua um profissional certificado.
 - Use linguagem simples e acolhedora.
+- Responda obrigatoriamente no idioma informado.
+- Use a moeda informada nos valores financeiros.
+- Não misture português com outro idioma.
 - Explique prioridades de forma pratica.
 - Organize em 4 semanas, com apenas 1 objetivo e 2 acoes curtas por semana.
 - Evite textos longos.

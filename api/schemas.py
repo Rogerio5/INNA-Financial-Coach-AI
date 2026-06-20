@@ -10,6 +10,9 @@ class FinancialInput(BaseModel):
     dividas_mensais: float = Field(ge=0)
     reserva_atual: float = Field(ge=0)
     objetivo: str = Field(default="Organizar minha vida financeira")
+    idioma: str = Field(default="pt")
+    moeda: str = Field(default="BRL")
+    simbolo_moeda: str = Field(default="R$")
 
 
 class FinancialResponse(BaseModel):
