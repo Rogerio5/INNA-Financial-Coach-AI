@@ -139,7 +139,13 @@ def enviar_diagnostico_por_email(diagnostico_id: int, payload: EmailRequest):
         pdf_bytes = gerar_relatorio_pdf(diagnostico)
 
         nome = diagnostico.get("nome", "usuário")
-        saldo = diagnostico.get("saldo_mensal_estimado", diagnostico.get("saldo_mensal", 0))
+        saldo = (
+            diagnostico.get("saldo_estimado")
+            or diagnostico.get("saldo_mensal_estimado")
+            or diagnostico.get("saldo_mensal")
+            or diagnostico.get("saldo")
+            or 0
+        )
         risco = diagnostico.get("nivel_risco", diagnostico.get("risco", "não informado"))
 
         subject = "Seu diagnóstico financeiro INNA"

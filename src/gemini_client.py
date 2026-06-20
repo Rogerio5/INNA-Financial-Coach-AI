@@ -23,7 +23,7 @@ def build_financial_prompt(payload: dict, diagnosis: dict) -> str:
     return f"""
 Voce e a INNA, uma educadora financeira digital.
 
-Crie um plano de acao de 30 dias, simples, seguro e educativo para a pessoa abaixo.
+Crie um plano de acao de 30 dias, curto, direto, seguro e educativo para a pessoa abaixo.
 
 Dados do usuario:
 - Nome: {nome}
@@ -47,8 +47,11 @@ Regras importantes:
 - Nao substitua um profissional certificado.
 - Use linguagem simples e acolhedora.
 - Explique prioridades de forma pratica.
-- Organize em semanas: Semana 1, Semana 2, Semana 3 e Semana 4.
-- Inclua proximos passos claros.
+- Organize em 4 semanas, com apenas 1 objetivo e 2 acoes curtas por semana.
+- Evite textos longos.
+- Nao use muitos detalhes.
+- O plano completo deve caber bem em 1 pagina de PDF.
+- Inclua proximos passos claros e curtos.
 """.strip()
 
 

@@ -33,7 +33,7 @@ Meses de reserva: {diagnosis.get("meses_reserva_estimados")}
 Score financeiro: {diagnosis.get("score_financeiro")}/100
 Nível de risco: {diagnosis.get("nivel_risco")}
 
-Crie um plano de ação financeiro educativo de 30 dias.
+Crie um plano de ação financeiro educativo de 30 dias, curto, direto e fácil de aplicar.
 
 A resposta deve seguir obrigatoriamente este formato:
 
@@ -41,18 +41,17 @@ Plano de Ação de 30 Dias
 
 Resumo da situação:
 
-* Explique em 2 ou 3 linhas a situação financeira do usuário com base nos dados informados.
+* Explique em no máximo 2 linhas a situação financeira do usuário com base nos dados informados.
 * Cite saldo estimado, nível de risco e principal ponto de atenção.
 
 Semana 1 — Diagnóstico e organização
 
-* Ação 1: orientar o usuário a entender para onde o dinheiro está indo.
-* Ação 2: orientar o usuário a separar gastos fixos, variáveis, dívidas e gastos não essenciais.
-* Ação 3: orientar o usuário a definir uma meta simples para os próximos 30 dias.
+* Ação 1: levantar gastos fixos, variáveis e dívidas.
+* Ação 2: separar gastos por categoria.
 
 Semana 2 — Redução de gastos e controle
 
-* Ação 1: orientar o usuário a reduzir desperdícios e gastos variáveis.
+* Ação 1: reduzir desperdícios e gastos não essenciais.
 * Ação 2: orientar o usuário a revisar assinaturas, compras por impulso ou gastos pequenos recorrentes.
 * Ação 3: orientar o usuário a acompanhar os gastos durante a semana.
 
@@ -75,8 +74,11 @@ Próximo passo após 30 dias:
 
 Regras obrigatórias da resposta:
 
-* Use linguagem simples, educativa e prática.
+* Use linguagem simples, educativa, prática e objetiva.
 * Separe claramente as quatro semanas.
+* Use no máximo 2 ações por semana.
+* Evite textos longos.
+* O plano deve caber bem em um PDF curto.
 * Use exatamente os títulos: Semana 1, Semana 2, Semana 3 e Semana 4.
 * Não recomende investimentos.
 * Não prometa rentabilidade.
