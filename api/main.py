@@ -12,6 +12,7 @@ from api.schemas import (
 from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
 from src.pdf_report import gerar_relatorio_pdf
+from src.email_sender import send_diagnostico_email
 from src.repository import (
     get_diagnostico_by_id_db,
     list_diagnosticos_by_nome_db,
@@ -129,3 +130,60 @@ def listar_diagnosticos_por_usuario(
 
 
 app.include_router(telegram_router)
+
+
+@app.post("/diagnosticos/{diagnostico_id}/enviar-email")
+def enviar_diagnostico_por_email(diagnostico_id: int, payload: EmailRequest):
+    diagnostico = get_diagnostico_by_id_db(diagnostico_id)
+
+    if not diagnostico:
+        raise HTTPException(status_code=404, detail="Diagnóstico não encontrado.")
+
+    if "@" not in payload.email or "." not in payload.email:
+        raise HTTPException(status_code=400, detail="E-mail inválido.")
+
+    try:
+        pdf_bytes = gerar_relatorio_pdf(diagnostico)
+
+        nome = diagnostico.get("nome", "usuário")
+        saldo = diagnostico.get("saldo_mensal_estimado", diagnostico.get("saldo_mensal", 0))
+        risco = diagnostico.get("nivel_risco", diagnostico.get("risco", "não informado"))
+
+        subject = "Seu diagnóstico financeiro INNA"
+
+        body = f"""Olá, {nome}.
+
+Segue em anexo seu relatório financeiro gerado pela INNA Financial Coach AI.
+
+Resumo do diagnóstico:
+- Saldo mensal estimado: {saldo}
+- Nível de risco: {risco}
+
+A INNA ajuda você a entender sua renda, gastos, dívidas, reserva financeira e próximos passos para organizar sua vida financeira.
+
+Você também pode acompanhar seus diagnósticos pelo app web, dashboard e Telegram.
+
+Atenciosamente,
+INNA Financial Coach AI
+"""
+
+        send_diagnostico_email(
+            to_email=payload.email,
+            subject=subject,
+            body=body,
+            pdf_bytes=pdf_bytes,
+            filename=f"relatorio-inna-{diagnostico_id}.pdf",
+        )
+
+        return {
+            "success": True,
+            "message": "Relatório enviado por e-mail com sucesso.",
+            "email": payload.email,
+            "diagnostico_id": diagnostico_id,
+        }
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao enviar e-mail: {str(exc)}",
+        )

@@ -64,3 +64,7 @@ class FeedbackItem(BaseModel):
     comentario: str | None
     score_financeiro: int
     nivel_risco: str
+
+
+class EmailRequest(BaseModel):
+    email: str
