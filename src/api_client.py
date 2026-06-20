@@ -100,12 +100,23 @@ def buscar_historico_usuario_api(nome: str, limit: int = 10) -> list[dict]:
         raise RuntimeError(f"Erro ao buscar histórico pela API: {error}") from error
 
 
-def enviar_relatorio_email(diagnostico_id: int, email: str):
+def enviar_relatorio_email(
+    diagnostico_id: int,
+    email: str,
+    idioma: str = "pt",
+    moeda: str = "BRL",
+    simbolo_moeda: str = "R$",
+):
     url = f"{API_BASE_URL}/diagnosticos/{diagnostico_id}/enviar-email"
 
     response = requests.post(
         url,
-        json={"email": email},
+        json={
+            "email": email,
+            "idioma": idioma,
+            "moeda": moeda,
+            "simbolo_moeda": simbolo_moeda,
+        },
         timeout=60,
     )
 
