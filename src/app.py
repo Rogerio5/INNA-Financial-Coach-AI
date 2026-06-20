@@ -16,21 +16,155 @@ st.set_page_config(
     layout="centered",
 )
 
-st.title("💰 INNA Financial Coach AI")
+
+APP_LANG_LABELS = {
+    "pt": "🇧🇷 Português Brasil",
+    "en_us": "🇺🇸 English US",
+    "en_gb": "🇬🇧 English UK",
+}
+
+APP_TRANSLATIONS = {
+    "pt": {
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "Diagnóstico financeiro com IA e plano de ação de 30 dias",
+        "notice": "A INNA é uma educadora financeira. Ela não recomenda investimentos nem substitui um profissional certificado.",
+        "api_offline": "A API da INNA está offline. Confirme se a API online está ativa.",
+        "name": "Seu nome",
+        "monthly_income": tr("monthly_income"),
+        "fixed_expenses": tr("fixed_expenses"),
+        "variable_expenses": tr("variable_expenses"),
+        "debts": tr("debts"),
+        "savings": tr("savings"),
+        "goal": tr("goal"),
+        "default_goal": "Organizar minha vida financeira",
+        "generate": "Gerar diagnóstico com a INNA",
+        "loading": "Chamando a API da INNA e gerando diagnóstico com IA...",
+        "saved": "Diagnóstico gerado e salvo via FastAPI com sucesso!",
+        "success": "Diagnóstico gerado com sucesso!",
+        "diagnosis": "### Diagnóstico",
+        "plan": "### Plano de ação de 30 dias",
+        "download_pdf": "📄 Baixar relatório em PDF",
+        "email_title": "### 📧 Receber relatório por e-mail",
+        "email_input": tr("email_input"),
+        "email_button": "📧 Enviar relatório por e-mail",
+        "email_invalid": "Digite um e-mail válido.",
+        "email_success": "Relatório enviado por e-mail com sucesso!",
+        "email_error": "Erro ao enviar relatório por e-mail",
+        "pdf_error": "Não foi possível baixar o relatório pela API",
+        "pdf_unavailable": "Relatório PDF indisponível: diagnóstico ainda não possui ID retornado pela API.",
+        "feedback_title": "Feedback",
+        "feedback_comment": tr("feedback_comment"),
+        "feedback_placeholder": "Exemplo: o plano ficou claro, faltou mais detalhe, gostei da explicação...",
+        "feedback_button": "Enviar feedback",
+        "feedback_success": "Feedback registrado via FastAPI com sucesso. Obrigado por ajudar a evoluir a INNA!",
+        "history_title": "Histórico individual",
+        "history_name": tr("history_name"),
+        "history_limit": tr("history_limit"),
+        "history_button": "Buscar histórico",
+        "history_empty": "Nenhum diagnóstico encontrado para esse nome.",
+    },
+    "en_us": {
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "AI financial diagnosis and 30-day action plan",
+        "notice": "INNA is a financial educator. It does not recommend investments and does not replace a certified professional.",
+        "api_offline": "The INNA API is offline. Please check if the online API is active.",
+        "name": "Your name",
+        "monthly_income": "Monthly income",
+        "fixed_expenses": "Monthly fixed expenses",
+        "variable_expenses": "Monthly variable expenses",
+        "debts": "Monthly debt payments",
+        "savings": "Current savings",
+        "goal": "What is your financial goal?",
+        "default_goal": "Organize my financial life",
+        "generate": "Generate diagnosis with INNA",
+        "loading": "Calling INNA API and generating AI diagnosis...",
+        "saved": "Diagnosis generated and saved through FastAPI successfully!",
+        "success": "Diagnosis generated successfully!",
+        "diagnosis": "### Diagnosis",
+        "plan": "### 30-day action plan",
+        "download_pdf": "📄 Download PDF report",
+        "email_title": "### 📧 Receive report by email",
+        "email_input": "Enter your email to receive the PDF report:",
+        "email_button": "📧 Send report by email",
+        "email_invalid": "Enter a valid email.",
+        "email_success": "Report sent by email successfully!",
+        "email_error": "Error sending report by email",
+        "pdf_error": "Could not download the report from the API",
+        "pdf_unavailable": "PDF report unavailable: the diagnosis does not have an API ID yet.",
+        "feedback_title": "Feedback",
+        "feedback_comment": "Optional comment",
+        "feedback_placeholder": "Example: the plan was clear, I wanted more detail, I liked the explanation...",
+        "feedback_button": "Send feedback",
+        "feedback_success": "Feedback registered successfully through FastAPI. Thank you for helping INNA improve!",
+        "history_title": "Individual history",
+        "history_name": "Name to search history",
+        "history_limit": "Maximum number of records",
+        "history_button": "Search history",
+        "history_empty": "No diagnosis found for this name.",
+    },
+    "en_gb": {
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "AI financial diagnosis and 30-day action plan",
+        "notice": "INNA is a financial educator. It does not recommend investments and does not replace a certified professional.",
+        "api_offline": "The INNA API is offline. Please check if the online API is active.",
+        "name": "Your name",
+        "monthly_income": "Monthly income",
+        "fixed_expenses": "Monthly fixed expenses",
+        "variable_expenses": "Monthly variable expenses",
+        "debts": "Monthly debt payments",
+        "savings": "Current savings",
+        "goal": "What is your financial goal?",
+        "default_goal": "Organise my financial life",
+        "generate": "Generate diagnosis with INNA",
+        "loading": "Calling INNA API and generating AI diagnosis...",
+        "saved": "Diagnosis generated and saved through FastAPI successfully!",
+        "success": "Diagnosis generated successfully!",
+        "diagnosis": "### Diagnosis",
+        "plan": "### 30-day action plan",
+        "download_pdf": "📄 Download PDF report",
+        "email_title": "### 📧 Receive report by email",
+        "email_input": "Enter your email to receive the PDF report:",
+        "email_button": "📧 Send report by email",
+        "email_invalid": "Enter a valid email.",
+        "email_success": "Report sent by email successfully!",
+        "email_error": "Error sending report by email",
+        "pdf_error": "Could not download the report from the API",
+        "pdf_unavailable": "PDF report unavailable: the diagnosis does not have an API ID yet.",
+        "feedback_title": "Feedback",
+        "feedback_comment": "Optional comment",
+        "feedback_placeholder": "Example: the plan was clear, I wanted more detail, I liked the explanation...",
+        "feedback_button": "Send feedback",
+        "feedback_success": "Feedback registered successfully through FastAPI. Thank you for helping INNA improve!",
+        "history_title": "Individual history",
+        "history_name": "Name to search history",
+        "history_limit": "Maximum number of records",
+        "history_button": "Search history",
+        "history_empty": "No diagnosis found for this name.",
+    },
+}
+
+app_lang = st.sidebar.selectbox(
+    "🌍 Idioma / Language",
+    options=list(APP_LANG_LABELS.keys()),
+    format_func=lambda key: APP_LANG_LABELS[key],
+)
+
+def tr(key: str) -> str:
+    return APP_TRANSLATIONS.get(app_lang, APP_TRANSLATIONS["pt"]).get(
+        key,
+        APP_TRANSLATIONS["pt"].get(key, key),
+    )
+
+
+st.title(tr("title"))
 
 if not verificar_api_online():
-    st.error(
-        "A API da INNA está offline. "
-        "Abra outro terminal e rode: python -m uvicorn api.main:app --reload --port 8000"
-    )
+    st.error(tr("api_offline"))
     st.stop()
 
-st.subheader("Diagnóstico financeiro com IA e plano de ação de 30 dias")
+st.subheader(tr("subtitle"))
 
-st.info(
-    "A INNA é uma educadora financeira. Ela não recomenda investimentos "
-    "nem substitui um profissional certificado."
-)
+st.info(tr("notice"))
 
 if "last_response" not in st.session_state:
     st.session_state.last_response = None
@@ -40,49 +174,49 @@ if "last_payload" not in st.session_state:
 
 
 with st.form("financial_form"):
-    nome = st.text_input("Seu nome", value="Ronaldo")
+    nome = st.text_input(tr("name"), value="Ronaldo")
 
     renda_mensal = st.number_input(
-        "Renda mensal",
+        tr("monthly_income"),
         min_value=0.0,
         value=3000.0,
         step=100.0,
     )
 
     gastos_fixos = st.number_input(
-        "Gastos fixos mensais",
+        tr("fixed_expenses"),
         min_value=0.0,
         value=1400.0,
         step=100.0,
     )
 
     gastos_variaveis = st.number_input(
-        "Gastos variáveis mensais",
+        tr("variable_expenses"),
         min_value=0.0,
         value=700.0,
         step=100.0,
     )
 
     dividas_mensais = st.number_input(
-        "Dívidas mensais",
+        tr("debts"),
         min_value=0.0,
         value=300.0,
         step=100.0,
     )
 
     reserva_atual = st.number_input(
-        "Reserva atual",
+        tr("savings"),
         min_value=0.0,
         value=500.0,
         step=100.0,
     )
 
     objetivo = st.text_area(
-        "Qual seu objetivo financeiro?",
-        value="Organizar minha vida financeira",
+        tr("goal"),
+        value=tr("default_goal"),
     )
 
-    submitted = st.form_submit_button("Gerar diagnóstico com a INNA")
+    submitted = st.form_submit_button(tr("generate"))
 
 
 if submitted:
@@ -97,13 +231,13 @@ if submitted:
     }
 
     try:
-        with st.spinner("Chamando a API da INNA e gerando diagnóstico com IA..."):
+        with st.spinner(tr("loading")):
             response = gerar_diagnostico_api(payload)
 
         st.session_state.last_payload = payload
         st.session_state.last_response = response
 
-        st.success("Diagnóstico gerado e salvo via FastAPI com sucesso!")
+        st.success(tr("saved"))
 
     except requests.exceptions.ConnectionError:
         st.error(
@@ -124,7 +258,7 @@ if submitted:
 if st.session_state.last_response:
     response = st.session_state.last_response
 
-    st.success("Diagnóstico gerado com sucesso!")
+    st.success(tr("success"))
 
     col1, col2, col3 = st.columns(3)
 
@@ -143,11 +277,11 @@ if st.session_state.last_response:
         response["nivel_risco"],
     )
 
-    st.write("### Diagnóstico")
+    st.write(tr("diagnosis"))
     diagnostico_formatado = response["diagnostico"].replace("$", "\\$")
     st.markdown(diagnostico_formatado)
 
-    st.write("### Plano de ação de 30 dias")
+    st.write(tr("plan"))
     plano_formatado = response["plano_30_dias"].replace("$", "\\$")
     st.markdown(plano_formatado)
 
@@ -160,40 +294,40 @@ if st.session_state.last_response:
             pdf_bytes = baixar_relatorio_pdf_api(diagnostico_id)
 
             st.download_button(
-                label="📄 Baixar relatório em PDF",
+                label=tr("download_pdf"),
                 data=pdf_bytes,
                 file_name=f"relatorio_inna_{response['nome'].replace(' ', '_').lower()}_{diagnostico_id}.pdf",
                 mime="application/pdf",
             )
 
         except Exception as error:
-            st.warning(f"Não foi possível baixar o relatório pela API: {error}")
+            st.warning(f"{tr('pdf_error')}: {error}")
 
-        st.markdown("### 📧 Receber relatório por e-mail")
+        st.markdown(tr("email_title"))
 
         email_destino = st.text_input(
-            "Digite seu e-mail para receber o relatório PDF:",
+            tr("email_input"),
             placeholder="seuemail@gmail.com",
             key=f"email_destino_{diagnostico_id}",
         )
 
-        if st.button("📧 Enviar relatório por e-mail", key=f"btn_email_{diagnostico_id}"):
+        if st.button(tr("email_button"), key=f"btn_email_{diagnostico_id}"):
             if not email_destino or "@" not in email_destino or "." not in email_destino:
-                st.warning("Digite um e-mail válido.")
+                st.warning(tr("email_invalid"))
             else:
                 try:
                     enviar_relatorio_email(diagnostico_id, email_destino)
-                    st.success("Relatório enviado por e-mail com sucesso!")
+                    st.success(tr("email_success"))
                 except Exception as error:
-                    st.error(f"Erro ao enviar relatório por e-mail: {error}")
+                    st.error(f"{tr('email_error')}: {error}")
 
     else:
-        st.warning("Relatório PDF indisponível: diagnóstico ainda não possui ID retornado pela API.")
+        st.warning(tr("pdf_unavailable"))
 
 
     st.divider()
 
-    st.write("### Feedback")
+    st.write(tr("feedback_title"))
     st.caption("Sua avaliação ajuda a melhorar a INNA e validar o projeto.")
 
     with st.form("feedback_form"):
@@ -204,11 +338,11 @@ if st.session_state.last_response:
         )
 
         comentario = st.text_area(
-            "Comentário opcional",
-            placeholder="Exemplo: o plano ficou claro, faltou mais detalhe, gostei da explicação...",
+            tr("feedback_comment"),
+            placeholder=tr("feedback_placeholder"),
         )
 
-        feedback_submitted = st.form_submit_button("Enviar feedback")
+        feedback_submitted = st.form_submit_button(tr("feedback_button"))
 
     if feedback_submitted:
         feedback_payload = {
@@ -221,7 +355,7 @@ if st.session_state.last_response:
 
         try:
             enviar_feedback_api(feedback_payload)
-            st.success("Feedback registrado via FastAPI com sucesso. Obrigado por ajudar a evoluir a INNA!")
+            st.success(tr("feedback_success"))
 
         except requests.exceptions.ConnectionError:
             st.error(
@@ -244,19 +378,19 @@ st.caption(
 
 with st.form("historico_form"):
     nome_historico = st.text_input(
-        "Nome para buscar histórico",
+        tr("history_name"),
         value="Ronaldo",
     )
 
     limite_historico = st.number_input(
-        "Quantidade máxima de registros",
+        tr("history_limit"),
         min_value=1,
         max_value=20,
         value=10,
         step=1,
     )
 
-    buscar_historico = st.form_submit_button("Buscar histórico")
+    buscar_historico = st.form_submit_button(tr("history_button"))
 
 if buscar_historico:
     try:
@@ -266,7 +400,7 @@ if buscar_historico:
         )
 
         if not historico:
-            st.warning("Nenhum diagnóstico encontrado para esse nome.")
+            st.warning(tr("history_empty"))
         else:
             st.success(f"{len(historico)} diagnóstico(s) encontrado(s).")
 
