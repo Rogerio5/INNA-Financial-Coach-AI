@@ -169,9 +169,8 @@ if st.session_state.last_response:
         except Exception as error:
             st.warning(f"Não foi possível baixar o relatório pela API: {error}")
 
-    st.markdown("### 📧 Receber relatório por e-mail")
+        st.markdown("### 📧 Receber relatório por e-mail")
 
-    if diagnostico_id:
         email_destino = st.text_input(
             "Digite seu e-mail para receber o relatório PDF:",
             placeholder="seuemail@gmail.com",
@@ -187,11 +186,10 @@ if st.session_state.last_response:
                     st.success("Relatório enviado por e-mail com sucesso!")
                 except Exception as error:
                     st.error(f"Erro ao enviar relatório por e-mail: {error}")
-    else:
-        st.info("Gere um diagnóstico salvo para liberar o envio por e-mail.")
 
     else:
         st.warning("Relatório PDF indisponível: diagnóstico ainda não possui ID retornado pela API.")
+
 
     st.divider()
 
