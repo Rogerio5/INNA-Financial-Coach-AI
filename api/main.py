@@ -1,14 +1,7 @@
 from api.telegram_webhook import router as telegram_router
 from fastapi import FastAPI, HTTPException, Query, Response
+from api.schemas import DiagnosticoItem, EmailRequest, FeedbackInput, FeedbackItem, FeedbackResponse, FinancialInput, FinancialResponse
 
-from api.schemas import (
-    DiagnosticoItem,
-    FeedbackInput,
-    FeedbackItem,
-    FeedbackResponse,
-    FinancialInput,
-    FinancialResponse,
-)
 from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
 from src.pdf_report import gerar_relatorio_pdf
