@@ -16,6 +16,18 @@ from src.repository import (
 )
 
 
+
+
+def format_money_br(value) -> str:
+    try:
+        number = float(str(value).replace(",", "."))
+    except Exception:
+        number = 0.0
+
+    formatted = f"R$ {number:,.2f}"
+    return formatted.replace(",", "X").replace(".", ",").replace("X", ".")
+
+
 app = FastAPI(
     title="INNA Financial Coach AI API",
     description="API para diagnóstico financeiro com IA Generativa, Gemini e PostgreSQL.",
@@ -147,6 +159,7 @@ def enviar_diagnostico_por_email(diagnostico_id: int, payload: EmailRequest):
             or 0
         )
         risco = diagnostico.get("nivel_risco", diagnostico.get("risco", "não informado"))
+        saldo_formatado = format_money_br(saldo)
 
         subject = "Seu diagnóstico financeiro INNA"
 
@@ -155,7 +168,7 @@ def enviar_diagnostico_por_email(diagnostico_id: int, payload: EmailRequest):
 Segue em anexo seu relatório financeiro gerado pela INNA Financial Coach AI.
 
 Resumo do diagnóstico:
-- Saldo mensal estimado: {saldo}
+- Saldo mensal estimado: {saldo_formatado}
 - Nível de risco: {risco}
 
 A INNA ajuda você a entender sua renda, gastos, dívidas, reserva financeira e próximos passos para organizar sua vida financeira.
