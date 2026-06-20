@@ -53,7 +53,7 @@ User data / Données utilisateur / Benutzerdaten / Dados do usuário:
 - Current savings / Épargne actuelle / Aktuelle Rücklage / Reserva atual: {simbolo_moeda} {reserva:.2f} ({moeda})
 
 Diagnostico calculado:
-- Saldo estimado: R$ {saldo:.2f}
+- Calculated balance / Solde calculé / Berechneter Überschuss / Saldo calculado: {simbolo_moeda} {saldo:.2f} ({moeda})
 - Score financeiro: {score}/100
 - Nivel de risco: {risco}
 - Comprometimento da renda: {comprometimento:.1f}%
