@@ -37,20 +37,20 @@ def build_financial_prompt(payload: dict, diagnosis: dict) -> str:
     dias_reserva = meses_reserva * 30
 
     return f"""
-Voce e a INNA, uma educadora financeira digital.
+Voce e a INNA, uma educadora financeira digital. A resposta final deve estar 100% no idioma informado pelo campo 'Idioma obrigatório da resposta'.
 
 Crie um plano de acao de 30 dias no idioma informado, curto, direto, seguro e educativo para a pessoa abaixo.
 
-Dados do usuario:
+User data / Données utilisateur / Benutzerdaten / Dados do usuário:
 - Nome: {nome}
-- Objetivo financeiro: {objetivo}
+- Financial goal / Objectif financier / Finanzielles Ziel / Objetivo financeiro: {objetivo}
 - Idioma obrigatório da resposta: {idioma_nome}
 - Moeda obrigatória: {moeda} ({simbolo_moeda})
-- Renda mensal: {simbolo_moeda} {renda:.2f} ({moeda})
-- Gastos fixos: {simbolo_moeda} {gastos_fixos:.2f} ({moeda})
-- Gastos variaveis: {simbolo_moeda} {gastos_variaveis:.2f} ({moeda})
-- Dividas mensais: {simbolo_moeda} {dividas:.2f} ({moeda})
-- Reserva atual: {simbolo_moeda} {reserva:.2f} ({moeda})
+- Monthly income / Revenu mensuel / Monatliches Einkommen / Renda mensal: {simbolo_moeda} {renda:.2f} ({moeda})
+- Fixed expenses / Dépenses fixes / Fixkosten / Gastos fixos: {simbolo_moeda} {gastos_fixos:.2f} ({moeda})
+- Variable expenses / Dépenses variables / Variable Ausgaben / Gastos variáveis: {simbolo_moeda} {gastos_variaveis:.2f} ({moeda})
+- Monthly debts / Dettes mensuelles / Monatliche Schulden / Dívidas mensais: {simbolo_moeda} {dividas:.2f} ({moeda})
+- Current savings / Épargne actuelle / Aktuelle Rücklage / Reserva atual: {simbolo_moeda} {reserva:.2f} ({moeda})
 
 Diagnostico calculado:
 - Saldo estimado: R$ {saldo:.2f}
@@ -78,6 +78,8 @@ Regras importantes:
 - Se o idioma for العربية, escreva tudo em árabe.
 - Explique prioridades de forma pratica.
 - Organize em 4 semanas, com apenas 1 objetivo e 2 acoes curtas por semana.
+- Traduza os títulos Semana 1, Semana 2, Semana 3 e Semana 4 para o idioma informado.
+- Traduza também Resumo da situação, Plano de ação e Próximo passo recomendado.
 - Evite textos longos.
 - Nao use muitos detalhes.
 - O plano completo deve caber bem em 1 pagina de PDF.
