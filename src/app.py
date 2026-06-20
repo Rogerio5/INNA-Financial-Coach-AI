@@ -71,6 +71,7 @@ APP_TRANSLATIONS = {
         "history_limit": "Quantidade máxima de registros",
         "history_button": "Buscar histórico",
         "history_empty": "Nenhum diagnóstico encontrado para esse nome.",
+        "browser_translate_warning": "Para testar os idiomas corretamente, desative o tradutor automático do navegador.",
         "feedback_help": "Sua avaliação ajuda a melhorar a INNA e validar o projeto.",
         "feedback_question": "Essa resposta foi útil?",
         "yes": "Sim",
@@ -115,6 +116,7 @@ APP_TRANSLATIONS = {
         "history_limit": "Maximum number of records",
         "history_button": "Search history",
         "history_empty": "No diagnosis found for this name.",
+        "browser_translate_warning": "To test languages correctly, disable the browser automatic translator.",
         "feedback_help": "Your feedback helps improve INNA and validate the project.",
         "feedback_question": "Was this answer useful?",
         "yes": "Yes",
@@ -159,6 +161,7 @@ APP_TRANSLATIONS = {
         "history_limit": "Maximum number of records",
         "history_button": "Search history",
         "history_empty": "No diagnosis found for this name.",
+        "browser_translate_warning": "To test languages correctly, disable the browser automatic translator.",
         "feedback_help": "Your feedback helps improve INNA and validate the project.",
         "feedback_question": "Was this answer useful?",
         "yes": "Yes",
@@ -247,6 +250,7 @@ APP_TRANSLATIONS = {
         "history_limit": "Maximale Anzahl von Einträgen",
         "history_button": "Verlauf suchen",
         "history_empty": "Keine Diagnose für diesen Namen gefunden.",
+        "browser_translate_warning": "Um die Sprachen korrekt zu testen, deaktiviere den automatischen Browser-Übersetzer.",
         "feedback_help": "Deine Bewertung hilft, INNA zu verbessern und das Projekt zu validieren.",
         "feedback_question": "War diese Antwort hilfreich?",
         "yes": "Ja",
@@ -555,6 +559,7 @@ APP_TRANSLATIONS = {
         "history_limit": "Maximale Anzahl von Einträgen",
         "history_button": "Verlauf suchen",
         "history_empty": "Keine Diagnose für diesen Namen gefunden.",
+        "browser_translate_warning": "Um die Sprachen korrekt zu testen, deaktiviere den automatischen Browser-Übersetzer.",
         "feedback_help": "Deine Bewertung hilft, INNA zu verbessern und das Projekt zu validieren.",
         "feedback_question": "War diese Antwort hilfreich?",
         "yes": "Ja",
@@ -568,6 +573,8 @@ app_lang = st.sidebar.selectbox(
     options=list(APP_LANG_LABELS.keys()),
     format_func=lambda key: APP_LANG_LABELS[key],
 )
+
+st.sidebar.caption(tr("browser_translate_warning"))
 
 
 CURRENCY_BY_LANG = {
