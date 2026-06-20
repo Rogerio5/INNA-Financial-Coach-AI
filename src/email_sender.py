@@ -38,6 +38,10 @@ def send_diagnostico_email(
         filename=filename,
     )
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+    # Gmail SMTP usando STARTTLS na porta 587
+    with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as smtp:
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.ehlo()
         smtp.login(gmail_user, gmail_app_password)
         smtp.send_message(msg)
