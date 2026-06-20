@@ -574,7 +574,6 @@ app_lang = st.sidebar.selectbox(
     format_func=lambda key: APP_LANG_LABELS[key],
 )
 
-st.sidebar.caption(tr("browser_translate_warning"))
 
 
 CURRENCY_BY_LANG = {
@@ -598,6 +597,8 @@ def tr(key: str) -> str:
         key,
         APP_TRANSLATIONS["pt"].get(key, key),
     )
+
+st.sidebar.caption(tr("browser_translate_warning"))
 
 
 st.title(tr("title"))
