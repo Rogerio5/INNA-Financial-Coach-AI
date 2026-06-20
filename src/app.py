@@ -5,6 +5,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT_DIR))
 
 import streamlit as st
+from streamlit_js_eval import streamlit_js_eval
 import requests
 
 from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_relatorio_pdf_api, buscar_historico_usuario_api, verificar_api_online, enviar_relatorio_email
@@ -31,6 +32,52 @@ APP_LANG_LABELS = {
     "ar": "🇸🇦 العربية",
     "ch": "🇨🇭 Schweiz",
 }
+
+
+BROWSER_LANG_TO_APP_LANG = {
+    "pt": "pt",
+    "pt-br": "pt",
+    "en": "en_us",
+    "en-us": "en_us",
+    "en-gb": "en_gb",
+    "es": "es",
+    "es-es": "es",
+    "de": "de",
+    "de-de": "de",
+    "fr": "fr",
+    "fr-fr": "fr",
+    "it": "it",
+    "it-it": "it",
+    "ro": "ro",
+    "ro-ro": "ro",
+    "uk": "uk",
+    "uk-ua": "uk",
+    "ru": "ru",
+    "ru-ru": "ru",
+    "ar": "ar",
+    "ar-sa": "ar",
+    "de-ch": "ch",
+    "fr-ch": "ch",
+    "it-ch": "ch",
+}
+
+def detect_browser_language() -> str:
+    browser_lang = streamlit_js_eval(
+        js_expressions="navigator.language || navigator.userLanguage",
+        key="browser_language",
+    )
+
+    if not browser_lang:
+        return "pt"
+
+    browser_lang = str(browser_lang).lower()
+    short_lang = browser_lang.split("-")[0]
+
+    return BROWSER_LANG_TO_APP_LANG.get(
+        browser_lang,
+        BROWSER_LANG_TO_APP_LANG.get(short_lang, "pt"),
+    )
+
 
 APP_TRANSLATIONS = {
     "pt": {
@@ -568,10 +615,17 @@ APP_TRANSLATIONS = {
     },
 }
 
+detected_lang = detect_browser_language()
+
+if "app_lang" not in st.session_state:
+    st.session_state.app_lang = detected_lang
+
 app_lang = st.sidebar.selectbox(
     "🌍 Idioma / Language",
     options=list(APP_LANG_LABELS.keys()),
+    index=list(APP_LANG_LABELS.keys()).index(st.session_state.app_lang),
     format_func=lambda key: APP_LANG_LABELS[key],
+    key="app_lang",
 )
 
 
