@@ -240,7 +240,10 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     if idioma == "ch":
         idioma = "de"
 
-    textos = PDF_TEXTS.get(idioma, PDF_TEXTS["en_us"])
+    if idioma == "ch":
+        idioma = "de"
+
+    textos = PDF_TEXTS.get(idioma, PDF_TEXTS["pt"])
 
     moeda = diagnostico.get("moeda", "BRL")
     simbolo = diagnostico.get("simbolo_moeda", "R$")
@@ -304,7 +307,7 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     elements.append(Paragraph("INNA Financial Coach AI", title_style))
     elements.append(Paragraph(textos["report_title"], heading_style))
 
-    data_geracao = diagnostico.get("data_geracao") or diagnostico.get("created_at")
+    data_geracao = diagnostico.get("data_geracao") or diagnostico.get("created_at") or diagnostico.get("data_hora")
     if not data_geracao:
         data_geracao = datetime.now().strftime("%d/%m/%Y %H:%M")
 
