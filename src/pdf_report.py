@@ -293,6 +293,56 @@ def force_pdf_language(diagnostico: dict) -> str:
     return "pt"
 
 
+
+
+RISK_TRANSLATIONS.update({
+    "Medio": {
+        "pt": "Médio",
+        "en_us": "Medium",
+        "en_gb": "Medium",
+        "es": "Medio",
+        "fr": "Moyen",
+        "de": "Mittel",
+        "it": "Medio",
+        "ro": "Mediu",
+        "uk": "Середній",
+        "ru": "Средний",
+        "ar": "متوسط",
+    },
+    "Médio": {
+        "pt": "Médio",
+        "en_us": "Medium",
+        "en_gb": "Medium",
+        "es": "Medio",
+        "fr": "Moyen",
+        "de": "Mittel",
+        "it": "Medio",
+        "ro": "Mediu",
+        "uk": "Середній",
+        "ru": "Средний",
+        "ar": "متوسط",
+    },
+})
+
+
+def get_currency_by_language_pdf(idioma: str) -> dict:
+    currencies = {
+        "pt": {"moeda": "BRL", "simbolo": "R$"},
+        "en_us": {"moeda": "USD", "simbolo": "US$"},
+        "en_gb": {"moeda": "GBP", "simbolo": "£"},
+        "es": {"moeda": "EUR", "simbolo": "€"},
+        "de": {"moeda": "EUR", "simbolo": "€"},
+        "fr": {"moeda": "EUR", "simbolo": "€"},
+        "it": {"moeda": "EUR", "simbolo": "€"},
+        "ro": {"moeda": "RON", "simbolo": "RON"},
+        "uk": {"moeda": "UAH", "simbolo": "₴"},
+        "ru": {"moeda": "RUB", "simbolo": "₽"},
+        "ar": {"moeda": "SAR", "simbolo": "SAR"},
+        "ch": {"moeda": "CHF", "simbolo": "CHF"},
+    }
+    return currencies.get(idioma, currencies["pt"])
+
+
 def format_money(value, symbol="R$", currency="BRL") -> str:
     try:
         number = float(value)
@@ -330,8 +380,13 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
 
     textos = PDF_TEXTS.get(idioma, PDF_TEXTS["pt"])
 
-    moeda = diagnostico.get("moeda", "BRL")
-    simbolo = diagnostico.get("simbolo_moeda", "R$")
+    currency_default = get_currency_by_language_pdf(idioma)
+    moeda = diagnostico.get("moeda") or currency_default["moeda"]
+    simbolo = diagnostico.get("simbolo_moeda") or currency_default["simbolo"]
+
+    if idioma != "pt" and moeda == "BRL" and simbolo == "R$":
+        moeda = currency_default["moeda"]
+        simbolo = currency_default["simbolo"]
 
     nome = diagnostico.get("nome", "Usuário")
     saldo = diagnostico.get("saldo_estimado", 0)
