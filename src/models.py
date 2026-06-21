@@ -19,6 +19,10 @@ class DiagnosticoFinanceiro(Base):
     reserva_atual = Column(Float, nullable=False)
     objetivo = Column(Text, nullable=True)
 
+    idioma = Column(String(20), nullable=False, default="pt")
+    moeda = Column(String(20), nullable=False, default="BRL")
+    simbolo_moeda = Column(String(10), nullable=False, default="R$")
+
     saldo_estimado = Column(Float, nullable=False)
     comprometimento_renda_percentual = Column(Float, nullable=False)
     meses_reserva_estimados = Column(Float, nullable=False)
