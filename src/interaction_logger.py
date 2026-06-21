@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Any
 
 from dotenv import load_dotenv
+from psycopg2.extras import Json
 
 load_dotenv()
 
@@ -107,7 +108,7 @@ def record_interaction(
                         status,
                         round(float(tempo_resposta_segundos or 0), 3),
                         diagnostico_id,
-                        metadata,
+                        Json(metadata) if metadata is not None else None,
                     ),
                 )
     except Exception:
