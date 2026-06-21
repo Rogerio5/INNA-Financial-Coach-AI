@@ -81,6 +81,12 @@ def detect_browser_language() -> str:
 
 APP_TRANSLATIONS = {
     "pt": {
+        "estimated_balance": "Saldo estimado",
+        "financial_score": "Score financeiro",
+        "risk": "Risco",
+        "income_commitment": "Comprometimento da renda",
+        "reserve_months": "Meses de reserva",
+        "history_score": "Score",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Diagnóstico financeiro com IA e plano de ação de 30 dias",
         "notice": "A INNA é uma educadora financeira. Ela não recomenda investimentos nem substitui um profissional certificado.",
@@ -126,6 +132,12 @@ APP_TRANSLATIONS = {
         "history_help": "Consulte diagnósticos anteriores pelo nome do usuário. Essa área usa a FastAPI para buscar dados salvos no PostgreSQL.",
     },
     "en_us": {
+        "estimated_balance": "Estimated balance",
+        "financial_score": "Financial score",
+        "risk": "Risk",
+        "income_commitment": "Income commitment",
+        "reserve_months": "Savings months",
+        "history_score": "Score",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "AI financial diagnosis and 30-day action plan",
         "notice": "INNA is a financial educator. It does not recommend investments and does not replace a certified professional.",
@@ -171,6 +183,12 @@ APP_TRANSLATIONS = {
         "history_help": "Search previous diagnoses by user name. This area uses FastAPI to retrieve data saved in PostgreSQL.",
     },
     "en_gb": {
+        "estimated_balance": "Estimated balance",
+        "financial_score": "Financial score",
+        "risk": "Risk",
+        "income_commitment": "Income commitment",
+        "reserve_months": "Savings months",
+        "history_score": "Score",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "AI financial diagnosis and 30-day action plan",
         "notice": "INNA is a financial educator. It does not recommend investments and does not replace a certified professional.",
@@ -216,6 +234,12 @@ APP_TRANSLATIONS = {
         "history_help": "Search previous diagnoses by user name. This area uses FastAPI to retrieve data saved in PostgreSQL.",
     },
     "es": {
+        "estimated_balance": "Saldo estimado",
+        "financial_score": "Puntuación financiera",
+        "risk": "Riesgo",
+        "income_commitment": "Compromiso de ingresos",
+        "reserve_months": "Meses de reserva",
+        "history_score": "Puntuación",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Diagnóstico financiero con IA y plan de acción de 30 días",
         "notice": "INNA es una educadora financiera. No recomienda inversiones ni sustituye a un profesional certificado.",
@@ -260,6 +284,12 @@ APP_TRANSLATIONS = {
         "history_help": "Consulta diagnósticos anteriores por nombre de usuario. Esta área usa FastAPI para buscar datos guardados en PostgreSQL.",
     },
     "de": {
+        "estimated_balance": "Geschätzter Überschuss",
+        "financial_score": "Finanzscore",
+        "risk": "Risiko",
+        "income_commitment": "Einkommensbindung",
+        "reserve_months": "Rücklagenmonate",
+        "history_score": "Score",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Finanzdiagnose mit KI und 30-Tage-Aktionsplan",
         "notice": "INNA ist eine Finanzpädagogin. Sie empfiehlt keine Investitionen und ersetzt keine zertifizierte Fachperson.",
@@ -305,6 +335,12 @@ APP_TRANSLATIONS = {
         "history_help": "Suche frühere Diagnosen nach Benutzername. Dieser Bereich nutzt FastAPI, um gespeicherte Daten aus PostgreSQL abzurufen.",
     },
     "fr": {
+        "estimated_balance": "Solde estimé",
+        "financial_score": "Score financier",
+        "risk": "Risque",
+        "income_commitment": "Engagement du revenu",
+        "reserve_months": "Mois d’épargne",
+        "history_score": "Score",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Diagnostic financier avec IA et plan d’action de 30 jours",
         "notice": "INNA est une éducatrice financière. Elle ne recommande pas d’investissements et ne remplace pas un professionnel certifié.",
@@ -349,6 +385,12 @@ APP_TRANSLATIONS = {
         "history_help": "Consultez les diagnostics précédents par nom d’utilisateur. Cette zone utilise FastAPI pour récupérer les données enregistrées dans PostgreSQL.",
     },
     "it": {
+        "estimated_balance": "Saldo stimato",
+        "financial_score": "Punteggio finanziario",
+        "risk": "Rischio",
+        "income_commitment": "Impegno del reddito",
+        "reserve_months": "Mesi di riserva",
+        "history_score": "Punteggio",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Diagnosi finanziaria con IA e piano d’azione di 30 giorni",
         "notice": "INNA è un’educatrice finanziaria. Non raccomanda investimenti e non sostituisce un professionista certificato.",
@@ -393,6 +435,12 @@ APP_TRANSLATIONS = {
         "history_help": "Consulta le diagnosi precedenti per nome utente. Quest’area usa FastAPI per cercare dati salvati in PostgreSQL.",
     },
     "ro": {
+        "estimated_balance": "Sold estimat",
+        "financial_score": "Scor financiar",
+        "risk": "Risc",
+        "income_commitment": "Grad de angajare a venitului",
+        "reserve_months": "Luni de rezervă",
+        "history_score": "Scor",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Diagnostic financiar cu IA și plan de acțiune pe 30 de zile",
         "notice": "INNA este o educatoare financiară. Nu recomandă investiții și nu înlocuiește un profesionist certificat.",
@@ -437,6 +485,12 @@ APP_TRANSLATIONS = {
         "history_help": "Consultă diagnosticele anterioare după numele utilizatorului. Această zonă folosește FastAPI pentru datele salvate în PostgreSQL.",
     },
     "uk": {
+        "estimated_balance": "Орієнтовний баланс",
+        "financial_score": "Фінансовий бал",
+        "risk": "Ризик",
+        "income_commitment": "Навантаження на дохід",
+        "reserve_months": "Місяці резерву",
+        "history_score": "Бал",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Фінансова діагностика з ШІ та план дій на 30 днів",
         "notice": "INNA — фінансова освітня помічниця. Вона не рекомендує інвестиції та не замінює сертифікованого фахівця.",
@@ -481,6 +535,12 @@ APP_TRANSLATIONS = {
         "history_help": "Перегляньте попередні діагностики за ім’ям користувача. Цей розділ використовує FastAPI для пошуку даних у PostgreSQL.",
     },
     "ru": {
+        "estimated_balance": "Оценочный баланс",
+        "financial_score": "Финансовый балл",
+        "risk": "Риск",
+        "income_commitment": "Нагрузка на доход",
+        "reserve_months": "Месяцы резерва",
+        "history_score": "Балл",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Финансовая диагностика с ИИ и план действий на 30 дней",
         "notice": "INNA — финансовый образовательный помощник. Она не рекомендует инвестиции и не заменяет сертифицированного специалиста.",
@@ -525,6 +585,12 @@ APP_TRANSLATIONS = {
         "history_help": "Просмотрите предыдущие диагностики по имени пользователя. Этот раздел использует FastAPI для поиска данных в PostgreSQL.",
     },
     "ar": {
+        "estimated_balance": "الرصيد التقديري",
+        "financial_score": "الدرجة المالية",
+        "risk": "المخاطر",
+        "income_commitment": "نسبة الالتزام من الدخل",
+        "reserve_months": "أشهر الاحتياطي",
+        "history_score": "الدرجة",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "تشخيص مالي بالذكاء الاصطناعي وخطة عمل لمدة 30 يومًا",
         "notice": "INNA هي أداة تعليم مالي. لا تقدم توصيات استثمارية ولا تستبدل المتخصص المالي المعتمد.",
@@ -569,6 +635,12 @@ APP_TRANSLATIONS = {
         "history_help": "ابحث عن التشخيصات السابقة حسب اسم المستخدم. يستخدم هذا القسم FastAPI لجلب البيانات المحفوظة في PostgreSQL.",
     },
     "ch": {
+        "estimated_balance": "Geschätzter Überschuss",
+        "financial_score": "Finanzscore",
+        "risk": "Risiko",
+        "income_commitment": "Einkommensbindung",
+        "reserve_months": "Rücklagenmonate",
+        "history_score": "Score",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Finanzdiagnose mit KI und 30-Tage-Aktionsplan",
         "notice": "INNA ist eine Finanzpädagogin. Sie empfiehlt keine Investitionen und ersetzt keine zertifizierte Fachperson.",
@@ -644,6 +716,21 @@ CURRENCY_BY_LANG = {
     "ar": {"moeda": "SAR", "simbolo": "SAR"},
     "ch": {"moeda": "CHF", "simbolo": "CHF"},
 }
+
+
+
+def format_currency_app(value, symbol: str, currency: str) -> str:
+    try:
+        value = float(value)
+    except Exception:
+        value = 0.0
+
+    if currency in ("USD", "GBP"):
+        return f"{symbol}{value:,.2f}"
+
+    formatted = f"{value:,.2f}"
+    formatted = formatted.replace(",", "X").replace(".", ",").replace("X", ".")
+    return f"{symbol} {formatted}"
 
 
 def tr(key: str) -> str:
@@ -767,17 +854,21 @@ if st.session_state.last_response:
     col1, col2, col3 = st.columns(3)
 
     col1.metric(
-        "Saldo estimado",
-        f"R$ {response['saldo_estimado']:.2f}",
+        tr("estimated_balance"),
+        format_currency_app(
+            response["saldo_estimado"],
+            response.get("simbolo_moeda", currency_info["simbolo"]),
+            response.get("moeda", currency_info["moeda"]),
+        ),
     )
 
     col2.metric(
-        "Score financeiro",
+        tr("financial_score"),
         f"{response['score_financeiro']}/100",
     )
 
     col3.metric(
-        "Risco",
+        tr("risk"),
         response["nivel_risco"],
     )
 
@@ -929,14 +1020,17 @@ if buscar_historico:
 
             for item in historico:
                 with st.expander(
-                    f"ID {item['id']} — {item['nome']} — Score {item['score_financeiro']}/100 — Risco {item['nivel_risco']}"
+                    f"ID {item['id']} — {item['nome']} — {tr('history_score')} {item['score_financeiro']}/100 — {tr('risk')} {item['nivel_risco']}"
                 ):
-                    st.write(f"**Saldo estimado:** R$ {item['saldo_estimado']:.2f}")
-                    st.write(f"**Comprometimento da renda:** {item['comprometimento_renda_percentual']:.2f}%")
-                    st.write(f"**Meses de reserva:** {item['meses_reserva_estimados']:.2f}")
-                    st.write(f"**Objetivo:** {item.get('objetivo', '')}")
+                    st.write(
+                        f"**{tr('estimated_balance')}:** "
+                        f"{format_currency_app(item['saldo_estimado'], item.get('simbolo_moeda', currency_info['simbolo']), item.get('moeda', currency_info['moeda']))}"
+                    )
+                    st.write(f"**{tr('income_commitment')}:** {item['comprometimento_renda_percentual']:.2f}%")
+                    st.write(f"**{tr('reserve_months')}:** {item['meses_reserva_estimados']:.2f}")
+                    st.write(f"**{tr('goal')}:** {item.get('objetivo', '')}")
 
-                    st.write("**Diagnóstico:**")
+                    st.write(f"**{tr('diagnosis')}:**")
                     st.write(item["diagnostico"])
 
                     try:
