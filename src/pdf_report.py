@@ -1,106 +1,328 @@
-from datetime import datetime
 from io import BytesIO
+from datetime import datetime
 
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import (
-    SimpleDocTemplate,
-    Paragraph,
-    Spacer,
-    Table,
-    TableStyle,
-)
 from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 
 
-def gerar_relatorio_pdf(response: dict) -> bytes:
+PDF_TEXTS = {
+    "pt": {
+        "report_title": "Relatório de Diagnóstico Financeiro",
+        "field": "Campo",
+        "value": "Valor",
+        "name": "Nome",
+        "date": "Data de geração",
+        "balance": "Saldo estimado",
+        "score": "Score financeiro",
+        "risk": "Nível de risco",
+        "income_commitment": "Comprometimento da renda",
+        "reserve_months": "Meses estimados de reserva",
+        "diagnosis": "Diagnóstico",
+        "action_plan": "Plano de Ação de 30 Dias",
+        "important_notice": "Aviso Importante",
+        "notice_text": "A INNA atua como educadora financeira digital. Ela não recomenda compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
+        "approx": "aprox.",
+        "days": "dias",
+        "months": "mês(es)",
+    },
+    "fr": {
+        "report_title": "Rapport de diagnostic financier",
+        "field": "Champ",
+        "value": "Valeur",
+        "name": "Nom",
+        "date": "Date de génération",
+        "balance": "Solde estimé",
+        "score": "Score financier",
+        "risk": "Niveau de risque",
+        "income_commitment": "Engagement du revenu",
+        "reserve_months": "Mois estimés d’épargne",
+        "diagnosis": "Diagnostic",
+        "action_plan": "Plan d’action de 30 jours",
+        "important_notice": "Avis important",
+        "notice_text": "INNA agit comme éducatrice financière numérique. Elle ne recommande pas l’achat ou la vente d’actifs, ne promet pas de rentabilité et ne remplace pas des professionnels certifiés.",
+        "approx": "env.",
+        "days": "jours",
+        "months": "mois",
+    },
+    "en_us": {
+        "report_title": "Financial Diagnosis Report",
+        "field": "Field",
+        "value": "Value",
+        "name": "Name",
+        "date": "Generation date",
+        "balance": "Estimated balance",
+        "score": "Financial score",
+        "risk": "Risk level",
+        "income_commitment": "Income commitment",
+        "reserve_months": "Estimated savings months",
+        "diagnosis": "Diagnosis",
+        "action_plan": "30-Day Action Plan",
+        "important_notice": "Important Notice",
+        "notice_text": "INNA acts as a digital financial educator. It does not recommend buying or selling assets, does not promise returns, and does not replace certified professionals.",
+        "approx": "approx.",
+        "days": "days",
+        "months": "month(s)",
+    },
+    "en_gb": {
+        "report_title": "Financial Diagnosis Report",
+        "field": "Field",
+        "value": "Value",
+        "name": "Name",
+        "date": "Generation date",
+        "balance": "Estimated balance",
+        "score": "Financial score",
+        "risk": "Risk level",
+        "income_commitment": "Income commitment",
+        "reserve_months": "Estimated savings months",
+        "diagnosis": "Diagnosis",
+        "action_plan": "30-Day Action Plan",
+        "important_notice": "Important Notice",
+        "notice_text": "INNA acts as a digital financial educator. It does not recommend buying or selling assets, does not promise returns, and does not replace certified professionals.",
+        "approx": "approx.",
+        "days": "days",
+        "months": "month(s)",
+    },
+    "de": {
+        "report_title": "Finanzdiagnosebericht",
+        "field": "Feld",
+        "value": "Wert",
+        "name": "Name",
+        "date": "Erstellungsdatum",
+        "balance": "Geschätzter Überschuss",
+        "score": "Finanzscore",
+        "risk": "Risikostufe",
+        "income_commitment": "Einkommensbindung",
+        "reserve_months": "Geschätzte Rücklagenmonate",
+        "diagnosis": "Diagnose",
+        "action_plan": "30-Tage-Aktionsplan",
+        "important_notice": "Wichtiger Hinweis",
+        "notice_text": "INNA agiert als digitale Finanzbildnerin. Sie empfiehlt keinen Kauf oder Verkauf von Vermögenswerten, verspricht keine Rendite und ersetzt keine zertifizierten Fachleute.",
+        "approx": "ca.",
+        "days": "Tage",
+        "months": "Monat(e)",
+    },
+    "es": {
+        "report_title": "Informe de diagnóstico financiero",
+        "field": "Campo",
+        "value": "Valor",
+        "name": "Nombre",
+        "date": "Fecha de generación",
+        "balance": "Saldo estimado",
+        "score": "Puntuación financiera",
+        "risk": "Nivel de riesgo",
+        "income_commitment": "Compromiso de ingresos",
+        "reserve_months": "Meses estimados de reserva",
+        "diagnosis": "Diagnóstico",
+        "action_plan": "Plan de acción de 30 días",
+        "important_notice": "Aviso importante",
+        "notice_text": "INNA actúa como educadora financiera digital. No recomienda compra o venta de activos, no promete rentabilidad y no sustituye a profesionales certificados.",
+        "approx": "aprox.",
+        "days": "días",
+        "months": "mes(es)",
+    },
+    "it": {
+        "report_title": "Rapporto di diagnosi finanziaria",
+        "field": "Campo",
+        "value": "Valore",
+        "name": "Nome",
+        "date": "Data di generazione",
+        "balance": "Saldo stimato",
+        "score": "Punteggio finanziario",
+        "risk": "Livello di rischio",
+        "income_commitment": "Impegno del reddito",
+        "reserve_months": "Mesi stimati di riserva",
+        "diagnosis": "Diagnosi",
+        "action_plan": "Piano d’azione di 30 giorni",
+        "important_notice": "Avviso importante",
+        "notice_text": "INNA agisce come educatrice finanziaria digitale. Non raccomanda l’acquisto o la vendita di asset, non promette rendimenti e non sostituisce professionisti certificati.",
+        "approx": "circa",
+        "days": "giorni",
+        "months": "mese/i",
+    },
+    "ro": {
+        "report_title": "Raport de diagnostic financiar",
+        "field": "Câmp",
+        "value": "Valoare",
+        "name": "Nume",
+        "date": "Data generării",
+        "balance": "Sold estimat",
+        "score": "Scor financiar",
+        "risk": "Nivel de risc",
+        "income_commitment": "Grad de angajare a venitului",
+        "reserve_months": "Luni estimate de rezervă",
+        "diagnosis": "Diagnostic",
+        "action_plan": "Plan de acțiune pe 30 de zile",
+        "important_notice": "Avertisment important",
+        "notice_text": "INNA acționează ca educator financiar digital. Nu recomandă cumpărarea sau vânzarea de active, nu promite randamente și nu înlocuiește profesioniștii certificați.",
+        "approx": "aprox.",
+        "days": "zile",
+        "months": "lună/luni",
+    },
+}
+
+
+RISK_TRANSLATIONS = {
+    "Baixo": {
+        "pt": "Baixo", "fr": "Faible", "en_us": "Low", "en_gb": "Low",
+        "de": "Niedrig", "es": "Bajo", "it": "Basso", "ro": "Scăzut",
+    },
+    "Medio": {
+        "pt": "Médio", "fr": "Moyen", "en_us": "Medium", "en_gb": "Medium",
+        "de": "Mittel", "es": "Medio", "it": "Medio", "ro": "Mediu",
+    },
+    "Alto": {
+        "pt": "Alto", "fr": "Élevé", "en_us": "High", "en_gb": "High",
+        "de": "Hoch", "es": "Alto", "it": "Alto", "ro": "Ridicat",
+    },
+}
+
+
+def format_money(value, symbol="R$", currency="BRL") -> str:
+    try:
+        number = float(value)
+    except Exception:
+        number = 0.0
+
+    if currency in ["USD", "GBP"]:
+        return f"{symbol}{number:,.2f}"
+
+    if currency == "CHF":
+        return f"{symbol} {number:,.2f}".replace(",", "'")
+
+    if currency in ["EUR", "BRL", "RON", "UAH", "RUB"]:
+        formatted = f"{number:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        return f"{symbol} {formatted}"
+
+    return f"{symbol} {number:,.2f}"
+
+
+def normalizar_texto_pdf(texto: str) -> str:
+    if not texto:
+        return ""
+    return str(texto).replace("\n", "<br/>")
+
+
+def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     buffer = BytesIO()
+
+    idioma = diagnostico.get("idioma", "pt")
+    if idioma == "ch":
+        idioma = "de"
+
+    textos = PDF_TEXTS.get(idioma, PDF_TEXTS["en_us"])
+
+    moeda = diagnostico.get("moeda", "BRL")
+    simbolo = diagnostico.get("simbolo_moeda", "R$")
+
+    nome = diagnostico.get("nome", "Usuário")
+    saldo = diagnostico.get("saldo_estimado", 0)
+    score = diagnostico.get("score_financeiro", 0)
+    risco_original = diagnostico.get("nivel_risco", "-")
+    risco = RISK_TRANSLATIONS.get(risco_original, {}).get(idioma, risco_original)
+
+    comprometimento = diagnostico.get("comprometimento_renda_percentual", 0)
+    meses_reserva = diagnostico.get("meses_reserva_estimados", 0)
+    dias_reserva = float(meses_reserva or 0) * 30
+
+    diagnostico_texto = diagnostico.get("diagnostico", "")
+    plano_30_dias = diagnostico.get("plano_30_dias", "")
 
     doc = SimpleDocTemplate(
         buffer,
         pagesize=A4,
-        rightMargin=40,
-        leftMargin=40,
-        topMargin=40,
-        bottomMargin=40,
+        rightMargin=1.5 * cm,
+        leftMargin=1.5 * cm,
+        topMargin=1.2 * cm,
+        bottomMargin=1.2 * cm,
     )
 
     styles = getSampleStyleSheet()
-    story = []
 
-    titulo = "INNA Financial Coach AI"
-    subtitulo = "Relatorio de Diagnostico Financeiro"
+    title_style = ParagraphStyle(
+        "INNATitle",
+        parent=styles["Title"],
+        fontName="Helvetica-Bold",
+        fontSize=16,
+        leading=20,
+        alignment=1,
+        spaceAfter=10,
+    )
 
-    story.append(Paragraph(titulo, styles["Title"]))
-    story.append(Paragraph(subtitulo, styles["Heading2"]))
-    story.append(Spacer(1, 16))
+    heading_style = ParagraphStyle(
+        "INNAHeading",
+        parent=styles["Heading2"],
+        fontName="Helvetica-Bold",
+        fontSize=12,
+        leading=15,
+        spaceBefore=12,
+        spaceAfter=6,
+    )
 
-    data_geracao = datetime.now().strftime("%d/%m/%Y %H:%M")
+    normal_style = ParagraphStyle(
+        "INNANormal",
+        parent=styles["BodyText"],
+        fontName="Helvetica",
+        fontSize=8.5,
+        leading=11,
+        spaceAfter=6,
+    )
 
-    dados_principais = [
-        ["Campo", "Valor"],
-        ["Nome", str(response.get("nome", "Usuario"))],
-        ["Data de geracao", data_geracao],
-        ["Saldo estimado", f"R$ {float(response.get('saldo_estimado', 0)):.2f}"],
-        ["Score financeiro", f"{response.get('score_financeiro', 0)}/100"],
-        ["Nivel de risco", str(response.get("nivel_risco", "Indefinido"))],
+    elements = []
+
+    elements.append(Paragraph("INNA Financial Coach AI", title_style))
+    elements.append(Paragraph(textos["report_title"], heading_style))
+
+    data_geracao = diagnostico.get("data_geracao") or diagnostico.get("created_at")
+    if not data_geracao:
+        data_geracao = datetime.now().strftime("%d/%m/%Y %H:%M")
+
+    table_data = [
+        [textos["field"], textos["value"]],
+        [textos["name"], str(nome)],
+        [textos["date"], str(data_geracao)],
+        [textos["balance"], format_money(saldo, simbolo, moeda)],
+        [textos["score"], f"{score}/100"],
+        [textos["risk"], str(risco)],
+        [textos["income_commitment"], f"{float(comprometimento):.2f}%"],
         [
-            "Comprometimento da renda",
-            f"{float(response.get('comprometimento_renda_percentual', 0)):.2f}%",
-        ],
-        [
-            "Meses estimados de reserva",
-            f"{float(response.get('meses_reserva_estimados', 0)):.2f} mes(es) - aprox. {float(response.get('meses_reserva_estimados', 0)) * 30:.0f} dias",
+            textos["reserve_months"],
+            f"{float(meses_reserva):.2f} {textos['months']} - {textos['approx']} {dias_reserva:.0f} {textos['days']}",
         ],
     ]
 
-    tabela = Table(dados_principais, colWidths=[180, 300])
-    tabela.setStyle(
+    table = Table(table_data, colWidths=[6.5 * cm, 10.5 * cm])
+    table.setStyle(
         TableStyle(
             [
                 ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
                 ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
-                ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
                 ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+                ("FONTSIZE", (0, 0), (-1, -1), 8),
+                ("GRID", (0, 0), (-1, -1), 0.4, colors.grey),
                 ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                ("PADDING", (0, 0), (-1, -1), 8),
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.whitesmoke, colors.white]),
             ]
         )
     )
 
-    story.append(tabela)
-    story.append(Spacer(1, 20))
+    elements.append(Spacer(1, 8))
+    elements.append(table)
 
-    story.append(Paragraph("Diagnostico", styles["Heading2"]))
-    story.append(
-        Paragraph(
-            str(response.get("diagnostico", "Diagnostico nao informado.")),
-            styles["BodyText"],
-        )
-    )
-    story.append(Spacer(1, 16))
+    elements.append(Paragraph(textos["diagnosis"], heading_style))
+    elements.append(Paragraph(normalizar_texto_pdf(diagnostico_texto), normal_style))
 
-    story.append(Paragraph("Plano de Acao de 30 Dias", styles["Heading2"]))
+    elements.append(Paragraph(textos["action_plan"], heading_style))
+    elements.append(Paragraph(normalizar_texto_pdf(plano_30_dias), normal_style))
 
-    plano = str(response.get("plano_30_dias", "Plano nao informado."))
-    plano_html = plano.replace("\n", "<br/>")
+    elements.append(Paragraph(textos["important_notice"], heading_style))
+    elements.append(Paragraph(textos["notice_text"], normal_style))
 
-    story.append(Paragraph(plano_html, styles["BodyText"]))
-    story.append(Spacer(1, 20))
+    doc.build(elements)
 
-    story.append(Paragraph("Aviso Importante", styles["Heading2"]))
-    story.append(
-        Paragraph(
-            "A INNA atua como educadora financeira digital. "
-            "Ela nao recomenda compra ou venda de ativos, nao promete rentabilidade "
-            "e nao substitui profissionais certificados.",
-            styles["BodyText"],
-        )
-    )
-
-    doc.build(story)
-
-    pdf_bytes = buffer.getvalue()
+    pdf = buffer.getvalue()
     buffer.close()
-
-    return pdf_bytes
+    return pdf
