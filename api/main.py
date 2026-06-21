@@ -1,4 +1,6 @@
 from api.telegram_webhook import router as telegram_router
+import time
+
 from fastapi import FastAPI, HTTPException, Query, Response
 from api.schemas import DiagnosticoItem, EmailRequest, FeedbackInput, FeedbackItem, FeedbackResponse, FinancialInput, FinancialResponse
 
@@ -6,6 +8,7 @@ from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
 from src.pdf_report import gerar_relatorio_pdf
 from src.email_sender import send_diagnostico_email
+from src.interaction_logger import record_interaction
 from src.repository import (
     get_diagnostico_by_id_db,
     list_diagnosticos_by_nome_db,
@@ -289,6 +292,7 @@ def health_check():
 
 @app.post("/diagnostico", response_model=FinancialResponse)
 def gerar_diagnostico(payload: FinancialInput):
+    inicio = time.time()
     payload_dict = payload.model_dump()
 
     diagnosis = build_financial_diagnosis(payload_dict)
@@ -306,6 +310,25 @@ def gerar_diagnostico(payload: FinancialInput):
 
     diagnostico_id = save_diagnostico_db(payload_dict, response)
     response["id"] = diagnostico_id
+
+    record_interaction(
+        canal="web-app",
+        usuario_id=payload_dict.get("nome"),
+        usuario=payload_dict.get("nome"),
+        idioma=payload_dict.get("idioma"),
+        moeda=payload_dict.get("moeda"),
+        pergunta=payload_dict.get("objetivo"),
+        resposta=response.get("diagnostico"),
+        status="success",
+        tempo_resposta_segundos=time.time() - inicio,
+        diagnostico_id=diagnostico_id,
+        metadata={
+            "score_financeiro": response.get("score_financeiro"),
+            "nivel_risco": response.get("nivel_risco"),
+            "saldo_estimado": response.get("saldo_estimado"),
+            "origem": "diagnostico_streamlit"
+        }
+    )
 
     return response
 
