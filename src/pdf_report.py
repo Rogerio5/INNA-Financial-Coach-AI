@@ -208,6 +208,32 @@ def get_pdf_font_name() -> str:
     return "Helvetica"
 
 
+
+def force_pdf_language(diagnostico: dict) -> str:
+    idioma = str(diagnostico.get("idioma") or "").lower().strip()
+
+    conteudo = (
+        str(diagnostico.get("diagnostico", "")) + " " +
+        str(diagnostico.get("plano_30_dias", ""))
+    ).lower()
+
+    has_cyrillic = any(ch in conteudo for ch in "абвгдежзийклмнопрстуфхцчшщыэюяіїєґ")
+    has_arabic = any("\u0600" <= ch <= "\u06ff" for ch in conteudo)
+
+    if has_arabic:
+        return "ar"
+
+    if has_cyrillic:
+        if any(ch in conteudo for ch in "іїєґ"):
+            return "uk"
+        return "ru"
+
+    if idioma:
+        return idioma
+
+    return "pt"
+
+
 def format_money(value, symbol="R$", currency="BRL") -> str:
     try:
         number = float(value)
@@ -236,7 +262,7 @@ def normalizar_texto_pdf(texto: str) -> str:
 def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     buffer = BytesIO()
 
-    idioma = diagnostico.get("idioma", "pt")
+    idioma = force_pdf_language(diagnostico)
     if idioma == "ch":
         idioma = "de"
 
@@ -307,7 +333,7 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     elements.append(Paragraph("INNA Financial Coach AI", title_style))
     elements.append(Paragraph(textos["report_title"], heading_style))
 
-    data_geracao = diagnostico.get("data_geracao") or diagnostico.get("created_at") or diagnostico.get("data_hora")
+    data_geracao = diagnostico.get("data_geracao") or diagnostico.get("created_at") or diagnostico.get("data_hora") or diagnostico.get("data_hora")
     if not data_geracao:
         data_geracao = datetime.now().strftime("%d/%m/%Y %H:%M")
 
