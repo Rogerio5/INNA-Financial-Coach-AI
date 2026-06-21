@@ -739,6 +739,8 @@ def tr(key: str) -> str:
         APP_TRANSLATIONS["pt"].get(key, key),
     )
 
+current_currency_info = CURRENCY_BY_LANG.get(app_lang, CURRENCY_BY_LANG["pt"])
+
 st.sidebar.caption(tr("browser_translate_warning"))
 
 
@@ -857,8 +859,8 @@ if st.session_state.last_response:
         tr("estimated_balance"),
         format_currency_app(
             response["saldo_estimado"],
-            response.get("simbolo_moeda", currency_info["simbolo"]),
-            response.get("moeda", currency_info["moeda"]),
+            response.get("simbolo_moeda", current_currency_info["simbolo"]),
+            response.get("moeda", current_currency_info["moeda"]),
         ),
     )
 
@@ -1024,7 +1026,7 @@ if buscar_historico:
                 ):
                     st.write(
                         f"**{tr('estimated_balance')}:** "
-                        f"{format_currency_app(item['saldo_estimado'], item.get('simbolo_moeda', currency_info['simbolo']), item.get('moeda', currency_info['moeda']))}"
+                        f"{format_currency_app(item['saldo_estimado'], item.get('simbolo_moeda', current_currency_info['simbolo']), item.get('moeda', current_currency_info['moeda']))}"
                     )
                     st.write(f"**{tr('income_commitment')}:** {item['comprometimento_renda_percentual']:.2f}%")
                     st.write(f"**{tr('reserve_months')}:** {item['meses_reserva_estimados']:.2f}")
