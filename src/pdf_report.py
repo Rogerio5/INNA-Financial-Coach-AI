@@ -1,11 +1,14 @@
 from io import BytesIO
 from datetime import datetime
+from pathlib import Path
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import cm
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 
 PDF_TEXTS = {
@@ -180,6 +183,31 @@ RISK_TRANSLATIONS = {
 }
 
 
+
+
+def get_pdf_font_name() -> str:
+    possible_paths = [
+        "fonts/DejaVuSans.ttf",
+        "assets/DejaVuSans.ttf",
+        "DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/dejavu/DejaVuSans.ttf",
+        "C:/Windows/Fonts/arial.ttf",
+        "C:/Windows/Fonts/calibri.ttf",
+    ]
+
+    for font_path in possible_paths:
+        try:
+            candidate = Path(font_path)
+            if candidate.exists():
+                pdfmetrics.registerFont(TTFont("INNAUnicode", str(candidate)))
+                return "INNAUnicode"
+        except Exception:
+            continue
+
+    return "Helvetica"
+
+
 def format_money(value, symbol="R$", currency="BRL") -> str:
     try:
         number = float(value)
@@ -240,11 +268,12 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     )
 
     styles = getSampleStyleSheet()
+    base_font = get_pdf_font_name()
 
     title_style = ParagraphStyle(
         "INNATitle",
         parent=styles["Title"],
-        fontName="Helvetica-Bold",
+        fontName=base_font,
         fontSize=16,
         leading=20,
         alignment=1,
@@ -254,7 +283,7 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     heading_style = ParagraphStyle(
         "INNAHeading",
         parent=styles["Heading2"],
-        fontName="Helvetica-Bold",
+        fontName=base_font,
         fontSize=12,
         leading=15,
         spaceBefore=12,
@@ -264,7 +293,7 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     normal_style = ParagraphStyle(
         "INNANormal",
         parent=styles["BodyText"],
-        fontName="Helvetica",
+        fontName=base_font,
         fontSize=8.5,
         leading=11,
         spaceAfter=6,
@@ -299,8 +328,8 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
             [
                 ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
                 ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+                ("FONTNAME", (0, 0), (-1, 0), base_font),
+                ("FONTNAME", (0, 1), (-1, -1), base_font),
                 ("FONTSIZE", (0, 0), (-1, -1), 8),
                 ("GRID", (0, 0), (-1, -1), 0.4, colors.grey),
                 ("VALIGN", (0, 0), (-1, -1), "TOP"),
