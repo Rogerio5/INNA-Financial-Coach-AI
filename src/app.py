@@ -81,6 +81,7 @@ def detect_browser_language() -> str:
 
 APP_TRANSLATIONS = {
     "pt": {
+        "currency_notice": "Os valores devem ser informados em {currency}. A INNA não faz conversão cambial automática.",
         "estimated_balance": "Saldo estimado",
         "financial_score": "Score financeiro",
         "risk": "Risco",
@@ -132,6 +133,7 @@ APP_TRANSLATIONS = {
         "history_help": "Consulte diagnósticos anteriores pelo nome do usuário. Essa área usa a FastAPI para buscar dados salvos no PostgreSQL.",
     },
     "en_us": {
+        "currency_notice": "Enter values in {currency}. INNA does not automatically convert exchange rates.",
         "estimated_balance": "Estimated balance",
         "financial_score": "Financial score",
         "risk": "Risk",
@@ -183,6 +185,7 @@ APP_TRANSLATIONS = {
         "history_help": "Search previous diagnoses by user name. This area uses FastAPI to retrieve data saved in PostgreSQL.",
     },
     "en_gb": {
+        "currency_notice": "Enter values in {currency}. INNA does not automatically convert exchange rates.",
         "estimated_balance": "Estimated balance",
         "financial_score": "Financial score",
         "risk": "Risk",
@@ -234,6 +237,7 @@ APP_TRANSLATIONS = {
         "history_help": "Search previous diagnoses by user name. This area uses FastAPI to retrieve data saved in PostgreSQL.",
     },
     "es": {
+        "currency_notice": "Ingresa los valores en {currency}. INNA no convierte tipos de cambio automáticamente.",
         "estimated_balance": "Saldo estimado",
         "financial_score": "Puntuación financiera",
         "risk": "Riesgo",
@@ -284,6 +288,7 @@ APP_TRANSLATIONS = {
         "history_help": "Consulta diagnósticos anteriores por nombre de usuario. Esta área usa FastAPI para buscar datos guardados en PostgreSQL.",
     },
     "de": {
+        "currency_notice": "Gib die Werte in {currency} ein. INNA führt keine automatische Währungsumrechnung durch.",
         "estimated_balance": "Geschätzter Überschuss",
         "financial_score": "Finanzscore",
         "risk": "Risiko",
@@ -335,6 +340,7 @@ APP_TRANSLATIONS = {
         "history_help": "Suche frühere Diagnosen nach Benutzername. Dieser Bereich nutzt FastAPI, um gespeicherte Daten aus PostgreSQL abzurufen.",
     },
     "fr": {
+        "currency_notice": "Saisissez les valeurs en {currency}. INNA ne convertit pas automatiquement les devises.",
         "estimated_balance": "Solde estimé",
         "financial_score": "Score financier",
         "risk": "Risque",
@@ -385,6 +391,7 @@ APP_TRANSLATIONS = {
         "history_help": "Consultez les diagnostics précédents par nom d’utilisateur. Cette zone utilise FastAPI pour récupérer les données enregistrées dans PostgreSQL.",
     },
     "it": {
+        "currency_notice": "Inserisci i valori in {currency}. INNA non converte automaticamente i tassi di cambio.",
         "estimated_balance": "Saldo stimato",
         "financial_score": "Punteggio finanziario",
         "risk": "Rischio",
@@ -435,6 +442,7 @@ APP_TRANSLATIONS = {
         "history_help": "Consulta le diagnosi precedenti per nome utente. Quest’area usa FastAPI per cercare dati salvati in PostgreSQL.",
     },
     "ro": {
+        "currency_notice": "Introduceți valorile în {currency}. INNA nu face conversie valutară automată.",
         "estimated_balance": "Sold estimat",
         "financial_score": "Scor financiar",
         "risk": "Risc",
@@ -485,6 +493,7 @@ APP_TRANSLATIONS = {
         "history_help": "Consultă diagnosticele anterioare după numele utilizatorului. Această zonă folosește FastAPI pentru datele salvate în PostgreSQL.",
     },
     "uk": {
+        "currency_notice": "Вводьте значення у валюті {currency}. INNA не виконує автоматичну конвертацію валют.",
         "estimated_balance": "Орієнтовний баланс",
         "financial_score": "Фінансовий бал",
         "risk": "Ризик",
@@ -535,6 +544,7 @@ APP_TRANSLATIONS = {
         "history_help": "Перегляньте попередні діагностики за ім’ям користувача. Цей розділ використовує FastAPI для пошуку даних у PostgreSQL.",
     },
     "ru": {
+        "currency_notice": "Введите значения в валюте {currency}. INNA не выполняет автоматическую конвертацию валют.",
         "estimated_balance": "Оценочный баланс",
         "financial_score": "Финансовый балл",
         "risk": "Риск",
@@ -585,6 +595,7 @@ APP_TRANSLATIONS = {
         "history_help": "Просмотрите предыдущие диагностики по имени пользователя. Этот раздел использует FastAPI для поиска данных в PostgreSQL.",
     },
     "ar": {
+        "currency_notice": "أدخل القيم بعملة {currency}. لا تقوم INNA بتحويل العملات تلقائيًا.",
         "estimated_balance": "الرصيد التقديري",
         "financial_score": "الدرجة المالية",
         "risk": "المخاطر",
@@ -635,6 +646,7 @@ APP_TRANSLATIONS = {
         "history_help": "ابحث عن التشخيصات السابقة حسب اسم المستخدم. يستخدم هذا القسم FastAPI لجلب البيانات المحفوظة في PostgreSQL.",
     },
     "ch": {
+        "currency_notice": "Gib die Werte in {currency} ein. INNA führt keine automatische Währungsumrechnung durch.",
         "estimated_balance": "Geschätzter Überschuss",
         "financial_score": "Finanzscore",
         "risk": "Risiko",
@@ -719,6 +731,17 @@ CURRENCY_BY_LANG = {
 
 
 
+
+def label_with_currency(key: str) -> str:
+    currency = current_currency_info.get("moeda", "")
+    symbol = current_currency_info.get("simbolo", "")
+
+    if symbol and symbol != currency:
+        return f"{tr(key)} ({currency} / {symbol})"
+
+    return f"{tr(key)} ({currency})"
+
+
 def format_currency_app(value, symbol: str, currency: str) -> str:
     try:
         value = float(value)
@@ -764,36 +787,44 @@ if "last_payload" not in st.session_state:
 with st.form("financial_form"):
     nome = st.text_input(tr("name"), value="Ronaldo")
 
+    st.caption(
+        tr("currency_notice").format(
+            currency=f"{current_currency_info['moeda']} / {current_currency_info['simbolo']}"
+            if current_currency_info["simbolo"] != current_currency_info["moeda"]
+            else current_currency_info["moeda"]
+        )
+    )
+
     renda_mensal = st.number_input(
-        tr("monthly_income"),
+        label_with_currency("monthly_income"),
         min_value=0.0,
         value=3000.0,
         step=100.0,
     )
 
     gastos_fixos = st.number_input(
-        tr("fixed_expenses"),
+        label_with_currency("fixed_expenses"),
         min_value=0.0,
         value=1400.0,
         step=100.0,
     )
 
     gastos_variaveis = st.number_input(
-        tr("variable_expenses"),
+        label_with_currency("variable_expenses"),
         min_value=0.0,
         value=700.0,
         step=100.0,
     )
 
     dividas_mensais = st.number_input(
-        tr("debts"),
+        label_with_currency("debts"),
         min_value=0.0,
         value=300.0,
         step=100.0,
     )
 
     reserva_atual = st.number_input(
-        tr("savings"),
+        label_with_currency("savings"),
         min_value=0.0,
         value=500.0,
         step=100.0,
