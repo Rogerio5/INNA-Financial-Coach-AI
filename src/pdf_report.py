@@ -481,6 +481,8 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     moeda = diagnostico.get("moeda") or currency_default["moeda"]
     simbolo = diagnostico.get("simbolo_moeda") or currency_default["simbolo"]
 
+    moeda, simbolo = force_currency_for_pdf_language(diagnostico, idioma, moeda, simbolo)
+
     # Regra principal:
     # pt = Brasil = BRL/R$
     # Se o relatório estiver em português, nunca usar moeda estrangeira na tabela.
@@ -498,7 +500,7 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     saldo = diagnostico.get("saldo_estimado", 0)
     score = diagnostico.get("score_financeiro", 0)
     risco_original = diagnostico.get("nivel_risco", "-")
-    risco = RISK_TRANSLATIONS.get(risco_original, {}).get(idioma, risco_original)
+    risco = translate_risk_pdf(risco_original, idioma)
 
     comprometimento = diagnostico.get("comprometimento_renda_percentual", 0)
     meses_reserva = diagnostico.get("meses_reserva_estimados", 0)
