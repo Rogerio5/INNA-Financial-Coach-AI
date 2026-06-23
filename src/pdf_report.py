@@ -422,7 +422,16 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     moeda = diagnostico.get("moeda") or currency_default["moeda"]
     simbolo = diagnostico.get("simbolo_moeda") or currency_default["simbolo"]
 
-    if idioma != "pt" and moeda == "BRL" and simbolo == "R$":
+    # Regra principal:
+    # pt = Brasil = BRL/R$
+    # Se o relatório estiver em português, nunca usar moeda estrangeira na tabela.
+    if idioma == "pt":
+        moeda = "BRL"
+        simbolo = "R$"
+
+    # Para relatórios internacionais antigos salvos sem moeda correta,
+    # troca BRL pelo padrão do idioma selecionado.
+    elif moeda == "BRL" and simbolo == "R$":
         moeda = currency_default["moeda"]
         simbolo = currency_default["simbolo"]
 
