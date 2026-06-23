@@ -197,22 +197,37 @@ with col_filter3:
     filtro_feedback = st.selectbox("Filtrar por feedback", feedbacks_disponiveis)
 
 with col_filter4:
-    if "idioma" in diagnosticos_df.columns:
-        idiomas_disponiveis = ["Todos"] + sorted(
-            diagnosticos_df["idioma"].dropna().astype(str).unique().tolist()
-        )
-    else:
-        idiomas_disponiveis = ["Todos"]
+    idiomas_disponiveis = [
+        "Todos",
+        "pt",
+        "en_us",
+        "en_gb",
+        "es",
+        "de",
+        "fr",
+        "it",
+        "ro",
+        "uk",
+        "ru",
+        "ar",
+        "ch",
+    ]
 
     filtro_idioma = st.selectbox("Filtrar por idioma", idiomas_disponiveis)
 
 with col_filter5:
-    if "moeda" in diagnosticos_df.columns:
-        moedas_disponiveis = ["Todos"] + sorted(
-            diagnosticos_df["moeda"].dropna().astype(str).unique().tolist()
-        )
-    else:
-        moedas_disponiveis = ["Todos"]
+    moedas_disponiveis = [
+        "Todos",
+        "BRL",
+        "USD",
+        "GBP",
+        "EUR",
+        "RON",
+        "UAH",
+        "RUB",
+        "SAR",
+        "CHF",
+    ]
 
     filtro_moeda = st.selectbox("Filtrar por moeda", moedas_disponiveis)
 
