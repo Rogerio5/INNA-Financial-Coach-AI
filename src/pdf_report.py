@@ -465,6 +465,61 @@ def force_currency_for_pdf_language(diagnostico: dict, idioma: str, moeda: str, 
 
 
 
+
+def clean_action_plan_notice_for_pdf(texto: str) -> str:
+    """
+    Remove avisos legais duplicados do corpo do plano.
+    O PDF já possui uma seção própria chamada Aviso Importante.
+    """
+    if not texto:
+        return ""
+
+    linhas = str(texto).splitlines()
+    novas_linhas = []
+
+    prefixes_to_remove = (
+        "aviso:",
+        "aviso importante:",
+        "important:",
+        "important notice:",
+        "notice:",
+        "hinweis:",
+        "wichtiger hinweis:",
+        "avertissement:",
+        "avis important:",
+        "avviso:",
+        "avviso importante:",
+        "avertisment:",
+        "повідомлення:",
+        "важливе повідомлення:",
+        "уведомление:",
+        "важное уведомление:",
+        "تنبيه:",
+        "إشعار مهم:",
+    )
+
+    for linha in linhas:
+        linha_limpa = linha.strip()
+        linha_lower = linha_limpa.lower()
+
+        if linha_lower.startswith(prefixes_to_remove):
+            continue
+
+        # Remove linhas legais repetidas mesmo sem prefixo
+        if "não recomenda compra ou venda de ativos" in linha_lower:
+            continue
+
+        if "não promete rentabilidade" in linha_lower:
+            continue
+
+        if "não substitui profissionais certificados" in linha_lower:
+            continue
+
+        novas_linhas.append(linha)
+
+    return "\n".join(novas_linhas).strip()
+
+
 def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     buffer = BytesIO()
 
@@ -548,6 +603,7 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
 
     diagnostico_texto = diagnostico.get("diagnostico", "")
     plano_30_dias = diagnostico.get("plano_30_dias", "")
+    plano_30_dias = clean_action_plan_notice_for_pdf(plano_30_dias)
 
     doc = SimpleDocTemplate(
         buffer,
