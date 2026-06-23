@@ -375,11 +375,17 @@ def baixar_relatorio_diagnostico(diagnostico_id: int):
 
     pdf_bytes = gerar_relatorio_pdf(diagnostico)
 
+    idioma_evento = infer_event_language_for_log(diagnostico)
+    moeda_evento = diagnostico.get("moeda") or default_currency_for_log(idioma_evento)
+
+    if idioma_evento == "pt":
+        moeda_evento = "BRL"
+
     record_event(
         canal="pdf-download",
         usuario=diagnostico.get("nome"),
-        idioma=diagnostico.get("idioma"),
-        moeda=diagnostico.get("moeda"),
+        idioma=idioma_evento,
+        moeda=moeda_evento,
         status="success",
         diagnostico_id=diagnostico.get("id") or diagnostico_id,
         metadata={
@@ -484,6 +490,59 @@ INNA Financial Coach AI
             status_code=500,
             detail=f"Erro ao enviar e-mail: {str(exc)}",
         )
+
+
+
+
+def infer_event_language_for_log(diagnostico: dict) -> str:
+    idioma = str(diagnostico.get("idioma") or "").lower().strip()
+
+    if idioma:
+        return "de" if idioma == "ch" else idioma
+
+    conteudo = (
+        str(diagnostico.get("diagnostico", "")) + " " +
+        str(diagnostico.get("plano_30_dias", ""))
+    ).lower()
+
+    if any("\u0600" <= ch <= "\u06ff" for ch in conteudo):
+        return "ar"
+
+    if any(ch in conteudo for ch in "іїєґ"):
+        return "uk"
+
+    if any(ch in conteudo for ch in "абвгдежзийклмнопрстуфхцчшщыэюя"):
+        return "ru"
+
+    if any(x in conteudo for x in ["dein geschätzter", "finanzscore", "risikostufe", "woche"]):
+        return "de"
+
+    if any(x in conteudo for x in ["your estimated", "financial score", "week 1"]):
+        return "en_us"
+
+    if any(x in conteudo for x in ["seu saldo estimado", "plano de ação", "semana 1"]):
+        return "pt"
+
+    return "pt"
+
+
+def default_currency_for_log(idioma: str) -> str:
+    currencies = {
+        "pt": "BRL",
+        "en_us": "USD",
+        "en_gb": "GBP",
+        "es": "EUR",
+        "de": "EUR",
+        "fr": "EUR",
+        "it": "EUR",
+        "ro": "RON",
+        "uk": "UAH",
+        "ru": "RUB",
+        "ar": "SAR",
+        "ch": "CHF",
+    }
+
+    return currencies.get(idioma, "BRL")
 
 
 class EventLogRequest(BaseModel):
