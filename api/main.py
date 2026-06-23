@@ -335,6 +335,35 @@ def gerar_diagnostico(payload: FinancialInput):
     return response
 
 
+
+
+def safe_record_event(
+    canal: str,
+    usuario: str | None = None,
+    idioma: str | None = None,
+    moeda: str | None = None,
+    status: str = "success",
+    diagnostico_id: int | None = None,
+    pergunta: str | None = None,
+    resposta: str | None = None,
+    metadata: dict | None = None,
+):
+    try:
+        record_event(
+            canal=canal,
+            usuario=usuario,
+            idioma=idioma,
+            moeda=moeda,
+            status=status,
+            diagnostico_id=diagnostico_id,
+            pergunta=pergunta,
+            resposta=resposta,
+            metadata=metadata or {},
+        )
+    except Exception as exc:
+        print(f"[safe_record_event] Falha ao registrar {canal}: {exc}")
+
+
 @app.post("/feedback", response_model=FeedbackResponse)
 def registrar_feedback(payload: FeedbackInput):
     payload_dict = payload.model_dump()
@@ -476,6 +505,20 @@ INNA Financial Coach AI
             filename=f"relatorio-inna-{diagnostico_id}.pdf",
         )
 
+        safe_record_event(
+            canal="email",
+            usuario=diagnostico.get("nome"),
+            idioma=lang,
+            moeda=moeda,
+            status="success",
+            diagnostico_id=diagnostico_id,
+            metadata={
+                "evento": "envio_relatorio_email",
+                "origem": "api",
+                "email_destino": payload.email,
+            },
+        )
+
         return {
             "success": True,
             "message": "Relatório enviado por e-mail com sucesso.",
@@ -486,6 +529,20 @@ INNA Financial Coach AI
         }
 
     except Exception as exc:
+        safe_record_event(
+            canal="email",
+            usuario=diagnostico.get("nome") if diagnostico else None,
+            idioma=(payload.idioma if payload else None) or (diagnostico.get("idioma") if diagnostico else None) or "pt",
+            moeda=(payload.moeda if payload else None) or (diagnostico.get("moeda") if diagnostico else None) or "BRL",
+            status="error",
+            diagnostico_id=diagnostico_id,
+            metadata={
+                "evento": "erro_envio_relatorio_email",
+                "origem": "api",
+                "erro": str(exc),
+            },
+        )
+
         raise HTTPException(
             status_code=500,
             detail=f"Erro ao enviar e-mail: {str(exc)}",
