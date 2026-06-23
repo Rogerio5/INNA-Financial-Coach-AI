@@ -406,6 +406,46 @@ def normalizar_texto_pdf(texto: str) -> str:
     return str(texto).replace("\n", "<br/>")
 
 
+
+def translate_risk_pdf(risk: str, idioma: str) -> str:
+    risk_raw = str(risk or "").strip().lower()
+    idioma = str(idioma or "pt").lower().strip()
+
+    # Normaliza entradas em vários idiomas para um código técnico
+    low_values = {"baixo", "bajo", "low", "faible", "niedrig", "basso", "scăzut", "низкий", "низький", "منخفض"}
+    medium_values = {"medio", "médio", "medium", "moyen", "mittel", "mediu", "средний", "середній", "متوسط"}
+    high_values = {"alto", "high", "élevé", "eleve", "hoch", "ridicat", "высокий", "високий", "مرتفع"}
+
+    if risk_raw in low_values:
+        code = "low"
+    elif risk_raw in medium_values:
+        code = "medium"
+    elif risk_raw in high_values:
+        code = "high"
+    else:
+        return risk or ""
+
+    translations = {
+        "low": {
+            "pt": "Baixo", "en_us": "Low", "en_gb": "Low", "es": "Bajo",
+            "fr": "Faible", "de": "Niedrig", "ch": "Niedrig", "it": "Basso",
+            "ro": "Scăzut", "uk": "Низький", "ru": "Низкий", "ar": "منخفض",
+        },
+        "medium": {
+            "pt": "Médio", "en_us": "Medium", "en_gb": "Medium", "es": "Medio",
+            "fr": "Moyen", "de": "Mittel", "ch": "Mittel", "it": "Medio",
+            "ro": "Mediu", "uk": "Середній", "ru": "Средний", "ar": "متوسط",
+        },
+        "high": {
+            "pt": "Alto", "en_us": "High", "en_gb": "High", "es": "Alto",
+            "fr": "Élevé", "de": "Hoch", "ch": "Hoch", "it": "Alto",
+            "ro": "Ridicat", "uk": "Високий", "ru": "Высокий", "ar": "مرتفع",
+        },
+    }
+
+    return translations[code].get(idioma, translations[code]["pt"])
+
+
 def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     buffer = BytesIO()
 
