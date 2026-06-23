@@ -172,7 +172,7 @@ filtro_mes = st.selectbox(
     meses_disponiveis,
 )
 
-col_filter1, col_filter2, col_filter3 = st.columns(3)
+col_filter1, col_filter2, col_filter3, col_filter4, col_filter5 = st.columns(5)
 
 with col_filter1:
     nomes_disponiveis = ["Todos"] + sorted(
@@ -195,6 +195,26 @@ with col_filter3:
         )
 
     filtro_feedback = st.selectbox("Filtrar por feedback", feedbacks_disponiveis)
+
+with col_filter4:
+    if "idioma" in diagnosticos_df.columns:
+        idiomas_disponiveis = ["Todos"] + sorted(
+            diagnosticos_df["idioma"].dropna().astype(str).unique().tolist()
+        )
+    else:
+        idiomas_disponiveis = ["Todos"]
+
+    filtro_idioma = st.selectbox("Filtrar por idioma", idiomas_disponiveis)
+
+with col_filter5:
+    if "moeda" in diagnosticos_df.columns:
+        moedas_disponiveis = ["Todos"] + sorted(
+            diagnosticos_df["moeda"].dropna().astype(str).unique().tolist()
+        )
+    else:
+        moedas_disponiveis = ["Todos"]
+
+    filtro_moeda = st.selectbox("Filtrar por moeda", moedas_disponiveis)
 
 
 diagnosticos_filtrados = diagnosticos_df.copy()
@@ -264,6 +284,16 @@ if filtro_risco != "Todos":
 if filtro_feedback != "Todos" and not feedbacks_filtrados.empty:
     feedbacks_filtrados = feedbacks_filtrados[
         feedbacks_filtrados["util"] == filtro_feedback
+    ]
+
+if filtro_idioma != "Todos" and "idioma" in diagnosticos_filtrados.columns:
+    diagnosticos_filtrados = diagnosticos_filtrados[
+        diagnosticos_filtrados["idioma"].astype(str) == filtro_idioma
+    ]
+
+if filtro_moeda != "Todos" and "moeda" in diagnosticos_filtrados.columns:
+    diagnosticos_filtrados = diagnosticos_filtrados[
+        diagnosticos_filtrados["moeda"].astype(str) == filtro_moeda
     ]
 
 
@@ -345,6 +375,136 @@ st.divider()
 
 
 col_left, col_right = st.columns(2)
+
+st.divider()
+
+st.write("## 🌍 Visão internacional")
+
+if diagnosticos_filtrados.empty:
+    st.caption("Ainda não há dados internacionais para os filtros selecionados.")
+else:
+    col_int1, col_int2 = st.columns(2)
+
+    with col_int1:
+        st.write("### Diagnósticos por idioma")
+
+        if "idioma" in diagnosticos_filtrados.columns:
+            idioma_counts = diagnosticos_filtrados["idioma"].fillna("não informado").astype(str).value_counts()
+            st.bar_chart(idioma_counts)
+
+            idioma_table = idioma_counts.reset_index()
+            idioma_table.columns = ["idioma", "diagnósticos"]
+            st.dataframe(idioma_table, use_container_width=True)
+        else:
+            st.caption("Coluna idioma não encontrada.")
+
+    with col_int2:
+        st.write("### Diagnósticos por moeda")
+
+        if "moeda" in diagnosticos_filtrados.columns:
+            moeda_counts = diagnosticos_filtrados["moeda"].fillna("não informado").astype(str).value_counts()
+            st.bar_chart(moeda_counts)
+
+            moeda_table = moeda_counts.reset_index()
+            moeda_table.columns = ["moeda", "diagnósticos"]
+            st.dataframe(moeda_table, use_container_width=True)
+        else:
+            st.caption("Coluna moeda não encontrada.")
+
+    st.write("### 💱 Saldo médio por moeda")
+
+    if "moeda" in diagnosticos_filtrados.columns:
+        saldo_por_moeda = (
+            diagnosticos_filtrados
+            .groupby("moeda", dropna=False)
+            .agg(
+                diagnosticos=("id", "count"),
+                saldo_medio=("saldo_estimado", "mean"),
+                score_medio=("score_financeiro", "mean"),
+            )
+            .reset_index()
+        )
+
+        saldo_por_moeda["moeda"] = saldo_por_moeda["moeda"].fillna("não informado")
+        saldo_por_moeda["saldo_medio"] = saldo_por_moeda["saldo_medio"].round(2)
+        saldo_por_moeda["score_medio"] = saldo_por_moeda["score_medio"].round(1)
+
+        st.dataframe(saldo_por_moeda, use_container_width=True)
+    else:
+        st.caption("Coluna moeda não encontrada.")
+
+    st.write("### 🌐 Resumo por idioma e moeda")
+
+    if "idioma" in diagnosticos_filtrados.columns and "moeda" in diagnosticos_filtrados.columns:
+        resumo_internacional = (
+            diagnosticos_filtrados
+            .groupby(["idioma", "moeda"], dropna=False)
+            .agg(
+                diagnosticos=("id", "count"),
+                score_medio=("score_financeiro", "mean"),
+                saldo_medio=("saldo_estimado", "mean"),
+            )
+            .reset_index()
+        )
+
+        resumo_internacional["idioma"] = resumo_internacional["idioma"].fillna("não informado")
+        resumo_internacional["moeda"] = resumo_internacional["moeda"].fillna("não informado")
+        resumo_internacional["score_medio"] = resumo_internacional["score_medio"].round(1)
+        resumo_internacional["saldo_medio"] = resumo_internacional["saldo_medio"].round(2)
+
+        st.dataframe(resumo_internacional, use_container_width=True)
+    else:
+        st.caption("Colunas idioma/moeda não encontradas.")
+
+st.divider()
+
+st.write("## 🧭 Funil de uso")
+
+diagnosticos_funil = len(diagnosticos_filtrados)
+
+if "eventos_filtrados" in globals() and not eventos_filtrados.empty:
+    pdf_downloads = int((eventos_filtrados["canal"] == "pdf-download").sum())
+    emails_enviados = int((eventos_filtrados["canal"] == "email").sum())
+    telegram_eventos = int((eventos_filtrados["canal"] == "telegram").sum())
+else:
+    pdf_downloads = 0
+    emails_enviados = 0
+    telegram_eventos = 0
+
+feedbacks_funil = len(feedbacks_filtrados) if not feedbacks_filtrados.empty else 0
+taxa_download_pdf = (pdf_downloads / diagnosticos_funil * 100) if diagnosticos_funil > 0 else 0
+
+col_funil1, col_funil2, col_funil3, col_funil4, col_funil5 = st.columns(5)
+
+col_funil1.metric("Diagnósticos", diagnosticos_funil)
+col_funil2.metric("PDFs baixados", pdf_downloads)
+col_funil3.metric("E-mails", emails_enviados)
+col_funil4.metric("Feedbacks", feedbacks_funil)
+col_funil5.metric("Taxa PDF", f"{taxa_download_pdf:.1f}%")
+
+funil_df = pd.DataFrame(
+    {
+        "etapa": [
+            "Diagnóstico gerado",
+            "PDF baixado",
+            "E-mail enviado",
+            "Feedback recebido",
+            "Telegram",
+        ],
+        "quantidade": [
+            diagnosticos_funil,
+            pdf_downloads,
+            emails_enviados,
+            feedbacks_funil,
+            telegram_eventos,
+        ],
+    }
+)
+
+st.bar_chart(funil_df.set_index("etapa"))
+st.dataframe(funil_df, use_container_width=True)
+
+st.divider()
 
 with col_left:
     st.write("## ⚠️ Distribuição por risco")
@@ -562,7 +722,8 @@ else:
         - O **saldo médio estimado** é de **R$ {saldo_medio:.2f}**.
         - O nível de risco mais comum é **{risco_mais_comum}**.
         - A taxa de feedback útil é de **{taxa_util:.1f}%**.
+        - A visão internacional permite separar resultados por idioma e moeda, evitando misturar BRL, USD, GBP, EUR e outras moedas.
 
-        Esses dados ajudam a validar se a INNA está gerando valor real para os usuários.
+        Esses dados ajudam a validar se a INNA está gerando valor real para os usuários em diferentes canais, idiomas e moedas.
         """
     )
