@@ -226,23 +226,65 @@ PDF_TEXTS = {
 }
 
 
+
 RISK_TRANSLATIONS = {
     "Baixo": {
-        "pt": "Baixo", "fr": "Faible", "en_us": "Low", "en_gb": "Low",
-        "de": "Niedrig", "es": "Bajo", "it": "Basso", "ro": "Scăzut",
+        "pt": "Baixo",
+        "en_us": "Low",
+        "en_gb": "Low",
+        "es": "Bajo",
+        "fr": "Faible",
+        "de": "Niedrig",
+        "ch": "Niedrig",
+        "it": "Basso",
+        "ro": "Scăzut",
+        "uk": "Низький",
+        "ru": "Низкий",
+        "ar": "منخفض",
     },
     "Medio": {
-        "pt": "Médio", "fr": "Moyen", "en_us": "Medium", "en_gb": "Medium",
-        "de": "Mittel", "es": "Medio", "it": "Medio", "ro": "Mediu",
+        "pt": "Médio",
+        "en_us": "Medium",
+        "en_gb": "Medium",
+        "es": "Medio",
+        "fr": "Moyen",
+        "de": "Mittel",
+        "ch": "Mittel",
+        "it": "Medio",
+        "ro": "Mediu",
+        "uk": "Середній",
+        "ru": "Средний",
+        "ar": "متوسط",
+    },
+    "Médio": {
+        "pt": "Médio",
+        "en_us": "Medium",
+        "en_gb": "Medium",
+        "es": "Medio",
+        "fr": "Moyen",
+        "de": "Mittel",
+        "ch": "Mittel",
+        "it": "Medio",
+        "ro": "Mediu",
+        "uk": "Середній",
+        "ru": "Средний",
+        "ar": "متوسط",
     },
     "Alto": {
-        "pt": "Alto", "fr": "Élevé", "en_us": "High", "en_gb": "High",
-        "de": "Hoch", "es": "Alto", "it": "Alto", "ro": "Ridicat",
+        "pt": "Alto",
+        "en_us": "High",
+        "en_gb": "High",
+        "es": "Alto",
+        "fr": "Élevé",
+        "de": "Hoch",
+        "ch": "Hoch",
+        "it": "Alto",
+        "ro": "Ridicat",
+        "uk": "Високий",
+        "ru": "Высокий",
+        "ar": "مرتفع",
     },
 }
-
-
-
 
 def get_pdf_font_name() -> str:
     possible_paths = [
@@ -268,6 +310,9 @@ def get_pdf_font_name() -> str:
 
 
 
+
+
+
 def force_pdf_language(diagnostico: dict) -> str:
     idioma = str(diagnostico.get("idioma") or "").lower().strip()
 
@@ -276,72 +321,45 @@ def force_pdf_language(diagnostico: dict) -> str:
         str(diagnostico.get("plano_30_dias", ""))
     ).lower()
 
-    has_cyrillic = any(ch in conteudo for ch in "абвгдежзийклмнопрстуфхцчшщыэюяіїєґ")
-    has_arabic = any("\u0600" <= ch <= "\u06ff" for ch in conteudo)
-
-    if has_arabic:
+    # Idiomas com alfabetos específicos
+    if any("\u0600" <= ch <= "\u06ff" for ch in conteudo):
         return "ar"
 
-    if has_cyrillic:
-        if any(ch in conteudo for ch in "іїєґ"):
-            return "uk"
+    if any(ch in conteudo for ch in "іїєґ"):
+        return "uk"
+
+    if any(ch in conteudo for ch in "абвгдежзийклмнопрстуфхцчшщыэюя"):
         return "ru"
 
-    if idioma:
-        return idioma
+    # Detecta alemão mesmo se o campo idioma vier errado como pt
+    german_markers = [
+        "finanzdiagnose", "finanzscore", "risikostufe", "rücklage",
+        "einkommensbindung", "monatlicher überschuss", "woche",
+        "wichtiger hinweis", "auf grundlage", "schulden"
+    ]
+    if any(marker in conteudo for marker in german_markers):
+        return "de"
 
-    return "pt"
+    french_markers = ["diagnostic financier", "semaine", "épargne", "revenu", "avis important"]
+    if any(marker in conteudo for marker in french_markers):
+        return "fr"
 
+    spanish_markers = ["diagnóstico financiero", "semana", "ingresos", "aviso importante"]
+    if any(marker in conteudo for marker in spanish_markers):
+        return "es"
 
+    italian_markers = ["diagnosi finanziaria", "settimana", "reddito", "avviso importante"]
+    if any(marker in conteudo for marker in italian_markers):
+        return "it"
 
+    romanian_markers = ["diagnostic financiar", "săptămâna", "venit", "avertisment important"]
+    if any(marker in conteudo for marker in romanian_markers):
+        return "ro"
 
-RISK_TRANSLATIONS.update({
-    "Medio": {
-        "pt": "Médio",
-        "en_us": "Medium",
-        "en_gb": "Medium",
-        "es": "Medio",
-        "fr": "Moyen",
-        "de": "Mittel",
-        "it": "Medio",
-        "ro": "Mediu",
-        "uk": "Середній",
-        "ru": "Средний",
-        "ar": "متوسط",
-    },
-    "Médio": {
-        "pt": "Médio",
-        "en_us": "Medium",
-        "en_gb": "Medium",
-        "es": "Medio",
-        "fr": "Moyen",
-        "de": "Mittel",
-        "it": "Medio",
-        "ro": "Mediu",
-        "uk": "Середній",
-        "ru": "Средний",
-        "ar": "متوسط",
-    },
-})
+    if idioma == "ch":
+        return "de"
 
-
-def get_currency_by_language_pdf(idioma: str) -> dict:
-    currencies = {
-        "pt": {"moeda": "BRL", "simbolo": "R$"},
-        "en_us": {"moeda": "USD", "simbolo": "US$"},
-        "en_gb": {"moeda": "GBP", "simbolo": "£"},
-        "es": {"moeda": "EUR", "simbolo": "€"},
-        "de": {"moeda": "EUR", "simbolo": "€"},
-        "fr": {"moeda": "EUR", "simbolo": "€"},
-        "it": {"moeda": "EUR", "simbolo": "€"},
-        "ro": {"moeda": "RON", "simbolo": "RON"},
-        "uk": {"moeda": "UAH", "simbolo": "₴"},
-        "ru": {"moeda": "RUB", "simbolo": "₽"},
-        "ar": {"moeda": "SAR", "simbolo": "SAR"},
-        "ch": {"moeda": "CHF", "simbolo": "CHF"},
-    }
-    return currencies.get(idioma, currencies["pt"])
-
+    return idioma or "pt"
 
 def format_money(value, symbol="R$", currency="BRL") -> str:
     try:

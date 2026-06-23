@@ -733,29 +733,66 @@ CURRENCY_BY_LANG = {
 
 
 
+
 def translate_risk_app(risk: str) -> str:
     risk = str(risk or "").strip()
 
     risk_map = {
         "Baixo": {
-            "pt": "Baixo", "en_us": "Low", "en_gb": "Low", "es": "Bajo",
-            "fr": "Faible", "de": "Niedrig", "it": "Basso", "ro": "Scăzut",
-            "uk": "Низький", "ru": "Низкий", "ar": "منخفض", "ch": "Niedrig",
+            "pt": "Baixo",
+            "en_us": "Low",
+            "en_gb": "Low",
+            "es": "Bajo",
+            "fr": "Faible",
+            "de": "Niedrig",
+            "ch": "Niedrig",
+            "it": "Basso",
+            "ro": "Scăzut",
+            "uk": "Низький",
+            "ru": "Низкий",
+            "ar": "منخفض",
         },
         "Medio": {
-            "pt": "Médio", "en_us": "Medium", "en_gb": "Medium", "es": "Medio",
-            "fr": "Moyen", "de": "Mittel", "it": "Medio", "ro": "Mediu",
-            "uk": "Середній", "ru": "Средний", "ar": "متوسط", "ch": "Mittel",
+            "pt": "Médio",
+            "en_us": "Medium",
+            "en_gb": "Medium",
+            "es": "Medio",
+            "fr": "Moyen",
+            "de": "Mittel",
+            "ch": "Mittel",
+            "it": "Medio",
+            "ro": "Mediu",
+            "uk": "Середній",
+            "ru": "Средний",
+            "ar": "متوسط",
         },
         "Médio": {
-            "pt": "Médio", "en_us": "Medium", "en_gb": "Medium", "es": "Medio",
-            "fr": "Moyen", "de": "Mittel", "it": "Medio", "ro": "Mediu",
-            "uk": "Середній", "ru": "Средний", "ar": "متوسط", "ch": "Mittel",
+            "pt": "Médio",
+            "en_us": "Medium",
+            "en_gb": "Medium",
+            "es": "Medio",
+            "fr": "Moyen",
+            "de": "Mittel",
+            "ch": "Mittel",
+            "it": "Medio",
+            "ro": "Mediu",
+            "uk": "Середній",
+            "ru": "Средний",
+            "ar": "متوسط",
         },
         "Alto": {
-            "pt": "Alto", "en_us": "High", "en_gb": "High", "es": "Alto",
-            "fr": "Élevé", "de": "Hoch", "it": "Alto", "ro": "Ridicat",
-            "uk": "Високий", "ru": "Высокий", "ar": "مرتفع", "ch": "Hoch",
+            "pt": "Alto",
+            "en_us": "High",
+            "en_gb": "High",
+            "es": "Alto",
+            "fr": "Élevé",
+            "de": "Hoch",
+            "ch": "Hoch",
+            "it": "Alto",
+            "ro": "Ridicat",
+            "uk": "Високий",
+            "ru": "Высокий",
+            "ar": "مرتفع",
         },
     }
 
@@ -1015,7 +1052,7 @@ if st.session_state.last_response:
             "util": util,
             "comentario": comentario,
             "score_financeiro": response["score_financeiro"],
-            "nivel_risco": response["nivel_risco"],
+            "nivel_risco": translate_risk_app(response["nivel_risco"]),
         }
 
         try:
