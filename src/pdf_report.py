@@ -361,6 +361,26 @@ def force_pdf_language(diagnostico: dict) -> str:
 
     return idioma or "pt"
 
+
+def get_currency_by_language_pdf(idioma: str) -> dict:
+    currencies = {
+        "pt": {"moeda": "BRL", "simbolo": "R$"},
+        "en_us": {"moeda": "USD", "simbolo": "US$"},
+        "en_gb": {"moeda": "GBP", "simbolo": "£"},
+        "es": {"moeda": "EUR", "simbolo": "€"},
+        "de": {"moeda": "EUR", "simbolo": "€"},
+        "ch": {"moeda": "CHF", "simbolo": "CHF"},
+        "fr": {"moeda": "EUR", "simbolo": "€"},
+        "it": {"moeda": "EUR", "simbolo": "€"},
+        "ro": {"moeda": "RON", "simbolo": "RON"},
+        "uk": {"moeda": "UAH", "simbolo": "₴"},
+        "ru": {"moeda": "RUB", "simbolo": "₽"},
+        "ar": {"moeda": "SAR", "simbolo": "SAR"},
+    }
+
+    return currencies.get(idioma, currencies["pt"])
+
+
 def format_money(value, symbol="R$", currency="BRL") -> str:
     try:
         number = float(value)
