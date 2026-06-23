@@ -446,6 +446,25 @@ def translate_risk_pdf(risk: str, idioma: str) -> str:
     return translations[code].get(idioma, translations[code]["pt"])
 
 
+
+def force_currency_for_pdf_language(diagnostico: dict, idioma: str, moeda: str, simbolo: str) -> tuple[str, str]:
+    diagnostico_texto = str(diagnostico.get("diagnostico", "")).lower()
+    plano_texto = str(diagnostico.get("plano_30_dias", "")).lower()
+
+    is_pt_report = (
+        idioma == "pt"
+        or "seu saldo estimado" in diagnostico_texto
+        or "plano de ação" in plano_texto
+        or "diagnóstico" in diagnostico_texto
+    )
+
+    if is_pt_report:
+        return "BRL", "R$"
+
+    return moeda, simbolo
+
+
+
 def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     buffer = BytesIO()
 
