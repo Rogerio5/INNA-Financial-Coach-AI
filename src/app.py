@@ -732,6 +732,36 @@ CURRENCY_BY_LANG = {
 
 
 
+
+def translate_risk_app(risk: str) -> str:
+    risk = str(risk or "").strip()
+
+    risk_map = {
+        "Baixo": {
+            "pt": "Baixo", "en_us": "Low", "en_gb": "Low", "es": "Bajo",
+            "fr": "Faible", "de": "Niedrig", "it": "Basso", "ro": "Scăzut",
+            "uk": "Низький", "ru": "Низкий", "ar": "منخفض", "ch": "Niedrig",
+        },
+        "Medio": {
+            "pt": "Médio", "en_us": "Medium", "en_gb": "Medium", "es": "Medio",
+            "fr": "Moyen", "de": "Mittel", "it": "Medio", "ro": "Mediu",
+            "uk": "Середній", "ru": "Средний", "ar": "متوسط", "ch": "Mittel",
+        },
+        "Médio": {
+            "pt": "Médio", "en_us": "Medium", "en_gb": "Medium", "es": "Medio",
+            "fr": "Moyen", "de": "Mittel", "it": "Medio", "ro": "Mediu",
+            "uk": "Середній", "ru": "Средний", "ar": "متوسط", "ch": "Mittel",
+        },
+        "Alto": {
+            "pt": "Alto", "en_us": "High", "en_gb": "High", "es": "Alto",
+            "fr": "Élevé", "de": "Hoch", "it": "Alto", "ro": "Ridicat",
+            "uk": "Високий", "ru": "Высокий", "ar": "مرتفع", "ch": "Hoch",
+        },
+    }
+
+    return risk_map.get(risk, {}).get(app_lang, risk)
+
+
 def label_with_currency(key: str) -> str:
     currency = current_currency_info.get("moeda", "")
     symbol = current_currency_info.get("simbolo", "")
@@ -902,7 +932,7 @@ if st.session_state.last_response:
 
     col3.metric(
         tr("risk"),
-        response["nivel_risco"],
+        translate_risk_app(response["nivel_risco"]),
     )
 
     st.write(tr("diagnosis"))
@@ -1053,7 +1083,7 @@ if buscar_historico:
 
             for item in historico:
                 with st.expander(
-                    f"ID {item['id']} — {item['nome']} — {tr('history_score')} {item['score_financeiro']}/100 — {tr('risk')} {item['nivel_risco']}"
+                    f"ID {item['id']} — {item['nome']} — {tr('history_score')} {item['score_financeiro']}/100 — {tr('risk')} {translate_risk_app(item['nivel_risco'])}"
                 ):
                     st.write(
                         f"**{tr('estimated_balance')}:** "
