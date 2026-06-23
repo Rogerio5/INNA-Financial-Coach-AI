@@ -79,6 +79,23 @@ feedbacks_df = load_table("""
     ORDER BY id ASC
 """)
 
+eventos_df = load_table("""
+    SELECT
+        id,
+        data_hora,
+        canal,
+        usuario,
+        idioma,
+        moeda,
+        status,
+        diagnostico_id,
+        metadata
+    FROM interacoes_inna
+    WHERE canal NOT LIKE 'teste%'
+      AND COALESCE(metadata->>'teste', 'false') <> 'true'
+    ORDER BY id ASC
+""")
+
 
 if diagnosticos_df.empty:
     st.warning("Ainda não existem diagnósticos registrados no PostgreSQL.")
@@ -93,6 +110,12 @@ diagnosticos_df["data_hora"] = pd.to_datetime(
 if not feedbacks_df.empty:
     feedbacks_df["data_hora"] = pd.to_datetime(
         feedbacks_df["data_hora"],
+        errors="coerce",
+    )
+
+if not eventos_df.empty:
+    eventos_df["data_hora"] = pd.to_datetime(
+        eventos_df["data_hora"],
         errors="coerce",
     )
 
@@ -176,6 +199,7 @@ with col_filter3:
 
 diagnosticos_filtrados = diagnosticos_df.copy()
 feedbacks_filtrados = feedbacks_df.copy()
+eventos_filtrados = eventos_df.copy()
 
 inicio_periodo = pd.to_datetime(filtro_data_inicio)
 fim_periodo = pd.to_datetime(filtro_data_fim) + pd.Timedelta(days=1)
@@ -191,6 +215,12 @@ if not feedbacks_filtrados.empty:
         & (feedbacks_filtrados["data_hora"] < fim_periodo)
     ]
 
+if not eventos_filtrados.empty:
+    eventos_filtrados = eventos_filtrados[
+        (eventos_filtrados["data_hora"] >= inicio_periodo)
+        & (eventos_filtrados["data_hora"] < fim_periodo)
+    ]
+
 if filtro_mes != "Todos":
     diagnosticos_filtrados = diagnosticos_filtrados[
         diagnosticos_filtrados["data_hora"].dt.to_period("M").astype(str) == filtro_mes
@@ -201,6 +231,11 @@ if filtro_mes != "Todos":
             feedbacks_filtrados["data_hora"].dt.to_period("M").astype(str) == filtro_mes
         ]
 
+    if not eventos_filtrados.empty:
+        eventos_filtrados = eventos_filtrados[
+            eventos_filtrados["data_hora"].dt.to_period("M").astype(str) == filtro_mes
+        ]
+
 if filtro_nome != "Todos":
     diagnosticos_filtrados = diagnosticos_filtrados[
         diagnosticos_filtrados["nome"] == filtro_nome
@@ -209,6 +244,11 @@ if filtro_nome != "Todos":
     if not feedbacks_filtrados.empty:
         feedbacks_filtrados = feedbacks_filtrados[
             feedbacks_filtrados["nome"] == filtro_nome
+        ]
+
+    if not eventos_filtrados.empty and "usuario" in eventos_filtrados.columns:
+        eventos_filtrados = eventos_filtrados[
+            eventos_filtrados["usuario"] == filtro_nome
         ]
 
 if filtro_risco != "Todos":
@@ -253,6 +293,53 @@ col2.metric("Usuários únicos", usuarios_unicos)
 col3.metric("Score médio", f"{score_medio:.1f}/100" if total_diagnosticos > 0 else "0/100")
 col4.metric("Saldo médio", f"R$ {saldo_medio:.2f}" if total_diagnosticos > 0 else "R$ 0.00")
 col5.metric("Feedback útil", f"{taxa_util:.1f}%")
+
+st.divider()
+
+st.write("## 🌐 Eventos multicanal reais")
+
+if eventos_filtrados.empty:
+    st.caption("Ainda não há eventos multicanal reais registrados no período selecionado.")
+else:
+    eventos_total = len(eventos_filtrados)
+    canais_ativos = eventos_filtrados["canal"].nunique()
+
+    ultimo_evento = eventos_filtrados.sort_values("data_hora").tail(1)
+    ultimo_canal = ultimo_evento["canal"].iloc[0] if not ultimo_evento.empty else "-"
+
+    col_event1, col_event2, col_event3 = st.columns(3)
+    col_event1.metric("Eventos reais", eventos_total)
+    col_event2.metric("Canais ativos", canais_ativos)
+    col_event3.metric("Último canal", ultimo_canal)
+
+    eventos_por_canal = eventos_filtrados["canal"].value_counts()
+    st.bar_chart(eventos_por_canal)
+
+    eventos_table = eventos_por_canal.reset_index()
+    eventos_table.columns = ["canal", "quantidade"]
+    st.dataframe(eventos_table, use_container_width=True)
+
+    with st.expander("Ver últimos eventos reais"):
+        colunas_eventos = [
+            "id",
+            "data_hora",
+            "canal",
+            "usuario",
+            "idioma",
+            "moeda",
+            "status",
+            "diagnostico_id",
+        ]
+
+        colunas_eventos = [
+            coluna for coluna in colunas_eventos
+            if coluna in eventos_filtrados.columns
+        ]
+
+        st.dataframe(
+            eventos_filtrados[colunas_eventos].tail(20),
+            use_container_width=True,
+        )
 
 st.divider()
 
