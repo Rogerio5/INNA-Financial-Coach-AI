@@ -496,6 +496,46 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
         moeda = currency_default["moeda"]
         simbolo = currency_default["simbolo"]
 
+
+    # Correção definitiva PT-BR:
+    # Se o conteúdo do relatório está em português, força idioma, moeda,
+    # labels e unidades para português do Brasil.
+    texto_check_pt = (
+        str(diagnostico.get("diagnostico", "")) + " " +
+        str(diagnostico.get("plano_30_dias", ""))
+    ).lower()
+
+    if (
+        idioma == "pt"
+        or "seu saldo estimado" in texto_check_pt
+        or "plano de ação" in texto_check_pt
+        or "diagnóstico financeiro" in texto_check_pt
+        or "semana 1" in texto_check_pt
+    ):
+        idioma = "pt"
+        textos = PDF_TEXTS["pt"].copy()
+        textos.update({
+            "report_title": "Relatório de Diagnóstico Financeiro",
+            "field": "Campo",
+            "value": "Valor",
+            "name": "Nome",
+            "date": "Data de geração",
+            "balance": "Saldo estimado",
+            "score": "Score financeiro",
+            "risk": "Nível de risco",
+            "income_commitment": "Comprometimento da renda",
+            "reserve_months": "Meses estimados de reserva",
+            "diagnosis": "Diagnóstico",
+            "action_plan": "Plano de Ação de 30 Dias",
+            "important_notice": "Aviso Importante",
+            "notice_text": "A INNA atua como educadora financeira digital. Ela não recomenda compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
+            "approx": "aprox.",
+            "days": "dias",
+            "months": "mês(es)",
+        })
+        moeda = "BRL"
+        simbolo = "R$"
+
     nome = diagnostico.get("nome", "Usuário")
     saldo = diagnostico.get("saldo_estimado", 0)
     score = diagnostico.get("score_financeiro", 0)
