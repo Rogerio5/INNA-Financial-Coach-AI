@@ -55,12 +55,12 @@ PDF_TEXTS = {
         "field": "Field",
         "value": "Value",
         "name": "Name",
-        "date": "Generation date",
+        "date": "Created at",
         "balance": "Estimated balance",
         "score": "Financial score",
         "risk": "Risk level",
         "income_commitment": "Income commitment",
-        "reserve_months": "Estimated savings months",
+        "reserve_months": "Emergency savings",
         "diagnosis": "Diagnosis",
         "action_plan": "30-Day Action Plan",
         "important_notice": "Important Notice",
@@ -74,12 +74,12 @@ PDF_TEXTS = {
         "field": "Field",
         "value": "Value",
         "name": "Name",
-        "date": "Generation date",
+        "date": "Created at",
         "balance": "Estimated balance",
         "score": "Financial score",
         "risk": "Risk level",
         "income_commitment": "Income commitment",
-        "reserve_months": "Estimated savings months",
+        "reserve_months": "Emergency savings",
         "diagnosis": "Diagnosis",
         "action_plan": "30-Day Action Plan",
         "important_notice": "Important Notice",
@@ -108,20 +108,20 @@ PDF_TEXTS = {
         "months": "Monat(e)",
     },
     "es": {
-        "report_title": "Relatório de Diagnóstico Financeiro",
+        "report_title": "Informe de Diagnóstico Financiero",
         "field": "Campo",
         "value": "Valor",
-        "name": "Nome",
-        "date": "Data de geração",
+        "name": "Nombre",
+        "date": "Fecha de generación",
         "balance": "Saldo estimado",
-        "score": "Score financeiro",
-        "risk": "Nível de risco",
-        "income_commitment": "Comprometimento da renda",
-        "reserve_months": "Reserva de emergência",
+        "score": "Puntuación financiera",
+        "risk": "Nivel de riesgo",
+        "income_commitment": "Compromiso de ingresos",
+        "reserve_months": "Reserva de emergencia",
         "diagnosis": "Diagnóstico",
-        "action_plan": "Plano de Ação de 30 Dias",
+        "action_plan": "Plan de Acción de 30 Días",
         "important_notice": "Aviso Importante",
-        "notice_text": "A INNA atua como educadora financeira digital. Ela não recomenda compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
+        "notice_text": "INNA actúa como educadora financiera digital. No recomienda comprar ni vender activos, no promete rentabilidad y no sustituye a profesionales certificados.",
         "approx": "aprox.",
         "days": "días",
         "months": "mes(es)",
@@ -604,6 +604,43 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     diagnostico_texto = diagnostico.get("diagnostico", "")
     plano_30_dias = diagnostico.get("plano_30_dias", "")
     plano_30_dias = clean_action_plan_notice_for_pdf(plano_30_dias)
+
+    # PDF_ENGLISH_CONTENT_GUARD
+    texto_lang_check = f"{diagnostico_texto} {plano_30_dias}".lower()
+
+    english_markers = [
+        "your estimated monthly balance",
+        "your income commitment",
+        "your savings cover",
+        "financial risk level",
+        "30-day action plan",
+        "week 1",
+        "week 2",
+        "week 3",
+        "week 4",
+        "important notice",
+    ]
+
+    has_english_content = any(marker in texto_lang_check for marker in english_markers)
+
+    if has_english_content:
+        if idioma not in ["en_us", "en_gb"]:
+            idioma = "en_us"
+
+        textos = PDF_TEXTS.get(idioma, PDF_TEXTS["en_us"]).copy()
+
+        if idioma == "en_us":
+            moeda = "USD"
+            simbolo = "US$"
+        elif idioma == "en_gb":
+            moeda = "GBP"
+            simbolo = "£"
+
+        risco = translate_risk_pdf(
+            diagnostico.get("nivel_risco", "Undefined"),
+            idioma,
+        )
+
 
     doc = SimpleDocTemplate(
         buffer,
