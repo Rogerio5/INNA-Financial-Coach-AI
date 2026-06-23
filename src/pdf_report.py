@@ -22,7 +22,7 @@ PDF_TEXTS = {
         "score": "Score financeiro",
         "risk": "Nível de risco",
         "income_commitment": "Comprometimento da renda",
-        "reserve_months": "Meses estimados de reserva",
+        "reserve_months": "Reserva de emergência",
         "diagnosis": "Diagnóstico",
         "action_plan": "Plano de Ação de 30 Dias",
         "important_notice": "Aviso Importante",
@@ -117,7 +117,7 @@ PDF_TEXTS = {
         "score": "Score financeiro",
         "risk": "Nível de risco",
         "income_commitment": "Comprometimento da renda",
-        "reserve_months": "Meses estimados de reserva",
+        "reserve_months": "Reserva de emergência",
         "diagnosis": "Diagnóstico",
         "action_plan": "Plano de Ação de 30 Dias",
         "important_notice": "Aviso Importante",
@@ -579,7 +579,7 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
             "score": "Score financeiro",
             "risk": "Nível de risco",
             "income_commitment": "Comprometimento da renda",
-            "reserve_months": "Meses estimados de reserva",
+            "reserve_months": "Reserva de emergência",
             "diagnosis": "Diagnóstico",
             "action_plan": "Plano de Ação de 30 Dias",
             "important_notice": "Aviso Importante",
@@ -665,7 +665,7 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
         [textos["income_commitment"], f"{float(comprometimento):.2f}%"],
         [
             textos["reserve_months"],
-            f"{float(meses_reserva):.2f} {textos['months']} - {textos['approx']} {dias_reserva:.0f} {textos['days']}",
+            f"{textos['approx']} {dias_reserva:.0f} {textos['days']} de despesas ({float(meses_reserva):.2f} {textos['months']})",
         ],
     ]
 

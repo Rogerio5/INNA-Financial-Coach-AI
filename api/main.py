@@ -225,6 +225,7 @@ def build_localized_diagnosis_text(payload: dict, diagnosis: dict) -> str:
     comprometimento = diagnosis.get("comprometimento_renda_percentual", 0)
     meses_reserva = diagnosis.get("meses_reserva_estimados", 0)
     risco = diagnosis.get("nivel_risco", "Baixo")
+    dias_reserva = max(0, int(round(float(meses_reserva or 0) * 30)))
 
     saldo_fmt = format_money_by_currency(saldo, symbol, moeda)
 
@@ -249,18 +250,18 @@ def build_localized_diagnosis_text(payload: dict, diagnosis: dict) -> str:
     risco_txt = risk_map.get(risco, {}).get(lang, risco)
 
     templates = {
-        "pt": f"Seu saldo estimado mensal é de {saldo_fmt}. O comprometimento da renda está em {comprometimento:.1f}%. Sua reserva cobre aproximadamente {meses_reserva:.1f} meses dos gastos atuais. O nível de risco financeiro foi classificado como {risco_txt}.",
-        "en_us": f"Your estimated monthly balance is {saldo_fmt}. Your income commitment is {comprometimento:.1f}%. Your savings cover approximately {meses_reserva:.1f} months of current expenses. Your financial risk level was classified as {risco_txt}.",
-        "en_gb": f"Your estimated monthly balance is {saldo_fmt}. Your income commitment is {comprometimento:.1f}%. Your savings cover approximately {meses_reserva:.1f} months of current expenses. Your financial risk level was classified as {risco_txt}.",
-        "es": f"Tu saldo mensual estimado es de {saldo_fmt}. El compromiso de ingresos es del {comprometimento:.1f}%. Tu reserva cubre aproximadamente {meses_reserva:.1f} meses de los gastos actuales. El nivel de riesgo financiero fue clasificado como {risco_txt}.",
-        "de": f"Dein geschätzter monatlicher Überschuss beträgt {saldo_fmt}. Die Einkommensbindung liegt bei {comprometimento:.1f}%. Deine Rücklage deckt ungefähr {meses_reserva:.1f} Monate der aktuellen Ausgaben. Die finanzielle Risikostufe wurde als {risco_txt} eingestuft.",
-        "fr": f"Votre solde mensuel estimé est de {saldo_fmt}. L’engagement de revenu est de {comprometimento:.1f}%. Votre épargne couvre environ {meses_reserva:.1f} mois de dépenses actuelles. Le niveau de risque financier a été classé comme {risco_txt}.",
-        "it": f"Il tuo saldo mensile stimato è di {saldo_fmt}. L’impegno del reddito è del {comprometimento:.1f}%. I tuoi risparmi coprono circa {meses_reserva:.1f} mesi delle spese attuali. Il livello di rischio finanziario è stato classificato come {risco_txt}.",
-        "ro": f"Soldul lunar estimat este de {saldo_fmt}. Gradul de angajare a venitului este de {comprometimento:.1f}%. Economiile acoperă aproximativ {meses_reserva:.1f} luni de cheltuieli curente. Nivelul de risc financiar a fost clasificat ca {risco_txt}.",
-        "uk": f"Ваш орієнтовний місячний баланс становить {saldo_fmt}. Навантаження на дохід складає {comprometimento:.1f}%. Ваші заощадження покривають приблизно {meses_reserva:.1f} місяця поточних витрат. Рівень фінансового ризику класифіковано як {risco_txt}.",
-        "ru": f"Ваш оценочный ежемесячный баланс составляет {saldo_fmt}. Нагрузка на доход составляет {comprometimento:.1f}%. Ваши сбережения покрывают примерно {meses_reserva:.1f} месяца текущих расходов. Уровень финансового риска классифицирован как {risco_txt}.",
-        "ar": f"الرصيد الشهري المتوقع هو {saldo_fmt}. نسبة الالتزام من الدخل هي {comprometimento:.1f}%. تغطي مدخراتك حوالي {meses_reserva:.1f} شهرًا من المصاريف الحالية. تم تصنيف مستوى المخاطر المالية على أنه {risco_txt}.",
-        "ch": f"Dein geschätzter monatlicher Überschuss beträgt {saldo_fmt}. Die Einkommensbindung liegt bei {comprometimento:.1f}%. Deine Rücklage deckt ungefähr {meses_reserva:.1f} Monate der aktuellen Ausgaben. Die finanzielle Risikostufe wurde als {risco_txt} eingestuft.",
+        "pt": f"Seu saldo estimado mensal é de {saldo_fmt}. O comprometimento da renda está em {comprometimento:.1f}%. Sua reserva cobre aproximadamente {dias_reserva} dias de despesas ({meses_reserva:.2f} mês). O nível de risco financeiro foi classificado como {risco_txt}.",
+        "en_us": f"Your estimated monthly balance is {saldo_fmt}. Your income commitment is {comprometimento:.1f}%. Your savings cover approximately {dias_reserva} days of expenses ({meses_reserva:.2f} months). Your financial risk level was classified as {risco_txt}.",
+        "en_gb": f"Your estimated monthly balance is {saldo_fmt}. Your income commitment is {comprometimento:.1f}%. Your savings cover approximately {dias_reserva} days of expenses ({meses_reserva:.2f} months). Your financial risk level was classified as {risco_txt}.",
+        "es": f"Tu saldo mensual estimado es de {saldo_fmt}. El compromiso de ingresos es del {comprometimento:.1f}%. Tu reserva cubre aproximadamente {dias_reserva} días de gastos ({meses_reserva:.2f} meses). El nivel de riesgo financiero fue clasificado como {risco_txt}.",
+        "de": f"Dein geschätzter monatlicher Überschuss beträgt {saldo_fmt}. Die Einkommensbindung liegt bei {comprometimento:.1f}%. Deine Rücklage deckt ungefähr {dias_reserva} Tage Ausgaben ({meses_reserva:.2f} Monate). Die finanzielle Risikostufe wurde als {risco_txt} eingestuft.",
+        "fr": f"Votre solde mensuel estimé est de {saldo_fmt}. L’engagement de revenu est de {comprometimento:.1f}%. Votre épargne couvre environ {dias_reserva} jours de dépenses ({meses_reserva:.2f} mois). Le niveau de risque financier a été classé comme {risco_txt}.",
+        "it": f"Il tuo saldo mensile stimato è di {saldo_fmt}. L’impegno del reddito è del {comprometimento:.1f}%. I tuoi risparmi coprono circa {dias_reserva} giorni di spese ({meses_reserva:.2f} mesi). Il livello di rischio finanziario è stato classificato come {risco_txt}.",
+        "ro": f"Soldul lunar estimat este de {saldo_fmt}. Gradul de angajare a venitului este de {comprometimento:.1f}%. Economiile acoperă aproximativ {dias_reserva} zile de cheltuieli ({meses_reserva:.2f} luni). Nivelul de risc financiar a fost clasificat ca {risco_txt}.",
+        "uk": f"Ваш орієнтовний місячний баланс становить {saldo_fmt}. Навантаження на дохід складає {comprometimento:.1f}%. Ваші заощадження покривають приблизно {dias_reserva} днів витрат ({meses_reserva:.2f} місяця). Рівень фінансового ризику класифіковано як {risco_txt}.",
+        "ru": f"Ваш оценочный ежемесячный баланс составляет {saldo_fmt}. Нагрузка на доход составляет {comprometimento:.1f}%. Ваши сбережения покрывают примерно {dias_reserva} дней расходов ({meses_reserva:.2f} месяца). Уровень финансового риска классифицирован как {risco_txt}.",
+        "ar": f"الرصيد الشهري المتوقع هو {saldo_fmt}. نسبة الالتزام من الدخل هي {comprometimento:.1f}%. تغطي مدخراتك حوالي {dias_reserva} يومًا من المصاريف ({meses_reserva:.2f} شهر). تم تصنيف مستوى المخاطر المالية على أنه {risco_txt}.",
+        "ch": f"Dein geschätzter monatlicher Überschuss beträgt {saldo_fmt}. Die Einkommensbindung liegt bei {comprometimento:.1f}%. Deine Rücklage deckt ungefähr {dias_reserva} Tage Ausgaben ({meses_reserva:.2f} Monate). Die finanzielle Risikostufe wurde als {risco_txt} eingestuft.",
     }
 
     return templates.get(lang, templates["pt"])

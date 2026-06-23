@@ -57,7 +57,7 @@ Diagnostico calculado:
 - Score financeiro: {score}/100
 - Nivel de risco: {risco}
 - Comprometimento da renda: {comprometimento:.1f}%
-- Reserva estimada: {meses_reserva:.2f} mes(es), aproximadamente {dias_reserva:.0f} dias
+- Reserva estimada: sua reserva cobre aproximadamente {dias_reserva:.0f} dias de despesas ({meses_reserva:.2f} mes(es))
 
 Regras importantes:
 - Nao recomende compra ou venda de ativos.
@@ -152,7 +152,7 @@ def generate_fallback_plan(payload: dict, diagnosis: dict) -> str:
             "score": "Score financeiro",
             "risk": "Nível de risco",
             "commitment": "Comprometimento da renda",
-            "reserve": "Reserva atual estimada",
+            "reserve": "Reserva de emergência",
             "plan": "Plano de ação de 30 dias:",
             "w1": "Semana 1 — Entender para onde o dinheiro está indo",
             "w1a": "Anote todos os gastos fixos e variáveis.",
@@ -509,7 +509,7 @@ def generate_fallback_plan(payload: dict, diagnosis: dict) -> str:
 - {t["score"]}: {score}/100
 - {t["risk"]}: {risco_txt}
 - {t["commitment"]}: {comprometimento:.1f}%
-- {t["reserve"]}: {meses_reserva:.2f} {t["months"]}, {dias_reserva} {t["days"]}
+- {t["reserve"]}: {dias_reserva} {t["days"]} ({meses_reserva:.2f} {t["months"]})
 
 {t["plan"]}
 
