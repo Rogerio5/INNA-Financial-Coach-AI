@@ -1,7 +1,9 @@
 from api.telegram_webhook import router as telegram_router
 import time
 
+from src.audit_logger import record_event
 from fastapi import FastAPI, HTTPException, Query, Response
+from pydantic import BaseModel
 from api.schemas import DiagnosticoItem, EmailRequest, FeedbackInput, FeedbackItem, FeedbackResponse, FinancialInput, FinancialResponse
 
 from src.financial_engine import build_financial_diagnosis
@@ -373,6 +375,19 @@ def baixar_relatorio_diagnostico(diagnostico_id: int):
 
     pdf_bytes = gerar_relatorio_pdf(diagnostico)
 
+    record_event(
+        canal="pdf-download",
+        usuario=diagnostico.get("nome"),
+        idioma=diagnostico.get("idioma"),
+        moeda=diagnostico.get("moeda"),
+        status="success",
+        diagnostico_id=diagnostico.get("id") or diagnostico_id,
+        metadata={
+            "origem": "api",
+            "evento": "download_relatorio_pdf"
+        },
+    )
+
     nome = str(diagnostico.get("nome", "usuario"))
     nome_arquivo = nome.strip().lower().replace(" ", "_")
     filename = f"relatorio_inna_{nome_arquivo}_{diagnostico_id}.pdf"
@@ -469,3 +484,40 @@ INNA Financial Coach AI
             status_code=500,
             detail=f"Erro ao enviar e-mail: {str(exc)}",
         )
+
+
+class EventLogRequest(BaseModel):
+    canal: str
+    usuario: str | None = None
+    usuario_id: str | None = None
+    idioma: str | None = None
+    moeda: str | None = None
+    status: str = "success"
+    diagnostico_id: int | None = None
+    pergunta: str | None = None
+    resposta: str | None = None
+    tempo_resposta_segundos: float = 0
+    metadata: dict | None = None
+
+
+@app.post("/eventos")
+def registrar_evento(payload: EventLogRequest):
+    record_event(
+        canal=payload.canal,
+        usuario=payload.usuario,
+        usuario_id=payload.usuario_id,
+        idioma=payload.idioma,
+        moeda=payload.moeda,
+        status=payload.status,
+        diagnostico_id=payload.diagnostico_id,
+        pergunta=payload.pergunta,
+        resposta=payload.resposta,
+        tempo_resposta_segundos=payload.tempo_resposta_segundos,
+        metadata=payload.metadata or {},
+    )
+
+    return {
+        "status": "ok",
+        "message": "Evento registrado na tabela interacoes_inna.",
+        "canal": payload.canal,
+    }
