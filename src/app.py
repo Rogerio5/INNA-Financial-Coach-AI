@@ -6,7 +6,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT_DIR))
 
 HERO_IMAGE = ROOT_DIR / "assets" / "inna_hero.png"
-INNA_PORTRAIT_IMAGE = ROOT_DIR / "assets" / "inna_portrait.png"
+HERO_IMAGE = ROOT_DIR / "assets" / "inna_hero.png"
 DASHBOARD_ADMIN_URL = "https://inna-dashboard-streamlit.onrender.com"
 
 INNA_USER_EMAIL = os.getenv("INNA_USER_EMAIL", "usuario@inna.ai")
@@ -2332,8 +2332,8 @@ if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
     st.stop()
 if app_menu == "🏠 Início":
 
-    if INNA_PORTRAIT_IMAGE.exists():
-        portrait_path = str(INNA_PORTRAIT_IMAGE).replace("\\", "/")
+    if HERO_IMAGE.exists():
+        portrait_path = str(HERO_IMAGE).replace("\\", "/")
 
         st.markdown(f"""
         <div class="inna-hero-dynamic">
@@ -2380,7 +2380,7 @@ if app_menu == "🏠 Início":
         </div>
         """, unsafe_allow_html=True)
     else:
-        st.warning("Imagem não encontrada em assets/inna_portrait.png")
+        st.warning("Imagem não encontrada em assets/inna_hero.png")
 
     st.markdown(
         f'<div class="premium-badge">{home_t("badge")}</div>',
@@ -3857,6 +3857,8 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
+
 
 
 
