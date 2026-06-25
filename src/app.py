@@ -3585,31 +3585,6 @@ div[data-testid="stImage"] {
 
 </style>
 """, unsafe_allow_html=True)
-
-# ==========================================
-# AJUSTE FINAL DA LINHA DOURADA DO TOPO
-# ==========================================
-st.markdown("""
-<style>
-
-/* Sobe um pouco a linha dourada/divisor do topo */
-.inna-top-divider {
-    margin: 2px 0 6px 0 !important;
-    transform: translateY(-6px) !important;
-}
-
-/* Aproxima um pouco os cards de idioma/tema/entrar do divisor */
-.inna-top-divider + div {
-    margin-top: -6px !important;
-}
-
-/* Reduz pequena folga abaixo do subtítulo */
-.inna-top-subtitle {
-    margin-bottom: 0px !important;
-}
-
-</style>
-""", unsafe_allow_html=True)
 if app_menu == "🏠 Início":
 
     # HERO PRINCIPAL DA INNA SEM HTML GRANDE
@@ -5120,7 +5095,6 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
-
 
 
 
