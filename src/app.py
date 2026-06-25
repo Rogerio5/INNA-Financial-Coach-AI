@@ -3109,6 +3109,507 @@ st.markdown("""
 
 </style>
 """, unsafe_allow_html=True)
+
+# ==========================================
+# PADRÃO FINAL: AVISO + CTA COMO CARD PREMIUM
+# ==========================================
+st.markdown("""
+<style>
+
+/* Aviso importante e CTA final no mesmo padrão */
+.warning-box,
+.cta-box {
+    background: linear-gradient(135deg, #164A86 0%, #071C36 48%, #03101E 100%) !important;
+    border: 1.5px solid #D4AF37 !important;
+    border-radius: 30px !important;
+    padding: 42px 32px !important;
+    margin-top: 26px !important;
+    margin-bottom: 22px !important;
+    text-align: center !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.26) !important;
+}
+
+/* Texto do aviso */
+.warning-box {
+    color: #FFFFFF !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    line-height: 1.6 !important;
+}
+
+/* Destaque do aviso */
+.warning-box strong {
+    color: #F6D889 !important;
+    font-weight: 950 !important;
+}
+
+/* Título do CTA */
+.cta-box h2,
+.cta-box .cta-title {
+    color: #F6D889 !important;
+    font-size: 40px !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 26px !important;
+    opacity: 1 !important;
+}
+
+/* Texto do CTA */
+.cta-box p,
+.cta-box .cta-subtitle {
+    color: #FFFFFF !important;
+    font-size: 21px !important;
+    font-weight: 500 !important;
+    line-height: 1.65 !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+}
+
+/* Remove ícone/link de heading do Streamlit dentro do CTA */
+.cta-box a,
+.warning-box a {
+    display: none !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
+# FORÇA FINAL DO CTA - CORREÇÃO DEFINITIVA
+# ==========================================
+st.markdown("""
+<style>
+
+/* CTA final definitivo */
+.cta-box {
+    background: linear-gradient(135deg, #164A86 0%, #071C36 45%, #03101E 100%) !important;
+    border: 2px solid #D4AF37 !important;
+    border-radius: 30px !important;
+    padding: 46px 32px !important;
+    margin-top: 28px !important;
+    margin-bottom: 22px !important;
+    text-align: center !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.28) !important;
+}
+
+/* Remove qualquer fundo claro dentro do CTA */
+.cta-box * {
+    background: transparent !important;
+}
+
+/* Título do CTA */
+.cta-box h2,
+.cta-box .cta-title,
+.cta-box div.cta-title {
+    color: #F6D889 !important;
+    font-size: 40px !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 22px !important;
+    opacity: 1 !important;
+}
+
+/* Subtítulo do CTA */
+.cta-box p,
+.cta-box .cta-subtitle,
+.cta-box div.cta-subtitle {
+    color: #FFFFFF !important;
+    font-size: 21px !important;
+    font-weight: 500 !important;
+    line-height: 1.6 !important;
+    opacity: 1 !important;
+}
+
+/* Evita ícone de link do markdown */
+.cta-box a {
+    display: none !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
+# CTA FINAL PREMIUM - CLASSE EXCLUSIVA
+# ==========================================
+st.markdown("""
+<style>
+
+.final-cta-premium {
+    background: linear-gradient(135deg, #164A86 0%, #071C36 45%, #03101E 100%) !important;
+    border: 2px solid #D4AF37 !important;
+    border-radius: 30px !important;
+    padding: 46px 32px !important;
+    margin-top: 28px !important;
+    margin-bottom: 22px !important;
+    text-align: center !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.30) !important;
+}
+
+.final-cta-premium,
+.final-cta-premium * {
+    background-color: transparent !important;
+}
+
+.final-cta-title {
+    color: #F6D889 !important;
+    font-size: 40px !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 22px !important;
+    opacity: 1 !important;
+}
+
+.final-cta-subtitle {
+    color: #FFFFFF !important;
+    font-size: 21px !important;
+    font-weight: 500 !important;
+    line-height: 1.6 !important;
+    opacity: 1 !important;
+}
+
+.final-cta-premium a {
+    display: none !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
+# FINAL DA LANDING POR TEMA
+# Aviso + CTA final separados por tema
+# ==========================================
+
+landing_theme_name = st.session_state.get("theme_name", "Escuro azul")
+
+if landing_theme_name == "Branco brilhante":
+    landing_warning_bg = "linear-gradient(135deg, #FFFFFF 0%, #F7FBFF 100%)"
+    landing_warning_text = "#071C36"
+    landing_warning_strong = "#071C36"
+    landing_warning_border = "#D4AF37"
+
+    landing_cta_bg = "linear-gradient(135deg, #FFFFFF 0%, #EEF6FF 100%)"
+    landing_cta_title = "#071C36"
+    landing_cta_subtitle = "#334155"
+    landing_cta_border = "#D4AF37"
+
+elif landing_theme_name in ["Escuro preto", "Preto dourado", "Preto vermelho"]:
+    landing_warning_bg = "linear-gradient(135deg, #101010 0%, #050505 100%)"
+    landing_warning_text = "#FFFFFF"
+    landing_warning_strong = "#F6D889"
+    landing_warning_border = "#D4AF37"
+
+    landing_cta_bg = "linear-gradient(135deg, #141414 0%, #050505 100%)"
+    landing_cta_title = "#F6D889"
+    landing_cta_subtitle = "#FFFFFF"
+    landing_cta_border = "#D4AF37"
+
+else:
+    landing_warning_bg = "linear-gradient(135deg, #164A86 0%, #071C36 48%, #03101E 100%)"
+    landing_warning_text = "#FFFFFF"
+    landing_warning_strong = "#F6D889"
+    landing_warning_border = "#D4AF37"
+
+    landing_cta_bg = "linear-gradient(135deg, #164A86 0%, #071C36 45%, #03101E 100%)"
+    landing_cta_title = "#F6D889"
+    landing_cta_subtitle = "#FFFFFF"
+    landing_cta_border = "#D4AF37"
+
+
+st.markdown(f"""
+<style>
+
+/* ===== AVISO IMPORTANTE POR TEMA ===== */
+.warning-box {{
+    background: {landing_warning_bg} !important;
+    border: 2px solid {landing_warning_border} !important;
+    border-radius: 24px !important;
+    padding: 20px 24px !important;
+    margin-top: 20px !important;
+    margin-bottom: 24px !important;
+    box-shadow: 0 14px 34px rgba(0,0,0,0.16) !important;
+    color: {landing_warning_text} !important;
+    text-align: left !important;
+}}
+
+.warning-box,
+.warning-box p,
+.warning-box span,
+.warning-box div {{
+    color: {landing_warning_text} !important;
+    background: transparent !important;
+    opacity: 1 !important;
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+}}
+
+.warning-box strong {{
+    color: {landing_warning_strong} !important;
+    background: transparent !important;
+    opacity: 1 !important;
+    font-weight: 950 !important;
+}}
+
+/* ===== CTA FINAL POR TEMA ===== */
+.final-cta-premium {{
+    background: {landing_cta_bg} !important;
+    border: 2px solid {landing_cta_border} !important;
+    border-radius: 30px !important;
+    padding: 46px 32px !important;
+    margin-top: 28px !important;
+    margin-bottom: 24px !important;
+    text-align: center !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.24) !important;
+}}
+
+.final-cta-premium,
+.final-cta-premium * {{
+    background: transparent !important;
+    background-color: transparent !important;
+    opacity: 1 !important;
+}}
+
+.final-cta-title {{
+    color: {landing_cta_title} !important;
+    font-size: 40px !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 18px !important;
+}}
+
+.final-cta-subtitle {{
+    color: {landing_cta_subtitle} !important;
+    font-size: 21px !important;
+    font-weight: 500 !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+}}
+
+.final-cta-premium a,
+.warning-box a {{
+    display: none !important;
+}}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
+# LANDING PAGE MAIS COMPACTA
+# ==========================================
+st.markdown("""
+<style>
+
+/* Área geral mais compacta */
+.block-container {
+    max-width: 1220px !important;
+    padding-top: 0.4rem !important;
+    padding-bottom: 1rem !important;
+}
+
+/* Reduz espaço vertical entre blocos do Streamlit */
+div[data-testid="stVerticalBlock"] {
+    gap: 0.75rem !important;
+}
+
+/* Reduz espaço entre colunas */
+div[data-testid="stHorizontalBlock"] {
+    gap: 0.9rem !important;
+}
+
+/* Topo mais enxuto */
+.inna-top-title {
+    margin-bottom: 0px !important;
+    font-size: 24px !important;
+}
+
+.inna-top-subtitle {
+    margin-bottom: 4px !important;
+    font-size: 12px !important;
+}
+
+.inna-top-divider {
+    margin: 8px 0 10px 0 !important;
+}
+
+/* Linha de idioma, tema e login mais compacta */
+div[data-testid="stSelectbox"] {
+    margin-bottom: 0px !important;
+}
+
+/* Menu superior menor */
+.stButton > button {
+    min-height: 38px !important;
+    padding: 0.35rem 0.55rem !important;
+    font-size: 0.9rem !important;
+}
+
+/* Badge mais próximo da imagem */
+.premium-badge {
+    margin-top: 4px !important;
+    margin-bottom: 8px !important;
+    padding: 7px 14px !important;
+    font-size: 12px !important;
+}
+
+/* Imagem da Inna mais ajustada */
+div[data-testid="stImage"] img {
+    border-radius: 18px !important;
+    max-height: 520px !important;
+    object-fit: cover !important;
+}
+
+/* Cards do hero mais compactos */
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    padding: 12px !important;
+    border-radius: 18px !important;
+}
+
+/* Títulos do hero menores */
+div[data-testid="stVerticalBlockBorderWrapper"] h1 {
+    font-size: 42px !important;
+    margin-bottom: 0px !important;
+}
+
+div[data-testid="stVerticalBlockBorderWrapper"] h2 {
+    font-size: 22px !important;
+    margin-top: 0px !important;
+    margin-bottom: 4px !important;
+}
+
+div[data-testid="stVerticalBlockBorderWrapper"] h3 {
+    font-size: 18px !important;
+    margin-bottom: 4px !important;
+}
+
+/* Texto dos cards mais compacto */
+div[data-testid="stVerticalBlockBorderWrapper"] p {
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+    margin-bottom: 4px !important;
+}
+
+/* Info box menor */
+.info-box {
+    padding: 12px 16px !important;
+    margin-top: 12px !important;
+    margin-bottom: 16px !important;
+}
+
+/* Seções mais próximas */
+.section-title,
+h2, h3 {
+    margin-top: 14px !important;
+    margin-bottom: 8px !important;
+}
+
+/* Cards de recursos e passos menores */
+.feature-card,
+.step-card,
+.metric-card {
+    padding: 14px !important;
+    min-height: auto !important;
+    border-radius: 16px !important;
+}
+
+/* CTA e aviso menores */
+.warning-box,
+.final-cta-premium {
+    margin-top: 16px !important;
+    margin-bottom: 16px !important;
+    padding: 28px 24px !important;
+}
+
+.final-cta-title {
+    font-size: 32px !important;
+    margin-bottom: 12px !important;
+}
+
+.final-cta-subtitle {
+    font-size: 17px !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
+# REDUZIR ESPAÇO ENTRE MENU SUPERIOR E HERO
+# ==========================================
+st.markdown("""
+<style>
+
+/* Reduz espaço geral do topo */
+.block-container {
+    padding-top: 0.2rem !important;
+}
+
+/* Reduz espaços verticais internos do Streamlit */
+div[data-testid="stVerticalBlock"] {
+    gap: 0.35rem !important;
+}
+
+/* Reduz espaço depois do menu superior */
+.inna-top-divider {
+    margin: 6px 0 6px 0 !important;
+}
+
+/* Menu superior mais compacto */
+div[data-testid="stHorizontalBlock"] {
+    gap: 0.55rem !important;
+}
+
+/* Botões do menu com menos altura */
+div[data-testid="stHorizontalBlock"] .stButton > button {
+    min-height: 44px !important;
+    padding: 0.35rem 0.55rem !important;
+}
+
+/* Badge mais perto do menu e da imagem */
+.premium-badge {
+    margin-top: 0px !important;
+    margin-bottom: 6px !important;
+}
+
+/* Remove espaço vazio antes do hero da INNA */
+.premium-badge + div {
+    margin-top: 0px !important;
+}
+
+/* Reduz margem dos containers logo abaixo do menu */
+div[data-testid="stVerticalBlock"] > div {
+    margin-top: 0px !important;
+}
+
+/* Ajusta a área da imagem e card da Inna para subir */
+div[data-testid="stImage"] {
+    margin-top: 0px !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
+# AJUSTE FINAL DA LINHA DOURADA DO TOPO
+# ==========================================
+st.markdown("""
+<style>
+
+/* Sobe um pouco a linha dourada/divisor do topo */
+.inna-top-divider {
+    margin: 2px 0 6px 0 !important;
+    transform: translateY(-6px) !important;
+}
+
+/* Aproxima um pouco os cards de idioma/tema/entrar do divisor */
+.inna-top-divider + div {
+    margin-top: -6px !important;
+}
+
+/* Reduz pequena folga abaixo do subtítulo */
+.inna-top-subtitle {
+    margin-bottom: 0px !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 if app_menu == "🏠 Início":
 
     # HERO PRINCIPAL DA INNA SEM HTML GRANDE
@@ -3283,9 +3784,9 @@ if app_menu == "🏠 Início":
     """, unsafe_allow_html=True)
 
     st.markdown(f"""
-    <div class="cta-box">
-        <h2>{home_t("cta_title")}</h2>
-        <p>{home_t("cta_text")}</p>
+    <div class="final-cta-premium">
+        <div class="final-cta-title">{home_t("cta_title")}</div>
+        <div class="final-cta-subtitle">{home_t("cta_text")}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -4619,6 +5120,16 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
+
+
+
+
+
+
+
+
+
 
 
 
