@@ -1239,6 +1239,10 @@ else:
     st.sidebar.info("Acesso público")
     st.sidebar.caption("Faça login para usar diagnóstico, relatório, histórico e área admin.")
 
+    if st.sidebar.button("🔑 Entrar", use_container_width=True, key="btn_sidebar_login_publico"):
+        st.session_state.app_menu_selected = "🔑 Entrar"
+        st.rerun()
+
 st.sidebar.divider()
 
 st.sidebar.caption(tr("browser_translate_warning"))
@@ -2097,6 +2101,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"Erro ao buscar histórico pela API: {error}")
+
 
 
 
