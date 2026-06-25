@@ -1,17 +1,21 @@
-import sys
-from pathlib import Path
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-sys.path.append(str(ROOT_DIR))
-
+import os
 from datetime import date
 
 import pandas as pd
+import psycopg2
 import streamlit as st
-from sqlalchemy import text
+from dotenv import load_dotenv
 
-from src.database import engine, init_db
 
+load_dotenv(".env")
+
+
+st.set_page_config(
+    page_title="INNA Analytics",
+    page_icon="📊",
+    layout="wide",
+)
 
 
 LANGUAGE_LABELS = {
@@ -41,8 +45,106 @@ CURRENCY_SYMBOLS = {
     "CHF": "CHF",
 }
 
+FIXED_LANGUAGES = [
+    "Todos",
+    "pt",
+    "en_us",
+    "en_gb",
+    "es",
+    "de",
+    "fr",
+    "it",
+    "ro",
+    "uk",
+    "ru",
+    "ar",
+    "ch",
+]
 
-def format_money_dashboard(value, currency="BRL", symbol=None):
+FIXED_CURRENCIES = [
+    "Todos",
+    "BRL",
+    "USD",
+    "GBP",
+    "EUR",
+    "RON",
+    "UAH",
+    "RUB",
+    "SAR",
+    "CHF",
+]
+
+
+def get_connection():
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        st.error("DATABASE_URL não configurada.")
+        st.stop()
+
+    return psycopg2.connect(database_url)
+
+
+@st.cache_data(ttl=60)
+def load_data():
+    conn = get_connection()
+
+    diagnosticos_query = """
+    SELECT
+        id,
+        data_hora,
+        nome,
+        renda_mensal,
+        saldo_estimado,
+        comprometimento_renda_percentual,
+        score_financeiro,
+        nivel_risco,
+        idioma,
+        moeda,
+        simbolo_moeda,
+        objetivo
+    FROM diagnosticos_financeiros
+    ORDER BY data_hora DESC;
+    """
+
+    feedbacks_query = """
+    SELECT *
+    FROM feedbacks_usuarios
+    ORDER BY data_hora DESC;
+    """
+
+    eventos_query = """
+    SELECT
+        id,
+        data_hora,
+        canal,
+        usuario,
+        usuario_id,
+        idioma,
+        moeda,
+        status,
+        diagnostico_id,
+        metadata
+    FROM interacoes_inna
+    WHERE canal NOT LIKE 'teste%%'
+      AND COALESCE(metadata->>'teste', 'false') <> 'true'
+      AND COALESCE(metadata->>'teste_controlado', 'false') <> 'true'
+    ORDER BY data_hora DESC;
+    """
+
+    diagnosticos_df = pd.read_sql(diagnosticos_query, conn)
+    feedbacks_df = pd.read_sql(feedbacks_query, conn)
+    eventos_df = pd.read_sql(eventos_query, conn)
+
+    conn.close()
+
+    for df in [diagnosticos_df, feedbacks_df, eventos_df]:
+        if not df.empty and "data_hora" in df.columns:
+            df["data_hora"] = pd.to_datetime(df["data_hora"], errors="coerce")
+
+    return diagnosticos_df, feedbacks_df, eventos_df
+
+
+def format_money(value, currency="BRL", symbol=None):
     try:
         amount = float(value or 0)
     except Exception:
@@ -59,815 +161,751 @@ def format_money_dashboard(value, currency="BRL", symbol=None):
     return f"{symbol} {formatted}"
 
 
-def format_lang_dashboard(lang):
+def format_lang(lang):
     lang = str(lang or "não informado")
     return LANGUAGE_LABELS.get(lang, lang)
 
 
-def safe_value(value, fallback="não informado"):
+def safe_text(value, fallback="não informado"):
     if value is None:
         return fallback
+
     value = str(value).strip()
     return value if value else fallback
 
 
-st.set_page_config(
-    page_title="Dashboard INNA",
-    page_icon="📊",
-    layout="wide",
-)
+def translate_risk(risk, lang):
+    value = str(risk or "").strip().lower()
 
-st.title("📊 Dashboard — INNA Financial Coach AI")
-st.subheader("Analytics financeiro, feedbacks e validação com usuários via PostgreSQL")
+    normalized = {
+        "baixo": "low",
+        "baixa": "low",
+        "low": "low",
+        "médio": "medium",
+        "medio": "medium",
+        "média": "medium",
+        "media": "medium",
+        "medium": "medium",
+        "alto": "high",
+        "alta": "high",
+        "high": "high",
+        "indefinido": "undefined",
+        "undefined": "undefined",
+    }.get(value, value)
 
-st.info(
-    "Este dashboard lê dados diretamente do PostgreSQL configurado no projeto, podendo ser local ou Neon. "
-    "Ele será usado para validar uso real, métricas de hackathon e evolução futura."
-)
+    translations = {
+        "pt": {"low": "Baixo", "medium": "Médio", "high": "Alto", "undefined": "Indefinido"},
+        "en_us": {"low": "Low", "medium": "Medium", "high": "High", "undefined": "Undefined"},
+        "en_gb": {"low": "Low", "medium": "Medium", "high": "High", "undefined": "Undefined"},
+        "es": {"low": "Bajo", "medium": "Medio", "high": "Alto", "undefined": "Indefinido"},
+        "de": {"low": "Niedrig", "medium": "Mittel", "high": "Hoch", "undefined": "Nicht definiert"},
+        "fr": {"low": "Faible", "medium": "Moyen", "high": "Élevé", "undefined": "Non défini"},
+        "it": {"low": "Basso", "medium": "Medio", "high": "Alto", "undefined": "Non definito"},
+        "ro": {"low": "Scăzut", "medium": "Mediu", "high": "Ridicat", "undefined": "Nedefinit"},
+        "uk": {"low": "Низький", "medium": "Середній", "high": "Високий", "undefined": "Невизначено"},
+        "ru": {"low": "Низкий", "medium": "Средний", "high": "Высокий", "undefined": "Не определено"},
+        "ar": {"low": "منخفض", "medium": "متوسط", "high": "مرتفع", "undefined": "غير محدد"},
+        "ch": {"low": "Low", "medium": "Medium", "high": "High", "undefined": "Undefined"},
+    }
 
-
-def load_table(query: str) -> pd.DataFrame:
-    try:
-        init_db()
-
-        with engine.connect() as connection:
-            return pd.read_sql(text(query), connection)
-
-    except Exception as error:
-        st.error(f"Erro ao carregar dados do PostgreSQL: {error}")
-        return pd.DataFrame()
-
-
-if st.button("🔄 Atualizar dados"):
-    st.rerun()
-
-
-diagnosticos_df = load_table("""
-    SELECT
-        id,
-        data_hora,
-        nome,
-        renda_mensal,
-        gastos_fixos,
-        gastos_variaveis,
-        dividas_mensais,
-        reserva_atual,
-        objetivo,
-        saldo_estimado,
-        comprometimento_renda_percentual,
-        meses_reserva_estimados,
-        score_financeiro,
-        nivel_risco,
-        diagnostico,
-        plano_30_dias
-    FROM diagnosticos_financeiros
-    ORDER BY id ASC
-""")
-
-feedbacks_df = load_table("""
-    SELECT
-        id,
-        data_hora,
-        nome,
-        util,
-        comentario,
-        score_financeiro,
-        nivel_risco
-    FROM feedbacks_usuarios
-    ORDER BY id ASC
-""")
-
-eventos_df = load_table("""
-    SELECT
-        id,
-        data_hora,
-        canal,
-        usuario,
-        idioma,
-        moeda,
-        status,
-        diagnostico_id,
-        metadata
-    FROM interacoes_inna
-    WHERE canal NOT LIKE 'teste%'
-      AND COALESCE(metadata->>'teste', 'false') <> 'true'
-    ORDER BY id ASC
-""")
+    return translations.get(str(lang), translations["pt"]).get(normalized, str(risk or "Indefinido"))
 
 
-if diagnosticos_df.empty:
-    st.warning("Ainda não existem diagnósticos registrados no PostgreSQL.")
-    st.stop()
+def add_display_columns(df):
+    if df.empty:
+        return df
 
+    df = df.copy()
 
-diagnosticos_df["data_hora"] = pd.to_datetime(
-    diagnosticos_df["data_hora"],
-    errors="coerce",
-)
-
-if not feedbacks_df.empty:
-    feedbacks_df["data_hora"] = pd.to_datetime(
-        feedbacks_df["data_hora"],
-        errors="coerce",
-    )
-
-if not eventos_df.empty:
-    eventos_df["data_hora"] = pd.to_datetime(
-        eventos_df["data_hora"],
-        errors="coerce",
-    )
-
-
-st.divider()
-
-st.write("## 🔎 Filtros")
-
-min_data = diagnosticos_df["data_hora"].min()
-max_data = diagnosticos_df["data_hora"].max()
-
-if pd.isna(min_data) or pd.isna(max_data):
-    data_inicio = date.today()
-    data_fim = date.today()
-else:
-    data_inicio = min_data.date()
-    data_fim = max_data.date()
-
-col_data1, col_data2 = st.columns(2)
-
-with col_data1:
-    filtro_data_inicio = st.date_input(
-        "Data inicial",
-        value=data_inicio,
-        format="DD/MM/YYYY",
-    )
-
-with col_data2:
-    filtro_data_fim = st.date_input(
-        "Data final",
-        value=data_fim,
-        format="DD/MM/YYYY",
-    )
-
-st.write("### Atalhos de período")
-
-meses_disponiveis = ["Todos"]
-
-if "data_hora" in diagnosticos_df.columns:
-    meses_unicos = (
-        diagnosticos_df["data_hora"]
-        .dropna()
-        .dt.to_period("M")
-        .astype(str)
-        .sort_values()
-        .unique()
-        .tolist()
-    )
-
-    meses_disponiveis += meses_unicos
-
-filtro_mes = st.selectbox(
-    "Filtrar por mês",
-    meses_disponiveis,
-)
-
-col_filter1, col_filter2, col_filter3, col_filter4, col_filter5 = st.columns(5)
-
-with col_filter1:
-    nomes_disponiveis = ["Todos"] + sorted(
-        diagnosticos_df["nome"].dropna().unique().tolist()
-    )
-    filtro_nome = st.selectbox("Filtrar por usuário", nomes_disponiveis)
-
-with col_filter2:
-    riscos_disponiveis = ["Todos"] + sorted(
-        diagnosticos_df["nivel_risco"].dropna().unique().tolist()
-    )
-    filtro_risco = st.selectbox("Filtrar por risco", riscos_disponiveis)
-
-with col_filter3:
-    if feedbacks_df.empty:
-        feedbacks_disponiveis = ["Todos"]
-    else:
-        feedbacks_disponiveis = ["Todos"] + sorted(
-            feedbacks_df["util"].dropna().unique().tolist()
+    if "nivel_risco" in df.columns:
+        df["risco_exibicao"] = df.apply(
+            lambda row: translate_risk(row.get("nivel_risco"), row.get("idioma")),
+            axis=1,
         )
 
-    filtro_feedback = st.selectbox("Filtrar por feedback", feedbacks_disponiveis)
+    if "saldo_estimado" in df.columns:
+        df["saldo_formatado"] = df.apply(
+            lambda row: format_money(
+                row.get("saldo_estimado"),
+                row.get("moeda"),
+                row.get("simbolo_moeda"),
+            ),
+            axis=1,
+        )
 
-with col_filter4:
-    idiomas_disponiveis = [
-        "Todos",
-        "pt",
-        "en_us",
-        "en_gb",
-        "es",
-        "de",
-        "fr",
-        "it",
-        "ro",
-        "uk",
-        "ru",
-        "ar",
-        "ch",
-    ]
+    if "idioma" in df.columns:
+        df["idioma_exibicao"] = df["idioma"].apply(format_lang)
 
-    filtro_idioma = st.selectbox("Filtrar por idioma", idiomas_disponiveis)
-
-with col_filter5:
-    moedas_disponiveis = [
-        "Todos",
-        "BRL",
-        "USD",
-        "GBP",
-        "EUR",
-        "RON",
-        "UAH",
-        "RUB",
-        "SAR",
-        "CHF",
-    ]
-
-    filtro_moeda = st.selectbox("Filtrar por moeda", moedas_disponiveis)
+    return df
 
 
-diagnosticos_filtrados = diagnosticos_df.copy()
-feedbacks_filtrados = feedbacks_df.copy()
-eventos_filtrados = eventos_df.copy()
+def filter_by_date(df, start_date, end_date):
+    if df.empty or "data_hora" not in df.columns:
+        return df
 
-inicio_periodo = pd.to_datetime(filtro_data_inicio)
-fim_periodo = pd.to_datetime(filtro_data_fim) + pd.Timedelta(days=1)
+    start_ts = pd.Timestamp(start_date)
+    end_ts = pd.Timestamp(end_date) + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
 
-diagnosticos_filtrados = diagnosticos_filtrados[
-    (diagnosticos_filtrados["data_hora"] >= inicio_periodo)
-    & (diagnosticos_filtrados["data_hora"] < fim_periodo)
-]
+    return df[(df["data_hora"] >= start_ts) & (df["data_hora"] <= end_ts)]
 
-if not feedbacks_filtrados.empty:
-    feedbacks_filtrados = feedbacks_filtrados[
-        (feedbacks_filtrados["data_hora"] >= inicio_periodo)
-        & (feedbacks_filtrados["data_hora"] < fim_periodo)
-    ]
 
-if not eventos_filtrados.empty:
-    eventos_filtrados = eventos_filtrados[
-        (eventos_filtrados["data_hora"] >= inicio_periodo)
-        & (eventos_filtrados["data_hora"] < fim_periodo)
-    ]
+def filter_dataframe(
+    diagnosticos_df,
+    feedbacks_df,
+    eventos_df,
+    start_date,
+    end_date,
+    filtro_usuario,
+    filtro_risco,
+    filtro_feedback,
+    filtro_idioma,
+    filtro_moeda,
+):
+    diagnosticos = filter_by_date(diagnosticos_df, start_date, end_date)
+    feedbacks = filter_by_date(feedbacks_df, start_date, end_date)
+    eventos = filter_by_date(eventos_df, start_date, end_date)
 
-if filtro_mes != "Todos":
-    diagnosticos_filtrados = diagnosticos_filtrados[
-        diagnosticos_filtrados["data_hora"].dt.to_period("M").astype(str) == filtro_mes
-    ]
+    if filtro_usuario != "Todos" and not diagnosticos.empty:
+        diagnosticos = diagnosticos[diagnosticos["nome"].astype(str) == filtro_usuario]
 
-    if not feedbacks_filtrados.empty:
-        feedbacks_filtrados = feedbacks_filtrados[
-            feedbacks_filtrados["data_hora"].dt.to_period("M").astype(str) == filtro_mes
+        if not feedbacks.empty and "nome" in feedbacks.columns:
+            feedbacks = feedbacks[feedbacks["nome"].astype(str) == filtro_usuario]
+
+        if not eventos.empty:
+            ids = diagnosticos["id"].dropna().astype(int).tolist()
+            eventos = eventos[
+                (eventos["usuario"].astype(str) == filtro_usuario)
+                | (eventos["diagnostico_id"].isin(ids))
+            ]
+
+    if filtro_risco != "Todos" and not diagnosticos.empty:
+        diagnosticos = diagnosticos[
+            diagnosticos.apply(
+                lambda row: translate_risk(row.get("nivel_risco"), row.get("idioma")) == filtro_risco
+                or str(row.get("nivel_risco")) == filtro_risco,
+                axis=1,
+            )
         ]
 
-    if not eventos_filtrados.empty:
-        eventos_filtrados = eventos_filtrados[
-            eventos_filtrados["data_hora"].dt.to_period("M").astype(str) == filtro_mes
-        ]
+    if filtro_feedback != "Todos" and not feedbacks.empty and "util" in feedbacks.columns:
+        feedbacks = feedbacks[feedbacks["util"].astype(str) == filtro_feedback]
 
-if filtro_nome != "Todos":
-    diagnosticos_filtrados = diagnosticos_filtrados[
-        diagnosticos_filtrados["nome"] == filtro_nome
-    ]
+    if filtro_idioma != "Todos":
+        if not diagnosticos.empty and "idioma" in diagnosticos.columns:
+            diagnosticos = diagnosticos[diagnosticos["idioma"].astype(str) == filtro_idioma]
 
-    if not feedbacks_filtrados.empty:
-        feedbacks_filtrados = feedbacks_filtrados[
-            feedbacks_filtrados["nome"] == filtro_nome
-        ]
+        if not eventos.empty and "idioma" in eventos.columns:
+            eventos = eventos[eventos["idioma"].astype(str) == filtro_idioma]
 
-    if not eventos_filtrados.empty and "usuario" in eventos_filtrados.columns:
-        eventos_filtrados = eventos_filtrados[
-            eventos_filtrados["usuario"] == filtro_nome
-        ]
+    if filtro_moeda != "Todos":
+        if not diagnosticos.empty and "moeda" in diagnosticos.columns:
+            diagnosticos = diagnosticos[diagnosticos["moeda"].astype(str) == filtro_moeda]
 
-if filtro_risco != "Todos":
-    diagnosticos_filtrados = diagnosticos_filtrados[
-        diagnosticos_filtrados["nivel_risco"] == filtro_risco
-    ]
+        if not eventos.empty and "moeda" in eventos.columns:
+            eventos = eventos[eventos["moeda"].astype(str) == filtro_moeda]
 
-    if not feedbacks_filtrados.empty:
-        feedbacks_filtrados = feedbacks_filtrados[
-            feedbacks_filtrados["nivel_risco"] == filtro_risco
-        ]
-
-if filtro_feedback != "Todos" and not feedbacks_filtrados.empty:
-    feedbacks_filtrados = feedbacks_filtrados[
-        feedbacks_filtrados["util"] == filtro_feedback
-    ]
-
-if filtro_idioma != "Todos" and "idioma" in diagnosticos_filtrados.columns:
-    diagnosticos_filtrados = diagnosticos_filtrados[
-        diagnosticos_filtrados["idioma"].astype(str) == filtro_idioma
-    ]
-
-if filtro_moeda != "Todos" and "moeda" in diagnosticos_filtrados.columns:
-    diagnosticos_filtrados = diagnosticos_filtrados[
-        diagnosticos_filtrados["moeda"].astype(str) == filtro_moeda
-    ]
+    return add_display_columns(diagnosticos), feedbacks, eventos
 
 
-st.divider()
-
-st.write("## 📌 Indicadores principais")
-
-total_diagnosticos = len(diagnosticos_filtrados)
-usuarios_unicos = diagnosticos_filtrados["nome"].nunique()
-score_medio = diagnosticos_filtrados["score_financeiro"].mean()
-saldo_medio = diagnosticos_filtrados["saldo_estimado"].mean()
-
-if feedbacks_filtrados.empty:
-    total_feedbacks = 0
-    taxa_util = 0
-else:
-    total_feedbacks = len(feedbacks_filtrados)
-    feedbacks_positivos = feedbacks_filtrados[
-        feedbacks_filtrados["util"] == "Sim"
-    ].shape[0]
-    taxa_util = (feedbacks_positivos / total_feedbacks) * 100 if total_feedbacks > 0 else 0
-
-col1, col2, col3, col4, col5 = st.columns(5)
-
-col1.metric("Diagnósticos", total_diagnosticos)
-col2.metric("Usuários únicos", usuarios_unicos)
-col3.metric("Score médio", f"{score_medio:.1f}/100" if total_diagnosticos > 0 else "0/100")
-col4.metric("Saldo médio", f"R$ {saldo_medio:.2f}" if total_diagnosticos > 0 else "R$ 0.00")
-col5.metric("Feedback útil", f"{taxa_util:.1f}%")
-
-st.divider()
-
-st.divider()
-
-st.write("## 👤 Resumo do usuário filtrado")
-
-if diagnosticos_filtrados.empty:
-    st.caption("Nenhum diagnóstico encontrado para os filtros selecionados.")
-else:
-    diagnosticos_resumo = diagnosticos_filtrados.copy()
-
-    if "data_hora" in diagnosticos_resumo.columns:
-        diagnosticos_resumo = diagnosticos_resumo.sort_values("data_hora")
-
-    ultimo_diag = diagnosticos_resumo.iloc[-1]
-
-    usuario_resumo = safe_value(ultimo_diag.get("nome"))
-    idioma_resumo = safe_value(ultimo_diag.get("idioma"))
-    moeda_resumo = safe_value(ultimo_diag.get("moeda"))
-    simbolo_resumo = safe_value(ultimo_diag.get("simbolo_moeda"), CURRENCY_SYMBOLS.get(moeda_resumo, moeda_resumo))
-    risco_resumo = safe_value(ultimo_diag.get("nivel_risco"))
-    score_resumo = ultimo_diag.get("score_financeiro", 0)
-    saldo_resumo = ultimo_diag.get("saldo_estimado", 0)
-
-    canal_resumo = "não informado"
-    if "eventos_filtrados" in globals() and not eventos_filtrados.empty and "canal" in eventos_filtrados.columns:
-        eventos_resumo = eventos_filtrados.copy()
-        if "data_hora" in eventos_resumo.columns:
-            eventos_resumo = eventos_resumo.sort_values("data_hora")
-        canal_resumo = safe_value(eventos_resumo.iloc[-1].get("canal"))
-
-    col_res1, col_res2, col_res3, col_res4 = st.columns(4)
-
-    col_res1.metric("Usuário", usuario_resumo)
-    col_res2.metric("Idioma", format_lang_dashboard(idioma_resumo))
-    col_res3.metric("Moeda", moeda_resumo)
-    col_res4.metric("Canal mais recente", canal_resumo)
-
-    col_res5, col_res6, col_res7 = st.columns(3)
-
-    col_res5.metric("Score financeiro", f"{float(score_resumo or 0):.1f}/100")
-    col_res6.metric("Risco", risco_resumo)
-    col_res7.metric(
-        "Saldo estimado",
-        format_money_dashboard(saldo_resumo, moeda_resumo, simbolo_resumo),
+def render_header():
+    st.title("📊 Dashboard — INNA Financial Coach AI")
+    st.subheader("Analytics financeiro, feedbacks e validação com usuários via PostgreSQL")
+    st.info(
+        "Este dashboard lê dados diretamente do PostgreSQL/Neon e valida uso real por canal, idioma, moeda, diagnóstico, PDF, e-mail e Telegram."
     )
+
+    if st.button("🔄 Atualizar dados"):
+        st.cache_data.clear()
+        st.rerun()
+
+
+def render_filters(diagnosticos_df, feedbacks_df):
+    st.sidebar.title("🧭 INNA Analytics")
+    st.sidebar.caption("Dashboard administrativo")
+
+    menu = st.sidebar.radio(
+        "Menu",
+        [
+            "📌 Visão Geral",
+            "🌐 Eventos Multicanal",
+            "🌍 Visão Internacional",
+            "👤 Diagnósticos",
+            "💬 Feedbacks",
+            "📈 Evolução",
+            "🧠 Leitura Executiva",
+            "📤 Exportar",
+        ],
+    )
+
+    st.sidebar.divider()
+    st.sidebar.write("### 🔎 Filtros")
+
+    today = date.today()
+
+    if not diagnosticos_df.empty and "data_hora" in diagnosticos_df.columns:
+        min_date = diagnosticos_df["data_hora"].min().date()
+        max_date = diagnosticos_df["data_hora"].max().date()
+    else:
+        min_date = today
+        max_date = today
+
+    start_date = st.sidebar.date_input("Data inicial", value=min_date)
+    end_date = st.sidebar.date_input("Data final", value=max_date)
+
+    usuarios = ["Todos"]
+    if not diagnosticos_df.empty and "nome" in diagnosticos_df.columns:
+        usuarios += sorted(diagnosticos_df["nome"].dropna().astype(str).unique().tolist())
+
+    filtro_usuario = st.sidebar.selectbox("Filtrar por usuário", usuarios)
+
+    riscos = ["Todos"]
+    if not diagnosticos_df.empty and "nivel_risco" in diagnosticos_df.columns:
+        temp = add_display_columns(diagnosticos_df)
+        riscos += sorted(temp["risco_exibicao"].dropna().astype(str).unique().tolist())
+
+    filtro_risco = st.sidebar.selectbox("Filtrar por risco", riscos)
+
+    feedbacks = ["Todos"]
+    if not feedbacks_df.empty and "util" in feedbacks_df.columns:
+        feedbacks += sorted(feedbacks_df["util"].dropna().astype(str).unique().tolist())
+
+    filtro_feedback = st.sidebar.selectbox("Filtrar por feedback", feedbacks)
+
+    filtro_idioma = st.sidebar.selectbox("Filtrar por idioma", FIXED_LANGUAGES)
+    filtro_moeda = st.sidebar.selectbox("Filtrar por moeda", FIXED_CURRENCIES)
+
+    st.sidebar.divider()
+    st.sidebar.caption("Use os filtros para analisar usuário, idioma, moeda e canal sem misturar resultados internacionais.")
+
+    return (
+        menu,
+        start_date,
+        end_date,
+        filtro_usuario,
+        filtro_risco,
+        filtro_feedback,
+        filtro_idioma,
+        filtro_moeda,
+    )
+
+
+def get_currency_context(df):
+    if df.empty or "moeda" not in df.columns:
+        return "BRL", "R$"
+
+    moedas = df["moeda"].dropna().astype(str).unique().tolist()
+
+    if len(moedas) == 1:
+        moeda = moedas[0]
+        simbolo = CURRENCY_SYMBOLS.get(moeda, moeda)
+
+        if "simbolo_moeda" in df.columns:
+            simbolos = df["simbolo_moeda"].dropna().astype(str).unique().tolist()
+            if simbolos:
+                simbolo = simbolos[0]
+
+        return moeda, simbolo
+
+    return "MULTI", ""
+
+
+def render_main_metrics(diagnosticos_df, feedbacks_df):
+    total_diagnosticos = len(diagnosticos_df)
+    usuarios_unicos = diagnosticos_df["nome"].nunique() if not diagnosticos_df.empty else 0
+    score_medio = diagnosticos_df["score_financeiro"].mean() if not diagnosticos_df.empty else 0
+    saldo_medio = diagnosticos_df["saldo_estimado"].mean() if not diagnosticos_df.empty else 0
+
+    moeda, simbolo = get_currency_context(diagnosticos_df)
+    saldo_label = "Ver por moeda" if moeda == "MULTI" else format_money(saldo_medio, moeda, simbolo)
+
+    feedback_util = 0
+    if not feedbacks_df.empty and "util" in feedbacks_df.columns:
+        total_feedbacks = len(feedbacks_df)
+        uteis = feedbacks_df["util"].astype(str).str.lower().isin(["sim", "true", "1", "yes"]).sum()
+        feedback_util = (uteis / total_feedbacks * 100) if total_feedbacks > 0 else 0
+
+    st.write("## 📌 Indicadores principais")
+
+    col1, col2, col3, col4, col5 = st.columns(5)
+    col1.metric("Diagnósticos", total_diagnosticos)
+    col2.metric("Usuários únicos", usuarios_unicos)
+    col3.metric("Score médio", f"{score_medio:.1f}/100")
+    col4.metric("Saldo médio", saldo_label)
+    col5.metric("Feedback útil", f"{feedback_util:.1f}%")
+
+
+def render_user_summary(diagnosticos_df, eventos_df):
+    st.write("## 👤 Resumo do usuário filtrado")
+
+    if diagnosticos_df.empty:
+        st.warning("Nenhum diagnóstico encontrado para os filtros selecionados.")
+        return
+
+    df = diagnosticos_df.copy()
+
+    if "data_hora" in df.columns:
+        df = df.sort_values("data_hora")
+
+    ultimo = df.iloc[-1]
+
+    usuario = safe_text(ultimo.get("nome"))
+    idioma = safe_text(ultimo.get("idioma"))
+    moeda = safe_text(ultimo.get("moeda"))
+    simbolo = safe_text(ultimo.get("simbolo_moeda"), CURRENCY_SYMBOLS.get(moeda, moeda))
+    risco = safe_text(ultimo.get("risco_exibicao", ultimo.get("nivel_risco")))
+    score = float(ultimo.get("score_financeiro") or 0)
+    saldo = ultimo.get("saldo_estimado") or 0
+
+    canal = "não informado"
+    if not eventos_df.empty and "canal" in eventos_df.columns:
+        ev = eventos_df.copy()
+        if "data_hora" in ev.columns:
+            ev = ev.sort_values("data_hora")
+        canal = safe_text(ev.iloc[-1].get("canal"))
+
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Usuário", usuario)
+    col2.metric("Idioma", format_lang(idioma))
+    col3.metric("Moeda", moeda)
+    col4.metric("Canal mais recente", canal)
+
+    col5, col6, col7 = st.columns(3)
+    col5.metric("Score financeiro", f"{score:.1f}/100")
+    col6.metric("Risco", risco)
+    col7.metric("Saldo estimado", format_money(saldo, moeda, simbolo))
 
     st.caption(
-        "Este resumo ajuda a interpretar rapidamente o usuário filtrado, separando idioma, moeda, canal, score, risco e saldo estimado."
+        "Resumo executivo do usuário filtrado, separando idioma, moeda, canal, score, risco e saldo estimado."
     )
 
-st.divider()
 
-st.write("## 🌐 Eventos multicanal reais")
+def render_overview(diagnosticos_df, feedbacks_df, eventos_df):
+    render_main_metrics(diagnosticos_df, feedbacks_df)
+    st.divider()
+    render_user_summary(diagnosticos_df, eventos_df)
 
-if eventos_filtrados.empty:
-    st.caption("Ainda não há eventos multicanal reais registrados no período selecionado.")
-else:
-    eventos_total = len(eventos_filtrados)
-    canais_ativos = eventos_filtrados["canal"].nunique()
 
-    ultimo_evento = eventos_filtrados.sort_values("data_hora").tail(1)
-    ultimo_canal = ultimo_evento["canal"].iloc[0] if not ultimo_evento.empty else "-"
+def render_events(eventos_df, diagnosticos_df, feedbacks_df):
+    st.write("## 🌐 Eventos multicanal reais")
 
-    col_event1, col_event2, col_event3 = st.columns(3)
-    col_event1.metric("Eventos reais", eventos_total)
-    col_event2.metric("Canais ativos", canais_ativos)
-    col_event3.metric("Último canal", ultimo_canal)
+    if eventos_df.empty:
+        st.warning("Nenhum evento encontrado para os filtros selecionados.")
+        return
 
-    eventos_por_canal = eventos_filtrados["canal"].value_counts()
-    st.bar_chart(eventos_por_canal)
+    eventos_reais = len(eventos_df)
+    canais_ativos = eventos_df["canal"].nunique() if "canal" in eventos_df.columns else 0
+    ultimo_canal = eventos_df.iloc[0]["canal"] if "canal" in eventos_df.columns else "não informado"
 
-    eventos_table = eventos_por_canal.reset_index()
-    eventos_table.columns = ["canal", "quantidade"]
-    st.dataframe(eventos_table, use_container_width=True)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Eventos reais", eventos_reais)
+    col2.metric("Canais ativos", canais_ativos)
+    col3.metric("Último canal", ultimo_canal)
+
+    if "canal" in eventos_df.columns:
+        canal_counts = eventos_df["canal"].fillna("não informado").astype(str).value_counts()
+        if len(canal_counts) > 1:
+            st.bar_chart(canal_counts)
+        else:
+            st.caption("Somente um canal encontrado no filtro atual.")
+
+        canal_table = canal_counts.reset_index()
+        canal_table.columns = ["canal", "quantidade"]
+        st.dataframe(canal_table, use_container_width=True)
 
     with st.expander("Ver últimos eventos reais"):
-        colunas_eventos = [
-            "id",
-            "data_hora",
-            "canal",
-            "usuario",
-            "idioma",
-            "moeda",
-            "status",
-            "diagnostico_id",
-        ]
+        st.dataframe(eventos_df.head(20), use_container_width=True)
 
-        colunas_eventos = [
-            coluna for coluna in colunas_eventos
-            if coluna in eventos_filtrados.columns
-        ]
-
-        st.dataframe(
-            eventos_filtrados[colunas_eventos].tail(20),
-            use_container_width=True,
-        )
-
-st.divider()
+    st.divider()
+    render_funnel(eventos_df, diagnosticos_df, feedbacks_df)
 
 
-col_left, col_right = st.columns(2)
+def render_funnel(eventos_df, diagnosticos_df, feedbacks_df):
+    st.write("## 🧭 Funil de uso")
 
-st.divider()
+    diagnosticos_count = len(diagnosticos_df)
+    pdf_downloads = int((eventos_df["canal"] == "pdf-download").sum()) if not eventos_df.empty else 0
+    emails = int((eventos_df["canal"] == "email").sum()) if not eventos_df.empty else 0
+    telegram = int((eventos_df["canal"] == "telegram").sum()) if not eventos_df.empty else 0
+    feedbacks_count = len(feedbacks_df) if not feedbacks_df.empty else 0
 
-st.write("## 🌍 Visão internacional")
+    taxa_pdf = (pdf_downloads / diagnosticos_count * 100) if diagnosticos_count > 0 else 0
 
-if diagnosticos_filtrados.empty:
-    st.caption("Ainda não há dados internacionais para os filtros selecionados.")
-else:
-    col_int1, col_int2 = st.columns(2)
+    col1, col2, col3, col4, col5 = st.columns(5)
+    col1.metric("Diagnósticos", diagnosticos_count)
+    col2.metric("PDFs baixados", pdf_downloads)
+    col3.metric("E-mails", emails)
+    col4.metric("Feedbacks", feedbacks_count)
+    col5.metric("Taxa PDF", f"{taxa_pdf:.1f}%")
 
-    with col_int1:
+    funil = pd.DataFrame(
+        {
+            "etapa": [
+                "Diagnóstico gerado",
+                "PDF baixado",
+                "E-mail enviado",
+                "Feedback recebido",
+                "Telegram",
+            ],
+            "quantidade": [
+                diagnosticos_count,
+                pdf_downloads,
+                emails,
+                feedbacks_count,
+                telegram,
+            ],
+        }
+    )
+
+    if int(funil["quantidade"].sum()) > 5:
+        st.bar_chart(funil.set_index("etapa"))
+    else:
+        st.caption("Poucos registros no filtro atual. O funil foi exibido em tabela para evitar gráfico exagerado.")
+
+    st.dataframe(funil, use_container_width=True)
+
+
+def render_international(diagnosticos_df):
+    st.write("## 🌍 Visão internacional")
+
+    if diagnosticos_df.empty:
+        st.warning("Nenhum dado internacional encontrado para os filtros selecionados.")
+        return
+
+    col1, col2 = st.columns(2)
+
+    with col1:
         st.write("### Diagnósticos por idioma")
+        idioma_counts = diagnosticos_df["idioma"].fillna("não informado").astype(str).value_counts()
 
-        if "idioma" in diagnosticos_filtrados.columns:
-            idioma_counts = diagnosticos_filtrados["idioma"].fillna("não informado").astype(str).value_counts()
-
-            if len(idioma_counts) > 1:
-                st.bar_chart(idioma_counts)
-            else:
-                st.caption("Somente um idioma encontrado nos filtros atuais.")
-
-            idioma_table = idioma_counts.reset_index()
-            idioma_table.columns = ["idioma", "diagnósticos"]
-            st.dataframe(idioma_table, use_container_width=True)
+        if len(idioma_counts) > 1:
+            st.bar_chart(idioma_counts)
         else:
-            st.caption("Coluna idioma não encontrada.")
+            st.caption("Somente um idioma encontrado nos filtros atuais.")
 
-    with col_int2:
+        idioma_table = idioma_counts.reset_index()
+        idioma_table.columns = ["idioma", "diagnósticos"]
+        idioma_table["idioma_nome"] = idioma_table["idioma"].apply(format_lang)
+        st.dataframe(idioma_table, use_container_width=True)
+
+    with col2:
         st.write("### Diagnósticos por moeda")
+        moeda_counts = diagnosticos_df["moeda"].fillna("não informado").astype(str).value_counts()
 
-        if "moeda" in diagnosticos_filtrados.columns:
-            moeda_counts = diagnosticos_filtrados["moeda"].fillna("não informado").astype(str).value_counts()
-
-            if len(moeda_counts) > 1:
-                st.bar_chart(moeda_counts)
-            else:
-                st.caption("Somente uma moeda encontrada nos filtros atuais.")
-
-            moeda_table = moeda_counts.reset_index()
-            moeda_table.columns = ["moeda", "diagnósticos"]
-            st.dataframe(moeda_table, use_container_width=True)
+        if len(moeda_counts) > 1:
+            st.bar_chart(moeda_counts)
         else:
-            st.caption("Coluna moeda não encontrada.")
+            st.caption("Somente uma moeda encontrada nos filtros atuais.")
+
+        moeda_table = moeda_counts.reset_index()
+        moeda_table.columns = ["moeda", "diagnósticos"]
+        st.dataframe(moeda_table, use_container_width=True)
 
     st.write("### 💱 Saldo médio por moeda")
 
-    if "moeda" in diagnosticos_filtrados.columns:
-        saldo_por_moeda = (
-            diagnosticos_filtrados
-            .groupby("moeda", dropna=False)
-            .agg(
-                diagnosticos=("id", "count"),
-                saldo_medio=("saldo_estimado", "mean"),
-                score_medio=("score_financeiro", "mean"),
-            )
-            .reset_index()
+    saldo_por_moeda = (
+        diagnosticos_df.groupby("moeda", dropna=False)
+        .agg(
+            diagnosticos=("id", "count"),
+            saldo_medio=("saldo_estimado", "mean"),
+            score_medio=("score_financeiro", "mean"),
         )
+        .reset_index()
+    )
 
-        saldo_por_moeda["moeda"] = saldo_por_moeda["moeda"].fillna("não informado")
-        saldo_por_moeda["saldo_medio"] = saldo_por_moeda["saldo_medio"].round(2)
-        saldo_por_moeda["score_medio"] = saldo_por_moeda["score_medio"].round(1)
-        saldo_por_moeda["saldo_medio_formatado"] = saldo_por_moeda.apply(
-            lambda row: format_money_dashboard(row["saldo_medio"], row["moeda"]),
-            axis=1,
-        )
+    saldo_por_moeda["moeda"] = saldo_por_moeda["moeda"].fillna("não informado")
+    saldo_por_moeda["saldo_medio"] = saldo_por_moeda["saldo_medio"].round(2)
+    saldo_por_moeda["score_medio"] = saldo_por_moeda["score_medio"].round(1)
+    saldo_por_moeda["saldo_formatado"] = saldo_por_moeda.apply(
+        lambda row: format_money(row["saldo_medio"], row["moeda"]),
+        axis=1,
+    )
 
-        st.dataframe(saldo_por_moeda, use_container_width=True)
-    else:
-        st.caption("Coluna moeda não encontrada.")
+    st.dataframe(saldo_por_moeda, use_container_width=True)
 
     st.write("### 🌐 Resumo por idioma e moeda")
 
-    if "idioma" in diagnosticos_filtrados.columns and "moeda" in diagnosticos_filtrados.columns:
-        resumo_internacional = (
-            diagnosticos_filtrados
-            .groupby(["idioma", "moeda"], dropna=False)
+    resumo = (
+        diagnosticos_df.groupby(["idioma", "moeda"], dropna=False)
+        .agg(
+            diagnosticos=("id", "count"),
+            score_medio=("score_financeiro", "mean"),
+            saldo_medio=("saldo_estimado", "mean"),
+        )
+        .reset_index()
+    )
+
+    resumo["idioma"] = resumo["idioma"].fillna("não informado")
+    resumo["moeda"] = resumo["moeda"].fillna("não informado")
+    resumo["idioma_nome"] = resumo["idioma"].apply(format_lang)
+    resumo["score_medio"] = resumo["score_medio"].round(1)
+    resumo["saldo_medio"] = resumo["saldo_medio"].round(2)
+    resumo["saldo_formatado"] = resumo.apply(
+        lambda row: format_money(row["saldo_medio"], row["moeda"]),
+        axis=1,
+    )
+
+    st.dataframe(resumo, use_container_width=True)
+
+
+def render_diagnostics(diagnosticos_df):
+    st.write("## 👤 Diagnósticos")
+
+    if diagnosticos_df.empty:
+        st.warning("Nenhum diagnóstico encontrado para os filtros selecionados.")
+        return
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write("### ⚠️ Distribuição por risco")
+        risk_counts = diagnosticos_df["risco_exibicao"].fillna("não informado").astype(str).value_counts()
+
+        if len(risk_counts) > 1:
+            st.bar_chart(risk_counts)
+        else:
+            st.caption("Somente um nível de risco encontrado nos filtros atuais.")
+
+        risk_table = risk_counts.reset_index()
+        risk_table.columns = ["risco", "quantidade"]
+        st.dataframe(risk_table, use_container_width=True)
+
+    with col2:
+        st.write("### 🏆 Ranking de usuários por diagnósticos")
+        ranking = (
+            diagnosticos_df.groupby("nome", dropna=False)
             .agg(
-                diagnosticos=("id", "count"),
+                total_diagnosticos=("id", "count"),
                 score_medio=("score_financeiro", "mean"),
                 saldo_medio=("saldo_estimado", "mean"),
             )
             .reset_index()
+            .sort_values("total_diagnosticos", ascending=False)
         )
 
-        resumo_internacional["idioma"] = resumo_internacional["idioma"].fillna("não informado")
-        resumo_internacional["moeda"] = resumo_internacional["moeda"].fillna("não informado")
-        resumo_internacional["score_medio"] = resumo_internacional["score_medio"].round(1)
-        resumo_internacional["saldo_medio"] = resumo_internacional["saldo_medio"].round(2)
-        resumo_internacional["saldo_medio_formatado"] = resumo_internacional.apply(
-            lambda row: format_money_dashboard(row["saldo_medio"], row["moeda"]),
-            axis=1,
-        )
+        ranking["score_medio"] = ranking["score_medio"].round(1)
+        ranking["saldo_medio"] = ranking["saldo_medio"].round(2)
 
-        st.dataframe(resumo_internacional, use_container_width=True)
-    else:
-        st.caption("Colunas idioma/moeda não encontradas.")
+        st.dataframe(ranking, use_container_width=True)
 
-st.divider()
+    st.write("### 🧾 Últimos diagnósticos")
 
-st.write("## 🧭 Funil de uso")
+    cols = [
+        "id",
+        "data_hora",
+        "nome",
+        "idioma",
+        "moeda",
+        "renda_mensal",
+        "saldo_formatado",
+        "comprometimento_renda_percentual",
+        "score_financeiro",
+        "risco_exibicao",
+        "objetivo",
+    ]
 
-diagnosticos_funil = len(diagnosticos_filtrados)
+    available_cols = [col for col in cols if col in diagnosticos_df.columns]
+    st.dataframe(diagnosticos_df[available_cols].head(50), use_container_width=True)
 
-if "eventos_filtrados" in globals() and not eventos_filtrados.empty:
-    pdf_downloads = int((eventos_filtrados["canal"] == "pdf-download").sum())
-    emails_enviados = int((eventos_filtrados["canal"] == "email").sum())
-    telegram_eventos = int((eventos_filtrados["canal"] == "telegram").sum())
-else:
-    pdf_downloads = 0
-    emails_enviados = 0
-    telegram_eventos = 0
 
-feedbacks_funil = len(feedbacks_filtrados) if not feedbacks_filtrados.empty else 0
-taxa_download_pdf = (pdf_downloads / diagnosticos_funil * 100) if diagnosticos_funil > 0 else 0
+def render_feedbacks(feedbacks_df):
+    st.write("## 💬 Feedbacks")
 
-col_funil1, col_funil2, col_funil3, col_funil4, col_funil5 = st.columns(5)
-
-col_funil1.metric("Diagnósticos", diagnosticos_funil)
-col_funil2.metric("PDFs baixados", pdf_downloads)
-col_funil3.metric("E-mails", emails_enviados)
-col_funil4.metric("Feedbacks", feedbacks_funil)
-col_funil5.metric("Taxa PDF", f"{taxa_download_pdf:.1f}%")
-
-funil_df = pd.DataFrame(
-    {
-        "etapa": [
-            "Diagnóstico gerado",
-            "PDF baixado",
-            "E-mail enviado",
-            "Feedback recebido",
-            "Telegram",
-        ],
-        "quantidade": [
-            diagnosticos_funil,
-            pdf_downloads,
-            emails_enviados,
-            feedbacks_funil,
-            telegram_eventos,
-        ],
-    }
-)
-
-if int(funil_df["quantidade"].sum()) > 5:
-    st.bar_chart(funil_df.set_index("etapa"))
-else:
-    st.caption("Como há poucos registros no filtro atual, o funil foi exibido em tabela para evitar gráfico visualmente exagerado.")
-
-st.dataframe(funil_df, use_container_width=True)
-
-st.divider()
-
-with col_left:
-    st.write("## ⚠️ Distribuição por risco")
-
-    if diagnosticos_filtrados.empty:
-        st.warning("Nenhum diagnóstico encontrado para os filtros selecionados.")
-    else:
-        risco_counts = diagnosticos_filtrados["nivel_risco"].value_counts()
-        st.bar_chart(risco_counts)
-
-        risco_table = risco_counts.reset_index()
-        risco_table.columns = ["nivel_risco", "quantidade"]
-        st.dataframe(risco_table, use_container_width=True)
-
-with col_right:
-    st.write("## 👍 Feedbacks")
-
-    if feedbacks_filtrados.empty:
+    if feedbacks_df.empty:
         st.warning("Nenhum feedback encontrado para os filtros selecionados.")
+        return
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write("### 👍 Feedbacks úteis")
+        if "util" in feedbacks_df.columns:
+            util_counts = feedbacks_df["util"].fillna("não informado").astype(str).value_counts()
+            st.bar_chart(util_counts)
+            st.dataframe(util_counts.reset_index(), use_container_width=True)
+
+    with col2:
+        st.write("### 💬 Comentários recebidos")
+        comentario_cols = [col for col in ["data_hora", "nome", "comentario", "util"] if col in feedbacks_df.columns]
+        if comentario_cols:
+            st.dataframe(feedbacks_df[comentario_cols].head(30), use_container_width=True)
+        else:
+            st.caption("Ainda não há comentários preenchidos.")
+
+    st.write("### 🧾 Últimos feedbacks")
+    st.dataframe(feedbacks_df.head(50), use_container_width=True)
+
+
+def render_evolution(diagnosticos_df):
+    st.write("## 📈 Evolução")
+
+    if diagnosticos_df.empty:
+        st.warning("Nenhum diagnóstico encontrado para os filtros selecionados.")
+        return
+
+    df = diagnosticos_df.copy()
+
+    if "data_hora" in df.columns:
+        df = df.sort_values("data_hora")
+        df["data_label"] = df["data_hora"].dt.strftime("%d/%m %H:%M")
     else:
-        feedback_counts = feedbacks_filtrados["util"].value_counts()
-        st.bar_chart(feedback_counts)
+        df["data_label"] = df["id"].astype(str)
 
-        feedback_table = feedback_counts.reset_index()
-        feedback_table.columns = ["feedback", "quantidade"]
-        st.dataframe(feedback_table, use_container_width=True)
+    col1, col2 = st.columns(2)
 
+    with col1:
+        st.write("### 📈 Evolução dos scores")
+        if len(df) > 1:
+            st.line_chart(df.set_index("data_label")["score_financeiro"])
+        else:
+            st.caption("A evolução aparecerá quando houver mais de um diagnóstico no filtro.")
+            st.dataframe(df[["id", "nome", "score_financeiro"]], use_container_width=True)
 
-st.divider()
-
-col_score, col_saldo = st.columns(2)
-
-with col_score:
-    st.write("## 📈 Evolução dos scores")
-
-    if diagnosticos_filtrados.empty:
-        st.warning("Sem dados para evolução de score.")
-    else:
-        score_chart = diagnosticos_filtrados[["id", "score_financeiro"]].set_index("id")
-        st.line_chart(score_chart)
-
-with col_saldo:
-    st.write("## 💵 Evolução do saldo estimado")
-
-    if diagnosticos_filtrados.empty:
-        st.warning("Sem dados para evolução de saldo.")
-    else:
-        saldo_chart = diagnosticos_filtrados[["id", "saldo_estimado"]].set_index("id")
-        st.line_chart(saldo_chart)
+    with col2:
+        st.write("### 💵 Evolução do saldo estimado")
+        if len(df) > 1:
+            st.line_chart(df.set_index("data_label")["saldo_estimado"])
+        else:
+            st.caption("A evolução aparecerá quando houver mais de um diagnóstico no filtro.")
+            st.dataframe(df[["id", "nome", "saldo_formatado"]], use_container_width=True)
 
 
-st.divider()
+def render_executive_reading(diagnosticos_df, feedbacks_df, eventos_df):
+    st.write("## 🧠 Leitura executiva")
 
-col_rank, col_risco_score = st.columns(2)
+    total_diag = len(diagnosticos_df)
+    usuarios = diagnosticos_df["nome"].nunique() if not diagnosticos_df.empty else 0
+    score = diagnosticos_df["score_financeiro"].mean() if not diagnosticos_df.empty else 0
+    saldo = diagnosticos_df["saldo_estimado"].mean() if not diagnosticos_df.empty else 0
+    moeda, simbolo = get_currency_context(diagnosticos_df)
 
-with col_rank:
-    st.write("## 🏆 Ranking de usuários por diagnósticos")
+    risco_mais_comum = "não informado"
+    if not diagnosticos_df.empty and "risco_exibicao" in diagnosticos_df.columns:
+        risco_mais_comum = diagnosticos_df["risco_exibicao"].mode().iloc[0]
 
-    ranking_usuarios = (
-        diagnosticos_df.groupby("nome")
-        .agg(
-            total_diagnosticos=("id", "count"),
-            score_medio=("score_financeiro", "mean"),
-            saldo_medio=("saldo_estimado", "mean"),
-        )
-        .reset_index()
-        .sort_values(by="total_diagnosticos", ascending=False)
+    canal_mais_usado = "não informado"
+    if not eventos_df.empty and "canal" in eventos_df.columns:
+        canal_mais_usado = eventos_df["canal"].mode().iloc[0]
+
+    idiomas = []
+    moedas = []
+
+    if not diagnosticos_df.empty:
+        idiomas = sorted(diagnosticos_df["idioma"].dropna().astype(str).unique().tolist())
+        moedas = sorted(diagnosticos_df["moeda"].dropna().astype(str).unique().tolist())
+
+    saldo_texto = "Ver por moeda" if moeda == "MULTI" else format_money(saldo, moeda, simbolo)
+
+    st.write("### Resumo da base atual")
+
+    st.markdown(
+        f"""
+- Foram gerados **{total_diag} diagnósticos** nos filtros selecionados.
+- Existem **{usuarios} usuários únicos** na base filtrada.
+- O **score financeiro médio** é de **{score:.1f}/100**.
+- O **saldo médio estimado** é de **{saldo_texto}**.
+- O **nível de risco mais comum** é **{risco_mais_comum}**.
+- O **canal mais usado** nos eventos filtrados é **{canal_mais_usado}**.
+- Idiomas encontrados: **{", ".join(idiomas) if idiomas else "não informado"}**.
+- Moedas encontradas: **{", ".join(moedas) if moedas else "não informado"}**.
+- A visão internacional separa idioma e moeda para evitar misturar BRL, USD, GBP, EUR e outras moedas.
+
+Esses dados ajudam a validar se a INNA está gerando valor real para usuários em diferentes canais, idiomas e moedas.
+        """
     )
 
-    ranking_usuarios["score_medio"] = ranking_usuarios["score_medio"].round(1)
-    ranking_usuarios["saldo_medio"] = ranking_usuarios["saldo_medio"].round(2)
 
-    st.dataframe(ranking_usuarios, use_container_width=True)
+def render_export(diagnosticos_df, feedbacks_df, eventos_df):
+    st.write("## 📤 Exportar dados filtrados")
 
-with col_risco_score:
-    st.write("## 📊 Score médio por risco")
-
-    score_por_risco = (
-        diagnosticos_df.groupby("nivel_risco")
-        .agg(
-            quantidade=("id", "count"),
-            score_medio=("score_financeiro", "mean"),
-            saldo_medio=("saldo_estimado", "mean"),
-        )
-        .reset_index()
-    )
-
-    score_por_risco["score_medio"] = score_por_risco["score_medio"].round(1)
-    score_por_risco["saldo_medio"] = score_por_risco["saldo_medio"].round(2)
-
-    st.dataframe(score_por_risco, use_container_width=True)
-
-
-st.divider()
-
-st.write("## 📤 Exportar dados filtrados")
-
-col_export1, col_export2 = st.columns(2)
-
-with col_export1:
-    csv_diagnosticos = diagnosticos_filtrados.to_csv(
-        index=False,
-        encoding="utf-8-sig",
-    )
-
-    st.download_button(
-        label="⬇️ Baixar diagnósticos filtrados CSV",
-        data=csv_diagnosticos,
-        file_name="inna_diagnosticos_filtrados.csv",
-        mime="text/csv",
-    )
-
-with col_export2:
-    if feedbacks_filtrados.empty:
-        st.caption("Sem feedbacks filtrados para exportar.")
-    else:
-        csv_feedbacks = feedbacks_filtrados.to_csv(
-            index=False,
-            encoding="utf-8-sig",
-        )
-
+    if not diagnosticos_df.empty:
+        csv_diag = diagnosticos_df.to_csv(index=False).encode("utf-8-sig")
         st.download_button(
-            label="⬇️ Baixar feedbacks filtrados CSV",
+            "⬇️ Baixar diagnósticos filtrados CSV",
+            data=csv_diag,
+            file_name="inna_diagnosticos_filtrados.csv",
+            mime="text/csv",
+        )
+    else:
+        st.caption("Sem diagnósticos filtrados para exportar.")
+
+    if not feedbacks_df.empty:
+        csv_feedbacks = feedbacks_df.to_csv(index=False).encode("utf-8-sig")
+        st.download_button(
+            "⬇️ Baixar feedbacks filtrados CSV",
             data=csv_feedbacks,
             file_name="inna_feedbacks_filtrados.csv",
             mime="text/csv",
         )
-
-st.divider()
-
-st.write("## 🧾 Últimos diagnósticos")
-
-colunas_diagnostico = [
-    "id",
-    "data_hora",
-    "nome",
-    "renda_mensal",
-    "saldo_estimado",
-    "comprometimento_renda_percentual",
-    "score_financeiro",
-    "nivel_risco",
-    "objetivo",
-]
-
-if diagnosticos_filtrados.empty:
-    st.warning("Nenhum diagnóstico encontrado.")
-else:
-    st.dataframe(
-        diagnosticos_filtrados[colunas_diagnostico].tail(20),
-        use_container_width=True,
-    )
-
-
-st.divider()
-
-st.write("## 💬 Últimos feedbacks")
-
-if feedbacks_filtrados.empty:
-    st.warning("Nenhum feedback encontrado.")
-else:
-    colunas_feedback = [
-        "id",
-        "data_hora",
-        "nome",
-        "util",
-        "comentario",
-        "score_financeiro",
-        "nivel_risco",
-    ]
-
-    st.dataframe(
-        feedbacks_filtrados[colunas_feedback].tail(20),
-        use_container_width=True,
-    )
-
-
-st.divider()
-
-st.write("## 🗣️ Comentários recebidos")
-
-if feedbacks_filtrados.empty or "comentario" not in feedbacks_filtrados.columns:
-    st.caption("Ainda não há comentários preenchidos.")
-else:
-    comentarios = feedbacks_filtrados["comentario"].dropna()
-    comentarios = comentarios[comentarios.astype(str).str.strip() != ""]
-
-    if comentarios.empty:
-        st.caption("Ainda não há comentários preenchidos.")
     else:
-        for comentario in comentarios.tail(10):
-            st.markdown(f"> {comentario}")
+        st.caption("Sem feedbacks filtrados para exportar.")
 
-
-st.divider()
-
-st.write("## 🧠 Leitura executiva")
-
-if total_diagnosticos == 0:
-    st.warning("Ainda não há dados suficientes para análise executiva.")
-else:
-    risco_mais_comum = diagnosticos_filtrados["nivel_risco"].mode()
-
-    if not risco_mais_comum.empty:
-        risco_mais_comum = risco_mais_comum.iloc[0]
+    if not eventos_df.empty:
+        csv_eventos = eventos_df.to_csv(index=False).encode("utf-8-sig")
+        st.download_button(
+            "⬇️ Baixar eventos filtrados CSV",
+            data=csv_eventos,
+            file_name="inna_eventos_filtrados.csv",
+            mime="text/csv",
+        )
     else:
-        risco_mais_comum = "Indefinido"
+        st.caption("Sem eventos filtrados para exportar.")
 
-    st.markdown(
-        f"""
-        **Resumo da base atual:**
 
-        - Foram gerados **{total_diagnosticos} diagnósticos** nos filtros selecionados.
-        - Existem **{usuarios_unicos} usuários únicos** na base filtrada.
-        - O **score financeiro médio** é de **{score_medio:.1f}/100**.
-        - O **saldo médio estimado** é de **R$ {saldo_medio:.2f}**.
-        - O nível de risco mais comum é **{risco_mais_comum}**.
-        - A taxa de feedback útil é de **{taxa_util:.1f}%**.
-        - A visão internacional permite separar resultados por idioma e moeda, evitando misturar BRL, USD, GBP, EUR e outras moedas.
+def main():
+    render_header()
 
-        Esses dados ajudam a validar se a INNA está gerando valor real para os usuários em diferentes canais, idiomas e moedas.
-        """
+    diagnosticos_df, feedbacks_df, eventos_df = load_data()
+
+    (
+        menu,
+        start_date,
+        end_date,
+        filtro_usuario,
+        filtro_risco,
+        filtro_feedback,
+        filtro_idioma,
+        filtro_moeda,
+    ) = render_filters(diagnosticos_df, feedbacks_df)
+
+    diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados = filter_dataframe(
+        diagnosticos_df,
+        feedbacks_df,
+        eventos_df,
+        start_date,
+        end_date,
+        filtro_usuario,
+        filtro_risco,
+        filtro_feedback,
+        filtro_idioma,
+        filtro_moeda,
     )
+
+    st.divider()
+
+    if menu == "📌 Visão Geral":
+        render_overview(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
+
+    elif menu == "🌐 Eventos Multicanal":
+        render_events(eventos_filtrados, diagnosticos_filtrados, feedbacks_filtrados)
+
+    elif menu == "🌍 Visão Internacional":
+        render_international(diagnosticos_filtrados)
+
+    elif menu == "👤 Diagnósticos":
+        render_diagnostics(diagnosticos_filtrados)
+
+    elif menu == "💬 Feedbacks":
+        render_feedbacks(feedbacks_filtrados)
+
+    elif menu == "📈 Evolução":
+        render_evolution(diagnosticos_filtrados)
+
+    elif menu == "🧠 Leitura Executiva":
+        render_executive_reading(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
+
+    elif menu == "📤 Exportar":
+        render_export(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
+
+
+if __name__ == "__main__":
+    main()
