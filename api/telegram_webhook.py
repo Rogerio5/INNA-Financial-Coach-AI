@@ -1067,6 +1067,11 @@ def process_telegram_update(update: dict):
                 "objetivo": objetivo,
             }
 
+            moeda, simbolo = currency_by_telegram_lang(lang)
+            payload["idioma"] = lang
+            payload["moeda"] = moeda
+            payload["simbolo_moeda"] = simbolo
+
             send_telegram_message(
                 chat_id,
                 get_text(lang, "analyzing"),
