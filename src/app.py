@@ -1588,7 +1588,7 @@ if app_menu == "📚 Histórico":
     with st.form("historico_form_menu"):
         nome_busca = st.text_input(
             tr("history_name"),
-            value=st.session_state.get("last_payload", {}).get("nome", ""),
+            value=(st.session_state.get("last_payload") or {}).get("nome", ""),
             key="historico_nome_menu",
         )
 
@@ -1955,6 +1955,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"Erro ao buscar histórico pela API: {error}")
+
 
 
 
