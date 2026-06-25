@@ -2530,16 +2530,335 @@ if app_menu == "ℹ️ Sobre a INNA":
     st.stop()
 
 
-st.caption(f"Página atual: {app_menu}")
+
+INTERNAL_PAGE_TEXTS_INNA = {
+    "pt": {
+        "current_page": "Página atual",
+        "new_diagnosis_title": "🧾 Novo diagnóstico financeiro",
+        "overview_title": "📊 Meu panorama financeiro",
+        "report_title": "📄 Meu relatório",
+        "history_title_page": "📚 Meu histórico",
+        "feedback_title_page": "⭐ Avaliar a Inna",
+        "chat_title_page": "💬 Conversar com a Inna",
+        "admin_title_page": "🔐 Admin Analytics — INNA",
+        "no_diagnosis": "Nenhum diagnóstico gerado ainda. Primeiro vá em **🧾 Novo diagnóstico**.",
+        "api_connection_error": "Não foi possível conectar na FastAPI. Confirme se a API está rodando em http://127.0.0.1:8000.",
+        "api_timeout": "A API demorou muito para responder. Tente novamente.",
+        "unexpected_error": "Erro inesperado ao gerar diagnóstico",
+        "diagnosis_opening": "Diagnóstico gerado. Abrindo a página de resultado financeiro...",
+        "report_pdf_section": "### 📄 Relatório em PDF",
+        "back_to_result": "📊 Voltar para resultado",
+        "send_feedback": "💬 Enviar feedback",
+        "new_diagnosis_btn": "🧾 Novo diagnóstico",
+        "see_history": "📚 Ver histórico",
+        "history_found": "diagnóstico(s) encontrado(s).",
+        "score_evolution": "### Evolução do score",
+        "diagnoses_found": "### Diagnósticos encontrados",
+        "old_pdf": "📄 Baixar PDF do diagnóstico",
+        "history_pdf_error": "Não foi possível gerar PDF do histórico",
+        "history_search_error": "Erro ao buscar histórico pela API",
+        "feedback_connection_error": "Não foi possível conectar na FastAPI para enviar o feedback. Confirme se a API está rodando.",
+        "feedback_error": "Erro ao enviar feedback pela API",
+        "chat_demo_info": "Aqui ficará o chat da INNA. A próxima etapa é conectar esta tela à IA para responder dúvidas com base no último diagnóstico financeiro do usuário.",
+        "chat_question": "Digite uma dúvida financeira:",
+        "chat_placeholder": "Exemplo: Como posso melhorar meu score financeiro?",
+        "chat_button": "Enviar pergunta para a Inna",
+        "chat_empty": "Digite uma pergunta antes de enviar.",
+        "chat_demo_answer": "Ainda estou em modo demonstração. Em breve, vou responder usando IA e o contexto do seu diagnóstico financeiro.",
+    },
+    "en_us": {
+        "current_page": "Current page",
+        "new_diagnosis_title": "🧾 New financial diagnosis",
+        "overview_title": "📊 My financial overview",
+        "report_title": "📄 My report",
+        "history_title_page": "📚 My history",
+        "feedback_title_page": "⭐ Rate Inna",
+        "chat_title_page": "💬 Chat with Inna",
+        "admin_title_page": "🔐 Admin Analytics — INNA",
+        "no_diagnosis": "No diagnosis has been generated yet. First go to **🧾 New diagnosis**.",
+        "api_connection_error": "Could not connect to FastAPI. Check if the API is running at http://127.0.0.1:8000.",
+        "api_timeout": "The API took too long to respond. Please try again.",
+        "unexpected_error": "Unexpected error while generating diagnosis",
+        "diagnosis_opening": "Diagnosis generated. Opening the financial result page...",
+        "report_pdf_section": "### 📄 PDF report",
+        "back_to_result": "📊 Back to result",
+        "send_feedback": "💬 Send feedback",
+        "new_diagnosis_btn": "🧾 New diagnosis",
+        "see_history": "📚 View history",
+        "history_found": "diagnosis record(s) found.",
+        "score_evolution": "### Score evolution",
+        "diagnoses_found": "### Diagnoses found",
+        "old_pdf": "📄 Download PDF for diagnosis",
+        "history_pdf_error": "Could not generate PDF from history",
+        "history_search_error": "Error searching history through API",
+        "feedback_connection_error": "Could not connect to FastAPI to send feedback. Check if the API is running.",
+        "feedback_error": "Error sending feedback through API",
+        "chat_demo_info": "This is where the INNA chat will be. The next step is to connect this screen to AI so it can answer questions based on the user's latest financial diagnosis.",
+        "chat_question": "Type a financial question:",
+        "chat_placeholder": "Example: How can I improve my financial score?",
+        "chat_button": "Send question to Inna",
+        "chat_empty": "Type a question before sending.",
+        "chat_demo_answer": "I am still in demo mode. Soon, I will answer using AI and the context of your financial diagnosis.",
+    },
+    "en_gb": {
+        "current_page": "Current page",
+        "new_diagnosis_title": "🧾 New financial diagnosis",
+        "overview_title": "📊 My financial overview",
+        "report_title": "📄 My report",
+        "history_title_page": "📚 My history",
+        "feedback_title_page": "⭐ Rate Inna",
+        "chat_title_page": "💬 Chat with Inna",
+        "admin_title_page": "🔐 Admin Analytics — INNA",
+        "no_diagnosis": "No diagnosis has been generated yet. First go to **🧾 New diagnosis**.",
+        "api_connection_error": "Could not connect to FastAPI. Check if the API is running at http://127.0.0.1:8000.",
+        "api_timeout": "The API took too long to respond. Please try again.",
+        "unexpected_error": "Unexpected error while generating diagnosis",
+        "diagnosis_opening": "Diagnosis generated. Opening the financial result page...",
+        "report_pdf_section": "### 📄 PDF report",
+        "back_to_result": "📊 Back to result",
+        "send_feedback": "💬 Send feedback",
+        "new_diagnosis_btn": "🧾 New diagnosis",
+        "see_history": "📚 View history",
+        "history_found": "diagnosis record(s) found.",
+        "score_evolution": "### Score evolution",
+        "diagnoses_found": "### Diagnoses found",
+        "old_pdf": "📄 Download PDF for diagnosis",
+        "history_pdf_error": "Could not generate PDF from history",
+        "history_search_error": "Error searching history through API",
+        "feedback_connection_error": "Could not connect to FastAPI to send feedback. Check if the API is running.",
+        "feedback_error": "Error sending feedback through API",
+        "chat_demo_info": "This is where the INNA chat will be. The next step is to connect this screen to AI so it can answer questions based on the user's latest financial diagnosis.",
+        "chat_question": "Type a financial question:",
+        "chat_placeholder": "Example: How can I improve my financial score?",
+        "chat_button": "Send question to Inna",
+        "chat_empty": "Type a question before sending.",
+        "chat_demo_answer": "I am still in demo mode. Soon, I will answer using AI and the context of your financial diagnosis.",
+    },
+    "es": {
+        "current_page": "Página actual",
+        "new_diagnosis_title": "🧾 Nuevo diagnóstico financiero",
+        "overview_title": "📊 Mi panorama financiero",
+        "report_title": "📄 Mi informe",
+        "history_title_page": "📚 Mi historial",
+        "feedback_title_page": "⭐ Evaluar a Inna",
+        "chat_title_page": "💬 Conversar con Inna",
+        "admin_title_page": "🔐 Admin Analytics — INNA",
+        "no_diagnosis": "Aún no se ha generado ningún diagnóstico. Primero ve a **🧾 Nuevo diagnóstico**.",
+        "api_connection_error": "No fue posible conectar con FastAPI. Verifica si la API está activa en http://127.0.0.1:8000.",
+        "api_timeout": "La API tardó demasiado en responder. Inténtalo nuevamente.",
+        "unexpected_error": "Error inesperado al generar diagnóstico",
+        "diagnosis_opening": "Diagnóstico generado. Abriendo la página de resultado financiero...",
+        "report_pdf_section": "### 📄 Informe PDF",
+        "back_to_result": "📊 Volver al resultado",
+        "send_feedback": "💬 Enviar comentario",
+        "new_diagnosis_btn": "🧾 Nuevo diagnóstico",
+        "see_history": "📚 Ver historial",
+        "history_found": "diagnóstico(s) encontrado(s).",
+        "score_evolution": "### Evolución del score",
+        "diagnoses_found": "### Diagnósticos encontrados",
+        "old_pdf": "📄 Descargar PDF del diagnóstico",
+        "history_pdf_error": "No fue posible generar PDF del historial",
+        "history_search_error": "Error al buscar historial por la API",
+        "feedback_connection_error": "No fue posible conectar con FastAPI para enviar el feedback. Verifica si la API está activa.",
+        "feedback_error": "Error al enviar feedback por la API",
+        "chat_demo_info": "Aquí estará el chat de INNA. El próximo paso es conectar esta pantalla a la IA para responder preguntas con base en el último diagnóstico financiero del usuario.",
+        "chat_question": "Escribe una duda financiera:",
+        "chat_placeholder": "Ejemplo: ¿Cómo puedo mejorar mi puntuación financiera?",
+        "chat_button": "Enviar pregunta a Inna",
+        "chat_empty": "Escribe una pregunta antes de enviar.",
+        "chat_demo_answer": "Todavía estoy en modo demostración. Pronto responderé usando IA y el contexto de tu diagnóstico financiero.",
+    },
+    "de": {
+        "current_page": "Aktuelle Seite",
+        "new_diagnosis_title": "🧾 Neue Finanzdiagnose",
+        "overview_title": "📊 Mein Finanzüberblick",
+        "report_title": "📄 Mein Bericht",
+        "history_title_page": "📚 Mein Verlauf",
+        "feedback_title_page": "⭐ Inna bewerten",
+        "chat_title_page": "💬 Mit Inna sprechen",
+        "admin_title_page": "🔐 Admin Analytics — INNA",
+        "no_diagnosis": "Es wurde noch keine Diagnose erstellt. Gehen Sie zuerst zu **🧾 Neue Diagnose**.",
+        "api_connection_error": "Verbindung zur FastAPI nicht möglich. Prüfen Sie, ob die API unter http://127.0.0.1:8000 läuft.",
+        "api_timeout": "Die API hat zu lange gebraucht. Versuchen Sie es erneut.",
+        "unexpected_error": "Unerwarteter Fehler beim Erstellen der Diagnose",
+        "diagnosis_opening": "Diagnose erstellt. Finanzübersicht wird geöffnet...",
+        "report_pdf_section": "### 📄 PDF-Bericht",
+        "back_to_result": "📊 Zurück zum Ergebnis",
+        "send_feedback": "💬 Feedback senden",
+        "new_diagnosis_btn": "🧾 Neue Diagnose",
+        "see_history": "📚 Verlauf ansehen",
+        "history_found": "Diagnose(n) gefunden.",
+        "score_evolution": "### Score-Entwicklung",
+        "diagnoses_found": "### Gefundene Diagnosen",
+        "old_pdf": "📄 PDF der Diagnose herunterladen",
+        "history_pdf_error": "PDF aus dem Verlauf konnte nicht erstellt werden",
+        "history_search_error": "Fehler beim Suchen des Verlaufs über die API",
+        "feedback_connection_error": "Verbindung zur FastAPI zum Senden des Feedbacks nicht möglich.",
+        "feedback_error": "Fehler beim Senden des Feedbacks über die API",
+        "chat_demo_info": "Hier wird der INNA-Chat angezeigt. Der nächste Schritt ist, diese Seite mit KI zu verbinden.",
+        "chat_question": "Geben Sie eine Finanzfrage ein:",
+        "chat_placeholder": "Beispiel: Wie kann ich meinen Finanzscore verbessern?",
+        "chat_button": "Frage an Inna senden",
+        "chat_empty": "Geben Sie vor dem Senden eine Frage ein.",
+        "chat_demo_answer": "Ich bin noch im Demonstrationsmodus. Bald werde ich mit KI und Ihrer Finanzdiagnose antworten.",
+    },
+    "fr": {
+        "current_page": "Page actuelle",
+        "new_diagnosis_title": "🧾 Nouveau diagnostic financier",
+        "overview_title": "📊 Mon panorama financier",
+        "report_title": "📄 Mon rapport",
+        "history_title_page": "📚 Mon historique",
+        "feedback_title_page": "⭐ Évaluer Inna",
+        "chat_title_page": "💬 Parler avec Inna",
+        "admin_title_page": "🔐 Admin Analytics — INNA",
+        "no_diagnosis": "Aucun diagnostic n’a encore été généré. Allez d’abord dans **🧾 Nouveau diagnostic**.",
+        "api_connection_error": "Impossible de se connecter à FastAPI. Vérifiez si l’API fonctionne sur http://127.0.0.1:8000.",
+        "api_timeout": "L’API a mis trop de temps à répondre. Réessayez.",
+        "unexpected_error": "Erreur inattendue lors de la génération du diagnostic",
+        "diagnosis_opening": "Diagnostic généré. Ouverture de la page de résultat financier...",
+        "report_pdf_section": "### 📄 Rapport PDF",
+        "back_to_result": "📊 Retour au résultat",
+        "send_feedback": "💬 Envoyer un retour",
+        "new_diagnosis_btn": "🧾 Nouveau diagnostic",
+        "see_history": "📚 Voir l’historique",
+        "history_found": "diagnostic(s) trouvé(s).",
+        "score_evolution": "### Évolution du score",
+        "diagnoses_found": "### Diagnostics trouvés",
+        "old_pdf": "📄 Télécharger le PDF du diagnostic",
+        "history_pdf_error": "Impossible de générer le PDF de l’historique",
+        "history_search_error": "Erreur lors de la recherche de l’historique via l’API",
+        "feedback_connection_error": "Impossible de se connecter à FastAPI pour envoyer le feedback.",
+        "feedback_error": "Erreur lors de l’envoi du feedback via l’API",
+        "chat_demo_info": "C’est ici que le chat INNA sera affiché. La prochaine étape consiste à connecter cette page à l’IA.",
+        "chat_question": "Écrivez une question financière :",
+        "chat_placeholder": "Exemple : Comment améliorer mon score financier ?",
+        "chat_button": "Envoyer la question à Inna",
+        "chat_empty": "Écrivez une question avant d’envoyer.",
+        "chat_demo_answer": "Je suis encore en mode démonstration. Bientôt, je répondrai avec l’IA et votre diagnostic financier.",
+    },
+    "it": {
+        "current_page": "Pagina attuale",
+        "new_diagnosis_title": "🧾 Nuova diagnosi finanziaria",
+        "overview_title": "📊 Il mio panorama finanziario",
+        "report_title": "📄 Il mio report",
+        "history_title_page": "📚 Il mio storico",
+        "feedback_title_page": "⭐ Valuta Inna",
+        "chat_title_page": "💬 Parlare con Inna",
+        "admin_title_page": "🔐 Admin Analytics — INNA",
+        "no_diagnosis": "Non è stata ancora generata alcuna diagnosi. Vai prima su **🧾 Nuova diagnosi**.",
+        "api_connection_error": "Impossibile connettersi a FastAPI. Verifica che l’API sia attiva su http://127.0.0.1:8000.",
+        "api_timeout": "L’API ha impiegato troppo tempo a rispondere. Riprova.",
+        "unexpected_error": "Errore imprevisto durante la generazione della diagnosi",
+        "diagnosis_opening": "Diagnosi generata. Apertura della pagina del risultato finanziario...",
+        "report_pdf_section": "### 📄 Report PDF",
+        "back_to_result": "📊 Torna al risultato",
+        "send_feedback": "💬 Invia feedback",
+        "new_diagnosis_btn": "🧾 Nuova diagnosi",
+        "see_history": "📚 Vedi storico",
+        "history_found": "diagnosi trovata/e.",
+        "score_evolution": "### Evoluzione del punteggio",
+        "diagnoses_found": "### Diagnosi trovate",
+        "old_pdf": "📄 Scarica PDF della diagnosi",
+        "history_pdf_error": "Impossibile generare PDF dallo storico",
+        "history_search_error": "Errore nella ricerca dello storico tramite API",
+        "feedback_connection_error": "Impossibile connettersi a FastAPI per inviare il feedback.",
+        "feedback_error": "Errore durante l’invio del feedback tramite API",
+        "chat_demo_info": "Qui sarà disponibile la chat di INNA. Il prossimo passo è collegare questa schermata all’IA.",
+        "chat_question": "Scrivi una domanda finanziaria:",
+        "chat_placeholder": "Esempio: Come posso migliorare il mio punteggio finanziario?",
+        "chat_button": "Invia domanda a Inna",
+        "chat_empty": "Scrivi una domanda prima di inviare.",
+        "chat_demo_answer": "Sono ancora in modalità dimostrativa. Presto risponderò usando IA e la tua diagnosi finanziaria.",
+    },
+    "ro": {
+        "current_page": "Pagina curentă",
+        "new_diagnosis_title": "🧾 Diagnostic financiar nou",
+        "overview_title": "📊 Panorama mea financiară",
+        "report_title": "📄 Raportul meu",
+        "history_title_page": "📚 Istoricul meu",
+        "feedback_title_page": "⭐ Evaluează Inna",
+        "chat_title_page": "💬 Vorbește cu Inna",
+        "admin_title_page": "🔐 Admin Analytics — INNA",
+        "no_diagnosis": "Nu a fost generat încă niciun diagnostic. Mai întâi mergi la **🧾 Diagnostic nou**.",
+        "api_connection_error": "Nu s-a putut conecta la FastAPI. Verifică dacă API-ul rulează pe http://127.0.0.1:8000.",
+        "api_timeout": "API-ul a răspuns prea greu. Încearcă din nou.",
+        "unexpected_error": "Eroare neașteptată la generarea diagnosticului",
+        "diagnosis_opening": "Diagnostic generat. Se deschide pagina rezultatului financiar...",
+        "report_pdf_section": "### 📄 Raport PDF",
+        "back_to_result": "📊 Înapoi la rezultat",
+        "send_feedback": "💬 Trimite feedback",
+        "new_diagnosis_btn": "🧾 Diagnostic nou",
+        "see_history": "📚 Vezi istoricul",
+        "history_found": "diagnostic(e) găsite.",
+        "score_evolution": "### Evoluția scorului",
+        "diagnoses_found": "### Diagnostice găsite",
+        "old_pdf": "📄 Descarcă PDF-ul diagnosticului",
+        "history_pdf_error": "Nu s-a putut genera PDF din istoric",
+        "history_search_error": "Eroare la căutarea istoricului prin API",
+        "feedback_connection_error": "Nu s-a putut conecta la FastAPI pentru trimiterea feedbackului.",
+        "feedback_error": "Eroare la trimiterea feedbackului prin API",
+        "chat_demo_info": "Aici va fi chatul INNA. Următorul pas este conectarea acestei pagini la IA.",
+        "chat_question": "Scrie o întrebare financiară:",
+        "chat_placeholder": "Exemplu: Cum îmi pot îmbunătăți scorul financiar?",
+        "chat_button": "Trimite întrebarea către Inna",
+        "chat_empty": "Scrie o întrebare înainte de trimitere.",
+        "chat_demo_answer": "Sunt încă în modul demonstrație. În curând voi răspunde folosind IA și diagnosticul tău financiar.",
+    },
+    "ru": {
+        "current_page": "Текущая страница",
+        "new_diagnosis_title": "🧾 Новая финансовая диагностика",
+        "overview_title": "📊 Мой финансовый обзор",
+        "report_title": "📄 Мой отчёт",
+        "history_title_page": "📚 Моя история",
+        "feedback_title_page": "⭐ Оценить Inna",
+        "chat_title_page": "💬 Поговорить с Inna",
+        "admin_title_page": "🔐 Admin Analytics — INNA",
+        "no_diagnosis": "Диагностика ещё не создана. Сначала перейдите в **🧾 Новая диагностика**.",
+        "api_connection_error": "Не удалось подключиться к FastAPI. Проверьте, работает ли API на http://127.0.0.1:8000.",
+        "api_timeout": "API слишком долго отвечает. Попробуйте снова.",
+        "unexpected_error": "Неожиданная ошибка при создании диагностики",
+        "diagnosis_opening": "Диагностика создана. Открывается страница финансового результата...",
+        "report_pdf_section": "### 📄 PDF-отчёт",
+        "back_to_result": "📊 Вернуться к результату",
+        "send_feedback": "💬 Отправить отзыв",
+        "new_diagnosis_btn": "🧾 Новая диагностика",
+        "see_history": "📚 Посмотреть историю",
+        "history_found": "диагностик(а) найдено.",
+        "score_evolution": "### Динамика score",
+        "diagnoses_found": "### Найденные диагностики",
+        "old_pdf": "📄 Скачать PDF диагностики",
+        "history_pdf_error": "Не удалось создать PDF из истории",
+        "history_search_error": "Ошибка при поиске истории через API",
+        "feedback_connection_error": "Не удалось подключиться к FastAPI для отправки отзыва.",
+        "feedback_error": "Ошибка при отправке отзыва через API",
+        "chat_demo_info": "Здесь будет чат INNA. Следующий шаг — подключить эту страницу к ИИ.",
+        "chat_question": "Введите финансовый вопрос:",
+        "chat_placeholder": "Пример: Как улучшить мой финансовый рейтинг?",
+        "chat_button": "Отправить вопрос Inna",
+        "chat_empty": "Введите вопрос перед отправкой.",
+        "chat_demo_answer": "Я пока работаю в демо-режиме. Скоро я буду отвечать с помощью ИИ и вашей финансовой диагностики.",
+    },
+}
+
+for lang_code in ["uk", "ar", "ch"]:
+    INTERNAL_PAGE_TEXTS_INNA[lang_code] = INTERNAL_PAGE_TEXTS_INNA.get(lang_code, INTERNAL_PAGE_TEXTS_INNA["en_us"]) if lang_code in INTERNAL_PAGE_TEXTS_INNA else INTERNAL_PAGE_TEXTS_INNA["en_us"]
+
+def page_t(key: str) -> str:
+    lang = app_lang if app_lang in INTERNAL_PAGE_TEXTS_INNA else "pt"
+    return INTERNAL_PAGE_TEXTS_INNA.get(lang, INTERNAL_PAGE_TEXTS_INNA["pt"]).get(
+        key,
+        INTERNAL_PAGE_TEXTS_INNA["pt"].get(key, key),
+    )
+st.caption(f"{page_t('current_page')}: {menu_t(app_menu) if 'menu_t' in globals() else app_menu}")
 
 
 if app_menu == "📊 Meu panorama financeiro":
-    st.title("📊 Meu panorama financeiro")
+    st.title(page_t("overview_title"))
 
     response = st.session_state.get("last_response")
 
     if not response:
-        st.warning("Nenhum diagnóstico gerado ainda. Primeiro vá em **🧾 Novo diagnóstico**.")
+        st.warning(page_t("no_diagnosis"))
         st.stop()
 
     st.success(tr("success"))
@@ -2576,12 +2895,12 @@ if app_menu == "📊 Meu panorama financeiro":
 
 
 if app_menu == "📄 Meu relatório":
-    st.title("📄 Meu relatório")
+    st.title(page_t("report_title"))
 
     response = st.session_state.get("last_response")
 
     if not response:
-        st.warning("Nenhum diagnóstico gerado ainda. Primeiro vá em **🧾 Novo diagnóstico**.")
+        st.warning(page_t("no_diagnosis"))
         st.stop()
 
     diagnostico_id = response.get("id")
@@ -2590,7 +2909,7 @@ if app_menu == "📄 Meu relatório":
         st.warning(tr("pdf_unavailable"))
         st.stop()
 
-    st.write("### 📄 Relatório em PDF")
+    st.write(page_t("report_pdf_section"))
 
     try:
         pdf_bytes = baixar_relatorio_pdf_api(diagnostico_id)
@@ -2639,11 +2958,11 @@ if app_menu == "📄 Meu relatório":
 
     col_rel1, col_rel2 = st.columns(2)
 
-    if col_rel1.button("📊 Voltar para resultado"):
+    if col_rel1.button(page_t("back_to_result")):
         st.session_state.app_menu_selected = "📊 Meu panorama financeiro"
         st.rerun()
 
-    if col_rel2.button("💬 Enviar feedback"):
+    if col_rel2.button(page_t("send_feedback")):
         st.session_state.app_menu_selected = "⭐ Avaliar a Inna"
         st.rerun()
 
@@ -2651,12 +2970,12 @@ if app_menu == "📄 Meu relatório":
 
 
 if app_menu == "⭐ Avaliar a Inna":
-    st.title("⭐ Avaliar a Inna")
+    st.title(page_t("feedback_title_page"))
 
     response = st.session_state.get("last_response")
 
     if not response:
-        st.warning("Nenhum diagnóstico gerado ainda. Primeiro vá em **🧾 Novo diagnóstico**.")
+        st.warning(page_t("no_diagnosis"))
         st.stop()
 
     st.caption(tr("feedback_help"))
@@ -2695,19 +3014,19 @@ if app_menu == "⭐ Avaliar a Inna":
                 "Confirme se a API está rodando."
             )
         except Exception as error:
-            st.error(f"Erro ao enviar feedback pela API: {error}")
+            st.error(f"{page_t('feedback_error')}: {error}")
 
     st.divider()
 
     col_fb1, col_fb2 = st.columns(2)
 
-    if col_fb1.button("🧾 Novo diagnóstico"):
+    if col_fb1.button(page_t("new_diagnosis_btn")):
         st.session_state.last_response = None
         st.session_state.last_payload = None
         st.session_state.app_menu_selected = "🏠 Início"
         st.rerun()
 
-    if col_fb2.button("📚 Ver histórico"):
+    if col_fb2.button(page_t("see_history")):
         st.session_state.app_menu_selected = "📚 Meu histórico"
         st.rerun()
 
@@ -2756,17 +3075,17 @@ if app_menu == "📚 Meu histórico":
                             pdf_antigo = baixar_relatorio_pdf_api(item["id"])
 
                             st.download_button(
-                                label=f"📄 Baixar PDF do diagnóstico {item['id']}",
+                                label=f"{page_t('old_pdf')} {item['id']}",
                                 data=pdf_antigo,
                                 file_name=f"relatorio_inna_{item['nome'].replace(' ', '_').lower()}_{item['id']}.pdf",
                                 mime="application/pdf",
                                 key=f"download_pdf_historico_menu_{item['id']}",
                             )
                         except Exception as error:
-                            st.warning(f"Não foi possível gerar PDF do histórico: {error}")
+                            st.warning(f"{page_t('history_pdf_error')}: {error}")
 
         except Exception as error:
-            st.error(f"Erro ao buscar histórico pela API: {error}")
+            st.error(f"{page_t('history_search_error')}: {error}")
 
     st.stop()
 
@@ -2867,7 +3186,7 @@ if submitted:
         st.session_state.app_menu_selected = "📊 Meu panorama financeiro"
 
         st.success(tr("saved"))
-        st.info("Diagnóstico gerado. Abrindo a página de resultado financeiro...")
+        st.info(page_t("diagnosis_opening"))
         st.rerun()
 
     except requests.exceptions.ConnectionError:
@@ -2877,13 +3196,13 @@ if submitted:
         )
 
     except requests.exceptions.Timeout:
-        st.error("A API demorou muito para responder. Tente novamente.")
+        st.error(page_t("api_timeout"))
 
     except requests.exceptions.HTTPError as error:
         st.error(f"Erro HTTP ao chamar a API: {error}")
 
     except Exception as error:
-        st.error(f"Erro inesperado ao gerar diagnóstico: {error}")
+        st.error(f"{page_t('unexpected_error')}: {error}")
 
 
 if st.session_state.last_response:
@@ -3006,7 +3325,7 @@ if st.session_state.last_response:
             )
 
         except Exception as error:
-            st.error(f"Erro ao enviar feedback pela API: {error}")
+            st.error(f"{page_t('feedback_error')}: {error}")
 
 
 st.divider()
@@ -3041,7 +3360,7 @@ if buscar_historico:
         if not historico:
             st.warning(tr("history_empty"))
         else:
-            st.success(f"{len(historico)} diagnóstico(s) encontrado(s).")
+            st.success(f"{len(historico)} {page_t('history_found')}")
 
             historico_ordenado = sorted(
                 historico,
@@ -3053,10 +3372,10 @@ if buscar_historico:
                 for item in historico_ordenado
             }
 
-            st.write("### Evolução do score")
+            st.write(page_t("score_evolution"))
             st.line_chart(score_data)
 
-            st.write("### Diagnósticos encontrados")
+            st.write(page_t("diagnoses_found"))
 
             for item in historico:
                 with st.expander(
@@ -3077,17 +3396,18 @@ if buscar_historico:
                         pdf_antigo = baixar_relatorio_pdf_api(item["id"])
 
                         st.download_button(
-                            label=f"📄 Baixar PDF do diagnóstico {item['id']}",
+                            label=f"{page_t('old_pdf')} {item['id']}",
                             data=pdf_antigo,
                             file_name=f"relatorio_inna_{item['nome'].replace(' ', '_').lower()}_{item['id']}.pdf",
                             mime="application/pdf",
                             key=f"download_pdf_historico_{item['id']}",
                         )
                     except Exception as error:
-                        st.warning(f"Não foi possível gerar PDF do histórico: {error}")
+                        st.warning(f"{page_t('history_pdf_error')}: {error}")
 
     except Exception as error:
-        st.error(f"Erro ao buscar histórico pela API: {error}")
+        st.error(f"{page_t('history_search_error')}: {error}")
+
 
 
 
