@@ -9,6 +9,7 @@ from api.schemas import FinancialInput
 from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
 from src.repository import save_diagnostico_db
+from src.audit_logger import record_event
 
 load_dotenv()
 
@@ -487,6 +488,58 @@ def get_help_message(lang: str) -> str:
     return messages.get(lang, messages["pt"])
 
 
+
+def currency_by_telegram_lang(lang: str) -> tuple[str, str]:
+    mapping = {
+        "pt": ("BRL", "R$"),
+        "en_us": ("USD", "US$"),
+        "en_gb": ("GBP", "£"),
+        "es": ("EUR", "€"),
+        "de": ("EUR", "€"),
+        "fr": ("EUR", "€"),
+        "it": ("EUR", "€"),
+        "ro": ("RON", "RON"),
+        "uk": ("UAH", "₴"),
+        "ru": ("RUB", "₽"),
+        "ar": ("SAR", "SAR"),
+        "ch": ("CHF", "CHF"),
+    }
+    return mapping.get(lang, ("BRL", "R$"))
+
+
+def safe_record_telegram_event(
+    chat_id: int,
+    lang: str,
+    payload: dict,
+    resultado: dict,
+    resposta: str,
+) -> None:
+    try:
+        moeda, simbolo = currency_by_telegram_lang(lang)
+
+        record_event(
+            canal="telegram",
+            usuario=str(payload.get("nome") or chat_id),
+            usuario_id=str(chat_id),
+            idioma=lang,
+            moeda=moeda,
+            status="success",
+            diagnostico_id=resultado.get("id"),
+            pergunta=payload.get("objetivo"),
+            resposta=resposta,
+            metadata={
+                "origem": "telegram_webhook",
+                "evento": "diagnostico_telegram",
+                "simbolo_moeda": simbolo,
+                "score_financeiro": resultado.get("score_financeiro"),
+                "nivel_risco": resultado.get("nivel_risco"),
+                "saldo_estimado": resultado.get("saldo_estimado"),
+            },
+        )
+    except Exception as exc:
+        print(f"[telegram-event-log] Falha ao registrar evento Telegram: {exc}")
+
+
 def send_telegram_message(chat_id: int, text: str, reply_markup: dict | None = None):
     if not TELEGRAM_BOT_TOKEN:
         print("TELEGRAM_BOT_TOKEN não configurado.")
@@ -923,7 +976,16 @@ def process_telegram_update(update: dict):
             )
 
             resultado = gerar_diagnostico_pelo_payload(payload, lang)
-            send_telegram_message(chat_id, resposta_curta(resultado, lang))
+            resposta_final = resposta_curta(resultado, lang)
+            send_telegram_message(chat_id, resposta_final)
+
+            safe_record_telegram_event(
+                chat_id=chat_id,
+                lang=lang,
+                payload=payload,
+                resultado=resultado,
+                resposta=resposta_final,
+            )
 
             USER_LAST_LANG[chat_id] = lang
             USER_SESSIONS.pop(chat_id, None)
