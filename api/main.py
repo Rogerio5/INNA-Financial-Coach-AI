@@ -314,23 +314,24 @@ def gerar_diagnostico(payload: FinancialInput):
     diagnostico_id = save_diagnostico_db(payload_dict, response)
     response["id"] = diagnostico_id
 
-    record_interaction(
+    safe_record_event(
         canal="web-app",
-        usuario_id=payload_dict.get("nome"),
         usuario=payload_dict.get("nome"),
         idioma=payload_dict.get("idioma"),
         moeda=payload_dict.get("moeda"),
+        status="success",
+        diagnostico_id=diagnostico_id,
         pergunta=payload_dict.get("objetivo"),
         resposta=response.get("diagnostico"),
-        status="success",
-        tempo_resposta_segundos=time.time() - inicio,
-        diagnostico_id=diagnostico_id,
         metadata={
+            "evento": "diagnostico_web_app",
+            "origem": "streamlit",
             "score_financeiro": response.get("score_financeiro"),
             "nivel_risco": response.get("nivel_risco"),
             "saldo_estimado": response.get("saldo_estimado"),
-            "origem": "diagnostico_streamlit"
-        }
+            "simbolo_moeda": payload_dict.get("simbolo_moeda"),
+            "tempo_resposta_segundos": time.time() - inicio,
+        },
     )
 
     return response
