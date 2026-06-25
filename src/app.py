@@ -2333,66 +2333,68 @@ if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
 if app_menu == "🏠 Início":
 
     if HERO_IMAGE.exists():
-        portrait_path = str(HERO_IMAGE).replace("\\", "/")
+        import base64
 
-        st.markdown(f"""
-        <div class="inna-hero-dynamic">
-            <div class="inna-hero-grid">
-                <div class="inna-portrait-box">
-                    <img src="file:///{portrait_path}" alt="INNA Financial Coach AI">
-                </div>
+        with open(HERO_IMAGE, "rb") as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode()
 
-                <div class="inna-hero-content">
-                    <h1>Inna</h1>
-                    <h2>Financial Coach AI</h2>
-                    <div class="inna-hero-subtitle">{home_t("subtitle")}</div>
-                    <div class="inna-hero-description">
-                        {home_t("intro")}
-                    </div>
+        img_src = f"data:image/png;base64,{encoded_image}"
 
-                    <div class="inna-feature-grid">
-                        <div class="inna-hero-mini-card">
-                            <div class="icon">📋</div>
-                            <h3>{home_t("feature_1_title").replace("📋 ", "")}</h3>
-                            <p>{home_t("feature_1_text")}</p>
-                        </div>
+        hero_html = f'''
+<div class="inna-hero-dynamic-final">
+  <div class="inna-hero-final-grid">
 
-                        <div class="inna-hero-mini-card">
-                            <div class="icon">🧠</div>
-                            <h3>{home_t("feature_2_title").replace("🧠 ", "")}</h3>
-                            <p>{home_t("feature_2_text")}</p>
-                        </div>
+    <div class="inna-hero-photo-card">
+      <img src="{img_src}" alt="INNA Financial Coach AI">
+    </div>
 
-                        <div class="inna-hero-mini-card">
-                            <div class="icon">📄</div>
-                            <h3>{home_t("feature_3_title").replace("📄 ", "")}</h3>
-                            <p>{home_t("feature_3_text")}</p>
-                        </div>
+    <div class="inna-hero-text-side">
+      <h1>Inna</h1>
+      <h2>Financial Coach AI</h2>
 
-                        <div class="inna-hero-mini-card">
-                            <div class="icon">🌐</div>
-                            <h3>{home_t("feature_4_title").replace("🌐 ", "")}</h3>
-                            <p>{home_t("feature_4_text")}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="inna-hero-subtitle-final">
+        {home_t("subtitle")}
+      </div>
+
+      <div class="inna-hero-description-final">
+        {home_t("intro")}
+      </div>
+
+      <div class="inna-hero-cards-final">
+        <div class="inna-hero-card-final">
+          <div class="icon">📋</div>
+          <h3>{home_t("feature_1_title").replace("📋 ", "")}</h3>
+          <p>{home_t("feature_1_text")}</p>
         </div>
-        """, unsafe_allow_html=True)
+
+        <div class="inna-hero-card-final">
+          <div class="icon">🧠</div>
+          <h3>{home_t("feature_2_title").replace("🧠 ", "")}</h3>
+          <p>{home_t("feature_2_text")}</p>
+        </div>
+
+        <div class="inna-hero-card-final">
+          <div class="icon">📄</div>
+          <h3>{home_t("feature_3_title").replace("📄 ", "")}</h3>
+          <p>{home_t("feature_3_text")}</p>
+        </div>
+
+        <div class="inna-hero-card-final">
+          <div class="icon">🌐</div>
+          <h3>{home_t("feature_4_title").replace("🌐 ", "")}</h3>
+          <p>{home_t("feature_4_text")}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+'''
+
+        st.markdown(hero_html, unsafe_allow_html=True)
+
     else:
         st.warning("Imagem não encontrada em assets/inna_hero.png")
-
-    st.markdown(
-        f'<div class="premium-badge">{home_t("badge")}</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(f'<div class="title-main">{home_t("title")}</div>', unsafe_allow_html=True)
-    st.markdown(
-        f'<div class="subtitle">{home_t("subtitle")}</div>',
-        unsafe_allow_html=True
-    )
-
     st.markdown(f"""
     <div class="info-box">
         {home_t("intro")}
@@ -3857,6 +3859,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
 
 
 
