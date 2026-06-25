@@ -1110,7 +1110,7 @@ GLOBAL_UI_TEXTS_INNA = {
         "admin_title": "🔐 Admin Analytics — INNA",
         "admin_caption": "Área administrativa para gestor, administrador ou avaliador acompanhar métricas da plataforma.",
         "admin_warning": "Este painel é destinado ao administrador da INNA. Ele não deve aparecer para o usuário comum/trabalhador.",
-        "admin_open": ui_t("admin_open"),
+        "admin_open": "Open dashboard in new tab",
         "about_title": "ℹ️ Sobre a INNA Financial Coach AI",
         "about_text": "A INNA é uma educadora financeira com IA Generativa, criada para transformar dados simples em diagnóstico financeiro, plano de ação, relatório PDF e indicadores reais.",
         "about_resources": "Recursos do projeto",
@@ -3572,6 +3572,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
 
 
 
