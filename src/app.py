@@ -2221,13 +2221,29 @@ if app_menu == "🏠 Início":
     m1, m2, m3, m4 = st.columns(4)
 
     with m1:
-        st.metric(home_t("income"), "R$ 3.500", "+12%")
+        st.metric(
+            home_t("income"),
+            format_currency_app(3500, current_currency_info["simbolo"], current_currency_info["moeda"]),
+            "+12%"
+        )
     with m2:
-        st.metric(home_t("expenses"), "R$ 2.150", "-5%")
+        st.metric(
+            home_t("expenses"),
+            format_currency_app(2150, current_currency_info["simbolo"], current_currency_info["moeda"]),
+            "-5%"
+        )
     with m3:
-        st.metric(home_t("debts"), "R$ 780", "-10%")
+        st.metric(
+            home_t("debts"),
+            format_currency_app(780, current_currency_info["simbolo"], current_currency_info["moeda"]),
+            "-10%"
+        )
     with m4:
-        st.metric(home_t("reserve"), "R$ 1.200", "+18%")
+        st.metric(
+            home_t("reserve"),
+            format_currency_app(1200, current_currency_info["simbolo"], current_currency_info["moeda"]),
+            "+18%"
+        )
 
     st.markdown(f"""
     <div class="warning-box">
@@ -3572,6 +3588,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
 
 
 
