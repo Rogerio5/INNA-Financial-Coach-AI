@@ -1319,6 +1319,154 @@ app_lang = st.sidebar.selectbox(
     key="app_lang",
 )
 
+# =============================
+# TEMA VISUAL DA INNA
+# =============================
+
+THEMES_INNA = {
+    "Claro": {
+        "bg": "#F7F9FC",
+        "sidebar": "#EEF3FA",
+        "surface": "#FFFFFF",
+        "surface_2": "#EEF4FF",
+        "text": "#071C36",
+        "muted": "#4B5F78",
+        "accent": "#D4AF37",
+        "primary": "#0E3A73",
+        "border": "#D7E2F1",
+        "hero_bg": "linear-gradient(135deg, #FFFFFF 0%, #F4F8FF 100%)",
+        "hero_text": "#071C36",
+        "hero_subtext": "#34465F",
+        "card_bg": "#FFFFFF",
+        "card_text": "#071C36",
+    },
+    "Escuro": {
+        "bg": "#070B14",
+        "sidebar": "#0D1422",
+        "surface": "#111827",
+        "surface_2": "#182338",
+        "text": "#F8FAFC",
+        "muted": "#B8C2D1",
+        "accent": "#D4AF37",
+        "primary": "#1E3A8A",
+        "border": "#2A3852",
+        "hero_bg": "linear-gradient(135deg, #0B1424 0%, #13233D 100%)",
+        "hero_text": "#FFFFFF",
+        "hero_subtext": "#D8E2F0",
+        "card_bg": "#101B2D",
+        "card_text": "#FFFFFF",
+    },
+    "Azulado escuro": {
+        "bg": "#EEF3FA",
+        "sidebar": "#EAF0F7",
+        "surface": "#FFFFFF",
+        "surface_2": "#EAF1FB",
+        "text": "#071C36",
+        "muted": "#4B5F78",
+        "accent": "#E0B64A",
+        "primary": "#071C36",
+        "border": "#D7E2F1",
+        "hero_bg": "linear-gradient(135deg, #0A2345 0%, #041A35 55%, #021120 100%)",
+        "hero_text": "#F6D889",
+        "hero_subtext": "#E5EDF8",
+        "card_bg": "#0F2545",
+        "card_text": "#FFFFFF",
+    },
+}
+
+if "theme_name" not in st.session_state:
+    st.session_state.theme_name = "Azulado escuro"
+
+theme_top_left, theme_top_right = st.columns([5, 1])
+
+with theme_top_right:
+    st.session_state.theme_name = st.selectbox(
+        "🎨 Tema",
+        list(THEMES_INNA.keys()),
+        index=list(THEMES_INNA.keys()).index(st.session_state.theme_name),
+        key="theme_selector_inna",
+    )
+
+theme = THEMES_INNA[st.session_state.theme_name]
+
+st.markdown(f"""
+<style>
+.stApp {{
+    background: {theme["bg"]} !important;
+    color: {theme["text"]} !important;
+}}
+
+[data-testid="stAppViewContainer"] {{
+    background: {theme["bg"]} !important;
+}}
+
+[data-testid="stSidebar"] {{
+    background: {theme["sidebar"]} !important;
+    border-right: 1px solid {theme["border"]} !important;
+}}
+
+.block-container {{
+    color: {theme["text"]} !important;
+}}
+
+h1, h2, h3, h4, h5, h6, p, span, label {{
+    color: {theme["text"]};
+}}
+
+.premium-badge {{
+    background: {theme["primary"]} !important;
+    color: #F8D98B !important;
+    border: 1px solid {theme["accent"]} !important;
+}}
+
+.info-box {{
+    background: {theme["surface_2"]} !important;
+    color: {theme["text"]} !important;
+    border: 1px solid {theme["border"]} !important;
+}}
+
+.feature-card, .step-card {{
+    background: {theme["surface"]} !important;
+    border: 1px solid {theme["border"]} !important;
+}}
+
+.feature-card h3, .step-card h4, .section-title, .title-main {{
+    color: {theme["text"]} !important;
+}}
+
+.feature-card p, .step-card p, .text-normal, .subtitle {{
+    color: {theme["muted"]} !important;
+}}
+
+div[data-testid="stMetric"] {{
+    background: {theme["surface"]} !important;
+    border: 1px solid {theme["border"]} !important;
+}}
+
+div[data-testid="stMetricLabel"], div[data-testid="stMetricValue"] {{
+    color: {theme["text"]} !important;
+}}
+
+.stButton > button {{
+    background: {theme["surface"]} !important;
+    color: {theme["text"]} !important;
+    border: 1px solid {theme["border"]} !important;
+}}
+
+.stButton > button:hover {{
+    border-color: {theme["accent"]} !important;
+    color: {theme["accent"]} !important;
+}}
+
+div[data-baseweb="select"] > div {{
+    background: {theme["surface"]} !important;
+    color: {theme["text"]} !important;
+    border: 1px solid {theme["border"]} !important;
+}}
+</style>
+""", unsafe_allow_html=True)
+
+
 
 
 
@@ -2332,9 +2480,8 @@ if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
     st.stop()
 if app_menu == "🏠 Início":
 
-    # HERO PRINCIPAL EM STREAMLIT PURO
-    # Imagem da Inna fica no assets/inna_hero.png
-    # Textos e cards ficam fora da imagem e mudam conforme o idioma
+    # HERO PRINCIPAL DA INNA
+    # Foto à esquerda e textos/cards dinâmicos à direita
 
     st.markdown(
         f'<div class="premium-badge">{home_t("badge")}</div>',
@@ -2345,102 +2492,168 @@ if app_menu == "🏠 Início":
 
     with hero_col_img:
         if HERO_IMAGE.exists():
+            st.markdown(
+                """
+                <div style="
+                    background: linear-gradient(135deg, #071C36, #0E3A73);
+                    padding: 10px;
+                    border-radius: 30px;
+                    border: 1px solid rgba(212,175,55,0.45);
+                    box-shadow: 0 24px 60px rgba(7,28,54,0.28);
+                ">
+                """,
+                unsafe_allow_html=True
+            )
+
             st.image(str(HERO_IMAGE), use_container_width=True)
+
+            st.markdown("</div>", unsafe_allow_html=True)
         else:
             st.warning("Imagem não encontrada em assets/inna_hero.png")
 
     with hero_col_text:
         st.markdown(
-            """
-            <div style="
-                background: radial-gradient(circle at top left, #123E75 0%, #071C36 45%, #04101F 100%);
-                border: 1px solid rgba(212,175,55,0.35);
-                border-radius: 28px;
-                padding: 34px;
-                box-shadow: 0 24px 60px rgba(7,28,54,0.26);
-            ">
-            """,
-            unsafe_allow_html=True
-        )
-
-        st.markdown(
-            """
-            <div style="
-                font-size: 72px;
-                line-height: 0.95;
-                font-weight: 950;
-                color: #F7D88A;
-                letter-spacing: -1px;
-                margin-bottom: 6px;
-            ">
-                Inna
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        st.markdown(
-            """
-            <div style="
-                font-size: 38px;
-                font-weight: 800;
-                color: #FFFFFF;
-                margin-bottom: 8px;
-            ">
-                Financial Coach AI
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        st.markdown(
             f"""
             <div style="
-                font-size: 22px;
-                color: #F7D88A;
-                margin-bottom: 22px;
+                background: {theme["hero_bg"]};
+                border: 1px solid rgba(212,175,55,0.40);
+                border-radius: 30px;
+                padding: 36px;
+                box-shadow: 0 24px 60px rgba(7,28,54,0.24);
             ">
-                {home_t("subtitle")}
+                <div style="
+                    font-size: 68px;
+                    line-height: 0.95;
+                    font-weight: 950;
+                    color: {theme["hero_text"]};
+                    letter-spacing: -1px;
+                    margin-bottom: 8px;
+                ">
+                    Inna
+                </div>
+
+                <div style="
+                    font-size: 36px;
+                    font-weight: 850;
+                    color: {theme["hero_text"]};
+                    margin-bottom: 10px;
+                ">
+                    Financial Coach AI
+                </div>
+
+                <div style="
+                    font-size: 21px;
+                    color: {theme["accent"]};
+                    font-weight: 700;
+                    margin-bottom: 22px;
+                ">
+                    {home_t("subtitle")}
+                </div>
+
+                <div style="
+                    font-size: 17px;
+                    color: {theme["hero_subtext"]};
+                    line-height: 1.65;
+                    margin-bottom: 28px;
+                ">
+                    {home_t("intro")}
+                </div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-        st.markdown(
-            f"""
-            <div style="
-                font-size: 18px;
-                color: #E6EEF8;
-                line-height: 1.6;
-                margin-bottom: 26px;
-            ">
-                {home_t("intro")}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        c1, c2 = st.columns(2)
 
-        card_1, card_2 = st.columns(2)
+        with c1:
+            st.markdown(
+                f"""
+                <div style="
+                    background: {theme["card_bg"]};
+                    border: 1px solid rgba(212,175,55,0.28);
+                    border-radius: 20px;
+                    padding: 20px;
+                    min-height: 160px;
+                    box-shadow: 0 12px 30px rgba(7,28,54,0.10);
+                    margin-top: 16px;
+                ">
+                    <h3 style="color:{theme["card_text"]}; margin-bottom:10px;">
+                        📋 {home_t("feature_1_title").replace("📋 ", "")}
+                    </h3>
+                    <p style="color:{theme["hero_subtext"]}; line-height:1.55;">
+                        {home_t("feature_1_text")}
+                    </p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-        with card_1:
-            with st.container(border=True):
-                st.markdown("### 📋 " + home_t("feature_1_title").replace("📋 ", ""))
-                st.caption(home_t("feature_1_text"))
+            st.markdown(
+                f"""
+                <div style="
+                    background: {theme["card_bg"]};
+                    border: 1px solid rgba(212,175,55,0.28);
+                    border-radius: 20px;
+                    padding: 20px;
+                    min-height: 160px;
+                    box-shadow: 0 12px 30px rgba(7,28,54,0.10);
+                    margin-top: 16px;
+                ">
+                    <h3 style="color:{theme["card_text"]}; margin-bottom:10px;">
+                        📄 {home_t("feature_3_title").replace("📄 ", "")}
+                    </h3>
+                    <p style="color:{theme["hero_subtext"]}; line-height:1.55;">
+                        {home_t("feature_3_text")}
+                    </p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-            with st.container(border=True):
-                st.markdown("### 📄 " + home_t("feature_3_title").replace("📄 ", ""))
-                st.caption(home_t("feature_3_text"))
+        with c2:
+            st.markdown(
+                f"""
+                <div style="
+                    background: {theme["card_bg"]};
+                    border: 1px solid rgba(212,175,55,0.28);
+                    border-radius: 20px;
+                    padding: 20px;
+                    min-height: 160px;
+                    box-shadow: 0 12px 30px rgba(7,28,54,0.10);
+                    margin-top: 16px;
+                ">
+                    <h3 style="color:{theme["card_text"]}; margin-bottom:10px;">
+                        🧠 {home_t("feature_2_title").replace("🧠 ", "")}
+                    </h3>
+                    <p style="color:{theme["hero_subtext"]}; line-height:1.55;">
+                        {home_t("feature_2_text")}
+                    </p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-        with card_2:
-            with st.container(border=True):
-                st.markdown("### 🧠 " + home_t("feature_2_title").replace("🧠 ", ""))
-                st.caption(home_t("feature_2_text"))
-
-            with st.container(border=True):
-                st.markdown("### 🌐 " + home_t("feature_4_title").replace("🌐 ", ""))
-                st.caption(home_t("feature_4_text"))
-
-        st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown(
+                f"""
+                <div style="
+                    background: {theme["card_bg"]};
+                    border: 1px solid rgba(212,175,55,0.28);
+                    border-radius: 20px;
+                    padding: 20px;
+                    min-height: 160px;
+                    box-shadow: 0 12px 30px rgba(7,28,54,0.10);
+                    margin-top: 16px;
+                ">
+                    <h3 style="color:{theme["card_text"]}; margin-bottom:10px;">
+                        🌐 {home_t("feature_4_title").replace("🌐 ", "")}
+                    </h3>
+                    <p style="color:{theme["hero_subtext"]}; line-height:1.55;">
+                        {home_t("feature_4_text")}
+                    </p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"""
@@ -3907,6 +4120,9 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
+
+
 
 
 
