@@ -1401,17 +1401,243 @@ HOME_TEXTS_INNA = {
     },
 }
 
+
+# Traduções adicionais da landing page INNA
+HOME_TEXTS_INNA.update({
+    "de": {
+        "badge": "✨ KI-Finanzassistent • Intelligente Finanzbildung",
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "Virtueller Assistent für Finanzbildung mit KI",
+        "intro": "INNA hilft Menschen, Einkommen, Ausgaben, Schulden, Rücklagen und nächste Schritte einfach, lehrreich und personalisiert zu verstehen.",
+        "what_title": "Was ist INNA?",
+        "what_text": "INNA Financial Coach AI ist eine intelligente Finanzpädagogin, die grundlegende Benutzerdaten in eine klare Sicht auf die aktuelle finanzielle Situation verwandelt. Die Plattform kann Finanzdiagnosen, einen 30-Tage-Aktionsplan, PDF-Berichte, E-Mail-Versand, individuellen Verlauf, Dashboard-Analysen und Multichannel-Betreuung über Web und Telegram bereitstellen.",
+        "features_title": "Hauptfunktionen",
+        "feature_1_title": "📋 Finanzdiagnose",
+        "feature_1_text": "Analysiert Einkommen, Ausgaben, Schulden und Rücklagen, um eine klare Sicht auf die aktuelle Situation zu schaffen.",
+        "feature_2_title": "🧠 Generative KI",
+        "feature_2_text": "Erstellt einfache Erklärungen und einen personalisierten Aktionsplan für die nächsten 30 Tage.",
+        "feature_3_title": "📄 PDF-Bericht + E-Mail",
+        "feature_3_text": "Ermöglicht das Herunterladen des Finanzberichts oder den direkten Versand per E-Mail.",
+        "feature_4_title": "🌐 Multichannel und mehrsprachig",
+        "feature_4_text": "Funktioniert über Web App, Telegram, API und Dashboard, mit Unterstützung für verschiedene Sprachen und Währungen.",
+        "how_title": "So funktioniert es",
+        "step_1_title": "Ausfüllen",
+        "step_1_text": "Geben Sie Einkommen, Ausgaben, Schulden und Rücklagen ein.",
+        "step_2_title": "Analyse erhalten",
+        "step_2_text": "INNA berechnet die wichtigsten Finanzindikatoren.",
+        "step_3_title": "Plan ansehen",
+        "step_3_text": "Die KI erstellt personalisierte finanzielle Orientierung.",
+        "step_4_title": "Herunterladen oder senden",
+        "step_4_text": "Exportieren Sie als PDF oder erhalten Sie den Bericht per E-Mail.",
+        "quick_title": "Schneller Überblick",
+        "income": "Monatliches Einkommen",
+        "expenses": "Fixkosten",
+        "debts": "Schulden",
+        "reserve": "Rücklage",
+        "warning": "Wichtiger Hinweis: INNA ist ein Bildungswerkzeug. Sie ersetzt keine professionelle Finanz-, Steuer-, Rechts- oder Bankberatung.",
+        "cta_title": "Starten Sie jetzt Ihre Finanzdiagnose",
+        "cta_text": "Organisieren Sie Ihr Finanzleben mit einem intelligenten, einfachen und personalisierten virtuellen Assistenten.",
+        "btn_start": "🧾 Neue Diagnose starten",
+        "btn_report": "📄 Bericht erstellen",
+        "btn_about": "ℹ️ Über das Projekt",
+    },
+    "fr": {
+        "badge": "✨ Assistant financier IA • Éducation financière intelligente",
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "Assistant virtuel d’éducation financière avec IA",
+        "intro": "INNA aide les personnes à comprendre leurs revenus, dépenses, dettes, épargne et prochaines étapes de manière simple, éducative et personnalisée.",
+        "what_title": "Qu’est-ce qu’INNA ?",
+        "what_text": "INNA Financial Coach AI est une éducatrice financière intelligente qui transforme les données de base de l’utilisateur en une vision claire de sa situation actuelle. La plateforme peut générer un diagnostic financier, un plan d’action de 30 jours, un rapport PDF, un envoi par e-mail, un historique individuel, des analyses pour dashboard et un support multicanal via Web et Telegram.",
+        "features_title": "Principales ressources",
+        "feature_1_title": "📋 Diagnostic financier",
+        "feature_1_text": "Analyse les revenus, dépenses, dettes et réserves financières pour générer une vision claire de la situation actuelle.",
+        "feature_2_title": "🧠 IA générative",
+        "feature_2_text": "Génère des explications simples et un plan d’action personnalisé pour les 30 prochains jours.",
+        "feature_3_title": "📄 Rapport PDF + E-mail",
+        "feature_3_text": "Permet de télécharger le rapport financier ou de recevoir le diagnostic directement par e-mail.",
+        "feature_4_title": "🌐 Multicanal et multilingue",
+        "feature_4_text": "Fonctionne via Web App, Telegram, API et Dashboard, avec prise en charge de différentes langues et devises.",
+        "how_title": "Comment ça fonctionne",
+        "step_1_title": "Remplir",
+        "step_1_text": "Indiquez vos revenus, dépenses, dettes et réserve financière.",
+        "step_2_title": "Recevoir l’analyse",
+        "step_2_text": "INNA calcule les principaux indicateurs financiers.",
+        "step_3_title": "Voir le plan",
+        "step_3_text": "L’IA génère une orientation éducative personnalisée.",
+        "step_4_title": "Télécharger ou envoyer",
+        "step_4_text": "Exportez en PDF ou recevez le rapport par e-mail.",
+        "quick_title": "Aperçu rapide du diagnostic",
+        "income": "Revenu mensuel",
+        "expenses": "Dépenses fixes",
+        "debts": "Dettes",
+        "reserve": "Épargne",
+        "warning": "Avis important : INNA est un outil éducatif. Elle ne remplace pas un conseil financier, comptable, juridique ou bancaire professionnel.",
+        "cta_title": "Commencez votre diagnostic financier maintenant",
+        "cta_text": "Organisez votre vie financière avec une assistante virtuelle intelligente, simple et personnalisée.",
+        "btn_start": "🧾 Commencer un diagnostic",
+        "btn_report": "📄 Générer le rapport",
+        "btn_about": "ℹ️ Voir le projet",
+    },
+    "it": {
+        "badge": "✨ Assistente finanziario IA • Educazione finanziaria intelligente",
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "Assistente virtuale di educazione finanziaria con IA",
+        "intro": "INNA aiuta le persone a comprendere reddito, spese, debiti, riserva finanziaria e prossimi passi in modo semplice, educativo e personalizzato.",
+        "what_title": "Che cos’è INNA?",
+        "what_text": "INNA Financial Coach AI è un’educatrice finanziaria intelligente che trasforma i dati di base dell’utente in una visione chiara della situazione attuale. La piattaforma può generare diagnosi finanziaria, piano d’azione di 30 giorni, report PDF, invio via e-mail, storico individuale, analisi per dashboard e supporto multicanale via Web e Telegram.",
+        "features_title": "Risorse principali",
+        "feature_1_title": "📋 Diagnosi finanziaria",
+        "feature_1_text": "Analizza reddito, spese, debiti e riserva finanziaria per generare una visione chiara della situazione attuale.",
+        "feature_2_title": "🧠 IA generativa",
+        "feature_2_text": "Genera spiegazioni semplici e un piano d’azione personalizzato per i prossimi 30 giorni.",
+        "feature_3_title": "📄 Report PDF + E-mail",
+        "feature_3_text": "Permette di scaricare il report finanziario o ricevere la diagnosi direttamente via e-mail.",
+        "feature_4_title": "🌐 Multicanale e multilingue",
+        "feature_4_text": "Funziona via Web App, Telegram, API e Dashboard, con supporto a diverse lingue e valute.",
+        "how_title": "Come funziona",
+        "step_1_title": "Compila",
+        "step_1_text": "Inserisci reddito, spese, debiti e riserva finanziaria.",
+        "step_2_title": "Ricevi analisi",
+        "step_2_text": "INNA calcola i principali indicatori finanziari.",
+        "step_3_title": "Vedi il piano",
+        "step_3_text": "L’IA genera un orientamento educativo personalizzato.",
+        "step_4_title": "Scarica o invia",
+        "step_4_text": "Esporta in PDF o ricevi il report via e-mail.",
+        "quick_title": "Panoramica rapida della diagnosi",
+        "income": "Reddito mensile",
+        "expenses": "Spese fisse",
+        "debts": "Debiti",
+        "reserve": "Riserva",
+        "warning": "Avviso importante: INNA è uno strumento educativo. Non sostituisce consulenza finanziaria, contabile, legale o bancaria professionale.",
+        "cta_title": "Inizia ora la tua diagnosi finanziaria",
+        "cta_text": "Organizza la tua vita finanziaria con un’assistente virtuale intelligente, semplice e personalizzata.",
+        "btn_start": "🧾 Inizia nuova diagnosi",
+        "btn_report": "📄 Genera report",
+        "btn_about": "ℹ️ Vedi il progetto",
+    },
+    "ro": {
+        "badge": "✨ Asistent financiar IA • Educație financiară inteligentă",
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "Asistent virtual de educație financiară cu IA",
+        "intro": "INNA ajută oamenii să înțeleagă veniturile, cheltuielile, datoriile, economiile și pașii următori într-un mod simplu, educativ și personalizat.",
+        "what_title": "Ce este INNA?",
+        "what_text": "INNA Financial Coach AI este o educatoare financiară inteligentă care transformă datele de bază ale utilizatorului într-o imagine clară a situației financiare actuale. Platforma poate genera diagnostic financiar, plan de acțiune pe 30 de zile, raport PDF, trimitere prin e-mail, istoric individual, analize pentru dashboard și suport multicanal prin Web și Telegram.",
+        "features_title": "Funcționalități principale",
+        "feature_1_title": "📋 Diagnostic financiar",
+        "feature_1_text": "Analizează veniturile, cheltuielile, datoriile și economiile pentru a crea o imagine clară a situației actuale.",
+        "feature_2_title": "🧠 IA generativă",
+        "feature_2_text": "Generează explicații simple și un plan de acțiune personalizat pentru următoarele 30 de zile.",
+        "feature_3_title": "📄 Raport PDF + E-mail",
+        "feature_3_text": "Permite descărcarea raportului financiar sau primirea diagnosticului direct prin e-mail.",
+        "feature_4_title": "🌐 Multicanal și multilingv",
+        "feature_4_text": "Funcționează prin Web App, Telegram, API și Dashboard, cu suport pentru limbi și monede diferite.",
+        "how_title": "Cum funcționează",
+        "step_1_title": "Completează",
+        "step_1_text": "Introdu veniturile, cheltuielile, datoriile și economiile.",
+        "step_2_title": "Primește analiza",
+        "step_2_text": "INNA calculează principalii indicatori financiari.",
+        "step_3_title": "Vezi planul",
+        "step_3_text": "IA generează orientare educativă personalizată.",
+        "step_4_title": "Descarcă sau trimite",
+        "step_4_text": "Exportă în PDF sau primește raportul prin e-mail.",
+        "quick_title": "Prezentare rapidă a diagnosticului",
+        "income": "Venit lunar",
+        "expenses": "Cheltuieli fixe",
+        "debts": "Datorii",
+        "reserve": "Economii",
+        "warning": "Atenție: INNA este un instrument educativ. Nu înlocuiește consultanța financiară, contabilă, juridică sau bancară profesională.",
+        "cta_title": "Începe acum diagnosticul financiar",
+        "cta_text": "Organizează-ți viața financiară cu un asistent virtual inteligent, simplu și personalizat.",
+        "btn_start": "🧾 Începe diagnostic nou",
+        "btn_report": "📄 Generează raport",
+        "btn_about": "ℹ️ Despre proiect",
+    },
+    "ch": {
+        "badge": "✨ KI-Finanzassistent • Intelligente Finanzbildung",
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "Virtueller Assistent für Finanzbildung mit KI",
+        "intro": "INNA hilft Menschen, Einkommen, Ausgaben, Schulden, Rücklagen und nächste Schritte einfach, lehrreich und personalisiert zu verstehen.",
+        "what_title": "Was ist INNA?",
+        "what_text": "INNA Financial Coach AI ist eine intelligente Finanzpädagogin, die grundlegende Benutzerdaten in eine klare Sicht auf die aktuelle finanzielle Situation verwandelt. Die Plattform kann Finanzdiagnosen, einen 30-Tage-Aktionsplan, PDF-Berichte, E-Mail-Versand, individuellen Verlauf, Dashboard-Analysen und Multichannel-Betreuung über Web und Telegram bereitstellen.",
+        "features_title": "Hauptfunktionen",
+        "feature_1_title": "📋 Finanzdiagnose",
+        "feature_1_text": "Analysiert Einkommen, Ausgaben, Schulden und Rücklagen, um eine klare Sicht auf die aktuelle Situation zu schaffen.",
+        "feature_2_title": "🧠 Generative KI",
+        "feature_2_text": "Erstellt einfache Erklärungen und einen personalisierten Aktionsplan für die nächsten 30 Tage.",
+        "feature_3_title": "📄 PDF-Bericht + E-Mail",
+        "feature_3_text": "Ermöglicht das Herunterladen des Finanzberichts oder den direkten Versand per E-Mail.",
+        "feature_4_title": "🌐 Multichannel und mehrsprachig",
+        "feature_4_text": "Funktioniert über Web App, Telegram, API und Dashboard, mit Unterstützung für verschiedene Sprachen und Währungen.",
+        "how_title": "So funktioniert es",
+        "step_1_title": "Ausfüllen",
+        "step_1_text": "Geben Sie Einkommen, Ausgaben, Schulden und Rücklagen ein.",
+        "step_2_title": "Analyse erhalten",
+        "step_2_text": "INNA berechnet die wichtigsten Finanzindikatoren.",
+        "step_3_title": "Plan ansehen",
+        "step_3_text": "Die KI erstellt personalisierte finanzielle Orientierung.",
+        "step_4_title": "Herunterladen oder senden",
+        "step_4_text": "Exportieren Sie als PDF oder erhalten Sie den Bericht per E-Mail.",
+        "quick_title": "Schneller Überblick",
+        "income": "Monatliches Einkommen",
+        "expenses": "Fixkosten",
+        "debts": "Schulden",
+        "reserve": "Rücklage",
+        "warning": "Wichtiger Hinweis: INNA ist ein Bildungswerkzeug. Sie ersetzt keine professionelle Finanz-, Steuer-, Rechts- oder Bankberatung.",
+        "cta_title": "Starten Sie jetzt Ihre Finanzdiagnose",
+        "cta_text": "Organisieren Sie Ihr Finanzleben mit einem intelligenten, einfachen und personalisierten virtuellen Assistenten.",
+        "btn_start": "🧾 Neue Diagnose starten",
+        "btn_report": "📄 Bericht erstellen",
+        "btn_about": "ℹ️ Über das Projekt",
+    },
+})
 def home_t(key: str) -> str:
     lang = app_lang if app_lang in HOME_TEXTS_INNA else "en_us"
     return HOME_TEXTS_INNA.get(lang, HOME_TEXTS_INNA["pt"]).get(
         key,
         HOME_TEXTS_INNA["pt"].get(key, key),
     )
+
+def tela_login_inna_inline(destino_apos_login="📊 Meu panorama financeiro"):
+    st.warning("Faça login para acessar esta área.")
+
+    col_login1, col_login2, col_login3 = st.columns([1, 1.2, 1])
+
+    with col_login2:
+        st.markdown("### 🔑 Entrar na INNA")
+        st.caption("Use seu e-mail e senha para continuar.")
+
+        email_login = st.text_input("E-mail", key=f"login_email_inline_{destino_apos_login}")
+        senha_login = st.text_input("Senha", type="password", key=f"login_senha_inline_{destino_apos_login}")
+
+        with st.expander("Ver credenciais demo"):
+            st.info(
+                f"Usuário comum: {INNA_USER_EMAIL} | Senha: {INNA_USER_PASSWORD}\n\n"
+                f"Administrador: {INNA_ADMIN_EMAIL} | Senha: {INNA_ADMIN_PASSWORD}"
+            )
+
+        if st.button("Entrar", use_container_width=True, key=f"btn_login_inline_{destino_apos_login}"):
+            if email_login == INNA_USER_EMAIL and senha_login == INNA_USER_PASSWORD:
+                st.session_state.logado = True
+                st.session_state.usuario = email_login
+                st.session_state.perfil_usuario = "usuario"
+                st.session_state.app_menu_selected = destino_apos_login
+                st.success("Login realizado com sucesso.")
+                st.rerun()
+
+            elif email_login == INNA_ADMIN_EMAIL and senha_login == INNA_ADMIN_PASSWORD:
+                st.session_state.logado = True
+                st.session_state.usuario = email_login
+                st.session_state.perfil_usuario = "admin"
+                st.session_state.app_menu_selected = destino_apos_login
+                st.success("Login de administrador realizado com sucesso.")
+                st.rerun()
+
+            else:
+                st.error("E-mail ou senha inválidos.")
 PAGINAS_PUBLICAS_INNA = ["🏠 Início", "🔑 Entrar", "ℹ️ Sobre a INNA"]
 
 if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
-    st.warning("Faça login para acessar esta área.")
-    st.session_state.app_menu_selected = "🔑 Entrar"
+    tela_login_inna_inline(destino_apos_login=app_menu)
     st.stop()
 if app_menu == "🏠 Início":
 
@@ -2254,6 +2480,8 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"Erro ao buscar histórico pela API: {error}")
+
+
 
 
 
