@@ -1794,29 +1794,153 @@ if app_menu == "🏠 Início":
     st.stop()
 
 
-if app_menu == "💬 Conversar com a Inna":
-    st.title("💬 Conversar com a Inna")
-    st.caption("Canal de conversa educativa para dúvidas financeiras simples.")
 
-    st.info(
-        "Aqui ficará o chat da INNA. A próxima etapa é conectar esta tela à IA "
-        "para responder dúvidas com base no último diagnóstico financeiro do usuário."
+CHAT_TEXTS_INNA = {
+    "pt": {
+        "title": "💬 Conversar com a Inna",
+        "caption": "Canal de conversa educativa para dúvidas financeiras simples.",
+        "info": "Aqui ficará o chat da INNA. A próxima etapa é conectar esta tela à IA para responder dúvidas com base no último diagnóstico financeiro do usuário.",
+        "input_label": "Digite uma dúvida financeira:",
+        "placeholder": "Exemplo: Como posso melhorar meu score financeiro?",
+        "button": "Enviar pergunta para a Inna",
+        "empty": "Digite uma pergunta antes de enviar.",
+        "demo_answer": "Ainda estou em modo demonstração. Em breve, vou responder usando IA e o contexto do seu diagnóstico financeiro.",
+    },
+    "en_us": {
+        "title": "💬 Chat with Inna",
+        "caption": "Educational conversation channel for simple financial questions.",
+        "info": "This is where the INNA chat will be. The next step is to connect this screen to AI so it can answer questions based on the user's latest financial diagnosis.",
+        "input_label": "Type a financial question:",
+        "placeholder": "Example: How can I improve my financial score?",
+        "button": "Send question to Inna",
+        "empty": "Type a question before sending.",
+        "demo_answer": "I am still in demo mode. Soon, I will answer using AI and the context of your financial diagnosis.",
+    },
+    "en_gb": {
+        "title": "💬 Chat with Inna",
+        "caption": "Educational conversation channel for simple financial questions.",
+        "info": "This is where the INNA chat will be. The next step is to connect this screen to AI so it can answer questions based on the user's latest financial diagnosis.",
+        "input_label": "Type a financial question:",
+        "placeholder": "Example: How can I improve my financial score?",
+        "button": "Send question to Inna",
+        "empty": "Type a question before sending.",
+        "demo_answer": "I am still in demo mode. Soon, I will answer using AI and the context of your financial diagnosis.",
+    },
+    "es": {
+        "title": "💬 Conversar con Inna",
+        "caption": "Canal educativo para dudas financieras simples.",
+        "info": "Aquí estará el chat de INNA. El próximo paso es conectar esta pantalla a la IA para responder preguntas con base en el último diagnóstico financiero del usuario.",
+        "input_label": "Escribe una duda financiera:",
+        "placeholder": "Ejemplo: ¿Cómo puedo mejorar mi puntuación financiera?",
+        "button": "Enviar pregunta a Inna",
+        "empty": "Escribe una pregunta antes de enviar.",
+        "demo_answer": "Todavía estoy en modo demostración. Pronto responderé usando IA y el contexto de tu diagnóstico financiero.",
+    },
+    "de": {
+        "title": "💬 Mit Inna sprechen",
+        "caption": "Bildungskanal für einfache Finanzfragen.",
+        "info": "Hier wird der INNA-Chat angezeigt. Der nächste Schritt ist, diese Seite mit KI zu verbinden, um Fragen auf Basis der letzten Finanzdiagnose des Nutzers zu beantworten.",
+        "input_label": "Geben Sie eine Finanzfrage ein:",
+        "placeholder": "Beispiel: Wie kann ich meinen Finanzscore verbessern?",
+        "button": "Frage an Inna senden",
+        "empty": "Geben Sie vor dem Senden eine Frage ein.",
+        "demo_answer": "Ich bin noch im Demonstrationsmodus. Bald werde ich mit KI und dem Kontext Ihrer Finanzdiagnose antworten.",
+    },
+    "fr": {
+        "title": "💬 Parler avec Inna",
+        "caption": "Canal éducatif pour les questions financières simples.",
+        "info": "C’est ici que le chat INNA sera affiché. La prochaine étape consiste à connecter cette page à l’IA pour répondre aux questions à partir du dernier diagnostic financier de l’utilisateur.",
+        "input_label": "Écrivez une question financière :",
+        "placeholder": "Exemple : Comment améliorer mon score financier ?",
+        "button": "Envoyer la question à Inna",
+        "empty": "Écrivez une question avant d’envoyer.",
+        "demo_answer": "Je suis encore en mode démonstration. Bientôt, je répondrai avec l’IA et le contexte de votre diagnostic financier.",
+    },
+    "it": {
+        "title": "💬 Parlare con Inna",
+        "caption": "Canale educativo per semplici domande finanziarie.",
+        "info": "Qui sarà disponibile la chat di INNA. Il prossimo passo è collegare questa schermata all’IA per rispondere alle domande in base all’ultima diagnosi finanziaria dell’utente.",
+        "input_label": "Scrivi una domanda finanziaria:",
+        "placeholder": "Esempio: Come posso migliorare il mio punteggio finanziario?",
+        "button": "Invia domanda a Inna",
+        "empty": "Scrivi una domanda prima di inviare.",
+        "demo_answer": "Sono ancora in modalità dimostrativa. Presto risponderò usando l’IA e il contesto della tua diagnosi finanziaria.",
+    },
+    "ro": {
+        "title": "💬 Vorbește cu Inna",
+        "caption": "Canal educativ pentru întrebări financiare simple.",
+        "info": "Aici va fi chatul INNA. Următorul pas este conectarea acestei pagini la IA pentru a răspunde la întrebări pe baza ultimului diagnostic financiar al utilizatorului.",
+        "input_label": "Scrie o întrebare financiară:",
+        "placeholder": "Exemplu: Cum îmi pot îmbunătăți scorul financiar?",
+        "button": "Trimite întrebarea către Inna",
+        "empty": "Scrie o întrebare înainte de trimitere.",
+        "demo_answer": "Sunt încă în modul demonstrație. În curând voi răspunde folosind IA și contextul diagnosticului tău financiar.",
+    },
+    "ru": {
+        "title": "💬 Поговорить с Inna",
+        "caption": "Образовательный канал для простых финансовых вопросов.",
+        "info": "Здесь будет чат INNA. Следующий шаг — подключить эту страницу к ИИ, чтобы отвечать на вопросы на основе последней финансовой диагностики пользователя.",
+        "input_label": "Введите финансовый вопрос:",
+        "placeholder": "Пример: Как я могу улучшить свой финансовый рейтинг?",
+        "button": "Отправить вопрос Inna",
+        "empty": "Введите вопрос перед отправкой.",
+        "demo_answer": "Я пока работаю в демонстрационном режиме. Скоро я смогу отвечать с помощью ИИ и контекста вашей финансовой диагностики.",
+    },
+    "uk": {
+        "title": "💬 Поговорити з Inna",
+        "caption": "Освітній канал для простих фінансових питань.",
+        "info": "Тут буде чат INNA. Наступний крок — підключити цю сторінку до ШІ, щоб відповідати на питання на основі останньої фінансової діагностики користувача.",
+        "input_label": "Введіть фінансове питання:",
+        "placeholder": "Приклад: Як я можу покращити свій фінансовий рейтинг?",
+        "button": "Надіслати питання Inna",
+        "empty": "Введіть питання перед надсиланням.",
+        "demo_answer": "Я ще працюю в демонстраційному режимі. Незабаром я відповідатиму за допомогою ШІ та контексту вашої фінансової діагностики.",
+    },
+    "ar": {
+        "title": "💬 التحدث مع Inna",
+        "caption": "قناة تعليمية للأسئلة المالية البسيطة.",
+        "info": "هنا ستكون محادثة INNA. الخطوة التالية هي ربط هذه الشاشة بالذكاء الاصطناعي للإجابة على الأسئلة بناءً على آخر تشخيص مالي للمستخدم.",
+        "input_label": "اكتب سؤالًا ماليًا:",
+        "placeholder": "مثال: كيف يمكنني تحسين درجتي المالية؟",
+        "button": "إرسال السؤال إلى Inna",
+        "empty": "اكتب سؤالًا قبل الإرسال.",
+        "demo_answer": "ما زلت في وضع العرض التجريبي. قريبًا سأجيب باستخدام الذكاء الاصطناعي وسياق تشخيصك المالي.",
+    },
+    "ch": {
+        "title": "💬 Mit Inna sprechen",
+        "caption": "Bildungskanal für einfache Finanzfragen.",
+        "info": "Hier wird der INNA-Chat angezeigt. Der nächste Schritt ist, diese Seite mit KI zu verbinden, um Fragen auf Basis der letzten Finanzdiagnose des Nutzers zu beantworten.",
+        "input_label": "Geben Sie eine Finanzfrage ein:",
+        "placeholder": "Beispiel: Wie kann ich meinen Finanzscore verbessern?",
+        "button": "Frage an Inna senden",
+        "empty": "Geben Sie vor dem Senden eine Frage ein.",
+        "demo_answer": "Ich bin noch im Demonstrationsmodus. Bald werde ich mit KI und dem Kontext Ihrer Finanzdiagnose antworten.",
+    },
+}
+
+def chat_t(key: str) -> str:
+    lang = app_lang if app_lang in CHAT_TEXTS_INNA else "pt"
+    return CHAT_TEXTS_INNA.get(lang, CHAT_TEXTS_INNA["pt"]).get(
+        key,
+        CHAT_TEXTS_INNA["pt"].get(key, key),
     )
+if app_menu == "💬 Conversar com a Inna":
+    st.title(chat_t("title"))
+    st.caption(chat_t("caption"))
+
+    st.info(chat_t("info"))
 
     pergunta_demo = st.text_input(
-        "Digite uma dúvida financeira:",
-        placeholder="Exemplo: Como posso melhorar meu score financeiro?"
+        chat_t("input_label"),
+        placeholder=chat_t("placeholder")
     )
 
-    if st.button("Enviar pergunta para a Inna", use_container_width=True):
+    if st.button(chat_t("button"), use_container_width=True):
         if pergunta_demo.strip():
             st.chat_message("user").markdown(pergunta_demo)
-            st.chat_message("assistant").markdown(
-                "Ainda estou em modo demonstração. Em breve, vou responder usando IA "
-                "e o contexto do seu diagnóstico financeiro."
-            )
+            st.chat_message("assistant").markdown(chat_t("demo_answer"))
         else:
-            st.warning("Digite uma pergunta antes de enviar.")
+            st.warning(chat_t("empty"))
 
     st.stop()
 
@@ -2480,6 +2604,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"Erro ao buscar histórico pela API: {error}")
+
 
 
 
