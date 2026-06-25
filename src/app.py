@@ -176,6 +176,193 @@ st.markdown("""
     margin-bottom: 12px;
     box-shadow: 0 8px 20px rgba(7, 28, 54, 0.18);
 }
+
+/* ===== INNA FINAL VISUAL POLISH ===== */
+
+.hero-wrapper {
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 28px 70px rgba(7, 28, 54, 0.28);
+    margin-bottom: 42px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+.hero-wrapper img {
+    width: 100%;
+    border-radius: 28px;
+    display: block;
+}
+
+.title-main {
+    font-size: 44px;
+    font-weight: 950;
+    color: #061A33;
+    letter-spacing: -1.2px;
+    margin-top: 18px;
+    margin-bottom: 6px;
+}
+
+.subtitle {
+    font-size: 21px;
+    color: #34465F;
+    margin-bottom: 26px;
+}
+
+.info-box {
+    background: linear-gradient(135deg, #EAF4FF, #F7FBFF);
+    color: #113B63;
+    border: 1px solid #BBD9FF;
+    border-radius: 18px;
+    padding: 20px 24px;
+    font-size: 17px;
+    margin-bottom: 34px;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+}
+
+.section-title {
+    font-size: 32px;
+    font-weight: 900;
+    color: #061A33;
+    margin-top: 46px;
+    margin-bottom: 22px;
+    letter-spacing: -0.6px;
+}
+
+.text-normal {
+    font-size: 18px;
+    color: #28384D;
+    line-height: 1.85;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #DDE7F3;
+    border-radius: 24px;
+    padding: 32px;
+    min-height: 210px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
+
+.feature-card h3 {
+    color: #061A33;
+    font-size: 24px;
+    font-weight: 850;
+    margin-bottom: 16px;
+}
+
+.feature-card p {
+    color: #42526E;
+    font-size: 17px;
+    line-height: 1.75;
+}
+
+.step-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 32px;
+    border-left: 6px solid #D4AF37;
+    box-shadow: 0 16px 42px rgba(7, 28, 54, 0.08);
+    min-height: 235px;
+}
+
+.step-card h3 {
+    color: #D4AF37;
+    font-size: 34px;
+    margin-bottom: 24px;
+}
+
+.step-card h4 {
+    color: #061A33;
+    font-size: 23px;
+    margin-bottom: 18px;
+}
+
+.step-card p {
+    color: #42526E;
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+.warning-box {
+    background: linear-gradient(135deg, #FFF8DF, #FFFDF4);
+    color: #5C4300;
+    border: 1px solid #E9C95F;
+    border-radius: 20px;
+    padding: 22px 26px;
+    font-size: 17px;
+    margin-top: 36px;
+    box-shadow: 0 10px 26px rgba(212, 175, 55, 0.10);
+}
+
+.cta-box {
+    background: radial-gradient(circle at top left, #164A86 0%, #071C36 42%, #061426 100%);
+    color: white;
+    border-radius: 30px;
+    padding: 52px 34px;
+    text-align: center;
+    margin-top: 44px;
+    box-shadow: 0 26px 70px rgba(7, 28, 54, 0.32);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+.cta-box h2 {
+    color: white;
+    font-size: 38px;
+    font-weight: 900;
+    margin-bottom: 20px;
+}
+
+.cta-box p {
+    color: #D8E6F7;
+    font-size: 19px;
+}
+
+.premium-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #071C36, #0E3A73);
+    color: #F8D98B;
+    border: 1px solid #D4AF37;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    box-shadow: 0 12px 28px rgba(7, 28, 54, 0.22);
+}
+
+div[data-testid="stMetric"] {
+    background: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 22px;
+    padding: 22px 24px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.07);
+}
+
+div[data-testid="stMetricLabel"] {
+    font-size: 16px;
+    color: #334155;
+}
+
+div[data-testid="stMetricValue"] {
+    font-size: 36px;
+    color: #061A33;
+    font-weight: 850;
+}
+
+.stButton > button {
+    border-radius: 14px;
+    height: 48px;
+    font-weight: 700;
+    border: 1px solid #D8E0EA;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.stButton > button:hover {
+    border-color: #D4AF37;
+    color: #071C36;
+    box-shadow: 0 12px 26px rgba(7, 28, 54, 0.12);
+}
+
 </style>
 """, unsafe_allow_html=True)
 APP_MENU_OPTIONS = [
@@ -1768,5 +1955,6 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"Erro ao buscar histórico pela API: {error}")
+
 
 
