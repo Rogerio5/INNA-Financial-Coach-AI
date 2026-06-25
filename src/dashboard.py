@@ -13,6 +13,64 @@ from sqlalchemy import text
 from src.database import engine, init_db
 
 
+
+LANGUAGE_LABELS = {
+    "pt": "Português Brasil",
+    "en_us": "Inglês EUA",
+    "en_gb": "Inglês Reino Unido",
+    "es": "Espanhol",
+    "de": "Alemão",
+    "fr": "Francês",
+    "it": "Italiano",
+    "ro": "Romeno",
+    "uk": "Ucraniano",
+    "ru": "Russo",
+    "ar": "Árabe",
+    "ch": "Suíço",
+}
+
+CURRENCY_SYMBOLS = {
+    "BRL": "R$",
+    "USD": "US$",
+    "GBP": "£",
+    "EUR": "€",
+    "RON": "RON",
+    "UAH": "₴",
+    "RUB": "₽",
+    "SAR": "SAR",
+    "CHF": "CHF",
+}
+
+
+def format_money_dashboard(value, currency="BRL", symbol=None):
+    try:
+        amount = float(value or 0)
+    except Exception:
+        amount = 0.0
+
+    currency = str(currency or "BRL").upper()
+    symbol = symbol or CURRENCY_SYMBOLS.get(currency, currency)
+
+    if currency == "BRL":
+        formatted = f"{amount:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        return f"{symbol} {formatted}"
+
+    formatted = f"{amount:,.2f}"
+    return f"{symbol} {formatted}"
+
+
+def format_lang_dashboard(lang):
+    lang = str(lang or "não informado")
+    return LANGUAGE_LABELS.get(lang, lang)
+
+
+def safe_value(value, fallback="não informado"):
+    if value is None:
+        return fallback
+    value = str(value).strip()
+    return value if value else fallback
+
+
 st.set_page_config(
     page_title="Dashboard INNA",
     page_icon="📊",
@@ -341,6 +399,57 @@ col5.metric("Feedback útil", f"{taxa_util:.1f}%")
 
 st.divider()
 
+st.divider()
+
+st.write("## 👤 Resumo do usuário filtrado")
+
+if diagnosticos_filtrados.empty:
+    st.caption("Nenhum diagnóstico encontrado para os filtros selecionados.")
+else:
+    diagnosticos_resumo = diagnosticos_filtrados.copy()
+
+    if "data_hora" in diagnosticos_resumo.columns:
+        diagnosticos_resumo = diagnosticos_resumo.sort_values("data_hora")
+
+    ultimo_diag = diagnosticos_resumo.iloc[-1]
+
+    usuario_resumo = safe_value(ultimo_diag.get("nome"))
+    idioma_resumo = safe_value(ultimo_diag.get("idioma"))
+    moeda_resumo = safe_value(ultimo_diag.get("moeda"))
+    simbolo_resumo = safe_value(ultimo_diag.get("simbolo_moeda"), CURRENCY_SYMBOLS.get(moeda_resumo, moeda_resumo))
+    risco_resumo = safe_value(ultimo_diag.get("nivel_risco"))
+    score_resumo = ultimo_diag.get("score_financeiro", 0)
+    saldo_resumo = ultimo_diag.get("saldo_estimado", 0)
+
+    canal_resumo = "não informado"
+    if "eventos_filtrados" in globals() and not eventos_filtrados.empty and "canal" in eventos_filtrados.columns:
+        eventos_resumo = eventos_filtrados.copy()
+        if "data_hora" in eventos_resumo.columns:
+            eventos_resumo = eventos_resumo.sort_values("data_hora")
+        canal_resumo = safe_value(eventos_resumo.iloc[-1].get("canal"))
+
+    col_res1, col_res2, col_res3, col_res4 = st.columns(4)
+
+    col_res1.metric("Usuário", usuario_resumo)
+    col_res2.metric("Idioma", format_lang_dashboard(idioma_resumo))
+    col_res3.metric("Moeda", moeda_resumo)
+    col_res4.metric("Canal mais recente", canal_resumo)
+
+    col_res5, col_res6, col_res7 = st.columns(3)
+
+    col_res5.metric("Score financeiro", f"{float(score_resumo or 0):.1f}/100")
+    col_res6.metric("Risco", risco_resumo)
+    col_res7.metric(
+        "Saldo estimado",
+        format_money_dashboard(saldo_resumo, moeda_resumo, simbolo_resumo),
+    )
+
+    st.caption(
+        "Este resumo ajuda a interpretar rapidamente o usuário filtrado, separando idioma, moeda, canal, score, risco e saldo estimado."
+    )
+
+st.divider()
+
 st.write("## 🌐 Eventos multicanal reais")
 
 if eventos_filtrados.empty:
@@ -405,7 +514,11 @@ else:
 
         if "idioma" in diagnosticos_filtrados.columns:
             idioma_counts = diagnosticos_filtrados["idioma"].fillna("não informado").astype(str).value_counts()
-            st.bar_chart(idioma_counts)
+
+            if len(idioma_counts) > 1:
+                st.bar_chart(idioma_counts)
+            else:
+                st.caption("Somente um idioma encontrado nos filtros atuais.")
 
             idioma_table = idioma_counts.reset_index()
             idioma_table.columns = ["idioma", "diagnósticos"]
@@ -418,7 +531,11 @@ else:
 
         if "moeda" in diagnosticos_filtrados.columns:
             moeda_counts = diagnosticos_filtrados["moeda"].fillna("não informado").astype(str).value_counts()
-            st.bar_chart(moeda_counts)
+
+            if len(moeda_counts) > 1:
+                st.bar_chart(moeda_counts)
+            else:
+                st.caption("Somente uma moeda encontrada nos filtros atuais.")
 
             moeda_table = moeda_counts.reset_index()
             moeda_table.columns = ["moeda", "diagnósticos"]
@@ -443,6 +560,10 @@ else:
         saldo_por_moeda["moeda"] = saldo_por_moeda["moeda"].fillna("não informado")
         saldo_por_moeda["saldo_medio"] = saldo_por_moeda["saldo_medio"].round(2)
         saldo_por_moeda["score_medio"] = saldo_por_moeda["score_medio"].round(1)
+        saldo_por_moeda["saldo_medio_formatado"] = saldo_por_moeda.apply(
+            lambda row: format_money_dashboard(row["saldo_medio"], row["moeda"]),
+            axis=1,
+        )
 
         st.dataframe(saldo_por_moeda, use_container_width=True)
     else:
@@ -466,6 +587,10 @@ else:
         resumo_internacional["moeda"] = resumo_internacional["moeda"].fillna("não informado")
         resumo_internacional["score_medio"] = resumo_internacional["score_medio"].round(1)
         resumo_internacional["saldo_medio"] = resumo_internacional["saldo_medio"].round(2)
+        resumo_internacional["saldo_medio_formatado"] = resumo_internacional.apply(
+            lambda row: format_money_dashboard(row["saldo_medio"], row["moeda"]),
+            axis=1,
+        )
 
         st.dataframe(resumo_internacional, use_container_width=True)
     else:
@@ -516,7 +641,11 @@ funil_df = pd.DataFrame(
     }
 )
 
-st.bar_chart(funil_df.set_index("etapa"))
+if int(funil_df["quantidade"].sum()) > 5:
+    st.bar_chart(funil_df.set_index("etapa"))
+else:
+    st.caption("Como há poucos registros no filtro atual, o funil foi exibido em tabela para evitar gráfico visualmente exagerado.")
+
 st.dataframe(funil_df, use_container_width=True)
 
 st.divider()
