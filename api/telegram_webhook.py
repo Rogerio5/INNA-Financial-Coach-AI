@@ -507,6 +507,104 @@ def currency_by_telegram_lang(lang: str) -> tuple[str, str]:
     return mapping.get(lang, ("BRL", "R$"))
 
 
+
+def translate_telegram_risk(risk: str, lang: str) -> str:
+    value = str(risk or "").strip().lower()
+
+    normalized = {
+        "baixo": "low",
+        "baixa": "low",
+        "low": "low",
+        "médio": "medium",
+        "medio": "medium",
+        "média": "medium",
+        "media": "medium",
+        "medium": "medium",
+        "alto": "high",
+        "alta": "high",
+        "high": "high",
+        "indefinido": "undefined",
+        "undefined": "undefined",
+    }.get(value, value)
+
+    translations = {
+        "pt": {
+            "low": "Baixo",
+            "medium": "Médio",
+            "high": "Alto",
+            "undefined": "Indefinido",
+        },
+        "en_us": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High",
+            "undefined": "Undefined",
+        },
+        "en_gb": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High",
+            "undefined": "Undefined",
+        },
+        "es": {
+            "low": "Bajo",
+            "medium": "Medio",
+            "high": "Alto",
+            "undefined": "Indefinido",
+        },
+        "de": {
+            "low": "Niedrig",
+            "medium": "Mittel",
+            "high": "Hoch",
+            "undefined": "Nicht definiert",
+        },
+        "fr": {
+            "low": "Faible",
+            "medium": "Moyen",
+            "high": "Élevé",
+            "undefined": "Non défini",
+        },
+        "it": {
+            "low": "Basso",
+            "medium": "Medio",
+            "high": "Alto",
+            "undefined": "Non definito",
+        },
+        "ro": {
+            "low": "Scăzut",
+            "medium": "Mediu",
+            "high": "Ridicat",
+            "undefined": "Nedefinit",
+        },
+        "uk": {
+            "low": "Низький",
+            "medium": "Середній",
+            "high": "Високий",
+            "undefined": "Невизначено",
+        },
+        "ru": {
+            "low": "Низкий",
+            "medium": "Средний",
+            "high": "Высокий",
+            "undefined": "Не определено",
+        },
+        "ar": {
+            "low": "منخفض",
+            "medium": "متوسط",
+            "high": "مرتفع",
+            "undefined": "غير محدد",
+        },
+        "ch": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High",
+            "undefined": "Undefined",
+        },
+    }
+
+    return translations.get(lang, translations["pt"]).get(normalized, str(risk or "Indefinido"))
+
+
 def safe_record_telegram_event(
     chat_id: int,
     lang: str,
@@ -532,7 +630,7 @@ def safe_record_telegram_event(
                 "evento": "diagnostico_telegram",
                 "simbolo_moeda": simbolo,
                 "score_financeiro": resultado.get("score_financeiro"),
-                "nivel_risco": resultado.get("nivel_risco"),
+                "nivel_risco": translate_telegram_risk(resultado.get("nivel_risco"), lang),
                 "saldo_estimado": resultado.get("saldo_estimado"),
             },
         )
