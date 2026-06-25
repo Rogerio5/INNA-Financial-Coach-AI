@@ -5,8 +5,10 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT_DIR))
 
 HERO_IMAGE = ROOT_DIR / "assets" / "inna_hero.png"
+DASHBOARD_ADMIN_URL = "https://inna-dashboard-streamlit.onrender.com"
 
 import streamlit as st
+import streamlit.components.v1 as components
 from streamlit_js_eval import streamlit_js_eval
 import requests
 
@@ -365,15 +367,30 @@ div[data-testid="stMetricValue"] {
 
 </style>
 """, unsafe_allow_html=True)
-APP_MENU_OPTIONS = [
+APP_MENU_OPTIONS_USER = [
     "🏠 Início",
     "🧾 Novo diagnóstico",
-    "📊 Resultado financeiro",
-    "📄 Relatório PDF e e-mail",
-    "📚 Histórico",
-    "💬 Feedback",
+    "📊 Meu panorama financeiro",
+    "💬 Conversar com a Inna",
+    "📄 Meu relatório",
+    "📚 Meu histórico",
+    "⭐ Avaliar a Inna",
     "ℹ️ Sobre a INNA",
 ]
+
+APP_MENU_OPTIONS_ADMIN = [
+    "🏠 Início",
+    "🧾 Novo diagnóstico",
+    "📊 Meu panorama financeiro",
+    "💬 Conversar com a Inna",
+    "📄 Meu relatório",
+    "📚 Meu histórico",
+    "⭐ Avaliar a Inna",
+    "🔐 Admin Analytics",
+    "ℹ️ Sobre a INNA",
+]
+
+APP_MENU_OPTIONS = APP_MENU_OPTIONS_USER
 
 
 APP_LANG_LABELS = {
@@ -1361,7 +1378,7 @@ if app_menu == "🏠 Início":
         st.rerun()
 
     if col_start2.button("📄 Gerar relatório", use_container_width=True):
-        st.session_state.app_menu_selected = "📄 Relatório PDF e e-mail"
+        st.session_state.app_menu_selected = "📄 Meu relatório"
         st.rerun()
 
     if col_start3.button("ℹ️ Ver sobre o projeto", use_container_width=True):
@@ -1370,6 +1387,58 @@ if app_menu == "🏠 Início":
 
     st.stop()
 
+
+if app_menu == "💬 Conversar com a Inna":
+    st.title("💬 Conversar com a Inna")
+    st.caption("Canal de conversa educativa para dúvidas financeiras simples.")
+
+    st.info(
+        "Aqui ficará o chat da INNA. A próxima etapa é conectar esta tela à IA "
+        "para responder dúvidas com base no último diagnóstico financeiro do usuário."
+    )
+
+    pergunta_demo = st.text_input(
+        "Digite uma dúvida financeira:",
+        placeholder="Exemplo: Como posso melhorar meu score financeiro?"
+    )
+
+    if st.button("Enviar pergunta para a Inna", use_container_width=True):
+        if pergunta_demo.strip():
+            st.chat_message("user").markdown(pergunta_demo)
+            st.chat_message("assistant").markdown(
+                "Ainda estou em modo demonstração. Em breve, vou responder usando IA "
+                "e o contexto do seu diagnóstico financeiro."
+            )
+        else:
+            st.warning("Digite uma pergunta antes de enviar.")
+
+    st.stop()
+
+
+if app_menu == "🔐 Admin Analytics":
+    st.title("🔐 Admin Analytics — INNA")
+    st.caption("Área administrativa para gestor, administrador ou avaliador acompanhar métricas da plataforma.")
+
+    st.warning(
+        "Este painel é destinado ao administrador da INNA. "
+        "Ele não deve aparecer para o usuário comum/trabalhador."
+    )
+
+    st.link_button(
+        "Abrir dashboard em nova aba",
+        DASHBOARD_ADMIN_URL,
+        use_container_width=True
+    )
+
+    st.divider()
+
+    components.iframe(
+        DASHBOARD_ADMIN_URL,
+        height=900,
+        scrolling=True,
+    )
+
+    st.stop()
 if app_menu == "ℹ️ Sobre a INNA":
     st.title("ℹ️ Sobre a INNA Financial Coach AI")
     st.write(
@@ -1400,8 +1469,8 @@ if app_menu == "ℹ️ Sobre a INNA":
 st.caption(f"Página atual: {app_menu}")
 
 
-if app_menu == "📊 Resultado financeiro":
-    st.title("📊 Resultado financeiro")
+if app_menu == "📊 Meu panorama financeiro":
+    st.title("📊 Meu panorama financeiro")
 
     response = st.session_state.get("last_response")
 
@@ -1432,18 +1501,18 @@ if app_menu == "📊 Resultado financeiro":
     col_nav1, col_nav2 = st.columns(2)
 
     if col_nav1.button("📄 Abrir relatório PDF e e-mail"):
-        st.session_state.app_menu_selected = "📄 Relatório PDF e e-mail"
+        st.session_state.app_menu_selected = "📄 Meu relatório"
         st.rerun()
 
     if col_nav2.button("💬 Enviar feedback"):
-        st.session_state.app_menu_selected = "💬 Feedback"
+        st.session_state.app_menu_selected = "⭐ Avaliar a Inna"
         st.rerun()
 
     st.stop()
 
 
-if app_menu == "📄 Relatório PDF e e-mail":
-    st.title("📄 Relatório PDF e e-mail")
+if app_menu == "📄 Meu relatório":
+    st.title("📄 Meu relatório")
 
     response = st.session_state.get("last_response")
 
@@ -1507,18 +1576,18 @@ if app_menu == "📄 Relatório PDF e e-mail":
     col_rel1, col_rel2 = st.columns(2)
 
     if col_rel1.button("📊 Voltar para resultado"):
-        st.session_state.app_menu_selected = "📊 Resultado financeiro"
+        st.session_state.app_menu_selected = "📊 Meu panorama financeiro"
         st.rerun()
 
     if col_rel2.button("💬 Enviar feedback"):
-        st.session_state.app_menu_selected = "💬 Feedback"
+        st.session_state.app_menu_selected = "⭐ Avaliar a Inna"
         st.rerun()
 
     st.stop()
 
 
-if app_menu == "💬 Feedback":
-    st.title("💬 Feedback")
+if app_menu == "⭐ Avaliar a Inna":
+    st.title("⭐ Avaliar a Inna")
 
     response = st.session_state.get("last_response")
 
@@ -1575,14 +1644,14 @@ if app_menu == "💬 Feedback":
         st.rerun()
 
     if col_fb2.button("📚 Ver histórico"):
-        st.session_state.app_menu_selected = "📚 Histórico"
+        st.session_state.app_menu_selected = "📚 Meu histórico"
         st.rerun()
 
     st.stop()
 
 
-if app_menu == "📚 Histórico":
-    st.title("📚 Histórico individual")
+if app_menu == "📚 Meu histórico":
+    st.title("📚 Meu histórico individual")
     st.caption(tr("history_help"))
 
     with st.form("historico_form_menu"):
@@ -1731,7 +1800,7 @@ if submitted:
 
         st.session_state.last_payload = payload
         st.session_state.last_response = response
-        st.session_state.app_menu_selected = "📊 Resultado financeiro"
+        st.session_state.app_menu_selected = "📊 Meu panorama financeiro"
 
         st.success(tr("saved"))
         st.info("Diagnóstico gerado. Abrindo a página de resultado financeiro...")
@@ -1955,6 +2024,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"Erro ao buscar histórico pela API: {error}")
+
 
 
 
