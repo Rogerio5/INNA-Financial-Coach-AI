@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -6,6 +7,11 @@ sys.path.append(str(ROOT_DIR))
 
 HERO_IMAGE = ROOT_DIR / "assets" / "inna_hero.png"
 DASHBOARD_ADMIN_URL = "https://inna-dashboard-streamlit.onrender.com"
+
+INNA_USER_EMAIL = os.getenv("INNA_USER_EMAIL", "usuario@inna.ai")
+INNA_USER_PASSWORD = os.getenv("INNA_USER_PASSWORD", "usuario123")
+INNA_ADMIN_EMAIL = os.getenv("INNA_ADMIN_EMAIL", "admin@inna.ai")
+INNA_ADMIN_PASSWORD = os.getenv("INNA_ADMIN_PASSWORD", "admin123")
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -1210,7 +1216,7 @@ st.sidebar.title("💰 INNA")
 st.sidebar.caption("Educadora Financeira Inteligente")
 
 if "app_menu_selected" not in st.session_state:
-    st.session_state.app_menu_selected = "🧾 Novo diagnóstico"
+    st.session_state.app_menu_selected = "🏠 Início"
 
 app_menu = st.sidebar.radio(
     "Menu",
@@ -1225,9 +1231,26 @@ st.session_state.app_menu_selected = app_menu
 
 st.sidebar.divider()
 
+if st.session_state.get("logado"):
+    st.sidebar.success("Status: conectado")
+    st.sidebar.caption(f"Usuário: {st.session_state.get('usuario')}")
+    st.sidebar.caption(f"Perfil: {st.session_state.get('perfil_usuario')}")
+else:
+    st.sidebar.info("Acesso público")
+    st.sidebar.caption("Faça login para usar diagnóstico, relatório, histórico e área admin.")
+
+st.sidebar.divider()
+
 st.sidebar.caption(tr("browser_translate_warning"))
 
 
+
+PAGINAS_PUBLICAS_INNA = ["🏠 Início", "🔑 Entrar", "ℹ️ Sobre a INNA"]
+
+if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
+    st.warning("Faça login para acessar esta área.")
+    st.session_state.app_menu_selected = "🔑 Entrar"
+    st.stop()
 if app_menu == "🏠 Início":
 
     if HERO_IMAGE.exists():
@@ -1374,11 +1397,11 @@ if app_menu == "🏠 Início":
     col_start1, col_start2, col_start3 = st.columns(3)
 
     if col_start1.button("🧾 Começar novo diagnóstico", use_container_width=True):
-        st.session_state.app_menu_selected = "🧾 Novo diagnóstico"
+        st.session_state.app_menu_selected = "🏠 Início" if st.session_state.get("logado") else "🔑 Entrar"
         st.rerun()
 
     if col_start2.button("📄 Gerar relatório", use_container_width=True):
-        st.session_state.app_menu_selected = "📄 Meu relatório"
+        st.session_state.app_menu_selected = "📄 Meu relatório" if st.session_state.get("logado") else "🔑 Entrar"
         st.rerun()
 
     if col_start3.button("ℹ️ Ver sobre o projeto", use_container_width=True):
@@ -1439,6 +1462,56 @@ if app_menu == "🔐 Admin Analytics":
     )
 
     st.stop()
+
+if app_menu == "🔑 Entrar":
+    st.title("🔑 Entrar na INNA")
+    st.caption("Acesse sua conta para usar diagnóstico, relatório, histórico e recursos personalizados.")
+
+    col_login1, col_login2, col_login3 = st.columns([1, 1.3, 1])
+
+    with col_login2:
+        st.markdown("### 💰 Inna")
+        st.markdown("#### Educadora Financeira Inteligente")
+
+        email_login = st.text_input("E-mail", key="login_email")
+        senha_login = st.text_input("Senha", type="password", key="login_senha")
+
+        with st.expander("Ver credenciais demo"):
+            st.info(
+                f"Usuário comum: {INNA_USER_EMAIL} | Senha: {INNA_USER_PASSWORD}\n\n"
+                f"Administrador: {INNA_ADMIN_EMAIL} | Senha: {INNA_ADMIN_PASSWORD}"
+            )
+
+        if st.button("Entrar", use_container_width=True):
+            if email_login == INNA_USER_EMAIL and senha_login == INNA_USER_PASSWORD:
+                st.session_state.logado = True
+                st.session_state.usuario = email_login
+                st.session_state.perfil_usuario = "usuario"
+                st.success("Login realizado com sucesso.")
+                st.session_state.app_menu_selected = "📊 Meu panorama financeiro"
+                st.rerun()
+
+            elif email_login == INNA_ADMIN_EMAIL and senha_login == INNA_ADMIN_PASSWORD:
+                st.session_state.logado = True
+                st.session_state.usuario = email_login
+                st.session_state.perfil_usuario = "admin"
+                st.success("Login de administrador realizado com sucesso.")
+                st.session_state.app_menu_selected = "🔐 Admin Analytics"
+                st.rerun()
+
+            else:
+                st.error("E-mail ou senha inválidos.")
+
+    st.stop()
+
+
+if app_menu == "🚪 Sair":
+    st.session_state.logado = False
+    st.session_state.usuario = None
+    st.session_state.perfil_usuario = None
+    st.session_state.app_menu_selected = "🏠 Início"
+    st.success("Você saiu da INNA.")
+    st.rerun()
 if app_menu == "ℹ️ Sobre a INNA":
     st.title("ℹ️ Sobre a INNA Financial Coach AI")
     st.write(
@@ -1640,7 +1713,7 @@ if app_menu == "⭐ Avaliar a Inna":
     if col_fb1.button("🧾 Novo diagnóstico"):
         st.session_state.last_response = None
         st.session_state.last_payload = None
-        st.session_state.app_menu_selected = "🧾 Novo diagnóstico"
+        st.session_state.app_menu_selected = "🏠 Início"
         st.rerun()
 
     if col_fb2.button("📚 Ver histórico"):
@@ -2024,6 +2097,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"Erro ao buscar histórico pela API: {error}")
+
 
 
 
