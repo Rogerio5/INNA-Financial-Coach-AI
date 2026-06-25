@@ -6,6 +6,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT_DIR))
 
 HERO_IMAGE = ROOT_DIR / "assets" / "inna_hero.png"
+INNA_PORTRAIT_IMAGE = ROOT_DIR / "assets" / "inna_portrait.png"
 DASHBOARD_ADMIN_URL = "https://inna-dashboard-streamlit.onrender.com"
 
 INNA_USER_EMAIL = os.getenv("INNA_USER_EMAIL", "usuario@inna.ai")
@@ -369,6 +370,231 @@ div[data-testid="stMetricValue"] {
     border-color: #D4AF37;
     color: #071C36;
     box-shadow: 0 12px 26px rgba(7, 28, 54, 0.12);
+}
+
+
+.inna-hero-dynamic {
+    background: radial-gradient(circle at top left, #123E75 0%, #071C36 42%, #04101F 100%);
+    border-radius: 32px;
+    padding: 34px;
+    margin-bottom: 34px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    box-shadow: 0 28px 70px rgba(7, 28, 54, 0.32);
+}
+
+.inna-hero-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 34px;
+    align-items: center;
+}
+
+.inna-portrait-box {
+    border-radius: 28px;
+    overflow: hidden;
+    background: #061426;
+    box-shadow: 0 22px 50px rgba(0,0,0,0.32);
+}
+
+.inna-portrait-box img {
+    width: 100%;
+    display: block;
+    border-radius: 28px;
+}
+
+.inna-hero-content h1 {
+    font-size: 64px;
+    line-height: 1;
+    margin: 0;
+    color: #F7D88A;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.inna-hero-content h2 {
+    font-size: 36px;
+    margin: 8px 0 6px 0;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.inna-hero-subtitle {
+    font-size: 22px;
+    color: #F7D88A;
+    margin-bottom: 24px;
+}
+
+.inna-hero-description {
+    font-size: 20px;
+    color: #E6EEF8;
+    line-height: 1.55;
+    margin-bottom: 28px;
+}
+
+.inna-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.inna-hero-mini-card {
+    border: 1px solid rgba(65, 153, 255, 0.42);
+    background: rgba(4, 16, 31, 0.62);
+    border-radius: 18px;
+    padding: 18px;
+    min-height: 132px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+}
+
+.inna-hero-mini-card .icon {
+    font-size: 34px;
+    margin-bottom: 8px;
+}
+
+.inna-hero-mini-card h3 {
+    color: #ffffff;
+    font-size: 18px;
+    margin: 0 0 8px 0;
+}
+
+.inna-hero-mini-card p {
+    color: #C9D7EA;
+    font-size: 14px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .inna-hero-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .inna-hero-content h1 {
+        font-size: 46px;
+    }
+
+    .inna-hero-content h2 {
+        font-size: 28px;
+    }
+
+    .inna-feature-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ===== INNA HERO DINÂMICO FINAL ===== */
+
+.inna-hero-dynamic-final {
+    background: radial-gradient(circle at top left, #123E75 0%, #071C36 42%, #04101F 100%);
+    border-radius: 32px;
+    padding: 34px;
+    margin-bottom: 34px;
+    border: 1px solid rgba(212, 175, 55, 0.38);
+    box-shadow: 0 28px 70px rgba(7, 28, 54, 0.34);
+}
+
+.inna-hero-final-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 34px;
+    align-items: center;
+}
+
+.inna-hero-photo-card {
+    border-radius: 28px;
+    overflow: hidden;
+    background: #061426;
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    box-shadow: 0 22px 55px rgba(0,0,0,0.35);
+}
+
+.inna-hero-photo-card img {
+    width: 100%;
+    display: block;
+    border-radius: 28px;
+}
+
+.inna-hero-text-side h1 {
+    font-size: 72px;
+    line-height: 0.95;
+    margin: 0;
+    color: #F7D88A;
+    font-weight: 950;
+    letter-spacing: -1px;
+}
+
+.inna-hero-text-side h2 {
+    font-size: 38px;
+    margin: 10px 0 8px 0;
+    color: #ffffff;
+    font-weight: 750;
+}
+
+.inna-hero-subtitle-final {
+    font-size: 22px;
+    color: #F7D88A;
+    margin-bottom: 24px;
+}
+
+.inna-hero-description-final {
+    font-size: 20px;
+    color: #E6EEF8;
+    line-height: 1.55;
+    margin-bottom: 30px;
+    max-width: 780px;
+}
+
+.inna-hero-cards-final {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.inna-hero-card-final {
+    border: 1px solid rgba(65, 153, 255, 0.42);
+    background: rgba(4, 16, 31, 0.66);
+    border-radius: 20px;
+    padding: 20px;
+    min-height: 142px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.20);
+}
+
+.inna-hero-card-final .icon {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+.inna-hero-card-final h3 {
+    color: #ffffff;
+    font-size: 19px;
+    margin: 0 0 8px 0;
+    font-weight: 800;
+}
+
+.inna-hero-card-final p {
+    color: #C9D7EA;
+    font-size: 14px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .inna-hero-final-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .inna-hero-text-side h1 {
+        font-size: 48px;
+    }
+
+    .inna-hero-text-side h2 {
+        font-size: 28px;
+    }
+
+    .inna-hero-cards-final {
+        grid-template-columns: 1fr;
+    }
 }
 
 </style>
@@ -2106,12 +2332,55 @@ if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
     st.stop()
 if app_menu == "🏠 Início":
 
-    if HERO_IMAGE.exists():
-        st.markdown('<div class="hero-wrapper">', unsafe_allow_html=True)
-        st.image(str(HERO_IMAGE), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+    if INNA_PORTRAIT_IMAGE.exists():
+        portrait_path = str(INNA_PORTRAIT_IMAGE).replace("\\", "/")
+
+        st.markdown(f"""
+        <div class="inna-hero-dynamic">
+            <div class="inna-hero-grid">
+                <div class="inna-portrait-box">
+                    <img src="file:///{portrait_path}" alt="INNA Financial Coach AI">
+                </div>
+
+                <div class="inna-hero-content">
+                    <h1>Inna</h1>
+                    <h2>Financial Coach AI</h2>
+                    <div class="inna-hero-subtitle">{home_t("subtitle")}</div>
+                    <div class="inna-hero-description">
+                        {home_t("intro")}
+                    </div>
+
+                    <div class="inna-feature-grid">
+                        <div class="inna-hero-mini-card">
+                            <div class="icon">📋</div>
+                            <h3>{home_t("feature_1_title").replace("📋 ", "")}</h3>
+                            <p>{home_t("feature_1_text")}</p>
+                        </div>
+
+                        <div class="inna-hero-mini-card">
+                            <div class="icon">🧠</div>
+                            <h3>{home_t("feature_2_title").replace("🧠 ", "")}</h3>
+                            <p>{home_t("feature_2_text")}</p>
+                        </div>
+
+                        <div class="inna-hero-mini-card">
+                            <div class="icon">📄</div>
+                            <h3>{home_t("feature_3_title").replace("📄 ", "")}</h3>
+                            <p>{home_t("feature_3_text")}</p>
+                        </div>
+
+                        <div class="inna-hero-mini-card">
+                            <div class="icon">🌐</div>
+                            <h3>{home_t("feature_4_title").replace("🌐 ", "")}</h3>
+                            <p>{home_t("feature_4_text")}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     else:
-        st.warning("Imagem não encontrada em assets/inna_hero.png")
+        st.warning("Imagem não encontrada em assets/inna_portrait.png")
 
     st.markdown(
         f'<div class="premium-badge">{home_t("badge")}</div>',
@@ -3588,6 +3857,8 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
+
 
 
 
