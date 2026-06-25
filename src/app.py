@@ -17,6 +17,16 @@ st.set_page_config(
     layout="centered",
 )
 
+APP_MENU_OPTIONS = [
+    "🏠 Início",
+    "🧾 Novo diagnóstico",
+    "📊 Resultado financeiro",
+    "📄 Relatório PDF e e-mail",
+    "📚 Histórico",
+    "💬 Feedback",
+    "ℹ️ Sobre a INNA",
+]
+
 
 APP_LANG_LABELS = {
     "pt": "🇧🇷 Português Brasil",
@@ -831,7 +841,324 @@ def tr(key: str) -> str:
 
 current_currency_info = CURRENCY_BY_LANG.get(app_lang, CURRENCY_BY_LANG["pt"])
 
+st.sidebar.title("💰 INNA")
+st.sidebar.caption("Educadora Financeira Inteligente")
+
+if "app_menu_selected" not in st.session_state:
+    st.session_state.app_menu_selected = "🧾 Novo diagnóstico"
+
+app_menu = st.sidebar.radio(
+    "Menu",
+    APP_MENU_OPTIONS,
+    index=APP_MENU_OPTIONS.index(st.session_state.app_menu_selected)
+    if st.session_state.app_menu_selected in APP_MENU_OPTIONS
+    else 1,
+    key="app_menu_radio",
+)
+
+st.session_state.app_menu_selected = app_menu
+
+st.sidebar.divider()
+
 st.sidebar.caption(tr("browser_translate_warning"))
+
+
+if app_menu == "🏠 Início":
+    st.title("💰 INNA Financial Coach AI")
+    st.subheader("Sua educadora financeira inteligente com IA")
+
+    st.info(
+        "A INNA ajuda você a entender renda, gastos, dívidas e reserva financeira. "
+        "Ela gera diagnóstico educativo, plano de ação, relatório PDF e envio por e-mail."
+    )
+
+    col_home1, col_home2, col_home3 = st.columns(3)
+    col_home1.metric("Canais", "Web + Telegram")
+    col_home2.metric("Relatórios", "PDF + E-mail")
+    col_home3.metric("Idiomas", "Multilíngue")
+
+    st.write("### O que você pode fazer")
+    st.markdown(
+        """
+- Gerar um novo diagnóstico financeiro.
+- Ver resultado e plano de ação.
+- Baixar relatório em PDF.
+- Enviar relatório por e-mail.
+- Consultar histórico individual.
+- Enviar feedback.
+        """
+    )
+
+    st.success("Para começar, selecione **🧾 Novo diagnóstico** no menu lateral.")
+    st.stop()
+
+
+if app_menu == "ℹ️ Sobre a INNA":
+    st.title("ℹ️ Sobre a INNA Financial Coach AI")
+    st.write(
+        "A INNA é uma educadora financeira com IA Generativa, criada para transformar "
+        "dados simples em diagnóstico financeiro, plano de ação, relatório PDF e indicadores reais."
+    )
+
+    st.write("### Recursos do projeto")
+    st.markdown(
+        """
+- Interface web com Streamlit.
+- Backend com FastAPI.
+- Banco PostgreSQL/Neon.
+- IA Generativa para plano de ação.
+- PDF financeiro.
+- Envio por e-mail.
+- Telegram.
+- Dashboard administrativo.
+- Registro de eventos multicanal.
+- Suporte multilíngue e multimoeda.
+        """
+    )
+
+    st.success("Projeto pronto para portfólio, hackathons e evolução para assistente bancário.")
+    st.stop()
+
+
+st.caption(f"Página atual: {app_menu}")
+
+
+if app_menu == "📊 Resultado financeiro":
+    st.title("📊 Resultado financeiro")
+
+    response = st.session_state.get("last_response")
+
+    if not response:
+        st.warning("Nenhum diagnóstico gerado ainda. Primeiro vá em **🧾 Novo diagnóstico**.")
+        st.stop()
+
+    st.success(tr("success"))
+
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric("Score", f"{float(response.get('score_financeiro', 0)):.1f}/100")
+    col2.metric("Risco", response.get("nivel_risco", "não informado"))
+    col3.metric("Moeda", f"{response.get('moeda', '')} {response.get('simbolo_moeda', '')}")
+
+    st.divider()
+
+    st.write(tr("diagnosis"))
+    diagnostico_formatado = response["diagnostico"].replace("$", "\\$")
+    st.markdown(diagnostico_formatado)
+
+    st.write(tr("plan"))
+    plano_formatado = response["plano_30_dias"].replace("$", "\\$")
+    st.markdown(plano_formatado)
+
+    st.divider()
+
+    col_nav1, col_nav2 = st.columns(2)
+
+    if col_nav1.button("📄 Abrir relatório PDF e e-mail"):
+        st.session_state.app_menu_selected = "📄 Relatório PDF e e-mail"
+        st.rerun()
+
+    if col_nav2.button("💬 Enviar feedback"):
+        st.session_state.app_menu_selected = "💬 Feedback"
+        st.rerun()
+
+    st.stop()
+
+
+if app_menu == "📄 Relatório PDF e e-mail":
+    st.title("📄 Relatório PDF e e-mail")
+
+    response = st.session_state.get("last_response")
+
+    if not response:
+        st.warning("Nenhum diagnóstico gerado ainda. Primeiro vá em **🧾 Novo diagnóstico**.")
+        st.stop()
+
+    diagnostico_id = response.get("id")
+
+    if not diagnostico_id:
+        st.warning(tr("pdf_unavailable"))
+        st.stop()
+
+    st.write("### 📄 Relatório em PDF")
+
+    try:
+        pdf_bytes = baixar_relatorio_pdf_api(diagnostico_id)
+
+        st.download_button(
+            label=tr("download_pdf"),
+            data=pdf_bytes,
+            file_name=f"relatorio_inna_{response['nome'].replace(' ', '_').lower()}_{diagnostico_id}.pdf",
+            mime="application/pdf",
+        )
+
+    except Exception as error:
+        st.warning(f"{tr('pdf_error')}: {error}")
+
+    st.divider()
+
+    st.markdown(tr("email_title"))
+
+    email_destino = st.text_input(
+        tr("email_input"),
+        placeholder="seuemail@gmail.com",
+        key=f"email_destino_menu_{diagnostico_id}",
+    )
+
+    if st.button(tr("email_button"), key=f"btn_email_menu_{diagnostico_id}"):
+        if not email_destino or "@" not in email_destino or "." not in email_destino:
+            st.warning(tr("email_invalid"))
+        else:
+            try:
+                currency_info = CURRENCY_BY_LANG.get(app_lang, CURRENCY_BY_LANG["pt"])
+
+                enviar_relatorio_email(
+                    diagnostico_id,
+                    email_destino,
+                    idioma=app_lang,
+                    moeda=currency_info["moeda"],
+                    simbolo_moeda=currency_info["simbolo"],
+                )
+
+                st.success(tr("email_success"))
+
+            except Exception as error:
+                st.error(f"{tr('email_error')}: {error}")
+
+    st.divider()
+
+    col_rel1, col_rel2 = st.columns(2)
+
+    if col_rel1.button("📊 Voltar para resultado"):
+        st.session_state.app_menu_selected = "📊 Resultado financeiro"
+        st.rerun()
+
+    if col_rel2.button("💬 Enviar feedback"):
+        st.session_state.app_menu_selected = "💬 Feedback"
+        st.rerun()
+
+    st.stop()
+
+
+if app_menu == "💬 Feedback":
+    st.title("💬 Feedback")
+
+    response = st.session_state.get("last_response")
+
+    if not response:
+        st.warning("Nenhum diagnóstico gerado ainda. Primeiro vá em **🧾 Novo diagnóstico**.")
+        st.stop()
+
+    st.caption(tr("feedback_help"))
+
+    with st.form("feedback_form_menu"):
+        util = st.radio(
+            tr("feedback_question"),
+            [tr("yes"), tr("no")],
+            horizontal=True,
+            key="feedback_util_menu",
+        )
+
+        comentario = st.text_area(
+            tr("feedback_comment"),
+            placeholder=tr("feedback_placeholder"),
+            key="feedback_comentario_menu",
+        )
+
+        feedback_submitted = st.form_submit_button(tr("feedback_button"))
+
+    if feedback_submitted:
+        feedback_payload = {
+            "nome": response["nome"],
+            "util": util,
+            "comentario": comentario,
+            "score_financeiro": response["score_financeiro"],
+            "nivel_risco": translate_risk_app(response["nivel_risco"]),
+        }
+
+        try:
+            enviar_feedback_api(feedback_payload)
+            st.success(tr("feedback_success"))
+        except requests.exceptions.ConnectionError:
+            st.error(
+                "Não foi possível conectar na FastAPI para enviar o feedback. "
+                "Confirme se a API está rodando."
+            )
+        except Exception as error:
+            st.error(f"Erro ao enviar feedback pela API: {error}")
+
+    st.divider()
+
+    col_fb1, col_fb2 = st.columns(2)
+
+    if col_fb1.button("🧾 Novo diagnóstico"):
+        st.session_state.last_response = None
+        st.session_state.last_payload = None
+        st.session_state.app_menu_selected = "🧾 Novo diagnóstico"
+        st.rerun()
+
+    if col_fb2.button("📚 Ver histórico"):
+        st.session_state.app_menu_selected = "📚 Histórico"
+        st.rerun()
+
+    st.stop()
+
+
+if app_menu == "📚 Histórico":
+    st.title("📚 Histórico individual")
+    st.caption(tr("history_help"))
+
+    with st.form("historico_form_menu"):
+        nome_busca = st.text_input(
+            tr("history_name"),
+            value=st.session_state.get("last_payload", {}).get("nome", ""),
+            key="historico_nome_menu",
+        )
+
+        limite = st.number_input(
+            tr("history_limit"),
+            min_value=1,
+            max_value=50,
+            value=10,
+            step=1,
+            key="historico_limite_menu",
+        )
+
+        buscar_historico = st.form_submit_button(tr("history_button"))
+
+    if buscar_historico:
+        try:
+            historico = buscar_historico_usuario_api(nome_busca, int(limite))
+
+            if not historico:
+                st.info(tr("history_empty"))
+            else:
+                for item in historico:
+                    with st.expander(f"Diagnóstico {item['id']} — {item['nome']}"):
+                        st.write(f"**Score:** {item.get('score_financeiro')}")
+                        st.write(f"**Risco:** {item.get('nivel_risco')}")
+                        st.write(f"**Moeda:** {item.get('moeda')} {item.get('simbolo_moeda')}")
+
+                        st.write(f"**{tr('diagnosis')}:**")
+                        st.write(item["diagnostico"])
+
+                        try:
+                            pdf_antigo = baixar_relatorio_pdf_api(item["id"])
+
+                            st.download_button(
+                                label=f"📄 Baixar PDF do diagnóstico {item['id']}",
+                                data=pdf_antigo,
+                                file_name=f"relatorio_inna_{item['nome'].replace(' ', '_').lower()}_{item['id']}.pdf",
+                                mime="application/pdf",
+                                key=f"download_pdf_historico_menu_{item['id']}",
+                            )
+                        except Exception as error:
+                            st.warning(f"Não foi possível gerar PDF do histórico: {error}")
+
+        except Exception as error:
+            st.error(f"Erro ao buscar histórico pela API: {error}")
+
+    st.stop()
 
 
 st.title(tr("title"))
@@ -927,8 +1254,11 @@ if submitted:
 
         st.session_state.last_payload = payload
         st.session_state.last_response = response
+        st.session_state.app_menu_selected = "📊 Resultado financeiro"
 
         st.success(tr("saved"))
+        st.info("Diagnóstico gerado. Abrindo a página de resultado financeiro...")
+        st.rerun()
 
     except requests.exceptions.ConnectionError:
         st.error(
