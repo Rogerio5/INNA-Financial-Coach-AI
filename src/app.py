@@ -1095,6 +1095,306 @@ app_lang = st.sidebar.selectbox(
 
 
 
+
+GLOBAL_UI_TEXTS_INNA = {
+    "pt": {
+        "menu": "Menu",
+        "public_access": "Acesso público",
+        "login_needed": "Faça login para usar diagnóstico, relatório, histórico e área admin.",
+        "login_button": "🔑 Entrar",
+        "connected": "Status: conectado",
+        "user": "Usuário",
+        "profile": "Perfil",
+        "logout_success": "Você saiu da INNA.",
+        "browser_warning": "Para testar os idiomas corretamente, desative o tradutor automático do navegador.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Área administrativa para gestor, administrador ou avaliador acompanhar métricas da plataforma.",
+        "admin_warning": "Este painel é destinado ao administrador da INNA. Ele não deve aparecer para o usuário comum/trabalhador.",
+        "admin_open": ui_t("admin_open"),
+        "about_title": "ℹ️ Sobre a INNA Financial Coach AI",
+        "about_text": "A INNA é uma educadora financeira com IA Generativa, criada para transformar dados simples em diagnóstico financeiro, plano de ação, relatório PDF e indicadores reais.",
+        "about_resources": "Recursos do projeto",
+        "about_success": "Projeto pronto para portfólio, hackathons e evolução para assistente bancário.",
+    },
+    "en_us": {
+        "menu": "Menu",
+        "public_access": "Public access",
+        "login_needed": "Sign in to use diagnosis, report, history and admin area.",
+        "login_button": "🔑 Sign in",
+        "connected": "Status: connected",
+        "user": "User",
+        "profile": "Profile",
+        "logout_success": "You have signed out of INNA.",
+        "browser_warning": "To test languages correctly, disable the browser automatic translator.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Administrative area for managers, administrators or reviewers to monitor platform metrics.",
+        "admin_warning": "This dashboard is intended for INNA administrators. It should not appear for regular users/workers.",
+        "admin_open": "Open dashboard in new tab",
+        "about_title": "ℹ️ About INNA Financial Coach AI",
+        "about_text": "INNA is a financial educator powered by Generative AI, created to turn simple data into financial diagnosis, action plans, PDF reports and real indicators.",
+        "about_resources": "Project resources",
+        "about_success": "Project ready for portfolio, hackathons and evolution into a banking assistant.",
+    },
+    "en_gb": {
+        "menu": "Menu",
+        "public_access": "Public access",
+        "login_needed": "Sign in to use diagnosis, report, history and admin area.",
+        "login_button": "🔑 Sign in",
+        "connected": "Status: connected",
+        "user": "User",
+        "profile": "Profile",
+        "logout_success": "You have signed out of INNA.",
+        "browser_warning": "To test languages correctly, disable the browser automatic translator.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Administrative area for managers, administrators or reviewers to monitor platform metrics.",
+        "admin_warning": "This dashboard is intended for INNA administrators. It should not appear for regular users/workers.",
+        "admin_open": "Open dashboard in new tab",
+        "about_title": "ℹ️ About INNA Financial Coach AI",
+        "about_text": "INNA is a financial educator powered by Generative AI, created to turn simple data into financial diagnosis, action plans, PDF reports and real indicators.",
+        "about_resources": "Project resources",
+        "about_success": "Project ready for portfolio, hackathons and evolution into a banking assistant.",
+    },
+    "es": {
+        "menu": "Menú",
+        "public_access": "Acceso público",
+        "login_needed": "Inicia sesión para usar diagnóstico, informe, historial y área administrativa.",
+        "login_button": "🔑 Entrar",
+        "connected": "Estado: conectado",
+        "user": "Usuario",
+        "profile": "Perfil",
+        "logout_success": "Has salido de INNA.",
+        "browser_warning": "Para probar los idiomas correctamente, desactiva el traductor automático del navegador.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Área administrativa para gestores, administradores o evaluadores monitorear métricas de la plataforma.",
+        "admin_warning": "Este panel está destinado al administrador de INNA. No debe aparecer para el usuario común/trabajador.",
+        "admin_open": "Abrir dashboard en una nueva pestaña",
+        "about_title": "ℹ️ Sobre INNA Financial Coach AI",
+        "about_text": "INNA es una educadora financiera con IA Generativa, creada para transformar datos simples en diagnóstico financiero, plan de acción, informe PDF e indicadores reales.",
+        "about_resources": "Recursos del proyecto",
+        "about_success": "Proyecto listo para portafolio, hackathons y evolución hacia asistente bancario.",
+    },
+    "de": {
+        "menu": "Menü",
+        "public_access": "Öffentlicher Zugriff",
+        "login_needed": "Melden Sie sich an, um Diagnose, Bericht, Verlauf und Adminbereich zu nutzen.",
+        "login_button": "🔑 Anmelden",
+        "connected": "Status: verbunden",
+        "user": "Benutzer",
+        "profile": "Profil",
+        "logout_success": "Sie haben sich von INNA abgemeldet.",
+        "browser_warning": "Um Sprachen korrekt zu testen, deaktivieren Sie den automatischen Browser-Übersetzer.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Administrativer Bereich für Manager, Administratoren oder Prüfer zur Überwachung der Plattformmetriken.",
+        "admin_warning": "Dieses Dashboard ist für INNA-Administratoren bestimmt und sollte normalen Benutzern/Arbeitern nicht angezeigt werden.",
+        "admin_open": "Dashboard in neuem Tab öffnen",
+        "about_title": "ℹ️ Über INNA Financial Coach AI",
+        "about_text": "INNA ist eine Finanzpädagogin mit generativer KI, die einfache Daten in Finanzdiagnosen, Aktionspläne, PDF-Berichte und echte Kennzahlen verwandelt.",
+        "about_resources": "Projektressourcen",
+        "about_success": "Projekt bereit für Portfolio, Hackathons und Weiterentwicklung zum Banking-Assistenten.",
+    },
+    "fr": {
+        "menu": "Menu",
+        "public_access": "Accès public",
+        "login_needed": "Connectez-vous pour utiliser le diagnostic, le rapport, l’historique et l’espace admin.",
+        "login_button": "🔑 Se connecter",
+        "connected": "Statut : connecté",
+        "user": "Utilisateur",
+        "profile": "Profil",
+        "logout_success": "Vous vous êtes déconnecté d’INNA.",
+        "browser_warning": "Pour tester correctement les langues, désactivez le traducteur automatique du navigateur.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Espace administratif pour les gestionnaires, administrateurs ou évaluateurs afin de suivre les métriques de la plateforme.",
+        "admin_warning": "Ce tableau de bord est destiné à l’administrateur d’INNA. Il ne doit pas apparaître pour l’utilisateur/travailleur standard.",
+        "admin_open": "Ouvrir le dashboard dans un nouvel onglet",
+        "about_title": "ℹ️ À propos d’INNA Financial Coach AI",
+        "about_text": "INNA est une éducatrice financière avec IA générative, créée pour transformer des données simples en diagnostic financier, plan d’action, rapport PDF et indicateurs réels.",
+        "about_resources": "Ressources du projet",
+        "about_success": "Projet prêt pour portfolio, hackathons et évolution vers un assistant bancaire.",
+    },
+    "it": {
+        "menu": "Menu",
+        "public_access": "Accesso pubblico",
+        "login_needed": "Accedi per usare diagnosi, report, storico e area admin.",
+        "login_button": "🔑 Accedi",
+        "connected": "Stato: connesso",
+        "user": "Utente",
+        "profile": "Profilo",
+        "logout_success": "Sei uscito da INNA.",
+        "browser_warning": "Per testare correttamente le lingue, disattiva il traduttore automatico del browser.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Area amministrativa per manager, amministratori o valutatori per monitorare le metriche della piattaforma.",
+        "admin_warning": "Questo pannello è destinato agli amministratori di INNA. Non deve apparire all’utente comune/lavoratore.",
+        "admin_open": "Apri dashboard in una nuova scheda",
+        "about_title": "ℹ️ Informazioni su INNA Financial Coach AI",
+        "about_text": "INNA è un’educatrice finanziaria con IA generativa, creata per trasformare dati semplici in diagnosi finanziaria, piano d’azione, report PDF e indicatori reali.",
+        "about_resources": "Risorse del progetto",
+        "about_success": "Progetto pronto per portfolio, hackathon ed evoluzione verso assistente bancario.",
+    },
+    "ro": {
+        "menu": "Meniu",
+        "public_access": "Acces public",
+        "login_needed": "Autentifică-te pentru diagnostic, raport, istoric și zona admin.",
+        "login_button": "🔑 Intră",
+        "connected": "Status: conectat",
+        "user": "Utilizator",
+        "profile": "Profil",
+        "logout_success": "Ai ieșit din INNA.",
+        "browser_warning": "Pentru a testa corect limbile, dezactivează traducătorul automat al browserului.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Zonă administrativă pentru manageri, administratori sau evaluatori pentru monitorizarea metricilor platformei.",
+        "admin_warning": "Acest panou este destinat administratorului INNA. Nu trebuie să apară pentru utilizatorul obișnuit/lucrător.",
+        "admin_open": "Deschide dashboardul într-o filă nouă",
+        "about_title": "ℹ️ Despre INNA Financial Coach AI",
+        "about_text": "INNA este o educatoare financiară cu IA generativă, creată pentru a transforma date simple în diagnostic financiar, plan de acțiune, raport PDF și indicatori reali.",
+        "about_resources": "Resursele proiectului",
+        "about_success": "Proiect pregătit pentru portofoliu, hackathoane și evoluție către asistent bancar.",
+    },
+    "ru": {
+        "menu": "Меню",
+        "public_access": "Публичный доступ",
+        "login_needed": "Войдите, чтобы использовать диагностику, отчёт, историю и административную область.",
+        "login_button": "🔑 Войти",
+        "connected": "Статус: подключено",
+        "user": "Пользователь",
+        "profile": "Профиль",
+        "logout_success": "Вы вышли из INNA.",
+        "browser_warning": "Для корректной проверки языков отключите автоматический переводчик браузера.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Административная область для менеджера, администратора или проверяющего для отслеживания метрик платформы.",
+        "admin_warning": "Эта панель предназначена для администратора INNA. Она не должна отображаться обычному пользователю/работнику.",
+        "admin_open": "Открыть dashboard в новой вкладке",
+        "about_title": "ℹ️ О INNA Financial Coach AI",
+        "about_text": "INNA — финансовый помощник с генеративным ИИ, созданный для превращения простых данных в финансовую диагностику, план действий, PDF-отчёт и реальные показатели.",
+        "about_resources": "Ресурсы проекта",
+        "about_success": "Проект готов для портфолио, хакатонов и развития в банковского ассистента.",
+    },
+    "uk": {
+        "menu": "Меню",
+        "public_access": "Публічний доступ",
+        "login_needed": "Увійдіть, щоб використовувати діагностику, звіт, історію та адміністративну область.",
+        "login_button": "🔑 Увійти",
+        "connected": "Статус: підключено",
+        "user": "Користувач",
+        "profile": "Профіль",
+        "logout_success": "Ви вийшли з INNA.",
+        "browser_warning": "Для коректної перевірки мов вимкніть автоматичний перекладач браузера.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Адміністративна область для менеджера, адміністратора або оцінювача для відстеження метрик платформи.",
+        "admin_warning": "Ця панель призначена для адміністратора INNA. Вона не повинна відображатися звичайному користувачу/працівнику.",
+        "admin_open": "Відкрити dashboard у новій вкладці",
+        "about_title": "ℹ️ Про INNA Financial Coach AI",
+        "about_text": "INNA — фінансова помічниця з генеративним ШІ, створена для перетворення простих даних у фінансову діагностику, план дій, PDF-звіт і реальні показники.",
+        "about_resources": "Ресурси проєкту",
+        "about_success": "Проєкт готовий для портфоліо, хакатонів і розвитку в банківського асистента.",
+    },
+    "ar": {
+        "menu": "القائمة",
+        "public_access": "وصول عام",
+        "login_needed": "سجّل الدخول لاستخدام التشخيص والتقرير والسجل ومنطقة الإدارة.",
+        "login_button": "🔑 تسجيل الدخول",
+        "connected": "الحالة: متصل",
+        "user": "المستخدم",
+        "profile": "الملف الشخصي",
+        "logout_success": "لقد خرجت من INNA.",
+        "browser_warning": "لاختبار اللغات بشكل صحيح، عطّل الترجمة التلقائية في المتصفح.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "منطقة إدارية للمدير أو المسؤول أو المقيّم لمتابعة مؤشرات المنصة.",
+        "admin_warning": "هذه اللوحة مخصصة لمسؤول INNA ولا يجب أن تظهر للمستخدم العادي/العامل.",
+        "admin_open": "فتح لوحة البيانات في تبويب جديد",
+        "about_title": "ℹ️ حول INNA Financial Coach AI",
+        "about_text": "INNA هي أداة تعليم مالي بالذكاء الاصطناعي التوليدي، صُممت لتحويل البيانات البسيطة إلى تشخيص مالي وخطة عمل وتقرير PDF ومؤشرات حقيقية.",
+        "about_resources": "موارد المشروع",
+        "about_success": "المشروع جاهز للملف المهني والهاكاثونات والتطوير كمساعد مصرفي.",
+    },
+    "ch": {
+        "menu": "Menü",
+        "public_access": "Öffentlicher Zugriff",
+        "login_needed": "Melden Sie sich an, um Diagnose, Bericht, Verlauf und Adminbereich zu nutzen.",
+        "login_button": "🔑 Anmelden",
+        "connected": "Status: verbunden",
+        "user": "Benutzer",
+        "profile": "Profil",
+        "logout_success": "Sie haben sich von INNA abgemeldet.",
+        "browser_warning": "Um Sprachen korrekt zu testen, deaktivieren Sie den automatischen Browser-Übersetzer.",
+        "admin_title": "🔐 Admin Analytics — INNA",
+        "admin_caption": "Administrativer Bereich zur Überwachung der Plattformmetriken.",
+        "admin_warning": "Dieses Dashboard ist für INNA-Administratoren bestimmt und sollte normalen Benutzern nicht angezeigt werden.",
+        "admin_open": "Dashboard in neuem Tab öffnen",
+        "about_title": "ℹ️ Über INNA Financial Coach AI",
+        "about_text": "INNA ist eine Finanzpädagogin mit generativer KI, die einfache Daten in Finanzdiagnosen, Aktionspläne, PDF-Berichte und echte Kennzahlen verwandelt.",
+        "about_resources": "Projektressourcen",
+        "about_success": "Projekt bereit für Portfolio, Hackathons und Weiterentwicklung zum Banking-Assistenten.",
+    },
+}
+
+MENU_LABELS_INNA = {
+    "pt": {
+        "🏠 Início": "🏠 Início",
+        "🔑 Entrar": "🔑 Entrar",
+        "🧾 Novo diagnóstico": "🧾 Novo diagnóstico",
+        "📊 Meu panorama financeiro": "📊 Meu panorama financeiro",
+        "💬 Conversar com a Inna": "💬 Conversar com a Inna",
+        "📄 Meu relatório": "📄 Meu relatório",
+        "📚 Meu histórico": "📚 Meu histórico",
+        "⭐ Avaliar a Inna": "⭐ Avaliar a Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ Sobre a INNA",
+        "🚪 Sair": "🚪 Sair",
+    },
+    "en_us": {
+        "🏠 Início": "🏠 Home",
+        "🔑 Entrar": "🔑 Sign in",
+        "🧾 Novo diagnóstico": "🧾 New diagnosis",
+        "📊 Meu panorama financeiro": "📊 My financial overview",
+        "💬 Conversar com a Inna": "💬 Chat with Inna",
+        "📄 Meu relatório": "📄 My report",
+        "📚 Meu histórico": "📚 My history",
+        "⭐ Avaliar a Inna": "⭐ Rate Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ About INNA",
+        "🚪 Sair": "🚪 Sign out",
+    },
+    "en_gb": {
+        "🏠 Início": "🏠 Home",
+        "🔑 Entrar": "🔑 Sign in",
+        "🧾 Novo diagnóstico": "🧾 New diagnosis",
+        "📊 Meu panorama financeiro": "📊 My financial overview",
+        "💬 Conversar com a Inna": "💬 Chat with Inna",
+        "📄 Meu relatório": "📄 My report",
+        "📚 Meu histórico": "📚 My history",
+        "⭐ Avaliar a Inna": "⭐ Rate Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ About INNA",
+        "🚪 Sair": "🚪 Sign out",
+    },
+    "es": {
+        "🏠 Início": "🏠 Inicio",
+        "🔑 Entrar": "🔑 Entrar",
+        "🧾 Novo diagnóstico": "🧾 Nuevo diagnóstico",
+        "📊 Meu panorama financeiro": "📊 Mi panorama financiero",
+        "💬 Conversar com a Inna": "💬 Conversar con Inna",
+        "📄 Meu relatório": "📄 Mi informe",
+        "📚 Meu histórico": "📚 Mi historial",
+        "⭐ Avaliar a Inna": "⭐ Evaluar a Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ Sobre INNA",
+        "🚪 Sair": "🚪 Salir",
+    },
+}
+
+for lang_code in ["de", "fr", "it", "ro", "ru", "uk", "ar", "ch"]:
+    MENU_LABELS_INNA[lang_code] = MENU_LABELS_INNA["en_us"]
+
+def ui_t(key: str) -> str:
+    lang = app_lang if app_lang in GLOBAL_UI_TEXTS_INNA else "pt"
+    return GLOBAL_UI_TEXTS_INNA.get(lang, GLOBAL_UI_TEXTS_INNA["pt"]).get(
+        key,
+        GLOBAL_UI_TEXTS_INNA["pt"].get(key, key),
+    )
+
+def menu_t(key: str) -> str:
+    lang = app_lang if app_lang in MENU_LABELS_INNA else "pt"
+    return MENU_LABELS_INNA.get(lang, MENU_LABELS_INNA["pt"]).get(key, key)
 CURRENCY_BY_LANG = {
     "pt": {"moeda": "BRL", "simbolo": "R$"},
     "en_us": {"moeda": "USD", "simbolo": "US$"},
@@ -1232,20 +1532,20 @@ st.session_state.app_menu_selected = app_menu
 st.sidebar.divider()
 
 if st.session_state.get("logado"):
-    st.sidebar.success("Status: conectado")
-    st.sidebar.caption(f"Usuário: {st.session_state.get('usuario')}")
-    st.sidebar.caption(f"Perfil: {st.session_state.get('perfil_usuario')}")
+    st.sidebar.success(ui_t("connected"))
+    st.sidebar.caption(f"{ui_t('user')}: {st.session_state.get('usuario')}")
+    st.sidebar.caption(f"{ui_t('profile')}: {st.session_state.get('perfil_usuario')}")
 else:
-    st.sidebar.info("Acesso público")
-    st.sidebar.caption("Faça login para usar diagnóstico, relatório, histórico e área admin.")
+    st.sidebar.info(ui_t("public_access"))
+    st.sidebar.caption(ui_t("login_needed"))
 
-    if st.sidebar.button("🔑 Entrar", use_container_width=True, key="btn_sidebar_login_publico"):
+    if st.sidebar.button(ui_t("login_button"), use_container_width=True, key="btn_sidebar_login_publico"):
         st.session_state.app_menu_selected = "🔑 Entrar"
         st.rerun()
 
 st.sidebar.divider()
 
-st.sidebar.caption(tr("browser_translate_warning"))
+st.sidebar.caption(ui_t("browser_warning"))
 
 
 
@@ -1946,16 +2246,13 @@ if app_menu == "💬 Conversar com a Inna":
 
 
 if app_menu == "🔐 Admin Analytics":
-    st.title("🔐 Admin Analytics — INNA")
-    st.caption("Área administrativa para gestor, administrador ou avaliador acompanhar métricas da plataforma.")
+    st.title(ui_t("admin_title"))
+    st.caption(ui_t("admin_caption"))
 
-    st.warning(
-        "Este painel é destinado ao administrador da INNA. "
-        "Ele não deve aparecer para o usuário comum/trabalhador."
-    )
+    st.warning(ui_t("admin_warning"))
 
     st.link_button(
-        "Abrir dashboard em nova aba",
+        ui_t("admin_open"),
         DASHBOARD_ADMIN_URL,
         use_container_width=True
     )
@@ -2207,32 +2504,29 @@ if app_menu == "🚪 Sair":
     st.session_state.usuario = None
     st.session_state.perfil_usuario = None
     st.session_state.app_menu_selected = "🏠 Início"
-    st.success("Você saiu da INNA.")
+    st.success(ui_t("logout_success"))
     st.rerun()
 if app_menu == "ℹ️ Sobre a INNA":
-    st.title("ℹ️ Sobre a INNA Financial Coach AI")
-    st.write(
-        "A INNA é uma educadora financeira com IA Generativa, criada para transformar "
-        "dados simples em diagnóstico financeiro, plano de ação, relatório PDF e indicadores reais."
-    )
+    st.title(ui_t("about_title"))
+    st.write(ui_t("about_text"))
 
-    st.write("### Recursos do projeto")
+    st.write("### " + ui_t("about_resources"))
     st.markdown(
         """
-- Interface web com Streamlit.
-- Backend com FastAPI.
-- Banco PostgreSQL/Neon.
-- IA Generativa para plano de ação.
-- PDF financeiro.
-- Envio por e-mail.
-- Telegram.
-- Dashboard administrativo.
-- Registro de eventos multicanal.
-- Suporte multilíngue e multimoeda.
+- Streamlit Web App.
+- FastAPI Backend.
+- PostgreSQL/Neon Database.
+- Generative AI.
+- Financial PDF report.
+- E-mail delivery.
+- Telegram integration.
+- Administrative dashboard.
+- Multichannel event tracking.
+- Multilingual and multicurrency support.
         """
     )
 
-    st.success("Projeto pronto para portfólio, hackathons e evolução para assistente bancário.")
+    st.success(ui_t("about_success"))
     st.stop()
 
 
@@ -2794,6 +3088,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"Erro ao buscar histórico pela API: {error}")
+
 
 
 
