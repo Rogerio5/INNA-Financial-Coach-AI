@@ -32,7 +32,9 @@ st.markdown("""
 
 .block-container {
     padding-top: 1.2rem;
-    max-width: 1180px;
+    max-width: 1320px;
+    padding-left: 3rem;
+    padding-right: 3rem;
 }
 
 .hero-wrapper {
@@ -155,6 +157,24 @@ st.markdown("""
 .cta-box p {
     color: #D8E6F7;
     font-size: 16px;
+}
+
+.hero-wrapper img {
+    width: 100%;
+    border-radius: 24px;
+}
+
+.premium-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #071C36, #0E3A73);
+    color: #F8D98B;
+    border: 1px solid #D4AF37;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 20px rgba(7, 28, 54, 0.18);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -1013,6 +1033,11 @@ if app_menu == "🏠 Início":
     else:
         st.warning("Imagem não encontrada em assets/inna_hero.png")
 
+    st.markdown(
+        '<div class="premium-badge">✨ AI Financial Assistant • Educação financeira inteligente</div>',
+        unsafe_allow_html=True
+    )
+
     st.markdown('<div class="title-main">💰 INNA Financial Coach AI</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="subtitle">Assistente virtual de educação financeira com IA</div>',
@@ -1743,4 +1768,5 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"Erro ao buscar histórico pela API: {error}")
+
 
