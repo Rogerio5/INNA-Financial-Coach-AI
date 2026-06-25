@@ -601,25 +601,25 @@ div[data-testid="stMetricValue"] {
 """, unsafe_allow_html=True)
 APP_MENU_OPTIONS_USER = [
     "🏠 Início",
-    "🧾 Novo diagnóstico",
-    "📊 Meu panorama financeiro",
-    "💬 Conversar com a Inna",
-    "📄 Meu relatório",
-    "📚 Meu histórico",
-    "⭐ Avaliar a Inna",
-    "ℹ️ Sobre a INNA",
+    "🧾 Diagnóstico",
+    "📊 Panorama",
+    "💬 Conversar",
+    "📄 Relatório",
+    "📚 Histórico",
+    "⭐ Avaliar",
+    "ℹ️ Sobre",
 ]
 
 APP_MENU_OPTIONS_ADMIN = [
     "🏠 Início",
-    "🧾 Novo diagnóstico",
-    "📊 Meu panorama financeiro",
-    "💬 Conversar com a Inna",
-    "📄 Meu relatório",
-    "📚 Meu histórico",
-    "⭐ Avaliar a Inna",
+    "🧾 Diagnóstico",
+    "📊 Panorama",
+    "💬 Conversar",
+    "📄 Relatório",
+    "📚 Histórico",
+    "⭐ Avaliar",
     "🔐 Admin Analytics",
-    "ℹ️ Sobre a INNA",
+    "ℹ️ Sobre",
 ]
 
 APP_MENU_OPTIONS = APP_MENU_OPTIONS_USER
@@ -1316,7 +1316,7 @@ app_lang = st.sidebar.selectbox(
     options=list(APP_LANG_LABELS.keys()),
     index=list(APP_LANG_LABELS.keys()).index(st.session_state.app_lang),
     format_func=lambda key: APP_LANG_LABELS[key],
-    key="app_lang",
+    key="app_lang_sidebar_hidden",
 )
 
 # =============================
@@ -1324,71 +1324,62 @@ app_lang = st.sidebar.selectbox(
 # =============================
 
 THEMES_INNA = {
-    "Claro": {
-        "bg": "#F7F9FC",
-        "sidebar": "#EEF3FA",
+    "Branco brilhante": {
+        "bg": "#F8FBFF",
+        "sidebar": "#EEF4FB",
         "surface": "#FFFFFF",
-        "surface_2": "#EEF4FF",
+        "surface_2": "#EEF6FF",
         "text": "#071C36",
-        "muted": "#4B5F78",
+        "muted": "#42526E",
         "accent": "#D4AF37",
         "primary": "#0E3A73",
-        "border": "#D7E2F1",
-        "hero_bg": "linear-gradient(135deg, #FFFFFF 0%, #F4F8FF 100%)",
+        "border": "#D5E3F5",
+        "hero_bg": "linear-gradient(135deg, #FFFFFF 0%, #F1F7FF 100%)",
         "hero_text": "#071C36",
         "hero_subtext": "#34465F",
         "card_bg": "#FFFFFF",
         "card_text": "#071C36",
     },
-    "Escuro": {
-        "bg": "#070B14",
-        "sidebar": "#0D1422",
-        "surface": "#111827",
-        "surface_2": "#182338",
+    "Escuro preto": {
+        "bg": "#05070D",
+        "sidebar": "#090D16",
+        "surface": "#0D1320",
+        "surface_2": "#111827",
         "text": "#F8FAFC",
         "muted": "#B8C2D1",
-        "accent": "#D4AF37",
-        "primary": "#1E3A8A",
-        "border": "#2A3852",
-        "hero_bg": "linear-gradient(135deg, #0B1424 0%, #13233D 100%)",
+        "accent": "#E0B64A",
+        "primary": "#111827",
+        "border": "#26344D",
+        "hero_bg": "linear-gradient(135deg, #05070D 0%, #0D1320 55%, #111827 100%)",
         "hero_text": "#FFFFFF",
         "hero_subtext": "#D8E2F0",
-        "card_bg": "#101B2D",
+        "card_bg": "#0D1320",
         "card_text": "#FFFFFF",
     },
-    "Azulado escuro": {
-        "bg": "#EEF3FA",
-        "sidebar": "#EAF0F7",
-        "surface": "#FFFFFF",
-        "surface_2": "#EAF1FB",
-        "text": "#071C36",
-        "muted": "#4B5F78",
-        "accent": "#E0B64A",
-        "primary": "#071C36",
-        "border": "#D7E2F1",
-        "hero_bg": "linear-gradient(135deg, #0A2345 0%, #041A35 55%, #021120 100%)",
+    "Escuro azul": {
+        "bg": "#07111F",
+        "sidebar": "#0A1729",
+        "surface": "#0B1F3A",
+        "surface_2": "#102A4C",
+        "text": "#F8FAFC",
+        "muted": "#C5D3E8",
+        "accent": "#F2C86B",
+        "primary": "#0B2D5C",
+        "border": "#24476F",
+        "hero_bg": "linear-gradient(135deg, #0B2D5C 0%, #071C36 55%, #04101F 100%)",
         "hero_text": "#F6D889",
         "hero_subtext": "#E5EDF8",
         "card_bg": "#0F2545",
         "card_text": "#FFFFFF",
     },
 }
-
 if "theme_name" not in st.session_state:
-    st.session_state.theme_name = "Azulado escuro"
+    st.session_state.theme_name = "Escuro azul"
 
-theme_top_left, theme_top_right = st.columns([5, 1])
-
-with theme_top_right:
-    st.session_state.theme_name = st.selectbox(
-        "🎨 Tema",
-        list(THEMES_INNA.keys()),
-        index=list(THEMES_INNA.keys()).index(st.session_state.theme_name),
-        key="theme_selector_inna",
-    )
+if "theme_selector_top" in st.session_state:
+    st.session_state.theme_name = st.session_state.theme_selector_top
 
 theme = THEMES_INNA[st.session_state.theme_name]
-
 st.markdown(f"""
 <style>
 .stApp {{
@@ -1705,53 +1696,53 @@ MENU_LABELS_INNA = {
     "pt": {
         "🏠 Início": "🏠 Início",
         "🔑 Entrar": "🔑 Entrar",
-        "🧾 Novo diagnóstico": "🧾 Novo diagnóstico",
-        "📊 Meu panorama financeiro": "📊 Meu panorama financeiro",
-        "💬 Conversar com a Inna": "💬 Conversar com a Inna",
-        "📄 Meu relatório": "📄 Meu relatório",
-        "📚 Meu histórico": "📚 Meu histórico",
-        "⭐ Avaliar a Inna": "⭐ Avaliar a Inna",
+        "🧾 Diagnóstico": "🧾 Diagnóstico",
+        "📊 Panorama": "📊 Panorama",
+        "💬 Conversar": "💬 Conversar",
+        "📄 Relatório": "📄 Relatório",
+        "📚 Histórico": "📚 Histórico",
+        "⭐ Avaliar": "⭐ Avaliar",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ Sobre a INNA",
+        "ℹ️ Sobre": "ℹ️ Sobre",
         "🚪 Sair": "🚪 Sair",
     },
     "en_us": {
         "🏠 Início": "🏠 Home",
         "🔑 Entrar": "🔑 Sign in",
-        "🧾 Novo diagnóstico": "🧾 New diagnosis",
-        "📊 Meu panorama financeiro": "📊 My financial overview",
-        "💬 Conversar com a Inna": "💬 Chat with Inna",
-        "📄 Meu relatório": "📄 My report",
-        "📚 Meu histórico": "📚 My history",
-        "⭐ Avaliar a Inna": "⭐ Rate Inna",
+        "🧾 Diagnóstico": "🧾 New diagnosis",
+        "📊 Panorama": "📊 My financial overview",
+        "💬 Conversar": "💬 Chat with Inna",
+        "📄 Relatório": "📄 My report",
+        "📚 Histórico": "📚 My history",
+        "⭐ Avaliar": "⭐ Rate Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ About INNA",
+        "ℹ️ Sobre": "ℹ️ About INNA",
         "🚪 Sair": "🚪 Sign out",
     },
     "en_gb": {
         "🏠 Início": "🏠 Home",
         "🔑 Entrar": "🔑 Sign in",
-        "🧾 Novo diagnóstico": "🧾 New diagnosis",
-        "📊 Meu panorama financeiro": "📊 My financial overview",
-        "💬 Conversar com a Inna": "💬 Chat with Inna",
-        "📄 Meu relatório": "📄 My report",
-        "📚 Meu histórico": "📚 My history",
-        "⭐ Avaliar a Inna": "⭐ Rate Inna",
+        "🧾 Diagnóstico": "🧾 New diagnosis",
+        "📊 Panorama": "📊 My financial overview",
+        "💬 Conversar": "💬 Chat with Inna",
+        "📄 Relatório": "📄 My report",
+        "📚 Histórico": "📚 My history",
+        "⭐ Avaliar": "⭐ Rate Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ About INNA",
+        "ℹ️ Sobre": "ℹ️ About INNA",
         "🚪 Sair": "🚪 Sign out",
     },
     "es": {
         "🏠 Início": "🏠 Inicio",
         "🔑 Entrar": "🔑 Entrar",
-        "🧾 Novo diagnóstico": "🧾 Nuevo diagnóstico",
-        "📊 Meu panorama financeiro": "📊 Mi panorama financiero",
-        "💬 Conversar com a Inna": "💬 Conversar con Inna",
-        "📄 Meu relatório": "📄 Mi informe",
-        "📚 Meu histórico": "📚 Mi historial",
-        "⭐ Avaliar a Inna": "⭐ Evaluar a Inna",
+        "🧾 Diagnóstico": "🧾 Nuevo diagnóstico",
+        "📊 Panorama": "📊 Mi panorama financiero",
+        "💬 Conversar": "💬 Conversar con Inna",
+        "📄 Relatório": "📄 Mi informe",
+        "📚 Histórico": "📚 Mi historial",
+        "⭐ Avaliar": "⭐ Evaluar a Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ Sobre INNA",
+        "ℹ️ Sobre": "ℹ️ Sobre INNA",
         "🚪 Sair": "🚪 Salir",
     },
 }
@@ -1775,157 +1766,157 @@ MENU_LABELS_INNA = {
     "pt": {
         "🏠 Início": "🏠 Início",
         "🔑 Entrar": "🔑 Entrar",
-        "🧾 Novo diagnóstico": "🧾 Novo diagnóstico",
-        "📊 Meu panorama financeiro": "📊 Meu panorama financeiro",
-        "💬 Conversar com a Inna": "💬 Conversar com a Inna",
-        "📄 Meu relatório": "📄 Meu relatório",
-        "📚 Meu histórico": "📚 Meu histórico",
-        "⭐ Avaliar a Inna": "⭐ Avaliar a Inna",
+        "🧾 Diagnóstico": "🧾 Diagnóstico",
+        "📊 Panorama": "📊 Panorama",
+        "💬 Conversar": "💬 Conversar",
+        "📄 Relatório": "📄 Relatório",
+        "📚 Histórico": "📚 Histórico",
+        "⭐ Avaliar": "⭐ Avaliar",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ Sobre a INNA",
+        "ℹ️ Sobre": "ℹ️ Sobre",
         "🚪 Sair": "🚪 Sair",
     },
     "en_us": {
         "🏠 Início": "🏠 Home",
         "🔑 Entrar": "🔑 Sign in",
-        "🧾 Novo diagnóstico": "🧾 New diagnosis",
-        "📊 Meu panorama financeiro": "📊 My financial overview",
-        "💬 Conversar com a Inna": "💬 Chat with Inna",
-        "📄 Meu relatório": "📄 My report",
-        "📚 Meu histórico": "📚 My history",
-        "⭐ Avaliar a Inna": "⭐ Rate Inna",
+        "🧾 Diagnóstico": "🧾 New diagnosis",
+        "📊 Panorama": "📊 My financial overview",
+        "💬 Conversar": "💬 Chat with Inna",
+        "📄 Relatório": "📄 My report",
+        "📚 Histórico": "📚 My history",
+        "⭐ Avaliar": "⭐ Rate Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ About INNA",
+        "ℹ️ Sobre": "ℹ️ About INNA",
         "🚪 Sair": "🚪 Sign out",
     },
     "en_gb": {
         "🏠 Início": "🏠 Home",
         "🔑 Entrar": "🔑 Sign in",
-        "🧾 Novo diagnóstico": "🧾 New diagnosis",
-        "📊 Meu panorama financeiro": "📊 My financial overview",
-        "💬 Conversar com a Inna": "💬 Chat with Inna",
-        "📄 Meu relatório": "📄 My report",
-        "📚 Meu histórico": "📚 My history",
-        "⭐ Avaliar a Inna": "⭐ Rate Inna",
+        "🧾 Diagnóstico": "🧾 New diagnosis",
+        "📊 Panorama": "📊 My financial overview",
+        "💬 Conversar": "💬 Chat with Inna",
+        "📄 Relatório": "📄 My report",
+        "📚 Histórico": "📚 My history",
+        "⭐ Avaliar": "⭐ Rate Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ About INNA",
+        "ℹ️ Sobre": "ℹ️ About INNA",
         "🚪 Sair": "🚪 Sign out",
     },
     "es": {
         "🏠 Início": "🏠 Inicio",
         "🔑 Entrar": "🔑 Entrar",
-        "🧾 Novo diagnóstico": "🧾 Nuevo diagnóstico",
-        "📊 Meu panorama financeiro": "📊 Mi panorama financiero",
-        "💬 Conversar com a Inna": "💬 Conversar con Inna",
-        "📄 Meu relatório": "📄 Mi informe",
-        "📚 Meu histórico": "📚 Mi historial",
-        "⭐ Avaliar a Inna": "⭐ Evaluar a Inna",
+        "🧾 Diagnóstico": "🧾 Nuevo diagnóstico",
+        "📊 Panorama": "📊 Mi panorama financiero",
+        "💬 Conversar": "💬 Conversar con Inna",
+        "📄 Relatório": "📄 Mi informe",
+        "📚 Histórico": "📚 Mi historial",
+        "⭐ Avaliar": "⭐ Evaluar a Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ Sobre INNA",
+        "ℹ️ Sobre": "ℹ️ Sobre INNA",
         "🚪 Sair": "🚪 Salir",
     },
     "de": {
         "🏠 Início": "🏠 Startseite",
         "🔑 Entrar": "🔑 Anmelden",
-        "🧾 Novo diagnóstico": "🧾 Neue Diagnose",
-        "📊 Meu panorama financeiro": "📊 Meine Finanzübersicht",
-        "💬 Conversar com a Inna": "💬 Mit Inna sprechen",
-        "📄 Meu relatório": "📄 Mein Bericht",
-        "📚 Meu histórico": "📚 Mein Verlauf",
-        "⭐ Avaliar a Inna": "⭐ Inna bewerten",
+        "🧾 Diagnóstico": "🧾 Neue Diagnose",
+        "📊 Panorama": "📊 Meine Finanzübersicht",
+        "💬 Conversar": "💬 Mit Inna sprechen",
+        "📄 Relatório": "📄 Mein Bericht",
+        "📚 Histórico": "📚 Mein Verlauf",
+        "⭐ Avaliar": "⭐ Inna bewerten",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ Über INNA",
+        "ℹ️ Sobre": "ℹ️ Über INNA",
         "🚪 Sair": "🚪 Abmelden",
     },
     "fr": {
         "🏠 Início": "🏠 Accueil",
         "🔑 Entrar": "🔑 Se connecter",
-        "🧾 Novo diagnóstico": "🧾 Nouveau diagnostic",
-        "📊 Meu panorama financeiro": "📊 Mon panorama financier",
-        "💬 Conversar com a Inna": "💬 Parler avec Inna",
-        "📄 Meu relatório": "📄 Mon rapport",
-        "📚 Meu histórico": "📚 Mon historique",
-        "⭐ Avaliar a Inna": "⭐ Évaluer Inna",
+        "🧾 Diagnóstico": "🧾 Nouveau diagnostic",
+        "📊 Panorama": "📊 Mon panorama financier",
+        "💬 Conversar": "💬 Parler avec Inna",
+        "📄 Relatório": "📄 Mon rapport",
+        "📚 Histórico": "📚 Mon historique",
+        "⭐ Avaliar": "⭐ Évaluer Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ À propos d’INNA",
+        "ℹ️ Sobre": "ℹ️ À propos d’INNA",
         "🚪 Sair": "🚪 Se déconnecter",
     },
     "it": {
         "🏠 Início": "🏠 Inizio",
         "🔑 Entrar": "🔑 Accedi",
-        "🧾 Novo diagnóstico": "🧾 Nuova diagnosi",
-        "📊 Meu panorama financeiro": "📊 Il mio panorama finanziario",
-        "💬 Conversar com a Inna": "💬 Parlare con Inna",
-        "📄 Meu relatório": "📄 Il mio report",
-        "📚 Meu histórico": "📚 Il mio storico",
-        "⭐ Avaliar a Inna": "⭐ Valuta Inna",
+        "🧾 Diagnóstico": "🧾 Nuova diagnosi",
+        "📊 Panorama": "📊 Il mio panorama finanziario",
+        "💬 Conversar": "💬 Parlare con Inna",
+        "📄 Relatório": "📄 Il mio report",
+        "📚 Histórico": "📚 Il mio storico",
+        "⭐ Avaliar": "⭐ Valuta Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ Informazioni su INNA",
+        "ℹ️ Sobre": "ℹ️ Informazioni su INNA",
         "🚪 Sair": "🚪 Esci",
     },
     "ro": {
         "🏠 Início": "🏠 Acasă",
         "🔑 Entrar": "🔑 Intră",
-        "🧾 Novo diagnóstico": "🧾 Diagnostic nou",
-        "📊 Meu panorama financeiro": "📊 Panorama mea financiară",
-        "💬 Conversar com a Inna": "💬 Vorbește cu Inna",
-        "📄 Meu relatório": "📄 Raportul meu",
-        "📚 Meu histórico": "📚 Istoricul meu",
-        "⭐ Avaliar a Inna": "⭐ Evaluează Inna",
+        "🧾 Diagnóstico": "🧾 Diagnostic nou",
+        "📊 Panorama": "📊 Panorama mea financiară",
+        "💬 Conversar": "💬 Vorbește cu Inna",
+        "📄 Relatório": "📄 Raportul meu",
+        "📚 Histórico": "📚 Istoricul meu",
+        "⭐ Avaliar": "⭐ Evaluează Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ Despre INNA",
+        "ℹ️ Sobre": "ℹ️ Despre INNA",
         "🚪 Sair": "🚪 Ieșire",
     },
     "ru": {
         "🏠 Início": "🏠 Главная",
         "🔑 Entrar": "🔑 Войти",
-        "🧾 Novo diagnóstico": "🧾 Новая диагностика",
-        "📊 Meu panorama financeiro": "📊 Мой финансовый обзор",
-        "💬 Conversar com a Inna": "💬 Поговорить с Inna",
-        "📄 Meu relatório": "📄 Мой отчёт",
-        "📚 Meu histórico": "📚 Моя история",
-        "⭐ Avaliar a Inna": "⭐ Оценить Inna",
+        "🧾 Diagnóstico": "🧾 Новая диагностика",
+        "📊 Panorama": "📊 Мой финансовый обзор",
+        "💬 Conversar": "💬 Поговорить с Inna",
+        "📄 Relatório": "📄 Мой отчёт",
+        "📚 Histórico": "📚 Моя история",
+        "⭐ Avaliar": "⭐ Оценить Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ О INNA",
+        "ℹ️ Sobre": "ℹ️ О INNA",
         "🚪 Sair": "🚪 Выйти",
     },
     "uk": {
         "🏠 Início": "🏠 Головна",
         "🔑 Entrar": "🔑 Увійти",
-        "🧾 Novo diagnóstico": "🧾 Нова діагностика",
-        "📊 Meu panorama financeiro": "📊 Мій фінансовий огляд",
-        "💬 Conversar com a Inna": "💬 Поговорити з Inna",
-        "📄 Meu relatório": "📄 Мій звіт",
-        "📚 Meu histórico": "📚 Моя історія",
-        "⭐ Avaliar a Inna": "⭐ Оцінити Inna",
+        "🧾 Diagnóstico": "🧾 Нова діагностика",
+        "📊 Panorama": "📊 Мій фінансовий огляд",
+        "💬 Conversar": "💬 Поговорити з Inna",
+        "📄 Relatório": "📄 Мій звіт",
+        "📚 Histórico": "📚 Моя історія",
+        "⭐ Avaliar": "⭐ Оцінити Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ Про INNA",
+        "ℹ️ Sobre": "ℹ️ Про INNA",
         "🚪 Sair": "🚪 Вийти",
     },
     "ar": {
         "🏠 Início": "🏠 الرئيسية",
         "🔑 Entrar": "🔑 تسجيل الدخول",
-        "🧾 Novo diagnóstico": "🧾 تشخيص جديد",
-        "📊 Meu panorama financeiro": "📊 نظرتي المالية",
-        "💬 Conversar com a Inna": "💬 التحدث مع Inna",
-        "📄 Meu relatório": "📄 تقريري",
-        "📚 Meu histórico": "📚 سجلي",
-        "⭐ Avaliar a Inna": "⭐ تقييم Inna",
+        "🧾 Diagnóstico": "🧾 تشخيص جديد",
+        "📊 Panorama": "📊 نظرتي المالية",
+        "💬 Conversar": "💬 التحدث مع Inna",
+        "📄 Relatório": "📄 تقريري",
+        "📚 Histórico": "📚 سجلي",
+        "⭐ Avaliar": "⭐ تقييم Inna",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ حول INNA",
+        "ℹ️ Sobre": "ℹ️ حول INNA",
         "🚪 Sair": "🚪 تسجيل الخروج",
     },
     "ch": {
         "🏠 Início": "🏠 Startseite",
         "🔑 Entrar": "🔑 Anmelden",
-        "🧾 Novo diagnóstico": "🧾 Neue Diagnose",
-        "📊 Meu panorama financeiro": "📊 Meine Finanzübersicht",
-        "💬 Conversar com a Inna": "💬 Mit Inna sprechen",
-        "📄 Meu relatório": "📄 Mein Bericht",
-        "📚 Meu histórico": "📚 Mein Verlauf",
-        "⭐ Avaliar a Inna": "⭐ Inna bewerten",
+        "🧾 Diagnóstico": "🧾 Neue Diagnose",
+        "📊 Panorama": "📊 Meine Finanzübersicht",
+        "💬 Conversar": "💬 Mit Inna sprechen",
+        "📄 Relatório": "📄 Mein Bericht",
+        "📚 Histórico": "📚 Mein Verlauf",
+        "⭐ Avaliar": "⭐ Inna bewerten",
         "🔐 Admin Analytics": "🔐 Admin Analytics",
-        "ℹ️ Sobre a INNA": "ℹ️ Über INNA",
+        "ℹ️ Sobre": "ℹ️ Über INNA",
         "🚪 Sair": "🚪 Abmelden",
     },
 }
@@ -2056,6 +2047,140 @@ st.sidebar.caption("Educadora Financeira Inteligente")
 if "app_menu_selected" not in st.session_state:
     st.session_state.app_menu_selected = "🏠 Início"
 
+
+# =============================
+# TOPO PRINCIPAL DA INNA
+# =============================
+
+st.markdown("""
+<div class="inna-top-title">💰 INNA Financial Coach AI</div>
+<div class="inna-top-subtitle">Educadora Financeira Inteligente • Web App • IA • Diagnóstico financeiro</div>
+<div class="inna-top-divider"></div>
+""", unsafe_allow_html=True)
+
+# Linha superior: idioma, tema e login/sair
+top_lang_col, top_theme_col, top_login_col = st.columns([1.4, 1.1, 1])
+
+with top_lang_col:
+    app_lang = st.selectbox(
+        "🌍 Idioma / Language",
+        options=list(APP_LANG_LABELS.keys()),
+        index=list(APP_LANG_LABELS.keys()).index(st.session_state.app_lang),
+        format_func=lambda key: APP_LANG_LABELS[key],
+        key="app_lang_top",
+    )
+    st.session_state.app_lang = app_lang
+
+with top_theme_col:
+    st.session_state.theme_name = st.selectbox(
+        "🎨 Tema",
+        list(THEMES_INNA.keys()),
+        index=list(THEMES_INNA.keys()).index(st.session_state.theme_name),
+        key="theme_selector_top",
+    )
+    theme = THEMES_INNA[st.session_state.theme_name]
+
+with top_login_col:
+    st.write("")
+    if st.session_state.get("logado"):
+        if st.button("🚪 Sair", use_container_width=True, key="btn_top_sair"):
+            st.session_state.logado = False
+            st.session_state.usuario = None
+            st.session_state.perfil_usuario = None
+            st.session_state.app_menu_selected = "🏠 Início"
+            st.rerun()
+    else:
+        if st.button(ui_t("login_button") if "ui_t" in globals() else "🔑 Entrar", use_container_width=True, key="btn_top_entrar"):
+            st.session_state.app_menu_selected = "🔑 Entrar"
+            st.rerun()
+
+
+# Labels curtos para o menu superior
+def top_menu_t(menu_item: str) -> str:
+    labels = {
+        "🏠 Início": "🏠 Início",
+        "🧾 Diagnóstico": "🧾 Diagnóstico",
+        "📊 Panorama": "📊 Panorama",
+        "💬 Conversar": "💬 Chat",
+        "📄 Relatório": "📄 Relatório",
+        "📚 Histórico": "📚 Histórico",
+        "⭐ Avaliar": "⭐ Avaliar",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "ℹ️ Sobre": "ℹ️ Sobre",
+        "🚪 Sair": "🚪 Sair",
+    }
+
+    translated = menu_t(menu_item) if "menu_t" in globals() else menu_item
+
+    if app_lang in ["pt"]:
+        return labels.get(menu_item, menu_item)
+
+    if app_lang in ["en_us", "en_gb"]:
+        labels_en = {
+            "🏠 Início": "🏠 Home",
+            "🧾 Diagnóstico": "🧾 Diagnosis",
+            "📊 Panorama": "📊 Overview",
+            "💬 Conversar": "💬 Chat",
+            "📄 Relatório": "📄 Report",
+            "📚 Histórico": "📚 History",
+            "⭐ Avaliar": "⭐ Rate",
+            "🔐 Admin Analytics": "🔐 Admin",
+            "ℹ️ Sobre": "ℹ️ About",
+        }
+        return labels_en.get(menu_item, translated)
+
+    if app_lang == "es":
+        labels_es = {
+            "🏠 Início": "🏠 Inicio",
+            "🧾 Diagnóstico": "🧾 Diagnóstico",
+            "📊 Panorama": "📊 Panorama",
+            "💬 Conversar": "💬 Chat",
+            "📄 Relatório": "📄 Informe",
+            "📚 Histórico": "📚 Historial",
+            "⭐ Avaliar": "⭐ Evaluar",
+            "🔐 Admin Analytics": "🔐 Admin",
+            "ℹ️ Sobre": "ℹ️ Sobre",
+        }
+        return labels_es.get(menu_item, translated)
+
+    return labels.get(menu_item, translated)
+
+st.markdown("""
+<style>
+/* Ajuste do menu superior para não quebrar texto */
+button[kind="secondary"] {
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    padding: 0.45rem 0.55rem !important;
+    font-size: 0.92rem !important;
+}
+</style>
+""", unsafe_allow_html=True)
+# Linha do menu principal
+menu_options_top = [
+    "🏠 Início",
+    "🧾 Diagnóstico",
+    "📊 Panorama",
+    "💬 Conversar",
+    "📄 Relatório",
+    "📚 Histórico",
+    "⭐ Avaliar",
+    "ℹ️ Sobre",
+]
+
+if st.session_state.get("perfil_usuario") == "admin":
+    menu_options_top.insert(-1, "🔐 Admin Analytics")
+
+menu_cols = st.columns(len(menu_options_top))
+
+for index_menu, menu_item in enumerate(menu_options_top):
+    with menu_cols[index_menu]:
+        label_menu = top_menu_t(menu_item)
+        if st.button(label_menu, use_container_width=True, key=f"top_menu_{index_menu}_{menu_item}"):
+            st.session_state.app_menu_selected = menu_item
+            st.rerun()
+
+st.markdown("<div class='inna-top-divider'></div>", unsafe_allow_html=True)
 app_menu = st.sidebar.radio(
     ui_t("menu") if "ui_t" in globals() else "Menu",
     APP_MENU_OPTIONS,
@@ -2436,7 +2561,7 @@ def home_t(key: str) -> str:
         HOME_TEXTS_INNA["pt"].get(key, key),
     )
 
-def tela_login_inna_inline(destino_apos_login="📊 Meu panorama financeiro"):
+def tela_login_inna_inline(destino_apos_login="📊 Panorama"):
     st.warning(login_t("caption"))
 
     col_login1, col_login2, col_login3 = st.columns([1, 1.2, 1])
@@ -2473,7 +2598,7 @@ def tela_login_inna_inline(destino_apos_login="📊 Meu panorama financeiro"):
 
             else:
                 st.error(login_t("error"))
-PAGINAS_PUBLICAS_INNA = ["🏠 Início", "🔑 Entrar", "ℹ️ Sobre a INNA"]
+PAGINAS_PUBLICAS_INNA = ["🏠 Início", "🔑 Entrar", "ℹ️ Sobre"]
 
 if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
     tela_login_inna_inline(destino_apos_login=app_menu)
@@ -2530,6 +2655,457 @@ div[data-testid="stVerticalBlockBorderWrapper"] h3 {{
     color: {theme["accent"]} !important;
     font-weight: 800 !important;
 }}
+
+</style>
+""", unsafe_allow_html=True)
+
+# =============================
+# MENU SUPERIOR / SIDEBAR OCULTA
+# =============================
+
+st.markdown("""
+<style>
+[data-testid="stSidebar"] {
+    display: none !important;
+}
+
+[data-testid="collapsedControl"] {
+    display: none !important;
+}
+
+.block-container {
+    max-width: 1500px !important;
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
+    padding-top: 1.2rem !important;
+}
+
+.inna-top-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #071C36;
+    margin-bottom: 4px;
+}
+
+.inna-top-subtitle {
+    font-size: 13px;
+    color: #64748B;
+    margin-bottom: 10px;
+}
+
+.inna-top-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+    margin: 12px 0 18px 0;
+}
+
+div[data-testid="stHorizontalBlock"] button {
+    min-height: 40px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# =============================
+# AJUSTE FINAL DO CTA DA LANDING PAGE
+# =============================
+
+st.markdown(f"""
+<style>
+
+/* CTA final da landing page */
+.cta-box {{
+    background: {theme["hero_bg"]} !important;
+    border: 1px solid {theme["accent"]} !important;
+    border-radius: 26px !important;
+    padding: 42px 30px !important;
+    text-align: center !important;
+    box-shadow: 0 20px 50px rgba(7, 28, 54, 0.18) !important;
+    margin-top: 32px !important;
+}}
+
+/* Título do CTA */
+.cta-box h2 {{
+    color: {theme["hero_text"]} !important;
+    font-size: 34px !important;
+    font-weight: 950 !important;
+    margin-bottom: 14px !important;
+}}
+
+/* Texto do CTA */
+.cta-box p {{
+    color: {theme["hero_subtext"]} !important;
+    font-size: 17px !important;
+    font-weight: 500 !important;
+}}
+
+/* Ajuste específico para Branco brilhante */
+body:not(.dark) .cta-box {{
+    background: linear-gradient(135deg, #FFFFFF 0%, #EEF6FF 100%) !important;
+}}
+
+/* Botões finais */
+.stButton > button {{
+    min-height: 44px !important;
+    font-weight: 800 !important;
+    border-radius: 14px !important;
+}}
+
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown(f"""
+<style>
+
+/* ===== TOPO / TÍTULO ===== */
+.inna-top-title {{
+    font-size: 28px !important;
+    font-weight: 900 !important;
+    color: {theme["hero_text"]} !important;
+    margin-bottom: 6px !important;
+}}
+
+.inna-top-subtitle {{
+    font-size: 14px !important;
+    color: {theme["hero_subtext"]} !important;
+    margin-bottom: 10px !important;
+}}
+
+.inna-top-divider {{
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, {theme["accent"]}, transparent) !important;
+    margin: 12px 0 18px 0 !important;
+}}
+
+/* ===== MENU SUPERIOR ===== */
+div[data-testid="stHorizontalBlock"] .stButton > button {{
+    min-height: 58px !important;
+    border-radius: 18px !important;
+    border: 1px solid {theme["border"]} !important;
+    background: {theme["surface"]} !important;
+    color: {theme["text"]} !important;
+    font-weight: 700 !important;
+    font-size: 0.98rem !important;
+    padding: 0.55rem 0.75rem !important;
+    white-space: nowrap !important;
+    line-height: 1.15 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    text-align: center !important;
+}}
+
+div[data-testid="stHorizontalBlock"] .stButton > button p {{
+    white-space: nowrap !important;
+    margin: 0 !important;
+    line-height: 1.15 !important;
+}}
+
+div[data-testid="stHorizontalBlock"] .stButton > button:hover {{
+    border: 1px solid {theme["accent"]} !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+}}
+
+/* ===== CONTAINERS / CARDS ===== */
+div[data-testid="stVerticalBlockBorderWrapper"] {{
+    background: {theme["card_bg"]} !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.10) !important;
+    padding: 16px !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"] h1,
+div[data-testid="stVerticalBlockBorderWrapper"] h2,
+div[data-testid="stVerticalBlockBorderWrapper"] h3,
+div[data-testid="stVerticalBlockBorderWrapper"] h4,
+div[data-testid="stVerticalBlockBorderWrapper"] strong {{
+    color: {theme["hero_text"]} !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"] p,
+div[data-testid="stVerticalBlockBorderWrapper"] span,
+div[data-testid="stVerticalBlockBorderWrapper"] li {{
+    color: {theme["hero_subtext"]} !important;
+}}
+
+/* ===== MÉTRICAS ===== */
+div[data-testid="metric-container"] {{
+    background: {theme["card_bg"]} !important;
+    border: 1px solid {theme["border"]} !important;
+    border-radius: 16px !important;
+    padding: 12px !important;
+}}
+
+/* ===== CTA FINAL ===== */
+.cta-box {{
+    background: {theme["hero_bg"]} !important;
+    border: 1px solid {theme["accent"]} !important;
+    border-radius: 24px !important;
+    padding: 34px 26px !important;
+    text-align: center !important;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.18) !important;
+    margin-top: 28px !important;
+}}
+
+.cta-box h2 {{
+    color: {theme["hero_text"]} !important;
+    font-size: 32px !important;
+    font-weight: 900 !important;
+    margin-bottom: 10px !important;
+}}
+
+.cta-box p {{
+    color: {theme["hero_subtext"]} !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    margin-bottom: 0 !important;
+}}
+
+/* ===== BOTÕES FINAIS ===== */
+.stButton > button {{
+    border-radius: 14px !important;
+    font-weight: 800 !important;
+}}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
+# AJUSTE FINAL DA LANDING PAGE
+# warning + cta + ações finais
+# ==========================================
+st.markdown(f"""
+<style>
+
+/* ===== AVISO IMPORTANTE ===== */
+.warning-box {{
+    background: {theme["card_bg"]} !important;
+    border: 1px solid {theme["accent"]} !important;
+    border-radius: 20px !important;
+    padding: 18px 20px !important;
+    margin-top: 18px !important;
+    margin-bottom: 18px !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.10) !important;
+    color: {theme["text"]} !important;
+}}
+
+.warning-box strong {{
+    color: {theme["accent"]} !important;
+    font-weight: 900 !important;
+}}
+
+.warning-box,
+.warning-box p,
+.warning-box span {{
+    color: {theme["text"]} !important;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+}}
+
+/* ===== CTA FINAL ===== */
+.cta-box {{
+    background: {theme["card_bg"]} !important;
+    border: 1px solid {theme["accent"]} !important;
+    border-radius: 24px !important;
+    padding: 36px 26px !important;
+    margin-top: 22px !important;
+    margin-bottom: 18px !important;
+    text-align: center !important;
+    box-shadow: 0 14px 32px rgba(0,0,0,0.14) !important;
+}}
+
+.cta-box h2 {{
+    color: {theme["hero_text"]} !important;
+    font-size: 34px !important;
+    font-weight: 950 !important;
+    margin: 0 0 12px 0 !important;
+    line-height: 1.2 !important;
+}}
+
+.cta-box p {{
+    color: {theme["hero_subtext"]} !important;
+    font-size: 17px !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+    line-height: 1.55 !important;
+}}
+
+/* ===== CONTAINERS DOS BOTÕES FINAIS ===== */
+.final-action-wrap {{
+    background: {theme["card_bg"]} !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    border-radius: 20px !important;
+    padding: 14px !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08) !important;
+    margin-top: 6px !important;
+}}
+
+.final-action-wrap .stButton > button {{
+    width: 100% !important;
+    min-height: 56px !important;
+    border-radius: 16px !important;
+    border: 1px solid {theme["border"]} !important;
+    background: {theme["surface"]} !important;
+    color: {theme["text"]} !important;
+    font-weight: 800 !important;
+    font-size: 16px !important;
+}}
+
+.final-action-wrap .stButton > button:hover {{
+    border: 1px solid {theme["accent"]} !important;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.10) !important;
+}}
+
+/* ===== PEQUENO REFORÇO DE CONTRASTE NOS TEMAS ESCUROS ===== */
+section[data-testid="stSidebar"] + div .cta-box h2,
+section[data-testid="stSidebar"] + div .warning-box strong {{
+    opacity: 1 !important;
+}}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
+# CTA E AVISO FINAL - FUNDO ESCURO + BORDA DOURADA
+# ==========================================
+st.markdown("""
+<style>
+
+/* Aviso importante */
+.warning-box {
+    background: linear-gradient(135deg, #07192F 0%, #03101E 100%) !important;
+    border: 1px solid #D4AF37 !important;
+    border-radius: 22px !important;
+    padding: 18px 22px !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18) !important;
+}
+
+.warning-box strong {
+    color: #FFFFFF !important;
+    font-weight: 900 !important;
+}
+
+.warning-box,
+.warning-box p,
+.warning-box span {
+    color: #FFFFFF !important;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+}
+
+/* CTA final */
+.cta-box {
+    background: linear-gradient(135deg, #07192F 0%, #03101E 100%) !important;
+    border: 1px solid #D4AF37 !important;
+    border-radius: 28px !important;
+    padding: 42px 28px !important;
+    margin-top: 24px !important;
+    margin-bottom: 18px !important;
+    text-align: center !important;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.22) !important;
+}
+
+.cta-box h2,
+.cta-box .cta-title {
+    color: #FFFFFF !important;
+    font-size: 38px !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 14px !important;
+}
+
+.cta-box p,
+.cta-box .cta-subtitle {
+    color: #D8E3F2 !important;
+    font-size: 18px !important;
+    font-weight: 500 !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+}
+
+/* Remove aparência apagada de headings dentro do CTA */
+.cta-box a {
+    display: none !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
+# CTA FINAL DEFINITIVO - ESCURO + DOURADO
+# ==========================================
+st.markdown("""
+<style>
+
+/* Força o CTA final a NÃO ficar branco */
+.cta-box {
+    background: linear-gradient(135deg, #07192F 0%, #03101E 100%) !important;
+    border: 1.5px solid #D4AF37 !important;
+    border-radius: 28px !important;
+    padding: 42px 28px !important;
+    margin-top: 24px !important;
+    margin-bottom: 18px !important;
+    text-align: center !important;
+    box-shadow: 0 18px 42px rgba(0,0,0,0.28) !important;
+}
+
+/* Título do CTA */
+.cta-box h2,
+.cta-box .cta-title {
+    color: #FFFFFF !important;
+    font-size: 38px !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 14px !important;
+    opacity: 1 !important;
+}
+
+/* Destaque dourado dentro do título */
+.cta-box .cta-highlight {
+    color: #F6D889 !important;
+}
+
+/* Subtítulo do CTA */
+.cta-box p,
+.cta-box .cta-subtitle {
+    color: #D8E3F2 !important;
+    font-size: 18px !important;
+    font-weight: 500 !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+}
+
+/* Remove ícone/link de heading do Streamlit caso apareça */
+.cta-box a {
+    display: none !important;
+}
+
+/* Aviso importante no mesmo padrão */
+.warning-box {
+    background: linear-gradient(135deg, #07192F 0%, #03101E 100%) !important;
+    border: 1.5px solid #D4AF37 !important;
+    border-radius: 22px !important;
+    padding: 18px 22px !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18) !important;
+}
+
+.warning-box strong {
+    color: #F6D889 !important;
+    font-weight: 900 !important;
+}
+
+.warning-box,
+.warning-box p,
+.warning-box span {
+    color: #FFFFFF !important;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    opacity: 1 !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -2716,15 +3292,15 @@ if app_menu == "🏠 Início":
     col_start1, col_start2, col_start3 = st.columns(3)
 
     if col_start1.button(home_t("btn_start"), use_container_width=True):
-        st.session_state.app_menu_selected = "🧾 Novo diagnóstico" if st.session_state.get("logado") else "🔑 Entrar"
+        st.session_state.app_menu_selected = "🧾 Diagnóstico" if st.session_state.get("logado") else "🔑 Entrar"
         st.rerun()
 
     if col_start2.button(home_t("btn_report"), use_container_width=True):
-        st.session_state.app_menu_selected = "📄 Meu relatório" if st.session_state.get("logado") else "🔑 Entrar"
+        st.session_state.app_menu_selected = "📄 Relatório" if st.session_state.get("logado") else "🔑 Entrar"
         st.rerun()
 
     if col_start3.button(home_t("btn_about"), use_container_width=True):
-        st.session_state.app_menu_selected = "ℹ️ Sobre a INNA"
+        st.session_state.app_menu_selected = "ℹ️ Sobre"
         st.rerun()
 
     st.stop()
@@ -2733,7 +3309,7 @@ if app_menu == "🏠 Início":
 
 CHAT_TEXTS_INNA = {
     "pt": {
-        "title": "💬 Conversar com a Inna",
+        "title": "💬 Conversar",
         "caption": "Canal de conversa educativa para dúvidas financeiras simples.",
         "info": "Aqui ficará o chat da INNA. A próxima etapa é conectar esta tela à IA para responder dúvidas com base no último diagnóstico financeiro do usuário.",
         "input_label": "Digite uma dúvida financeira:",
@@ -2860,7 +3436,7 @@ def chat_t(key: str) -> str:
         key,
         CHAT_TEXTS_INNA["pt"].get(key, key),
     )
-if app_menu == "💬 Conversar com a Inna":
+if app_menu == "💬 Conversar":
     st.title(chat_t("title"))
     st.caption(chat_t("caption"))
 
@@ -3117,7 +3693,7 @@ if app_menu == "🔑 Entrar":
                 st.session_state.logado = True
                 st.session_state.usuario = email_login
                 st.session_state.perfil_usuario = "usuario"
-                st.session_state.app_menu_selected = "📊 Meu panorama financeiro"
+                st.session_state.app_menu_selected = "📊 Panorama"
                 st.success(login_t("success_user"))
                 st.rerun()
 
@@ -3142,7 +3718,7 @@ if app_menu == "🚪 Sair":
     st.session_state.app_menu_selected = "🏠 Início"
     st.success(ui_t("logout_success"))
     st.rerun()
-if app_menu == "ℹ️ Sobre a INNA":
+if app_menu == "ℹ️ Sobre":
     st.title(ui_t("about_title"))
     st.write(ui_t("about_text"))
 
@@ -3171,11 +3747,11 @@ INTERNAL_PAGE_TEXTS_INNA = {
     "pt": {
         "current_page": "Página atual",
         "new_diagnosis_title": "🧾 Novo diagnóstico financeiro",
-        "overview_title": "📊 Meu panorama financeiro",
-        "report_title": "📄 Meu relatório",
-        "history_title_page": "📚 Meu histórico",
-        "feedback_title_page": "⭐ Avaliar a Inna",
-        "chat_title_page": "💬 Conversar com a Inna",
+        "overview_title": "📊 Panorama",
+        "report_title": "📄 Relatório",
+        "history_title_page": "📚 Histórico",
+        "feedback_title_page": "⭐ Avaliar",
+        "chat_title_page": "💬 Conversar",
         "admin_title_page": "🔐 Admin Analytics — INNA",
         "no_diagnosis": "Nenhum diagnóstico gerado ainda. Primeiro vá em **🧾 Novo diagnóstico**.",
         "api_connection_error": "Não foi possível conectar na FastAPI. Confirme se a API está rodando em http://127.0.0.1:8000.",
@@ -3185,7 +3761,7 @@ INTERNAL_PAGE_TEXTS_INNA = {
         "report_pdf_section": "### 📄 Relatório em PDF",
         "back_to_result": "📊 Voltar para resultado",
         "send_feedback": "💬 Enviar feedback",
-        "new_diagnosis_btn": "🧾 Novo diagnóstico",
+        "new_diagnosis_btn": "🧾 Diagnóstico",
         "see_history": "📚 Ver histórico",
         "history_found": "diagnóstico(s) encontrado(s).",
         "score_evolution": "### Evolução do score",
@@ -3488,7 +4064,7 @@ def page_t(key: str) -> str:
 st.caption(f"{page_t('current_page')}: {menu_t(app_menu) if 'menu_t' in globals() else app_menu}")
 
 
-if app_menu == "📊 Meu panorama financeiro":
+if app_menu == "📊 Panorama":
     st.title(page_t("overview_title"))
 
     response = st.session_state.get("last_response")
@@ -3520,17 +4096,17 @@ if app_menu == "📊 Meu panorama financeiro":
     col_nav1, col_nav2 = st.columns(2)
 
     if col_nav1.button("📄 Abrir relatório PDF e e-mail"):
-        st.session_state.app_menu_selected = "📄 Meu relatório"
+        st.session_state.app_menu_selected = "📄 Relatório"
         st.rerun()
 
     if col_nav2.button("💬 Enviar feedback"):
-        st.session_state.app_menu_selected = "⭐ Avaliar a Inna"
+        st.session_state.app_menu_selected = "⭐ Avaliar"
         st.rerun()
 
     st.stop()
 
 
-if app_menu == "📄 Meu relatório":
+if app_menu == "📄 Relatório":
     st.title(page_t("report_title"))
 
     response = st.session_state.get("last_response")
@@ -3595,17 +4171,17 @@ if app_menu == "📄 Meu relatório":
     col_rel1, col_rel2 = st.columns(2)
 
     if col_rel1.button(page_t("back_to_result")):
-        st.session_state.app_menu_selected = "📊 Meu panorama financeiro"
+        st.session_state.app_menu_selected = "📊 Panorama"
         st.rerun()
 
     if col_rel2.button(page_t("send_feedback")):
-        st.session_state.app_menu_selected = "⭐ Avaliar a Inna"
+        st.session_state.app_menu_selected = "⭐ Avaliar"
         st.rerun()
 
     st.stop()
 
 
-if app_menu == "⭐ Avaliar a Inna":
+if app_menu == "⭐ Avaliar":
     st.title(page_t("feedback_title_page"))
 
     response = st.session_state.get("last_response")
@@ -3663,13 +4239,13 @@ if app_menu == "⭐ Avaliar a Inna":
         st.rerun()
 
     if col_fb2.button(page_t("see_history")):
-        st.session_state.app_menu_selected = "📚 Meu histórico"
+        st.session_state.app_menu_selected = "📚 Histórico"
         st.rerun()
 
     st.stop()
 
 
-if app_menu == "📚 Meu histórico":
+if app_menu == "📚 Histórico":
     st.title("📚 Meu histórico individual")
     st.caption(tr("history_help"))
 
@@ -3819,7 +4395,7 @@ if submitted:
 
         st.session_state.last_payload = payload
         st.session_state.last_response = response
-        st.session_state.app_menu_selected = "📊 Meu panorama financeiro"
+        st.session_state.app_menu_selected = "📊 Panorama"
 
         st.success(tr("saved"))
         st.info(page_t("diagnosis_opening"))
@@ -4043,6 +4619,19 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
