@@ -1395,6 +1395,170 @@ def ui_t(key: str) -> str:
 def menu_t(key: str) -> str:
     lang = app_lang if app_lang in MENU_LABELS_INNA else "pt"
     return MENU_LABELS_INNA.get(lang, MENU_LABELS_INNA["pt"]).get(key, key)
+
+# MENU_LABELS_INNA_COMPLETO
+MENU_LABELS_INNA = {
+    "pt": {
+        "🏠 Início": "🏠 Início",
+        "🔑 Entrar": "🔑 Entrar",
+        "🧾 Novo diagnóstico": "🧾 Novo diagnóstico",
+        "📊 Meu panorama financeiro": "📊 Meu panorama financeiro",
+        "💬 Conversar com a Inna": "💬 Conversar com a Inna",
+        "📄 Meu relatório": "📄 Meu relatório",
+        "📚 Meu histórico": "📚 Meu histórico",
+        "⭐ Avaliar a Inna": "⭐ Avaliar a Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ Sobre a INNA",
+        "🚪 Sair": "🚪 Sair",
+    },
+    "en_us": {
+        "🏠 Início": "🏠 Home",
+        "🔑 Entrar": "🔑 Sign in",
+        "🧾 Novo diagnóstico": "🧾 New diagnosis",
+        "📊 Meu panorama financeiro": "📊 My financial overview",
+        "💬 Conversar com a Inna": "💬 Chat with Inna",
+        "📄 Meu relatório": "📄 My report",
+        "📚 Meu histórico": "📚 My history",
+        "⭐ Avaliar a Inna": "⭐ Rate Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ About INNA",
+        "🚪 Sair": "🚪 Sign out",
+    },
+    "en_gb": {
+        "🏠 Início": "🏠 Home",
+        "🔑 Entrar": "🔑 Sign in",
+        "🧾 Novo diagnóstico": "🧾 New diagnosis",
+        "📊 Meu panorama financeiro": "📊 My financial overview",
+        "💬 Conversar com a Inna": "💬 Chat with Inna",
+        "📄 Meu relatório": "📄 My report",
+        "📚 Meu histórico": "📚 My history",
+        "⭐ Avaliar a Inna": "⭐ Rate Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ About INNA",
+        "🚪 Sair": "🚪 Sign out",
+    },
+    "es": {
+        "🏠 Início": "🏠 Inicio",
+        "🔑 Entrar": "🔑 Entrar",
+        "🧾 Novo diagnóstico": "🧾 Nuevo diagnóstico",
+        "📊 Meu panorama financeiro": "📊 Mi panorama financiero",
+        "💬 Conversar com a Inna": "💬 Conversar con Inna",
+        "📄 Meu relatório": "📄 Mi informe",
+        "📚 Meu histórico": "📚 Mi historial",
+        "⭐ Avaliar a Inna": "⭐ Evaluar a Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ Sobre INNA",
+        "🚪 Sair": "🚪 Salir",
+    },
+    "de": {
+        "🏠 Início": "🏠 Startseite",
+        "🔑 Entrar": "🔑 Anmelden",
+        "🧾 Novo diagnóstico": "🧾 Neue Diagnose",
+        "📊 Meu panorama financeiro": "📊 Meine Finanzübersicht",
+        "💬 Conversar com a Inna": "💬 Mit Inna sprechen",
+        "📄 Meu relatório": "📄 Mein Bericht",
+        "📚 Meu histórico": "📚 Mein Verlauf",
+        "⭐ Avaliar a Inna": "⭐ Inna bewerten",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ Über INNA",
+        "🚪 Sair": "🚪 Abmelden",
+    },
+    "fr": {
+        "🏠 Início": "🏠 Accueil",
+        "🔑 Entrar": "🔑 Se connecter",
+        "🧾 Novo diagnóstico": "🧾 Nouveau diagnostic",
+        "📊 Meu panorama financeiro": "📊 Mon panorama financier",
+        "💬 Conversar com a Inna": "💬 Parler avec Inna",
+        "📄 Meu relatório": "📄 Mon rapport",
+        "📚 Meu histórico": "📚 Mon historique",
+        "⭐ Avaliar a Inna": "⭐ Évaluer Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ À propos d’INNA",
+        "🚪 Sair": "🚪 Se déconnecter",
+    },
+    "it": {
+        "🏠 Início": "🏠 Inizio",
+        "🔑 Entrar": "🔑 Accedi",
+        "🧾 Novo diagnóstico": "🧾 Nuova diagnosi",
+        "📊 Meu panorama financeiro": "📊 Il mio panorama finanziario",
+        "💬 Conversar com a Inna": "💬 Parlare con Inna",
+        "📄 Meu relatório": "📄 Il mio report",
+        "📚 Meu histórico": "📚 Il mio storico",
+        "⭐ Avaliar a Inna": "⭐ Valuta Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ Informazioni su INNA",
+        "🚪 Sair": "🚪 Esci",
+    },
+    "ro": {
+        "🏠 Início": "🏠 Acasă",
+        "🔑 Entrar": "🔑 Intră",
+        "🧾 Novo diagnóstico": "🧾 Diagnostic nou",
+        "📊 Meu panorama financeiro": "📊 Panorama mea financiară",
+        "💬 Conversar com a Inna": "💬 Vorbește cu Inna",
+        "📄 Meu relatório": "📄 Raportul meu",
+        "📚 Meu histórico": "📚 Istoricul meu",
+        "⭐ Avaliar a Inna": "⭐ Evaluează Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ Despre INNA",
+        "🚪 Sair": "🚪 Ieșire",
+    },
+    "ru": {
+        "🏠 Início": "🏠 Главная",
+        "🔑 Entrar": "🔑 Войти",
+        "🧾 Novo diagnóstico": "🧾 Новая диагностика",
+        "📊 Meu panorama financeiro": "📊 Мой финансовый обзор",
+        "💬 Conversar com a Inna": "💬 Поговорить с Inna",
+        "📄 Meu relatório": "📄 Мой отчёт",
+        "📚 Meu histórico": "📚 Моя история",
+        "⭐ Avaliar a Inna": "⭐ Оценить Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ О INNA",
+        "🚪 Sair": "🚪 Выйти",
+    },
+    "uk": {
+        "🏠 Início": "🏠 Головна",
+        "🔑 Entrar": "🔑 Увійти",
+        "🧾 Novo diagnóstico": "🧾 Нова діагностика",
+        "📊 Meu panorama financeiro": "📊 Мій фінансовий огляд",
+        "💬 Conversar com a Inna": "💬 Поговорити з Inna",
+        "📄 Meu relatório": "📄 Мій звіт",
+        "📚 Meu histórico": "📚 Моя історія",
+        "⭐ Avaliar a Inna": "⭐ Оцінити Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ Про INNA",
+        "🚪 Sair": "🚪 Вийти",
+    },
+    "ar": {
+        "🏠 Início": "🏠 الرئيسية",
+        "🔑 Entrar": "🔑 تسجيل الدخول",
+        "🧾 Novo diagnóstico": "🧾 تشخيص جديد",
+        "📊 Meu panorama financeiro": "📊 نظرتي المالية",
+        "💬 Conversar com a Inna": "💬 التحدث مع Inna",
+        "📄 Meu relatório": "📄 تقريري",
+        "📚 Meu histórico": "📚 سجلي",
+        "⭐ Avaliar a Inna": "⭐ تقييم Inna",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ حول INNA",
+        "🚪 Sair": "🚪 تسجيل الخروج",
+    },
+    "ch": {
+        "🏠 Início": "🏠 Startseite",
+        "🔑 Entrar": "🔑 Anmelden",
+        "🧾 Novo diagnóstico": "🧾 Neue Diagnose",
+        "📊 Meu panorama financeiro": "📊 Meine Finanzübersicht",
+        "💬 Conversar com a Inna": "💬 Mit Inna sprechen",
+        "📄 Meu relatório": "📄 Mein Bericht",
+        "📚 Meu histórico": "📚 Mein Verlauf",
+        "⭐ Avaliar a Inna": "⭐ Inna bewerten",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+        "ℹ️ Sobre a INNA": "ℹ️ Über INNA",
+        "🚪 Sair": "🚪 Abmelden",
+    },
+}
+
+def menu_t(key: str) -> str:
+    lang = app_lang if app_lang in MENU_LABELS_INNA else "pt"
+    return MENU_LABELS_INNA.get(lang, MENU_LABELS_INNA["pt"]).get(key, key)
 CURRENCY_BY_LANG = {
     "pt": {"moeda": "BRL", "simbolo": "R$"},
     "en_us": {"moeda": "USD", "simbolo": "US$"},
@@ -1519,12 +1683,13 @@ if "app_menu_selected" not in st.session_state:
     st.session_state.app_menu_selected = "🏠 Início"
 
 app_menu = st.sidebar.radio(
-    "Menu",
+    ui_t("menu") if "ui_t" in globals() else "Menu",
     APP_MENU_OPTIONS,
     index=APP_MENU_OPTIONS.index(st.session_state.app_menu_selected)
     if st.session_state.app_menu_selected in APP_MENU_OPTIONS
-    else 1,
+    else 0,
     key="app_menu_radio",
+    format_func=menu_t,
 )
 
 st.session_state.app_menu_selected = app_menu
@@ -3407,6 +3572,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
 
 
 
