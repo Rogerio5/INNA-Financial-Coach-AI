@@ -2478,6 +2478,61 @@ PAGINAS_PUBLICAS_INNA = ["🏠 Início", "🔑 Entrar", "ℹ️ Sobre a INNA"]
 if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
     tela_login_inna_inline(destino_apos_login=app_menu)
     st.stop()
+
+# =============================
+# AJUSTE VISUAL DOS CONTAINERS/CARDS
+# =============================
+
+st.markdown(f"""
+<style>
+
+/* Remove aparência cinza fraca dos containers com borda */
+div[data-testid="stVerticalBlockBorderWrapper"] {{
+    background: {theme["card_bg"]} !important;
+    border: 1px solid rgba(212, 175, 55, 0.32) !important;
+    border-radius: 22px !important;
+    box-shadow: 0 14px 34px rgba(7, 28, 54, 0.12) !important;
+    padding: 18px !important;
+}}
+
+/* Texto dentro dos containers */
+div[data-testid="stVerticalBlockBorderWrapper"] h1,
+div[data-testid="stVerticalBlockBorderWrapper"] h2,
+div[data-testid="stVerticalBlockBorderWrapper"] h3,
+div[data-testid="stVerticalBlockBorderWrapper"] p,
+div[data-testid="stVerticalBlockBorderWrapper"] span {{
+    color: {theme["card_text"]} !important;
+}}
+
+/* Cards menores dentro do hero */
+div[data-testid="stVerticalBlockBorderWrapper"] p {{
+    color: {theme["hero_subtext"]} !important;
+    line-height: 1.6 !important;
+}}
+
+/* Título Inna */
+div[data-testid="stVerticalBlockBorderWrapper"] h1 {{
+    color: {theme["hero_text"]} !important;
+    font-size: 56px !important;
+    font-weight: 950 !important;
+    letter-spacing: -1px !important;
+}}
+
+/* Financial Coach AI */
+div[data-testid="stVerticalBlockBorderWrapper"] h2 {{
+    color: {theme["hero_text"]} !important;
+    font-size: 32px !important;
+    font-weight: 850 !important;
+}}
+
+/* Subtítulo */
+div[data-testid="stVerticalBlockBorderWrapper"] h3 {{
+    color: {theme["accent"]} !important;
+    font-weight: 800 !important;
+}}
+
+</style>
+""", unsafe_allow_html=True)
 if app_menu == "🏠 Início":
 
     # HERO PRINCIPAL DA INNA SEM HTML GRANDE
@@ -3988,6 +4043,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
 
 
 
