@@ -2332,69 +2332,117 @@ if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
     st.stop()
 if app_menu == "🏠 Início":
 
-    if HERO_IMAGE.exists():
-        import base64
+    # HERO PRINCIPAL EM STREAMLIT PURO
+    # Imagem da Inna fica no assets/inna_hero.png
+    # Textos e cards ficam fora da imagem e mudam conforme o idioma
 
-        with open(HERO_IMAGE, "rb") as image_file:
-            encoded_image = base64.b64encode(image_file.read()).decode()
+    st.markdown(
+        f'<div class="premium-badge">{home_t("badge")}</div>',
+        unsafe_allow_html=True
+    )
 
-        img_src = f"data:image/png;base64,{encoded_image}"
+    hero_col_img, hero_col_text = st.columns([0.9, 1.25], vertical_alignment="center")
 
-        hero_html = f'''
-<div class="inna-hero-dynamic-final">
-  <div class="inna-hero-final-grid">
+    with hero_col_img:
+        if HERO_IMAGE.exists():
+            st.image(str(HERO_IMAGE), use_container_width=True)
+        else:
+            st.warning("Imagem não encontrada em assets/inna_hero.png")
 
-    <div class="inna-hero-photo-card">
-      <img src="{img_src}" alt="INNA Financial Coach AI">
-    </div>
+    with hero_col_text:
+        st.markdown(
+            """
+            <div style="
+                background: radial-gradient(circle at top left, #123E75 0%, #071C36 45%, #04101F 100%);
+                border: 1px solid rgba(212,175,55,0.35);
+                border-radius: 28px;
+                padding: 34px;
+                box-shadow: 0 24px 60px rgba(7,28,54,0.26);
+            ">
+            """,
+            unsafe_allow_html=True
+        )
 
-    <div class="inna-hero-text-side">
-      <h1>Inna</h1>
-      <h2>Financial Coach AI</h2>
+        st.markdown(
+            """
+            <div style="
+                font-size: 72px;
+                line-height: 0.95;
+                font-weight: 950;
+                color: #F7D88A;
+                letter-spacing: -1px;
+                margin-bottom: 6px;
+            ">
+                Inna
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-      <div class="inna-hero-subtitle-final">
-        {home_t("subtitle")}
-      </div>
+        st.markdown(
+            """
+            <div style="
+                font-size: 38px;
+                font-weight: 800;
+                color: #FFFFFF;
+                margin-bottom: 8px;
+            ">
+                Financial Coach AI
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-      <div class="inna-hero-description-final">
-        {home_t("intro")}
-      </div>
+        st.markdown(
+            f"""
+            <div style="
+                font-size: 22px;
+                color: #F7D88A;
+                margin-bottom: 22px;
+            ">
+                {home_t("subtitle")}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-      <div class="inna-hero-cards-final">
-        <div class="inna-hero-card-final">
-          <div class="icon">📋</div>
-          <h3>{home_t("feature_1_title").replace("📋 ", "")}</h3>
-          <p>{home_t("feature_1_text")}</p>
-        </div>
+        st.markdown(
+            f"""
+            <div style="
+                font-size: 18px;
+                color: #E6EEF8;
+                line-height: 1.6;
+                margin-bottom: 26px;
+            ">
+                {home_t("intro")}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-        <div class="inna-hero-card-final">
-          <div class="icon">🧠</div>
-          <h3>{home_t("feature_2_title").replace("🧠 ", "")}</h3>
-          <p>{home_t("feature_2_text")}</p>
-        </div>
+        card_1, card_2 = st.columns(2)
 
-        <div class="inna-hero-card-final">
-          <div class="icon">📄</div>
-          <h3>{home_t("feature_3_title").replace("📄 ", "")}</h3>
-          <p>{home_t("feature_3_text")}</p>
-        </div>
+        with card_1:
+            with st.container(border=True):
+                st.markdown("### 📋 " + home_t("feature_1_title").replace("📋 ", ""))
+                st.caption(home_t("feature_1_text"))
 
-        <div class="inna-hero-card-final">
-          <div class="icon">🌐</div>
-          <h3>{home_t("feature_4_title").replace("🌐 ", "")}</h3>
-          <p>{home_t("feature_4_text")}</p>
-        </div>
-      </div>
-    </div>
+            with st.container(border=True):
+                st.markdown("### 📄 " + home_t("feature_3_title").replace("📄 ", ""))
+                st.caption(home_t("feature_3_text"))
 
-  </div>
-</div>
-'''
+        with card_2:
+            with st.container(border=True):
+                st.markdown("### 🧠 " + home_t("feature_2_title").replace("🧠 ", ""))
+                st.caption(home_t("feature_2_text"))
 
-        st.markdown(hero_html, unsafe_allow_html=True)
+            with st.container(border=True):
+                st.markdown("### 🌐 " + home_t("feature_4_title").replace("🌐 ", ""))
+                st.caption(home_t("feature_4_text"))
 
-    else:
-        st.warning("Imagem não encontrada em assets/inna_hero.png")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"""
     <div class="info-box">
         {home_t("intro")}
@@ -3859,6 +3907,7 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
 
 
 
