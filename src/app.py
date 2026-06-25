@@ -4,6 +4,8 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT_DIR))
 
+HERO_IMAGE = ROOT_DIR / "assets" / "inna_hero.png"
+
 import streamlit as st
 from streamlit_js_eval import streamlit_js_eval
 import requests
@@ -14,9 +16,148 @@ from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_re
 st.set_page_config(
     page_title="INNA Financial Coach AI",
     page_icon="💰",
-    layout="centered",
+    layout="wide",
 )
 
+
+st.markdown("""
+<style>
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
+}
+
+[data-testid="stSidebar"] {
+    background: #f0f4f8;
+}
+
+.block-container {
+    padding-top: 1.2rem;
+    max-width: 1180px;
+}
+
+.hero-wrapper {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 22px 55px rgba(0,0,0,0.22);
+    margin-bottom: 35px;
+}
+
+.title-main {
+    font-size: 38px;
+    font-weight: 900;
+    color: #071C36;
+    margin-top: 10px;
+}
+
+.subtitle {
+    font-size: 19px;
+    color: #42526E;
+    margin-bottom: 20px;
+}
+
+.info-box {
+    background: #EAF4FF;
+    color: #113B63;
+    border: 1px solid #C7E2FF;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 15px;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 27px;
+    font-weight: 850;
+    color: #071C36;
+    margin-top: 35px;
+    margin-bottom: 16px;
+}
+
+.text-normal {
+    font-size: 16px;
+    color: #334155;
+    line-height: 1.7;
+}
+
+.feature-card {
+    background: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    padding: 24px;
+    min-height: 175px;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.07);
+}
+
+.feature-card h3 {
+    color: #071C36;
+    font-size: 21px;
+    margin-bottom: 10px;
+}
+
+.feature-card p {
+    color: #526173;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.step-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 22px;
+    border-left: 5px solid #D4AF37;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+    min-height: 180px;
+}
+
+.step-card h3 {
+    color: #D4AF37;
+    font-size: 28px;
+    margin-bottom: 6px;
+}
+
+.step-card h4 {
+    color: #071C36;
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.step-card p {
+    color: #526173;
+    font-size: 14px;
+}
+
+.warning-box {
+    background: #FFF8DF;
+    color: #5C4300;
+    border: 1px solid #F3DA8B;
+    border-radius: 16px;
+    padding: 18px;
+    font-size: 15px;
+    margin-top: 25px;
+}
+
+.cta-box {
+    background: linear-gradient(135deg, #071C36, #0E3A73);
+    color: white;
+    border-radius: 24px;
+    padding: 34px;
+    text-align: center;
+    margin-top: 35px;
+    box-shadow: 0 18px 40px rgba(7, 28, 54, 0.25);
+}
+
+.cta-box h2 {
+    color: white;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.cta-box p {
+    color: #D8E6F7;
+    font-size: 16px;
+}
+</style>
+""", unsafe_allow_html=True)
 APP_MENU_OPTIONS = [
     "🏠 Início",
     "🧾 Novo diagnóstico",
@@ -864,95 +1005,158 @@ st.sidebar.caption(tr("browser_translate_warning"))
 
 
 if app_menu == "🏠 Início":
-    st.title("💰 INNA Financial Coach AI")
-    st.subheader("Assistente virtual de educação financeira com IA")
 
-    st.info(
-        "A INNA ajuda pessoas a entenderem renda, gastos, dívidas, reserva financeira "
-        "e próximos passos de forma simples, educativa e personalizada."
-    )
+    if HERO_IMAGE.exists():
+        st.markdown('<div class="hero-wrapper">', unsafe_allow_html=True)
+        st.image(str(HERO_IMAGE), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        st.warning("Imagem não encontrada em assets/inna_hero.png")
 
+    st.markdown('<div class="title-main">💰 INNA Financial Coach AI</div>', unsafe_allow_html=True)
     st.markdown(
-        """
-### O que é a INNA?
-
-A **INNA Financial Coach AI** é uma educadora financeira inteligente que transforma dados básicos do usuário em:
-
-- diagnóstico financeiro;
-- plano de ação de 30 dias;
-- relatório em PDF;
-- envio por e-mail;
-- histórico individual;
-- registros analíticos para dashboard;
-- atendimento multicanal via Web e Telegram.
-        """
+        '<div class="subtitle">Assistente virtual de educação financeira com IA</div>',
+        unsafe_allow_html=True
     )
 
-    st.divider()
+    st.markdown("""
+    <div class="info-box">
+        A INNA ajuda pessoas a entenderem renda, gastos, dívidas, reserva financeira
+        e próximos passos de forma simples, educativa e personalizada.
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.write("### Principais recursos")
+    st.markdown('<div class="section-title">O que é a INNA?</div>', unsafe_allow_html=True)
 
-    col_feature1, col_feature2 = st.columns(2)
+    st.markdown("""
+    <div class="text-normal">
+        A <strong>INNA Financial Coach AI</strong> é uma educadora financeira inteligente que transforma
+        dados básicos do usuário em uma visão clara da situação atual. A plataforma pode gerar diagnóstico
+        financeiro, plano de ação de 30 dias, relatório em PDF, envio por e-mail, histórico individual,
+        registros analíticos para dashboard e atendimento multicanal via Web e Telegram.
+    </div>
+    """, unsafe_allow_html=True)
 
-    with col_feature1:
-        st.markdown(
-            """
-#### 🧾 Diagnóstico financeiro
-Analisa renda, gastos, dívidas e reserva financeira para gerar uma visão clara da situação atual.
+    st.markdown('<div class="section-title">Principais recursos</div>', unsafe_allow_html=True)
 
-#### 📄 Relatório PDF + E-mail
-Permite baixar o relatório financeiro ou receber o diagnóstico diretamente por e-mail.
-            """
-        )
+    col1, col2 = st.columns(2)
 
-    with col_feature2:
-        st.markdown(
-            """
-#### 🤖 IA Generativa
-Gera explicações simples e um plano de ação personalizado para os próximos 30 dias.
+    with col1:
+        st.markdown("""
+        <div class="feature-card">
+            <h3>📋 Diagnóstico financeiro</h3>
+            <p>Analisa renda, gastos, dívidas e reserva financeira para gerar uma visão clara da situação atual.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-#### 🌐 Multicanal e multilíngue
-Funciona via Web App, Telegram, API e Dashboard, com suporte a diferentes idiomas e moedas.
-            """
-        )
+        st.markdown("<br>", unsafe_allow_html=True)
 
-    st.divider()
+        st.markdown("""
+        <div class="feature-card">
+            <h3>📄 Relatório PDF + E-mail</h3>
+            <p>Permite baixar o relatório financeiro ou receber o diagnóstico diretamente por e-mail.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.write("### Como funciona")
+    with col2:
+        st.markdown("""
+        <div class="feature-card">
+            <h3>🧠 IA Generativa</h3>
+            <p>Gera explicações simples e um plano de ação personalizado para os próximos 30 dias.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class="feature-card">
+            <h3>🌐 Multicanal e multilíngue</h3>
+            <p>Funciona via Web App, Telegram, API e Dashboard, com suporte a diferentes idiomas e moedas.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown('<div class="section-title">Como funciona</div>', unsafe_allow_html=True)
 
     col_step1, col_step2, col_step3, col_step4 = st.columns(4)
 
-    col_step1.metric("1", "Preencha os dados")
-    col_step2.metric("2", "Receba o diagnóstico")
-    col_step3.metric("3", "Veja o plano")
-    col_step4.metric("4", "Baixe ou envie PDF")
+    with col_step1:
+        st.markdown("""
+        <div class="step-card">
+            <h3>1</h3>
+            <h4>Preencha</h4>
+            <p>Informe renda, gastos, dívidas e reserva financeira.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown(
-        """
-A experiência foi pensada para ser simples: o usuário informa seus dados financeiros, 
-a INNA processa as informações e entrega uma orientação educativa com linguagem acessível.
-        """
-    )
+    with col_step2:
+        st.markdown("""
+        <div class="step-card">
+            <h3>2</h3>
+            <h4>Receba análise</h4>
+            <p>A INNA calcula os principais indicadores financeiros.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.divider()
+    with col_step3:
+        st.markdown("""
+        <div class="step-card">
+            <h3>3</h3>
+            <h4>Veja o plano</h4>
+            <p>A IA gera uma orientação educativa personalizada.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.warning(
-        "Aviso importante: a INNA é uma ferramenta educativa. Ela não substitui consultoria financeira, "
-        "contábil, jurídica ou bancária profissional."
-    )
+    with col_step4:
+        st.markdown("""
+        <div class="step-card">
+            <h3>4</h3>
+            <h4>Baixe ou envie</h4>
+            <p>Exporte em PDF ou receba o relatório por e-mail.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    col_start1, col_start2 = st.columns(2)
+    st.markdown('<div class="section-title">Visão rápida do diagnóstico</div>', unsafe_allow_html=True)
 
-    if col_start1.button("🧾 Começar novo diagnóstico"):
+    m1, m2, m3, m4 = st.columns(4)
+
+    with m1:
+        st.metric("Renda mensal", "R$ 3.500", "+12%")
+    with m2:
+        st.metric("Gastos fixos", "R$ 2.150", "-5%")
+    with m3:
+        st.metric("Dívidas", "R$ 780", "-10%")
+    with m4:
+        st.metric("Reserva", "R$ 1.200", "+18%")
+
+    st.markdown("""
+    <div class="warning-box">
+        <strong>Aviso importante:</strong> a INNA é uma ferramenta educativa.
+        Ela não substitui consultoria financeira, contábil, jurídica ou bancária profissional.
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="cta-box">
+        <h2>Comece seu diagnóstico financeiro agora</h2>
+        <p>Organize sua vida financeira com uma assistente virtual inteligente, simples e personalizada.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_start1, col_start2, col_start3 = st.columns(3)
+
+    if col_start1.button("🧾 Começar novo diagnóstico", use_container_width=True):
         st.session_state.app_menu_selected = "🧾 Novo diagnóstico"
         st.rerun()
 
-    if col_start2.button("ℹ️ Ver sobre o projeto"):
+    if col_start2.button("📄 Gerar relatório", use_container_width=True):
+        st.session_state.app_menu_selected = "📄 Relatório PDF e e-mail"
+        st.rerun()
+
+    if col_start3.button("ℹ️ Ver sobre o projeto", use_container_width=True):
         st.session_state.app_menu_selected = "ℹ️ Sobre a INNA"
         st.rerun()
 
     st.stop()
-
 
 if app_menu == "ℹ️ Sobre a INNA":
     st.title("ℹ️ Sobre a INNA Financial Coach AI")
@@ -1539,3 +1743,4 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"Erro ao buscar histórico pela API: {error}")
+
