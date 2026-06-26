@@ -815,29 +815,257 @@ Esses dados ajudam a validar se a INNA está gerando valor real para usuários e
     )
 
 
+def get_dashboard_db_connection():
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        raise RuntimeError("DATABASE_URL não encontrada no ambiente.")
+
+    return psycopg2.connect(database_url)
+
+
+def ensure_agent_evaluation_table():
+    conn = get_dashboard_db_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS avaliacoes_agente_inna (
+            id SERIAL PRIMARY KEY,
+            data_hora TIMESTAMPTZ DEFAULT NOW(),
+            avaliador TEXT,
+            assertividade INTEGER CHECK (assertividade BETWEEN 1 AND 5),
+            seguranca INTEGER CHECK (seguranca BETWEEN 1 AND 5),
+            coerencia INTEGER CHECK (coerencia BETWEEN 1 AND 5),
+            clareza INTEGER CHECK (clareza BETWEEN 1 AND 5),
+            utilidade INTEGER CHECK (utilidade BETWEEN 1 AND 5),
+            media NUMERIC(4,2),
+            comentario TEXT,
+            origem TEXT DEFAULT 'dashboard',
+            metadata JSONB DEFAULT '{}'::jsonb
+        );
+        """
+    )
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def save_agent_evaluation(
+    avaliador,
+    assertividade,
+    seguranca,
+    coerencia,
+    clareza,
+    utilidade,
+    comentario,
+):
+    ensure_agent_evaluation_table()
+
+    media = round(
+        (
+            assertividade
+            + seguranca
+            + coerencia
+            + clareza
+            + utilidade
+        ) / 5,
+        2,
+    )
+
+    conn = get_dashboard_db_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        INSERT INTO avaliacoes_agente_inna (
+            avaliador,
+            assertividade,
+            seguranca,
+            coerencia,
+            clareza,
+            utilidade,
+            media,
+            comentario,
+            origem,
+            metadata
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, '{}'::jsonb)
+        RETURNING id;
+        """,
+        (
+            avaliador,
+            assertividade,
+            seguranca,
+            coerencia,
+            clareza,
+            utilidade,
+            media,
+            comentario,
+            "dashboard",
+        ),
+    )
+
+    evaluation_id = cur.fetchone()[0]
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return evaluation_id, media
+
+
+def load_agent_evaluations():
+    ensure_agent_evaluation_table()
+
+    conn = get_dashboard_db_connection()
+
+    query = """
+        SELECT
+            id,
+            data_hora,
+            avaliador,
+            assertividade,
+            seguranca,
+            coerencia,
+            clareza,
+            utilidade,
+            media,
+            comentario,
+            origem
+        FROM avaliacoes_agente_inna
+        ORDER BY data_hora DESC;
+    """
+
+    df = pd.read_sql_query(query, conn)
+
+    conn.close()
+
+    if not df.empty and "data_hora" in df.columns:
+        df["data_hora"] = pd.to_datetime(df["data_hora"], errors="coerce")
+
+    return df
+
+
 def render_agent_evaluation(diagnosticos_df, feedbacks_df, eventos_df):
     st.write("## 🧪 Avaliação e Métricas do Agente INNA")
 
     st.info(
-        "Esta página concentra os critérios de qualidade, segurança e observabilidade "
-        "do agente INNA. A avaliação combina testes estruturados, feedback real de usuários "
-        "e métricas técnicas do uso da plataforma."
+        "Esta página registra avaliações reais do agente INNA no PostgreSQL/Neon. "
+        "As notas ajudam a medir assertividade, segurança, coerência, clareza e utilidade."
     )
 
-    st.write("### 📌 Indicadores de qualidade")
+    try:
+        avaliacoes_df = load_agent_evaluations()
+    except Exception as error:
+        st.error(f"Erro ao carregar avaliações do agente: {error}")
+        avaliacoes_df = pd.DataFrame()
 
-    col1, col2, col3, col4, col5 = st.columns(5)
+    st.write("### 📌 Indicadores reais de qualidade")
 
-    col1.metric("Assertividade", "1 a 5")
-    col2.metric("Segurança", "1 a 5")
-    col3.metric("Coerência", "1 a 5")
-    col4.metric("Clareza", "1 a 5")
-    col5.metric("Utilidade", "1 a 5")
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
 
-    st.caption(
-        "As notas podem ser coletadas com 3 a 5 participantes testando o agente "
-        "e avaliando cada métrica de 1 a 5."
-    )
+    total_avaliacoes = len(avaliacoes_df)
+
+    if avaliacoes_df.empty:
+        media_geral = 0
+        media_assertividade = 0
+        media_seguranca = 0
+        media_coerencia = 0
+        media_clareza = 0
+        media_utilidade = 0
+    else:
+        media_geral = avaliacoes_df["media"].mean()
+        media_assertividade = avaliacoes_df["assertividade"].mean()
+        media_seguranca = avaliacoes_df["seguranca"].mean()
+        media_coerencia = avaliacoes_df["coerencia"].mean()
+        media_clareza = avaliacoes_df["clareza"].mean()
+        media_utilidade = avaliacoes_df["utilidade"].mean()
+
+    col1.metric("Avaliações", total_avaliacoes)
+    col2.metric("Média geral", f"{media_geral:.1f}/5")
+    col3.metric("Assertividade", f"{media_assertividade:.1f}/5")
+    col4.metric("Segurança", f"{media_seguranca:.1f}/5")
+    col5.metric("Coerência", f"{media_coerencia:.1f}/5")
+    col6.metric("Clareza", f"{media_clareza:.1f}/5")
+
+    st.metric("Utilidade média", f"{media_utilidade:.1f}/5")
+
+    st.divider()
+
+    st.write("### 📝 Registrar avaliação real")
+
+    with st.form("agent_evaluation_form_dashboard_real"):
+        avaliador = st.text_input(
+            "Nome do avaliador",
+            placeholder="Exemplo: Participante 1, colega, familiar, recrutador..."
+        )
+
+        nota_assertividade = st.slider("Assertividade — respondeu corretamente?", 1, 5, 4)
+        nota_seguranca = st.slider("Segurança — evitou inventar informações?", 1, 5, 4)
+        nota_coerencia = st.slider("Coerência — fez sentido para o perfil?", 1, 5, 4)
+        nota_clareza = st.slider("Clareza — linguagem simples e fácil?", 1, 5, 4)
+        nota_utilidade = st.slider("Utilidade — ajudou de verdade?", 1, 5, 4)
+
+        comentario = st.text_area(
+            "Comentário aberto",
+            placeholder="O que funcionou bem? O que poderia melhorar?"
+        )
+
+        salvar = st.form_submit_button("💾 Salvar avaliação no Neon")
+
+    if salvar:
+        try:
+            evaluation_id, media = save_agent_evaluation(
+                avaliador=avaliador or "Avaliador não informado",
+                assertividade=nota_assertividade,
+                seguranca=nota_seguranca,
+                coerencia=nota_coerencia,
+                clareza=nota_clareza,
+                utilidade=nota_utilidade,
+                comentario=comentario,
+            )
+
+            st.success(
+                f"Avaliação salva com sucesso no Neon! ID: {evaluation_id} | Média: {media:.1f}/5"
+            )
+
+            st.rerun()
+
+        except Exception as error:
+            st.error(f"Erro ao salvar avaliação no Neon: {error}")
+
+    st.divider()
+
+    st.write("### 🗃️ Tabela real — avaliações salvas no Neon")
+
+    try:
+        avaliacoes_df = load_agent_evaluations()
+    except Exception as error:
+        st.error(f"Erro ao recarregar avaliações: {error}")
+        avaliacoes_df = pd.DataFrame()
+
+    if avaliacoes_df.empty:
+        st.warning("Nenhuma avaliação real salva ainda.")
+    else:
+        tabela_avaliacoes = avaliacoes_df.copy()
+
+        if "data_hora" in tabela_avaliacoes.columns:
+            tabela_avaliacoes["data_hora"] = tabela_avaliacoes["data_hora"].dt.strftime(
+                "%d/%m/%Y %H:%M"
+            )
+
+        st.dataframe(tabela_avaliacoes, use_container_width=True)
+
+        csv_avaliacoes = tabela_avaliacoes.to_csv(index=False).encode("utf-8-sig")
+
+        st.download_button(
+            "⬇️ Baixar avaliações do agente CSV",
+            data=csv_avaliacoes,
+            file_name="inna_avaliacoes_agente.csv",
+            mime="text/csv",
+        )
 
     st.divider()
 
@@ -924,47 +1152,6 @@ def render_agent_evaluation(diagnosticos_df, feedbacks_df, eventos_df):
 
     st.divider()
 
-    st.write("### 📝 Simular avaliação de participante")
-
-    with st.form("agent_evaluation_form_dashboard"):
-        avaliador = st.text_input(
-            "Nome do avaliador",
-            placeholder="Exemplo: Participante 1"
-        )
-
-        nota_assertividade = st.slider("Assertividade", 1, 5, 4)
-        nota_seguranca = st.slider("Segurança", 1, 5, 4)
-        nota_coerencia = st.slider("Coerência", 1, 5, 4)
-        nota_clareza = st.slider("Clareza", 1, 5, 4)
-        nota_utilidade = st.slider("Utilidade", 1, 5, 4)
-
-        comentario = st.text_area(
-            "Comentário aberto",
-            placeholder="O que funcionou bem? O que poderia melhorar?"
-        )
-
-        calcular = st.form_submit_button("Calcular nota média")
-
-    if calcular:
-        media = (
-            nota_assertividade
-            + nota_seguranca
-            + nota_coerencia
-            + nota_clareza
-            + nota_utilidade
-        ) / 5
-
-        st.success(f"Nota média simulada do agente: {media:.1f}/5")
-
-        if avaliador:
-            st.write(f"**Avaliador:** {avaliador}")
-
-        if comentario:
-            st.write("**Comentário:**")
-            st.write(comentario)
-
-    st.divider()
-
     st.write("### 📈 Métricas técnicas de observabilidade")
 
     total_eventos = len(eventos_df)
@@ -998,6 +1185,7 @@ mas uma solução monitorada, testada e validada com dados reais de uso.
 
 **Evidências importantes para portfólio:**
 
+- avaliações reais salvas no Neon;
 - prints dos testes estruturados;
 - feedbacks de usuários;
 - eventos salvos por canal;
