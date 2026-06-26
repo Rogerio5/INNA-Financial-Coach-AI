@@ -2738,10 +2738,11 @@ with top_login_col:
             st.session_state.usuario = None
             st.session_state.perfil_usuario = None
             st.session_state.app_menu_selected = "🏠 Início"
+            st.session_state.show_login_page = False
             st.rerun()
     else:
         if st.button(ui_t("login_button") if "ui_t" in globals() else "🔑 Entrar", use_container_width=True, key="btn_top_entrar"):
-            st.session_state.app_menu_selected = "🔑 Entrar"
+            st.session_state.show_login_page = True
             st.rerun()
 
 
@@ -2922,6 +2923,7 @@ app_menu = st.sidebar.radio(
 )
 
 st.session_state.app_menu_selected = app_menu
+
 
 st.sidebar.divider()
 
@@ -3363,6 +3365,166 @@ def home_t(key: str) -> str:
         HOME_TEXTS_INNA["pt"].get(key, key),
     )
 
+
+# ==========================================
+# TEXTOS SEGUROS DA TELA DE LOGIN
+# Fica antes de tela_login_inna_inline para evitar NameError
+# ==========================================
+LOGIN_TEXTS_SAFE_INNA = {
+    "pt": {
+        "title": "🔑 Entrar na INNA",
+        "caption": "Acesse sua conta para usar diagnóstico, relatório, histórico e recursos personalizados.",
+        "brand": "💰 Inna",
+        "subtitle": "Educadora Financeira Inteligente",
+        "email": "E-mail",
+        "password": "Senha",
+        "button": "🔑 Entrar",
+        "success_user": "Login realizado com sucesso.",
+        "success_admin": "Login administrativo realizado com sucesso.",
+        "error": "E-mail ou senha inválidos.",
+    },
+    "en_us": {
+        "title": "🔑 Sign in to INNA",
+        "caption": "Access your account to use diagnosis, reports, history and personalized resources.",
+        "brand": "💰 Inna",
+        "subtitle": "Intelligent Financial Educator",
+        "email": "Email",
+        "password": "Password",
+        "button": "🔑 Sign in",
+        "success_user": "Signed in successfully.",
+        "success_admin": "Admin signed in successfully.",
+        "error": "Invalid email or password.",
+    },
+    "en_gb": {
+        "title": "🔑 Sign in to INNA",
+        "caption": "Access your account to use diagnosis, reports, history and personalised resources.",
+        "brand": "💰 Inna",
+        "subtitle": "Intelligent Financial Educator",
+        "email": "Email",
+        "password": "Password",
+        "button": "🔑 Sign in",
+        "success_user": "Signed in successfully.",
+        "success_admin": "Admin signed in successfully.",
+        "error": "Invalid email or password.",
+    },
+    "es": {
+        "title": "🔑 Entrar en INNA",
+        "caption": "Accede a tu cuenta para usar diagnóstico, informes, historial y recursos personalizados.",
+        "brand": "💰 Inna",
+        "subtitle": "Educadora Financiera Inteligente",
+        "email": "E-mail",
+        "password": "Contraseña",
+        "button": "🔑 Entrar",
+        "success_user": "Inicio de sesión realizado con éxito.",
+        "success_admin": "Inicio administrativo realizado con éxito.",
+        "error": "E-mail o contraseña inválidos.",
+    },
+    "fr": {
+        "title": "🔑 Connexion à INNA",
+        "caption": "Accédez à votre compte pour utiliser le diagnostic, les rapports, l’historique et les ressources personnalisées.",
+        "brand": "💰 Inna",
+        "subtitle": "Éducatrice financière intelligente",
+        "email": "E-mail",
+        "password": "Mot de passe",
+        "button": "🔑 Se connecter",
+        "success_user": "Connexion réussie.",
+        "success_admin": "Connexion administrateur réussie.",
+        "error": "E-mail ou mot de passe invalide.",
+    },
+    "de": {
+        "title": "🔑 Bei INNA anmelden",
+        "caption": "Melden Sie sich an, um Diagnose, Berichte, Verlauf und personalisierte Ressourcen zu nutzen.",
+        "brand": "💰 Inna",
+        "subtitle": "Intelligente Finanzpädagogin",
+        "email": "E-mail",
+        "password": "Passwort",
+        "button": "🔑 Anmelden",
+        "success_user": "Anmeldung erfolgreich.",
+        "success_admin": "Admin-Anmeldung erfolgreich.",
+        "error": "Ungültige E-mail oder ungültiges Passwort.",
+    },
+    "it": {
+        "title": "🔑 Accedi a INNA",
+        "caption": "Accedi al tuo account per usare diagnosi, report, cronologia e risorse personalizzate.",
+        "brand": "💰 Inna",
+        "subtitle": "Educatrice finanziaria intelligente",
+        "email": "E-mail",
+        "password": "Password",
+        "button": "🔑 Accedi",
+        "success_user": "Accesso effettuato con successo.",
+        "success_admin": "Accesso amministrativo effettuato con successo.",
+        "error": "E-mail o password non validi.",
+    },
+    "ro": {
+        "title": "🔑 Intră în INNA",
+        "caption": "Accesează contul pentru diagnostic, rapoarte, istoric și resurse personalizate.",
+        "brand": "💰 Inna",
+        "subtitle": "Educatoare financiară inteligentă",
+        "email": "E-mail",
+        "password": "Parolă",
+        "button": "🔑 Intră",
+        "success_user": "Autentificare reușită.",
+        "success_admin": "Autentificare administrativă reușită.",
+        "error": "E-mail sau parolă invalidă.",
+    },
+    "uk": {
+        "title": "🔑 Увійти в INNA",
+        "caption": "Увійдіть, щоб використовувати діагностику, звіти, історію та персоналізовані ресурси.",
+        "brand": "💰 Inna",
+        "subtitle": "Інтелектуальна фінансова освітня асистентка",
+        "email": "E-mail",
+        "password": "Пароль",
+        "button": "🔑 Увійти",
+        "success_user": "Вхід виконано успішно.",
+        "success_admin": "Адміністративний вхід виконано успішно.",
+        "error": "Невірний e-mail або пароль.",
+    },
+    "ru": {
+        "title": "🔑 Войти в INNA",
+        "caption": "Войдите в аккаунт, чтобы использовать диагностику, отчёты, историю и персонализированные ресурсы.",
+        "brand": "💰 Inna",
+        "subtitle": "Интеллектуальный финансовый образовательный ассистент",
+        "email": "E-mail",
+        "password": "Пароль",
+        "button": "🔑 Войти",
+        "success_user": "Вход выполнен успешно.",
+        "success_admin": "Административный вход выполнен успешно.",
+        "error": "Неверный e-mail или пароль.",
+    },
+    "ar": {
+        "title": "🔑 تسجيل الدخول إلى INNA",
+        "caption": "ادخل إلى حسابك لاستخدام التشخيص والتقارير والسجل والموارد الشخصية.",
+        "brand": "💰 Inna",
+        "subtitle": "مساعدة تعليم مالي ذكية",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "button": "🔑 تسجيل الدخول",
+        "success_user": "تم تسجيل الدخول بنجاح.",
+        "success_admin": "تم تسجيل دخول المسؤول بنجاح.",
+        "error": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    },
+    "ch": {
+        "title": "🔑 Bei INNA anmelden",
+        "caption": "Melden Sie sich an, um Diagnose, Berichte, Verlauf und personalisierte Ressourcen zu nutzen.",
+        "brand": "💰 Inna",
+        "subtitle": "Intelligente Finanzpädagogin",
+        "email": "E-mail",
+        "password": "Passwort",
+        "button": "🔑 Anmelden",
+        "success_user": "Anmeldung erfolgreich.",
+        "success_admin": "Admin-Anmeldung erfolgreich.",
+        "error": "Ungültige E-mail oder ungültiges Passwort.",
+    },
+}
+
+def login_t(key: str) -> str:
+    lang = st.session_state.get("app_lang", app_lang)
+    return LOGIN_TEXTS_SAFE_INNA.get(lang, LOGIN_TEXTS_SAFE_INNA["pt"]).get(
+        key,
+        LOGIN_TEXTS_SAFE_INNA["pt"].get(key, key),
+    )
+
+
 def tela_login_inna_inline(destino_apos_login="📊 Panorama"):
     st.warning(login_t("caption"))
 
@@ -3384,6 +3546,7 @@ def tela_login_inna_inline(destino_apos_login="📊 Panorama"):
         if st.button(login_t("button"), use_container_width=True, key=f"btn_login_inline_{destino_apos_login}"):
             if email_login == INNA_USER_EMAIL and senha_login == INNA_USER_PASSWORD:
                 st.session_state.logado = True
+                st.session_state.show_login_page = False
                 st.session_state.usuario = email_login
                 st.session_state.perfil_usuario = "usuario"
                 st.session_state.app_menu_selected = destino_apos_login
@@ -3392,6 +3555,7 @@ def tela_login_inna_inline(destino_apos_login="📊 Panorama"):
 
             elif email_login == INNA_ADMIN_EMAIL and senha_login == INNA_ADMIN_PASSWORD:
                 st.session_state.logado = True
+                st.session_state.show_login_page = False
                 st.session_state.usuario = email_login
                 st.session_state.perfil_usuario = "admin"
                 st.session_state.app_menu_selected = destino_apos_login
@@ -3401,6 +3565,15 @@ def tela_login_inna_inline(destino_apos_login="📊 Panorama"):
             else:
                 st.error(login_t("error"))
 PAGINAS_PUBLICAS_INNA = ["🏠 Início", "🔑 Entrar", "ℹ️ Sobre"]
+
+
+# Abre a tela de login quando o botão Entrar do topo for clicado
+if st.session_state.get("show_login_page") and not st.session_state.get("logado"):
+    tela_login_inna_inline(destino_apos_login="📊 Panorama")
+    st.stop()
+
+
+
 
 if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
     tela_login_inna_inline(destino_apos_login=app_menu)
@@ -4969,6 +5142,7 @@ if app_menu == "🔑 Entrar":
         if st.button(login_t("button"), use_container_width=True):
             if email_login == INNA_USER_EMAIL and senha_login == INNA_USER_PASSWORD:
                 st.session_state.logado = True
+                st.session_state.show_login_page = False
                 st.session_state.usuario = email_login
                 st.session_state.perfil_usuario = "usuario"
                 st.session_state.app_menu_selected = "📊 Panorama"
@@ -4977,6 +5151,7 @@ if app_menu == "🔑 Entrar":
 
             elif email_login == INNA_ADMIN_EMAIL and senha_login == INNA_ADMIN_PASSWORD:
                 st.session_state.logado = True
+                st.session_state.show_login_page = False
                 st.session_state.usuario = email_login
                 st.session_state.perfil_usuario = "admin"
                 st.session_state.app_menu_selected = "🔐 Admin Analytics"
