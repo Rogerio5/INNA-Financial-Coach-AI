@@ -1178,6 +1178,170 @@ def render_agent_evaluation(diagnosticos_df, feedbacks_df, eventos_df):
     col_obs4.metric("Canais ativos", canais_ativos)
     col_obs5.metric("Idiomas ativos", idiomas_ativos)
 
+    st.divider()
+
+    st.write("### ⚙️ Métricas avançadas de observabilidade")
+
+    eventos_metricas = eventos_df.copy()
+
+    tempo_medio = 0
+    taxa_erro = 0
+    eventos_sucesso = 0
+    eventos_erro = 0
+    total_tokens = 0
+    custo_estimado = 0
+
+    if not eventos_metricas.empty:
+        if "status" in eventos_metricas.columns:
+            status_series = eventos_metricas["status"].fillna("").astype(str).str.lower()
+
+            eventos_sucesso = status_series.str.contains("success|sucesso|ok", regex=True).sum()
+            eventos_erro = status_series.str.contains("error|erro|failed|falha", regex=True).sum()
+
+            if total_eventos > 0:
+                taxa_erro = (eventos_erro / total_eventos) * 100
+
+        if "tempo_resposta_segundos" in eventos_metricas.columns:
+            tempos = pd.to_numeric(
+                eventos_metricas["tempo_resposta_segundos"],
+                errors="coerce"
+            ).dropna()
+
+            if not tempos.empty:
+                tempo_medio = tempos.mean()
+
+        elif "metadata" in eventos_metricas.columns:
+            def extrair_tempo(metadata):
+                try:
+                    if isinstance(metadata, dict):
+                        return metadata.get("tempo_resposta_segundos")
+                    return None
+                except Exception:
+                    return None
+
+            tempos = pd.to_numeric(
+                eventos_metricas["metadata"].apply(extrair_tempo),
+                errors="coerce"
+            ).dropna()
+
+            if not tempos.empty:
+                tempo_medio = tempos.mean()
+
+        if "metadata" in eventos_metricas.columns:
+            def extrair_tokens(metadata):
+                try:
+                    if isinstance(metadata, dict):
+                        return (
+                            metadata.get("total_tokens")
+                            or metadata.get("tokens_total")
+                            or metadata.get("tokens")
+                            or 0
+                        )
+                    return 0
+                except Exception:
+                    return 0
+
+            def extrair_custo(metadata):
+                try:
+                    if isinstance(metadata, dict):
+                        return (
+                            metadata.get("custo_estimado_usd")
+                            or metadata.get("estimated_cost_usd")
+                            or metadata.get("cost_usd")
+                            or 0
+                        )
+                    return 0
+                except Exception:
+                    return 0
+
+            total_tokens = pd.to_numeric(
+                eventos_metricas["metadata"].apply(extrair_tokens),
+                errors="coerce"
+            ).fillna(0).sum()
+
+            custo_estimado = pd.to_numeric(
+                eventos_metricas["metadata"].apply(extrair_custo),
+                errors="coerce"
+            ).fillna(0).sum()
+
+    col_adv1, col_adv2, col_adv3, col_adv4 = st.columns(4)
+
+    col_adv1.metric("Tempo médio", f"{tempo_medio:.2f}s")
+    col_adv2.metric("Taxa de erro", f"{taxa_erro:.1f}%")
+    col_adv3.metric("Eventos sucesso", int(eventos_sucesso))
+    col_adv4.metric("Eventos erro", int(eventos_erro))
+
+    col_adv5, col_adv6, col_adv7 = st.columns(3)
+
+    col_adv5.metric("Logs/eventos", total_eventos)
+    col_adv6.metric("Tokens consumidos", int(total_tokens))
+    col_adv7.metric("Custo estimado", f"US$ {float(custo_estimado):.4f}")
+
+    st.caption(
+        "Tokens e custo estimado aparecem com valor real quando a API salva essas informações "
+        "no metadata dos eventos. Latência, status e logs já usam os eventos reais do Neon."
+    )
+
+    with st.expander("📘 Como interpretar as métricas avançadas"):
+        st.markdown(
+            """
+| Métrica | O que mostra | Por que importa |
+|---|---|---|
+| **Tempo médio** | Média de resposta da API/agente | Ajuda a medir performance |
+| **Taxa de erro** | Percentual de eventos com falha | Ajuda a encontrar problemas técnicos |
+| **Eventos sucesso** | Interações concluídas corretamente | Mostra estabilidade da solução |
+| **Eventos erro** | Interações com falha | Ajuda a priorizar correções |
+| **Logs/eventos** | Total de registros no Neon | Mostra rastreabilidade |
+| **Tokens consumidos** | Uso do modelo de IA | Ajuda a controlar consumo |
+| **Custo estimado** | Custo aproximado da IA | Ajuda a controlar viabilidade financeira |
+            """
+        )
+
+    st.divider()
+
+    st.write("### ⏳ Próximas métricas planejadas")
+
+    st.info(
+        "Essas métricas fazem parte da evolução planejada da INNA. "
+        "Elas ainda não estão ativas para evitar custos desnecessários neste momento, "
+        "mas a arquitetura do projeto já está preparada para receber esses dados futuramente."
+    )
+
+    metricas_futuras = [
+        {
+            "Métrica planejada": "Tokens consumidos",
+            "Objetivo": "Medir o consumo do modelo de IA por diagnóstico ou interação.",
+            "Status": "Planejado",
+        },
+        {
+            "Métrica planejada": "Custo estimado",
+            "Objetivo": "Calcular o custo aproximado das chamadas de IA.",
+            "Status": "Planejado",
+        },
+        {
+            "Métrica planejada": "Preço por milhão de tokens",
+            "Objetivo": "Permitir configurar valores por variável de ambiente no Render.",
+            "Status": "Planejado",
+        },
+        {
+            "Métrica planejada": "Modelo de IA utilizado",
+            "Objetivo": "Registrar qual modelo respondeu cada diagnóstico.",
+            "Status": "Planejado",
+        },
+        {
+            "Métrica planejada": "Provider de IA",
+            "Objetivo": "Registrar se a resposta veio de Gemini, fallback ou outro provedor.",
+            "Status": "Planejado",
+        },
+    ]
+
+    st.dataframe(pd.DataFrame(metricas_futuras), use_container_width=True)
+
+    st.caption(
+        "Quando a medição de tokens/custos for ativada, esses dados poderão ser salvos no metadata "
+        "dos eventos da tabela interacoes_inna e exibidos automaticamente no dashboard."
+    )
+
     st.markdown(
         """
 Essas métricas ajudam a demonstrar que a INNA não é apenas uma chamada de IA,
