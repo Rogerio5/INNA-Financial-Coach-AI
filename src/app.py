@@ -597,6 +597,41 @@ div[data-testid="stMetricValue"] {
     }
 }
 
+
+/* ==========================================
+   MENU SUPERIOR RESPONSIVO MULTIIDIOMA
+   ========================================== */
+
+div[data-testid="stHorizontalBlock"] .stButton > button {
+    min-height: 58px !important;
+    height: auto !important;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    line-height: 1.15 !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: anywhere !important;
+    text-align: center !important;
+    border-radius: 16px !important;
+}
+
+/* Em telas menores, reduz um pouco mais a fonte */
+@media (max-width: 1100px) {
+    div[data-testid="stHorizontalBlock"] .stButton > button {
+        font-size: 12px !important;
+        padding: 7px 8px !important;
+        min-height: 56px !important;
+    }
+}
+
+@media (max-width: 800px) {
+    div[data-testid="stHorizontalBlock"] .stButton > button {
+        font-size: 11px !important;
+        min-height: 52px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 APP_MENU_OPTIONS_USER = [
@@ -630,8 +665,8 @@ APP_LANG_LABELS = {
     "en_us": "🇺🇸 English US",
     "en_gb": "🇬🇧 English UK",
     "es": "🇪🇸 Español",
-    "de": "🇩🇪 Deutsch",
     "fr": "🇫🇷 Français",
+    "de": "🇩🇪 Deutsch",
     "it": "🇮🇹 Italiano",
     "ro": "🇷🇴 Română",
     "uk": "🇺🇦 Українська",
@@ -639,7 +674,6 @@ APP_LANG_LABELS = {
     "ar": "🇸🇦 العربية",
     "ch": "🇨🇭 Schweiz",
 }
-
 
 BROWSER_LANG_TO_APP_LANG = {
     "pt": "pt",
@@ -1311,6 +1345,20 @@ detected_lang = detect_browser_language()
 if "app_lang" not in st.session_state:
     st.session_state.app_lang = detected_lang
 
+CURRENCY_BY_LANG = {
+    "pt": {"moeda": "BRL", "simbolo": "R$"},
+    "en_us": {"moeda": "USD", "simbolo": "$"},
+    "en_gb": {"moeda": "GBP", "simbolo": "£"},
+    "es": {"moeda": "EUR", "simbolo": "€"},
+    "de": {"moeda": "EUR", "simbolo": "€"},
+    "fr": {"moeda": "EUR", "simbolo": "€"},
+    "it": {"moeda": "EUR", "simbolo": "€"},
+    "ro": {"moeda": "RON", "simbolo": "lei"},
+    "uk": {"moeda": "UAH", "simbolo": "₴"},
+    "ru": {"moeda": "RUB", "simbolo": "₽"},
+    "ar": {"moeda": "SAR", "simbolo": "ر.س"},
+    "ch": {"moeda": "CHF", "simbolo": "CHF"},
+}
 app_lang = st.sidebar.selectbox(
     "🌍 Idioma / Language",
     options=list(APP_LANG_LABELS.keys()),
@@ -1318,6 +1366,11 @@ app_lang = st.sidebar.selectbox(
     format_func=lambda key: APP_LANG_LABELS[key],
     key="app_lang_sidebar_hidden",
 )
+
+
+# Atualiza idioma e moeda após mudança no seletor superior
+st.session_state.app_lang = app_lang
+current_currency_info = CURRENCY_BY_LANG.get(app_lang, CURRENCY_BY_LANG["pt"])
 
 # =============================
 # TEMA VISUAL DA INNA
@@ -1459,6 +1512,599 @@ div[data-baseweb="select"] > div {{
 
 
 
+
+
+MENU_TEXTS_INNA = {
+    "pt": {
+        "🏠 Início": "🏠 Início",
+        "🧾 Diagnóstico": "🧾 Diagnóstico",
+        "📊 Panorama": "📊 Panorama",
+        "💬 Conversar": "💬 Conversar",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Relatório",
+        "📚 Histórico": "📚 Histórico",
+        "⭐ Avaliar": "⭐ Avaliar",
+        "ℹ️ Sobre": "ℹ️ Sobre",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "en_us": {
+        "🏠 Início": "🏠 Home",
+        "🧾 Diagnóstico": "🧾 Diagnosis",
+        "📊 Panorama": "📊 Overview",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Report",
+        "📚 Histórico": "📚 History",
+        "⭐ Avaliar": "⭐ Rate",
+        "ℹ️ Sobre": "ℹ️ About",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "en_gb": {
+        "🏠 Início": "🏠 Home",
+        "🧾 Diagnóstico": "🧾 Diagnosis",
+        "📊 Panorama": "📊 Overview",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Report",
+        "📚 Histórico": "📚 History",
+        "⭐ Avaliar": "⭐ Rate",
+        "ℹ️ Sobre": "ℹ️ About",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "es": {
+        "🏠 Início": "🏠 Inicio",
+        "🧾 Diagnóstico": "🧾 Diagnóstico",
+        "📊 Panorama": "📊 Panorama",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Informe",
+        "📚 Histórico": "📚 Historial",
+        "⭐ Avaliar": "⭐ Evaluar",
+        "ℹ️ Sobre": "ℹ️ Acerca de",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "de": {
+        "🏠 Início": "🏠 Start",
+        "🧾 Diagnóstico": "🧾 Diagnose",
+        "📊 Panorama": "📊 Übersicht",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Bericht",
+        "📚 Histórico": "📚 Verlauf",
+        "⭐ Avaliar": "⭐ Bewerten",
+        "ℹ️ Sobre": "ℹ️ Über",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "fr": {
+        "🏠 Início": "🏠 Accueil",
+        "🧾 Diagnóstico": "🧾 Diagnostic",
+        "📊 Panorama": "📊 Aperçu",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Rapport",
+        "📚 Histórico": "📚 Historique",
+        "⭐ Avaliar": "⭐ Évaluer",
+        "ℹ️ Sobre": "ℹ️ À propos",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "it": {
+        "🏠 Início": "🏠 Home",
+        "🧾 Diagnóstico": "🧾 Diagnosi",
+        "📊 Panorama": "📊 Panoramica",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Report",
+        "📚 Histórico": "📚 Cronologia",
+        "⭐ Avaliar": "⭐ Valuta",
+        "ℹ️ Sobre": "ℹ️ Info",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "ro": {
+        "🏠 Início": "🏠 Acasă",
+        "🧾 Diagnóstico": "🧾 Diagnostic",
+        "📊 Panorama": "📊 Prezentare",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Raport",
+        "📚 Histórico": "📚 Istoric",
+        "⭐ Avaliar": "⭐ Evaluează",
+        "ℹ️ Sobre": "ℹ️ Despre",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "uk": {
+        "🏠 Início": "🏠 Головна",
+        "🧾 Diagnóstico": "🧾 Діагностика",
+        "📊 Panorama": "📊 Огляд",
+        "💬 Conversar": "💬 Чат",
+        "💬 Chat": "💬 Чат",
+        "📄 Relatório": "📄 Звіт",
+        "📚 Histórico": "📚 Історія",
+        "⭐ Avaliar": "⭐ Оцінити",
+        "ℹ️ Sobre": "ℹ️ Про INNA",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "ru": {
+        "🏠 Início": "🏠 Главная",
+        "🧾 Diagnóstico": "🧾 Диагностика",
+        "📊 Panorama": "📊 Обзор",
+        "💬 Conversar": "💬 Чат",
+        "💬 Chat": "💬 Чат",
+        "📄 Relatório": "📄 Отчёт",
+        "📚 Histórico": "📚 История",
+        "⭐ Avaliar": "⭐ Оценить",
+        "ℹ️ Sobre": "ℹ️ О INNA",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "ar": {
+        "🏠 Início": "🏠 الرئيسية",
+        "🧾 Diagnóstico": "🧾 التشخيص",
+        "📊 Panorama": "📊 نظرة عامة",
+        "💬 Conversar": "💬 الدردشة",
+        "💬 Chat": "💬 الدردشة",
+        "📄 Relatório": "📄 التقرير",
+        "📚 Histórico": "📚 السجل",
+        "⭐ Avaliar": "⭐ التقييم",
+        "ℹ️ Sobre": "ℹ️ حول INNA",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+    "ch": {
+        "🏠 Início": "🏠 Start",
+        "🧾 Diagnóstico": "🧾 Diagnose",
+        "📊 Panorama": "📊 Übersicht",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Bericht",
+        "📚 Histórico": "📚 Verlauf",
+        "⭐ Avaliar": "⭐ Bewerten",
+        "ℹ️ Sobre": "ℹ️ Über",
+        "🔐 Admin Analytics": "🔐 Admin Analytics",
+    },
+}
+
+def menu_t(menu_item: str) -> str:
+    lang = app_lang if app_lang in MENU_TEXTS_INNA else "pt"
+    return MENU_TEXTS_INNA.get(lang, MENU_TEXTS_INNA["pt"]).get(menu_item, menu_item)
+
+
+
+# ==========================================
+# MENU MULTILÍNGUE SEGURO DA INNA
+# ==========================================
+MENU_TEXTS_INNA_SAFE = {
+    "pt": {
+        "🏠 Início": "🏠 Início",
+        "🧾 Diagnóstico": "🧾 Diagnóstico",
+        "📊 Panorama": "📊 Panorama",
+        "💬 Conversar": "💬 Conversar",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Relatório",
+        "📚 Histórico": "📚 Histórico",
+        "⭐ Avaliar": "⭐ Avaliar",
+        "ℹ️ Sobre": "ℹ️ Sobre",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Entrar",
+        "🚪 Sair": "🚪 Sair",
+    },
+    "en_us": {
+        "🏠 Início": "🏠 Home",
+        "🧾 Diagnóstico": "🧾 Diagnosis",
+        "📊 Panorama": "📊 Overview",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Report",
+        "📚 Histórico": "📚 History",
+        "⭐ Avaliar": "⭐ Rate",
+        "ℹ️ Sobre": "ℹ️ About",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Sign in",
+        "🚪 Sair": "🚪 Sign out",
+    },
+    "en_gb": {
+        "🏠 Início": "🏠 Home",
+        "🧾 Diagnóstico": "🧾 Diagnosis",
+        "📊 Panorama": "📊 Overview",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Report",
+        "📚 Histórico": "📚 History",
+        "⭐ Avaliar": "⭐ Rate",
+        "ℹ️ Sobre": "ℹ️ About",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Sign in",
+        "🚪 Sair": "🚪 Sign out",
+    },
+    "es": {
+        "🏠 Início": "🏠 Inicio",
+        "🧾 Diagnóstico": "🧾 Diagnóstico",
+        "📊 Panorama": "📊 Panorama",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Informe",
+        "📚 Histórico": "📚 Historial",
+        "⭐ Avaliar": "⭐ Evaluar",
+        "ℹ️ Sobre": "ℹ️ Acerca de",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Entrar",
+        "🚪 Sair": "🚪 Salir",
+    },
+    "fr": {
+        "🏠 Início": "🏠 Accueil",
+        "🧾 Diagnóstico": "🧾 Diagnostic",
+        "📊 Panorama": "📊 Aperçu",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Rapport",
+        "📚 Histórico": "📚 Historique",
+        "⭐ Avaliar": "⭐ Évaluer",
+        "ℹ️ Sobre": "ℹ️ À propos",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Se connecter",
+        "🚪 Sair": "🚪 Se déconnecter",
+    },
+    "de": {
+        "🏠 Início": "🏠 Start",
+        "🧾 Diagnóstico": "🧾 Diagnose",
+        "📊 Panorama": "📊 Übersicht",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Bericht",
+        "📚 Histórico": "📚 Verlauf",
+        "⭐ Avaliar": "⭐ Bewerten",
+        "ℹ️ Sobre": "ℹ️ Über",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Anmelden",
+        "🚪 Sair": "🚪 Abmelden",
+    },
+    "it": {
+        "🏠 Início": "🏠 Home",
+        "🧾 Diagnóstico": "🧾 Diagnosi",
+        "📊 Panorama": "📊 Panoramica",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Report",
+        "📚 Histórico": "📚 Cronologia",
+        "⭐ Avaliar": "⭐ Valuta",
+        "ℹ️ Sobre": "ℹ️ Info",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Accedi",
+        "🚪 Sair": "🚪 Esci",
+    },
+    "ro": {
+        "🏠 Início": "🏠 Acasă",
+        "🧾 Diagnóstico": "🧾 Diagnostic",
+        "📊 Panorama": "📊 Prezentare",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Raport",
+        "📚 Histórico": "📚 Istoric",
+        "⭐ Avaliar": "⭐ Evaluează",
+        "ℹ️ Sobre": "ℹ️ Despre",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Intră",
+        "🚪 Sair": "🚪 Ieși",
+    },
+    "uk": {
+        "🏠 Início": "🏠 Головна",
+        "🧾 Diagnóstico": "🧾 Діагностика",
+        "📊 Panorama": "📊 Огляд",
+        "💬 Conversar": "💬 Чат",
+        "💬 Chat": "💬 Чат",
+        "📄 Relatório": "📄 Звіт",
+        "📚 Histórico": "📚 Історія",
+        "⭐ Avaliar": "⭐ Оцінити",
+        "ℹ️ Sobre": "ℹ️ Про INNA",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Увійти",
+        "🚪 Sair": "🚪 Вийти",
+    },
+    "ru": {
+        "🏠 Início": "🏠 Главная",
+        "🧾 Diagnóstico": "🧾 Диагностика",
+        "📊 Panorama": "📊 Обзор",
+        "💬 Conversar": "💬 Чат",
+        "💬 Chat": "💬 Чат",
+        "📄 Relatório": "📄 Отчёт",
+        "📚 Histórico": "📚 История",
+        "⭐ Avaliar": "⭐ Оценить",
+        "ℹ️ Sobre": "ℹ️ О INNA",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Войти",
+        "🚪 Sair": "🚪 Выйти",
+    },
+    "ar": {
+        "🏠 Início": "🏠 الرئيسية",
+        "🧾 Diagnóstico": "🧾 التشخيص",
+        "📊 Panorama": "📊 نظرة عامة",
+        "💬 Conversar": "💬 الدردشة",
+        "💬 Chat": "💬 الدردشة",
+        "📄 Relatório": "📄 التقرير",
+        "📚 Histórico": "📚 السجل",
+        "⭐ Avaliar": "⭐ التقييم",
+        "ℹ️ Sobre": "ℹ️ حول INNA",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 تسجيل الدخول",
+        "🚪 Sair": "🚪 خروج",
+    },
+    "ch": {
+        "🏠 Início": "🏠 Start",
+        "🧾 Diagnóstico": "🧾 Diagnose",
+        "📊 Panorama": "📊 Übersicht",
+        "💬 Conversar": "💬 Chat",
+        "💬 Chat": "💬 Chat",
+        "📄 Relatório": "📄 Bericht",
+        "📚 Histórico": "📚 Verlauf",
+        "⭐ Avaliar": "⭐ Bewerten",
+        "ℹ️ Sobre": "ℹ️ Über",
+        "🔐 Admin Analytics": "🔐 Admin",
+        "🔑 Entrar": "🔑 Anmelden",
+        "🚪 Sair": "🚪 Abmelden",
+    },
+}
+
+def menu_t(menu_item: str) -> str:
+    lang = app_lang if app_lang in MENU_TEXTS_INNA_SAFE else "pt"
+    return MENU_TEXTS_INNA_SAFE.get(lang, MENU_TEXTS_INNA_SAFE["pt"]).get(menu_item, menu_item)
+
+def top_menu_t(menu_item: str) -> str:
+    return menu_t(menu_item)
+
+
+
+# ==========================================
+# MENU MULTILÍNGUE FINAL DA INNA
+# ==========================================
+MENU_LABELS_FINAL = {
+    "pt": {
+        "🏠 Início": "🏠 Início",
+        "🧾 Diagnóstico": "🧾 Diagnóstico",
+        "🧾 Novo diagnóstico": "🧾 Novo diagnóstico",
+        "📊 Panorama": "📊 Panorama",
+        "📊 Meu panorama financeiro": "📊 Meu panorama financeiro",
+        "💬 Chat": "💬 Chat",
+        "💬 Conversar": "💬 Conversar",
+        "💬 Conversar com a Inna": "💬 Conversar com a Inna",
+        "📄 Relatório": "📄 Relatório",
+        "📄 Meu relatório": "📄 Meu relatório",
+        "📚 Histórico": "📚 Histórico",
+        "📚 Meu histórico": "📚 Meu histórico",
+        "⭐ Avaliar": "⭐ Avaliar",
+        "⭐ Avaliar a Inna": "⭐ Avaliar a Inna",
+        "ℹ️ Sobre": "ℹ️ Sobre",
+        "ℹ️ Sobre a INNA": "ℹ️ Sobre a INNA",
+        "🔑 Entrar": "🔑 Entrar",
+        "🚪 Sair": "🚪 Sair",
+    },
+    "en_us": {
+        "🏠 Início": "🏠 Home",
+        "🧾 Diagnóstico": "🧾 Diagnosis",
+        "🧾 Novo diagnóstico": "🧾 New diagnosis",
+        "📊 Panorama": "📊 Overview",
+        "📊 Meu panorama financeiro": "📊 My overview",
+        "💬 Chat": "💬 Chat",
+        "💬 Conversar": "💬 Chat",
+        "💬 Conversar com a Inna": "💬 Chat with Inna",
+        "📄 Relatório": "📄 Report",
+        "📄 Meu relatório": "📄 My report",
+        "📚 Histórico": "📚 History",
+        "📚 Meu histórico": "📚 My history",
+        "⭐ Avaliar": "⭐ Rate",
+        "⭐ Avaliar a Inna": "⭐ Rate Inna",
+        "ℹ️ Sobre": "ℹ️ About",
+        "ℹ️ Sobre a INNA": "ℹ️ About INNA",
+        "🔑 Entrar": "🔑 Sign in",
+        "🚪 Sair": "🚪 Sign out",
+    },
+    "en_gb": {
+        "🏠 Início": "🏠 Home",
+        "🧾 Diagnóstico": "🧾 Diagnosis",
+        "🧾 Novo diagnóstico": "🧾 New diagnosis",
+        "📊 Panorama": "📊 Overview",
+        "📊 Meu panorama financeiro": "📊 My overview",
+        "💬 Chat": "💬 Chat",
+        "💬 Conversar": "💬 Chat",
+        "💬 Conversar com a Inna": "💬 Chat with Inna",
+        "📄 Relatório": "📄 Report",
+        "📄 Meu relatório": "📄 My report",
+        "📚 Histórico": "📚 History",
+        "📚 Meu histórico": "📚 My history",
+        "⭐ Avaliar": "⭐ Rate",
+        "⭐ Avaliar a Inna": "⭐ Rate Inna",
+        "ℹ️ Sobre": "ℹ️ About",
+        "ℹ️ Sobre a INNA": "ℹ️ About INNA",
+        "🔑 Entrar": "🔑 Sign in",
+        "🚪 Sair": "🚪 Sign out",
+    },
+    "es": {
+        "🏠 Início": "🏠 Inicio",
+        "🧾 Diagnóstico": "🧾 Diagnóstico",
+        "🧾 Novo diagnóstico": "🧾 Nuevo diagnóstico",
+        "📊 Panorama": "📊 Panorama",
+        "📊 Meu panorama financeiro": "📊 Mi panorama",
+        "💬 Chat": "💬 Chat",
+        "💬 Conversar": "💬 Chat",
+        "💬 Conversar com a Inna": "💬 Hablar con Inna",
+        "📄 Relatório": "📄 Informe",
+        "📄 Meu relatório": "📄 Mi informe",
+        "📚 Histórico": "📚 Historial",
+        "📚 Meu histórico": "📚 Mi historial",
+        "⭐ Avaliar": "⭐ Evaluar",
+        "⭐ Avaliar a Inna": "⭐ Evaluar Inna",
+        "ℹ️ Sobre": "ℹ️ Acerca de",
+        "ℹ️ Sobre a INNA": "ℹ️ Sobre INNA",
+        "🔑 Entrar": "🔑 Entrar",
+        "🚪 Sair": "🚪 Salir",
+    },
+    "fr": {
+        "🏠 Início": "🏠 Accueil",
+        "🧾 Diagnóstico": "🧾 Diagnostic",
+        "🧾 Novo diagnóstico": "🧾 Nouveau diagnostic",
+        "📊 Panorama": "📊 Aperçu",
+        "📊 Meu panorama financeiro": "📊 Mon aperçu",
+        "💬 Chat": "💬 Chat",
+        "💬 Conversar": "💬 Chat",
+        "💬 Conversar com a Inna": "💬 Parler avec Inna",
+        "📄 Relatório": "📄 Rapport",
+        "📄 Meu relatório": "📄 Mon rapport",
+        "📚 Histórico": "📚 Historique",
+        "📚 Meu histórico": "📚 Mon historique",
+        "⭐ Avaliar": "⭐ Évaluer",
+        "⭐ Avaliar a Inna": "⭐ Évaluer Inna",
+        "ℹ️ Sobre": "ℹ️ À propos",
+        "ℹ️ Sobre a INNA": "ℹ️ À propos d’INNA",
+        "🔑 Entrar": "🔑 Se connecter",
+        "🚪 Sair": "🚪 Se déconnecter",
+    },
+    "de": {
+        "🏠 Início": "🏠 Start",
+        "🧾 Diagnóstico": "🧾 Diagnose",
+        "🧾 Novo diagnóstico": "🧾 Neue Diagnose",
+        "📊 Panorama": "📊 Übersicht",
+        "📊 Meu panorama financeiro": "📊 Meine Übersicht",
+        "💬 Chat": "💬 Chat",
+        "💬 Conversar": "💬 Chat",
+        "💬 Conversar com a Inna": "💬 Mit Inna chatten",
+        "📄 Relatório": "📄 Bericht",
+        "📄 Meu relatório": "📄 Mein Bericht",
+        "📚 Histórico": "📚 Verlauf",
+        "📚 Meu histórico": "📚 Mein Verlauf",
+        "⭐ Avaliar": "⭐ Bewerten",
+        "⭐ Avaliar a Inna": "⭐ Inna bewerten",
+        "ℹ️ Sobre": "ℹ️ Über",
+        "ℹ️ Sobre a INNA": "ℹ️ Über INNA",
+        "🔑 Entrar": "🔑 Anmelden",
+        "🚪 Sair": "🚪 Abmelden",
+    },
+    "it": {
+        "🏠 Início": "🏠 Home",
+        "🧾 Diagnóstico": "🧾 Diagnosi",
+        "🧾 Novo diagnóstico": "🧾 Nuova diagnosi",
+        "📊 Panorama": "📊 Panoramica",
+        "📊 Meu panorama financeiro": "📊 La mia panoramica",
+        "💬 Chat": "💬 Chat",
+        "💬 Conversar": "💬 Chat",
+        "💬 Conversar com a Inna": "💬 Parla con Inna",
+        "📄 Relatório": "📄 Report",
+        "📄 Meu relatório": "📄 Il mio report",
+        "📚 Histórico": "📚 Cronologia",
+        "📚 Meu histórico": "📚 La mia cronologia",
+        "⭐ Avaliar": "⭐ Valuta",
+        "⭐ Avaliar a Inna": "⭐ Valuta Inna",
+        "ℹ️ Sobre": "ℹ️ Info",
+        "ℹ️ Sobre a INNA": "ℹ️ Info INNA",
+        "🔑 Entrar": "🔑 Accedi",
+        "🚪 Sair": "🚪 Esci",
+    },
+    "ro": {
+        "🏠 Início": "🏠 Acasă",
+        "🧾 Diagnóstico": "🧾 Diagnostic",
+        "🧾 Novo diagnóstico": "🧾 Diagnostic nou",
+        "📊 Panorama": "📊 Prezentare",
+        "📊 Meu panorama financeiro": "📊 Prezentarea mea",
+        "💬 Chat": "💬 Chat",
+        "💬 Conversar": "💬 Chat",
+        "💬 Conversar com a Inna": "💬 Vorbește cu Inna",
+        "📄 Relatório": "📄 Raport",
+        "📄 Meu relatório": "📄 Raportul meu",
+        "📚 Histórico": "📚 Istoric",
+        "📚 Meu histórico": "📚 Istoricul meu",
+        "⭐ Avaliar": "⭐ Evaluează",
+        "⭐ Avaliar a Inna": "⭐ Evaluează Inna",
+        "ℹ️ Sobre": "ℹ️ Despre",
+        "ℹ️ Sobre a INNA": "ℹ️ Despre INNA",
+        "🔑 Entrar": "🔑 Intră",
+        "🚪 Sair": "🚪 Ieși",
+    },
+    "uk": {
+        "🏠 Início": "🏠 Головна",
+        "🧾 Diagnóstico": "🧾 Діагностика",
+        "🧾 Novo diagnóstico": "🧾 Нова діагностика",
+        "📊 Panorama": "📊 Огляд",
+        "📊 Meu panorama financeiro": "📊 Мій огляд",
+        "💬 Chat": "💬 Чат",
+        "💬 Conversar": "💬 Чат",
+        "💬 Conversar com a Inna": "💬 Чат з Inna",
+        "📄 Relatório": "📄 Звіт",
+        "📄 Meu relatório": "📄 Мій звіт",
+        "📚 Histórico": "📚 Історія",
+        "📚 Meu histórico": "📚 Моя історія",
+        "⭐ Avaliar": "⭐ Оцінити",
+        "⭐ Avaliar a Inna": "⭐ Оцінити Inna",
+        "ℹ️ Sobre": "ℹ️ Про INNA",
+        "ℹ️ Sobre a INNA": "ℹ️ Про INNA",
+        "🔑 Entrar": "🔑 Увійти",
+        "🚪 Sair": "🚪 Вийти",
+    },
+    "ru": {
+        "🏠 Início": "🏠 Главная",
+        "🧾 Diagnóstico": "🧾 Диагностика",
+        "🧾 Novo diagnóstico": "🧾 Новая диагностика",
+        "📊 Panorama": "📊 Обзор",
+        "📊 Meu panorama financeiro": "📊 Мой обзор",
+        "💬 Chat": "💬 Чат",
+        "💬 Conversar": "💬 Чат",
+        "💬 Conversar com a Inna": "💬 Чат с Inna",
+        "📄 Relatório": "📄 Отчёт",
+        "📄 Meu relatório": "📄 Мой отчёт",
+        "📚 Histórico": "📚 История",
+        "📚 Meu histórico": "📚 Моя история",
+        "⭐ Avaliar": "⭐ Оценить",
+        "⭐ Avaliar a Inna": "⭐ Оценить Inna",
+        "ℹ️ Sobre": "ℹ️ О INNA",
+        "ℹ️ Sobre a INNA": "ℹ️ О INNA",
+        "🔑 Entrar": "🔑 Войти",
+        "🚪 Sair": "🚪 Выйти",
+    },
+    "ar": {
+        "🏠 Início": "🏠 الرئيسية",
+        "🧾 Diagnóstico": "🧾 التشخيص",
+        "🧾 Novo diagnóstico": "🧾 تشخيص جديد",
+        "📊 Panorama": "📊 نظرة عامة",
+        "📊 Meu panorama financeiro": "📊 نظرتي المالية",
+        "💬 Chat": "💬 الدردشة",
+        "💬 Conversar": "💬 الدردشة",
+        "💬 Conversar com a Inna": "💬 تحدث مع Inna",
+        "📄 Relatório": "📄 التقرير",
+        "📄 Meu relatório": "📄 تقريري",
+        "📚 Histórico": "📚 السجل",
+        "📚 Meu histórico": "📚 سجلي",
+        "⭐ Avaliar": "⭐ التقييم",
+        "⭐ Avaliar a Inna": "⭐ تقييم Inna",
+        "ℹ️ Sobre": "ℹ️ حول INNA",
+        "ℹ️ Sobre a INNA": "ℹ️ حول INNA",
+        "🔑 Entrar": "🔑 تسجيل الدخول",
+        "🚪 Sair": "🚪 خروج",
+    },
+    "ch": {
+        "🏠 Início": "🏠 Start",
+        "🧾 Diagnóstico": "🧾 Diagnose",
+        "🧾 Novo diagnóstico": "🧾 Neue Diagnose",
+        "📊 Panorama": "📊 Übersicht",
+        "📊 Meu panorama financeiro": "📊 Meine Übersicht",
+        "💬 Chat": "💬 Chat",
+        "💬 Conversar": "💬 Chat",
+        "💬 Conversar com a Inna": "💬 Mit Inna chatten",
+        "📄 Relatório": "📄 Bericht",
+        "📄 Meu relatório": "📄 Mein Bericht",
+        "📚 Histórico": "📚 Verlauf",
+        "📚 Meu histórico": "📚 Mein Verlauf",
+        "⭐ Avaliar": "⭐ Bewerten",
+        "⭐ Avaliar a Inna": "⭐ Inna bewerten",
+        "ℹ️ Sobre": "ℹ️ Über INNA",
+        "ℹ️ Sobre a INNA": "ℹ️ Über INNA",
+        "🔑 Entrar": "🔑 Anmelden",
+        "🚪 Sair": "🚪 Abmelden",
+    },
+}
+
+def menu_label_final(menu_item: str) -> str:
+    lang = st.session_state.get("app_lang", app_lang)
+    return MENU_LABELS_FINAL.get(lang, MENU_LABELS_FINAL["pt"]).get(menu_item, menu_item)
+
+def menu_t(menu_item: str) -> str:
+    return menu_label_final(menu_item)
+
+def top_menu_t(menu_item: str) -> str:
+    return menu_label_final(menu_item)
 
 
 GLOBAL_UI_TEXTS_INNA = {
@@ -1924,26 +2570,6 @@ MENU_LABELS_INNA = {
 def menu_t(key: str) -> str:
     lang = app_lang if app_lang in MENU_LABELS_INNA else "pt"
     return MENU_LABELS_INNA.get(lang, MENU_LABELS_INNA["pt"]).get(key, key)
-CURRENCY_BY_LANG = {
-    "pt": {"moeda": "BRL", "simbolo": "R$"},
-    "en_us": {"moeda": "USD", "simbolo": "US$"},
-    "en_gb": {"moeda": "GBP", "simbolo": "£"},
-    "es": {"moeda": "EUR", "simbolo": "€"},
-    "de": {"moeda": "EUR", "simbolo": "€"},
-    "fr": {"moeda": "EUR", "simbolo": "€"},
-    "it": {"moeda": "EUR", "simbolo": "€"},
-    "ro": {"moeda": "RON", "simbolo": "RON"},
-    "uk": {"moeda": "UAH", "simbolo": "₴"},
-    "ru": {"moeda": "RUB", "simbolo": "₽"},
-    "ar": {"moeda": "SAR", "simbolo": "SAR"},
-    "ch": {"moeda": "CHF", "simbolo": "CHF"},
-}
-
-
-
-
-
-
 def translate_risk_app(risk: str) -> str:
     risk = str(risk or "").strip()
 
@@ -2025,12 +2651,32 @@ def format_currency_app(value, symbol: str, currency: str) -> str:
     except Exception:
         value = 0.0
 
-    if currency in ("USD", "GBP"):
-        return f"{symbol}{value:,.2f}"
+    # Brasil e padrão europeu: 3.500,00
+    if currency in ["BRL", "EUR", "RON"]:
+        formatted = f"{value:,.2f}"
+        formatted = formatted.replace(",", "X").replace(".", ",").replace("X", ".")
+        if currency == "RON":
+            return f"{formatted} {symbol}".strip()
+        return f"{symbol} {formatted}".strip()
 
+    # Suíça: 3'500.00
+    if currency == "CHF":
+        formatted = f"{value:,.2f}".replace(",", "'")
+        return f"{symbol} {formatted}".strip()
+
+    # Ucrânia e Rússia: 3 500,00
+    if currency in ["UAH", "RUB"]:
+        formatted = f"{value:,.2f}"
+        formatted = formatted.replace(",", " ").replace(".", ",")
+        return f"{symbol} {formatted}".strip()
+
+    # Inglês, dólar, libra, rial e demais: 3,500.00
     formatted = f"{value:,.2f}"
-    formatted = formatted.replace(",", "X").replace(".", ",").replace("X", ".")
-    return f"{symbol} {formatted}"
+
+    if symbol:
+        return f"{symbol} {formatted}".strip()
+
+    return f"{currency} {formatted}".strip()
 
 
 def tr(key: str) -> str:
@@ -2069,7 +2715,11 @@ with top_lang_col:
         format_func=lambda key: APP_LANG_LABELS[key],
         key="app_lang_top",
     )
-    st.session_state.app_lang = app_lang
+    
+
+# Atualiza idioma e moeda após mudança no seletor superior
+st.session_state.app_lang = app_lang
+current_currency_info = CURRENCY_BY_LANG.get(app_lang, CURRENCY_BY_LANG["pt"])
 
 with top_theme_col:
     st.session_state.theme_name = st.selectbox(
@@ -2097,26 +2747,19 @@ with top_login_col:
 
 # Labels curtos para o menu superior
 def top_menu_t(menu_item: str) -> str:
-    labels = {
-        "🏠 Início": "🏠 Início",
-        "🧾 Diagnóstico": "🧾 Diagnóstico",
-        "📊 Panorama": "📊 Panorama",
-        "💬 Conversar": "💬 Chat",
-        "📄 Relatório": "📄 Relatório",
-        "📚 Histórico": "📚 Histórico",
-        "⭐ Avaliar": "⭐ Avaliar",
-        "🔐 Admin Analytics": "🔐 Admin",
-        "ℹ️ Sobre": "ℹ️ Sobre",
-        "🚪 Sair": "🚪 Sair",
-    }
-
-    translated = menu_t(menu_item) if "menu_t" in globals() else menu_item
-
-    if app_lang in ["pt"]:
-        return labels.get(menu_item, menu_item)
-
-    if app_lang in ["en_us", "en_gb"]:
-        labels_en = {
+    top_labels = {
+        "pt": {
+            "🏠 Início": "🏠 Início",
+            "🧾 Diagnóstico": "🧾 Diagnóstico",
+            "📊 Panorama": "📊 Panorama",
+            "💬 Conversar": "💬 Chat",
+            "📄 Relatório": "📄 Relatório",
+            "📚 Histórico": "📚 Histórico",
+            "⭐ Avaliar": "⭐ Avaliar",
+            "ℹ️ Sobre": "ℹ️ Sobre",
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "en_us": {
             "🏠 Início": "🏠 Home",
             "🧾 Diagnóstico": "🧾 Diagnosis",
             "📊 Panorama": "📊 Overview",
@@ -2124,13 +2767,21 @@ def top_menu_t(menu_item: str) -> str:
             "📄 Relatório": "📄 Report",
             "📚 Histórico": "📚 History",
             "⭐ Avaliar": "⭐ Rate",
-            "🔐 Admin Analytics": "🔐 Admin",
             "ℹ️ Sobre": "ℹ️ About",
-        }
-        return labels_en.get(menu_item, translated)
-
-    if app_lang == "es":
-        labels_es = {
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "en_gb": {
+            "🏠 Início": "🏠 Home",
+            "🧾 Diagnóstico": "🧾 Diagnosis",
+            "📊 Panorama": "📊 Overview",
+            "💬 Conversar": "💬 Chat",
+            "📄 Relatório": "📄 Report",
+            "📚 Histórico": "📚 History",
+            "⭐ Avaliar": "⭐ Rate",
+            "ℹ️ Sobre": "ℹ️ About",
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "es": {
             "🏠 Início": "🏠 Inicio",
             "🧾 Diagnóstico": "🧾 Diagnóstico",
             "📊 Panorama": "📊 Panorama",
@@ -2138,24 +2789,103 @@ def top_menu_t(menu_item: str) -> str:
             "📄 Relatório": "📄 Informe",
             "📚 Histórico": "📚 Historial",
             "⭐ Avaliar": "⭐ Evaluar",
-            "🔐 Admin Analytics": "🔐 Admin",
             "ℹ️ Sobre": "ℹ️ Sobre",
-        }
-        return labels_es.get(menu_item, translated)
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "fr": {
+            "🏠 Início": "🏠 Accueil",
+            "🧾 Diagnóstico": "🧾 Diagnostic",
+            "📊 Panorama": "📊 Aperçu",
+            "💬 Conversar": "💬 Chat",
+            "📄 Relatório": "📄 Rapport",
+            "📚 Histórico": "📚 Historique",
+            "⭐ Avaliar": "⭐ Évaluer",
+            "ℹ️ Sobre": "ℹ️ À propos",
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "de": {
+            "🏠 Início": "🏠 Start",
+            "🧾 Diagnóstico": "🧾 Diagnose",
+            "📊 Panorama": "📊 Übersicht",
+            "💬 Conversar": "💬 Chat",
+            "📄 Relatório": "📄 Bericht",
+            "📚 Histórico": "📚 Verlauf",
+            "⭐ Avaliar": "⭐ Bewerten",
+            "ℹ️ Sobre": "ℹ️ Über",
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "it": {
+            "🏠 Início": "🏠 Home",
+            "🧾 Diagnóstico": "🧾 Diagnosi",
+            "📊 Panorama": "📊 Panoramica",
+            "💬 Conversar": "💬 Chat",
+            "📄 Relatório": "📄 Report",
+            "📚 Histórico": "📚 Storico",
+            "⭐ Avaliar": "⭐ Valuta",
+            "ℹ️ Sobre": "ℹ️ Info",
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "ro": {
+            "🏠 Início": "🏠 Acasă",
+            "🧾 Diagnóstico": "🧾 Diagnostic",
+            "📊 Panorama": "📊 Prezentare",
+            "💬 Conversar": "💬 Chat",
+            "📄 Relatório": "📄 Raport",
+            "📚 Histórico": "📚 Istoric",
+            "⭐ Avaliar": "⭐ Evaluare",
+            "ℹ️ Sobre": "ℹ️ Despre",
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "uk": {
+            "🏠 Início": "🏠 Головна",
+            "🧾 Diagnóstico": "🧾 Діагноз",
+            "📊 Panorama": "📊 Огляд",
+            "💬 Conversar": "💬 Чат",
+            "📄 Relatório": "📄 Звіт",
+            "📚 Histórico": "📚 Історія",
+            "⭐ Avaliar": "⭐ Оцінка",
+            "ℹ️ Sobre": "ℹ️ Про",
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "ru": {
+            "🏠 Início": "🏠 Главная",
+            "🧾 Diagnóstico": "🧾 Диагноз",
+            "📊 Panorama": "📊 Обзор",
+            "💬 Conversar": "💬 Чат",
+            "📄 Relatório": "📄 Отчёт",
+            "📚 Histórico": "📚 История",
+            "⭐ Avaliar": "⭐ Оценка",
+            "ℹ️ Sobre": "ℹ️ О INNA",
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "ar": {
+            "🏠 Início": "🏠 الرئيسية",
+            "🧾 Diagnóstico": "🧾 التشخيص",
+            "📊 Panorama": "📊 نظرة",
+            "💬 Conversar": "💬 دردشة",
+            "📄 Relatório": "📄 تقرير",
+            "📚 Histórico": "📚 السجل",
+            "⭐ Avaliar": "⭐ تقييم",
+            "ℹ️ Sobre": "ℹ️ حول",
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+        "ch": {
+            "🏠 Início": "🏠 Start",
+            "🧾 Diagnóstico": "🧾 Diagnose",
+            "📊 Panorama": "📊 Übersicht",
+            "💬 Conversar": "💬 Chat",
+            "📄 Relatório": "📄 Bericht",
+            "📚 Histórico": "📚 Verlauf",
+            "⭐ Avaliar": "⭐ Bewerten",
+            "ℹ️ Sobre": "ℹ️ Über",
+            "🔐 Admin Analytics": "🔐 Admin",
+        },
+    }
 
-    return labels.get(menu_item, translated)
+    lang = st.session_state.get("app_lang", app_lang)
+    return top_labels.get(lang, top_labels["pt"]).get(menu_item, menu_t(menu_item))
 
-st.markdown("""
-<style>
-/* Ajuste do menu superior para não quebrar texto */
-button[kind="secondary"] {
-    white-space: normal !important;
-    line-height: 1.2 !important;
-    padding: 0.45rem 0.55rem !important;
-    font-size: 0.92rem !important;
-}
-</style>
-""", unsafe_allow_html=True)
+
 # Linha do menu principal
 menu_options_top = [
     "🏠 Início",
@@ -2223,6 +2953,8 @@ HOME_TEXTS_INNA = {
         "what_title": "O que é a INNA?",
         "what_text": "A INNA Financial Coach AI é uma educadora financeira inteligente que transforma dados básicos do usuário em uma visão clara da situação atual. A plataforma pode gerar diagnóstico financeiro, plano de ação de 30 dias, relatório em PDF, envio por e-mail, histórico individual, registros analíticos para dashboard e atendimento multicanal via Web e Telegram.",
         "features_title": "Principais recursos",
+        "how_title": "Como funciona",
+        "quick_title": "Visão rápida do diagnóstico",
         "feature_1_title": "📋 Diagnóstico financeiro",
         "feature_1_text": "Analisa renda, gastos, dívidas e reserva financeira para gerar uma visão clara da situação atual.",
         "feature_2_title": "🧠 IA Generativa",
@@ -2231,7 +2963,6 @@ HOME_TEXTS_INNA = {
         "feature_3_text": "Permite baixar o relatório financeiro ou receber o diagnóstico diretamente por e-mail.",
         "feature_4_title": "🌐 Multicanal e multilíngue",
         "feature_4_text": "Funciona via Web App, Telegram, API e Dashboard, com suporte a diferentes idiomas e moedas.",
-        "how_title": "Como funciona",
         "step_1_title": "Preencha",
         "step_1_text": "Informe renda, gastos, dívidas e reserva financeira.",
         "step_2_title": "Receba análise",
@@ -2240,7 +2971,6 @@ HOME_TEXTS_INNA = {
         "step_3_text": "A IA gera uma orientação educativa personalizada.",
         "step_4_title": "Baixe ou envie",
         "step_4_text": "Exporte em PDF ou receba o relatório por e-mail.",
-        "quick_title": "Visão rápida do diagnóstico",
         "income": "Renda mensal",
         "expenses": "Gastos fixos",
         "debts": "Dívidas",
@@ -2255,20 +2985,21 @@ HOME_TEXTS_INNA = {
     "en_us": {
         "badge": "✨ AI Financial Assistant • Smart financial education",
         "title": "💰 INNA Financial Coach AI",
-        "subtitle": "AI-powered virtual financial education assistant",
+        "subtitle": "AI-powered financial education virtual assistant",
         "intro": "INNA helps people understand income, expenses, debt, emergency savings and next steps in a simple, educational and personalized way.",
         "what_title": "What is INNA?",
-        "what_text": "INNA Financial Coach AI is an intelligent financial educator that turns basic user data into a clear view of the current financial situation. The platform can generate a financial diagnosis, 30-day action plan, PDF report, email delivery, individual history, dashboard analytics records and multichannel support via Web and Telegram.",
+        "what_text": "INNA Financial Coach AI is an intelligent financial educator that turns basic user data into a clear view of the current financial situation. The platform can generate a financial diagnosis, a 30-day action plan, PDF report, email delivery, individual history, analytics records and multichannel support via Web and Telegram.",
         "features_title": "Main features",
+        "how_title": "How it works",
+        "quick_title": "Quick diagnosis overview",
         "feature_1_title": "📋 Financial diagnosis",
-        "feature_1_text": "Analyzes income, expenses, debt and emergency savings to create a clear view of the current situation.",
+        "feature_1_text": "Analyzes income, expenses, debt and emergency savings to generate a clear view of the current situation.",
         "feature_2_title": "🧠 Generative AI",
         "feature_2_text": "Generates simple explanations and a personalized action plan for the next 30 days.",
-        "feature_3_title": "📄 PDF Report + Email",
+        "feature_3_title": "📄 PDF report + Email",
         "feature_3_text": "Allows users to download the financial report or receive the diagnosis directly by email.",
         "feature_4_title": "🌐 Multichannel and multilingual",
-        "feature_4_text": "Works via Web App, Telegram, API and Dashboard, with support for different languages and currencies.",
-        "how_title": "How it works",
+        "feature_4_text": "Works through Web App, Telegram, API and Dashboard, with support for different languages and currencies.",
         "step_1_title": "Fill in",
         "step_1_text": "Enter income, expenses, debt and emergency savings.",
         "step_2_title": "Receive analysis",
@@ -2277,63 +3008,27 @@ HOME_TEXTS_INNA = {
         "step_3_text": "AI generates personalized educational guidance.",
         "step_4_title": "Download or send",
         "step_4_text": "Export as PDF or receive the report by email.",
-        "quick_title": "Quick diagnosis overview",
         "income": "Monthly income",
         "expenses": "Fixed expenses",
         "debts": "Debt",
         "reserve": "Savings",
-        "warning": "Important notice: INNA is an educational tool. It does not replace financial, accounting, legal or banking advice from a professional.",
+        "warning": "Important notice: INNA is an educational tool. It does not replace professional financial, accounting, legal or banking advice.",
         "cta_title": "Start your financial diagnosis now",
-        "cta_text": "Organize your financial life with a smart, simple and personalized virtual assistant.",
+        "cta_text": "Organize your financial life with an intelligent, simple and personalized virtual assistant.",
         "btn_start": "🧾 Start new diagnosis",
         "btn_report": "📄 Generate report",
-        "btn_about": "ℹ️ About the project",
-    },
-    "en_gb": {
-        "badge": "✨ AI Financial Assistant • Smart financial education",
-        "title": "💰 INNA Financial Coach AI",
-        "subtitle": "AI-powered virtual financial education assistant",
-        "intro": "INNA helps people understand income, expenses, debt, emergency savings and next steps in a simple, educational and personalised way.",
-        "what_title": "What is INNA?",
-        "what_text": "INNA Financial Coach AI is an intelligent financial educator that turns basic user data into a clear view of the current financial situation. The platform can generate a financial diagnosis, 30-day action plan, PDF report, email delivery, individual history, dashboard analytics records and multichannel support via Web and Telegram.",
-        "features_title": "Main features",
-        "feature_1_title": "📋 Financial diagnosis",
-        "feature_1_text": "Analyses income, expenses, debt and emergency savings to create a clear view of the current situation.",
-        "feature_2_title": "🧠 Generative AI",
-        "feature_2_text": "Generates simple explanations and a personalised action plan for the next 30 days.",
-        "feature_3_title": "📄 PDF Report + Email",
-        "feature_3_text": "Allows users to download the financial report or receive the diagnosis directly by email.",
-        "feature_4_title": "🌐 Multichannel and multilingual",
-        "feature_4_text": "Works via Web App, Telegram, API and Dashboard, with support for different languages and currencies.",
-        "how_title": "How it works",
-        "step_1_title": "Fill in",
-        "step_1_text": "Enter income, expenses, debt and emergency savings.",
-        "step_2_title": "Receive analysis",
-        "step_2_text": "INNA calculates the main financial indicators.",
-        "step_3_title": "See the plan",
-        "step_3_text": "AI generates personalised educational guidance.",
-        "step_4_title": "Download or send",
-        "step_4_text": "Export as PDF or receive the report by email.",
-        "quick_title": "Quick diagnosis overview",
-        "income": "Monthly income",
-        "expenses": "Fixed expenses",
-        "debts": "Debt",
-        "reserve": "Savings",
-        "warning": "Important notice: INNA is an educational tool. It does not replace financial, accounting, legal or banking advice from a professional.",
-        "cta_title": "Start your financial diagnosis now",
-        "cta_text": "Organise your financial life with a smart, simple and personalised virtual assistant.",
-        "btn_start": "🧾 Start new diagnosis",
-        "btn_report": "📄 Generate report",
-        "btn_about": "ℹ️ About the project",
+        "btn_about": "ℹ️ See project",
     },
     "es": {
-        "badge": "✨ Asistente Financiero con IA • Educación financiera inteligente",
+        "badge": "✨ Asistente financiero con IA • Educación financiera inteligente",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Asistente virtual de educación financiera con IA",
         "intro": "INNA ayuda a las personas a entender ingresos, gastos, deudas, reserva financiera y próximos pasos de forma simple, educativa y personalizada.",
         "what_title": "¿Qué es INNA?",
-        "what_text": "INNA Financial Coach AI es una educadora financiera inteligente que transforma datos básicos del usuario en una visión clara de la situación actual. La plataforma puede generar diagnóstico financiero, plan de acción de 30 días, informe PDF, envío por e-mail, historial individual, registros analíticos para dashboard y atención multicanal vía Web y Telegram.",
-        "features_title": "Recursos principales",
+        "what_text": "INNA Financial Coach AI es una educadora financiera inteligente que transforma datos básicos del usuario en una visión clara de la situación actual. La plataforma puede generar diagnóstico financiero, plan de acción de 30 días, informe PDF, envío por e-mail, historial individual, registros analíticos y atención multicanal vía Web y Telegram.",
+        "features_title": "Principales recursos",
+        "how_title": "Cómo funciona",
+        "quick_title": "Vista rápida del diagnóstico",
         "feature_1_title": "📋 Diagnóstico financiero",
         "feature_1_text": "Analiza ingresos, gastos, deudas y reserva financiera para generar una visión clara de la situación actual.",
         "feature_2_title": "🧠 IA Generativa",
@@ -2342,7 +3037,6 @@ HOME_TEXTS_INNA = {
         "feature_3_text": "Permite descargar el informe financiero o recibir el diagnóstico directamente por e-mail.",
         "feature_4_title": "🌐 Multicanal y multilingüe",
         "feature_4_text": "Funciona vía Web App, Telegram, API y Dashboard, con soporte para diferentes idiomas y monedas.",
-        "how_title": "Cómo funciona",
         "step_1_title": "Completa",
         "step_1_text": "Informa ingresos, gastos, deudas y reserva financiera.",
         "step_2_title": "Recibe análisis",
@@ -2351,7 +3045,6 @@ HOME_TEXTS_INNA = {
         "step_3_text": "La IA genera una orientación educativa personalizada.",
         "step_4_title": "Descarga o envía",
         "step_4_text": "Exporta en PDF o recibe el informe por e-mail.",
-        "quick_title": "Vista rápida del diagnóstico",
         "income": "Ingreso mensual",
         "expenses": "Gastos fijos",
         "debts": "Deudas",
@@ -2359,78 +3052,73 @@ HOME_TEXTS_INNA = {
         "warning": "Aviso importante: INNA es una herramienta educativa. No sustituye consultoría financiera, contable, jurídica o bancaria profesional.",
         "cta_title": "Comienza tu diagnóstico financiero ahora",
         "cta_text": "Organiza tu vida financiera con una asistente virtual inteligente, simple y personalizada.",
-        "btn_start": "🧾 Iniciar nuevo diagnóstico",
+        "btn_start": "🧾 Comenzar nuevo diagnóstico",
         "btn_report": "📄 Generar informe",
-        "btn_about": "ℹ️ Ver sobre el proyecto",
+        "btn_about": "ℹ️ Ver proyecto",
     },
-}
-
-
-# Traduções adicionais da landing page INNA
-HOME_TEXTS_INNA.update({
     "de": {
         "badge": "✨ KI-Finanzassistent • Intelligente Finanzbildung",
         "title": "💰 INNA Financial Coach AI",
-        "subtitle": "Virtueller Assistent für Finanzbildung mit KI",
+        "subtitle": "Virtuelle Assistentin für Finanzbildung mit KI",
         "intro": "INNA hilft Menschen, Einkommen, Ausgaben, Schulden, Rücklagen und nächste Schritte einfach, lehrreich und personalisiert zu verstehen.",
         "what_title": "Was ist INNA?",
-        "what_text": "INNA Financial Coach AI ist eine intelligente Finanzpädagogin, die grundlegende Benutzerdaten in eine klare Sicht auf die aktuelle finanzielle Situation verwandelt. Die Plattform kann Finanzdiagnosen, einen 30-Tage-Aktionsplan, PDF-Berichte, E-Mail-Versand, individuellen Verlauf, Dashboard-Analysen und Multichannel-Betreuung über Web und Telegram bereitstellen.",
+        "what_text": "INNA Financial Coach AI ist eine intelligente Finanzpädagogin, die grundlegende Benutzerdaten in eine klare Sicht auf die aktuelle finanzielle Situation verwandelt.",
         "features_title": "Hauptfunktionen",
+        "how_title": "So funktioniert es",
+        "quick_title": "Schnellübersicht der Diagnose",
         "feature_1_title": "📋 Finanzdiagnose",
-        "feature_1_text": "Analysiert Einkommen, Ausgaben, Schulden und Rücklagen, um eine klare Sicht auf die aktuelle Situation zu schaffen.",
+        "feature_1_text": "Analysiert Einkommen, Ausgaben, Schulden und Rücklagen, um eine klare Sicht auf die aktuelle Situation zu erzeugen.",
         "feature_2_title": "🧠 Generative KI",
         "feature_2_text": "Erstellt einfache Erklärungen und einen personalisierten Aktionsplan für die nächsten 30 Tage.",
         "feature_3_title": "📄 PDF-Bericht + E-Mail",
-        "feature_3_text": "Ermöglicht das Herunterladen des Finanzberichts oder den direkten Versand per E-Mail.",
-        "feature_4_title": "🌐 Multichannel und mehrsprachig",
-        "feature_4_text": "Funktioniert über Web App, Telegram, API und Dashboard, mit Unterstützung für verschiedene Sprachen und Währungen.",
-        "how_title": "So funktioniert es",
+        "feature_3_text": "Ermöglicht das Herunterladen des Finanzberichts oder den direkten Erhalt der Diagnose per E-Mail.",
+        "feature_4_title": "🌐 Multikanal und mehrsprachig",
+        "feature_4_text": "Funktioniert über Web App, Telegram, API und Dashboard mit Unterstützung für verschiedene Sprachen und Währungen.",
         "step_1_title": "Ausfüllen",
-        "step_1_text": "Geben Sie Einkommen, Ausgaben, Schulden und Rücklagen ein.",
+        "step_1_text": "Einkommen, Ausgaben, Schulden und Rücklagen eingeben.",
         "step_2_title": "Analyse erhalten",
         "step_2_text": "INNA berechnet die wichtigsten Finanzindikatoren.",
         "step_3_title": "Plan ansehen",
-        "step_3_text": "Die KI erstellt personalisierte finanzielle Orientierung.",
+        "step_3_text": "Die KI erstellt eine personalisierte Bildungsorientierung.",
         "step_4_title": "Herunterladen oder senden",
-        "step_4_text": "Exportieren Sie als PDF oder erhalten Sie den Bericht per E-Mail.",
-        "quick_title": "Schneller Überblick",
+        "step_4_text": "Als PDF exportieren oder Bericht per E-Mail erhalten.",
         "income": "Monatliches Einkommen",
         "expenses": "Fixkosten",
         "debts": "Schulden",
         "reserve": "Rücklage",
-        "warning": "Wichtiger Hinweis: INNA ist ein Bildungswerkzeug. Sie ersetzt keine professionelle Finanz-, Steuer-, Rechts- oder Bankberatung.",
-        "cta_title": "Starten Sie jetzt Ihre Finanzdiagnose",
-        "cta_text": "Organisieren Sie Ihr Finanzleben mit einem intelligenten, einfachen und personalisierten virtuellen Assistenten.",
+        "warning": "Wichtiger Hinweis: INNA ist ein Bildungstool. Sie ersetzt keine professionelle Finanz-, Steuer-, Rechts- oder Bankberatung.",
+        "cta_title": "Starte jetzt deine Finanzdiagnose",
+        "cta_text": "Organisiere dein Finanzleben mit einer intelligenten, einfachen und personalisierten virtuellen Assistentin.",
         "btn_start": "🧾 Neue Diagnose starten",
         "btn_report": "📄 Bericht erstellen",
-        "btn_about": "ℹ️ Über das Projekt",
+        "btn_about": "ℹ️ Projekt ansehen",
     },
     "fr": {
-        "badge": "✨ Assistant financier IA • Éducation financière intelligente",
+        "badge": "✨ Assistante financière IA • Éducation financière intelligente",
         "title": "💰 INNA Financial Coach AI",
-        "subtitle": "Assistant virtuel d’éducation financière avec IA",
-        "intro": "INNA aide les personnes à comprendre leurs revenus, dépenses, dettes, épargne et prochaines étapes de manière simple, éducative et personnalisée.",
+        "subtitle": "Assistante virtuelle d’éducation financière avec IA",
+        "intro": "INNA aide les personnes à comprendre revenus, dépenses, dettes, épargne de précaution et prochaines étapes de manière simple, éducative et personnalisée.",
         "what_title": "Qu’est-ce qu’INNA ?",
-        "what_text": "INNA Financial Coach AI est une éducatrice financière intelligente qui transforme les données de base de l’utilisateur en une vision claire de sa situation actuelle. La plateforme peut générer un diagnostic financier, un plan d’action de 30 jours, un rapport PDF, un envoi par e-mail, un historique individuel, des analyses pour dashboard et un support multicanal via Web et Telegram.",
-        "features_title": "Principales ressources",
+        "what_text": "INNA Financial Coach AI est une éducatrice financière intelligente qui transforme des données simples en une vision claire de la situation financière actuelle.",
+        "features_title": "Fonctionnalités principales",
+        "how_title": "Comment ça fonctionne",
+        "quick_title": "Aperçu rapide du diagnostic",
         "feature_1_title": "📋 Diagnostic financier",
-        "feature_1_text": "Analyse les revenus, dépenses, dettes et réserves financières pour générer une vision claire de la situation actuelle.",
+        "feature_1_text": "Analyse les revenus, dépenses, dettes et l’épargne afin de générer une vision claire de la situation actuelle.",
         "feature_2_title": "🧠 IA générative",
         "feature_2_text": "Génère des explications simples et un plan d’action personnalisé pour les 30 prochains jours.",
         "feature_3_title": "📄 Rapport PDF + E-mail",
         "feature_3_text": "Permet de télécharger le rapport financier ou de recevoir le diagnostic directement par e-mail.",
         "feature_4_title": "🌐 Multicanal et multilingue",
-        "feature_4_text": "Fonctionne via Web App, Telegram, API et Dashboard, avec prise en charge de différentes langues et devises.",
-        "how_title": "Comment ça fonctionne",
+        "feature_4_text": "Fonctionne via Web App, Telegram, API et Dashboard, avec prise en charge de plusieurs langues et devises.",
         "step_1_title": "Remplir",
-        "step_1_text": "Indiquez vos revenus, dépenses, dettes et réserve financière.",
+        "step_1_text": "Indiquez revenus, dépenses, dettes et épargne.",
         "step_2_title": "Recevoir l’analyse",
         "step_2_text": "INNA calcule les principaux indicateurs financiers.",
         "step_3_title": "Voir le plan",
         "step_3_text": "L’IA génère une orientation éducative personnalisée.",
         "step_4_title": "Télécharger ou envoyer",
         "step_4_text": "Exportez en PDF ou recevez le rapport par e-mail.",
-        "quick_title": "Aperçu rapide du diagnostic",
         "income": "Revenu mensuel",
         "expenses": "Dépenses fixes",
         "debts": "Dettes",
@@ -2438,27 +3126,28 @@ HOME_TEXTS_INNA.update({
         "warning": "Avis important : INNA est un outil éducatif. Elle ne remplace pas un conseil financier, comptable, juridique ou bancaire professionnel.",
         "cta_title": "Commencez votre diagnostic financier maintenant",
         "cta_text": "Organisez votre vie financière avec une assistante virtuelle intelligente, simple et personnalisée.",
-        "btn_start": "🧾 Commencer un diagnostic",
+        "btn_start": "🧾 Commencer un nouveau diagnostic",
         "btn_report": "📄 Générer le rapport",
         "btn_about": "ℹ️ Voir le projet",
     },
     "it": {
-        "badge": "✨ Assistente finanziario IA • Educazione finanziaria intelligente",
+        "badge": "✨ Assistente finanziaria IA • Educazione finanziaria intelligente",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Assistente virtuale di educazione finanziaria con IA",
         "intro": "INNA aiuta le persone a comprendere reddito, spese, debiti, riserva finanziaria e prossimi passi in modo semplice, educativo e personalizzato.",
         "what_title": "Che cos’è INNA?",
-        "what_text": "INNA Financial Coach AI è un’educatrice finanziaria intelligente che trasforma i dati di base dell’utente in una visione chiara della situazione attuale. La piattaforma può generare diagnosi finanziaria, piano d’azione di 30 giorni, report PDF, invio via e-mail, storico individuale, analisi per dashboard e supporto multicanale via Web e Telegram.",
-        "features_title": "Risorse principali",
+        "what_text": "INNA Financial Coach AI è un’educatrice finanziaria intelligente che trasforma dati semplici in una visione chiara della situazione finanziaria attuale.",
+        "features_title": "Funzionalità principali",
+        "how_title": "Come funziona",
+        "quick_title": "Panoramica rapida della diagnosi",
         "feature_1_title": "📋 Diagnosi finanziaria",
-        "feature_1_text": "Analizza reddito, spese, debiti e riserva finanziaria per generare una visione chiara della situazione attuale.",
-        "feature_2_title": "🧠 IA generativa",
+        "feature_1_text": "Analizza reddito, spese, debiti e riserva per generare una visione chiara della situazione attuale.",
+        "feature_2_title": "🧠 IA Generativa",
         "feature_2_text": "Genera spiegazioni semplici e un piano d’azione personalizzato per i prossimi 30 giorni.",
         "feature_3_title": "📄 Report PDF + E-mail",
         "feature_3_text": "Permette di scaricare il report finanziario o ricevere la diagnosi direttamente via e-mail.",
         "feature_4_title": "🌐 Multicanale e multilingue",
         "feature_4_text": "Funziona via Web App, Telegram, API e Dashboard, con supporto a diverse lingue e valute.",
-        "how_title": "Come funziona",
         "step_1_title": "Compila",
         "step_1_text": "Inserisci reddito, spese, debiti e riserva finanziaria.",
         "step_2_title": "Ricevi analisi",
@@ -2467,7 +3156,6 @@ HOME_TEXTS_INNA.update({
         "step_3_text": "L’IA genera un orientamento educativo personalizzato.",
         "step_4_title": "Scarica o invia",
         "step_4_text": "Esporta in PDF o ricevi il report via e-mail.",
-        "quick_title": "Panoramica rapida della diagnosi",
         "income": "Reddito mensile",
         "expenses": "Spese fisse",
         "debts": "Debiti",
@@ -2477,85 +3165,199 @@ HOME_TEXTS_INNA.update({
         "cta_text": "Organizza la tua vita finanziaria con un’assistente virtuale intelligente, semplice e personalizzata.",
         "btn_start": "🧾 Inizia nuova diagnosi",
         "btn_report": "📄 Genera report",
-        "btn_about": "ℹ️ Vedi il progetto",
+        "btn_about": "ℹ️ Vedi progetto",
     },
     "ro": {
         "badge": "✨ Asistent financiar IA • Educație financiară inteligentă",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Asistent virtual de educație financiară cu IA",
-        "intro": "INNA ajută oamenii să înțeleagă veniturile, cheltuielile, datoriile, economiile și pașii următori într-un mod simplu, educativ și personalizat.",
+        "intro": "INNA ajută oamenii să înțeleagă veniturile, cheltuielile, datoriile, rezerva financiară și pașii următori într-un mod simplu, educativ și personalizat.",
         "what_title": "Ce este INNA?",
-        "what_text": "INNA Financial Coach AI este o educatoare financiară inteligentă care transformă datele de bază ale utilizatorului într-o imagine clară a situației financiare actuale. Platforma poate genera diagnostic financiar, plan de acțiune pe 30 de zile, raport PDF, trimitere prin e-mail, istoric individual, analize pentru dashboard și suport multicanal prin Web și Telegram.",
-        "features_title": "Funcționalități principale",
+        "what_text": "INNA Financial Coach AI este o educatoare financiară inteligentă care transformă date simple într-o imagine clară a situației financiare actuale.",
+        "features_title": "Funcții principale",
+        "how_title": "Cum funcționează",
+        "quick_title": "Prezentare rapidă a diagnosticului",
         "feature_1_title": "📋 Diagnostic financiar",
-        "feature_1_text": "Analizează veniturile, cheltuielile, datoriile și economiile pentru a crea o imagine clară a situației actuale.",
+        "feature_1_text": "Analizează veniturile, cheltuielile, datoriile și rezerva pentru a genera o imagine clară a situației actuale.",
         "feature_2_title": "🧠 IA generativă",
         "feature_2_text": "Generează explicații simple și un plan de acțiune personalizat pentru următoarele 30 de zile.",
         "feature_3_title": "📄 Raport PDF + E-mail",
         "feature_3_text": "Permite descărcarea raportului financiar sau primirea diagnosticului direct prin e-mail.",
         "feature_4_title": "🌐 Multicanal și multilingv",
-        "feature_4_text": "Funcționează prin Web App, Telegram, API și Dashboard, cu suport pentru limbi și monede diferite.",
-        "how_title": "Cum funcționează",
+        "feature_4_text": "Funcționează prin Web App, Telegram, API și Dashboard, cu suport pentru diferite limbi și monede.",
         "step_1_title": "Completează",
-        "step_1_text": "Introdu veniturile, cheltuielile, datoriile și economiile.",
+        "step_1_text": "Introdu veniturile, cheltuielile, datoriile și rezerva financiară.",
         "step_2_title": "Primește analiza",
         "step_2_text": "INNA calculează principalii indicatori financiari.",
         "step_3_title": "Vezi planul",
-        "step_3_text": "IA generează orientare educativă personalizată.",
+        "step_3_text": "IA generează o orientare educativă personalizată.",
         "step_4_title": "Descarcă sau trimite",
         "step_4_text": "Exportă în PDF sau primește raportul prin e-mail.",
-        "quick_title": "Prezentare rapidă a diagnosticului",
         "income": "Venit lunar",
         "expenses": "Cheltuieli fixe",
         "debts": "Datorii",
-        "reserve": "Economii",
-        "warning": "Atenție: INNA este un instrument educativ. Nu înlocuiește consultanța financiară, contabilă, juridică sau bancară profesională.",
+        "reserve": "Rezervă",
+        "warning": "Notă importantă: INNA este un instrument educativ. Nu înlocuiește consultanța financiară, contabilă, juridică sau bancară profesională.",
         "cta_title": "Începe acum diagnosticul financiar",
         "cta_text": "Organizează-ți viața financiară cu un asistent virtual inteligent, simplu și personalizat.",
         "btn_start": "🧾 Începe diagnostic nou",
         "btn_report": "📄 Generează raport",
-        "btn_about": "ℹ️ Despre proiect",
+        "btn_about": "ℹ️ Vezi proiectul",
+    },
+    "uk": {
+        "badge": "✨ Фінансовий асистент ШІ • Розумна фінансова освіта",
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "Віртуальна асистентка фінансової освіти з ШІ",
+        "intro": "INNA допомагає людям зрозуміти доходи, витрати, борги, фінансовий резерв і наступні кроки просто, освітньо та персоналізовано.",
+        "what_title": "Що таке INNA?",
+        "what_text": "INNA Financial Coach AI — це інтелектуальна фінансова освітня асистентка, яка перетворює базові дані користувача на зрозумілу картину поточної фінансової ситуації.",
+        "features_title": "Основні можливості",
+        "how_title": "Як це працює",
+        "quick_title": "Швидкий огляд діагностики",
+        "feature_1_title": "📋 Фінансова діагностика",
+        "feature_1_text": "Аналізує доходи, витрати, борги та резерв, щоб створити зрозумілу картину поточної ситуації.",
+        "feature_2_title": "🧠 Генеративний ШІ",
+        "feature_2_text": "Створює прості пояснення та персоналізований план дій на наступні 30 днів.",
+        "feature_3_title": "📄 PDF-звіт + E-mail",
+        "feature_3_text": "Дозволяє завантажити фінансовий звіт або отримати діагностику безпосередньо на e-mail.",
+        "feature_4_title": "🌐 Мультиканальний і багатомовний",
+        "feature_4_text": "Працює через Web App, Telegram, API і Dashboard з підтримкою різних мов і валют.",
+        "step_1_title": "Заповніть",
+        "step_1_text": "Вкажіть доходи, витрати, борги та фінансовий резерв.",
+        "step_2_title": "Отримайте аналіз",
+        "step_2_text": "INNA розраховує основні фінансові показники.",
+        "step_3_title": "Перегляньте план",
+        "step_3_text": "ШІ створює персоналізовану освітню рекомендацію.",
+        "step_4_title": "Завантажте або надішліть",
+        "step_4_text": "Експортуйте у PDF або отримайте звіт на e-mail.",
+        "income": "Місячний дохід",
+        "expenses": "Фіксовані витрати",
+        "debts": "Борги",
+        "reserve": "Резерв",
+        "warning": "Важливе повідомлення: INNA є освітнім інструментом. Вона не замінює професійну фінансову, бухгалтерську, юридичну чи банківську консультацію.",
+        "cta_title": "Почніть фінансову діагностику зараз",
+        "cta_text": "Організуйте своє фінансове життя з розумною, простою та персоналізованою віртуальною асистенткою.",
+        "btn_start": "🧾 Почати нову діагностику",
+        "btn_report": "📄 Створити звіт",
+        "btn_about": "ℹ️ Переглянути проєкт",
+    },
+    "ru": {
+        "badge": "✨ Финансовый ИИ-ассистент • Умное финансовое обучение",
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "Виртуальный ассистент финансового образования с ИИ",
+        "intro": "INNA помогает людям понять доходы, расходы, долги, финансовый резерв и следующие шаги простым, образовательным и персонализированным способом.",
+        "what_title": "Что такое INNA?",
+        "what_text": "INNA Financial Coach AI — это интеллектуальный финансовый образовательный ассистент, который превращает базовые данные пользователя в понятную картину текущей финансовой ситуации.",
+        "features_title": "Основные функции",
+        "how_title": "Как это работает",
+        "quick_title": "Краткий обзор диагностики",
+        "feature_1_title": "📋 Финансовая диагностика",
+        "feature_1_text": "Анализирует доходы, расходы, долги и резерв, чтобы показать понятную картину текущей ситуации.",
+        "feature_2_title": "🧠 Генеративный ИИ",
+        "feature_2_text": "Создаёт простые объяснения и персонализированный план действий на следующие 30 дней.",
+        "feature_3_title": "📄 PDF-отчёт + E-mail",
+        "feature_3_text": "Позволяет скачать финансовый отчёт или получить диагностику напрямую по e-mail.",
+        "feature_4_title": "🌐 Мультиканальный и многоязычный",
+        "feature_4_text": "Работает через Web App, Telegram, API и Dashboard с поддержкой разных языков и валют.",
+        "step_1_title": "Заполните",
+        "step_1_text": "Введите доходы, расходы, долги и финансовый резерв.",
+        "step_2_title": "Получите анализ",
+        "step_2_text": "INNA рассчитывает основные финансовые показатели.",
+        "step_3_title": "Посмотрите план",
+        "step_3_text": "ИИ создаёт персонализированную образовательную рекомендацию.",
+        "step_4_title": "Скачайте или отправьте",
+        "step_4_text": "Экспортируйте в PDF или получите отчёт по e-mail.",
+        "income": "Ежемесячный доход",
+        "expenses": "Фиксированные расходы",
+        "debts": "Долги",
+        "reserve": "Резерв",
+        "warning": "Важное уведомление: INNA является образовательным инструментом. Она не заменяет профессиональную финансовую, бухгалтерскую, юридическую или банковскую консультацию.",
+        "cta_title": "Начните финансовую диагностику сейчас",
+        "cta_text": "Организуйте свою финансовую жизнь с умным, простым и персонализированным виртуальным ассистентом.",
+        "btn_start": "🧾 Начать новую диагностику",
+        "btn_report": "📄 Создать отчёт",
+        "btn_about": "ℹ️ Посмотреть проект",
+    },
+    "ar": {
+        "badge": "✨ مساعد مالي بالذكاء الاصطناعي • تعليم مالي ذكي",
+        "title": "💰 INNA Financial Coach AI",
+        "subtitle": "مساعد افتراضي للتعليم المالي بالذكاء الاصطناعي",
+        "intro": "تساعد INNA الأشخاص على فهم الدخل والمصروفات والديون والاحتياطي المالي والخطوات التالية بطريقة بسيطة وتعليمية وشخصية.",
+        "what_title": "ما هي INNA؟",
+        "what_text": "INNA Financial Coach AI هي أداة تعليم مالي ذكية تحول بيانات المستخدم الأساسية إلى رؤية واضحة للوضع المالي الحالي.",
+        "features_title": "المزايا الرئيسية",
+        "how_title": "كيف تعمل",
+        "quick_title": "نظرة سريعة على التشخيص",
+        "feature_1_title": "📋 تشخيص مالي",
+        "feature_1_text": "تحلل الدخل والمصروفات والديون والاحتياطي المالي لتكوين رؤية واضحة للوضع الحالي.",
+        "feature_2_title": "🧠 ذكاء اصطناعي توليدي",
+        "feature_2_text": "ينشئ تفسيرات بسيطة وخطة عمل شخصية للأيام الثلاثين القادمة.",
+        "feature_3_title": "📄 تقرير PDF + بريد إلكتروني",
+        "feature_3_text": "يسمح بتنزيل التقرير المالي أو استلام التشخيص مباشرة عبر البريد الإلكتروني.",
+        "feature_4_title": "🌐 متعدد القنوات واللغات",
+        "feature_4_text": "يعمل عبر Web App وTelegram وAPI وDashboard مع دعم لغات وعملات مختلفة.",
+        "step_1_title": "املأ البيانات",
+        "step_1_text": "أدخل الدخل والمصروفات والديون والاحتياطي المالي.",
+        "step_2_title": "استلم التحليل",
+        "step_2_text": "تحسب INNA المؤشرات المالية الرئيسية.",
+        "step_3_title": "راجع الخطة",
+        "step_3_text": "ينشئ الذكاء الاصطناعي توجيهاً تعليمياً مخصصاً.",
+        "step_4_title": "نزّل أو أرسل",
+        "step_4_text": "صدّر بصيغة PDF أو استلم التقرير عبر البريد الإلكتروني.",
+        "income": "الدخل الشهري",
+        "expenses": "المصاريف الثابتة",
+        "debts": "الديون",
+        "reserve": "الاحتياطي",
+        "warning": "تنبيه مهم: INNA أداة تعليمية. لا تستبدل الاستشارة المالية أو المحاسبية أو القانونية أو المصرفية المهنية.",
+        "cta_title": "ابدأ تشخيصك المالي الآن",
+        "cta_text": "نظّم حياتك المالية مع مساعد افتراضي ذكي وبسيط وشخصي.",
+        "btn_start": "🧾 بدء تشخيص جديد",
+        "btn_report": "📄 إنشاء التقرير",
+        "btn_about": "ℹ️ عرض المشروع",
     },
     "ch": {
         "badge": "✨ KI-Finanzassistent • Intelligente Finanzbildung",
         "title": "💰 INNA Financial Coach AI",
-        "subtitle": "Virtueller Assistent für Finanzbildung mit KI",
+        "subtitle": "Virtuelle Assistentin für Finanzbildung mit KI",
         "intro": "INNA hilft Menschen, Einkommen, Ausgaben, Schulden, Rücklagen und nächste Schritte einfach, lehrreich und personalisiert zu verstehen.",
         "what_title": "Was ist INNA?",
-        "what_text": "INNA Financial Coach AI ist eine intelligente Finanzpädagogin, die grundlegende Benutzerdaten in eine klare Sicht auf die aktuelle finanzielle Situation verwandelt. Die Plattform kann Finanzdiagnosen, einen 30-Tage-Aktionsplan, PDF-Berichte, E-Mail-Versand, individuellen Verlauf, Dashboard-Analysen und Multichannel-Betreuung über Web und Telegram bereitstellen.",
+        "what_text": "INNA Financial Coach AI ist eine intelligente Finanzpädagogin, die grundlegende Benutzerdaten in eine klare Sicht auf die aktuelle finanzielle Situation verwandelt.",
         "features_title": "Hauptfunktionen",
+        "how_title": "So funktioniert es",
+        "quick_title": "Schnellübersicht der Diagnose",
         "feature_1_title": "📋 Finanzdiagnose",
-        "feature_1_text": "Analysiert Einkommen, Ausgaben, Schulden und Rücklagen, um eine klare Sicht auf die aktuelle Situation zu schaffen.",
+        "feature_1_text": "Analysiert Einkommen, Ausgaben, Schulden und Rücklagen, um eine klare Sicht auf die aktuelle Situation zu erzeugen.",
         "feature_2_title": "🧠 Generative KI",
         "feature_2_text": "Erstellt einfache Erklärungen und einen personalisierten Aktionsplan für die nächsten 30 Tage.",
         "feature_3_title": "📄 PDF-Bericht + E-Mail",
-        "feature_3_text": "Ermöglicht das Herunterladen des Finanzberichts oder den direkten Versand per E-Mail.",
-        "feature_4_title": "🌐 Multichannel und mehrsprachig",
-        "feature_4_text": "Funktioniert über Web App, Telegram, API und Dashboard, mit Unterstützung für verschiedene Sprachen und Währungen.",
-        "how_title": "So funktioniert es",
+        "feature_3_text": "Ermöglicht das Herunterladen des Finanzberichts oder den direkten Erhalt der Diagnose per E-Mail.",
+        "feature_4_title": "🌐 Multikanal und mehrsprachig",
+        "feature_4_text": "Funktioniert über Web App, Telegram, API und Dashboard mit Unterstützung für verschiedene Sprachen und Währungen.",
         "step_1_title": "Ausfüllen",
-        "step_1_text": "Geben Sie Einkommen, Ausgaben, Schulden und Rücklagen ein.",
+        "step_1_text": "Einkommen, Ausgaben, Schulden und Rücklagen eingeben.",
         "step_2_title": "Analyse erhalten",
         "step_2_text": "INNA berechnet die wichtigsten Finanzindikatoren.",
         "step_3_title": "Plan ansehen",
-        "step_3_text": "Die KI erstellt personalisierte finanzielle Orientierung.",
+        "step_3_text": "Die KI erstellt eine personalisierte Bildungsorientierung.",
         "step_4_title": "Herunterladen oder senden",
-        "step_4_text": "Exportieren Sie als PDF oder erhalten Sie den Bericht per E-Mail.",
-        "quick_title": "Schneller Überblick",
+        "step_4_text": "Als PDF exportieren oder Bericht per E-Mail erhalten.",
         "income": "Monatliches Einkommen",
         "expenses": "Fixkosten",
         "debts": "Schulden",
         "reserve": "Rücklage",
-        "warning": "Wichtiger Hinweis: INNA ist ein Bildungswerkzeug. Sie ersetzt keine professionelle Finanz-, Steuer-, Rechts- oder Bankberatung.",
-        "cta_title": "Starten Sie jetzt Ihre Finanzdiagnose",
-        "cta_text": "Organisieren Sie Ihr Finanzleben mit einem intelligenten, einfachen und personalisierten virtuellen Assistenten.",
+        "warning": "Wichtiger Hinweis: INNA ist ein Bildungstool. Sie ersetzt keine professionelle Finanz-, Steuer-, Rechts- oder Bankberatung.",
+        "cta_title": "Starte jetzt deine Finanzdiagnose",
+        "cta_text": "Organisiere dein Finanzleben mit einer intelligenten, einfachen und personalisierten virtuellen Assistentin.",
         "btn_start": "🧾 Neue Diagnose starten",
         "btn_report": "📄 Bericht erstellen",
-        "btn_about": "ℹ️ Über das Projekt",
+        "btn_about": "ℹ️ Projekt ansehen",
     },
-})
+}
+
+HOME_TEXTS_INNA["en_gb"] = HOME_TEXTS_INNA["en_us"].copy()
+
 def home_t(key: str) -> str:
-    lang = app_lang if app_lang in HOME_TEXTS_INNA else "en_us"
+    lang = app_lang if app_lang in HOME_TEXTS_INNA else "pt"
     return HOME_TEXTS_INNA.get(lang, HOME_TEXTS_INNA["pt"]).get(
         key,
         HOME_TEXTS_INNA["pt"].get(key, key),
@@ -5095,6 +5897,9 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
+
+
 
 
 
