@@ -336,7 +336,6 @@ def gerar_diagnostico(payload: FinancialInput):
             "saldo_estimado": response.get("saldo_estimado"),
             "simbolo_moeda": payload_dict.get("simbolo_moeda"),
             "tempo_resposta_segundos": time.time() - inicio,
-            **get_last_gemini_usage_metadata(),
         },
     )
 
