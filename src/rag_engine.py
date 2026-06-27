@@ -329,44 +329,81 @@ def search_knowledge_base(
     return scored[: max(1, min(int(top_k or 5), 10))]
 
 
-def answer_with_rag(
-    pergunta: str,
-    idioma: str = "pt",
-    top_k: int = 4,
-) -> dict[str, Any]:
-    sources = search_knowledge_base(pergunta, idioma=idioma, top_k=top_k)
+def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
+    results = search_knowledge_base(pergunta, idioma=idioma, top_k=top_k)
 
-    if not sources:
+    if not results:
         return {
-            "resposta": (
-                "Não encontrei informações suficientes na base de conhecimento da INNA. "
-                "Posso responder apenas de forma educativa sobre organização financeira."
-            ),
+            "resposta": "Não encontrei informação suficiente na base de conhecimento da INNA para responder com segurança.",
             "fontes": [],
-            "modo": "rag_sem_fontes",
+            "contexto_usado": "",
+            "modo": "rag_local_sem_custo",
         }
 
-    context = "\n\n".join(
-        [
-            f"Fonte: {source['fonte']} | Trecho: {source['trecho']}"
-            for source in sources
-        ]
-    )
+    def get_chunk_text(item: dict) -> str:
+        return (
+            item.get("chunk_text")
+            or item.get("texto")
+            or item.get("trecho")
+            or item.get("conteudo")
+            or item.get("content")
+            or ""
+        )
 
-    resposta = (
-        "Com base na base de conhecimento da INNA, a orientação educativa é:\n\n"
-        f"{sources[0]['trecho']}\n\n"
-        "Resumo prático:\n"
-        "- organize seus dados financeiros;\n"
-        "- compare renda, gastos, dívidas e reserva;\n"
-        "- priorize ações simples e mensuráveis;\n"
-        "- evite decisões financeiras arriscadas sem orientação profissional.\n\n"
-        "Observação: esta resposta é educativa e não substitui consultoria financeira profissional."
-    )
+    contexto = "\n\n".join([get_chunk_text(item) for item in results])
+    pergunta_normalizada = normalize_text(pergunta)
+
+    if "reserva" in pergunta_normalizada:
+        resposta = """Para melhorar sua reserva financeira, a INNA recomenda:
+
+1. Calcule seus gastos mensais totais, incluindo gastos fixos, variáveis e parcelas de dívidas.
+2. Separe uma parte possível do saldo mensal para fortalecer sua reserva.
+3. Evite usar a reserva para gastos que não sejam emergenciais.
+4. Acompanhe a evolução da reserva todo mês.
+
+Essa orientação é educativa e não substitui consultoria financeira profissional."""
+    elif "divida" in pergunta_normalizada or "dívida" in pergunta_normalizada:
+        resposta = """Para reduzir dívidas, a INNA recomenda:
+
+1. Liste todas as dívidas, parcelas, juros e vencimentos.
+2. Priorize o pagamento das dívidas mais caras ou com maior impacto no orçamento.
+3. Evite assumir novas dívidas durante o plano de organização.
+4. Negocie condições melhores quando possível.
+
+Essa orientação é educativa e não substitui consultoria financeira profissional."""
+    elif "gasto" in pergunta_normalizada or "organizar" in pergunta_normalizada:
+        resposta = """Para organizar seus gastos, a INNA recomenda:
+
+1. Separe seus gastos em fixos, variáveis e dívidas.
+2. Identifique gastos pequenos recorrentes que podem ser reduzidos.
+3. Defina um limite semanal para despesas variáveis.
+4. Revise seu orçamento ao final de cada mês.
+
+Essa orientação é educativa e não substitui consultoria financeira profissional."""
+    else:
+        resposta = """Com base na base de conhecimento da INNA, a orientação educativa é:
+
+1. Organize seus dados financeiros.
+2. Compare renda, gastos, dívidas e reserva.
+3. Priorize ações simples e mensuráveis.
+4. Evite decisões financeiras arriscadas sem orientação profissional.
+
+Essa orientação é educativa e não substitui consultoria financeira profissional."""
+
+    fontes = [
+        {
+            "titulo": item["titulo"],
+            "fonte": item["fonte"],
+            "score": item["score"],
+            "trecho": get_chunk_text(item)[:500],
+        }
+        for item in results
+    ]
 
     return {
         "resposta": resposta,
-        "fontes": sources,
-        "contexto_usado": context,
+        "fontes": fontes,
+        "contexto_usado": contexto,
         "modo": "rag_local_sem_custo",
     }
+

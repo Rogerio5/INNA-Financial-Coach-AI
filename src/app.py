@@ -5775,7 +5775,14 @@ if app_menu == "📊 Panorama":
 
     col1.metric("Score", f"{float(response.get('score_financeiro', 0)):.1f}/100")
     col2.metric("Risco", response.get("nivel_risco", "não informado"))
-    col3.metric("Moeda", f"{response.get('moeda', '')} {response.get('simbolo_moeda', '')}")
+    col3.metric(
+        "Saldo estimado",
+        format_currency_app(
+            response.get("saldo_estimado", 0),
+            response.get("simbolo_moeda", current_currency_info["simbolo"]),
+            response.get("moeda", current_currency_info["moeda"]),
+        ),
+    )
 
     st.divider()
 
@@ -6088,6 +6095,11 @@ if submitted:
     try:
         with st.spinner(tr("loading")):
             response = gerar_diagnostico_api(payload)
+
+        # Garante que moeda e símbolo apareçam na interface,
+        # mesmo quando a API não devolver esses campos no response.
+        response.setdefault("moeda", payload.get("moeda", current_currency_info["moeda"]))
+        response.setdefault("simbolo_moeda", payload.get("simbolo_moeda", current_currency_info["simbolo"]))
 
         st.session_state.last_payload = payload
         st.session_state.last_response = response

@@ -129,8 +129,6 @@ def get_last_gemini_usage_metadata() -> dict:
     return dict(LAST_GEMINI_USAGE_METADATA)
 
 
-
-
 def build_financial_prompt(payload: dict, diagnosis: dict) -> str:
     nome = payload.get("nome", "Usuario")
     objetivo = payload.get("objetivo", "Organizar minha vida financeira")
@@ -269,19 +267,15 @@ def generate_fallback_plan(payload: dict, diagnosis: dict) -> str:
             "w1": "Semana 1 — Diagnóstico e organização",
             "w1a": "Levante seus gastos fixos, variáveis e dívidas.",
             "w1b": "Separe seus gastos por categoria para entender melhor o orçamento.",
-            "w1c": "Use essa visão para encontrar o principal ponto de atenção financeiro.",
             "w2": "Semana 2 — Redução de gastos e controle",
             "w2a": "Revise assinaturas, compras por impulso e pequenos gastos recorrentes.",
             "w2b": "Acompanhe os gastos durante a semana para evitar surpresas.",
-            "w2c": "Evite assumir novos compromissos financeiros durante o plano.",
             "w3": "Semana 3 — Reserva financeira",
             "w3a": "Separe uma parte possível do saldo mensal para fortalecer a reserva.",
             "w3b": "Crie o hábito de acompanhar a evolução da reserva.",
-            "w3c": "Evite usar a reserva para gastos que não sejam emergenciais.",
             "w4": "Semana 4 — Revisão e próximos passos",
             "w4a": "Revise o que funcionou melhor durante o plano.",
             "w4b": "Compare gastos antes e depois do plano.",
-            "w4c": "Mantenha uma rotina simples de acompanhamento para o próximo mês.",
             "next": "Próximo passo recomendado:",
             "next_text": "Após os 30 dias, mantenha o foco no ponto mais sensível do diagnóstico: reserva, dívidas ou controle de gastos, conforme seu saldo estimado e nível de risco.",
             "notice": "Aviso:",
@@ -628,22 +622,18 @@ def generate_fallback_plan(payload: dict, diagnosis: dict) -> str:
 {t["w1"]}
 - {t["w1a"]}
 - {t["w1b"]}
-- {t["w1c"]}
 
 {t["w2"]}
 - {t["w2a"]}
 - {t["w2b"]}
-- {t["w2c"]}
 
 {t["w3"]}
 - {t["w3a"]}
 - {t["w3b"]}
-- {t["w3c"]}
 
 {t["w4"]}
 - {t["w4a"]}
 - {t["w4b"]}
-- {t["w4c"]}
 
 {t["next"]} {t["next_text"]}
 
