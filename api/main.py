@@ -8,6 +8,11 @@ from api.schemas import DiagnosticoItem, EmailRequest, FeedbackInput, FeedbackIt
 
 from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
+from src.rag_engine import (
+    answer_with_rag,
+    ingest_default_knowledge_base,
+    search_knowledge_base,
+)
 from src.pdf_report import gerar_relatorio_pdf
 from src.email_sender import send_diagnostico_email
 from src.interaction_logger import record_interaction
@@ -331,6 +336,7 @@ def gerar_diagnostico(payload: FinancialInput):
             "saldo_estimado": response.get("saldo_estimado"),
             "simbolo_moeda": payload_dict.get("simbolo_moeda"),
             "tempo_resposta_segundos": time.time() - inicio,
+            **get_last_gemini_usage_metadata(),
         },
     )
 
@@ -639,3 +645,126 @@ def registrar_evento(payload: EventLogRequest):
         "message": "Evento registrado na tabela interacoes_inna.",
         "canal": payload.canal,
     }
+
+
+class RagAskRequest(BaseModel):
+    pergunta: str
+    idioma: str = "pt"
+    top_k: int = 4
+
+
+@app.post("/rag/setup")
+def rag_setup():
+    """
+    Cria/atualiza a base de conhecimento da INNA no PostgreSQL/Neon.
+    """
+    try:
+        result = ingest_default_knowledge_base()
+
+        safe_record_event(
+            canal="dashboard",
+            usuario="admin",
+            idioma="pt",
+            moeda="BRL",
+            status="success",
+            pergunta="setup_rag",
+            resposta="Base RAG atualizada",
+            metadata={
+                "evento": "rag_setup",
+                "origem": "api",
+                "resultado": result,
+            },
+        )
+
+        return result
+
+    except Exception as exc:
+        safe_record_event(
+            canal="dashboard",
+            usuario="admin",
+            idioma="pt",
+            moeda="BRL",
+            status="error",
+            pergunta="setup_rag",
+            resposta="Erro ao atualizar base RAG",
+            metadata={
+                "evento": "erro_rag_setup",
+                "origem": "api",
+                "erro": str(exc),
+            },
+        )
+
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/rag/search")
+def rag_search(
+    query: str = Query(..., min_length=3),
+    idioma: str = "pt",
+    top_k: int = 5,
+):
+    """
+    Busca semântica na base de conhecimento da INNA.
+    """
+    try:
+        results = search_knowledge_base(query=query, idioma=idioma, top_k=top_k)
+
+        return {
+            "query": query,
+            "idioma": idioma,
+            "top_k": top_k,
+            "results": results,
+        }
+
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.post("/rag/ask")
+def rag_ask(payload: RagAskRequest):
+    """
+    Responde usando RAG local sem custo, com fontes da base da INNA.
+    """
+    try:
+        result = answer_with_rag(
+            pergunta=payload.pergunta,
+            idioma=payload.idioma,
+            top_k=payload.top_k,
+        )
+
+        safe_record_event(
+            canal="rag",
+            usuario="admin",
+            idioma=payload.idioma,
+            moeda="BRL",
+            status="success",
+            pergunta=payload.pergunta,
+            resposta=result.get("resposta"),
+            metadata={
+                "evento": "rag_ask",
+                "origem": "api",
+                "modo": result.get("modo"),
+                "fontes": result.get("fontes", []),
+            },
+        )
+
+        return result
+
+    except Exception as exc:
+        safe_record_event(
+            canal="rag",
+            usuario="admin",
+            idioma=payload.idioma,
+            moeda="BRL",
+            status="error",
+            pergunta=payload.pergunta,
+            resposta="Erro no RAG",
+            metadata={
+                "evento": "erro_rag_ask",
+                "origem": "api",
+                "erro": str(exc),
+            },
+        )
+
+        raise HTTPException(status_code=500, detail=str(exc))
+

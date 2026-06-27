@@ -29,6 +29,128 @@ st.set_page_config(
 )
 
 
+def apply_inna_dark_form_fix():
+    st.markdown("""
+    <style>
+    /* ===== INPUTS / TEXTAREA / NUMBER INPUT ===== */
+    div[data-baseweb="input"] > div,
+    div[data-baseweb="base-input"] > div,
+    div[data-baseweb="textarea"] > div {
+        background-color: #0d2747 !important;
+        border: 1px solid #c9a84f !important;
+        border-radius: 10px !important;
+    }
+
+    div[data-baseweb="input"] input,
+    div[data-baseweb="base-input"] input,
+    div[data-baseweb="textarea"] textarea {
+        background-color: transparent !important;
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: #b8c7d9 !important;
+        opacity: 1 !important;
+    }
+
+    /* ===== NUMBER INPUT BOTÕES + / - ===== */
+    button[aria-label="Increment"],
+    button[aria-label="Decrement"] {
+        background-color: #0b2442 !important;
+        color: #ffffff !important;
+        border-left: 1px solid #c9a84f !important;
+    }
+
+    /* ===== SELECTBOX ===== */
+    div[data-baseweb="select"] > div {
+        background-color: #0d2747 !important;
+        border: 1px solid #c9a84f !important;
+        border-radius: 10px !important;
+        color: #ffffff !important;
+    }
+
+    div[data-baseweb="select"] span {
+        color: #ffffff !important;
+    }
+
+    /* ===== BOTÕES ===== */
+    .stButton > button,
+    .stFormSubmitButton > button,
+    .stDownloadButton > button {
+        width: 100%;
+        background: linear-gradient(135deg, #15365f, #0b2442) !important;
+        color: #ffffff !important;
+        border: 1px solid #d4af37 !important;
+        border-radius: 10px !important;
+        font-weight: 800 !important;
+        padding: 0.65rem 1rem !important;
+        opacity: 1 !important;
+    }
+
+    .stButton > button p,
+    .stFormSubmitButton > button p,
+    .stDownloadButton > button p,
+    .stButton > button div,
+    .stFormSubmitButton > button div,
+    .stDownloadButton > button div,
+    .stButton > button span,
+    .stFormSubmitButton > button span,
+    .stDownloadButton > button span {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        font-weight: 800 !important;
+    }
+
+    .stButton > button:hover,
+    .stFormSubmitButton > button:hover,
+    .stDownloadButton > button:hover {
+        background: linear-gradient(135deg, #1d4679, #123055) !important;
+        border: 1px solid #ffd76a !important;
+    }
+
+    .stButton > button:hover p,
+    .stFormSubmitButton > button:hover p,
+    .stDownloadButton > button:hover p,
+    .stButton > button:hover span,
+    .stFormSubmitButton > button:hover span,
+    .stDownloadButton > button:hover span {
+        color: #ffd76a !important;
+        -webkit-text-fill-color: #ffd76a !important;
+    }
+
+    /* ===== BOTÃO DESABILITADO, MAS LEGÍVEL ===== */
+    .stButton > button:disabled,
+    .stFormSubmitButton > button:disabled,
+    .stDownloadButton > button:disabled {
+        background: #31465f !important;
+        color: #f5f7fa !important;
+        border: 1px solid #8fa3b8 !important;
+        opacity: 1 !important;
+        cursor: not-allowed !important;
+    }
+
+    .stButton > button:disabled p,
+    .stFormSubmitButton > button:disabled p,
+    .stDownloadButton > button:disabled p,
+    .stButton > button:disabled span,
+    .stFormSubmitButton > button:disabled span,
+    .stDownloadButton > button:disabled span {
+        color: #f5f7fa !important;
+        -webkit-text-fill-color: #f5f7fa !important;
+        opacity: 1 !important;
+        font-weight: 800 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+apply_inna_dark_form_fix()
+
+
+
+
 st.markdown("""
 <style>
 [data-testid="stAppViewContainer"] {
@@ -4765,7 +4887,7 @@ CHAT_TEXTS_INNA = {
     "pt": {
         "title": "💬 Conversar",
         "caption": "Canal de conversa educativa para dúvidas financeiras simples.",
-        "info": "Aqui ficará o chat da INNA. A próxima etapa é conectar esta tela à IA para responder dúvidas com base no último diagnóstico financeiro do usuário.",
+        "info": "Chat educativo conectado ao RAG local da INNA. As respostas usam a base de conhecimento financeira e exibem fontes quando disponíveis.",
         "input_label": "Digite uma dúvida financeira:",
         "placeholder": "Exemplo: Como posso melhorar meu score financeiro?",
         "button": "Enviar pergunta para a Inna",
@@ -4929,7 +5051,58 @@ if app_menu == "💬 Conversar":
     if st.button(chat_t("button"), use_container_width=True):
         if pergunta_demo.strip():
             st.chat_message("user").markdown(pergunta_demo)
-            st.chat_message("assistant").markdown(chat_t("demo_answer"))
+
+            try:
+                api_base_url = globals().get("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
+
+                rag_payload = {
+                    "pergunta": pergunta_demo.strip(),
+                    "idioma": st.session_state.get("app_lang", "pt"),
+                    "top_k": 3,
+                }
+
+                with st.spinner("Consultando a base de conhecimento da INNA..."):
+                    rag_response = requests.post(
+                        f"{api_base_url}/rag/ask",
+                        json=rag_payload,
+                        timeout=30,
+                    )
+
+                if rag_response.status_code == 200:
+                    rag_data = rag_response.json()
+
+                    resposta_rag = rag_data.get("resposta") or "Não encontrei uma resposta suficiente na base da INNA."
+                    fontes_rag = rag_data.get("fontes", [])
+
+                    st.chat_message("assistant").markdown(resposta_rag)
+
+                    if fontes_rag:
+                        with st.expander("📚 Fontes usadas pela INNA"):
+                            for fonte in fontes_rag:
+                                st.markdown(
+                                    f"""
+**Fonte:** `{fonte.get("fonte", "-")}`  
+**Título:** {fonte.get("titulo", "-")}  
+**Score:** {fonte.get("score", "-")}  
+**Trecho:**  
+{fonte.get("trecho", "-")}
+"""
+                                )
+                else:
+                    st.error(
+                        f"Não foi possível consultar o RAG da INNA. "
+                        f"Status: {rag_response.status_code}"
+                    )
+
+            except requests.exceptions.ConnectionError:
+                st.error("Não foi possível conectar na FastAPI. Confirme se a API está rodando em http://127.0.0.1:8000.")
+
+            except requests.exceptions.Timeout:
+                st.error("A API demorou muito para responder. Tente novamente.")
+
+            except Exception as exc:
+                st.error(f"Erro inesperado ao consultar o RAG da INNA: {exc}")
+
         else:
             st.warning(chat_t("empty"))
 

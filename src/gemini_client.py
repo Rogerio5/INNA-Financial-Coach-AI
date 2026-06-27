@@ -14,9 +14,121 @@ LANGUAGE_NAME_BY_CODE = {
     "ch": "Deutsch Schweiz",
 }
 
+import os
+
 from google import genai
 
 from src.config import GEMINI_API_KEY, GEMINI_MODEL, INNA_MOCK_MODE
+from src.prompts import build_plan_prompt
+
+LAST_GEMINI_USAGE_METADATA = {
+    "provider": "gemini",
+    "modelo_ia": GEMINI_MODEL,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0,
+    "custo_estimado_usd": 0.0,
+    "tokens_disponiveis": False,
+}
+
+
+def _usage_value(usage, *names):
+    for name in names:
+        if usage is None:
+            continue
+
+        if isinstance(usage, dict) and name in usage:
+            return usage.get(name)
+
+        value = getattr(usage, name, None)
+        if value is not None:
+            return value
+
+    return 0
+
+
+def _estimate_gemini_cost_usd(prompt_tokens: int, completion_tokens: int) -> float:
+    """
+    Custo estimado opcional.
+    Para custo real, configure no Render/.env:
+    GEMINI_INPUT_COST_PER_1M
+    GEMINI_OUTPUT_COST_PER_1M
+    """
+    input_cost_per_1m = float(os.getenv("GEMINI_INPUT_COST_PER_1M", "0") or 0)
+    output_cost_per_1m = float(os.getenv("GEMINI_OUTPUT_COST_PER_1M", "0") or 0)
+
+    return round(
+        (prompt_tokens / 1_000_000) * input_cost_per_1m
+        + (completion_tokens / 1_000_000) * output_cost_per_1m,
+        6,
+    )
+
+
+def _update_last_gemini_usage(response=None, fallback: bool = False):
+    global LAST_GEMINI_USAGE_METADATA
+
+    if fallback or response is None:
+        LAST_GEMINI_USAGE_METADATA = {
+            "provider": "gemini",
+            "modelo_ia": GEMINI_MODEL,
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+            "custo_estimado_usd": 0.0,
+            "tokens_disponiveis": False,
+            "observabilidade": "fallback_sem_usage_metadata",
+        }
+        return LAST_GEMINI_USAGE_METADATA
+
+    usage = getattr(response, "usage_metadata", None)
+
+    prompt_tokens = int(
+        _usage_value(
+            usage,
+            "prompt_token_count",
+            "prompt_tokens",
+            "input_tokens",
+        )
+        or 0
+    )
+
+    completion_tokens = int(
+        _usage_value(
+            usage,
+            "candidates_token_count",
+            "completion_tokens",
+            "output_tokens",
+        )
+        or 0
+    )
+
+    total_tokens = int(
+        _usage_value(
+            usage,
+            "total_token_count",
+            "total_tokens",
+        )
+        or (prompt_tokens + completion_tokens)
+        or 0
+    )
+
+    LAST_GEMINI_USAGE_METADATA = {
+        "provider": "gemini",
+        "modelo_ia": GEMINI_MODEL,
+        "prompt_tokens": prompt_tokens,
+        "completion_tokens": completion_tokens,
+        "total_tokens": total_tokens,
+        "custo_estimado_usd": _estimate_gemini_cost_usd(prompt_tokens, completion_tokens),
+        "tokens_disponiveis": total_tokens > 0,
+    }
+
+    return LAST_GEMINI_USAGE_METADATA
+
+
+def get_last_gemini_usage_metadata() -> dict:
+    return dict(LAST_GEMINI_USAGE_METADATA)
+
+
 
 
 def build_financial_prompt(payload: dict, diagnosis: dict) -> str:
@@ -153,25 +265,25 @@ def generate_fallback_plan(payload: dict, diagnosis: dict) -> str:
             "risk": "Nível de risco",
             "commitment": "Comprometimento da renda",
             "reserve": "Reserva de emergência",
-            "plan": "Plano de ação de 30 dias:",
-            "w1": "Semana 1 — Entender para onde o dinheiro está indo",
-            "w1a": "Anote todos os gastos fixos e variáveis.",
-            "w1b": "Separe os gastos em essenciais, importantes e opcionais.",
-            "w1c": "Identifique pelo menos 3 gastos que podem ser reduzidos sem prejudicar sua rotina.",
-            "w2": "Semana 2 — Reduzir desperdícios",
-            "w2a": "Defina um limite semanal para gastos variáveis.",
-            "w2b": "Evite criar novas dívidas neste período.",
-            "w2c": "Direcione qualquer sobra para sua reserva de emergência.",
-            "w3": "Semana 3 — Fortalecer a reserva",
-            "w3a": "Como sua reserva ainda cobre poucos dias, priorize aumentar esse valor.",
-            "w3b": "Mesmo que o valor seja pequeno, mantenha consistência.",
-            "w3c": "A primeira meta é chegar a pelo menos 1 mês de despesas cobertas.",
-            "w4": "Semana 4 — Revisar e ajustar",
-            "w4a": "Compare sua situação atual com o início do plano.",
-            "w4b": "Verifique se o saldo mensal melhorou.",
-            "w4c": "Ajuste suas metas para o próximo mês.",
+            "plan": "Plano de Ação de 30 Dias",
+            "w1": "Semana 1 — Diagnóstico e organização",
+            "w1a": "Levante seus gastos fixos, variáveis e dívidas.",
+            "w1b": "Separe seus gastos por categoria para entender melhor o orçamento.",
+            "w1c": "Use essa visão para encontrar o principal ponto de atenção financeiro.",
+            "w2": "Semana 2 — Redução de gastos e controle",
+            "w2a": "Revise assinaturas, compras por impulso e pequenos gastos recorrentes.",
+            "w2b": "Acompanhe os gastos durante a semana para evitar surpresas.",
+            "w2c": "Evite assumir novos compromissos financeiros durante o plano.",
+            "w3": "Semana 3 — Reserva financeira",
+            "w3a": "Separe uma parte possível do saldo mensal para fortalecer a reserva.",
+            "w3b": "Crie o hábito de acompanhar a evolução da reserva.",
+            "w3c": "Evite usar a reserva para gastos que não sejam emergenciais.",
+            "w4": "Semana 4 — Revisão e próximos passos",
+            "w4a": "Revise o que funcionou melhor durante o plano.",
+            "w4b": "Compare gastos antes e depois do plano.",
+            "w4c": "Mantenha uma rotina simples de acompanhamento para o próximo mês.",
             "next": "Próximo passo recomendado:",
-            "next_text": "Priorize aumentar sua reserva e reduzir gastos variáveis antes de assumir novos compromissos financeiros.",
+            "next_text": "Após os 30 dias, mantenha o foco no ponto mais sensível do diagnóstico: reserva, dívidas ou controle de gastos, conforme seu saldo estimado e nível de risco.",
             "notice": "Aviso:",
             "notice_text": "A INNA atua como educadora financeira digital. Ela não recomenda compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
             "months": "mês(es)",
@@ -539,6 +651,7 @@ def generate_fallback_plan(payload: dict, diagnosis: dict) -> str:
 """.strip()
 
 def generate_ai_plan(payload: dict, diagnosis: dict) -> str:
+    _update_last_gemini_usage(fallback=True)
     if INNA_MOCK_MODE:
         return generate_fallback_plan(payload, diagnosis)
 
@@ -547,12 +660,14 @@ def generate_ai_plan(payload: dict, diagnosis: dict) -> str:
 
     try:
         client = genai.Client(api_key=GEMINI_API_KEY)
-        prompt = build_financial_prompt(payload, diagnosis)
+        prompt = build_plan_prompt(payload, diagnosis)
 
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=prompt,
         )
+
+        _update_last_gemini_usage(response)
 
         text = getattr(response, "text", None)
 
