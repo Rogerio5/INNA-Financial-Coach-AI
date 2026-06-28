@@ -429,6 +429,235 @@ def formatar_reais_simples(valor: float) -> str:
     return f"R$ {texto}"
 
 
+
+def detectar_intencao_continuacao(pergunta: str) -> str:
+    texto = normalize_text(pergunta)
+
+    confirmou = any(p in texto for p in [
+        "sim", "quero", "pode", "mostre", "me mostre", "continue", "ok", "vamos", "claro"
+    ])
+
+    negou = any(p in texto for p in [
+        "nao", "não", "cancelar", "pare", "agora nao", "agora não", "depois"
+    ])
+
+    if negou:
+        return "cancelar"
+
+    if any(p in texto for p in [
+        "nao consigo", "não consigo", "muito alto", "apertado", "pesado",
+        "guardar menos", "valor menor", "diminuir", "reduzir valor"
+    ]):
+        return "ajustar_para_menos"
+
+    if any(p in texto for p in [
+        "guardar mais", "valor maior", "aumentar", "consigo mais"
+    ]):
+        return "ajustar_para_mais"
+
+    if any(p in texto for p in [
+        "divida", "dívida", "devo", "parcelas", "emprestimo", "empréstimo",
+        "cartao", "cartão", "financiamento"
+    ]):
+        return "dividas"
+
+    if any(p in texto for p in [
+        "gasto", "gastos", "conta", "contas", "mercado", "aluguel",
+        "luz", "agua", "internet", "transporte", "organizar"
+    ]):
+        return "organizar_gastos"
+
+    if any(p in texto for p in [
+        "reserva", "guardar dinheiro", "juntar dinheiro", "emergencia", "emergência"
+    ]):
+        return "reserva"
+
+    if any(p in texto for p in [
+        "esta semana", "desta semana", "semana", "7 dias"
+    ]) and confirmou:
+        return "meta_semana"
+
+    if any(p in texto for p in [
+        "mes inteiro", "mês inteiro", "30 dias", "mes", "mês", "4 semanas"
+    ]) and confirmou:
+        return "meta_mes"
+
+    if confirmou and any(p in texto for p in [
+        "meta simples para esta semana", "esta semana", "semana"
+    ]):
+        return "meta_semana"
+
+    if confirmou and any(p in texto for p in [
+        "meta no mes inteiro", "meta no mês inteiro", "mes inteiro",
+        "mês inteiro", "30 dias"
+    ]):
+        return "meta_mes"
+
+    if confirmou:
+        return "confirmacao"
+
+    return "pergunta_normal"
+
+
+def resposta_cancelar_simples() -> dict:
+    return {
+        "resposta": """Tudo bem. Podemos parar por aqui.
+
+Quando quiser continuar, você pode perguntar sobre:
+- reserva;
+- dívidas;
+- gastos;
+- meta da semana;
+- meta de 30 dias.
+
+A INNA está aqui para orientar de forma simples, no seu ritmo.""",
+        "fontes": [],
+        "contexto_usado": "",
+        "modo": "rag_local_sem_custo",
+    }
+
+
+def resposta_ajustar_valor(menor: bool = True) -> dict:
+    if menor:
+        resposta = """Tudo bem. Vamos deixar mais leve.
+
+Quando o valor fica pesado, o melhor é começar menor.
+
+Você pode fazer assim:
+
+1. Escolha um valor que não aperte seu mês.
+2. Pode começar com R$ 10, R$ 20 ou R$ 50 por semana.
+3. Guarde primeiro o que for possível.
+4. Quando melhorar, aumente aos poucos.
+
+Me diga um valor menor que cabe no seu bolso, por exemplo:
+"consigo guardar 50 por mês"."""
+    else:
+        resposta = """Ótimo. Se você consegue guardar mais, vamos ajustar com cuidado.
+
+Faça assim:
+
+1. Veja se esse valor maior não vai apertar suas contas.
+2. Separe primeiro o valor das contas importantes.
+3. Depois aumente a reserva aos poucos.
+4. Não precisa subir tudo de uma vez.
+
+Me diga o novo valor, por exemplo:
+"posso guardar 300 por mês"."""
+
+    return {
+        "resposta": resposta,
+        "fontes": [],
+        "contexto_usado": "",
+        "modo": "rag_local_sem_custo",
+    }
+
+
+def resposta_meta_semana_simples() -> dict:
+    return {
+        "resposta": """Claro. Vamos fazer só a meta desta semana.
+
+Meta da semana:
+Guardar um valor pequeno e possível, sem apertar demais.
+
+O que fazer nesta semana:
+
+1. Escolha um valor que caiba no seu bolso.
+2. Separe esse valor assim que receber ou assim que sobrar.
+3. Não use esse dinheiro para compras comuns.
+4. No fim da semana, veja se conseguiu manter o valor guardado.
+
+Orientação simples:
+Se não conseguir guardar tudo, guarde uma parte. O importante é começar.
+
+Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar.""",
+        "fontes": [],
+        "contexto_usado": "",
+        "modo": "rag_local_sem_custo",
+    }
+
+
+def resposta_meta_mes_simples() -> dict:
+    return {
+        "resposta": """Claro. Vou mostrar uma ideia simples para o mês inteiro.
+
+Meta de 30 dias:
+Guardar um valor pequeno toda semana, sem apertar demais.
+
+Plano simples de 4 semanas:
+
+1. Semana 1:
+Guarde o primeiro valor da semana. O importante é começar.
+
+2. Semana 2:
+Tente repetir o mesmo valor da semana anterior.
+
+3. Semana 3:
+Veja se sobrou um pouco mais. Se não sobrou, mantenha o mesmo valor.
+
+4. Semana 4:
+Some tudo que conseguiu guardar e veja seu progresso.
+
+Orientação simples:
+Se uma semana apertar, guarde menos. O importante é não desistir.
+
+Depois você pode me dizer se quer uma meta menor ou maior.""",
+        "fontes": [],
+        "contexto_usado": "",
+        "modo": "rag_local_sem_custo",
+    }
+
+
+def resposta_dividas_simples() -> dict:
+    return {
+        "resposta": """Vamos por partes. Para olhar as dívidas de forma simples:
+
+1. Anote todas as dívidas ou parcelas.
+2. Coloque o valor de cada uma.
+3. Veja qual pesa mais no mês.
+4. Evite fazer novas dívidas enquanto organiza as atuais.
+
+O que fazer hoje:
+Anote quanto você paga por mês em dívidas ou parcelas.
+
+Depois me diga aqui no chat, por exemplo:
+"pago 600 de dívida por mês".
+
+Aí eu te ajudo a organizar o próximo passo.""",
+        "fontes": [],
+        "contexto_usado": "",
+        "modo": "rag_local_sem_custo",
+    }
+
+
+def resposta_organizar_gastos_simples() -> dict:
+    return {
+        "resposta": """Vamos organizar seus gastos de forma simples.
+
+Separe em 3 grupos:
+
+1. Contas fixas:
+aluguel, luz, água, internet, telefone.
+
+2. Gastos do dia a dia:
+mercado, transporte, comida fora, compras pequenas.
+
+3. Dívidas ou parcelas:
+cartão, empréstimo, financiamento ou compras parceladas.
+
+O que fazer hoje:
+Anote quanto vai para cada grupo.
+
+Depois me diga, por exemplo:
+"gasto 1200 em contas, 800 em mercado e 400 em parcelas".
+
+Aí eu te ajudo a enxergar onde pode melhorar.""",
+        "fontes": [],
+        "contexto_usado": "",
+        "modo": "rag_local_sem_custo",
+    }
+
+
 def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     results = search_knowledge_base(pergunta, idioma=idioma, top_k=top_k)
 
@@ -452,6 +681,28 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
 
     contexto = "\n\n".join([get_chunk_text(item) for item in results])
     pergunta_normalizada = normalize_text(pergunta)
+    intencao_continuacao = detectar_intencao_continuacao(pergunta)
+
+    if intencao_continuacao == "cancelar":
+        return resposta_cancelar_simples()
+
+    if intencao_continuacao == "ajustar_para_menos":
+        return resposta_ajustar_valor(menor=True)
+
+    if intencao_continuacao == "ajustar_para_mais":
+        return resposta_ajustar_valor(menor=False)
+
+    if intencao_continuacao == "meta_semana":
+        return resposta_meta_semana_simples()
+
+    if intencao_continuacao == "meta_mes":
+        return resposta_meta_mes_simples()
+
+    if intencao_continuacao == "dividas" and "anotacao_financeira_do_usuario" not in pergunta_normalizada:
+        return resposta_dividas_simples()
+
+    if intencao_continuacao == "organizar_gastos" and "anotacao_financeira_do_usuario" not in pergunta_normalizada:
+        return resposta_organizar_gastos_simples()
 
     # Quando o usuário responde "sim", a INNA precisa olhar a última pergunta.
     # Se a última pergunta foi sobre "esta semana", responde só a meta semanal.

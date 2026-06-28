@@ -5309,8 +5309,12 @@ if app_menu == "💬 Conversar":
 
             elif pergunta_usuario.lower().strip("?!. ") in continuacoes_curtas and ultima_resposta_inna:
                 pergunta_para_rag = (
-                    "O usuário quer continuar a conversa com base na última resposta da INNA. "
-                    "Não reinicie o assunto. Entregue um próximo passo prático e curto.\n\n"
+                    "CONTINUACAO_DA_CONVERSA\n"
+                    "O usuário respondeu de forma curta e quer continuar. "
+                    "Use a última resposta da INNA para entender exatamente o que ele aceitou. "
+                    "Se a última resposta perguntou sobre esta semana, responda só sobre esta semana. "
+                    "Se a última resposta perguntou sobre mês inteiro ou 30 dias, responda sobre 4 semanas. "
+                    "Não reinicie o assunto.\n\n"
                     f"Última resposta da INNA:\n{ultima_resposta_inna}\n\n"
                     f"Resposta curta do usuário:\n{pergunta_usuario}"
                 )
