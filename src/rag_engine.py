@@ -329,6 +329,106 @@ def search_knowledge_base(
     return scored[: max(1, min(int(top_k or 5), 10))]
 
 
+
+def extrair_valor_para_guardar(pergunta: str) -> float | None:
+    texto = normalize_text(pergunta)
+
+    # Palavras simples que pessoas podem usar:
+    # "guardo 100", "sobra 100", "consigo guardar 100",
+    # "dá pra guardar 100", "posso juntar 100", "separo 100".
+    padroes = [
+        r"consigo\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"consigo\s+juntar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"consigo\s+separar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+
+        r"posso\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"posso\s+juntar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"posso\s+separar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+
+        r"da\s+pra\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"da\s+para\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"daria\s+pra\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"daria\s+para\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+
+        r"eu\s+guardo\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"guardo\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+
+        r"eu\s+junto\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"junto\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"juntar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+
+        r"eu\s+separo\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"separo\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"separar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+
+        r"me\s+sobra\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"sobra\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"sobrou\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"fica\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"resta\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+
+        r"tenho\s+livre\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"dinheiro\s+livre\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+        r"livre\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
+    ]
+
+    for padrao in padroes:
+        match = re.search(padrao, texto)
+        if match:
+            valor = match.group(1).replace(".", "").replace(",", ".")
+            try:
+                return float(valor)
+            except Exception:
+                return None
+
+    return None
+
+
+
+def extrair_valor_por_palavras(pergunta: str, palavras: list[str]) -> float | None:
+    texto = normalize_text(pergunta)
+
+    for palavra in palavras:
+        padrao = rf"{palavra}\s*(?:de|do|da|é|e|:)?\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)"
+        match = re.search(padrao, texto)
+
+        if match:
+            valor = match.group(1).replace(".", "").replace(",", ".")
+            try:
+                return float(valor)
+            except Exception:
+                return None
+
+    return None
+
+
+def extrair_renda_mensal(pergunta: str) -> float | None:
+    return extrair_valor_por_palavras(
+        pergunta,
+        ["ganho", "recebo", "salario", "renda", "entra", "aposentadoria", "beneficio", "pensao"],
+    )
+
+
+def extrair_gasto_mensal(pergunta: str) -> float | None:
+    return extrair_valor_por_palavras(
+        pergunta,
+        ["gasto", "gastei", "pago", "conta", "contas", "despesa", "despesas", "custos"],
+    )
+
+
+def formatar_reais_simples(valor: float) -> str:
+    if valor >= 1000:
+        texto = f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    else:
+        texto = f"{valor:.2f}".replace(".", ",")
+
+    if texto.endswith(",00"):
+        texto = texto[:-3]
+
+    return f"R$ {texto}"
+
+
 def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     results = search_knowledge_base(pergunta, idioma=idioma, top_k=top_k)
 
@@ -353,42 +453,199 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     contexto = "\n\n".join([get_chunk_text(item) for item in results])
     pergunta_normalizada = normalize_text(pergunta)
 
-    if "reserva" in pergunta_normalizada:
-        resposta = """Para melhorar sua reserva financeira, a INNA recomenda:
+    # Quando o usuário responde "sim", a INNA precisa olhar a última pergunta.
+    # Se a última pergunta foi sobre "esta semana", responde só a meta semanal.
+    # Se foi sobre "mês inteiro" ou "30 dias", responde as 4 semanas.
+    usuario_confirmou = (
+        "sim" in pergunta_normalizada
+        or "quero" in pergunta_normalizada
+        or "pode" in pergunta_normalizada
+        or "continue" in pergunta_normalizada
+        or "me mostre" in pergunta_normalizada
+        or "mostre" in pergunta_normalizada
+    )
 
-1. Calcule seus gastos mensais totais, incluindo gastos fixos, variáveis e parcelas de dívidas.
-2. Separe uma parte possível do saldo mensal para fortalecer sua reserva.
-3. Evite usar a reserva para gastos que não sejam emergenciais.
-4. Acompanhe a evolução da reserva todo mês.
+    pedido_semana = (
+        "esta semana" in pergunta_normalizada
+        or "desta semana" in pergunta_normalizada
+        or "meta simples para esta semana" in pergunta_normalizada
+        or "meta para esta semana" in pergunta_normalizada
+    )
 
-Essa orientação é educativa e não substitui consultoria financeira profissional."""
+    pedido_mes = (
+        "mes inteiro" in pergunta_normalizada
+        or "mês inteiro" in pergunta_normalizada
+        or "30 dias" in pergunta_normalizada
+        or "meta do mes" in pergunta_normalizada
+        or "meta do mês" in pergunta_normalizada
+    )
+
+    if usuario_confirmou and pedido_mes:
+        resposta = """Claro. Vou mostrar uma ideia simples para o mês inteiro.
+
+Meta de 30 dias:
+Guardar um valor pequeno toda semana, sem apertar demais.
+
+Plano simples de 4 semanas:
+
+1. Semana 1:
+Guarde o primeiro valor da semana. O importante é começar.
+
+2. Semana 2:
+Tente repetir o mesmo valor da semana anterior.
+
+3. Semana 3:
+Veja se sobrou um pouco mais. Se não sobrou, mantenha o mesmo valor.
+
+4. Semana 4:
+Some tudo que conseguiu guardar e veja seu progresso.
+
+Orientação simples:
+Se uma semana apertar, guarde menos. O importante é não desistir.
+
+Depois você pode me dizer se quer uma meta menor ou maior."""
+
+        return {
+            "resposta": resposta,
+            "fontes": [],
+            "contexto_usado": "",
+            "modo": "rag_local_sem_custo",
+        }
+
+    if usuario_confirmou and pedido_semana:
+        resposta = """Claro. Vamos fazer só a meta desta semana.
+
+Meta da semana:
+Guardar um valor pequeno e possível, sem apertar demais.
+
+O que fazer nesta semana:
+
+1. Escolha um valor que caiba no seu bolso.
+2. Separe esse valor assim que receber ou assim que sobrar.
+3. Não use esse dinheiro para compras comuns.
+4. No fim da semana, veja se conseguiu manter o valor guardado.
+
+Orientação simples:
+Se não conseguir guardar tudo, guarde uma parte. O importante é começar.
+
+Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
+
+        return {
+            "resposta": resposta,
+            "fontes": [],
+            "contexto_usado": "",
+            "modo": "rag_local_sem_custo",
+        }
+
+    valor_para_guardar = extrair_valor_para_guardar(pergunta)
+
+    if valor_para_guardar and (
+        "anotacao_financeira_do_usuario" in pergunta_normalizada
+        or "guardar" in pergunta_normalizada
+        or "guardo" in pergunta_normalizada
+        or "juntar" in pergunta_normalizada
+        or "junto" in pergunta_normalizada
+        or "separar" in pergunta_normalizada
+        or "separo" in pergunta_normalizada
+        or "sobra" in pergunta_normalizada
+        or "sobrou" in pergunta_normalizada
+        or "resta" in pergunta_normalizada
+        or "fica" in pergunta_normalizada
+        or "consigo" in pergunta_normalizada
+        or "posso" in pergunta_normalizada
+        or "ganho" in pergunta_normalizada
+        or "recebo" in pergunta_normalizada
+        or "gasto" in pergunta_normalizada
+        or "gastei" in pergunta_normalizada
+        or "pago" in pergunta_normalizada
+        or "salario" in pergunta_normalizada
+        or "renda" in pergunta_normalizada
+        or "conta" in pergunta_normalizada
+        or "despesa" in pergunta_normalizada
+    ):
+        renda_mensal = extrair_renda_mensal(pergunta) if "extrair_renda_mensal" in globals() else None
+        gasto_mensal = extrair_gasto_mensal(pergunta) if "extrair_gasto_mensal" in globals() else None
+
+        valor_semana = valor_para_guardar / 4
+
+        linhas = []
+
+        if renda_mensal:
+            linhas.append(f"- Renda informada: {formatar_reais_simples(renda_mensal)} por mês.")
+
+        if gasto_mensal:
+            linhas.append(f"- Gasto informado: {formatar_reais_simples(gasto_mensal)} por mês.")
+
+        linhas.append(f"- Valor que você disse que consegue guardar: {formatar_reais_simples(valor_para_guardar)} por mês.")
+
+        contexto_financeiro = "\n".join(linhas)
+
+        resposta = f"""Entendi sua anotação. Vou te orientar de forma simples.
+
+{contexto_financeiro}
+
+Uma forma fácil de começar é dividir esse valor por semana:
+
+- Por mês: {formatar_reais_simples(valor_para_guardar)}
+- Por semana: guardar cerca de {formatar_reais_simples(valor_semana)}
+
+Meta desta semana:
+
+1. Separe cerca de {formatar_reais_simples(valor_semana)} nesta semana.
+2. Guarde esse valor assim que receber ou assim que sobrar.
+3. Evite usar esse dinheiro para compras do dia a dia.
+4. No fim da semana, veja se conseguiu manter esse valor guardado.
+
+Orientação simples:
+Se uma semana apertar, guarde menos. O importante é começar e manter o costume.
+
+Quer que eu mostre como ficaria essa meta no mês inteiro?"""
+
+        fontes = [
+            {
+                "titulo": item["titulo"],
+                "fonte": item["fonte"],
+                "score": item["score"],
+                "trecho": get_chunk_text(item)[:500],
+            }
+            for item in results
+        ]
+
+        return {
+            "resposta": resposta,
+            "fontes": fontes,
+            "contexto_usado": contexto,
+            "modo": "rag_local_sem_custo",
+        }
+
+    elif "reserva" in pergunta_normalizada:
+        resposta = """Vamos por partes. Vou te orientar de um jeito simples:
+
+1. Veja quanto entra e quanto sai todo mês com contas, mercado, transporte, compras e parcelas.
+2. Separe um valor pequeno que caiba no seu bolso, sem apertar demais.
+3. Não use esse dinheiro para compras do dia a dia.
+4. Olhe todo mês se conseguiu guardar alguma quantia, mesmo que seja pouco.\n\nQuer que eu monte uma meta simples para esta semana?"""
     elif "divida" in pergunta_normalizada or "dívida" in pergunta_normalizada:
-        resposta = """Para reduzir dívidas, a INNA recomenda:
+        resposta = """Vamos por partes. O melhor caminho para reduzir suas dívidas é:
 
 1. Liste todas as dívidas, parcelas, juros e vencimentos.
 2. Priorize o pagamento das dívidas mais caras ou com maior impacto no orçamento.
 3. Evite assumir novas dívidas durante o plano de organização.
-4. Negocie condições melhores quando possível.
-
-Essa orientação é educativa e não substitui consultoria financeira profissional."""
+4. Negocie condições melhores quando possível.\n\nQuer que eu monte uma meta simples para esta semana?"""
     elif "gasto" in pergunta_normalizada or "organizar" in pergunta_normalizada:
-        resposta = """Para organizar seus gastos, a INNA recomenda:
+        resposta = """Vamos por partes. O melhor caminho para organizar seus gastos é:
 
 1. Separe seus gastos em fixos, variáveis e dívidas.
 2. Identifique gastos pequenos recorrentes que podem ser reduzidos.
 3. Defina um limite semanal para despesas variáveis.
-4. Revise seu orçamento ao final de cada mês.
-
-Essa orientação é educativa e não substitui consultoria financeira profissional."""
+4. Revise seu orçamento ao final de cada mês.\n\nQuer que eu monte uma meta simples para esta semana?"""
     else:
         resposta = """Com base na base de conhecimento da INNA, a orientação educativa é:
 
 1. Organize seus dados financeiros.
 2. Compare renda, gastos, dívidas e reserva.
 3. Priorize ações simples e mensuráveis.
-4. Evite decisões financeiras arriscadas sem orientação profissional.
-
-Essa orientação é educativa e não substitui consultoria financeira profissional."""
+4. Evite decisões financeiras arriscadas sem orientação profissional.\n\nQuer que eu monte uma meta simples para esta semana?"""
 
     fontes = [
         {

@@ -142,7 +142,36 @@ def apply_inna_dark_form_fix():
         opacity: 1 !important;
         font-weight: 800 !important;
     }
-    </style>
+    
+.inna-pergunta-proximo-passo {
+    font-size: 20px !important;
+    font-weight: 900 !important;
+    color: #FFFFFF !important;
+    margin-top: 14px !important;
+    margin-bottom: 8px !important;
+    line-height: 1.35 !important;
+}
+
+
+.fonte-inna-top {
+    text-align: right !important;
+    font-size: 12px !important;
+    color: #9ca3af !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+    opacity: 0.85 !important;
+}
+
+.inna-pergunta-proximo-passo {
+    font-size: 20px !important;
+    font-weight: 900 !important;
+    color: #FFFFFF !important;
+    margin-top: 14px !important;
+    margin-bottom: 8px !important;
+    line-height: 1.35 !important;
+}
+
+</style>
     """, unsafe_allow_html=True)
 
 
@@ -4888,8 +4917,8 @@ CHAT_TEXTS_INNA = {
         "title": "💬 Conversar",
         "caption": "Canal de conversa educativa para dúvidas financeiras simples.",
         "info": "Chat educativo conectado ao RAG local da INNA. As respostas usam a base de conhecimento financeira e exibem fontes quando disponíveis.",
-        "input_label": "Digite uma dúvida financeira:",
-        "placeholder": "Exemplo: Como posso melhorar meu score financeiro?",
+        "input_label": "Digite uma pergunta ou anotação financeira:",
+        "placeholder": "Exemplo: Ganho 3000, gasto 2500 e consigo guardar 100",
         "button": "Enviar pergunta para a Inna",
         "empty": "Digite uma pergunta antes de enviar.",
         "demo_answer": "Ainda estou em modo demonstração. Em breve, vou responder usando IA e o contexto do seu diagnóstico financeiro.",
@@ -5006,6 +5035,49 @@ CHAT_TEXTS_INNA = {
     },
 }
 
+
+def formatar_mensagem_chat_inna(texto: str) -> str:
+    texto = str(texto or "")
+
+    # Remove aviso repetido no chat
+    texto = texto.replace(
+        "Essa orientação é educativa e não substitui consultoria financeira profissional.",
+        ""
+    )
+
+    # Linguagem mais simples e orientativa
+    texto = texto.replace(
+        "A INNA sugere este caminho para melhorar sua reserva financeira:",
+        "Vamos por partes. Vou te orientar de um jeito simples:"
+    )
+
+    texto = texto.replace(
+        "Vamos por partes. O melhor caminho para melhorar sua reserva é:",
+        "Vamos por partes. Vou te orientar de um jeito simples:"
+    )
+
+    texto = texto.replace(
+        "Melhor caminho para melhorar sua reserva financeira:",
+        "Vou te mostrar um caminho simples para começar:"
+    )
+
+    texto = texto.replace(
+        "Quer que eu te mostre o melhor caminho agora?",
+        "<div class='inna-pergunta-proximo-passo'>Quer que eu monte uma meta simples para esta semana?</div>"
+    )
+
+    texto = texto.replace(
+        "Quer que eu monte uma meta simples para esta semana?",
+        "<div class='inna-pergunta-proximo-passo'>Quer que eu monte uma meta simples para esta semana?</div>"
+    )
+
+    # Corrige R$ para o Streamlit/Markdown não interpretar o símbolo $
+    texto = texto.replace("R$", "R&#36;")
+    texto = texto.replace(r"R\$", "R&#36;")
+
+    return f"<div class='inna-chat-texto-simples'>{texto}</div>"
+
+
 def chat_t(key: str) -> str:
     lang = app_lang if app_lang in CHAT_TEXTS_INNA else "pt"
     return CHAT_TEXTS_INNA.get(lang, CHAT_TEXTS_INNA["pt"]).get(
@@ -5016,13 +5088,29 @@ if app_menu == "💬 Conversar":
     st.title(chat_t("title"))
     st.caption(chat_t("caption"))
 
-    st.info(chat_t("info"))
+    st.info("Chat educativo conectado ao RAG local da INNA. Faça uma pergunta e continue conversando na mesma página.")
+
+    if "inna_chat_history" not in st.session_state:
+        st.session_state.inna_chat_history = [
+            {
+                "role": "assistant",
+                "content": "Olá! Sou a Inna, sua educadora financeira inteligente. Como posso ajudar?",
+                "source": None,
+            }
+        ]
+
+    if st.button("🧹 Limpar conversa", use_container_width=True):
+        st.session_state.inna_chat_history = [
+            {
+                "role": "assistant",
+                "content": "Olá! Sou a Inna, sua educadora financeira inteligente. Como posso ajudar?",
+                "source": None,
+            }
+        ]
+        st.rerun()
 
     st.write("### 💡 Perguntas rápidas")
-
-    st.caption(
-        "Escolha uma pergunta para começar a conversa com a INNA de forma mais fácil."
-    )
+    st.caption("Escolha uma pergunta para começar a conversa com a INNA de forma mais fácil.")
 
     quick_questions = [
         "Como melhorar minha reserva?",
@@ -5040,28 +5128,209 @@ if app_menu == "💬 Conversar":
                 st.session_state.quick_chat_question_inna = question
                 st.rerun()
 
+    st.divider()
+
+    for message in st.session_state.inna_chat_history:
+        with st.chat_message(message["role"]):
+            if message.get("source"):
+                st.markdown(
+                    f"<div class='fonte-inna-top'>{message['source']}</div>",
+                    unsafe_allow_html=True,
+                )
+
+            st.markdown(formatar_mensagem_chat_inna(message["content"]), unsafe_allow_html=True)
+
+    pergunta_rapida_pendente = st.session_state.pop("quick_chat_question_inna", "")
+
+    if st.session_state.pop("limpar_chat_input_inna", False):
+        st.session_state["chat_question_input_inna"] = ""
+
+    ultima_msg_inna = ""
+    for msg in reversed(st.session_state.inna_chat_history):
+        if msg.get("role") == "assistant":
+            ultima_msg_inna = msg.get("content", "")
+            break
+
+    if "Quer que eu" in ultima_msg_inna:
+        col_sim, col_nao, col_cancelar = st.columns(3)
+
+        with col_sim:
+            if st.button("✅ Sim, me mostre", use_container_width=True):
+                st.session_state.quick_chat_question_inna = "sim"
+                st.rerun()
+
+        with col_nao:
+            if st.button("❌ Não agora", use_container_width=True):
+                st.session_state.quick_chat_question_inna = "não"
+                st.rerun()
+
+        with col_cancelar:
+            if st.button("🚫 Cancelar", use_container_width=True):
+                st.session_state.quick_chat_question_inna = "cancelar"
+                st.rerun()
 
     pergunta_demo = st.text_input(
         chat_t("input_label"),
-        value=st.session_state.get("quick_chat_question_inna", ""),
+        value=pergunta_rapida_pendente,
         placeholder=chat_t("placeholder"),
         key="chat_question_input_inna",
     )
 
-    if st.button(chat_t("button"), use_container_width=True):
+    texto_digitado_chat = str(pergunta_demo or "").lower()
+
+    parece_anotacao_financeira = (
+        any(char.isdigit() for char in texto_digitado_chat)
+        and (
+            "ganho" in texto_digitado_chat
+            or "salario" in texto_digitado_chat
+            or "salário" in texto_digitado_chat
+            or "gasto" in texto_digitado_chat
+            or "guardar" in texto_digitado_chat
+            or "sobra" in texto_digitado_chat
+        )
+    )
+
+    if parece_anotacao_financeira:
+        texto_botao_chat = "Enviar anotação para a Inna"
+    else:
+        texto_botao_chat = "Enviar pergunta para a Inna"
+
+    enviar_chat = st.button(texto_botao_chat, use_container_width=True)
+
+    if enviar_chat or pergunta_rapida_pendente:
         if pergunta_demo.strip():
-            st.chat_message("user").markdown(pergunta_demo)
+            pergunta_usuario = pergunta_demo.strip()
+
+            continuacoes_curtas = {
+                "sim",
+                "s",
+                "quero",
+                "sim quero",
+                "quero sim",
+                "pode",
+                "pode mostrar",
+                "me mostre",
+                "me mostra",
+                "mostre",
+                "como faço isso",
+                "como faco isso",
+                "continue",
+                "pode continuar",
+                "vamos",
+                "ok",
+                "claro",
+            }
+
+            ultima_resposta_inna = ""
+
+            for msg in reversed(st.session_state.inna_chat_history):
+                if msg.get("role") == "assistant":
+                    ultima_resposta_inna = msg.get("content", "")
+                    break
+
+            pergunta_para_rag = pergunta_usuario
+
+            texto_anotacao = pergunta_usuario.lower()
+
+            palavras_anotacao_financeira = [
+                "ganho",
+                "recebo",
+                "salario",
+                "salário",
+                "pagamento",
+                "renda",
+                "entra",
+                "cai",
+                "meu dinheiro",
+                "aposentadoria",
+                "beneficio",
+                "benefício",
+                "pensão",
+                "pensao",
+                "bico",
+                "extra",
+
+                "gasto",
+                "gastos",
+                "conta",
+                "contas",
+                "pago",
+                "pagando",
+                "despesa",
+                "despesas",
+                "mercado",
+                "aluguel",
+                "luz",
+                "agua",
+                "água",
+                "internet",
+                "telefone",
+                "transporte",
+                "remedio",
+                "remédio",
+                "parcela",
+                "parcelas",
+                "divida",
+                "dívida",
+
+                "guardo",
+                "guardar",
+                "juntar",
+                "junto",
+                "separo",
+                "separar",
+                "sobra",
+                "sobrou",
+                "resta",
+                "fica",
+                "consigo",
+                "posso",
+                "da pra",
+                "dá pra",
+                "da para",
+                "dá para",
+                "livre",
+            ]
+
+            parece_anotacao_financeira = (
+                any(char.isdigit() for char in texto_anotacao)
+                and any(palavra in texto_anotacao for palavra in palavras_anotacao_financeira)
+            )
+
+            if parece_anotacao_financeira:
+                pergunta_para_rag = (
+                    "ANOTACAO_FINANCEIRA_DO_USUARIO\n"
+                    "O usuário informou dados financeiros em texto livre. "
+                    "Não trate como pergunta genérica. "
+                    "Extraia o valor que ele consegue guardar, se existir, "
+                    "e oriente de forma simples, prática e educativa.\n\n"
+                    f"Texto do usuário:\n{pergunta_usuario}"
+                )
+
+            elif pergunta_usuario.lower().strip("?!. ") in continuacoes_curtas and ultima_resposta_inna:
+                pergunta_para_rag = (
+                    "O usuário quer continuar a conversa com base na última resposta da INNA. "
+                    "Não reinicie o assunto. Entregue um próximo passo prático e curto.\n\n"
+                    f"Última resposta da INNA:\n{ultima_resposta_inna}\n\n"
+                    f"Resposta curta do usuário:\n{pergunta_usuario}"
+                )
+
+            st.session_state.inna_chat_history.append({
+                "role": "user",
+                "content": pergunta_usuario,
+                "source": None,
+            })
 
             try:
                 api_base_url = globals().get("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
 
                 rag_payload = {
-                    "pergunta": pergunta_demo.strip(),
+                    "pergunta": pergunta_para_rag,
                     "idioma": st.session_state.get("app_lang", "pt"),
                     "top_k": 3,
                 }
 
-                with st.spinner("Consultando a base de conhecimento da INNA..."):
+                with st.spinner("A Inna está analisando..."):
                     rag_response = requests.post(
                         f"{api_base_url}/rag/ask",
                         json=rag_payload,
@@ -5074,20 +5343,21 @@ if app_menu == "💬 Conversar":
                     resposta_rag = rag_data.get("resposta") or "Não encontrei uma resposta suficiente na base da INNA."
                     fontes_rag = rag_data.get("fontes", [])
 
-                    st.chat_message("assistant").markdown(resposta_rag)
+                    fonte_resumida = None
 
                     if fontes_rag:
-                        with st.expander("📚 Fontes usadas pela INNA"):
-                            for fonte in fontes_rag:
-                                st.markdown(
-                                    f"""
-**Fonte:** `{fonte.get("fonte", "-")}`  
-**Título:** {fonte.get("titulo", "-")}  
-**Score:** {fonte.get("score", "-")}  
-**Trecho:**  
-{fonte.get("trecho", "-")}
-"""
-                                )
+                        fonte_principal = fontes_rag[0]
+                        fonte_resumida = "📚 Fonte usada pela INNA"
+
+                    st.session_state.inna_chat_history.append({
+                        "role": "assistant",
+                        "content": resposta_rag,
+                        "source": fonte_resumida,
+                    })
+
+                    st.session_state.limpar_chat_input_inna = True
+                    st.rerun()
+
                 else:
                     st.error(
                         f"Não foi possível consultar o RAG da INNA. "
@@ -5469,7 +5739,7 @@ INTERNAL_PAGE_TEXTS_INNA = {
         "feedback_error": "Erro ao enviar feedback pela API",
         "chat_demo_info": "Aqui ficará o chat da INNA. A próxima etapa é conectar esta tela à IA para responder dúvidas com base no último diagnóstico financeiro do usuário.",
         "chat_question": "Digite uma dúvida financeira:",
-        "chat_placeholder": "Exemplo: Como posso melhorar meu score financeiro?",
+        "chat_placeholder": "Exemplo: Como posso organizar minha reserva financeira?",
         "chat_button": "Enviar pergunta para a Inna",
         "chat_empty": "Digite uma pergunta antes de enviar.",
         "chat_demo_answer": "Ainda estou em modo demonstração. Em breve, vou responder usando IA e o contexto do seu diagnóstico financeiro.",
