@@ -70,5 +70,4 @@ websockets==14.2
 python-telegram-bot==21.6
 streamlit-js-eval==0.1.7
 streamlit==1.41.1
-pillow==11.0.0
 streamlit-js-eval==0.1.7
