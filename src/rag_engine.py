@@ -204,96 +204,162 @@ def ingest_knowledge_document(
     return len(chunks)
 
 
-def ingest_default_knowledge_base() -> dict[str, Any]:
-    ensure_rag_tables()
 
-    results = []
+def chunk_text(text: str, max_chars: int = 1200, overlap: int = 150) -> list[str]:
+    """
+    Divide textos grandes em partes menores para salvar na base RAG.
+    Mantém um pequeno overlap para não perder contexto entre os chunks.
+    """
+    if not text:
+        return []
+
+    text = text.strip()
+
+    if len(text) <= max_chars:
+        return [text]
+
+    chunks = []
+    start = 0
+
+    while start < len(text):
+        end = start + max_chars
+        chunk = text[start:end].strip()
+
+        if chunk:
+            chunks.append(chunk)
+
+        start = end - overlap
+
+        if start < 0:
+            start = 0
+
+        if start >= len(text):
+            break
+
+    return chunks
+
+
+def ingest_default_knowledge_base() -> dict[str, Any]:
+    """
+    Carrega todos os arquivos .md da pasta data/knowledge_base no RAG local.
+
+    Exemplo:
+    - financeiro_basico.md
+    - faq_financeiro_inna.md
+    """
+    ensure_rag_tables()
 
     if not KNOWLEDGE_DIR.exists():
         return {
-            "status": "empty",
+            "status": "error",
             "message": "Diretório data/knowledge_base não encontrado.",
             "documents": [],
+            "total_documents": 0,
+            "total_chunks": 0,
         }
 
-    files = sorted(
-        list(KNOWLEDGE_DIR.glob("*.md"))
-        + list(KNOWLEDGE_DIR.glob("*.txt"))
-    )
+    markdown_files = sorted(KNOWLEDGE_DIR.glob("*.md"))
 
-    for file_path in files:
-        content = file_path.read_text(encoding="utf-8")
+    if not markdown_files:
+        return {
+            "status": "error",
+            "message": "Nenhum arquivo .md encontrado em data/knowledge_base.",
+            "documents": [],
+            "total_documents": 0,
+            "total_chunks": 0,
+        }
+
+    documents = []
+    total_chunks = 0
+
+    for file_path in markdown_files:
+        conteudo = file_path.read_text(encoding="utf-8")
+
         chunks_count = ingest_knowledge_document(
             titulo=file_path.stem.replace("_", " ").title(),
             fonte=str(file_path).replace("\\", "/"),
-            conteudo=content,
+            conteudo=conteudo,
             categoria="educacao_financeira",
             idioma="pt",
         )
 
-        results.append(
+        documents.append(
             {
                 "fonte": str(file_path).replace("\\", "/"),
-                "chunks": chunks_count,
+                "chunks": int(chunks_count),
             }
         )
 
+        total_chunks += int(chunks_count)
+
     return {
         "status": "ok",
-        "documents": results,
-        "total_documents": len(results),
-        "total_chunks": sum(item["chunks"] for item in results),
+        "documents": documents,
+        "total_documents": len(documents),
+        "total_chunks": total_chunks,
     }
 
 
+
 def load_chunks(idioma: str = "pt") -> list[dict[str, Any]]:
+    """
+    Carrega os chunks salvos no banco para busca semântica local.
+    Retorna uma lista de dicionários com aliases seguros para texto/embedding.
+    """
     ensure_rag_tables()
 
     conn = get_rag_connection()
     cur = conn.cursor()
 
-    cur.execute(
-        """
-        SELECT
-            id,
-            titulo,
-            fonte,
-            categoria,
-            idioma,
-            chunk_index,
-            chunk_text,
-            embedding,
-            metadata
-        FROM inna_knowledge_chunks
-        WHERE idioma = %s OR idioma = 'pt'
-        ORDER BY id ASC;
-        """,
-        (idioma,),
-    )
-
-    rows = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    chunks = []
-
-    for row in rows:
-        chunks.append(
-            {
-                "id": row[0],
-                "titulo": row[1],
-                "fonte": row[2],
-                "categoria": row[3],
-                "idioma": row[4],
-                "chunk_index": row[5],
-                "chunk_text": row[6],
-                "embedding": row[7],
-                "metadata": row[8],
-            }
+    try:
+        cur.execute(
+            """
+            SELECT *
+            FROM inna_knowledge_chunks
+            WHERE idioma = %s
+            ORDER BY fonte, chunk_index, id;
+            """,
+            (idioma,),
         )
 
-    return chunks
+        columns = [desc[0] for desc in cur.description]
+        rows = cur.fetchall()
+
+        chunks = []
+
+        for row in rows:
+            item = dict(zip(columns, row))
+
+            texto = (
+                item.get("texto")
+                or item.get("conteudo")
+                or item.get("chunk_text")
+                or item.get("trecho")
+                or ""
+            )
+
+            embedding = (
+                item.get("embedding")
+                or item.get("embedding_json")
+                or item.get("vetor")
+                or []
+            )
+
+            item["texto"] = texto
+            item["conteudo"] = texto
+            item["chunk_text"] = texto
+
+            item["embedding"] = embedding
+            item["embedding_json"] = embedding
+            item["vetor"] = embedding
+
+            chunks.append(item)
+
+        return chunks
+
+    finally:
+        cur.close()
+        conn.close()
 
 
 def search_knowledge_base(
@@ -698,10 +764,19 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     if intencao_continuacao == "meta_mes":
         return resposta_meta_mes_simples()
 
-    if intencao_continuacao == "dividas" and "anotacao_financeira_do_usuario" not in pergunta_normalizada:
+    tem_anotacao_financeira = (
+        "anotacao_financeira_do_usuario" in pergunta_normalizada
+        or (
+            any(p in pergunta_normalizada for p in ["ganho", "recebo", "salario", "renda"])
+            and any(p in pergunta_normalizada for p in ["gasto", "gastei", "pago", "despesa", "conta"])
+            and any(p in pergunta_normalizada for p in ["guardo", "guardar", "sobra", "consigo guardar", "junto"])
+        )
+    )
+
+    if intencao_continuacao == "dividas" and not tem_anotacao_financeira:
         return resposta_dividas_simples()
 
-    if intencao_continuacao == "organizar_gastos" and "anotacao_financeira_do_usuario" not in pergunta_normalizada:
+    if intencao_continuacao == "organizar_gastos" and not tem_anotacao_financeira:
         return resposta_organizar_gastos_simples()
 
     # Quando o usuário responde "sim", a INNA precisa olhar a última pergunta.
@@ -837,8 +912,8 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
 
 Uma forma fácil de começar é dividir esse valor por semana:
 
-- Por mês: {formatar_reais_simples(valor_para_guardar)}
-- Por semana: guardar cerca de {formatar_reais_simples(valor_semana)}
+- Meta no mês: {formatar_reais_simples(valor_para_guardar)}
+- Meta por semana: cerca de {formatar_reais_simples(valor_semana)}
 
 Meta desta semana:
 
