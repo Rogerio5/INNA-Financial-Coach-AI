@@ -8,3 +8,13 @@ htmlcov/
 .coverage
 data/*.db
 data/*.csv
+.env
+.env.*
+*.bak
+*.log
+backups/
+__pycache__/
+.venv/
+secrets/
+credentials.json
+token.json
