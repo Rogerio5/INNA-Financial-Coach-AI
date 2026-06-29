@@ -39,3 +39,14 @@ __pycache__/
 secrets/
 credentials.json
 token.json
+.env
+.env.*
+*.bak
+*.bak_*
+backups/
+*.log
+__pycache__/
+.venv/
+secrets/
+credentials.json
+token.json

@@ -30,6 +30,34 @@ st.set_page_config(
 )
 
 
+
+def add_inna_chat_message_safe(role: str, content: str) -> None:
+    """
+    Adiciona mensagem no histórico do chat da INNA sem duplicar a última mensagem igual.
+    Evita duplicação quando o Streamlit reexecuta a página.
+    """
+    if "inna_chat_history" not in st.session_state:
+        st.session_state.inna_chat_history = []
+
+    content_clean = str(content or "").strip()
+
+    if not content_clean:
+        return
+
+    if st.session_state.inna_chat_history:
+        last = st.session_state.inna_chat_history[-1]
+        last_role = last.get("role")
+        last_content = str(last.get("content", "")).strip()
+
+        if last_role == role and last_content.lower() == content_clean.lower():
+            return
+
+    st.session_state.inna_chat_history.append({
+        "role": role,
+        "content": content_clean,
+    })
+
+
 def apply_inna_dark_form_fix():
     st.markdown("""
     <style>

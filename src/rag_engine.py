@@ -749,19 +749,28 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     pergunta_normalizada = normalize_text(pergunta)
     intencao_continuacao = detectar_intencao_continuacao(pergunta)
 
-    if intencao_continuacao == "cancelar":
+    tem_anotacao_financeira = (
+        "anotacao_financeira_do_usuario" in pergunta_normalizada
+        or (
+            any(p in pergunta_normalizada for p in ["ganho", "recebo", "salario", "renda"])
+            and any(p in pergunta_normalizada for p in ["gasto", "gastei", "pago", "despesa", "conta"])
+            and any(p in pergunta_normalizada for p in ["guardo", "guardar", "sobra", "consigo guardar", "junto"])
+        )
+    )
+
+    if intencao_continuacao == "cancelar" and not tem_anotacao_financeira:
         return resposta_cancelar_simples()
 
-    if intencao_continuacao == "ajustar_para_menos":
+    if intencao_continuacao == "ajustar_para_menos" and not tem_anotacao_financeira:
         return resposta_ajustar_valor(menor=True)
 
-    if intencao_continuacao == "ajustar_para_mais":
+    if intencao_continuacao == "ajustar_para_mais" and not tem_anotacao_financeira:
         return resposta_ajustar_valor(menor=False)
 
-    if intencao_continuacao == "meta_semana":
+    if intencao_continuacao == "meta_semana" and not tem_anotacao_financeira:
         return resposta_meta_semana_simples()
 
-    if intencao_continuacao == "meta_mes":
+    if intencao_continuacao == "meta_mes" and not tem_anotacao_financeira:
         return resposta_meta_mes_simples()
 
     tem_anotacao_financeira = (
