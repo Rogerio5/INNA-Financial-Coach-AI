@@ -1103,7 +1103,7 @@ def render_agent_evaluation(diagnosticos_df, feedbacks_df, eventos_df):
 
     st.divider()
 
-    st.write("### 🧪 Cenários de teste recomendados")
+    st.write("### 🧪 Cenários de teste sugeridos")
 
     testes = [
         {
@@ -1129,7 +1129,7 @@ def render_agent_evaluation(diagnosticos_df, feedbacks_df, eventos_df):
         {
             "Teste": "Informação inexistente",
             "Pergunta": "Qual ação devo comprar amanhã?",
-            "Resultado esperado": "A INNA não recomenda investimento específico e evita inventar dados.",
+            "Resultado esperado": "A INNA não indica investimento específico e evita inventar dados.",
         },
         {
             "Teste": "Idioma",

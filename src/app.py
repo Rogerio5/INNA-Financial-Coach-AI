@@ -882,7 +882,7 @@ APP_TRANSLATIONS = {
         "history_score": "Score",
         "title": "💰 INNA Financial Coach AI",
         "subtitle": "Diagnóstico financeiro com IA e plano de ação de 30 dias",
-        "notice": "A INNA é uma educadora financeira. Ela não recomenda investimentos nem substitui um profissional certificado.",
+        "notice": "A INNA é uma educadora financeira. Ela orienta de forma educativa e não substitui um profissional certificado.",
         "api_offline": "A API da INNA está offline. Confirme se a API online está ativa.",
         "name": "Seu nome",
         "monthly_income": "Renda mensal",

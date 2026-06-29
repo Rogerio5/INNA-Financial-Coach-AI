@@ -189,7 +189,7 @@ Regras importantes:
 - Explique prioridades de forma pratica.
 - Organize em 4 semanas, com apenas 1 objetivo e 2 acoes curtas por semana.
 - Traduza os títulos Semana 1, Semana 2, Semana 3 e Semana 4 para o idioma informado.
-- Traduza também Resumo da situação, Plano de ação e Próximo passo recomendado.
+- Traduza também Resumo da situação, Plano de ação e Próxima orientação.
 - Evite textos longos.
 - Nao use muitos detalhes.
 - O plano completo deve caber bem em 1 pagina de PDF.
@@ -276,10 +276,10 @@ def generate_fallback_plan(payload: dict, diagnosis: dict) -> str:
             "w4": "Semana 4 — Revisão e próximos passos",
             "w4a": "Revise o que funcionou melhor durante o plano.",
             "w4b": "Compare gastos antes e depois do plano.",
-            "next": "Próximo passo recomendado:",
+            "next": "Próxima orientação:",
             "next_text": "Após os 30 dias, mantenha o foco no ponto mais sensível do diagnóstico: reserva, dívidas ou controle de gastos, conforme seu saldo estimado e nível de risco.",
             "notice": "Aviso:",
-            "notice_text": "A INNA atua como educadora financeira digital. Ela não recomenda compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
+            "notice_text": "A INNA atua como educadora financeira digital. Ela orienta de forma educativa, não indica compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
             "months": "mês(es)",
             "days": "dias",
         },
@@ -372,7 +372,7 @@ def generate_fallback_plan(payload: dict, diagnosis: dict) -> str:
             "w4a": "Compara tu situación actual con el inicio del plan.",
             "w4b": "Verifica si el saldo mensual mejoró.",
             "w4c": "Ajusta tus metas para el próximo mes.",
-            "next": "Próximo paso recomendado:",
+            "next": "Próxima orientación:",
             "next_text": "Prioriza aumentar tu reserva y reducir gastos variables antes de asumir nuevos compromisos financieros.",
             "notice": "Aviso:",
             "notice_text": "INNA actúa como educadora financiera digital. No recomienda comprar o vender activos, no promete rentabilidad y no sustituye a profesionales certificados.",

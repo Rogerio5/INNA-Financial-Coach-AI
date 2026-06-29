@@ -26,7 +26,7 @@ PDF_TEXTS = {
         "diagnosis": "Diagnóstico",
         "action_plan": "Plano de Ação de 30 Dias",
         "important_notice": "Aviso Importante",
-        "notice_text": "A INNA atua como educadora financeira digital. Ela não recomenda compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
+        "notice_text": "A INNA atua como educadora financeira digital. Ela orienta de forma educativa, não indica compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
         "approx": "aprox.",
         "days": "dias",
         "months": "mês(es)",
@@ -506,7 +506,7 @@ def clean_action_plan_notice_for_pdf(texto: str) -> str:
             continue
 
         # Remove linhas legais repetidas mesmo sem prefixo
-        if "não recomenda compra ou venda de ativos" in linha_lower:
+        if "não indica compra ou venda de ativos" in linha_lower:
             continue
 
         if "não promete rentabilidade" in linha_lower:
@@ -583,7 +583,7 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
             "diagnosis": "Diagnóstico",
             "action_plan": "Plano de Ação de 30 Dias",
             "important_notice": "Aviso Importante",
-            "notice_text": "A INNA atua como educadora financeira digital. Ela não recomenda compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
+            "notice_text": "A INNA atua como educadora financeira digital. Ela orienta de forma educativa, não indica compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
             "approx": "aprox.",
             "days": "dias",
             "months": "mês(es)",
