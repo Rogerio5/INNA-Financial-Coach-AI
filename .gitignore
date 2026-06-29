@@ -18,3 +18,13 @@ __pycache__/
 secrets/
 credentials.json
 token.json
+.env
+.env.*
+*.bak
+*.log
+backups/
+__pycache__/
+.venv/
+secrets/
+credentials.json
+token.json
