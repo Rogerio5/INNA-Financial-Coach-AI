@@ -8,6 +8,7 @@ sys.path.append(str(ROOT_DIR))
 HERO_IMAGE = ROOT_DIR / "assets" / "inna_hero.png"
 HERO_IMAGE = ROOT_DIR / "assets" / "inna_hero.png"
 DASHBOARD_ADMIN_URL = "https://inna-dashboard-streamlit.onrender.com"
+API_BASE_URL = os.getenv("INNA_API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
 
 INNA_USER_EMAIL = os.getenv("INNA_USER_EMAIL", "usuario@inna.ai")
 INNA_USER_PASSWORD = os.getenv("INNA_USER_PASSWORD", "usuario123")
@@ -5326,7 +5327,7 @@ if app_menu == "💬 Conversar":
             })
 
             try:
-                api_base_url = globals().get("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
+                api_base_url = API_BASE_URL
 
                 rag_payload = {
                     "pergunta": pergunta_para_rag,
