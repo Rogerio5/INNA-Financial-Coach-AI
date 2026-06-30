@@ -837,6 +837,96 @@ Aí eu te ajudo a enxergar onde pode melhorar.""",
     }
 
 
+
+def generate_gemini_rag_answer(pergunta: str, contexto: str, idioma: str = "pt") -> str | None:
+    """
+    Gera resposta final usando Gemini + contexto recuperado pelo RAG.
+    Se falhar, retorna None para manter o fallback local.
+    """
+    try:
+        import os
+        from google import genai
+
+        api_key = os.getenv("GEMINI_API_KEY")
+
+        if not api_key:
+            return None
+
+        client = genai.Client(api_key=api_key)
+
+        prompt = f"""
+Você é a INNA, uma educadora financeira com IA.
+
+Seu papel é orientar de forma simples, acolhedora e educativa.
+Você NÃO deve recomendar investimentos, produtos financeiros ou decisões obrigatórias.
+Você NÃO substitui consultoria financeira, contábil, jurídica ou bancária profissional.
+
+Use uma linguagem fácil para trabalhador, idoso, leigo e pessoa com pouco estudo.
+Explique de forma prática, curta e humana.
+Prefira frases como:
+- "vou te orientar"
+- "vamos por partes"
+- "de forma simples"
+- "um caminho possível é"
+- "o importante é começar"
+
+Evite:
+- linguagem difícil;
+- prometer resultado;
+- mandar a pessoa fazer algo;
+- recomendar investimento;
+- parecer banco, corretora ou consultor.
+
+Contexto recuperado da base da INNA:
+{contexto}
+
+Pergunta do usuário:
+{pergunta}
+
+Responda em português do Brasil.
+A resposta deve:
+1. Ser simples e clara.
+2. Usar o contexto recuperado quando fizer sentido.
+3. Mostrar passos práticos.
+4. Manter tom educativo.
+5. Não inventar dados que o usuário não informou.
+6. Se citar valores, mantenha o formato R$.
+7. Terminar com uma pergunta curta para continuar a conversa, quando fizer sentido.
+"""
+
+        response = client.models.generate_content(
+            model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite"),
+            contents=prompt,
+        )
+
+        resposta = getattr(response, "text", "") or ""
+
+        resposta = resposta.strip()
+
+        if not resposta:
+            return None
+
+        # Pequenas correções de espaçamento em respostas geradas.
+        correcoes_espaco = {
+            "aquelesimprevistos": "aqueles imprevistos",
+            "tododia": "todo dia",
+            "todomês": "todo mês",
+            "umpouco": "um pouco",
+            "umpouquinho": "um pouquinho",
+            "R$ 10, R$ 20, ou R$ 50": "R$ 10, R$ 20 ou R$ 50",
+            "R$ 10, R$ 20, R$ 50, ou": "R$ 10, R$ 20, R$ 50 ou",
+            "se o trabalho": "se o trabalho",
+        }
+
+        for errado, certo in correcoes_espaco.items():
+            resposta = resposta.replace(errado, certo)
+
+        return resposta
+
+    except Exception:
+        return None
+
+
 def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     results = search_knowledge_base_pgvector(pergunta, idioma=idioma, top_k=top_k)
 
@@ -992,6 +1082,55 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
 
     valor_para_guardar = extrair_valor_para_guardar(pergunta)
 
+    fontes = [
+        {
+            "titulo": item["titulo"],
+            "fonte": item["fonte"],
+            "score": item["score"],
+            "trecho": get_chunk_text(item)[:500],
+        }
+        for item in results
+    ]
+
+    numeros_na_pergunta = re.findall(r"(?<!\\w)(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)(?!\\w)", pergunta_normalizada)
+
+    pergunta_tem_calculo = (
+        tem_anotacao_financeira
+        or len(numeros_na_pergunta) > 0
+        or valor_para_guardar is not None
+    )
+
+    pergunta_explicativa = (
+        pergunta_normalizada.startswith("como ")
+        or pergunta_normalizada.startswith("o que ")
+        or pergunta_normalizada.startswith("qual ")
+        or pergunta_normalizada.startswith("por que ")
+        or pergunta_normalizada.startswith("porque ")
+        or "como posso" in pergunta_normalizada
+        or "me explica" in pergunta_normalizada
+        or "explique" in pergunta_normalizada
+    )
+
+    pergunta_aberta_para_gemini = (
+        not pergunta_tem_calculo
+        and not usuario_confirmou
+        and not pedido_mes
+        and not pedido_semana
+        and intencao_continuacao not in ["cancelar", "ajustar_para_menos", "ajustar_para_mais"]
+        and pergunta_explicativa
+    )
+
+    if pergunta_aberta_para_gemini:
+        resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
+
+        if resposta_gemini:
+            return {
+                "resposta": resposta_gemini,
+                "fontes": fontes,
+                "contexto_usado": contexto,
+                "modo": modo_busca + "_gemini_answer",
+            }
+
     if valor_para_guardar and (
         "anotacao_financeira_do_usuario" in pergunta_normalizada
         or "guardar" in pergunta_normalizada
@@ -1071,7 +1210,84 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
             "modo": modo_busca,
         }
 
-    elif "reserva" in pergunta_normalizada:
+    fontes = [
+        {
+            "titulo": item["titulo"],
+            "fonte": item["fonte"],
+            "score": item["score"],
+            "trecho": get_chunk_text(item)[:500],
+        }
+        for item in results
+    ]
+
+    numeros_na_pergunta = re.findall(r"(?<!\\w)(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)(?!\\w)", pergunta_normalizada)
+
+    pergunta_tem_calculo = (
+        tem_anotacao_financeira
+        or len(numeros_na_pergunta) > 0
+        or valor_para_guardar is not None
+    )
+
+    pergunta_aberta_para_gemini = (
+        not pergunta_tem_calculo
+        and not usuario_confirmou
+        and not pedido_mes
+        and not pedido_semana
+        and intencao_continuacao not in ["cancelar", "ajustar_para_menos", "ajustar_para_mais"]
+    )
+
+    if pergunta_aberta_para_gemini:
+        resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
+
+        if resposta_gemini:
+            return {
+                "resposta": resposta_gemini,
+                "fontes": fontes,
+                "contexto_usado": contexto,
+                "modo": modo_busca + "_gemini_answer",
+            }
+
+    fontes = [
+        {
+            "titulo": item["titulo"],
+            "fonte": item["fonte"],
+            "score": item["score"],
+            "trecho": get_chunk_text(item)[:500],
+        }
+        for item in results
+    ]
+
+    numeros_na_pergunta = re.findall(r"(?<!\\w)(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)(?!\\w)", pergunta_normalizada)
+
+    pergunta_explicativa = (
+        pergunta_normalizada.startswith("como ")
+        or pergunta_normalizada.startswith("o que ")
+        or pergunta_normalizada.startswith("qual ")
+        or pergunta_normalizada.startswith("por que ")
+        or pergunta_normalizada.startswith("porque ")
+        or "como posso" in pergunta_normalizada
+        or "me explica" in pergunta_normalizada
+        or "explique" in pergunta_normalizada
+    )
+
+    pergunta_tem_calculo = (
+        tem_anotacao_financeira
+        or len(numeros_na_pergunta) > 0
+        or valor_para_guardar is not None
+    )
+
+    if pergunta_explicativa and not pergunta_tem_calculo:
+        resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
+
+        if resposta_gemini:
+            return {
+                "resposta": resposta_gemini,
+                "fontes": fontes,
+                "contexto_usado": contexto,
+                "modo": modo_busca + "_gemini_answer",
+            }
+
+    if "reserva" in pergunta_normalizada:
         resposta = """Vamos por partes. Vou te orientar de um jeito simples:
 
 1. Veja quanto entra e quanto sai todo mês com contas, mercado, transporte, compras e parcelas.
