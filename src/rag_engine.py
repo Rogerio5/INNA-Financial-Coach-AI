@@ -843,12 +843,14 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     if not results:
         results = search_knowledge_base(pergunta, idioma=idioma, top_k=top_k)
 
+    modo_busca = results[0].get("modo_busca", "rag_local_fallback") if results else "sem_resultados"
+
     if not results:
         return {
             "resposta": "Não encontrei informação suficiente na base de conhecimento da INNA para responder com segurança.",
             "fontes": [],
             "contexto_usado": "",
-            "modo": "rag_local_sem_custo",
+            "modo": modo_busca,
         }
 
     def get_chunk_text(item: dict) -> str:
@@ -960,7 +962,7 @@ Depois você pode me dizer se quer uma meta menor ou maior."""
             "resposta": resposta,
             "fontes": [],
             "contexto_usado": "",
-            "modo": "rag_local_sem_custo",
+            "modo": modo_busca,
         }
 
     if usuario_confirmou and pedido_semana:
@@ -985,7 +987,7 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
             "resposta": resposta,
             "fontes": [],
             "contexto_usado": "",
-            "modo": "rag_local_sem_custo",
+            "modo": modo_busca,
         }
 
     valor_para_guardar = extrair_valor_para_guardar(pergunta)
@@ -1066,7 +1068,7 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
             "resposta": resposta,
             "fontes": fontes,
             "contexto_usado": contexto,
-            "modo": "rag_local_sem_custo",
+            "modo": modo_busca,
         }
 
     elif "reserva" in pergunta_normalizada:
@@ -1112,6 +1114,6 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         "resposta": resposta,
         "fontes": fontes,
         "contexto_usado": contexto,
-        "modo": "rag_local_sem_custo",
+        "modo": modo_busca,
     }
 
