@@ -163,7 +163,12 @@ def ingest_knowledge_document(
     cur.execute("DELETE FROM inna_knowledge_chunks WHERE fonte = %s;", (fonte,))
 
     for index, chunk in enumerate(chunks):
+        # Embedding local antigo: mantido como fallback técnico.
         embedding = text_to_embedding(chunk)
+
+        # Embedding profissional: caminho principal com Gemini + pgvector.
+        embedding_profissional = generate_gemini_embedding(chunk)
+        embedding_vector_sql = pgvector_to_sql(embedding_profissional) if embedding_profissional else None
 
         cur.execute(
             """
@@ -175,9 +180,10 @@ def ingest_knowledge_document(
                 chunk_index,
                 chunk_text,
                 embedding,
+                embedding_vector,
                 metadata
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s::vector, %s);
             """,
             (
                 titulo,
@@ -187,11 +193,15 @@ def ingest_knowledge_document(
                 index,
                 chunk,
                 Json(embedding),
+                embedding_vector_sql,
                 Json(
                     {
                         "tipo": "base_conhecimento",
                         "origem": "arquivo_markdown",
-                        "vector_dim": RAG_VECTOR_DIM,
+                        "vector_dim_local": RAG_VECTOR_DIM,
+                        "vector_dim_profissional": 768 if embedding_profissional else None,
+                        "embedding_provider": "gemini" if embedding_profissional else "local_fallback",
+                        "embedding_model": "gemini-embedding-001" if embedding_profissional else "local",
                     }
                 ),
             ),
@@ -237,6 +247,51 @@ def chunk_text(text: str, max_chars: int = 1200, overlap: int = 150) -> list[str
             break
 
     return chunks
+
+
+
+def pgvector_to_sql(vector: list[float]) -> str:
+    """
+    Converte lista Python para formato aceito pelo pgvector:
+    [0.1,0.2,0.3]
+    """
+    return "[" + ",".join(str(float(x)) for x in vector) + "]"
+
+
+def generate_gemini_embedding(text: str) -> list[float] | None:
+    """
+    Gera embedding profissional com Gemini.
+    Se falhar, retorna None para o RAG local assumir como fallback.
+    """
+    try:
+        import os
+        from google import genai
+        from google.genai import types
+
+        api_key = os.getenv("GEMINI_API_KEY")
+
+        if not api_key:
+            return None
+
+        client = genai.Client(api_key=api_key)
+
+        response = client.models.embed_content(
+            model=os.getenv("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001"),
+            contents=text,
+            config=types.EmbedContentConfig(
+                output_dimensionality=768
+            ),
+        )
+
+        embedding = response.embeddings[0].values
+
+        if not embedding:
+            return None
+
+        return [float(x) for x in embedding]
+
+    except Exception:
+        return None
 
 
 def ingest_default_knowledge_base() -> dict[str, Any]:
@@ -356,6 +411,64 @@ def load_chunks(idioma: str = "pt") -> list[dict[str, Any]]:
             chunks.append(item)
 
         return chunks
+
+    finally:
+        cur.close()
+        conn.close()
+
+
+
+def search_knowledge_base_pgvector(query: str, idioma: str = "pt", top_k: int = 4) -> list[dict]:
+    """
+    Busca principal da INNA:
+    Gemini Embeddings + pgvector no Neon/PostgreSQL.
+    """
+    query_embedding = generate_gemini_embedding(query)
+
+    if not query_embedding:
+        return []
+
+    query_vector_sql = pgvector_to_sql(query_embedding)
+
+    conn = get_rag_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(
+            """
+            SELECT
+                id,
+                titulo,
+                fonte,
+                categoria,
+                idioma,
+                chunk_index,
+                chunk_text,
+                metadata,
+                1 - (embedding_vector <=> %s::vector) AS score
+            FROM inna_knowledge_chunks
+            WHERE idioma = %s
+              AND embedding_vector IS NOT NULL
+            ORDER BY embedding_vector <=> %s::vector
+            LIMIT %s;
+            """,
+            (query_vector_sql, idioma, query_vector_sql, top_k),
+        )
+
+        rows = cur.fetchall()
+        columns = [desc[0] for desc in cur.description]
+
+        results = []
+
+        for row in rows:
+            item = dict(zip(columns, row))
+            item["texto"] = item.get("chunk_text", "")
+            item["trecho"] = item.get("chunk_text", "")
+            item["score"] = float(item.get("score") or 0)
+            item["modo_busca"] = "gemini_embeddings_pgvector_neon"
+            results.append(item)
+
+        return results
 
     finally:
         cur.close()
@@ -725,7 +838,10 @@ Aí eu te ajudo a enxergar onde pode melhorar.""",
 
 
 def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
-    results = search_knowledge_base(pergunta, idioma=idioma, top_k=top_k)
+    results = search_knowledge_base_pgvector(pergunta, idioma=idioma, top_k=top_k)
+
+    if not results:
+        results = search_knowledge_base(pergunta, idioma=idioma, top_k=top_k)
 
     if not results:
         return {
