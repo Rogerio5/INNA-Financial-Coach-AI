@@ -578,6 +578,129 @@ def search_knowledge_base_text(query: str, idioma: str = "pt", top_k: int = 4) -
         conn.close()
 
 
+
+def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) -> list[dict]:
+    """
+    Reordena os chunks recuperados pelo RAG híbrido.
+
+    Critérios:
+    - score original do pgvector/textual;
+    - bônus se veio de busca vetorial + textual;
+    - bônus por palavras importantes da pergunta;
+    - bônus por tema financeiro identificado;
+    - penalização leve para chunks muito genéricos.
+    """
+    if not results:
+        return []
+
+    query_norm = normalize_text(query)
+
+    stopwords = {
+        "como", "posso", "comecar", "começar", "uma", "um", "para", "por",
+        "que", "qual", "quais", "sobre", "minha", "meu", "me", "da", "de",
+        "do", "das", "dos", "com", "sem", "isso", "esse", "essa", "estou",
+        "esta", "esse", "aqui", "ali", "voce", "você"
+    }
+
+    termos_query = []
+
+    for termo in re.findall(r"[a-zA-ZÀ-ÿ0-9]+", query_norm):
+        termo = normalize_text(termo).strip()
+
+        if len(termo) < 3:
+            continue
+
+        if termo in stopwords:
+            continue
+
+        if termo not in termos_query:
+            termos_query.append(termo)
+
+    temas = {
+        "reserva": ["reserva", "emergencia", "guardar", "poupar", "imprevisto"],
+        "divida": ["divida", "dívida", "cartao", "cartão", "credito", "crédito", "parcelas", "juros"],
+        "orcamento": ["orcamento", "orçamento", "gastos", "fixos", "variaveis", "variáveis", "despesas"],
+        "renda": ["renda", "salario", "salário", "ganho", "recebo"],
+    }
+
+    temas_pergunta = []
+
+    for tema, palavras in temas.items():
+        if any(normalize_text(palavra) in query_norm for palavra in palavras):
+            temas_pergunta.append(tema)
+
+    reranked = []
+
+    for item in results:
+        texto = normalize_text(
+            str(item.get("chunk_text") or item.get("texto") or item.get("trecho") or "")
+        )
+        titulo = normalize_text(str(item.get("titulo") or ""))
+        categoria = normalize_text(str(item.get("categoria") or ""))
+
+        score_base = float(item.get("score_hibrido") or item.get("score") or 0)
+
+        origem = item.get("origem_busca") or []
+        if isinstance(origem, str):
+            origem = [origem]
+
+        bonus_origem = 0.0
+
+        if "vetorial" in origem and "textual" in origem:
+            bonus_origem += 0.25
+        elif "vetorial" in origem:
+            bonus_origem += 0.10
+        elif "textual" in origem:
+            bonus_origem += 0.08
+
+        termos_encontrados = 0
+
+        for termo in termos_query:
+            if termo in texto or termo in titulo or termo in categoria:
+                termos_encontrados += 1
+
+        bonus_termos = min(0.30, termos_encontrados * 0.06)
+
+        bonus_tema = 0.0
+
+        for tema in temas_pergunta:
+            palavras_tema = temas.get(tema, [])
+
+            if any(normalize_text(palavra) in texto for palavra in palavras_tema):
+                bonus_tema += 0.12
+
+        bonus_tema = min(0.30, bonus_tema)
+
+        penalidade_generico = 0.0
+
+        texto_generico = (
+            "organize seus dados financeiros" in texto
+            or "compare renda, gastos, dívidas e reserva" in texto
+            or "ações simples e mensuráveis" in texto
+        )
+
+        if texto_generico and termos_encontrados <= 1:
+            penalidade_generico = 0.20
+
+        score_rerank = score_base + bonus_origem + bonus_termos + bonus_tema - penalidade_generico
+
+        novo_item = dict(item)
+        novo_item["score_rerank"] = round(score_rerank, 6)
+        novo_item["termos_encontrados"] = termos_encontrados
+        novo_item["temas_pergunta"] = temas_pergunta
+        novo_item["modo_busca"] = "rag_hibrido_pgvector_text_neon_rerank"
+
+        reranked.append(novo_item)
+
+    reranked.sort(
+        key=lambda item: float(item.get("score_rerank") or 0),
+        reverse=True,
+    )
+
+    return reranked[:top_k]
+
+
+
 def search_knowledge_base_hybrid(query: str, idioma: str = "pt", top_k: int = 4) -> list[dict]:
     """
     RAG híbrido da INNA:
@@ -622,12 +745,7 @@ def search_knowledge_base_hybrid(query: str, idioma: str = "pt", top_k: int = 4)
 
     results = list(combinados.values())
 
-    results.sort(
-        key=lambda item: float(item.get("score_hibrido") or item.get("score") or 0),
-        reverse=True,
-    )
-
-    return results[:top_k]
+    return rerank_knowledge_results(query, results, top_k=top_k)
 
 
 
@@ -1253,6 +1371,41 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
         or valor_para_guardar is not None
     )
 
+    # BLOCO_FORCADO_GEMINI_ABERTO_INICIO
+    tema_aberto_para_gemini = (
+        pergunta_normalizada.startswith("como ")
+        or pergunta_normalizada.startswith("o que ")
+        or pergunta_normalizada.startswith("qual ")
+        or pergunta_normalizada.startswith("por que ")
+        or pergunta_normalizada.startswith("porque ")
+        or "como posso" in pergunta_normalizada
+        or "reserva" in pergunta_normalizada
+        or "cartao" in pergunta_normalizada
+        or "cartão" in pergunta_normalizada
+        or "credito" in pergunta_normalizada
+        or "crédito" in pergunta_normalizada
+        or "divida" in pergunta_normalizada
+        or "dívida" in pergunta_normalizada
+        or "dividas" in pergunta_normalizada
+        or "dívidas" in pergunta_normalizada
+        or "gastos fixos" in pergunta_normalizada
+        or "gastos variaveis" in pergunta_normalizada
+        or "gastos variáveis" in pergunta_normalizada
+        or "organizar gastos" in pergunta_normalizada
+    )
+
+    if tema_aberto_para_gemini and not pergunta_tem_calculo:
+        resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
+
+        if resposta_gemini:
+            return {
+                "resposta": resposta_gemini,
+                "fontes": fontes,
+                "contexto_usado": contexto,
+                "modo": modo_busca + "_gemini_answer",
+            }
+    # BLOCO_FORCADO_GEMINI_ABERTO_FIM
+
     pergunta_explicativa = (
         pergunta_normalizada.startswith("como ")
         or pergunta_normalizada.startswith("o que ")
@@ -1263,6 +1416,14 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
         or "me explica" in pergunta_normalizada
         or "explique" in pergunta_normalizada
         or intencao_continuacao in ["dividas", "organizar_gastos"]
+        or "cartao" in pergunta_normalizada
+        or "cartão" in pergunta_normalizada
+        or "credito" in pergunta_normalizada
+        or "crédito" in pergunta_normalizada
+        or "divida" in pergunta_normalizada
+        or "dívida" in pergunta_normalizada
+        or "dividas" in pergunta_normalizada
+        or "dívidas" in pergunta_normalizada
     )
 
     pergunta_aberta_para_gemini = (
@@ -1423,6 +1584,14 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         or "me explica" in pergunta_normalizada
         or "explique" in pergunta_normalizada
         or intencao_continuacao in ["dividas", "organizar_gastos"]
+        or "cartao" in pergunta_normalizada
+        or "cartão" in pergunta_normalizada
+        or "credito" in pergunta_normalizada
+        or "crédito" in pergunta_normalizada
+        or "divida" in pergunta_normalizada
+        or "dívida" in pergunta_normalizada
+        or "dividas" in pergunta_normalizada
+        or "dívidas" in pergunta_normalizada
     )
 
     pergunta_tem_calculo = (
@@ -1432,6 +1601,41 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
     )
 
     if pergunta_explicativa and not pergunta_tem_calculo:
+        resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
+
+        if resposta_gemini:
+            return {
+                "resposta": resposta_gemini,
+                "fontes": fontes,
+                "contexto_usado": contexto,
+                "modo": modo_busca + "_gemini_answer",
+            }
+
+    # Perguntas abertas sobre temas financeiros usam Gemini com contexto RAG.
+    # Perguntas com números/cálculo continuam controladas pelo código.
+    tema_aberto_para_gemini = (
+        pergunta_normalizada.startswith("como ")
+        or pergunta_normalizada.startswith("o que ")
+        or pergunta_normalizada.startswith("qual ")
+        or pergunta_normalizada.startswith("por que ")
+        or pergunta_normalizada.startswith("porque ")
+        or "como posso" in pergunta_normalizada
+        or "cartao" in pergunta_normalizada
+        or "cartão" in pergunta_normalizada
+        or "credito" in pergunta_normalizada
+        or "crédito" in pergunta_normalizada
+        or "divida" in pergunta_normalizada
+        or "dívida" in pergunta_normalizada
+        or "dividas" in pergunta_normalizada
+        or "dívidas" in pergunta_normalizada
+        or "gastos fixos" in pergunta_normalizada
+        or "gastos variaveis" in pergunta_normalizada
+        or "gastos variáveis" in pergunta_normalizada
+        or "organizar gastos" in pergunta_normalizada
+        or "reserva" in pergunta_normalizada
+    )
+
+    if tema_aberto_para_gemini and not pergunta_tem_calculo:
         resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
 
         if resposta_gemini:
@@ -1487,4 +1691,3 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         "contexto_usado": contexto,
         "modo": modo_busca,
     }
-
