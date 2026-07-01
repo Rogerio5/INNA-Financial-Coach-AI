@@ -475,6 +475,162 @@ def search_knowledge_base_pgvector(query: str, idioma: str = "pt", top_k: int = 
         conn.close()
 
 
+
+def search_knowledge_base_text(query: str, idioma: str = "pt", top_k: int = 4) -> list[dict]:
+    """
+    Busca textual complementar no PostgreSQL.
+    Ajuda quando a pergunta tem palavras específicas como dívida, reserva,
+    cartão, orçamento, gastos fixos e variáveis.
+    """
+    ensure_rag_tables()
+
+    query_norm = normalize_text(query)
+    termos = []
+
+    palavras_ignoradas = {
+        "como", "posso", "comecar", "começar", "uma", "para", "por", "que",
+        "qual", "quais", "sobre", "minha", "meu", "me", "da", "de", "do",
+        "das", "dos", "com", "sem", "isso", "esse", "essa", "estou"
+    }
+
+    for termo in re.findall(r"[a-zA-ZÀ-ÿ0-9]+", query.lower() + " " + query_norm):
+        termo_limpo = normalize_text(termo).strip()
+
+        if len(termo_limpo) < 3:
+            continue
+
+        if termo_limpo in palavras_ignoradas:
+            continue
+
+        if termo_limpo not in termos:
+            termos.append(termo_limpo)
+
+    termos = termos[:8]
+
+    if not termos:
+        return []
+
+    score_expr = " + ".join(
+        ["(CASE WHEN LOWER(chunk_text) LIKE %s THEN 1 ELSE 0 END)" for _ in termos]
+    )
+
+    where_expr = " OR ".join(
+        [
+            "(LOWER(chunk_text) LIKE %s OR LOWER(titulo) LIKE %s OR LOWER(categoria) LIKE %s)"
+            for _ in termos
+        ]
+    )
+
+    sql = f"""
+        SELECT
+            id,
+            titulo,
+            fonte,
+            categoria,
+            idioma,
+            chunk_index,
+            chunk_text,
+            metadata,
+            ({score_expr}) AS score_textual
+        FROM inna_knowledge_chunks
+        WHERE idioma = %s
+          AND ({where_expr})
+        ORDER BY score_textual DESC, fonte, chunk_index
+        LIMIT %s;
+    """
+
+    score_params = [f"%{termo}%" for termo in termos]
+
+    where_params = []
+    for termo in termos:
+        pattern = f"%{termo}%"
+        where_params.extend([pattern, pattern, pattern])
+
+    params = score_params + [idioma] + where_params + [top_k]
+
+    conn = get_rag_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(sql, params)
+
+        rows = cur.fetchall()
+        columns = [desc[0] for desc in cur.description]
+
+        results = []
+
+        for row in rows:
+            item = dict(zip(columns, row))
+            score_textual = float(item.get("score_textual") or 0)
+
+            item["texto"] = item.get("chunk_text", "")
+            item["trecho"] = item.get("chunk_text", "")
+            item["score"] = min(0.95, 0.55 + (score_textual * 0.08))
+            item["modo_busca"] = "text_search_postgres_neon"
+            item["origem_busca"] = ["textual"]
+
+            results.append(item)
+
+        return results
+
+    finally:
+        cur.close()
+        conn.close()
+
+
+def search_knowledge_base_hybrid(query: str, idioma: str = "pt", top_k: int = 4) -> list[dict]:
+    """
+    RAG híbrido da INNA:
+    - busca semântica com Gemini Embeddings + pgvector
+    - busca textual no PostgreSQL
+    - junta resultados
+    - remove duplicados
+    - ordena os melhores contextos
+    """
+    vector_results = search_knowledge_base_pgvector(query, idioma=idioma, top_k=max(top_k, 6))
+    text_results = search_knowledge_base_text(query, idioma=idioma, top_k=max(top_k, 6))
+
+    combinados = {}
+
+    for item in vector_results:
+        item_id = item.get("id")
+        if item_id is None:
+            continue
+
+        item = dict(item)
+        item["origem_busca"] = ["vetorial"]
+        item["score_hibrido"] = float(item.get("score") or 0) + 0.10
+        item["modo_busca"] = "rag_hibrido_pgvector_text_neon"
+        combinados[item_id] = item
+
+    for item in text_results:
+        item_id = item.get("id")
+        if item_id is None:
+            continue
+
+        item = dict(item)
+
+        if item_id in combinados:
+            atual = combinados[item_id]
+            atual["score_hibrido"] = float(atual.get("score_hibrido") or 0) + 0.20
+            atual["origem_busca"] = sorted(set(atual.get("origem_busca", []) + ["textual"]))
+            atual["modo_busca"] = "rag_hibrido_pgvector_text_neon"
+        else:
+            item["score_hibrido"] = float(item.get("score") or 0)
+            item["modo_busca"] = "rag_hibrido_pgvector_text_neon"
+            combinados[item_id] = item
+
+    results = list(combinados.values())
+
+    results.sort(
+        key=lambda item: float(item.get("score_hibrido") or item.get("score") or 0),
+        reverse=True,
+    )
+
+    return results[:top_k]
+
+
+
 def search_knowledge_base(
     query: str,
     idioma: str = "pt",
@@ -928,7 +1084,7 @@ A resposta deve:
 
 
 def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
-    results = search_knowledge_base_pgvector(pergunta, idioma=idioma, top_k=top_k)
+    results = search_knowledge_base_hybrid(pergunta, idioma=idioma, top_k=top_k)
 
     if not results:
         results = search_knowledge_base(pergunta, idioma=idioma, top_k=top_k)
@@ -990,11 +1146,8 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
         )
     )
 
-    if intencao_continuacao == "dividas" and not tem_anotacao_financeira:
-        return resposta_dividas_simples()
-
-    if intencao_continuacao == "organizar_gastos" and not tem_anotacao_financeira:
-        return resposta_organizar_gastos_simples()
+    # Dívidas e organização de gastos agora passam pelo RAG híbrido + Gemini
+    # quando não houver cálculo numérico específico.
 
     # Quando o usuário responde "sim", a INNA precisa olhar a última pergunta.
     # Se a última pergunta foi sobre "esta semana", responde só a meta semanal.
@@ -1109,6 +1262,7 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
         or "como posso" in pergunta_normalizada
         or "me explica" in pergunta_normalizada
         or "explique" in pergunta_normalizada
+        or intencao_continuacao in ["dividas", "organizar_gastos"]
     )
 
     pergunta_aberta_para_gemini = (
@@ -1268,6 +1422,7 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         or "como posso" in pergunta_normalizada
         or "me explica" in pergunta_normalizada
         or "explique" in pergunta_normalizada
+        or intencao_continuacao in ["dividas", "organizar_gastos"]
     )
 
     pergunta_tem_calculo = (
