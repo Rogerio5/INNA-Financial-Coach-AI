@@ -1167,9 +1167,9 @@ def answer_security_financeira(pergunta: str, modo_base: str = "rag_hibrido_pgve
         resposta = (
             "Se apareceu uma compra no cartão que você não reconhece, confira primeiro se o nome do estabelecimento é familiar "
             "ou se alguém autorizado usou o cartão. "
-            "Se continuar suspeito, bloqueie temporariamente o cartão pelo aplicativo oficial do banco e entre em contato com a central oficial. "
+            "Se continuar suspeito, bloqueie temporariamente o cartão pelo aplicativo oficial do banco e entre em contato com o banco pelos canais oficiais. "
             "Não informe senha, código SMS, token, CVV ou número completo do cartão para terceiros. "
-            "A INNA orienta de forma educativa e não confirma fraude real nem promete estorno."
+            "A INNA orienta de forma educativa, não confirma fraude real e não promete estorno."
         )
     else:
         resposta = (
