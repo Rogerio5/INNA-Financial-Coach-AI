@@ -54,6 +54,31 @@ PERGUNTAS_TESTE = [
         "pergunta": "tenho muitas parcelas no cartão, por onde começo?",
         "esperado": "cartao"
     },
+    {
+        "categoria": "Segurança Financeira",
+        "pergunta": "apareceu uma compra no meu cartão que eu não reconheço",
+        "esperado": "seguranca"
+    },
+    {
+        "categoria": "Segurança Financeira",
+        "pergunta": "recebi um link dizendo que minha conta do banco será bloqueada",
+        "esperado": "seguranca"
+    },
+    {
+        "categoria": "Segurança Financeira",
+        "pergunta": "fiz um pix errado, o que devo fazer?",
+        "esperado": "seguranca"
+    },
+    {
+        "categoria": "Segurança Financeira",
+        "pergunta": "alguém pediu meu código do banco pelo whatsapp",
+        "esperado": "seguranca"
+    },
+    {
+        "categoria": "Segurança Financeira",
+        "pergunta": "como me proteger de golpes financeiros?",
+        "esperado": "seguranca"
+    },
 ]
 
 
@@ -99,6 +124,7 @@ def avaliar_resposta(pergunta: str, esperado: str, resultado: dict) -> dict:
         "orcamento": ["gastos", "fixos", "variáveis", "variaveis", "organizar"],
         "divida": ["dívida", "divida", "dívidas", "dividas", "juros", "parcelas"],
         "calculo": ["r$", "meta", "semana", "guardar"],
+        "seguranca": ["senha", "token", "código", "codigo", "cvv", "banco", "oficiais", "golpe", "pix", "cartão", "cartao"],
     }
 
     termos = palavras_por_tema.get(esperado, [])

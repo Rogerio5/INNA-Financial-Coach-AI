@@ -1112,6 +1112,86 @@ Aí eu te ajudo a enxergar onde pode melhorar.""",
 
 
 
+
+
+def answer_security_financeira(pergunta: str, modo_base: str = "rag_hibrido_pgvector_text_neon_rerank") -> dict | None:
+    pergunta_norm = pergunta.lower()
+
+    termos_seguranca = [
+        "golpe", "golpes", "fraude", "fraudes", "pix", "link", "sms",
+        "whatsapp", "senha", "token", "cvv", "código", "codigo",
+        "compra desconhecida", "compra não reconhecida", "compra nao reconhecida",
+        "não reconheço", "nao reconheco", "não reconheci",
+        "nao reconheci", "cartão clonado", "cartao clonado",
+        "bloqueada", "bloqueado", "conta do banco"
+    ]
+
+    if not any(termo in pergunta_norm for termo in termos_seguranca):
+        return None
+
+    if "pix" in pergunta_norm:
+        resposta = (
+            "Se você fez um PIX errado, o primeiro passo é conferir o comprovante, "
+            "verificar o nome de quem recebeu e entrar em contato com seu banco pelos canais oficiais o quanto antes. "
+            "Se for possível, tente falar com o recebedor de forma segura. "
+            "Não aceite ajuda de desconhecidos por WhatsApp, SMS ou redes sociais e nunca informe senha, token ou código de segurança. "
+            "A INNA orienta de forma educativa e não consegue recuperar PIX nem prometer estorno."
+        )
+    elif "código" in pergunta_norm or "codigo" in pergunta_norm or "token" in pergunta_norm or "senha" in pergunta_norm or "whatsapp" in pergunta_norm:
+        resposta = (
+            "Não envie código do banco, senha, token ou código SMS pelo WhatsApp. "
+            "Esse tipo de informação pode permitir acesso à sua conta ou autorizar transações. "
+            "Bancos não costumam pedir esse tipo de dado por mensagem. "
+            "Entre no aplicativo oficial do banco ou fale com a central oficial para verificar a situação. "
+            "Se você já informou algum dado, troque as senhas, bloqueie cartões se necessário e procure o banco imediatamente pelos canais oficiais. A INNA orienta de forma educativa e preventiva."
+        )
+    elif "link" in pergunta_norm or "bloqueada" in pergunta_norm or "bloqueado" in pergunta_norm:
+        resposta = (
+            "Se você recebeu um link dizendo que sua conta do banco será bloqueada, desconfie. "
+            "Não clique no link e não informe senha, token, código SMS, CVV ou número completo do cartão. "
+            "Acesse apenas o aplicativo oficial do banco ou entre em contato pelos canais oficiais. "
+            "Mensagens com urgência, ameaça de bloqueio ou pedido de dados costumam ser sinais de golpe. A INNA orienta de forma educativa e preventiva."
+        )
+    elif (
+        ("compra" in pergunta_norm and (
+            "não reconheço" in pergunta_norm
+            or "nao reconheco" in pergunta_norm
+            or "não reconheci" in pergunta_norm
+            or "nao reconheci" in pergunta_norm
+            or "desconhecida" in pergunta_norm
+            or "suspeita" in pergunta_norm
+        ))
+        or "cartão clonado" in pergunta_norm
+        or "cartao clonado" in pergunta_norm
+    ):
+        resposta = (
+            "Se apareceu uma compra no cartão que você não reconhece, confira primeiro se o nome do estabelecimento é familiar "
+            "ou se alguém autorizado usou o cartão. "
+            "Se continuar suspeito, bloqueie temporariamente o cartão pelo aplicativo oficial do banco e entre em contato com a central oficial. "
+            "Não informe senha, código SMS, token, CVV ou número completo do cartão para terceiros. "
+            "A INNA orienta de forma educativa e não confirma fraude real nem promete estorno."
+        )
+    else:
+        resposta = (
+            "Para se proteger de golpes financeiros, evite clicar em links suspeitos, confira os dados antes de fazer PIX "
+            "e nunca informe senha, token, código SMS, CVV ou número completo do cartão. "
+            "Use apenas aplicativos oficiais do banco, ative notificações de compra e procure os canais oficiais se algo parecer estranho. "
+            "A INNA orienta de forma educativa e preventiva."
+        )
+
+    return {
+        "resposta": resposta,
+        "modo": f"{modo_base}_seguranca_financeira",
+        "fontes": [
+            {
+                "titulo": "Segurança Financeira",
+                "fonte": "data/knowledge_base/seguranca_financeira.md",
+                "score": None,
+            }
+        ],
+    }
+
+
 def generate_gemini_rag_answer(pergunta: str, contexto: str, idioma: str = "pt") -> str | None:
     """
     Gera resposta final usando Gemini + contexto recuperado pelo RAG.
@@ -1202,6 +1282,10 @@ A resposta deve:
 
 
 def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
+    resposta_seguranca = answer_security_financeira(pergunta)
+    if resposta_seguranca:
+        return resposta_seguranca
+
     results = search_knowledge_base_hybrid(pergunta, idioma=idioma, top_k=top_k)
 
     if not results:
