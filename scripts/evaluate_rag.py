@@ -152,6 +152,12 @@ def avaliar_resposta(pergunta: str, esperado: str, resultado: dict) -> dict:
             pontos += 1
             criterios.append("cartao_contexto_forte")
 
+        termos_parcelas_pratico = ["parcelas", "fatura", "evitar", "organizar", "reduzir", "renda", "comprometido"]
+        encontrados_parcelas = sum(1 for termo in termos_parcelas_pratico if termo in resposta)
+        if "parcelas" in pergunta.lower() and encontrados_parcelas >= 3:
+            pontos += 1
+            criterios.append("parcelas_plano_pratico")
+
     nota = min(10, pontos)
 
     if nota >= 8:

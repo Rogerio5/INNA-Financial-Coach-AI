@@ -14,7 +14,7 @@ A avaliação verifica se a INNA usa RAG híbrido, reranking, fontes recuperadas
 
 # Relatório de Avaliação do RAG — INNA
 
-Data da avaliação: **2026-07-03 00:05:16**
+Data da avaliação: **2026-07-03 01:33:41**
 
 ## Objetivo
 
@@ -26,13 +26,13 @@ Avaliar a qualidade do RAG da INNA considerando busca híbrida, pgvector, busca 
 
 **Pergunta:** como posso começar uma reserva financeira?
 
-**Modo:** `rag_hibrido_pgvector_text_neon_rerank_gemini_answer`
+**Modo:** `rag_hibrido_pgvector_text_neon_rerank`
 
 **Nota:** 10/10
 
 **Status:** APROVADO
 
-**Critérios atendidos:** usa_rag_hibrido, usa_rerank, gemini_final, tem_fontes, tema_correto, resposta_completa
+**Critérios atendidos:** usa_rag_hibrido, usa_rerank, fallback_rag_controlado, tem_fontes, tema_correto, resposta_completa, pergunta_de_acao
 
 **Fontes recuperadas:**
 
@@ -42,13 +42,14 @@ Avaliar a qualidade do RAG da INNA considerando busca híbrida, pgvector, busca 
 
 **Resposta gerada:**
 
-> Olá! Que bom que você quer pensar na sua reserva financeira. É um passo muito importante para ter mais tranquilidade.
+> Vamos por partes. Vou te orientar de um jeito simples:
 > 
-> De forma simples, a reserva financeira é um dinheiro que a gente separa para ajudar quando aparece um imprevisto, sabe? Algo que a gente não planejou.
+> 1. Veja quanto entra e quanto sai todo mês com contas, mercado, transporte, compras e parcelas.
+> 2. Separe um valor pequeno que caiba no seu bolso, sem apertar demais.
+> 3. Não use esse dinheiro para compras do dia a dia.
+> 4. Olhe todo mês se conseguiu guardar alguma quantia, mesmo que seja pouco.
 > 
-> Para começar, **o importante é começar**! Uma ideia possível é separar um valor pequeno por semana. Pode ser R$ 10, R$ 20, R$ 50 ou o valor que você sentir que não vai atrapalhar suas contas principais. O segredo é criar o hábito de guardar, mesmo que seja pouquinho.
-> 
-> Você gostaria de entender como organizar seus gastos primeiro para ver quanto consegue separar?
+> Quer que eu monte uma meta simples para esta semana?
 
 ---
 
@@ -117,20 +118,17 @@ Avaliar a qualidade do RAG da INNA considerando busca híbrida, pgvector, busca 
 
 **Resposta gerada:**
 
-> Oi! Entendo que o cartão de crédito pode trazer preocupações quando aperta o orçamento. Vou te orientar de forma simples para a gente entender o que está acontecendo.
+> Olá! Que bom que você veio conversar comigo. Se o cartão de crédito está apertando, vamos por partes para a gente entender direitinho e achar um caminho.
 > 
-> De forma prática, o primeiro passo é olhar a sua fatura e ver quanto exatamente você precisa pagar. Vamos por partes:
+> De forma simples, o primeiro passo é dar uma olhada na sua fatura. Anote o valor total que está chegando. Depois, a gente pode separar o que foi compra essencial do que foi algo que talvez pudesse esperar.
 > 
-> 1.  **Anote o valor total da fatura:** Quanto você tem que pagar neste mês?
-> 2.  **Separe o que é essencial:** Dê uma olhada nas compras. Quais delas eram realmente necessárias e quais poderiam ter esperado?
-> 3.  **Evite novas parcelas:** Enquanto a fatura estiver pesada, tente não fazer novas compras parceladas. Isso evita que a bola de neve de juros e pagamentos aumente.
-> 4.  **Olhe os juros:** Veja se há cobrança de juros, multas por atraso ou algum parcelamento automático que você não escolheu.
-> 5.  **Priorize o que tem mais juros:** Se tiver alguma dívida que está com juros mais altos, o importante é tentar dar um jeito nela primeiro.
-> 6.  **Crie uma meta pequena:** Para esta semana, que tal pensarmos em uma pequena ação para reduzir o uso do cartão? Algo simples, como dizer "não" para uma compra não essencial?
+> Outra coisa importante é, enquanto a fatura está apertada, tentar evitar fazer novas compras parceladas. Assim, a gente não acumula mais para frente.
 > 
-> O importante é começar a organizar e entender para onde o dinheiro está indo.
+> E para essa semana, que tal a gente pensar em uma meta pequena? Pode ser algo como reduzir uma compra que não seja tão essencial, ou diminuir um pouco o uso do cartão nos próximos dias.
 > 
-> Ficou mais claro como podemos começar a olhar para isso?
+> O importante é começar a olhar para isso, viu?
+> 
+> Você gostaria de me contar um pouco mais sobre como tem sido o uso do seu cartão ultimamente? Assim, posso te orientar melhor.
 
 ---
 
@@ -138,130 +136,19 @@ Avaliar a qualidade do RAG da INNA considerando busca híbrida, pgvector, busca 
 
 **Pergunta:** como organizar gastos fixos e variáveis?
 
-**Modo:** `rag_hibrido_pgvector_text_neon_rerank_gemini_answer`
+**Modo:** `rag_hibrido_pgvector_text_neon_rerank`
 
 **Nota:** 10/10
 
 **Status:** APROVADO
 
-**Critérios atendidos:** usa_rag_hibrido, usa_rerank, gemini_final, tem_fontes, tema_correto, resposta_completa
+**Critérios atendidos:** usa_rag_hibrido, usa_rerank, fallback_rag_controlado, tem_fontes, tema_correto, resposta_completa, pergunta_de_acao
 
 **Fontes recuperadas:**
 
 - Faq Financeiro Inna | score: 0.7014182371804327 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
 - Financeiro Basico | score: 0.6474803236607236 | fonte: `data/knowledge_base/financeiro_basico.md`
 - Financeiro Basico | score: 0.6518220338707291 | fonte: `data/knowledge_base/financeiro_basico.md`
-
-**Resposta gerada:**
-
-> Oi! Sou a INNA, sua amiga IA para te ajudar a entender melhor o seu dinheiro. Que bom que você veio conversar comigo!
-> 
-> Vamos por partes para organizar os gastos. De forma simples, a gente pode pensar em dois tipos de gastos:
-> 
-> 1.  **Gastos Fixos:** São aqueles que vêm todo mês, mais ou menos com o mesmo valor, como o aluguel ou a prestação da casa, a conta de luz, água, gás, internet, telefone e mensalidade de escola, se tiver.
-> 2.  **Gastos Variáveis:** São aqueles que mudam de mês para mês e dependem mais do nosso dia a dia, como a comida do mercado, o transporte (gasolina, passagem de ônibus), farmácia, um lanche fora, ou aquela comprinha que a gente faz.
-> 
-> Para começar a organizar, um caminho possível é anotar tudinho! Pegue um caderninho ou o celular e anote o que você gasta em cada uma dessas categorias por um mês. Assim, você vai ver para onde seu dinheiro está indo e onde talvez seja possível fazer algum ajuste.
-> 
-> Já tem alguma ideia de como separa esses gastos no seu dia a dia?
-
----
-
-### 5. Dívidas
-
-**Pergunta:** como sair das dívidas?
-
-**Modo:** `rag_hibrido_pgvector_text_neon_rerank_gemini_answer`
-
-**Nota:** 10/10
-
-**Status:** APROVADO
-
-**Critérios atendidos:** usa_rag_hibrido, usa_rerank, gemini_final, tem_fontes, tema_correto, resposta_completa
-
-**Fontes recuperadas:**
-
-- Financeiro Basico | score: 0.734657414261252 | fonte: `data/knowledge_base/financeiro_basico.md`
-- Financeiro Basico | score: 0.7309024114663539 | fonte: `data/knowledge_base/financeiro_basico.md`
-- Faq Financeiro Inna | score: 0.7416262597189681 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
-
-**Resposta gerada:**
-
-> Olá! Eu sou a INNA, sua amiga IA para organização financeira. Fico feliz em te orientar nessa jornada para sair das dívidas. Vamos por partes?
-> 
-> Para sair das dívidas, o importante é começar com um bom entendimento da sua situação atual. Vou te orientar com alguns passos práticos:
-> 
-> 1.  **Vamos levantar tudo:** De forma simples, o primeiro passo é saber exatamente quanto você deve. Pegue papel e caneta (ou use um bloco de notas no celular) e anote todas as suas dívidas. Para cada uma, escreva:
->     *   Para quem você deve (nome do banco, loja, pessoa).
->     *   Qual o valor total da dívida.
->     *   Quanto você paga por mês.
->     *   Se tem juros e quanto é mais ou menos.
->     *   Qual a data de vencimento de cada parcela.
-> 
-> 2.  **Entendendo a sua lista:** Agora que você tem a lista, vamos olhar com atenção. Algumas dívidas podem ser mais urgentes que outras. Geralmente, aquelas com juros mais altos pesam mais no seu bolso a longo prazo. Pense em quais parcelas estão mais difíceis de pagar ou quais estão crescendo mais por causa dos juros.
-> 
-> 3.  **Negociar é um caminho:** Com a lista em mãos, é possível ver onde você pode tentar negociar. Falar com quem você deve para ver se é possível mudar o valor da parcela para algo que caiba melhor no seu orçamento pode ajudar muito.
-> 
-> 4.  **Um respiro nas despesas:** Para conseguir pagar as dívidas e organizar suas finanças, pode ser um bom momento para dar uma olhada em todos os seus gastos. Vamos categorizar seus gastos para entender para onde o dinheiro está indo. Você pode separar em: moradia, alimentação, transporte, saúde, educação, lazer, as próprias dívidas, e o que sobrar pode ser uma "reserva" ou gastos variáveis. Identificar onde é possível cortar um pouco, mesmo que temporariamente, faz toda a diferença.
-> 
-> 5.  **Sem novas compras parceladas:** Enquanto você está nesse plano para sair das dívidas, é fundamental evitar fazer novas compras parceladas. Assim, você não cria mais um peso para o seu orçamento.
-> 
-> 6.  **Acompanhamento é chave:** É muito importante acompanhar sua evolução. Uma vez por semana, olhe sua lista de dívidas e veja se já pagou alguma ou se os valores diminuíram. Isso te ajuda a ver que você está no caminho certo!
-> 
-> Lembre-se, a organização financeira é um processo. O importante é começar e ir ajustando aos poucos.
-> 
-> Como você se sente em começar anotando todas as suas dívidas?
-
----
-
-### 6. Reserva emergencial
-
-**Pergunta:** o que é reserva de emergência?
-
-**Modo:** `rag_hibrido_pgvector_text_neon_rerank`
-
-**Nota:** 10/10
-
-**Status:** APROVADO
-
-**Critérios atendidos:** usa_rag_hibrido, usa_rerank, fallback_rag_controlado, tem_fontes, tema_correto, resposta_completa, pergunta_de_acao
-
-**Fontes recuperadas:**
-
-- Financeiro Basico | score: 0.7119344188884856 | fonte: `data/knowledge_base/financeiro_basico.md`
-- Faq Financeiro Inna | score: 0.6888318318859966 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
-- Financeiro Basico | score: 0.6602684278515575 | fonte: `data/knowledge_base/financeiro_basico.md`
-
-**Resposta gerada:**
-
-> Vamos por partes. Vou te orientar de um jeito simples:
-> 
-> 1. Veja quanto entra e quanto sai todo mês com contas, mercado, transporte, compras e parcelas.
-> 2. Separe um valor pequeno que caiba no seu bolso, sem apertar demais.
-> 3. Não use esse dinheiro para compras do dia a dia.
-> 4. Olhe todo mês se conseguiu guardar alguma quantia, mesmo que seja pouco.
-> 
-> Quer que eu monte uma meta simples para esta semana?
-
----
-
-### 7. Gastos pequenos
-
-**Pergunta:** gasto muito com pequenas compras, como posso organizar?
-
-**Modo:** `rag_hibrido_pgvector_text_neon_rerank`
-
-**Nota:** 10/10
-
-**Status:** APROVADO
-
-**Critérios atendidos:** usa_rag_hibrido, usa_rerank, fallback_rag_controlado, tem_fontes, tema_correto, resposta_completa, pergunta_de_acao
-
-**Fontes recuperadas:**
-
-- Faq Financeiro Inna | score: 0.7067015603385549 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
-- Faq Financeiro Inna | score: 0.6972376313889488 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
-- Faq Financeiro Inna | score: 0.6777007932644881 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
 
 **Resposta gerada:**
 
@@ -276,17 +163,114 @@ Avaliar a qualidade do RAG da INNA considerando busca híbrida, pgvector, busca 
 
 ---
 
+### 5. Dívidas
+
+**Pergunta:** como sair das dívidas?
+
+**Modo:** `rag_hibrido_pgvector_text_neon_rerank`
+
+**Nota:** 10/10
+
+**Status:** APROVADO
+
+**Critérios atendidos:** usa_rag_hibrido, usa_rerank, fallback_rag_controlado, tem_fontes, tema_correto, resposta_completa, pergunta_de_acao
+
+**Fontes recuperadas:**
+
+- Financeiro Basico | score: 0.734657414261252 | fonte: `data/knowledge_base/financeiro_basico.md`
+- Financeiro Basico | score: 0.7309024114663539 | fonte: `data/knowledge_base/financeiro_basico.md`
+- Faq Financeiro Inna | score: 0.7416262597189681 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
+
+**Resposta gerada:**
+
+> Vamos por partes. O melhor caminho para reduzir suas dívidas é:
+> 
+> 1. Liste todas as dívidas, parcelas, juros e vencimentos.
+> 2. Priorize o pagamento das dívidas mais caras ou com maior impacto no orçamento.
+> 3. Evite assumir novas dívidas durante o plano de organização.
+> 4. Negocie condições melhores quando possível.
+> 
+> Quer que eu monte uma meta simples para esta semana?
+
+---
+
+### 6. Reserva emergencial
+
+**Pergunta:** o que é reserva de emergência?
+
+**Modo:** `rag_hibrido_pgvector_text_neon_rerank_gemini_answer`
+
+**Nota:** 10/10
+
+**Status:** APROVADO
+
+**Critérios atendidos:** usa_rag_hibrido, usa_rerank, gemini_final, tem_fontes, tema_correto, resposta_completa
+
+**Fontes recuperadas:**
+
+- Financeiro Basico | score: 0.7119344188884856 | fonte: `data/knowledge_base/financeiro_basico.md`
+- Faq Financeiro Inna | score: 0.6888318318859966 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
+- Financeiro Basico | score: 0.6602684278515575 | fonte: `data/knowledge_base/financeiro_basico.md`
+
+**Resposta gerada:**
+
+> Olá! Eu sou a INNA, sua amiga aqui para te ajudar a entender melhor sobre dinheiro. Vamos conversar sobre reserva de emergência?
+> 
+> De forma simples, **reserva financeira** é um dinheirinho que a gente separa para usar quando acontece algum imprevisto, sabe? É como ter um "colchãozinho" para não passar aperto.
+> 
+> **Por que ela é importante?** Porque a vida tem dessas coisas! Às vezes o carro quebra, alguém da família precisa de um remédio, ou acontece alguma coisa inesperada que a gente não planejou. Com a reserva, você fica mais tranquila para lidar com esses sustos sem precisar se apertar ou se endividar.
+> 
+> **Um caminho possível é pensar assim:** O quanto você gasta por mês, contando tudo (moradia, comida, transporte, as parcelinhas), te ajuda a ter uma ideia de quanto seria bom ter guardado para cobrir alguns desses gastos em caso de emergência. Quanto mais você tiver guardado comparado com seus gastos, mais protegida você vai se sentir.
+> 
+> Quer saber como podemos começar a pensar em ter essa reserva? Ou talvez você queira falar um pouco mais sobre suas dívidas?
+
+---
+
+### 7. Gastos pequenos
+
+**Pergunta:** gasto muito com pequenas compras, como posso organizar?
+
+**Modo:** `rag_hibrido_pgvector_text_neon_rerank_gemini_answer`
+
+**Nota:** 10/10
+
+**Status:** APROVADO
+
+**Critérios atendidos:** usa_rag_hibrido, usa_rerank, gemini_final, tem_fontes, tema_correto, resposta_completa
+
+**Fontes recuperadas:**
+
+- Faq Financeiro Inna | score: 0.7067015603385549 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
+- Faq Financeiro Inna | score: 0.6972376313889488 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
+- Faq Financeiro Inna | score: 0.6777007932644881 | fonte: `data/knowledge_base/faq_financeiro_inna.md`
+
+**Resposta gerada:**
+
+> Olá! Que bom que você veio conversar sobre isso. É super comum a gente se perder um pouquinho com as pequenas compras, elas parecem inofensivas, né? Mas juntas podem pesar no bolso.
+> 
+> Vou te orientar de forma simples, vamos por partes:
+> 
+> O primeiro passo é entender quanto da sua renda já está comprometida com esses gastos menores. Sabe aquela comprinha aqui, um cafezinho ali, um lanche no meio do dia? Se anotarmos tudo, vamos ter uma ideia mais clara.
+> 
+> Depois de saber para onde o dinheiro está indo, o importante é começar a organizar. Um caminho possível é tentar **evitar novas compras pequenas que não sejam essenciais** nesta semana. Que tal escolher uma pequena ação para esta semana, como reduzir uma dessas compras não essenciais?
+> 
+> E se você quiser montar uma meta para te ajudar, podemos pensar juntos em algo bem pequeno para começar. Por exemplo, se você quer tentar economizar R$ 20 na semana, pode ser uma boa meta para começar.
+> 
+> Ficou com alguma dúvida sobre por onde começar a anotar?
+
+---
+
 ### 8. Parcelas
 
 **Pergunta:** tenho muitas parcelas no cartão, por onde começo?
 
-**Modo:** `rag_hibrido_pgvector_text_neon_rerank`
+**Modo:** `rag_hibrido_pgvector_text_neon_rerank_gemini_answer`
 
-**Nota:** 9/10
+**Nota:** 10/10
 
 **Status:** APROVADO
 
-**Critérios atendidos:** usa_rag_hibrido, usa_rerank, fallback_rag_controlado, tem_fontes, seguranca_educativa, resposta_completa, pergunta_de_acao
+**Critérios atendidos:** usa_rag_hibrido, usa_rerank, gemini_final, tem_fontes, tema_correto, resposta_completa, cartao_contexto_forte, parcelas_plano_pratico
 
 **Fontes recuperadas:**
 
@@ -296,14 +280,23 @@ Avaliar a qualidade do RAG da INNA considerando busca híbrida, pgvector, busca 
 
 **Resposta gerada:**
 
-> Com base na base de conhecimento da INNA, a orientação educativa é:
+> Olá! Que bom que você buscou ajuda para organizar as suas parcelas no cartão. Vou te orientar de forma simples, como sempre gostamos por aqui.
 > 
-> 1. Organize seus dados financeiros.
-> 2. Compare renda, gastos, dívidas e reserva.
-> 3. Priorize ações simples e mensuráveis.
-> 4. Evite decisões financeiras arriscadas sem orientação profissional.
+> Quando a gente tem muitas parcelas, o primeiro passo é entender o quanto da sua renda já está comprometida com essas compras. **Vamos por partes**:
 > 
-> Quer que eu monte uma meta simples para esta semana?
+> 1.  **Olhar a fatura atual**: Dê uma olhada na sua fatura atual e veja quanto você já gastou e quanto ainda tem para pagar dela.
+> 2.  **Ver as parcelas futuras**: Agora, separe todas as outras parcelas que você já assumiu e que vão aparecer nas próximas faturas. É importante ver o total que vai sair do seu bolso nos próximos meses.
+> 3.  **Quanto da sua renda está comprometida?**: Junte o valor da fatura atual com o total das parcelas futuras e veja qual parte da sua renda já está "destinada" a essas dívidas.
+> 
+> A partir daí, **um caminho possível é**:
+> 
+> *   **Evitar novas compras parceladas por enquanto**: Sei que às vezes a gente se empolga com uma oferta, mas agora é a hora de dar um respiro para o seu orçamento. Deixe as novas parcelas para depois, quando a situação estiver mais leve.
+> *   **Olhar os juros**: Se alguma parcela tem juros altos, ou se você já se atrasou e gerou mais juros, isso também precisa da sua atenção. Às vezes, vale a pena focar em quitar essas dívidas que estão "engordando".
+> *   **Separar o essencial do impulso**: Pense se aquela compra que virou parcela era algo que você realmente precisava agora, ou se foi mais um impulso. Isso ajuda a gente a aprender para as próximas vezes.
+> 
+> Para começar, que tal criarmos uma meta simples para esta semana? Pode ser algo como **reduzir um gasto não essencial** que você costuma fazer. O importante é começar, mesmo que seja com um passo pequeno.
+> 
+> Como você se sente olhando para o total dessas parcelas?
 
 ---
 
