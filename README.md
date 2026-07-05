@@ -1078,3 +1078,4 @@ Esta versão tem como objetivo demonstrar que a INNA não é apenas um protótip
 - suporte multilíngue;
 - base preparada para validação com usuários reais.
 - [Testes RAG — INNA Financial Coach AI](docs/testes_rag_inna.md)
+- [Segurança Financeira — INNA Financial Coach AI](docs/seguranca_financeira_inna.md)
