@@ -50,3 +50,8 @@ __pycache__/
 secrets/
 credentials.json
 token.json
+
+# Backups locais do dashboard
+src/dashboard_backup_*.py
+src/dashboard_quebrado_*.py
+src/*backup*.py
