@@ -12,6 +12,7 @@ from src.rag_engine import (
     answer_with_rag,
     ingest_default_knowledge_base,
     search_knowledge_base,
+    save_rag_log,
 )
 from src.pdf_report import gerar_relatorio_pdf
 from src.email_sender import send_diagnostico_email
@@ -725,10 +726,22 @@ def rag_ask(payload: RagAskRequest):
     Responde usando RAG local sem custo, com fontes da base da INNA.
     """
     try:
+        import time
+
+        inicio = time.time()
+
         result = answer_with_rag(
             pergunta=payload.pergunta,
             idioma=payload.idioma,
             top_k=payload.top_k,
+        )
+
+        tempo_resposta_ms = int((time.time() - inicio) * 1000)
+
+        save_rag_log(
+            pergunta=payload.pergunta,
+            resultado=result,
+            tempo_resposta_ms=tempo_resposta_ms,
         )
 
         safe_record_event(

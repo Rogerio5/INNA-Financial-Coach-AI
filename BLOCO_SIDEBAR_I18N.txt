@@ -1,0 +1,39 @@
+
+# =====================================================
+# SIDEBAR I18N — MENU E FILTROS TRADUZIDOS
+# Substitua o bloco antigo da sidebar por este bloco.
+# =====================================================
+
+sidebar = render_sidebar_i18n(
+    st=st,
+    start_default=start_default,
+    end_default=end_default,
+    lista_usuarios=lista_usuarios,
+    lista_idiomas_dados=lista_idiomas_dados,
+    lista_moedas=["BRL", "USD", "EUR"],
+)
+
+selected_language = sidebar["selected_language"]
+t = sidebar["t"]
+selected_page = sidebar["selected_page"]
+
+start_date = sidebar["start_date"]
+end_date = sidebar["end_date"]
+
+user_filter = sidebar["user_filter_label"]
+risk_filter = sidebar["risk_filter"]
+feedback_filter = sidebar["feedback_filter"]
+data_language_filter = sidebar["data_language_filter_label"]
+currency_filter = sidebar["currency_filter_label"]
+
+# Exemplos de uso no corpo do dashboard:
+# st.markdown(f"### {t('main_indicators')}")
+# st.button(t("update_data"))
+# st.metric(t("financial_score"), "60.0/100")
+# st.metric(t("risk"), t("medium"))
+# st.metric(t("estimated_balance"), "R$ 600,00")
+
+# =====================================================
+# FIM SIDEBAR I18N
+# =====================================================
+

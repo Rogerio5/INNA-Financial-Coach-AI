@@ -1,3 +1,42 @@
+
+def normalizar_risco_dashboard_inna(valor):
+    mapa = {
+        "low": "Baixo",
+        "baixo": "Baixo",
+        "medium": "Médio",
+        "medio": "Médio",
+        "médio": "Médio",
+        "high": "Alto",
+        "alto": "Alto",
+    }
+
+    if valor is None:
+        return "Não informado"
+
+    texto = str(valor).strip()
+    return mapa.get(texto.lower(), texto)
+
+
+def normalizar_dataframe_risco_dashboard_inna(df):
+    if df is None:
+        return df
+
+    if hasattr(df, "empty") and df.empty:
+        return df
+
+    colunas_possiveis = [
+        "risco",
+        "nivel_risco",
+        "risco_exibicao",
+        "risk",
+    ]
+
+    for coluna in colunas_possiveis:
+        if coluna in df.columns:
+            df[coluna] = df[coluna].apply(normalizar_risco_dashboard_inna)
+
+    return df
+
 import os
 import sys
 from pathlib import Path
@@ -2751,7 +2790,24 @@ def menu_t(key: str) -> str:
     lang = app_lang if app_lang in MENU_LABELS_INNA else "pt"
     return MENU_LABELS_INNA.get(lang, MENU_LABELS_INNA["pt"]).get(key, key)
 def translate_risk_app(risk: str) -> str:
+    """
+    Traduz/normaliza risco para o idioma atual do app.
+    Também corrige entradas vindas como Low, Medium, High ou Medio.
+    """
+
     risk = str(risk or "").strip()
+
+    normalize_map = {
+        "baixo": "Baixo",
+        "low": "Baixo",
+        "médio": "Médio",
+        "medio": "Médio",
+        "medium": "Médio",
+        "alto": "Alto",
+        "high": "Alto",
+    }
+
+    risk_key = normalize_map.get(risk.lower(), risk)
 
     risk_map = {
         "Baixo": {
@@ -2762,25 +2818,6 @@ def translate_risk_app(risk: str) -> str:
             "fr": "Faible",
             "de": "Niedrig",
             "ch": "Niedrig",
-            "it": "Basso",
-            "ro": "Scăzut",
-            "uk": "Низький",
-            "ru": "Низкий",
-            "ar": "منخفض",
-        },
-        "Medio": {
-            "pt": "Médio",
-            "en_us": "Medium",
-            "en_gb": "Medium",
-            "es": "Medio",
-            "fr": "Moyen",
-            "de": "Mittel",
-            "ch": "Mittel",
-            "it": "Medio",
-            "ro": "Mediu",
-            "uk": "Середній",
-            "ru": "Средний",
-            "ar": "متوسط",
         },
         "Médio": {
             "pt": "Médio",
@@ -2790,11 +2827,6 @@ def translate_risk_app(risk: str) -> str:
             "fr": "Moyen",
             "de": "Mittel",
             "ch": "Mittel",
-            "it": "Medio",
-            "ro": "Mediu",
-            "uk": "Середній",
-            "ru": "Средний",
-            "ar": "متوسط",
         },
         "Alto": {
             "pt": "Alto",
@@ -2804,16 +2836,12 @@ def translate_risk_app(risk: str) -> str:
             "fr": "Élevé",
             "de": "Hoch",
             "ch": "Hoch",
-            "it": "Alto",
-            "ro": "Ridicat",
-            "uk": "Високий",
-            "ru": "Высокий",
-            "ar": "مرتفع",
         },
     }
 
-    return risk_map.get(risk, {}).get(app_lang, risk)
+    lang = globals().get("app_lang", "pt")
 
+    return risk_map.get(risk_key, {}).get(lang, risk_key)
 
 def label_with_currency(key: str) -> str:
     currency = current_currency_info.get("moeda", "")
@@ -3080,7 +3108,11 @@ menu_options_top = [
 ]
 
 if st.session_state.get("perfil_usuario") == "admin":
+    menu_options_top.insert(-1, "📊 Observabilidade RAG")
     menu_options_top.insert(-1, "🔐 Admin Analytics")
+
+    if "📊 Observabilidade RAG" not in APP_MENU_OPTIONS:
+        APP_MENU_OPTIONS.append("📊 Observabilidade RAG")
 
     if "🔐 Admin Analytics" not in APP_MENU_OPTIONS:
         APP_MENU_OPTIONS.append("🔐 Admin Analytics")
@@ -5412,9 +5444,99 @@ if app_menu == "💬 Conversar":
     st.stop()
 
 
+
+def render_observabilidade_rag_inna():
+    st.divider()
+    st.subheader("📊 Observabilidade RAG — INNA")
+    st.caption("Métricas das perguntas respondidas pelo RAG, Gemini, fallback e Segurança Financeira.")
+
+    try:
+        from src.rag_engine import get_rag_connection
+
+        conn_obs = get_rag_connection()
+        cur_obs = conn_obs.cursor()
+
+        cur_obs.execute("SELECT COUNT(*) FROM inna_rag_logs;")
+        total_logs = cur_obs.fetchone()[0] or 0
+
+        cur_obs.execute("""
+        SELECT
+            COALESCE(SUM(CASE WHEN usou_gemini THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN usou_seguranca THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN usou_fallback THEN 1 ELSE 0 END), 0),
+            COALESCE(ROUND(AVG(tempo_resposta_ms), 2), 0),
+            COALESCE(MAX(tempo_resposta_ms), 0)
+        FROM inna_rag_logs;
+        """)
+        gemini_total, seguranca_total, fallback_total, tempo_medio, tempo_maximo = cur_obs.fetchone()
+
+        c1, c2, c3, c4, c5 = st.columns(5)
+        c1.metric("Perguntas", total_logs)
+        c2.metric("Gemini", gemini_total)
+        c3.metric("Segurança", seguranca_total)
+        c4.metric("Fallback", fallback_total)
+        c5.metric("Tempo médio", f"{tempo_medio} ms")
+
+        st.metric("Maior tempo de resposta", f"{tempo_maximo} ms")
+
+        st.write("### Distribuição por modo")
+        cur_obs.execute("""
+        SELECT modo, COUNT(*) AS total
+        FROM inna_rag_logs
+        GROUP BY modo
+        ORDER BY total DESC;
+        """)
+        modos = cur_obs.fetchall()
+
+        st.dataframe(
+            [{"modo": modo, "total": total} for modo, total in modos],
+            use_container_width=True,
+        )
+
+        st.write("### Últimas perguntas")
+        cur_obs.execute("""
+        SELECT pergunta, modo, fontes_total, usou_gemini, usou_seguranca, usou_fallback, tempo_resposta_ms, created_at
+        FROM inna_rag_logs
+        ORDER BY id DESC
+        LIMIT 20;
+        """)
+        ultimas = cur_obs.fetchall()
+
+        st.dataframe(
+            [
+                {
+                    "pergunta": pergunta,
+                    "modo": modo,
+                    "fontes": fontes_total,
+                    "gemini": usou_gemini,
+                    "segurança": usou_seguranca,
+                    "fallback": usou_fallback,
+                    "tempo_ms": tempo_resposta_ms,
+                    "data": created_at,
+                }
+                for pergunta, modo, fontes_total, usou_gemini, usou_seguranca, usou_fallback, tempo_resposta_ms, created_at in ultimas
+            ],
+            use_container_width=True,
+        )
+
+        cur_obs.close()
+        conn_obs.close()
+
+    except Exception as error:
+        st.warning(f"Não foi possível carregar métricas RAG: {error}")
+
+
+
+
+if app_menu == "📊 Observabilidade RAG":
+    render_observabilidade_rag_inna()
+    st.stop()
+
 if app_menu in ["🔐 Admin", "🔐 Admin Analytics", "Admin", "Admin Analytics"]:
     st.title("🔐 Admin Analytics — INNA")
     st.caption("Dashboard administrativo integrado ao painel principal da INNA.")
+
+
 
     st.markdown(
         """
@@ -6630,6 +6752,8 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
+
+
 
 
 

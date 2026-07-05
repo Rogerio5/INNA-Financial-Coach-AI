@@ -1281,6 +1281,60 @@ A resposta deve:
         return None
 
 
+
+
+def save_rag_log(
+    pergunta: str,
+    resultado: dict,
+    tempo_resposta_ms: int | None = None,
+) -> None:
+    """
+    Salva log simples da resposta RAG para observabilidade da INNA.
+    """
+    try:
+        modo = resultado.get("modo") or ""
+        resposta = resultado.get("resposta") or ""
+        fontes = resultado.get("fontes") or []
+
+        conn = get_rag_connection()
+        cur = conn.cursor()
+
+        cur.execute(
+            """
+            INSERT INTO inna_rag_logs (
+                pergunta,
+                modo,
+                resposta_preview,
+                fontes_total,
+                usou_gemini,
+                usou_seguranca,
+                usou_fallback,
+                tempo_resposta_ms
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+            """,
+            (
+                pergunta,
+                modo,
+                resposta[:500],
+                len(fontes),
+                "_gemini_answer" in modo,
+                "seguranca_financeira" in modo,
+                "fallback" in modo or "rag_local_sem_custo" in modo,
+                tempo_resposta_ms,
+            ),
+        )
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    except Exception:
+        # Log não pode quebrar resposta do usuário.
+        return
+
+
+
 def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     resposta_seguranca = answer_security_financeira(pergunta)
     if resposta_seguranca:
