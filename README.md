@@ -1077,4 +1077,4 @@ Esta versão tem como objetivo demonstrar que a INNA não é apenas um protótip
 - painel administrativo;
 - suporte multilíngue;
 - base preparada para validação com usuários reais.
-
+- [Testes RAG — INNA Financial Coach AI](docs/testes_rag_inna.md)
