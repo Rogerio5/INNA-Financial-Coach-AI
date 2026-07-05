@@ -1039,5 +1039,42 @@ Motor financeiro + Gemini
 ↓  
 Neon PostgreSQL  
 ↓  
-Dashboard / App Web / PDF  
+Dashboard / App Web / PDF
+
+---
+
+## 🚀 Versão atual do projeto
+
+A versão atual da **INNA Financial Coach AI** consolida a aplicação como uma solução educativa, multilíngue e orientada por dados reais.
+
+### Funcionalidades implementadas
+
+- Dashboard administrativo multilíngue.
+- RAG financeiro para respostas contextualizadas.
+- Eventos reais registrados no PostgreSQL/Neon.
+- Segurança educativa sobre Pix, fraude e golpes financeiros.
+- Geração de diagnóstico financeiro personalizado.
+- Exportação de dados em CSV.
+- Observabilidade, métricas e validação do agente.
+- Suporte a múltiplos canais e idiomas.
+- Preservação dos dados reais salvos no banco, separando interface traduzida de informações originais do usuário.
+
+### Idiomas principais validados no dashboard
+
+- Português.
+- Inglês.
+- Árabe.
+- Russo.
+
+### Objetivo da versão
+
+Esta versão tem como objetivo demonstrar que a INNA não é apenas um protótipo visual, mas uma aplicação com:
+
+- uso real de banco de dados;
+- rastreabilidade de eventos;
+- camada de IA com RAG;
+- preocupação com segurança financeira;
+- painel administrativo;
+- suporte multilíngue;
+- base preparada para validação com usuários reais.
 
