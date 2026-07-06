@@ -5457,6 +5457,69 @@ def salvar_chunks_documento(nome_arquivo, texto):
 
 
 
+
+def atualizar_metadata_reprocessamento_rag(
+    documento_id,
+    caminho_chunks,
+    caminho_embedding_ready,
+    total_chunks,
+):
+    import os
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            from pathlib import Path
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return {
+            "ok": False,
+            "message": "DATABASE_URL não encontrada. Metadata não foi atualizada."
+        }
+
+    try:
+        import psycopg2
+
+        conn = psycopg2.connect(database_url)
+        cur = conn.cursor()
+
+        cur.execute("""
+            UPDATE documentos_upload_rag
+            SET
+                caminho_chunks = %s,
+                caminho_embedding_ready = %s,
+                total_chunks = %s,
+                status = 'processado'
+            WHERE id = %s;
+        """, (
+            caminho_chunks,
+            caminho_embedding_ready,
+            int(total_chunks),
+            int(documento_id),
+        ))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return {
+            "ok": True,
+            "message": f"Documento id {documento_id} reprocessado e atualizado no Neon/PostgreSQL."
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"Erro ao atualizar metadata no Neon/PostgreSQL: {e}"
+        }
+
+
 def carregar_documentos_upload_rag():
     import os
     import pandas as pd
@@ -5752,6 +5815,51 @@ def render_upload_documentos_rag():
             use_container_width=True,
             hide_index=True
         )
+
+
+        st.markdown("### Reprocessar documento")
+
+        opcoes_docs = [
+            f"{int(row['id'])} - {row['nome_salvo']}"
+            for _, row in df_docs.iterrows()
+        ]
+
+        doc_escolhido = st.selectbox(
+            "Escolha um documento para reprocessar",
+            opcoes_docs,
+            key="select_reprocessar_documento_rag"
+        )
+
+        if st.button("🔄 Reprocessar documento selecionado", key="btn_reprocessar_documento_rag"):
+            from pathlib import Path
+
+            documento_id = int(doc_escolhido.split(" - ")[0])
+            registro = df_docs[df_docs["id"] == documento_id].iloc[0]
+
+            caminho_upload = Path(str(registro["caminho_upload"]))
+
+            if not caminho_upload.exists():
+                st.error(f"Arquivo original não encontrado: {caminho_upload}")
+            else:
+                texto_documento = caminho_upload.read_text(encoding="utf-8", errors="ignore")
+
+                chunks_path, chunks, embedding_ready_path = salvar_chunks_documento(
+                    caminho_upload.name,
+                    texto_documento
+                )
+
+                resultado_update = atualizar_metadata_reprocessamento_rag(
+                    documento_id=documento_id,
+                    caminho_chunks=str(chunks_path),
+                    caminho_embedding_ready=str(embedding_ready_path),
+                    total_chunks=len(chunks),
+                )
+
+                if resultado_update.get("ok"):
+                    st.success(resultado_update.get("message"))
+                    st.info(f"Novo arquivo pronto para embeddings: {embedding_ready_path.name}")
+                else:
+                    st.warning(resultado_update.get("message"))
 
 def main():
 
