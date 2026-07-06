@@ -5458,6 +5458,169 @@ def salvar_chunks_documento(nome_arquivo, texto):
 
 
 
+
+def gerar_embedding_gemini_rag(texto):
+    import os
+
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+
+    if not api_key:
+        try:
+            from dotenv import load_dotenv
+            from pathlib import Path
+            load_dotenv(dotenv_path=Path(".env"))
+            api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        except Exception:
+            api_key = None
+
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY ou GOOGLE_API_KEY não encontrada.")
+
+    import google.generativeai as genai
+
+    genai.configure(api_key=api_key)
+
+    resultado = genai.embed_content(
+        model="models/gemini-embedding-001",
+        content=texto,
+        task_type="retrieval_document"
+    )
+
+    return resultado["embedding"]
+
+
+def preparar_tabela_embeddings_pgvector_rag(conn):
+    cur = conn.cursor()
+
+    cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS chunks_embeddings_rag (
+            id SERIAL PRIMARY KEY,
+            documento_id INTEGER REFERENCES documentos_upload_rag(id) ON DELETE CASCADE,
+            chunk_id TEXT NOT NULL,
+            documento_origem TEXT,
+            chunk_index INTEGER,
+            texto TEXT NOT NULL,
+            metadata JSONB,
+            embedding vector(3072),
+            modelo_embedding TEXT DEFAULT 'models/gemini-embedding-001',
+            criado_em TIMESTAMP DEFAULT NOW(),
+            UNIQUE(documento_id, chunk_id)
+        );
+    """)
+
+    conn.commit()
+    cur.close()
+
+
+def salvar_chunks_embeddings_pgvector_rag(documento_id, caminho_embedding_ready):
+    import os
+    import json
+    from pathlib import Path
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return {
+            "ok": False,
+            "message": "DATABASE_URL não encontrada."
+        }
+
+    caminho = Path(str(caminho_embedding_ready))
+
+    if not caminho.exists():
+        return {
+            "ok": False,
+            "message": f"Arquivo JSONL não encontrado: {caminho}"
+        }
+
+    try:
+        import psycopg2
+
+        conn = psycopg2.connect(database_url)
+        preparar_tabela_embeddings_pgvector_rag(conn)
+        cur = conn.cursor()
+
+        total_salvos = 0
+
+        with caminho.open("r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+
+                if not line:
+                    continue
+
+                item = json.loads(line)
+
+                texto = item.get("texto", "").strip()
+
+                if not texto:
+                    continue
+
+                embedding = gerar_embedding_gemini_rag(texto)
+
+                vetor_pgvector = "[" + ",".join(str(float(valor)) for valor in embedding) + "]"
+
+                cur.execute("""
+                    INSERT INTO chunks_embeddings_rag (
+                        documento_id,
+                        chunk_id,
+                        documento_origem,
+                        chunk_index,
+                        texto,
+                        metadata,
+                        embedding,
+                        modelo_embedding
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s::jsonb, %s::vector, %s)
+                    ON CONFLICT (documento_id, chunk_id)
+                    DO UPDATE SET
+                        documento_origem = EXCLUDED.documento_origem,
+                        chunk_index = EXCLUDED.chunk_index,
+                        texto = EXCLUDED.texto,
+                        metadata = EXCLUDED.metadata,
+                        embedding = EXCLUDED.embedding,
+                        modelo_embedding = EXCLUDED.modelo_embedding,
+                        criado_em = NOW();
+                """, (
+                    int(documento_id),
+                    item.get("chunk_id"),
+                    item.get("documento_origem"),
+                    int(item.get("chunk_index", 0)),
+                    texto,
+                    json.dumps(item.get("metadata", {}), ensure_ascii=False),
+                    vetor_pgvector,
+                    "models/gemini-embedding-001"
+                ))
+
+                total_salvos += 1
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return {
+            "ok": True,
+            "total": total_salvos,
+            "message": f"{total_salvos} embeddings salvos no pgvector."
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"Erro ao gerar/salvar embeddings no pgvector: {e}"
+        }
+
+
 def atualizar_metadata_reprocessamento_rag(
     documento_id,
     caminho_chunks,
@@ -5860,6 +6023,31 @@ def render_upload_documentos_rag():
                     st.info(f"Novo arquivo pronto para embeddings: {embedding_ready_path.name}")
                 else:
                     st.warning(resultado_update.get("message"))
+
+
+        st.markdown("### Gerar embeddings no pgvector")
+
+        st.caption("Este botão lê o arquivo JSONL do documento selecionado, gera embeddings com Gemini e salva no Neon/PostgreSQL usando pgvector.")
+
+        if st.button("🧠 Gerar embeddings do documento selecionado", key="btn_gerar_embeddings_pgvector_rag"):
+            documento_id = int(doc_escolhido.split(" - ")[0])
+            registro = df_docs[df_docs["id"] == documento_id].iloc[0]
+
+            caminho_embedding_ready = registro.get("caminho_embedding_ready")
+
+            if not caminho_embedding_ready:
+                st.error("Este documento ainda não possui caminho_embedding_ready registrado.")
+            else:
+                with st.spinner("Gerando embeddings e salvando no pgvector..."):
+                    resultado_embeddings = salvar_chunks_embeddings_pgvector_rag(
+                        documento_id=documento_id,
+                        caminho_embedding_ready=caminho_embedding_ready
+                    )
+
+                if resultado_embeddings.get("ok"):
+                    st.success(resultado_embeddings.get("message"))
+                else:
+                    st.warning(resultado_embeddings.get("message"))
 
 def main():
 
