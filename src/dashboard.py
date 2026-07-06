@@ -5455,6 +5455,102 @@ def salvar_chunks_documento(nome_arquivo, texto):
     return output_path, chunks, embedding_ready_path
 
 
+
+def registrar_metadata_upload_rag(
+    nome_original,
+    nome_salvo,
+    caminho_upload,
+    caminho_chunks,
+    caminho_embedding_ready,
+    extensao,
+    tamanho_bytes,
+    total_chunks,
+):
+    import os
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        return {
+            "ok": False,
+            "message": "DATABASE_URL não encontrada. Metadata não foi salva no Neon."
+        }
+
+    try:
+        import psycopg2
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"psycopg2 não disponível: {e}"
+        }
+
+    try:
+        conn = psycopg2.connect(database_url)
+        cur = conn.cursor()
+
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS documentos_upload_rag (
+                id SERIAL PRIMARY KEY,
+                nome_original TEXT,
+                nome_salvo TEXT NOT NULL,
+                caminho_upload TEXT,
+                caminho_chunks TEXT,
+                caminho_embedding_ready TEXT,
+                extensao TEXT,
+                tamanho_bytes INTEGER,
+                total_chunks INTEGER,
+                status TEXT DEFAULT 'processado',
+                origem TEXT DEFAULT 'dashboard_upload',
+                criado_em TIMESTAMP DEFAULT NOW()
+            );
+        """)
+
+        cur.execute("""
+            INSERT INTO documentos_upload_rag (
+                nome_original,
+                nome_salvo,
+                caminho_upload,
+                caminho_chunks,
+                caminho_embedding_ready,
+                extensao,
+                tamanho_bytes,
+                total_chunks,
+                status,
+                origem
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id;
+        """, (
+            nome_original,
+            nome_salvo,
+            caminho_upload,
+            caminho_chunks,
+            caminho_embedding_ready,
+            extensao,
+            int(tamanho_bytes),
+            int(total_chunks),
+            "processado",
+            "dashboard_upload"
+        ))
+
+        row = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return {
+            "ok": True,
+            "id": row[0],
+            "message": f"Metadata salva no Neon/PostgreSQL com id {row[0]}."
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"Erro ao salvar metadata no Neon/PostgreSQL: {e}"
+        }
+
+
 def render_upload_documentos_rag():
     import streamlit as st
     from pathlib import Path
@@ -5503,6 +5599,22 @@ def render_upload_documentos_rag():
             st.markdown("### Chunks gerados")
             st.success(f"{len(chunks)} chunks gerados e salvos em: {chunks_path.name}")
             st.info(f"Arquivo pronto para embeddings/pgvector: {embedding_ready_path.name}")
+
+            registro_db = registrar_metadata_upload_rag(
+                nome_original=original_name,
+                nome_salvo=final_path.name,
+                caminho_upload=str(final_path),
+                caminho_chunks=str(chunks_path),
+                caminho_embedding_ready=str(embedding_ready_path),
+                extensao=suffix,
+                tamanho_bytes=len(content_bytes),
+                total_chunks=len(chunks),
+            )
+
+            if registro_db.get("ok"):
+                st.success(registro_db.get("message"))
+            else:
+                st.warning(registro_db.get("message"))
 
             for idx, chunk in enumerate(chunks[:5], start=1):
                 with st.expander(f"Chunk {idx}"):
