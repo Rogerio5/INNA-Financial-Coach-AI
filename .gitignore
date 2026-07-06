@@ -55,3 +55,7 @@ token.json
 src/dashboard_backup_*.py
 src/dashboard_quebrado_*.py
 src/*backup*.py
+
+# Backups antigos do dashboard
+src/backups_dashboard_antigos/
+src/backups_dashboard_antigos/*.py
