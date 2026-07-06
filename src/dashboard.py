@@ -5621,6 +5621,154 @@ def salvar_chunks_embeddings_pgvector_rag(documento_id, caminho_embedding_ready)
         }
 
 
+
+
+def definir_limite_chunks_automatico_rag(pergunta):
+    if not pergunta:
+        return 3
+
+    pergunta_lower = pergunta.lower().strip()
+
+    termos_complexos = [
+        "analise",
+        "análise",
+        "plano",
+        "estratégia",
+        "organizar tudo",
+        "várias dívidas",
+        "varias dividas",
+        "cartão e pix",
+        "cartao e pix",
+        "financiamento",
+        "orçamento completo",
+        "orcamento completo",
+        "minha situação",
+        "minha situacao",
+        "renda",
+        "gastos",
+        "dívidas",
+        "dividas",
+        "parcelas",
+        "reserva",
+    ]
+
+    termos_simples = [
+        "pix estranho",
+        "devo devolver",
+        "é golpe",
+        "e golpe",
+        "cartão apertado",
+        "cartao apertado",
+        "posso parcelar",
+        "vale a pena",
+    ]
+
+    if any(termo in pergunta_lower for termo in termos_complexos):
+        return 8
+
+    if any(termo in pergunta_lower for termo in termos_simples):
+        return 3
+
+    if len(pergunta_lower) < 80:
+        return 3
+
+    if len(pergunta_lower) < 180:
+        return 5
+
+    return 8
+
+
+def buscar_chunks_semanticos_pgvector_rag(pergunta, limite=5):
+    import os
+    from pathlib import Path
+
+    if not pergunta or not pergunta.strip():
+        return {
+            "ok": False,
+            "message": "Pergunta vazia.",
+            "resultados": []
+        }
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return {
+            "ok": False,
+            "message": "DATABASE_URL não encontrada.",
+            "resultados": []
+        }
+
+    try:
+        import psycopg2
+
+        embedding_pergunta = gerar_embedding_gemini_rag(pergunta)
+
+        vetor_pgvector = "[" + ",".join(str(float(valor)) for valor in embedding_pergunta) + "]"
+
+        conn = psycopg2.connect(database_url)
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT
+                id,
+                documento_id,
+                chunk_id,
+                documento_origem,
+                chunk_index,
+                texto,
+                modelo_embedding,
+                embedding <=> %s::vector AS distancia
+            FROM chunks_embeddings_rag
+            ORDER BY embedding <=> %s::vector
+            LIMIT %s;
+        """, (
+            vetor_pgvector,
+            vetor_pgvector,
+            int(limite)
+        ))
+
+        rows = cur.fetchall()
+
+        resultados = []
+
+        for row in rows:
+            resultados.append({
+                "id": row[0],
+                "documento_id": row[1],
+                "chunk_id": row[2],
+                "documento_origem": row[3],
+                "chunk_index": row[4],
+                "texto": row[5],
+                "modelo_embedding": row[6],
+                "distancia": float(row[7]),
+                "similaridade_aproximada": round(1 - float(row[7]), 4)
+            })
+
+        cur.close()
+        conn.close()
+
+        return {
+            "ok": True,
+            "message": f"{len(resultados)} chunks encontrados.",
+            "resultados": resultados
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"Erro na busca semântica pgvector: {e}",
+            "resultados": []
+        }
+
+
 def atualizar_metadata_reprocessamento_rag(
     documento_id,
     caminho_chunks,
@@ -6048,6 +6196,59 @@ def render_upload_documentos_rag():
                     st.success(resultado_embeddings.get("message"))
                 else:
                     st.warning(resultado_embeddings.get("message"))
+
+
+        st.markdown("### Testar busca semântica no pgvector")
+
+        pergunta_teste_pgvector = st.text_input(
+            "Digite uma pergunta para buscar nos documentos vetorizados",
+            value="Recebi um Pix estranho, devo devolver?",
+            key="pergunta_teste_pgvector_rag"
+        )
+
+        modo_limite_chunks = st.radio(
+            "Modo de quantidade de chunks",
+            ["Automático pela INNA", "Manual"],
+            horizontal=True,
+            key="modo_limite_chunks_pgvector_rag"
+        )
+
+        if modo_limite_chunks == "Automático pela INNA":
+            limite_resultados_pgvector = definir_limite_chunks_automatico_rag(pergunta_teste_pgvector)
+            st.info(f"Quantidade escolhida automaticamente pela INNA: {limite_resultados_pgvector} chunks")
+        else:
+            limite_resultados_pgvector = st.slider(
+                "Quantidade de chunks retornados",
+                min_value=1,
+                max_value=10,
+                value=5,
+                key="limite_resultados_pgvector_rag"
+            )
+
+        if st.button("🔎 Buscar chunks mais parecidos", key="btn_buscar_chunks_pgvector_rag"):
+            with st.spinner("Gerando embedding da pergunta e buscando no pgvector..."):
+                resultado_busca = buscar_chunks_semanticos_pgvector_rag(
+                    pergunta=pergunta_teste_pgvector,
+                    limite=limite_resultados_pgvector
+                )
+
+            if not resultado_busca.get("ok"):
+                st.warning(resultado_busca.get("message"))
+            else:
+                st.success(resultado_busca.get("message"))
+
+                resultados = resultado_busca.get("resultados", [])
+
+                if not resultados:
+                    st.info("Nenhum chunk encontrado.")
+                else:
+                    for item in resultados:
+                        with st.expander(
+                            f"Chunk {item['chunk_index']} | Similaridade aprox.: {item['similaridade_aproximada']} | {item['documento_origem']}"
+                        ):
+                            st.caption(f"chunk_id: {item['chunk_id']}")
+                            st.caption(f"distância pgvector: {item['distancia']}")
+                            st.write(item["texto"])
 
 def main():
 
