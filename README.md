@@ -1079,3 +1079,4 @@ Esta versão tem como objetivo demonstrar que a INNA não é apenas um protótip
 - base preparada para validação com usuários reais.
 - [Testes RAG — INNA Financial Coach AI](docs/testes_rag_inna.md)
 - [Segurança Financeira — INNA Financial Coach AI](docs/seguranca_financeira_inna.md)
+- [Fase 5.11 — RAG Híbrido da INNA](docs/rag_hibrido_inna.md)
