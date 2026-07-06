@@ -59,3 +59,12 @@ src/*backup*.py
 # Backups antigos do dashboard
 src/backups_dashboard_antigos/
 src/backups_dashboard_antigos/*.py
+
+# Uploads locais da base RAG
+data/knowledge_base/uploads/*
+!data/knowledge_base/uploads/.gitkeep
+
+# Backups locais
+src/dashboard_backup_*.py
+docs_backup_antes_correcao_*/
+

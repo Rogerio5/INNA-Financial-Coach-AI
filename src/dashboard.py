@@ -3118,6 +3118,7 @@ def render_filters(diagnosticos_df, feedbacks_df):
             "🧠 Leitura Executiva",
             "🧪 Avaliação do Agente",
             "📊 Observabilidade RAG",
+            "📄 Upload Documentos",
             "📤 Exportar",
         ],
         format_func=dt_menu,
@@ -5318,6 +5319,106 @@ DASHBOARD_EXTRA_TEXTS.setdefault("ru", {}).update({
 })
 
 
+
+# ============================================================
+# FASE 5.18 — UPLOAD REAL DE DOCUMENTOS PARA BASE RAG
+# ============================================================
+
+DASHBOARD_MENU_LABELS.setdefault("pt", {}).update({
+    "📄 Upload Documentos": "📄 Upload Documentos",
+})
+DASHBOARD_MENU_LABELS.setdefault("en_us", {}).update({
+    "📄 Upload Documentos": "📄 Document Upload",
+})
+DASHBOARD_MENU_LABELS.setdefault("en_gb", {}).update({
+    "📄 Upload Documentos": "📄 Document Upload",
+})
+DASHBOARD_MENU_LABELS.setdefault("es", {}).update({
+    "📄 Upload Documentos": "📄 Subida de documentos",
+})
+DASHBOARD_MENU_LABELS.setdefault("fr", {}).update({
+    "📄 Upload Documentos": "📄 Téléversement de documents",
+})
+DASHBOARD_MENU_LABELS.setdefault("de", {}).update({
+    "📄 Upload Documentos": "📄 Dokumenten-Upload",
+})
+DASHBOARD_MENU_LABELS.setdefault("it", {}).update({
+    "📄 Upload Documentos": "📄 Caricamento documenti",
+})
+DASHBOARD_MENU_LABELS.setdefault("ro", {}).update({
+    "📄 Upload Documentos": "📄 Încărcare documente",
+})
+DASHBOARD_MENU_LABELS.setdefault("ua", {}).update({
+    "📄 Upload Documentos": "📄 Завантаження документів",
+})
+DASHBOARD_MENU_LABELS.setdefault("ru", {}).update({
+    "📄 Upload Documentos": "📄 Загрузка документов",
+})
+DASHBOARD_MENU_LABELS.setdefault("sa", {}).update({
+    "📄 Upload Documentos": "📄 رفع المستندات",
+})
+DASHBOARD_MENU_LABELS.setdefault("ch", {}).update({
+    "📄 Upload Documentos": "📄 Dokumenten-Upload",
+})
+
+
+def render_upload_documentos_rag():
+    import streamlit as st
+    from pathlib import Path
+    from datetime import datetime
+
+    st.markdown("## 📄 Upload de Documentos para Base RAG")
+    st.caption("Envie arquivos .md ou .txt para expandir a base de conhecimento da INNA.")
+
+    upload_dir = Path("data/knowledge_base/uploads")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    uploaded_file = st.file_uploader(
+        "Selecione um documento",
+        type=["md", "txt"],
+        help="Nesta primeira versão, a INNA aceita arquivos Markdown e TXT."
+    )
+
+    if uploaded_file is not None:
+        original_name = uploaded_file.name
+        suffix = Path(original_name).suffix.lower()
+
+        if suffix not in [".md", ".txt"]:
+            st.error("Formato não permitido. Envie apenas arquivos .md ou .txt.")
+            return
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_name = original_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
+        final_path = upload_dir / f"{timestamp}_{safe_name}"
+
+        content_bytes = uploaded_file.getvalue()
+        final_path.write_bytes(content_bytes)
+
+        st.success(f"Documento salvo com sucesso: {final_path.name}")
+
+        try:
+            preview = content_bytes.decode("utf-8", errors="ignore")
+            st.markdown("### Prévia do conteúdo")
+            st.text_area("Conteúdo carregado", preview[:3000], height=250)
+        except Exception:
+            st.warning("Arquivo salvo, mas não foi possível gerar prévia do conteúdo.")
+
+    st.markdown("---")
+    st.markdown("### Documentos enviados")
+
+    files = sorted(upload_dir.glob("*"), reverse=True)
+
+    if not files:
+        st.info("Nenhum documento enviado ainda.")
+        return
+
+    for file in files:
+        if file.is_file():
+            st.write(f"📄 **{file.name}**")
+            st.caption(f"Tamanho: {file.stat().st_size} bytes")
+
+
+
 def main():
 
     diagnosticos_df, feedbacks_df, eventos_df = load_data()
@@ -5377,52 +5478,12 @@ def main():
     elif menu == "📊 Observabilidade RAG":
         render_rag_observability()
 
+    elif menu == "📄 Upload Documentos":
+        render_upload_documentos_rag()
+
     elif menu == "📤 Exportar":
         render_export(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
 
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
