@@ -1081,3 +1081,4 @@ Esta versão tem como objetivo demonstrar que a INNA não é apenas um protótip
 - [Segurança Financeira — INNA Financial Coach AI](docs/seguranca_financeira_inna.md)
 - [Fase 5.11 — RAG Híbrido da INNA](docs/rag_hibrido_inna.md)
 - [Fase 5.12 — Reranking da INNA](docs/reranking_inna.md)
+- [Fase 5.14 — Upload de Documentos da INNA](docs/upload_documentos_inna.md)
