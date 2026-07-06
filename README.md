@@ -1083,3 +1083,36 @@ Esta versão tem como objetivo demonstrar que a INNA não é apenas um protótip
 - [Fase 5.12 — Reranking da INNA](docs/reranking_inna.md)
 - [Fase 5.14 — Upload de Documentos da INNA](docs/upload_documentos_inna.md)
 - [Fase 5.16 — Agentic RAG da INNA](docs/agentic_rag_inna.md)
+
+---
+
+## 📚 Documentação Técnica
+
+### Produto e validação
+
+- [Validação do Produto — INNA Financial Coach AI](docs/validacao_produto_inna.md)
+- [Roadmap do Projeto](docs/roadmap.md)
+- [Arquitetura Geral](docs/arquitetura.md)
+- [Deploy Render + Neon](docs/deploy-render-neon.md)
+
+### RAG, IA e Base de Conhecimento
+
+- [Arquitetura RAG](docs/rag_architecture.md)
+- [Status Atual do RAG](docs/rag_status_atual.md)
+- [Roadmap RAG](docs/rag_roadmap.md)
+- [Fase 5.11 — RAG Híbrido da INNA](docs/rag_hibrido_inna.md)
+- [Fase 5.12 — Reranking da INNA](docs/reranking_inna.md)
+- [Testes RAG — INNA Financial Coach AI](docs/testes_rag_inna.md)
+- [Fase 5.14 — Upload de Documentos da INNA](docs/upload_documentos_inna.md)
+- [Fase 5.15 — Memória por Usuário da INNA](docs/memoria_usuario_inna.md)
+- [Fase 5.16 — Agentic RAG da INNA](docs/agentic_rag_inna.md)
+
+### Segurança Financeira
+
+- [Segurança Financeira — INNA Financial Coach AI](docs/seguranca_financeira_inna.md)
+- [Diretrizes de Linguagem e Segurança da INNA](docs/inna_guidelines.md)
+
+### Pitch
+
+- [Pitch — INNA Financial Coach AI](docs/pitch.md)
+
