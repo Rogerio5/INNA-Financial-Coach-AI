@@ -111,3 +111,4 @@ CREATE TABLE IF NOT EXISTS chunks_rag (
     data_criacao TIMESTAMP DEFAULT NOW(),
     ativo BOOLEAN DEFAULT TRUE
 );
+```
