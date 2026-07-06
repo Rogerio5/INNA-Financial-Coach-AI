@@ -5362,6 +5362,72 @@ DASHBOARD_MENU_LABELS.setdefault("ch", {}).update({
 })
 
 
+
+def dividir_texto_em_chunks(texto, tamanho_chunk=900, sobreposicao=120):
+    texto = texto.replace("\r\n", "\n").replace("\r", "\n").strip()
+
+    if not texto:
+        return []
+
+    palavras = texto.split()
+    chunks = []
+    atual = []
+
+    for palavra in palavras:
+        atual.append(palavra)
+
+        if len(" ".join(atual)) >= tamanho_chunk:
+            chunk = " ".join(atual).strip()
+            chunks.append(chunk)
+
+            if sobreposicao > 0:
+                trecho_overlap = chunk[-sobreposicao:]
+                atual = trecho_overlap.split()
+            else:
+                atual = []
+
+    if atual:
+        chunk_final = " ".join(atual).strip()
+        if chunk_final:
+            chunks.append(chunk_final)
+
+    return chunks
+
+
+def salvar_chunks_documento(nome_arquivo, texto):
+    import json
+    from pathlib import Path
+    from datetime import datetime
+
+    chunks_dir = Path("data/knowledge_base/chunks")
+    chunks_dir.mkdir(parents=True, exist_ok=True)
+
+    chunks = dividir_texto_em_chunks(texto)
+
+    base_name = Path(nome_arquivo).stem
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_path = chunks_dir / f"{timestamp}_{base_name}_chunks.json"
+
+    payload = {
+        "documento_origem": nome_arquivo,
+        "total_chunks": len(chunks),
+        "chunks": [
+            {
+                "chunk_index": idx,
+                "texto": chunk
+            }
+            for idx, chunk in enumerate(chunks, start=1)
+        ]
+    }
+
+    output_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8"
+    )
+
+    return output_path, chunks
+
+
 def render_upload_documentos_rag():
     import streamlit as st
     from pathlib import Path
@@ -5372,6 +5438,9 @@ def render_upload_documentos_rag():
 
     upload_dir = Path("data/knowledge_base/uploads")
     upload_dir.mkdir(parents=True, exist_ok=True)
+
+    chunks_dir = Path("data/knowledge_base/chunks")
+    chunks_dir.mkdir(parents=True, exist_ok=True)
 
     uploaded_file = st.file_uploader(
         "Selecione um documento",
@@ -5398,10 +5467,25 @@ def render_upload_documentos_rag():
 
         try:
             preview = content_bytes.decode("utf-8", errors="ignore")
+
             st.markdown("### Prévia do conteúdo")
             st.text_area("Conteúdo carregado", preview[:3000], height=250)
-        except Exception:
-            st.warning("Arquivo salvo, mas não foi possível gerar prévia do conteúdo.")
+
+            chunks_path, chunks = salvar_chunks_documento(final_path.name, preview)
+
+            st.markdown("### Chunks gerados")
+            st.success(f"{len(chunks)} chunks gerados e salvos em: {chunks_path.name}")
+
+            for idx, chunk in enumerate(chunks[:5], start=1):
+                with st.expander(f"Chunk {idx}"):
+                    st.write(chunk)
+
+            if len(chunks) > 5:
+                st.info(f"Foram gerados {len(chunks)} chunks. Exibindo apenas os 5 primeiros.")
+
+        except Exception as e:
+            st.warning("Arquivo salvo, mas não foi possível gerar prévia ou chunks.")
+            st.caption(str(e))
 
     st.markdown("---")
     st.markdown("### Documentos enviados")
@@ -5410,14 +5494,23 @@ def render_upload_documentos_rag():
 
     if not files:
         st.info("Nenhum documento enviado ainda.")
-        return
+    else:
+        for file in files:
+            if file.is_file():
+                st.write(f"📄 **{file.name}**")
+                st.caption(f"Tamanho: {file.stat().st_size} bytes")
 
-    for file in files:
-        if file.is_file():
-            st.write(f"📄 **{file.name}**")
+    st.markdown("---")
+    st.markdown("### Arquivos de chunks gerados")
+
+    chunk_files = sorted(chunks_dir.glob("*.json"), reverse=True)
+
+    if not chunk_files:
+        st.info("Nenhum arquivo de chunks gerado ainda.")
+    else:
+        for file in chunk_files[:10]:
+            st.write(f"🧩 **{file.name}**")
             st.caption(f"Tamanho: {file.stat().st_size} bytes")
-
-
 
 def main():
 
