@@ -5456,6 +5456,58 @@ def salvar_chunks_documento(nome_arquivo, texto):
 
 
 
+
+def carregar_documentos_upload_rag():
+    import os
+    import pandas as pd
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            from pathlib import Path
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return pd.DataFrame(), "DATABASE_URL não encontrada."
+
+    try:
+        import psycopg2
+
+        conn = psycopg2.connect(database_url)
+
+        query = """
+            SELECT
+                id,
+                nome_original,
+                nome_salvo,
+                extensao,
+                tamanho_bytes,
+                total_chunks,
+                status,
+                origem,
+                caminho_upload,
+                caminho_chunks,
+                caminho_embedding_ready,
+                criado_em
+            FROM documentos_upload_rag
+            ORDER BY criado_em DESC
+            LIMIT 100;
+        """
+
+        df = pd.read_sql(query, conn)
+        conn.close()
+
+        return df, None
+
+    except Exception as e:
+        return pd.DataFrame(), str(e)
+
+
 def registrar_metadata_upload_rag(
     nome_original,
     nome_salvo,
@@ -5666,6 +5718,40 @@ def render_upload_documentos_rag():
         for file in embedding_files[:10]:
             st.write(f"🧠 **{file.name}**")
             st.caption(f"Tamanho: {file.stat().st_size} bytes")
+
+
+    st.markdown("---")
+    st.markdown("### Documentos registrados no Neon/PostgreSQL")
+
+    df_docs, erro_docs = carregar_documentos_upload_rag()
+
+    if erro_docs:
+        st.warning(f"Não foi possível carregar documentos do banco: {erro_docs}")
+    elif df_docs.empty:
+        st.info("Nenhum documento registrado no Neon/PostgreSQL ainda.")
+    else:
+        st.metric("Total de documentos registrados", len(df_docs))
+
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Total de chunks", int(df_docs["total_chunks"].fillna(0).sum()))
+        col2.metric("Processados", int((df_docs["status"] == "processado").sum()))
+        col3.metric("Extensões", df_docs["extensao"].nunique())
+
+        st.dataframe(
+            df_docs[
+                [
+                    "id",
+                    "nome_salvo",
+                    "extensao",
+                    "total_chunks",
+                    "status",
+                    "criado_em",
+                    "caminho_embedding_ready",
+                ]
+            ],
+            use_container_width=True,
+            hide_index=True
+        )
 
 def main():
 
