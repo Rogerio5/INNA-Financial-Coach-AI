@@ -5402,19 +5402,35 @@ def salvar_chunks_documento(nome_arquivo, texto):
     chunks_dir = Path("data/knowledge_base/chunks")
     chunks_dir.mkdir(parents=True, exist_ok=True)
 
+    embedding_ready_dir = Path("data/knowledge_base/embedding_ready")
+    embedding_ready_dir.mkdir(parents=True, exist_ok=True)
+
     chunks = dividir_texto_em_chunks(texto)
 
     base_name = Path(nome_arquivo).stem
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
     output_path = chunks_dir / f"{timestamp}_{base_name}_chunks.json"
+    embedding_ready_path = embedding_ready_dir / f"{timestamp}_{base_name}_embedding_ready.jsonl"
 
     payload = {
         "documento_origem": nome_arquivo,
         "total_chunks": len(chunks),
+        "status": "chunks_gerados",
+        "preparado_para_embeddings": True,
         "chunks": [
             {
+                "chunk_id": f"{base_name}_chunk_{idx}",
                 "chunk_index": idx,
-                "texto": chunk
+                "texto": chunk,
+                "metadata": {
+                    "documento_origem": nome_arquivo,
+                    "fonte": f"data/knowledge_base/uploads/{nome_arquivo}",
+                    "categoria": "upload_usuario",
+                    "idioma": "pt",
+                    "tipo": "documento_upload",
+                    "fase": "5.18.2_embedding_ready"
+                }
             }
             for idx, chunk in enumerate(chunks, start=1)
         ]
@@ -5425,7 +5441,18 @@ def salvar_chunks_documento(nome_arquivo, texto):
         encoding="utf-8"
     )
 
-    return output_path, chunks
+    with embedding_ready_path.open("w", encoding="utf-8") as f:
+        for item in payload["chunks"]:
+            linha = {
+                "chunk_id": item["chunk_id"],
+                "documento_origem": nome_arquivo,
+                "chunk_index": item["chunk_index"],
+                "texto": item["texto"],
+                "metadata": item["metadata"]
+            }
+            f.write(json.dumps(linha, ensure_ascii=False) + "\n")
+
+    return output_path, chunks, embedding_ready_path
 
 
 def render_upload_documentos_rag():
@@ -5471,10 +5498,11 @@ def render_upload_documentos_rag():
             st.markdown("### Prévia do conteúdo")
             st.text_area("Conteúdo carregado", preview[:3000], height=250)
 
-            chunks_path, chunks = salvar_chunks_documento(final_path.name, preview)
+            chunks_path, chunks, embedding_ready_path = salvar_chunks_documento(final_path.name, preview)
 
             st.markdown("### Chunks gerados")
             st.success(f"{len(chunks)} chunks gerados e salvos em: {chunks_path.name}")
+            st.info(f"Arquivo pronto para embeddings/pgvector: {embedding_ready_path.name}")
 
             for idx, chunk in enumerate(chunks[:5], start=1):
                 with st.expander(f"Chunk {idx}"):
@@ -5510,6 +5538,21 @@ def render_upload_documentos_rag():
     else:
         for file in chunk_files[:10]:
             st.write(f"🧩 **{file.name}**")
+            st.caption(f"Tamanho: {file.stat().st_size} bytes")
+
+    st.markdown("---")
+    st.markdown("### Arquivos prontos para embeddings")
+
+    embedding_ready_dir = Path("data/knowledge_base/embedding_ready")
+    embedding_ready_dir.mkdir(parents=True, exist_ok=True)
+
+    embedding_files = sorted(embedding_ready_dir.glob("*.jsonl"), reverse=True)
+
+    if not embedding_files:
+        st.info("Nenhum arquivo pronto para embeddings gerado ainda.")
+    else:
+        for file in embedding_files[:10]:
+            st.write(f"🧠 **{file.name}**")
             st.caption(f"Tamanho: {file.stat().st_size} bytes")
 
 def main():

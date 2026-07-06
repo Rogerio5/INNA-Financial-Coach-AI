@@ -68,3 +68,19 @@ data/knowledge_base/uploads/*
 src/dashboard_backup_*.py
 docs_backup_antes_correcao_*/
 
+# Uploads locais da base RAG
+data/knowledge_base/uploads/*
+!data/knowledge_base/uploads/.gitkeep
+
+# Chunks locais gerados a partir de uploads
+data/knowledge_base/chunks/*
+!data/knowledge_base/chunks/.gitkeep
+
+# Arquivos locais prontos para embeddings
+data/knowledge_base/embedding_ready/*
+!data/knowledge_base/embedding_ready/.gitkeep
+
+# Backups locais
+src/dashboard_backup_*.py
+docs_backup_antes_correcao_*/
+
