@@ -5881,6 +5881,63 @@ def definir_limite_chunks_automatico_rag(pergunta):
 
 
 
+
+def arquivar_arquivos_locais_rag(manter_ultimos=5):
+    from pathlib import Path
+    from datetime import datetime
+    import shutil
+
+    pastas = [
+        Path("data/knowledge_base/uploads"),
+        Path("data/knowledge_base/chunks"),
+        Path("data/knowledge_base/embedding_ready"),
+    ]
+
+    archive_root = Path("data/knowledge_base/archive")
+    archive_root.mkdir(parents=True, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    archive_dir = archive_root / f"arquivos_antigos_{timestamp}"
+    archive_dir.mkdir(parents=True, exist_ok=True)
+
+    total_arquivados = 0
+
+    for pasta in pastas:
+        if not pasta.exists():
+            continue
+
+        arquivos = [
+            item for item in pasta.iterdir()
+            if item.is_file() and item.name != ".gitkeep"
+        ]
+
+        arquivos = sorted(
+            arquivos,
+            key=lambda item: item.stat().st_mtime,
+            reverse=True
+        )
+
+        arquivos_antigos = arquivos[manter_ultimos:]
+
+        if not arquivos_antigos:
+            continue
+
+        destino_pasta = archive_dir / pasta.name
+        destino_pasta.mkdir(parents=True, exist_ok=True)
+
+        for arquivo in arquivos_antigos:
+            destino = destino_pasta / arquivo.name
+            shutil.move(str(arquivo), str(destino))
+            total_arquivados += 1
+
+    return {
+        "ok": True,
+        "total_arquivados": total_arquivados,
+        "archive_dir": str(archive_dir),
+        "message": f"{total_arquivados} arquivo(s) antigo(s) arquivado(s) em {archive_dir}."
+    }
+
+
 def carregar_resumo_embeddings_pgvector_rag():
     import os
     import pandas as pd
@@ -6803,6 +6860,61 @@ def render_upload_documentos_rag():
             hide_index=True
         )
 
+
+        st.markdown("### Organização local dos arquivos RAG")
+
+        uploads_dir_local = Path("data/knowledge_base/uploads")
+        chunks_dir_local = Path("data/knowledge_base/chunks")
+        embedding_ready_dir_local = Path("data/knowledge_base/embedding_ready")
+
+        uploads_local = [f for f in uploads_dir_local.glob("*") if f.is_file() and f.name != ".gitkeep"] if uploads_dir_local.exists() else []
+        chunks_local = [f for f in chunks_dir_local.glob("*") if f.is_file() and f.name != ".gitkeep"] if chunks_dir_local.exists() else []
+        embeddings_local = [f for f in embedding_ready_dir_local.glob("*") if f.is_file() and f.name != ".gitkeep"] if embedding_ready_dir_local.exists() else []
+
+        col_local_1, col_local_2, col_local_3 = st.columns(3)
+
+        col_local_1.metric("Uploads locais", len(uploads_local))
+        col_local_2.metric("Arquivos de chunks", len(chunks_local))
+        col_local_3.metric("JSONL embedding_ready", len(embeddings_local))
+
+        with st.expander("Ver arquivos locais recentes"):
+            st.caption("Mostrando no máximo os 5 arquivos mais recentes de cada pasta.")
+
+            st.markdown("**Uploads recentes**")
+            for file in sorted(uploads_local, key=lambda f: f.stat().st_mtime, reverse=True)[:5]:
+                st.write(f"📄 {file.name}")
+                st.caption(f"Tamanho: {file.stat().st_size} bytes")
+
+            st.markdown("**Chunks recentes**")
+            for file in sorted(chunks_local, key=lambda f: f.stat().st_mtime, reverse=True)[:5]:
+                st.write(f"🧩 {file.name}")
+                st.caption(f"Tamanho: {file.stat().st_size} bytes")
+
+            st.markdown("**JSONL recentes**")
+            for file in sorted(embeddings_local, key=lambda f: f.stat().st_mtime, reverse=True)[:5]:
+                st.write(f"🧠 {file.name}")
+                st.caption(f"Tamanho: {file.stat().st_size} bytes")
+
+        st.caption("Arquivar move arquivos antigos para data/knowledge_base/archive. Nada é apagado definitivamente.")
+
+        manter_ultimos_arquivos = st.slider(
+            "Manter quantos arquivos recentes em cada pasta?",
+            min_value=1,
+            max_value=10,
+            value=5,
+            key="manter_ultimos_arquivos_rag"
+        )
+
+        if st.button("🗂️ Arquivar arquivos locais antigos", key="btn_arquivar_arquivos_locais_rag"):
+            resultado_arquivo = arquivar_arquivos_locais_rag(
+                manter_ultimos=manter_ultimos_arquivos
+            )
+
+            if resultado_arquivo.get("ok"):
+                st.success(resultado_arquivo.get("message"))
+                st.rerun()
+            else:
+                st.warning(resultado_arquivo.get("message"))
 
         st.markdown("### Status do documento na base RAG")
 
