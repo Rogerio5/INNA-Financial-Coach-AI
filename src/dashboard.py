@@ -5679,6 +5679,69 @@ def definir_limite_chunks_automatico_rag(pergunta):
 
 
 
+
+def criar_indice_pgvector_rag():
+    import os
+    from pathlib import Path
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return {
+            "ok": False,
+            "message": "DATABASE_URL não encontrada."
+        }
+
+    try:
+        import psycopg2
+
+        conn = psycopg2.connect(database_url)
+        cur = conn.cursor()
+
+        cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+
+        cur.execute("""
+            CREATE INDEX IF NOT EXISTS idx_chunks_embeddings_rag_embedding_hnsw_halfvec
+            ON chunks_embeddings_rag
+            USING hnsw ((embedding::halfvec(3072)) halfvec_cosine_ops);
+        """)
+
+        cur.execute("""
+            CREATE INDEX IF NOT EXISTS idx_chunks_embeddings_rag_documento_id
+            ON chunks_embeddings_rag (documento_id);
+        """)
+
+        cur.execute("""
+            CREATE INDEX IF NOT EXISTS idx_chunks_embeddings_rag_chunk_id
+            ON chunks_embeddings_rag (chunk_id);
+        """)
+
+        cur.execute("ANALYZE chunks_embeddings_rag;")
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return {
+            "ok": True,
+            "message": "Índices pgvector criados/validados com sucesso."
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"Erro ao criar índice pgvector: {e}"
+        }
+
+
 def gerar_resposta_rag_pgvector_inna(pergunta, limite=None):
     import os
     from pathlib import Path
@@ -5854,9 +5917,9 @@ def buscar_chunks_semanticos_pgvector_rag(pergunta, limite=5):
                 chunk_index,
                 texto,
                 modelo_embedding,
-                embedding <=> %s::vector AS distancia
+                embedding::halfvec(3072) <=> %s::halfvec(3072) AS distancia
             FROM chunks_embeddings_rag
-            ORDER BY embedding <=> %s::vector
+            ORDER BY embedding::halfvec(3072) <=> %s::halfvec(3072)
             LIMIT %s;
         """, (
             vetor_pgvector,
@@ -6326,6 +6389,19 @@ def render_upload_documentos_rag():
                 else:
                     st.warning(resultado_embeddings.get("message"))
 
+
+        st.markdown("### Otimização pgvector")
+
+        st.caption("Cria índices no pgvector para acelerar buscas semânticas quando a base tiver muitos chunks.")
+
+        if st.button("⚡ Criar/validar índice pgvector", key="btn_criar_indice_pgvector_rag"):
+            with st.spinner("Criando/validando índice pgvector no Neon/PostgreSQL..."):
+                resultado_indice = criar_indice_pgvector_rag()
+
+            if resultado_indice.get("ok"):
+                st.success(resultado_indice.get("message"))
+            else:
+                st.warning(resultado_indice.get("message"))
 
         st.markdown("### Testar busca semântica no pgvector")
 
