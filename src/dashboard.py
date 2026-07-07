@@ -6219,16 +6219,19 @@ def buscar_chunks_semanticos_pgvector_rag(pergunta, limite=5):
 
         cur.execute("""
             SELECT
-                id,
-                documento_id,
-                chunk_id,
-                documento_origem,
-                chunk_index,
-                texto,
-                modelo_embedding,
-                embedding::halfvec(3072) <=> %s::halfvec(3072) AS distancia
-            FROM chunks_embeddings_rag
-            ORDER BY embedding::halfvec(3072) <=> %s::halfvec(3072)
+                ce.id,
+                ce.documento_id,
+                ce.chunk_id,
+                ce.documento_origem,
+                ce.chunk_index,
+                ce.texto,
+                ce.modelo_embedding,
+                ce.embedding::halfvec(3072) <=> %s::halfvec(3072) AS distancia
+            FROM chunks_embeddings_rag ce
+            JOIN documentos_upload_rag du
+                ON du.id = ce.documento_id
+            WHERE COALESCE(du.ativo, TRUE) = TRUE
+            ORDER BY ce.embedding::halfvec(3072) <=> %s::halfvec(3072)
             LIMIT %s;
         """, (
             vetor_pgvector,
@@ -6352,6 +6355,110 @@ def atualizar_metadata_reprocessamento_rag(
         }
 
 
+
+def garantir_coluna_ativo_documentos_rag():
+    import os
+    from pathlib import Path
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return {
+            "ok": False,
+            "message": "DATABASE_URL não encontrada."
+        }
+
+    try:
+        import psycopg2
+
+        conn = psycopg2.connect(database_url)
+        cur = conn.cursor()
+
+        cur.execute("""
+            ALTER TABLE documentos_upload_rag
+            ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT TRUE;
+        """)
+
+        cur.execute("""
+            UPDATE documentos_upload_rag
+            SET ativo = TRUE
+            WHERE ativo IS NULL;
+        """)
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return {
+            "ok": True,
+            "message": "Coluna ativo criada/validada com sucesso."
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"Erro ao garantir coluna ativo: {e}"
+        }
+
+
+def atualizar_status_documento_rag(documento_id, ativo):
+    import os
+    from pathlib import Path
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return {
+            "ok": False,
+            "message": "DATABASE_URL não encontrada."
+        }
+
+    try:
+        import psycopg2
+
+        conn = psycopg2.connect(database_url)
+        cur = conn.cursor()
+
+        cur.execute("""
+            UPDATE documentos_upload_rag
+            SET ativo = %s
+            WHERE id = %s;
+        """, (bool(ativo), int(documento_id)))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        status = "ativado" if ativo else "desativado"
+
+        return {
+            "ok": True,
+            "message": f"Documento id {documento_id} {status} com sucesso."
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"Erro ao atualizar status do documento: {e}"
+        }
+
+
 def carregar_documentos_upload_rag():
     import os
     import pandas as pd
@@ -6385,6 +6492,7 @@ def carregar_documentos_upload_rag():
                 total_chunks,
                 status,
                 origem,
+                ativo,
                 caminho_upload,
                 caminho_chunks,
                 caminho_embedding_ready,
@@ -6648,6 +6756,7 @@ def render_upload_documentos_rag():
                     "extensao",
                     "total_chunks",
                     "status",
+                    "ativo",
                     "criado_em",
                     "caminho_embedding_ready",
                 ]
@@ -6656,6 +6765,56 @@ def render_upload_documentos_rag():
             hide_index=True
         )
 
+
+        st.markdown("### Status do documento na base RAG")
+
+        resultado_coluna_ativo = garantir_coluna_ativo_documentos_rag()
+
+        if not resultado_coluna_ativo.get("ok"):
+            st.warning(resultado_coluna_ativo.get("message"))
+
+        opcoes_status_docs = [
+            f"{int(row['id'])} - {row['nome_salvo']}"
+            for _, row in df_docs.iterrows()
+        ]
+
+        doc_status_escolhido = st.selectbox(
+            "Escolha um documento para ativar/desativar",
+            opcoes_status_docs,
+            key="select_status_documento_rag"
+        )
+
+        documento_status_id = int(doc_status_escolhido.split(" - ")[0])
+        registro_status = df_docs[df_docs["id"] == documento_status_id].iloc[0]
+
+        ativo_atual = bool(registro_status.get("ativo", True))
+
+        if ativo_atual:
+            st.success("Este documento está ATIVO na busca RAG.")
+        else:
+            st.warning("Este documento está INATIVO e será ignorado na busca RAG.")
+
+        col_status_1, col_status_2 = st.columns(2)
+
+        with col_status_1:
+            if st.button("✅ Ativar documento", key="btn_ativar_documento_rag"):
+                resultado_status = atualizar_status_documento_rag(documento_status_id, True)
+
+                if resultado_status.get("ok"):
+                    st.success(resultado_status.get("message"))
+                    st.rerun()
+                else:
+                    st.warning(resultado_status.get("message"))
+
+        with col_status_2:
+            if st.button("🚫 Desativar documento", key="btn_desativar_documento_rag"):
+                resultado_status = atualizar_status_documento_rag(documento_status_id, False)
+
+                if resultado_status.get("ok"):
+                    st.success(resultado_status.get("message"))
+                    st.rerun()
+                else:
+                    st.warning(resultado_status.get("message"))
 
         st.markdown("### Reprocessar documento")
 
