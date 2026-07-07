@@ -5680,6 +5680,111 @@ def definir_limite_chunks_automatico_rag(pergunta):
 
 
 
+
+def carregar_resumo_embeddings_pgvector_rag():
+    import os
+    import pandas as pd
+    from pathlib import Path
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return {
+            "ok": False,
+            "message": "DATABASE_URL não encontrada.",
+            "total_embeddings": 0,
+            "documentos_com_embeddings": 0,
+            "df": pd.DataFrame()
+        }
+
+    try:
+        import psycopg2
+
+        conn = psycopg2.connect(database_url)
+
+        query = """
+            SELECT
+                documento_id,
+                COUNT(*) AS total_embeddings,
+                MAX(modelo_embedding) AS modelo_embedding,
+                MAX(criado_em) AS ultimo_processamento
+            FROM chunks_embeddings_rag
+            GROUP BY documento_id
+            ORDER BY ultimo_processamento DESC;
+        """
+
+        df = pd.read_sql(query, conn)
+        conn.close()
+
+        total_embeddings = int(df["total_embeddings"].sum()) if not df.empty else 0
+        documentos_com_embeddings = int(df["documento_id"].nunique()) if not df.empty else 0
+
+        return {
+            "ok": True,
+            "message": "Resumo de embeddings carregado.",
+            "total_embeddings": total_embeddings,
+            "documentos_com_embeddings": documentos_com_embeddings,
+            "df": df
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"Erro ao carregar resumo de embeddings: {e}",
+            "total_embeddings": 0,
+            "documentos_com_embeddings": 0,
+            "df": pd.DataFrame()
+        }
+
+
+def documento_tem_embeddings_pgvector_rag(documento_id):
+    import os
+    from pathlib import Path
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return False, 0
+
+    try:
+        import psycopg2
+
+        conn = psycopg2.connect(database_url)
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT COUNT(*)
+            FROM chunks_embeddings_rag
+            WHERE documento_id = %s;
+        """, (int(documento_id),))
+
+        total = int(cur.fetchone()[0])
+
+        cur.close()
+        conn.close()
+
+        return total > 0, total
+
+    except Exception:
+        return False, 0
+
+
 def criar_indice_pgvector_rag():
     import os
     from pathlib import Path
@@ -6365,9 +6470,44 @@ def render_upload_documentos_rag():
                     st.warning(resultado_update.get("message"))
 
 
+        st.markdown("### Resumo dos embeddings no pgvector")
+
+        resumo_embeddings = carregar_resumo_embeddings_pgvector_rag()
+
+        if not resumo_embeddings.get("ok"):
+            st.warning(resumo_embeddings.get("message"))
+        else:
+            col_emb_1, col_emb_2 = st.columns(2)
+
+            col_emb_1.metric(
+                "Total de embeddings",
+                resumo_embeddings.get("total_embeddings", 0)
+            )
+
+            col_emb_2.metric(
+                "Documentos com embeddings",
+                resumo_embeddings.get("documentos_com_embeddings", 0)
+            )
+
+            df_resumo_embeddings = resumo_embeddings.get("df")
+
+            if df_resumo_embeddings is not None and not df_resumo_embeddings.empty:
+                with st.expander("Ver resumo por documento"):
+                    st.dataframe(
+                        df_resumo_embeddings,
+                        use_container_width=True,
+                        hide_index=True
+                    )
+
         st.markdown("### Gerar embeddings no pgvector")
 
         st.caption("Este botão lê o arquivo JSONL do documento selecionado, gera embeddings com Gemini e salva no Neon/PostgreSQL usando pgvector.")
+
+        forcar_reprocessamento_embeddings = st.checkbox(
+            "Forçar reprocessamento dos embeddings mesmo se já existirem",
+            value=False,
+            key="forcar_reprocessamento_embeddings_pgvector_rag"
+        )
 
         if st.button("🧠 Gerar embeddings do documento selecionado", key="btn_gerar_embeddings_pgvector_rag"):
             documento_id = int(doc_escolhido.split(" - ")[0])
@@ -6378,16 +6518,24 @@ def render_upload_documentos_rag():
             if not caminho_embedding_ready:
                 st.error("Este documento ainda não possui caminho_embedding_ready registrado.")
             else:
-                with st.spinner("Gerando embeddings e salvando no pgvector..."):
-                    resultado_embeddings = salvar_chunks_embeddings_pgvector_rag(
-                        documento_id=documento_id,
-                        caminho_embedding_ready=caminho_embedding_ready
-                    )
+                ja_tem_embeddings, total_existente = documento_tem_embeddings_pgvector_rag(documento_id)
 
-                if resultado_embeddings.get("ok"):
-                    st.success(resultado_embeddings.get("message"))
+                if ja_tem_embeddings and not forcar_reprocessamento_embeddings:
+                    st.info(
+                        f"Este documento já possui {total_existente} embedding(s) no pgvector. "
+                        "Para gerar novamente, marque a opção de forçar reprocessamento."
+                    )
                 else:
-                    st.warning(resultado_embeddings.get("message"))
+                    with st.spinner("Gerando embeddings e salvando no pgvector..."):
+                        resultado_embeddings = salvar_chunks_embeddings_pgvector_rag(
+                            documento_id=documento_id,
+                            caminho_embedding_ready=caminho_embedding_ready
+                        )
+
+                    if resultado_embeddings.get("ok"):
+                        st.success(resultado_embeddings.get("message"))
+                    else:
+                        st.warning(resultado_embeddings.get("message"))
 
 
         st.markdown("### Otimização pgvector")
