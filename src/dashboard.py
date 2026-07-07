@@ -5678,6 +5678,135 @@ def definir_limite_chunks_automatico_rag(pergunta):
     return 8
 
 
+
+def gerar_resposta_rag_pgvector_inna(pergunta, limite=None):
+    import os
+    from pathlib import Path
+
+    if not pergunta or not pergunta.strip():
+        return {
+            "ok": False,
+            "message": "Pergunta vazia.",
+            "resposta": "",
+            "contextos": []
+        }
+
+    if limite is None:
+        limite = definir_limite_chunks_automatico_rag(pergunta)
+
+    resultado_busca = buscar_chunks_semanticos_pgvector_rag(
+        pergunta=pergunta,
+        limite=limite
+    )
+
+    if not resultado_busca.get("ok"):
+        return {
+            "ok": False,
+            "message": resultado_busca.get("message"),
+            "resposta": "",
+            "contextos": []
+        }
+
+    contextos = resultado_busca.get("resultados", [])
+
+    if not contextos:
+        return {
+            "ok": False,
+            "message": "Nenhum contexto encontrado no pgvector.",
+            "resposta": "",
+            "contextos": []
+        }
+
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+
+    if not api_key:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=Path(".env"))
+            api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        except Exception:
+            api_key = None
+
+    if not api_key:
+        return {
+            "ok": False,
+            "message": "GEMINI_API_KEY ou GOOGLE_API_KEY não encontrada.",
+            "resposta": "",
+            "contextos": contextos
+        }
+
+    try:
+        import google.generativeai as genai
+
+        genai.configure(api_key=api_key)
+
+        trechos_contexto = []
+
+        for idx, item in enumerate(contextos, start=1):
+            trechos_contexto.append(
+                f"""
+[TRECHO {idx}]
+Documento: {item.get("documento_origem")}
+Chunk: {item.get("chunk_index")}
+Similaridade aproximada: {item.get("similaridade_aproximada")}
+Conteúdo:
+{item.get("texto")}
+"""
+            )
+
+        contexto_final = "\n".join(trechos_contexto)
+
+        prompt = f"""
+Você é a INNA, uma educadora financeira com IA.
+
+Sua função é responder de forma simples, segura, educativa e prática.
+
+Use prioritariamente os TRECHOS DA BASE RAG abaixo.
+Não invente informação que não esteja apoiada no contexto.
+Se o contexto for insuficiente, diga que a orientação é geral.
+
+Regras:
+- Não peça senha, token, código de segurança ou dados sensíveis.
+- Não oriente a pessoa a devolver Pix por fora.
+- Para Pix suspeito, recomende conferir no aplicativo oficial do banco.
+- Recomende usar canais oficiais do banco.
+- Explique em linguagem simples para trabalhador, idoso, leigo ou pessoa com pouco estudo.
+- Não faça promessa financeira.
+- Não dê recomendação de investimento específica.
+
+PERGUNTA DO USUÁRIO:
+{pergunta}
+
+TRECHOS DA BASE RAG:
+{contexto_final}
+
+Agora responda em português do Brasil, com orientação clara e direta.
+"""
+
+        model = genai.GenerativeModel("gemini-2.5-flash")
+        response = model.generate_content(prompt)
+
+        resposta = getattr(response, "text", "").strip()
+
+        if not resposta:
+            resposta = "Não consegui gerar uma resposta final com base no contexto encontrado."
+
+        return {
+            "ok": True,
+            "message": f"Resposta gerada com {len(contextos)} contexto(s) do pgvector.",
+            "resposta": resposta,
+            "contextos": contextos
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"Erro ao gerar resposta RAG com Gemini: {e}",
+            "resposta": "",
+            "contextos": contextos
+        }
+
+
 def buscar_chunks_semanticos_pgvector_rag(pergunta, limite=5):
     import os
     from pathlib import Path
@@ -6249,6 +6378,56 @@ def render_upload_documentos_rag():
                             st.caption(f"chunk_id: {item['chunk_id']}")
                             st.caption(f"distância pgvector: {item['distancia']}")
                             st.write(item["texto"])
+
+
+        st.markdown("### Gerar resposta final da INNA com RAG")
+
+        pergunta_resposta_rag = st.text_area(
+            "Pergunta para a INNA responder usando os documentos vetorizados",
+            value="Recebi um Pix estranho, devo devolver?",
+            height=100,
+            key="pergunta_resposta_final_rag_pgvector"
+        )
+
+        usar_limite_auto_resposta = st.checkbox(
+            "Usar quantidade automática de chunks na resposta",
+            value=True,
+            key="usar_limite_auto_resposta_rag_pgvector"
+        )
+
+        if usar_limite_auto_resposta:
+            limite_resposta_rag = definir_limite_chunks_automatico_rag(pergunta_resposta_rag)
+            st.info(f"A INNA usará automaticamente {limite_resposta_rag} chunks como limite.")
+        else:
+            limite_resposta_rag = st.slider(
+                "Quantidade de chunks para contexto da resposta",
+                min_value=1,
+                max_value=10,
+                value=5,
+                key="limite_resposta_final_rag_pgvector"
+            )
+
+        if st.button("🤖 Gerar resposta final com RAG", key="btn_gerar_resposta_final_rag_pgvector"):
+            with st.spinner("Buscando contexto no pgvector e gerando resposta final da INNA..."):
+                resultado_resposta = gerar_resposta_rag_pgvector_inna(
+                    pergunta=pergunta_resposta_rag,
+                    limite=limite_resposta_rag
+                )
+
+            if not resultado_resposta.get("ok"):
+                st.warning(resultado_resposta.get("message"))
+            else:
+                st.success(resultado_resposta.get("message"))
+
+                st.markdown("#### Resposta final da INNA")
+                st.write(resultado_resposta.get("resposta"))
+
+                with st.expander("Ver contextos usados na resposta"):
+                    for idx, item in enumerate(resultado_resposta.get("contextos", []), start=1):
+                        st.markdown(f"**Contexto {idx} — {item.get('documento_origem')}**")
+                        st.caption(f"Chunk: {item.get('chunk_id')}")
+                        st.caption(f"Similaridade aproximada: {item.get('similaridade_aproximada')}")
+                        st.write(item.get("texto"))
 
 def main():
 
