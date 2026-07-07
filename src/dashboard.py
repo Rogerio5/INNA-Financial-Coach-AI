@@ -5901,7 +5901,11 @@ def carregar_resumo_embeddings_pgvector_rag():
             "ok": False,
             "message": "DATABASE_URL não encontrada.",
             "total_embeddings": 0,
+            "embeddings_ativos": 0,
+            "embeddings_inativos": 0,
             "documentos_com_embeddings": 0,
+            "documentos_ativos_com_embeddings": 0,
+            "documentos_inativos_com_embeddings": 0,
             "df": pd.DataFrame()
         }
 
@@ -5912,26 +5916,56 @@ def carregar_resumo_embeddings_pgvector_rag():
 
         query = """
             SELECT
-                documento_id,
+                ce.documento_id,
+                du.nome_salvo,
+                COALESCE(du.ativo, TRUE) AS ativo,
                 COUNT(*) AS total_embeddings,
-                MAX(modelo_embedding) AS modelo_embedding,
-                MAX(criado_em) AS ultimo_processamento
-            FROM chunks_embeddings_rag
-            GROUP BY documento_id
+                MAX(ce.modelo_embedding) AS modelo_embedding,
+                MAX(ce.criado_em) AS ultimo_processamento
+            FROM chunks_embeddings_rag ce
+            LEFT JOIN documentos_upload_rag du
+                ON du.id = ce.documento_id
+            GROUP BY ce.documento_id, du.nome_salvo, COALESCE(du.ativo, TRUE)
             ORDER BY ultimo_processamento DESC;
         """
 
         df = pd.read_sql(query, conn)
         conn.close()
 
-        total_embeddings = int(df["total_embeddings"].sum()) if not df.empty else 0
-        documentos_com_embeddings = int(df["documento_id"].nunique()) if not df.empty else 0
+        if df.empty:
+            return {
+                "ok": True,
+                "message": "Nenhum embedding encontrado.",
+                "total_embeddings": 0,
+                "embeddings_ativos": 0,
+                "embeddings_inativos": 0,
+                "documentos_com_embeddings": 0,
+                "documentos_ativos_com_embeddings": 0,
+                "documentos_inativos_com_embeddings": 0,
+                "df": df
+            }
+
+        total_embeddings = int(df["total_embeddings"].sum())
+
+        df_ativos = df[df["ativo"] == True]
+        df_inativos = df[df["ativo"] == False]
+
+        embeddings_ativos = int(df_ativos["total_embeddings"].sum()) if not df_ativos.empty else 0
+        embeddings_inativos = int(df_inativos["total_embeddings"].sum()) if not df_inativos.empty else 0
+
+        documentos_com_embeddings = int(df["documento_id"].nunique())
+        documentos_ativos_com_embeddings = int(df_ativos["documento_id"].nunique()) if not df_ativos.empty else 0
+        documentos_inativos_com_embeddings = int(df_inativos["documento_id"].nunique()) if not df_inativos.empty else 0
 
         return {
             "ok": True,
             "message": "Resumo de embeddings carregado.",
             "total_embeddings": total_embeddings,
+            "embeddings_ativos": embeddings_ativos,
+            "embeddings_inativos": embeddings_inativos,
             "documentos_com_embeddings": documentos_com_embeddings,
+            "documentos_ativos_com_embeddings": documentos_ativos_com_embeddings,
+            "documentos_inativos_com_embeddings": documentos_inativos_com_embeddings,
             "df": df
         }
 
@@ -5940,7 +5974,11 @@ def carregar_resumo_embeddings_pgvector_rag():
             "ok": False,
             "message": f"Erro ao carregar resumo de embeddings: {e}",
             "total_embeddings": 0,
+            "embeddings_ativos": 0,
+            "embeddings_inativos": 0,
             "documentos_com_embeddings": 0,
+            "documentos_ativos_com_embeddings": 0,
+            "documentos_inativos_com_embeddings": 0,
             "df": pd.DataFrame()
         }
 
@@ -6868,16 +6906,38 @@ def render_upload_documentos_rag():
         if not resumo_embeddings.get("ok"):
             st.warning(resumo_embeddings.get("message"))
         else:
-            col_emb_1, col_emb_2 = st.columns(2)
+            col_emb_1, col_emb_2, col_emb_3 = st.columns(3)
 
             col_emb_1.metric(
-                "Total de embeddings",
+                "Embeddings totais",
                 resumo_embeddings.get("total_embeddings", 0)
             )
 
             col_emb_2.metric(
+                "Embeddings ativos",
+                resumo_embeddings.get("embeddings_ativos", 0)
+            )
+
+            col_emb_3.metric(
+                "Embeddings inativos",
+                resumo_embeddings.get("embeddings_inativos", 0)
+            )
+
+            col_doc_1, col_doc_2, col_doc_3 = st.columns(3)
+
+            col_doc_1.metric(
                 "Documentos com embeddings",
                 resumo_embeddings.get("documentos_com_embeddings", 0)
+            )
+
+            col_doc_2.metric(
+                "Documentos ativos",
+                resumo_embeddings.get("documentos_ativos_com_embeddings", 0)
+            )
+
+            col_doc_3.metric(
+                "Documentos inativos",
+                resumo_embeddings.get("documentos_inativos_com_embeddings", 0)
             )
 
             df_resumo_embeddings = resumo_embeddings.get("df")
