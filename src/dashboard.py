@@ -5363,35 +5363,192 @@ DASHBOARD_MENU_LABELS.setdefault("ch", {}).update({
 
 
 
-def dividir_texto_em_chunks(texto, tamanho_chunk=900, sobreposicao=120):
-    texto = texto.replace("\r\n", "\n").replace("\r", "\n").strip()
+
+
+def classificar_categoria_chunk_rag(texto):
+    if not texto:
+        return "geral"
+
+    texto_lower = texto.lower()
+
+    categorias = {
+        "pix": [
+            "pix",
+            "transferência",
+            "transferencia",
+            "devolver valor",
+            "devolver dinheiro",
+            "transação",
+            "transacao",
+        ],
+        "cartao_credito": [
+            "cartão",
+            "cartao",
+            "fatura",
+            "parcelas",
+            "parcelado",
+            "limite do cartão",
+            "credito",
+            "crédito",
+        ],
+        "organizacao_financeira": [
+            "organizar",
+            "organização",
+            "organizacao",
+            "renda",
+            "gastos fixos",
+            "gastos variáveis",
+            "gastos variaveis",
+            "orçamento",
+            "orcamento",
+        ],
+        "reserva_financeira": [
+            "reserva",
+            "guardar",
+            "poupar",
+            "emergência",
+            "emergencia",
+            "hábito de guardar",
+            "habito de guardar",
+        ],
+        "seguranca": [
+            "senha",
+            "token",
+            "código de segurança",
+            "codigo de seguranca",
+            "dados sensíveis",
+            "dados sensiveis",
+            "golpe",
+            "links",
+            "sms",
+            "canais oficiais",
+            "aplicativo oficial",
+        ],
+        "dividas": [
+            "dívida",
+            "divida",
+            "dívidas",
+            "dividas",
+            "endividado",
+            "juros",
+            "negociação",
+            "negociacao",
+        ],
+    }
+
+    pontuacao = {}
+
+    for categoria, termos in categorias.items():
+        pontuacao[categoria] = sum(1 for termo in termos if termo in texto_lower)
+
+    melhor_categoria = max(pontuacao, key=pontuacao.get)
+
+    if pontuacao[melhor_categoria] == 0:
+        return "geral"
+
+    return melhor_categoria
+
+
+def limpar_texto_documento_rag(texto):
+    import re
+
+    if not texto:
+        return ""
+
+    texto = texto.replace("\r\n", "\n").replace("\r", "\n")
+    texto = texto.replace("\t", " ")
+
+    linhas = []
+
+    for linha in texto.split("\n"):
+        linha = linha.strip()
+
+        if not linha:
+            linhas.append("")
+            continue
+
+        linha = re.sub(r"\s+", " ", linha)
+        linhas.append(linha)
+
+    texto_limpo = "\n".join(linhas)
+
+    texto_limpo = re.sub(r"\n{3,}", "\n\n", texto_limpo)
+
+    return texto_limpo.strip()
+
+
+def dividir_texto_em_chunks(texto, tamanho_chunk=550, sobreposicao=60):
+    texto = limpar_texto_documento_rag(texto)
 
     if not texto:
         return []
 
-    palavras = texto.split()
+    linhas = texto.split("\n")
+    blocos = []
+    bloco_atual = []
+
+    for linha in linhas:
+        linha_limpa = linha.strip()
+
+        if linha_limpa.startswith("#") and bloco_atual:
+            blocos.append("\n".join(bloco_atual).strip())
+            bloco_atual = [linha_limpa]
+        else:
+            bloco_atual.append(linha_limpa)
+
+    if bloco_atual:
+        blocos.append("\n".join(bloco_atual).strip())
+
+    blocos = [b for b in blocos if b.strip()]
+
     chunks = []
-    atual = []
+    chunk_atual = ""
 
-    for palavra in palavras:
-        atual.append(palavra)
+    for bloco in blocos:
+        if not chunk_atual:
+            chunk_atual = bloco
+            continue
 
-        if len(" ".join(atual)) >= tamanho_chunk:
-            chunk = " ".join(atual).strip()
-            chunks.append(chunk)
+        candidato = chunk_atual + "\n\n" + bloco
 
-            if sobreposicao > 0:
-                trecho_overlap = chunk[-sobreposicao:]
-                atual = trecho_overlap.split()
+        if len(candidato) <= tamanho_chunk:
+            chunk_atual = candidato
+        else:
+            chunks.append(chunk_atual.strip())
+            chunk_atual = bloco
+
+    if chunk_atual.strip():
+        chunks.append(chunk_atual.strip())
+
+    chunks_finais = []
+
+    for chunk in chunks:
+        if len(chunk) <= tamanho_chunk * 1.25:
+            chunks_finais.append(chunk)
+            continue
+
+        paragrafos = [p.strip() for p in chunk.split("\n\n") if p.strip()]
+        parte = ""
+
+        for paragrafo in paragrafos:
+            candidato = (parte + "\n\n" + paragrafo).strip() if parte else paragrafo
+
+            if len(candidato) <= tamanho_chunk:
+                parte = candidato
             else:
-                atual = []
+                if parte:
+                    chunks_finais.append(parte.strip())
 
-    if atual:
-        chunk_final = " ".join(atual).strip()
-        if chunk_final:
-            chunks.append(chunk_final)
+                if sobreposicao > 0:
+                    overlap = parte[-sobreposicao:].strip()
+                    parte = (overlap + "\n\n" + paragrafo).strip()
+                else:
+                    parte = paragrafo
 
-    return chunks
+        if parte:
+            chunks_finais.append(parte.strip())
+
+    return chunks_finais
 
 
 def salvar_chunks_documento(nome_arquivo, texto):
@@ -5426,10 +5583,11 @@ def salvar_chunks_documento(nome_arquivo, texto):
                 "metadata": {
                     "documento_origem": nome_arquivo,
                     "fonte": f"data/knowledge_base/uploads/{nome_arquivo}",
-                    "categoria": "upload_usuario",
+                    "categoria": classificar_categoria_chunk_rag(chunk),
+                    "origem": "upload_usuario",
                     "idioma": "pt",
                     "tipo": "documento_upload",
-                    "fase": "5.18.2_embedding_ready"
+                    "fase": "5.26_categorias_chunks"
                 }
             }
             for idx, chunk in enumerate(chunks, start=1)
@@ -6046,7 +6204,8 @@ def buscar_chunks_semanticos_pgvector_rag(pergunta, limite=5):
                 "texto": row[5],
                 "modelo_embedding": row[6],
                 "distancia": float(row[7]),
-                "similaridade_aproximada": round(1 - float(row[7]), 4)
+                "similaridade_aproximada": round(1 - float(row[7]), 4),
+                "categoria": classificar_categoria_chunk_rag(row[5])
             })
 
         cur.close()
@@ -6313,11 +6472,12 @@ def render_upload_documentos_rag():
 
         try:
             preview = content_bytes.decode("utf-8", errors="ignore")
+            preview_limpo = limpar_texto_documento_rag(preview)
 
             st.markdown("### Prévia do conteúdo")
-            st.text_area("Conteúdo carregado", preview[:3000], height=250)
+            st.text_area("Conteúdo carregado", preview_limpo[:3000], height=250)
 
-            chunks_path, chunks, embedding_ready_path = salvar_chunks_documento(final_path.name, preview)
+            chunks_path, chunks, embedding_ready_path = salvar_chunks_documento(final_path.name, preview_limpo)
 
             st.markdown("### Chunks gerados")
             st.success(f"{len(chunks)} chunks gerados e salvos em: {chunks_path.name}")
@@ -6340,8 +6500,15 @@ def render_upload_documentos_rag():
                 st.warning(registro_db.get("message"))
 
             for idx, chunk in enumerate(chunks[:5], start=1):
-                with st.expander(f"Chunk {idx}"):
-                    st.write(chunk)
+                categoria_chunk = classificar_categoria_chunk_rag(chunk)
+
+                with st.expander(f"Chunk {idx} | {len(chunk)} caracteres | Categoria: {categoria_chunk}"):
+                    st.text_area(
+                        "Texto do chunk",
+                        chunk,
+                        height=180,
+                        key=f"preview_chunk_upload_rag_{idx}_{final_path.name}"
+                    )
 
             if len(chunks) > 5:
                 st.info(f"Foram gerados {len(chunks)} chunks. Exibindo apenas os 5 primeiros.")
@@ -6597,7 +6764,7 @@ def render_upload_documentos_rag():
                 else:
                     for item in resultados:
                         with st.expander(
-                            f"Chunk {item['chunk_index']} | Similaridade aprox.: {item['similaridade_aproximada']} | {item['documento_origem']}"
+                            f"Chunk {item['chunk_index']} | Categoria: {item.get('categoria', 'geral')} | Similaridade aprox.: {item['similaridade_aproximada']} | {item['documento_origem']}"
                         ):
                             st.caption(f"chunk_id: {item['chunk_id']}")
                             st.caption(f"distância pgvector: {item['distancia']}")
