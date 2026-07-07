@@ -6419,15 +6419,50 @@ def render_upload_documentos_rag():
             else:
                 st.success(resultado_resposta.get("message"))
 
-                st.markdown("#### Resposta final da INNA")
-                st.write(resultado_resposta.get("resposta"))
+                st.markdown("#### 🤖 Resposta final da INNA")
 
-                with st.expander("Ver contextos usados na resposta"):
-                    for idx, item in enumerate(resultado_resposta.get("contextos", []), start=1):
-                        st.markdown(f"**Contexto {idx} — {item.get('documento_origem')}**")
-                        st.caption(f"Chunk: {item.get('chunk_id')}")
-                        st.caption(f"Similaridade aproximada: {item.get('similaridade_aproximada')}")
-                        st.write(item.get("texto"))
+                with st.container(border=True):
+                    st.markdown(resultado_resposta.get("resposta", ""))
+
+                contextos_usados = resultado_resposta.get("contextos", [])
+
+                st.markdown("#### 📚 Fontes usadas pela INNA")
+
+                if not contextos_usados:
+                    st.info("Nenhum contexto foi usado na resposta.")
+                else:
+                    st.caption(
+                        "Abaixo estão os trechos da base RAG que ajudaram a INNA a montar a resposta."
+                    )
+
+                    for idx, item in enumerate(contextos_usados, start=1):
+                        similaridade = item.get("similaridade_aproximada")
+                        documento = item.get("documento_origem")
+                        chunk_id = item.get("chunk_id")
+                        texto_contexto = item.get("texto", "")
+
+                        texto_preview = texto_contexto[:900]
+
+                        if len(texto_contexto) > 900:
+                            texto_preview = texto_preview + "..."
+
+                        with st.expander(
+                            f"Fonte {idx} | Similaridade: {similaridade} | Documento: {documento}"
+                        ):
+                            col_a, col_b, col_c = st.columns(3)
+
+                            col_a.metric("Fonte", idx)
+                            col_b.metric("Similaridade", similaridade)
+                            col_c.metric("Chunk", item.get("chunk_index"))
+
+                            st.caption(f"chunk_id: {chunk_id}")
+
+                            st.text_area(
+                                "Trecho usado como contexto",
+                                texto_preview,
+                                height=180,
+                                key=f"contexto_resposta_rag_{idx}_{chunk_id}"
+                            )
 
 def main():
 
