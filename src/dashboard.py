@@ -5365,6 +5365,54 @@ DASHBOARD_MENU_LABELS.setdefault("ch", {}).update({
 
 
 
+
+def inferir_categorias_pergunta_rag(pergunta):
+    if not pergunta:
+        return ["geral"]
+
+    pergunta_lower = pergunta.lower()
+
+    regras = [
+        (
+            ["pix", "transferência", "transferencia", "devolver", "valor estranho", "dinheiro estranho"],
+            ["pix", "seguranca"]
+        ),
+        (
+            ["cartão", "cartao", "fatura", "parcelas", "parcelado", "limite", "crédito", "credito"],
+            ["cartao_credito", "organizacao_financeira", "dividas"]
+        ),
+        (
+            ["dívida", "divida", "dívidas", "dividas", "endividado", "juros", "negociar", "negociação", "negociacao"],
+            ["dividas", "organizacao_financeira", "cartao_credito"]
+        ),
+        (
+            ["reserva", "guardar", "poupar", "emergência", "emergencia"],
+            ["reserva_financeira", "organizacao_financeira"]
+        ),
+        (
+            ["organizar", "orçamento", "orcamento", "renda", "gastos", "controle financeiro"],
+            ["organizacao_financeira", "dividas", "reserva_financeira"]
+        ),
+        (
+            ["senha", "token", "golpe", "link", "sms", "segurança", "seguranca", "dados sensíveis", "dados sensiveis"],
+            ["seguranca", "pix"]
+        ),
+    ]
+
+    categorias = []
+
+    for termos, categorias_regra in regras:
+        if any(termo in pergunta_lower for termo in termos):
+            for categoria in categorias_regra:
+                if categoria not in categorias:
+                    categorias.append(categoria)
+
+    if not categorias:
+        categorias.append("geral")
+
+    return categorias
+
+
 def classificar_categoria_chunk_rag(texto):
     if not texto:
         return "geral"
@@ -5477,78 +5525,67 @@ def limpar_texto_documento_rag(texto):
     return texto_limpo.strip()
 
 
-def dividir_texto_em_chunks(texto, tamanho_chunk=550, sobreposicao=60):
+def dividir_texto_em_chunks(texto, tamanho_chunk=650, sobreposicao=0):
     texto = limpar_texto_documento_rag(texto)
 
     if not texto:
         return []
 
     linhas = texto.split("\n")
-    blocos = []
-    bloco_atual = []
+    titulo_documento = ""
+    secoes = []
+    secao_atual = []
 
     for linha in linhas:
         linha_limpa = linha.strip()
 
-        if linha_limpa.startswith("#") and bloco_atual:
-            blocos.append("\n".join(bloco_atual).strip())
-            bloco_atual = [linha_limpa]
+        if linha_limpa.startswith("# ") and not titulo_documento:
+            titulo_documento = linha_limpa
+            continue
+
+        if linha_limpa.startswith("## "):
+            if secao_atual:
+                secoes.append("\n".join(secao_atual).strip())
+            secao_atual = [linha_limpa]
         else:
-            bloco_atual.append(linha_limpa)
+            if linha_limpa:
+                secao_atual.append(linha_limpa)
 
-    if bloco_atual:
-        blocos.append("\n".join(bloco_atual).strip())
+    if secao_atual:
+        secoes.append("\n".join(secao_atual).strip())
 
-    blocos = [b for b in blocos if b.strip()]
+    if not secoes and texto:
+        secoes = [texto]
 
     chunks = []
-    chunk_atual = ""
 
-    for bloco in blocos:
-        if not chunk_atual:
-            chunk_atual = bloco
-            continue
-
-        candidato = chunk_atual + "\n\n" + bloco
-
-        if len(candidato) <= tamanho_chunk:
-            chunk_atual = candidato
+    for secao in secoes:
+        if titulo_documento:
+            chunk = titulo_documento + "\n\n" + secao
         else:
-            chunks.append(chunk_atual.strip())
-            chunk_atual = bloco
+            chunk = secao
 
-    if chunk_atual.strip():
-        chunks.append(chunk_atual.strip())
-
-    chunks_finais = []
-
-    for chunk in chunks:
-        if len(chunk) <= tamanho_chunk * 1.25:
-            chunks_finais.append(chunk)
+        if len(chunk) <= tamanho_chunk:
+            chunks.append(chunk.strip())
             continue
 
-        paragrafos = [p.strip() for p in chunk.split("\n\n") if p.strip()]
+        palavras = chunk.split()
         parte = ""
 
-        for paragrafo in paragrafos:
-            candidato = (parte + "\n\n" + paragrafo).strip() if parte else paragrafo
+        for palavra in palavras:
+            candidato = (parte + " " + palavra).strip()
 
             if len(candidato) <= tamanho_chunk:
                 parte = candidato
             else:
                 if parte:
-                    chunks_finais.append(parte.strip())
-
-                if sobreposicao > 0:
-                    overlap = parte[-sobreposicao:].strip()
-                    parte = (overlap + "\n\n" + paragrafo).strip()
-                else:
-                    parte = paragrafo
+                    chunks.append(parte.strip())
+                parte = palavra
 
         if parte:
-            chunks_finais.append(parte.strip())
+            chunks.append(parte.strip())
 
-    return chunks_finais
+    return [chunk for chunk in chunks if chunk.strip()]
 
 
 def salvar_chunks_documento(nome_arquivo, texto):
@@ -5707,6 +5744,11 @@ def salvar_chunks_embeddings_pgvector_rag(documento_id, caminho_embedding_ready)
         conn = psycopg2.connect(database_url)
         preparar_tabela_embeddings_pgvector_rag(conn)
         cur = conn.cursor()
+
+        cur.execute("""
+            DELETE FROM chunks_embeddings_rag
+            WHERE documento_id = %s;
+        """, (int(documento_id),))
 
         total_salvos = 0
 
@@ -6168,6 +6210,10 @@ def buscar_chunks_semanticos_pgvector_rag(pergunta, limite=5):
 
         vetor_pgvector = "[" + ",".join(str(float(valor)) for valor in embedding_pergunta) + "]"
 
+        categorias_prioritarias = inferir_categorias_pergunta_rag(pergunta)
+        limite_final = int(limite)
+        limite_busca = max(limite_final * 4, 10)
+
         conn = psycopg2.connect(database_url)
         cur = conn.cursor()
 
@@ -6187,7 +6233,7 @@ def buscar_chunks_semanticos_pgvector_rag(pergunta, limite=5):
         """, (
             vetor_pgvector,
             vetor_pgvector,
-            int(limite)
+            int(limite_busca)
         ))
 
         rows = cur.fetchall()
@@ -6211,9 +6257,28 @@ def buscar_chunks_semanticos_pgvector_rag(pergunta, limite=5):
         cur.close()
         conn.close()
 
+        for item in resultados:
+            categoria = item.get("categoria", "geral")
+            prioridade_categoria = 1 if categoria in categorias_prioritarias else 0
+            item["categorias_prioritarias"] = categorias_prioritarias
+            item["prioridade_categoria"] = prioridade_categoria
+            item["score_rag"] = round(
+                float(item.get("similaridade_aproximada", 0)) + (0.08 * prioridade_categoria),
+                4
+            )
+
+        resultados = sorted(
+            resultados,
+            key=lambda item: (
+                item.get("prioridade_categoria", 0),
+                item.get("similaridade_aproximada", 0)
+            ),
+            reverse=True
+        )[:limite_final]
+
         return {
             "ok": True,
-            "message": f"{len(resultados)} chunks encontrados.",
+            "message": f"{len(resultados)} chunks encontrados. Categorias priorizadas: {', '.join(categorias_prioritarias)}.",
             "resultados": resultados
         }
 
@@ -6768,6 +6833,8 @@ def render_upload_documentos_rag():
                         ):
                             st.caption(f"chunk_id: {item['chunk_id']}")
                             st.caption(f"distância pgvector: {item['distancia']}")
+                            st.caption(f"categorias priorizadas: {item.get('categorias_prioritarias', [])}")
+                            st.caption(f"score RAG: {item.get('score_rag')}")
                             st.write(item["texto"])
 
 
