@@ -3119,6 +3119,7 @@ def render_filters(diagnosticos_df, feedbacks_df):
             "🧪 Avaliação do Agente",
             "📊 Observabilidade RAG",
             "📄 Upload Documentos",
+            "🧠 Memória Usuário",
             "📤 Exportar",
         ],
         format_func=dt_menu,
@@ -6142,7 +6143,60 @@ def criar_indice_pgvector_rag():
         }
 
 
-def gerar_resposta_rag_pgvector_inna(pergunta, limite=None):
+
+
+def preparar_markdown_resposta_inna(texto):
+    import unicodedata
+
+    if not texto:
+        return ""
+
+    texto = unicodedata.normalize("NFC", str(texto))
+
+    # Evita Streamlit/Markdown interpretar R$ como fórmula matemática
+    texto = texto.replace("R$", "R\\$")
+
+    return texto
+
+
+def limpar_formatacao_resposta_inna(texto):
+    import re
+
+    if not texto:
+        return ""
+
+    texto = str(texto)
+
+    # Remove markdown problemático
+    texto = texto.replace("**", "")
+    texto = texto.replace("__", "")
+
+    # Corrige valores grudados: R$200 -> R$ 200
+    texto = re.sub(r"R\$\s*(\d)", r"R$ \1", texto)
+
+    # Corrige dinheiro grudado com texto
+    texto = re.sub(r"(R\$ [0-9\.\,]+)(por)", r"\1 por", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"(R\$ [0-9\.\,]+)(mensal|semana|semanal|mês|mes)", r"\1 \2", texto, flags=re.IGNORECASE)
+
+    # Corrige palavras grudadas comuns
+    texto = re.sub(r"([a-záéíóúãõç])([A-ZÁÉÍÓÚÃÕÇ])", r"\1 \2", texto)
+
+    # Remove espaços excessivos
+    texto = re.sub(r"[ \t]+", " ", texto)
+
+    # Garante quebra depois de seções
+    texto = texto.replace("Resumo:", "\nResumo:")
+    texto = texto.replace("Cálculo:", "\n\nCálculo:")
+    texto = texto.replace("Orientação:", "\n\nOrientação:")
+    texto = texto.replace("Próximo passo:", "\n\nPróximo passo:")
+
+    # Remove quebras exageradas
+    texto = re.sub(r"\n{3,}", "\n\n", texto)
+
+    return texto.strip()
+
+
+def gerar_resposta_rag_pgvector_inna(pergunta, limite=None, usuario_id="demo_user"):
     import os
     from pathlib import Path
 
@@ -6156,6 +6210,28 @@ def gerar_resposta_rag_pgvector_inna(pergunta, limite=None):
 
     if limite is None:
         limite = definir_limite_chunks_automatico_rag(pergunta)
+
+    resultado_memoria = buscar_memoria_inna(usuario_id)
+    memoria_usuario = resultado_memoria.get("memoria") if resultado_memoria.get("ok") else None
+
+    bloco_memoria = "Nenhuma memória ativa encontrada para este usuário."
+
+    if memoria_usuario:
+        bloco_memoria = f"""
+Usuário ID: {memoria_usuario.get("usuario_id")}
+Nome: {memoria_usuario.get("nome")}
+Idioma: {memoria_usuario.get("idioma")}
+Moeda: {memoria_usuario.get("moeda")}
+Renda mensal: {memoria_usuario.get("renda_mensal")}
+Gastos mensais: {memoria_usuario.get("gastos_mensais")}
+Valor que consegue guardar: {memoria_usuario.get("valor_reserva")}
+Possui dívidas: {memoria_usuario.get("possui_dividas")}
+Usa cartão de crédito: {memoria_usuario.get("uso_cartao_credito")}
+Perfil financeiro: {memoria_usuario.get("perfil_financeiro")}
+Objetivo principal: {memoria_usuario.get("objetivo_principal")}
+Última meta: {memoria_usuario.get("ultima_meta")}
+Resumo: {memoria_usuario.get("resumo_contexto")}
+"""
 
     resultado_busca = buscar_chunks_semanticos_pgvector_rag(
         pergunta=pergunta,
@@ -6219,37 +6295,22 @@ Conteúdo:
 
         contexto_final = "\n".join(trechos_contexto)
 
-        prompt = f"""
-Você é a INNA, uma educadora financeira com IA.
+        try:
+            from services.prompt_builder_inna import montar_prompt_inna
+        except ImportError:
+            from src.services.prompt_builder_inna import montar_prompt_inna
 
-Sua função é responder de forma simples, segura, educativa e prática.
-
-Use prioritariamente os TRECHOS DA BASE RAG abaixo.
-Não invente informação que não esteja apoiada no contexto.
-Se o contexto for insuficiente, diga que a orientação é geral.
-
-Regras:
-- Não peça senha, token, código de segurança ou dados sensíveis.
-- Não oriente a pessoa a devolver Pix por fora.
-- Para Pix suspeito, recomende conferir no aplicativo oficial do banco.
-- Recomende usar canais oficiais do banco.
-- Explique em linguagem simples para trabalhador, idoso, leigo ou pessoa com pouco estudo.
-- Não faça promessa financeira.
-- Não dê recomendação de investimento específica.
-
-PERGUNTA DO USUÁRIO:
-{pergunta}
-
-TRECHOS DA BASE RAG:
-{contexto_final}
-
-Agora responda em português do Brasil, com orientação clara e direta.
-"""
+        prompt = montar_prompt_inna(
+            pergunta=pergunta,
+            memoria=memoria_usuario,
+            historico=None,
+            chunks=contextos
+        )
 
         model = genai.GenerativeModel("gemini-2.5-flash")
         response = model.generate_content(prompt)
 
-        resposta = getattr(response, "text", "").strip()
+        resposta = limpar_formatacao_resposta_inna(getattr(response, "text", "").strip())
 
         if not resposta:
             resposta = "Não consegui gerar uma resposta final com base no contexto encontrado."
@@ -7171,8 +7232,14 @@ def render_upload_documentos_rag():
 
         st.markdown("### Gerar resposta final da INNA com RAG")
 
+        usuario_id_resposta_rag = st.text_input(
+            "ID do usuário para usar memória",
+            value="demo_user",
+            key="usuario_id_resposta_final_rag"
+        )
+
         pergunta_resposta_rag = st.text_area(
-            "Pergunta para a INNA responder usando os documentos vetorizados",
+            "Pergunta para a INNA responder usando memória + documentos vetorizados",
             value="Recebi um Pix estranho, devo devolver?",
             height=100,
             key="pergunta_resposta_final_rag_pgvector"
@@ -7200,7 +7267,8 @@ def render_upload_documentos_rag():
             with st.spinner("Buscando contexto no pgvector e gerando resposta final da INNA..."):
                 resultado_resposta = gerar_resposta_rag_pgvector_inna(
                     pergunta=pergunta_resposta_rag,
-                    limite=limite_resposta_rag
+                    limite=limite_resposta_rag,
+                    usuario_id=usuario_id_resposta_rag
                 )
 
             if not resultado_resposta.get("ok"):
@@ -7211,7 +7279,7 @@ def render_upload_documentos_rag():
                 st.markdown("#### 🤖 Resposta final da INNA")
 
                 with st.container(border=True):
-                    st.markdown(resultado_resposta.get("resposta", ""))
+                    st.markdown(preparar_markdown_resposta_inna(resultado_resposta.get("resposta", "")))
 
                 contextos_usados = resultado_resposta.get("contextos", [])
 
@@ -7252,6 +7320,379 @@ def render_upload_documentos_rag():
                                 height=180,
                                 key=f"contexto_resposta_rag_{idx}_{chunk_id}"
                             )
+
+
+def salvar_ou_atualizar_memoria_inna(usuario_id, dados_memoria, origem="dashboard"):
+    import os
+    import json
+    from pathlib import Path
+
+    if not usuario_id:
+        return {"ok": False, "message": "usuario_id não informado."}
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return {"ok": False, "message": "DATABASE_URL não encontrada."}
+
+    try:
+        import psycopg2
+        import psycopg2.extras
+
+        conn = psycopg2.connect(database_url)
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        cur.execute("""
+            SELECT *
+            FROM memoria_usuarios_inna
+            WHERE usuario_id = %s
+            LIMIT 1;
+        """, (usuario_id,))
+
+        antes = cur.fetchone()
+
+        memoria_json = dados_memoria.get("memoria_json", {})
+
+        cur.execute("""
+            INSERT INTO memoria_usuarios_inna (
+                usuario_id,
+                nome,
+                idioma,
+                moeda,
+                renda_mensal,
+                gastos_mensais,
+                valor_reserva,
+                possui_dividas,
+                uso_cartao_credito,
+                ultimo_score,
+                ultimo_risco,
+                ultima_meta,
+                resumo_contexto,
+                perfil_financeiro,
+                objetivo_principal,
+                preferencia_linguagem,
+                canal_origem,
+                nivel_confianca,
+                memoria_json,
+                tags,
+                ativo,
+                atualizado_em
+            )
+            VALUES (
+                %(usuario_id)s,
+                %(nome)s,
+                %(idioma)s,
+                %(moeda)s,
+                %(renda_mensal)s,
+                %(gastos_mensais)s,
+                %(valor_reserva)s,
+                %(possui_dividas)s,
+                %(uso_cartao_credito)s,
+                %(ultimo_score)s,
+                %(ultimo_risco)s,
+                %(ultima_meta)s,
+                %(resumo_contexto)s,
+                %(perfil_financeiro)s,
+                %(objetivo_principal)s,
+                %(preferencia_linguagem)s,
+                %(canal_origem)s,
+                %(nivel_confianca)s,
+                %(memoria_json)s::jsonb,
+                %(tags)s,
+                TRUE,
+                NOW()
+            )
+            ON CONFLICT (usuario_id)
+            DO UPDATE SET
+                nome = EXCLUDED.nome,
+                idioma = EXCLUDED.idioma,
+                moeda = EXCLUDED.moeda,
+                renda_mensal = EXCLUDED.renda_mensal,
+                gastos_mensais = EXCLUDED.gastos_mensais,
+                valor_reserva = EXCLUDED.valor_reserva,
+                possui_dividas = EXCLUDED.possui_dividas,
+                uso_cartao_credito = EXCLUDED.uso_cartao_credito,
+                ultimo_score = EXCLUDED.ultimo_score,
+                ultimo_risco = EXCLUDED.ultimo_risco,
+                ultima_meta = EXCLUDED.ultima_meta,
+                resumo_contexto = EXCLUDED.resumo_contexto,
+                perfil_financeiro = EXCLUDED.perfil_financeiro,
+                objetivo_principal = EXCLUDED.objetivo_principal,
+                preferencia_linguagem = EXCLUDED.preferencia_linguagem,
+                canal_origem = EXCLUDED.canal_origem,
+                nivel_confianca = EXCLUDED.nivel_confianca,
+                memoria_json = EXCLUDED.memoria_json,
+                tags = EXCLUDED.tags,
+                ativo = TRUE,
+                atualizado_em = NOW()
+            RETURNING *;
+        """, {
+            "usuario_id": usuario_id,
+            "nome": dados_memoria.get("nome"),
+            "idioma": dados_memoria.get("idioma", "pt"),
+            "moeda": dados_memoria.get("moeda", "BRL"),
+            "renda_mensal": dados_memoria.get("renda_mensal"),
+            "gastos_mensais": dados_memoria.get("gastos_mensais"),
+            "valor_reserva": dados_memoria.get("valor_reserva"),
+            "possui_dividas": dados_memoria.get("possui_dividas"),
+            "uso_cartao_credito": dados_memoria.get("uso_cartao_credito"),
+            "ultimo_score": dados_memoria.get("ultimo_score"),
+            "ultimo_risco": dados_memoria.get("ultimo_risco"),
+            "ultima_meta": dados_memoria.get("ultima_meta"),
+            "resumo_contexto": dados_memoria.get("resumo_contexto"),
+            "perfil_financeiro": dados_memoria.get("perfil_financeiro"),
+            "objetivo_principal": dados_memoria.get("objetivo_principal"),
+            "preferencia_linguagem": dados_memoria.get("preferencia_linguagem", "simples"),
+            "canal_origem": origem,
+            "nivel_confianca": dados_memoria.get("nivel_confianca", 1.0),
+            "memoria_json": json.dumps(memoria_json, ensure_ascii=False),
+            "tags": dados_memoria.get("tags", []),
+        })
+
+        depois = cur.fetchone()
+
+        tipo_evento = "memoria_criada" if antes is None else "memoria_atualizada"
+
+        cur.execute("""
+            INSERT INTO memoria_eventos_inna (
+                usuario_id,
+                tipo_evento,
+                origem,
+                dados_antes,
+                dados_depois,
+                resumo_evento
+            )
+            VALUES (%s, %s, %s, %s::jsonb, %s::jsonb, %s);
+        """, (
+            usuario_id,
+            tipo_evento,
+            origem,
+            json.dumps(dict(antes), default=str, ensure_ascii=False) if antes else None,
+            json.dumps(dict(depois), default=str, ensure_ascii=False),
+            dados_memoria.get("resumo_contexto") or "Memória do usuário salva/atualizada."
+        ))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return {
+            "ok": True,
+            "message": f"Memória do usuário {usuario_id} salva/atualizada com sucesso.",
+            "tipo_evento": tipo_evento
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "message": f"Erro ao salvar memória: {e}"
+        }
+
+
+def buscar_memoria_inna(usuario_id):
+    import os
+    from pathlib import Path
+
+    if not usuario_id:
+        return {"ok": False, "message": "usuario_id não informado.", "memoria": None}
+
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=Path(".env"))
+            database_url = os.getenv("DATABASE_URL")
+        except Exception:
+            database_url = None
+
+    if not database_url:
+        return {"ok": False, "message": "DATABASE_URL não encontrada.", "memoria": None}
+
+    try:
+        import psycopg2
+        import psycopg2.extras
+
+        conn = psycopg2.connect(database_url)
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        cur.execute("""
+            SELECT *
+            FROM memoria_usuarios_inna
+            WHERE usuario_id = %s
+              AND COALESCE(ativo, TRUE) = TRUE
+            LIMIT 1;
+        """, (usuario_id,))
+
+        memoria = cur.fetchone()
+
+        cur.close()
+        conn.close()
+
+        return {
+            "ok": True,
+            "message": "Memória encontrada." if memoria else "Nenhuma memória ativa encontrada.",
+            "memoria": dict(memoria) if memoria else None
+        }
+
+    except Exception as e:
+        return {"ok": False, "message": f"Erro ao buscar memória: {e}", "memoria": None}
+
+
+
+def render_memoria_usuario_inna():
+    import streamlit as st
+    import json
+
+    st.markdown("## 🧠 Memória do Usuário — INNA")
+    st.caption("Gerencie a memória persistente da INNA por usuário.")
+
+    usuario_id = st.text_input(
+        "ID do usuário",
+        value="demo_user",
+        key="memoria_usuario_id_inna"
+    )
+
+    col_buscar, col_limpar = st.columns(2)
+
+    with col_buscar:
+        buscar = st.button("🔎 Buscar memória", key="btn_buscar_memoria_inna")
+
+    st.markdown("---")
+    st.markdown("### Dados financeiros principais")
+
+    col1, col2, col3 = st.columns(3)
+
+    nome = col1.text_input("Nome", value="Usuário Demo")
+    idioma = col2.selectbox("Idioma", ["pt", "en", "es", "ru", "ar"], index=0)
+    moeda = col3.selectbox("Moeda", ["BRL", "USD", "EUR"], index=0)
+
+    renda_mensal = col1.number_input("Renda mensal", min_value=0.0, value=3500.0, step=100.0)
+    gastos_mensais = col2.number_input("Gastos mensais", min_value=0.0, value=2800.0, step=100.0)
+    valor_reserva = col3.number_input("Valor que consegue guardar", min_value=0.0, value=200.0, step=50.0)
+
+    possui_dividas = st.checkbox("Possui dívidas?", value=True)
+    uso_cartao_credito = st.checkbox("Usa cartão de crédito?", value=True)
+
+    st.markdown("### Perfil e contexto")
+
+    perfil_financeiro = st.selectbox(
+        "Perfil financeiro",
+        ["iniciante", "organizando", "endividado", "equilibrado", "avancado"],
+        index=1
+    )
+
+    objetivo_principal = st.text_input(
+        "Objetivo principal",
+        value="Organizar gastos e criar reserva financeira"
+    )
+
+    preferencia_linguagem = st.selectbox(
+        "Preferência de linguagem",
+        ["simples", "detalhada", "técnica"],
+        index=0
+    )
+
+    ultimo_score = st.number_input("Último score", min_value=0.0, max_value=100.0, value=72.0)
+    ultimo_risco = st.selectbox("Último risco", ["baixo", "moderado", "alto"], index=1)
+    ultima_meta = st.text_input("Última meta", value="Guardar R$ 50 por semana")
+
+    resumo_contexto = st.text_area(
+        "Resumo da memória",
+        value="Usuário informou renda de R$ 3.500, gastos de R$ 2.800 e capacidade de guardar R$ 200 por mês.",
+        height=120
+    )
+
+    tags_texto = st.text_input(
+        "Tags separadas por vírgula",
+        value="cartao_credito,reserva_financeira,organizacao"
+    )
+
+    memoria_json_texto = st.text_area(
+        "Memória JSON avançada",
+        value=json.dumps({
+            "renda": 3500,
+            "gastos": 2800,
+            "pode_guardar": 200,
+            "meta_semanal": 50,
+            "observacao": "Usuário quer começar com metas simples."
+        }, ensure_ascii=False, indent=2),
+        height=180
+    )
+
+    if st.button("💾 Salvar ou atualizar memória", key="btn_salvar_memoria_inna"):
+        try:
+            memoria_json = json.loads(memoria_json_texto)
+        except Exception:
+            st.error("Memória JSON inválida.")
+            return
+
+        tags = [tag.strip() for tag in tags_texto.split(",") if tag.strip()]
+
+        dados = {
+            "nome": nome,
+            "idioma": idioma,
+            "moeda": moeda,
+            "renda_mensal": renda_mensal,
+            "gastos_mensais": gastos_mensais,
+            "valor_reserva": valor_reserva,
+            "possui_dividas": possui_dividas,
+            "uso_cartao_credito": uso_cartao_credito,
+            "ultimo_score": ultimo_score,
+            "ultimo_risco": ultimo_risco,
+            "ultima_meta": ultima_meta,
+            "resumo_contexto": resumo_contexto,
+            "perfil_financeiro": perfil_financeiro,
+            "objetivo_principal": objetivo_principal,
+            "preferencia_linguagem": preferencia_linguagem,
+            "nivel_confianca": 1.0,
+            "memoria_json": memoria_json,
+            "tags": tags,
+        }
+
+        resultado = salvar_ou_atualizar_memoria_inna(
+            usuario_id=usuario_id,
+            dados_memoria=dados,
+            origem="dashboard_memoria"
+        )
+
+        if resultado.get("ok"):
+            st.success(resultado.get("message"))
+            st.caption(f"Evento: {resultado.get('tipo_evento')}")
+        else:
+            st.warning(resultado.get("message"))
+
+    if buscar:
+        resultado_busca = buscar_memoria_inna(usuario_id)
+
+        if not resultado_busca.get("ok"):
+            st.warning(resultado_busca.get("message"))
+        elif not resultado_busca.get("memoria"):
+            st.info(resultado_busca.get("message"))
+        else:
+            memoria = resultado_busca["memoria"]
+
+            st.markdown("---")
+            st.markdown("### Memória encontrada")
+
+            st.json(memoria, expanded=False)
+
+            col_a, col_b, col_c = st.columns(3)
+
+            col_a.metric("Renda", memoria.get("renda_mensal") or 0)
+            col_b.metric("Gastos", memoria.get("gastos_mensais") or 0)
+            col_c.metric("Reserva", memoria.get("valor_reserva") or 0)
+
+            st.info(memoria.get("resumo_contexto") or "Sem resumo salvo.")
+
 
 def main():
 
@@ -7314,6 +7755,9 @@ def main():
 
     elif menu == "📄 Upload Documentos":
         render_upload_documentos_rag()
+
+    elif menu == "🧠 Memória Usuário":
+        render_memoria_usuario_inna()
 
     elif menu == "📤 Exportar":
         render_export(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
