@@ -5499,329 +5499,145 @@ def classificar_categoria_chunk_rag(texto):
 
 
 def limpar_texto_documento_rag(texto):
-    import re
+    """
+    Adaptador para o serviço modular de chunking.
+    """
+    try:
+        from services.rag.chunking import (
+            limpar_texto_documento
+        )
+    except ImportError:
+        from src.services.rag.chunking import (
+            limpar_texto_documento
+        )
 
-    if not texto:
-        return ""
-
-    texto = texto.replace("\r\n", "\n").replace("\r", "\n")
-    texto = texto.replace("\t", " ")
-
-    linhas = []
-
-    for linha in texto.split("\n"):
-        linha = linha.strip()
-
-        if not linha:
-            linhas.append("")
-            continue
-
-        linha = re.sub(r"\s+", " ", linha)
-        linhas.append(linha)
-
-    texto_limpo = "\n".join(linhas)
-
-    texto_limpo = re.sub(r"\n{3,}", "\n\n", texto_limpo)
-
-    return texto_limpo.strip()
+    return limpar_texto_documento(texto)
 
 
-def dividir_texto_em_chunks(texto, tamanho_chunk=650, sobreposicao=0):
-    texto = limpar_texto_documento_rag(texto)
+def dividir_texto_em_chunks(
+    texto,
+    tamanho_chunk=650,
+    sobreposicao=0,
+):
+    """
+    Adaptador para o serviço modular de chunking.
+    """
+    try:
+        from services.rag.chunking import (
+            dividir_texto_em_chunks as dividir_chunks
+        )
+    except ImportError:
+        from src.services.rag.chunking import (
+            dividir_texto_em_chunks as dividir_chunks
+        )
 
-    if not texto:
-        return []
-
-    linhas = texto.split("\n")
-    titulo_documento = ""
-    secoes = []
-    secao_atual = []
-
-    for linha in linhas:
-        linha_limpa = linha.strip()
-
-        if linha_limpa.startswith("# ") and not titulo_documento:
-            titulo_documento = linha_limpa
-            continue
-
-        if linha_limpa.startswith("## "):
-            if secao_atual:
-                secoes.append("\n".join(secao_atual).strip())
-            secao_atual = [linha_limpa]
-        else:
-            if linha_limpa:
-                secao_atual.append(linha_limpa)
-
-    if secao_atual:
-        secoes.append("\n".join(secao_atual).strip())
-
-    if not secoes and texto:
-        secoes = [texto]
-
-    chunks = []
-
-    for secao in secoes:
-        if titulo_documento:
-            chunk = titulo_documento + "\n\n" + secao
-        else:
-            chunk = secao
-
-        if len(chunk) <= tamanho_chunk:
-            chunks.append(chunk.strip())
-            continue
-
-        palavras = chunk.split()
-        parte = ""
-
-        for palavra in palavras:
-            candidato = (parte + " " + palavra).strip()
-
-            if len(candidato) <= tamanho_chunk:
-                parte = candidato
-            else:
-                if parte:
-                    chunks.append(parte.strip())
-                parte = palavra
-
-        if parte:
-            chunks.append(parte.strip())
-
-    return [chunk for chunk in chunks if chunk.strip()]
-
-
-def salvar_chunks_documento(nome_arquivo, texto):
-    import json
-    from pathlib import Path
-    from datetime import datetime
-
-    chunks_dir = Path("data/knowledge_base/chunks")
-    chunks_dir.mkdir(parents=True, exist_ok=True)
-
-    embedding_ready_dir = Path("data/knowledge_base/embedding_ready")
-    embedding_ready_dir.mkdir(parents=True, exist_ok=True)
-
-    chunks = dividir_texto_em_chunks(texto)
-
-    base_name = Path(nome_arquivo).stem
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-    output_path = chunks_dir / f"{timestamp}_{base_name}_chunks.json"
-    embedding_ready_path = embedding_ready_dir / f"{timestamp}_{base_name}_embedding_ready.jsonl"
-
-    payload = {
-        "documento_origem": nome_arquivo,
-        "total_chunks": len(chunks),
-        "status": "chunks_gerados",
-        "preparado_para_embeddings": True,
-        "chunks": [
-            {
-                "chunk_id": f"{base_name}_chunk_{idx}",
-                "chunk_index": idx,
-                "texto": chunk,
-                "metadata": {
-                    "documento_origem": nome_arquivo,
-                    "fonte": f"data/knowledge_base/uploads/{nome_arquivo}",
-                    "categoria": classificar_categoria_chunk_rag(chunk),
-                    "origem": "upload_usuario",
-                    "idioma": "pt",
-                    "tipo": "documento_upload",
-                    "fase": "5.26_categorias_chunks"
-                }
-            }
-            for idx, chunk in enumerate(chunks, start=1)
-        ]
-    }
-
-    output_path.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2),
-        encoding="utf-8"
+    return dividir_chunks(
+        texto,
+        tamanho_chunk=tamanho_chunk,
+        sobreposicao=sobreposicao,
     )
 
-    with embedding_ready_path.open("w", encoding="utf-8") as f:
-        for item in payload["chunks"]:
-            linha = {
-                "chunk_id": item["chunk_id"],
-                "documento_origem": nome_arquivo,
-                "chunk_index": item["chunk_index"],
-                "texto": item["texto"],
-                "metadata": item["metadata"]
-            }
-            f.write(json.dumps(linha, ensure_ascii=False) + "\n")
 
-    return output_path, chunks, embedding_ready_path
+def salvar_chunks_documento(
+    nome_arquivo,
+    texto,
+):
+    """
+    Adaptador para geração de JSON e JSONL.
+    """
+    try:
+        from services.rag.chunking import (
+            salvar_chunks_documento as salvar_chunks
+        )
+    except ImportError:
+        from src.services.rag.chunking import (
+            salvar_chunks_documento as salvar_chunks
+        )
 
-
-
+    return salvar_chunks(
+        nome_arquivo=nome_arquivo,
+        texto=texto,
+        classificar_chunk=classificar_categoria_chunk_rag,
+        tamanho_chunk=650,
+        sobreposicao=0,
+        idioma="pt",
+    )
 
 
 
 def gerar_embedding_gemini_rag(texto):
-    import os
+    """
+    Adaptador compatível para embeddings de documentos.
 
-    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    Mantido para não quebrar as chamadas antigas.
+    """
+    try:
+        from services.embeddings.gemini import (
+            gerar_embedding_documento
+        )
+    except ImportError:
+        from src.services.embeddings.gemini import (
+            gerar_embedding_documento
+        )
 
-    if not api_key:
-        try:
-            from dotenv import load_dotenv
-            from pathlib import Path
-            load_dotenv(dotenv_path=Path(".env"))
-            api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-        except Exception:
-            api_key = None
+    return gerar_embedding_documento(texto)
 
-    if not api_key:
-        raise RuntimeError("GEMINI_API_KEY ou GOOGLE_API_KEY não encontrada.")
 
-    import google.generativeai as genai
+def gerar_embedding_consulta_gemini_rag(texto):
+    """
+    Embedding específico para perguntas de busca semântica.
+    """
+    try:
+        from services.embeddings.gemini import (
+            gerar_embedding_consulta
+        )
+    except ImportError:
+        from src.services.embeddings.gemini import (
+            gerar_embedding_consulta
+        )
 
-    genai.configure(api_key=api_key)
+    return gerar_embedding_consulta(texto)
 
-    resultado = genai.embed_content(
-        model="models/gemini-embedding-001",
-        content=texto,
-        task_type="retrieval_document"
-    )
-
-    return resultado["embedding"]
 
 
 def preparar_tabela_embeddings_pgvector_rag(conn):
-    cur = conn.cursor()
-
-    cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS chunks_embeddings_rag (
-            id SERIAL PRIMARY KEY,
-            documento_id INTEGER REFERENCES documentos_upload_rag(id) ON DELETE CASCADE,
-            chunk_id TEXT NOT NULL,
-            documento_origem TEXT,
-            chunk_index INTEGER,
-            texto TEXT NOT NULL,
-            metadata JSONB,
-            embedding vector(3072),
-            modelo_embedding TEXT DEFAULT 'models/gemini-embedding-001',
-            criado_em TIMESTAMP DEFAULT NOW(),
-            UNIQUE(documento_id, chunk_id)
-        );
-    """)
-
-    conn.commit()
-    cur.close()
-
-
-def salvar_chunks_embeddings_pgvector_rag(documento_id, caminho_embedding_ready):
-    import os
-    import json
-    from pathlib import Path
-
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        try:
-            from dotenv import load_dotenv
-            load_dotenv(dotenv_path=Path(".env"))
-            database_url = os.getenv("DATABASE_URL")
-        except Exception:
-            database_url = None
-
-    if not database_url:
-        return {
-            "ok": False,
-            "message": "DATABASE_URL não encontrada."
-        }
-
-    caminho = Path(str(caminho_embedding_ready))
-
-    if not caminho.exists():
-        return {
-            "ok": False,
-            "message": f"Arquivo JSONL não encontrado: {caminho}"
-        }
-
+    """
+    Adaptador para o serviço modular pgvector.
+    """
     try:
-        import psycopg2
+        from services.rag.vector_store import (
+            preparar_tabela_embeddings
+        )
+    except ImportError:
+        from src.services.rag.vector_store import (
+            preparar_tabela_embeddings
+        )
 
-        conn = psycopg2.connect(database_url)
-        preparar_tabela_embeddings_pgvector_rag(conn)
-        cur = conn.cursor()
-
-        cur.execute("""
-            DELETE FROM chunks_embeddings_rag
-            WHERE documento_id = %s;
-        """, (int(documento_id),))
-
-        total_salvos = 0
-
-        with caminho.open("r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-
-                if not line:
-                    continue
-
-                item = json.loads(line)
-
-                texto = item.get("texto", "").strip()
-
-                if not texto:
-                    continue
-
-                embedding = gerar_embedding_gemini_rag(texto)
-
-                vetor_pgvector = "[" + ",".join(str(float(valor)) for valor in embedding) + "]"
-
-                cur.execute("""
-                    INSERT INTO chunks_embeddings_rag (
-                        documento_id,
-                        chunk_id,
-                        documento_origem,
-                        chunk_index,
-                        texto,
-                        metadata,
-                        embedding,
-                        modelo_embedding
-                    )
-                    VALUES (%s, %s, %s, %s, %s, %s::jsonb, %s::vector, %s)
-                    ON CONFLICT (documento_id, chunk_id)
-                    DO UPDATE SET
-                        documento_origem = EXCLUDED.documento_origem,
-                        chunk_index = EXCLUDED.chunk_index,
-                        texto = EXCLUDED.texto,
-                        metadata = EXCLUDED.metadata,
-                        embedding = EXCLUDED.embedding,
-                        modelo_embedding = EXCLUDED.modelo_embedding,
-                        criado_em = NOW();
-                """, (
-                    int(documento_id),
-                    item.get("chunk_id"),
-                    item.get("documento_origem"),
-                    int(item.get("chunk_index", 0)),
-                    texto,
-                    json.dumps(item.get("metadata", {}), ensure_ascii=False),
-                    vetor_pgvector,
-                    "models/gemini-embedding-001"
-                ))
-
-                total_salvos += 1
-
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        return {
-            "ok": True,
-            "total": total_salvos,
-            "message": f"{total_salvos} embeddings salvos no pgvector."
-        }
-
-    except Exception as e:
-        return {
-            "ok": False,
-            "message": f"Erro ao gerar/salvar embeddings no pgvector: {e}"
-        }
+    return preparar_tabela_embeddings(conn)
 
 
+def salvar_chunks_embeddings_pgvector_rag(
+    documento_id,
+    caminho_embedding_ready,
+):
+    """
+    Adaptador para geração e armazenamento vetorial.
+    """
+    try:
+        from services.rag.vector_store import (
+            salvar_chunks_embeddings
+        )
+    except ImportError:
+        from src.services.rag.vector_store import (
+            salvar_chunks_embeddings
+        )
+
+    return salvar_chunks_embeddings(
+        documento_id=documento_id,
+        caminho_embedding_ready=caminho_embedding_ready,
+        gerar_embedding=gerar_embedding_gemini_rag,
+        substituir_existentes=True,
+    )
 
 
 def definir_limite_chunks_automatico_rag(pergunta):
@@ -5940,209 +5756,157 @@ def arquivar_arquivos_locais_rag(manter_ultimos=5):
 
 
 def carregar_resumo_embeddings_pgvector_rag():
-    import os
-    import pandas as pd
-    from pathlib import Path
-
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        try:
-            from dotenv import load_dotenv
-            load_dotenv(dotenv_path=Path(".env"))
-            database_url = os.getenv("DATABASE_URL")
-        except Exception:
-            database_url = None
-
-    if not database_url:
-        return {
-            "ok": False,
-            "message": "DATABASE_URL não encontrada.",
-            "total_embeddings": 0,
-            "embeddings_ativos": 0,
-            "embeddings_inativos": 0,
-            "documentos_com_embeddings": 0,
-            "documentos_ativos_com_embeddings": 0,
-            "documentos_inativos_com_embeddings": 0,
-            "df": pd.DataFrame()
-        }
-
+    """
+    Adaptador para resumo do armazenamento vetorial.
+    """
     try:
-        import psycopg2
+        from services.rag.vector_store import (
+            carregar_resumo_embeddings
+        )
+    except ImportError:
+        from src.services.rag.vector_store import (
+            carregar_resumo_embeddings
+        )
 
-        conn = psycopg2.connect(database_url)
-
-        query = """
-            SELECT
-                ce.documento_id,
-                du.nome_salvo,
-                COALESCE(du.ativo, TRUE) AS ativo,
-                COUNT(*) AS total_embeddings,
-                MAX(ce.modelo_embedding) AS modelo_embedding,
-                MAX(ce.criado_em) AS ultimo_processamento
-            FROM chunks_embeddings_rag ce
-            LEFT JOIN documentos_upload_rag du
-                ON du.id = ce.documento_id
-            GROUP BY ce.documento_id, du.nome_salvo, COALESCE(du.ativo, TRUE)
-            ORDER BY ultimo_processamento DESC;
-        """
-
-        df = pd.read_sql(query, conn)
-        conn.close()
-
-        if df.empty:
-            return {
-                "ok": True,
-                "message": "Nenhum embedding encontrado.",
-                "total_embeddings": 0,
-                "embeddings_ativos": 0,
-                "embeddings_inativos": 0,
-                "documentos_com_embeddings": 0,
-                "documentos_ativos_com_embeddings": 0,
-                "documentos_inativos_com_embeddings": 0,
-                "df": df
-            }
-
-        total_embeddings = int(df["total_embeddings"].sum())
-
-        df_ativos = df[df["ativo"] == True]
-        df_inativos = df[df["ativo"] == False]
-
-        embeddings_ativos = int(df_ativos["total_embeddings"].sum()) if not df_ativos.empty else 0
-        embeddings_inativos = int(df_inativos["total_embeddings"].sum()) if not df_inativos.empty else 0
-
-        documentos_com_embeddings = int(df["documento_id"].nunique())
-        documentos_ativos_com_embeddings = int(df_ativos["documento_id"].nunique()) if not df_ativos.empty else 0
-        documentos_inativos_com_embeddings = int(df_inativos["documento_id"].nunique()) if not df_inativos.empty else 0
-
-        return {
-            "ok": True,
-            "message": "Resumo de embeddings carregado.",
-            "total_embeddings": total_embeddings,
-            "embeddings_ativos": embeddings_ativos,
-            "embeddings_inativos": embeddings_inativos,
-            "documentos_com_embeddings": documentos_com_embeddings,
-            "documentos_ativos_com_embeddings": documentos_ativos_com_embeddings,
-            "documentos_inativos_com_embeddings": documentos_inativos_com_embeddings,
-            "df": df
-        }
-
-    except Exception as e:
-        return {
-            "ok": False,
-            "message": f"Erro ao carregar resumo de embeddings: {e}",
-            "total_embeddings": 0,
-            "embeddings_ativos": 0,
-            "embeddings_inativos": 0,
-            "documentos_com_embeddings": 0,
-            "documentos_ativos_com_embeddings": 0,
-            "documentos_inativos_com_embeddings": 0,
-            "df": pd.DataFrame()
-        }
+    return carregar_resumo_embeddings()
 
 
-def documento_tem_embeddings_pgvector_rag(documento_id):
-    import os
-    from pathlib import Path
-
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        try:
-            from dotenv import load_dotenv
-            load_dotenv(dotenv_path=Path(".env"))
-            database_url = os.getenv("DATABASE_URL")
-        except Exception:
-            database_url = None
-
-    if not database_url:
-        return False, 0
-
+def documento_tem_embeddings_pgvector_rag(
+    documento_id
+):
+    """
+    Adaptador para verificação de embeddings.
+    """
     try:
-        import psycopg2
+        from services.rag.vector_store import (
+            documento_tem_embeddings
+        )
+    except ImportError:
+        from src.services.rag.vector_store import (
+            documento_tem_embeddings
+        )
 
-        conn = psycopg2.connect(database_url)
-        cur = conn.cursor()
-
-        cur.execute("""
-            SELECT COUNT(*)
-            FROM chunks_embeddings_rag
-            WHERE documento_id = %s;
-        """, (int(documento_id),))
-
-        total = int(cur.fetchone()[0])
-
-        cur.close()
-        conn.close()
-
-        return total > 0, total
-
-    except Exception:
-        return False, 0
+    return documento_tem_embeddings(
+        documento_id
+    )
 
 
 def criar_indice_pgvector_rag():
-    import os
-    from pathlib import Path
+    """
+    Adaptador para criação dos índices pgvector.
+    """
+    try:
+        from services.rag.vector_store import (
+            criar_indices_pgvector
+        )
+    except ImportError:
+        from src.services.rag.vector_store import (
+            criar_indices_pgvector
+        )
 
-    database_url = os.getenv("DATABASE_URL")
+    return criar_indices_pgvector()
 
-    if not database_url:
-        try:
-            from dotenv import load_dotenv
-            load_dotenv(dotenv_path=Path(".env"))
-            database_url = os.getenv("DATABASE_URL")
-        except Exception:
-            database_url = None
 
-    if not database_url:
-        return {
-            "ok": False,
-            "message": "DATABASE_URL não encontrada."
-        }
+def renderizar_evolucao_financeira_inna(evolucao, moeda="BRL"):
+    import streamlit as st
 
     try:
-        import psycopg2
+        from services.formatter_inna import formatar_moeda
+    except ImportError:
+        from src.services.formatter_inna import formatar_moeda
 
-        conn = psycopg2.connect(database_url)
-        cur = conn.cursor()
+    if not evolucao or not evolucao.get("tem_evolucao"):
+        return
 
-        cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+    itens = evolucao.get("evolucoes", [])
 
-        cur.execute("""
-            CREATE INDEX IF NOT EXISTS idx_chunks_embeddings_rag_embedding_hnsw_halfvec
-            ON chunks_embeddings_rag
-            USING hnsw ((embedding::halfvec(3072)) halfvec_cosine_ops);
-        """)
+    if not itens:
+        return
 
-        cur.execute("""
-            CREATE INDEX IF NOT EXISTS idx_chunks_embeddings_rag_documento_id
-            ON chunks_embeddings_rag (documento_id);
-        """)
+    st.info("📈 Evolução financeira detectada")
 
-        cur.execute("""
-            CREATE INDEX IF NOT EXISTS idx_chunks_embeddings_rag_chunk_id
-            ON chunks_embeddings_rag (chunk_id);
-        """)
+    mapa_icones = {
+        "renda_mensal": "💰",
+        "gastos_mensais": "💸",
+        "valor_reserva": "🏦",
+    }
 
-        cur.execute("ANALYZE chunks_embeddings_rag;")
+    mapa_titulos = {
+        "renda_mensal": "Renda mensal",
+        "gastos_mensais": "Gastos mensais",
+        "valor_reserva": "Capacidade de guardar",
+    }
 
-        conn.commit()
-        cur.close()
-        conn.close()
+    colunas = st.columns(min(len(itens), 3))
 
-        return {
-            "ok": True,
-            "message": "Índices pgvector criados/validados com sucesso."
-        }
+    for indice, item in enumerate(itens):
+        campo = item.get("campo")
+        antes = float(item.get("antes") or 0)
+        depois = float(item.get("depois") or 0)
+        diferenca = float(item.get("diferenca") or 0)
 
-    except Exception as e:
-        return {
-            "ok": False,
-            "message": f"Erro ao criar índice pgvector: {e}"
-        }
+        percentual = 0.0
+        if antes != 0:
+            percentual = (diferenca / antes) * 100
 
+        antes_fmt = formatar_moeda(antes, moeda)
+        depois_fmt = formatar_moeda(depois, moeda)
+        diferenca_fmt = formatar_moeda(abs(diferenca), moeda)
 
+        icone = mapa_icones.get(campo, "📊")
+        titulo = mapa_titulos.get(campo, item.get("label") or "Indicador")
+
+        if diferenca > 0:
+            simbolo = "▲"
+            variacao_texto = f"{simbolo} +{diferenca_fmt} ({percentual:+.2f}%)"
+        elif diferenca < 0:
+            simbolo = "▼"
+            variacao_texto = f"{simbolo} -{diferenca_fmt} ({percentual:.2f}%)"
+        else:
+            variacao_texto = "Sem alteração"
+
+        coluna = colunas[indice % len(colunas)]
+
+        coluna.metric(
+            label=f"{icone} {titulo}",
+            value=depois_fmt,
+            delta=variacao_texto
+        )
+
+        coluna.caption(f"Antes: {antes_fmt}")
+
+    with st.expander("Ver detalhes da evolução"):
+        for item in itens:
+            campo = item.get("campo")
+            antes = float(item.get("antes") or 0)
+            depois = float(item.get("depois") or 0)
+            diferenca = float(item.get("diferenca") or 0)
+
+            percentual = 0.0
+            if antes != 0:
+                percentual = (diferenca / antes) * 100
+
+            titulo = mapa_titulos.get(campo, item.get("label") or "Indicador")
+            icone = mapa_icones.get(campo, "📊")
+
+            st.markdown(f"**{icone} {titulo}**")
+            st.write(
+                f"{formatar_moeda(antes, moeda)} → "
+                f"{formatar_moeda(depois, moeda)}"
+            )
+
+            if diferenca > 0:
+                st.caption(
+                    f"Aumento de {formatar_moeda(diferenca, moeda)} "
+                    f"({percentual:+.2f}%)"
+                )
+            elif diferenca < 0:
+                st.caption(
+                    f"Redução de {formatar_moeda(abs(diferenca), moeda)} "
+                    f"({percentual:.2f}%)"
+                )
+            else:
+                st.caption("Sem alteração.")
 
 
 def preparar_markdown_resposta_inna(texto):
@@ -6275,9 +6039,10 @@ Resumo: {memoria_usuario.get("resumo_contexto")}
         }
 
     try:
-        import google.generativeai as genai
-
-        genai.configure(api_key=api_key)
+        try:
+            from services.llm.gemini import gerar_texto_gemini
+        except ImportError:
+            from src.services.llm.gemini import gerar_texto_gemini
 
         trechos_contexto = []
 
@@ -6307,19 +6072,89 @@ Conteúdo:
             chunks=contextos
         )
 
-        model = genai.GenerativeModel("gemini-2.5-flash")
-        response = model.generate_content(prompt)
+        resposta_bruta = gerar_texto_gemini(
+            prompt=prompt,
+            modelo="gemini-2.5-flash",
+            temperatura=0.2,
+            max_tokens=4096,
+        )
 
-        resposta = limpar_formatacao_resposta_inna(getattr(response, "text", "").strip())
+        resposta = limpar_formatacao_resposta_inna(
+            resposta_bruta
+        )
+
+        print("\n========== RESPOSTA BRUTA GEMINI ==========")
+        print(resposta_bruta)
+        print("========== FIM RESPOSTA BRUTA ==========\n")
+
+        print("\n========== RESPOSTA APÓS LIMPEZA ==========")
+        print(resposta)
+        print("========== FIM RESPOSTA LIMPA ==========\n")
 
         if not resposta:
             resposta = "Não consegui gerar uma resposta final com base no contexto encontrado."
+
+        memoria_atualizada = {
+            "ok": False,
+            "message": "Nenhuma atualização automática de memória detectada."
+        }
+
+        try:
+            from services.memory_update_inna import (
+                extrair_memoria_da_mensagem_inna,
+                mesclar_memoria_existente,
+                calcular_evolucao_memoria,
+                copiar_memoria
+            )
+        except ImportError:
+            from src.services.memory_update_inna import (
+                extrair_memoria_da_mensagem_inna,
+                mesclar_memoria_existente,
+                calcular_evolucao_memoria,
+                copiar_memoria
+            )
+
+        extracao_memoria = extrair_memoria_da_mensagem_inna(pergunta)
+
+        if extracao_memoria.get("tem_memoria"):
+            memoria_anterior = copiar_memoria(memoria_usuario)
+
+            dados_mesclados = mesclar_memoria_existente(
+                memoria_usuario,
+                extracao_memoria.get("dados", {})
+            )
+
+            evolucao_memoria = calcular_evolucao_memoria(
+                memoria_anterior,
+                dados_mesclados
+            )
+
+            if evolucao_memoria.get("tem_evolucao"):
+                resumo_anterior = dados_mesclados.get("resumo_contexto") or ""
+                dados_mesclados["resumo_contexto"] = (
+                    resumo_anterior
+                    + "\nEvolução financeira detectada: "
+                    + evolucao_memoria.get("resumo", "")
+                ).strip()
+
+                memoria_json = dados_mesclados.get("memoria_json") or {}
+                memoria_json["ultima_evolucao_financeira"] = evolucao_memoria
+                dados_mesclados["memoria_json"] = memoria_json
+
+            memoria_atualizada = salvar_ou_atualizar_memoria_inna(
+                usuario_id=usuario_id,
+                dados_memoria=dados_mesclados,
+                origem="auto_conversa_rag"
+            )
+
+            memoria_atualizada["evolucao"] = evolucao_memoria
 
         return {
             "ok": True,
             "message": f"Resposta gerada com {len(contextos)} contexto(s) do pgvector.",
             "resposta": resposta,
-            "contextos": contextos
+            "contextos": contextos,
+            "memoria_atualizada": memoria_atualizada
         }
 
     except Exception as e:
@@ -6331,122 +6166,31 @@ Conteúdo:
         }
 
 
-def buscar_chunks_semanticos_pgvector_rag(pergunta, limite=5):
-    import os
-    from pathlib import Path
-
-    if not pergunta or not pergunta.strip():
-        return {
-            "ok": False,
-            "message": "Pergunta vazia.",
-            "resultados": []
-        }
-
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        try:
-            from dotenv import load_dotenv
-            load_dotenv(dotenv_path=Path(".env"))
-            database_url = os.getenv("DATABASE_URL")
-        except Exception:
-            database_url = None
-
-    if not database_url:
-        return {
-            "ok": False,
-            "message": "DATABASE_URL não encontrada.",
-            "resultados": []
-        }
-
+def buscar_chunks_semanticos_pgvector_rag(
+    pergunta,
+    limite=5,
+):
+    """
+    Adaptador temporário para o serviço modular de recuperação RAG.
+    """
     try:
-        import psycopg2
+        from services.rag.retrieval import (
+            buscar_chunks_semanticos
+        )
+    except ImportError:
+        from src.services.rag.retrieval import (
+            buscar_chunks_semanticos
+        )
 
-        embedding_pergunta = gerar_embedding_gemini_rag(pergunta)
+    return buscar_chunks_semanticos(
+        pergunta=pergunta,
+        limite=limite,
+        gerar_embedding=gerar_embedding_consulta_gemini_rag,
+        classificar_chunk=classificar_categoria_chunk_rag,
+        dimensoes=3072,
+        bonus_categoria=0.08,
+    )
 
-        vetor_pgvector = "[" + ",".join(str(float(valor)) for valor in embedding_pergunta) + "]"
-
-        categorias_prioritarias = inferir_categorias_pergunta_rag(pergunta)
-        limite_final = int(limite)
-        limite_busca = max(limite_final * 4, 10)
-
-        conn = psycopg2.connect(database_url)
-        cur = conn.cursor()
-
-        cur.execute("""
-            SELECT
-                ce.id,
-                ce.documento_id,
-                ce.chunk_id,
-                ce.documento_origem,
-                ce.chunk_index,
-                ce.texto,
-                ce.modelo_embedding,
-                ce.embedding::halfvec(3072) <=> %s::halfvec(3072) AS distancia
-            FROM chunks_embeddings_rag ce
-            JOIN documentos_upload_rag du
-                ON du.id = ce.documento_id
-            WHERE COALESCE(du.ativo, TRUE) = TRUE
-            ORDER BY ce.embedding::halfvec(3072) <=> %s::halfvec(3072)
-            LIMIT %s;
-        """, (
-            vetor_pgvector,
-            vetor_pgvector,
-            int(limite_busca)
-        ))
-
-        rows = cur.fetchall()
-
-        resultados = []
-
-        for row in rows:
-            resultados.append({
-                "id": row[0],
-                "documento_id": row[1],
-                "chunk_id": row[2],
-                "documento_origem": row[3],
-                "chunk_index": row[4],
-                "texto": row[5],
-                "modelo_embedding": row[6],
-                "distancia": float(row[7]),
-                "similaridade_aproximada": round(1 - float(row[7]), 4),
-                "categoria": classificar_categoria_chunk_rag(row[5])
-            })
-
-        cur.close()
-        conn.close()
-
-        for item in resultados:
-            categoria = item.get("categoria", "geral")
-            prioridade_categoria = 1 if categoria in categorias_prioritarias else 0
-            item["categorias_prioritarias"] = categorias_prioritarias
-            item["prioridade_categoria"] = prioridade_categoria
-            item["score_rag"] = round(
-                float(item.get("similaridade_aproximada", 0)) + (0.08 * prioridade_categoria),
-                4
-            )
-
-        resultados = sorted(
-            resultados,
-            key=lambda item: (
-                item.get("prioridade_categoria", 0),
-                item.get("similaridade_aproximada", 0)
-            ),
-            reverse=True
-        )[:limite_final]
-
-        return {
-            "ok": True,
-            "message": f"{len(resultados)} chunks encontrados. Categorias priorizadas: {', '.join(categorias_prioritarias)}.",
-            "resultados": resultados
-        }
-
-    except Exception as e:
-        return {
-            "ok": False,
-            "message": f"Erro na busca semântica pgvector: {e}",
-            "resultados": []
-        }
 
 
 def atualizar_metadata_reprocessamento_rag(
@@ -6455,216 +6199,68 @@ def atualizar_metadata_reprocessamento_rag(
     caminho_embedding_ready,
     total_chunks,
 ):
-    import os
-
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        try:
-            from dotenv import load_dotenv
-            from pathlib import Path
-            load_dotenv(dotenv_path=Path(".env"))
-            database_url = os.getenv("DATABASE_URL")
-        except Exception:
-            database_url = None
-
-    if not database_url:
-        return {
-            "ok": False,
-            "message": "DATABASE_URL não encontrada. Metadata não foi atualizada."
-        }
-
     try:
-        import psycopg2
+        from services.rag.document_repository import (
+            atualizar_processamento_documento
+        )
+    except ImportError:
+        from src.services.rag.document_repository import (
+            atualizar_processamento_documento
+        )
 
-        conn = psycopg2.connect(database_url)
-        cur = conn.cursor()
-
-        cur.execute("""
-            UPDATE documentos_upload_rag
-            SET
-                caminho_chunks = %s,
-                caminho_embedding_ready = %s,
-                total_chunks = %s,
-                status = 'processado'
-            WHERE id = %s;
-        """, (
-            caminho_chunks,
-            caminho_embedding_ready,
-            int(total_chunks),
-            int(documento_id),
-        ))
-
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        return {
-            "ok": True,
-            "message": f"Documento id {documento_id} reprocessado e atualizado no Neon/PostgreSQL."
-        }
-
-    except Exception as e:
-        return {
-            "ok": False,
-            "message": f"Erro ao atualizar metadata no Neon/PostgreSQL: {e}"
-        }
-
+    return atualizar_processamento_documento(
+        documento_id=documento_id,
+        caminho_chunks=caminho_chunks,
+        caminho_embedding_ready=caminho_embedding_ready,
+        total_chunks=total_chunks,
+    )
 
 
 def garantir_coluna_ativo_documentos_rag():
-    import os
-    from pathlib import Path
-
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        try:
-            from dotenv import load_dotenv
-            load_dotenv(dotenv_path=Path(".env"))
-            database_url = os.getenv("DATABASE_URL")
-        except Exception:
-            database_url = None
-
-    if not database_url:
-        return {
-            "ok": False,
-            "message": "DATABASE_URL não encontrada."
-        }
-
     try:
-        import psycopg2
+        from services.rag.document_repository import (
+            garantir_coluna_ativo
+        )
+    except ImportError:
+        from src.services.rag.document_repository import (
+            garantir_coluna_ativo
+        )
 
-        conn = psycopg2.connect(database_url)
-        cur = conn.cursor()
-
-        cur.execute("""
-            ALTER TABLE documentos_upload_rag
-            ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT TRUE;
-        """)
-
-        cur.execute("""
-            UPDATE documentos_upload_rag
-            SET ativo = TRUE
-            WHERE ativo IS NULL;
-        """)
-
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        return {
-            "ok": True,
-            "message": "Coluna ativo criada/validada com sucesso."
-        }
-
-    except Exception as e:
-        return {
-            "ok": False,
-            "message": f"Erro ao garantir coluna ativo: {e}"
-        }
+    return garantir_coluna_ativo()
 
 
-def atualizar_status_documento_rag(documento_id, ativo):
-    import os
-    from pathlib import Path
-
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        try:
-            from dotenv import load_dotenv
-            load_dotenv(dotenv_path=Path(".env"))
-            database_url = os.getenv("DATABASE_URL")
-        except Exception:
-            database_url = None
-
-    if not database_url:
-        return {
-            "ok": False,
-            "message": "DATABASE_URL não encontrada."
-        }
-
+def atualizar_status_documento_rag(
+    documento_id,
+    ativo,
+):
     try:
-        import psycopg2
+        from services.rag.document_repository import (
+            atualizar_status_documento
+        )
+    except ImportError:
+        from src.services.rag.document_repository import (
+            atualizar_status_documento
+        )
 
-        conn = psycopg2.connect(database_url)
-        cur = conn.cursor()
-
-        cur.execute("""
-            UPDATE documentos_upload_rag
-            SET ativo = %s
-            WHERE id = %s;
-        """, (bool(ativo), int(documento_id)))
-
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        status = "ativado" if ativo else "desativado"
-
-        return {
-            "ok": True,
-            "message": f"Documento id {documento_id} {status} com sucesso."
-        }
-
-    except Exception as e:
-        return {
-            "ok": False,
-            "message": f"Erro ao atualizar status do documento: {e}"
-        }
+    return atualizar_status_documento(
+        documento_id=documento_id,
+        ativo=ativo,
+    )
 
 
 def carregar_documentos_upload_rag():
-    import os
-    import pandas as pd
-
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        try:
-            from dotenv import load_dotenv
-            from pathlib import Path
-            load_dotenv(dotenv_path=Path(".env"))
-            database_url = os.getenv("DATABASE_URL")
-        except Exception:
-            database_url = None
-
-    if not database_url:
-        return pd.DataFrame(), "DATABASE_URL não encontrada."
-
     try:
-        import psycopg2
+        from services.rag.document_repository import (
+            listar_documentos
+        )
+    except ImportError:
+        from src.services.rag.document_repository import (
+            listar_documentos
+        )
 
-        conn = psycopg2.connect(database_url)
-
-        query = """
-            SELECT
-                id,
-                nome_original,
-                nome_salvo,
-                extensao,
-                tamanho_bytes,
-                total_chunks,
-                status,
-                origem,
-                ativo,
-                caminho_upload,
-                caminho_chunks,
-                caminho_embedding_ready,
-                criado_em
-            FROM documentos_upload_rag
-            ORDER BY criado_em DESC
-            LIMIT 100;
-        """
-
-        df = pd.read_sql(query, conn)
-        conn.close()
-
-        return df, None
-
-    except Exception as e:
-        return pd.DataFrame(), str(e)
+    return listar_documentos(
+        limite=100
+    )
 
 
 def registrar_metadata_upload_rag(
@@ -6677,89 +6273,27 @@ def registrar_metadata_upload_rag(
     tamanho_bytes,
     total_chunks,
 ):
-    import os
-
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        return {
-            "ok": False,
-            "message": "DATABASE_URL não encontrada. Metadata não foi salva no Neon."
-        }
-
     try:
-        import psycopg2
-    except Exception as e:
-        return {
-            "ok": False,
-            "message": f"psycopg2 não disponível: {e}"
-        }
+        from services.rag.document_repository import (
+            registrar_documento
+        )
+    except ImportError:
+        from src.services.rag.document_repository import (
+            registrar_documento
+        )
 
-    try:
-        conn = psycopg2.connect(database_url)
-        cur = conn.cursor()
-
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS documentos_upload_rag (
-                id SERIAL PRIMARY KEY,
-                nome_original TEXT,
-                nome_salvo TEXT NOT NULL,
-                caminho_upload TEXT,
-                caminho_chunks TEXT,
-                caminho_embedding_ready TEXT,
-                extensao TEXT,
-                tamanho_bytes INTEGER,
-                total_chunks INTEGER,
-                status TEXT DEFAULT 'processado',
-                origem TEXT DEFAULT 'dashboard_upload',
-                criado_em TIMESTAMP DEFAULT NOW()
-            );
-        """)
-
-        cur.execute("""
-            INSERT INTO documentos_upload_rag (
-                nome_original,
-                nome_salvo,
-                caminho_upload,
-                caminho_chunks,
-                caminho_embedding_ready,
-                extensao,
-                tamanho_bytes,
-                total_chunks,
-                status,
-                origem
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING id;
-        """, (
-            nome_original,
-            nome_salvo,
-            caminho_upload,
-            caminho_chunks,
-            caminho_embedding_ready,
-            extensao,
-            int(tamanho_bytes),
-            int(total_chunks),
-            "processado",
-            "dashboard_upload"
-        ))
-
-        row = cur.fetchone()
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        return {
-            "ok": True,
-            "id": row[0],
-            "message": f"Metadata salva no Neon/PostgreSQL com id {row[0]}."
-        }
-
-    except Exception as e:
-        return {
-            "ok": False,
-            "message": f"Erro ao salvar metadata no Neon/PostgreSQL: {e}"
-        }
+    return registrar_documento(
+        nome_original=nome_original,
+        nome_salvo=nome_salvo,
+        caminho_upload=caminho_upload,
+        caminho_chunks=caminho_chunks,
+        caminho_embedding_ready=caminho_embedding_ready,
+        extensao=extensao,
+        tamanho_bytes=tamanho_bytes,
+        total_chunks=total_chunks,
+        status="processado",
+        origem="dashboard_upload",
+    )
 
 
 def render_upload_documentos_rag():
@@ -7281,6 +6815,32 @@ def render_upload_documentos_rag():
                 with st.container(border=True):
                     st.markdown(preparar_markdown_resposta_inna(resultado_resposta.get("resposta", "")))
 
+                memoria_auto = resultado_resposta.get("memoria_atualizada", {})
+
+                if memoria_auto.get("ok"):
+                    st.success("🧠 Memória atualizada automaticamente pela conversa.")
+                    st.caption(memoria_auto.get("message"))
+
+                    evolucao = memoria_auto.get("evolucao", {})
+
+                    if evolucao.get("tem_evolucao"):
+                        moeda_memoria = "BRL"
+
+                        try:
+                            memoria_resultado = buscar_memoria_inna(usuario_id_resposta_rag)
+                            memoria_atual = memoria_resultado.get("memoria") or {}
+                            moeda_memoria = memoria_atual.get("moeda") or "BRL"
+                        except Exception:
+                            moeda_memoria = "BRL"
+
+                        renderizar_evolucao_financeira_inna(
+                            evolucao=evolucao,
+                            moeda=moeda_memoria
+                        )
+
+                else:
+                    st.caption(memoria_auto.get("message", "Memória não atualizada nesta interação."))
+
                 contextos_usados = resultado_resposta.get("contextos", [])
 
                 st.markdown("#### 📚 Fontes usadas pela INNA")
@@ -7498,144 +7058,312 @@ def salvar_ou_atualizar_memoria_inna(usuario_id, dados_memoria, origem="dashboar
 
 
 def buscar_memoria_inna(usuario_id):
-    import os
-    from pathlib import Path
+    """
+    Adaptador oficial para o repositório modular de memória.
 
-    if not usuario_id:
-        return {"ok": False, "message": "usuario_id não informado.", "memoria": None}
-
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        try:
-            from dotenv import load_dotenv
-            load_dotenv(dotenv_path=Path(".env"))
-            database_url = os.getenv("DATABASE_URL")
-        except Exception:
-            database_url = None
-
-    if not database_url:
-        return {"ok": False, "message": "DATABASE_URL não encontrada.", "memoria": None}
-
+    A implementação PostgreSQL está em:
+    src/services/memory/repository.py
+    """
     try:
-        import psycopg2
-        import psycopg2.extras
+        from services.memory.repository import (
+            buscar_memoria_usuario
+        )
+    except ImportError:
+        from src.services.memory.repository import (
+            buscar_memoria_usuario
+        )
 
-        conn = psycopg2.connect(database_url)
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-
-        cur.execute("""
-            SELECT *
-            FROM memoria_usuarios_inna
-            WHERE usuario_id = %s
-              AND COALESCE(ativo, TRUE) = TRUE
-            LIMIT 1;
-        """, (usuario_id,))
-
-        memoria = cur.fetchone()
-
-        cur.close()
-        conn.close()
-
-        return {
-            "ok": True,
-            "message": "Memória encontrada." if memoria else "Nenhuma memória ativa encontrada.",
-            "memoria": dict(memoria) if memoria else None
-        }
-
-    except Exception as e:
-        return {"ok": False, "message": f"Erro ao buscar memória: {e}", "memoria": None}
+    return buscar_memoria_usuario(
+        usuario_id=usuario_id,
+        somente_ativa=True,
+    )
 
 
 
 def render_memoria_usuario_inna():
-    import streamlit as st
     import json
+    import streamlit as st
+    from decimal import Decimal
 
     st.markdown("## 🧠 Memória do Usuário — INNA")
-    st.caption("Gerencie a memória persistente da INNA por usuário.")
+    st.caption(
+        "Os campos abaixo são carregados diretamente da memória persistente "
+        "armazenada no Neon/PostgreSQL."
+    )
+
+    def para_float(valor, padrao=0.0):
+        if valor is None:
+            return float(padrao)
+
+        try:
+            if isinstance(valor, Decimal):
+                return float(valor)
+
+            return float(valor)
+        except (TypeError, ValueError):
+            return float(padrao)
+
+    def indice_seguro(opcoes, valor, padrao=0):
+        try:
+            return opcoes.index(valor)
+        except ValueError:
+            return padrao
 
     usuario_id = st.text_input(
         "ID do usuário",
         value="demo_user",
         key="memoria_usuario_id_inna"
-    )
+    ).strip()
 
-    col_buscar, col_limpar = st.columns(2)
+    if not usuario_id:
+        st.warning("Informe o ID do usuário para carregar a memória.")
+        return
 
-    with col_buscar:
-        buscar = st.button("🔎 Buscar memória", key="btn_buscar_memoria_inna")
+    resultado_busca = buscar_memoria_inna(usuario_id)
 
-    st.markdown("---")
-    st.markdown("### Dados financeiros principais")
+    if not resultado_busca.get("ok"):
+        st.error(resultado_busca.get("message"))
+        return
 
-    col1, col2, col3 = st.columns(3)
+    memoria = resultado_busca.get("memoria") or {}
 
-    nome = col1.text_input("Nome", value="Usuário Demo")
-    idioma = col2.selectbox("Idioma", ["pt", "en", "es", "ru", "ar"], index=0)
-    moeda = col3.selectbox("Moeda", ["BRL", "USD", "EUR"], index=0)
+    if memoria:
+        st.success(f"Memória atual de {usuario_id} carregada do banco.")
+    else:
+        st.info(
+            f"Nenhuma memória encontrada para {usuario_id}. "
+            "O formulário será iniciado vazio."
+        )
 
-    renda_mensal = col1.number_input("Renda mensal", min_value=0.0, value=3500.0, step=100.0)
-    gastos_mensais = col2.number_input("Gastos mensais", min_value=0.0, value=2800.0, step=100.0)
-    valor_reserva = col3.number_input("Valor que consegue guardar", min_value=0.0, value=200.0, step=50.0)
+    idiomas = ["pt", "en", "es", "fr", "de", "it", "ru", "ar"]
+    moedas = ["BRL", "USD", "EUR"]
+    perfis = [
+        "iniciante",
+        "organizando",
+        "endividado",
+        "equilibrado",
+        "avancado"
+    ]
+    linguagens = ["simples", "detalhada", "técnica"]
+    riscos = ["baixo", "moderado", "alto"]
 
-    possui_dividas = st.checkbox("Possui dívidas?", value=True)
-    uso_cartao_credito = st.checkbox("Usa cartão de crédito?", value=True)
+    idioma_atual = memoria.get("idioma") or "pt"
+    moeda_atual = memoria.get("moeda") or "BRL"
+    perfil_atual = memoria.get("perfil_financeiro") or "organizando"
+    linguagem_atual = memoria.get("preferencia_linguagem") or "simples"
+    risco_atual = memoria.get("ultimo_risco") or "moderado"
 
-    st.markdown("### Perfil e contexto")
+    for valor, lista in [
+        (idioma_atual, idiomas),
+        (moeda_atual, moedas),
+        (perfil_atual, perfis),
+        (linguagem_atual, linguagens),
+        (risco_atual, riscos),
+    ]:
+        if valor not in lista:
+            lista.insert(0, valor)
 
-    perfil_financeiro = st.selectbox(
-        "Perfil financeiro",
-        ["iniciante", "organizando", "endividado", "equilibrado", "avancado"],
-        index=1
-    )
+    tags_atuais = memoria.get("tags") or []
 
-    objetivo_principal = st.text_input(
-        "Objetivo principal",
-        value="Organizar gastos e criar reserva financeira"
-    )
+    if isinstance(tags_atuais, list):
+        tags_texto_atual = ",".join(str(tag) for tag in tags_atuais)
+    else:
+        tags_texto_atual = str(tags_atuais)
 
-    preferencia_linguagem = st.selectbox(
-        "Preferência de linguagem",
-        ["simples", "detalhada", "técnica"],
-        index=0
-    )
+    memoria_json_atual = memoria.get("memoria_json") or {}
 
-    ultimo_score = st.number_input("Último score", min_value=0.0, max_value=100.0, value=72.0)
-    ultimo_risco = st.selectbox("Último risco", ["baixo", "moderado", "alto"], index=1)
-    ultima_meta = st.text_input("Última meta", value="Guardar R$ 50 por semana")
-
-    resumo_contexto = st.text_area(
-        "Resumo da memória",
-        value="Usuário informou renda de R$ 3.500, gastos de R$ 2.800 e capacidade de guardar R$ 200 por mês.",
-        height=120
-    )
-
-    tags_texto = st.text_input(
-        "Tags separadas por vírgula",
-        value="cartao_credito,reserva_financeira,organizacao"
-    )
-
-    memoria_json_texto = st.text_area(
-        "Memória JSON avançada",
-        value=json.dumps({
-            "renda": 3500,
-            "gastos": 2800,
-            "pode_guardar": 200,
-            "meta_semanal": 50,
-            "observacao": "Usuário quer começar com metas simples."
-        }, ensure_ascii=False, indent=2),
-        height=180
-    )
-
-    if st.button("💾 Salvar ou atualizar memória", key="btn_salvar_memoria_inna"):
+    if isinstance(memoria_json_atual, str):
         try:
-            memoria_json = json.loads(memoria_json_texto)
+            memoria_json_atual = json.loads(memoria_json_atual)
         except Exception:
-            st.error("Memória JSON inválida.")
+            memoria_json_atual = {
+                "conteudo_original": memoria_json_atual
+            }
+
+    with st.form("form_memoria_usuario_inna"):
+        st.markdown("### Dados financeiros principais")
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            nome = st.text_input(
+                "Nome",
+                value=memoria.get("nome") or ""
+            )
+
+            renda_mensal = st.number_input(
+                "Renda mensal",
+                min_value=0.0,
+                value=para_float(memoria.get("renda_mensal")),
+                step=100.0,
+                format="%.2f"
+            )
+
+        with col2:
+            idioma = st.selectbox(
+                "Idioma",
+                idiomas,
+                index=indice_seguro(idiomas, idioma_atual)
+            )
+
+            gastos_mensais = st.number_input(
+                "Gastos mensais",
+                min_value=0.0,
+                value=para_float(memoria.get("gastos_mensais")),
+                step=100.0,
+                format="%.2f"
+            )
+
+        with col3:
+            moeda = st.selectbox(
+                "Moeda",
+                moedas,
+                index=indice_seguro(moedas, moeda_atual)
+            )
+
+            valor_reserva = st.number_input(
+                "Valor que consegue guardar por mês",
+                min_value=0.0,
+                value=para_float(memoria.get("valor_reserva")),
+                step=50.0,
+                format="%.2f"
+            )
+
+        col_divida, col_cartao = st.columns(2)
+
+        possui_dividas = col_divida.checkbox(
+            "Possui dívidas?",
+            value=bool(memoria.get("possui_dividas"))
+        )
+
+        uso_cartao_credito = col_cartao.checkbox(
+            "Usa cartão de crédito?",
+            value=bool(memoria.get("uso_cartao_credito"))
+        )
+
+        st.markdown("### Perfil e contexto")
+
+        perfil_financeiro = st.selectbox(
+            "Perfil financeiro",
+            perfis,
+            index=indice_seguro(perfis, perfil_atual)
+        )
+
+        objetivo_principal = st.text_input(
+            "Objetivo principal",
+            value=memoria.get("objetivo_principal") or ""
+        )
+
+        preferencia_linguagem = st.selectbox(
+            "Preferência de linguagem",
+            linguagens,
+            index=indice_seguro(linguagens, linguagem_atual)
+        )
+
+        col_score, col_risco = st.columns(2)
+
+        ultimo_score = col_score.number_input(
+            "Último score",
+            min_value=0.0,
+            max_value=100.0,
+            value=para_float(memoria.get("ultimo_score")),
+            step=1.0
+        )
+
+        ultimo_risco = col_risco.selectbox(
+            "Último risco",
+            riscos,
+            index=indice_seguro(riscos, risco_atual)
+        )
+
+        ultima_meta = st.text_input(
+            "Última meta",
+            value=memoria.get("ultima_meta") or ""
+        )
+
+        resumo_contexto = st.text_area(
+            "Resumo da memória",
+            value=memoria.get("resumo_contexto") or "",
+            height=140
+        )
+
+        tags_texto = st.text_input(
+            "Tags separadas por vírgula",
+            value=tags_texto_atual
+        )
+
+        memoria_json_texto = st.text_area(
+            "Memória JSON avançada",
+            value=json.dumps(
+                memoria_json_atual,
+                ensure_ascii=False,
+                indent=2,
+                default=str
+            ),
+            height=220
+        )
+
+        confirmar = st.checkbox(
+            "Confirmo que revisei os dados e desejo atualizar a memória",
+            value=False
+        )
+
+        salvar = st.form_submit_button(
+            "💾 Salvar memória revisada",
+            use_container_width=True
+        )
+
+    try:
+        from services.formatter_inna import formatar_moeda
+    except ImportError:
+        from src.services.formatter_inna import formatar_moeda
+
+    saldo_estimado = renda_mensal - gastos_mensais
+    reserva_semanal = valor_reserva / 4 if valor_reserva else 0.0
+
+    st.markdown("### Resumo calculado")
+
+    col_saldo, col_semanal, col_comprometimento = st.columns(3)
+
+    col_saldo.metric(
+        "Saldo mensal estimado",
+        formatar_moeda(saldo_estimado, moeda)
+    )
+
+    col_semanal.metric(
+        "Capacidade semanal",
+        formatar_moeda(reserva_semanal, moeda)
+    )
+
+    percentual_comprometido = (
+        (gastos_mensais / renda_mensal) * 100
+        if renda_mensal > 0
+        else 0.0
+    )
+
+    col_comprometimento.metric(
+        "Renda comprometida",
+        f"{percentual_comprometido:.1f}%"
+    )
+
+    if salvar:
+        if not confirmar:
+            st.warning(
+                "Marque a confirmação antes de atualizar a memória."
+            )
             return
 
-        tags = [tag.strip() for tag in tags_texto.split(",") if tag.strip()]
+        try:
+            memoria_json = json.loads(memoria_json_texto or "{}")
+        except json.JSONDecodeError as erro:
+            st.error(f"Memória JSON inválida: {erro}")
+            return
+
+        tags = [
+            tag.strip()
+            for tag in tags_texto.split(",")
+            if tag.strip()
+        ]
 
         dados = {
             "nome": nome,
@@ -7661,37 +7389,57 @@ def render_memoria_usuario_inna():
         resultado = salvar_ou_atualizar_memoria_inna(
             usuario_id=usuario_id,
             dados_memoria=dados,
-            origem="dashboard_memoria"
+            origem="dashboard_memoria_revisada"
         )
 
         if resultado.get("ok"):
             st.success(resultado.get("message"))
-            st.caption(f"Evento: {resultado.get('tipo_evento')}")
+            st.caption(
+                f"Evento registrado: {resultado.get('tipo_evento')}"
+            )
         else:
-            st.warning(resultado.get("message"))
+            st.error(resultado.get("message"))
 
-    if buscar:
-        resultado_busca = buscar_memoria_inna(usuario_id)
+    st.markdown("---")
+    st.markdown("### Memória atual armazenada")
 
-        if not resultado_busca.get("ok"):
-            st.warning(resultado_busca.get("message"))
-        elif not resultado_busca.get("memoria"):
-            st.info(resultado_busca.get("message"))
-        else:
-            memoria = resultado_busca["memoria"]
+    memoria_banco = (
+        buscar_memoria_inna(usuario_id).get("memoria")
+        or memoria
+    )
 
-            st.markdown("---")
-            st.markdown("### Memória encontrada")
+    if memoria_banco:
+        col_a, col_b, col_c = st.columns(3)
 
-            st.json(memoria, expanded=False)
+        col_a.metric(
+            "Renda atual",
+            formatar_moeda(
+                memoria_banco.get("renda_mensal"),
+                memoria_banco.get("moeda") or "BRL"
+            )
+        )
 
-            col_a, col_b, col_c = st.columns(3)
+        col_b.metric(
+            "Gastos atuais",
+            formatar_moeda(
+                memoria_banco.get("gastos_mensais"),
+                memoria_banco.get("moeda") or "BRL"
+            )
+        )
 
-            col_a.metric("Renda", memoria.get("renda_mensal") or 0)
-            col_b.metric("Gastos", memoria.get("gastos_mensais") or 0)
-            col_c.metric("Reserva", memoria.get("valor_reserva") or 0)
+        col_c.metric(
+            "Reserva atual",
+            formatar_moeda(
+                memoria_banco.get("valor_reserva"),
+                memoria_banco.get("moeda") or "BRL"
+            )
+        )
 
-            st.info(memoria.get("resumo_contexto") or "Sem resumo salvo.")
+        with st.expander("Ver registro completo do banco"):
+            st.json(memoria_banco, expanded=False)
+    else:
+        st.info("Nenhuma memória armazenada para este usuário.")
+
 
 
 def main():

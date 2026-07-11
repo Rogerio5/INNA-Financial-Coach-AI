@@ -1,78 +1,42 @@
+# Ambiente virtual
 .venv/
-__pycache__/
-*.pyc
+venv/
+
+# Variáveis e segredos
 .env
-.DS_Store
+.env.*
+!.env.example
+secrets/
+credentials.json
+token.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testes e cobertura
 .pytest_cache/
-htmlcov/
 .coverage
+.coverage.*
+htmlcov/
+
+# Logs e temporários
+*.log
+*.tmp
+*.bak
+*.bak_*
+.DS_Store
+
+# Bancos e dados locais
 data/*.db
 data/*.csv
-.env
-.env.*
-*.bak
-*.log
-backups/
-__pycache__/
-.venv/
-secrets/
-credentials.json
-token.json
-.env
-.env.*
-*.bak
-*.log
-backups/
-__pycache__/
-.venv/
-secrets/
-credentials.json
-token.json
-.env
-.env.*
-*.bak
-*.bak_*
-backups/
-*.log
-__pycache__/
-.venv/
-secrets/
-credentials.json
-token.json
-.env
-.env.*
-*.bak
-*.bak_*
-backups/
-*.log
-__pycache__/
-.venv/
-secrets/
-credentials.json
-token.json
-
-# Backups locais do dashboard
-src/dashboard_backup_*.py
-src/dashboard_quebrado_*.py
-src/*backup*.py
-
-# Backups antigos do dashboard
-src/backups_dashboard_antigos/
-src/backups_dashboard_antigos/*.py
 
 # Uploads locais da base RAG
 data/knowledge_base/uploads/*
 !data/knowledge_base/uploads/.gitkeep
 
-# Backups locais
-src/dashboard_backup_*.py
-docs_backup_antes_correcao_*/
-
-# Uploads locais da base RAG
-data/knowledge_base/uploads/*
-!data/knowledge_base/uploads/.gitkeep
-
-# Chunks locais gerados a partir de uploads
+# Chunks gerados localmente
 data/knowledge_base/chunks/*
 !data/knowledge_base/chunks/.gitkeep
 
@@ -80,7 +44,13 @@ data/knowledge_base/chunks/*
 data/knowledge_base/embedding_ready/*
 !data/knowledge_base/embedding_ready/.gitkeep
 
-# Backups locais
-src/dashboard_backup_*.py
-docs_backup_antes_correcao_*/
+# Arquivos arquivados localmente
+data/knowledge_base/archive/
 
+# Backups locais
+backups/
+docs_backup_antes_correcao_*/
+src/backups_dashboard_antigos/
+src/**/*backup*.py
+src/**/*antes_*.py
+src/dashboard_quebrado_*.py
