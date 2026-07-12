@@ -68,6 +68,23 @@ def _conectar_postgres():
     )
 
 
+def _criar_engine_sqlalchemy():
+    """
+    Cria engine SQLAlchemy para consultas com pandas.
+    """
+    try:
+        from sqlalchemy import create_engine
+    except ImportError as exc:
+        raise RuntimeError(
+            "Pacote SQLAlchemy não instalado."
+        ) from exc
+
+    return create_engine(
+        _carregar_database_url(),
+        pool_pre_ping=True,
+    )
+
+
 def _converter_vetor_pgvector(
     embedding: list[float],
 ) -> str:
@@ -555,7 +572,7 @@ def carregar_resumo_embeddings() -> dict:
     }
 
     try:
-        conn = _conectar_postgres()
+        engine = _criar_engine_sqlalchemy()
 
         query = f"""
             SELECT
@@ -585,12 +602,13 @@ def carregar_resumo_embeddings() -> dict:
             ORDER BY ultimo_processamento DESC;
         """
 
-        df = pd.read_sql(
-            query,
-            conn,
-        )
+        with engine.connect() as connection:
+            df = pd.read_sql(
+                query,
+                connection,
+            )
 
-        conn.close()
+        engine.dispose()
 
         if df.empty:
             estrutura_vazia.update({

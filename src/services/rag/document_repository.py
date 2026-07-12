@@ -59,6 +59,23 @@ def _conectar_postgres():
     )
 
 
+def _criar_engine_sqlalchemy():
+    """
+    Cria engine SQLAlchemy para consultas com pandas.
+    """
+    try:
+        from sqlalchemy import create_engine
+    except ImportError as exc:
+        raise RuntimeError(
+            "Pacote SQLAlchemy não instalado."
+        ) from exc
+
+    return create_engine(
+        _carregar_database_url(),
+        pool_pre_ping=True,
+    )
+
+
 def preparar_tabelas_documentos(
     conn=None,
 ) -> dict:
@@ -432,6 +449,10 @@ def listar_documentos(
                 preparacao.get("message"),
             )
 
+        conn.close()
+
+        engine = _criar_engine_sqlalchemy()
+
         query = f"""
             SELECT
                 id,
@@ -453,12 +474,13 @@ def listar_documentos(
             LIMIT {limite};
         """
 
-        df = pd.read_sql(
-            query,
-            conn,
-        )
+        with engine.connect() as connection:
+            df = pd.read_sql(
+                query,
+                connection,
+            )
 
-        conn.close()
+        engine.dispose()
 
         return df, None
 
@@ -785,7 +807,7 @@ def listar_historico_documento(
     import pandas as pd
 
     try:
-        conn = _conectar_postgres()
+        engine = _criar_engine_sqlalchemy()
 
         query = f"""
             SELECT
@@ -805,16 +827,17 @@ def listar_historico_documento(
             LIMIT %s;
         """
 
-        df = pd.read_sql(
-            query,
-            conn,
-            params=(
-                int(documento_id),
-                int(limite),
-            ),
-        )
+        with engine.connect() as connection:
+            df = pd.read_sql(
+                query,
+                connection,
+                params=(
+                    int(documento_id),
+                    int(limite),
+                ),
+            )
 
-        conn.close()
+        engine.dispose()
 
         return {
             "ok": True,
