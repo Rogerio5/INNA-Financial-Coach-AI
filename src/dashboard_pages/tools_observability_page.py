@@ -1,0 +1,852 @@
+"""
+Operations Center das Tools financeiras da INNA.
+"""
+
+from __future__ import annotations
+
+import json
+from io import BytesIO
+from typing import Any
+
+import pandas as pd
+import streamlit as st
+
+try:
+    from observability.metrics import (
+        calcular_metricas_executivas,
+    )
+except ImportError:
+    from src.observability.metrics import (
+        calcular_metricas_executivas,
+    )
+
+
+def calcular_taxa_sucesso(
+    total_sucesso: int,
+    total_executadas: int,
+) -> float:
+    if total_executadas <= 0:
+        return 0.0
+
+    return round(
+        (total_sucesso / total_executadas) * 100,
+        2,
+    )
+
+
+def preparar_ranking_tools(
+    df: pd.DataFrame | None,
+) -> pd.DataFrame:
+    if df is None or df.empty:
+        return pd.DataFrame()
+
+    base = df.copy()
+
+    base["tool_label"] = (
+        base["tool_label"]
+        .fillna(base["tool_nome"])
+        .fillna("Sem Tool")
+    )
+
+    ranking = (
+        base.groupby("tool_label")
+        .agg(
+            Execuções=("id", "count"),
+            Sucessos=("sucesso", "sum"),
+            Falhas=(
+                "sucesso",
+                lambda valores: int(
+                    (~valores.astype(bool)).sum()
+                ),
+            ),
+            Média_ms=("duracao_ms", "mean"),
+            Mínimo_ms=("duracao_ms", "min"),
+            Máximo_ms=("duracao_ms", "max"),
+        )
+        .reset_index()
+        .rename(
+            columns={
+                "tool_label": "Ferramenta",
+            }
+        )
+    )
+
+    ranking["Taxa de sucesso (%)"] = ranking.apply(
+        lambda row: calcular_taxa_sucesso(
+            int(row["Sucessos"]),
+            int(row["Execuções"]),
+        ),
+        axis=1,
+    )
+
+    for coluna in [
+        "Média_ms",
+        "Mínimo_ms",
+        "Máximo_ms",
+    ]:
+        ranking[coluna] = (
+            ranking[coluna]
+            .fillna(0)
+            .round(3)
+        )
+
+    return ranking.sort_values(
+        by=["Execuções", "Taxa de sucesso (%)"],
+        ascending=[False, False],
+    ).reset_index(drop=True)
+
+
+def preparar_serie_temporal(
+    df: pd.DataFrame,
+    frequencia: str,
+) -> pd.DataFrame:
+    if df.empty:
+        return pd.DataFrame()
+
+    temporal = df.copy()
+
+    temporal["criado_em"] = pd.to_datetime(
+        temporal["criado_em"],
+        errors="coerce",
+        utc=True,
+    )
+
+    temporal = temporal.dropna(
+        subset=["criado_em"]
+    )
+
+    if frequencia == "Hora":
+        temporal["Período"] = (
+            temporal["criado_em"]
+            .dt.floor("h")
+            .dt.strftime("%d/%m %H:00")
+        )
+    else:
+        temporal["Período"] = (
+            temporal["criado_em"]
+            .dt.floor("D")
+            .dt.strftime("%d/%m/%Y")
+        )
+
+    return (
+        temporal.groupby("Período")
+        .agg(
+            Execuções=("id", "count"),
+            Sucessos=("sucesso", "sum"),
+            Duração_média_ms=(
+                "duracao_ms",
+                "mean",
+            ),
+        )
+        .reset_index()
+    )
+
+
+def preparar_eventos_exibicao(
+    df: pd.DataFrame,
+) -> pd.DataFrame:
+    if df.empty:
+        return pd.DataFrame()
+
+    tabela = df.copy()
+
+    tabela["Ferramenta"] = (
+        tabela["tool_label"]
+        .fillna(tabela["tool_nome"])
+        .fillna("Sem Tool")
+    )
+
+    tabela["Status"] = tabela["sucesso"].map({
+        True: "Sucesso",
+        False: "Falha",
+    })
+
+    tabela["Confiança"] = (
+        tabela["confianca"]
+        .fillna(0)
+        .apply(
+            lambda valor: f"{float(valor) * 100:.0f}%"
+        )
+    )
+
+    tabela["Duração"] = (
+        tabela["duracao_ms"]
+        .fillna(0)
+        .apply(
+            lambda valor: f"{float(valor):.3f} ms"
+        )
+    )
+
+    tabela["Data"] = pd.to_datetime(
+        tabela["criado_em"],
+        errors="coerce",
+    ).dt.strftime("%d/%m/%Y %H:%M:%S")
+
+    colunas = [
+        "Data",
+        "usuario_id",
+        "pergunta",
+        "Ferramenta",
+        "intencao",
+        "Confiança",
+        "Status",
+        "Duração",
+        "origem",
+        "mensagem",
+        "erro",
+    ]
+
+    return tabela[
+        [
+            coluna
+            for coluna in colunas
+            if coluna in tabela.columns
+        ]
+    ].rename(
+        columns={
+            "usuario_id": "Usuário",
+            "pergunta": "Pergunta",
+            "intencao": "Intenção",
+            "origem": "Origem",
+            "mensagem": "Mensagem",
+            "erro": "Erro",
+        }
+    )
+
+
+def gerar_excel(
+    df_eventos: pd.DataFrame,
+    df_ranking: pd.DataFrame,
+) -> bytes:
+    output = BytesIO()
+
+    with pd.ExcelWriter(
+        output,
+        engine="openpyxl",
+    ) as writer:
+        df_eventos.to_excel(
+            writer,
+            sheet_name="Eventos",
+            index=False,
+        )
+
+        df_ranking.to_excel(
+            writer,
+            sheet_name="Ranking",
+            index=False,
+        )
+
+    return output.getvalue()
+
+
+def render_metricas_executivas(
+    df: pd.DataFrame,
+) -> dict:
+    """
+    Renderiza os KPIs executivos do Operations Center.
+    """
+    metricas = calcular_metricas_executivas(
+        df
+    )
+
+    st.markdown("## Visão executiva")
+
+    linha_1 = st.columns(4)
+
+    linha_1[0].metric(
+        "Eventos registrados",
+        metricas["total_eventos"],
+    )
+
+    linha_1[1].metric(
+        "Execuções hoje",
+        metricas["execucoes_hoje"],
+    )
+
+    linha_1[2].metric(
+        "Últimas 24 horas",
+        metricas["execucoes_ultimas_24h"],
+    )
+
+    linha_1[3].metric(
+        "Usuários ativos",
+        metricas["usuarios_ativos"],
+    )
+
+    linha_2 = st.columns(4)
+
+    linha_2[0].metric(
+        "Taxa de sucesso",
+        (
+            f"{metricas[
+                'taxa_sucesso_percentual'
+            ]:.2f}%"
+        ),
+    )
+
+    linha_2[1].metric(
+        "Execuções com sucesso",
+        metricas["total_sucesso"],
+    )
+
+    linha_2[2].metric(
+        "Falhas",
+        metricas["total_falhas"],
+    )
+
+    linha_2[3].metric(
+        "Confiança média",
+        (
+            f"{metricas[
+                'confianca_media_percentual'
+            ]:.2f}%"
+        ),
+    )
+
+    linha_3 = st.columns(4)
+
+    linha_3[0].metric(
+        "Duração média",
+        (
+            f"{metricas[
+                'duracao_media_ms'
+            ]:.3f} ms"
+        ),
+    )
+
+    linha_3[1].metric(
+        "Duração mínima",
+        (
+            f"{metricas[
+                'duracao_minima_ms'
+            ]:.3f} ms"
+        ),
+    )
+
+    linha_3[2].metric(
+        "Duração P95",
+        (
+            f"{metricas[
+                'duracao_p95_ms'
+            ]:.3f} ms"
+        ),
+        help=(
+            "95% das execuções terminaram "
+            "abaixo deste tempo."
+        ),
+    )
+
+    linha_3[3].metric(
+        "Duração máxima",
+        (
+            f"{metricas[
+                'duracao_maxima_ms'
+            ]:.3f} ms"
+        ),
+    )
+
+    tool_top = metricas.get(
+        "tool_mais_utilizada",
+        {},
+    )
+
+    ultima_execucao = metricas.get(
+        "ultima_execucao"
+    )
+
+    col_destaque_1, col_destaque_2 = st.columns(2)
+
+    with col_destaque_1:
+        st.markdown("### Tool mais utilizada")
+
+        if tool_top.get("nome"):
+            st.success(
+                f"{tool_top['nome']} — "
+                f"{tool_top['total']} execução(ões)"
+            )
+        else:
+            st.info(
+                "Ainda não há Tool predominante."
+            )
+
+    with col_destaque_2:
+        st.markdown("### Última execução")
+
+        if ultima_execucao:
+            data_formatada = pd.to_datetime(
+                ultima_execucao,
+                errors="coerce",
+            )
+
+            if pd.notna(data_formatada):
+                st.info(
+                    data_formatada.strftime(
+                        "%d/%m/%Y %H:%M:%S"
+                    )
+                )
+            else:
+                st.info(str(ultima_execucao))
+        else:
+            st.info(
+                "Nenhuma execução registrada."
+            )
+
+    return metricas
+
+
+def render_status_infraestrutura(
+    resultado_status: dict[str, Any],
+) -> None:
+    st.markdown("## Estado da infraestrutura")
+
+    status = resultado_status.get(
+        "status",
+        {},
+    )
+
+    total = resultado_status.get(
+        "total_componentes",
+        0,
+    )
+
+    operacionais = resultado_status.get(
+        "total_operacionais",
+        0,
+    )
+
+    st.progress(
+        operacionais / total
+        if total
+        else 0
+    )
+
+    st.caption(
+        f"{operacionais} de {total} componentes operacionais."
+    )
+
+    colunas = st.columns(3)
+
+    for indice, item in enumerate(
+        status.values()
+    ):
+        coluna = colunas[
+            indice % len(colunas)
+        ]
+
+        simbolo = "🟢" if item["ok"] else "🔴"
+
+        coluna.markdown(
+            f"**{simbolo} {item['label']}**"
+        )
+
+        coluna.caption(
+            item["message"]
+        )
+
+
+def render_tools_observability_page() -> None:
+    try:
+        from tools.observability import (
+            carregar_eventos_tools,
+            carregar_resumo_tools,
+            carregar_status_infraestrutura,
+        )
+    except ImportError:
+        from src.tools.observability import (
+            carregar_eventos_tools,
+            carregar_resumo_tools,
+            carregar_status_infraestrutura,
+        )
+
+    st.title("🛠️ Operations Center — Tools da INNA")
+
+    st.caption(
+        "Monitoramento operacional, desempenho, "
+        "uso e integridade das ferramentas financeiras."
+    )
+
+    controle_1, controle_2, controle_3 = st.columns(
+        [1, 1, 2]
+    )
+
+    limite = controle_1.selectbox(
+        "Eventos carregados",
+        [50, 100, 250, 500, 1000],
+        index=1,
+    )
+
+    frequencia = controle_2.selectbox(
+        "Agrupamento temporal",
+        ["Hora", "Dia"],
+    )
+
+    with controle_3:
+        st.write("")
+
+        if st.button(
+            "🔄 Atualizar Operations Center",
+            use_container_width=True,
+        ):
+            st.rerun()
+
+    resumo_resultado = carregar_resumo_tools()
+    eventos_resultado = carregar_eventos_tools(
+        limite=int(limite)
+    )
+
+    if not resumo_resultado.get("ok"):
+        st.error(resumo_resultado["message"])
+        return
+
+    if not eventos_resultado.get("ok"):
+        st.error(eventos_resultado["message"])
+        return
+
+    resumo = resumo_resultado.get(
+        "resumo",
+        {},
+    )
+
+    df = eventos_resultado.get("df")
+
+    if df is None:
+        df = pd.DataFrame()
+
+    total_execucoes = int(
+        resumo.get("total_executadas", 0)
+    )
+
+    total_sucesso = int(
+        resumo.get("total_sucesso", 0)
+    )
+
+    taxa_sucesso = calcular_taxa_sucesso(
+        total_sucesso,
+        total_execucoes,
+    )
+
+    duracoes = (
+        pd.to_numeric(
+            df.get(
+                "duracao_ms",
+                pd.Series(dtype=float),
+            ),
+            errors="coerce",
+        )
+        .dropna()
+    )
+
+    duracao_minima = (
+        float(duracoes.min())
+        if not duracoes.empty
+        else 0.0
+    )
+
+    duracao_maxima = (
+        float(duracoes.max())
+        if not duracoes.empty
+        else 0.0
+    )
+
+    usuarios_unicos = (
+        int(df["usuario_id"].nunique())
+        if (
+            not df.empty
+            and "usuario_id" in df.columns
+        )
+        else 0
+    )
+
+    ultima_execucao = "Sem eventos"
+
+    if (
+        not df.empty
+        and "criado_em" in df.columns
+    ):
+        data_ultima = pd.to_datetime(
+            df["criado_em"],
+            errors="coerce",
+        ).max()
+
+        if pd.notna(data_ultima):
+            ultima_execucao = data_ultima.strftime(
+                "%d/%m/%Y %H:%M:%S"
+            )
+
+    metricas_executivas = (
+        render_metricas_executivas(
+            df
+        )
+    )
+
+    st.divider()
+
+    status_resultado = (
+        carregar_status_infraestrutura()
+    )
+
+    render_status_infraestrutura(
+        status_resultado
+    )
+
+    if df.empty:
+        st.info(
+            "Ainda não existem eventos para análise."
+        )
+        return
+
+    st.divider()
+    st.markdown("## Pesquisa e filtros")
+
+    pesquisa = st.text_input(
+        "Pesquisar usuário, pergunta, Tool ou intenção",
+        placeholder=(
+            "Ex.: demo_user, quanto sobra, orçamento..."
+        ),
+    )
+
+    filtro_1, filtro_2, filtro_3 = st.columns(3)
+
+    ferramentas = sorted(
+        df["tool_label"]
+        .fillna(df["tool_nome"])
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    origens = sorted(
+        df["origem"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    usuarios = sorted(
+        df["usuario_id"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    ferramenta = filtro_1.selectbox(
+        "Ferramenta",
+        ["Todas"] + ferramentas,
+    )
+
+    origem = filtro_2.selectbox(
+        "Origem",
+        ["Todas"] + origens,
+    )
+
+    usuario = filtro_3.selectbox(
+        "Usuário",
+        ["Todos"] + usuarios,
+    )
+
+    status = st.radio(
+        "Status",
+        ["Todos", "Sucesso", "Falha"],
+        horizontal=True,
+    )
+
+    filtrado = df.copy()
+
+    if pesquisa.strip():
+        termo = pesquisa.strip().lower()
+
+        colunas_busca = [
+            coluna
+            for coluna in [
+                "usuario_id",
+                "pergunta",
+                "tool_nome",
+                "tool_label",
+                "intencao",
+            ]
+            if coluna in filtrado.columns
+        ]
+
+        mascara = pd.Series(
+            False,
+            index=filtrado.index,
+        )
+
+        for coluna in colunas_busca:
+            mascara = mascara | (
+                filtrado[coluna]
+                .fillna("")
+                .astype(str)
+                .str.lower()
+                .str.contains(
+                    termo,
+                    regex=False,
+                )
+            )
+
+        filtrado = filtrado[mascara]
+
+    labels = filtrado[
+        "tool_label"
+    ].fillna(
+        filtrado["tool_nome"]
+    )
+
+    if ferramenta != "Todas":
+        filtrado = filtrado[
+            labels == ferramenta
+        ]
+
+    if origem != "Todas":
+        filtrado = filtrado[
+            filtrado["origem"] == origem
+        ]
+
+    if usuario != "Todos":
+        filtrado = filtrado[
+            filtrado["usuario_id"] == usuario
+        ]
+
+    if status == "Sucesso":
+        filtrado = filtrado[
+            filtrado["sucesso"] == True
+        ]
+
+    elif status == "Falha":
+        filtrado = filtrado[
+            filtrado["sucesso"] == False
+        ]
+
+    st.caption(
+        f"{len(filtrado)} evento(s) encontrados."
+    )
+
+    st.divider()
+    st.markdown("## Evolução temporal")
+
+    serie_temporal = preparar_serie_temporal(
+        filtrado,
+        frequencia,
+    )
+
+    if not serie_temporal.empty:
+        st.line_chart(
+            serie_temporal.set_index(
+                "Período"
+            )[["Execuções", "Sucessos"]],
+            use_container_width=True,
+        )
+
+    st.divider()
+    st.markdown("## Performance por Tool")
+
+    ranking = preparar_ranking_tools(
+        filtrado
+    )
+
+    if not ranking.empty:
+        st.dataframe(
+            ranking,
+            use_container_width=True,
+            hide_index=True,
+        )
+
+        st.bar_chart(
+            ranking.set_index(
+                "Ferramenta"
+            )[["Execuções"]],
+            use_container_width=True,
+        )
+
+    st.divider()
+    st.markdown("## Usuários mais ativos")
+
+    usuarios_ranking = (
+        filtrado["usuario_id"]
+        .fillna("sem_usuario")
+        .value_counts()
+        .rename_axis("Usuário")
+        .reset_index(name="Execuções")
+    )
+
+    st.bar_chart(
+        usuarios_ranking.set_index(
+            "Usuário"
+        ),
+        use_container_width=True,
+    )
+
+    st.divider()
+    st.markdown("## Histórico pesquisável")
+
+    tabela = preparar_eventos_exibicao(
+        filtrado
+    )
+
+    st.dataframe(
+        tabela,
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    st.divider()
+    st.markdown("## Exportar dados")
+
+    export_1, export_2, export_3 = st.columns(3)
+
+    csv_bytes = tabela.to_csv(
+        index=False,
+    ).encode("utf-8-sig")
+
+    export_1.download_button(
+        "⬇️ Exportar CSV",
+        data=csv_bytes,
+        file_name="inna_tools_eventos.csv",
+        mime="text/csv",
+        use_container_width=True,
+    )
+
+    json_bytes = json.dumps(
+        filtrado.to_dict(
+            orient="records"
+        ),
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    ).encode("utf-8")
+
+    export_2.download_button(
+        "⬇️ Exportar JSON",
+        data=json_bytes,
+        file_name="inna_tools_eventos.json",
+        mime="application/json",
+        use_container_width=True,
+    )
+
+    excel_bytes = gerar_excel(
+        tabela,
+        ranking,
+    )
+
+    export_3.download_button(
+        "⬇️ Exportar Excel",
+        data=excel_bytes,
+        file_name="inna_tools_operations.xlsx",
+        mime=(
+            "application/vnd.openxmlformats-"
+            "officedocument.spreadsheetml.sheet"
+        ),
+        use_container_width=True,
+    )
+
+
+__all__ = [
+    "calcular_taxa_sucesso",
+    "preparar_ranking_tools",
+    "preparar_serie_temporal",
+    "preparar_eventos_exibicao",
+    "gerar_excel",
+    "render_metricas_executivas",
+    "render_status_infraestrutura",
+    "render_tools_observability_page",
+]

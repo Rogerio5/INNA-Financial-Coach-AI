@@ -9,6 +9,13 @@ from .reserve_tool import (
     calcular_capacidade_semanal,
     simular_formacao_reserva,
 )
+from .observability import (
+    carregar_eventos_tools,
+    carregar_resumo_tools,
+    carregar_status_infraestrutura,
+    preparar_tabela_eventos_tools,
+    registrar_evento_tool,
+)
 from .orchestrator import (
     executar_tools_para_pergunta,
     montar_bloco_tools_prompt,
@@ -35,6 +42,11 @@ __all__ = [
     "simular_parcelamento_sem_juros",
     "executar_tool",
     "listar_tools",
+    "carregar_eventos_tools",
+    "carregar_status_infraestrutura",
+    "carregar_resumo_tools",
+    "registrar_evento_tool",
+    "preparar_tabela_eventos_tools",
     "processar_pergunta_com_tools",
     "montar_bloco_tools_prompt",
     "executar_tools_para_pergunta",

@@ -13,6 +13,7 @@ Responsabilidades:
 from __future__ import annotations
 
 import json
+from time import perf_counter
 from typing import Any
 
 from .registry import TOOL_LABELS
@@ -311,24 +312,72 @@ Regras obrigatórias:
 def processar_pergunta_com_tools(
     pergunta: str,
     memoria: dict[str, Any] | None = None,
+    *,
+    usuario_id: str | None = None,
+    origem: str = "interno",
+    registrar_observabilidade: bool = False,
 ) -> dict:
     """
     Fluxo completo para preparar Tools antes do Gemini.
     """
+    inicio = perf_counter()
+
     resultado = executar_tools_para_pergunta(
         pergunta=pergunta,
         memoria=memoria,
         executar=True,
     )
 
+    duracao_ms = round(
+        (perf_counter() - inicio) * 1000,
+        3,
+    )
+
     bloco_prompt = montar_bloco_tools_prompt(
         resultado
     )
 
-    return {
+    resultado_final = {
         **resultado,
         "bloco_prompt": bloco_prompt,
+        "duracao_ms": duracao_ms,
+        "observabilidade": {
+            "ok": False,
+            "message": "Registro não solicitado.",
+        },
     }
+
+    if registrar_observabilidade:
+        try:
+            from .observability import registrar_evento_tool
+
+            evento = registrar_evento_tool(
+                usuario_id=(
+                    usuario_id
+                    or (
+                        memoria or {}
+                    ).get("usuario_id")
+                ),
+                pergunta=pergunta,
+                resultado_tools=resultado_final,
+                duracao_ms=duracao_ms,
+                origem=origem,
+            )
+
+            resultado_final[
+                "observabilidade"
+            ] = evento
+
+        except Exception as exc:
+            resultado_final["observabilidade"] = {
+                "ok": False,
+                "message": (
+                    "Falha não bloqueante na "
+                    f"observabilidade: {exc}"
+                ),
+            }
+
+    return resultado_final
 
 
 __all__ = [

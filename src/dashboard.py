@@ -3118,6 +3118,8 @@ def render_filters(diagnosticos_df, feedbacks_df):
             "🧠 Leitura Executiva",
             "🧪 Avaliação do Agente",
             "📊 Observabilidade RAG",
+            "🛠️ Observabilidade Tools",
+            "🧭 Timeline Viewer",
             "📄 Upload Documentos",
             "🧠 Memória Usuário",
             "📤 Exportar",
@@ -5963,6 +5965,20 @@ def limpar_formatacao_resposta_inna(texto):
 def gerar_resposta_rag_pgvector_inna(pergunta, limite=None, usuario_id="demo_user"):
     import os
     from pathlib import Path
+    from datetime import datetime, timezone
+
+    try:
+        from observability.timeline import (
+            executar_etapa_timeline,
+            gerar_trace_id,
+            registrar_evento_timeline,
+        )
+    except ImportError:
+        from src.observability.timeline import (
+            executar_etapa_timeline,
+            gerar_trace_id,
+            registrar_evento_timeline,
+        )
 
     if not pergunta or not pergunta.strip():
         return {
@@ -5975,8 +5991,52 @@ def gerar_resposta_rag_pgvector_inna(pergunta, limite=None, usuario_id="demo_use
     if limite is None:
         limite = definir_limite_chunks_automatico_rag(pergunta)
 
-    resultado_memoria = buscar_memoria_inna(usuario_id)
-    memoria_usuario = resultado_memoria.get("memoria") if resultado_memoria.get("ok") else None
+    trace_id = gerar_trace_id()
+
+    registrar_evento_timeline(
+        trace_id=trace_id,
+        etapa="pergunta_recebida",
+        usuario_id=usuario_id,
+        pergunta=pergunta,
+        status="sucesso",
+        inicio_em=datetime.now(timezone.utc),
+        fim_em=datetime.now(timezone.utc),
+        duracao_ms=0.0,
+        mensagem="Pergunta recebida pelo fluxo RAG.",
+        origem="dashboard_rag",
+        metadata={
+            "limite_chunks": limite,
+        },
+    )
+
+    etapa_memoria = executar_etapa_timeline(
+        trace_id=trace_id,
+        etapa="memoria_consultada",
+        funcao=buscar_memoria_inna,
+        argumentos={
+            "usuario_id": usuario_id,
+        },
+        usuario_id=usuario_id,
+        pergunta=pergunta,
+        origem="dashboard_rag",
+        metadata={
+            "fonte": "memoria_usuarios_inna",
+        },
+    )
+
+    resultado_memoria = (
+        etapa_memoria.get("resultado")
+        or {
+            "ok": False,
+            "memoria": None,
+        }
+    )
+
+    memoria_usuario = (
+        resultado_memoria.get("memoria")
+        if resultado_memoria.get("ok")
+        else None
+    )
 
     bloco_memoria = "Nenhuma memória ativa encontrada para este usuário."
 
@@ -5997,9 +6057,30 @@ Objetivo principal: {memoria_usuario.get("objetivo_principal")}
 Resumo: {memoria_usuario.get("resumo_contexto")}
 """
 
-    resultado_busca = buscar_chunks_semanticos_pgvector_rag(
+    etapa_rag = executar_etapa_timeline(
+        trace_id=trace_id,
+        etapa="rag_consultado",
+        funcao=buscar_chunks_semanticos_pgvector_rag,
+        argumentos={
+            "pergunta": pergunta,
+            "limite": limite,
+        },
+        usuario_id=usuario_id,
         pergunta=pergunta,
-        limite=limite
+        origem="dashboard_rag",
+        metadata={
+            "limite_chunks": limite,
+            "banco_vetorial": "pgvector",
+        },
+    )
+
+    resultado_busca = (
+        etapa_rag.get("resultado")
+        or {
+            "ok": False,
+            "resultados": [],
+            "message": etapa_rag.get("erro"),
+        }
     )
 
     if not resultado_busca.get("ok"):
@@ -6069,10 +6150,93 @@ Conteúdo:
                 processar_pergunta_com_tools
             )
 
-        resultado_tools = processar_pergunta_com_tools(
+        etapa_router = executar_etapa_timeline(
+            trace_id=trace_id,
+            etapa="router_executado",
+            funcao=processar_pergunta_com_tools,
+            argumentos={
+                "pergunta": pergunta,
+                "memoria": memoria_usuario,
+                "usuario_id": usuario_id,
+                "origem": "dashboard_rag",
+                "registrar_observabilidade": True,
+            },
+            usuario_id=usuario_id,
             pergunta=pergunta,
-            memoria=memoria_usuario,
+            origem="dashboard_rag",
+            metadata={
+                "componente": "tools_orchestrator",
+            },
         )
+
+        resultado_tools = (
+            etapa_router.get("resultado")
+            or {}
+        )
+
+        tool_identificada_timeline = (
+            resultado_tools.get(
+                "tool_identificada"
+            )
+        )
+
+        if tool_identificada_timeline:
+            registrar_evento_timeline(
+                trace_id=trace_id,
+                etapa="tool_executada",
+                usuario_id=usuario_id,
+                pergunta=pergunta,
+                status=(
+                    "sucesso"
+                    if resultado_tools.get("executada")
+                    else "ignorado"
+                ),
+                inicio_em=None,
+                fim_em=None,
+                duracao_ms=None,
+                mensagem=(
+                    "Resultado da Tool registrado. "
+                    "O tempo total foi contabilizado "
+                    "na etapa do Router/Orquestrador."
+                ),
+                origem="dashboard_rag",
+                metadata={
+                    "tool": tool_identificada_timeline,
+                    "tool_label": resultado_tools.get(
+                        "tool_label"
+                    ),
+                    "intencao": resultado_tools.get(
+                        "intencao"
+                    ),
+                    "confianca": resultado_tools.get(
+                        "confianca"
+                    ),
+                    "executada": resultado_tools.get(
+                        "executada"
+                    ),
+                    "dados_ausentes": resultado_tools.get(
+                        "dados_ausentes",
+                        [],
+                    ),
+                },
+            )
+        else:
+            registrar_evento_timeline(
+                trace_id=trace_id,
+                etapa="tool_executada",
+                usuario_id=usuario_id,
+                pergunta=pergunta,
+                status="ignorado",
+                duracao_ms=None,
+                mensagem=(
+                    "Nenhuma Tool financeira foi "
+                    "necessária para esta pergunta."
+                ),
+                origem="dashboard_rag",
+                metadata={
+                    "tool": None,
+                },
+            )
 
         contexto_tools = resultado_tools.get(
             "bloco_prompt"
@@ -6083,23 +6247,75 @@ Conteúdo:
         except ImportError:
             from src.services.prompt_builder_inna import montar_prompt_inna
 
-        prompt = montar_prompt_inna(
+        etapa_prompt = executar_etapa_timeline(
+            trace_id=trace_id,
+            etapa="prompt_montado",
+            funcao=montar_prompt_inna,
+            argumentos={
+                "pergunta": pergunta,
+                "memoria": memoria_usuario,
+                "historico": None,
+                "chunks": contextos,
+                "contexto_tools": contexto_tools,
+            },
+            usuario_id=usuario_id,
             pergunta=pergunta,
-            memoria=memoria_usuario,
-            historico=None,
-            chunks=contextos,
-            contexto_tools=contexto_tools,
+            origem="dashboard_rag",
+            metadata={
+                "total_contextos": len(contextos),
+                "tool": resultado_tools.get(
+                    "tool_identificada"
+                ),
+            },
         )
 
-        resposta_bruta = gerar_texto_gemini(
-            prompt=prompt,
-            modelo="gemini-2.5-flash",
-            temperatura=0.2,
-            max_tokens=4096,
+        prompt = etapa_prompt.get(
+            "resultado"
         )
 
-        resposta = limpar_formatacao_resposta_inna(
-            resposta_bruta
+        etapa_gemini = executar_etapa_timeline(
+            trace_id=trace_id,
+            etapa="gemini_executado",
+            funcao=gerar_texto_gemini,
+            argumentos={
+                "prompt": prompt,
+                "modelo": "gemini-2.5-flash",
+                "temperatura": 0.2,
+                "max_tokens": 4096,
+            },
+            usuario_id=usuario_id,
+            pergunta=pergunta,
+            origem="dashboard_rag",
+            metadata={
+                "modelo": "gemini-2.5-flash",
+                "temperatura": 0.2,
+                "max_tokens": 4096,
+            },
+        )
+
+        resposta_bruta = etapa_gemini.get(
+            "resultado"
+        )
+
+        etapa_formatter = executar_etapa_timeline(
+            trace_id=trace_id,
+            etapa="resposta_formatada",
+            funcao=limpar_formatacao_resposta_inna,
+            argumentos={
+                "texto": resposta_bruta,
+            },
+            usuario_id=usuario_id,
+            pergunta=pergunta,
+            origem="dashboard_rag",
+            metadata={
+                "tamanho_resposta_bruta": len(
+                    str(resposta_bruta or "")
+                ),
+            },
+        )
+
+        resposta = etapa_formatter.get(
+            "resultado"
         )
 
         print("\n========== RESPOSTA BRUTA GEMINI ==========")
@@ -6168,8 +6384,37 @@ Conteúdo:
 
             memoria_atualizada["evolucao"] = evolucao_memoria
 
+        registrar_evento_timeline(
+            trace_id=trace_id,
+            etapa="resposta_entregue",
+            usuario_id=usuario_id,
+            pergunta=pergunta,
+            status="sucesso",
+            inicio_em=datetime.now(timezone.utc),
+            fim_em=datetime.now(timezone.utc),
+            duracao_ms=0.0,
+            mensagem=(
+                "Resposta final preparada para "
+                "entrega ao dashboard."
+            ),
+            origem="dashboard_rag",
+            metadata={
+                "total_contextos": len(contextos),
+                "tool": resultado_tools.get(
+                    "tool_identificada"
+                ),
+                "memoria_atualizada": bool(
+                    memoria_atualizada.get("ok")
+                ),
+                "tamanho_resposta": len(
+                    str(resposta or "")
+                ),
+            },
+        )
+
         return {
             "ok": True,
+            "trace_id": trace_id,
             "message": (
                 f"Resposta gerada com {len(contextos)} "
                 "contexto(s) do pgvector."
@@ -7754,6 +7999,30 @@ def main():
 
     elif menu == "📊 Observabilidade RAG":
         render_rag_observability()
+
+    elif menu == "🛠️ Observabilidade Tools":
+        try:
+            from dashboard_pages.tools_observability_page import (
+                render_tools_observability_page
+            )
+        except ImportError:
+            from src.dashboard_pages.tools_observability_page import (
+                render_tools_observability_page
+            )
+
+        render_tools_observability_page()
+
+    elif menu == "🧭 Timeline Viewer":
+        try:
+            from dashboard_pages.timeline_viewer_page import (
+                render_timeline_viewer_page
+            )
+        except ImportError:
+            from src.dashboard_pages.timeline_viewer_page import (
+                render_timeline_viewer_page
+            )
+
+        render_timeline_viewer_page()
 
     elif menu == "📄 Upload Documentos":
         render_upload_documentos_rag()
