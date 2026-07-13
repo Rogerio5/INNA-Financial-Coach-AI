@@ -31,9 +31,16 @@ def analisar_orcamento(
     gastos_mensais: float,
     *,
     dividas_mensais: float = 0.0,
+    gastos_incluem_dividas: bool = True,
 ) -> dict:
     """
-    Calcula saldo, comprometimento da renda e situação do orçamento.
+    Calcula o saldo e o comprometimento da renda.
+
+    Quando gastos_incluem_dividas=True, os gastos mensais são
+    tratados como o total já comprometido no mês.
+
+    Quando gastos_incluem_dividas=False, as parcelas de dívidas
+    são acrescentadas separadamente aos gastos mensais.
     """
     renda = _valor_nao_negativo(
         renda_mensal,
@@ -50,7 +57,25 @@ def analisar_orcamento(
         "dividas_mensais",
     )
 
-    despesas_totais = gastos + dividas
+    incluem_dividas = bool(
+        gastos_incluem_dividas
+    )
+
+    if incluem_dividas:
+        parcelas_adicionais = 0.0
+        despesas_totais = gastos
+        base_calculo = (
+            "Os gastos mensais já incluem parcelas "
+            "e compromissos com dívidas."
+        )
+    else:
+        parcelas_adicionais = dividas
+        despesas_totais = gastos + dividas
+        base_calculo = (
+            "As parcelas de dívidas foram acrescentadas "
+            "separadamente aos gastos mensais."
+        )
+
     saldo = renda - despesas_totais
 
     comprometimento = (
@@ -71,8 +96,19 @@ def analisar_orcamento(
     return {
         "renda_mensal": round(renda, 2),
         "gastos_mensais": round(gastos, 2),
-        "dividas_mensais": round(dividas, 2),
-        "despesas_totais": round(despesas_totais, 2),
+        "dividas_mensais_informadas": round(
+            dividas,
+            2,
+        ),
+        "gastos_incluem_dividas": incluem_dividas,
+        "parcelas_adicionais_consideradas": round(
+            parcelas_adicionais,
+            2,
+        ),
+        "despesas_totais": round(
+            despesas_totais,
+            2,
+        ),
         "saldo_mensal": round(saldo, 2),
         "renda_comprometida_percentual": round(
             comprometimento,
@@ -80,6 +116,7 @@ def analisar_orcamento(
         ),
         "situacao": situacao,
         "tem_saldo_positivo": saldo > 0,
+        "base_calculo": base_calculo,
     }
 
 

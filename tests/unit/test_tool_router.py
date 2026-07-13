@@ -78,6 +78,7 @@ def test_montar_argumentos_com_aliases():
         "renda_mensal": 6300,
         "gastos_mensais": 3300,
         "dividas_mensais": 500,
+        "gastos_incluem_dividas": True,
     }
 
 
@@ -128,7 +129,7 @@ def test_router_executa_orcamento():
         resultado["execucao"]["resultado"][
             "saldo_mensal"
         ]
-        == 2500.0
+        == 3000.0
     )
 
 

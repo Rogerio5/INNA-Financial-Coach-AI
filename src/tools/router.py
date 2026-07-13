@@ -17,7 +17,7 @@ import re
 import unicodedata
 from typing import Any
 
-from src.tools.registry import executar_tool
+from .registry import executar_tool
 
 
 def normalizar_texto(texto: str | None) -> str:
@@ -362,6 +362,13 @@ def montar_argumentos_tool(
                     "parcelas_mensais",
                 ],
                 0.0,
+            ),
+            "gastos_incluem_dividas": _primeiro_valor(
+                contexto,
+                [
+                    "gastos_incluem_dividas",
+                ],
+                True,
             ),
         }
 

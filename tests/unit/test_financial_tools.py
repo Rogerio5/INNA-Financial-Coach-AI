@@ -23,6 +23,7 @@ def test_analisar_orcamento():
         renda_mensal=6300,
         gastos_mensais=3300,
         dividas_mensais=500,
+        gastos_incluem_dividas=False,
     )
 
     assert resultado["despesas_totais"] == 3800.0
@@ -168,3 +169,35 @@ def test_rejeitar_valor_negativo():
             renda_mensal=-1,
             gastos_mensais=0,
         )
+
+def test_orcamento_nao_duplica_dividas_incluidas_nos_gastos():
+    resultado = analisar_orcamento(
+        renda_mensal=6300,
+        gastos_mensais=3300,
+        dividas_mensais=500,
+        gastos_incluem_dividas=True,
+    )
+
+    assert resultado["despesas_totais"] == 3300.0
+    assert resultado["saldo_mensal"] == 3000.0
+    assert (
+        resultado["parcelas_adicionais_consideradas"]
+        == 0.0
+    )
+
+
+def test_orcamento_acrescenta_dividas_quando_separadas():
+    resultado = analisar_orcamento(
+        renda_mensal=6300,
+        gastos_mensais=3300,
+        dividas_mensais=500,
+        gastos_incluem_dividas=False,
+    )
+
+    assert resultado["despesas_totais"] == 3800.0
+    assert resultado["saldo_mensal"] == 2500.0
+    assert (
+        resultado["parcelas_adicionais_consideradas"]
+        == 500.0
+    )
+

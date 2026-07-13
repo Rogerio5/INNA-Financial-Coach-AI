@@ -93,3 +93,57 @@ def test_prompt_inclui_chunk_rag():
     assert "guia.md" in prompt
     assert "reserva_financeira" in prompt
     assert "0.91" in prompt
+
+def test_prompt_inclui_contexto_tools():
+    contexto_tools = """
+[TOOL FINANCEIRA EXECUTADA]
+Ferramenta: calcular_capacidade_semanal
+
+Resultado determinístico:
+{
+  "valor_semanal_estimado": 300.0
+}
+"""
+
+    prompt = montar_prompt_inna(
+        pergunta="Quanto posso guardar por semana?",
+        memoria=memoria_teste(),
+        historico=None,
+        chunks=None,
+        contexto_tools=contexto_tools,
+    )
+
+    assert "TOOLS FINANCEIRAS" in prompt
+    assert "calcular_capacidade_semanal" in prompt
+    assert "valor_semanal_estimado" in prompt
+    assert "300.0" in prompt
+
+
+def test_prompt_funciona_sem_contexto_tools():
+    prompt = montar_prompt_inna(
+        pergunta="Olá",
+        memoria=memoria_teste(),
+        historico=None,
+        chunks=None,
+    )
+
+    assert "TOOLS FINANCEIRAS" in prompt
+    assert (
+        "Nenhuma ferramenta financeira "
+        "determinística foi acionada"
+        in prompt
+    )
+
+def test_prompt_inclui_regras_de_apresentacao_profissional():
+    prompt = montar_prompt_inna(
+        pergunta="Quanto sobra?",
+        memoria=memoria_teste(),
+        historico=None,
+        chunks=None,
+    )
+
+    assert "APRESENTAÇÃO PROFISSIONAL" in prompt
+    assert "Não repita o mesmo saldo" in prompt
+    assert "Próximo passo sugerido" in prompt
+    assert "Saldo mensal estimado" in prompt
+

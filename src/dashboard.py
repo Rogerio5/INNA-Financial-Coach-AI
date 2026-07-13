@@ -6061,6 +6061,24 @@ Conteúdo:
         contexto_final = "\n".join(trechos_contexto)
 
         try:
+            from tools.orchestrator import (
+                processar_pergunta_com_tools
+            )
+        except ImportError:
+            from src.tools.orchestrator import (
+                processar_pergunta_com_tools
+            )
+
+        resultado_tools = processar_pergunta_com_tools(
+            pergunta=pergunta,
+            memoria=memoria_usuario,
+        )
+
+        contexto_tools = resultado_tools.get(
+            "bloco_prompt"
+        )
+
+        try:
             from services.prompt_builder_inna import montar_prompt_inna
         except ImportError:
             from src.services.prompt_builder_inna import montar_prompt_inna
@@ -6069,7 +6087,8 @@ Conteúdo:
             pergunta=pergunta,
             memoria=memoria_usuario,
             historico=None,
-            chunks=contextos
+            chunks=contextos,
+            contexto_tools=contexto_tools,
         )
 
         resposta_bruta = gerar_texto_gemini(
@@ -6151,10 +6170,14 @@ Conteúdo:
 
         return {
             "ok": True,
-            "message": f"Resposta gerada com {len(contextos)} contexto(s) do pgvector.",
+            "message": (
+                f"Resposta gerada com {len(contextos)} "
+                "contexto(s) do pgvector."
+            ),
             "resposta": resposta,
             "contextos": contextos,
-            "memoria_atualizada": memoria_atualizada
+            "memoria_atualizada": memoria_atualizada,
+            "tools": resultado_tools,
         }
 
     except Exception as e:
@@ -6814,6 +6837,237 @@ def render_upload_documentos_rag():
 
                 with st.container(border=True):
                     st.markdown(preparar_markdown_resposta_inna(resultado_resposta.get("resposta", "")))
+
+                resultado_tools_ui = (
+                    resultado_resposta.get("tools")
+                    or {}
+                )
+
+                tool_utilizada = resultado_tools_ui.get(
+                    "tool_identificada"
+                )
+
+                total_contextos_utilizados = len(
+                    resultado_resposta.get("contextos")
+                    or []
+                )
+
+                memoria_foi_consultada = bool(
+                    usuario_id_resposta_rag
+                )
+
+                with st.expander(
+                    "🔎 Recursos utilizados pela INNA",
+                    expanded=False,
+                ):
+                    st.markdown("#### Etapas executadas")
+
+                    if memoria_foi_consultada:
+                        st.markdown(
+                            "✅ **Memória persistente:** "
+                            "contexto do usuário consultado"
+                        )
+
+                    if total_contextos_utilizados > 0:
+                        st.markdown(
+                            "✅ **Busca semântica RAG:** "
+                            f"{total_contextos_utilizados} "
+                            "trecho(s) recuperado(s)"
+                        )
+
+                    if tool_utilizada:
+                        try:
+                            from tools.registry import TOOL_LABELS
+                        except ImportError:
+                            from src.tools.registry import TOOL_LABELS
+
+                        tool_label = TOOL_LABELS.get(
+                            tool_utilizada,
+                            tool_utilizada,
+                        )
+
+                        st.markdown(
+                            "✅ **Tool financeira:** "
+                            f"{tool_label}"
+                        )
+
+                        motivo_tool = resultado_tools_ui.get(
+                            "motivo_tool"
+                        )
+
+                        if motivo_tool:
+                            st.caption(
+                                "Motivo da escolha: "
+                                f"{motivo_tool}"
+                            )
+
+                    if not tool_utilizada:
+                        st.caption(
+                            "Nenhum cálculo financeiro "
+                            "determinístico foi necessário."
+                        )
+
+                if tool_utilizada:
+                    with st.expander(
+                        "🧮 Detalhes do cálculo financeiro",
+                        expanded=False,
+                    ):
+                        col_tool_1, col_tool_2 = st.columns(2)
+
+                        col_tool_1.markdown(
+                            f"**Ferramenta:** {tool_label}"
+                        )
+
+                        col_tool_2.markdown(
+                            "**Confiança do roteamento:** "
+                            f"{resultado_tools_ui.get('confianca', 0):.0%}"
+                        )
+
+                        if resultado_tools_ui.get("executada"):
+                            st.success(
+                                "Cálculo determinístico executado "
+                                "antes da geração da resposta."
+                            )
+                        else:
+                            st.info(
+                                "A ferramenta foi identificada, "
+                                "mas não precisou ser executada."
+                            )
+
+                        dados_ausentes_tools = (
+                            resultado_tools_ui.get(
+                                "dados_ausentes",
+                                [],
+                            )
+                        )
+
+                        if dados_ausentes_tools:
+                            st.warning(
+                                "Dados ainda necessários: "
+                                + ", ".join(
+                                    dados_ausentes_tools
+                                )
+                            )
+
+                        resultado_calculo = (
+                            resultado_tools_ui.get(
+                                "resultado"
+                            )
+                        )
+
+                        if resultado_calculo is not None:
+                            st.markdown(
+                                "#### Resultado principal"
+                            )
+
+                            try:
+                                from services.formatter_inna import (
+                                    formatar_moeda
+                                )
+                            except ImportError:
+                                from src.services.formatter_inna import (
+                                    formatar_moeda
+                                )
+
+                            moeda_tool = "BRL"
+
+                            try:
+                                memoria_resultado_tool = (
+                                    buscar_memoria_inna(
+                                        usuario_id_resposta_rag
+                                    )
+                                )
+
+                                moeda_tool = (
+                                    memoria_resultado_tool
+                                    .get("memoria", {})
+                                    .get("moeda")
+                                    or "BRL"
+                                )
+                            except Exception:
+                                moeda_tool = "BRL"
+
+                            if (
+                                "saldo_mensal"
+                                in resultado_calculo
+                            ):
+                                col_a, col_b, col_c = st.columns(3)
+
+                                col_a.metric(
+                                    "Renda mensal",
+                                    formatar_moeda(
+                                        resultado_calculo.get(
+                                            "renda_mensal"
+                                        ),
+                                        moeda_tool,
+                                    ),
+                                )
+
+                                col_b.metric(
+                                    "Gastos mensais",
+                                    formatar_moeda(
+                                        resultado_calculo.get(
+                                            "gastos_mensais"
+                                        ),
+                                        moeda_tool,
+                                    ),
+                                )
+
+                                col_c.metric(
+                                    "Saldo estimado",
+                                    formatar_moeda(
+                                        resultado_calculo.get(
+                                            "saldo_mensal"
+                                        ),
+                                        moeda_tool,
+                                    ),
+                                )
+
+                                st.caption(
+                                    "Renda comprometida: "
+                                    f"{resultado_calculo.get(
+                                        'renda_comprometida_percentual',
+                                        0,
+                                    ):.2f}%"
+                                )
+
+                            elif (
+                                "valor_semanal_estimado"
+                                in resultado_calculo
+                            ):
+                                col_a, col_b = st.columns(2)
+
+                                col_a.metric(
+                                    "Capacidade mensal",
+                                    formatar_moeda(
+                                        resultado_calculo.get(
+                                            "valor_mensal"
+                                        ),
+                                        moeda_tool,
+                                    ),
+                                )
+
+                                col_b.metric(
+                                    "Referência semanal",
+                                    formatar_moeda(
+                                        resultado_calculo.get(
+                                            "valor_semanal_estimado"
+                                        ),
+                                        moeda_tool,
+                                    ),
+                                )
+
+                            mostrar_json_tool = st.checkbox(
+                                "Mostrar resultado técnico em JSON",
+                                value=False,
+                                key=(
+                                    "mostrar_json_tool_"
+                                    f"{tool_utilizada}"
+                                ),
+                            )
+
+                            if mostrar_json_tool:
+                                st.json(resultado_calculo)
 
                 memoria_auto = resultado_resposta.get("memoria_atualizada", {})
 

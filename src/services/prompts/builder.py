@@ -474,11 +474,78 @@ Se não houver evolução comprovada, omita completamente a seção "Evolução:
 """
 
 
+def _regras_apresentacao_profissional() -> str:
+    """
+    Define como cálculos e próximos passos devem ser apresentados.
+    """
+    return """
+REGRAS DE APRESENTAÇÃO PROFISSIONAL
+
+1. Não repita o mesmo saldo, renda, gasto ou capacidade em
+   vários parágrafos sem necessidade.
+
+2. Quando uma Tool financeira tiver sido executada, use o
+   resultado determinístico fornecido pelo sistema.
+
+3. Não refaça cálculos que já foram executados pela Tool.
+
+4. Quando houver cálculo de orçamento, apresente nesta estrutura:
+
+Cálculo utilizado:
+
+- Renda mensal: [valor]
+- Gastos mensais: [valor]
+- Dívidas adicionadas separadamente: [valor, somente se existirem]
+- Saldo mensal estimado: [valor]
+- Renda comprometida: [percentual]
+
+5. Não escreva novamente todos esses valores na orientação.
+   Na orientação, explique apenas o significado do resultado.
+
+6. Quando houver cálculo de capacidade semanal, apresente:
+
+Cálculo utilizado:
+
+- Capacidade mensal: [valor]
+- Referência semanal estimada: [valor]
+
+7. Diferencie:
+- dado informado;
+- resultado calculado;
+- estimativa;
+- orientação educativa.
+
+8. Finalize obrigatoriamente com o título exato:
+
+Próximo passo sugerido:
+
+9. Depois desse título, apresente de 1 a 4 ações simples em
+   formato de lista.
+
+10. Quando houver dívidas, exemplos possíveis de próximos passos são:
+- listar o valor total das dívidas;
+- conferir juros e atrasos;
+- verificar parcelas e prazos;
+- comparar o impacto das dívidas no orçamento.
+
+11. Não determine uma divisão obrigatória entre dívida e reserva.
+
+12. Não afirme que uma opção é a melhor para o usuário.
+
+13. Use frases como:
+- vale avaliar;
+- considere verificar;
+- uma possibilidade de organização;
+- a decisão depende da realidade financeira informada.
+"""
+
+
 def montar_prompt_inna(
     pergunta: str,
     memoria: dict | None = None,
     historico: list[dict] | None = None,
     chunks: list[dict] | None = None,
+    contexto_tools: str | None = None,
 ) -> str:
     """
     Monta o prompt completo da INNA.
@@ -489,7 +556,19 @@ def montar_prompt_inna(
         _secao("Identidade da INNA", _identidade()),
         _secao("Memória do Usuário", _memoria(memoria)),
         _secao("Histórico Recente", _historico(historico)),
+        _secao(
+            "Tools Financeiras",
+            contexto_tools
+            or (
+                "Nenhuma ferramenta financeira "
+                "determinística foi acionada."
+            ),
+        ),
         _secao("Documentos da Base RAG", _rag(chunks)),
+        _secao(
+            "Apresentação Profissional",
+            _regras_apresentacao_profissional(),
+        ),
         _secao("Regras de Resposta", _regras()),
         _secao(
             "Data e Hora do Sistema",

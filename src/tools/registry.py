@@ -7,17 +7,17 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from src.tools.budget_tool import (
+from .budget_tool import (
     analisar_orcamento,
 )
-from src.tools.debt_tool import (
+from .debt_tool import (
     analisar_divida_educativamente,
 )
-from src.tools.reserve_tool import (
+from .reserve_tool import (
     calcular_capacidade_semanal,
     simular_formacao_reserva,
 )
-from src.tools.simulation_tool import (
+from .simulation_tool import (
     simular_meta_por_aporte,
     simular_parcelamento_sem_juros,
 )
@@ -30,6 +30,16 @@ TOOLS: dict[str, Callable[..., dict]] = {
     "analisar_divida_educativamente": analisar_divida_educativamente,
     "simular_parcelamento_sem_juros": simular_parcelamento_sem_juros,
     "simular_meta_por_aporte": simular_meta_por_aporte,
+}
+
+
+TOOL_LABELS = {
+    "analisar_orcamento": "Análise do orçamento mensal",
+    "calcular_capacidade_semanal": "Cálculo de capacidade semanal",
+    "simular_formacao_reserva": "Simulação de formação de reserva",
+    "analisar_divida_educativamente": "Análise educativa de dívida",
+    "simular_parcelamento_sem_juros": "Simulação de parcelamento sem juros",
+    "simular_meta_por_aporte": "Simulação de meta por aporte",
 }
 
 
@@ -62,6 +72,10 @@ def listar_tools() -> list[dict[str, str]]:
     return [
         {
             "nome": nome,
+            "label": TOOL_LABELS.get(
+                nome,
+                nome,
+            ),
             "descricao": TOOL_DESCRIPTIONS.get(
                 nome,
                 "",
@@ -111,6 +125,7 @@ def executar_tool(
 
 __all__ = [
     "TOOLS",
+    "TOOL_LABELS",
     "TOOL_DESCRIPTIONS",
     "listar_tools",
     "executar_tool",
