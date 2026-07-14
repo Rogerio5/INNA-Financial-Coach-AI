@@ -1,0 +1,626 @@
+"""
+Notificações administrativas dos alertas de LLM da INNA.
+
+Envia somente informações técnicas, sem prompts, respostas
+ou dados financeiros pessoais.
+"""
+
+from __future__ import annotations
+
+import html
+import os
+from pathlib import Path
+from typing import Any
+
+import pandas as pd
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
+from sqlalchemy.exc import IntegrityError
+
+from src.email_sender import send_text_email
+
+
+load_dotenv(
+    dotenv_path=Path(".env"),
+    override=True,
+)
+
+
+NOME_TABELA = "llm_alert_notifications_inna"
+
+ORDEM_SEVERIDADE = {
+    "informativa": 1,
+    "baixa": 2,
+    "media": 3,
+    "alta": 4,
+    "critica": 5,
+}
+
+
+def _get_database_url() -> str:
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        raise RuntimeError(
+            "DATABASE_URL não configurada."
+        )
+
+    return database_url
+
+
+def _criar_engine():
+    return create_engine(
+        _get_database_url(),
+        pool_pre_ping=True,
+    )
+
+
+def carregar_configuracao() -> dict[str, Any]:
+    habilitado = (
+        os.getenv(
+            "LLM_ALERT_EMAIL_ENABLED",
+            "false",
+        )
+        .strip()
+        .lower()
+        in {"true", "1", "yes", "sim", "on"}
+    )
+
+    destinatario = os.getenv(
+        "LLM_ALERT_EMAIL_TO",
+        "",
+    ).strip()
+
+    severidade_minima = os.getenv(
+        "LLM_ALERT_MIN_SEVERITY",
+        "alta",
+    ).strip().lower()
+
+    if severidade_minima not in ORDEM_SEVERIDADE:
+        severidade_minima = "alta"
+
+    return {
+        "habilitado": habilitado,
+        "destinatario": destinatario,
+        "severidade_minima": severidade_minima,
+        "resend_configurado": bool(
+            os.getenv("RESEND_API_KEY")
+        ),
+    }
+
+
+def mascarar_email(email: str) -> str:
+    valor = str(email or "").strip()
+
+    if "@" not in valor:
+        return "***"
+
+    usuario, dominio = valor.split("@", 1)
+
+    if len(usuario) <= 2:
+        usuario_mascarado = usuario[:1] + "***"
+    else:
+        usuario_mascarado = (
+            usuario[:2]
+            + "***"
+            + usuario[-1:]
+        )
+
+    return f"{usuario_mascarado}@{dominio}"
+
+
+def inicializar_tabela_notificacoes() -> dict[str, Any]:
+    try:
+        engine = _criar_engine()
+
+        comando = text(f"""
+            CREATE TABLE IF NOT EXISTS {NOME_TABELA} (
+                id BIGSERIAL PRIMARY KEY,
+
+                alerta_id BIGINT NOT NULL,
+                canal VARCHAR(30) NOT NULL
+                    DEFAULT 'email',
+
+                status VARCHAR(30) NOT NULL
+                    DEFAULT 'processando',
+
+                destinatario_mascarado VARCHAR(255),
+                assunto VARCHAR(255),
+
+                tentativas INTEGER NOT NULL
+                    DEFAULT 1,
+
+                provider_message_id VARCHAR(255),
+
+                criado_em TIMESTAMPTZ NOT NULL
+                    DEFAULT NOW(),
+
+                atualizado_em TIMESTAMPTZ NOT NULL
+                    DEFAULT NOW(),
+
+                enviado_em TIMESTAMPTZ,
+
+                erro_tipo VARCHAR(150),
+                erro_mensagem TEXT,
+
+                CONSTRAINT uq_llm_alert_notification
+                    UNIQUE (alerta_id, canal)
+            );
+        """)
+
+        indice = text(f"""
+            CREATE INDEX IF NOT EXISTS
+            idx_{NOME_TABELA}_status
+            ON {NOME_TABELA} (status);
+        """)
+
+        with engine.begin() as connection:
+            connection.execute(comando)
+            connection.execute(indice)
+
+        engine.dispose()
+
+        return {
+            "ok": True,
+            "message": (
+                "Tabela de notificações inicializada."
+            ),
+        }
+
+    except Exception as exc:
+        return {
+            "ok": False,
+            "message": (
+                "Erro ao inicializar tabela: "
+                f"{exc}"
+            ),
+        }
+
+
+def alerta_deve_ser_enviado(
+    alerta: dict[str, Any],
+    *,
+    severidade_minima: str,
+) -> bool:
+    status = str(
+        alerta.get("status", "aberto")
+    ).lower()
+
+    severidade = str(
+        alerta.get(
+            "severidade",
+            "informativa",
+        )
+    ).lower()
+
+    minimo = str(
+        severidade_minima or "alta"
+    ).lower()
+
+    if minimo not in ORDEM_SEVERIDADE:
+        minimo = "alta"
+
+    return (
+        status == "aberto"
+        and ORDEM_SEVERIDADE.get(
+            severidade,
+            0,
+        )
+        >= ORDEM_SEVERIDADE[minimo]
+    )
+
+
+def montar_email_alerta(
+    alerta: dict[str, Any],
+) -> dict[str, str]:
+    titulo = str(
+        alerta.get(
+            "titulo",
+            "Alerta operacional",
+        )
+    )
+
+    severidade = str(
+        alerta.get(
+            "severidade",
+            "informativa",
+        )
+    ).title()
+
+    categoria = str(
+        alerta.get(
+            "categoria",
+            "observabilidade",
+        )
+    ).title()
+
+    descricao = str(
+        alerta.get("descricao", "")
+    )
+
+    recomendacao = str(
+        alerta.get("recomendacao", "")
+    )
+
+    valor_atual = alerta.get(
+        "valor_atual",
+        0,
+    )
+
+    valor_limite = alerta.get(
+        "valor_limite",
+        0,
+    )
+
+    unidade = str(
+        alerta.get("unidade", "")
+    )
+
+    assunto = (
+        f"[INNA] Alerta {severidade}: {titulo}"
+    )[:255]
+
+    corpo_texto = f"""INNA Financial Coach AI
+
+Novo alerta operacional detectado.
+
+Alerta: {titulo}
+Severidade: {severidade}
+Categoria: {categoria}
+
+Descrição:
+{descricao}
+
+Valor atual: {valor_atual} {unidade}
+Limite configurado: {valor_limite} {unidade}
+
+Recomendação:
+{recomendacao}
+
+Esta mensagem contém somente telemetria técnica.
+Nenhum prompt, resposta ou dado financeiro pessoal foi incluído.
+"""
+
+    corpo_html = f"""
+    <div style="
+        max-width: 680px;
+        margin: auto;
+        font-family: Arial, sans-serif;
+        color: #172033;
+    ">
+        <h2>🚨 Alerta operacional da INNA</h2>
+
+        <p>
+            A INNA Financial Coach AI detectou
+            um novo alerta técnico.
+        </p>
+
+        <table style="
+            width: 100%;
+            border-collapse: collapse;
+        ">
+            <tr>
+                <td><strong>Alerta</strong></td>
+                <td>{html.escape(titulo)}</td>
+            </tr>
+            <tr>
+                <td><strong>Severidade</strong></td>
+                <td>{html.escape(severidade)}</td>
+            </tr>
+            <tr>
+                <td><strong>Categoria</strong></td>
+                <td>{html.escape(categoria)}</td>
+            </tr>
+            <tr>
+                <td><strong>Valor atual</strong></td>
+                <td>
+                    {html.escape(str(valor_atual))}
+                    {html.escape(unidade)}
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Limite</strong></td>
+                <td>
+                    {html.escape(str(valor_limite))}
+                    {html.escape(unidade)}
+                </td>
+            </tr>
+        </table>
+
+        <h3>Descrição</h3>
+        <p>{html.escape(descricao)}</p>
+
+        <h3>Recomendação</h3>
+        <p>{html.escape(recomendacao)}</p>
+
+        <hr>
+
+        <p style="
+            font-size: 12px;
+            color: #667085;
+        ">
+            Esta notificação contém somente
+            informações técnicas de observabilidade.
+        </p>
+    </div>
+    """
+
+    return {
+        "assunto": assunto,
+        "texto": corpo_texto,
+        "html": corpo_html,
+    }
+
+
+def notificar_alerta_email(
+    alerta: dict[str, Any],
+) -> dict[str, Any]:
+    configuracao = carregar_configuracao()
+
+    if not configuracao["habilitado"]:
+        return {
+            "ok": True,
+            "enviado": False,
+            "ignorado": True,
+            "message": (
+                "Notificações por e-mail desabilitadas."
+            ),
+        }
+
+    if not configuracao["destinatario"]:
+        return {
+            "ok": False,
+            "enviado": False,
+            "message": (
+                "LLM_ALERT_EMAIL_TO não configurado."
+            ),
+        }
+
+    if not alerta_deve_ser_enviado(
+        alerta,
+        severidade_minima=configuracao[
+            "severidade_minima"
+        ],
+    ):
+        return {
+            "ok": True,
+            "enviado": False,
+            "ignorado": True,
+            "message": (
+                "Alerta não atende aos critérios "
+                "de envio."
+            ),
+        }
+
+    alerta_id = int(
+        alerta.get("id", 0)
+    )
+
+    if alerta_id <= 0:
+        return {
+            "ok": False,
+            "enviado": False,
+            "message": (
+                "O alerta precisa possuir um ID."
+            ),
+        }
+
+    inicializacao = (
+        inicializar_tabela_notificacoes()
+    )
+
+    if not inicializacao.get("ok"):
+        return {
+            **inicializacao,
+            "enviado": False,
+        }
+
+    email = montar_email_alerta(alerta)
+    engine = _criar_engine()
+
+    inserir = text(f"""
+        INSERT INTO {NOME_TABELA} (
+            alerta_id,
+            canal,
+            status,
+            destinatario_mascarado,
+            assunto,
+            tentativas
+        )
+        VALUES (
+            :alerta_id,
+            'email',
+            'processando',
+            :destinatario,
+            :assunto,
+            1
+        );
+    """)
+
+    try:
+        with engine.begin() as connection:
+            connection.execute(
+                inserir,
+                {
+                    "alerta_id": alerta_id,
+                    "destinatario": mascarar_email(
+                        configuracao[
+                            "destinatario"
+                        ]
+                    ),
+                    "assunto": email["assunto"],
+                },
+            )
+
+    except IntegrityError:
+        engine.dispose()
+
+        return {
+            "ok": True,
+            "enviado": False,
+            "duplicado": True,
+            "message": (
+                "Este alerta já foi processado "
+                "por e-mail."
+            ),
+        }
+
+    try:
+        resultado_envio = send_text_email(
+            to_email=configuracao[
+                "destinatario"
+            ],
+            subject=email["assunto"],
+            body=email["texto"],
+            html_body=email["html"],
+        )
+
+        atualizar = text(f"""
+            UPDATE {NOME_TABELA}
+            SET
+                status = 'enviado',
+                provider_message_id =
+                    :provider_message_id,
+                enviado_em = NOW(),
+                atualizado_em = NOW()
+            WHERE alerta_id = :alerta_id
+              AND canal = 'email';
+        """)
+
+        with engine.begin() as connection:
+            connection.execute(
+                atualizar,
+                {
+                    "alerta_id": alerta_id,
+                    "provider_message_id": (
+                        resultado_envio.get(
+                            "message_id"
+                        )
+                    ),
+                },
+            )
+
+        engine.dispose()
+
+        return {
+            "ok": True,
+            "enviado": True,
+            "duplicado": False,
+            **resultado_envio,
+        }
+
+    except Exception as exc:
+        atualizar_erro = text(f"""
+            UPDATE {NOME_TABELA}
+            SET
+                status = 'falhou',
+                erro_tipo = :erro_tipo,
+                erro_mensagem = :erro_mensagem,
+                atualizado_em = NOW()
+            WHERE alerta_id = :alerta_id
+              AND canal = 'email';
+        """)
+
+        with engine.begin() as connection:
+            connection.execute(
+                atualizar_erro,
+                {
+                    "alerta_id": alerta_id,
+                    "erro_tipo": type(exc).__name__,
+                    "erro_mensagem": str(exc),
+                },
+            )
+
+        engine.dispose()
+
+        return {
+            "ok": False,
+            "enviado": False,
+            "duplicado": False,
+            "message": str(exc),
+        }
+
+
+def carregar_notificacoes(
+    *,
+    limite: int = 500,
+) -> dict[str, Any]:
+    inicializacao = (
+        inicializar_tabela_notificacoes()
+    )
+
+    if not inicializacao.get("ok"):
+        return {
+            **inicializacao,
+            "df": pd.DataFrame(),
+        }
+
+    try:
+        engine = _criar_engine()
+
+        consulta = text(f"""
+            SELECT
+                id,
+                alerta_id,
+                canal,
+                status,
+                destinatario_mascarado,
+                assunto,
+                tentativas,
+                provider_message_id,
+                criado_em,
+                enviado_em,
+                atualizado_em,
+                erro_tipo,
+                erro_mensagem
+            FROM {NOME_TABELA}
+            ORDER BY criado_em DESC
+            LIMIT :limite;
+        """)
+
+        with engine.connect() as connection:
+            df = pd.read_sql(
+                consulta,
+                connection,
+                params={
+                    "limite": max(
+                        int(limite),
+                        1,
+                    ),
+                },
+            )
+
+        engine.dispose()
+
+        return {
+            "ok": True,
+            "df": df,
+            "total": len(df),
+            "message": (
+                "Notificações carregadas."
+            ),
+        }
+
+    except Exception as exc:
+        return {
+            "ok": False,
+            "df": pd.DataFrame(),
+            "total": 0,
+            "message": (
+                "Erro ao carregar notificações: "
+                f"{exc}"
+            ),
+        }
+
+
+__all__ = [
+    "NOME_TABELA",
+    "ORDEM_SEVERIDADE",
+    "carregar_configuracao",
+    "mascarar_email",
+    "inicializar_tabela_notificacoes",
+    "alerta_deve_ser_enviado",
+    "montar_email_alerta",
+    "notificar_alerta_email",
+    "carregar_notificacoes",
+]
