@@ -1,3 +1,35 @@
+from .llm_finops import (
+    analisar_finops_llm,
+    calcular_projecao_mensal,
+    carregar_configuracao_finops,
+    classificar_orcamento,
+    converter_usd_para_brl,
+)
+
+from .llm_tracking import (
+    executar_generate_content_observado,
+    executar_llm_observado,
+)
+
+from .llm_costs import (
+    calcular_custo_estimado,
+    carregar_consumo_llm,
+    carregar_precos_modelo,
+    extrair_tokens_resposta,
+    inicializar_tabela_llm_usage,
+    normalizar_modelo,
+    registrar_consumo_llm,
+)
+
+from .health_history import (
+    NOME_TABELA,
+    calcular_tendencia_health,
+    carregar_health_history,
+    inicializar_tabela_health_history,
+    preparar_snapshot,
+    salvar_health_snapshot,
+)
+
 from .health_runtime import (
     coletar_health_score_real,
 )
@@ -62,6 +94,26 @@ from .metrics import (
 
 
 __all__ = [
+    "analisar_finops_llm",
+    "calcular_projecao_mensal",
+    "classificar_orcamento",
+    "converter_usd_para_brl",
+    "carregar_configuracao_finops",
+    "executar_generate_content_observado",
+    "executar_llm_observado",
+    "carregar_consumo_llm",
+    "registrar_consumo_llm",
+    "inicializar_tabela_llm_usage",
+    "extrair_tokens_resposta",
+    "calcular_custo_estimado",
+    "carregar_precos_modelo",
+    "normalizar_modelo",
+    "calcular_tendencia_health",
+    "carregar_health_history",
+    "salvar_health_snapshot",
+    "preparar_snapshot",
+    "inicializar_tabela_health_history",
+    "NOME_TABELA",
     "coletar_health_score_real",
     "calcular_health_score_global",
     "calcular_score_performance",

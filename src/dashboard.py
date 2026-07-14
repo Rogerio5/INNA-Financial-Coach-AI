@@ -3122,6 +3122,7 @@ def render_filters(diagnosticos_df, feedbacks_df):
             "🧭 Timeline Viewer",
             "📊 Analytics Tools",
             "❤️ Health Center",
+            "💰 LLM Cost Center",
             "📄 Upload Documentos",
             "🧠 Memória Usuário",
             "📤 Exportar",
@@ -8049,6 +8050,18 @@ def main():
             )
 
         render_health_score_page()
+
+    elif menu == "💰 LLM Cost Center":
+        try:
+            from dashboard_pages.llm_costs_page import (
+                render_llm_costs_page
+            )
+        except ImportError:
+            from src.dashboard_pages.llm_costs_page import (
+                render_llm_costs_page
+            )
+
+        render_llm_costs_page()
 
     elif menu == "📄 Upload Documentos":
         render_upload_documentos_rag()
