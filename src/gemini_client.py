@@ -18,6 +18,15 @@ import os
 
 from google import genai
 
+try:
+    from observability.llm_tracking import (
+        executar_generate_content_observado,
+    )
+except ImportError:
+    from src.observability.llm_tracking import (
+        executar_generate_content_observado,
+    )
+
 from src.config import GEMINI_API_KEY, GEMINI_MODEL, INNA_MOCK_MODE
 from src.prompts import build_plan_prompt
 
@@ -652,9 +661,16 @@ def generate_ai_plan(payload: dict, diagnosis: dict) -> str:
         client = genai.Client(api_key=GEMINI_API_KEY)
         prompt = build_plan_prompt(payload, diagnosis)
 
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
+        response = executar_generate_content_observado(
+            client,
+            modelo=GEMINI_MODEL,
             contents=prompt,
+            operacao="plano_financeiro",
+            origem="gemini_client",
+            metadados={
+                "fluxo": "generate_ai_plan",
+                "fallback_disponivel": True,
+            },
         )
 
         _update_last_gemini_usage(response)

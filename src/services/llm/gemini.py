@@ -17,6 +17,14 @@ from __future__ import annotations
 import os
 from pathlib import Path
 from typing import Any
+try:
+    from observability.llm_tracking import (
+        executar_generate_content_observado,
+    )
+except ImportError:
+    from src.observability.llm_tracking import (
+        executar_generate_content_observado,
+    )
 
 
 MODELO_TEXTO_PADRAO = "gemini-2.5-flash"
@@ -167,16 +175,26 @@ def gerar_texto_gemini(
 
         client = criar_cliente_gemini()
 
-        response = client.models.generate_content(
-            model=modelo,
-            contents=prompt_normalizado,
-            config=types.GenerateContentConfig(
-                temperature=temperatura,
-                max_output_tokens=max_tokens,
-                thinking_config=types.ThinkingConfig(
-                    thinking_budget=0
-                ),
+        config = types.GenerateContentConfig(
+            temperature=temperatura,
+            max_output_tokens=max_tokens,
+            thinking_config=types.ThinkingConfig(
+                thinking_budget=0
             ),
+        )
+
+        response = executar_generate_content_observado(
+            client,
+            modelo=modelo,
+            contents=prompt_normalizado,
+            config=config,
+            operacao="llm_service_generate",
+            origem="services.llm.gemini",
+            metadados={
+                "temperatura": temperatura,
+                "max_output_tokens": max_tokens,
+                "thinking_budget": 0,
+            },
         )
 
         resposta = _extrair_texto_resposta(response)

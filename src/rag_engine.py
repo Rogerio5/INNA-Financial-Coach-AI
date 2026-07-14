@@ -8,6 +8,14 @@ from typing import Any
 import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extras import Json
+try:
+    from observability.llm_tracking import (
+        executar_generate_content_observado,
+    )
+except ImportError:
+    from src.observability.llm_tracking import (
+        executar_generate_content_observado,
+    )
 
 
 load_dotenv(".env")
@@ -1248,9 +1256,21 @@ A resposta deve:
 7. Terminar com uma pergunta curta para continuar a conversa, quando fizer sentido.
 """
 
-        response = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite"),
+        modelo_gemini = os.getenv(
+            "GEMINI_MODEL",
+            "gemini-2.5-flash-lite",
+        )
+
+        response = executar_generate_content_observado(
+            client,
+            modelo=modelo_gemini,
             contents=prompt,
+            operacao="rag_answer",
+            origem="rag_engine",
+            metadados={
+                "fluxo": "rag_hibrido",
+                "usa_contexto_recuperado": True,
+            },
         )
 
         resposta = getattr(response, "text", "") or ""
