@@ -3120,6 +3120,8 @@ def render_filters(diagnosticos_df, feedbacks_df):
             "📊 Observabilidade RAG",
             "🛠️ Observabilidade Tools",
             "🧭 Timeline Viewer",
+            "📊 Analytics Tools",
+            "❤️ Health Center",
             "📄 Upload Documentos",
             "🧠 Memória Usuário",
             "📤 Exportar",
@@ -8023,6 +8025,30 @@ def main():
             )
 
         render_timeline_viewer_page()
+
+    elif menu == "📊 Analytics Tools":
+        try:
+            from dashboard_pages.tools_analytics_page import (
+                render_tools_analytics_page
+            )
+        except ImportError:
+            from src.dashboard_pages.tools_analytics_page import (
+                render_tools_analytics_page
+            )
+
+        render_tools_analytics_page()
+
+    elif menu == "❤️ Health Center":
+        try:
+            from dashboard_pages.health_score_page import (
+                render_health_score_page
+            )
+        except ImportError:
+            from src.dashboard_pages.health_score_page import (
+                render_health_score_page
+            )
+
+        render_health_score_page()
 
     elif menu == "📄 Upload Documentos":
         render_upload_documentos_rag()
