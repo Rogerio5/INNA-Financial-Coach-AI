@@ -333,6 +333,13 @@ def processar_evento_resend(
                 UPDATE {NOME_TABELA_NOTIFICACOES}
                 SET
                     status_entrega = CASE
+                        WHEN entregue_em IS NOT NULL
+                        AND :status_entrega IN (
+                            'enviado',
+                            'aguardando',
+                            'atrasado'
+                        )
+                        THEN 'entregue'
                         WHEN status_entrega IN (
                             'entregue',
                             'devolvido',
