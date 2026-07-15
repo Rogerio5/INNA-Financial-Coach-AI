@@ -733,7 +733,13 @@ def carregar_notificacoes(
                 enviado_em,
                 atualizado_em,
                 erro_tipo,
-                erro_mensagem
+                erro_mensagem,
+                status_entrega,
+                evento_provider,
+                entregue_em,
+                devolvido_em,
+                webhook_recebido_em,
+                motivo_entrega
             FROM {NOME_TABELA}
             ORDER BY criado_em DESC
             LIMIT :limite;

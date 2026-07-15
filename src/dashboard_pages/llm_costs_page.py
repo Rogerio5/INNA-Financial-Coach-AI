@@ -659,16 +659,184 @@ def render_alertas_llm_section(
         )
 
     else:
+        auditoria_df = notificacoes_df.copy()
+
+        auditoria_df["status_entrega"] = (
+            auditoria_df["status_entrega"]
+            .fillna("aguardando")
+            .astype(str)
+            .str.lower()
+        )
+
+        total_notificacoes = len(auditoria_df)
+
+        total_enviadas = int(
+            auditoria_df["status"]
+            .astype(str)
+            .str.lower()
+            .eq("enviado")
+            .sum()
+        )
+
+        total_entregues = int(
+            auditoria_df["status_entrega"]
+            .eq("entregue")
+            .sum()
+        )
+
+        status_falha = {
+            "falhou",
+            "devolvido",
+            "suprimido",
+            "reclamacao",
+        }
+
+        total_falhas = int(
+            auditoria_df["status_entrega"]
+            .isin(status_falha)
+            .sum()
+        )
+
+        total_aguardando = max(
+            total_enviadas
+            - total_entregues
+            - total_falhas,
+            0,
+        )
+
+        taxa_entrega = (
+            total_entregues
+            / total_enviadas
+            * 100
+            if total_enviadas
+            else 0
+        )
+
+        metrica_1, metrica_2, metrica_3, metrica_4, metrica_5 = (
+            st.columns(5)
+        )
+
+        metrica_1.metric(
+            "Notificações",
+            total_notificacoes,
+        )
+
+        metrica_2.metric(
+            "Enviadas",
+            total_enviadas,
+        )
+
+        metrica_3.metric(
+            "Entregues",
+            total_entregues,
+        )
+
+        metrica_4.metric(
+            "Aguardando",
+            total_aguardando,
+        )
+
+        metrica_5.metric(
+            "Taxa de entrega",
+            f"{taxa_entrega:.1f}%",
+        )
+
+        filtro_1, filtro_2 = st.columns(2)
+
+        opcoes_status = [
+            "todos",
+            *sorted(
+                auditoria_df[
+                    "status_entrega"
+                ]
+                .dropna()
+                .astype(str)
+                .unique()
+                .tolist()
+            ),
+        ]
+
+        filtro_status_entrega = filtro_1.selectbox(
+            "Status de entrega",
+            options=opcoes_status,
+            key="llm_notification_delivery_status",
+        )
+
+        filtro_destinatario = filtro_2.text_input(
+            "Filtrar destinatário",
+            key="llm_notification_recipient_filter",
+        )
+
+        filtrado_notificacoes = auditoria_df.copy()
+
+        if filtro_status_entrega != "todos":
+            filtrado_notificacoes = (
+                filtrado_notificacoes[
+                    filtrado_notificacoes[
+                        "status_entrega"
+                    ]
+                    == filtro_status_entrega
+                ]
+            )
+
+        if filtro_destinatario.strip():
+            filtrado_notificacoes = (
+                filtrado_notificacoes[
+                    filtrado_notificacoes[
+                        "destinatario_mascarado"
+                    ]
+                    .astype(str)
+                    .str.contains(
+                        filtro_destinatario.strip(),
+                        case=False,
+                        na=False,
+                    )
+                ]
+            )
+
+        icones_status = {
+            "entregue": "🟢 Entregue",
+            "enviado": "🔵 Enviado",
+            "aguardando": "⚪ Aguardando",
+            "atrasado": "🟡 Atrasado",
+            "falhou": "🔴 Falhou",
+            "devolvido": "🟠 Devolvido",
+            "suprimido": "🟣 Suprimido",
+            "reclamacao": "🔴 Reclamação",
+            "aberto_email": "📬 Aberto",
+            "clicado": "🔗 Clicado",
+        }
+
+        filtrado_notificacoes[
+            "status_entrega_exibicao"
+        ] = (
+            filtrado_notificacoes[
+                "status_entrega"
+            ]
+            .map(icones_status)
+            .fillna(
+                filtrado_notificacoes[
+                    "status_entrega"
+                ]
+            )
+        )
+
         colunas_notificacoes = [
             "id",
             "alerta_id",
             "status",
+            "status_entrega_exibicao",
+            "evento_provider",
             "destinatario_mascarado",
             "assunto",
             "tentativas",
             "provider_message_id",
             "criado_em",
             "enviado_em",
+            "entregue_em",
+            "devolvido_em",
+            "webhook_recebido_em",
+            "motivo_entrega",
             "erro_tipo",
             "erro_mensagem",
         ]
@@ -677,13 +845,51 @@ def render_alertas_llm_section(
             coluna
             for coluna in colunas_notificacoes
             if coluna
-            in notificacoes_df.columns
+            in filtrado_notificacoes.columns
         ]
 
         tabela_notificacoes = (
-            notificacoes_df[
+            filtrado_notificacoes[
                 colunas_notificacoes
             ].copy()
+        )
+
+        tabela_notificacoes = (
+            tabela_notificacoes.rename(
+                columns={
+                    "id": "ID",
+                    "alerta_id": "Alerta",
+                    "status": "Status do envio",
+                    "status_entrega_exibicao": (
+                        "Status da entrega"
+                    ),
+                    "evento_provider": (
+                        "Evento do Resend"
+                    ),
+                    "destinatario_mascarado": (
+                        "Destinatário"
+                    ),
+                    "assunto": "Assunto",
+                    "tentativas": "Tentativas",
+                    "provider_message_id": (
+                        "Message ID"
+                    ),
+                    "criado_em": "Criado em",
+                    "enviado_em": "Enviado em",
+                    "entregue_em": "Entregue em",
+                    "devolvido_em": "Devolvido em",
+                    "webhook_recebido_em": (
+                        "Webhook recebido em"
+                    ),
+                    "motivo_entrega": (
+                        "Motivo da entrega/falha"
+                    ),
+                    "erro_tipo": "Tipo do erro",
+                    "erro_mensagem": (
+                        "Mensagem de erro"
+                    ),
+                }
+            )
         )
 
         st.dataframe(

@@ -301,8 +301,38 @@ def processar_evento_resend(
             atualizar_notificacao = text(f"""
                 UPDATE {NOME_TABELA_NOTIFICACOES}
                 SET
-                    status_entrega = :status_entrega,
-                    evento_provider = :evento_tipo,
+                    status_entrega = CASE
+                        WHEN status_entrega IN (
+                            'entregue',
+                            'devolvido',
+                            'falhou',
+                            'suprimido',
+                            'reclamacao'
+                        )
+                        AND :status_entrega IN (
+                            'enviado',
+                            'aguardando',
+                            'atrasado'
+                        )
+                        THEN status_entrega
+                        ELSE :status_entrega
+                    END,
+                    evento_provider = CASE
+                        WHEN status_entrega IN (
+                            'entregue',
+                            'devolvido',
+                            'falhou',
+                            'suprimido',
+                            'reclamacao'
+                        )
+                        AND :status_entrega IN (
+                            'enviado',
+                            'aguardando',
+                            'atrasado'
+                        )
+                        THEN evento_provider
+                        ELSE :evento_tipo
+                    END,
                     webhook_recebido_em = NOW(),
                     entregue_em = CASE
                         WHEN :evento_tipo = 'email.delivered'
@@ -318,7 +348,11 @@ def processar_evento_resend(
                         THEN COALESCE(devolvido_em, NOW())
                         ELSE devolvido_em
                     END,
-                    motivo_entrega = :motivo,
+                    motivo_entrega = CASE
+                        WHEN :motivo IS NOT NULL
+                        THEN :motivo
+                        ELSE motivo_entrega
+                    END,
                     atualizado_em = NOW()
                 WHERE provider_message_id =
                     :provider_message_id
