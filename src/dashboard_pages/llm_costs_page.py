@@ -155,6 +155,19 @@ def render_alertas_llm_section(
             resolver_alerta_llm,
         )
 
+    try:
+        from observability.llm_notifications import (
+            carregar_configuracao,
+            carregar_notificacoes,
+            notificar_alerta_email,
+        )
+    except ImportError:
+        from src.observability.llm_notifications import (
+            carregar_configuracao,
+            carregar_notificacoes,
+            notificar_alerta_email,
+        )
+
     st.divider()
     st.markdown(
         "## 🚨 Alertas de custo e desempenho"
@@ -319,9 +332,63 @@ def render_alertas_llm_section(
         "informativa": "ℹ️",
     }
 
+    configuracao_email = carregar_configuracao()
+
+    resultado_notificacoes = carregar_notificacoes(
+        limite=1000
+    )
+
+    notificacoes_df = resultado_notificacoes.get(
+        "df"
+    )
+
+    alertas_enviados: set[int] = set()
+
+    if (
+        notificacoes_df is not None
+        and not notificacoes_df.empty
+        and "alerta_id" in notificacoes_df.columns
+        and "status" in notificacoes_df.columns
+    ):
+        enviados_df = notificacoes_df[
+            notificacoes_df["status"] == "enviado"
+        ]
+
+        alertas_enviados = {
+            int(alerta_id)
+            for alerta_id in enviados_df[
+                "alerta_id"
+            ].dropna().tolist()
+        }
+
     st.markdown(
         "### Lista de alertas"
     )
+
+    if not configuracao_email.get(
+        "habilitado"
+    ):
+        st.warning(
+            "As notificações por e-mail estão "
+            "desabilitadas no ambiente."
+        )
+    elif not configuracao_email.get(
+        "destinatario"
+    ):
+        st.warning(
+            "O destinatário dos alertas não está configurado."
+        )
+    elif not configuracao_email.get(
+        "resend_configurado"
+    ):
+        st.warning(
+            "A integração com o Resend não está configurada."
+        )
+    else:
+        st.success(
+            "Notificações por e-mail habilitadas. "
+            "Alertas altos e críticos podem ser enviados."
+        )
 
     for _, alerta in alertas.iterrows():
         severidade = str(
@@ -428,39 +495,213 @@ def render_alertas_llm_section(
             )
 
             if status == "aberto":
-                if st.button(
-                    "✅ Marcar como resolvido",
-                    key=(
-                        f"resolve_llm_alert_"
-                        f"{int(alerta['id'])}"
-                    ),
-                    use_container_width=True,
-                ):
-                    resultado_resolucao = (
-                        resolver_alerta_llm(
-                            int(
-                                alerta["id"]
-                            ),
-                            resolvido_por=(
-                                "llm_cost_center"
-                            ),
+                alerta_id = int(
+                    alerta["id"]
+                )
+
+                pode_enviar_email = (
+                    severidade
+                    in {"alta", "critica"}
+                    and configuracao_email.get(
+                        "habilitado"
+                    )
+                    and bool(
+                        configuracao_email.get(
+                            "destinatario"
                         )
                     )
+                    and configuracao_email.get(
+                        "resend_configurado"
+                    )
+                )
 
-                    if resultado_resolucao.get(
-                        "resolvido"
-                    ):
+                ja_enviado = (
+                    alerta_id
+                    in alertas_enviados
+                )
+
+                coluna_email, coluna_resolver = (
+                    st.columns(2)
+                )
+
+                with coluna_email:
+                    if ja_enviado:
                         st.success(
-                            "Alerta resolvido."
+                            "📧 Notificação já enviada"
                         )
-                        st.rerun()
-                    else:
+
+                    elif severidade not in {
+                        "alta",
+                        "critica",
+                    }:
                         st.info(
-                            resultado_resolucao.get(
-                                "message",
-                                "O alerta já foi resolvido.",
+                            "📧 Envio reservado para "
+                            "alertas altos e críticos."
+                        )
+
+                    elif st.button(
+                        "📧 Enviar alerta por e-mail",
+                        key=(
+                            "send_llm_alert_email_"
+                            f"{alerta_id}"
+                        ),
+                        use_container_width=True,
+                        disabled=(
+                            not pode_enviar_email
+                        ),
+                    ):
+                        with st.spinner(
+                            "Enviando alerta..."
+                        ):
+                            resultado_envio = (
+                                notificar_alerta_email(
+                                    alerta.to_dict()
+                                )
+                            )
+
+                        if resultado_envio.get(
+                            "enviado"
+                        ):
+                            st.success(
+                                "Alerta enviado por e-mail."
+                            )
+                            st.rerun()
+
+                        elif resultado_envio.get(
+                            "duplicado"
+                        ):
+                            st.info(
+                                "Este alerta já foi "
+                                "enviado por e-mail."
+                            )
+                            st.rerun()
+
+                        elif resultado_envio.get(
+                            "ignorado"
+                        ):
+                            st.warning(
+                                resultado_envio.get(
+                                    "message",
+                                    "O alerta não atende "
+                                    "aos critérios de envio.",
+                                )
+                            )
+
+                        else:
+                            st.error(
+                                "Falha ao enviar o alerta: "
+                                + str(
+                                    resultado_envio.get(
+                                        "message",
+                                        "erro desconhecido",
+                                    )
+                                )
+                            )
+
+                with coluna_resolver:
+                    if st.button(
+                        "✅ Marcar como resolvido",
+                        key=(
+                            f"resolve_llm_alert_"
+                            f"{alerta_id}"
+                        ),
+                        use_container_width=True,
+                    ):
+                        resultado_resolucao = (
+                            resolver_alerta_llm(
+                                alerta_id,
+                                resolvido_por=(
+                                    "llm_cost_center"
+                                ),
                             )
                         )
+
+                        if resultado_resolucao.get(
+                            "resolvido"
+                        ):
+                            st.success(
+                                "Alerta resolvido."
+                            )
+                            st.rerun()
+                        else:
+                            st.info(
+                                resultado_resolucao.get(
+                                    "message",
+                                    "O alerta já foi resolvido.",
+                                )
+                            )
+
+    st.markdown(
+        "### Auditoria das notificações"
+    )
+
+    if not resultado_notificacoes.get("ok"):
+        st.error(
+            resultado_notificacoes.get(
+                "message",
+                "Não foi possível carregar "
+                "as notificações.",
+            )
+        )
+
+    elif (
+        notificacoes_df is None
+        or notificacoes_df.empty
+    ):
+        st.info(
+            "Nenhuma notificação registrada."
+        )
+
+    else:
+        colunas_notificacoes = [
+            "id",
+            "alerta_id",
+            "status",
+            "destinatario_mascarado",
+            "assunto",
+            "tentativas",
+            "provider_message_id",
+            "criado_em",
+            "enviado_em",
+            "erro_tipo",
+            "erro_mensagem",
+        ]
+
+        colunas_notificacoes = [
+            coluna
+            for coluna in colunas_notificacoes
+            if coluna
+            in notificacoes_df.columns
+        ]
+
+        tabela_notificacoes = (
+            notificacoes_df[
+                colunas_notificacoes
+            ].copy()
+        )
+
+        st.dataframe(
+            tabela_notificacoes,
+            use_container_width=True,
+            hide_index=True,
+        )
+
+        csv_notificacoes = (
+            tabela_notificacoes.to_csv(
+                index=False
+            ).encode("utf-8-sig")
+        )
+
+        st.download_button(
+            "⬇️ Exportar notificações em CSV",
+            data=csv_notificacoes,
+            file_name=(
+                "inna_llm_notificacoes.csv"
+            ),
+            mime="text/csv",
+            use_container_width=True,
+            key="llm_notification_download",
+        )
 
     st.markdown(
         "### Auditoria dos alertas"

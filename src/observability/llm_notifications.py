@@ -17,7 +17,10 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import IntegrityError
 
-from src.email_sender import send_text_email
+try:
+    from email_sender import send_text_email
+except ImportError:
+    from src.email_sender import send_text_email
 
 
 load_dotenv(
