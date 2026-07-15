@@ -161,6 +161,7 @@ def render_alertas_llm_section(
             carregar_configuracao,
             carregar_notificacoes,
             notificar_alerta_email,
+            reenviar_notificacao_email,
         )
     except ImportError:
         from src.observability.llm_notifications import (
@@ -168,6 +169,7 @@ def render_alertas_llm_section(
             carregar_configuracao,
             carregar_notificacoes,
             notificar_alerta_email,
+            reenviar_notificacao_email,
         )
 
     st.divider()
@@ -1065,6 +1067,138 @@ def render_alertas_llm_section(
             use_container_width=True,
             key="llm_notification_download",
         )
+
+    st.markdown(
+        "### 🔄 Reenvio de notificações"
+    )
+
+    status_reenvio = {
+        "falhou",
+        "devolvido",
+        "suprimido",
+    }
+
+    notificacoes_reenvio = (
+        notificacoes_df.copy()
+        if notificacoes_df is not None
+        else None
+    )
+
+    if (
+        notificacoes_reenvio is None
+        or notificacoes_reenvio.empty
+    ):
+        st.info(
+            "Nenhuma notificação disponível "
+            "para reenvio."
+        )
+
+    else:
+        notificacoes_reenvio[
+            "status_entrega_normalizado"
+        ] = (
+            notificacoes_reenvio[
+                "status_entrega"
+            ]
+            .fillna("")
+            .astype(str)
+            .str.lower()
+        )
+
+        notificacoes_reenvio = (
+            notificacoes_reenvio[
+                (
+                    notificacoes_reenvio[
+                        "status_entrega_normalizado"
+                    ].isin(status_reenvio)
+                )
+                & (
+                    notificacoes_reenvio[
+                        "tentativas"
+                    ].fillna(0).astype(int) < 3
+                )
+            ]
+        )
+
+        if notificacoes_reenvio.empty:
+            st.success(
+                "Não existem notificações "
+                "com falha aguardando reenvio."
+            )
+
+        else:
+            st.warning(
+                "O reenvio é limitado a três "
+                "tentativas por notificação."
+            )
+
+            for _, notificacao in (
+                notificacoes_reenvio.iterrows()
+            ):
+                notificacao_id = int(
+                    notificacao["id"]
+                )
+
+                col_info, col_acao = st.columns(
+                    [4, 1]
+                )
+
+                with col_info:
+                    st.write(
+                        f"**Notificação "
+                        f"#{notificacao_id}** — "
+                        f"Alerta "
+                        f"#{int(notificacao['alerta_id'])}"
+                    )
+
+                    st.caption(
+                        "Status: "
+                        f"{notificacao.get('status_entrega')} "
+                        "• Tentativas: "
+                        f"{int(notificacao.get('tentativas', 0))}/3 "
+                        "• Destinatário: "
+                        f"{notificacao.get('destinatario_mascarado')}"
+                    )
+
+                with col_acao:
+                    if st.button(
+                        "🔄 Reenviar",
+                        key=(
+                            "retry_notification_"
+                            f"{notificacao_id}"
+                        ),
+                        use_container_width=True,
+                    ):
+                        with st.spinner(
+                            "Reenviando notificação..."
+                        ):
+                            resultado_reenvio = (
+                                reenviar_notificacao_email(
+                                    notificacao_id=(
+                                        notificacao_id
+                                    ),
+                                    max_tentativas=3,
+                                )
+                            )
+
+                        if resultado_reenvio.get(
+                            "ok"
+                        ):
+                            st.success(
+                                resultado_reenvio.get(
+                                    "message",
+                                    "Notificação reenviada.",
+                                )
+                            )
+                            st.rerun()
+
+                        else:
+                            st.error(
+                                resultado_reenvio.get(
+                                    "message",
+                                    "Falha no reenvio.",
+                                )
+                            )
 
     st.markdown(
         "### Auditoria dos alertas"

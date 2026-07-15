@@ -702,6 +702,354 @@ def avaliar_persistir_e_notificar_alertas(
         }
 
 
+def reenviar_notificacao_email(
+    *,
+    notificacao_id: int,
+    max_tentativas: int = 3,
+) -> dict[str, Any]:
+    """
+    Reenvia uma notificação que apresentou falha.
+
+    Proteções:
+    - aceita somente notificações com falha;
+    - bloqueia e-mails já entregues;
+    - limita o número total de tentativas;
+    - atualiza o provider_message_id;
+    - aguarda o novo webhook do Resend.
+    """
+    inicializacao = (
+        inicializar_tabela_notificacoes()
+    )
+
+    if not inicializacao.get("ok"):
+        return {
+            **inicializacao,
+            "reenviado": False,
+        }
+
+    configuracao = carregar_configuracao()
+
+    if not configuracao.get("habilitado"):
+        return {
+            "ok": False,
+            "reenviado": False,
+            "message": (
+                "Notificações por e-mail "
+                "estão desabilitadas."
+            ),
+        }
+
+    if not configuracao.get("destinatario"):
+        return {
+            "ok": False,
+            "reenviado": False,
+            "message": (
+                "LLM_ALERT_EMAIL_TO "
+                "não configurado."
+            ),
+        }
+
+    try:
+        notificacao_id = int(notificacao_id)
+        max_tentativas = max(
+            int(max_tentativas),
+            1,
+        )
+    except (TypeError, ValueError):
+        return {
+            "ok": False,
+            "reenviado": False,
+            "message": "Identificador inválido.",
+        }
+
+    engine = _criar_engine()
+
+    consulta = text(f"""
+        SELECT
+            n.id AS notificacao_id,
+            n.alerta_id,
+            n.status,
+            n.status_entrega,
+            n.tentativas,
+            n.provider_message_id,
+
+            a.id,
+            a.codigo,
+            a.titulo,
+            a.descricao,
+            a.categoria,
+            a.severidade,
+            a.status AS alerta_status,
+            a.valor_atual,
+            a.valor_limite,
+            a.unidade,
+            a.modelo,
+            a.operacao,
+            a.recomendacao,
+            a.criado_em
+
+        FROM {NOME_TABELA} n
+
+        INNER JOIN llm_alerts_inna a
+            ON a.id = n.alerta_id
+
+        WHERE n.id = :notificacao_id
+        LIMIT 1;
+    """)
+
+    with engine.connect() as connection:
+        registro = (
+            connection.execute(
+                consulta,
+                {
+                    "notificacao_id": (
+                        notificacao_id
+                    ),
+                },
+            )
+            .mappings()
+            .first()
+        )
+
+    if not registro:
+        engine.dispose()
+
+        return {
+            "ok": False,
+            "reenviado": False,
+            "message": (
+                "Notificação não encontrada."
+            ),
+        }
+
+    status_entrega = str(
+        registro.get("status_entrega")
+        or ""
+    ).strip().lower()
+
+    status_envio = str(
+        registro.get("status")
+        or ""
+    ).strip().lower()
+
+    status_permitidos = {
+        "falhou",
+        "devolvido",
+        "suprimido",
+    }
+
+    if status_entrega == "entregue":
+        engine.dispose()
+
+        return {
+            "ok": False,
+            "reenviado": False,
+            "message": (
+                "E-mails entregues não podem "
+                "ser reenviados."
+            ),
+        }
+
+    if (
+        status_entrega not in status_permitidos
+        and status_envio not in {
+            "erro",
+            "falhou",
+        }
+    ):
+        engine.dispose()
+
+        return {
+            "ok": False,
+            "reenviado": False,
+            "message": (
+                "O reenvio é permitido somente "
+                "para notificações com falha."
+            ),
+        }
+
+    tentativas = int(
+        registro.get("tentativas")
+        or 0
+    )
+
+    if tentativas >= max_tentativas:
+        engine.dispose()
+
+        return {
+            "ok": False,
+            "reenviado": False,
+            "limite_atingido": True,
+            "message": (
+                "Limite máximo de tentativas "
+                f"atingido: {max_tentativas}."
+            ),
+        }
+
+    alerta = dict(registro)
+
+    email = montar_email_alerta(alerta)
+
+    bloquear = text(f"""
+        UPDATE {NOME_TABELA}
+        SET
+            status = 'processando',
+            tentativas = tentativas + 1,
+            atualizado_em = NOW()
+        WHERE id = :notificacao_id
+          AND tentativas < :max_tentativas
+          AND (
+              status IN ('erro', 'falhou')
+              OR status_entrega IN (
+                  'falhou',
+                  'devolvido',
+                  'suprimido'
+              )
+          )
+        RETURNING tentativas;
+    """)
+
+    with engine.begin() as connection:
+        bloqueio = (
+            connection.execute(
+                bloquear,
+                {
+                    "notificacao_id": (
+                        notificacao_id
+                    ),
+                    "max_tentativas": (
+                        max_tentativas
+                    ),
+                },
+            )
+            .mappings()
+            .first()
+        )
+
+    if not bloqueio:
+        engine.dispose()
+
+        return {
+            "ok": False,
+            "reenviado": False,
+            "message": (
+                "A notificação já está sendo "
+                "processada ou não pode ser reenviada."
+            ),
+        }
+
+    try:
+        resultado_envio = send_text_email(
+            to_email=configuracao[
+                "destinatario"
+            ],
+            subject=email["assunto"],
+            body=email["texto"],
+            html_body=email["html"],
+        )
+
+        provider_message_id = (
+            resultado_envio.get(
+                "provider_message_id"
+            )
+            or resultado_envio.get("id")
+            or resultado_envio.get(
+                "message_id"
+            )
+        )
+
+        atualizar_sucesso = text(f"""
+            UPDATE {NOME_TABELA}
+            SET
+                status = 'enviado',
+                status_entrega = 'enviado',
+                evento_provider = NULL,
+                provider_message_id =
+                    :provider_message_id,
+                enviado_em = NOW(),
+                entregue_em = NULL,
+                devolvido_em = NULL,
+                webhook_recebido_em = NULL,
+                motivo_entrega = NULL,
+                erro_tipo = NULL,
+                erro_mensagem = NULL,
+                atualizado_em = NOW()
+            WHERE id = :notificacao_id;
+        """)
+
+        with engine.begin() as connection:
+            connection.execute(
+                atualizar_sucesso,
+                {
+                    "notificacao_id": (
+                        notificacao_id
+                    ),
+                    "provider_message_id": (
+                        provider_message_id
+                    ),
+                },
+            )
+
+        engine.dispose()
+
+        return {
+            "ok": True,
+            "reenviado": True,
+            "notificacao_id": notificacao_id,
+            "tentativas": int(
+                bloqueio["tentativas"]
+            ),
+            "provider_message_id": (
+                provider_message_id
+            ),
+            "message": (
+                "Notificação reenviada "
+                "com sucesso."
+            ),
+        }
+
+    except Exception as exc:
+        atualizar_erro = text(f"""
+            UPDATE {NOME_TABELA}
+            SET
+                status = 'erro',
+                status_entrega = 'falhou',
+                erro_tipo = :erro_tipo,
+                erro_mensagem = :erro_mensagem,
+                atualizado_em = NOW()
+            WHERE id = :notificacao_id;
+        """)
+
+        with engine.begin() as connection:
+            connection.execute(
+                atualizar_erro,
+                {
+                    "notificacao_id": (
+                        notificacao_id
+                    ),
+                    "erro_tipo": (
+                        type(exc).__name__
+                    ),
+                    "erro_mensagem": (
+                        str(exc)[:4000]
+                    ),
+                },
+            )
+
+        engine.dispose()
+
+        return {
+            "ok": False,
+            "reenviado": False,
+            "notificacao_id": notificacao_id,
+            "message": (
+                "Falha ao reenviar: "
+                f"{exc}"
+            ),
+        }
+
+
+
 def carregar_notificacoes(
     *,
     limite: int = 500,
@@ -791,4 +1139,5 @@ __all__ = [
     "notificar_alerta_email",
     "avaliar_persistir_e_notificar_alertas",
     "carregar_notificacoes",
+    "reenviar_notificacao_email",
 ]
