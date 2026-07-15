@@ -1,4 +1,5 @@
 from api.telegram_webhook import router as telegram_router
+from api.resend_webhook import router as resend_router
 import time
 
 from src.audit_logger import record_event
@@ -453,6 +454,7 @@ def listar_diagnosticos_por_usuario(
 
 
 app.include_router(telegram_router)
+app.include_router(resend_router)
 
 
 @app.post("/diagnosticos/{diagnostico_id}/enviar-email")
