@@ -638,6 +638,157 @@ def render_alertas_llm_section(
                             )
 
     st.markdown(
+        "### 🩺 Saúde das integrações"
+    )
+
+    try:
+        try:
+            from observability.resend_webhook import (
+                carregar_saude_integracoes,
+            )
+        except ImportError:
+            from src.observability.resend_webhook import (
+                carregar_saude_integracoes,
+            )
+
+        saude = carregar_saude_integracoes()
+
+        saude_col_1, saude_col_2, saude_col_3, saude_col_4 = (
+            st.columns(4)
+        )
+
+        saude_col_1.metric(
+            "Banco PostgreSQL",
+            (
+                "🟢 Conectado"
+                if saude.get("banco_conectado")
+                else "🔴 Indisponível"
+            ),
+        )
+
+        saude_col_2.metric(
+            "Resend",
+            (
+                "🟢 Configurado"
+                if saude.get("resend_configurado")
+                else "🔴 Não configurado"
+            ),
+        )
+
+        saude_col_3.metric(
+            "Webhook",
+            (
+                "🟢 Configurado"
+                if saude.get("webhook_configurado")
+                else "🔴 Não configurado"
+            ),
+        )
+
+        saude_col_4.metric(
+            "Alertas por e-mail",
+            (
+                "🟢 Habilitados"
+                if saude.get(
+                    "email_alertas_habilitado"
+                )
+                else "🟡 Desabilitados"
+            ),
+        )
+
+        detalhe_1, detalhe_2, detalhe_3, detalhe_4 = (
+            st.columns(4)
+        )
+
+        detalhe_1.metric(
+            "Eventos nas últimas 24h",
+            int(
+                saude.get(
+                    "eventos_webhook_24h",
+                    0,
+                )
+                or 0
+            ),
+        )
+
+        detalhe_2.metric(
+            "Falhas de webhook em 24h",
+            int(
+                saude.get(
+                    "falhas_webhook_24h",
+                    0,
+                )
+                or 0
+            ),
+        )
+
+        detalhe_3.metric(
+            "E-mails entregues",
+            int(
+                saude.get(
+                    "emails_entregues",
+                    0,
+                )
+                or 0
+            ),
+        )
+
+        detalhe_4.metric(
+            "E-mails com falha",
+            int(
+                saude.get(
+                    "emails_com_falha",
+                    0,
+                )
+                or 0
+            ),
+        )
+
+        with st.expander(
+            "Detalhes técnicos das integrações",
+            expanded=False,
+        ):
+            st.write(
+                {
+                    "Último evento": saude.get(
+                        "ultimo_evento_tipo"
+                    ),
+                    "Evento recebido em": saude.get(
+                        "ultimo_evento_recebido_em"
+                    ),
+                    "Evento processado": saude.get(
+                        "ultimo_evento_processado"
+                    ),
+                    "Resultado": saude.get(
+                        "ultimo_evento_resultado"
+                    ),
+                    "Último e-mail entregue em": (
+                        saude.get(
+                            "ultimo_email_entregue_em"
+                        )
+                    ),
+                    "Destinatário configurado": (
+                        saude.get(
+                            "destinatario_configurado"
+                        )
+                    ),
+                }
+            )
+
+        if not saude.get("ok"):
+            st.warning(
+                saude.get(
+                    "message",
+                    "Saúde parcialmente indisponível.",
+                )
+            )
+
+    except Exception as exc:
+        st.warning(
+            "Não foi possível carregar a saúde "
+            f"das integrações: {exc}"
+        )
+
+    st.markdown(
         "### Auditoria das notificações"
     )
 

@@ -484,6 +484,162 @@ def processar_evento_resend(
         }
 
 
+def carregar_saude_integracoes() -> dict[str, Any]:
+    """
+    Retorna o estado das integrações usadas pelos alertas.
+
+    Não expõe chaves ou dados sensíveis.
+    """
+    resultado = {
+        "ok": True,
+        "banco_conectado": False,
+        "resend_configurado": bool(
+            os.getenv("RESEND_API_KEY")
+        ),
+        "webhook_configurado": bool(
+            os.getenv("RESEND_WEBHOOK_SECRET")
+        ),
+        "email_alertas_habilitado": (
+            str(
+                os.getenv(
+                    "LLM_ALERT_EMAIL_ENABLED",
+                    "false",
+                )
+            ).strip().lower()
+            in {"1", "true", "sim", "yes", "on"}
+        ),
+        "destinatario_configurado": bool(
+            os.getenv("LLM_ALERT_EMAIL_TO")
+        ),
+        "ultimo_evento_tipo": None,
+        "ultimo_evento_recebido_em": None,
+        "ultimo_evento_processado": None,
+        "ultimo_evento_resultado": None,
+        "ultimo_email_entregue_em": None,
+        "emails_entregues": 0,
+        "emails_com_falha": 0,
+        "eventos_webhook_24h": 0,
+        "falhas_webhook_24h": 0,
+        "message": "Saúde das integrações carregada.",
+    }
+
+    try:
+        inicializacao = (
+            inicializar_tabelas_resend_webhook()
+        )
+
+        if not inicializacao.get("ok"):
+            return {
+                **resultado,
+                "ok": False,
+                "message": inicializacao.get(
+                    "message",
+                    "Falha na inicialização.",
+                ),
+            }
+
+        engine = _criar_engine()
+
+        consulta = text(f"""
+            SELECT
+                (
+                    SELECT evento_tipo
+                    FROM {NOME_TABELA_EVENTOS}
+                    ORDER BY recebido_em DESC
+                    LIMIT 1
+                ) AS ultimo_evento_tipo,
+
+                (
+                    SELECT recebido_em
+                    FROM {NOME_TABELA_EVENTOS}
+                    ORDER BY recebido_em DESC
+                    LIMIT 1
+                ) AS ultimo_evento_recebido_em,
+
+                (
+                    SELECT processado
+                    FROM {NOME_TABELA_EVENTOS}
+                    ORDER BY recebido_em DESC
+                    LIMIT 1
+                ) AS ultimo_evento_processado,
+
+                (
+                    SELECT resultado
+                    FROM {NOME_TABELA_EVENTOS}
+                    ORDER BY recebido_em DESC
+                    LIMIT 1
+                ) AS ultimo_evento_resultado,
+
+                (
+                    SELECT MAX(entregue_em)
+                    FROM {NOME_TABELA_NOTIFICACOES}
+                ) AS ultimo_email_entregue_em,
+
+                (
+                    SELECT COUNT(*)
+                    FROM {NOME_TABELA_NOTIFICACOES}
+                    WHERE status_entrega = 'entregue'
+                ) AS emails_entregues,
+
+                (
+                    SELECT COUNT(*)
+                    FROM {NOME_TABELA_NOTIFICACOES}
+                    WHERE status_entrega IN (
+                        'falhou',
+                        'devolvido',
+                        'suprimido',
+                        'reclamacao'
+                    )
+                ) AS emails_com_falha,
+
+                (
+                    SELECT COUNT(*)
+                    FROM {NOME_TABELA_EVENTOS}
+                    WHERE recebido_em >=
+                        NOW() - INTERVAL '24 hours'
+                ) AS eventos_webhook_24h,
+
+                (
+                    SELECT COUNT(*)
+                    FROM {NOME_TABELA_EVENTOS}
+                    WHERE recebido_em >=
+                        NOW() - INTERVAL '24 hours'
+                      AND (
+                          processado = FALSE
+                          OR resultado = 'erro'
+                      )
+                ) AS falhas_webhook_24h;
+        """)
+
+        with engine.connect() as connection:
+            row = (
+                connection.execute(consulta)
+                .mappings()
+                .first()
+            )
+
+        engine.dispose()
+
+        if row:
+            resultado.update(dict(row))
+
+        resultado["banco_conectado"] = True
+
+        return resultado
+
+    except Exception as exc:
+        return {
+            **resultado,
+            "ok": False,
+            "banco_conectado": False,
+            "message": (
+                "Erro ao consultar a saúde das "
+                f"integrações: {exc}"
+            ),
+        }
+
+
+
 __all__ = [
     "NOME_TABELA_EVENTOS",
     "STATUS_POR_EVENTO",
@@ -491,4 +647,5 @@ __all__ = [
     "extrair_message_id",
     "extrair_motivo",
     "processar_evento_resend",
+    "carregar_saude_integracoes",
 ]
