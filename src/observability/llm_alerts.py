@@ -106,7 +106,7 @@ def inicializar_tabela_llm_alerts() -> dict[str, Any]:
                     DEFAULT '{{}}'::jsonb,
 
                 resolvido_em TIMESTAMPTZ,
-                resolvido_por VARCHAR(255),
+                resolvido_por VARCHAR(255)
 
             );
         """)
