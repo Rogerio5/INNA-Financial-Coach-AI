@@ -108,8 +108,6 @@ def inicializar_tabela_llm_alerts() -> dict[str, Any]:
                 resolvido_em TIMESTAMPTZ,
                 resolvido_por VARCHAR(255),
 
-                CONSTRAINT uq_llm_alert_dedupe_aberto
-                    UNIQUE (dedupe_key, status)
             );
         """)
 
@@ -131,6 +129,12 @@ def inicializar_tabela_llm_alerts() -> dict[str, Any]:
                 idx_{NOME_TABELA}_severidade
                 ON {NOME_TABELA}
                 (severidade);
+            """),
+            text(f"""
+                CREATE UNIQUE INDEX IF NOT EXISTS
+                uq_llm_alert_dedupe_open
+                ON {NOME_TABELA} (dedupe_key)
+                WHERE status = 'aberto';
             """),
         ]
 

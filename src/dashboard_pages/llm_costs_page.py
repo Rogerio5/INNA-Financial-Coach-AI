@@ -157,12 +157,14 @@ def render_alertas_llm_section(
 
     try:
         from observability.llm_notifications import (
+            avaliar_persistir_e_notificar_alertas,
             carregar_configuracao,
             carregar_notificacoes,
             notificar_alerta_email,
         )
     except ImportError:
         from src.observability.llm_notifications import (
+            avaliar_persistir_e_notificar_alertas,
             carregar_configuracao,
             carregar_notificacoes,
             notificar_alerta_email,
@@ -218,7 +220,7 @@ def render_alertas_llm_section(
 
     if avaliar:
         resultado_avaliacao = (
-            avaliar_e_persistir_alertas(
+            avaliar_persistir_e_notificar_alertas(
                 base_consumo,
                 finops,
             )
@@ -232,7 +234,11 @@ def render_alertas_llm_section(
                 f"Salvos: "
                 f"{resultado_avaliacao.get('total_salvos', 0)} | "
                 f"Duplicados: "
-                f"{resultado_avaliacao.get('total_duplicados', 0)}"
+                f"{resultado_avaliacao.get('total_duplicados', 0)} | "
+                f"E-mails enviados: "
+                f"{resultado_avaliacao.get('total_notificacoes_enviadas', 0)} | "
+                f"Falhas de e-mail: "
+                f"{resultado_avaliacao.get('total_notificacoes_falhas', 0)}"
             )
         else:
             st.error(

@@ -544,6 +544,164 @@ def notificar_alerta_email(
         }
 
 
+def avaliar_persistir_e_notificar_alertas(
+    df,
+    finops: dict[str, Any],
+) -> dict[str, Any]:
+    """
+    Detecta, persiste e notifica somente alertas novos.
+
+    Regras:
+    - não notifica alertas duplicados;
+    - não notifica alertas médios ou baixos;
+    - registra cada tentativa na auditoria;
+    - falha de e-mail não desfaz o alerta persistido.
+    """
+    try:
+        try:
+            from observability.llm_alerts import (
+                avaliar_e_persistir_alertas,
+            )
+        except ImportError:
+            from src.observability.llm_alerts import (
+                avaliar_e_persistir_alertas,
+            )
+
+        resultado_alertas = (
+            avaliar_e_persistir_alertas(
+                df,
+                finops,
+            )
+        )
+
+        detectados = resultado_alertas.get(
+            "alertas_detectados",
+            [],
+        )
+
+        persistencias = resultado_alertas.get(
+            "resultados_persistencia",
+            [],
+        )
+
+        notificacoes: list[dict[str, Any]] = []
+
+        for alerta, persistencia in zip(
+            detectados,
+            persistencias,
+        ):
+            if not persistencia.get("salvo"):
+                notificacoes.append(
+                    {
+                        "ok": True,
+                        "enviado": False,
+                        "duplicado": bool(
+                            persistencia.get(
+                                "duplicado"
+                            )
+                        ),
+                        "ignorado": True,
+                        "codigo": alerta.get(
+                            "codigo"
+                        ),
+                        "message": (
+                            "Alerta não notificado porque "
+                            "não foi criado um novo registro."
+                        ),
+                    }
+                )
+                continue
+
+            alerta_persistido = {
+                **alerta,
+                "id": int(
+                    persistencia["id"]
+                ),
+                "status": "aberto",
+                "criado_em": persistencia.get(
+                    "criado_em"
+                ),
+            }
+
+            resultado_notificacao = (
+                notificar_alerta_email(
+                    alerta_persistido
+                )
+            )
+
+            notificacoes.append(
+                {
+                    **resultado_notificacao,
+                    "alerta_id": (
+                        alerta_persistido["id"]
+                    ),
+                    "codigo": alerta.get(
+                        "codigo"
+                    ),
+                    "severidade": alerta.get(
+                        "severidade"
+                    ),
+                }
+            )
+
+        total_enviados = sum(
+            1
+            for item in notificacoes
+            if item.get("enviado")
+        )
+
+        total_ignorados = sum(
+            1
+            for item in notificacoes
+            if item.get("ignorado")
+        )
+
+        total_falhas = sum(
+            1
+            for item in notificacoes
+            if (
+                not item.get("ok")
+                and not item.get("ignorado")
+            )
+        )
+
+        return {
+            **resultado_alertas,
+            "notificacoes": notificacoes,
+            "total_notificacoes_enviadas": (
+                total_enviados
+            ),
+            "total_notificacoes_ignoradas": (
+                total_ignorados
+            ),
+            "total_notificacoes_falhas": (
+                total_falhas
+            ),
+            "ok_notificacoes": (
+                total_falhas == 0
+            ),
+        }
+
+    except Exception as exc:
+        return {
+            "ok": False,
+            "ok_notificacoes": False,
+            "alertas_detectados": [],
+            "resultados_persistencia": [],
+            "notificacoes": [],
+            "total_detectados": 0,
+            "total_salvos": 0,
+            "total_duplicados": 0,
+            "total_notificacoes_enviadas": 0,
+            "total_notificacoes_ignoradas": 0,
+            "total_notificacoes_falhas": 1,
+            "message": (
+                "Erro na automação de alertas: "
+                f"{exc}"
+            ),
+        }
+
+
 def carregar_notificacoes(
     *,
     limite: int = 500,
@@ -625,5 +783,6 @@ __all__ = [
     "alerta_deve_ser_enviado",
     "montar_email_alerta",
     "notificar_alerta_email",
+    "avaliar_persistir_e_notificar_alertas",
     "carregar_notificacoes",
 ]
