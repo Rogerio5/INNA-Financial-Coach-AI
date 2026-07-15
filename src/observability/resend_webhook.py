@@ -484,6 +484,103 @@ def processar_evento_resend(
         }
 
 
+
+def carregar_eventos_resend(
+    *,
+    limite: int = 500,
+    horas: int | None = None,
+) -> dict[str, Any]:
+    """
+    Carrega eventos recebidos pelo webhook do Resend.
+    """
+    inicializacao = (
+        inicializar_tabelas_resend_webhook()
+    )
+
+    if not inicializacao.get("ok"):
+        return {
+            **inicializacao,
+            "eventos": [],
+            "total": 0,
+        }
+
+    try:
+        limite = max(int(limite), 1)
+
+        filtro_periodo = ""
+        parametros: dict[str, Any] = {
+            "limite": limite,
+        }
+
+        if horas is not None:
+            horas = max(int(horas), 1)
+
+            filtro_periodo = """
+                WHERE recebido_em >=
+                    NOW() - (
+                        :horas * INTERVAL '1 hour'
+                    )
+            """
+
+            parametros["horas"] = horas
+
+        engine = _criar_engine()
+
+        consulta = text(f"""
+            SELECT
+                id,
+                svix_id,
+                evento_tipo,
+                provider_message_id,
+                recebido_em,
+                processado,
+                processado_em,
+                resultado,
+                erro_mensagem
+            FROM {NOME_TABELA_EVENTOS}
+            {filtro_periodo}
+            ORDER BY recebido_em DESC
+            LIMIT :limite;
+        """)
+
+        with engine.connect() as connection:
+            rows = (
+                connection.execute(
+                    consulta,
+                    parametros,
+                )
+                .mappings()
+                .all()
+            )
+
+        engine.dispose()
+
+        eventos = [
+            dict(row)
+            for row in rows
+        ]
+
+        return {
+            "ok": True,
+            "eventos": eventos,
+            "total": len(eventos),
+            "message": (
+                "Eventos do Resend carregados."
+            ),
+        }
+
+    except Exception as exc:
+        return {
+            "ok": False,
+            "eventos": [],
+            "total": 0,
+            "message": (
+                "Erro ao carregar eventos do Resend: "
+                f"{exc}"
+            ),
+        }
+
+
 def carregar_saude_integracoes() -> dict[str, Any]:
     """
     Retorna o estado das integrações usadas pelos alertas.
@@ -648,4 +745,5 @@ __all__ = [
     "extrair_motivo",
     "processar_evento_resend",
     "carregar_saude_integracoes",
+    "carregar_eventos_resend",
 ]

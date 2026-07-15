@@ -647,10 +647,12 @@ def render_alertas_llm_section(
         try:
             from observability.resend_webhook import (
                 carregar_saude_integracoes,
+                carregar_eventos_resend,
             )
         except ImportError:
             from src.observability.resend_webhook import (
                 carregar_saude_integracoes,
+                carregar_eventos_resend,
             )
 
         saude = carregar_saude_integracoes()
@@ -789,6 +791,283 @@ def render_alertas_llm_section(
             "Não foi possível carregar a saúde "
             f"das integrações: {exc}"
         )
+
+    st.markdown(
+        "### 📨 Eventos do webhook do Resend"
+    )
+
+    controle_evento_1, controle_evento_2 = (
+        st.columns(2)
+    )
+
+    periodo_eventos = controle_evento_1.selectbox(
+        "Período dos eventos",
+        options=[
+            "Últimas 24 horas",
+            "Últimos 7 dias",
+            "Todo o histórico",
+        ],
+        key="resend_events_period",
+    )
+
+    limite_eventos = controle_evento_2.selectbox(
+        "Limite de eventos",
+        options=[
+            50,
+            100,
+            250,
+            500,
+        ],
+        index=1,
+        key="resend_events_limit",
+    )
+
+    horas_eventos = {
+        "Últimas 24 horas": 24,
+        "Últimos 7 dias": 168,
+        "Todo o histórico": None,
+    }.get(periodo_eventos)
+
+    resultado_eventos = carregar_eventos_resend(
+        limite=limite_eventos,
+        horas=horas_eventos,
+    )
+
+    if not resultado_eventos.get("ok"):
+        st.warning(
+            resultado_eventos.get(
+                "message",
+                "Eventos indisponíveis.",
+            )
+        )
+
+    else:
+        eventos_resend = pd.DataFrame(
+            resultado_eventos.get(
+                "eventos",
+                [],
+            )
+        )
+
+        if eventos_resend.empty:
+            st.info(
+                "Nenhum evento do webhook "
+                "encontrado neste período."
+            )
+
+        else:
+            total_eventos = len(eventos_resend)
+
+            total_processados = int(
+                eventos_resend[
+                    "processado"
+                ]
+                .fillna(False)
+                .astype(bool)
+                .sum()
+            )
+
+            total_falhas_eventos = int(
+                (
+                    eventos_resend[
+                        "resultado"
+                    ]
+                    .fillna("")
+                    .astype(str)
+                    .str.lower()
+                    .eq("erro")
+                    |
+                    eventos_resend[
+                        "processado"
+                    ]
+                    .fillna(False)
+                    .eq(False)
+                ).sum()
+            )
+
+            ultimo_evento = (
+                eventos_resend.iloc[0][
+                    "evento_tipo"
+                ]
+                if not eventos_resend.empty
+                else "Nenhum"
+            )
+
+            evento_col_1, evento_col_2, evento_col_3, evento_col_4 = (
+                st.columns(4)
+            )
+
+            evento_col_1.metric(
+                "Total de eventos",
+                total_eventos,
+            )
+
+            evento_col_2.metric(
+                "Processados",
+                total_processados,
+            )
+
+            evento_col_3.metric(
+                "Falhas",
+                total_falhas_eventos,
+            )
+
+            evento_col_4.metric(
+                "Último evento",
+                str(ultimo_evento),
+            )
+
+            filtro_evento_1, filtro_evento_2 = (
+                st.columns(2)
+            )
+
+            tipos_eventos = [
+                "todos",
+                *sorted(
+                    eventos_resend[
+                        "evento_tipo"
+                    ]
+                    .dropna()
+                    .astype(str)
+                    .unique()
+                    .tolist()
+                ),
+            ]
+
+            tipo_evento_filtro = (
+                filtro_evento_1.selectbox(
+                    "Tipo do evento",
+                    options=tipos_eventos,
+                    key="resend_event_type_filter",
+                )
+            )
+
+            resultados_eventos = [
+                "todos",
+                *sorted(
+                    eventos_resend[
+                        "resultado"
+                    ]
+                    .dropna()
+                    .astype(str)
+                    .unique()
+                    .tolist()
+                ),
+            ]
+
+            resultado_evento_filtro = (
+                filtro_evento_2.selectbox(
+                    "Resultado",
+                    options=resultados_eventos,
+                    key=(
+                        "resend_event_result_filter"
+                    ),
+                )
+            )
+
+            eventos_filtrados = (
+                eventos_resend.copy()
+            )
+
+            if tipo_evento_filtro != "todos":
+                eventos_filtrados = (
+                    eventos_filtrados[
+                        eventos_filtrados[
+                            "evento_tipo"
+                        ]
+                        == tipo_evento_filtro
+                    ]
+                )
+
+            if (
+                resultado_evento_filtro
+                != "todos"
+            ):
+                eventos_filtrados = (
+                    eventos_filtrados[
+                        eventos_filtrados[
+                            "resultado"
+                        ]
+                        == resultado_evento_filtro
+                    ]
+                )
+
+            eventos_filtrados[
+                "processado_exibicao"
+            ] = eventos_filtrados[
+                "processado"
+            ].apply(
+                lambda valor: (
+                    "🟢 Sim"
+                    if bool(valor)
+                    else "🔴 Não"
+                )
+            )
+
+            colunas_eventos = [
+                "id",
+                "evento_tipo",
+                "provider_message_id",
+                "recebido_em",
+                "processado_exibicao",
+                "processado_em",
+                "resultado",
+                "erro_mensagem",
+                "svix_id",
+            ]
+
+            tabela_eventos = (
+                eventos_filtrados[
+                    colunas_eventos
+                ]
+                .copy()
+                .rename(
+                    columns={
+                        "id": "ID",
+                        "evento_tipo": (
+                            "Tipo do evento"
+                        ),
+                        "provider_message_id": (
+                            "Message ID"
+                        ),
+                        "recebido_em": (
+                            "Recebido em"
+                        ),
+                        "processado_exibicao": (
+                            "Processado"
+                        ),
+                        "processado_em": (
+                            "Processado em"
+                        ),
+                        "resultado": "Resultado",
+                        "erro_mensagem": "Erro",
+                        "svix_id": "Svix ID",
+                    }
+                )
+            )
+
+            st.dataframe(
+                tabela_eventos,
+                use_container_width=True,
+                hide_index=True,
+            )
+
+            csv_eventos = (
+                tabela_eventos.to_csv(
+                    index=False
+                ).encode("utf-8-sig")
+            )
+
+            st.download_button(
+                "⬇️ Exportar eventos do webhook em CSV",
+                data=csv_eventos,
+                file_name=(
+                    "inna_resend_webhook_eventos.csv"
+                ),
+                mime="text/csv",
+                use_container_width=True,
+                key="resend_events_download",
+            )
 
     st.markdown(
         "### Auditoria das notificações"
