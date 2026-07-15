@@ -283,16 +283,47 @@ def processar_evento_resend(
             )
 
     except IntegrityError:
-        engine.dispose()
+        verificar_evento = text(f"""
+            SELECT
+                processado,
+                resultado
+            FROM {NOME_TABELA_EVENTOS}
+            WHERE svix_id = :svix_id
+            LIMIT 1;
+        """)
 
-        return {
-            "ok": True,
-            "duplicado": True,
-            "atualizado": False,
-            "message": (
-                "Evento já processado anteriormente."
-            ),
-        }
+        with engine.connect() as connection:
+            evento_existente = (
+                connection.execute(
+                    verificar_evento,
+                    {"svix_id": svix_id},
+                )
+                .mappings()
+                .first()
+            )
+
+        processamento_concluido = bool(
+            evento_existente
+            and evento_existente.get("processado")
+            and evento_existente.get("resultado")
+            == "notificacao_atualizada"
+        )
+
+        if processamento_concluido:
+            engine.dispose()
+
+            return {
+                "ok": True,
+                "duplicado": True,
+                "atualizado": False,
+                "message": (
+                    "Evento já processado anteriormente."
+                ),
+            }
+
+        # O evento existe, mas falhou, ficou incompleto
+        # ou não encontrou a notificação. O processamento
+        # continua para permitir replay seguro.
 
     try:
         atualizado = False
