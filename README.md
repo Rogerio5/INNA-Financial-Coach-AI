@@ -1116,3 +1116,288 @@ Esta versão tem como objetivo demonstrar que a INNA não é apenas um protótip
 
 - [Pitch — INNA Financial Coach AI](docs/pitch.md)
 
+---
+
+## 📡 Observabilidade, alertas e monitoramento de e-mails
+
+A INNA possui uma camada profissional de observabilidade para acompanhar custos, desempenho, falhas, latência, alertas operacionais e entrega real das notificações por e-mail.
+
+### 🔄 Fluxo de monitoramento
+
+```mermaid
+flowchart LR
+    A[Telemetria das chamadas LLM] --> B[Avaliação dos limites]
+    B --> C[Alerta persistido no PostgreSQL]
+    C --> D[Notificação enviada pelo Resend]
+    D --> E[Webhook assinado do Resend]
+    E --> F[FastAPI valida a assinatura]
+    F --> G[Evento salvo e processado]
+    G --> H[Status atualizado no PostgreSQL]
+    H --> I[Dashboard de observabilidade]
+```
+
+### 🚨 Alertas operacionais
+
+O sistema pode detectar e registrar alertas relacionados a:
+
+- custo acumulado;
+- projeção mensal;
+- consumo de tokens;
+- falhas em chamadas de IA;
+- latência elevada;
+- limites operacionais;
+- severidades baixa, média, alta e crítica.
+
+A deduplicação permite apenas um alerta aberto para cada chave operacional. Após a resolução, uma nova ocorrência pode ser registrada.
+
+### 📧 Notificações por e-mail
+
+Alertas altos e críticos podem ser enviados automaticamente pelo Resend.
+
+A auditoria registra:
+
+- alerta relacionado;
+- destinatário mascarado;
+- assunto;
+- número de tentativas;
+- identificador da mensagem no provider;
+- horário do envio;
+- status real da entrega;
+- evento recebido do Resend;
+- horário de entrega ou devolução;
+- motivo de falha;
+- erros técnicos.
+
+### 🔐 Webhook seguro do Resend
+
+Endpoint da API:
+
+```text
+POST /webhooks/resend
+```
+
+A requisição é validada utilizando o corpo bruto e os cabeçalhos criptográficos enviados pelo Svix.
+
+Eventos tratados:
+
+```text
+email.sent
+email.delivered
+email.delivery_delayed
+email.bounced
+email.failed
+email.suppressed
+email.complained
+email.opened
+email.clicked
+```
+
+O processamento implementa:
+
+- validação criptográfica da assinatura;
+- idempotência pelo identificador Svix;
+- replay seguro de eventos incompletos;
+- proteção contra eventos fora de ordem;
+- preservação do status `entregue`;
+- auditoria completa dos eventos recebidos;
+- atualização do status no PostgreSQL.
+
+### 🗄️ Tabelas de observabilidade
+
+#### `llm_alerts_inna`
+
+Armazena:
+
+- alertas técnicos;
+- severidade;
+- categoria;
+- valor atual;
+- valor limite;
+- status;
+- data e responsável pela resolução;
+- chave de deduplicação.
+
+#### `llm_alert_notifications_inna`
+
+Armazena:
+
+- envio das notificações;
+- quantidade de tentativas;
+- provider message ID;
+- status do envio;
+- status real da entrega;
+- evento do Resend;
+- data de envio;
+- data de entrega ou devolução;
+- erros e motivos de falha.
+
+#### `resend_webhook_events_inna`
+
+Armazena:
+
+- identificador Svix;
+- tipo do evento;
+- provider message ID;
+- data de recebimento;
+- status do processamento;
+- resultado;
+- erros técnicos.
+
+### 📊 Dashboard profissional
+
+O LLM Cost Center oferece:
+
+- custo acumulado;
+- custo médio por chamada;
+- projeção mensal;
+- uso do orçamento;
+- consumo por modelo;
+- consumo por operação;
+- evolução temporal;
+- alertas abertos e resolvidos;
+- avaliação manual dos limites;
+- envio automático de alertas;
+- auditoria das notificações;
+- taxa real de entrega;
+- filtros por status e destinatário;
+- saúde do PostgreSQL, Resend e webhook;
+- quantidade de eventos nas últimas 24 horas;
+- tabela dos eventos do Resend;
+- exportação das auditorias em CSV;
+- reenvio controlado de notificações com falha.
+
+### 🩺 Saúde das integrações
+
+O dashboard monitora:
+
+```text
+PostgreSQL conectado
+Resend configurado
+Webhook configurado
+Alertas por e-mail habilitados
+Eventos recebidos nas últimas 24 horas
+Falhas de webhook nas últimas 24 horas
+E-mails entregues
+E-mails com falha
+```
+
+### 🔄 Reenvio seguro
+
+O botão de reenvio aparece somente para notificações com os estados:
+
+```text
+falhou
+devolvido
+suprimido
+```
+
+Proteções implementadas:
+
+- máximo de três tentativas;
+- bloqueio de e-mails já entregues;
+- bloqueio contra processamento simultâneo;
+- geração de um novo provider message ID;
+- nova confirmação por webhook;
+- registro da falha em caso de erro no reenvio.
+
+### 🛡️ Segurança e privacidade
+
+A telemetria armazena apenas informações técnicas necessárias para observabilidade.
+
+O conteúdo completo do prompt e da resposta da IA não é salvo nas tabelas de custos e alertas.
+
+Os segredos devem permanecer no `.env` local e nas variáveis seguras do Render.
+
+### ⚙️ Variáveis de ambiente
+
+```env
+DATABASE_URL=
+RESEND_API_KEY=
+RESEND_WEBHOOK_SECRET=
+EMAIL_FROM=
+LLM_ALERT_EMAIL_ENABLED=true
+LLM_ALERT_EMAIL_TO=
+LLM_ALERT_MIN_SEVERITY=alta
+LLM_ALERT_COOLDOWN_MINUTES=60
+```
+
+As chaves reais nunca devem ser enviadas ao GitHub.
+
+### 🧪 Testes automatizados
+
+A camada de observabilidade possui testes para:
+
+- detecção e persistência de alertas;
+- deduplicação;
+- envio de notificações;
+- bloqueio de e-mails duplicados;
+- processamento de eventos do Resend;
+- saúde das integrações;
+- carregamento dos eventos do webhook;
+- bloqueio de reenvio para e-mails entregues.
+
+Para executar:
+
+```powershell
+python -m pytest tests\unit -q
+```
+
+Resultado atual esperado:
+
+```text
+199 passed
+```
+
+### ✅ Validação técnica
+
+```powershell
+python -m py_compile api\main.py
+python -m py_compile api\resend_webhook.py
+python -m py_compile src\observability\resend_webhook.py
+python -m py_compile src\observability\llm_notifications.py
+python -m py_compile src\observability\llm_alerts.py
+python -m py_compile src\dashboard_pages\llm_costs_page.py
+python -m pytest tests\unit -q
+python -m pip check
+```
+
+### 🌐 Endpoints públicos
+
+```text
+GET  /
+GET  /health
+GET  /docs
+POST /webhooks/resend
+```
+
+API publicada:
+
+```text
+https://inna-api.onrender.com
+```
+
+### 🧱 Arquitetura da observabilidade
+
+```text
+Streamlit Dashboard
+        │
+        ▼
+Avaliação dos alertas
+        │
+        ▼
+PostgreSQL / Neon
+        │
+        ▼
+Resend API
+        │
+        ▼
+Webhook assinado
+        │
+        ▼
+FastAPI
+        │
+        ▼
+Auditoria e status real de entrega
+```
+
+
