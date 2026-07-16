@@ -26,6 +26,9 @@ from src.agents.persistence import (
 )
 from src.agents.state import InnaAgentState
 from src.agents.supervisor import supervisor_node
+from src.context_engineering.node import (
+    context_builder_node,
+)
 
 
 def _selecionar_rota(
@@ -39,6 +42,11 @@ def _selecionar_rota(
 
 def criar_builder_inna() -> StateGraph:
     builder = StateGraph(InnaAgentState)
+
+    builder.add_node(
+        "context_builder",
+        context_builder_node,
+    )
 
     builder.add_node(
         "supervisor",
@@ -72,6 +80,11 @@ def criar_builder_inna() -> StateGraph:
 
     builder.add_edge(
         START,
+        "context_builder",
+    )
+
+    builder.add_edge(
+        "context_builder",
         "supervisor",
     )
 

@@ -55,10 +55,20 @@ def test_grafo_executa_agente_financeiro():
     assert "agent_response" in (
         resultado["structured_response"]
     )
-    assert resultado["trace"] == [
-        "supervisor:diagnostico_financeiro",
-        "agent:financial_agent",
-    ]
+    assert (
+        resultado["trace"][0]
+        == "context_builder:0_messages"
+    )
+
+    assert (
+        "supervisor:diagnostico_financeiro"
+        in resultado["trace"]
+    )
+
+    assert (
+        resultado["trace"][-1]
+        == "agent:financial_agent"
+    )
 
 
 def test_grafo_executa_fallback():
