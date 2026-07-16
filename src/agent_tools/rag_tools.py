@@ -169,6 +169,11 @@ def consultar_rag_inna(
             quantidade_documentos = len(
                 documentos
             )
+
+            if quantidade_documentos == 0:
+                quantidade_documentos = len(
+                    fontes
+                )
         else:
             quantidade_documentos = len(
                 fontes

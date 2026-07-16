@@ -40,6 +40,12 @@ def _finalizar(
     return {
         **state,
         "response": resposta.summary,
+        "conversation_history": [
+            {
+                "role": "assistant",
+                "content": resposta.summary,
+            }
+        ],
         "structured_response": {
             **state.get(
                 "structured_response",
@@ -213,6 +219,12 @@ def rag_agent_node(
         return {
             **state,
             "response": resposta.summary,
+            "conversation_history": [
+                {
+                    "role": "assistant",
+                    "content": resposta.summary,
+                }
+            ],
             "structured_response": (
                 structured_response
             ),
@@ -249,6 +261,12 @@ def rag_agent_node(
     return {
         **state,
         "response": resultado.answer,
+        "conversation_history": [
+            {
+                "role": "assistant",
+                "content": resultado.answer,
+            }
+        ],
         "structured_response": (
             structured_response
         ),

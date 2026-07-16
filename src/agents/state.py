@@ -4,7 +4,65 @@ Estado compartilhado do núcleo de agentes da INNA.
 
 from __future__ import annotations
 
-from typing import Any, Literal, TypedDict
+from typing import Annotated, Any, Literal, TypedDict
+
+
+def merge_conversation_history(
+    current: list[dict[str, str]] | None,
+    update: list[dict[str, str]] | None,
+) -> list[dict[str, str]]:
+    """
+    Combina o histórico de conversa sem duplicações.
+
+    Compatível tanto com atualizações incrementais quanto
+    com nós que retornam o estado completo.
+    """
+    current = list(current or [])
+    update = list(update or [])
+
+    if not update:
+        return current
+
+    if not current:
+        return update
+
+    # O nó pode devolver o histórico completo mais a nova mensagem.
+    if (
+        len(update) >= len(current)
+        and update[: len(current)] == current
+    ):
+        return update
+
+    resultado = list(current)
+
+    for mensagem in update:
+        if not isinstance(mensagem, dict):
+            continue
+
+        role = str(
+            mensagem.get("role", "")
+        ).strip()
+
+        texto = str(
+            mensagem.get("content", "")
+        ).strip()
+
+        if not role or not texto:
+            continue
+
+        normalizada = {
+            "role": role,
+            "content": texto,
+        }
+
+        # Evita apenas duplicação consecutiva.
+        # A mesma pergunta pode aparecer novamente mais tarde.
+        if resultado and resultado[-1] == normalizada:
+            continue
+
+        resultado.append(normalizada)
+
+    return resultado
 
 
 IntentType = Literal[
@@ -29,6 +87,13 @@ class InnaAgentState(TypedDict, total=False):
     language: str
     currency: str
 
+    thread_id: str
+    conversation_history: Annotated[
+        list[dict[str, str]],
+        merge_conversation_history,
+    ]
+    conversation_summary: str
+
     intent: IntentType
     confidence: float
     next_node: str
@@ -50,4 +115,5 @@ class InnaAgentState(TypedDict, total=False):
 __all__ = [
     "IntentType",
     "InnaAgentState",
+    "merge_conversation_history",
 ]
