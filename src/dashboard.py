@@ -6276,13 +6276,22 @@ Conteúdo:
             "resultado"
         )
 
+        from src.services.llm.model_registry import (
+            LLMRole,
+            get_model_for_role,
+        )
+
+        modelo_rag = get_model_for_role(
+            LLMRole.RAG
+        )
+
         etapa_gemini = executar_etapa_timeline(
             trace_id=trace_id,
             etapa="gemini_executado",
             funcao=gerar_texto_gemini,
             argumentos={
                 "prompt": prompt,
-                "modelo": "gemini-2.5-flash",
+                "role": LLMRole.RAG,
                 "temperatura": 0.2,
                 "max_tokens": 4096,
             },
@@ -6290,7 +6299,8 @@ Conteúdo:
             pergunta=pergunta,
             origem="dashboard_rag",
             metadata={
-                "modelo": "gemini-2.5-flash",
+                "modelo": modelo_rag,
+                "role": LLMRole.RAG.value,
                 "temperatura": 0.2,
                 "max_tokens": 4096,
             },

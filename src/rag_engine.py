@@ -18,6 +18,11 @@ except ImportError:
     )
 
 
+from src.services.llm.model_registry import (
+    LLMRole,
+    get_model_for_role,
+)
+
 load_dotenv(".env")
 
 RAG_VECTOR_DIM = int(os.getenv("INNA_RAG_VECTOR_DIM", "384"))
@@ -1256,9 +1261,8 @@ A resposta deve:
 7. Terminar com uma pergunta curta para continuar a conversa, quando fizer sentido.
 """
 
-        modelo_gemini = os.getenv(
-            "GEMINI_MODEL",
-            "gemini-2.5-flash-lite",
+        modelo_gemini = get_model_for_role(
+            LLMRole.RAG
         )
 
         response = executar_generate_content_observado(

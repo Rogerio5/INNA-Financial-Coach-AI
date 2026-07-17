@@ -11,6 +11,13 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from src.services.llm.model_registry import (
+    DEFAULT_TEXT_MODEL,
+    LLMRole,
+    get_model_for_role,
+    reset_model_registry_cache,
+)
+
 
 load_dotenv(
     dotenv_path=Path(".env"),
@@ -19,7 +26,7 @@ load_dotenv(
 
 
 DEFAULT_SUPERVISOR_MODEL = (
-    "gemini-3.1-flash-lite"
+    DEFAULT_TEXT_MODEL
 )
 
 DEFAULT_SUPERVISOR_TIMEOUT_MS = 15_000
@@ -72,15 +79,9 @@ class SupervisorRuntimeConfig:
 @lru_cache(maxsize=1)
 def get_supervisor_runtime_config(
 ) -> SupervisorRuntimeConfig:
-    model = str(
-        os.getenv(
-            "INNA_SUPERVISOR_MODEL",
-            DEFAULT_SUPERVISOR_MODEL,
-        )
-    ).strip()
-
-    if not model:
-        model = DEFAULT_SUPERVISOR_MODEL
+    model = get_model_for_role(
+        LLMRole.SUPERVISOR
+    )
 
     return SupervisorRuntimeConfig(
         model=model,
@@ -137,6 +138,7 @@ def get_gemini_api_key() -> str:
 
 def reset_supervisor_config_cache() -> None:
     get_supervisor_runtime_config.cache_clear()
+    reset_model_registry_cache()
 
 
 __all__ = [

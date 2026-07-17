@@ -27,12 +27,18 @@ except ImportError:
         executar_generate_content_observado,
     )
 
-from src.config import GEMINI_API_KEY, GEMINI_MODEL, INNA_MOCK_MODE
+from src.config import GEMINI_API_KEY, INNA_MOCK_MODE
+from src.services.llm.model_registry import (
+    LLMRole,
+    get_model_for_role,
+)
 from src.prompts import build_plan_prompt
 
 LAST_GEMINI_USAGE_METADATA = {
     "provider": "gemini",
-    "modelo_ia": GEMINI_MODEL,
+    "modelo_ia": get_model_for_role(
+        LLMRole.FINANCIAL_EXPLANATION
+    ),
     "prompt_tokens": 0,
     "completion_tokens": 0,
     "total_tokens": 0,
@@ -661,9 +667,13 @@ def generate_ai_plan(payload: dict, diagnosis: dict) -> str:
         client = genai.Client(api_key=GEMINI_API_KEY)
         prompt = build_plan_prompt(payload, diagnosis)
 
+        modelo_geracao = get_model_for_role(
+            LLMRole.FINANCIAL_EXPLANATION
+        )
+
         response = executar_generate_content_observado(
             client,
-            modelo=GEMINI_MODEL,
+            modelo=modelo_geracao,
             contents=prompt,
             operacao="plano_financeiro",
             origem="gemini_client",

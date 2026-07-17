@@ -27,7 +27,13 @@ except ImportError:
     )
 
 
-MODELO_TEXTO_PADRAO = "gemini-2.5-flash"
+from src.services.llm.model_registry import (
+    DEFAULT_TEXT_MODEL,
+    LLMRole,
+    get_model_for_role,
+)
+
+MODELO_TEXTO_PADRAO = DEFAULT_TEXT_MODEL
 
 
 class GeminiTextConfigurationError(RuntimeError):
@@ -138,7 +144,8 @@ def _extrair_texto_resposta(response: Any) -> str:
 def gerar_texto_gemini(
     prompt: Any,
     *,
-    modelo: str = MODELO_TEXTO_PADRAO,
+    modelo: str | None = None,
+    role: LLMRole | str = LLMRole.DEFAULT,
     temperatura: float = 0.3,
     max_tokens: int = 2048,
 ) -> str:
@@ -173,6 +180,11 @@ def gerar_texto_gemini(
     try:
         from google.genai import types
 
+        modelo_resolvido = (
+            str(modelo or "").strip()
+            or get_model_for_role(role)
+        )
+
         client = criar_cliente_gemini()
 
         config = types.GenerateContentConfig(
@@ -185,7 +197,7 @@ def gerar_texto_gemini(
 
         response = executar_generate_content_observado(
             client,
-            modelo=modelo,
+            modelo=modelo_resolvido,
             contents=prompt_normalizado,
             config=config,
             operacao="llm_service_generate",
@@ -235,7 +247,9 @@ def testar_servico_gemini() -> dict:
             "ok": True,
             "message": "Serviço textual Gemini validado.",
             "response": resposta,
-            "model": MODELO_TEXTO_PADRAO,
+            "model": get_model_for_role(
+                LLMRole.DEFAULT
+            ),
             "sdk": "google-genai",
         }
 
@@ -244,7 +258,9 @@ def testar_servico_gemini() -> dict:
             "ok": False,
             "message": str(exc),
             "response": "",
-            "model": MODELO_TEXTO_PADRAO,
+            "model": get_model_for_role(
+                LLMRole.DEFAULT
+            ),
             "sdk": "google-genai",
         }
 
