@@ -12,12 +12,16 @@ import os
 from src.agent_tools.core import (
     ToolRegistry,
 )
+from src.agent_tools.financial_tools import (
+    criar_definicao_calcular_diagnostico_financeiro,
+)
 from src.agent_tools.rag_tools import (
     criar_definicao_buscar_conhecimento_rag,
 )
 
 
 DEFAULT_RAG_TOOL_TIMEOUT_SECONDS = 20.0
+DEFAULT_FINANCIAL_TOOL_TIMEOUT_SECONDS = 2.0
 
 
 def _positive_float_environment(
@@ -46,9 +50,6 @@ def criar_registro_ferramentas_inna(
 ) -> ToolRegistry:
     """
     Monta o catálogo completo de ferramentas.
-
-    Novas ferramentas financeiras e de relatório
-    serão registradas aqui nas próximas etapas.
     """
     registry = ToolRegistry()
 
@@ -57,9 +58,22 @@ def criar_registro_ferramentas_inna(
         DEFAULT_RAG_TOOL_TIMEOUT_SECONDS,
     )
 
+    financial_timeout = (
+        _positive_float_environment(
+            "INNA_FINANCIAL_TOOL_TIMEOUT_SECONDS",
+            DEFAULT_FINANCIAL_TOOL_TIMEOUT_SECONDS,
+        )
+    )
+
     registry.register(
         criar_definicao_buscar_conhecimento_rag(
             timeout_seconds=rag_timeout,
+        )
+    )
+
+    registry.register(
+        criar_definicao_calcular_diagnostico_financeiro(
+            timeout_seconds=financial_timeout,
         )
     )
 
@@ -69,8 +83,8 @@ def criar_registro_ferramentas_inna(
 def obter_catalogo_schemas_ferramentas(
 ) -> list[dict]:
     """
-    Retorna schemas apropriados para integração
-    futura com Gemini Function Calling.
+    Retorna schemas para integração futura com
+    Gemini Function Calling.
     """
     return (
         criar_registro_ferramentas_inna()
@@ -79,6 +93,7 @@ def obter_catalogo_schemas_ferramentas(
 
 
 __all__ = [
+    "DEFAULT_FINANCIAL_TOOL_TIMEOUT_SECONDS",
     "DEFAULT_RAG_TOOL_TIMEOUT_SECONDS",
     "criar_registro_ferramentas_inna",
     "obter_catalogo_schemas_ferramentas",

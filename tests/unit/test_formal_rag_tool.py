@@ -98,12 +98,13 @@ def test_schema_catalog_exposes_rag_tool():
         obter_catalogo_schemas_ferramentas()
     )
 
-    assert len(catalog) == 1
-    assert catalog[0]["name"] == (
-        RAG_TOOL_NAME
+    rag_definition = next(
+        item
+        for item in catalog
+        if item["name"] == RAG_TOOL_NAME
     )
 
-    properties = catalog[0][
+    properties = rag_definition[
         "input_schema"
     ]["properties"]
 
