@@ -61,7 +61,7 @@ def test_grafo_executa_agente_financeiro():
     )
 
     assert (
-        "supervisor:diagnostico_financeiro"
+        "supervisor:rule:diagnostico_financeiro"
         in resultado["trace"]
     )
 
