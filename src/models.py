@@ -9,6 +9,7 @@ class DiagnosticoFinanceiro(Base):
     __tablename__ = "diagnosticos_financeiros"
 
     id = Column(Integer, primary_key=True, index=True)
+    usuario_id = Column(String(160), nullable=True)
     data_hora = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     nome = Column(String(120), nullable=False)
