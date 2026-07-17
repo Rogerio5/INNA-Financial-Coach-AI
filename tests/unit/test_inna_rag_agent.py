@@ -1,5 +1,14 @@
 from __future__ import annotations
 
+from src.agent_tools.core import (
+    ToolError,
+    ToolResult,
+    ToolStatus,
+)
+from src.agent_tools.rag_tools import (
+    RAG_TOOL_NAME,
+)
+
 from unittest.mock import patch
 
 from src.agent_tools.rag_tools import (
@@ -38,31 +47,31 @@ def test_consultar_rag_rejeita_pergunta_curta():
     )
 
 
-@patch(
-    "src.agents.nodes."
-    "consultar_rag_inna"
-)
-def test_rag_agent_node_sucesso(
-    mock_consultar,
-):
-    mock_consultar.return_value = (
-        RagToolResult(
-            ok=True,
-            question=(
+def test_rag_agent_node_sucesso():
+    tool_result = ToolResult(
+        call_id="call-rag-success",
+        tool_name=RAG_TOOL_NAME,
+        status=ToolStatus.SUCCESS,
+        output={
+            "pergunta": (
                 "Como criar uma reserva?"
             ),
-            language="pt",
-            answer=(
-                "Comece definindo um valor "
-                "mensal possível."
+            "idioma": "pt",
+            "resposta": (
+                "Comece reservando uma parte "
+                "da renda todos os meses."
             ),
-            sources=[
-                "base-reserva-financeira"
+            "fontes": [
+                "reserva_financeira.md",
             ],
-            mode="rag_hibrido",
-            retrieved_documents=3,
-            duration_ms=125,
-        )
+            "modo": (
+                "rag_hibrido_pgvector_text_"
+                "neon_rerank"
+            ),
+            "documentos_recuperados": 3,
+            "duracao_rag_ms": 120,
+        },
+        duration_ms=135.0,
     )
 
     state = {
@@ -70,88 +79,123 @@ def test_rag_agent_node_sucesso(
             "Como criar uma reserva?"
         ),
         "language": "pt",
+        "user_id": "user-test",
+        "thread_id": "thread-test",
+        "trace_id": "trace-test",
         "intent": "consulta_rag",
-        "confidence": 0.80,
-        "structured_response": {},
-        "tool_results": [],
+        "confidence": 0.90,
+        "trace": [],
         "errors": [],
-        "trace": [
-            "supervisor:consulta_rag"
-        ],
+        "tool_results": [],
+        "structured_response": {},
     }
 
-    resultado = rag_agent_node(state)
+    with patch(
+        "src.agents.nodes."
+        "executar_ferramenta_inna",
+        return_value=tool_result,
+    ) as mock_execute:
+        result = rag_agent_node(state)
 
-    assert resultado["response"].startswith(
-        "Comece definindo"
+    mock_execute.assert_called_once()
+
+    call = mock_execute.call_args.args[0]
+
+    assert call.tool_name == (
+        RAG_TOOL_NAME
     )
 
-    assert resultado[
+    assert (
+        call.context.requested_by
+        == "rag_agent"
+    )
+
+    assert result["response"] == (
+        "Comece reservando uma parte "
+        "da renda todos os meses."
+    )
+
+    assert result[
         "structured_response"
-    ]["rag_execution"]["ok"] is True
+    ]["rag_execution"][
+        "retrieved_documents"
+    ] == 3
 
-    assert resultado[
-        "structured_response"
-    ]["agent_response"]["sources"] == [
-        "base-reserva-financeira"
-    ]
+    assert (
+        "tool:buscar_conhecimento_rag:success"
+        in result["trace"]
+    )
 
-    assert resultado["trace"] == [
-        "supervisor:consulta_rag",
-        "tool:consultar_rag_inna:start",
-        "tool:consultar_rag_inna:success",
-        "agent:rag_agent",
-    ]
+    assert (
+        "agent:rag_agent"
+        in result["trace"]
+    )
 
 
-@patch(
-    "src.agents.nodes."
-    "consultar_rag_inna"
-)
-def test_rag_agent_node_falha_controlada(
-    mock_consultar,
-):
-    mock_consultar.return_value = (
-        RagToolResult(
-            ok=False,
-            question="Pergunta financeira",
-            language="pt",
-            duration_ms=20,
-            error_type="DatabaseError",
-            error_message=(
-                "Banco temporariamente "
-                "indisponível."
+def test_rag_agent_node_falha_controlada():
+    tool_result = ToolResult(
+        call_id="call-rag-error",
+        tool_name=RAG_TOOL_NAME,
+        status=ToolStatus.ERROR,
+        output=None,
+        error=ToolError(
+            code="tool_execution_error",
+            message=(
+                "A ferramenta falhou durante "
+                "a execução."
             ),
-        )
+            retryable=False,
+        ),
+        duration_ms=20.0,
     )
 
     state = {
         "user_message": (
-            "Pergunta financeira"
+            "Como organizar minhas finanças?"
         ),
         "language": "pt",
+        "user_id": "user-test",
+        "thread_id": "thread-test",
+        "trace_id": "trace-test",
         "intent": "consulta_rag",
         "confidence": 0.80,
-        "structured_response": {},
-        "tool_results": [],
+        "trace": [],
         "errors": [],
-        "trace": [
-            "supervisor:consulta_rag"
-        ],
+        "tool_results": [],
+        "structured_response": {},
     }
 
-    resultado = rag_agent_node(state)
+    with patch(
+        "src.agents.nodes."
+        "executar_ferramenta_inna",
+        return_value=tool_result,
+    ) as mock_execute:
+        result = rag_agent_node(state)
 
-    assert (
-        "Não foi possível"
-        in resultado["response"]
+    mock_execute.assert_called_once()
+
+    assert result["response"] == (
+        "Não foi possível consultar a base "
+        "de conhecimento neste momento."
     )
 
-    assert resultado["errors"] == [
-        "Banco temporariamente indisponível."
+    assert result["errors"] == [
+        (
+            "A ferramenta falhou durante "
+            "a execução."
+        )
     ]
 
+    assert result["tool_results"][0][
+        "error_code"
+    ] == "tool_execution_error"
+
     assert (
-        resultado["tool_results"][0]["ok"]
-        is False
+        "tool:buscar_conhecimento_rag:error"
+        in result["trace"]
+    )
+
+    assert (
+        "agent:rag_agent:error"
+        in result["trace"]
     )

@@ -4,7 +4,17 @@ Nós especializados do primeiro grafo da INNA.
 
 from __future__ import annotations
 
-from src.agent_tools.rag_tools import consultar_rag_inna
+from src.agent_tools.core import (
+    ToolCall,
+    ToolExecutionContext,
+    ToolStatus,
+)
+from src.agent_tools.rag_tools import (
+    RAG_TOOL_NAME,
+)
+from src.agent_tools.runtime import (
+    executar_ferramenta_inna,
+)
 from src.agents.schemas import AgentResponse
 from src.agents.state import InnaAgentState
 
@@ -104,10 +114,11 @@ def rag_agent_node(
     state: InnaAgentState,
 ) -> InnaAgentState:
     """
-    Agente funcional de conhecimento financeiro.
+    Agente de conhecimento financeiro da INNA.
 
-    Utiliza o RAG híbrido existente da INNA e grava
-    resultado, fontes, duração e modo no estado.
+    Cria um ToolCall formal e executa o RAG por meio
+    do catálogo, política de permissões, validação
+    Pydantic e ToolExecutor.
     """
     pergunta = str(
         state.get("user_message", "")
@@ -116,42 +127,100 @@ def rag_agent_node(
     idioma = str(
         state.get("language", "pt")
         or "pt"
-    )
+    ).strip()
+
+    try:
+        top_k = int(
+            state.get("rag_top_k", 4)
+            or 4
+        )
+    except (TypeError, ValueError):
+        top_k = 4
 
     trace = list(
         state.get("trace", [])
     )
 
     trace.append(
-        "tool:consultar_rag_inna:start"
+        f"tool:{RAG_TOOL_NAME}:start"
     )
 
-    resultado = consultar_rag_inna(
-        pergunta,
-        idioma=idioma,
-        top_k=4,
+    def optional_text(
+        value,
+    ) -> str | None:
+        normalized = str(
+            value or ""
+        ).strip()
+
+        return normalized or None
+
+    tool_call = ToolCall(
+        tool_name=RAG_TOOL_NAME,
+        arguments={
+            "pergunta": pergunta,
+            "idioma": idioma,
+            "top_k": top_k,
+        },
+        context=ToolExecutionContext(
+            requested_by="rag_agent",
+            user_id=optional_text(
+                state.get("user_id")
+                or state.get("usuario_id")
+            ),
+            session_id=optional_text(
+                state.get("thread_id")
+                or state.get("session_id")
+            ),
+            trace_id=optional_text(
+                state.get("trace_id")
+            ),
+            metadata={
+                "intent": str(
+                    state.get(
+                        "intent",
+                        "consulta_rag",
+                    )
+                )[:100],
+                "route_source": str(
+                    state.get(
+                        "route_source",
+                        "",
+                    )
+                )[:100],
+            },
+        ),
+    )
+
+    tool_result = executar_ferramenta_inna(
+        tool_call
     )
 
     tool_results = list(
         state.get("tool_results", [])
     )
 
+    compact_tool_result = {
+        "call_id": tool_result.call_id,
+        "tool": tool_result.tool_name,
+        "status": tool_result.status.value,
+        "ok": tool_result.ok,
+        "duration_ms": (
+            tool_result.duration_ms
+        ),
+    }
+
+    if tool_result.error is not None:
+        compact_tool_result.update({
+            "error_code": (
+                tool_result.error.code
+            ),
+            "retryable": (
+                tool_result.error.retryable
+            ),
+        })
+
     tool_results.append(
-        {
-            "tool": "consultar_rag_inna",
-            "ok": resultado.ok,
-            "mode": resultado.mode,
-            "duration_ms": (
-                resultado.duration_ms
-            ),
-            "retrieved_documents": (
-                resultado.retrieved_documents
-            ),
-            "sources": resultado.sources,
-            "error_type": (
-                resultado.error_type
-            ),
-        }
+        compact_tool_result
     )
 
     structured_response = dict(
@@ -163,32 +232,35 @@ def rag_agent_node(
 
     structured_response[
         "rag_execution"
-    ] = {
-        "ok": resultado.ok,
-        "mode": resultado.mode,
-        "duration_ms": (
-            resultado.duration_ms
-        ),
-        "retrieved_documents": (
-            resultado.retrieved_documents
-        ),
-        "sources": resultado.sources,
-    }
+    ] = dict(
+        compact_tool_result
+    )
 
-    if not resultado.ok:
+    if (
+        tool_result.status
+        != ToolStatus.SUCCESS
+        or not tool_result.output
+    ):
+        safe_error = (
+            tool_result.error.message
+            if tool_result.error
+            else (
+                "A ferramenta RAG não retornou "
+                "um resultado utilizável."
+            )
+        )
+
         errors = list(
             state.get("errors", [])
         )
 
-        mensagem_erro = (
-            resultado.error_message
-            or "Falha ao consultar o RAG."
+        errors.append(
+            safe_error
         )
 
-        errors.append(mensagem_erro)
-
         trace.append(
-            "tool:consultar_rag_inna:error"
+            f"tool:{RAG_TOOL_NAME}:"
+            f"{tool_result.status.value}"
         )
 
         resposta = AgentResponse(
@@ -235,8 +307,56 @@ def rag_agent_node(
             ],
         }
 
+    output = tool_result.output
+
+    resposta_texto = str(
+        output.get("resposta", "")
+    ).strip()
+
+    fontes = [
+        str(source).strip()
+        for source in output.get(
+            "fontes",
+            [],
+        )
+        if str(source).strip()
+    ]
+
+    modo = str(
+        output.get("modo", "rag")
+    )
+
+    documentos_recuperados = int(
+        output.get(
+            "documentos_recuperados",
+            0,
+        )
+        or 0
+    )
+
+    duracao_rag_ms = int(
+        output.get(
+            "duracao_rag_ms",
+            0,
+        )
+        or 0
+    )
+
+    structured_response[
+        "rag_execution"
+    ].update({
+        "mode": modo,
+        "retrieved_documents": (
+            documentos_recuperados
+        ),
+        "rag_duration_ms": (
+            duracao_rag_ms
+        ),
+        "sources": fontes,
+    })
+
     trace.append(
-        "tool:consultar_rag_inna:success"
+        f"tool:{RAG_TOOL_NAME}:success"
     )
 
     resposta = AgentResponse(
@@ -245,12 +365,13 @@ def rag_agent_node(
             "intent",
             "consulta_rag",
         ),
-        summary=resultado.answer,
+        summary=resposta_texto,
         recommendations=[],
         next_steps=[],
-        sources=resultado.sources,
+        sources=fontes,
         confidence=float(
-            state.get("confidence", 0.80)
+            state.get("confidence")
+            or 0.80
         ),
     )
 
@@ -260,11 +381,11 @@ def rag_agent_node(
 
     return {
         **state,
-        "response": resultado.answer,
+        "response": resposta_texto,
         "conversation_history": [
             {
                 "role": "assistant",
-                "content": resultado.answer,
+                "content": resposta_texto,
             }
         ],
         "structured_response": (
@@ -278,7 +399,6 @@ def rag_agent_node(
             "agent:rag_agent"
         ],
     }
-
 
 def report_agent_node(
     state: InnaAgentState,

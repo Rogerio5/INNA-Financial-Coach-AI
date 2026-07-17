@@ -10,7 +10,13 @@ from __future__ import annotations
 import time
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+from src.agent_tools.core import (
+    ToolDefinition,
+    ToolExecutionContext,
+)
+
 
 
 class RagToolResult(BaseModel):
@@ -239,7 +245,194 @@ def consultar_rag_inna(
         )
 
 
+RAG_TOOL_NAME = "buscar_conhecimento_rag"
+
+
+class BuscarConhecimentoRagInput(BaseModel):
+    """
+    Entrada pública e validada da ferramenta RAG.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+        frozen=True,
+        str_strip_whitespace=True,
+    )
+
+    pergunta: str = Field(
+        min_length=3,
+        max_length=4000,
+        description=(
+            "Pergunta financeira ou educacional "
+            "que será consultada na base da INNA."
+        ),
+    )
+
+    idioma: str = Field(
+        default="pt",
+        min_length=2,
+        max_length=10,
+        pattern=(
+            r"^[A-Za-z]{2,3}"
+            r"(?:-[A-Za-z]{2})?$"
+        ),
+        description=(
+            "Idioma da consulta, como pt, en-US "
+            "ou es."
+        ),
+    )
+
+    top_k: int = Field(
+        default=4,
+        ge=1,
+        le=10,
+        description=(
+            "Quantidade máxima de resultados "
+            "recuperados."
+        ),
+    )
+
+
+class BuscarConhecimentoRagOutput(BaseModel):
+    """
+    Saída segura disponibilizada ao agente.
+
+    O resultado bruto do banco e detalhes internos
+    não são expostos no contrato formal.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+        frozen=True,
+    )
+
+    pergunta: str
+    idioma: str
+
+    resposta: str = Field(
+        min_length=1,
+    )
+
+    fontes: list[str] = Field(
+        default_factory=list,
+    )
+
+    modo: str = "rag"
+
+    documentos_recuperados: int = Field(
+        default=0,
+        ge=0,
+    )
+
+    duracao_rag_ms: int = Field(
+        default=0,
+        ge=0,
+    )
+
+
+class RagFormalToolExecutionError(
+    RuntimeError
+):
+    """
+    Falha interna e controlada da ferramenta RAG.
+    """
+
+
+def executar_busca_conhecimento_rag(
+    payload: BuscarConhecimentoRagInput,
+    context: ToolExecutionContext,
+) -> BuscarConhecimentoRagOutput:
+    """
+    Handler compatível com o ToolExecutor.
+
+    A função reutiliza consultar_rag_inna(), que por
+    sua vez reutiliza o RAG híbrido atual.
+    """
+    del context
+
+    resultado = consultar_rag_inna(
+        pergunta=payload.pergunta,
+        idioma=payload.idioma.lower(),
+        top_k=payload.top_k,
+    )
+
+    if not resultado.ok:
+        raise RagFormalToolExecutionError(
+            resultado.error_type
+            or "rag_execution_failed"
+        )
+
+    resposta = str(
+        resultado.answer or ""
+    ).strip()
+
+    if not resposta:
+        raise RagFormalToolExecutionError(
+            "empty_rag_answer"
+        )
+
+    return BuscarConhecimentoRagOutput(
+        pergunta=resultado.question,
+        idioma=resultado.language,
+        resposta=resposta,
+        fontes=list(resultado.sources),
+        modo=resultado.mode,
+        documentos_recuperados=(
+            resultado.retrieved_documents
+        ),
+        duracao_rag_ms=(
+            resultado.duration_ms
+        ),
+    )
+
+
+def criar_definicao_buscar_conhecimento_rag(
+    *,
+    timeout_seconds: float = 20.0,
+) -> ToolDefinition:
+    """
+    Cria a definição formal da ferramenta RAG.
+    """
+    return ToolDefinition(
+        name=RAG_TOOL_NAME,
+        description=(
+            "Consulta a base de conhecimento "
+            "financeiro da INNA usando busca "
+            "híbrida, reranking e geração "
+            "fundamentada nas fontes recuperadas."
+        ),
+        input_model=(
+            BuscarConhecimentoRagInput
+        ),
+        output_model=(
+            BuscarConhecimentoRagOutput
+        ),
+        handler=(
+            executar_busca_conhecimento_rag
+        ),
+        allowed_agents=frozenset({
+            "rag_agent",
+            "education_agent",
+        }),
+        timeout_seconds=timeout_seconds,
+        idempotent=True,
+        sensitive_output=False,
+        tags=frozenset({
+            "rag",
+            "knowledge",
+            "financial_education",
+            "read_only",
+        }),
+    )
+
+
 __all__ = [
+    "BuscarConhecimentoRagInput",
+    "BuscarConhecimentoRagOutput",
+    "RAG_TOOL_NAME",
+    "RagFormalToolExecutionError",
     "RagToolResult",
     "consultar_rag_inna",
+    "criar_definicao_buscar_conhecimento_rag",
+    "executar_busca_conhecimento_rag",
 ]
