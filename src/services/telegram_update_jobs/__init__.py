@@ -1,5 +1,6 @@
 from . import repository
 from . import service
+from . import ingress
 
 from .repository import (
     TelegramUpdateJobLease,
@@ -32,9 +33,28 @@ from .service import (
 )
 
 
+from .ingress import (
+    TelegramUpdateIngressConfigurationError,
+    TelegramUpdateIngressConflictError,
+    TelegramUpdateIngressConsistencyError,
+    TelegramUpdateIngressError,
+    TelegramUpdateIngressOutcome,
+    TelegramUpdateIngressUnavailableError,
+    TelegramUpdateIngressValidationError,
+    enqueue_authenticated_telegram_update_atomic,
+)
+
 __all__ = [
     "repository",
     "service",
+    "TelegramUpdateIngressConfigurationError",
+    "TelegramUpdateIngressConflictError",
+    "TelegramUpdateIngressConsistencyError",
+    "TelegramUpdateIngressError",
+    "TelegramUpdateIngressOutcome",
+    "TelegramUpdateIngressUnavailableError",
+    "TelegramUpdateIngressValidationError",
+    "enqueue_authenticated_telegram_update_atomic",
     "EncryptedTelegramUpdatePayload",
     "TelegramUpdateEncryptionKeyring",
     "TelegramUpdateJobConfigurationError",
