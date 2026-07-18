@@ -1,6 +1,7 @@
 from . import repository
 from . import service
 from . import ingress
+from . import worker
 
 from .repository import (
     TelegramUpdateJobLease,
@@ -44,9 +45,25 @@ from .ingress import (
     enqueue_authenticated_telegram_update_atomic,
 )
 
+from .worker import (
+    TelegramUpdateWorkerConsistencyError,
+    TelegramUpdateWorkerError,
+    TelegramUpdateWorkerLease,
+    TelegramUpdateWorkerUnavailableError,
+    TelegramUpdateWorkerValidationError,
+    claim_next_authenticated_telegram_update_job_atomic,
+)
+
 __all__ = [
     "repository",
     "service",
+    "worker",
+    "TelegramUpdateWorkerConsistencyError",
+    "TelegramUpdateWorkerError",
+    "TelegramUpdateWorkerLease",
+    "TelegramUpdateWorkerUnavailableError",
+    "TelegramUpdateWorkerValidationError",
+    "claim_next_authenticated_telegram_update_job_atomic",
     "TelegramUpdateIngressConfigurationError",
     "TelegramUpdateIngressConflictError",
     "TelegramUpdateIngressConsistencyError",
