@@ -12,6 +12,9 @@ from src.agent_tools.core import (
 from src.agent_tools.financial_tools import (
     FINANCIAL_DIAGNOSIS_TOOL_NAME,
 )
+from src.agents.financial_history_flow import (
+    executar_fluxo_historico_financeiro,
+)
 from src.agent_tools.rag_tools import (
     RAG_TOOL_NAME,
 )
@@ -85,6 +88,15 @@ def financial_agent_node(
     campos ausentes ou executa a ferramenta formal
     de diagnóstico financeiro.
     """
+    if str(
+        state.get("intent", "")
+    ) == "historico_financeiro":
+        return (
+            executar_fluxo_historico_financeiro(
+                state
+            )
+        )
+
     resolution = resolver_entrada_financeira(
         dict(state)
     )

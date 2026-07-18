@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 AgentIntent = Literal[
     "diagnostico_financeiro",
+    "historico_financeiro",
     "educacao_financeira",
     "consulta_rag",
     "relatorio",

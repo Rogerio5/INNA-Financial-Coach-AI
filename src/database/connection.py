@@ -13,9 +13,13 @@ Este módulo é responsável por:
 
 from __future__ import annotations
 
+import math
 import os
+import socket
+import time
 from contextlib import contextmanager
 from pathlib import Path
+from threading import Lock
 from typing import Any, Generator, Optional
 
 
@@ -25,6 +29,330 @@ class DatabaseConfigurationError(RuntimeError):
 
 class DatabaseConnectionError(RuntimeError):
     """Erro ao abrir ou utilizar uma conexão com o banco."""
+
+
+DEFAULT_DB_CONNECT_TIMEOUT_SECONDS = 8
+DEFAULT_DB_DNS_CACHE_TTL_SECONDS = 60
+
+SUPPORTED_DB_NETWORK_FAMILIES = frozenset({
+    "ipv4",
+    "system",
+})
+
+
+_ipv4_dns_cache: dict[
+    tuple[str, int],
+    tuple[float, tuple[str, ...]],
+] = {}
+
+_ipv4_dns_cache_lock = Lock()
+
+
+def _positive_integer_environment(
+    name: str,
+    default: int,
+    *,
+    minimum: int = 1,
+    maximum: int = 300,
+) -> int:
+    raw_value = str(
+        os.getenv(name, "")
+    ).strip()
+
+    if not raw_value:
+        return default
+
+    try:
+        parsed = int(
+            raw_value
+        )
+    except (TypeError, ValueError):
+        return default
+
+    if parsed < minimum:
+        return default
+
+    return min(
+        parsed,
+        maximum,
+    )
+
+
+def _obter_familia_rede_postgres() -> str:
+    family = str(
+        os.getenv(
+            "INNA_POSTGRES_NETWORK_FAMILY",
+            "ipv4",
+        )
+    ).strip().lower()
+
+    if family not in (
+        SUPPORTED_DB_NETWORK_FAMILIES
+    ):
+        raise DatabaseConfigurationError(
+            "INNA_POSTGRES_NETWORK_FAMILY "
+            "deve ser 'ipv4' ou 'system'."
+        )
+
+    return family
+
+
+def _extrair_host_porta_database_url(
+    psycopg2_module,
+    database_url: str,
+) -> tuple[str, int]:
+    try:
+        parameters = (
+            psycopg2_module
+            .extensions
+            .parse_dsn(
+                database_url
+            )
+        )
+    except Exception:
+        raise DatabaseConfigurationError(
+            "DATABASE_URL possui formato inválido."
+        ) from None
+
+    raw_host = str(
+        parameters.get("host")
+        or ""
+    ).strip()
+
+    # A INNA utiliza uma única origem PostgreSQL.
+    # Em uma URL multi-host, somente o primeiro host
+    # é tratado por esta camada.
+    host = raw_host.split(
+        ","
+    )[0].strip()
+
+    if not host:
+        raise DatabaseConfigurationError(
+            "Hostname PostgreSQL não encontrado "
+            "na DATABASE_URL."
+        )
+
+    raw_port = str(
+        parameters.get("port")
+        or "5432"
+    ).split(
+        ","
+    )[0].strip()
+
+    try:
+        port = int(
+            raw_port
+        )
+    except (TypeError, ValueError):
+        raise DatabaseConfigurationError(
+            "Porta PostgreSQL inválida."
+        ) from None
+
+    if not 1 <= port <= 65535:
+        raise DatabaseConfigurationError(
+            "Porta PostgreSQL fora da faixa válida."
+        )
+
+    return (
+        host,
+        port,
+    )
+
+
+def _invalidar_cache_ipv4(
+    host: str,
+    port: int,
+) -> None:
+    with _ipv4_dns_cache_lock:
+        _ipv4_dns_cache.pop(
+            (
+                host,
+                port,
+            ),
+            None,
+        )
+
+
+def _limpar_cache_ipv4() -> None:
+    """
+    Utilizada por testes e operações controladas.
+    """
+    with _ipv4_dns_cache_lock:
+        _ipv4_dns_cache.clear()
+
+
+def _resolver_enderecos_ipv4(
+    host: str,
+    port: int,
+    *,
+    cache_ttl_seconds: int | None = None,
+) -> tuple[str, ...]:
+    ttl = (
+        cache_ttl_seconds
+        if cache_ttl_seconds is not None
+        else _positive_integer_environment(
+            (
+                "INNA_POSTGRES_DNS_CACHE_"
+                "TTL_SECONDS"
+            ),
+            DEFAULT_DB_DNS_CACHE_TTL_SECONDS,
+            minimum=1,
+            maximum=3600,
+        )
+    )
+
+    cache_key = (
+        host,
+        port,
+    )
+
+    now = time.monotonic()
+
+    with _ipv4_dns_cache_lock:
+        cached = _ipv4_dns_cache.get(
+            cache_key
+        )
+
+        if cached is not None:
+            expires_at, addresses = cached
+
+            if expires_at > now:
+                return addresses
+
+            _ipv4_dns_cache.pop(
+                cache_key,
+                None,
+            )
+
+    try:
+        address_infos = socket.getaddrinfo(
+            host,
+            port,
+            family=socket.AF_INET,
+            type=socket.SOCK_STREAM,
+        )
+    except Exception as exc:
+        raise DatabaseConnectionError(
+            "Não foi possível resolver um "
+            "endereço IPv4 do PostgreSQL: "
+            f"{type(exc).__name__}"
+        ) from None
+
+    addresses = []
+
+    for info in address_infos:
+        address = str(
+            info[4][0]
+        ).strip()
+
+        if (
+            address
+            and address not in addresses
+        ):
+            addresses.append(
+                address
+            )
+
+    if not addresses:
+        raise DatabaseConnectionError(
+            "Nenhum endereço IPv4 foi encontrado "
+            "para o PostgreSQL."
+        )
+
+    result = tuple(
+        addresses
+    )
+
+    with _ipv4_dns_cache_lock:
+        _ipv4_dns_cache[
+            cache_key
+        ] = (
+            now + ttl,
+            result,
+        )
+
+    return result
+
+
+def _conectar_postgres_ipv4(
+    psycopg2_module,
+    *,
+    database_url: str,
+    connect_timeout: int,
+):
+    host, port = (
+        _extrair_host_porta_database_url(
+            psycopg2_module,
+            database_url,
+        )
+    )
+
+    addresses = (
+        _resolver_enderecos_ipv4(
+            host,
+            port,
+        )
+    )
+
+    deadline = (
+        time.monotonic()
+        + connect_timeout
+    )
+
+    last_error_type = (
+        "ConnectionError"
+    )
+
+    for address in addresses:
+        remaining_seconds = (
+            deadline
+            - time.monotonic()
+        )
+
+        if remaining_seconds <= 0:
+            break
+
+        # Um endereço individual não pode consumir
+        # todo o orçamento de conexão.
+        attempt_timeout = max(
+            1,
+            min(
+                3,
+                math.ceil(
+                    remaining_seconds
+                ),
+            ),
+        )
+
+        try:
+            return psycopg2_module.connect(
+                database_url,
+                host=host,
+                hostaddr=address,
+                port=port,
+                connect_timeout=(
+                    attempt_timeout
+                ),
+                application_name=(
+                    "inna-financial-coach-ai"
+                ),
+            )
+
+        except Exception as exc:
+            last_error_type = (
+                type(exc).__name__
+            )
+
+    _invalidar_cache_ipv4(
+        host,
+        port,
+    )
+
+    raise DatabaseConnectionError(
+        "Não foi possível conectar ao PostgreSQL "
+        "pelos endereços IPv4 disponíveis: "
+        f"{last_error_type}"
+    )
 
 
 def carregar_variaveis_ambiente() -> None:
@@ -74,12 +402,16 @@ def obter_database_url(obrigatoria: bool = True) -> Optional[str]:
 def criar_conexao(
     *,
     autocommit: bool = False,
-    connect_timeout: int = 15,
+    connect_timeout: int | None = None,
 ):
     """
-    Cria uma conexão com PostgreSQL.
+    Cria uma conexão segura com PostgreSQL.
 
-    A senha e a URL nunca são exibidas em mensagens de erro.
+    Por padrão, resolve somente endereços IPv4 e usa
+    hostaddr, preservando o hostname original para SSL.
+
+    A senha e a URL nunca são exibidas em mensagens
+    de erro.
     """
     try:
         import psycopg2
@@ -88,21 +420,73 @@ def criar_conexao(
             "Dependência psycopg2 não instalada."
         ) from exc
 
-    database_url = obter_database_url(obrigatoria=True)
+    database_url = obter_database_url(
+        obrigatoria=True
+    )
+
+    effective_timeout = (
+        int(connect_timeout)
+        if connect_timeout is not None
+        else _positive_integer_environment(
+            (
+                "INNA_POSTGRES_CONNECT_"
+                "TIMEOUT_SECONDS"
+            ),
+            DEFAULT_DB_CONNECT_TIMEOUT_SECONDS,
+            minimum=1,
+            maximum=60,
+        )
+    )
+
+    if effective_timeout < 1:
+        raise ValueError(
+            "connect_timeout deve ser positivo."
+        )
+
+    network_family = (
+        _obter_familia_rede_postgres()
+    )
 
     try:
-        conexao = psycopg2.connect(
-            database_url,
-            connect_timeout=connect_timeout,
-            application_name="inna-financial-coach-ai",
+        if network_family == "system":
+            connection = psycopg2.connect(
+                database_url,
+                connect_timeout=(
+                    effective_timeout
+                ),
+                application_name=(
+                    "inna-financial-coach-ai"
+                ),
+            )
+        else:
+            connection = (
+                _conectar_postgres_ipv4(
+                    psycopg2,
+                    database_url=database_url,
+                    connect_timeout=(
+                        effective_timeout
+                    ),
+                )
+            )
+
+        connection.autocommit = (
+            autocommit
         )
-        conexao.autocommit = autocommit
-        return conexao
+
+        return connection
+
+    except (
+        DatabaseConfigurationError,
+        DatabaseConnectionError,
+    ):
+        raise
 
     except Exception as exc:
         raise DatabaseConnectionError(
-            f"Não foi possível conectar ao PostgreSQL: {type(exc).__name__}"
-        ) from exc
+            "Não foi possível conectar ao "
+            "PostgreSQL: "
+            f"{type(exc).__name__}"
+        ) from None
 
 
 @contextmanager

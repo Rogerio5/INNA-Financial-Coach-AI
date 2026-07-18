@@ -42,6 +42,7 @@ load_dotenv(
 
 _INTENT_ROUTE_MAP = {
     "diagnostico_financeiro": "financial_agent",
+    "historico_financeiro": "financial_agent",
     "educacao_financeira": "education_agent",
     "consulta_rag": "rag_agent",
     "relatorio": "report_agent",
@@ -128,7 +129,14 @@ def _validar_compatibilidade(
     if decision.next_node != expected_node:
         decision.next_node = expected_node
 
+    decision.use_rag = False
+    decision.use_database = False
+    decision.generate_report = False
+
     if decision.intent == "diagnostico_financeiro":
+        decision.use_database = True
+
+    elif decision.intent == "historico_financeiro":
         decision.use_database = True
 
     elif decision.intent == "educacao_financeira":
@@ -140,11 +148,6 @@ def _validar_compatibilidade(
     elif decision.intent == "relatorio":
         decision.use_database = True
         decision.generate_report = True
-
-    elif decision.intent == "desconhecido":
-        decision.use_rag = False
-        decision.use_database = False
-        decision.generate_report = False
 
     return decision
 
@@ -162,26 +165,33 @@ Classifique a solicitação em exatamente uma intenção:
 
 1. diagnostico_financeiro
    O usuário informa ou quer analisar renda, gastos,
-   dívidas, saldo, orçamento, parcelas ou sua situação.
+   dívidas, saldo, orçamento, parcelas ou a situação
+   financeira atual.
 
-2. educacao_financeira
+2. historico_financeiro
+   O usuário solicita diagnósticos anteriores,
+   score anterior, evolução financeira ou histórico
+   financeiro vinculado à própria conta.
+
+3. educacao_financeira
    O usuário busca orientação, planejamento, hábitos,
    organização, economia ou passos educativos.
 
-3. consulta_rag
+4. consulta_rag
    O usuário faz uma pergunta conceitual que precisa
    consultar a base de conhecimento financeiro.
 
-4. relatorio
-   O usuário solicita PDF, relatório, exportação,
-   histórico ou documento baseado em dados existentes.
+5. relatorio
+   O usuário solicita PDF, relatório, exportação ou
+   documento baseado em dados existentes.
 
-5. desconhecido
+6. desconhecido
    A mensagem não permite identificar uma solicitação
    financeira ou está fora do escopo da INNA.
 
 Rotas obrigatórias:
 - diagnostico_financeiro -> financial_agent
+- historico_financeiro -> financial_agent
 - educacao_financeira -> education_agent
 - consulta_rag -> rag_agent
 - relatorio -> report_agent
@@ -192,7 +202,7 @@ Regras:
 - Não execute nenhuma ação.
 - Não responda à pergunta do usuário.
 - Apenas classifique.
-- Use o histórico somente para resolver referências.
+- Use o contexto anterior somente para resolver referências.
 - Caso a intenção continue incerta, use desconhecido.
 - Confiança deve ficar entre 0 e 1.
 - A justificativa deve ser curta e objetiva.

@@ -73,6 +73,62 @@ _FINANCIAL_TERMS = {
     "estou devendo",
 }
 
+
+_HISTORY_TERMS = {
+    "meu historico",
+    "meu historico financeiro",
+    "historico financeiro",
+    "historico de diagnosticos",
+    "consultar historico",
+    "consultar meu historico",
+    "meus diagnosticos",
+    "ultimos diagnosticos",
+    "diagnosticos anteriores",
+    "diagnostico anterior",
+    "meu score anterior",
+    "score anterior",
+    "como estava meu score",
+    "evolucao do meu score",
+    "minha evolucao financeira",
+}
+
+
+def _is_history_request(
+    texto: str,
+) -> bool:
+    if _contains_any(
+        texto,
+        _HISTORY_TERMS,
+    ):
+        return True
+
+    temporal_terms = {
+        "historico",
+        "anterior",
+        "anteriores",
+        "ultimo",
+        "ultimos",
+        "ultima",
+        "ultimas",
+        "evolucao",
+    }
+
+    mentions_financial_record = (
+        "diagnostico" in texto
+        or "score" in texto
+    )
+
+    mentions_time = any(
+        term in texto
+        for term in temporal_terms
+    )
+
+    return (
+        mentions_financial_record
+        and mentions_time
+    )
+
+
 _RAG_TERMS = {
     "o que e",
     "como funciona",
@@ -146,16 +202,34 @@ def classificar_intencao_por_regras(
             classification_source="rule",
         )
 
-    matches = {
-        "relatorio": _contains_any(
+    report_match = _contains_any(
+        texto,
+        _REPORT_TERMS,
+    )
+
+    history_match = (
+        not report_match
+        and _is_history_request(
+            texto
+        )
+    )
+
+    financial_match = (
+        not report_match
+        and not history_match
+        and _contains_any(
             texto,
-            _REPORT_TERMS,
+            _FINANCIAL_TERMS,
+        )
+    )
+
+    matches = {
+        "relatorio": report_match,
+        "historico_financeiro": (
+            history_match
         ),
         "diagnostico_financeiro": (
-            _contains_any(
-                texto,
-                _FINANCIAL_TERMS,
-            )
+            financial_match
         ),
         "consulta_rag": _contains_any(
             texto,
@@ -183,6 +257,21 @@ def classificar_intencao_por_regras(
             reason=(
                 "Mais de uma intenção foi identificada "
                 "pelas regras."
+            ),
+            classification_source="rule",
+        )
+
+    if matched_intents == [
+        "historico_financeiro"
+    ]:
+        return SupervisorDecision(
+            intent="historico_financeiro",
+            next_node="financial_agent",
+            confidence=0.96,
+            use_database=True,
+            reason=(
+                "A mensagem solicita diagnósticos "
+                "financeiros anteriores do usuário."
             ),
             classification_source="rule",
         )
