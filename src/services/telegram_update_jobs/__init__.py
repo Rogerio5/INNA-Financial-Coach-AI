@@ -2,6 +2,7 @@ from . import repository
 from . import service
 from . import ingress
 from . import worker
+from . import execution
 
 from .repository import (
     TelegramUpdateJobLease,
@@ -54,7 +55,25 @@ from .worker import (
     claim_next_authenticated_telegram_update_job_atomic,
 )
 
+from .execution import (
+    TelegramUpdateExecutionConfigurationError,
+    TelegramUpdateExecutionDecryptionError,
+    TelegramUpdateExecutionError,
+    TelegramUpdateExecutionPayloadError,
+    TelegramUpdateExecutionValidationError,
+    TelegramUpdateWorkerPayload,
+    decrypt_authenticated_telegram_worker_lease,
+)
+
 __all__ = [
+    "execution",
+    "TelegramUpdateExecutionConfigurationError",
+    "TelegramUpdateExecutionDecryptionError",
+    "TelegramUpdateExecutionError",
+    "TelegramUpdateExecutionPayloadError",
+    "TelegramUpdateExecutionValidationError",
+    "TelegramUpdateWorkerPayload",
+    "decrypt_authenticated_telegram_worker_lease",
     "repository",
     "service",
     "worker",
