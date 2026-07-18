@@ -1554,7 +1554,1073 @@ def complete_authenticated_telegram_update_job_atomic(
             "o job Telegram."
         ) from None
 
+FailureDecision = Literal[
+    "retry_scheduled",
+    "dead_lettered",
+    "already_retry_scheduled",
+    "already_dead_lettered",
+]
+
+
+WORKER_ERROR_CODE_PATTERN = re.compile(
+    r"^[a-z0-9][a-z0-9._:-]{0,63}$"
+)
+
+
+SQL_LOCK_RECEIPT_FOR_FAILURE = """
+SELECT
+    receipt.update_id,
+    receipt.status,
+    receipt.attempt_count,
+    receipt.claim_token,
+    receipt.last_error_code,
+
+    (
+        receipt.status = 'processing'
+        AND receipt.lease_expires_at > NOW()
+    ) AS lease_active
+FROM public.telegram_update_receipts AS receipt
+WHERE
+    receipt.update_id = %(update_id)s
+FOR UPDATE;
+"""
+
+
+SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB = """
+UPDATE public.telegram_update_jobs AS job
+SET
+    status = CASE
+        WHEN
+            %(force_dead_letter)s
+            OR job.attempt_count >= job.max_attempts
+        THEN 'dead_letter'
+        ELSE 'queued'
+    END,
+
+    available_at = CASE
+        WHEN
+            %(force_dead_letter)s
+            OR job.attempt_count >= job.max_attempts
+        THEN job.available_at
+        ELSE (
+            NOW()
+            + (
+                %(retry_delay_seconds)s
+                * INTERVAL '1 second'
+            )
+        )
+    END,
+
+    locked_at = NULL,
+    lock_expires_at = NULL,
+    lock_token = NULL,
+
+    completed_at = NULL,
+
+    dead_lettered_at = CASE
+        WHEN
+            %(force_dead_letter)s
+            OR job.attempt_count >= job.max_attempts
+        THEN NOW()
+        ELSE NULL
+    END,
+
+    last_error_code = %(error_code)s,
+    updated_at = NOW()
+WHERE
+    job.update_id = %(update_id)s
+    AND job.status = 'processing'
+    AND job.lock_token = %(lock_token)s
+    AND job.lock_expires_at > NOW()
+
+    AND job.attempt_count = (
+        %(job_attempt_count)s
+    )
+
+    AND job.max_attempts = (
+        %(job_max_attempts)s
+    )
+
+    AND job.payload_version = (
+        %(payload_version)s
+    )
+RETURNING
+    job.update_id,
+    job.status,
+    job.attempt_count,
+    job.max_attempts,
+    job.payload_version,
+    job.last_error_code,
+
+    (
+        job.payload_ciphertext IS NOT NULL
+        AND job.payload_nonce IS NOT NULL
+        AND job.payload_key_id IS NOT NULL
+    ) AS payload_retained,
+
+    (
+        job.locked_at IS NULL
+        AND job.lock_expires_at IS NULL
+        AND job.lock_token IS NULL
+    ) AS ownership_cleared,
+
+    (
+        job.completed_at IS NULL
+    ) AS completed_at_cleared,
+
+    (
+        job.status = 'queued'
+        AND job.dead_lettered_at IS NULL
+    ) AS retry_state_valid,
+
+    (
+        job.status = 'dead_letter'
+        AND job.dead_lettered_at IS NOT NULL
+    ) AS dead_letter_state_valid;
+"""
+
+
+SQL_FAIL_OWNED_RECEIPT = """
+UPDATE public.telegram_update_receipts AS receipt
+SET
+    status = 'failed',
+
+    last_received_at = NOW(),
+    lease_expires_at = NOW(),
+
+    completed_at = NULL,
+    failed_at = NOW(),
+
+    last_error_code = %(error_code)s
+WHERE
+    receipt.update_id = %(update_id)s
+    AND receipt.status = 'processing'
+    AND receipt.claim_token = %(lock_token)s
+    AND receipt.lease_expires_at > NOW()
+RETURNING
+    receipt.update_id,
+    receipt.status,
+    receipt.attempt_count,
+    receipt.last_error_code,
+
+    (
+        receipt.completed_at IS NULL
+    ) AS completed_at_cleared,
+
+    (
+        receipt.failed_at IS NOT NULL
+    ) AS failed_at_set,
+
+    (
+        receipt.lease_expires_at <= NOW()
+    ) AS lease_closed;
+"""
+
+
+SQL_SELECT_FAILED_JOB_STATE = """
+SELECT
+    job.update_id,
+    job.status,
+    job.attempt_count,
+    job.max_attempts,
+    job.payload_version,
+    job.last_error_code,
+
+    (
+        job.payload_ciphertext IS NOT NULL
+        AND job.payload_nonce IS NOT NULL
+        AND job.payload_key_id IS NOT NULL
+    ) AS payload_retained,
+
+    (
+        job.locked_at IS NULL
+        AND job.lock_expires_at IS NULL
+        AND job.lock_token IS NULL
+    ) AS ownership_cleared,
+
+    (
+        job.completed_at IS NULL
+    ) AS completed_at_cleared,
+
+    (
+        job.status = 'queued'
+        AND job.dead_lettered_at IS NULL
+    ) AS retry_state_valid,
+
+    (
+        job.status = 'dead_letter'
+        AND job.dead_lettered_at IS NOT NULL
+    ) AS dead_letter_state_valid
+FROM public.telegram_update_jobs AS job
+WHERE
+    job.update_id = %(update_id)s;
+"""
+
+
+@dataclass(
+    frozen=True,
+    slots=True,
+)
+class _FailureReceiptSnapshot:
+    update_id: int
+    status: str
+    attempt_count: int
+
+    last_error_code: str | None
+
+    claim_token: str = field(
+        repr=False
+    )
+
+    lease_active: bool = False
+
+
+@dataclass(
+    frozen=True,
+    slots=True,
+)
+class _FailedJobSnapshot:
+    update_id: int
+    status: Literal[
+        "queued",
+        "dead_letter",
+    ]
+
+    attempt_count: int
+    max_attempts: int
+    payload_version: int
+
+    last_error_code: str
+
+    payload_retained: bool
+    ownership_cleared: bool
+    completed_at_cleared: bool
+
+    retry_state_valid: bool
+    dead_letter_state_valid: bool
+
+
+@dataclass(
+    frozen=True,
+    slots=True,
+)
+class _FailedReceiptResult:
+    update_id: int
+
+    status: Literal[
+        "failed",
+    ]
+
+    attempt_count: int
+    last_error_code: str
+
+    completed_at_cleared: bool
+    failed_at_set: bool
+    lease_closed: bool
+
+
+@dataclass(
+    frozen=True,
+    slots=True,
+)
+class TelegramUpdateWorkerFailureOutcome:
+    update_id: int
+
+    decision: FailureDecision
+
+    job_status: Literal[
+        "queued",
+        "dead_letter",
+    ]
+
+    receipt_status: Literal[
+        "failed",
+    ]
+
+    job_attempt_count: int
+    job_max_attempts: int
+    receipt_attempt_count: int
+
+    payload_version: int
+    last_error_code: str
+
+    retry_delay_seconds: int | None
+
+    payload_retained: bool
+    ownership_cleared: bool
+
+    @property
+    def retry_scheduled(
+        self,
+    ) -> bool:
+        return self.job_status == "queued"
+
+    @property
+    def dead_lettered(
+        self,
+    ) -> bool:
+        return self.job_status == "dead_letter"
+
+    @property
+    def terminal(
+        self,
+    ) -> bool:
+        return self.dead_lettered
+
+    @property
+    def idempotent_replay(
+        self,
+    ) -> bool:
+        return self.decision in {
+            "already_retry_scheduled",
+            "already_dead_lettered",
+        }
+
+    def to_safe_dict(
+        self,
+    ) -> dict[str, object]:
+        return {
+            "update_id": self.update_id,
+            "decision": self.decision,
+            "job_status": self.job_status,
+            "receipt_status": (
+                self.receipt_status
+            ),
+            "job_attempt_count": (
+                self.job_attempt_count
+            ),
+            "job_max_attempts": (
+                self.job_max_attempts
+            ),
+            "receipt_attempt_count": (
+                self.receipt_attempt_count
+            ),
+            "payload_version": (
+                self.payload_version
+            ),
+            "last_error_code": (
+                self.last_error_code
+            ),
+            "retry_delay_seconds": (
+                self.retry_delay_seconds
+            ),
+            "payload_retained": (
+                self.payload_retained
+            ),
+            "ownership_cleared": (
+                self.ownership_cleared
+            ),
+            "retry_scheduled": (
+                self.retry_scheduled
+            ),
+            "dead_lettered": (
+                self.dead_lettered
+            ),
+            "terminal": self.terminal,
+            "idempotent_replay": (
+                self.idempotent_replay
+            ),
+        }
+
+
+def _validate_worker_error_code(
+    value: Any,
+) -> str:
+    if not isinstance(
+        value,
+        str,
+    ):
+        raise TelegramUpdateWorkerValidationError(
+            "error_code inválido."
+        )
+
+    normalized = value.strip()
+
+    if (
+        normalized != value
+        or WORKER_ERROR_CODE_PATTERN.fullmatch(
+            normalized
+        )
+        is None
+    ):
+        raise TelegramUpdateWorkerValidationError(
+            "error_code inválido."
+        )
+
+    return normalized
+
+
+def _validate_boolean(
+    value: Any,
+    *,
+    field_name: str,
+) -> bool:
+    if not isinstance(
+        value,
+        bool,
+    ):
+        raise TelegramUpdateWorkerValidationError(
+            f"{field_name} inválido."
+        )
+
+    return value
+
+
+def _failure_receipt_from_row(
+    row: Any,
+) -> _FailureReceiptSnapshot:
+    try:
+        update_id = int(
+            row["update_id"]
+        )
+
+        status = str(
+            row["status"]
+        )
+
+        attempt_count = int(
+            row["attempt_count"]
+        )
+
+        claim_token = str(
+            row["claim_token"]
+        )
+
+        raw_error = row.get(
+            "last_error_code"
+        )
+
+        last_error_code = (
+            None
+            if raw_error is None
+            else str(raw_error)
+        )
+
+        lease_active = bool(
+            row["lease_active"]
+        )
+
+    except (
+        AttributeError,
+        KeyError,
+        TypeError,
+        ValueError,
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O banco retornou um receipt "
+            "de falha inválido."
+        ) from None
+
+    if (
+        update_id < 0
+        or status not in {
+            "processing",
+            "completed",
+            "failed",
+        }
+        or attempt_count < 1
+        or SHA256_PATTERN.fullmatch(
+            claim_token
+        )
+        is None
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O banco retornou um receipt "
+            "de falha inválido."
+        )
+
+    if (
+        last_error_code is not None
+        and WORKER_ERROR_CODE_PATTERN.fullmatch(
+            last_error_code
+        )
+        is None
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O receipt contém error_code inválido."
+        )
+
+    return _FailureReceiptSnapshot(
+        update_id=update_id,
+        status=status,
+        attempt_count=attempt_count,
+        claim_token=claim_token,
+        last_error_code=last_error_code,
+        lease_active=lease_active,
+    )
+
+
+def _failed_job_from_row(
+    row: Any,
+) -> _FailedJobSnapshot:
+    try:
+        status = str(
+            row["status"]
+        )
+
+        snapshot = _FailedJobSnapshot(
+            update_id=int(
+                row["update_id"]
+            ),
+            status=status,
+            attempt_count=int(
+                row["attempt_count"]
+            ),
+            max_attempts=int(
+                row["max_attempts"]
+            ),
+            payload_version=int(
+                row["payload_version"]
+            ),
+            last_error_code=str(
+                row["last_error_code"]
+            ),
+            payload_retained=bool(
+                row["payload_retained"]
+            ),
+            ownership_cleared=bool(
+                row["ownership_cleared"]
+            ),
+            completed_at_cleared=bool(
+                row["completed_at_cleared"]
+            ),
+            retry_state_valid=bool(
+                row["retry_state_valid"]
+            ),
+            dead_letter_state_valid=bool(
+                row["dead_letter_state_valid"]
+            ),
+        )
+
+    except (
+        KeyError,
+        TypeError,
+        ValueError,
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O banco retornou um job "
+            "de falha inválido."
+        ) from None
+
+    if snapshot.status not in {
+        "queued",
+        "dead_letter",
+    }:
+        raise TelegramUpdateWorkerConsistencyError(
+            "O job retornou estado "
+            "de falha inválido."
+        )
+
+    if (
+        snapshot.update_id < 0
+        or snapshot.attempt_count < 1
+        or snapshot.max_attempts < 1
+        or snapshot.attempt_count
+        > snapshot.max_attempts
+        or snapshot.payload_version < 1
+        or WORKER_ERROR_CODE_PATTERN.fullmatch(
+            snapshot.last_error_code
+        )
+        is None
+        or not snapshot.payload_retained
+        or not snapshot.ownership_cleared
+        or not snapshot.completed_at_cleared
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O job não foi finalizado "
+            "de forma consistente."
+        )
+
+    if (
+        snapshot.status == "queued"
+        and (
+            not snapshot.retry_state_valid
+            or snapshot.dead_letter_state_valid
+        )
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O estado de retry é inconsistente."
+        )
+
+    if (
+        snapshot.status == "dead_letter"
+        and (
+            not snapshot.dead_letter_state_valid
+            or snapshot.retry_state_valid
+        )
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O estado dead-letter é inconsistente."
+        )
+
+    return snapshot
+
+
+def _failed_receipt_result_from_row(
+    row: Any,
+) -> _FailedReceiptResult:
+    try:
+        result = _FailedReceiptResult(
+            update_id=int(
+                row["update_id"]
+            ),
+            status=str(
+                row["status"]
+            ),
+            attempt_count=int(
+                row["attempt_count"]
+            ),
+            last_error_code=str(
+                row["last_error_code"]
+            ),
+            completed_at_cleared=bool(
+                row["completed_at_cleared"]
+            ),
+            failed_at_set=bool(
+                row["failed_at_set"]
+            ),
+            lease_closed=bool(
+                row["lease_closed"]
+            ),
+        )
+
+    except (
+        KeyError,
+        TypeError,
+        ValueError,
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O banco retornou um receipt "
+            "falho inválido."
+        ) from None
+
+    if (
+        result.update_id < 0
+        or result.status != "failed"
+        or result.attempt_count < 1
+        or WORKER_ERROR_CODE_PATTERN.fullmatch(
+            result.last_error_code
+        )
+        is None
+        or not result.completed_at_cleared
+        or not result.failed_at_set
+        or not result.lease_closed
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O receipt não foi marcado "
+            "como falho corretamente."
+        )
+
+    return result
+
+
+def _validate_failed_job_matches_lease(
+    *,
+    lease: TelegramUpdateWorkerLease,
+    job: _FailedJobSnapshot,
+    error_code: str,
+) -> None:
+    if job.update_id != lease.update_id:
+        raise TelegramUpdateWorkerConsistencyError(
+            "O job de falha pertence "
+            "a outro update."
+        )
+
+    if (
+        job.attempt_count
+        != lease.job_attempt_count
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "A tentativa do job não "
+            "corresponde ao lease."
+        )
+
+    if (
+        job.max_attempts
+        != lease.job_max_attempts
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O limite de tentativas não "
+            "corresponde ao lease."
+        )
+
+    if (
+        job.payload_version
+        != lease.payload_version
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "A versão do payload não "
+            "corresponde ao lease."
+        )
+
+    if job.last_error_code != error_code:
+        raise TelegramUpdateWorkerConsistencyError(
+            "O error_code persistido não confere."
+        )
+
+
+def _build_failure_outcome(
+    *,
+    lease: TelegramUpdateWorkerLease,
+    decision: FailureDecision,
+    job: _FailedJobSnapshot,
+    receipt_attempt_count: int,
+    retry_delay_seconds: int | None,
+    error_code: str,
+) -> TelegramUpdateWorkerFailureOutcome:
+    _validate_failed_job_matches_lease(
+        lease=lease,
+        job=job,
+        error_code=error_code,
+    )
+
+    if receipt_attempt_count < job.attempt_count:
+        raise TelegramUpdateWorkerConsistencyError(
+            "As tentativas do receipt "
+            "estão atrás do job."
+        )
+
+    return TelegramUpdateWorkerFailureOutcome(
+        update_id=lease.update_id,
+        decision=decision,
+        job_status=job.status,
+        receipt_status="failed",
+        job_attempt_count=(
+            job.attempt_count
+        ),
+        job_max_attempts=(
+            job.max_attempts
+        ),
+        receipt_attempt_count=(
+            receipt_attempt_count
+        ),
+        payload_version=(
+            job.payload_version
+        ),
+        last_error_code=error_code,
+        retry_delay_seconds=(
+            retry_delay_seconds
+        ),
+        payload_retained=(
+            job.payload_retained
+        ),
+        ownership_cleared=(
+            job.ownership_cleared
+        ),
+    )
+
+
+def retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+    lease: TelegramUpdateWorkerLease,
+    *,
+    error_code: str,
+    retry_delay_seconds: int,
+    force_dead_letter: bool = False,
+) -> TelegramUpdateWorkerFailureOutcome:
+    """
+    Finaliza atomicamente uma tentativa com falha.
+
+    Falha recuperável:
+        job processing -> queued
+        receipt processing -> failed
+
+    Falha definitiva ou tentativas esgotadas:
+        job processing -> dead_letter
+        receipt processing -> failed
+
+    O payload permanece criptografado tanto em
+    queued quanto em dead_letter, conforme o
+    contrato da migration 004.
+
+    Uma repetição com o mesmo lease e error_code
+    retorna um resultado idempotente quando o
+    commit anterior já tiver sido confirmado.
+    """
+    normalized_lease = (
+        _validate_completion_lease(
+            lease
+        )
+    )
+
+    normalized_error = (
+        _validate_worker_error_code(
+            error_code
+        )
+    )
+
+    normalized_delay = _validate_integer(
+        retry_delay_seconds,
+        field_name="retry_delay_seconds",
+        minimum=0,
+        maximum=(
+            job_repository
+            .MAX_RETRY_DELAY_SECONDS
+        ),
+    )
+
+    normalized_force = _validate_boolean(
+        force_dead_letter,
+        field_name="force_dead_letter",
+    )
+
+    parameters = {
+        "update_id": (
+            normalized_lease.update_id
+        ),
+        "lock_token": (
+            normalized_lease.lock_token
+        ),
+        "error_code": normalized_error,
+        "retry_delay_seconds": (
+            normalized_delay
+        ),
+        "force_dead_letter": (
+            normalized_force
+        ),
+        "job_attempt_count": (
+            normalized_lease
+            .job_attempt_count
+        ),
+        "job_max_attempts": (
+            normalized_lease
+            .job_max_attempts
+        ),
+        "payload_version": (
+            normalized_lease
+            .payload_version
+        ),
+    }
+
+    try:
+        with cursor_postgres(
+            dict_cursor=True,
+            commit_automatico=True,
+        ) as cursor:
+            _set_transaction_timeouts(
+                cursor
+            )
+
+            cursor.execute(
+                SQL_LOCK_RECEIPT_FOR_FAILURE,
+                {
+                    "update_id": (
+                        normalized_lease.update_id
+                    ),
+                },
+            )
+
+            receipt_row = cursor.fetchone()
+
+            if receipt_row is None:
+                raise TelegramUpdateWorkerOwnershipError(
+                    "O receipt do worker "
+                    "não foi localizado."
+                )
+
+            receipt = (
+                _failure_receipt_from_row(
+                    receipt_row
+                )
+            )
+
+            if (
+                receipt.update_id
+                != normalized_lease.update_id
+            ):
+                raise TelegramUpdateWorkerConsistencyError(
+                    "O receipt pertence "
+                    "a outro update."
+                )
+
+            if (
+                receipt.claim_token
+                != normalized_lease.lock_token
+            ):
+                raise TelegramUpdateWorkerOwnershipError(
+                    "O worker não possui mais "
+                    "o receipt."
+                )
+
+            if receipt.status == "failed":
+                if (
+                    receipt.last_error_code
+                    != normalized_error
+                ):
+                    raise TelegramUpdateWorkerConsistencyError(
+                        "O receipt já foi finalizado "
+                        "com outro error_code."
+                    )
+
+                cursor.execute(
+                    SQL_SELECT_FAILED_JOB_STATE,
+                    {
+                        "update_id": (
+                            normalized_lease.update_id
+                        ),
+                    },
+                )
+
+                existing_job_row = (
+                    cursor.fetchone()
+                )
+
+                if existing_job_row is None:
+                    raise TelegramUpdateWorkerConsistencyError(
+                        "Receipt falho sem "
+                        "job correspondente."
+                    )
+
+                existing_job = (
+                    _failed_job_from_row(
+                        existing_job_row
+                    )
+                )
+
+                replay_decision: FailureDecision
+
+                if existing_job.status == "queued":
+                    replay_decision = (
+                        "already_retry_scheduled"
+                    )
+
+                else:
+                    replay_decision = (
+                        "already_dead_lettered"
+                    )
+
+                return _build_failure_outcome(
+                    lease=normalized_lease,
+                    decision=replay_decision,
+                    job=existing_job,
+                    receipt_attempt_count=(
+                        receipt.attempt_count
+                    ),
+                    retry_delay_seconds=None,
+                    error_code=normalized_error,
+                )
+
+            if receipt.status != "processing":
+                raise TelegramUpdateWorkerOwnershipError(
+                    "O receipt não está mais "
+                    "em processamento."
+                )
+
+            if not receipt.lease_active:
+                raise TelegramUpdateWorkerOwnershipError(
+                    "O lease do receipt expirou."
+                )
+
+            cursor.execute(
+                SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB,
+                parameters,
+            )
+
+            failed_job_row = cursor.fetchone()
+
+            if failed_job_row is None:
+                raise TelegramUpdateWorkerOwnershipError(
+                    "O lease do job não "
+                    "está mais ativo."
+                )
+
+            failed_job = _failed_job_from_row(
+                failed_job_row
+            )
+
+            _validate_failed_job_matches_lease(
+                lease=normalized_lease,
+                job=failed_job,
+                error_code=normalized_error,
+            )
+
+            cursor.execute(
+                SQL_FAIL_OWNED_RECEIPT,
+                parameters,
+            )
+
+            failed_receipt_row = (
+                cursor.fetchone()
+            )
+
+            if failed_receipt_row is None:
+                raise TelegramUpdateWorkerOwnershipError(
+                    "O receipt não pôde "
+                    "ser marcado como falho."
+                )
+
+            failed_receipt = (
+                _failed_receipt_result_from_row(
+                    failed_receipt_row
+                )
+            )
+
+            if (
+                failed_receipt.update_id
+                != normalized_lease.update_id
+            ):
+                raise TelegramUpdateWorkerConsistencyError(
+                    "O receipt falho pertence "
+                    "a outro update."
+                )
+
+            if (
+                failed_receipt.last_error_code
+                != normalized_error
+            ):
+                raise TelegramUpdateWorkerConsistencyError(
+                    "O error_code do receipt "
+                    "não confere."
+                )
+
+            if failed_job.status == "queued":
+                decision: FailureDecision = (
+                    "retry_scheduled"
+                )
+
+                outcome_delay: int | None = (
+                    normalized_delay
+                )
+
+            else:
+                decision = "dead_lettered"
+                outcome_delay = None
+
+            return _build_failure_outcome(
+                lease=normalized_lease,
+                decision=decision,
+                job=failed_job,
+                receipt_attempt_count=(
+                    failed_receipt
+                    .attempt_count
+                ),
+                retry_delay_seconds=(
+                    outcome_delay
+                ),
+                error_code=normalized_error,
+            )
+
+    except (
+        TelegramUpdateWorkerConsistencyError,
+        TelegramUpdateWorkerOwnershipError,
+        TelegramUpdateWorkerValidationError,
+    ):
+        raise
+
+    except Exception:
+        raise TelegramUpdateWorkerUnavailableError(
+            "Não foi possível finalizar "
+            "a falha do job Telegram."
+        ) from None
+
 __all__ = [
+    "FailureDecision",
+    "SQL_FAIL_OWNED_RECEIPT",
+    "SQL_LOCK_RECEIPT_FOR_FAILURE",
+    "SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB",
+    "SQL_SELECT_FAILED_JOB_STATE",
+    "TelegramUpdateWorkerFailureOutcome",
+    "WORKER_ERROR_CODE_PATTERN",
+    "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
     "SQL_COMPLETE_OWNED_JOB",
     "SQL_COMPLETE_OWNED_RECEIPT",
     "SQL_LOCK_RECEIPT_FOR_COMPLETION",
