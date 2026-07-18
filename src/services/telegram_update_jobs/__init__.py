@@ -1,11 +1,12 @@
 from . import repository
+from . import service
 
 from .repository import (
     TelegramUpdateJobLease,
     TelegramUpdateJobOwnershipError,
     TelegramUpdateJobRecord,
     TelegramUpdateJobRepositoryError,
-    TelegramUpdateJobValidationError,
+    TelegramUpdateJobValidationError as TelegramUpdateJobRepositoryValidationError,
     claim_next_telegram_update_job,
     complete_telegram_update_job,
     enqueue_telegram_update_job,
@@ -14,17 +15,47 @@ from .repository import (
     retry_or_dead_letter_telegram_update_job,
 )
 
+from .service import (
+    EncryptedTelegramUpdatePayload,
+    TelegramUpdateEncryptionKeyring,
+    TelegramUpdateJobConfigurationError,
+    TelegramUpdateJobDecryptionError,
+    TelegramUpdateJobEncryptionError,
+    TelegramUpdateJobServiceError,
+    TelegramUpdateJobValidationError,
+    calculate_telegram_update_retry_delay,
+    canonicalize_telegram_update,
+    decrypt_authenticated_telegram_update,
+    encrypt_authenticated_telegram_update,
+    generate_telegram_update_job_lock_token,
+    load_telegram_update_keyring_from_env,
+)
+
 
 __all__ = [
     "repository",
+    "service",
+    "EncryptedTelegramUpdatePayload",
+    "TelegramUpdateEncryptionKeyring",
+    "TelegramUpdateJobConfigurationError",
+    "TelegramUpdateJobDecryptionError",
+    "TelegramUpdateJobEncryptionError",
     "TelegramUpdateJobLease",
     "TelegramUpdateJobOwnershipError",
     "TelegramUpdateJobRecord",
     "TelegramUpdateJobRepositoryError",
+    "TelegramUpdateJobRepositoryValidationError",
+    "TelegramUpdateJobServiceError",
     "TelegramUpdateJobValidationError",
+    "calculate_telegram_update_retry_delay",
+    "canonicalize_telegram_update",
     "claim_next_telegram_update_job",
     "complete_telegram_update_job",
+    "decrypt_authenticated_telegram_update",
+    "encrypt_authenticated_telegram_update",
     "enqueue_telegram_update_job",
+    "generate_telegram_update_job_lock_token",
+    "load_telegram_update_keyring_from_env",
     "recover_expired_telegram_update_jobs",
     "renew_telegram_update_job_lease",
     "retry_or_dead_letter_telegram_update_job",
