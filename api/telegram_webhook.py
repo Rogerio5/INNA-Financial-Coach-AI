@@ -26,13 +26,24 @@ from src.audit_logger import record_event
 
 load_dotenv()
 
+from src.services.telegram_update_receipts import (
+    TelegramUpdateClaimDecision,
+    TelegramUpdateProcessingLease,
+    TelegramUpdateReceiptConflictError,
+    TelegramUpdateReceiptServiceError,
+    TelegramUpdateReceiptUnavailableError,
+    TelegramUpdateReceiptValidationError,
+    claim_authenticated_telegram_update,
+    complete_authenticated_telegram_update,
+    fail_authenticated_telegram_update,
+)
+
 router = APIRouter(prefix="/telegram", tags=["telegram"])
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 USER_SESSIONS = {}
 USER_LAST_LANG = {}
-PROCESSED_UPDATES = set()
 
 LANGUAGE_OPTIONS = {
     "🇧🇷 Português": "pt",
@@ -1130,7 +1141,7 @@ def process_telegram_update(update: dict):
             "[telegram-webhook] "
             "Update inválido descartado."
         )
-        return
+        return False
 
     message = update.get(
         "message",
@@ -1341,6 +1352,91 @@ def process_telegram_update(update: dict):
             ),
         )
 
+        return False
+
+
+def _fail_claimed_telegram_update_safely(
+    lease: TelegramUpdateProcessingLease,
+) -> None:
+    try:
+        fail_authenticated_telegram_update(
+            lease,
+            error_code=(
+                "telegram.processing_failed"
+            ),
+        )
+
+    except TelegramUpdateReceiptServiceError:
+        print(
+            "[telegram-webhook] "
+            "Falha segura ao atualizar receipt."
+        )
+
+    except Exception:
+        print(
+            "[telegram-webhook] "
+            "Falha segura ao atualizar receipt."
+        )
+
+
+def process_claimed_telegram_update(
+    update: dict,
+    lease: TelegramUpdateProcessingLease,
+) -> None:
+    """
+    Processa um update com claim durável ativo.
+
+    Tokens e fingerprints não são registrados.
+    """
+    try:
+        processing_result = (
+            process_telegram_update(
+                update
+            )
+        )
+
+    except Exception:
+        print(
+            "[telegram-webhook] "
+            "Falha segura no worker Telegram."
+        )
+
+        _fail_claimed_telegram_update_safely(
+            lease
+        )
+        return
+
+    if processing_result is False:
+        _fail_claimed_telegram_update_safely(
+            lease
+        )
+        return
+
+    try:
+        complete_authenticated_telegram_update(
+            lease
+        )
+
+    except TelegramUpdateReceiptServiceError:
+        print(
+            "[telegram-webhook] "
+            "Falha segura ao concluir receipt."
+        )
+
+        _fail_claimed_telegram_update_safely(
+            lease
+        )
+
+    except Exception:
+        print(
+            "[telegram-webhook] "
+            "Falha segura ao concluir receipt."
+        )
+
+        _fail_claimed_telegram_update_safely(
+            lease
+        )
+
 
 @router.post("/webhook")
 async def telegram_webhook(
@@ -1353,7 +1449,16 @@ async def telegram_webhook(
         ),
     ],
 ):
-    update = await request.json()
+    try:
+        update = await request.json()
+
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Atualização Telegram inválida."
+            ),
+        ) from None
 
     if not isinstance(
         update,
@@ -1367,15 +1472,13 @@ async def telegram_webhook(
         )
 
     try:
-        update_id = (
-            normalizar_update_id_telegram(
-                update.get(
-                    "update_id"
-                )
+        decision = (
+            claim_authenticated_telegram_update(
+                update
             )
         )
 
-    except TelegramUpdateContextError:
+    except TelegramUpdateReceiptValidationError:
         raise HTTPException(
             status_code=400,
             detail=(
@@ -1383,15 +1486,54 @@ async def telegram_webhook(
             ),
         ) from None
 
-    if update_id in PROCESSED_UPDATES:
-        return {"ok": True, "duplicate": True}
+    except TelegramUpdateReceiptConflictError:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Conflito no update Telegram."
+            ),
+        ) from None
 
-    if update_id is not None:
-        PROCESSED_UPDATES.add(update_id)
+    except TelegramUpdateReceiptServiceError:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Processamento Telegram "
+                "temporariamente indisponível."
+            ),
+        ) from None
 
-        if len(PROCESSED_UPDATES) > 1000:
-            PROCESSED_UPDATES.clear()
+    if not decision.should_process:
+        return {
+            "ok": True,
+            "accepted": False,
+            "duplicate": (
+                decision.status
+                == "duplicate"
+            ),
+            "status": decision.status,
+        }
 
-    background_tasks.add_task(process_telegram_update, update)
+    lease = decision.lease
 
-    return {"ok": True}
+    if lease is None:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Processamento Telegram "
+                "temporariamente indisponível."
+            ),
+        )
+
+    background_tasks.add_task(
+        process_claimed_telegram_update,
+        update,
+        lease,
+    )
+
+    return {
+        "ok": True,
+        "accepted": True,
+        "duplicate": False,
+        "status": decision.status,
+    }

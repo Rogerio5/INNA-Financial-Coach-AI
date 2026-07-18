@@ -201,32 +201,71 @@ def test_real_webhook_accepts_valid_header(
         SECRET,
     )
 
+    update = {
+        "update_id": 1003,
+    }
+
+    lease = (
+        telegram_webhook
+        .TelegramUpdateProcessingLease(
+            update_id=1003,
+            attempt_count=1,
+            claim_token="c" * 64,
+            update_fingerprint="a" * 64,
+        )
+    )
+
+    claim = MagicMock(
+        return_value=(
+            telegram_webhook
+            .TelegramUpdateClaimDecision(
+                update_id=1003,
+                status="claimed",
+                attempt_count=1,
+                lease=lease,
+            )
+        )
+    )
+
     process = MagicMock()
 
     monkeypatch.setattr(
         telegram_webhook,
-        "process_telegram_update",
+        "claim_authenticated_telegram_update",
+        claim,
+    )
+
+    monkeypatch.setattr(
+        telegram_webhook,
+        "process_claimed_telegram_update",
         process,
     )
 
-    telegram_webhook.PROCESSED_UPDATES.clear()
-
     response = _build_client().post(
         _webhook_path(),
-        json={
-            "update_id": 1003,
-        },
+        json=update,
         headers={
             TELEGRAM_SECRET_HEADER: SECRET,
         },
     )
 
     assert response.status_code == 200
-    assert response.json()["ok"] is True
 
-    process.assert_called_once_with({
-        "update_id": 1003,
-    })
+    assert response.json() == {
+        "ok": True,
+        "accepted": True,
+        "duplicate": False,
+        "status": "claimed",
+    }
+
+    claim.assert_called_once_with(
+        update
+    )
+
+    process.assert_called_once_with(
+        update,
+        lease,
+    )
 
 
 def test_route_declares_trusted_dependency():
