@@ -15,6 +15,9 @@ from src.agent_tools.core import (
 from src.agent_tools.financial_tools import (
     criar_definicao_calcular_diagnostico_financeiro,
 )
+from src.agent_tools.financial_history_tools import (
+    criar_definicao_consultar_historico_financeiro,
+)
 from src.agent_tools.rag_tools import (
     criar_definicao_buscar_conhecimento_rag,
 )
@@ -23,6 +26,8 @@ from src.agent_tools.rag_tools import (
 DEFAULT_RAG_TOOL_TIMEOUT_SECONDS = 20.0
 DEFAULT_FINANCIAL_TOOL_TIMEOUT_SECONDS = 2.0
 
+
+DEFAULT_FINANCIAL_HISTORY_TOOL_TIMEOUT_SECONDS = 5.0
 
 def _positive_float_environment(
     name: str,
@@ -53,6 +58,12 @@ def criar_registro_ferramentas_inna(
     """
     registry = ToolRegistry()
 
+    history_timeout = _positive_float_environment(
+        "INNA_FINANCIAL_HISTORY_TOOL_TIMEOUT_SECONDS",
+        DEFAULT_FINANCIAL_HISTORY_TOOL_TIMEOUT_SECONDS,
+    )
+
+
     rag_timeout = _positive_float_environment(
         "INNA_RAG_TOOL_TIMEOUT_SECONDS",
         DEFAULT_RAG_TOOL_TIMEOUT_SECONDS,
@@ -77,6 +88,12 @@ def criar_registro_ferramentas_inna(
         )
     )
 
+    registry.register(
+        criar_definicao_consultar_historico_financeiro(
+            timeout_seconds=history_timeout,
+        )
+    )
+
     return registry
 
 
@@ -95,6 +112,7 @@ def obter_catalogo_schemas_ferramentas(
 __all__ = [
     "DEFAULT_FINANCIAL_TOOL_TIMEOUT_SECONDS",
     "DEFAULT_RAG_TOOL_TIMEOUT_SECONDS",
+    "DEFAULT_FINANCIAL_HISTORY_TOOL_TIMEOUT_SECONDS",
     "criar_registro_ferramentas_inna",
     "obter_catalogo_schemas_ferramentas",
 ]
