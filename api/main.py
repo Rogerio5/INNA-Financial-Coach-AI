@@ -1,9 +1,14 @@
 from api.telegram_webhook import router as telegram_router
+from api.security import (
+    TrustedRequestContext,
+    require_trusted_request_context,
+)
 from api.resend_webhook import router as resend_router
 import time
+from typing import Annotated
 
 from src.audit_logger import record_event
-from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi import Depends, FastAPI, HTTPException, Query, Response
 from pydantic import BaseModel
 from api.schemas import DiagnosticoItem, EmailRequest, FeedbackInput, FeedbackItem, FeedbackResponse, FinancialInput, FinancialResponse
 
@@ -18,12 +23,19 @@ from src.rag_engine import (
 from src.pdf_report import gerar_relatorio_pdf
 from src.email_sender import send_diagnostico_email
 from src.interaction_logger import record_interaction
+from src.services.financial_diagnosis import (
+    FinancialDiagnosisIdempotencyConflictError,
+    FinancialDiagnosisServiceError,
+    FinancialDiagnosisValidationError,
+    TrustedDiagnosisIdentityError,
+    gerar_chave_idempotencia,
+    persistir_diagnostico_financeiro,
+)
 from src.repository import (
     get_diagnostico_by_id_db,
     list_diagnosticos_by_nome_db,
     list_diagnosticos_db,
     list_feedbacks_db,
-    save_diagnostico_db,
     save_feedback_db,
 )
 
@@ -301,43 +313,312 @@ def health_check():
 
 
 @app.post("/diagnostico", response_model=FinancialResponse)
-def gerar_diagnostico(payload: FinancialInput):
+def gerar_diagnostico(
+    payload: FinancialInput,
+    trusted_context: Annotated[
+        TrustedRequestContext,
+        Depends(
+            require_trusted_request_context
+        ),
+    ],
+):
+    """
+    Gera e persiste um diagnóstico financeiro
+    vinculado à identidade autenticada da sessão.
+
+    O usuario_id e o request_id não são obtidos do
+    body financeiro.
+    """
     inicio = time.time()
+
     payload_dict = payload.model_dump()
 
-    diagnosis = build_financial_diagnosis(payload_dict)
-    diagnosis["diagnostico"] = build_localized_diagnosis_text(payload_dict, diagnosis)
-    ai_plan = generate_ai_plan(payload_dict, diagnosis)
+    diagnosis = build_financial_diagnosis(
+        payload_dict
+    )
+
+    diagnosis_text = (
+        build_localized_diagnosis_text(
+            payload_dict,
+            diagnosis,
+        )
+    )
+
+    diagnosis[
+        "diagnostico"
+    ] = diagnosis_text
+
+    ai_plan = generate_ai_plan(
+        payload_dict,
+        diagnosis,
+    )
 
     response = {
         **diagnosis,
         "nome": payload_dict["nome"],
-        "idioma": payload_dict.get("idioma", "pt"),
-        "moeda": payload_dict.get("moeda", "BRL"),
-        "simbolo_moeda": payload_dict.get("simbolo_moeda", "R$"),
+        "idioma": payload_dict.get(
+            "idioma",
+            "pt",
+        ),
+        "moeda": payload_dict.get(
+            "moeda",
+            "BRL",
+        ),
+        "simbolo_moeda": payload_dict.get(
+            "simbolo_moeda",
+            "R$",
+        ),
         "plano_30_dias": ai_plan,
     }
 
-    diagnostico_id = save_diagnostico_db(payload_dict, response)
-    response["id"] = diagnostico_id
+    persistence_payload = {
+        "nome": payload_dict["nome"],
+        "renda_mensal": payload_dict[
+            "renda_mensal"
+        ],
+        "gastos_fixos": payload_dict[
+            "gastos_fixos"
+        ],
+        "gastos_variaveis": payload_dict[
+            "gastos_variaveis"
+        ],
+        "dividas_mensais": payload_dict[
+            "dividas_mensais"
+        ],
+        "reserva_atual": payload_dict[
+            "reserva_atual"
+        ],
+        "objetivo": payload_dict.get(
+            "objetivo"
+        ),
+        "idioma": response["idioma"],
+        "moeda": response["moeda"],
+        "simbolo_moeda": response[
+            "simbolo_moeda"
+        ],
+        "saldo_estimado": response[
+            "saldo_estimado"
+        ],
+        (
+            "comprometimento_"
+            "renda_percentual"
+        ): response[
+            (
+                "comprometimento_"
+                "renda_percentual"
+            )
+        ],
+        "meses_reserva_estimados": (
+            response[
+                "meses_reserva_estimados"
+            ]
+        ),
+        "score_financeiro": response[
+            "score_financeiro"
+        ],
+        "nivel_risco": response[
+            "nivel_risco"
+        ],
+        "diagnostico": response[
+            "diagnostico"
+        ],
+        "plano_30_dias": response[
+            "plano_30_dias"
+        ],
+    }
+
+    idempotency_key = (
+        gerar_chave_idempotencia(
+            origem="web-app",
+            request_id=(
+                trusted_context.request_id
+            ),
+        )
+    )
+
+    try:
+        persistence = (
+            persistir_diagnostico_financeiro(
+                usuario_id_confiavel=(
+                    trusted_context.user_id
+                ),
+                idempotency_key=(
+                    idempotency_key
+                ),
+                diagnostico=(
+                    persistence_payload
+                ),
+            )
+        )
+
+    except (
+        FinancialDiagnosisIdempotencyConflictError
+    ):
+        safe_record_event(
+            canal="web-app",
+            usuario=payload_dict.get(
+                "nome"
+            ),
+            idioma=payload_dict.get(
+                "idioma"
+            ),
+            moeda=payload_dict.get(
+                "moeda"
+            ),
+            status="conflict",
+            metadata={
+                "evento": (
+                    "conflito_idempotencia_"
+                    "diagnostico_web"
+                ),
+                "origem": "streamlit",
+                "codigo": (
+                    "idempotency_conflict"
+                ),
+                "identity_source": (
+                    "signed_internal_request"
+                ),
+                "tempo_resposta_segundos": (
+                    time.time() - inicio
+                ),
+            },
+        )
+
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "A requisição já foi processada "
+                "com outro conteúdo."
+            ),
+        ) from None
+
+    except (
+        FinancialDiagnosisValidationError,
+        TrustedDiagnosisIdentityError,
+    ):
+        safe_record_event(
+            canal="web-app",
+            usuario=payload_dict.get(
+                "nome"
+            ),
+            idioma=payload_dict.get(
+                "idioma"
+            ),
+            moeda=payload_dict.get(
+                "moeda"
+            ),
+            status="error",
+            metadata={
+                "evento": (
+                    "erro_validacao_"
+                    "diagnostico_web"
+                ),
+                "origem": "streamlit",
+                "codigo": (
+                    "persistence_validation_error"
+                ),
+                "identity_source": (
+                    "signed_internal_request"
+                ),
+                "tempo_resposta_segundos": (
+                    time.time() - inicio
+                ),
+            },
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Não foi possível validar o "
+                "diagnóstico gerado."
+            ),
+        ) from None
+
+    except FinancialDiagnosisServiceError:
+        safe_record_event(
+            canal="web-app",
+            usuario=payload_dict.get(
+                "nome"
+            ),
+            idioma=payload_dict.get(
+                "idioma"
+            ),
+            moeda=payload_dict.get(
+                "moeda"
+            ),
+            status="error",
+            metadata={
+                "evento": (
+                    "erro_persistencia_"
+                    "diagnostico_web"
+                ),
+                "origem": "streamlit",
+                "codigo": (
+                    "persistence_unavailable"
+                ),
+                "identity_source": (
+                    "signed_internal_request"
+                ),
+                "tempo_resposta_segundos": (
+                    time.time() - inicio
+                ),
+            },
+        )
+
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "A persistência do diagnóstico "
+                "está temporariamente indisponível."
+            ),
+        ) from None
+
+    diagnostico_id = persistence.id
+
+    response[
+        "id"
+    ] = diagnostico_id
 
     safe_record_event(
         canal="web-app",
-        usuario=payload_dict.get("nome"),
-        idioma=payload_dict.get("idioma"),
-        moeda=payload_dict.get("moeda"),
+        usuario=payload_dict.get(
+            "nome"
+        ),
+        idioma=payload_dict.get(
+            "idioma"
+        ),
+        moeda=payload_dict.get(
+            "moeda"
+        ),
         status="success",
-        diagnostico_id=diagnostico_id,
-        pergunta=payload_dict.get("objetivo"),
-        resposta=response.get("diagnostico"),
+        diagnostico_id=(
+            diagnostico_id
+        ),
         metadata={
-            "evento": "diagnostico_web_app",
+            "evento": (
+                "diagnostico_web_app"
+            ),
             "origem": "streamlit",
-            "score_financeiro": response.get("score_financeiro"),
-            "nivel_risco": response.get("nivel_risco"),
-            "saldo_estimado": response.get("saldo_estimado"),
-            "simbolo_moeda": payload_dict.get("simbolo_moeda"),
-            "tempo_resposta_segundos": time.time() - inicio,
+            "identity_source": (
+                "signed_internal_request"
+            ),
+            "persistence_status": (
+                persistence.status
+            ),
+            "created": persistence.created,
+            "score_financeiro": (
+                response.get(
+                    "score_financeiro"
+                )
+            ),
+            "nivel_risco": (
+                response.get(
+                    "nivel_risco"
+                )
+            ),
+            "tempo_resposta_segundos": (
+                time.time() - inicio
+            ),
         },
     )
 
