@@ -53,6 +53,9 @@ from .worker import (
     TelegramUpdateWorkerUnavailableError,
     TelegramUpdateWorkerValidationError,
     claim_next_authenticated_telegram_update_job_atomic,
+    TelegramUpdateWorkerCompletionOutcome,
+    TelegramUpdateWorkerOwnershipError,
+    complete_authenticated_telegram_update_job_atomic,
 )
 
 from .execution import (
@@ -66,6 +69,9 @@ from .execution import (
 )
 
 __all__ = [
+    "TelegramUpdateWorkerCompletionOutcome",
+    "TelegramUpdateWorkerOwnershipError",
+    "complete_authenticated_telegram_update_job_atomic",
     "execution",
     "TelegramUpdateExecutionConfigurationError",
     "TelegramUpdateExecutionDecryptionError",
