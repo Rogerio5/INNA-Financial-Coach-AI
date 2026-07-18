@@ -101,6 +101,31 @@ class TrustedTelegramUpdateContext:
         }
 
 
+def construir_contexto_confiavel_telegram(
+    *,
+    update_id: Any,
+    chat_id: Any,
+    message_id: Any = None,
+) -> TrustedTelegramUpdateContext:
+    """
+    Constrói o contexto a partir de identificadores
+    fornecidos pelo SDK ou pelo webhook autenticado.
+    """
+    return TrustedTelegramUpdateContext(
+        update_id=(
+            normalizar_update_id_telegram(
+                update_id
+            )
+        ),
+        chat_id=_normalizar_chat_id(
+            chat_id
+        ),
+        message_id=_normalizar_message_id(
+            message_id
+        ),
+    )
+
+
 def extrair_contexto_confiavel_telegram(
     update: Mapping[str, Any],
 ) -> TrustedTelegramUpdateContext:
@@ -154,7 +179,7 @@ def extrair_contexto_confiavel_telegram(
         )
     )
 
-    return TrustedTelegramUpdateContext(
+    return construir_contexto_confiavel_telegram(
         update_id=update_id,
         chat_id=chat_id,
         message_id=message_id,
@@ -164,6 +189,7 @@ def extrair_contexto_confiavel_telegram(
 __all__ = [
     "TelegramUpdateContextError",
     "TrustedTelegramUpdateContext",
+    "construir_contexto_confiavel_telegram",
     "extrair_contexto_confiavel_telegram",
     "normalizar_update_id_telegram",
 ]

@@ -299,6 +299,76 @@ def gerar_diagnostico_api(
         ) from error
 
 
+def gerar_diagnostico_telegram_api(
+    payload: Mapping[str, Any],
+    *,
+    usuario_id_confiavel: str,
+    request_id: str,
+) -> dict[str, Any]:
+    """
+    Envia um diagnóstico do bot polling para a rota
+    interna exclusiva do Telegram.
+    """
+    path = (
+        "/internal/telegram/diagnostico"
+    )
+
+    body, headers, _effective_request_id = (
+        preparar_requisicao_interna_json(
+            method="POST",
+            path=path,
+            payload=payload,
+            usuario_id_confiavel=(
+                usuario_id_confiavel
+            ),
+            request_id=request_id,
+        )
+    )
+
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}{path}",
+            data=body,
+            headers=headers,
+            timeout=90,
+        )
+
+        response.raise_for_status()
+
+        result = response.json()
+
+        if not isinstance(
+            result,
+            dict,
+        ):
+            raise InternalApiClientError(
+                "A API retornou uma resposta inválida."
+            )
+
+        return result
+
+    except requests.Timeout as error:
+        raise RuntimeError(
+            "A API da INNA demorou muito para "
+            "responder."
+        ) from error
+
+    except requests.RequestException as error:
+        raise RuntimeError(
+            "Não foi possível processar o "
+            "diagnóstico Telegram."
+        ) from error
+
+    except (
+        InternalApiClientError,
+        ValueError,
+    ):
+        raise InternalApiClientError(
+            "A resposta do diagnóstico "
+            "Telegram é inválida."
+        ) from None
+
+
 def enviar_feedback_api(
     payload: dict,
 ) -> dict:
@@ -420,6 +490,7 @@ __all__ = [
     "enviar_feedback_api",
     "enviar_relatorio_email",
     "gerar_diagnostico_api",
+    "gerar_diagnostico_telegram_api",
     "gerar_request_id_interno",
     "preparar_requisicao_interna_json",
     "verificar_api_online",

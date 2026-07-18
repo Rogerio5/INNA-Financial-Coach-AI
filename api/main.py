@@ -5,6 +5,7 @@ from api.security import (
 )
 from api.resend_webhook import router as resend_router
 import time
+import re
 from typing import Annotated
 
 from src.audit_logger import record_event
@@ -312,22 +313,21 @@ def health_check():
     }
 
 
-@app.post("/diagnostico", response_model=FinancialResponse)
-def gerar_diagnostico(
+def _gerar_e_persistir_diagnostico_canal(
+    *,
     payload: FinancialInput,
-    trusted_context: Annotated[
-        TrustedRequestContext,
-        Depends(
-            require_trusted_request_context
-        ),
-    ],
-):
+    trusted_context: TrustedRequestContext,
+    canal: str,
+    origem_evento: str,
+    origem_idempotencia: str,
+    evento: str,
+) -> dict:
     """
-    Gera e persiste um diagnóstico financeiro
-    vinculado à identidade autenticada da sessão.
+    Núcleo compartilhado entre canais internos
+    autenticados.
 
-    O usuario_id e o request_id não são obtidos do
-    body financeiro.
+    Identidade e request_id permanecem separados
+    do conteúdo financeiro.
     """
     inicio = time.time()
 
@@ -337,16 +337,12 @@ def gerar_diagnostico(
         payload_dict
     )
 
-    diagnosis_text = (
-        build_localized_diagnosis_text(
-            payload_dict,
-            diagnosis,
-        )
-    )
-
     diagnosis[
         "diagnostico"
-    ] = diagnosis_text
+    ] = build_localized_diagnosis_text(
+        payload_dict,
+        diagnosis,
+    )
 
     ai_plan = generate_ai_plan(
         payload_dict,
@@ -429,7 +425,7 @@ def gerar_diagnostico(
 
     idempotency_key = (
         gerar_chave_idempotencia(
-            origem="web-app",
+            origem=origem_idempotencia,
             request_id=(
                 trusted_context.request_id
             ),
@@ -455,7 +451,7 @@ def gerar_diagnostico(
         FinancialDiagnosisIdempotencyConflictError
     ):
         safe_record_event(
-            canal="web-app",
+            canal=canal,
             usuario=payload_dict.get(
                 "nome"
             ),
@@ -468,10 +464,9 @@ def gerar_diagnostico(
             status="conflict",
             metadata={
                 "evento": (
-                    "conflito_idempotencia_"
-                    "diagnostico_web"
+                    f"{evento}_idempotency_conflict"
                 ),
-                "origem": "streamlit",
+                "origem": origem_evento,
                 "codigo": (
                     "idempotency_conflict"
                 ),
@@ -497,7 +492,7 @@ def gerar_diagnostico(
         TrustedDiagnosisIdentityError,
     ):
         safe_record_event(
-            canal="web-app",
+            canal=canal,
             usuario=payload_dict.get(
                 "nome"
             ),
@@ -510,10 +505,9 @@ def gerar_diagnostico(
             status="error",
             metadata={
                 "evento": (
-                    "erro_validacao_"
-                    "diagnostico_web"
+                    f"{evento}_validation_error"
                 ),
-                "origem": "streamlit",
+                "origem": origem_evento,
                 "codigo": (
                     "persistence_validation_error"
                 ),
@@ -536,7 +530,7 @@ def gerar_diagnostico(
 
     except FinancialDiagnosisServiceError:
         safe_record_event(
-            canal="web-app",
+            canal=canal,
             usuario=payload_dict.get(
                 "nome"
             ),
@@ -549,10 +543,9 @@ def gerar_diagnostico(
             status="error",
             metadata={
                 "evento": (
-                    "erro_persistencia_"
-                    "diagnostico_web"
+                    f"{evento}_persistence_error"
                 ),
-                "origem": "streamlit",
+                "origem": origem_evento,
                 "codigo": (
                     "persistence_unavailable"
                 ),
@@ -573,14 +566,10 @@ def gerar_diagnostico(
             ),
         ) from None
 
-    diagnostico_id = persistence.id
-
-    response[
-        "id"
-    ] = diagnostico_id
+    response["id"] = persistence.id
 
     safe_record_event(
-        canal="web-app",
+        canal=canal,
         usuario=payload_dict.get(
             "nome"
         ),
@@ -592,13 +581,11 @@ def gerar_diagnostico(
         ),
         status="success",
         diagnostico_id=(
-            diagnostico_id
+            persistence.id
         ),
         metadata={
-            "evento": (
-                "diagnostico_web_app"
-            ),
-            "origem": "streamlit",
+            "evento": evento,
+            "origem": origem_evento,
             "identity_source": (
                 "signed_internal_request"
             ),
@@ -623,6 +610,75 @@ def gerar_diagnostico(
     )
 
     return response
+
+
+@app.post(
+    "/diagnostico",
+    response_model=FinancialResponse,
+)
+def gerar_diagnostico(
+    payload: FinancialInput,
+    trusted_context: Annotated[
+        TrustedRequestContext,
+        Depends(
+            require_trusted_request_context
+        ),
+    ],
+):
+    return _gerar_e_persistir_diagnostico_canal(
+        payload=payload,
+        trusted_context=trusted_context,
+        canal="web-app",
+        origem_evento="streamlit",
+        origem_idempotencia="web-app",
+        evento="diagnostico_web_app",
+    )
+
+
+@app.post(
+    "/internal/telegram/diagnostico",
+    response_model=FinancialResponse,
+)
+def gerar_diagnostico_telegram_interno(
+    payload: FinancialInput,
+    trusted_context: Annotated[
+        TrustedRequestContext,
+        Depends(
+            require_trusted_request_context
+        ),
+    ],
+):
+    if not re.fullmatch(
+        r"telegram:-?[1-9][0-9]*",
+        trusted_context.user_id,
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Identidade Telegram inválida."
+            ),
+        )
+
+    if not re.fullmatch(
+        r"telegram-update:[0-9]+",
+        trusted_context.request_id,
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Identificador do update "
+                "Telegram inválido."
+            ),
+        )
+
+    return _gerar_e_persistir_diagnostico_canal(
+        payload=payload,
+        trusted_context=trusted_context,
+        canal="telegram",
+        origem_evento="telegram_polling",
+        origem_idempotencia="telegram",
+        evento="diagnostico_telegram_polling",
+    )
 
 
 

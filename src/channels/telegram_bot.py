@@ -1,7 +1,14 @@
+import asyncio
 import os
 
-import requests
 from dotenv import load_dotenv
+from src.api_client import (
+    gerar_diagnostico_telegram_api,
+)
+from src.channels.telegram_context import (
+    TelegramUpdateContextError,
+    construir_contexto_confiavel_telegram,
+)
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import (
     Application,
@@ -176,14 +183,19 @@ def _format_money(value) -> str:
         return "R$ 0,00"
 
 
-def gerar_diagnostico(payload: dict) -> dict:
-    response = requests.post(
-        f"{API_BASE_URL}/diagnostico",
-        json=payload,
-        timeout=90,
+def gerar_diagnostico(
+    payload: dict,
+    *,
+    usuario_id_confiavel: str,
+    request_id: str,
+) -> dict:
+    return gerar_diagnostico_telegram_api(
+        payload,
+        usuario_id_confiavel=(
+            usuario_id_confiavel
+        ),
+        request_id=request_id,
     )
-    response.raise_for_status()
-    return response.json()
 
 
 def formatar_resposta(resultado: dict, context: ContextTypes.DEFAULT_TYPE) -> str:
@@ -341,52 +353,170 @@ async def receber_reserva(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return OBJETIVO
 
 
-async def receber_objetivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    objetivo_original = update.message.text.strip()
+async def receber_objetivo(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+):
+    effective_message = (
+        update.effective_message
+    )
+
+    effective_chat = (
+        update.effective_chat
+    )
+
+    if (
+        effective_message is None
+        or effective_chat is None
+    ):
+        context.user_data.clear()
+
+        return ConversationHandler.END
+
+    objetivo_original = (
+        effective_message.text
+        or ""
+    ).strip()
+
     objetivo = objetivo_original
 
-    dividas_mensais = float(context.user_data.get("dividas_mensais", 0))
-    lang = context.user_data.get("lang", "pt")
+    dividas_mensais = float(
+        context.user_data.get(
+            "dividas_mensais",
+            0,
+        )
+    )
+
+    lang = context.user_data.get(
+        "lang",
+        "pt",
+    )
 
     objetivo_fala_sobre_divida = any(
         termo in objetivo_original.lower()
         for termo in [
-            "dívida", "divida", "dívidas", "dividas",
-            "debt", "debts", "deuda", "deudas",
+            "dívida",
+            "divida",
+            "dívidas",
+            "dividas",
+            "debt",
+            "debts",
+            "deuda",
+            "deudas",
         ]
     )
 
-    if dividas_mensais <= 0 and objetivo_fala_sobre_divida:
-        objetivo = "Organizar as contas, evitar novas dívidas e fortalecer a reserva financeira"
-        await update.message.reply_text(t(context, "adjust_debt"))
+    if (
+        dividas_mensais <= 0
+        and objetivo_fala_sobre_divida
+    ):
+        objetivo = (
+            "Organizar as contas, evitar novas "
+            "dívidas e fortalecer a reserva "
+            "financeira"
+        )
 
-    objetivo = f"{objetivo}. Responda em {LANGUAGE_NAMES.get(lang, 'português brasileiro')}."
+        await effective_message.reply_text(
+            t(
+                context,
+                "adjust_debt",
+            )
+        )
+
+    objetivo = (
+        f"{objetivo}. Responda em "
+        f"{LANGUAGE_NAMES.get(lang, 'português brasileiro')}."
+    )
 
     payload = {
         "nome": context.user_data["nome"],
-        "renda_mensal": context.user_data["renda_mensal"],
-        "gastos_fixos": context.user_data["gastos_fixos"],
-        "gastos_variaveis": context.user_data["gastos_variaveis"],
-        "dividas_mensais": context.user_data["dividas_mensais"],
-        "reserva_atual": context.user_data["reserva_atual"],
+        "renda_mensal": (
+            context.user_data[
+                "renda_mensal"
+            ]
+        ),
+        "gastos_fixos": (
+            context.user_data[
+                "gastos_fixos"
+            ]
+        ),
+        "gastos_variaveis": (
+            context.user_data[
+                "gastos_variaveis"
+            ]
+        ),
+        "dividas_mensais": (
+            context.user_data[
+                "dividas_mensais"
+            ]
+        ),
+        "reserva_atual": (
+            context.user_data[
+                "reserva_atual"
+            ]
+        ),
         "objetivo": objetivo,
+        "idioma": lang,
     }
 
-    await update.message.reply_text(
-        t(context, "analyzing"),
+    await effective_message.reply_text(
+        t(
+            context,
+            "analyzing",
+        ),
         reply_markup=ReplyKeyboardRemove(),
     )
 
     try:
-        resultado = gerar_diagnostico(payload)
-        resposta = formatar_resposta(resultado, context)
-        await update.message.reply_text(resposta)
-    except requests.RequestException:
-        await update.message.reply_text(t(context, "api_error"))
-    except Exception as error:
-        await update.message.reply_text(f"Erro: {error}")
+        trusted_update = (
+            construir_contexto_confiavel_telegram(
+                update_id=update.update_id,
+                chat_id=effective_chat.id,
+                message_id=(
+                    effective_message.message_id
+                ),
+            )
+        )
 
-    context.user_data.clear()
+        resultado = await asyncio.to_thread(
+            gerar_diagnostico,
+            payload,
+            usuario_id_confiavel=(
+                trusted_update.usuario_id
+            ),
+            request_id=(
+                trusted_update.request_id
+            ),
+        )
+
+        resposta = formatar_resposta(
+            resultado,
+            context,
+        )
+
+        await effective_message.reply_text(
+            resposta
+        )
+
+    except TelegramUpdateContextError:
+        await effective_message.reply_text(
+            t(
+                context,
+                "api_error",
+            )
+        )
+
+    except Exception:
+        await effective_message.reply_text(
+            t(
+                context,
+                "api_error",
+            )
+        )
+
+    finally:
+        context.user_data.clear()
+
     return ConversationHandler.END
 
 
