@@ -2612,7 +2612,611 @@ def retry_or_dead_letter_authenticated_telegram_update_job_atomic(
             "a falha do job Telegram."
         ) from None
 
+RecoveryJobStatus = Literal[
+    "queued",
+    "dead_letter",
+]
+
+
+RECOVERY_ERROR_CODE = (
+    "telegram.worker_lease_expired"
+)
+
+
+SQL_RECOVER_EXPIRED_AUTHENTICATED_JOBS = """
+WITH candidates AS (
+    SELECT
+        job.update_id,
+        job.lock_token
+            AS previous_lock_token
+    FROM public.telegram_update_jobs AS job
+    INNER JOIN
+        public.telegram_update_receipts
+        AS receipt
+        ON receipt.update_id = job.update_id
+    WHERE
+        job.status = 'processing'
+        AND job.lock_expires_at <= NOW()
+        AND job.lock_token IS NOT NULL
+
+        AND receipt.status = 'processing'
+        AND receipt.lease_expires_at <= NOW()
+        AND receipt.claim_token = job.lock_token
+    ORDER BY
+        job.lock_expires_at,
+        job.update_id
+    FOR UPDATE OF receipt SKIP LOCKED
+    LIMIT %(limit)s
+),
+
+updated_jobs AS (
+    UPDATE public.telegram_update_jobs AS job
+    SET
+        status = CASE
+            WHEN
+                job.attempt_count
+                >= job.max_attempts
+            THEN 'dead_letter'
+            ELSE 'queued'
+        END,
+
+        available_at = CASE
+            WHEN
+                job.attempt_count
+                >= job.max_attempts
+            THEN job.available_at
+            ELSE NOW()
+        END,
+
+        locked_at = NULL,
+        lock_expires_at = NULL,
+        lock_token = NULL,
+
+        completed_at = NULL,
+
+        dead_lettered_at = CASE
+            WHEN
+                job.attempt_count
+                >= job.max_attempts
+            THEN NOW()
+            ELSE NULL
+        END,
+
+        last_error_code =
+            'telegram.worker_lease_expired',
+
+        updated_at = NOW()
+    FROM candidates AS candidate
+    WHERE
+        job.update_id = candidate.update_id
+        AND job.status = 'processing'
+
+        AND job.lock_token = (
+            candidate.previous_lock_token
+        )
+
+        AND job.lock_expires_at <= NOW()
+    RETURNING
+        job.update_id,
+        job.status,
+        job.attempt_count,
+        job.max_attempts,
+        job.payload_version,
+        job.last_error_code,
+
+        candidate.previous_lock_token
+            AS previous_lock_token,
+
+        (
+            job.payload_ciphertext
+                IS NOT NULL
+            AND job.payload_nonce
+                IS NOT NULL
+            AND job.payload_key_id
+                IS NOT NULL
+        ) AS payload_retained,
+
+        (
+            job.locked_at IS NULL
+            AND job.lock_expires_at IS NULL
+            AND job.lock_token IS NULL
+        ) AS ownership_cleared
+),
+
+updated_receipts AS (
+    UPDATE
+        public.telegram_update_receipts
+        AS receipt
+    SET
+        status = 'failed',
+
+        last_received_at = NOW(),
+        lease_expires_at = NOW(),
+
+        completed_at = NULL,
+        failed_at = NOW(),
+
+        last_error_code =
+            'telegram.worker_lease_expired'
+    FROM updated_jobs AS job
+    WHERE
+        receipt.update_id = job.update_id
+        AND receipt.status = 'processing'
+
+        AND receipt.claim_token = (
+            job.previous_lock_token
+        )
+
+        AND receipt.lease_expires_at <= NOW()
+    RETURNING
+        receipt.update_id,
+        receipt.attempt_count,
+        receipt.last_error_code,
+
+        (
+            receipt.completed_at IS NULL
+        ) AS completed_at_cleared,
+
+        (
+            receipt.failed_at IS NOT NULL
+        ) AS failed_at_set,
+
+        (
+            receipt.lease_expires_at <= NOW()
+        ) AS lease_closed
+),
+
+paired AS (
+    SELECT
+        job.update_id,
+        job.status,
+        job.attempt_count,
+        job.max_attempts,
+        job.payload_version,
+        job.last_error_code,
+        job.payload_retained,
+        job.ownership_cleared,
+
+        receipt.attempt_count
+            AS receipt_attempt_count,
+
+        receipt.completed_at_cleared,
+        receipt.failed_at_set,
+        receipt.lease_closed
+    FROM updated_jobs AS job
+    INNER JOIN updated_receipts AS receipt
+        ON receipt.update_id = job.update_id
+)
+
+SELECT
+    COALESCE(
+        (
+            SELECT jsonb_agg(
+                jsonb_build_object(
+                    'update_id',
+                        paired.update_id,
+
+                    'status',
+                        paired.status,
+
+                    'attempt_count',
+                        paired.attempt_count,
+
+                    'max_attempts',
+                        paired.max_attempts,
+
+                    'payload_version',
+                        paired.payload_version,
+
+                    'last_error_code',
+                        paired.last_error_code,
+
+                    'payload_retained',
+                        paired.payload_retained,
+
+                    'ownership_cleared',
+                        paired.ownership_cleared,
+
+                    'receipt_attempt_count',
+                        paired.receipt_attempt_count,
+
+                    'completed_at_cleared',
+                        paired.completed_at_cleared,
+
+                    'failed_at_set',
+                        paired.failed_at_set,
+
+                    'lease_closed',
+                        paired.lease_closed
+                )
+                ORDER BY paired.update_id
+            )
+            FROM paired
+        ),
+        '[]'::jsonb
+    ) AS records,
+
+    (
+        SELECT COUNT(*)
+        FROM candidates
+    ) AS candidate_count,
+
+    (
+        SELECT COUNT(*)
+        FROM updated_jobs
+    ) AS job_count,
+
+    (
+        SELECT COUNT(*)
+        FROM updated_receipts
+    ) AS receipt_count;
+"""
+
+
+@dataclass(
+    frozen=True,
+    slots=True,
+)
+class TelegramUpdateWorkerRecoveryRecord:
+    update_id: int
+
+    job_status: RecoveryJobStatus
+
+    job_attempt_count: int
+    job_max_attempts: int
+    receipt_attempt_count: int
+
+    payload_version: int
+    last_error_code: str
+
+    payload_retained: bool
+    ownership_cleared: bool
+
+    @property
+    def dead_lettered(
+        self,
+    ) -> bool:
+        return (
+            self.job_status
+            == "dead_letter"
+        )
+
+    @property
+    def retry_scheduled(
+        self,
+    ) -> bool:
+        return (
+            self.job_status
+            == "queued"
+        )
+
+    def to_safe_dict(
+        self,
+    ) -> dict[str, object]:
+        return {
+            "update_id": self.update_id,
+            "job_status": self.job_status,
+            "job_attempt_count": (
+                self.job_attempt_count
+            ),
+            "job_max_attempts": (
+                self.job_max_attempts
+            ),
+            "receipt_attempt_count": (
+                self.receipt_attempt_count
+            ),
+            "payload_version": (
+                self.payload_version
+            ),
+            "last_error_code": (
+                self.last_error_code
+            ),
+            "payload_retained": (
+                self.payload_retained
+            ),
+            "ownership_cleared": (
+                self.ownership_cleared
+            ),
+            "retry_scheduled": (
+                self.retry_scheduled
+            ),
+            "dead_lettered": (
+                self.dead_lettered
+            ),
+        }
+
+
+@dataclass(
+    frozen=True,
+    slots=True,
+)
+class TelegramUpdateWorkerRecoveryBatch:
+    records: tuple[
+        TelegramUpdateWorkerRecoveryRecord,
+        ...,
+    ]
+
+    @property
+    def total(
+        self,
+    ) -> int:
+        return len(
+            self.records
+        )
+
+    @property
+    def retried(
+        self,
+    ) -> int:
+        return sum(
+            record.retry_scheduled
+            for record in self.records
+        )
+
+    @property
+    def dead_lettered(
+        self,
+    ) -> int:
+        return sum(
+            record.dead_lettered
+            for record in self.records
+        )
+
+    def to_safe_dict(
+        self,
+    ) -> dict[str, object]:
+        return {
+            "total": self.total,
+            "retried": self.retried,
+            "dead_lettered": (
+                self.dead_lettered
+            ),
+            "records": [
+                record.to_safe_dict()
+                for record in self.records
+            ],
+        }
+
+
+def _recovery_record_from_row(
+    row: Any,
+) -> TelegramUpdateWorkerRecoveryRecord:
+    try:
+        status = str(
+            row["status"]
+        )
+
+        record = (
+            TelegramUpdateWorkerRecoveryRecord(
+                update_id=int(
+                    row["update_id"]
+                ),
+                job_status=status,
+                job_attempt_count=int(
+                    row["attempt_count"]
+                ),
+                job_max_attempts=int(
+                    row["max_attempts"]
+                ),
+                receipt_attempt_count=int(
+                    row[
+                        "receipt_attempt_count"
+                    ]
+                ),
+                payload_version=int(
+                    row["payload_version"]
+                ),
+                last_error_code=str(
+                    row["last_error_code"]
+                ),
+                payload_retained=bool(
+                    row["payload_retained"]
+                ),
+                ownership_cleared=bool(
+                    row["ownership_cleared"]
+                ),
+            )
+        )
+
+        completed_at_cleared = bool(
+            row["completed_at_cleared"]
+        )
+
+        failed_at_set = bool(
+            row["failed_at_set"]
+        )
+
+        lease_closed = bool(
+            row["lease_closed"]
+        )
+
+    except (
+        KeyError,
+        TypeError,
+        ValueError,
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "O banco retornou recuperação "
+            "Telegram inválida."
+        ) from None
+
+    if record.job_status not in {
+        "queued",
+        "dead_letter",
+    }:
+        raise TelegramUpdateWorkerConsistencyError(
+            "A recuperação retornou "
+            "status inválido."
+        )
+
+    if (
+        record.update_id < 0
+        or record.job_attempt_count < 1
+        or record.job_max_attempts < 1
+        or record.job_attempt_count
+        > record.job_max_attempts
+        or record.receipt_attempt_count
+        < record.job_attempt_count
+        or record.payload_version < 1
+        or record.last_error_code
+        != RECOVERY_ERROR_CODE
+        or not record.payload_retained
+        or not record.ownership_cleared
+        or not completed_at_cleared
+        or not failed_at_set
+        or not lease_closed
+    ):
+        raise TelegramUpdateWorkerConsistencyError(
+            "Job e receipt não foram "
+            "recuperados consistentemente."
+        )
+
+    return record
+
+
+def recover_expired_authenticated_telegram_update_jobs_atomic(
+    *,
+    limit: int = 100,
+) -> TelegramUpdateWorkerRecoveryBatch:
+    """
+    Recupera atomicamente leases expirados.
+
+    A transação bloqueia primeiro os receipts,
+    atualiza os jobs e marca os receipts como
+    failed usando o mesmo ownership anterior.
+
+    Jobs com tentativas restantes voltam a queued.
+    Jobs esgotados vão para dead_letter.
+    """
+    normalized_limit = _validate_integer(
+        limit,
+        field_name="limit",
+        minimum=1,
+        maximum=(
+            job_repository
+            .MAX_RECOVERY_BATCH
+        ),
+    )
+
+    try:
+        with cursor_postgres(
+            dict_cursor=True,
+            commit_automatico=True,
+        ) as cursor:
+            _set_transaction_timeouts(
+                cursor
+            )
+
+            cursor.execute(
+                SQL_RECOVER_EXPIRED_AUTHENTICATED_JOBS,
+                {
+                    "limit": normalized_limit,
+                },
+            )
+
+            summary_row = cursor.fetchone()
+
+            if summary_row is None:
+                raise TelegramUpdateWorkerConsistencyError(
+                    "O banco não retornou o "
+                    "resumo da recuperação."
+                )
+
+            try:
+                candidate_count = int(
+                    summary_row[
+                        "candidate_count"
+                    ]
+                )
+
+                job_count = int(
+                    summary_row[
+                        "job_count"
+                    ]
+                )
+
+                receipt_count = int(
+                    summary_row[
+                        "receipt_count"
+                    ]
+                )
+
+                raw_records = (
+                    summary_row["records"]
+                )
+
+            except (
+                KeyError,
+                TypeError,
+                ValueError,
+            ):
+                raise (
+                    TelegramUpdateWorkerConsistencyError(
+                        "O banco retornou resumo "
+                        "de recuperação inválido."
+                    )
+                ) from None
+
+            if (
+                candidate_count < 0
+                or job_count < 0
+                or receipt_count < 0
+                or candidate_count
+                != job_count
+                or job_count
+                != receipt_count
+            ):
+                raise TelegramUpdateWorkerConsistencyError(
+                    "A recuperação de jobs e "
+                    "receipts ficou divergente."
+                )
+
+            if not isinstance(
+                raw_records,
+                list,
+            ):
+                raise TelegramUpdateWorkerConsistencyError(
+                    "A lista de recuperação "
+                    "é inválida."
+                )
+
+            records = tuple(
+                _recovery_record_from_row(
+                    row
+                )
+                for row in raw_records
+            )
+
+            if len(records) != candidate_count:
+                raise TelegramUpdateWorkerConsistencyError(
+                    "A quantidade recuperada "
+                    "não corresponde ao resumo."
+                )
+
+            return (
+                TelegramUpdateWorkerRecoveryBatch(
+                    records=records,
+                )
+            )
+
+    except (
+        TelegramUpdateWorkerConsistencyError,
+        TelegramUpdateWorkerValidationError,
+    ):
+        raise
+
+    except Exception:
+        raise TelegramUpdateWorkerUnavailableError(
+            "Não foi possível recuperar "
+            "leases Telegram expirados."
+        ) from None
+
 __all__ = [
+    "RECOVERY_ERROR_CODE",
+    "SQL_RECOVER_EXPIRED_AUTHENTICATED_JOBS",
+    "TelegramUpdateWorkerRecoveryBatch",
+    "TelegramUpdateWorkerRecoveryRecord",
+    "recover_expired_authenticated_telegram_update_jobs_atomic",
     "FailureDecision",
     "SQL_FAIL_OWNED_RECEIPT",
     "SQL_LOCK_RECEIPT_FOR_FAILURE",

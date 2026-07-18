@@ -3,6 +3,7 @@ from . import service
 from . import ingress
 from . import worker
 from . import execution
+from . import runner
 
 from .repository import (
     TelegramUpdateJobLease,
@@ -58,6 +59,9 @@ from .worker import (
     complete_authenticated_telegram_update_job_atomic,
     TelegramUpdateWorkerFailureOutcome,
     retry_or_dead_letter_authenticated_telegram_update_job_atomic,
+    TelegramUpdateWorkerRecoveryBatch,
+    TelegramUpdateWorkerRecoveryRecord,
+    recover_expired_authenticated_telegram_update_jobs_atomic,
 )
 
 from .execution import (
@@ -70,7 +74,38 @@ from .execution import (
     decrypt_authenticated_telegram_worker_lease,
 )
 
+from .runner import (
+    TelegramUpdatePermanentProcessingError,
+    TelegramUpdateProcessorError,
+    TelegramUpdateRunnerConfigurationError,
+    TelegramUpdateRunnerError,
+    TelegramUpdateRunnerResult,
+    TelegramUpdateRunnerSummary,
+    TelegramUpdateTransientProcessingError,
+    TelegramUpdateWorkerConfig,
+    TelegramUpdateWorkerDependencies,
+    calculate_worker_retry_delay_seconds,
+    run_one_telegram_update_job,
+    run_telegram_update_worker,
+)
+
 __all__ = [
+    "runner",
+    "TelegramUpdatePermanentProcessingError",
+    "TelegramUpdateProcessorError",
+    "TelegramUpdateRunnerConfigurationError",
+    "TelegramUpdateRunnerError",
+    "TelegramUpdateRunnerResult",
+    "TelegramUpdateRunnerSummary",
+    "TelegramUpdateTransientProcessingError",
+    "TelegramUpdateWorkerConfig",
+    "TelegramUpdateWorkerDependencies",
+    "calculate_worker_retry_delay_seconds",
+    "run_one_telegram_update_job",
+    "run_telegram_update_worker",
+    "TelegramUpdateWorkerRecoveryBatch",
+    "TelegramUpdateWorkerRecoveryRecord",
+    "recover_expired_authenticated_telegram_update_jobs_atomic",
     "TelegramUpdateWorkerFailureOutcome",
     "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
     "TelegramUpdateWorkerCompletionOutcome",
