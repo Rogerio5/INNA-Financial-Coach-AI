@@ -4,16 +4,24 @@ import re
 import requests
 from typing import Annotated
 from dotenv import load_dotenv
-from fastapi import APIRouter, BackgroundTasks, Depends, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from api.security import (
     TrustedTelegramWebhookContext,
     require_trusted_telegram_webhook,
 )
 
 from api.schemas import FinancialInput
+from src.channels.telegram_context import (
+    TelegramUpdateContextError,
+    extrair_contexto_confiavel_telegram,
+    normalizar_update_id_telegram,
+)
 from src.financial_engine import build_financial_diagnosis
+from src.services.financial_diagnosis import (
+    gerar_chave_idempotencia,
+    persistir_diagnostico_financeiro,
+)
 from src.gemini_client import generate_ai_plan
-from src.repository import save_diagnostico_db
 from src.audit_logger import record_event
 
 load_dotenv()
@@ -617,30 +625,80 @@ def safe_record_telegram_event(
     resultado: dict,
     resposta: str,
 ) -> None:
+    """
+    Registra somente metadados compactos.
+
+    Não persiste a pergunta, a resposta completa
+    nem dados financeiros detalhados no evento.
+    """
+    del resposta
+
     try:
-        moeda, simbolo = currency_by_telegram_lang(lang)
+        moeda, simbolo = (
+            currency_by_telegram_lang(
+                lang
+            )
+        )
 
         record_event(
             canal="telegram",
-            usuario=str(payload.get("nome") or chat_id),
-            usuario_id=str(chat_id),
+            usuario=str(
+                payload.get(
+                    "nome"
+                )
+                or "telegram-user"
+            ),
+            usuario_id=(
+                f"telegram:{chat_id}"
+            ),
             idioma=lang,
             moeda=moeda,
             status="success",
-            diagnostico_id=resultado.get("id"),
-            pergunta=payload.get("objetivo"),
-            resposta=resposta,
+            diagnostico_id=(
+                resultado.get(
+                    "id"
+                )
+            ),
             metadata={
-                "origem": "telegram_webhook",
-                "evento": "diagnostico_telegram",
+                "origem": (
+                    "telegram_webhook"
+                ),
+                "evento": (
+                    "diagnostico_telegram"
+                ),
+                "identity_source": (
+                    "authenticated_telegram_update"
+                ),
                 "simbolo_moeda": simbolo,
-                "score_financeiro": resultado.get("score_financeiro"),
-                "nivel_risco": translate_telegram_risk(resultado.get("nivel_risco"), lang),
-                "saldo_estimado": resultado.get("saldo_estimado"),
+                "persistence_status": (
+                    resultado.get(
+                        "persistence_status"
+                    )
+                ),
+                "created": resultado.get(
+                    "created"
+                ),
+                "score_financeiro": (
+                    resultado.get(
+                        "score_financeiro"
+                    )
+                ),
+                "nivel_risco": (
+                    translate_telegram_risk(
+                        resultado.get(
+                            "nivel_risco"
+                        ),
+                        lang,
+                    )
+                ),
             },
         )
-    except Exception as exc:
-        print(f"[telegram-event-log] Falha ao registrar evento Telegram: {exc}")
+
+    except Exception:
+        print(
+            "[telegram-event-log] "
+            "Falha segura ao registrar evento."
+        )
 
 
 def send_telegram_message(chat_id: int, text: str, reply_markup: dict | None = None):
@@ -870,29 +928,166 @@ def resposta_curta(resultado: dict, lang: str = "pt") -> str:
 """
 
 
-def gerar_diagnostico_pelo_payload(payload: dict, lang: str = "pt") -> dict:
-    financial_input = FinancialInput(**payload)
-    payload_dict = financial_input.model_dump()
+def gerar_diagnostico_pelo_payload(
+    payload: dict,
+    lang: str = "pt",
+    *,
+    usuario_id_confiavel: str,
+    request_id: str,
+) -> dict:
+    """
+    Gera e persiste o diagnóstico Telegram.
 
-    diagnosis = build_financial_diagnosis(payload_dict)
+    Identidade e request_id são recebidos
+    separadamente do payload financeiro.
+    """
+    financial_input = FinancialInput(
+        **payload
+    )
+
+    payload_dict = (
+        financial_input.model_dump()
+    )
+
+    diagnosis = (
+        build_financial_diagnosis(
+            payload_dict
+        )
+    )
 
     objective_with_language = (
         f"{payload_dict['objetivo']}. "
-        f"Responda em {LANGUAGE_NAMES.get(lang, 'português brasileiro')}."
+        f"Responda em "
+        f"{LANGUAGE_NAMES.get(lang, 'português brasileiro')}."
     )
-    ai_payload = {**payload_dict, "objetivo": objective_with_language}
 
-    ai_plan = generate_ai_plan(ai_payload, diagnosis)
+    ai_payload = {
+        **payload_dict,
+        "objetivo": (
+            objective_with_language
+        ),
+    }
+
+    ai_plan = generate_ai_plan(
+        ai_payload,
+        diagnosis,
+    )
 
     response = {
         **diagnosis,
         "nome": payload_dict["nome"],
-        "objetivo": payload_dict["objetivo"],
+        "objetivo": payload_dict[
+            "objetivo"
+        ],
+        "idioma": payload_dict.get(
+            "idioma",
+            lang,
+        ),
+        "moeda": payload_dict.get(
+            "moeda",
+            "BRL",
+        ),
+        "simbolo_moeda": (
+            payload_dict.get(
+                "simbolo_moeda",
+                "R$",
+            )
+        ),
         "plano_30_dias": ai_plan,
     }
 
-    diagnostico_id = save_diagnostico_db(payload_dict, response)
-    response["id"] = diagnostico_id
+    persistence_payload = {
+        "nome": response["nome"],
+        "renda_mensal": payload_dict[
+            "renda_mensal"
+        ],
+        "gastos_fixos": payload_dict[
+            "gastos_fixos"
+        ],
+        "gastos_variaveis": payload_dict[
+            "gastos_variaveis"
+        ],
+        "dividas_mensais": payload_dict[
+            "dividas_mensais"
+        ],
+        "reserva_atual": payload_dict[
+            "reserva_atual"
+        ],
+        "objetivo": response[
+            "objetivo"
+        ],
+        "idioma": response[
+            "idioma"
+        ],
+        "moeda": response[
+            "moeda"
+        ],
+        "simbolo_moeda": response[
+            "simbolo_moeda"
+        ],
+        "saldo_estimado": response[
+            "saldo_estimado"
+        ],
+        (
+            "comprometimento_"
+            "renda_percentual"
+        ): response[
+            (
+                "comprometimento_"
+                "renda_percentual"
+            )
+        ],
+        "meses_reserva_estimados": (
+            response[
+                "meses_reserva_estimados"
+            ]
+        ),
+        "score_financeiro": response[
+            "score_financeiro"
+        ],
+        "nivel_risco": response[
+            "nivel_risco"
+        ],
+        "diagnostico": response[
+            "diagnostico"
+        ],
+        "plano_30_dias": response[
+            "plano_30_dias"
+        ],
+    }
+
+    idempotency_key = (
+        gerar_chave_idempotencia(
+            origem="telegram",
+            request_id=request_id,
+        )
+    )
+
+    persistence = (
+        persistir_diagnostico_financeiro(
+            usuario_id_confiavel=(
+                usuario_id_confiavel
+            ),
+            idempotency_key=(
+                idempotency_key
+            ),
+            diagnostico=(
+                persistence_payload
+            ),
+        )
+    )
+
+    response["id"] = (
+        persistence.id
+    )
+
+    response[
+        "persistence_status"
+    ] = persistence.status
+
+    response[
+        "created"
+    ] = persistence.created
 
     return response
 
@@ -923,13 +1118,33 @@ def start_language_flow(chat_id: int, lang: str = "pt", auto: bool = False):
 
 
 def process_telegram_update(update: dict):
-    message = update.get("message", {})
-    chat = message.get("chat", {})
-    chat_id = chat.get("id")
-    text = message.get("text", "")
+    try:
+        trusted_update = (
+            extrair_contexto_confiavel_telegram(
+                update
+            )
+        )
 
-    if not chat_id:
+    except TelegramUpdateContextError:
+        print(
+            "[telegram-webhook] "
+            "Update inválido descartado."
+        )
         return
+
+    message = update.get(
+        "message",
+        {},
+    )
+
+    chat_id = (
+        trusted_update.chat_id
+    )
+
+    text = message.get(
+        "text",
+        "",
+    )
 
     text = text.strip()
 
@@ -1083,7 +1298,18 @@ def process_telegram_update(update: dict):
                 remove_keyboard(),
             )
 
-            resultado = gerar_diagnostico_pelo_payload(payload, lang)
+            resultado = (
+                gerar_diagnostico_pelo_payload(
+                    payload,
+                    lang,
+                    usuario_id_confiavel=(
+                        trusted_update.usuario_id
+                    ),
+                    request_id=(
+                        trusted_update.request_id
+                    ),
+                )
+            )
             resposta_final = resposta_curta(resultado, lang)
             send_telegram_message(chat_id, resposta_final)
 
@@ -1101,9 +1327,19 @@ def process_telegram_update(update: dict):
     except ValueError:
         send_telegram_message(chat_id, get_text(lang, "invalid_number"))
 
-    except Exception as error:
-        print(f"Erro no webhook Telegram: {error}")
-        send_telegram_message(chat_id, get_text(lang, "api_error"))
+    except Exception:
+        print(
+            "[telegram-webhook] "
+            "Falha segura ao processar atualização."
+        )
+
+        send_telegram_message(
+            chat_id,
+            get_text(
+                lang,
+                "api_error",
+            ),
+        )
 
 
 @router.post("/webhook")
@@ -1118,7 +1354,34 @@ async def telegram_webhook(
     ],
 ):
     update = await request.json()
-    update_id = update.get("update_id")
+
+    if not isinstance(
+        update,
+        dict,
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Atualização Telegram inválida."
+            ),
+        )
+
+    try:
+        update_id = (
+            normalizar_update_id_telegram(
+                update.get(
+                    "update_id"
+                )
+            )
+        )
+
+    except TelegramUpdateContextError:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Atualização Telegram inválida."
+            ),
+        ) from None
 
     if update_id in PROCESSED_UPDATES:
         return {"ok": True, "duplicate": True}
