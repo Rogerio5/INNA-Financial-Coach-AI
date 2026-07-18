@@ -2,8 +2,13 @@ import os
 import re
 
 import requests
+from typing import Annotated
 from dotenv import load_dotenv
-from fastapi import APIRouter, BackgroundTasks, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Request
+from api.security import (
+    TrustedTelegramWebhookContext,
+    require_trusted_telegram_webhook,
+)
 
 from api.schemas import FinancialInput
 from src.financial_engine import build_financial_diagnosis
@@ -1102,7 +1107,16 @@ def process_telegram_update(update: dict):
 
 
 @router.post("/webhook")
-async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
+async def telegram_webhook(
+    request: Request,
+    background_tasks: BackgroundTasks,
+    _trusted_webhook: Annotated[
+        TrustedTelegramWebhookContext,
+        Depends(
+            require_trusted_telegram_webhook
+        ),
+    ],
+):
     update = await request.json()
     update_id = update.get("update_id")
 
