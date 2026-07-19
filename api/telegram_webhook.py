@@ -1835,6 +1835,22 @@ def _fail_claimed_telegram_update_safely(
 
 
 
+
+def _process_legacy_telegram_update(
+    update: dict,
+):
+    """
+    Executa temporariamente o fluxo baseado em memória.
+
+    Esta função existe apenas para compatibilidade com testes e
+    chamadores antigos. O worker produtivo não deve utilizá-la.
+    """
+    return process_telegram_update(
+        update,
+        conversation_bridge=None,
+    )
+
+
 def _process_telegram_update_with_optional_bridge(
     update: dict,
     *,
@@ -1850,7 +1866,9 @@ def _process_telegram_update_with_optional_bridge(
     Quando uma bridge é fornecida, propaga a dependência explicitamente.
     """
     if conversation_bridge is None:
-        return process_telegram_update(update)
+        return _process_legacy_telegram_update(
+            update
+        )
 
     return process_telegram_update(
         update,

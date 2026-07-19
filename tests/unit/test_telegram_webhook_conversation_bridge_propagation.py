@@ -26,8 +26,19 @@ def test_optional_bridge_helper_preserves_legacy_call(
 ):
     calls = []
 
-    def fake_process(update):
-        calls.append(update)
+    def fake_process(
+        update,
+        *,
+        conversation_bridge=None,
+    ):
+        calls.append(
+            {
+                "update": update,
+                "conversation_bridge": (
+                    conversation_bridge
+                ),
+            }
+        )
         return "legacy-result"
 
     monkeypatch.setattr(
@@ -48,7 +59,12 @@ def test_optional_bridge_helper_preserves_legacy_call(
     )
 
     assert result == "legacy-result"
-    assert calls == [update]
+    assert calls == [
+        {
+            "update": update,
+            "conversation_bridge": None,
+        }
+    ]
 
 
 def test_optional_bridge_helper_forwards_bridge(
