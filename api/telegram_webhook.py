@@ -1334,38 +1334,126 @@ def process_telegram_update(
 
     text = text.strip()
 
+    durable_session = None
+
+    if conversation_bridge is not None:
+        (
+            durable_session,
+            session,
+        ) = _load_or_open_durable_telegram_session(
+            conversation_bridge=conversation_bridge,
+            telegram_user_id=(
+                trusted_update.usuario_id
+            ),
+            chat_id=chat_id,
+        )
+    else:
+        session = USER_SESSIONS.get(
+            chat_id
+        )
+
     if text in ["/start", "/idioma", "/language"]:
-        lang = get_chat_lang(chat_id, USER_SESSIONS.get(chat_id))
-        USER_SESSIONS[chat_id] = {"step": "idioma", "lang": lang}
-        start_language_flow(chat_id, lang)
+        lang = get_chat_lang(
+            chat_id,
+            session,
+        )
+
+        session = {
+            "step": "idioma",
+            "lang": lang,
+        }
+
+        if conversation_bridge is not None:
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
+        else:
+            USER_SESSIONS[chat_id] = session
+
+        start_language_flow(
+            chat_id,
+            lang,
+        )
         return
 
     if text in ["/help", "/ajuda"]:
-        session = USER_SESSIONS.get(chat_id)
-        lang = get_chat_lang(chat_id, session)
-        send_telegram_message(chat_id, get_help_message(lang))
+        lang = get_chat_lang(
+            chat_id,
+            session,
+        )
+        send_telegram_message(
+            chat_id,
+            get_help_message(lang),
+        )
         return
 
     if text in ["/help", "/ajuda"]:
-        session = USER_SESSIONS.get(chat_id)
-        lang = get_chat_lang(chat_id, session)
-        send_telegram_message(chat_id, get_help_message(lang))
+        lang = get_chat_lang(
+            chat_id,
+            session,
+        )
+        send_telegram_message(
+            chat_id,
+            get_help_message(lang),
+        )
         return
 
     if text in ["/cancelar", "/cancel"]:
-        session = USER_SESSIONS.get(chat_id)
-        lang = get_chat_lang(chat_id, session)
-        USER_LAST_LANG[chat_id] = lang
-        USER_SESSIONS.pop(chat_id, None)
-        send_telegram_message(chat_id, get_text(lang, "cancel"), remove_keyboard())
+        lang = get_chat_lang(
+            chat_id,
+            session,
+        )
+
+        if conversation_bridge is not None:
+            _delete_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+            )
+        else:
+            USER_LAST_LANG[chat_id] = lang
+            USER_SESSIONS.pop(
+                chat_id,
+                None,
+            )
+
+        send_telegram_message(
+            chat_id,
+            get_text(
+                lang,
+                "cancel",
+            ),
+            remove_keyboard(),
+        )
         return
 
-    session = USER_SESSIONS.get(chat_id)
-
     if not session:
-        lang = get_chat_lang(chat_id)
-        USER_SESSIONS[chat_id] = {"step": "idioma", "lang": lang}
-        start_language_flow(chat_id, lang, auto=True)
+        lang = get_chat_lang(
+            chat_id,
+        )
+
+        session = {
+            "step": "idioma",
+            "lang": lang,
+        }
+
+        if conversation_bridge is not None:
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
+        else:
+            USER_SESSIONS[chat_id] = session
+
+        start_language_flow(
+            chat_id,
+            lang,
+            auto=True,
+        )
         return
 
     step = session.get("step")
@@ -1377,10 +1465,23 @@ def process_telegram_update(
                 start_language_flow(chat_id)
                 return
 
-            session["lang"] = LANGUAGE_OPTIONS.get(text, "pt")
+            session["lang"] = LANGUAGE_OPTIONS.get(
+                text,
+                "pt",
+            )
             lang = session["lang"]
-            USER_LAST_LANG[chat_id] = lang
             session["step"] = "nome"
+
+            if conversation_bridge is not None:
+                _sync_and_save_durable_telegram_session(
+                    conversation_bridge=conversation_bridge,
+                    durable_session=durable_session,
+                    processing_state=session,
+                    language=lang,
+                )
+            else:
+                USER_LAST_LANG[chat_id] = lang
+                USER_SESSIONS[chat_id] = session
 
             send_telegram_message(
                 chat_id,
@@ -1396,6 +1497,16 @@ def process_telegram_update(
             session["nome"] = text
             session["step"] = "renda"
 
+            if conversation_bridge is not None:
+                _sync_and_save_durable_telegram_session(
+                    conversation_bridge=conversation_bridge,
+                    durable_session=durable_session,
+                    processing_state=session,
+                    language=lang,
+                )
+            else:
+                USER_SESSIONS[chat_id] = session
+
             send_telegram_message(
                 chat_id,
                 get_text(lang, "ask_income").format(nome=text),
@@ -1408,7 +1519,24 @@ def process_telegram_update(
 
             session["renda_mensal"] = renda
             session["step"] = "gastos_fixos"
-            send_telegram_message(chat_id, get_text(lang, "ask_fixed"))
+
+            if conversation_bridge is not None:
+                _sync_and_save_durable_telegram_session(
+                    conversation_bridge=conversation_bridge,
+                    durable_session=durable_session,
+                    processing_state=session,
+                    language=lang,
+                )
+            else:
+                USER_SESSIONS[chat_id] = session
+
+            send_telegram_message(
+                chat_id,
+                get_text(
+                    lang,
+                    "ask_fixed",
+                ),
+            )
 
         elif step == "gastos_fixos":
             gastos_fixos = to_float(text)
@@ -1417,7 +1545,24 @@ def process_telegram_update(
 
             session["gastos_fixos"] = gastos_fixos
             session["step"] = "gastos_variaveis"
-            send_telegram_message(chat_id, get_text(lang, "ask_variable"))
+
+            if conversation_bridge is not None:
+                _sync_and_save_durable_telegram_session(
+                    conversation_bridge=conversation_bridge,
+                    durable_session=durable_session,
+                    processing_state=session,
+                    language=lang,
+                )
+            else:
+                USER_SESSIONS[chat_id] = session
+
+            send_telegram_message(
+                chat_id,
+                get_text(
+                    lang,
+                    "ask_variable",
+                ),
+            )
 
         elif step == "gastos_variaveis":
             gastos_variaveis = to_float(text)
@@ -1426,7 +1571,24 @@ def process_telegram_update(
 
             session["gastos_variaveis"] = gastos_variaveis
             session["step"] = "dividas"
-            send_telegram_message(chat_id, get_text(lang, "ask_debts"))
+
+            if conversation_bridge is not None:
+                _sync_and_save_durable_telegram_session(
+                    conversation_bridge=conversation_bridge,
+                    durable_session=durable_session,
+                    processing_state=session,
+                    language=lang,
+                )
+            else:
+                USER_SESSIONS[chat_id] = session
+
+            send_telegram_message(
+                chat_id,
+                get_text(
+                    lang,
+                    "ask_debts",
+                ),
+            )
 
         elif step == "dividas":
             dividas = to_float(text)
@@ -1435,7 +1597,24 @@ def process_telegram_update(
 
             session["dividas_mensais"] = dividas
             session["step"] = "reserva"
-            send_telegram_message(chat_id, get_text(lang, "ask_savings"))
+
+            if conversation_bridge is not None:
+                _sync_and_save_durable_telegram_session(
+                    conversation_bridge=conversation_bridge,
+                    durable_session=durable_session,
+                    processing_state=session,
+                    language=lang,
+                )
+            else:
+                USER_SESSIONS[chat_id] = session
+
+            send_telegram_message(
+                chat_id,
+                get_text(
+                    lang,
+                    "ask_savings",
+                ),
+            )
 
         elif step == "reserva":
             reserva = to_float(text)
@@ -1444,6 +1623,16 @@ def process_telegram_update(
 
             session["reserva_atual"] = reserva
             session["step"] = "objetivo"
+
+            if conversation_bridge is not None:
+                _sync_and_save_durable_telegram_session(
+                    conversation_bridge=conversation_bridge,
+                    durable_session=durable_session,
+                    processing_state=session,
+                    language=lang,
+                )
+            else:
+                USER_SESSIONS[chat_id] = session
 
             send_telegram_message(
                 chat_id,
@@ -1507,8 +1696,17 @@ def process_telegram_update(
                 resposta=resposta_final,
             )
 
-            USER_LAST_LANG[chat_id] = lang
-            USER_SESSIONS.pop(chat_id, None)
+            if conversation_bridge is not None:
+                _delete_durable_telegram_session(
+                    conversation_bridge=conversation_bridge,
+                    durable_session=durable_session,
+                )
+            else:
+                USER_LAST_LANG[chat_id] = lang
+                USER_SESSIONS.pop(
+                    chat_id,
+                    None,
+                )
 
     except ValueError:
         send_telegram_message(chat_id, get_text(lang, "invalid_number"))
