@@ -2,13 +2,18 @@ import os
 import re
 
 import requests
-from typing import Annotated
+from typing import Annotated, TYPE_CHECKING
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException, Request
 from api.security import (
     TrustedTelegramWebhookContext,
     require_trusted_telegram_webhook,
 )
+
+if TYPE_CHECKING:
+    from src.services.telegram_conversation_state import (
+        TelegramWebhookConversationBridge,
+    )
 
 from api.schemas import FinancialInput
 from src.channels.telegram_context import (
@@ -1137,7 +1142,21 @@ def start_language_flow(chat_id: int, lang: str = "pt", auto: bool = False):
     )
 
 
-def process_telegram_update(update: dict):
+def process_telegram_update(
+    update: dict,
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge | None" = None,
+):
+    """
+    Processa uma atualização confiável do Telegram.
+
+    ``conversation_bridge`` é uma dependência injetável. Nesta etapa de
+    migração, ela ainda pode ser ``None`` para preservar compatibilidade
+    com os testes e chamadores existentes.
+
+    A função não deve construir runtime, store, repository ou conexão
+    PostgreSQL diretamente.
+    """
     try:
         trusted_update = (
             extrair_contexto_confiavel_telegram(

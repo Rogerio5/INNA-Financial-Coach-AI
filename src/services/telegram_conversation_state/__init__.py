@@ -39,6 +39,12 @@ from .store import (
     TelegramConversationStateStore,
 )
 
+from .webhook_bridge import (
+    TelegramConversationStateRuntimePort,
+    TelegramWebhookConversationBridge,
+    create_postgres_telegram_webhook_conversation_bridge,
+)
+
 
 __all__ = [
     "DEFAULT_STATE_TTL_SECONDS",
@@ -55,10 +61,13 @@ __all__ = [
     "TelegramConversationStateError",
     "TelegramConversationStateOpenResult",
     "TelegramConversationStateRuntime",
+    "TelegramConversationStateRuntimePort",
     "TelegramConversationStateStore",
     "TelegramConversationStateUnavailableError",
     "TelegramConversationStateValidationError",
+    "TelegramWebhookConversationBridge",
     "create_postgres_telegram_conversation_state_runtime",
+    "create_postgres_telegram_webhook_conversation_bridge",
     "create_telegram_conversation_state",
     "delete_expired_telegram_conversation_states",
     "delete_telegram_conversation_state",
