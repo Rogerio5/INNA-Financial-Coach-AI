@@ -1142,6 +1142,63 @@ def start_language_flow(chat_id: int, lang: str = "pt", auto: bool = False):
     )
 
 
+
+def _load_or_open_durable_telegram_session(
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge",
+    telegram_user_id: int,
+    chat_id: int,
+):
+    """
+    Carrega ou cria a sessão conversacional durável.
+
+    Retorna a sessão de domínio e uma cópia mutável do estado para o
+    processamento da mensagem atual. Não realiza fallback para memória.
+    """
+    if conversation_bridge is None:
+        raise ValueError(
+            "conversation_bridge é obrigatória."
+        )
+
+    durable_session = (
+        conversation_bridge.load_or_open_session(
+            telegram_user_id,
+            chat_id,
+            {
+                "step": "idioma",
+                "lang": "pt",
+            },
+            language="pt",
+        )
+    )
+
+    processing_state = (
+        durable_session.to_processing_state()
+    )
+
+    if not isinstance(
+        processing_state,
+        dict,
+    ):
+        raise TypeError(
+            "O estado conversacional carregado é inválido."
+        )
+
+    if not processing_state.get("step"):
+        processing_state["step"] = "idioma"
+
+    if not processing_state.get("lang"):
+        processing_state["lang"] = (
+            durable_session.language
+            or "pt"
+        )
+
+    return (
+        durable_session,
+        processing_state,
+    )
+
+
 def process_telegram_update(
     update: dict,
     *,
