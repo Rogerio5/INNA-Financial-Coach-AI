@@ -1385,7 +1385,31 @@ def _resolve_durable_telegram_language(
     )
 
 
+
 def process_telegram_update(
+    update: dict,
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge",
+):
+    """
+    Processa uma atualização Telegram usando estado durável.
+
+    A bridge é obrigatória na API pública. Chamadores produtivos não
+    podem executar o fluxo baseado em memória.
+    """
+    if conversation_bridge is None:
+        raise TelegramUpdateIngressConfigurationError(
+            "conversation_bridge é obrigatória "
+            "para o processador Telegram produtivo."
+        )
+
+    return _process_telegram_update_core(
+        update,
+        conversation_bridge=conversation_bridge,
+    )
+
+
+def _process_telegram_update_core(
     update: dict,
     *,
     conversation_bridge: "TelegramWebhookConversationBridge | None" = None,
@@ -1845,7 +1869,7 @@ def _process_legacy_telegram_update(
     Esta função existe apenas para compatibilidade com testes e
     chamadores antigos. O worker produtivo não deve utilizá-la.
     """
-    return process_telegram_update(
+    return _process_telegram_update_core(
         update,
         conversation_bridge=None,
     )

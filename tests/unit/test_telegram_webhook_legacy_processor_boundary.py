@@ -3,7 +3,7 @@ from __future__ import annotations
 from api import telegram_webhook
 
 
-def test_legacy_processor_calls_main_processor_with_explicit_none(
+def test_legacy_processor_calls_core_with_explicit_none(
     monkeypatch,
 ):
     calls = []
@@ -26,7 +26,7 @@ def test_legacy_processor_calls_main_processor_with_explicit_none(
 
     monkeypatch.setattr(
         telegram_webhook,
-        "process_telegram_update",
+        "_process_telegram_update_core",
         fake_processor,
     )
 

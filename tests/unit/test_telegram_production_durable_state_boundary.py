@@ -94,12 +94,8 @@ def test_production_callers_require_bridge_except_legacy_processor():
     violations = []
     controlled_legacy_calls = []
 
-    for path in ROOT.rglob(
-        "*.py"
-    ):
-        relative = path.relative_to(
-            ROOT
-        )
+    for path in ROOT.rglob("*.py"):
+        relative = path.relative_to(ROOT)
 
         if _ignored(relative):
             continue
@@ -117,22 +113,30 @@ def test_production_callers_require_bridge_except_legacy_processor():
             filename=str(path),
         )
 
-        parents = _build_parent_map(
-            tree
-        )
+        parents = _build_parent_map(tree)
 
         for node in ast.walk(tree):
-            if not isinstance(
-                node,
-                ast.Call,
-            ):
+            if not isinstance(node, ast.Call):
                 continue
 
-            if (
-                _call_name(node)
-                != "process_telegram_update"
-            ):
+            name = _call_name(node)
+
+            if name not in {
+                "process_telegram_update",
+                "_process_telegram_update_core",
+            }:
                 continue
+
+            owner = _find_owner(
+                node,
+                parents,
+            )
+
+            owner_name = (
+                owner.name
+                if owner is not None
+                else "<module>"
+            )
 
             keyword_names = {
                 keyword.arg
@@ -150,19 +154,10 @@ def test_production_callers_require_bridge_except_legacy_processor():
                 None,
             )
 
-            owner = _find_owner(
-                node,
-                parents,
-            )
-
-            owner_name = (
-                owner.name
-                if owner is not None
-                else "<module>"
-            )
-
-            is_controlled_legacy_call = (
-                relative.as_posix()
+            if (
+                name
+                == "_process_telegram_update_core"
+                and relative.as_posix()
                 == "api/telegram_webhook.py"
                 and owner_name
                 == LEGACY_PROCESSOR
@@ -172,9 +167,7 @@ def test_production_callers_require_bridge_except_legacy_processor():
                     ast.Constant,
                 )
                 and bridge_keyword.value.value is None
-            )
-
-            if is_controlled_legacy_call:
+            ):
                 controlled_legacy_calls.append(
                     (
                         relative.as_posix(),
@@ -185,7 +178,8 @@ def test_production_callers_require_bridge_except_legacy_processor():
                 continue
 
             if (
-                "conversation_bridge"
+                name == "process_telegram_update"
+                and "conversation_bridge"
                 not in keyword_names
             ):
                 violations.append(
@@ -197,21 +191,16 @@ def test_production_callers_require_bridge_except_legacy_processor():
                 )
 
     assert violations == []
-
-    assert len(
-        controlled_legacy_calls
-    ) == 1
-
+    assert len(controlled_legacy_calls) == 1
     assert controlled_legacy_calls[0][0] == (
         "api/telegram_webhook.py"
     )
-
     assert controlled_legacy_calls[0][2] == (
         LEGACY_PROCESSOR
     )
 
 
-def test_legacy_processor_passes_explicit_none_to_main_processor():
+def test_legacy_processor_passes_explicit_none_to_core():
     target = (
         ROOT
         / "api"
@@ -246,12 +235,9 @@ def test_legacy_processor_passes_explicit_none_to_main_processor():
             legacy_processor
         )
         if (
-            isinstance(
-                node,
-                ast.Call,
-            )
+            isinstance(node, ast.Call)
             and _call_name(node)
-            == "process_telegram_update"
+            == "_process_telegram_update_core"
         )
     ]
 
@@ -274,10 +260,7 @@ def test_legacy_processor_passes_explicit_none_to_main_processor():
         ast.Constant,
     )
 
-    assert (
-        bridge_keyword.value.value
-        is None
-    )
+    assert bridge_keyword.value.value is None
 
 
 def test_optional_wrapper_has_explicit_legacy_and_durable_paths():
@@ -509,8 +492,13 @@ def test_durable_helpers_do_not_reference_legacy_globals():
 
     assert violations == []
 
-def test_tests_do_not_call_main_processor_without_bridge():
+def test_tests_do_not_call_main_processor_without_bridge_except_negative_contract_test():
     violations = []
+
+    allowed_negative_test = (
+        "tests/unit/"
+        "test_telegram_webhook_required_durable_bridge.py"
+    )
 
     for path in (
         ROOT
@@ -518,9 +506,7 @@ def test_tests_do_not_call_main_processor_without_bridge():
     ).rglob(
         "*.py"
     ):
-        relative = path.relative_to(
-            ROOT
-        )
+        relative = path.relative_to(ROOT)
 
         if _ignored(relative):
             continue
@@ -537,6 +523,8 @@ def test_tests_do_not_call_main_processor_without_bridge():
             source,
             filename=str(path),
         )
+
+        parents = _build_parent_map(tree)
 
         for node in ast.walk(tree):
             if not isinstance(
@@ -559,14 +547,38 @@ def test_tests_do_not_call_main_processor_without_bridge():
 
             if (
                 "conversation_bridge"
-                not in keyword_names
+                in keyword_names
             ):
-                violations.append(
-                    (
-                        relative.as_posix(),
-                        node.lineno,
-                    )
+                continue
+
+            owner = _find_owner(
+                node,
+                parents,
+            )
+
+            owner_name = (
+                owner.name
+                if owner is not None
+                else "<module>"
+            )
+
+            is_allowed_negative_contract_test = (
+                relative.as_posix()
+                == allowed_negative_test
+                and owner_name
+                == "test_public_processor_requires_bridge_argument"
+            )
+
+            if is_allowed_negative_contract_test:
+                continue
+
+            violations.append(
+                (
+                    relative.as_posix(),
+                    node.lineno,
+                    owner_name,
                 )
+            )
 
     assert violations == []
 

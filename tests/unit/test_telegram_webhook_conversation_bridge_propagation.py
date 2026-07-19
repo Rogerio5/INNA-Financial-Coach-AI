@@ -43,7 +43,7 @@ def test_optional_bridge_helper_preserves_legacy_call(
 
     monkeypatch.setattr(
         telegram_webhook,
-        "process_telegram_update",
+        "_process_telegram_update_core",
         fake_process,
     )
 
