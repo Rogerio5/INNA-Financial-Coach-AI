@@ -27,6 +27,12 @@ from .repository import (
     save_telegram_conversation_state,
 )
 
+from .store import (
+    PostgresTelegramConversationStateStore,
+    TelegramConversationStateOpenResult,
+    TelegramConversationStateStore,
+)
+
 
 __all__ = [
     "DEFAULT_STATE_TTL_SECONDS",
@@ -35,10 +41,13 @@ __all__ = [
     "MAX_STATE_JSON_BYTES",
     "MAX_STATE_TTL_SECONDS",
     "MIN_STATE_TTL_SECONDS",
+    "PostgresTelegramConversationStateStore",
     "TelegramConversationState",
     "TelegramConversationStateConflictError",
     "TelegramConversationStateConsistencyError",
     "TelegramConversationStateError",
+    "TelegramConversationStateOpenResult",
+    "TelegramConversationStateStore",
     "TelegramConversationStateUnavailableError",
     "TelegramConversationStateValidationError",
     "create_telegram_conversation_state",
