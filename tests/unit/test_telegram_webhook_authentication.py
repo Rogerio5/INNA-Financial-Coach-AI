@@ -205,40 +205,22 @@ def test_real_webhook_accepts_valid_header(
         "update_id": 1003,
     }
 
-    lease = (
-        telegram_webhook
-        .TelegramUpdateProcessingLease(
-            update_id=1003,
-            attempt_count=1,
-            claim_token="c" * 64,
-            update_fingerprint="a" * 64,
-        )
-    )
+    outcome = MagicMock()
+    outcome.accepted = True
+    outcome.duplicate = False
+    outcome.decision = "enqueued"
 
-    claim = MagicMock(
-        return_value=(
-            telegram_webhook
-            .TelegramUpdateClaimDecision(
-                update_id=1003,
-                status="claimed",
-                attempt_count=1,
-                lease=lease,
-            )
-        )
-    )
-
-    process = MagicMock()
-
-    monkeypatch.setattr(
-        telegram_webhook,
-        "claim_authenticated_telegram_update",
-        claim,
+    enqueue = MagicMock(
+        return_value=outcome,
     )
 
     monkeypatch.setattr(
         telegram_webhook,
-        "process_claimed_telegram_update",
-        process,
+        (
+            "enqueue_authenticated_"
+            "telegram_update_atomic"
+        ),
+        enqueue,
     )
 
     response = _build_client().post(
@@ -255,16 +237,11 @@ def test_real_webhook_accepts_valid_header(
         "ok": True,
         "accepted": True,
         "duplicate": False,
-        "status": "claimed",
+        "status": "enqueued",
     }
 
-    claim.assert_called_once_with(
+    enqueue.assert_called_once_with(
         update
-    )
-
-    process.assert_called_once_with(
-        update,
-        lease,
     )
 
 

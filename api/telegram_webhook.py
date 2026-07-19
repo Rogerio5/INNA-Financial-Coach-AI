@@ -4,7 +4,7 @@ import re
 import requests
 from typing import Annotated
 from dotenv import load_dotenv
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from api.security import (
     TrustedTelegramWebhookContext,
     require_trusted_telegram_webhook,
@@ -36,6 +36,15 @@ from src.services.telegram_update_receipts import (
     claim_authenticated_telegram_update,
     complete_authenticated_telegram_update,
     fail_authenticated_telegram_update,
+)
+
+from src.services.telegram_update_jobs import (
+    TelegramUpdateIngressConfigurationError,
+    TelegramUpdateIngressConflictError,
+    TelegramUpdateIngressConsistencyError,
+    TelegramUpdateIngressUnavailableError,
+    TelegramUpdateIngressValidationError,
+    enqueue_authenticated_telegram_update_atomic,
 )
 
 router = APIRouter(prefix="/telegram", tags=["telegram"])
@@ -1441,7 +1450,6 @@ def process_claimed_telegram_update(
 @router.post("/webhook")
 async def telegram_webhook(
     request: Request,
-    background_tasks: BackgroundTasks,
     _trusted_webhook: Annotated[
         TrustedTelegramWebhookContext,
         Depends(
@@ -1449,6 +1457,16 @@ async def telegram_webhook(
         ),
     ],
 ):
+    """
+    Autentica e registra o update Telegram
+    em uma fila PostgreSQL durável.
+
+    A resposta HTTP somente é enviada depois que
+    receipt e job criptografado forem confirmados
+    na mesma transação.
+
+    O conteúdo não é processado dentro do request.
+    """
     try:
         update = await request.json()
 
@@ -1472,13 +1490,13 @@ async def telegram_webhook(
         )
 
     try:
-        decision = (
-            claim_authenticated_telegram_update(
+        outcome = (
+            enqueue_authenticated_telegram_update_atomic(
                 update
             )
         )
 
-    except TelegramUpdateReceiptValidationError:
+    except TelegramUpdateIngressValidationError:
         raise HTTPException(
             status_code=400,
             detail=(
@@ -1486,7 +1504,7 @@ async def telegram_webhook(
             ),
         ) from None
 
-    except TelegramUpdateReceiptConflictError:
+    except TelegramUpdateIngressConflictError:
         raise HTTPException(
             status_code=409,
             detail=(
@@ -1494,7 +1512,11 @@ async def telegram_webhook(
             ),
         ) from None
 
-    except TelegramUpdateReceiptServiceError:
+    except (
+        TelegramUpdateIngressConfigurationError,
+        TelegramUpdateIngressConsistencyError,
+        TelegramUpdateIngressUnavailableError,
+    ):
         raise HTTPException(
             status_code=503,
             detail=(
@@ -1503,37 +1525,18 @@ async def telegram_webhook(
             ),
         ) from None
 
-    if not decision.should_process:
-        return {
-            "ok": True,
-            "accepted": False,
-            "duplicate": (
-                decision.status
-                == "duplicate"
-            ),
-            "status": decision.status,
-        }
-
-    lease = decision.lease
-
-    if lease is None:
+    except Exception:
         raise HTTPException(
             status_code=503,
             detail=(
                 "Processamento Telegram "
                 "temporariamente indisponível."
             ),
-        )
-
-    background_tasks.add_task(
-        process_claimed_telegram_update,
-        update,
-        lease,
-    )
+        ) from None
 
     return {
         "ok": True,
-        "accepted": True,
-        "duplicate": False,
-        "status": decision.status,
+        "accepted": outcome.accepted,
+        "duplicate": outcome.duplicate,
+        "status": outcome.decision,
     }
