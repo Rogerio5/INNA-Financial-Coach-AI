@@ -1407,9 +1407,35 @@ def _fail_claimed_telegram_update_safely(
         )
 
 
+
+def _process_telegram_update_with_optional_bridge(
+    update: dict,
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge | None" = None,
+):
+    """
+    Encaminha a atualização ao processador conversacional.
+
+    Quando nenhuma bridge é fornecida, preserva a chamada histórica com
+    apenas o argumento update. Isso mantém compatibilidade com mocks e
+    monkeypatches existentes.
+
+    Quando uma bridge é fornecida, propaga a dependência explicitamente.
+    """
+    if conversation_bridge is None:
+        return process_telegram_update(update)
+
+    return process_telegram_update(
+        update,
+        conversation_bridge=conversation_bridge,
+    )
+
+
 def process_claimed_telegram_update(
     update: dict,
     lease: TelegramUpdateProcessingLease,
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge | None" = None,
 ) -> None:
     """
     Processa um update com claim durável ativo.
@@ -1418,8 +1444,9 @@ def process_claimed_telegram_update(
     """
     try:
         processing_result = (
-            process_telegram_update(
-                update
+            _process_telegram_update_with_optional_bridge(
+                update,
+                conversation_bridge=conversation_bridge,
             )
         )
 
