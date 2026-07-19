@@ -1,6 +1,14 @@
 import os
 import re
 
+try:
+    from src.services.telegram_conversation_state import (
+        TelegramConversationStateConflictError,
+    )
+except ImportError:
+    TelegramConversationStateConflictError = None
+
+
 import requests
 from typing import Annotated, TYPE_CHECKING
 from dotenv import load_dotenv
@@ -1207,11 +1215,10 @@ def _sync_and_save_durable_telegram_session(
     language: str | None = None,
 ):
     """
-    Sincroniza e persiste uma transição conversacional.
+    Persiste uma transição com uma única recuperação de conflito.
 
-    O estado mutável usado pelo webhook é normalizado pelo objeto de
-    domínio antes da persistência. A exceção do runtime ou PostgreSQL
-    não é ocultada e não existe fallback silencioso para memória.
+    Em conflito otimista, recarrega a sessão mais recente, reaplica a
+    transição atual e tenta salvar uma segunda e última vez.
     """
     if conversation_bridge is None:
         raise ValueError(
@@ -1231,24 +1238,68 @@ def _sync_and_save_durable_telegram_session(
             "processing_state deve ser um dict."
         )
 
-    durable_session.replace_state(
-        processing_state
-    )
-
     resolved_language = (
         language
         if language is not None
         else processing_state.get("lang")
     )
 
-    durable_session.set_language(
-        resolved_language
+    def apply_transition(
+        target_session,
+    ):
+        target_session.replace_state(
+            processing_state
+        )
+
+        target_session.set_language(
+            resolved_language
+        )
+
+        return target_session
+
+    apply_transition(
+        durable_session
     )
 
-    return conversation_bridge.save_session(
-        durable_session,
-        only_if_changed=True,
-    )
+    try:
+        return conversation_bridge.save_session(
+            durable_session,
+            only_if_changed=True,
+        )
+
+    except Exception as error:
+        conflict_type = (
+            TelegramConversationStateConflictError
+        )
+
+        if (
+            conflict_type is None
+            or not isinstance(
+                error,
+                conflict_type,
+            )
+        ):
+            raise
+
+        reloaded_session = (
+            conversation_bridge.reload_session(
+                durable_session
+            )
+        )
+
+        if reloaded_session is None:
+            raise
+
+        apply_transition(
+            reloaded_session
+        )
+
+        return conversation_bridge.save_session(
+            reloaded_session,
+            only_if_changed=True,
+        )
+
+
 
 
 def _delete_durable_telegram_session(
