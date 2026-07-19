@@ -1340,6 +1340,51 @@ def _delete_durable_telegram_session(
 
 
 
+
+def _resolve_durable_telegram_language(
+    *,
+    chat_id: int,
+    telegram_user_id: int,
+    session: dict | None,
+    conversation_bridge: "TelegramWebhookConversationBridge | None",
+    durable_session=None,
+) -> str:
+    """
+    Resolve o idioma sem consultar memória local no caminho durável.
+
+    Prioridade:
+    1. idioma presente no estado de processamento;
+    2. idioma persistido no objeto de sessão;
+    3. idioma resolvido pela bridge;
+    4. fallback validado como português.
+
+    USER_LAST_LANG permanece somente no caminho legado.
+    """
+    if (
+        isinstance(session, dict)
+        and session.get("lang")
+    ):
+        return session["lang"]
+
+    if conversation_bridge is None:
+        return get_chat_lang(
+            chat_id,
+            session,
+        )
+
+    if (
+        durable_session is not None
+        and durable_session.language
+    ):
+        return durable_session.language
+
+    return conversation_bridge.resolve_language(
+        telegram_user_id,
+        chat_id,
+        fallback_language="pt",
+    )
+
+
 def process_telegram_update(
     update: dict,
     *,
@@ -1404,10 +1449,7 @@ def process_telegram_update(
         )
 
     if text in ["/start", "/idioma", "/language"]:
-        lang = get_chat_lang(
-            chat_id,
-            session,
-        )
+        lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)
 
         session = {
             "step": "idioma",
@@ -1431,10 +1473,7 @@ def process_telegram_update(
         return
 
     if text in ["/help", "/ajuda"]:
-        lang = get_chat_lang(
-            chat_id,
-            session,
-        )
+        lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)
         send_telegram_message(
             chat_id,
             get_help_message(lang),
@@ -1442,10 +1481,7 @@ def process_telegram_update(
         return
 
     if text in ["/help", "/ajuda"]:
-        lang = get_chat_lang(
-            chat_id,
-            session,
-        )
+        lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)
         send_telegram_message(
             chat_id,
             get_help_message(lang),
@@ -1453,10 +1489,7 @@ def process_telegram_update(
         return
 
     if text in ["/cancelar", "/cancel"]:
-        lang = get_chat_lang(
-            chat_id,
-            session,
-        )
+        lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)
 
         if conversation_bridge is not None:
             _delete_durable_telegram_session(
@@ -1481,9 +1514,7 @@ def process_telegram_update(
         return
 
     if not session:
-        lang = get_chat_lang(
-            chat_id,
-        )
+        lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=None, conversation_bridge=conversation_bridge, durable_session=durable_session)
 
         session = {
             "step": "idioma",
