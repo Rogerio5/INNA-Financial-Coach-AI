@@ -508,3 +508,65 @@ def test_durable_helpers_do_not_reference_legacy_globals():
                 )
 
     assert violations == []
+
+def test_tests_do_not_call_main_processor_without_bridge():
+    violations = []
+
+    for path in (
+        ROOT
+        / "tests"
+    ).rglob(
+        "*.py"
+    ):
+        relative = path.relative_to(
+            ROOT
+        )
+
+        if _ignored(relative):
+            continue
+
+        if path == Path(__file__).resolve():
+            continue
+
+        source = path.read_text(
+            encoding="utf-8",
+            errors="replace",
+        )
+
+        tree = ast.parse(
+            source,
+            filename=str(path),
+        )
+
+        for node in ast.walk(tree):
+            if not isinstance(
+                node,
+                ast.Call,
+            ):
+                continue
+
+            if (
+                _call_name(node)
+                != "process_telegram_update"
+            ):
+                continue
+
+            keyword_names = {
+                keyword.arg
+                for keyword in node.keywords
+                if keyword.arg is not None
+            }
+
+            if (
+                "conversation_bridge"
+                not in keyword_names
+            ):
+                violations.append(
+                    (
+                        relative.as_posix(),
+                        node.lineno,
+                    )
+                )
+
+    assert violations == []
+

@@ -382,7 +382,7 @@ def test_process_derives_identity_from_update(
         MagicMock(),
     )
 
-    telegram_webhook.process_telegram_update(
+    telegram_webhook._process_legacy_telegram_update(
         _update(
             update_id=9010,
             chat_id=chat_id,
@@ -414,7 +414,7 @@ def test_invalid_update_never_generates_diagnosis(
         generation,
     )
 
-    telegram_webhook.process_telegram_update({
+    telegram_webhook._process_legacy_telegram_update({
         "update_id": "invalid",
     })
 
