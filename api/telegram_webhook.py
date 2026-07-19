@@ -1199,6 +1199,96 @@ def _load_or_open_durable_telegram_session(
     )
 
 
+def _sync_and_save_durable_telegram_session(
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge",
+    durable_session,
+    processing_state: dict,
+    language: str | None = None,
+):
+    """
+    Sincroniza e persiste uma transição conversacional.
+
+    O estado mutável usado pelo webhook é normalizado pelo objeto de
+    domínio antes da persistência. A exceção do runtime ou PostgreSQL
+    não é ocultada e não existe fallback silencioso para memória.
+    """
+    if conversation_bridge is None:
+        raise ValueError(
+            "conversation_bridge é obrigatória."
+        )
+
+    if durable_session is None:
+        raise ValueError(
+            "durable_session é obrigatória."
+        )
+
+    if not isinstance(
+        processing_state,
+        dict,
+    ):
+        raise TypeError(
+            "processing_state deve ser um dict."
+        )
+
+    durable_session.replace_state(
+        processing_state
+    )
+
+    resolved_language = (
+        language
+        if language is not None
+        else processing_state.get("lang")
+    )
+
+    durable_session.set_language(
+        resolved_language
+    )
+
+    return conversation_bridge.save_session(
+        durable_session,
+        only_if_changed=True,
+    )
+
+
+def _delete_durable_telegram_session(
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge",
+    durable_session,
+) -> bool:
+    """
+    Exclui uma sessão conversacional após cancelamento ou conclusão.
+
+    Falhas de infraestrutura são propagadas para que o worker possa
+    realizar retry. A exclusão não utiliza estado local como fallback.
+    """
+    if conversation_bridge is None:
+        raise ValueError(
+            "conversation_bridge é obrigatória."
+        )
+
+    if durable_session is None:
+        raise ValueError(
+            "durable_session é obrigatória."
+        )
+
+    deleted = conversation_bridge.delete_session(
+        durable_session
+    )
+
+    if not isinstance(
+        deleted,
+        bool,
+    ):
+        raise TypeError(
+            "Resultado de delete_session inválido."
+        )
+
+    return deleted
+
+
+
+
 def process_telegram_update(
     update: dict,
     *,
