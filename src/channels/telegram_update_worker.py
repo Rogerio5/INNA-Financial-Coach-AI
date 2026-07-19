@@ -227,11 +227,20 @@ def load_worker_config_from_env(
 
 def load_telegram_processor():
     """
-    Importa o processador somente após a
-    configuração do worker ter sido validada.
+    Compõe o processador produtivo do worker.
+
+    A bridge é criada uma única vez durante a inicialização do processo
+    e reutilizada em todos os jobs processados por esta instância.
+
+    A factory da bridge mantém a inicialização do runtime PostgreSQL
+    lazy: importar este módulo ou construir o wrapper não deve abrir uma
+    conexão com o banco antecipadamente.
     """
     from api.telegram_webhook import (
         process_telegram_update,
+    )
+    from src.services.telegram_conversation_state import (
+        create_postgres_telegram_webhook_conversation_bridge,
     )
 
     if not callable(
@@ -241,7 +250,38 @@ def load_telegram_processor():
             "O processador Telegram é inválido."
         )
 
-    return process_telegram_update
+    if not callable(
+        create_postgres_telegram_webhook_conversation_bridge
+    ):
+        raise TelegramUpdateRunnerConfigurationError(
+            "A factory da conversation bridge é inválida."
+        )
+
+    try:
+        conversation_bridge = (
+            create_postgres_telegram_webhook_conversation_bridge()
+        )
+
+    except Exception:
+        raise TelegramUpdateRunnerConfigurationError(
+            "Não foi possível compor o estado conversacional durável."
+        ) from None
+
+    if conversation_bridge is None:
+        raise TelegramUpdateRunnerConfigurationError(
+            "A conversation bridge criada é inválida."
+        )
+
+    def process_with_durable_conversation_state(
+        update: dict,
+    ):
+        return process_telegram_update(
+            update,
+            conversation_bridge=conversation_bridge,
+        )
+
+    return process_with_durable_conversation_state
+
 
 
 def _emit_event(
