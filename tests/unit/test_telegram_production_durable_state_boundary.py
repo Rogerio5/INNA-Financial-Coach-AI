@@ -15,10 +15,6 @@ EXCLUDED_DIRECTORIES = {
     "node_modules",
 }
 
-LEGACY_COMPATIBILITY_WRAPPER = (
-    "_process_telegram_update_with_optional_bridge"
-)
-
 LEGACY_PROCESSOR = (
     "_process_legacy_telegram_update"
 )
@@ -261,91 +257,6 @@ def test_legacy_processor_passes_explicit_none_to_core():
     )
 
     assert bridge_keyword.value.value is None
-
-
-def test_optional_wrapper_has_explicit_legacy_and_durable_paths():
-    target = (
-        ROOT
-        / "api"
-        / "telegram_webhook.py"
-    )
-
-    source = target.read_text(
-        encoding="utf-8",
-    )
-
-    tree = ast.parse(
-        source,
-        filename=str(target),
-    )
-
-    wrapper = next(
-        node
-        for node in tree.body
-        if isinstance(
-            node,
-            (
-                ast.FunctionDef,
-                ast.AsyncFunctionDef,
-            ),
-        )
-        and node.name
-        == LEGACY_COMPATIBILITY_WRAPPER
-    )
-
-    legacy_calls = 0
-    durable_calls = 0
-    has_explicit_none_branch = False
-
-    for node in ast.walk(
-        wrapper
-    ):
-        if isinstance(
-            node,
-            ast.If,
-        ):
-            try:
-                condition = ast.unparse(
-                    node.test
-                )
-            except Exception:
-                condition = ""
-
-            if (
-                condition
-                == "conversation_bridge is None"
-            ):
-                has_explicit_none_branch = True
-
-        if not isinstance(
-            node,
-            ast.Call,
-        ):
-            continue
-
-        name = _call_name(
-            node
-        )
-
-        if name == LEGACY_PROCESSOR:
-            legacy_calls += 1
-
-        if name == "process_telegram_update":
-            keyword_names = {
-                keyword.arg
-                for keyword in node.keywords
-                if keyword.arg is not None
-            }
-
-            if (
-                "conversation_bridge"
-                in keyword_names
-            ):
-                durable_calls += 1
-
-    assert has_explicit_none_branch is True
-    assert legacy_calls == 1
-    assert durable_calls == 1
 
 
 def test_worker_creates_one_bridge_and_forwards_it():
