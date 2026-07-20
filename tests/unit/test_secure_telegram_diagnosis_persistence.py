@@ -23,6 +23,130 @@ from src.services.financial_diagnosis import (
 )
 
 
+class _DurableTestSession:
+    def __init__(
+        self,
+        *,
+        telegram_user_id,
+        chat_id,
+        state=None,
+        language="pt",
+        version=1,
+    ):
+        self.telegram_user_id = telegram_user_id
+        self.chat_id = chat_id
+        self.state = dict(state or {})
+        self.language = language
+        self.version = version
+
+    def to_processing_state(self):
+        return dict(self.state)
+
+
+class _DurableTestBridge:
+    def __init__(self):
+        self.sessions = {}
+
+    def load_or_open_session(
+        self,
+        telegram_user_id,
+        chat_id,
+        initial_state,
+        *,
+        language,
+    ):
+        key = (
+            telegram_user_id,
+            chat_id,
+        )
+
+        session = self.sessions.get(
+            key
+        )
+
+        if session is None:
+            session = _DurableTestSession(
+                telegram_user_id=telegram_user_id,
+                chat_id=chat_id,
+                state=initial_state,
+                language=language,
+            )
+
+            self.sessions[key] = session
+
+        return session
+
+    def save_session(
+        self,
+        session,
+        **kwargs,
+    ):
+        state = kwargs.get(
+            "state",
+            kwargs.get(
+                "processing_state",
+                session.state,
+            ),
+        )
+
+        language = kwargs.get(
+            "language",
+            session.language,
+        )
+
+        session.state = dict(
+            state
+        )
+        session.language = language
+        session.version += 1
+
+        return session
+
+    def reload_session(
+        self,
+        session,
+        **kwargs,
+    ):
+        return session
+
+    def delete_session(
+        self,
+        session,
+        **kwargs,
+    ):
+        self.sessions.pop(
+            (
+                session.telegram_user_id,
+                session.chat_id,
+            ),
+            None,
+        )
+
+    def resolve_language(
+        self,
+        *,
+        telegram_user_id,
+        chat_id,
+        default_language="pt",
+        **kwargs,
+    ):
+        session = self.sessions.get(
+            (
+                telegram_user_id,
+                chat_id,
+            )
+        )
+
+        if (
+            session is not None
+            and session.language
+        ):
+            return session.language
+
+        return default_language
+
+
+
 SECRET = (
     "Telegram_Webhook_Secret_"
     "0123456789abcdef0123456789"
@@ -324,21 +448,44 @@ def test_process_derives_identity_from_update(
 ):
     chat_id = 123456
 
-    telegram_webhook.USER_SESSIONS.clear()
-    telegram_webhook.USER_LAST_LANG.clear()
+    update = _update(
+        update_id=9010,
+        chat_id=chat_id,
+        text="Criar reserva",
+    )
 
-    telegram_webhook.USER_SESSIONS[
-        chat_id
-    ] = {
-        "step": "objetivo",
-        "lang": "pt",
-        "nome": "Usuário Telegram",
-        "renda_mensal": 4000,
-        "gastos_fixos": 1800,
-        "gastos_variaveis": 700,
-        "dividas_mensais": 300,
-        "reserva_atual": 2000,
-    }
+    trusted_update = (
+        telegram_webhook
+        .extrair_contexto_confiavel_telegram(
+            update
+        )
+    )
+
+    bridge = _DurableTestBridge()
+
+    bridge.sessions[
+        (
+            trusted_update.usuario_id,
+            trusted_update.chat_id,
+        )
+    ] = _DurableTestSession(
+        telegram_user_id=(
+            trusted_update.usuario_id
+        ),
+        chat_id=trusted_update.chat_id,
+        state={
+            "step": "objetivo",
+            "lang": "pt",
+            "nome": "Usuário Telegram",
+            "renda_mensal": 4000,
+            "gastos_fixos": 1800,
+            "gastos_variaveis": 700,
+            "dividas_mensais": 300,
+            "reserva_atual": 2000,
+        },
+        language="pt",
+    )
+
 
     generation = MagicMock(
         return_value={
@@ -382,12 +529,9 @@ def test_process_derives_identity_from_update(
         MagicMock(),
     )
 
-    telegram_webhook._process_legacy_telegram_update(
-        _update(
-            update_id=9010,
-            chat_id=chat_id,
-            text="Criar reserva",
-        )
+    telegram_webhook.process_telegram_update(
+        update,
+        conversation_bridge=bridge,
     )
 
     assert generation.call_count == 1
@@ -414,9 +558,10 @@ def test_invalid_update_never_generates_diagnosis(
         generation,
     )
 
-    telegram_webhook._process_legacy_telegram_update({
-        "update_id": "invalid",
-    })
+    telegram_webhook.process_telegram_update(
+        {'update_id': 'invalid'},
+        conversation_bridge=_DurableTestBridge(),
+    )
 
     generation.assert_not_called()
 

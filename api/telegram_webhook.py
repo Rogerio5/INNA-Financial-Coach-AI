@@ -1412,18 +1412,23 @@ def process_telegram_update(
 def _process_telegram_update_core(
     update: dict,
     *,
-    conversation_bridge: "TelegramWebhookConversationBridge | None" = None,
+    conversation_bridge: "TelegramWebhookConversationBridge",
 ):
     """
     Processa uma atualização confiável do Telegram.
 
-    ``conversation_bridge`` é uma dependência injetável. Nesta etapa de
-    migração, ela ainda pode ser ``None`` para preservar compatibilidade
-    com os testes e chamadores existentes.
+    ``conversation_bridge`` é uma dependência obrigatória. O estado da
+    conversa deve ser carregado e persistido exclusivamente pela bridge.
 
     A função não deve construir runtime, store, repository ou conexão
     PostgreSQL diretamente.
     """
+    if conversation_bridge is None:
+        raise TelegramUpdateIngressConfigurationError(
+            "conversation_bridge é obrigatória "
+            "para o núcleo Telegram durável."
+        )
+
     try:
         trusted_update = (
             extrair_contexto_confiavel_telegram(
@@ -1858,21 +1863,6 @@ def _fail_claimed_telegram_update_safely(
         )
 
 
-
-
-def _process_legacy_telegram_update(
-    update: dict,
-):
-    """
-    Executa temporariamente o fluxo baseado em memória.
-
-    Esta função existe apenas para compatibilidade com testes e
-    chamadores antigos. O worker produtivo não deve utilizá-la.
-    """
-    return _process_telegram_update_core(
-        update,
-        conversation_bridge=None,
-    )
 
 
 def process_claimed_telegram_update(
