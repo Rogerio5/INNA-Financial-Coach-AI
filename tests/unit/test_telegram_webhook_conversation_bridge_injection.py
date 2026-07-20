@@ -18,7 +18,7 @@ def test_process_telegram_update_exposes_injectable_bridge():
         parameter.kind
         is inspect.Parameter.KEYWORD_ONLY
     )
-    assert parameter.default is None
+    assert parameter.default is inspect.Parameter.empty
 
 
 def test_process_telegram_update_accepts_fake_bridge_without_database():

@@ -64,8 +64,6 @@ router = APIRouter(prefix="/telegram", tags=["telegram"])
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-USER_SESSIONS = {}
-USER_LAST_LANG = {}
 
 LANGUAGE_OPTIONS = {
     "🇧🇷 Português": "pt",
@@ -510,10 +508,27 @@ def get_lang_from_session(session: dict | None) -> str:
     return session.get("lang", "pt")
 
 
-def get_chat_lang(chat_id: int, session: dict | None = None) -> str:
+def get_chat_lang(
+    chat_id: int,
+    session: dict | None = None,
+) -> str:
+    """
+    Resolve idioma somente a partir da sessão fornecida.
+
+    O chat_id permanece na assinatura por compatibilidade com os
+    chamadores atuais, mas não existe mais fallback global em memória.
+    """
+    del chat_id
+
     if session and session.get("lang"):
-        return session.get("lang", "pt")
-    return USER_LAST_LANG.get(chat_id, "pt")
+        return session.get(
+            "lang",
+            "pt",
+        )
+
+    return "pt"
+
+
 
 
 def get_help_message(lang: str) -> str:
@@ -1459,23 +1474,16 @@ def _process_telegram_update_core(
 
     text = text.strip()
 
-    durable_session = None
-
-    if conversation_bridge is not None:
-        (
-            durable_session,
-            session,
-        ) = _load_or_open_durable_telegram_session(
-            conversation_bridge=conversation_bridge,
-            telegram_user_id=(
-                trusted_update.usuario_id
-            ),
-            chat_id=chat_id,
-        )
-    else:
-        session = USER_SESSIONS.get(
-            chat_id
-        )
+    (
+        durable_session,
+        session,
+    ) = _load_or_open_durable_telegram_session(
+        conversation_bridge=conversation_bridge,
+        telegram_user_id=(
+            trusted_update.usuario_id
+        ),
+        chat_id=chat_id,
+    )
 
     if text in ["/start", "/idioma", "/language"]:
         lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)
@@ -1485,15 +1493,12 @@ def _process_telegram_update_core(
             "lang": lang,
         }
 
-        if conversation_bridge is not None:
-            _sync_and_save_durable_telegram_session(
-                conversation_bridge=conversation_bridge,
-                durable_session=durable_session,
-                processing_state=session,
-                language=lang,
-            )
-        else:
-            USER_SESSIONS[chat_id] = session
+        _sync_and_save_durable_telegram_session(
+            conversation_bridge=conversation_bridge,
+            durable_session=durable_session,
+            processing_state=session,
+            language=lang,
+        )
 
         start_language_flow(
             chat_id,
@@ -1520,17 +1525,10 @@ def _process_telegram_update_core(
     if text in ["/cancelar", "/cancel"]:
         lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)
 
-        if conversation_bridge is not None:
-            _delete_durable_telegram_session(
-                conversation_bridge=conversation_bridge,
-                durable_session=durable_session,
-            )
-        else:
-            USER_LAST_LANG[chat_id] = lang
-            USER_SESSIONS.pop(
-                chat_id,
-                None,
-            )
+        _delete_durable_telegram_session(
+            conversation_bridge=conversation_bridge,
+            durable_session=durable_session,
+        )
 
         send_telegram_message(
             chat_id,
@@ -1550,15 +1548,12 @@ def _process_telegram_update_core(
             "lang": lang,
         }
 
-        if conversation_bridge is not None:
-            _sync_and_save_durable_telegram_session(
-                conversation_bridge=conversation_bridge,
-                durable_session=durable_session,
-                processing_state=session,
-                language=lang,
-            )
-        else:
-            USER_SESSIONS[chat_id] = session
+        _sync_and_save_durable_telegram_session(
+            conversation_bridge=conversation_bridge,
+            durable_session=durable_session,
+            processing_state=session,
+            language=lang,
+        )
 
         start_language_flow(
             chat_id,
@@ -1583,16 +1578,12 @@ def _process_telegram_update_core(
             lang = session["lang"]
             session["step"] = "nome"
 
-            if conversation_bridge is not None:
-                _sync_and_save_durable_telegram_session(
-                    conversation_bridge=conversation_bridge,
-                    durable_session=durable_session,
-                    processing_state=session,
-                    language=lang,
-                )
-            else:
-                USER_LAST_LANG[chat_id] = lang
-                USER_SESSIONS[chat_id] = session
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
 
             send_telegram_message(
                 chat_id,
@@ -1608,15 +1599,12 @@ def _process_telegram_update_core(
             session["nome"] = text
             session["step"] = "renda"
 
-            if conversation_bridge is not None:
-                _sync_and_save_durable_telegram_session(
-                    conversation_bridge=conversation_bridge,
-                    durable_session=durable_session,
-                    processing_state=session,
-                    language=lang,
-                )
-            else:
-                USER_SESSIONS[chat_id] = session
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
 
             send_telegram_message(
                 chat_id,
@@ -1631,15 +1619,12 @@ def _process_telegram_update_core(
             session["renda_mensal"] = renda
             session["step"] = "gastos_fixos"
 
-            if conversation_bridge is not None:
-                _sync_and_save_durable_telegram_session(
-                    conversation_bridge=conversation_bridge,
-                    durable_session=durable_session,
-                    processing_state=session,
-                    language=lang,
-                )
-            else:
-                USER_SESSIONS[chat_id] = session
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
 
             send_telegram_message(
                 chat_id,
@@ -1657,15 +1642,12 @@ def _process_telegram_update_core(
             session["gastos_fixos"] = gastos_fixos
             session["step"] = "gastos_variaveis"
 
-            if conversation_bridge is not None:
-                _sync_and_save_durable_telegram_session(
-                    conversation_bridge=conversation_bridge,
-                    durable_session=durable_session,
-                    processing_state=session,
-                    language=lang,
-                )
-            else:
-                USER_SESSIONS[chat_id] = session
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
 
             send_telegram_message(
                 chat_id,
@@ -1683,15 +1665,12 @@ def _process_telegram_update_core(
             session["gastos_variaveis"] = gastos_variaveis
             session["step"] = "dividas"
 
-            if conversation_bridge is not None:
-                _sync_and_save_durable_telegram_session(
-                    conversation_bridge=conversation_bridge,
-                    durable_session=durable_session,
-                    processing_state=session,
-                    language=lang,
-                )
-            else:
-                USER_SESSIONS[chat_id] = session
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
 
             send_telegram_message(
                 chat_id,
@@ -1709,15 +1688,12 @@ def _process_telegram_update_core(
             session["dividas_mensais"] = dividas
             session["step"] = "reserva"
 
-            if conversation_bridge is not None:
-                _sync_and_save_durable_telegram_session(
-                    conversation_bridge=conversation_bridge,
-                    durable_session=durable_session,
-                    processing_state=session,
-                    language=lang,
-                )
-            else:
-                USER_SESSIONS[chat_id] = session
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
 
             send_telegram_message(
                 chat_id,
@@ -1735,15 +1711,12 @@ def _process_telegram_update_core(
             session["reserva_atual"] = reserva
             session["step"] = "objetivo"
 
-            if conversation_bridge is not None:
-                _sync_and_save_durable_telegram_session(
-                    conversation_bridge=conversation_bridge,
-                    durable_session=durable_session,
-                    processing_state=session,
-                    language=lang,
-                )
-            else:
-                USER_SESSIONS[chat_id] = session
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
 
             send_telegram_message(
                 chat_id,
@@ -1807,17 +1780,10 @@ def _process_telegram_update_core(
                 resposta=resposta_final,
             )
 
-            if conversation_bridge is not None:
-                _delete_durable_telegram_session(
-                    conversation_bridge=conversation_bridge,
-                    durable_session=durable_session,
-                )
-            else:
-                USER_LAST_LANG[chat_id] = lang
-                USER_SESSIONS.pop(
-                    chat_id,
-                    None,
-                )
+            _delete_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+            )
 
     except ValueError:
         send_telegram_message(chat_id, get_text(lang, "invalid_number"))
@@ -1837,6 +1803,7 @@ def _process_telegram_update_core(
         )
 
         return False
+
 
 
 def _fail_claimed_telegram_update_safely(

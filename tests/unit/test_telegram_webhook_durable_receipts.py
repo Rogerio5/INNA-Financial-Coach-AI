@@ -132,6 +132,7 @@ def test_background_success_completes_receipt(
     telegram_webhook.process_claimed_telegram_update(
         _update(),
         lease,
+            conversation_bridge=object(),
     )
 
     complete.assert_called_once_with(
@@ -172,6 +173,7 @@ def test_background_processing_failure_marks_failed(
     telegram_webhook.process_claimed_telegram_update(
         _update(),
         lease,
+            conversation_bridge=object(),
     )
 
     complete.assert_not_called()
@@ -210,6 +212,7 @@ def test_background_exception_marks_failed(
     telegram_webhook.process_claimed_telegram_update(
         _update(),
         lease,
+            conversation_bridge=object(),
     )
 
     fail.assert_called_once()
@@ -252,6 +255,7 @@ def test_complete_failure_attempts_safe_fail(
     telegram_webhook.process_claimed_telegram_update(
         _update(),
         lease,
+            conversation_bridge=object(),
     )
 
     fail.assert_called_once()
@@ -288,6 +292,7 @@ def test_background_receipt_error_is_sanitized(
     telegram_webhook.process_claimed_telegram_update(
         _update(),
         lease,
+            conversation_bridge=object(),
     )
 
     output = capsys.readouterr().out

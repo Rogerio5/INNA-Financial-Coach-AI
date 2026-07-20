@@ -124,11 +124,7 @@ def test_bridge_resolves_language_when_state_is_absent():
 
 
 def test_durable_path_does_not_use_user_last_lang():
-    telegram_webhook.USER_LAST_LANG.clear()
 
-    telegram_webhook.USER_LAST_LANG[
-        2001
-    ] = "ru"
 
     bridge = FakeBridge(
         resolved_language="it"
@@ -148,33 +144,8 @@ def test_durable_path_does_not_use_user_last_lang():
     assert result == "it"
 
 
-def test_legacy_path_preserves_user_last_lang():
-    telegram_webhook.USER_LAST_LANG.clear()
-
-    telegram_webhook.USER_LAST_LANG[
-        2001
-    ] = "ro"
-
-    result = (
-        telegram_webhook
-        ._resolve_durable_telegram_language(
-            chat_id=2001,
-            telegram_user_id=1001,
-            session=None,
-            conversation_bridge=None,
-            durable_session=None,
-        )
-    )
-
-    assert result == "ro"
-
-
 def test_bridge_failure_is_not_replaced_by_legacy_memory():
-    telegram_webhook.USER_LAST_LANG.clear()
 
-    telegram_webhook.USER_LAST_LANG[
-        2001
-    ] = "es"
 
     class FailingBridge:
         def resolve_language(

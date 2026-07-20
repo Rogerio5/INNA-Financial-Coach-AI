@@ -145,8 +145,6 @@ def test_start_loads_resets_and_saves_durable_session(
         session
     )
 
-    telegram_webhook.USER_SESSIONS.clear()
-    telegram_webhook.USER_LAST_LANG.clear()
 
     result = (
         telegram_webhook.process_telegram_update(
@@ -168,8 +166,6 @@ def test_start_loads_resets_and_saves_durable_session(
         "lang": "pt",
     }
 
-    assert telegram_webhook.USER_SESSIONS == {}
-    assert telegram_webhook.USER_LAST_LANG == {}
     assert sent
 
 
@@ -271,8 +267,6 @@ def test_cancel_deletes_durable_session_without_legacy_fallback(
         session
     )
 
-    telegram_webhook.USER_SESSIONS.clear()
-    telegram_webhook.USER_LAST_LANG.clear()
 
     telegram_webhook.process_telegram_update(
         {
@@ -287,8 +281,6 @@ def test_cancel_deletes_durable_session_without_legacy_fallback(
         session
     ]
 
-    assert telegram_webhook.USER_SESSIONS == {}
-    assert telegram_webhook.USER_LAST_LANG == {}
 
 
 def test_save_failure_returns_false_inside_transition(
@@ -350,12 +342,6 @@ def test_load_failure_is_not_replaced_by_memory(
                 "state unavailable"
             )
 
-    telegram_webhook.USER_SESSIONS[
-        2001
-    ] = {
-        "step": "nome",
-        "lang": "pt",
-    }
 
     try:
         telegram_webhook.process_telegram_update(
