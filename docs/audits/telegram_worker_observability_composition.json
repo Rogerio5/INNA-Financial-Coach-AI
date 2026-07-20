@@ -1,0 +1,587 @@
+{
+  "target": "src/channels/telegram_update_worker.py",
+  "imports": [
+    {
+      "line": 1,
+      "source": "from __future__ import annotations"
+    },
+    {
+      "line": 3,
+      "source": "import argparse"
+    },
+    {
+      "line": 4,
+      "source": "import json"
+    },
+    {
+      "line": 5,
+      "source": "import math"
+    },
+    {
+      "line": 6,
+      "source": "import os"
+    },
+    {
+      "line": 7,
+      "source": "import signal"
+    },
+    {
+      "line": 8,
+      "source": "import sys"
+    },
+    {
+      "line": 10,
+      "source": "from collections.abc import (\n    Mapping,\n    Sequence,\n)"
+    },
+    {
+      "line": 14,
+      "source": "from threading import Event"
+    },
+    {
+      "line": 15,
+      "source": "from typing import Any, TextIO"
+    },
+    {
+      "line": 17,
+      "source": "from src.services.telegram_update_jobs import (\n    TelegramUpdateJobConfigurationError,\n    TelegramUpdateRunnerConfigurationError,\n    TelegramUpdateRunnerResult,\n    TelegramUpdateRunnerSummary,\n    TelegramUpdateWorkerConfig,\n    load_telegram_update_keyring_from_env,\n    run_telegram_update_worker,\n)"
+    }
+  ],
+  "functions": [
+    {
+      "name": "_configuration_error",
+      "line_start": 68,
+      "line_end": 74,
+      "signature": "def _configuration_error() -> TelegramUpdateRunnerConfigurationError",
+      "calls": [
+        {
+          "line": 71,
+          "name": "TelegramUpdateRunnerConfigurationError",
+          "source": "TelegramUpdateRunnerConfigurationError(\n        \"A configuração do worker Telegram \"\n        \"é inválida.\"\n    )"
+        }
+      ],
+      "source": "def _configuration_error() -> (\n    TelegramUpdateRunnerConfigurationError\n):\n    return TelegramUpdateRunnerConfigurationError(\n        \"A configuração do worker Telegram \"\n        \"é inválida.\"\n    )"
+    },
+    {
+      "name": "_read_integer",
+      "line_start": 77,
+      "line_end": 107,
+      "signature": "def _read_integer(environment: Mapping[str, str], name: str, default: int) -> int",
+      "calls": [
+        {
+          "line": 82,
+          "name": "environment.get",
+          "source": "environment.get(\n        name\n    )"
+        },
+        {
+          "line": 89,
+          "name": "raw_value.strip",
+          "source": "raw_value.strip()"
+        },
+        {
+          "line": 92,
+          "name": "_configuration_error",
+          "source": "_configuration_error()"
+        },
+        {
+          "line": 95,
+          "name": "int",
+          "source": "int(\n            normalized,\n            10,\n        )"
+        },
+        {
+          "line": 105,
+          "name": "_configuration_error",
+          "source": "_configuration_error()"
+        }
+      ],
+      "source": "def _read_integer(\n    environment: Mapping[str, str],\n    name: str,\n    default: int,\n) -> int:\n    raw_value = environment.get(\n        name\n    )\n\n    if raw_value is None:\n        return default\n\n    normalized = raw_value.strip()\n\n    if not normalized:\n        raise _configuration_error()\n\n    try:\n        value = int(\n            normalized,\n            10,\n        )\n\n    except (\n        TypeError,\n        ValueError,\n        OverflowError,\n    ):\n        raise _configuration_error() from None\n\n    return value"
+    },
+    {
+      "name": "_read_float",
+      "line_start": 110,
+      "line_end": 144,
+      "signature": "def _read_float(environment: Mapping[str, str], name: str, default: float) -> float",
+      "calls": [
+        {
+          "line": 115,
+          "name": "environment.get",
+          "source": "environment.get(\n        name\n    )"
+        },
+        {
+          "line": 122,
+          "name": "raw_value.strip",
+          "source": "raw_value.strip()"
+        },
+        {
+          "line": 125,
+          "name": "_configuration_error",
+          "source": "_configuration_error()"
+        },
+        {
+          "line": 128,
+          "name": "float",
+          "source": "float(\n            normalized\n        )"
+        },
+        {
+          "line": 139,
+          "name": "math.isfinite",
+          "source": "math.isfinite(\n        value\n    )"
+        },
+        {
+          "line": 142,
+          "name": "_configuration_error",
+          "source": "_configuration_error()"
+        },
+        {
+          "line": 137,
+          "name": "_configuration_error",
+          "source": "_configuration_error()"
+        }
+      ],
+      "source": "def _read_float(\n    environment: Mapping[str, str],\n    name: str,\n    default: float,\n) -> float:\n    raw_value = environment.get(\n        name\n    )\n\n    if raw_value is None:\n        return default\n\n    normalized = raw_value.strip()\n\n    if not normalized:\n        raise _configuration_error()\n\n    try:\n        value = float(\n            normalized\n        )\n\n    except (\n        TypeError,\n        ValueError,\n        OverflowError,\n    ):\n        raise _configuration_error() from None\n\n    if not math.isfinite(\n        value\n    ):\n        raise _configuration_error()\n\n    return value"
+    },
+    {
+      "name": "load_worker_config_from_env",
+      "line_start": 147,
+      "line_end": 225,
+      "signature": "def load_worker_config_from_env(environment: Mapping[str, str] | None=None) -> TelegramUpdateWorkerConfig",
+      "calls": [
+        {
+          "line": 164,
+          "name": "TelegramUpdateWorkerConfig",
+          "source": "TelegramUpdateWorkerConfig()"
+        },
+        {
+          "line": 168,
+          "name": "TelegramUpdateWorkerConfig",
+          "source": "TelegramUpdateWorkerConfig(\n            lease_seconds=_read_integer(\n                resolved_environment,\n                ENV_LEASE_SECONDS,\n                defaults.lease_seconds,\n            ),\n            idle_sleep_seconds=_read_float(\n                resolved_environment,\n                ENV_IDLE_SLEEP_SECONDS,\n                defaults.idle_sleep_seconds,\n            ),\n            unavailable_sleep_seconds=(\n                _read_float(\n                    resolved_environment,\n                    ENV_UNAVAILABLE_SLEEP_SECONDS,\n                    defaults\n                    .unavailable_sleep_seconds,\n                )\n            ),\n            recovery_interval_seconds=(\n                _read_float(\n                    resolved_environment,\n                    ENV_RECOVERY_INTERVAL_SECONDS,\n                    defaults\n                    .recovery_interval_seconds,\n                )\n            ),\n            recovery_batch_size=(\n                _read_integer(\n                    resolved_environment,\n                    ENV_RECOVERY_BATCH_SIZE,\n                    defaults\n                    .recovery_batch_size,\n                )\n            ),\n            retry_base_delay_seconds=(\n                _read_integer(\n                    resolved_environment,\n                    ENV_RETRY_BASE_DELAY_SECONDS,\n                    defaults\n                    .retry_base_delay_seconds,\n                )\n            ),\n            retry_max_delay_seconds=(\n                _read_integer(\n                    resolved_environment,\n                    ENV_RETRY_MAX_DELAY_SECONDS,\n                    defaults\n                    .retry_max_delay_seconds,\n                )\n            ),\n        )"
+        },
+        {
+          "line": 225,
+          "name": "_configuration_error",
+          "source": "_configuration_error()"
+        },
+        {
+          "line": 169,
+          "name": "_read_integer",
+          "source": "_read_integer(\n                resolved_environment,\n                ENV_LEASE_SECONDS,\n                defaults.lease_seconds,\n            )"
+        },
+        {
+          "line": 174,
+          "name": "_read_float",
+          "source": "_read_float(\n                resolved_environment,\n                ENV_IDLE_SLEEP_SECONDS,\n                defaults.idle_sleep_seconds,\n            )"
+        },
+        {
+          "line": 180,
+          "name": "_read_float",
+          "source": "_read_float(\n                    resolved_environment,\n                    ENV_UNAVAILABLE_SLEEP_SECONDS,\n                    defaults\n                    .unavailable_sleep_seconds,\n                )"
+        },
+        {
+          "line": 188,
+          "name": "_read_float",
+          "source": "_read_float(\n                    resolved_environment,\n                    ENV_RECOVERY_INTERVAL_SECONDS,\n                    defaults\n                    .recovery_interval_seconds,\n                )"
+        },
+        {
+          "line": 196,
+          "name": "_read_integer",
+          "source": "_read_integer(\n                    resolved_environment,\n                    ENV_RECOVERY_BATCH_SIZE,\n                    defaults\n                    .recovery_batch_size,\n                )"
+        },
+        {
+          "line": 204,
+          "name": "_read_integer",
+          "source": "_read_integer(\n                    resolved_environment,\n                    ENV_RETRY_BASE_DELAY_SECONDS,\n                    defaults\n                    .retry_base_delay_seconds,\n                )"
+        },
+        {
+          "line": 212,
+          "name": "_read_integer",
+          "source": "_read_integer(\n                    resolved_environment,\n                    ENV_RETRY_MAX_DELAY_SECONDS,\n                    defaults\n                    .retry_max_delay_seconds,\n                )"
+        }
+      ],
+      "source": "def load_worker_config_from_env(\n    environment: Mapping[str, str]\n        | None = None,\n) -> TelegramUpdateWorkerConfig:\n    \"\"\"\n    Carrega somente configurações operacionais.\n\n    Segredos e chaves criptográficas são\n    carregados pelo serviço de keyring.\n    \"\"\"\n    resolved_environment = (\n        environment\n        if environment is not None\n        else os.environ\n    )\n\n    defaults = (\n        TelegramUpdateWorkerConfig()\n    )\n\n    try:\n        return TelegramUpdateWorkerConfig(\n            lease_seconds=_read_integer(\n                resolved_environment,\n                ENV_LEASE_SECONDS,\n                defaults.lease_seconds,\n            ),\n            idle_sleep_seconds=_read_float(\n                resolved_environment,\n                ENV_IDLE_SLEEP_SECONDS,\n                defaults.idle_sleep_seconds,\n            ),\n            unavailable_sleep_seconds=(\n                _read_float(\n                    resolved_environment,\n                    ENV_UNAVAILABLE_SLEEP_SECONDS,\n                    defaults\n                    .unavailable_sleep_seconds,\n                )\n            ),\n            recovery_interval_seconds=(\n                _read_float(\n                    resolved_environment,\n                    ENV_RECOVERY_INTERVAL_SECONDS,\n                    defaults\n                    .recovery_interval_seconds,\n                )\n            ),\n            recovery_batch_size=(\n                _read_integer(\n                    resolved_environment,\n                    ENV_RECOVERY_BATCH_SIZE,\n                    defaults\n                    .recovery_batch_size,\n                )\n            ),\n            retry_base_delay_seconds=(\n                _read_integer(\n                    resolved_environment,\n                    ENV_RETRY_BASE_DELAY_SECONDS,\n                    defaults\n                    .retry_base_delay_seconds,\n                )\n            ),\n            retry_max_delay_seconds=(\n                _read_integer(\n                    resolved_environment,\n                    ENV_RETRY_MAX_DELAY_SECONDS,\n                    defaults\n                    .retry_max_delay_seconds,\n                )\n            ),\n        )\n\n    except TelegramUpdateRunnerConfigurationError:\n        raise\n\n    except Exception:\n        raise _configuration_error() from None"
+    },
+    {
+      "name": "load_telegram_processor",
+      "line_start": 228,
+      "line_end": 283,
+      "signature": "def load_telegram_processor()",
+      "calls": [
+        {
+          "line": 246,
+          "name": "callable",
+          "source": "callable(\n        process_telegram_update\n    )"
+        },
+        {
+          "line": 249,
+          "name": "TelegramUpdateRunnerConfigurationError",
+          "source": "TelegramUpdateRunnerConfigurationError(\n            \"O processador Telegram é inválido.\"\n        )"
+        },
+        {
+          "line": 253,
+          "name": "callable",
+          "source": "callable(\n        create_postgres_telegram_webhook_conversation_bridge\n    )"
+        },
+        {
+          "line": 256,
+          "name": "TelegramUpdateRunnerConfigurationError",
+          "source": "TelegramUpdateRunnerConfigurationError(\n            \"A factory da conversation bridge é inválida.\"\n        )"
+        },
+        {
+          "line": 262,
+          "name": "create_postgres_telegram_webhook_conversation_bridge",
+          "source": "create_postgres_telegram_webhook_conversation_bridge()"
+        },
+        {
+          "line": 271,
+          "name": "TelegramUpdateRunnerConfigurationError",
+          "source": "TelegramUpdateRunnerConfigurationError(\n            \"A conversation bridge criada é inválida.\"\n        )"
+        },
+        {
+          "line": 278,
+          "name": "process_telegram_update",
+          "source": "process_telegram_update(\n            update,\n            conversation_bridge=conversation_bridge,\n        )"
+        },
+        {
+          "line": 266,
+          "name": "TelegramUpdateRunnerConfigurationError",
+          "source": "TelegramUpdateRunnerConfigurationError(\n            \"Não foi possível compor o estado conversacional durável.\"\n        )"
+        }
+      ],
+      "source": "def load_telegram_processor():\n    \"\"\"\n    Compõe o processador produtivo do worker.\n\n    A bridge é criada uma única vez durante a inicialização do processo\n    e reutilizada em todos os jobs processados por esta instância.\n\n    A factory da bridge mantém a inicialização do runtime PostgreSQL\n    lazy: importar este módulo ou construir o wrapper não deve abrir uma\n    conexão com o banco antecipadamente.\n    \"\"\"\n    from api.telegram_webhook import (\n        process_telegram_update,\n    )\n    from src.services.telegram_conversation_state import (\n        create_postgres_telegram_webhook_conversation_bridge,\n    )\n\n    if not callable(\n        process_telegram_update\n    ):\n        raise TelegramUpdateRunnerConfigurationError(\n            \"O processador Telegram é inválido.\"\n        )\n\n    if not callable(\n        create_postgres_telegram_webhook_conversation_bridge\n    ):\n        raise TelegramUpdateRunnerConfigurationError(\n            \"A factory da conversation bridge é inválida.\"\n        )\n\n    try:\n        conversation_bridge = (\n            create_postgres_telegram_webhook_conversation_bridge()\n        )\n\n    except Exception:\n        raise TelegramUpdateRunnerConfigurationError(\n            \"Não foi possível compor o estado conversacional durável.\"\n        ) from None\n\n    if conversation_bridge is None:\n        raise TelegramUpdateRunnerConfigurationError(\n            \"A conversation bridge criada é inválida.\"\n        )\n\n    def process_with_durable_conversation_state(\n        update: dict,\n    ):\n        return process_telegram_update(\n            update,\n            conversation_bridge=conversation_bridge,\n        )\n\n    return process_with_durable_conversation_state"
+    },
+    {
+      "name": "_emit_event",
+      "line_start": 287,
+      "line_end": 315,
+      "signature": "def _emit_event(event: str, payload: Mapping[str, object], *, stream: TextIO) -> None",
+      "calls": [
+        {
+          "line": 300,
+          "name": "json.dumps",
+          "source": "json.dumps(\n        record,\n        ensure_ascii=False,\n        sort_keys=True,\n        separators=(\n            \",\",\n            \":\",\n        ),\n        allow_nan=False,\n    )"
+        },
+        {
+          "line": 311,
+          "name": "print",
+          "source": "print(\n        serialized,\n        file=stream,\n        flush=True,\n    )"
+        },
+        {
+          "line": 295,
+          "name": "dict",
+          "source": "dict(\n            payload\n        )"
+        }
+      ],
+      "source": "def _emit_event(\n    event: str,\n    payload: Mapping[str, object],\n    *,\n    stream: TextIO,\n) -> None:\n    record = {\n        \"event\": event,\n        \"data\": dict(\n            payload\n        ),\n    }\n\n    serialized = json.dumps(\n        record,\n        ensure_ascii=False,\n        sort_keys=True,\n        separators=(\n            \",\",\n            \":\",\n        ),\n        allow_nan=False,\n    )\n\n    print(\n        serialized,\n        file=stream,\n        flush=True,\n    )"
+    },
+    {
+      "name": "emit_runner_result",
+      "line_start": 318,
+      "line_end": 336,
+      "signature": "def emit_runner_result(result: TelegramUpdateRunnerResult, *, stream: TextIO) -> None",
+      "calls": [
+        {
+          "line": 332,
+          "name": "_emit_event",
+          "source": "_emit_event(\n        \"telegram_worker_result\",\n        result.to_safe_dict(),\n        stream=stream,\n    )"
+        },
+        {
+          "line": 334,
+          "name": "result.to_safe_dict",
+          "source": "result.to_safe_dict()"
+        }
+      ],
+      "source": "def emit_runner_result(\n    result: TelegramUpdateRunnerResult,\n    *,\n    stream: TextIO,\n) -> None:\n    \"\"\"\n    Registra somente o contrato seguro do runner.\n\n    Jobs idle são omitidos para evitar logs\n    excessivos em produção.\n    \"\"\"\n    if result.decision == \"idle\":\n        return\n\n    _emit_event(\n        \"telegram_worker_result\",\n        result.to_safe_dict(),\n        stream=stream,\n    )"
+    },
+    {
+      "name": "emit_runner_summary",
+      "line_start": 339,
+      "line_end": 348,
+      "signature": "def emit_runner_summary(summary: TelegramUpdateRunnerSummary, *, stream: TextIO) -> None",
+      "calls": [
+        {
+          "line": 344,
+          "name": "_emit_event",
+          "source": "_emit_event(\n        \"telegram_worker_summary\",\n        summary.to_safe_dict(),\n        stream=stream,\n    )"
+        },
+        {
+          "line": 346,
+          "name": "summary.to_safe_dict",
+          "source": "summary.to_safe_dict()"
+        }
+      ],
+      "source": "def emit_runner_summary(\n    summary: TelegramUpdateRunnerSummary,\n    *,\n    stream: TextIO,\n) -> None:\n    _emit_event(\n        \"telegram_worker_summary\",\n        summary.to_safe_dict(),\n        stream=stream,\n    )"
+    },
+    {
+      "name": "_config_to_safe_dict",
+      "line_start": 351,
+      "line_end": 380,
+      "signature": "def _config_to_safe_dict(config: TelegramUpdateWorkerConfig) -> dict[str, object]",
+      "calls": [],
+      "source": "def _config_to_safe_dict(\n    config: TelegramUpdateWorkerConfig,\n) -> dict[str, object]:\n    return {\n        \"lease_seconds\": (\n            config.lease_seconds\n        ),\n        \"idle_sleep_seconds\": (\n            config.idle_sleep_seconds\n        ),\n        \"unavailable_sleep_seconds\": (\n            config\n            .unavailable_sleep_seconds\n        ),\n        \"recovery_interval_seconds\": (\n            config\n            .recovery_interval_seconds\n        ),\n        \"recovery_batch_size\": (\n            config.recovery_batch_size\n        ),\n        \"retry_base_delay_seconds\": (\n            config\n            .retry_base_delay_seconds\n        ),\n        \"retry_max_delay_seconds\": (\n            config\n            .retry_max_delay_seconds\n        ),\n    }"
+    },
+    {
+      "name": "_install_signal_handlers",
+      "line_start": 383,
+      "line_end": 442,
+      "signature": "def _install_signal_handlers(stop_event: Any, *, signal_module: Any=signal) -> dict[int, Any]",
+      "calls": [
+        {
+          "line": 388,
+          "name": "callable",
+          "source": "callable(\n        getattr(\n            stop_event,\n            \"set\",\n            None,\n        )\n    )"
+        },
+        {
+          "line": 395,
+          "name": "TelegramUpdateRunnerConfigurationError",
+          "source": "TelegramUpdateRunnerConfigurationError(\n            \"O stop_event do worker é inválido.\"\n        )"
+        },
+        {
+          "line": 408,
+          "name": "stop_event.set",
+          "source": "stop_event.set()"
+        },
+        {
+          "line": 416,
+          "name": "getattr",
+          "source": "getattr(\n            signal_module,\n            attribute_name,\n            None,\n        )"
+        },
+        {
+          "line": 437,
+          "name": "signal_module.signal",
+          "source": "signal_module.signal(\n            signal_number,\n            stop_handler,\n        )"
+        },
+        {
+          "line": 389,
+          "name": "getattr",
+          "source": "getattr(\n            stop_event,\n            \"set\",\n            None,\n        )"
+        },
+        {
+          "line": 423,
+          "name": "isinstance",
+          "source": "isinstance(\n                signal_number,\n                int,\n            )"
+        },
+        {
+          "line": 430,
+          "name": "signal_numbers.append",
+          "source": "signal_numbers.append(\n                signal_number\n            )"
+        }
+      ],
+      "source": "def _install_signal_handlers(\n    stop_event: Any,\n    *,\n    signal_module: Any = signal,\n) -> dict[int, Any]:\n    if not callable(\n        getattr(\n            stop_event,\n            \"set\",\n            None,\n        )\n    ):\n        raise TelegramUpdateRunnerConfigurationError(\n            \"O stop_event do worker é inválido.\"\n        )\n\n    previous_handlers: dict[\n        int,\n        Any,\n    ] = {}\n\n    def stop_handler(\n        _signal_number,\n        _frame,\n    ) -> None:\n        stop_event.set()\n\n    signal_numbers: list[int] = []\n\n    for attribute_name in (\n        \"SIGINT\",\n        \"SIGTERM\",\n    ):\n        signal_number = getattr(\n            signal_module,\n            attribute_name,\n            None,\n        )\n\n        if (\n            isinstance(\n                signal_number,\n                int,\n            )\n            and signal_number\n            not in signal_numbers\n        ):\n            signal_numbers.append(\n                signal_number\n            )\n\n    for signal_number in signal_numbers:\n        previous_handlers[\n            signal_number\n        ] = signal_module.signal(\n            signal_number,\n            stop_handler,\n        )\n\n    return previous_handlers"
+    },
+    {
+      "name": "_restore_signal_handlers",
+      "line_start": 445,
+      "line_end": 464,
+      "signature": "def _restore_signal_handlers(previous_handlers: Mapping[int, Any], *, signal_module: Any=signal) -> None",
+      "calls": [
+        {
+          "line": 456,
+          "name": "previous_handlers.items",
+          "source": "previous_handlers.items()"
+        },
+        {
+          "line": 458,
+          "name": "signal_module.signal",
+          "source": "signal_module.signal(\n                signal_number,\n                previous_handler,\n            )"
+        }
+      ],
+      "source": "def _restore_signal_handlers(\n    previous_handlers: Mapping[\n        int,\n        Any,\n    ],\n    *,\n    signal_module: Any = signal,\n) -> None:\n    for (\n        signal_number,\n        previous_handler,\n    ) in previous_handlers.items():\n        try:\n            signal_module.signal(\n                signal_number,\n                previous_handler,\n            )\n\n        except Exception:\n            continue"
+    },
+    {
+      "name": "_positive_integer_argument",
+      "line_start": 467,
+      "line_end": 490,
+      "signature": "def _positive_integer_argument(value: str) -> int",
+      "calls": [
+        {
+          "line": 471,
+          "name": "int",
+          "source": "int(\n            value,\n            10,\n        )"
+        },
+        {
+          "line": 486,
+          "name": "argparse.ArgumentTypeError",
+          "source": "argparse.ArgumentTypeError(\n            \"deve ser um inteiro positivo\"\n        )"
+        },
+        {
+          "line": 481,
+          "name": "argparse.ArgumentTypeError",
+          "source": "argparse.ArgumentTypeError(\n            \"deve ser um inteiro positivo\"\n        )"
+        }
+      ],
+      "source": "def _positive_integer_argument(\n    value: str,\n) -> int:\n    try:\n        parsed = int(\n            value,\n            10,\n        )\n\n    except (\n        TypeError,\n        ValueError,\n        OverflowError,\n    ):\n        raise argparse.ArgumentTypeError(\n            \"deve ser um inteiro positivo\"\n        ) from None\n\n    if parsed < 1:\n        raise argparse.ArgumentTypeError(\n            \"deve ser um inteiro positivo\"\n        )\n\n    return parsed"
+    },
+    {
+      "name": "_build_parser",
+      "line_start": 493,
+      "line_end": 516,
+      "signature": "def _build_parser() -> argparse.ArgumentParser",
+      "calls": [
+        {
+          "line": 496,
+          "name": "argparse.ArgumentParser",
+          "source": "argparse.ArgumentParser(\n        prog=(\n            \"run_telegram_update_worker\"\n        ),\n        description=(\n            \"Executa o worker durável \"\n            \"da fila Telegram da INNA.\"\n        ),\n    )"
+        },
+        {
+          "line": 506,
+          "name": "parser.add_argument",
+          "source": "parser.add_argument(\n        \"--max-cycles\",\n        type=_positive_integer_argument,\n        default=None,\n        help=(\n            \"Limita os ciclos para smoke tests. \"\n            \"O padrão é execução contínua.\"\n        ),\n    )"
+        }
+      ],
+      "source": "def _build_parser() -> (\n    argparse.ArgumentParser\n):\n    parser = argparse.ArgumentParser(\n        prog=(\n            \"run_telegram_update_worker\"\n        ),\n        description=(\n            \"Executa o worker durável \"\n            \"da fila Telegram da INNA.\"\n        ),\n    )\n\n    parser.add_argument(\n        \"--max-cycles\",\n        type=_positive_integer_argument,\n        default=None,\n        help=(\n            \"Limita os ciclos para smoke tests. \"\n            \"O padrão é execução contínua.\"\n        ),\n    )\n\n    return parser"
+    },
+    {
+      "name": "main",
+      "line_start": 519,
+      "line_end": 690,
+      "signature": "def main(argv: Sequence[str] | None=None, *, stdout: TextIO | None=None, stderr: TextIO | None=None) -> int",
+      "calls": [
+        {
+          "line": 537,
+          "name": "_build_parser",
+          "source": "_build_parser()"
+        },
+        {
+          "line": 595,
+          "name": "Event",
+          "source": "Event()"
+        },
+        {
+          "line": 685,
+          "name": "emit_runner_summary",
+          "source": "emit_runner_summary(\n        summary,\n        stream=resolved_stdout,\n    )"
+        },
+        {
+          "line": 540,
+          "name": "parser.parse_args",
+          "source": "parser.parse_args(\n            list(argv)\n            if argv is not None\n            else None\n        )"
+        },
+        {
+          "line": 553,
+          "name": "load_worker_config_from_env",
+          "source": "load_worker_config_from_env()"
+        },
+        {
+          "line": 557,
+          "name": "load_telegram_update_keyring_from_env",
+          "source": "load_telegram_update_keyring_from_env()"
+        },
+        {
+          "line": 561,
+          "name": "load_telegram_processor",
+          "source": "load_telegram_processor()"
+        },
+        {
+          "line": 603,
+          "name": "_install_signal_handlers",
+          "source": "_install_signal_handlers(\n                stop_event\n            )"
+        },
+        {
+          "line": 608,
+          "name": "_emit_event",
+          "source": "_emit_event(\n            \"telegram_worker_started\",\n            _config_to_safe_dict(\n                config\n            ),\n            stream=resolved_stdout,\n        )"
+        },
+        {
+          "line": 617,
+          "name": "run_telegram_update_worker",
+          "source": "run_telegram_update_worker(\n                processor,\n                stop_event=stop_event,\n                config=config,\n                keyring=keyring,\n                on_result=lambda result: (\n                    emit_runner_result(\n                        result,\n                        stream=(\n                            resolved_stdout\n                        ),\n                    )\n                ),\n                max_cycles=(\n                    arguments.max_cycles\n                ),\n            )"
+        },
+        {
+          "line": 681,
+          "name": "_restore_signal_handlers",
+          "source": "_restore_signal_handlers(\n            previous_handlers\n        )"
+        },
+        {
+          "line": 547,
+          "name": "int",
+          "source": "int(\n            error.code\n        )"
+        },
+        {
+          "line": 568,
+          "name": "_emit_event",
+          "source": "_emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"configuration_invalid\"\n                ),\n            },\n            stream=resolved_stderr,\n        )"
+        },
+        {
+          "line": 582,
+          "name": "_emit_event",
+          "source": "_emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"initialization_failed\"\n                ),\n            },\n            stream=resolved_stderr,\n        )"
+        },
+        {
+          "line": 610,
+          "name": "_config_to_safe_dict",
+          "source": "_config_to_safe_dict(\n                config\n            )"
+        },
+        {
+          "line": 637,
+          "name": "stop_event.set",
+          "source": "stop_event.set()"
+        },
+        {
+          "line": 639,
+          "name": "_emit_event",
+          "source": "_emit_event(\n            \"telegram_worker_stopped\",\n            {\n                \"reason\": \"keyboard_interrupt\",\n            },\n            stream=resolved_stdout,\n        )"
+        },
+        {
+          "line": 653,
+          "name": "_emit_event",
+          "source": "_emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"configuration_invalid\"\n                ),\n            },\n            stream=resolved_stderr,\n        )"
+        },
+        {
+          "line": 667,
+          "name": "_emit_event",
+          "source": "_emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"runtime_failed\"\n                ),\n            },\n            stream=resolved_stderr,\n        )"
+        },
+        {
+          "line": 541,
+          "name": "list",
+          "source": "list(argv)"
+        },
+        {
+          "line": 623,
+          "name": "emit_runner_result",
+          "source": "emit_runner_result(\n                        result,\n                        stream=(\n                            resolved_stdout\n                        ),\n                    )"
+        }
+      ],
+      "source": "def main(\n    argv: Sequence[str] | None = None,\n    *,\n    stdout: TextIO | None = None,\n    stderr: TextIO | None = None,\n) -> int:\n    resolved_stdout = (\n        stdout\n        if stdout is not None\n        else sys.stdout\n    )\n\n    resolved_stderr = (\n        stderr\n        if stderr is not None\n        else sys.stderr\n    )\n\n    parser = _build_parser()\n\n    try:\n        arguments = parser.parse_args(\n            list(argv)\n            if argv is not None\n            else None\n        )\n\n    except SystemExit as error:\n        return int(\n            error.code\n        )\n\n    try:\n        config = (\n            load_worker_config_from_env()\n        )\n\n        keyring = (\n            load_telegram_update_keyring_from_env()\n        )\n\n        processor = (\n            load_telegram_processor()\n        )\n\n    except (\n        TelegramUpdateJobConfigurationError,\n        TelegramUpdateRunnerConfigurationError,\n    ):\n        _emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"configuration_invalid\"\n                ),\n            },\n            stream=resolved_stderr,\n        )\n\n        return EXIT_CONFIGURATION_ERROR\n\n    except Exception:\n        _emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"initialization_failed\"\n                ),\n            },\n            stream=resolved_stderr,\n        )\n\n        return EXIT_RUNTIME_ERROR\n\n    stop_event = Event()\n    previous_handlers: dict[\n        int,\n        Any,\n    ] = {}\n\n    try:\n        previous_handlers = (\n            _install_signal_handlers(\n                stop_event\n            )\n        )\n\n        _emit_event(\n            \"telegram_worker_started\",\n            _config_to_safe_dict(\n                config\n            ),\n            stream=resolved_stdout,\n        )\n\n        summary = (\n            run_telegram_update_worker(\n                processor,\n                stop_event=stop_event,\n                config=config,\n                keyring=keyring,\n                on_result=lambda result: (\n                    emit_runner_result(\n                        result,\n                        stream=(\n                            resolved_stdout\n                        ),\n                    )\n                ),\n                max_cycles=(\n                    arguments.max_cycles\n                ),\n            )\n        )\n\n    except KeyboardInterrupt:\n        stop_event.set()\n\n        _emit_event(\n            \"telegram_worker_stopped\",\n            {\n                \"reason\": \"keyboard_interrupt\",\n            },\n            stream=resolved_stdout,\n        )\n\n        return EXIT_INTERRUPTED\n\n    except (\n        TelegramUpdateJobConfigurationError,\n        TelegramUpdateRunnerConfigurationError,\n    ):\n        _emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"configuration_invalid\"\n                ),\n            },\n            stream=resolved_stderr,\n        )\n\n        return EXIT_CONFIGURATION_ERROR\n\n    except Exception:\n        _emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"runtime_failed\"\n                ),\n            },\n            stream=resolved_stderr,\n        )\n\n        return EXIT_RUNTIME_ERROR\n\n    finally:\n        _restore_signal_handlers(\n            previous_handlers\n        )\n\n    emit_runner_summary(\n        summary,\n        stream=resolved_stdout,\n    )\n\n    return EXIT_OK"
+    }
+  ],
+  "classes": [],
+  "bridge_references": [
+    {
+      "line": 254,
+      "name": "create_postgres_telegram_webhook_conversation_bridge"
+    },
+    {
+      "line": 262,
+      "name": "create_postgres_telegram_webhook_conversation_bridge"
+    }
+  ],
+  "bridge_constructors": [
+    {
+      "line": 262,
+      "name": "create_postgres_telegram_webhook_conversation_bridge",
+      "source": "create_postgres_telegram_webhook_conversation_bridge()",
+      "keywords": []
+    }
+  ],
+  "observability_references": [],
+  "postgres_factories": [
+    {
+      "line": 262,
+      "name": "create_postgres_telegram_webhook_conversation_bridge",
+      "source": "create_postgres_telegram_webhook_conversation_bridge()"
+    }
+  ],
+  "processor_references": [
+    {
+      "line": 560,
+      "name": "processor"
+    },
+    {
+      "line": 561,
+      "name": "load_telegram_processor"
+    },
+    {
+      "line": 618,
+      "name": "processor"
+    }
+  ]
+}

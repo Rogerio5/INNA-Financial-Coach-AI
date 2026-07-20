@@ -1,0 +1,631 @@
+{
+  "target": "src/services/telegram_conversation_state/webhook_bridge.py",
+  "class": "TelegramWebhookConversationBridge",
+  "class_line": 143,
+  "decorators": [
+    "dataclass(\n    slots=True,\n)"
+  ],
+  "fields": [
+    {
+      "name": "runtime_factory",
+      "annotation": "Callable[[], TelegramConversationStateRuntimePort]",
+      "default": "field(repr=False)",
+      "line": 144
+    },
+    {
+      "name": "default_language",
+      "annotation": "str",
+      "default": "'pt-BR'",
+      "line": 151
+    },
+    {
+      "name": "_runtime",
+      "annotation": "TelegramConversationStateRuntimePort | None",
+      "default": "field(default=None, init=False, repr=False)",
+      "line": 153
+    },
+    {
+      "name": "_runtime_lock",
+      "annotation": "Any",
+      "default": "field(default_factory=threading.Lock, init=False, repr=False)",
+      "line": 162
+    }
+  ],
+  "methods": [
+    {
+      "name": "__post_init__",
+      "line_start": 168,
+      "line_end": 191,
+      "signature": "def __post_init__(self) -> None",
+      "calls": [
+        {
+          "call": "normalize_telegram_language",
+          "line": 179
+        },
+        {
+          "call": "callable",
+          "line": 171
+        },
+        {
+          "call": "TelegramConversationStateValidationError",
+          "line": 174
+        },
+        {
+          "call": "TelegramConversationStateValidationError",
+          "line": 185
+        }
+      ],
+      "raises": [
+        {
+          "line": 174,
+          "expression": "raise TelegramConversationStateValidationError(\n                \"runtime_factory inválido.\"\n            )"
+        },
+        {
+          "line": 185,
+          "expression": "raise TelegramConversationStateValidationError(\n                \"default_language é obrigatório.\"\n            )"
+        }
+      ],
+      "catches": [],
+      "returns": [],
+      "source": "def __post_init__(\n        self,\n    ) -> None:\n        if not callable(\n            self.runtime_factory\n        ):\n            raise TelegramConversationStateValidationError(\n                \"runtime_factory inválido.\"\n            )\n\n        normalized_language = (\n            normalize_telegram_language(\n                self.default_language\n            )\n        )\n\n        if normalized_language is None:\n            raise TelegramConversationStateValidationError(\n                \"default_language é obrigatório.\"\n            )\n\n        self.default_language = (\n            normalized_language\n        )"
+    },
+    {
+      "name": "load_session",
+      "line_start": 199,
+      "line_end": 230,
+      "signature": "def load_session(self, telegram_user_id: int, chat_id: int) -> TelegramConversationSession | None",
+      "calls": [
+        {
+          "call": "validate_telegram_identity",
+          "line": 207
+        },
+        {
+          "call": "self._invoke",
+          "line": 212
+        },
+        {
+          "call": "_validate_session",
+          "line": 222
+        },
+        {
+          "call": "self._get_runtime().load_session",
+          "line": 213
+        },
+        {
+          "call": "self._get_runtime",
+          "line": 213
+        }
+      ],
+      "raises": [],
+      "catches": [],
+      "returns": [
+        {
+          "line": 222,
+          "expression": "return _validate_session(\n            result,\n            telegram_user_id=(\n                normalized_user_id\n            ),\n            chat_id=(\n                normalized_chat_id\n            ),\n        )"
+        },
+        {
+          "line": 220,
+          "expression": "return None"
+        }
+      ],
+      "source": "def load_session(\n        self,\n        telegram_user_id: int,\n        chat_id: int,\n    ) -> TelegramConversationSession | None:\n        (\n            normalized_user_id,\n            normalized_chat_id,\n        ) = validate_telegram_identity(\n            telegram_user_id,\n            chat_id,\n        )\n\n        result = self._invoke(\n            lambda: self._get_runtime().load_session(\n                normalized_user_id,\n                normalized_chat_id,\n            )\n        )\n\n        if result is None:\n            return None\n\n        return _validate_session(\n            result,\n            telegram_user_id=(\n                normalized_user_id\n            ),\n            chat_id=(\n                normalized_chat_id\n            ),\n        )"
+    },
+    {
+      "name": "open_session",
+      "line_start": 232,
+      "line_end": 296,
+      "signature": "def open_session(self, telegram_user_id: int, chat_id: int, initial_state: Mapping[str, Any], language: str | None=None, ttl_seconds: int | None=None) -> TelegramConversationSession",
+      "calls": [
+        {
+          "call": "validate_telegram_identity",
+          "line": 243
+        },
+        {
+          "call": "normalize_telegram_state",
+          "line": 249
+        },
+        {
+          "call": "normalize_telegram_language",
+          "line": 255
+        },
+        {
+          "call": "self._invoke",
+          "line": 268
+        },
+        {
+          "call": "_validate_session",
+          "line": 288
+        },
+        {
+          "call": "validate_state_ttl_seconds",
+          "line": 263
+        },
+        {
+          "call": "self._get_runtime().open_session",
+          "line": 269
+        },
+        {
+          "call": "self._get_runtime",
+          "line": 269
+        }
+      ],
+      "raises": [],
+      "catches": [],
+      "returns": [
+        {
+          "line": 288,
+          "expression": "return _validate_session(\n            result,\n            telegram_user_id=(\n                normalized_user_id\n            ),\n            chat_id=(\n                normalized_chat_id\n            ),\n        )"
+        }
+      ],
+      "source": "def open_session(\n        self,\n        telegram_user_id: int,\n        chat_id: int,\n        initial_state: Mapping[str, Any],\n        language: str | None = None,\n        ttl_seconds: int | None = None,\n    ) -> TelegramConversationSession:\n        (\n            normalized_user_id,\n            normalized_chat_id,\n        ) = validate_telegram_identity(\n            telegram_user_id,\n            chat_id,\n        )\n\n        normalized_state = (\n            normalize_telegram_state(\n                initial_state\n            )\n        )\n\n        normalized_language = (\n            normalize_telegram_language(\n                language\n            )\n        )\n\n        normalized_ttl = (\n            None\n            if ttl_seconds is None\n            else validate_state_ttl_seconds(\n                ttl_seconds\n            )\n        )\n\n        result = self._invoke(\n            lambda: self._get_runtime().open_session(\n                telegram_user_id=(\n                    normalized_user_id\n                ),\n                chat_id=(\n                    normalized_chat_id\n                ),\n                initial_state=(\n                    normalized_state\n                ),\n                language=(\n                    normalized_language\n                ),\n                ttl_seconds=(\n                    normalized_ttl\n                ),\n            )\n        )\n\n        return _validate_session(\n            result,\n            telegram_user_id=(\n                normalized_user_id\n            ),\n            chat_id=(\n                normalized_chat_id\n            ),\n        )"
+    },
+    {
+      "name": "load_or_open_session",
+      "line_start": 298,
+      "line_end": 350,
+      "signature": "def load_or_open_session(self, telegram_user_id: int, chat_id: int, initial_state: Mapping[str, Any], language: str | None=None, ttl_seconds: int | None=None) -> TelegramConversationSession",
+      "calls": [
+        {
+          "call": "validate_telegram_identity",
+          "line": 309
+        },
+        {
+          "call": "normalize_telegram_state",
+          "line": 315
+        },
+        {
+          "call": "normalize_telegram_language",
+          "line": 321
+        },
+        {
+          "call": "self.load_session",
+          "line": 334
+        },
+        {
+          "call": "self.open_session",
+          "line": 342
+        },
+        {
+          "call": "validate_state_ttl_seconds",
+          "line": 329
+        }
+      ],
+      "raises": [],
+      "catches": [],
+      "returns": [
+        {
+          "line": 342,
+          "expression": "return self.open_session(\n            telegram_user_id=(\n                normalized_user_id\n            ),\n            chat_id=normalized_chat_id,\n            initial_state=normalized_state,\n            language=normalized_language,\n            ttl_seconds=normalized_ttl,\n        )"
+        },
+        {
+          "line": 340,
+          "expression": "return existing"
+        }
+      ],
+      "source": "def load_or_open_session(\n        self,\n        telegram_user_id: int,\n        chat_id: int,\n        initial_state: Mapping[str, Any],\n        language: str | None = None,\n        ttl_seconds: int | None = None,\n    ) -> TelegramConversationSession:\n        (\n            normalized_user_id,\n            normalized_chat_id,\n        ) = validate_telegram_identity(\n            telegram_user_id,\n            chat_id,\n        )\n\n        normalized_state = (\n            normalize_telegram_state(\n                initial_state\n            )\n        )\n\n        normalized_language = (\n            normalize_telegram_language(\n                language\n            )\n        )\n\n        normalized_ttl = (\n            None\n            if ttl_seconds is None\n            else validate_state_ttl_seconds(\n                ttl_seconds\n            )\n        )\n\n        existing = self.load_session(\n            normalized_user_id,\n            normalized_chat_id,\n        )\n\n        if existing is not None:\n            return existing\n\n        return self.open_session(\n            telegram_user_id=(\n                normalized_user_id\n            ),\n            chat_id=normalized_chat_id,\n            initial_state=normalized_state,\n            language=normalized_language,\n            ttl_seconds=normalized_ttl,\n        )"
+    },
+    {
+      "name": "save_session",
+      "line_start": 352,
+      "line_end": 411,
+      "signature": "def save_session(self, session: TelegramConversationSession, *, ttl_seconds: int | None=None, only_if_changed: bool=True) -> TelegramConversationSession",
+      "calls": [
+        {
+          "call": "_validate_session",
+          "line": 371
+        },
+        {
+          "call": "self._invoke",
+          "line": 392
+        },
+        {
+          "call": "_validate_session",
+          "line": 402
+        },
+        {
+          "call": "isinstance",
+          "line": 362
+        },
+        {
+          "call": "TelegramConversationStateValidationError",
+          "line": 366
+        },
+        {
+          "call": "isinstance",
+          "line": 376
+        },
+        {
+          "call": "TelegramConversationStateValidationError",
+          "line": 380
+        },
+        {
+          "call": "validate_state_ttl_seconds",
+          "line": 387
+        },
+        {
+          "call": "self._get_runtime().save_session",
+          "line": 393
+        },
+        {
+          "call": "self._get_runtime",
+          "line": 393
+        }
+      ],
+      "raises": [
+        {
+          "line": 366,
+          "expression": "raise TelegramConversationStateValidationError(\n                \"Sessão informada para persistência é inválida.\"\n            )"
+        },
+        {
+          "line": 380,
+          "expression": "raise TelegramConversationStateValidationError(\n                \"only_if_changed inválido.\"\n            )"
+        }
+      ],
+      "catches": [],
+      "returns": [
+        {
+          "line": 402,
+          "expression": "return _validate_session(\n            result,\n            telegram_user_id=(\n                validated_session\n                .telegram_user_id\n            ),\n            chat_id=(\n                validated_session.chat_id\n            ),\n        )"
+        }
+      ],
+      "source": "def save_session(\n        self,\n        session: TelegramConversationSession,\n        *,\n        ttl_seconds: int | None = None,\n        only_if_changed: bool = True,\n    ) -> TelegramConversationSession:\n        # Entrada pública inválida é erro de validação.\n        # ConsistencyError fica reservado para dados\n        # inconsistentes retornados pelo runtime/store.\n        if not isinstance(\n            session,\n            TelegramConversationSession,\n        ):\n            raise TelegramConversationStateValidationError(\n                \"Sessão informada para persistência é inválida.\"\n            )\n\n        validated_session = (\n            _validate_session(\n                session\n            )\n        )\n\n        if not isinstance(\n            only_if_changed,\n            bool,\n        ):\n            raise TelegramConversationStateValidationError(\n                \"only_if_changed inválido.\"\n            )\n\n        normalized_ttl = (\n            None\n            if ttl_seconds is None\n            else validate_state_ttl_seconds(\n                ttl_seconds\n            )\n        )\n\n        result = self._invoke(\n            lambda: self._get_runtime().save_session(\n                validated_session,\n                ttl_seconds=normalized_ttl,\n                only_if_changed=(\n                    only_if_changed\n                ),\n            )\n        )\n\n        return _validate_session(\n            result,\n            telegram_user_id=(\n                validated_session\n                .telegram_user_id\n            ),\n            chat_id=(\n                validated_session.chat_id\n            ),\n        )"
+    },
+    {
+      "name": "reload_session",
+      "line_start": 413,
+      "line_end": 441,
+      "signature": "def reload_session(self, session: TelegramConversationSession) -> TelegramConversationSession | None",
+      "calls": [
+        {
+          "call": "_validate_session",
+          "line": 418
+        },
+        {
+          "call": "self._invoke",
+          "line": 423
+        },
+        {
+          "call": "_validate_session",
+          "line": 432
+        },
+        {
+          "call": "self._get_runtime().reload_session",
+          "line": 424
+        },
+        {
+          "call": "self._get_runtime",
+          "line": 424
+        }
+      ],
+      "raises": [],
+      "catches": [],
+      "returns": [
+        {
+          "line": 432,
+          "expression": "return _validate_session(\n            result,\n            telegram_user_id=(\n                validated_session\n                .telegram_user_id\n            ),\n            chat_id=(\n                validated_session.chat_id\n            ),\n        )"
+        },
+        {
+          "line": 430,
+          "expression": "return None"
+        }
+      ],
+      "source": "def reload_session(\n        self,\n        session: TelegramConversationSession,\n    ) -> TelegramConversationSession | None:\n        validated_session = (\n            _validate_session(\n                session\n            )\n        )\n\n        result = self._invoke(\n            lambda: self._get_runtime().reload_session(\n                validated_session\n            )\n        )\n\n        if result is None:\n            return None\n\n        return _validate_session(\n            result,\n            telegram_user_id=(\n                validated_session\n                .telegram_user_id\n            ),\n            chat_id=(\n                validated_session.chat_id\n            ),\n        )"
+    },
+    {
+      "name": "delete_session",
+      "line_start": 443,
+      "line_end": 472,
+      "signature": "def delete_session(self, session: TelegramConversationSession) -> bool",
+      "calls": [
+        {
+          "call": "_validate_session",
+          "line": 448
+        },
+        {
+          "call": "self._invoke",
+          "line": 453
+        },
+        {
+          "call": "isinstance",
+          "line": 459
+        },
+        {
+          "call": "TelegramConversationStateConsistencyError",
+          "line": 463
+        },
+        {
+          "call": "TelegramConversationStateConsistencyError",
+          "line": 468
+        },
+        {
+          "call": "self._get_runtime().delete_session",
+          "line": 454
+        },
+        {
+          "call": "self._get_runtime",
+          "line": 454
+        }
+      ],
+      "raises": [
+        {
+          "line": 463,
+          "expression": "raise TelegramConversationStateConsistencyError(\n                \"Resultado de exclusão do runtime inválido.\"\n            )"
+        },
+        {
+          "line": 468,
+          "expression": "raise TelegramConversationStateConsistencyError(\n                \"Runtime não invalidou a sessão removida.\"\n            )"
+        }
+      ],
+      "catches": [],
+      "returns": [
+        {
+          "line": 472,
+          "expression": "return deleted"
+        }
+      ],
+      "source": "def delete_session(\n        self,\n        session: TelegramConversationSession,\n    ) -> bool:\n        validated_session = (\n            _validate_session(\n                session\n            )\n        )\n\n        deleted = self._invoke(\n            lambda: self._get_runtime().delete_session(\n                validated_session\n            )\n        )\n\n        if not isinstance(\n            deleted,\n            bool,\n        ):\n            raise TelegramConversationStateConsistencyError(\n                \"Resultado de exclusão do runtime inválido.\"\n            )\n\n        if not validated_session.deleted:\n            raise TelegramConversationStateConsistencyError(\n                \"Runtime não invalidou a sessão removida.\"\n            )\n\n        return deleted"
+    },
+    {
+      "name": "delete_identity",
+      "line_start": 474,
+      "line_end": 502,
+      "signature": "def delete_identity(self, telegram_user_id: int, chat_id: int) -> bool",
+      "calls": [
+        {
+          "call": "validate_telegram_identity",
+          "line": 482
+        },
+        {
+          "call": "self._invoke",
+          "line": 487
+        },
+        {
+          "call": "isinstance",
+          "line": 494
+        },
+        {
+          "call": "TelegramConversationStateConsistencyError",
+          "line": 498
+        },
+        {
+          "call": "self._get_runtime().delete_identity",
+          "line": 488
+        },
+        {
+          "call": "self._get_runtime",
+          "line": 488
+        }
+      ],
+      "raises": [
+        {
+          "line": 498,
+          "expression": "raise TelegramConversationStateConsistencyError(\n                \"Resultado de exclusão do runtime inválido.\"\n            )"
+        }
+      ],
+      "catches": [],
+      "returns": [
+        {
+          "line": 502,
+          "expression": "return deleted"
+        }
+      ],
+      "source": "def delete_identity(\n        self,\n        telegram_user_id: int,\n        chat_id: int,\n    ) -> bool:\n        (\n            normalized_user_id,\n            normalized_chat_id,\n        ) = validate_telegram_identity(\n            telegram_user_id,\n            chat_id,\n        )\n\n        deleted = self._invoke(\n            lambda: self._get_runtime().delete_identity(\n                normalized_user_id,\n                normalized_chat_id,\n            )\n        )\n\n        if not isinstance(\n            deleted,\n            bool,\n        ):\n            raise TelegramConversationStateConsistencyError(\n                \"Resultado de exclusão do runtime inválido.\"\n            )\n\n        return deleted"
+    },
+    {
+      "name": "resolve_language",
+      "line_start": 504,
+      "line_end": 543,
+      "signature": "def resolve_language(self, telegram_user_id: int, chat_id: int, *, fallback_language: str | None=None) -> str",
+      "calls": [
+        {
+          "call": "validate_telegram_identity",
+          "line": 514
+        },
+        {
+          "call": "self.load_session",
+          "line": 532
+        },
+        {
+          "call": "normalize_telegram_language",
+          "line": 522
+        },
+        {
+          "call": "TelegramConversationStateValidationError",
+          "line": 528
+        }
+      ],
+      "raises": [
+        {
+          "line": 528,
+          "expression": "raise TelegramConversationStateValidationError(\n                \"fallback_language é obrigatório.\"\n            )"
+        }
+      ],
+      "catches": [],
+      "returns": [
+        {
+          "line": 543,
+          "expression": "return session.language"
+        },
+        {
+          "line": 541,
+          "expression": "return resolved_fallback"
+        }
+      ],
+      "source": "def resolve_language(\n        self,\n        telegram_user_id: int,\n        chat_id: int,\n        *,\n        fallback_language: str | None = None,\n    ) -> str:\n        (\n            normalized_user_id,\n            normalized_chat_id,\n        ) = validate_telegram_identity(\n            telegram_user_id,\n            chat_id,\n        )\n\n        resolved_fallback = (\n            self.default_language\n            if fallback_language is None\n            else normalize_telegram_language(\n                fallback_language\n            )\n        )\n\n        if resolved_fallback is None:\n            raise TelegramConversationStateValidationError(\n                \"fallback_language é obrigatório.\"\n            )\n\n        session = self.load_session(\n            normalized_user_id,\n            normalized_chat_id,\n        )\n\n        if (\n            session is None\n            or session.language is None\n        ):\n            return resolved_fallback\n\n        return session.language"
+    },
+    {
+      "name": "cleanup_expired",
+      "line_start": 545,
+      "line_end": 578,
+      "signature": "def cleanup_expired(self, limit: int=100) -> int",
+      "calls": [
+        {
+          "call": "validate_cleanup_limit",
+          "line": 550
+        },
+        {
+          "call": "self._invoke",
+          "line": 555
+        },
+        {
+          "call": "isinstance",
+          "line": 562
+        },
+        {
+          "call": "TelegramConversationStateConsistencyError",
+          "line": 574
+        },
+        {
+          "call": "self._get_runtime().cleanup_expired",
+          "line": 556
+        },
+        {
+          "call": "isinstance",
+          "line": 566
+        },
+        {
+          "call": "self._get_runtime",
+          "line": 556
+        }
+      ],
+      "raises": [
+        {
+          "line": 574,
+          "expression": "raise TelegramConversationStateConsistencyError(\n                \"Resultado de cleanup do runtime inválido.\"\n            )"
+        }
+      ],
+      "catches": [],
+      "returns": [
+        {
+          "line": 578,
+          "expression": "return deleted_count"
+        }
+      ],
+      "source": "def cleanup_expired(\n        self,\n        limit: int = 100,\n    ) -> int:\n        normalized_limit = (\n            validate_cleanup_limit(\n                limit\n            )\n        )\n\n        deleted_count = self._invoke(\n            lambda: self._get_runtime().cleanup_expired(\n                normalized_limit\n            )\n        )\n\n        if (\n            isinstance(\n                deleted_count,\n                bool,\n            )\n            or not isinstance(\n                deleted_count,\n                int,\n            )\n            or deleted_count < 0\n            or deleted_count\n            > normalized_limit\n        ):\n            raise TelegramConversationStateConsistencyError(\n                \"Resultado de cleanup do runtime inválido.\"\n            )\n\n        return deleted_count"
+    },
+    {
+      "name": "to_safe_dict",
+      "line_start": 580,
+      "line_end": 590,
+      "signature": "def to_safe_dict(self) -> dict[str, object]",
+      "calls": [],
+      "raises": [],
+      "catches": [],
+      "returns": [
+        {
+          "line": 583,
+          "expression": "return {\n            \"default_language\": (\n                self.default_language\n            ),\n            \"runtime_initialized\": (\n                self.runtime_initialized\n            ),\n        }"
+        }
+      ],
+      "source": "def to_safe_dict(\n        self,\n    ) -> dict[str, object]:\n        return {\n            \"default_language\": (\n                self.default_language\n            ),\n            \"runtime_initialized\": (\n                self.runtime_initialized\n            ),\n        }"
+    },
+    {
+      "name": "_get_runtime",
+      "line_start": 592,
+      "line_end": 628,
+      "signature": "def _get_runtime(self) -> TelegramConversationStateRuntimePort",
+      "calls": [
+        {
+          "call": "self.runtime_factory",
+          "line": 607
+        },
+        {
+          "call": "isinstance",
+          "line": 618
+        },
+        {
+          "call": "TelegramConversationStateConsistencyError",
+          "line": 622
+        },
+        {
+          "call": "TelegramConversationStateUnavailableError",
+          "line": 613
+        }
+      ],
+      "raises": [
+        {
+          "line": 622,
+          "expression": "raise TelegramConversationStateConsistencyError(\n                    \"Factory retornou runtime inválido.\"\n                )"
+        },
+        {
+          "line": 610,
+          "expression": "raise"
+        },
+        {
+          "line": 613,
+          "expression": "raise TelegramConversationStateUnavailableError(\n                    \"Runtime conversacional \"\n                    \"temporariamente indisponível.\"\n                ) from None"
+        }
+      ],
+      "catches": [
+        {
+          "line": 609,
+          "type": "TelegramConversationStateError"
+        },
+        {
+          "line": 612,
+          "type": "Exception"
+        }
+      ],
+      "returns": [
+        {
+          "line": 598,
+          "expression": "return existing"
+        },
+        {
+          "line": 628,
+          "expression": "return created"
+        },
+        {
+          "line": 604,
+          "expression": "return existing"
+        }
+      ],
+      "source": "def _get_runtime(\n        self,\n    ) -> TelegramConversationStateRuntimePort:\n        existing = self._runtime\n\n        if existing is not None:\n            return existing\n\n        with self._runtime_lock:\n            existing = self._runtime\n\n            if existing is not None:\n                return existing\n\n            try:\n                created = self.runtime_factory()\n\n            except TelegramConversationStateError:\n                raise\n\n            except Exception:\n                raise TelegramConversationStateUnavailableError(\n                    \"Runtime conversacional \"\n                    \"temporariamente indisponível.\"\n                ) from None\n\n            if not isinstance(\n                created,\n                TelegramConversationStateRuntimePort,\n            ):\n                raise TelegramConversationStateConsistencyError(\n                    \"Factory retornou runtime inválido.\"\n                )\n\n            self._runtime = created\n\n            return created"
+    },
+    {
+      "name": "_invoke",
+      "line_start": 631,
+      "line_end": 647,
+      "signature": "@staticmethod",
+      "calls": [
+        {
+          "call": "operation",
+          "line": 638
+        },
+        {
+          "call": "TelegramConversationStateUnavailableError",
+          "line": 644
+        }
+      ],
+      "raises": [
+        {
+          "line": 641,
+          "expression": "raise"
+        },
+        {
+          "line": 644,
+          "expression": "raise TelegramConversationStateUnavailableError(\n                \"Persistência conversacional \"\n                \"temporariamente indisponível.\"\n            ) from None"
+        }
+      ],
+      "catches": [
+        {
+          "line": 640,
+          "type": "TelegramConversationStateError"
+        },
+        {
+          "line": 643,
+          "type": "Exception"
+        }
+      ],
+      "returns": [
+        {
+          "line": 638,
+          "expression": "return operation()"
+        }
+      ],
+      "source": "def _invoke(\n        operation: Callable[\n            [],\n            _T,\n        ],\n    ) -> _T:\n        try:\n            return operation()\n\n        except TelegramConversationStateError:\n            raise\n\n        except Exception:\n            raise TelegramConversationStateUnavailableError(\n                \"Persistência conversacional \"\n                \"temporariamente indisponível.\"\n            ) from None"
+    }
+  ],
+  "missing_methods": [],
+  "existing_observability_references": []
+}

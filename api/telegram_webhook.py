@@ -1,6 +1,12 @@
 import os
 import re
 
+from src.services.telegram_observability import (
+    TelegramConversationMetricRecord,
+    TelegramOperationalEvent,
+    sanitize_event_fields,
+)
+
 try:
     from src.services.telegram_conversation_state import (
         TelegramConversationStateConflictError,
@@ -1222,6 +1228,136 @@ def _load_or_open_durable_telegram_session(
     )
 
 
+
+def _conflict_observability_now(
+    conversation_bridge,
+) -> float:
+    try:
+        return float(
+            conversation_bridge.clock()
+        )
+    except Exception:
+        return 0.0
+
+
+def _conflict_observability_duration_ms(
+    conversation_bridge,
+    *,
+    started_at: float,
+) -> float:
+    try:
+        duration_ms = (
+            _conflict_observability_now(
+                conversation_bridge
+            )
+            - float(started_at)
+        ) * 1000.0
+    except Exception:
+        return 0.0
+
+    return max(
+        0.0,
+        duration_ms,
+    )
+
+
+def _conflict_error_category(
+    error: BaseException,
+) -> str:
+    error_name = type(
+        error
+    ).__name__.lower()
+
+    if "conflict" in error_name:
+        return "optimistic_conflict"
+
+    if "timeout" in error_name:
+        return "timeout"
+
+    if "unavailable" in error_name:
+        return "unavailable"
+
+    if "validation" in error_name:
+        return "validation"
+
+    if "security" in error_name:
+        return "security"
+
+    if "identity" in error_name:
+        return "identity"
+
+    if (
+        "repository" in error_name
+        or "persistence" in error_name
+    ):
+        return "persistence"
+
+    return "unknown"
+
+
+def _record_conflict_observability(
+    conversation_bridge,
+    *,
+    operation: str,
+    outcome: str,
+    event_name: str,
+    level: str,
+    duration_ms: float,
+    error_category: str | None = None,
+    conflict_recovered: bool | None = None,
+) -> None:
+    try:
+        metric = TelegramConversationMetricRecord(
+            operation=operation,
+            component="webhook",
+            outcome=outcome,
+            duration_ms=duration_ms,
+            error_category=error_category,
+            conflict_recovered=(
+                conflict_recovered
+            ),
+        )
+
+        conversation_bridge.metrics.record_operation(
+            metric
+        )
+    except Exception:
+        pass
+
+    fields = {
+        "operation": operation,
+        "duration_ms": duration_ms,
+    }
+
+    if error_category is not None:
+        fields["error_category"] = (
+            error_category
+        )
+
+    if conflict_recovered is not None:
+        fields["conflict_recovered"] = (
+            conflict_recovered
+        )
+
+    try:
+        event = TelegramOperationalEvent(
+            name=event_name,
+            level=level,
+            component="webhook",
+            outcome=outcome,
+            fields=sanitize_event_fields(
+                fields
+            ),
+        )
+
+        conversation_bridge.event_sink.emit(
+            event
+        )
+    except Exception:
+        return
+
+
+
 def _sync_and_save_durable_telegram_session(
     *,
     conversation_bridge: "TelegramWebhookConversationBridge",
@@ -1231,9 +1367,6 @@ def _sync_and_save_durable_telegram_session(
 ):
     """
     Persiste uma transição com uma única recuperação de conflito.
-
-    Em conflito otimista, recarrega a sessão mais recente, reaplica a
-    transição atual e tenta salvar uma segunda e última vez.
     """
     if conversation_bridge is None:
         raise ValueError(
@@ -1296,23 +1429,164 @@ def _sync_and_save_durable_telegram_session(
         ):
             raise
 
-        reloaded_session = (
-            conversation_bridge.reload_session(
-                durable_session
+        started_at = (
+            _conflict_observability_now(
+                conversation_bridge
             )
         )
 
-        if reloaded_session is None:
+        _record_conflict_observability(
+            conversation_bridge,
+            operation="save_session",
+            outcome="conflict",
+            event_name=(
+                "telegram_session_conflict_detected"
+            ),
+            level="warning",
+            duration_ms=0.0,
+            error_category=(
+                "optimistic_conflict"
+            ),
+            conflict_recovered=False,
+        )
+
+        try:
+            reloaded_session = (
+                conversation_bridge.reload_session(
+                    durable_session
+                )
+            )
+
+        except Exception as reload_error:
+            _record_conflict_observability(
+                conversation_bridge,
+                operation="reload_session",
+                outcome="error",
+                event_name=(
+                    "telegram_session_conflict_failed"
+                ),
+                level="error",
+                duration_ms=(
+                    _conflict_observability_duration_ms(
+                        conversation_bridge,
+                        started_at=started_at,
+                    )
+                ),
+                error_category=(
+                    _conflict_error_category(
+                        reload_error
+                    )
+                ),
+            )
+
             raise
+
+        if reloaded_session is None:
+            _record_conflict_observability(
+                conversation_bridge,
+                operation="reload_session",
+                outcome="error",
+                event_name=(
+                    "telegram_session_conflict_failed"
+                ),
+                level="error",
+                duration_ms=(
+                    _conflict_observability_duration_ms(
+                        conversation_bridge,
+                        started_at=started_at,
+                    )
+                ),
+                error_category="persistence",
+            )
+
+            raise
+
+        _record_conflict_observability(
+            conversation_bridge,
+            operation="reload_session",
+            outcome="success",
+            event_name=(
+                "telegram_session_conflict_"
+                "reload_completed"
+            ),
+            level="info",
+            duration_ms=(
+                _conflict_observability_duration_ms(
+                    conversation_bridge,
+                    started_at=started_at,
+                )
+            ),
+        )
 
         apply_transition(
             reloaded_session
         )
 
-        return conversation_bridge.save_session(
-            reloaded_session,
-            only_if_changed=True,
+        try:
+            recovered_session = (
+                conversation_bridge.save_session(
+                    reloaded_session,
+                    only_if_changed=True,
+                )
+            )
+
+        except Exception as recovery_error:
+            category = (
+                _conflict_error_category(
+                    recovery_error
+                )
+            )
+
+            outcome = (
+                "conflict"
+                if category
+                == "optimistic_conflict"
+                else "error"
+            )
+
+            _record_conflict_observability(
+                conversation_bridge,
+                operation="save_session",
+                outcome=outcome,
+                event_name=(
+                    "telegram_session_conflict_failed"
+                ),
+                level="error",
+                duration_ms=(
+                    _conflict_observability_duration_ms(
+                        conversation_bridge,
+                        started_at=started_at,
+                    )
+                ),
+                error_category=category,
+                conflict_recovered=(
+                    False
+                    if outcome == "conflict"
+                    else None
+                ),
+            )
+
+            raise
+
+        _record_conflict_observability(
+            conversation_bridge,
+            operation="save_session",
+            outcome="recovered",
+            event_name=(
+                "telegram_session_conflict_recovered"
+            ),
+            level="info",
+            duration_ms=(
+                _conflict_observability_duration_ms(
+                    conversation_bridge,
+                    started_at=started_at,
+                )
+            ),
+            conflict_recovered=True,
         )
+
+        return recovered_session
+
 
 
 

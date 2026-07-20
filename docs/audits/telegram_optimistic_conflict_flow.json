@@ -1,0 +1,242 @@
+{
+  "files": [
+    "api/telegram_webhook.py",
+    "src/services/telegram_conversation_state/webhook_bridge.py",
+    "src/services/telegram_conversation_state/runtime.py",
+    "src/services/telegram_conversation_state/store.py",
+    "src/services/telegram_conversation_state/repository.py"
+  ],
+  "conflict_raises": [
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "__post_init__",
+      "line": 65,
+      "expression": "raise TelegramConversationStateValidationError(\n                \"recovered_from_conflict inválido.\"\n            )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "create_telegram_conversation_state",
+      "line": 537,
+      "expression": "raise TelegramConversationStateConflictError(\n                        \"Estado conversacional ativo já existe.\"\n                    )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "save_telegram_conversation_state",
+      "line": 641,
+      "expression": "raise TelegramConversationStateConflictError(\n                        \"Estado ausente, expirado \"\n                        \"ou versão divergente.\"\n                    )"
+    }
+  ],
+  "conflict_handlers": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "telegram_webhook",
+      "line": 1952,
+      "exception_type": "TelegramUpdateIngressConflictError",
+      "body": "raise HTTPException(\n            status_code=409,\n            detail=(\n                \"Conflito no update Telegram.\"\n            ),\n        ) from None"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "open",
+      "line": 280,
+      "exception_type": "TelegramConversationStateConflictError",
+      "body": "recovered = self.load(\n                normalized_user_id,\n                normalized_chat_id,\n            ) if recovered is None:\n                raise return TelegramConversationStateOpenResult(\n                record=recovered,\n                created=False,\n                recovered_from_conflict=True,\n            )"
+    }
+  ],
+  "reload_calls": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_sync_and_save_durable_telegram_session",
+      "line": 1300,
+      "expression": "conversation_bridge.reload_session(\n                durable_session\n            )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "reload_session",
+      "line": 737,
+      "expression": "self._get_runtime().reload_session(\n                validated_session\n            )"
+    }
+  ],
+  "save_calls": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_sync_and_save_durable_telegram_session",
+      "line": 1280,
+      "expression": "conversation_bridge.save_session(\n            durable_session,\n            only_if_changed=True,\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_sync_and_save_durable_telegram_session",
+      "line": 1312,
+      "expression": "conversation_bridge.save_session(\n            reloaded_session,\n            only_if_changed=True,\n        )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "save_session",
+      "line": 705,
+      "expression": "self._get_runtime().save_session(\n                validated_session,\n                ttl_seconds=normalized_ttl,\n                only_if_changed=(\n                    only_if_changed\n                ),\n            )"
+    }
+  ],
+  "recovery_functions": [
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "_sync_and_save_durable_telegram_session",
+      "line_start": 1225,
+      "line_end": 1315,
+      "source": "def _sync_and_save_durable_telegram_session(\n    *,\n    conversation_bridge: \"TelegramWebhookConversationBridge\",\n    durable_session,\n    processing_state: dict,\n    language: str | None = None,\n):\n    \"\"\"\n    Persiste uma transição com uma única recuperação de conflito.\n\n    Em conflito otimista, recarrega a sessão mais recente, reaplica a\n    transição atual e tenta salvar uma segunda e última vez.\n    \"\"\"\n    if conversation_bridge is None:\n        raise ValueError(\n            \"conversation_bridge é obrigatória.\"\n        )\n\n    if durable_session is None:\n        raise ValueError(\n            \"durable_session é obrigatória.\"\n        )\n\n    if not isinstance(\n        processing_state,\n        dict,\n    ):\n        raise TypeError(\n            \"processing_state deve ser um dict.\"\n        )\n\n    resolved_language = (\n        language\n        if language is not None\n        else processing_state.get(\"lang\")\n    )\n\n    def apply_transition(\n        target_session,\n    ):\n        target_session.replace_state(\n            processing_state\n        )\n\n        target_session.set_language(\n            resolved_language\n        )\n\n        return target_session\n\n    apply_transition(\n        durable_session\n    )\n\n    try:\n        return conversation_bridge.save_session(\n            durable_session,\n            only_if_changed=True,\n        )\n\n    except Exception as error:\n        conflict_type = (\n            TelegramConversationStateConflictError\n        )\n\n        if (\n            conflict_type is None\n            or not isinstance(\n                error,\n                conflict_type,\n            )\n        ):\n            raise\n\n        reloaded_session = (\n            conversation_bridge.reload_session(\n                durable_session\n            )\n        )\n\n        if reloaded_session is None:\n            raise\n\n        apply_transition(\n            reloaded_session\n        )\n\n        return conversation_bridge.save_session(\n            reloaded_session,\n            only_if_changed=True,\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "telegram_webhook",
+      "line_start": 1896,
+      "line_end": 1987,
+      "source": "async def telegram_webhook(\n    request: Request,\n    _trusted_webhook: Annotated[\n        TrustedTelegramWebhookContext,\n        Depends(\n            require_trusted_telegram_webhook\n        ),\n    ],\n):\n    \"\"\"\n    Autentica e registra o update Telegram\n    em uma fila PostgreSQL durável.\n\n    A resposta HTTP somente é enviada depois que\n    receipt e job criptografado forem confirmados\n    na mesma transação.\n\n    O conteúdo não é processado dentro do request.\n    \"\"\"\n    try:\n        update = await request.json()\n\n    except Exception:\n        raise HTTPException(\n            status_code=400,\n            detail=(\n                \"Atualização Telegram inválida.\"\n            ),\n        ) from None\n\n    if not isinstance(\n        update,\n        dict,\n    ):\n        raise HTTPException(\n            status_code=400,\n            detail=(\n                \"Atualização Telegram inválida.\"\n            ),\n        )\n\n    try:\n        outcome = (\n            enqueue_authenticated_telegram_update_atomic(\n                update\n            )\n        )\n\n    except TelegramUpdateIngressValidationError:\n        raise HTTPException(\n            status_code=400,\n            detail=(\n                \"Atualização Telegram inválida.\"\n            ),\n        ) from None\n\n    except TelegramUpdateIngressConflictError:\n        raise HTTPException(\n            status_code=409,\n            detail=(\n                \"Conflito no update Telegram.\"\n            ),\n        ) from None\n\n    except (\n        TelegramUpdateIngressConfigurationError,\n        TelegramUpdateIngressConsistencyError,\n        TelegramUpdateIngressUnavailableError,\n    ):\n        raise HTTPException(\n            status_code=503,\n            detail=(\n                \"Processamento Telegram \"\n                \"temporariamente indisponível.\"\n            ),\n        ) from None\n\n    except Exception:\n        raise HTTPException(\n            status_code=503,\n            detail=(\n                \"Processamento Telegram \"\n                \"temporariamente indisponível.\"\n            ),\n        ) from None\n\n    return {\n        \"ok\": True,\n        \"accepted\": outcome.accepted,\n        \"duplicate\": outcome.duplicate,\n        \"status\": outcome.decision,\n    }"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "_classify_observability_error",
+      "line_start": 172,
+      "line_end": 204,
+      "source": "def _classify_observability_error(\n    error: BaseException,\n) -> str:\n    error_name = type(\n        error\n    ).__name__.lower()\n\n    if \"conflict\" in error_name:\n        return \"optimistic_conflict\"\n\n    if \"timeout\" in error_name:\n        return \"timeout\"\n\n    if \"unavailable\" in error_name:\n        return \"unavailable\"\n\n    if \"validation\" in error_name:\n        return \"validation\"\n\n    if \"identity\" in error_name:\n        return \"identity\"\n\n    if \"security\" in error_name:\n        return \"security\"\n\n    if (\n        \"repository\" in error_name\n        or \"persistence\" in error_name\n        or \"conversationstate\" in error_name\n    ):\n        return \"persistence\"\n\n    return \"unknown\""
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "_observe_bridge_operation",
+      "line_start": 261,
+      "line_end": 428,
+      "source": "def _observe_bridge_operation(\n    operation_name: str,\n):\n    if operation_name not in _BRIDGE_EVENT_NAMES:\n        raise ValueError(\n            \"Operação observável inválida: \"\n            f\"{operation_name!r}.\"\n        )\n\n    event_name = _BRIDGE_EVENT_NAMES[\n        operation_name\n    ]\n\n    def decorator(\n        method: Callable[..., _T],\n    ) -> Callable[..., _T]:\n        @wraps(method)\n        def wrapped(\n            self: Any,\n            *args: Any,\n            **kwargs: Any,\n        ) -> _T:\n            try:\n                started_at = float(\n                    self.clock()\n                )\n\n            except Exception:\n                started_at = 0.0\n\n            try:\n                result = method(\n                    self,\n                    *args,\n                    **kwargs,\n                )\n\n            except Exception as error:\n                duration_ms = (\n                    _safe_duration_ms(\n                        clock=self.clock,\n                        started_at=started_at,\n                    )\n                )\n\n                error_category = (\n                    _classify_observability_error(\n                        error\n                    )\n                )\n\n                is_conflict = (\n                    error_category\n                    == \"optimistic_conflict\"\n                )\n\n                outcome = (\n                    \"conflict\"\n                    if is_conflict\n                    else \"error\"\n                )\n\n                record = (\n                    TelegramConversationMetricRecord(\n                        operation=operation_name,\n                        component=\"bridge\",\n                        outcome=outcome,\n                        duration_ms=duration_ms,\n                        error_category=(\n                            error_category\n                        ),\n                        conflict_recovered=(\n                            False\n                            if is_conflict\n                            else None\n                        ),\n                    )\n                )\n\n                _safe_record_bridge_metric(\n                    self,\n                    record,\n                )\n\n                failure_event_name = (\n                    \"telegram_session_save_conflict\"\n                    if (\n                        operation_name\n                        == \"save_session\"\n                        and is_conflict\n                    )\n                    else event_name\n                )\n\n                _safe_emit_bridge_event(\n                    self,\n                    TelegramOperationalEvent(\n                        name=failure_event_name,\n                        level=(\n                            \"warning\"\n                            if is_conflict\n                            else \"error\"\n                        ),\n                        component=\"bridge\",\n                        outcome=outcome,\n                        fields=sanitize_event_fields(\n                            {\n                                \"operation\": (\n                                    operation_name\n                                ),\n                                \"duration_ms\": (\n                                    duration_ms\n                                ),\n                                \"error_category\": (\n                                    error_category\n                                ),\n                                \"conflict_recovered\": (\n                                    False\n                                    if is_conflict\n                                    else None\n                                ),\n                            }\n                        ),\n                    ),\n                )\n\n                raise\n\n            duration_ms = _safe_duration_ms(\n                clock=self.clock,\n                started_at=started_at,\n            )\n\n            _safe_record_bridge_metric(\n                self,\n                TelegramConversationMetricRecord(\n                    operation=operation_name,\n                    component=\"bridge\",\n                    outcome=\"success\",\n                    duration_ms=duration_ms,\n                ),\n            )\n\n            _safe_emit_bridge_event(\n                self,\n                TelegramOperationalEvent(\n                    name=event_name,\n                    level=\"info\",\n                    component=\"bridge\",\n                    outcome=\"success\",\n                    fields=sanitize_event_fields(\n                        {\n                            \"operation\": (\n                                operation_name\n                            ),\n                            \"duration_ms\": (\n                                duration_ms\n                            ),\n                        }\n                    ),\n                ),\n            )\n\n            return result\n\n        return wrapped\n\n    return decorator"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "reload_session",
+      "line_start": 86,
+      "line_end": 90,
+      "source": "def reload_session(\n        self,\n        session: TelegramConversationSession,\n    ) -> TelegramConversationSession | None:\n        ..."
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "decorator",
+      "line_start": 274,
+      "line_end": 426,
+      "source": "def decorator(\n        method: Callable[..., _T],\n    ) -> Callable[..., _T]:\n        @wraps(method)\n        def wrapped(\n            self: Any,\n            *args: Any,\n            **kwargs: Any,\n        ) -> _T:\n            try:\n                started_at = float(\n                    self.clock()\n                )\n\n            except Exception:\n                started_at = 0.0\n\n            try:\n                result = method(\n                    self,\n                    *args,\n                    **kwargs,\n                )\n\n            except Exception as error:\n                duration_ms = (\n                    _safe_duration_ms(\n                        clock=self.clock,\n                        started_at=started_at,\n                    )\n                )\n\n                error_category = (\n                    _classify_observability_error(\n                        error\n                    )\n                )\n\n                is_conflict = (\n                    error_category\n                    == \"optimistic_conflict\"\n                )\n\n                outcome = (\n                    \"conflict\"\n                    if is_conflict\n                    else \"error\"\n                )\n\n                record = (\n                    TelegramConversationMetricRecord(\n                        operation=operation_name,\n                        component=\"bridge\",\n                        outcome=outcome,\n                        duration_ms=duration_ms,\n                        error_category=(\n                            error_category\n                        ),\n                        conflict_recovered=(\n                            False\n                            if is_conflict\n                            else None\n                        ),\n                    )\n                )\n\n                _safe_record_bridge_metric(\n                    self,\n                    record,\n                )\n\n                failure_event_name = (\n                    \"telegram_session_save_conflict\"\n                    if (\n                        operation_name\n                        == \"save_session\"\n                        and is_conflict\n                    )\n                    else event_name\n                )\n\n                _safe_emit_bridge_event(\n                    self,\n                    TelegramOperationalEvent(\n                        name=failure_event_name,\n                        level=(\n                            \"warning\"\n                            if is_conflict\n                            else \"error\"\n                        ),\n                        component=\"bridge\",\n                        outcome=outcome,\n                        fields=sanitize_event_fields(\n                            {\n                                \"operation\": (\n                                    operation_name\n                                ),\n                                \"duration_ms\": (\n                                    duration_ms\n                                ),\n                                \"error_category\": (\n                                    error_category\n                                ),\n                                \"conflict_recovered\": (\n                                    False\n                                    if is_conflict\n                                    else None\n                                ),\n                            }\n                        ),\n                    ),\n                )\n\n                raise\n\n            duration_ms = _safe_duration_ms(\n                clock=self.clock,\n                started_at=started_at,\n            )\n\n            _safe_record_bridge_metric(\n                self,\n                TelegramConversationMetricRecord(\n                    operation=operation_name,\n                    component=\"bridge\",\n                    outcome=\"success\",\n                    duration_ms=duration_ms,\n                ),\n            )\n\n            _safe_emit_bridge_event(\n                self,\n                TelegramOperationalEvent(\n                    name=event_name,\n                    level=\"info\",\n                    component=\"bridge\",\n                    outcome=\"success\",\n                    fields=sanitize_event_fields(\n                        {\n                            \"operation\": (\n                                operation_name\n                            ),\n                            \"duration_ms\": (\n                                duration_ms\n                            ),\n                        }\n                    ),\n                ),\n            )\n\n            return result\n\n        return wrapped"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "reload_session",
+      "line_start": 726,
+      "line_end": 754,
+      "source": "def reload_session(\n        self,\n        session: TelegramConversationSession,\n    ) -> TelegramConversationSession | None:\n        validated_session = (\n            _validate_session(\n                session\n            )\n        )\n\n        result = self._invoke(\n            lambda: self._get_runtime().reload_session(\n                validated_session\n            )\n        )\n\n        if result is None:\n            return None\n\n        return _validate_session(\n            result,\n            telegram_user_id=(\n                validated_session\n                .telegram_user_id\n            ),\n            chat_id=(\n                validated_session.chat_id\n            ),\n        )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "wrapped",
+      "line_start": 278,
+      "line_end": 424,
+      "source": "def wrapped(\n            self: Any,\n            *args: Any,\n            **kwargs: Any,\n        ) -> _T:\n            try:\n                started_at = float(\n                    self.clock()\n                )\n\n            except Exception:\n                started_at = 0.0\n\n            try:\n                result = method(\n                    self,\n                    *args,\n                    **kwargs,\n                )\n\n            except Exception as error:\n                duration_ms = (\n                    _safe_duration_ms(\n                        clock=self.clock,\n                        started_at=started_at,\n                    )\n                )\n\n                error_category = (\n                    _classify_observability_error(\n                        error\n                    )\n                )\n\n                is_conflict = (\n                    error_category\n                    == \"optimistic_conflict\"\n                )\n\n                outcome = (\n                    \"conflict\"\n                    if is_conflict\n                    else \"error\"\n                )\n\n                record = (\n                    TelegramConversationMetricRecord(\n                        operation=operation_name,\n                        component=\"bridge\",\n                        outcome=outcome,\n                        duration_ms=duration_ms,\n                        error_category=(\n                            error_category\n                        ),\n                        conflict_recovered=(\n                            False\n                            if is_conflict\n                            else None\n                        ),\n                    )\n                )\n\n                _safe_record_bridge_metric(\n                    self,\n                    record,\n                )\n\n                failure_event_name = (\n                    \"telegram_session_save_conflict\"\n                    if (\n                        operation_name\n                        == \"save_session\"\n                        and is_conflict\n                    )\n                    else event_name\n                )\n\n                _safe_emit_bridge_event(\n                    self,\n                    TelegramOperationalEvent(\n                        name=failure_event_name,\n                        level=(\n                            \"warning\"\n                            if is_conflict\n                            else \"error\"\n                        ),\n                        component=\"bridge\",\n                        outcome=outcome,\n                        fields=sanitize_event_fields(\n                            {\n                                \"operation\": (\n                                    operation_name\n                                ),\n                                \"duration_ms\": (\n                                    duration_ms\n                                ),\n                                \"error_category\": (\n                                    error_category\n                                ),\n                                \"conflict_recovered\": (\n                                    False\n                                    if is_conflict\n                                    else None\n                                ),\n                            }\n                        ),\n                    ),\n                )\n\n                raise\n\n            duration_ms = _safe_duration_ms(\n                clock=self.clock,\n                started_at=started_at,\n            )\n\n            _safe_record_bridge_metric(\n                self,\n                TelegramConversationMetricRecord(\n                    operation=operation_name,\n                    component=\"bridge\",\n                    outcome=\"success\",\n                    duration_ms=duration_ms,\n                ),\n            )\n\n            _safe_emit_bridge_event(\n                self,\n                TelegramOperationalEvent(\n                    name=event_name,\n                    level=\"info\",\n                    component=\"bridge\",\n                    outcome=\"success\",\n                    fields=sanitize_event_fields(\n                        {\n                            \"operation\": (\n                                operation_name\n                            ),\n                            \"duration_ms\": (\n                                duration_ms\n                            ),\n                        }\n                    ),\n                ),\n            )\n\n            return result"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "_session_from_record",
+      "line_start": 243,
+      "line_end": 266,
+      "source": "def _session_from_record(\n    record: TelegramConversationState,\n    *,\n    created: bool = False,\n    recovered_from_conflict: bool = False,\n) -> TelegramConversationSession:\n    if not isinstance(\n        record,\n        TelegramConversationState,\n    ):\n        raise TelegramConversationStateConsistencyError(\n            \"Registro retornado pelo store inválido.\"\n        )\n\n    return TelegramConversationSession(\n        current=record,\n        state=record.to_processing_state(),\n        language=record.language,\n        created=created,\n        recovered_from_conflict=(\n            recovered_from_conflict\n        ),\n        deleted=False,\n    )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "__post_init__",
+      "line_start": 49,
+      "line_end": 122,
+      "source": "def __post_init__(\n        self,\n    ) -> None:\n        if not isinstance(\n            self.current,\n            TelegramConversationState,\n        ):\n            raise TelegramConversationStateValidationError(\n                \"current inválido.\"\n            )\n\n        normalized_state = (\n            normalize_telegram_state(\n                self.state\n            )\n        )\n\n        normalized_language = (\n            normalize_telegram_language(\n                self.language\n            )\n        )\n\n        for field_name, value in (\n            (\n                \"created\",\n                self.created,\n            ),\n            (\n                \"recovered_from_conflict\",\n                self.recovered_from_conflict,\n            ),\n            (\n                \"deleted\",\n                self.deleted,\n            ),\n        ):\n            if not isinstance(\n                value,\n                bool,\n            ):\n                raise TelegramConversationStateValidationError(\n                    f\"{field_name} inválido.\"\n                )\n\n        if (\n            self.created\n            and self.recovered_from_conflict\n        ):\n            raise TelegramConversationStateValidationError(\n                \"Estado de abertura inconsistente.\"\n            )\n\n        persisted_state = (\n            self.current.to_processing_state()\n        )\n\n        if normalized_state != persisted_state:\n            raise TelegramConversationStateConsistencyError(\n                \"Estado inicial da sessão \"\n                \"difere do registro persistido.\"\n            )\n\n        if (\n            normalized_language\n            != self.current.language\n        ):\n            raise TelegramConversationStateConsistencyError(\n                \"Idioma inicial da sessão \"\n                \"difere do registro persistido.\"\n            )\n\n        self.state = normalized_state\n        self.language = normalized_language"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "to_safe_dict",
+      "line_start": 210,
+      "line_end": 232,
+      "source": "def to_safe_dict(\n        self,\n    ) -> dict[str, object]:\n        return {\n            \"telegram_user_id\": (\n                self.telegram_user_id\n            ),\n            \"chat_id\": self.chat_id,\n            \"language\": self.language,\n            \"state_version\": (\n                self.state_version\n            ),\n            \"created\": self.created,\n            \"recovered_from_conflict\": (\n                self.recovered_from_conflict\n            ),\n            \"deleted\": self.deleted,\n            \"dirty\": (\n                False\n                if self.deleted\n                else self.is_dirty()\n            ),\n        }"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "open_session",
+      "line_start": 341,
+      "line_end": 397,
+      "source": "def open_session(\n        self,\n        telegram_user_id: int,\n        chat_id: int,\n        initial_state: Mapping[str, Any],\n        language: str | None = None,\n        ttl_seconds: int | None = None,\n    ) -> TelegramConversationSession:\n        (\n            normalized_user_id,\n            normalized_chat_id,\n        ) = validate_telegram_identity(\n            telegram_user_id,\n            chat_id,\n        )\n\n        normalized_state = (\n            normalize_telegram_state(\n                initial_state\n            )\n        )\n\n        normalized_language = (\n            normalize_telegram_language(\n                language\n            )\n        )\n\n        resolved_ttl = self._resolve_ttl(\n            ttl_seconds\n        )\n\n        result = self.store.open(\n            telegram_user_id=(\n                normalized_user_id\n            ),\n            chat_id=normalized_chat_id,\n            initial_state=normalized_state,\n            language=normalized_language,\n            ttl_seconds=resolved_ttl,\n        )\n\n        if not isinstance(\n            result,\n            TelegramConversationStateOpenResult,\n        ):\n            raise TelegramConversationStateConsistencyError(\n                \"Resultado de abertura do store inválido.\"\n            )\n\n        return _session_from_record(\n            result.record,\n            created=result.created,\n            recovered_from_conflict=(\n                result.recovered_from_conflict\n            ),\n        )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "save_session",
+      "line_start": 399,
+      "line_end": 476,
+      "source": "def save_session(\n        self,\n        session: TelegramConversationSession,\n        *,\n        ttl_seconds: int | None = None,\n        only_if_changed: bool = True,\n    ) -> TelegramConversationSession:\n        validated_session = (\n            self._require_session(\n                session\n            )\n        )\n\n        if not isinstance(\n            only_if_changed,\n            bool,\n        ):\n            raise TelegramConversationStateValidationError(\n                \"only_if_changed inválido.\"\n            )\n\n        resolved_ttl = self._resolve_ttl(\n            ttl_seconds\n        )\n\n        if (\n            only_if_changed\n            and not validated_session.is_dirty()\n        ):\n            return validated_session\n\n        normalized_state = (\n            validated_session\n            .to_processing_state()\n        )\n\n        normalized_language = (\n            normalize_telegram_language(\n                validated_session.language\n            )\n        )\n\n        saved = self.store.save(\n            current=validated_session.current,\n            state=normalized_state,\n            language=normalized_language,\n            ttl_seconds=resolved_ttl,\n        )\n\n        result = _session_from_record(\n            saved,\n            created=validated_session.created,\n            recovered_from_conflict=(\n                validated_session\n                .recovered_from_conflict\n            ),\n        )\n\n        if (\n            result.telegram_user_id\n            != validated_session.telegram_user_id\n            or result.chat_id\n            != validated_session.chat_id\n        ):\n            raise TelegramConversationStateConsistencyError(\n                \"Identidade alterada durante o save.\"\n            )\n\n        if (\n            result.state_version\n            != validated_session.state_version + 1\n        ):\n            raise TelegramConversationStateConsistencyError(\n                \"Versão alterada incorretamente \"\n                \"durante o save.\"\n            )\n\n        return result"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "reload_session",
+      "line_start": 478,
+      "line_end": 491,
+      "source": "def reload_session(\n        self,\n        session: TelegramConversationSession,\n    ) -> TelegramConversationSession | None:\n        validated_session = (\n            self._require_session(\n                session\n            )\n        )\n\n        return self.load_session(\n            validated_session.telegram_user_id,\n            validated_session.chat_id,\n        )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "__post_init__",
+      "line_start": 42,
+      "line_end": 75,
+      "source": "def __post_init__(\n        self,\n    ) -> None:\n        if not isinstance(\n            self.record,\n            TelegramConversationState,\n        ):\n            raise TelegramConversationStateValidationError(\n                \"record inválido.\"\n            )\n\n        if not isinstance(\n            self.created,\n            bool,\n        ):\n            raise TelegramConversationStateValidationError(\n                \"created inválido.\"\n            )\n\n        if not isinstance(\n            self.recovered_from_conflict,\n            bool,\n        ):\n            raise TelegramConversationStateValidationError(\n                \"recovered_from_conflict inválido.\"\n            )\n\n        if (\n            self.created\n            and self.recovered_from_conflict\n        ):\n            raise TelegramConversationStateValidationError(\n                \"Resultado de abertura inconsistente.\"\n            )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "to_safe_dict",
+      "line_start": 77,
+      "line_end": 88,
+      "source": "def to_safe_dict(\n        self,\n    ) -> dict[str, object]:\n        return {\n            \"record\": (\n                self.record.to_safe_dict()\n            ),\n            \"created\": self.created,\n            \"recovered_from_conflict\": (\n                self.recovered_from_conflict\n            ),\n        }"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "open",
+      "line_start": 217,
+      "line_end": 311,
+      "source": "def open(\n        self,\n        telegram_user_id: int,\n        chat_id: int,\n        initial_state: Mapping[str, Any],\n        language: str | None = None,\n        ttl_seconds: int = (\n            DEFAULT_STATE_TTL_SECONDS\n        ),\n    ) -> TelegramConversationStateOpenResult:\n        (\n            normalized_user_id,\n            normalized_chat_id,\n        ) = validate_telegram_identity(\n            telegram_user_id,\n            chat_id,\n        )\n\n        normalized_state = (\n            normalize_telegram_state(\n                initial_state\n            )\n        )\n\n        normalized_language = (\n            normalize_telegram_language(\n                language\n            )\n        )\n\n        normalized_ttl = (\n            validate_state_ttl_seconds(\n                ttl_seconds\n            )\n        )\n\n        existing = self.load(\n            normalized_user_id,\n            normalized_chat_id,\n        )\n\n        if existing is not None:\n            return TelegramConversationStateOpenResult(\n                record=existing,\n                created=False,\n                recovered_from_conflict=False,\n            )\n\n        try:\n            created = (\n                create_telegram_conversation_state(\n                    telegram_user_id=(\n                        normalized_user_id\n                    ),\n                    chat_id=(\n                        normalized_chat_id\n                    ),\n                    state=normalized_state,\n                    language=normalized_language,\n                    ttl_seconds=normalized_ttl,\n                )\n            )\n\n        except TelegramConversationStateConflictError:\n            recovered = self.load(\n                normalized_user_id,\n                normalized_chat_id,\n            )\n\n            if recovered is None:\n                raise\n\n            return TelegramConversationStateOpenResult(\n                record=recovered,\n                created=False,\n                recovered_from_conflict=True,\n            )\n\n        validated_created = (\n            _validate_record_identity(\n                created,\n                telegram_user_id=(\n                    normalized_user_id\n                ),\n                chat_id=(\n                    normalized_chat_id\n                ),\n            )\n        )\n\n        return TelegramConversationStateOpenResult(\n            record=validated_created,\n            created=True,\n            recovered_from_conflict=False,\n        )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "create_telegram_conversation_state",
+      "line_start": 478,
+      "line_end": 571,
+      "source": "def create_telegram_conversation_state(\n    telegram_user_id: int,\n    chat_id: int,\n    state: Mapping[str, Any],\n    language: str | None = None,\n    ttl_seconds: int = (\n        DEFAULT_STATE_TTL_SECONDS\n    ),\n) -> TelegramConversationState:\n    (\n        normalized_user_id,\n        normalized_chat_id,\n    ) = validate_telegram_identity(\n        telegram_user_id,\n        chat_id,\n    )\n\n    serialized_state = _serialize_state(\n        state\n    )\n\n    normalized_language = (\n        normalize_telegram_language(\n            language\n        )\n    )\n\n    normalized_ttl = (\n        validate_state_ttl_seconds(\n            ttl_seconds\n        )\n    )\n\n    try:\n        with cursor_postgres(\n            dict_cursor=True,\n            commit_automatico=False,\n        ) as cursor:\n            connection = _require_connection(\n                cursor\n            )\n\n            try:\n                cursor.execute(\n                    _CREATE_STATE_SQL,\n                    (\n                        normalized_user_id,\n                        normalized_chat_id,\n                        serialized_state,\n                        normalized_language,\n                        normalized_ttl,\n                    ),\n                )\n\n                row = cursor.fetchone()\n\n                if row is None:\n                    connection.rollback()\n\n                    raise TelegramConversationStateConflictError(\n                        \"Estado conversacional ativo já existe.\"\n                    )\n\n                record = _record_from_row(\n                    row,\n                    expected_telegram_user_id=(\n                        normalized_user_id\n                    ),\n                    expected_chat_id=(\n                        normalized_chat_id\n                    ),\n                )\n\n                connection.commit()\n\n                return record\n\n            except TelegramConversationStateError:\n                _safe_rollback(\n                    connection\n                )\n                raise\n\n            except Exception:\n                _safe_rollback(\n                    connection\n                )\n                _raise_unavailable()\n\n    except TelegramConversationStateError:\n        raise\n\n    except Exception:\n        _raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "save_telegram_conversation_state",
+      "line_start": 574,
+      "line_end": 676,
+      "source": "def save_telegram_conversation_state(\n    telegram_user_id: int,\n    chat_id: int,\n    state: Mapping[str, Any],\n    language: str | None,\n    expected_version: int,\n    ttl_seconds: int = (\n        DEFAULT_STATE_TTL_SECONDS\n    ),\n) -> TelegramConversationState:\n    (\n        normalized_user_id,\n        normalized_chat_id,\n    ) = validate_telegram_identity(\n        telegram_user_id,\n        chat_id,\n    )\n\n    serialized_state = _serialize_state(\n        state\n    )\n\n    normalized_language = (\n        normalize_telegram_language(\n            language\n        )\n    )\n\n    normalized_version = (\n        validate_expected_version(\n            expected_version\n        )\n    )\n\n    normalized_ttl = (\n        validate_state_ttl_seconds(\n            ttl_seconds\n        )\n    )\n\n    try:\n        with cursor_postgres(\n            dict_cursor=True,\n            commit_automatico=False,\n        ) as cursor:\n            connection = _require_connection(\n                cursor\n            )\n\n            try:\n                cursor.execute(\n                    _SAVE_STATE_SQL,\n                    (\n                        serialized_state,\n                        normalized_language,\n                        normalized_ttl,\n                        normalized_user_id,\n                        normalized_chat_id,\n                        normalized_version,\n                    ),\n                )\n\n                row = cursor.fetchone()\n\n                if row is None:\n                    connection.rollback()\n\n                    raise TelegramConversationStateConflictError(\n                        \"Estado ausente, expirado \"\n                        \"ou versão divergente.\"\n                    )\n\n                record = _record_from_row(\n                    row,\n                    expected_telegram_user_id=(\n                        normalized_user_id\n                    ),\n                    expected_chat_id=(\n                        normalized_chat_id\n                    ),\n                )\n\n                connection.commit()\n\n                return record\n\n            except TelegramConversationStateError:\n                _safe_rollback(\n                    connection\n                )\n                raise\n\n            except Exception:\n                _safe_rollback(\n                    connection\n                )\n                _raise_unavailable()\n\n    except TelegramConversationStateError:\n        raise\n\n    except Exception:\n        _raise_unavailable()"
+    }
+  ],
+  "metric_records": [
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "wrapped",
+      "line": 396,
+      "expression": "TelegramConversationMetricRecord(\n                    operation=operation_name,\n                    component=\"bridge\",\n                    outcome=\"success\",\n                    duration_ms=duration_ms,\n                )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "wrapped",
+      "line": 324,
+      "expression": "TelegramConversationMetricRecord(\n                        operation=operation_name,\n                        component=\"bridge\",\n                        outcome=outcome,\n                        duration_ms=duration_ms,\n                        error_category=(\n                            error_category\n                        ),\n                        conflict_recovered=(\n                            False\n                            if is_conflict\n                            else None\n                        ),\n                    )"
+    }
+  ],
+  "event_records": [
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "wrapped",
+      "line": 406,
+      "expression": "TelegramOperationalEvent(\n                    name=event_name,\n                    level=\"info\",\n                    component=\"bridge\",\n                    outcome=\"success\",\n                    fields=sanitize_event_fields(\n                        {\n                            \"operation\": (\n                                operation_name\n                            ),\n                            \"duration_ms\": (\n                                duration_ms\n                            ),\n                        }\n                    ),\n                )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "wrapped",
+      "line": 357,
+      "expression": "TelegramOperationalEvent(\n                        name=failure_event_name,\n                        level=(\n                            \"warning\"\n                            if is_conflict\n                            else \"error\"\n                        ),\n                        component=\"bridge\",\n                        outcome=outcome,\n                        fields=sanitize_event_fields(\n                            {\n                                \"operation\": (\n                                    operation_name\n                                ),\n                                \"duration_ms\": (\n                                    duration_ms\n                                ),\n                                \"error_category\": (\n                                    error_category\n                                ),\n                                \"conflict_recovered\": (\n                                    False\n                                    if is_conflict\n                                    else None\n                                ),\n                            }\n                        ),\n                    )"
+    }
+  ]
+}

@@ -1,18 +1,28 @@
 from __future__ import annotations
 
 import argparse
+import inspect
 import json
 import math
 import os
 import signal
 import sys
+import time
 
 from collections.abc import (
+    Callable,
     Mapping,
     Sequence,
 )
 from threading import Event
 from typing import Any, TextIO
+
+from src.services.telegram_observability import (
+    NoOpTelegramConversationMetrics,
+    NoOpTelegramOperationalEventSink,
+    TelegramConversationMetrics,
+    TelegramOperationalEventSink,
+)
 
 from src.services.telegram_update_jobs import (
     TelegramUpdateJobConfigurationError,
@@ -225,16 +235,76 @@ def load_worker_config_from_env(
         raise _configuration_error() from None
 
 
-def load_telegram_processor():
+
+def _observable_bridge_factory_kwargs(
+    bridge_factory: Callable[..., Any],
+    *,
+    metrics: TelegramConversationMetrics,
+    event_sink: TelegramOperationalEventSink,
+    clock: Callable[[], float],
+) -> dict[str, object]:
+    """
+    Retorna os argumentos de observabilidade suportados pela factory.
+
+    Factories legadas e doubles de teste sem parâmetros recebem um
+    dicionário vazio. A chamada produtiva da factory permanece dentro
+    de load_telegram_processor.
+    """
+    try:
+        signature = inspect.signature(
+            bridge_factory
+        )
+
+    except (
+        TypeError,
+        ValueError,
+    ):
+        return {
+            "metrics": metrics,
+            "event_sink": event_sink,
+            "clock": clock,
+        }
+
+    try:
+        signature.bind(
+            metrics=metrics,
+            event_sink=event_sink,
+            clock=clock,
+        )
+
+    except TypeError:
+        return {}
+
+    return {
+        "metrics": metrics,
+        "event_sink": event_sink,
+        "clock": clock,
+    }
+
+
+def load_telegram_processor(
+    *,
+    metrics_factory: Callable[
+        [],
+        TelegramConversationMetrics,
+    ] = NoOpTelegramConversationMetrics,
+    event_sink_factory: Callable[
+        [],
+        TelegramOperationalEventSink,
+    ] = NoOpTelegramOperationalEventSink,
+    clock: Callable[[], float] = (
+        time.perf_counter
+    ),
+):
     """
     Compõe o processador produtivo do worker.
 
-    A bridge é criada uma única vez durante a inicialização do processo
-    e reutilizada em todos os jobs processados por esta instância.
+    Uma única bridge, um único coletor de métricas e um único event sink
+    são criados durante a inicialização do processo e reutilizados por
+    todos os jobs desta instância.
 
-    A factory da bridge mantém a inicialização do runtime PostgreSQL
-    lazy: importar este módulo ou construir o wrapper não deve abrir uma
-    conexão com o banco antecipadamente.
+    O runtime PostgreSQL permanece lazy: a composição não abre conexão
+    antecipadamente.
     """
     from api.telegram_webhook import (
         process_telegram_update,
@@ -257,14 +327,60 @@ def load_telegram_processor():
             "A factory da conversation bridge é inválida."
         )
 
+    if not callable(metrics_factory):
+        raise TelegramUpdateRunnerConfigurationError(
+            "A factory de métricas é inválida."
+        )
+
+    if not callable(event_sink_factory):
+        raise TelegramUpdateRunnerConfigurationError(
+            "A factory de eventos é inválida."
+        )
+
+    if not callable(clock):
+        raise TelegramUpdateRunnerConfigurationError(
+            "O relógio de observabilidade é inválido."
+        )
+
     try:
+        metrics = metrics_factory()
+        event_sink = event_sink_factory()
+
+        if not isinstance(
+            metrics,
+            TelegramConversationMetrics,
+        ):
+            raise TypeError(
+                "Coletor de métricas inválido."
+            )
+
+        if not isinstance(
+            event_sink,
+            TelegramOperationalEventSink,
+        ):
+            raise TypeError(
+                "Event sink inválido."
+            )
+
+        bridge_factory_kwargs = (
+            _observable_bridge_factory_kwargs(
+                create_postgres_telegram_webhook_conversation_bridge,
+                metrics=metrics,
+                event_sink=event_sink,
+                clock=clock,
+            )
+        )
+
         conversation_bridge = (
-            create_postgres_telegram_webhook_conversation_bridge()
+            create_postgres_telegram_webhook_conversation_bridge(
+                **bridge_factory_kwargs
+            )
         )
 
     except Exception:
         raise TelegramUpdateRunnerConfigurationError(
-            "Não foi possível compor o estado conversacional durável."
+            "Não foi possível compor o estado "
+            "conversacional durável."
         ) from None
 
     if conversation_bridge is None:

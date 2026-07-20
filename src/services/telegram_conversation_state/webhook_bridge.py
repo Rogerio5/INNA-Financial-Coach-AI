@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import threading
+import time
+from functools import wraps
 
 from collections.abc import (
     Callable,
@@ -15,6 +17,16 @@ from typing import (
     Protocol,
     TypeVar,
     runtime_checkable,
+)
+
+from ..telegram_observability import (
+    NoOpTelegramConversationMetrics,
+    NoOpTelegramOperationalEventSink,
+    TelegramConversationMetricRecord,
+    TelegramConversationMetrics,
+    TelegramOperationalEvent,
+    TelegramOperationalEventSink,
+    sanitize_event_fields,
 )
 
 from .contracts import (
@@ -137,6 +149,285 @@ def _validate_session(
     return value
 
 
+
+_BRIDGE_EVENT_NAMES = {
+    "load_or_open_session": (
+        "telegram_session_load_completed"
+    ),
+    "save_session": (
+        "telegram_session_save_completed"
+    ),
+    "reload_session": (
+        "telegram_session_reload_completed"
+    ),
+    "delete_session": (
+        "telegram_session_delete_completed"
+    ),
+    "resolve_language": (
+        "telegram_language_resolution_completed"
+    ),
+}
+
+
+def _classify_observability_error(
+    error: BaseException,
+) -> str:
+    error_name = type(
+        error
+    ).__name__.lower()
+
+    if "conflict" in error_name:
+        return "optimistic_conflict"
+
+    if "timeout" in error_name:
+        return "timeout"
+
+    if "unavailable" in error_name:
+        return "unavailable"
+
+    if "validation" in error_name:
+        return "validation"
+
+    if "identity" in error_name:
+        return "identity"
+
+    if "security" in error_name:
+        return "security"
+
+    if (
+        "repository" in error_name
+        or "persistence" in error_name
+        or "conversationstate" in error_name
+    ):
+        return "persistence"
+
+    return "unknown"
+
+
+def _safe_duration_ms(
+    *,
+    clock: Callable[[], float],
+    started_at: float,
+) -> float:
+    try:
+        finished_at = float(
+            clock()
+        )
+
+        duration_ms = (
+            finished_at
+            - float(started_at)
+        ) * 1000.0
+
+    except Exception:
+        return 0.0
+
+    return max(
+        0.0,
+        duration_ms,
+    )
+
+
+def _safe_record_bridge_metric(
+    bridge: Any,
+    record: TelegramConversationMetricRecord,
+) -> None:
+    try:
+        bridge.metrics.record_operation(
+            record
+        )
+
+    except Exception:
+        # Telemetria nunca interrompe
+        # a operação principal.
+        return
+
+
+def _safe_emit_bridge_event(
+    bridge: Any,
+    event: TelegramOperationalEvent,
+) -> None:
+    try:
+        bridge.event_sink.emit(
+            event
+        )
+
+    except Exception:
+        # Telemetria nunca interrompe
+        # a operação principal.
+        return
+
+
+def _observe_bridge_operation(
+    operation_name: str,
+):
+    if operation_name not in _BRIDGE_EVENT_NAMES:
+        raise ValueError(
+            "Operação observável inválida: "
+            f"{operation_name!r}."
+        )
+
+    event_name = _BRIDGE_EVENT_NAMES[
+        operation_name
+    ]
+
+    def decorator(
+        method: Callable[..., _T],
+    ) -> Callable[..., _T]:
+        @wraps(method)
+        def wrapped(
+            self: Any,
+            *args: Any,
+            **kwargs: Any,
+        ) -> _T:
+            try:
+                started_at = float(
+                    self.clock()
+                )
+
+            except Exception:
+                started_at = 0.0
+
+            try:
+                result = method(
+                    self,
+                    *args,
+                    **kwargs,
+                )
+
+            except Exception as error:
+                duration_ms = (
+                    _safe_duration_ms(
+                        clock=self.clock,
+                        started_at=started_at,
+                    )
+                )
+
+                error_category = (
+                    _classify_observability_error(
+                        error
+                    )
+                )
+
+                is_conflict = (
+                    error_category
+                    == "optimistic_conflict"
+                )
+
+                outcome = (
+                    "conflict"
+                    if is_conflict
+                    else "error"
+                )
+
+                record = (
+                    TelegramConversationMetricRecord(
+                        operation=operation_name,
+                        component="bridge",
+                        outcome=outcome,
+                        duration_ms=duration_ms,
+                        error_category=(
+                            error_category
+                        ),
+                        conflict_recovered=(
+                            False
+                            if is_conflict
+                            else None
+                        ),
+                    )
+                )
+
+                _safe_record_bridge_metric(
+                    self,
+                    record,
+                )
+
+                failure_event_name = (
+                    "telegram_session_save_conflict"
+                    if (
+                        operation_name
+                        == "save_session"
+                        and is_conflict
+                    )
+                    else event_name
+                )
+
+                _safe_emit_bridge_event(
+                    self,
+                    TelegramOperationalEvent(
+                        name=failure_event_name,
+                        level=(
+                            "warning"
+                            if is_conflict
+                            else "error"
+                        ),
+                        component="bridge",
+                        outcome=outcome,
+                        fields=sanitize_event_fields(
+                            {
+                                "operation": (
+                                    operation_name
+                                ),
+                                "duration_ms": (
+                                    duration_ms
+                                ),
+                                "error_category": (
+                                    error_category
+                                ),
+                                "conflict_recovered": (
+                                    False
+                                    if is_conflict
+                                    else None
+                                ),
+                            }
+                        ),
+                    ),
+                )
+
+                raise
+
+            duration_ms = _safe_duration_ms(
+                clock=self.clock,
+                started_at=started_at,
+            )
+
+            _safe_record_bridge_metric(
+                self,
+                TelegramConversationMetricRecord(
+                    operation=operation_name,
+                    component="bridge",
+                    outcome="success",
+                    duration_ms=duration_ms,
+                ),
+            )
+
+            _safe_emit_bridge_event(
+                self,
+                TelegramOperationalEvent(
+                    name=event_name,
+                    level="info",
+                    component="bridge",
+                    outcome="success",
+                    fields=sanitize_event_fields(
+                        {
+                            "operation": (
+                                operation_name
+                            ),
+                            "duration_ms": (
+                                duration_ms
+                            ),
+                        }
+                    ),
+                ),
+            )
+
+            return result
+
+        return wrapped
+
+    return decorator
+
+
 @dataclass(
     slots=True,
 )
@@ -149,6 +440,25 @@ class TelegramWebhookConversationBridge:
     )
 
     default_language: str = "pt-BR"
+
+    metrics: TelegramConversationMetrics = field(
+        default_factory=(
+            NoOpTelegramConversationMetrics
+        ),
+        repr=False,
+    )
+
+    event_sink: TelegramOperationalEventSink = field(
+        default_factory=(
+            NoOpTelegramOperationalEventSink
+        ),
+        repr=False,
+    )
+
+    clock: Callable[[], float] = field(
+        default=time.perf_counter,
+        repr=False,
+    )
 
     _runtime: (
         TelegramConversationStateRuntimePort
@@ -295,6 +605,7 @@ class TelegramWebhookConversationBridge:
             ),
         )
 
+    @_observe_bridge_operation('load_or_open_session')
     def load_or_open_session(
         self,
         telegram_user_id: int,
@@ -349,6 +660,7 @@ class TelegramWebhookConversationBridge:
             ttl_seconds=normalized_ttl,
         )
 
+    @_observe_bridge_operation('save_session')
     def save_session(
         self,
         session: TelegramConversationSession,
@@ -410,6 +722,7 @@ class TelegramWebhookConversationBridge:
             ),
         )
 
+    @_observe_bridge_operation('reload_session')
     def reload_session(
         self,
         session: TelegramConversationSession,
@@ -440,6 +753,7 @@ class TelegramWebhookConversationBridge:
             ),
         )
 
+    @_observe_bridge_operation('delete_session')
     def delete_session(
         self,
         session: TelegramConversationSession,
@@ -501,6 +815,7 @@ class TelegramWebhookConversationBridge:
 
         return deleted
 
+    @_observe_bridge_operation('resolve_language')
     def resolve_language(
         self,
         telegram_user_id: int,
@@ -653,6 +968,13 @@ def create_postgres_telegram_webhook_conversation_bridge(
         DEFAULT_STATE_TTL_SECONDS
     ),
     default_language: str = "pt-BR",
+    metrics: TelegramConversationMetrics
+        | None = None,
+    event_sink: TelegramOperationalEventSink
+        | None = None,
+    clock: Callable[[], float] = (
+        time.perf_counter
+    ),
 ) -> TelegramWebhookConversationBridge:
     normalized_ttl = (
         validate_state_ttl_seconds(
@@ -671,6 +993,39 @@ def create_postgres_telegram_webhook_conversation_bridge(
             "default_language é obrigatório."
         )
 
+    if not callable(clock):
+        raise TelegramConversationStateValidationError(
+            "clock de observabilidade inválido."
+        )
+
+    resolved_metrics = (
+        metrics
+        if metrics is not None
+        else NoOpTelegramConversationMetrics()
+    )
+
+    resolved_event_sink = (
+        event_sink
+        if event_sink is not None
+        else NoOpTelegramOperationalEventSink()
+    )
+
+    if not isinstance(
+        resolved_metrics,
+        TelegramConversationMetrics,
+    ):
+        raise TelegramConversationStateValidationError(
+            "Coletor de métricas inválido."
+        )
+
+    if not isinstance(
+        resolved_event_sink,
+        TelegramOperationalEventSink,
+    ):
+        raise TelegramConversationStateValidationError(
+            "Event sink inválido."
+        )
+
     def runtime_factory(
     ) -> TelegramConversationStateRuntimePort:
         return (
@@ -686,4 +1041,7 @@ def create_postgres_telegram_webhook_conversation_bridge(
         default_language=(
             normalized_language
         ),
+        metrics=resolved_metrics,
+        event_sink=resolved_event_sink,
+        clock=clock,
     )
