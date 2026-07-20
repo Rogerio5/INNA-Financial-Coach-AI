@@ -1904,7 +1904,7 @@ def process_claimed_telegram_update(
     update: dict,
     lease: TelegramUpdateProcessingLease,
     *,
-    conversation_bridge: "TelegramWebhookConversationBridge | None" = None,
+    conversation_bridge: "TelegramWebhookConversationBridge",
 ) -> None:
     """
     Processa um update com claim durável ativo.
@@ -1912,11 +1912,9 @@ def process_claimed_telegram_update(
     Tokens e fingerprints não são registrados.
     """
     try:
-        processing_result = (
-            _process_telegram_update_with_optional_bridge(
-                update,
-                conversation_bridge=conversation_bridge,
-            )
+        processing_result = process_telegram_update(
+            update,
+            conversation_bridge=conversation_bridge,
         )
 
     except Exception:

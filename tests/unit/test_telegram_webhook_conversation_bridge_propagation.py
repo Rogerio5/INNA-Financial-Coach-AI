@@ -18,7 +18,10 @@ def test_claimed_processor_exposes_keyword_only_conversation_bridge():
         parameter.kind
         is inspect.Parameter.KEYWORD_ONLY
     )
-    assert parameter.default is None
+    assert (
+        parameter.default
+        is inspect.Parameter.empty
+    )
 
 
 def test_optional_bridge_helper_preserves_legacy_call(
@@ -114,14 +117,19 @@ def test_optional_bridge_helper_forwards_bridge(
     ]
 
 
-def test_claimed_processor_propagates_bridge_through_helper():
+def test_claimed_processor_propagates_bridge_directly_to_public_processor():
     source = inspect.getsource(
         telegram_webhook.process_claimed_telegram_update
     )
 
     assert (
-        "_process_telegram_update_with_optional_bridge("
+        "process_telegram_update("
         in source
+    )
+
+    assert (
+        "_process_telegram_update_with_optional_bridge("
+        not in source
     )
 
     assert (
