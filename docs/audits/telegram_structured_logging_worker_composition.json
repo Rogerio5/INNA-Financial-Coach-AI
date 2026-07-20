@@ -1,0 +1,95 @@
+{
+  "worker_file": "src/channels/telegram_update_worker.py",
+  "imports": [
+    {
+      "line": 7,
+      "source": "import os"
+    },
+    {
+      "line": 9,
+      "source": "import sys"
+    },
+    {
+      "line": 20,
+      "source": "from src.services.telegram_observability import (\n    NoOpTelegramConversationMetrics,\n    NoOpTelegramOperationalEventSink,\n    TelegramConversationMetrics,\n    TelegramOperationalEventSink,\n)"
+    }
+  ],
+  "logger_definitions": [],
+  "target_functions": {
+    "_emit_event": {
+      "line_start": 403,
+      "line_end": 431,
+      "signature": "event: str, payload: Mapping[str, object], *, stream: TextIO",
+      "source": "def _emit_event(\n    event: str,\n    payload: Mapping[str, object],\n    *,\n    stream: TextIO,\n) -> None:\n    record = {\n        \"event\": event,\n        \"data\": dict(\n            payload\n        ),\n    }\n\n    serialized = json.dumps(\n        record,\n        ensure_ascii=False,\n        sort_keys=True,\n        separators=(\n            \",\",\n            \":\",\n        ),\n        allow_nan=False,\n    )\n\n    print(\n        serialized,\n        file=stream,\n        flush=True,\n    )"
+    },
+    "emit_runner_result": {
+      "line_start": 434,
+      "line_end": 452,
+      "signature": "result: TelegramUpdateRunnerResult, *, stream: TextIO",
+      "source": "def emit_runner_result(\n    result: TelegramUpdateRunnerResult,\n    *,\n    stream: TextIO,\n) -> None:\n    \"\"\"\n    Registra somente o contrato seguro do runner.\n\n    Jobs idle são omitidos para evitar logs\n    excessivos em produção.\n    \"\"\"\n    if result.decision == \"idle\":\n        return\n\n    _emit_event(\n        \"telegram_worker_result\",\n        result.to_safe_dict(),\n        stream=stream,\n    )"
+    },
+    "emit_runner_summary": {
+      "line_start": 455,
+      "line_end": 464,
+      "signature": "summary: TelegramUpdateRunnerSummary, *, stream: TextIO",
+      "source": "def emit_runner_summary(\n    summary: TelegramUpdateRunnerSummary,\n    *,\n    stream: TextIO,\n) -> None:\n    _emit_event(\n        \"telegram_worker_summary\",\n        summary.to_safe_dict(),\n        stream=stream,\n    )"
+    },
+    "load_telegram_processor": {
+      "line_start": 285,
+      "line_end": 399,
+      "signature": "*, metrics_factory: Callable[[], TelegramConversationMetrics]=NoOpTelegramConversationMetrics, event_sink_factory: Callable[[], TelegramOperationalEventSink]=NoOpTelegramOperationalEventSink, clock: Callable[[], float]=time.perf_counter",
+      "source": "def load_telegram_processor(\n    *,\n    metrics_factory: Callable[\n        [],\n        TelegramConversationMetrics,\n    ] = NoOpTelegramConversationMetrics,\n    event_sink_factory: Callable[\n        [],\n        TelegramOperationalEventSink,\n    ] = NoOpTelegramOperationalEventSink,\n    clock: Callable[[], float] = (\n        time.perf_counter\n    ),\n):\n    \"\"\"\n    Compõe o processador produtivo do worker.\n\n    Uma única bridge, um único coletor de métricas e um único event sink\n    são criados durante a inicialização do processo e reutilizados por\n    todos os jobs desta instância.\n\n    O runtime PostgreSQL permanece lazy: a composição não abre conexão\n    antecipadamente.\n    \"\"\"\n    from api.telegram_webhook import (\n        process_telegram_update,\n    )\n    from src.services.telegram_conversation_state import (\n        create_postgres_telegram_webhook_conversation_bridge,\n    )\n\n    if not callable(\n        process_telegram_update\n    ):\n        raise TelegramUpdateRunnerConfigurationError(\n            \"O processador Telegram é inválido.\"\n        )\n\n    if not callable(\n        create_postgres_telegram_webhook_conversation_bridge\n    ):\n        raise TelegramUpdateRunnerConfigurationError(\n            \"A factory da conversation bridge é inválida.\"\n        )\n\n    if not callable(metrics_factory):\n        raise TelegramUpdateRunnerConfigurationError(\n            \"A factory de métricas é inválida.\"\n        )\n\n    if not callable(event_sink_factory):\n        raise TelegramUpdateRunnerConfigurationError(\n            \"A factory de eventos é inválida.\"\n        )\n\n    if not callable(clock):\n        raise TelegramUpdateRunnerConfigurationError(\n            \"O relógio de observabilidade é inválido.\"\n        )\n\n    try:\n        metrics = metrics_factory()\n        event_sink = event_sink_factory()\n\n        if not isinstance(\n            metrics,\n            TelegramConversationMetrics,\n        ):\n            raise TypeError(\n                \"Coletor de métricas inválido.\"\n            )\n\n        if not isinstance(\n            event_sink,\n            TelegramOperationalEventSink,\n        ):\n            raise TypeError(\n                \"Event sink inválido.\"\n            )\n\n        bridge_factory_kwargs = (\n            _observable_bridge_factory_kwargs(\n                create_postgres_telegram_webhook_conversation_bridge,\n                metrics=metrics,\n                event_sink=event_sink,\n                clock=clock,\n            )\n        )\n\n        conversation_bridge = (\n            create_postgres_telegram_webhook_conversation_bridge(\n                **bridge_factory_kwargs\n            )\n        )\n\n    except Exception:\n        raise TelegramUpdateRunnerConfigurationError(\n            \"Não foi possível compor o estado \"\n            \"conversacional durável.\"\n        ) from None\n\n    if conversation_bridge is None:\n        raise TelegramUpdateRunnerConfigurationError(\n            \"A conversation bridge criada é inválida.\"\n        )\n\n    def process_with_durable_conversation_state(\n        update: dict,\n    ):\n        return process_telegram_update(\n            update,\n            conversation_bridge=conversation_bridge,\n        )\n\n    return process_with_durable_conversation_state"
+    },
+    "main": {
+      "line_start": 635,
+      "line_end": 806,
+      "signature": "argv: Sequence[str] | None=None, *, stdout: TextIO | None=None, stderr: TextIO | None=None",
+      "source": "def main(\n    argv: Sequence[str] | None = None,\n    *,\n    stdout: TextIO | None = None,\n    stderr: TextIO | None = None,\n) -> int:\n    resolved_stdout = (\n        stdout\n        if stdout is not None\n        else sys.stdout\n    )\n\n    resolved_stderr = (\n        stderr\n        if stderr is not None\n        else sys.stderr\n    )\n\n    parser = _build_parser()\n\n    try:\n        arguments = parser.parse_args(\n            list(argv)\n            if argv is not None\n            else None\n        )\n\n    except SystemExit as error:\n        return int(\n            error.code\n        )\n\n    try:\n        config = (\n            load_worker_config_from_env()\n        )\n\n        keyring = (\n            load_telegram_update_keyring_from_env()\n        )\n\n        processor = (\n            load_telegram_processor()\n        )\n\n    except (\n        TelegramUpdateJobConfigurationError,\n        TelegramUpdateRunnerConfigurationError,\n    ):\n        _emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"configuration_invalid\"\n                ),\n            },\n            stream=resolved_stderr,\n        )\n\n        return EXIT_CONFIGURATION_ERROR\n\n    except Exception:\n        _emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"initialization_failed\"\n                ),\n            },\n            stream=resolved_stderr,\n        )\n\n        return EXIT_RUNTIME_ERROR\n\n    stop_event = Event()\n    previous_handlers: dict[\n        int,\n        Any,\n    ] = {}\n\n    try:\n        previous_handlers = (\n            _install_signal_handlers(\n                stop_event\n            )\n        )\n\n        _emit_event(\n            \"telegram_worker_started\",\n            _config_to_safe_dict(\n                config\n            ),\n            stream=resolved_stdout,\n        )\n\n        summary = (\n            run_telegram_update_worker(\n                processor,\n                stop_event=stop_event,\n                config=config,\n                keyring=keyring,\n                on_result=lambda result: (\n                    emit_runner_result(\n                        result,\n                        stream=(\n                            resolved_stdout\n                        ),\n                    )\n                ),\n                max_cycles=(\n                    arguments.max_cycles\n                ),\n            )\n        )\n\n    except KeyboardInterrupt:\n        stop_event.set()\n\n        _emit_event(\n            \"telegram_worker_stopped\",\n            {\n                \"reason\": \"keyboard_interrupt\",\n            },\n            stream=resolved_stdout,\n        )\n\n        return EXIT_INTERRUPTED\n\n    except (\n        TelegramUpdateJobConfigurationError,\n        TelegramUpdateRunnerConfigurationError,\n    ):\n        _emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"configuration_invalid\"\n                ),\n            },\n            stream=resolved_stderr,\n        )\n\n        return EXIT_CONFIGURATION_ERROR\n\n    except Exception:\n        _emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"runtime_failed\"\n                ),\n            },\n            stream=resolved_stderr,\n        )\n\n        return EXIT_RUNTIME_ERROR\n\n    finally:\n        _restore_signal_handlers(\n            previous_handlers\n        )\n\n    emit_runner_summary(\n        summary,\n        stream=resolved_stdout,\n    )\n\n    return EXIT_OK"
+    }
+  },
+  "load_telegram_processor_parameters": [
+    "metrics_factory",
+    "event_sink_factory",
+    "clock"
+  ],
+  "load_telegram_processor_uses_event_sink_factory": true,
+  "load_telegram_processor_uses_noop_sink": true,
+  "load_telegram_processor_uses_json_sink": false,
+  "factory_references": [
+    {
+      "line": 323,
+      "name": "callable",
+      "source": "callable(\n        create_postgres_telegram_webhook_conversation_bridge\n    )"
+    },
+    {
+      "line": 335,
+      "name": "callable",
+      "source": "callable(event_sink_factory)"
+    },
+    {
+      "line": 347,
+      "name": "event_sink_factory",
+      "source": "event_sink_factory()"
+    },
+    {
+      "line": 366,
+      "name": "_observable_bridge_factory_kwargs",
+      "source": "_observable_bridge_factory_kwargs(\n                create_postgres_telegram_webhook_conversation_bridge,\n                metrics=metrics,\n                event_sink=event_sink,\n                clock=clock,\n            )"
+    },
+    {
+      "line": 375,
+      "name": "create_postgres_telegram_webhook_conversation_bridge",
+      "source": "create_postgres_telegram_webhook_conversation_bridge(\n                **bridge_factory_kwargs\n            )"
+    },
+    {
+      "line": 677,
+      "name": "load_telegram_processor",
+      "source": "load_telegram_processor()"
+    }
+  ],
+  "environment_reads": [],
+  "structured_classes": [
+    "JsonTelegramOperationalEventSink"
+  ],
+  "json_sink_exported": true
+}

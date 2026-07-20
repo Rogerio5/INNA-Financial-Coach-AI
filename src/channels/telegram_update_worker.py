@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import inspect
 import json
+import logging
 import math
 import os
 import signal
@@ -18,6 +19,7 @@ from threading import Event
 from typing import Any, TextIO
 
 from src.services.telegram_observability import (
+    JsonTelegramOperationalEventSink,
     NoOpTelegramConversationMetrics,
     NoOpTelegramOperationalEventSink,
     TelegramConversationMetrics,
@@ -280,6 +282,181 @@ def _observable_bridge_factory_kwargs(
         "event_sink": event_sink,
         "clock": clock,
     }
+
+
+
+_TELEGRAM_OPERATIONAL_LOGGER_NAME = (
+    "inna.telegram.operations"
+)
+
+_TELEGRAM_OPERATIONAL_LOG_LEVEL_ENV = (
+    "TELEGRAM_OPERATIONAL_LOG_LEVEL"
+)
+
+_DEFAULT_TELEGRAM_OPERATIONAL_LOG_LEVEL = (
+    "INFO"
+)
+
+_MANAGED_TELEGRAM_LOG_HANDLER_ATTRIBUTE = (
+    "_inna_telegram_structured_handler"
+)
+
+_ALLOWED_TELEGRAM_OPERATIONAL_LOG_LEVELS = {
+    "DEBUG": logging.DEBUG,
+    "INFO": logging.INFO,
+    "WARNING": logging.WARNING,
+    "ERROR": logging.ERROR,
+    "CRITICAL": logging.CRITICAL,
+}
+
+
+def _resolve_telegram_operational_log_level(
+    value: str | None,
+) -> int:
+    resolved = (
+        value
+        if value is not None
+        else os.getenv(
+            _TELEGRAM_OPERATIONAL_LOG_LEVEL_ENV,
+            _DEFAULT_TELEGRAM_OPERATIONAL_LOG_LEVEL,
+        )
+    )
+
+    normalized = str(
+        resolved
+    ).strip().upper()
+
+    level = (
+        _ALLOWED_TELEGRAM_OPERATIONAL_LOG_LEVELS.get(
+            normalized
+        )
+    )
+
+    if level is None:
+        allowed = ", ".join(
+            sorted(
+                _ALLOWED_TELEGRAM_OPERATIONAL_LOG_LEVELS
+            )
+        )
+
+        raise TelegramUpdateRunnerConfigurationError(
+            "Nível de logging Telegram inválido. "
+            f"Valores permitidos: {allowed}."
+        )
+
+    return level
+
+
+def create_production_telegram_event_sink(
+    *,
+    stream: TextIO | None = None,
+    level_name: str | None = None,
+    logger: logging.Logger | None = None,
+) -> TelegramOperationalEventSink:
+    """
+    Cria o sink JSON produtivo do Telegram.
+
+    O logger usa um único handler gerenciado, não propaga
+    para o root logger e escreve somente a mensagem JSON.
+    """
+    resolved_logger = (
+        logger
+        if logger is not None
+        else logging.getLogger(
+            _TELEGRAM_OPERATIONAL_LOGGER_NAME
+        )
+    )
+
+    if not isinstance(
+        resolved_logger,
+        logging.Logger,
+    ):
+        raise TelegramUpdateRunnerConfigurationError(
+            "Logger operacional Telegram inválido."
+        )
+
+    level = (
+        _resolve_telegram_operational_log_level(
+            level_name
+        )
+    )
+
+    resolved_logger.setLevel(
+        level
+    )
+
+    resolved_logger.propagate = False
+
+    managed_handlers = [
+        handler
+        for handler in resolved_logger.handlers
+        if bool(
+            getattr(
+                handler,
+                _MANAGED_TELEGRAM_LOG_HANDLER_ATTRIBUTE,
+                False,
+            )
+        )
+    ]
+
+    desired_stream = (
+        stream
+        if stream is not None
+        else sys.stderr
+    )
+
+    matching_handler = next(
+        (
+            handler
+            for handler in managed_handlers
+            if getattr(
+                handler,
+                "stream",
+                None,
+            )
+            is desired_stream
+        ),
+        None,
+    )
+
+    if matching_handler is None:
+        for handler in managed_handlers:
+            resolved_logger.removeHandler(
+                handler
+            )
+
+            try:
+                handler.close()
+            except Exception:
+                pass
+
+        matching_handler = logging.StreamHandler(
+            desired_stream
+        )
+
+        setattr(
+            matching_handler,
+            _MANAGED_TELEGRAM_LOG_HANDLER_ATTRIBUTE,
+            True,
+        )
+
+        matching_handler.setFormatter(
+            logging.Formatter(
+                "%(message)s"
+            )
+        )
+
+        resolved_logger.addHandler(
+            matching_handler
+        )
+
+    matching_handler.setLevel(
+        level
+    )
+
+    return JsonTelegramOperationalEventSink(
+        logger=resolved_logger
+    )
 
 
 def load_telegram_processor(
@@ -632,6 +809,51 @@ def _build_parser() -> (
     return parser
 
 
+
+def _load_productive_telegram_processor(
+    *,
+    stderr: TextIO,
+):
+    """
+    Compõe o processador com structured logging quando
+    a assinatura do loader aceita event_sink_factory.
+
+    Mantém compatibilidade com mocks e loaders antigos
+    sem parâmetros, usados pelos testes e integrações.
+    """
+    event_sink_factory = lambda: (
+        create_production_telegram_event_sink(
+            stream=stderr
+        )
+    )
+
+    loader_kwargs = {}
+
+    try:
+        signature = inspect.signature(
+            load_telegram_processor
+        )
+
+        signature.bind(
+            event_sink_factory=event_sink_factory
+        )
+
+    except (
+        TypeError,
+        ValueError,
+    ):
+        pass
+
+    else:
+        loader_kwargs[
+            "event_sink_factory"
+        ] = event_sink_factory
+
+    return load_telegram_processor(
+        **loader_kwargs
+    )
+
+
 def main(
     argv: Sequence[str] | None = None,
     *,
@@ -674,7 +896,9 @@ def main(
         )
 
         processor = (
-            load_telegram_processor()
+            _load_productive_telegram_processor(
+                stderr=resolved_stderr
+            )
         )
 
     except (

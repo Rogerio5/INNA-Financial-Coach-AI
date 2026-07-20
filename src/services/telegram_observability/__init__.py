@@ -42,4 +42,17 @@ __all__ = [
     "sanitize_error_category",
     "sanitize_event_fields",
     "sanitize_event_value",
+    "JsonTelegramOperationalEventSink",
+    "build_telegram_structured_log_payload",
+    "format_telegram_log_timestamp",
+    "serialize_telegram_structured_log",
+    "telegram_structured_logging_utc_now",
 ]
+
+from .structured_logging import (
+    JsonTelegramOperationalEventSink,
+    build_telegram_structured_log_payload,
+    format_telegram_log_timestamp,
+    serialize_telegram_structured_log,
+    telegram_structured_logging_utc_now,
+)

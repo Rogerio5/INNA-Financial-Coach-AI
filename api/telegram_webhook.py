@@ -1,7 +1,9 @@
 import os
 import re
+import logging
 
 from src.services.telegram_observability import (
+    JsonTelegramOperationalEventSink,
     TelegramConversationMetricRecord,
     TelegramOperationalEvent,
     sanitize_event_fields,
@@ -672,6 +674,70 @@ def translate_telegram_risk(risk: str, lang: str) -> str:
     return translations.get(lang, translations["pt"]).get(normalized, str(risk or "Indefinido"))
 
 
+
+_TELEGRAM_OPERATIONAL_LOGGER_NAME = (
+    "inna.telegram.operations"
+)
+
+_telegram_operational_logger = logging.getLogger(
+    _TELEGRAM_OPERATIONAL_LOGGER_NAME
+)
+
+_telegram_operational_event_sink = (
+    JsonTelegramOperationalEventSink(
+        logger=_telegram_operational_logger
+    )
+)
+
+
+def _emit_telegram_operational_event_safely(
+    *,
+    name: str,
+    level: str,
+    component: str,
+    outcome: str,
+    operation: str,
+    error_category: str | None = None,
+    stage: str | None = None,
+) -> None:
+    """
+    Emite evento operacional sem interromper o fluxo principal.
+
+    Não aceita identificadores, mensagens de usuários,
+    payloads, estados financeiros ou texto de exceções.
+    """
+    fields: dict[str, object] = {
+        "operation": operation,
+    }
+
+    if error_category is not None:
+        fields[
+            "error_category"
+        ] = error_category
+
+    if stage is not None:
+        fields["stage"] = stage
+
+    try:
+        event = TelegramOperationalEvent(
+            name=name,
+            level=level,
+            component=component,
+            outcome=outcome,
+            fields=sanitize_event_fields(
+                fields
+            ),
+        )
+
+        _telegram_operational_event_sink.emit(
+            event
+        )
+
+    except Exception:
+        return
+
+
+
 def safe_record_telegram_event(
     chat_id: int,
     lang: str,
@@ -749,15 +815,32 @@ def safe_record_telegram_event(
         )
 
     except Exception:
-        print(
-            "[telegram-event-log] "
-            "Falha segura ao registrar evento."
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_event_persistence_failed"
+            ),
+            level="error",
+            component="webhook",
+            outcome="error",
+            operation="process_update",
+            error_category="persistence",
+            stage="record_event",
         )
 
 
 def send_telegram_message(chat_id: int, text: str, reply_markup: dict | None = None):
     if not TELEGRAM_BOT_TOKEN:
-        print("TELEGRAM_BOT_TOKEN não configurado.")
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_delivery_configuration_missing"
+            ),
+            level="error",
+            component="webhook",
+            outcome="error",
+            operation="process_update",
+            error_category="configuration",
+            stage="send_message",
+        )
         return
 
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -1726,9 +1809,16 @@ def _process_telegram_update_core(
         )
 
     except TelegramUpdateContextError:
-        print(
-            "[telegram-webhook] "
-            "Update inválido descartado."
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_update_processing_failed"
+            ),
+            level="warning",
+            component="webhook",
+            outcome="discarded",
+            operation="process_update",
+            error_category="validation",
+            stage="validate_context",
         )
         return False
 
@@ -2063,9 +2153,16 @@ def _process_telegram_update_core(
         send_telegram_message(chat_id, get_text(lang, "invalid_number"))
 
     except Exception:
-        print(
-            "[telegram-webhook] "
-            "Falha segura ao processar atualização."
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_update_processing_failed"
+            ),
+            level="error",
+            component="webhook",
+            outcome="error",
+            operation="process_update",
+            error_category="unknown",
+            stage="process_update",
         )
 
         send_telegram_message(
@@ -2092,15 +2189,29 @@ def _fail_claimed_telegram_update_safely(
         )
 
     except TelegramUpdateReceiptServiceError:
-        print(
-            "[telegram-webhook] "
-            "Falha segura ao atualizar receipt."
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_receipt_failure_recording_failed"
+            ),
+            level="error",
+            component="receipt",
+            outcome="error",
+            operation="fail_receipt",
+            error_category="persistence",
+            stage="record_failure",
         )
 
     except Exception:
-        print(
-            "[telegram-webhook] "
-            "Falha segura ao atualizar receipt."
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_receipt_failure_recording_failed"
+            ),
+            level="error",
+            component="receipt",
+            outcome="error",
+            operation="fail_receipt",
+            error_category="persistence",
+            stage="record_failure",
         )
 
 
@@ -2124,9 +2235,16 @@ def process_claimed_telegram_update(
         )
 
     except Exception:
-        print(
-            "[telegram-webhook] "
-            "Falha segura no worker Telegram."
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_worker_processing_failed"
+            ),
+            level="error",
+            component="worker",
+            outcome="error",
+            operation="process_update",
+            error_category="unknown",
+            stage="worker_processing",
         )
 
         _fail_claimed_telegram_update_safely(
@@ -2146,9 +2264,16 @@ def process_claimed_telegram_update(
         )
 
     except TelegramUpdateReceiptServiceError:
-        print(
-            "[telegram-webhook] "
-            "Falha segura ao concluir receipt."
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_worker_processing_failed"
+            ),
+            level="error",
+            component="receipt",
+            outcome="error",
+            operation="complete_receipt",
+            error_category="persistence",
+            stage="complete_receipt",
         )
 
         _fail_claimed_telegram_update_safely(
@@ -2156,9 +2281,16 @@ def process_claimed_telegram_update(
         )
 
     except Exception:
-        print(
-            "[telegram-webhook] "
-            "Falha segura ao concluir receipt."
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_worker_processing_failed"
+            ),
+            level="error",
+            component="receipt",
+            outcome="error",
+            operation="complete_receipt",
+            error_category="persistence",
+            stage="complete_receipt",
         )
 
         _fail_claimed_telegram_update_safely(
