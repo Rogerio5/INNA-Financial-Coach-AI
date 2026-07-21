@@ -24,6 +24,12 @@ from src.services.telegram_observability import (
     NoOpTelegramOperationalEventSink,
     TelegramConversationMetrics,
     TelegramOperationalEventSink,
+    CompositeTelegramConversationMetrics,
+    InMemoryTelegramProductiveMetrics,
+    ProductiveTelegramConversationMetricsAdapter,
+    SafeTelegramProductiveMetrics,
+    SafeTelegramProductiveOperations,
+    TelegramProductiveOperationsRecorder,
 )
 
 from src.services.telegram_update_jobs import (
@@ -347,6 +353,46 @@ def _resolve_telegram_operational_log_level(
     return level
 
 
+
+class TelegramProductiveMetricsRuntime:
+    """
+    Mantém uma única instância do registry produtivo
+    durante a vida do processo do worker.
+    """
+
+    def __init__(self) -> None:
+        registry = (
+            InMemoryTelegramProductiveMetrics()
+        )
+
+        self.registry = registry
+
+        self.safe_registry = (
+            SafeTelegramProductiveMetrics(
+                registry
+            )
+        )
+
+        self.adapter = (
+            ProductiveTelegramConversationMetricsAdapter(
+                self.safe_registry
+            )
+        )
+
+        self.operations = (
+            SafeTelegramProductiveOperations(
+                TelegramProductiveOperationsRecorder(
+                    self.safe_registry
+                )
+            )
+        )
+
+
+def create_production_telegram_metrics_runtime(
+) -> TelegramProductiveMetricsRuntime:
+    return TelegramProductiveMetricsRuntime()
+
+
 def create_production_telegram_event_sink(
     *,
     stream: TextIO | None = None,
@@ -629,6 +675,564 @@ def emit_runner_result(
     )
 
 
+
+def _productive_error_category_for_result(
+    result: TelegramUpdateRunnerResult,
+) -> str:
+    error_code = str(
+        getattr(
+            result,
+            "error_code",
+            "",
+        )
+        or ""
+    ).strip().lower()
+
+    stage = str(
+        getattr(
+            result,
+            "stage",
+            "",
+        )
+        or ""
+    ).strip().lower()
+
+    if "timeout" in error_code:
+        return "timeout"
+
+    if (
+        "ownership_lost" in error_code
+        or "ownership" in error_code
+    ):
+        return "optimistic_conflict"
+
+    if (
+        "unavailable" in error_code
+        or "unavailable" in stage
+    ):
+        return "dependency"
+
+    if (
+        "inconsistent" in error_code
+        or "consistency" in error_code
+    ):
+        return "persistence"
+
+    if (
+        "decrypt" in error_code
+        or "keyring" in error_code
+        or "encryption" in error_code
+    ):
+        return "encryption"
+
+    if (
+        "validation" in error_code
+        or "invalid" in error_code
+    ):
+        return "validation"
+
+    if (
+        "delivery" in error_code
+        or "send" in error_code
+    ):
+        return "delivery"
+
+    return "unknown"
+
+
+def _productive_cycle_result_for_runner_result(
+    result: TelegramUpdateRunnerResult,
+) -> str:
+    decision = str(
+        getattr(
+            result,
+            "decision",
+            "",
+        )
+        or ""
+    ).strip().lower()
+
+    stage = str(
+        getattr(
+            result,
+            "stage",
+            "",
+        )
+        or ""
+    ).strip().lower()
+
+    if decision == "idle":
+        return "empty"
+
+    if (
+        stage == "recovery"
+        and decision != "unavailable"
+    ):
+        return "processed"
+
+    if decision in {
+        "completed",
+        "retry_scheduled",
+        "dead_lettered",
+    }:
+        return "processed"
+
+    if decision in {
+        "ownership_lost",
+        "unavailable",
+        "consistency_error",
+    }:
+        return "failed"
+
+    return "unknown"
+
+
+def _productive_update_outcome_for_runner_result(
+    result: TelegramUpdateRunnerResult,
+) -> tuple[str, str | None] | None:
+    decision = str(
+        getattr(
+            result,
+            "decision",
+            "",
+        )
+        or ""
+    ).strip().lower()
+
+    stage = str(
+        getattr(
+            result,
+            "stage",
+            "",
+        )
+        or ""
+    ).strip().lower()
+
+    idempotent_replay = bool(
+        getattr(
+            result,
+            "idempotent_replay",
+            False,
+        )
+    )
+
+    if (
+        decision == "idle"
+        or stage == "recovery"
+    ):
+        return None
+
+    if idempotent_replay:
+        return (
+            "duplicate",
+            None,
+        )
+
+    if decision == "completed":
+        return (
+            "success",
+            None,
+        )
+
+    if decision in {
+        "retry_scheduled",
+        "dead_lettered",
+        "ownership_lost",
+        "unavailable",
+        "consistency_error",
+    }:
+        return (
+            "error",
+            _productive_error_category_for_result(
+                result
+            ),
+        )
+
+    return (
+        "unknown",
+        "unknown",
+    )
+
+
+
+def _productive_receipt_for_runner_result(
+    result: TelegramUpdateRunnerResult,
+) -> tuple[str, str, str | None] | None:
+    decision = str(
+        getattr(
+            result,
+            "decision",
+            "",
+        )
+        or ""
+    ).strip().lower()
+
+    stage = str(
+        getattr(
+            result,
+            "stage",
+            "",
+        )
+        or ""
+    ).strip().lower()
+
+    if (
+        decision == "idle"
+        or stage == "recovery"
+    ):
+        return None
+
+    idempotent_replay = bool(
+        getattr(
+            result,
+            "idempotent_replay",
+            False,
+        )
+    )
+
+    error_category = (
+        _productive_error_category_for_result(
+            result
+        )
+    )
+
+    if idempotent_replay:
+        return (
+            "duplicate",
+            "duplicate",
+            None,
+        )
+
+    if decision == "completed":
+        return (
+            "completed",
+            "success",
+            None,
+        )
+
+    if decision in {
+        "retry_scheduled",
+        "dead_lettered",
+    }:
+        return (
+            "failed",
+            "error",
+            error_category,
+        )
+
+    if decision == "ownership_lost":
+        return (
+            "released",
+            "conflict",
+            "optimistic_conflict",
+        )
+
+    if stage == "claim":
+        if decision == "consistency_error":
+            return (
+                "claimed",
+                "conflict",
+                "persistence",
+            )
+
+        return (
+            "claimed",
+            "error",
+            error_category,
+        )
+
+    if decision in {
+        "unavailable",
+        "consistency_error",
+    }:
+        return (
+            "failed",
+            (
+                "conflict"
+                if decision
+                == "consistency_error"
+                else "error"
+            ),
+            error_category,
+        )
+
+    return (
+        "unknown",
+        "unknown",
+        "unknown",
+    )
+
+
+def _productive_queue_for_runner_result(
+    result: TelegramUpdateRunnerResult,
+) -> tuple[str, str, str | None] | None:
+    decision = str(
+        getattr(
+            result,
+            "decision",
+            "",
+        )
+        or ""
+    ).strip().lower()
+
+    stage = str(
+        getattr(
+            result,
+            "stage",
+            "",
+        )
+        or ""
+    ).strip().lower()
+
+    if decision == "idle":
+        return None
+
+    idempotent_replay = bool(
+        getattr(
+            result,
+            "idempotent_replay",
+            False,
+        )
+    )
+
+    error_category = (
+        _productive_error_category_for_result(
+            result
+        )
+    )
+
+    if stage == "recovery":
+        return (
+            "recover",
+            (
+                "error"
+                if decision == "unavailable"
+                else "success"
+            ),
+            (
+                error_category
+                if decision == "unavailable"
+                else None
+            ),
+        )
+
+    if stage == "claim":
+        return (
+            "claim",
+            (
+                "success"
+                if getattr(
+                    result,
+                    "update_id",
+                    None,
+                )
+                is not None
+                else (
+                    "conflict"
+                    if decision
+                    == "consistency_error"
+                    else "error"
+                )
+            ),
+            (
+                None
+                if getattr(
+                    result,
+                    "update_id",
+                    None,
+                )
+                is not None
+                else error_category
+            ),
+        )
+
+    if decision == "completed":
+        return (
+            "acknowledge",
+            (
+                "duplicate"
+                if idempotent_replay
+                else "success"
+            ),
+            None,
+        )
+
+    if decision == "retry_scheduled":
+        return (
+            "release",
+            (
+                "duplicate"
+                if idempotent_replay
+                else "success"
+            ),
+            None,
+        )
+
+    if decision == "dead_lettered":
+        return (
+            "fail",
+            (
+                "duplicate"
+                if idempotent_replay
+                else "success"
+            ),
+            None,
+        )
+
+    if decision == "ownership_lost":
+        return (
+            "release",
+            "conflict",
+            "optimistic_conflict",
+        )
+
+    if decision in {
+        "unavailable",
+        "consistency_error",
+    }:
+        return (
+            (
+                "acknowledge"
+                if stage == "complete"
+                else "fail"
+            ),
+            (
+                "conflict"
+                if decision
+                == "consistency_error"
+                else "error"
+            ),
+            error_category,
+        )
+
+    return (
+        "unknown",
+        "unknown",
+        "unknown",
+    )
+
+
+def record_productive_receipt_and_queue_result(
+    result: TelegramUpdateRunnerResult,
+    *,
+    operations,
+) -> None:
+    receipt = (
+        _productive_receipt_for_runner_result(
+            result
+        )
+    )
+
+    if receipt is not None:
+        (
+            receipt_status,
+            receipt_outcome,
+            receipt_error_category,
+        ) = receipt
+
+        operations.record_receipt(
+            status=receipt_status,
+            outcome=receipt_outcome,
+            error_category=(
+                receipt_error_category
+            ),
+        )
+
+    queue_operation = (
+        _productive_queue_for_runner_result(
+            result
+        )
+    )
+
+    if queue_operation is not None:
+        (
+            operation,
+            outcome,
+            error_category,
+        ) = queue_operation
+
+        operations.record_queue_operation(
+            operation=operation,
+            outcome=outcome,
+            error_category=error_category,
+        )
+
+
+def record_productive_runner_result(
+    result: TelegramUpdateRunnerResult,
+    *,
+    operations,
+) -> None:
+    """
+    Converte o contrato seguro do runner em
+    métricas agregadas de baixa cardinalidade.
+    """
+    cycle_result = (
+        _productive_cycle_result_for_runner_result(
+            result
+        )
+    )
+
+    operations.record_worker_cycle(
+        result=cycle_result,
+    )
+
+    update_classification = (
+        _productive_update_outcome_for_runner_result(
+            result
+        )
+    )
+
+    if update_classification is None:
+        return
+
+    outcome, error_category = (
+        update_classification
+    )
+
+    operations.record_worker_update(
+        outcome=outcome,
+        error_category=error_category,
+    )
+
+
+def handle_productive_runner_result(
+    result: TelegramUpdateRunnerResult,
+    *,
+    stream: TextIO,
+    operations,
+) -> None:
+    """
+    Callback único do runner.
+
+    Logging e métricas são isolados: falhas da
+    telemetria nunca interrompem o processamento.
+    """
+    try:
+        emit_runner_result(
+            result,
+            stream=stream,
+        )
+    except Exception:
+        pass
+
+    try:
+        record_productive_runner_result(
+            result,
+            operations=operations,
+        )
+    except Exception:
+        pass
+
+    try:
+        record_productive_receipt_and_queue_result(
+            result,
+            operations=operations,
+        )
+    except Exception:
+        pass
+
+
 def emit_runner_summary(
     summary: TelegramUpdateRunnerSummary,
     *,
@@ -813,17 +1417,34 @@ def _build_parser() -> (
 def _load_productive_telegram_processor(
     *,
     stderr: TextIO,
+    metrics_runtime: (
+        TelegramProductiveMetricsRuntime
+        | None
+    ) = None,
 ):
     """
-    Compõe o processador com structured logging quando
-    a assinatura do loader aceita event_sink_factory.
+    Compõe o processador produtivo com:
 
-    Mantém compatibilidade com mocks e loaders antigos
-    sem parâmetros, usados pelos testes e integrações.
+    - structured logging;
+    - registry produtivo único por processo;
+    - compatibilidade com loaders e mocks antigos.
     """
+    resolved_metrics_runtime = (
+        metrics_runtime
+        or create_production_telegram_metrics_runtime()
+    )
+
     event_sink_factory = lambda: (
         create_production_telegram_event_sink(
             stream=stderr
+        )
+    )
+
+    metrics_factory = lambda: (
+        CompositeTelegramConversationMetrics(
+            [
+                resolved_metrics_runtime.adapter,
+            ]
         )
     )
 
@@ -833,25 +1454,49 @@ def _load_productive_telegram_processor(
         signature = inspect.signature(
             load_telegram_processor
         )
-
-        signature.bind(
-            event_sink_factory=event_sink_factory
-        )
-
     except (
         TypeError,
         ValueError,
     ):
-        pass
+        signature = None
 
-    else:
-        loader_kwargs[
-            "event_sink_factory"
-        ] = event_sink_factory
+    if signature is not None:
+        try:
+            signature.bind(
+                event_sink_factory=event_sink_factory
+            )
+        except TypeError:
+            pass
+        else:
+            loader_kwargs[
+                "event_sink_factory"
+            ] = event_sink_factory
 
-    return load_telegram_processor(
+        try:
+            signature.bind(
+                metrics_factory=metrics_factory
+            )
+        except TypeError:
+            pass
+        else:
+            loader_kwargs[
+                "metrics_factory"
+            ] = metrics_factory
+
+    processor = load_telegram_processor(
         **loader_kwargs
     )
+
+    try:
+        setattr(
+            processor,
+            "_telegram_productive_metrics_runtime",
+            resolved_metrics_runtime,
+        )
+    except Exception:
+        pass
+
+    return processor
 
 
 def main(
@@ -895,9 +1540,14 @@ def main(
             load_telegram_update_keyring_from_env()
         )
 
+        metrics_runtime = (
+            create_production_telegram_metrics_runtime()
+        )
+
         processor = (
             _load_productive_telegram_processor(
-                stderr=resolved_stderr
+                stderr=resolved_stderr,
+                metrics_runtime=metrics_runtime,
             )
         )
 
@@ -960,10 +1610,11 @@ def main(
                 config=config,
                 keyring=keyring,
                 on_result=lambda result: (
-                    emit_runner_result(
+                    handle_productive_runner_result(
                         result,
-                        stream=(
-                            resolved_stdout
+                        stream=resolved_stdout,
+                        operations=(
+                            metrics_runtime.operations
                         ),
                     )
                 ),

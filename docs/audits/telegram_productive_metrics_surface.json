@@ -1,0 +1,1902 @@
+{
+  "candidate_calls": 159,
+  "files_scanned": 8,
+  "records": [
+    {
+      "call": "session.get",
+      "file": "api/telegram_webhook.py",
+      "function": "get_lang_from_session",
+      "line": 516,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "session.get('lang', 'pt')"
+    },
+    {
+      "call": "session.get",
+      "file": "api/telegram_webhook.py",
+      "function": "get_chat_lang",
+      "line": 531,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "session.get('lang')"
+    },
+    {
+      "call": "session.get",
+      "file": "api/telegram_webhook.py",
+      "function": "get_chat_lang",
+      "line": 532,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "session.get('lang', 'pt')"
+    },
+    {
+      "call": "record_event",
+      "file": "api/telegram_webhook.py",
+      "function": "safe_record_telegram_event",
+      "line": 763,
+      "metric_terms": [
+        "record"
+      ],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "record_event(canal='telegram', usuario=str(payload.get('nome') or 'telegram-user'), usuario_id=f'telegram:{chat_id}', idioma=lang, moeda=moeda, status='success', diagnostico_id=resultado.get('id'), metadata={'origem': 'telegram_webhook', 'evento': 'diagnostico_telegram', 'identity_source': 'authenticated_telegram_update', 'simbolo_moeda': simbolo, 'persistence_status': resultado.get('persistence_status'), 'created': resultado.get('created'), 'score_financeiro': resultado.get('score_financeiro'),"
+    },
+    {
+      "call": "_emit_telegram_operational_event_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "safe_record_telegram_event",
+      "line": 818,
+      "metric_terms": [
+        "record"
+      ],
+      "operation_terms": [
+        "fail",
+        "process",
+        "update"
+      ],
+      "source": "_emit_telegram_operational_event_safely(name='telegram_event_persistence_failed', level='error', component='webhook', outcome='error', operation='process_update', error_category='persistence', stage='record_event')"
+    },
+    {
+      "call": "_emit_telegram_operational_event_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "send_telegram_message",
+      "line": 833,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "update"
+      ],
+      "source": "_emit_telegram_operational_event_safely(name='telegram_delivery_configuration_missing', level='error', component='webhook', outcome='error', operation='process_update', error_category='configuration', stage='send_message')"
+    },
+    {
+      "call": "conversation_bridge.load_or_open_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_load_or_open_durable_telegram_session",
+      "line": 1276,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "conversation_bridge.load_or_open_session(telegram_user_id, chat_id, {'step': 'idioma', 'lang': 'pt'}, language='pt')"
+    },
+    {
+      "call": "durable_session.to_processing_state",
+      "file": "api/telegram_webhook.py",
+      "function": "_load_or_open_durable_telegram_session",
+      "line": 1288,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "durable_session.to_processing_state()"
+    },
+    {
+      "call": "isinstance",
+      "file": "api/telegram_webhook.py",
+      "function": "_load_or_open_durable_telegram_session",
+      "line": 1291,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "isinstance(processing_state, dict)"
+    },
+    {
+      "call": "processing_state.get",
+      "file": "api/telegram_webhook.py",
+      "function": "_load_or_open_durable_telegram_session",
+      "line": 1299,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "processing_state.get('step')"
+    },
+    {
+      "call": "processing_state.get",
+      "file": "api/telegram_webhook.py",
+      "function": "_load_or_open_durable_telegram_session",
+      "line": 1302,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "processing_state.get('lang')"
+    },
+    {
+      "call": "_conflict_observability_now",
+      "file": "api/telegram_webhook.py",
+      "function": "_conflict_observability_duration_ms",
+      "line": 1333,
+      "metric_terms": [],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "_conflict_observability_now(conversation_bridge)"
+    },
+    {
+      "call": "max",
+      "file": "api/telegram_webhook.py",
+      "function": "_conflict_observability_duration_ms",
+      "line": 1341,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [],
+      "source": "max(0.0, duration_ms)"
+    },
+    {
+      "call": "TelegramConversationMetricRecord",
+      "file": "api/telegram_webhook.py",
+      "function": "_record_conflict_observability",
+      "line": 1393,
+      "metric_terms": [
+        "duration",
+        "metric",
+        "record"
+      ],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "TelegramConversationMetricRecord(operation=operation, component='webhook', outcome=outcome, duration_ms=duration_ms, error_category=error_category, conflict_recovered=conflict_recovered)"
+    },
+    {
+      "call": "conversation_bridge.metrics.record_operation",
+      "file": "api/telegram_webhook.py",
+      "function": "_record_conflict_observability",
+      "line": 1404,
+      "metric_terms": [
+        "metric",
+        "metrics",
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "conversation_bridge.metrics.record_operation(metric)"
+    },
+    {
+      "call": "ValueError",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1460,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "ValueError('durable_session é obrigatória.')"
+    },
+    {
+      "call": "isinstance",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1464,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "isinstance(processing_state, dict)"
+    },
+    {
+      "call": "TypeError",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1468,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "TypeError('processing_state deve ser um dict.')"
+    },
+    {
+      "call": "processing_state.get",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1475,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "processing_state.get('lang')"
+    },
+    {
+      "call": "target_session.replace_state",
+      "file": "api/telegram_webhook.py",
+      "function": "apply_transition",
+      "line": 1481,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "target_session.replace_state(processing_state)"
+    },
+    {
+      "call": "target_session.set_language",
+      "file": "api/telegram_webhook.py",
+      "function": "apply_transition",
+      "line": 1485,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "target_session.set_language(resolved_language)"
+    },
+    {
+      "call": "apply_transition",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1491,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "apply_transition(durable_session)"
+    },
+    {
+      "call": "conversation_bridge.save_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1496,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "conversation_bridge.save_session(durable_session, only_if_changed=True)"
+    },
+    {
+      "call": "isinstance",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1508,
+      "metric_terms": [],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "isinstance(error, conflict_type)"
+    },
+    {
+      "call": "_conflict_observability_now",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1516,
+      "metric_terms": [],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "_conflict_observability_now(conversation_bridge)"
+    },
+    {
+      "call": "_record_conflict_observability",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1521,
+      "metric_terms": [
+        "duration",
+        "record"
+      ],
+      "operation_terms": [
+        "conflict",
+        "session"
+      ],
+      "source": "_record_conflict_observability(conversation_bridge, operation='save_session', outcome='conflict', event_name='telegram_session_conflict_detected', level='warning', duration_ms=0.0, error_category='optimistic_conflict', conflict_recovered=False)"
+    },
+    {
+      "call": "conversation_bridge.reload_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1538,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "conversation_bridge.reload_session(durable_session)"
+    },
+    {
+      "call": "_record_conflict_observability",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1544,
+      "metric_terms": [
+        "duration",
+        "record"
+      ],
+      "operation_terms": [
+        "conflict",
+        "fail",
+        "session"
+      ],
+      "source": "_record_conflict_observability(conversation_bridge, operation='reload_session', outcome='error', event_name='telegram_session_conflict_failed', level='error', duration_ms=_conflict_observability_duration_ms(conversation_bridge, started_at=started_at), error_category=_conflict_error_category(reload_error))"
+    },
+    {
+      "call": "_conflict_observability_duration_ms",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1553,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "_conflict_observability_duration_ms(conversation_bridge, started_at=started_at)"
+    },
+    {
+      "call": "_conflict_error_category",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1559,
+      "metric_terms": [],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "_conflict_error_category(reload_error)"
+    },
+    {
+      "call": "_record_conflict_observability",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1568,
+      "metric_terms": [
+        "duration",
+        "record"
+      ],
+      "operation_terms": [
+        "conflict",
+        "fail",
+        "session"
+      ],
+      "source": "_record_conflict_observability(conversation_bridge, operation='reload_session', outcome='error', event_name='telegram_session_conflict_failed', level='error', duration_ms=_conflict_observability_duration_ms(conversation_bridge, started_at=started_at), error_category='persistence')"
+    },
+    {
+      "call": "_conflict_observability_duration_ms",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1577,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "_conflict_observability_duration_ms(conversation_bridge, started_at=started_at)"
+    },
+    {
+      "call": "_record_conflict_observability",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1587,
+      "metric_terms": [
+        "duration",
+        "record"
+      ],
+      "operation_terms": [
+        "complete",
+        "conflict",
+        "session"
+      ],
+      "source": "_record_conflict_observability(conversation_bridge, operation='reload_session', outcome='success', event_name='telegram_session_conflict_reload_completed', level='info', duration_ms=_conflict_observability_duration_ms(conversation_bridge, started_at=started_at))"
+    },
+    {
+      "call": "_conflict_observability_duration_ms",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1597,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "_conflict_observability_duration_ms(conversation_bridge, started_at=started_at)"
+    },
+    {
+      "call": "apply_transition",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1604,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "apply_transition(reloaded_session)"
+    },
+    {
+      "call": "conversation_bridge.save_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1610,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "conversation_bridge.save_session(reloaded_session, only_if_changed=True)"
+    },
+    {
+      "call": "_conflict_error_category",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1618,
+      "metric_terms": [],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "_conflict_error_category(recovery_error)"
+    },
+    {
+      "call": "_record_conflict_observability",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1630,
+      "metric_terms": [
+        "duration",
+        "record"
+      ],
+      "operation_terms": [
+        "conflict",
+        "fail",
+        "session"
+      ],
+      "source": "_record_conflict_observability(conversation_bridge, operation='save_session', outcome=outcome, event_name='telegram_session_conflict_failed', level='error', duration_ms=_conflict_observability_duration_ms(conversation_bridge, started_at=started_at), error_category=category, conflict_recovered=False if outcome == 'conflict' else None)"
+    },
+    {
+      "call": "_conflict_observability_duration_ms",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1639,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "_conflict_observability_duration_ms(conversation_bridge, started_at=started_at)"
+    },
+    {
+      "call": "_record_conflict_observability",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1654,
+      "metric_terms": [
+        "duration",
+        "record"
+      ],
+      "operation_terms": [
+        "conflict",
+        "session"
+      ],
+      "source": "_record_conflict_observability(conversation_bridge, operation='save_session', outcome='recovered', event_name='telegram_session_conflict_recovered', level='info', duration_ms=_conflict_observability_duration_ms(conversation_bridge, started_at=started_at), conflict_recovered=True)"
+    },
+    {
+      "call": "_conflict_observability_duration_ms",
+      "file": "api/telegram_webhook.py",
+      "function": "_sync_and_save_durable_telegram_session",
+      "line": 1663,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "_conflict_observability_duration_ms(conversation_bridge, started_at=started_at)"
+    },
+    {
+      "call": "ValueError",
+      "file": "api/telegram_webhook.py",
+      "function": "_delete_durable_telegram_session",
+      "line": 1694,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "ValueError('durable_session é obrigatória.')"
+    },
+    {
+      "call": "conversation_bridge.delete_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_delete_durable_telegram_session",
+      "line": 1698,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "conversation_bridge.delete_session(durable_session)"
+    },
+    {
+      "call": "TypeError",
+      "file": "api/telegram_webhook.py",
+      "function": "_delete_durable_telegram_session",
+      "line": 1706,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "TypeError('Resultado de delete_session inválido.')"
+    },
+    {
+      "call": "isinstance",
+      "file": "api/telegram_webhook.py",
+      "function": "_resolve_durable_telegram_language",
+      "line": 1736,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "isinstance(session, dict)"
+    },
+    {
+      "call": "session.get",
+      "file": "api/telegram_webhook.py",
+      "function": "_resolve_durable_telegram_language",
+      "line": 1737,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "session.get('lang')"
+    },
+    {
+      "call": "get_chat_lang",
+      "file": "api/telegram_webhook.py",
+      "function": "_resolve_durable_telegram_language",
+      "line": 1742,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "get_chat_lang(chat_id, session)"
+    },
+    {
+      "call": "TelegramUpdateIngressConfigurationError",
+      "file": "api/telegram_webhook.py",
+      "function": "process_telegram_update",
+      "line": 1773,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "update"
+      ],
+      "source": "TelegramUpdateIngressConfigurationError('conversation_bridge é obrigatória para o processador Telegram produtivo.')"
+    },
+    {
+      "call": "_process_telegram_update_core",
+      "file": "api/telegram_webhook.py",
+      "function": "process_telegram_update",
+      "line": 1778,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "update"
+      ],
+      "source": "_process_telegram_update_core(update, conversation_bridge=conversation_bridge)"
+    },
+    {
+      "call": "TelegramUpdateIngressConfigurationError",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1799,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "TelegramUpdateIngressConfigurationError('conversation_bridge é obrigatória para o núcleo Telegram durável.')"
+    },
+    {
+      "call": "extrair_contexto_confiavel_telegram",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1806,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "extrair_contexto_confiavel_telegram(update)"
+    },
+    {
+      "call": "_emit_telegram_operational_event_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1812,
+      "metric_terms": [],
+      "operation_terms": [
+        "fail",
+        "process",
+        "update"
+      ],
+      "source": "_emit_telegram_operational_event_safely(name='telegram_update_processing_failed', level='warning', component='webhook', outcome='discarded', operation='process_update', error_category='validation', stage='validate_context')"
+    },
+    {
+      "call": "update.get",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1825,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "update.get('message', {})"
+    },
+    {
+      "call": "_load_or_open_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1844,
+      "metric_terms": [],
+      "operation_terms": [
+        "session",
+        "update"
+      ],
+      "source": "_load_or_open_durable_telegram_session(conversation_bridge=conversation_bridge, telegram_user_id=trusted_update.usuario_id, chat_id=chat_id)"
+    },
+    {
+      "call": "_resolve_durable_telegram_language",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1853,
+      "metric_terms": [],
+      "operation_terms": [
+        "session",
+        "update"
+      ],
+      "source": "_resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "call": "_sync_and_save_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1860,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "_sync_and_save_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session, processing_state=session, language=lang)"
+    },
+    {
+      "call": "_resolve_durable_telegram_language",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1874,
+      "metric_terms": [],
+      "operation_terms": [
+        "session",
+        "update"
+      ],
+      "source": "_resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "call": "_resolve_durable_telegram_language",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1882,
+      "metric_terms": [],
+      "operation_terms": [
+        "session",
+        "update"
+      ],
+      "source": "_resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "call": "_resolve_durable_telegram_language",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1890,
+      "metric_terms": [],
+      "operation_terms": [
+        "session",
+        "update"
+      ],
+      "source": "_resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "call": "_delete_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1892,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "_delete_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "call": "_resolve_durable_telegram_language",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1908,
+      "metric_terms": [],
+      "operation_terms": [
+        "session",
+        "update"
+      ],
+      "source": "_resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=None, conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "call": "_sync_and_save_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1915,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "_sync_and_save_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session, processing_state=session, language=lang)"
+    },
+    {
+      "call": "session.get",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1929,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "session.get('step')"
+    },
+    {
+      "call": "get_lang_from_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1930,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "get_lang_from_session(session)"
+    },
+    {
+      "call": "_sync_and_save_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1945,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "_sync_and_save_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session, processing_state=session, language=lang)"
+    },
+    {
+      "call": "_sync_and_save_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1966,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "_sync_and_save_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session, processing_state=session, language=lang)"
+    },
+    {
+      "call": "_sync_and_save_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 1986,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "_sync_and_save_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session, processing_state=session, language=lang)"
+    },
+    {
+      "call": "_sync_and_save_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 2009,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "_sync_and_save_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session, processing_state=session, language=lang)"
+    },
+    {
+      "call": "_sync_and_save_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 2032,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "_sync_and_save_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session, processing_state=session, language=lang)"
+    },
+    {
+      "call": "_sync_and_save_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 2055,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "_sync_and_save_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session, processing_state=session, language=lang)"
+    },
+    {
+      "call": "_sync_and_save_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 2078,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "session"
+      ],
+      "source": "_sync_and_save_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session, processing_state=session, language=lang)"
+    },
+    {
+      "call": "float",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 2095,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "float(session.get('dividas_mensais', 0))"
+    },
+    {
+      "call": "session.get",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 2095,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "session.get('dividas_mensais', 0)"
+    },
+    {
+      "call": "gerar_diagnostico_pelo_payload",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 2125,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "gerar_diagnostico_pelo_payload(payload, lang, usuario_id_confiavel=trusted_update.usuario_id, request_id=trusted_update.request_id)"
+    },
+    {
+      "call": "safe_record_telegram_event",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 2139,
+      "metric_terms": [
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "safe_record_telegram_event(chat_id=chat_id, lang=lang, payload=payload, resultado=resultado, resposta=resposta_final)"
+    },
+    {
+      "call": "_delete_durable_telegram_session",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 2147,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "_delete_durable_telegram_session(conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "call": "_emit_telegram_operational_event_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "_process_telegram_update_core",
+      "line": 2156,
+      "metric_terms": [],
+      "operation_terms": [
+        "fail",
+        "process",
+        "update"
+      ],
+      "source": "_emit_telegram_operational_event_safely(name='telegram_update_processing_failed', level='error', component='webhook', outcome='error', operation='process_update', error_category='unknown', stage='process_update')"
+    },
+    {
+      "call": "fail_authenticated_telegram_update",
+      "file": "api/telegram_webhook.py",
+      "function": "_fail_claimed_telegram_update_safely",
+      "line": 2184,
+      "metric_terms": [],
+      "operation_terms": [
+        "fail",
+        "lease",
+        "process",
+        "update"
+      ],
+      "source": "fail_authenticated_telegram_update(lease, error_code='telegram.processing_failed')"
+    },
+    {
+      "call": "_emit_telegram_operational_event_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "_fail_claimed_telegram_update_safely",
+      "line": 2192,
+      "metric_terms": [
+        "record"
+      ],
+      "operation_terms": [
+        "fail",
+        "receipt"
+      ],
+      "source": "_emit_telegram_operational_event_safely(name='telegram_receipt_failure_recording_failed', level='error', component='receipt', outcome='error', operation='fail_receipt', error_category='persistence', stage='record_failure')"
+    },
+    {
+      "call": "_emit_telegram_operational_event_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "_fail_claimed_telegram_update_safely",
+      "line": 2205,
+      "metric_terms": [
+        "record"
+      ],
+      "operation_terms": [
+        "fail",
+        "receipt"
+      ],
+      "source": "_emit_telegram_operational_event_safely(name='telegram_receipt_failure_recording_failed', level='error', component='receipt', outcome='error', operation='fail_receipt', error_category='persistence', stage='record_failure')"
+    },
+    {
+      "call": "process_telegram_update",
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2232,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "update"
+      ],
+      "source": "process_telegram_update(update, conversation_bridge=conversation_bridge)"
+    },
+    {
+      "call": "_emit_telegram_operational_event_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2238,
+      "metric_terms": [],
+      "operation_terms": [
+        "fail",
+        "process",
+        "update",
+        "worker"
+      ],
+      "source": "_emit_telegram_operational_event_safely(name='telegram_worker_processing_failed', level='error', component='worker', outcome='error', operation='process_update', error_category='unknown', stage='worker_processing')"
+    },
+    {
+      "call": "_fail_claimed_telegram_update_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2250,
+      "metric_terms": [],
+      "operation_terms": [
+        "claim",
+        "fail",
+        "lease",
+        "update"
+      ],
+      "source": "_fail_claimed_telegram_update_safely(lease)"
+    },
+    {
+      "call": "_fail_claimed_telegram_update_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2256,
+      "metric_terms": [],
+      "operation_terms": [
+        "claim",
+        "fail",
+        "lease",
+        "update"
+      ],
+      "source": "_fail_claimed_telegram_update_safely(lease)"
+    },
+    {
+      "call": "complete_authenticated_telegram_update",
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2262,
+      "metric_terms": [],
+      "operation_terms": [
+        "complete",
+        "lease",
+        "update"
+      ],
+      "source": "complete_authenticated_telegram_update(lease)"
+    },
+    {
+      "call": "_emit_telegram_operational_event_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2267,
+      "metric_terms": [],
+      "operation_terms": [
+        "complete",
+        "fail",
+        "process",
+        "receipt",
+        "worker"
+      ],
+      "source": "_emit_telegram_operational_event_safely(name='telegram_worker_processing_failed', level='error', component='receipt', outcome='error', operation='complete_receipt', error_category='persistence', stage='complete_receipt')"
+    },
+    {
+      "call": "_fail_claimed_telegram_update_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2279,
+      "metric_terms": [],
+      "operation_terms": [
+        "claim",
+        "fail",
+        "lease",
+        "update"
+      ],
+      "source": "_fail_claimed_telegram_update_safely(lease)"
+    },
+    {
+      "call": "_emit_telegram_operational_event_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2284,
+      "metric_terms": [],
+      "operation_terms": [
+        "complete",
+        "fail",
+        "process",
+        "receipt",
+        "worker"
+      ],
+      "source": "_emit_telegram_operational_event_safely(name='telegram_worker_processing_failed', level='error', component='receipt', outcome='error', operation='complete_receipt', error_category='persistence', stage='complete_receipt')"
+    },
+    {
+      "call": "_fail_claimed_telegram_update_safely",
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2296,
+      "metric_terms": [],
+      "operation_terms": [
+        "claim",
+        "fail",
+        "lease",
+        "update"
+      ],
+      "source": "_fail_claimed_telegram_update_safely(lease)"
+    },
+    {
+      "call": "isinstance",
+      "file": "api/telegram_webhook.py",
+      "function": "telegram_webhook",
+      "line": 2332,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "isinstance(update, dict)"
+    },
+    {
+      "call": "enqueue_authenticated_telegram_update_atomic",
+      "file": "api/telegram_webhook.py",
+      "function": "telegram_webhook",
+      "line": 2345,
+      "metric_terms": [],
+      "operation_terms": [
+        "enqueue",
+        "update"
+      ],
+      "source": "enqueue_authenticated_telegram_update_atomic(update)"
+    },
+    {
+      "call": "HTTPException",
+      "file": "api/telegram_webhook.py",
+      "function": "telegram_webhook",
+      "line": 2359,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "HTTPException(status_code=409, detail='Conflito no update Telegram.')"
+    },
+    {
+      "call": "HTTPException",
+      "file": "api/telegram_webhook.py",
+      "function": "telegram_webhook",
+      "line": 2371,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "HTTPException(status_code=503, detail='Processamento Telegram temporariamente indisponível.')"
+    },
+    {
+      "call": "HTTPException",
+      "file": "api/telegram_webhook.py",
+      "function": "telegram_webhook",
+      "line": 2380,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "HTTPException(status_code=503, detail='Processamento Telegram temporariamente indisponível.')"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "_configuration_error",
+      "line": 83,
+      "metric_terms": [],
+      "operation_terms": [
+        "update",
+        "worker"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError('A configuração do worker Telegram é inválida.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConfig",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_worker_config_from_env",
+      "line": 176,
+      "metric_terms": [],
+      "operation_terms": [
+        "update",
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConfig()"
+    },
+    {
+      "call": "TelegramUpdateWorkerConfig",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_worker_config_from_env",
+      "line": 180,
+      "metric_terms": [],
+      "operation_terms": [
+        "lease",
+        "retry",
+        "update",
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConfig(lease_seconds=_read_integer(resolved_environment, ENV_LEASE_SECONDS, defaults.lease_seconds), idle_sleep_seconds=_read_float(resolved_environment, ENV_IDLE_SLEEP_SECONDS, defaults.idle_sleep_seconds), unavailable_sleep_seconds=_read_float(resolved_environment, ENV_UNAVAILABLE_SLEEP_SECONDS, defaults.unavailable_sleep_seconds), recovery_interval_seconds=_read_float(resolved_environment, ENV_RECOVERY_INTERVAL_SECONDS, defaults.recovery_interval_seconds), recovery_batch_s"
+    },
+    {
+      "call": "_read_integer",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_worker_config_from_env",
+      "line": 181,
+      "metric_terms": [],
+      "operation_terms": [
+        "lease"
+      ],
+      "source": "_read_integer(resolved_environment, ENV_LEASE_SECONDS, defaults.lease_seconds)"
+    },
+    {
+      "call": "_read_integer",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_worker_config_from_env",
+      "line": 216,
+      "metric_terms": [],
+      "operation_terms": [
+        "retry"
+      ],
+      "source": "_read_integer(resolved_environment, ENV_RETRY_BASE_DELAY_SECONDS, defaults.retry_base_delay_seconds)"
+    },
+    {
+      "call": "_read_integer",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_worker_config_from_env",
+      "line": 224,
+      "metric_terms": [],
+      "operation_terms": [
+        "retry"
+      ],
+      "source": "_read_integer(resolved_environment, ENV_RETRY_MAX_DELAY_SECONDS, defaults.retry_max_delay_seconds)"
+    },
+    {
+      "call": "signature.bind",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "_observable_bridge_factory_kwargs",
+      "line": 271,
+      "metric_terms": [
+        "metric",
+        "metrics"
+      ],
+      "operation_terms": [],
+      "source": "signature.bind(metrics=metrics, event_sink=event_sink, clock=clock)"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "_resolve_telegram_operational_log_level",
+      "line": 342,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError(f'Nível de logging Telegram inválido. Valores permitidos: {allowed}.')"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "create_production_telegram_event_sink",
+      "line": 374,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError('Logger operacional Telegram inválido.')"
+    },
+    {
+      "call": "callable",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 493,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "update"
+      ],
+      "source": "callable(process_telegram_update)"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 496,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "update"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError('O processador Telegram é inválido.')"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 503,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError('A factory da conversation bridge é inválida.')"
+    },
+    {
+      "call": "callable",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 507,
+      "metric_terms": [
+        "metric",
+        "metrics"
+      ],
+      "operation_terms": [],
+      "source": "callable(metrics_factory)"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 508,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError('A factory de métricas é inválida.')"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 513,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError('A factory de eventos é inválida.')"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 518,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError('O relógio de observabilidade é inválido.')"
+    },
+    {
+      "call": "metrics_factory",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 523,
+      "metric_terms": [
+        "metric",
+        "metrics"
+      ],
+      "operation_terms": [],
+      "source": "metrics_factory()"
+    },
+    {
+      "call": "isinstance",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 526,
+      "metric_terms": [
+        "metric",
+        "metrics"
+      ],
+      "operation_terms": [],
+      "source": "isinstance(metrics, TelegramConversationMetrics)"
+    },
+    {
+      "call": "_observable_bridge_factory_kwargs",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 543,
+      "metric_terms": [
+        "metric",
+        "metrics"
+      ],
+      "operation_terms": [],
+      "source": "_observable_bridge_factory_kwargs(create_postgres_telegram_webhook_conversation_bridge, metrics=metrics, event_sink=event_sink, clock=clock)"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 558,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError('Não foi possível compor o estado conversacional durável.')"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_telegram_processor",
+      "line": 564,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError('A conversation bridge criada é inválida.')"
+    },
+    {
+      "call": "process_telegram_update",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "process_with_durable_conversation_state",
+      "line": 571,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "update"
+      ],
+      "source": "process_telegram_update(update, conversation_bridge=conversation_bridge)"
+    },
+    {
+      "call": "json.dumps",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "_emit_event",
+      "line": 593,
+      "metric_terms": [
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(',', ':'), allow_nan=False)"
+    },
+    {
+      "call": "_emit_event",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "emit_runner_result",
+      "line": 625,
+      "metric_terms": [],
+      "operation_terms": [
+        "worker"
+      ],
+      "source": "_emit_event('telegram_worker_result', result.to_safe_dict(), stream=stream)"
+    },
+    {
+      "call": "_emit_event",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "emit_runner_summary",
+      "line": 637,
+      "metric_terms": [],
+      "operation_terms": [
+        "worker"
+      ],
+      "source": "_emit_event('telegram_worker_summary', summary.to_safe_dict(), stream=stream)"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "_install_signal_handlers",
+      "line": 688,
+      "metric_terms": [],
+      "operation_terms": [
+        "update",
+        "worker"
+      ],
+      "source": "TelegramUpdateRunnerConfigurationError('O stop_event do worker é inválido.')"
+    },
+    {
+      "call": "argparse.ArgumentParser",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "_build_parser",
+      "line": 789,
+      "metric_terms": [],
+      "operation_terms": [
+        "update",
+        "worker"
+      ],
+      "source": "argparse.ArgumentParser(prog='run_telegram_update_worker', description='Executa o worker durável da fila Telegram da INNA.')"
+    },
+    {
+      "call": "inspect.signature",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "_load_productive_telegram_processor",
+      "line": 833,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "inspect.signature(load_telegram_processor)"
+    },
+    {
+      "call": "load_telegram_processor",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "_load_productive_telegram_processor",
+      "line": 852,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "load_telegram_processor(**loader_kwargs)"
+    },
+    {
+      "call": "load_worker_config_from_env",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 891,
+      "metric_terms": [],
+      "operation_terms": [
+        "worker"
+      ],
+      "source": "load_worker_config_from_env()"
+    },
+    {
+      "call": "load_telegram_update_keyring_from_env",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 895,
+      "metric_terms": [],
+      "operation_terms": [
+        "update"
+      ],
+      "source": "load_telegram_update_keyring_from_env()"
+    },
+    {
+      "call": "_load_productive_telegram_processor",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 899,
+      "metric_terms": [],
+      "operation_terms": [
+        "process"
+      ],
+      "source": "_load_productive_telegram_processor(stderr=resolved_stderr)"
+    },
+    {
+      "call": "_emit_event",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 908,
+      "metric_terms": [],
+      "operation_terms": [
+        "worker"
+      ],
+      "source": "_emit_event('telegram_worker_error', {'error_code': 'telegram.worker_configuration_invalid'}, stream=resolved_stderr)"
+    },
+    {
+      "call": "_emit_event",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 922,
+      "metric_terms": [],
+      "operation_terms": [
+        "fail",
+        "worker"
+      ],
+      "source": "_emit_event('telegram_worker_error', {'error_code': 'telegram.worker_initialization_failed'}, stream=resolved_stderr)"
+    },
+    {
+      "call": "_emit_event",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 948,
+      "metric_terms": [],
+      "operation_terms": [
+        "worker"
+      ],
+      "source": "_emit_event('telegram_worker_started', _config_to_safe_dict(config), stream=resolved_stdout)"
+    },
+    {
+      "call": "run_telegram_update_worker",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 957,
+      "metric_terms": [],
+      "operation_terms": [
+        "process",
+        "update",
+        "worker"
+      ],
+      "source": "run_telegram_update_worker(processor, stop_event=stop_event, config=config, keyring=keyring, on_result=lambda result: emit_runner_result(result, stream=resolved_stdout), max_cycles=arguments.max_cycles)"
+    },
+    {
+      "call": "_emit_event",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 979,
+      "metric_terms": [],
+      "operation_terms": [
+        "worker"
+      ],
+      "source": "_emit_event('telegram_worker_stopped', {'reason': 'keyboard_interrupt'}, stream=resolved_stdout)"
+    },
+    {
+      "call": "_emit_event",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 993,
+      "metric_terms": [],
+      "operation_terms": [
+        "worker"
+      ],
+      "source": "_emit_event('telegram_worker_error', {'error_code': 'telegram.worker_configuration_invalid'}, stream=resolved_stderr)"
+    },
+    {
+      "call": "_emit_event",
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 1007,
+      "metric_terms": [],
+      "operation_terms": [
+        "fail",
+        "worker"
+      ],
+      "source": "_emit_event('telegram_worker_error', {'error_code': 'telegram.worker_runtime_failed'}, stream=resolved_stderr)"
+    },
+    {
+      "call": "frozenset",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "<module>",
+      "line": 8,
+      "metric_terms": [],
+      "operation_terms": [
+        "claim",
+        "complete",
+        "fail",
+        "process",
+        "receipt",
+        "session",
+        "update"
+      ],
+      "source": "frozenset({'load_or_open_session', 'save_session', 'reload_session', 'delete_session', 'resolve_language', 'claim_update', 'process_update', 'complete_receipt', 'fail_receipt', 'rollback'})"
+    },
+    {
+      "call": "frozenset",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "<module>",
+      "line": 23,
+      "metric_terms": [],
+      "operation_terms": [
+        "receipt",
+        "worker"
+      ],
+      "source": "frozenset({'bridge', 'worker', 'webhook', 'receipt', 'repository'})"
+    },
+    {
+      "call": "frozenset",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "<module>",
+      "line": 33,
+      "metric_terms": [],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "frozenset({'success', 'error', 'conflict', 'recovered', 'discarded', 'skipped'})"
+    },
+    {
+      "call": "frozenset",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "<module>",
+      "line": 44,
+      "metric_terms": [],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "frozenset({'configuration', 'validation', 'security', 'identity', 'persistence', 'external_service', 'optimistic_conflict', 'timeout', 'unavailable', 'unknown'})"
+    },
+    {
+      "call": "ValueError",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "_validate_duration",
+      "line": 92,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [],
+      "source": "ValueError('duration_ms não pode ser negativa.')"
+    },
+    {
+      "call": "ValueError",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "_validate_duration",
+      "line": 97,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [],
+      "source": "ValueError('duration_ms não pode ser NaN.')"
+    },
+    {
+      "call": "ValueError",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "_validate_duration",
+      "line": 105,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [],
+      "source": "ValueError('duration_ms deve ser finita.')"
+    },
+    {
+      "call": "object.__setattr__",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "__post_init__",
+      "line": 125,
+      "metric_terms": [
+        "metric"
+      ],
+      "operation_terms": [],
+      "source": "object.__setattr__(self, 'operation', _validate_choice(field_name='operation', value=self.operation, allowed=ALLOWED_METRIC_OPERATIONS))"
+    },
+    {
+      "call": "_validate_choice",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "__post_init__",
+      "line": 128,
+      "metric_terms": [
+        "metric"
+      ],
+      "operation_terms": [],
+      "source": "_validate_choice(field_name='operation', value=self.operation, allowed=ALLOWED_METRIC_OPERATIONS)"
+    },
+    {
+      "call": "object.__setattr__",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "__post_init__",
+      "line": 135,
+      "metric_terms": [
+        "metric"
+      ],
+      "operation_terms": [],
+      "source": "object.__setattr__(self, 'component', _validate_choice(field_name='component', value=self.component, allowed=ALLOWED_METRIC_COMPONENTS))"
+    },
+    {
+      "call": "_validate_choice",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "__post_init__",
+      "line": 138,
+      "metric_terms": [
+        "metric"
+      ],
+      "operation_terms": [],
+      "source": "_validate_choice(field_name='component', value=self.component, allowed=ALLOWED_METRIC_COMPONENTS)"
+    },
+    {
+      "call": "object.__setattr__",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "__post_init__",
+      "line": 155,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [],
+      "source": "object.__setattr__(self, 'duration_ms', _validate_duration(self.duration_ms))"
+    },
+    {
+      "call": "_validate_duration",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "__post_init__",
+      "line": 158,
+      "metric_terms": [
+        "duration"
+      ],
+      "operation_terms": [],
+      "source": "_validate_duration(self.duration_ms)"
+    },
+    {
+      "call": "ValueError",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "__post_init__",
+      "line": 182,
+      "metric_terms": [],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "ValueError('error_category é obrigatória para outcomes error ou conflict.')"
+    },
+    {
+      "call": "ValueError",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "__post_init__",
+      "line": 195,
+      "metric_terms": [],
+      "operation_terms": [
+        "conflict"
+      ],
+      "source": "ValueError('conflict_recovered somente pode ser usado em conflito ou recuperação.')"
+    },
+    {
+      "call": "object.__setattr__",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "__post_init__",
+      "line": 247,
+      "metric_terms": [
+        "metric"
+      ],
+      "operation_terms": [],
+      "source": "object.__setattr__(self, 'component', _validate_choice(field_name='component', value=self.component, allowed=ALLOWED_METRIC_COMPONENTS))"
+    },
+    {
+      "call": "_validate_choice",
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "__post_init__",
+      "line": 250,
+      "metric_terms": [
+        "metric"
+      ],
+      "operation_terms": [],
+      "source": "_validate_choice(field_name='component', value=self.component, allowed=ALLOWED_METRIC_COMPONENTS)"
+    },
+    {
+      "call": "isinstance",
+      "file": "src/services/telegram_observability/metrics.py",
+      "function": "record_operation",
+      "line": 43,
+      "metric_terms": [
+        "metric",
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "isinstance(record, TelegramConversationMetricRecord)"
+    },
+    {
+      "call": "TypeError",
+      "file": "src/services/telegram_observability/metrics.py",
+      "function": "record_operation",
+      "line": 47,
+      "metric_terms": [
+        "metric",
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "TypeError('record deve ser TelegramConversationMetricRecord.')"
+    },
+    {
+      "call": "self._records.append",
+      "file": "src/services/telegram_observability/metrics.py",
+      "function": "record_operation",
+      "line": 53,
+      "metric_terms": [
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "self._records.append(record)"
+    },
+    {
+      "call": "tuple",
+      "file": "src/services/telegram_observability/metrics.py",
+      "function": "snapshot",
+      "line": 62,
+      "metric_terms": [
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "tuple(self._records)"
+    },
+    {
+      "call": "self._records.clear",
+      "file": "src/services/telegram_observability/metrics.py",
+      "function": "clear",
+      "line": 68,
+      "metric_terms": [
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "self._records.clear()"
+    },
+    {
+      "call": "sum",
+      "file": "src/services/telegram_observability/metrics.py",
+      "function": "count",
+      "line": 78,
+      "metric_terms": [
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "sum((1 for record in self.snapshot() if (operation is None or record.operation == operation) and (component is None or record.component == component) and (outcome is None or record.outcome == outcome) and (error_category is None or record.error_category == error_category)))"
+    },
+    {
+      "call": "Counter",
+      "file": "src/services/telegram_observability/metrics.py",
+      "function": "operation_counts",
+      "line": 106,
+      "metric_terms": [
+        "counter",
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "Counter(((record.component, record.operation, record.outcome) for record in self.snapshot()))"
+    },
+    {
+      "call": "tuple",
+      "file": "src/services/telegram_observability/metrics.py",
+      "function": "durations_ms",
+      "line": 122,
+      "metric_terms": [
+        "duration",
+        "record"
+      ],
+      "operation_terms": [],
+      "source": "tuple((record.duration_ms for record in self.snapshot() if operation is None or record.operation == operation))"
+    },
+    {
+      "call": "frozenset",
+      "file": "src/services/telegram_observability/sanitization.py",
+      "function": "<module>",
+      "line": 10,
+      "metric_terms": [],
+      "operation_terms": [
+        "session"
+      ],
+      "source": "frozenset({'chat_id', 'telegram_user_id', 'session_id', 'payload', 'encrypted_payload', 'decrypted_payload', 'message_text', 'text', 'state', 'financial_data', 'nome', 'renda', 'renda_mensal', 'gastos', 'gastos_fixos', 'gastos_variaveis', 'dividas', 'dividas_mensais', 'reserva', 'reserva_atual', 'objetivo', 'token', 'secret', 'password', 'database_url', 'configuration_value', 'query', 'parameters', 'exception_message_raw'})"
+    }
+  ],
+  "summary_by_file": {
+    "api/telegram_webhook.py": 94,
+    "src/channels/telegram_update_worker.py": 39,
+    "src/services/telegram_observability/contracts.py": 17,
+    "src/services/telegram_observability/metrics.py": 8,
+    "src/services/telegram_observability/sanitization.py": 1
+  }
+}

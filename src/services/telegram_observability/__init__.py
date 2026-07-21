@@ -56,3 +56,27 @@ from .structured_logging import (
     serialize_telegram_structured_log,
     telegram_structured_logging_utc_now,
 )
+
+from .productive_metrics import (
+    InMemoryTelegramProductiveMetrics,
+    NoOpTelegramProductiveMetrics,
+    SafeTelegramProductiveMetrics,
+    TELEGRAM_OPERATION_DURATION_BUCKETS_SECONDS,
+    TelegramHistogramSnapshot,
+    TelegramProductiveMetricsSink,
+    TelegramProductiveMetricsSnapshot,
+    normalize_metric_labels,
+)
+
+from .productive_adapter import (
+    CompositeTelegramConversationMetrics,
+    ProductiveTelegramConversationMetricsAdapter,
+    TelegramConversationMetricsRecorder,
+)
+
+from .productive_operations import (
+    NoOpTelegramProductiveOperations,
+    SafeTelegramProductiveOperations,
+    TelegramProductiveOperations,
+    TelegramProductiveOperationsRecorder,
+)

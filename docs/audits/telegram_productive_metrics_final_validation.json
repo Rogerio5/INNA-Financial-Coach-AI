@@ -1,0 +1,115 @@
+{
+  "checks": {
+    "all_contract_metrics_present": true,
+    "all_required_functions_present": true,
+    "all_source_metrics_present": true,
+    "callback_composes_receipt_queue": true,
+    "callback_composes_worker_metrics": true,
+    "no_sensitive_metric_labels": true,
+    "recovery_receipt_excluded": true,
+    "replay_is_explicit": true,
+    "safe_metrics_wrapper_present": true,
+    "safe_operations_wrapper_present": true
+  },
+  "contract_metric_names": [
+    "inna_telegram_conflicts_total",
+    "inna_telegram_failures_total",
+    "inna_telegram_operation_duration_seconds",
+    "inna_telegram_operations_total",
+    "inna_telegram_queue_operations_total",
+    "inna_telegram_receipts_total",
+    "inna_telegram_worker_cycles_total",
+    "inna_telegram_worker_updates_total"
+  ],
+  "expected_metric_names": [
+    "inna_telegram_conflicts_total",
+    "inna_telegram_failures_total",
+    "inna_telegram_operation_duration_seconds",
+    "inna_telegram_operations_total",
+    "inna_telegram_queue_operations_total",
+    "inna_telegram_receipts_total",
+    "inna_telegram_worker_cycles_total",
+    "inna_telegram_worker_updates_total"
+  ],
+  "metric_label_blocks": [
+    {
+      "labels": "labels",
+      "line": 476,
+      "source": "productive_metrics"
+    },
+    {
+      "labels": "labels",
+      "line": 519,
+      "source": "productive_metrics"
+    },
+    {
+      "labels": "{'component': metric.component, 'operation': metric.operation, 'outcome': metric.outcome, 'error_category': error_category}",
+      "line": 560,
+      "source": "productive_metrics"
+    },
+    {
+      "labels": "{'component': metric.component, 'operation': metric.operation, 'outcome': metric.outcome}",
+      "line": 578,
+      "source": "productive_metrics"
+    },
+    {
+      "labels": "{'component': metric.component, 'operation': metric.operation, 'error_category': error_category}",
+      "line": 595,
+      "source": "productive_metrics"
+    },
+    {
+      "labels": "{'operation': metric.operation, 'outcome': conflict_outcome}",
+      "line": 622,
+      "source": "productive_metrics"
+    },
+    {
+      "labels": "labels",
+      "line": 748,
+      "source": "productive_metrics"
+    },
+    {
+      "labels": "labels",
+      "line": 764,
+      "source": "productive_metrics"
+    },
+    {
+      "labels": "{'worker_result': result}",
+      "line": 65,
+      "source": "productive_operations"
+    },
+    {
+      "labels": "{'outcome': outcome, 'error_category': resolved_error_category}",
+      "line": 83,
+      "source": "productive_operations"
+    },
+    {
+      "labels": "{'receipt_status': status, 'outcome': outcome, 'error_category': resolved_error_category}",
+      "line": 120,
+      "source": "productive_operations"
+    },
+    {
+      "labels": "{'queue_operation': operation, 'outcome': outcome, 'error_category': resolved_error_category}",
+      "line": 167,
+      "source": "productive_operations"
+    },
+    {
+      "labels": "{'component': 'worker', 'operation': 'process_update', 'error_category': resolved_error_category}",
+      "line": 97,
+      "source": "productive_operations"
+    },
+    {
+      "labels": "{'component': 'receipt', 'operation': operation, 'error_category': resolved_error_category}",
+      "line": 144,
+      "source": "productive_operations"
+    },
+    {
+      "labels": "{'component': 'queue', 'operation': mapped_operation, 'error_category': resolved_error_category}",
+      "line": 197,
+      "source": "productive_operations"
+    }
+  ],
+  "missing_contract_metrics": [],
+  "missing_functions": [],
+  "missing_source_metrics": [],
+  "sensitive_label_occurrences": []
+}

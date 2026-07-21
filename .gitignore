@@ -54,3 +54,5 @@ src/backups_dashboard_antigos/
 src/**/*backup*.py
 src/**/*antes_*.py
 src/dashboard_quebrado_*.py
+
+# Python compiled artifacts
