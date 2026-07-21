@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "all_required_metrics_present": true,
+    "deterministic_export": true,
+    "no_chat_id": true,
+    "no_claim_token": true,
+    "no_payload": true,
+    "no_update_id": true,
+    "no_user_id": true,
+    "openmetrics_content_type": true,
+    "openmetrics_with_eof": true,
+    "prometheus_content_type": true,
+    "prometheus_without_eof": true
+  },
+  "failed_checks": [],
+  "openmetrics_content_type": "application/openmetrics-text; version=1.0.0; charset=utf-8",
+  "openmetrics_size_bytes": 551,
+  "phase": "F2H5-J1",
+  "prometheus_content_type": "text/plain; version=0.0.4; charset=utf-8",
+  "prometheus_size_bytes": 545,
+  "required_metrics": [
+    "inna_telegram_queue_operations_total",
+    "inna_telegram_receipts_total",
+    "inna_telegram_worker_cycles_total",
+    "inna_telegram_worker_updates_total"
+  ]
+}

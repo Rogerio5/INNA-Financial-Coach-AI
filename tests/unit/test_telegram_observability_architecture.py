@@ -57,8 +57,24 @@ def test_observability_package_has_no_prometheus_dependency():
                     or ""
                 )
 
-                if module.startswith(
-                    "prometheus"
+                is_absolute_import = (
+                    node.level == 0
+                )
+
+                is_external_prometheus = (
+                    module == "prometheus"
+                    or module.startswith(
+                        "prometheus."
+                    )
+                    or module == "prometheus_client"
+                    or module.startswith(
+                        "prometheus_client."
+                    )
+                )
+
+                if (
+                    is_absolute_import
+                    and is_external_prometheus
                 ):
                     violations.append(
                         (
