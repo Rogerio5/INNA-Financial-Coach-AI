@@ -12,6 +12,7 @@ from __future__ import annotations
 import uuid
 from typing import Any
 
+from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, StateGraph
 
 from src.agents.nodes import (
@@ -31,13 +32,95 @@ from src.context_engineering.node import (
 )
 
 
+DEFAULT_LANGGRAPH_RECURSION_LIMIT = 25
+
+ALLOWED_AGENT_ROUTES = frozenset(
+    {
+        "financial_agent",
+        "education_agent",
+        "rag_agent",
+        "report_agent",
+        "fallback_agent",
+    }
+)
+
+
+class LangGraphExecutionLimitError(
+    RuntimeError
+):
+    """
+    Indica que a execução do grafo excedeu
+    o limite operacional permitido.
+    """
+
+
+def _criar_config_execucao(
+    *,
+    thread_id: str | None = None,
+) -> dict[str, Any]:
+    """
+    Cria a configuração central de execução.
+
+    recursion_limit é uma chave de nível superior
+    do RunnableConfig do LangGraph.
+    """
+    config: dict[str, Any] = {
+        "recursion_limit": (
+            DEFAULT_LANGGRAPH_RECURSION_LIMIT
+        ),
+    }
+
+    normalized_thread_id = str(
+        thread_id or ""
+    ).strip()
+
+    if normalized_thread_id:
+        config["configurable"] = {
+            "thread_id": normalized_thread_id,
+        }
+
+    return config
+
+
+def _invocar_grafo_seguro(
+    grafo: Any,
+    estado_inicial: InnaAgentState,
+    *,
+    config: dict[str, Any],
+) -> InnaAgentState:
+    """
+    Executa o grafo com limite explícito.
+
+    Não cria resposta parcial silenciosa quando
+    o limite é atingido.
+    """
+    try:
+        return grafo.invoke(
+            estado_inicial,
+            config=config,
+        )
+    except GraphRecursionError as error:
+        raise LangGraphExecutionLimitError(
+            "A execução do núcleo agentic excedeu "
+            "o limite máximo de passos permitido."
+        ) from error
+
+
 def _selecionar_rota(
     state: InnaAgentState,
 ) -> str:
-    return state.get(
-        "next_node",
-        "fallback_agent",
-    )
+    route = str(
+        state.get(
+            "next_node",
+            "fallback_agent",
+        )
+        or "fallback_agent"
+    ).strip()
+
+    if route not in ALLOWED_AGENT_ROUTES:
+        return "fallback_agent"
+
+    return route
 
 
 def criar_builder_inna() -> StateGraph:
@@ -149,6 +232,7 @@ def _criar_estado_inicial(
         "context": {},
         "tool_results": [],
         "errors": [],
+        "route_history": [],
         "trace": [],
     }
 
@@ -175,8 +259,12 @@ def executar_nucleo_inna(
         moeda=moeda,
     )
 
-    return inna_agent_graph.invoke(
-        estado_inicial
+    config = _criar_config_execucao()
+
+    return _invocar_grafo_seguro(
+        inna_agent_graph,
+        estado_inicial,
+        config=config,
     )
 
 
@@ -215,18 +303,17 @@ def executar_nucleo_inna_persistente(
         moeda=moeda,
     )
 
-    config = {
-        "configurable": {
-            "thread_id": thread_id,
-        }
-    }
+    config = _criar_config_execucao(
+        thread_id=thread_id,
+    )
 
     with abrir_checkpointer_postgres() as checkpointer:
         grafo = criar_grafo_inna(
             checkpointer=checkpointer
         )
 
-        return grafo.invoke(
+        return _invocar_grafo_seguro(
+            grafo,
             estado_inicial,
             config=config,
         )
@@ -266,6 +353,9 @@ def consultar_estado_conversa(
 
 
 __all__ = [
+    "ALLOWED_AGENT_ROUTES",
+    "DEFAULT_LANGGRAPH_RECURSION_LIMIT",
+    "LangGraphExecutionLimitError",
     "criar_builder_inna",
     "criar_grafo_inna",
     "inna_agent_graph",

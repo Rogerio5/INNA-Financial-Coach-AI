@@ -540,9 +540,46 @@ def supervisor_node(
         or []
     )
 
+    existing_route_history = list(
+        state.get(
+            "route_history",
+            [],
+        )
+        or []
+    )
+
+    route_source = str(
+        decision.classification_source
+        or "fallback"
+    ).strip()
+
+    routing_reason = str(
+        decision.reason
+        or "Motivo de roteamento não informado."
+    ).strip()
+
+    route_record = {
+        "intent": decision.intent,
+        "next_node": decision.next_node,
+        "source": route_source,
+        "reason": routing_reason,
+        "confidence": decision.confidence,
+        "fallback_used": (
+            decision.fallback_used
+        ),
+        "gemini_called": (
+            decision.gemini_called
+        ),
+    }
+
+    updated_route_history = [
+        *existing_route_history,
+        route_record,
+    ]
+
     trace_item = (
         "supervisor:"
-        f"{decision.classification_source}:"
+        f"{route_source}:"
         f"{decision.intent}"
     )
 
@@ -555,6 +592,11 @@ def supervisor_node(
         "intent": decision.intent,
         "confidence": decision.confidence,
         "next_node": decision.next_node,
+        "route_source": route_source,
+        "routing_reason": routing_reason,
+        "route_history": (
+            updated_route_history
+        ),
         "use_rag": decision.use_rag,
         "use_database": (
             decision.use_database

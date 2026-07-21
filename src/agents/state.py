@@ -98,6 +98,10 @@ class InnaAgentState(TypedDict, total=False):
     confidence: float
     next_node: str
 
+    route_source: str
+    routing_reason: str
+    route_history: list[dict[str, Any]]
+
     use_rag: bool
     use_database: bool
     generate_report: bool
