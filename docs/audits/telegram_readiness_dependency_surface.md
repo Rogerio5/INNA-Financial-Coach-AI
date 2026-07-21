@@ -1,0 +1,324 @@
+# F2H5-H2A — Superfície de dependências para readiness
+
+## Resumo
+
+- Arquivos analisados: 26
+- Definições relevantes: 76
+- Imports relevantes: 27
+- Chamadas relevantes: 229
+- Candidatos não mutantes: 113
+- Operações mutantes a evitar: 116
+
+## Definições relevantes
+
+- `src/channels/telegram_update_worker.py:247` — function `_observable_bridge_factory_kwargs`
+- `src/channels/telegram_update_worker.py:508` — function `load_telegram_processor`
+- `src/channels/telegram_update_worker.py:858` — function `_productive_receipt_for_runner_result`
+- `src/channels/telegram_update_worker.py:966` — function `_productive_queue_for_runner_result`
+- `src/channels/telegram_update_worker.py:1115` — function `record_productive_receipt_and_queue_result`
+- `src/channels/telegram_update_worker.py:1417` — function `_load_productive_telegram_processor`
+- `src/services/telegram_observability/health_readiness.py:298` — function `ready`
+- `src/services/telegram_observability/health_readiness.py:627` — function `create_process_health_service`
+- `src/services/telegram_observability/productive_operations.py:29` — function `record_receipt`
+- `src/services/telegram_observability/productive_operations.py:38` — function `record_queue_operation`
+- `src/services/telegram_observability/productive_operations.py:108` — function `record_receipt`
+- `src/services/telegram_observability/productive_operations.py:155` — function `record_queue_operation`
+- `src/services/telegram_observability/productive_operations.py:226` — function `record_receipt`
+- `src/services/telegram_observability/productive_operations.py:237` — function `record_queue_operation`
+- `src/services/telegram_observability/productive_operations.py:287` — function `record_receipt`
+- `src/services/telegram_observability/productive_operations.py:303` — function `record_queue_operation`
+- `src/services/telegram_update_jobs/execution.py:56` — class `TelegramUpdateExecutionDecryptionError`
+- `src/services/telegram_update_jobs/execution.py:486` — function `decrypt_authenticated_telegram_worker_lease`
+- `src/services/telegram_update_jobs/ingress.py:167` — class `_ReceiptSnapshot`
+- `src/services/telegram_update_jobs/ingress.py:180` — class `_JobSnapshot`
+- `src/services/telegram_update_jobs/ingress.py:244` — function `_set_transaction_timeouts`
+- `src/services/telegram_update_jobs/ingress.py:256` — function `_receipt_snapshot_from_row`
+- `src/services/telegram_update_jobs/ingress.py:340` — function `_job_snapshot_from_row`
+- `src/services/telegram_update_jobs/ingress.py:405` — function `_select_existing_job`
+- `src/services/telegram_update_jobs/ingress.py:470` — function `_ensure_encrypted_job`
+- `src/services/telegram_update_jobs/ingress.py:581` — function `enqueue_authenticated_telegram_update_atomic`
+- `src/services/telegram_update_jobs/repository.py:280` — class `TelegramUpdateJobRepositoryError`
+- `src/services/telegram_update_jobs/repository.py:288` — class `TelegramUpdateJobOwnershipError`
+- `src/services/telegram_update_jobs/repository.py:296` — class `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/repository.py:308` — class `TelegramUpdateJobRecord`
+- `src/services/telegram_update_jobs/repository.py:331` — class `TelegramUpdateJobLease`
+- `src/services/telegram_update_jobs/repository.py:622` — function `enqueue_telegram_update_job`
+- `src/services/telegram_update_jobs/repository.py:739` — function `claim_next_telegram_update_job`
+- `src/services/telegram_update_jobs/repository.py:799` — function `renew_telegram_update_job_lease`
+- `src/services/telegram_update_jobs/repository.py:871` — function `complete_telegram_update_job`
+- `src/services/telegram_update_jobs/repository.py:932` — function `retry_or_dead_letter_telegram_update_job`
+- `src/services/telegram_update_jobs/repository.py:1012` — function `recover_expired_telegram_update_jobs`
+- `src/services/telegram_update_jobs/runner.py:59` — class `TelegramUpdateProcessorError`
+- `src/services/telegram_update_jobs/runner.py:640` — function `run_one_telegram_update_job`
+- `src/services/telegram_update_jobs/service.py:56` — class `TelegramUpdateJobServiceError`
+- `src/services/telegram_update_jobs/service.py:64` — class `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/service.py:72` — class `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:80` — class `TelegramUpdateJobEncryptionError`
+- `src/services/telegram_update_jobs/service.py:88` — class `TelegramUpdateJobDecryptionError`
+- `src/services/telegram_update_jobs/service.py:239` — class `TelegramUpdateEncryptionKeyring`
+- `src/services/telegram_update_jobs/service.py:337` — class `EncryptedTelegramUpdatePayload`
+- `src/services/telegram_update_jobs/service.py:365` — function `load_telegram_update_keyring_from_env`
+- `src/services/telegram_update_jobs/service.py:525` — function `encrypt_authenticated_telegram_update`
+- `src/services/telegram_update_jobs/service.py:593` — function `decrypt_authenticated_telegram_update`
+- `src/services/telegram_update_jobs/service.py:717` — function `generate_telegram_update_job_lock_token`
+- `src/services/telegram_update_jobs/worker.py:174` — class `_ReceiptCandidate`
+- `src/services/telegram_update_jobs/worker.py:325` — function `_set_transaction_timeouts`
+- `src/services/telegram_update_jobs/worker.py:538` — function `claim_next_authenticated_telegram_update_job_atomic`
+- `src/services/telegram_update_jobs/worker.py:919` — class `_OwnedReceiptCompletionSnapshot`
+- `src/services/telegram_update_jobs/worker.py:935` — class `_CompletedJobSnapshot`
+- `src/services/telegram_update_jobs/worker.py:952` — class `_CompletedReceiptSnapshot`
+- `src/services/telegram_update_jobs/worker.py:1067` — function `_owned_receipt_completion_from_row`
+- `src/services/telegram_update_jobs/worker.py:1126` — function `_completed_job_from_row`
+- `src/services/telegram_update_jobs/worker.py:1187` — function `_completed_receipt_from_row`
+- `src/services/telegram_update_jobs/worker.py:1237` — function `_validate_completed_job_matches_lease`
+- `src/services/telegram_update_jobs/worker.py:1336` — function `complete_authenticated_telegram_update_job_atomic`
+- `src/services/telegram_update_jobs/worker.py:1764` — class `_FailureReceiptSnapshot`
+- `src/services/telegram_update_jobs/worker.py:1782` — class `_FailedJobSnapshot`
+- `src/services/telegram_update_jobs/worker.py:1807` — class `_FailedReceiptResult`
+- `src/services/telegram_update_jobs/worker.py:1969` — function `_failure_receipt_from_row`
+- `src/services/telegram_update_jobs/worker.py:2053` — function `_failed_job_from_row`
+- `src/services/telegram_update_jobs/worker.py:2159` — function `_failed_receipt_result_from_row`
+- `src/services/telegram_update_jobs/worker.py:2217` — function `_validate_failed_job_matches_lease`
+- `src/services/telegram_update_jobs/worker.py:2313` — function `retry_or_dead_letter_authenticated_telegram_update_job_atomic`
+- `src/services/telegram_update_jobs/worker.py:3077` — function `recover_expired_authenticated_telegram_update_jobs_atomic`
+- `src/services/telegram_update_receipts/repository.py:156` — class `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/service.py:26` — class `TelegramUpdateReceiptServiceError`
+- `src/services/telegram_update_receipts/service.py:34` — class `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:42` — class `TelegramUpdateReceiptConflictError`
+- `src/services/telegram_update_receipts/service.py:51` — class `TelegramUpdateReceiptUnavailableError`
+- `src/services/telegram_update_receipts/service.py:59` — class `TelegramUpdateReceiptOwnershipError`
+
+## Candidatos não mutantes para probes
+
+- `src/channels/telegram_update_worker.py:569` — `load_telegram_processor` chama `metrics_factory`
+- `src/channels/telegram_update_worker.py:570` — `load_telegram_processor` chama `event_sink_factory`
+- `src/channels/telegram_update_worker.py:589` — `load_telegram_processor` chama `_observable_bridge_factory_kwargs`
+- `src/channels/telegram_update_worker.py:598` — `load_telegram_processor` chama `create_postgres_telegram_webhook_conversation_bridge`
+- `src/channels/telegram_update_worker.py:1121` — `record_productive_receipt_and_queue_result` chama `_productive_receipt_for_runner_result`
+- `src/channels/telegram_update_worker.py:1133` — `record_productive_receipt_and_queue_result` chama `operations.record_receipt`
+- `src/channels/telegram_update_worker.py:1142` — `record_productive_receipt_and_queue_result` chama `_productive_queue_for_runner_result`
+- `src/channels/telegram_update_worker.py:1154` — `record_productive_receipt_and_queue_result` chama `operations.record_queue_operation`
+- `src/channels/telegram_update_worker.py:1228` — `handle_productive_runner_result` chama `record_productive_receipt_and_queue_result`
+- `src/channels/telegram_update_worker.py:1486` — `_load_productive_telegram_processor` chama `load_telegram_processor`
+- `src/channels/telegram_update_worker.py:1548` — `main` chama `_load_productive_telegram_processor`
+- `src/services/telegram_observability/contracts.py:270` — `__post_init__` chama `MappingProxyType`
+- `src/services/telegram_observability/health_readiness.py:99` — `_safe_details` chama `MappingProxyType`
+- `src/services/telegram_observability/health_readiness.py:146` — `_safe_details` chama `MappingProxyType`
+- `src/services/telegram_observability/productive_metrics.py:31` — `<module>` chama `MappingProxyType`
+- `src/services/telegram_observability/productive_metrics.py:160` — `<module>` chama `MappingProxyType`
+- `src/services/telegram_observability/productive_metrics.py:681` — `snapshot` chama `MappingProxyType`
+- `src/services/telegram_observability/productive_metrics.py:692` — `snapshot` chama `MappingProxyType`
+- `src/services/telegram_observability/productive_metrics.py:694` — `snapshot` chama `MappingProxyType`
+- `src/services/telegram_observability/productive_metrics.py:703` — `snapshot` chama `MappingProxyType`
+- `src/services/telegram_observability/productive_metrics.py:705` — `snapshot` chama `MappingProxyType`
+- `src/services/telegram_observability/productive_operations.py:295` — `record_receipt` chama `self._delegate.record_receipt`
+- `src/services/telegram_observability/productive_operations.py:311` — `record_queue_operation` chama `self._delegate.record_queue_operation`
+- `src/services/telegram_observability/sanitization.py:110` — `_redact_string` chama `_DATABASE_URL_PATTERN.sub`
+- `src/services/telegram_observability/structured_logging.py:30` — `<module>` chama `MappingProxyType`
+- `src/services/telegram_update_jobs/execution.py:348` — `_freeze_json_value` chama `MappingProxyType`
+- `src/services/telegram_update_jobs/execution.py:571` — `decrypt_authenticated_telegram_worker_lease` chama `decrypted.get`
+- `src/services/telegram_update_jobs/ingress.py:247` — `_set_transaction_timeouts` chama `cursor.execute`
+- `src/services/telegram_update_jobs/ingress.py:251` — `_set_transaction_timeouts` chama `cursor.execute`
+- `src/services/telegram_update_jobs/ingress.py:329` — `_receipt_snapshot_from_row` chama `_ReceiptSnapshot`
+- `src/services/telegram_update_jobs/ingress.py:396` — `_job_snapshot_from_row` chama `_JobSnapshot`
+- `src/services/telegram_update_jobs/ingress.py:410` — `_select_existing_job` chama `cursor.execute`
+- `src/services/telegram_update_jobs/ingress.py:422` — `_select_existing_job` chama `_job_snapshot_from_row`
+- `src/services/telegram_update_jobs/ingress.py:432` — `_build_duplicate_outcome` chama `_select_existing_job`
+- `src/services/telegram_update_jobs/ingress.py:497` — `_ensure_encrypted_job` chama `cursor.execute`
+- `src/services/telegram_update_jobs/ingress.py:522` — `_ensure_encrypted_job` chama `cursor.execute`
+- `src/services/telegram_update_jobs/ingress.py:536` — `_ensure_encrypted_job` chama `_job_snapshot_from_row`
+- `src/services/telegram_update_jobs/ingress.py:681` — `enqueue_authenticated_telegram_update_atomic` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/ingress.py:685` — `enqueue_authenticated_telegram_update_atomic` chama `_set_transaction_timeouts`
+- `src/services/telegram_update_jobs/ingress.py:689` — `enqueue_authenticated_telegram_update_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/ingress.py:701` — `enqueue_authenticated_telegram_update_atomic` chama `_receipt_snapshot_from_row`
+- `src/services/telegram_update_jobs/ingress.py:706` — `enqueue_authenticated_telegram_update_atomic` chama `_ensure_encrypted_job`
+- `src/services/telegram_update_jobs/ingress.py:721` — `enqueue_authenticated_telegram_update_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/ingress.py:740` — `enqueue_authenticated_telegram_update_atomic` chama `_receipt_snapshot_from_row`
+- `src/services/telegram_update_jobs/ingress.py:767` — `enqueue_authenticated_telegram_update_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/ingress.py:784` — `enqueue_authenticated_telegram_update_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/ingress.py:792` — `enqueue_authenticated_telegram_update_atomic` chama `_ensure_encrypted_job`
+- `src/services/telegram_update_jobs/ingress.py:806` — `enqueue_authenticated_telegram_update_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/ingress.py:823` — `enqueue_authenticated_telegram_update_atomic` chama `_receipt_snapshot_from_row`
+- `src/services/telegram_update_jobs/ingress.py:828` — `enqueue_authenticated_telegram_update_atomic` chama `_ensure_encrypted_job`
+- `src/services/telegram_update_jobs/repository.py:613` — `_set_timeouts` chama `cursor.execute`
+- `src/services/telegram_update_jobs/repository.py:617` — `_set_timeouts` chama `cursor.execute`
+- `src/services/telegram_update_jobs/repository.py:670` — `enqueue_telegram_update_job` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/repository.py:678` — `enqueue_telegram_update_job` chama `cursor.execute`
+- `src/services/telegram_update_jobs/repository.py:705` — `enqueue_telegram_update_job` chama `cursor.execute`
+- `src/services/telegram_update_jobs/repository.py:757` — `claim_next_telegram_update_job` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/repository.py:765` — `claim_next_telegram_update_job` chama `cursor.execute`
+- `src/services/telegram_update_jobs/repository.py:822` — `renew_telegram_update_job_lease` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/repository.py:830` — `renew_telegram_update_job_lease` chama `cursor.execute`
+- `src/services/telegram_update_jobs/repository.py:886` — `complete_telegram_update_job` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/repository.py:894` — `complete_telegram_update_job` chama `cursor.execute`
+- `src/services/telegram_update_jobs/repository.py:960` — `retry_or_dead_letter_telegram_update_job` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/repository.py:968` — `retry_or_dead_letter_telegram_update_job` chama `cursor.execute`
+- `src/services/telegram_update_jobs/repository.py:1027` — `recover_expired_telegram_update_jobs` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/repository.py:1035` — `recover_expired_telegram_update_jobs` chama `cursor.execute`
+- `src/services/telegram_update_jobs/runner.py:731` — `run_one_telegram_update_job` chama `resolved_dependencies.decrypt`
+- `src/services/telegram_update_jobs/runner.py:817` — `run_one_telegram_update_job` chama `processor`
+- `src/services/telegram_update_jobs/service.py:308` — `__post_init__` chama `MappingProxyType`
+- `src/services/telegram_update_jobs/service.py:547` — `encrypt_authenticated_telegram_update` chama `resolved_keyring.get_key`
+- `src/services/telegram_update_jobs/service.py:564` — `encrypt_authenticated_telegram_update` chama `encrypt`
+- `src/services/telegram_update_jobs/service.py:644` — `decrypt_authenticated_telegram_update` chama `resolved_keyring.get_key`
+- `src/services/telegram_update_jobs/service.py:662` — `decrypt_authenticated_telegram_update` chama `decrypt`
+- `src/services/telegram_update_jobs/worker.py:328` — `_set_transaction_timeouts` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:332` — `_set_transaction_timeouts` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:375` — `_candidate_from_row` chama `_ReceiptCandidate`
+- `src/services/telegram_update_jobs/worker.py:591` — `claim_next_authenticated_telegram_update_job_atomic` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/worker.py:595` — `claim_next_authenticated_telegram_update_job_atomic` chama `_set_transaction_timeouts`
+- `src/services/telegram_update_jobs/worker.py:599` — `claim_next_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:616` — `claim_next_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:656` — `claim_next_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:1117` — `_owned_receipt_completion_from_row` chama `_OwnedReceiptCompletionSnapshot`
+- `src/services/telegram_update_jobs/worker.py:1365` — `complete_authenticated_telegram_update_job_atomic` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/worker.py:1369` — `complete_authenticated_telegram_update_job_atomic` chama `_set_transaction_timeouts`
+- `src/services/telegram_update_jobs/worker.py:1373` — `complete_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:1391` — `complete_authenticated_telegram_update_job_atomic` chama `_owned_receipt_completion_from_row`
+- `src/services/telegram_update_jobs/worker.py:1418` — `complete_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:1469` — `complete_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:1495` — `complete_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:2395` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/worker.py:2399` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `_set_transaction_timeouts`
+- `src/services/telegram_update_jobs/worker.py:2403` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:2454` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:2513` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:2536` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `cursor.execute`
+- `src/services/telegram_update_jobs/worker.py:3102` — `recover_expired_authenticated_telegram_update_jobs_atomic` chama `cursor_postgres`
+- `src/services/telegram_update_jobs/worker.py:3106` — `recover_expired_authenticated_telegram_update_jobs_atomic` chama `_set_transaction_timeouts`
+- `src/services/telegram_update_jobs/worker.py:3110` — `recover_expired_authenticated_telegram_update_jobs_atomic` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:510` — `claim_telegram_update` chama `cursor_postgres`
+- `src/services/telegram_update_receipts/repository.py:514` — `claim_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:519` — `claim_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:524` — `claim_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:540` — `claim_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:595` — `claim_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:621` — `claim_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:636` — `claim_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:691` — `complete_telegram_update` chama `cursor_postgres`
+- `src/services/telegram_update_receipts/repository.py:695` — `complete_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:700` — `complete_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:705` — `complete_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:770` — `fail_telegram_update` chama `cursor_postgres`
+- `src/services/telegram_update_receipts/repository.py:774` — `fail_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:779` — `fail_telegram_update` chama `cursor.execute`
+- `src/services/telegram_update_receipts/repository.py:784` — `fail_telegram_update` chama `cursor.execute`
+
+## Operações mutantes que não devem ser probes
+
+- `src/channels/telegram_update_worker.py:1540` — `main` chama `load_telegram_update_keyring_from_env`
+- `src/services/telegram_update_jobs/execution.py:509` — `decrypt_authenticated_telegram_worker_lease` chama `crypto_service.decrypt_authenticated_telegram_update`
+- `src/services/telegram_update_jobs/execution.py:546` — `decrypt_authenticated_telegram_worker_lease` chama `TelegramUpdateExecutionDecryptionError`
+- `src/services/telegram_update_jobs/execution.py:554` — `decrypt_authenticated_telegram_worker_lease` chama `TelegramUpdateExecutionDecryptionError`
+- `src/services/telegram_update_jobs/execution.py:559` — `decrypt_authenticated_telegram_worker_lease` chama `TelegramUpdateExecutionDecryptionError`
+- `src/services/telegram_update_jobs/ingress.py:485` — `_ensure_encrypted_job` chama `crypto_service.encrypt_authenticated_telegram_update`
+- `src/services/telegram_update_jobs/ingress.py:650` — `enqueue_authenticated_telegram_update_atomic` chama `receipt_service.fingerprint_telegram_update`
+- `src/services/telegram_update_jobs/repository.py:378` — `_validate_integer` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/repository.py:406` — `_validate_sha256` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/repository.py:421` — `_validate_key_id` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/repository.py:436` — `_validate_error_code` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/repository.py:458` — `_validate_bytes` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/repository.py:469` — `_validate_bytes` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/repository.py:512` — `_record_from_row` chama `TelegramUpdateJobRecord`
+- `src/services/telegram_update_jobs/repository.py:527` — `_record_from_row` chama `TelegramUpdateJobRepositoryError`
+- `src/services/telegram_update_jobs/repository.py:537` — `_lease_from_row` chama `TelegramUpdateJobLease`
+- `src/services/telegram_update_jobs/repository.py:604` — `_lease_from_row` chama `TelegramUpdateJobRepositoryError`
+- `src/services/telegram_update_jobs/repository.py:717` — `enqueue_telegram_update_job` chama `TelegramUpdateJobRepositoryError`
+- `src/services/telegram_update_jobs/repository.py:733` — `enqueue_telegram_update_job` chama `TelegramUpdateJobRepositoryError`
+- `src/services/telegram_update_jobs/repository.py:793` — `claim_next_telegram_update_job` chama `TelegramUpdateJobRepositoryError`
+- `src/services/telegram_update_jobs/repository.py:848` — `renew_telegram_update_job_lease` chama `TelegramUpdateJobOwnershipError`
+- `src/services/telegram_update_jobs/repository.py:865` — `renew_telegram_update_job_lease` chama `TelegramUpdateJobRepositoryError`
+- `src/services/telegram_update_jobs/repository.py:909` — `complete_telegram_update_job` chama `TelegramUpdateJobOwnershipError`
+- `src/services/telegram_update_jobs/repository.py:926` — `complete_telegram_update_job` chama `TelegramUpdateJobRepositoryError`
+- `src/services/telegram_update_jobs/repository.py:989` — `retry_or_dead_letter_telegram_update_job` chama `TelegramUpdateJobOwnershipError`
+- `src/services/telegram_update_jobs/repository.py:1006` — `retry_or_dead_letter_telegram_update_job` chama `TelegramUpdateJobRepositoryError`
+- `src/services/telegram_update_jobs/repository.py:1058` — `recover_expired_telegram_update_jobs` chama `TelegramUpdateJobRepositoryError`
+- `src/services/telegram_update_jobs/runner.py:1184` — `run_telegram_update_worker` chama `run_one_telegram_update_job`
+- `src/services/telegram_update_jobs/service.py:104` — `_validate_key_id` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/service.py:120` — `_validate_update_id` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/service.py:140` — `_validate_integer` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/service.py:162` — `_validate_bytes` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/service.py:173` — `_validate_bytes` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/service.py:198` — `_decode_base64url_key` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:220` — `_decode_base64url_key` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:230` — `_decode_base64url_key` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:258` — `__post_init__` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:266` — `__post_init__` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:286` — `__post_init__` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:295` — `__post_init__` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:326` — `get_key` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:378` — `load_telegram_update_keyring_from_env` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:383` — `load_telegram_update_keyring_from_env` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:396` — `load_telegram_update_keyring_from_env` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:404` — `load_telegram_update_keyring_from_env` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:420` — `load_telegram_update_keyring_from_env` chama `TelegramUpdateJobConfigurationError`
+- `src/services/telegram_update_jobs/service.py:430` — `load_telegram_update_keyring_from_env` chama `TelegramUpdateEncryptionKeyring`
+- `src/services/telegram_update_jobs/service.py:446` — `canonicalize_telegram_update` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/service.py:475` — `canonicalize_telegram_update` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/service.py:484` — `canonicalize_telegram_update` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/service.py:534` — `encrypt_authenticated_telegram_update` chama `load_telegram_update_keyring_from_env`
+- `src/services/telegram_update_jobs/service.py:573` — `encrypt_authenticated_telegram_update` chama `TelegramUpdateJobEncryptionError`
+- `src/services/telegram_update_jobs/service.py:579` — `encrypt_authenticated_telegram_update` chama `TelegramUpdateJobEncryptionError`
+- `src/services/telegram_update_jobs/service.py:584` — `encrypt_authenticated_telegram_update` chama `EncryptedTelegramUpdatePayload`
+- `src/services/telegram_update_jobs/service.py:633` — `decrypt_authenticated_telegram_update` chama `TelegramUpdateJobDecryptionError`
+- `src/services/telegram_update_jobs/service.py:640` — `decrypt_authenticated_telegram_update` chama `load_telegram_update_keyring_from_env`
+- `src/services/telegram_update_jobs/service.py:649` — `decrypt_authenticated_telegram_update` chama `TelegramUpdateJobDecryptionError`
+- `src/services/telegram_update_jobs/service.py:671` — `decrypt_authenticated_telegram_update` chama `TelegramUpdateJobDecryptionError`
+- `src/services/telegram_update_jobs/service.py:676` — `decrypt_authenticated_telegram_update` chama `TelegramUpdateJobDecryptionError`
+- `src/services/telegram_update_jobs/service.py:693` — `decrypt_authenticated_telegram_update` chama `TelegramUpdateJobDecryptionError`
+- `src/services/telegram_update_jobs/service.py:701` — `decrypt_authenticated_telegram_update` chama `TelegramUpdateJobDecryptionError`
+- `src/services/telegram_update_jobs/service.py:710` — `decrypt_authenticated_telegram_update` chama `TelegramUpdateJobDecryptionError`
+- `src/services/telegram_update_jobs/service.py:726` — `generate_telegram_update_job_lock_token` chama `TelegramUpdateJobServiceError`
+- `src/services/telegram_update_jobs/service.py:765` — `calculate_telegram_update_retry_delay` chama `TelegramUpdateJobValidationError`
+- `src/services/telegram_update_jobs/worker.py:568` — `claim_next_authenticated_telegram_update_job_atomic` chama `crypto_service.generate_telegram_update_job_lock_token`
+- `src/services/telegram_update_jobs/worker.py:1130` — `_completed_job_from_row` chama `_CompletedJobSnapshot`
+- `src/services/telegram_update_jobs/worker.py:1192` — `_completed_receipt_from_row` chama `_CompletedReceiptSnapshot`
+- `src/services/telegram_update_jobs/worker.py:1290` — `_build_completion_outcome` chama `_validate_completed_job_matches_lease`
+- `src/services/telegram_update_jobs/worker.py:1440` — `complete_authenticated_telegram_update_job_atomic` chama `_completed_job_from_row`
+- `src/services/telegram_update_jobs/worker.py:1485` — `complete_authenticated_telegram_update_job_atomic` chama `_completed_job_from_row`
+- `src/services/telegram_update_jobs/worker.py:1490` — `complete_authenticated_telegram_update_job_atomic` chama `_validate_completed_job_matches_lease`
+- `src/services/telegram_update_jobs/worker.py:1511` — `complete_authenticated_telegram_update_job_atomic` chama `_completed_receipt_from_row`
+- `src/services/telegram_update_jobs/worker.py:2043` — `_failure_receipt_from_row` chama `_FailureReceiptSnapshot`
+- `src/services/telegram_update_jobs/worker.py:2061` — `_failed_job_from_row` chama `_FailedJobSnapshot`
+- `src/services/telegram_update_jobs/worker.py:2163` — `_failed_receipt_result_from_row` chama `_FailedReceiptResult`
+- `src/services/telegram_update_jobs/worker.py:2271` — `_build_failure_outcome` chama `_validate_failed_job_matches_lease`
+- `src/services/telegram_update_jobs/worker.py:2421` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `_failure_receipt_from_row`
+- `src/services/telegram_update_jobs/worker.py:2474` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `_failed_job_from_row`
+- `src/services/telegram_update_jobs/worker.py:2526` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `_failed_job_from_row`
+- `src/services/telegram_update_jobs/worker.py:2530` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `_validate_failed_job_matches_lease`
+- `src/services/telegram_update_jobs/worker.py:2552` — `retry_or_dead_letter_authenticated_telegram_update_job_atomic` chama `_failed_receipt_result_from_row`
+- `src/services/telegram_update_receipts/repository.py:323` — `_validar_attempt_count` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:343` — `_extrair_update_id` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:358` — `_extrair_status_banco` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:367` — `_extrair_status_banco` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:396` — `_resultado_claim` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:425` — `_resultado_lifecycle` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:440` — `_resultado_lifecycle` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:553` — `claim_telegram_update` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:571` — `claim_telegram_update` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:645` — `claim_telegram_update` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:666` — `claim_telegram_update` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:738` — `complete_telegram_update` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/repository.py:820` — `fail_telegram_update` chama `TelegramUpdateReceiptRepositoryError`
+- `src/services/telegram_update_receipts/service.py:186` — `_extract_update_id` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:205` — `serialize_telegram_update_canonical` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:230` — `serialize_telegram_update_canonical` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:239` — `serialize_telegram_update_canonical` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:268` — `_generate_claim_token` chama `TelegramUpdateReceiptServiceError`
+- `src/services/telegram_update_receipts/service.py:288` — `claim_authenticated_telegram_update` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:308` — `claim_authenticated_telegram_update` chama `repository.claim_telegram_update`
+- `src/services/telegram_update_receipts/service.py:322` — `claim_authenticated_telegram_update` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:331` — `claim_authenticated_telegram_update` chama `TelegramUpdateReceiptConflictError`
+- `src/services/telegram_update_receipts/service.py:340` — `claim_authenticated_telegram_update` chama `TelegramUpdateReceiptUnavailableError`
+- `src/services/telegram_update_receipts/service.py:356` — `claim_authenticated_telegram_update` chama `TelegramUpdateReceiptServiceError`
+- `src/services/telegram_update_receipts/service.py:388` — `_validate_lease` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:403` — `_validate_lease` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:410` — `_validate_lease` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:417` — `_validate_lease` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:435` — `complete_authenticated_telegram_update` chama `repository.complete_telegram_update`
+- `src/services/telegram_update_receipts/service.py:450` — `complete_authenticated_telegram_update` chama `TelegramUpdateReceiptOwnershipError`
+- `src/services/telegram_update_receipts/service.py:458` — `complete_authenticated_telegram_update` chama `TelegramUpdateReceiptUnavailableError`
+- `src/services/telegram_update_receipts/service.py:493` — `fail_authenticated_telegram_update` chama `TelegramUpdateReceiptValidationError`
+- `src/services/telegram_update_receipts/service.py:499` — `fail_authenticated_telegram_update` chama `repository.fail_telegram_update`
+- `src/services/telegram_update_receipts/service.py:515` — `fail_authenticated_telegram_update` chama `TelegramUpdateReceiptOwnershipError`
+- `src/services/telegram_update_receipts/service.py:523` — `fail_authenticated_telegram_update` chama `TelegramUpdateReceiptUnavailableError`

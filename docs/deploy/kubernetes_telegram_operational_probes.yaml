@@ -1,0 +1,63 @@
+# Exemplo de probes operacionais da API INNA.
+# Este arquivo não contém segredos.
+
+ports:
+  - name: http
+    containerPort: 8000
+    protocol: TCP
+
+startupProbe:
+  httpGet:
+    path: /health
+    port: http
+    scheme: HTTP
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 30
+  successThreshold: 1
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+    scheme: HTTP
+  initialDelaySeconds: 10
+  periodSeconds: 15
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: http
+    scheme: HTTP
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+  successThreshold: 1
+
+env:
+  - name: INNA_INTERNAL_READY_ENABLED
+    value: "false"
+
+  - name: INNA_READINESS_CACHE_TTL_SECONDS
+    value: "1"
+
+  - name: INNA_READINESS_CONCURRENT_WAIT_SECONDS
+    value: "0.25"
+
+  - name: INNA_READINESS_EVALUATION_BUDGET_SECONDS
+    value: "2"
+
+# Quando a rota interna for necessária:
+#
+# - name: INNA_INTERNAL_READY_ENABLED
+#   value: "true"
+#
+# - name: INNA_INTERNAL_OPERATIONS_TOKEN
+#   valueFrom:
+#     secretKeyRef:
+#       name: inna-operational-secrets
+#       key: internal-operations-token

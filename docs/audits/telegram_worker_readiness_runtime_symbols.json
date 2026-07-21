@@ -1,0 +1,457 @@
+{
+  "failures": [],
+  "modules": [
+    {
+      "module": "src.channels.telegram_update_worker",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.productive_adapter",
+          "kind": "type",
+          "name": "CompositeTelegramConversationMetrics",
+          "signature": "(recorders: 'Iterable[TelegramConversationMetricsRecorder]') -> 'None'"
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "int",
+          "name": "EXIT_RUNTIME_ERROR",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.productive_metrics",
+          "kind": "type",
+          "name": "InMemoryTelegramProductiveMetrics",
+          "signature": "(*, histogram_buckets: 'tuple[float, ...]' = (0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0)) -> 'None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.metrics",
+          "kind": "type",
+          "name": "NoOpTelegramConversationMetrics",
+          "signature": "()"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.productive_adapter",
+          "kind": "type",
+          "name": "ProductiveTelegramConversationMetricsAdapter",
+          "signature": "(productive_metrics: 'TelegramProductiveMetricsSink') -> 'None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.productive_metrics",
+          "kind": "type",
+          "name": "SafeTelegramProductiveMetrics",
+          "signature": "(delegate: 'TelegramProductiveMetricsSink') -> 'None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.contracts",
+          "kind": "_ProtocolMeta",
+          "name": "TelegramConversationMetrics",
+          "signature": "(*args, **kwargs)"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.channels.telegram_update_worker",
+          "kind": "type",
+          "name": "TelegramProductiveMetricsRuntime",
+          "signature": "() -> 'None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "type",
+          "name": "TelegramUpdateJobConfigurationError",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.channels.telegram_update_worker",
+          "kind": "function",
+          "name": "_load_productive_telegram_processor",
+          "signature": "(*, stderr: 'TextIO', metrics_runtime: 'TelegramProductiveMetricsRuntime | None' = None)"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.channels.telegram_update_worker",
+          "kind": "function",
+          "name": "_productive_receipt_for_runner_result",
+          "signature": "(result: 'TelegramUpdateRunnerResult') -> 'tuple[str, str, str | None] | None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.channels.telegram_update_worker",
+          "kind": "function",
+          "name": "create_production_telegram_metrics_runtime",
+          "signature": "() -> 'TelegramProductiveMetricsRuntime'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.channels.telegram_update_worker",
+          "kind": "function",
+          "name": "load_telegram_processor",
+          "signature": "(*, metrics_factory: 'Callable[[], TelegramConversationMetrics]' = <class 'src.services.telegram_observability.metrics.NoOpTelegramConversationMetrics'>, event_sink_factory: 'Callable[[], TelegramOperationalEventSink]' = <class 'src.services.telegram_observability.events.NoOpTelegramOperationalEventSink'>, clock: 'Callable[[], float]' = <built-in function perf_counter>)"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "function",
+          "name": "load_telegram_update_keyring_from_env",
+          "signature": "() -> 'TelegramUpdateEncryptionKeyring'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.channels.telegram_update_worker",
+          "kind": "function",
+          "name": "load_worker_config_from_env",
+          "signature": "(environment: 'Mapping[str, str] | None' = None) -> 'TelegramUpdateWorkerConfig'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.channels.telegram_update_worker",
+          "kind": "function",
+          "name": "record_productive_receipt_and_queue_result",
+          "signature": "(result: 'TelegramUpdateRunnerResult', *, operations) -> 'None'"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_update_jobs.repository",
+      "symbols": [
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_CLAIM_NEXT_JOB",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_COMPLETE_JOB",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_INSERT_JOB",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_RECOVER_EXPIRED_JOBS",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_RENEW_JOB_LEASE",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_RETRY_OR_DEAD_LETTER_JOB",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_SELECT_JOB",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "type",
+          "name": "TelegramUpdateJobLease",
+          "signature": "(update_id: 'int', attempt_count: 'int', max_attempts: 'int', payload_version: 'int', payload_ciphertext: 'bytes', payload_nonce: 'bytes', payload_key_id: 'str', lock_token: 'str') -> None"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "type",
+          "name": "TelegramUpdateJobOwnershipError",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "type",
+          "name": "TelegramUpdateJobRecord",
+          "signature": "(update_id: 'int', status: 'str', attempt_count: 'int', max_attempts: 'int', payload_version: 'int') -> None"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "type",
+          "name": "TelegramUpdateJobRepositoryError",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "type",
+          "name": "TelegramUpdateJobValidationError",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "function",
+          "name": "claim_next_telegram_update_job",
+          "signature": "(*, lock_token: 'str', lease_seconds: 'int' = 120) -> 'TelegramUpdateJobLease | None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "function",
+          "name": "complete_telegram_update_job",
+          "signature": "(*, update_id: 'int', lock_token: 'str') -> 'TelegramUpdateJobRecord'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.database.connection",
+          "kind": "function",
+          "name": "cursor_postgres",
+          "signature": "(*, dict_cursor: 'bool' = False, commit_automatico: 'bool' = True)"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "function",
+          "name": "enqueue_telegram_update_job",
+          "signature": "(*, update_id: 'int', payload_ciphertext: 'bytes', payload_nonce: 'bytes', payload_key_id: 'str', payload_version: 'int' = 1, max_attempts: 'int' = 5) -> 'TelegramUpdateJobRecord'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "function",
+          "name": "recover_expired_telegram_update_jobs",
+          "signature": "(*, limit: 'int' = 100) -> 'tuple[TelegramUpdateJobRecord, ...]'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "function",
+          "name": "renew_telegram_update_job_lease",
+          "signature": "(*, update_id: 'int', lock_token: 'str', lease_seconds: 'int' = 120) -> 'TelegramUpdateJobRecord'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.repository",
+          "kind": "function",
+          "name": "retry_or_dead_letter_telegram_update_job",
+          "signature": "(*, update_id: 'int', lock_token: 'str', error_code: 'str', retry_delay_seconds: 'int') -> 'TelegramUpdateJobRecord'"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_update_jobs.service",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "type",
+          "name": "EncryptedTelegramUpdatePayload",
+          "signature": "(update_id: 'int', payload_key_id: 'str', payload_version: 'int', payload_ciphertext: 'bytes', payload_nonce: 'bytes') -> None"
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "int",
+          "name": "PAYLOAD_VERSION",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "type",
+          "name": "TelegramUpdateEncryptionKeyring",
+          "signature": "(active_key_id: 'str', keys: 'Mapping[str, bytes]') -> None"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "type",
+          "name": "TelegramUpdateJobConfigurationError",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "type",
+          "name": "TelegramUpdateJobDecryptionError",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "type",
+          "name": "TelegramUpdateJobEncryptionError",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "type",
+          "name": "TelegramUpdateJobServiceError",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "type",
+          "name": "TelegramUpdateJobValidationError",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "function",
+          "name": "generate_telegram_update_job_lock_token",
+          "signature": "() -> 'str'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "function",
+          "name": "load_telegram_update_keyring_from_env",
+          "signature": "() -> 'TelegramUpdateEncryptionKeyring'"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_update_receipts.repository",
+      "symbols": [
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_COMPLETE_RECEIPT",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_FAIL_RECEIPT",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_INSERT_RECEIPT",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_LOCK_EXISTING_RECEIPT",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_RECLAIM_RECEIPT",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_TOUCH_RECEIPT",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_receipts.repository",
+          "kind": "type",
+          "name": "TelegramUpdateReceiptRepositoryError",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.database.connection",
+          "kind": "function",
+          "name": "cursor_postgres",
+          "signature": "(*, dict_cursor: 'bool' = False, commit_automatico: 'bool' = True)"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_observability.productive_metrics",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.productive_metrics",
+          "kind": "type",
+          "name": "InMemoryTelegramProductiveMetrics",
+          "signature": "(*, histogram_buckets: 'tuple[float, ...]' = (0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0)) -> 'None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.productive_metrics",
+          "kind": "type",
+          "name": "NoOpTelegramProductiveMetrics",
+          "signature": "()"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.productive_metrics",
+          "kind": "type",
+          "name": "SafeTelegramProductiveMetrics",
+          "signature": "(delegate: 'TelegramProductiveMetricsSink') -> 'None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.contracts",
+          "kind": "type",
+          "name": "TelegramConversationMetricRecord",
+          "signature": "(operation: 'str', component: 'str', outcome: 'str', duration_ms: 'float', error_category: 'str | None' = None, conflict_recovered: 'bool | None' = None) -> None"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.productive_metrics",
+          "kind": "_ProtocolMeta",
+          "name": "TelegramProductiveMetricsSink",
+          "signature": "(*args, **kwargs)"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.productive_metrics",
+          "kind": "type",
+          "name": "TelegramProductiveMetricsSnapshot",
+          "signature": "(counters: 'Mapping[str, Mapping[tuple[tuple[str, str], ...], float]]', histograms: 'Mapping[str, Mapping[tuple[tuple[str, str], ...], TelegramHistogramSnapshot]]') -> None"
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "mappingproxy",
+          "name": "_METRIC_LABELS",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.productive_metrics",
+          "kind": "function",
+          "name": "normalize_metric_labels",
+          "signature": "(*, metric_name: 'str', labels: 'Mapping[str, object]') -> 'tuple[tuple[str, str], ...]'"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,826 @@
+{
+  "applications": [
+    {
+      "constructor": "FastAPI",
+      "file": "api/main.py",
+      "keywords": [
+        "title",
+        "description",
+        "version"
+      ],
+      "line": 290,
+      "targets": [
+        "app"
+      ]
+    }
+  ],
+  "existing_operational_routes": [
+    {
+      "async": false,
+      "decorator": "app.get",
+      "file": "api/main.py",
+      "function": "health_check",
+      "line": 308,
+      "method": "get",
+      "path": "/health"
+    }
+  ],
+  "fastapi_imports": [
+    {
+      "file": "api/main.py",
+      "line": 12,
+      "module": "fastapi",
+      "names": [
+        "Depends",
+        "FastAPI",
+        "HTTPException",
+        "Query",
+        "Response"
+      ]
+    },
+    {
+      "file": "api/resend_webhook.py",
+      "line": 9,
+      "module": "fastapi",
+      "names": [
+        "APIRouter",
+        "HTTPException",
+        "Request"
+      ]
+    },
+    {
+      "file": "api/security/internal_request.py",
+      "line": 11,
+      "module": "fastapi",
+      "names": [
+        "Header",
+        "HTTPException",
+        "Request",
+        "status"
+      ]
+    },
+    {
+      "file": "api/security/telegram_webhook.py",
+      "line": 9,
+      "module": "fastapi",
+      "names": [
+        "Header",
+        "HTTPException",
+        "status"
+      ]
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "line": 23,
+      "module": "fastapi",
+      "names": [
+        "APIRouter",
+        "Depends",
+        "HTTPException",
+        "Request"
+      ]
+    }
+  ],
+  "files_scanned": [
+    "api/__init__.py",
+    "api/main.py",
+    "api/resend_webhook.py",
+    "api/schemas.py",
+    "api/security/__init__.py",
+    "api/security/internal_request.py",
+    "api/security/telegram_webhook.py",
+    "api/telegram_webhook.py",
+    "src/__init__.py",
+    "src/agent_tools/__init__.py",
+    "src/agent_tools/catalog.py",
+    "src/agent_tools/core/__init__.py",
+    "src/agent_tools/core/contracts.py",
+    "src/agent_tools/core/executor.py",
+    "src/agent_tools/core/permissions.py",
+    "src/agent_tools/core/registry.py",
+    "src/agent_tools/financial_history_tools.py",
+    "src/agent_tools/financial_tools.py",
+    "src/agent_tools/rag_tools.py",
+    "src/agent_tools/runtime.py",
+    "src/agents/__init__.py",
+    "src/agents/financial_agent.py",
+    "src/agents/financial_history_flow.py",
+    "src/agents/financial_input_resolver.py",
+    "src/agents/gemini_client.py",
+    "src/agents/graph.py",
+    "src/agents/nodes.py",
+    "src/agents/persistence.py",
+    "src/agents/schemas.py",
+    "src/agents/state.py",
+    "src/agents/supervisor.py",
+    "src/agents/supervisor_config.py",
+    "src/agents/supervisor_deadline.py",
+    "src/agents/supervisor_llm.py",
+    "src/agents/supervisor_worker.py",
+    "src/api_client.py",
+    "src/app.py",
+    "src/audit_logger.py",
+    "src/channels/__init__.py",
+    "src/channels/message_parser.py",
+    "src/channels/telegram_bot.py",
+    "src/channels/telegram_context.py",
+    "src/channels/telegram_update_worker.py",
+    "src/config.py",
+    "src/context_engineering/__init__.py",
+    "src/context_engineering/context_builder.py",
+    "src/context_engineering/history_selector.py",
+    "src/context_engineering/node.py",
+    "src/context_engineering/privacy_filter.py",
+    "src/context_engineering/schemas.py",
+    "src/context_engineering/token_budget.py",
+    "src/context_engineering/tool_selector.py",
+    "src/dashboard.py",
+    "src/dashboard_pages/__init__.py",
+    "src/dashboard_pages/health_score_page.py",
+    "src/dashboard_pages/llm_costs_page.py",
+    "src/dashboard_pages/memory_page.py",
+    "src/dashboard_pages/rag_page.py",
+    "src/dashboard_pages/timeline_viewer_page.py",
+    "src/dashboard_pages/tools_analytics_page.py",
+    "src/dashboard_pages/tools_observability_page.py",
+    "src/database/__init__.py",
+    "src/database/connection.py",
+    "src/database/legacy.py",
+    "src/database.py",
+    "src/email_sender.py",
+    "src/feedback.py",
+    "src/financial_engine.py",
+    "src/gemini_client.py",
+    "src/interaction_logger.py",
+    "src/logger.py",
+    "src/models/__init__.py",
+    "src/models/legacy.py",
+    "src/models/memory.py",
+    "src/models/rag.py",
+    "src/models.py",
+    "src/observability/__init__.py",
+    "src/observability/analytics.py",
+    "src/observability/anomalies.py",
+    "src/observability/health.py",
+    "src/observability/health_history.py",
+    "src/observability/health_runtime.py",
+    "src/observability/llm_alerts.py",
+    "src/observability/llm_costs.py",
+    "src/observability/llm_finops.py",
+    "src/observability/llm_notifications.py",
+    "src/observability/llm_tracking.py",
+    "src/observability/metrics.py",
+    "src/observability/narrative.py",
+    "src/observability/resend_webhook.py",
+    "src/observability/timeline.py",
+    "src/pdf_report.py",
+    "src/prompts.py",
+    "src/rag_engine.py",
+    "src/rag_prompts.py",
+    "src/repository.py",
+    "src/services/analytics/__init__.py",
+    "src/services/analytics/evolution.py",
+    "src/services/embeddings/__init__.py",
+    "src/services/embeddings/gemini.py",
+    "src/services/financial_diagnosis/__init__.py",
+    "src/services/financial_diagnosis/contracts.py",
+    "src/services/financial_diagnosis/repository.py",
+    "src/services/financial_diagnosis/service.py",
+    "src/services/financial_history/__init__.py",
+    "src/services/financial_history/repository.py",
+    "src/services/formatter_inna.py",
+    "src/services/formatters/__init__.py",
+    "src/services/formatters/financial.py",
+    "src/services/llm/__init__.py",
+    "src/services/llm/gemini.py",
+    "src/services/llm/model_registry.py",
+    "src/services/memory/__init__.py",
+    "src/services/memory/evolution.py",
+    "src/services/memory/extractor.py",
+    "src/services/memory/repository.py",
+    "src/services/memory_update_inna.py",
+    "src/services/prompt_builder_inna.py",
+    "src/services/prompts/__init__.py",
+    "src/services/prompts/builder.py",
+    "src/services/rag/__init__.py",
+    "src/services/rag/chunking.py",
+    "src/services/rag/document_repository.py",
+    "src/services/rag/documents.py",
+    "src/services/rag/retrieval.py",
+    "src/services/rag/vector_store.py",
+    "src/services/scoring/__init__.py",
+    "src/services/scoring/financial.py",
+    "src/services/telegram_conversation_state/__init__.py",
+    "src/services/telegram_conversation_state/contracts.py",
+    "src/services/telegram_conversation_state/repository.py",
+    "src/services/telegram_conversation_state/runtime.py",
+    "src/services/telegram_conversation_state/store.py",
+    "src/services/telegram_conversation_state/webhook_bridge.py",
+    "src/services/telegram_observability/__init__.py",
+    "src/services/telegram_observability/contracts.py",
+    "src/services/telegram_observability/events.py",
+    "src/services/telegram_observability/health_readiness.py",
+    "src/services/telegram_observability/metrics.py",
+    "src/services/telegram_observability/operational_http.py",
+    "src/services/telegram_observability/productive_adapter.py",
+    "src/services/telegram_observability/productive_metrics.py",
+    "src/services/telegram_observability/productive_operations.py",
+    "src/services/telegram_observability/productive_readiness_factory.py",
+    "src/services/telegram_observability/prometheus_exporter.py",
+    "src/services/telegram_observability/readiness_probes.py",
+    "src/services/telegram_observability/readiness_runtime.py",
+    "src/services/telegram_observability/sanitization.py",
+    "src/services/telegram_observability/structured_logging.py",
+    "src/services/telegram_observability/worker_readiness.py",
+    "src/services/telegram_update_jobs/__init__.py",
+    "src/services/telegram_update_jobs/execution.py",
+    "src/services/telegram_update_jobs/ingress.py",
+    "src/services/telegram_update_jobs/repository.py",
+    "src/services/telegram_update_jobs/runner.py",
+    "src/services/telegram_update_jobs/service.py",
+    "src/services/telegram_update_jobs/worker.py",
+    "src/services/telegram_update_receipts/__init__.py",
+    "src/services/telegram_update_receipts/repository.py",
+    "src/services/telegram_update_receipts/service.py",
+    "src/sidebar_i18n.py",
+    "src/tools/__init__.py",
+    "src/tools/budget_tool.py",
+    "src/tools/debt_tool.py",
+    "src/tools/observability.py",
+    "src/tools/orchestrator.py",
+    "src/tools/registry.py",
+    "src/tools/reserve_tool.py",
+    "src/tools/router.py",
+    "src/tools/simulation_tool.py",
+    "src/translations.py",
+    "src/utils/__init__.py",
+    "src/utils/env.py"
+  ],
+  "included_routers": [
+    {
+      "call": "app.include_router",
+      "file": "api/main.py",
+      "line": 793,
+      "prefix": null,
+      "router": "telegram_router"
+    },
+    {
+      "call": "app.include_router",
+      "file": "api/main.py",
+      "line": 794,
+      "prefix": null,
+      "router": "resend_router"
+    }
+  ],
+  "lifespan_hooks": [],
+  "routers": [
+    {
+      "file": "api/resend_webhook.py",
+      "line": 27,
+      "prefix": "/webhooks",
+      "targets": [
+        "router"
+      ]
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "line": 71,
+      "prefix": "/telegram",
+      "targets": [
+        "router"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "async": false,
+      "decorator": "app.get",
+      "file": "api/main.py",
+      "function": "root",
+      "line": 298,
+      "method": "get",
+      "path": "/"
+    },
+    {
+      "async": false,
+      "decorator": "app.get",
+      "file": "api/main.py",
+      "function": "health_check",
+      "line": 308,
+      "method": "get",
+      "path": "/health"
+    },
+    {
+      "async": false,
+      "decorator": "app.post",
+      "file": "api/main.py",
+      "function": "gerar_diagnostico",
+      "line": 619,
+      "method": "post",
+      "path": "/diagnostico"
+    },
+    {
+      "async": false,
+      "decorator": "app.post",
+      "file": "api/main.py",
+      "function": "gerar_diagnostico_telegram_interno",
+      "line": 642,
+      "method": "post",
+      "path": "/internal/telegram/diagnostico"
+    },
+    {
+      "async": false,
+      "decorator": "app.post",
+      "file": "api/main.py",
+      "function": "registrar_feedback",
+      "line": 714,
+      "method": "post",
+      "path": "/feedback"
+    },
+    {
+      "async": false,
+      "decorator": "app.get",
+      "file": "api/main.py",
+      "function": "listar_diagnosticos",
+      "line": 732,
+      "method": "get",
+      "path": "/diagnosticos"
+    },
+    {
+      "async": false,
+      "decorator": "app.get",
+      "file": "api/main.py",
+      "function": "listar_feedbacks",
+      "line": 737,
+      "method": "get",
+      "path": "/feedbacks"
+    },
+    {
+      "async": false,
+      "decorator": "app.get",
+      "file": "api/main.py",
+      "function": "baixar_relatorio_diagnostico",
+      "line": 742,
+      "method": "get",
+      "path": "/diagnosticos/{diagnostico_id}/relatorio"
+    },
+    {
+      "async": false,
+      "decorator": "app.get",
+      "file": "api/main.py",
+      "function": "listar_diagnosticos_por_usuario",
+      "line": 786,
+      "method": "get",
+      "path": "/diagnosticos/usuario/{nome}"
+    },
+    {
+      "async": false,
+      "decorator": "app.post",
+      "file": "api/main.py",
+      "function": "enviar_diagnostico_por_email",
+      "line": 798,
+      "method": "post",
+      "path": "/diagnosticos/{diagnostico_id}/enviar-email"
+    },
+    {
+      "async": false,
+      "decorator": "app.post",
+      "file": "api/main.py",
+      "function": "registrar_evento",
+      "line": 967,
+      "method": "post",
+      "path": "/eventos"
+    },
+    {
+      "async": false,
+      "decorator": "app.post",
+      "file": "api/main.py",
+      "function": "rag_setup",
+      "line": 996,
+      "method": "post",
+      "path": "/rag/setup"
+    },
+    {
+      "async": false,
+      "decorator": "app.get",
+      "file": "api/main.py",
+      "function": "rag_search",
+      "line": 1040,
+      "method": "get",
+      "path": "/rag/search"
+    },
+    {
+      "async": false,
+      "decorator": "app.post",
+      "file": "api/main.py",
+      "function": "rag_ask",
+      "line": 1063,
+      "method": "post",
+      "path": "/rag/ask"
+    },
+    {
+      "async": true,
+      "decorator": "router.post",
+      "file": "api/resend_webhook.py",
+      "function": "receber_webhook_resend",
+      "line": 34,
+      "method": "post",
+      "path": "/resend"
+    },
+    {
+      "async": true,
+      "decorator": "router.post",
+      "file": "api/telegram_webhook.py",
+      "function": "telegram_webhook",
+      "line": 2302,
+      "method": "post",
+      "path": "/webhook"
+    }
+  ],
+  "security_candidates": [
+    {
+      "decorators": [],
+      "file": "src/context_engineering/token_budget.py",
+      "function": "estimate_tokens",
+      "line": 21
+    },
+    {
+      "decorators": [],
+      "file": "src/context_engineering/token_budget.py",
+      "function": "truncate_text_to_token_budget",
+      "line": 108
+    },
+    {
+      "decorators": [],
+      "file": "src/dashboard.py",
+      "function": "normalizar_risco_admin",
+      "line": 2
+    },
+    {
+      "decorators": [],
+      "file": "src/observability/llm_costs.py",
+      "function": "extrair_tokens_resposta",
+      "line": 219
+    },
+    {
+      "decorators": [],
+      "file": "src/rag_engine.py",
+      "function": "tokenize",
+      "line": 88
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "function": "_validate_integer",
+      "line": 103
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "function": "validate_telegram_identity",
+      "line": 146
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "function": "validate_state_ttl_seconds",
+      "line": 377
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "function": "validate_expected_version",
+      "line": 392
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "function": "validate_cleanup_limit",
+      "line": 402
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "function": "_validate_datetime",
+      "line": 413
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_conversation_state/store.py",
+      "function": "_validate_record_identity",
+      "line": 155
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "function": "_validate_session",
+      "line": 112
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "_validate_choice",
+      "line": 70
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_observability/contracts.py",
+      "function": "_validate_duration",
+      "line": 86
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_observability/operational_http.py",
+      "function": "_internal_runtime_payload",
+      "line": 207
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "function": "_validate_metric_name",
+      "line": 53
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "function": "_validate_label_name",
+      "line": 71
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_observability/readiness_runtime.py",
+      "function": "_validate_non_negative_finite",
+      "line": 19
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_observability/readiness_runtime.py",
+      "function": "invalidate",
+      "line": 180
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "function": "_validate_integer",
+      "line": 89
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "function": "_validate_bytes",
+      "line": 109
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "function": "_validate_worker_lease",
+      "line": 144
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "function": "decrypt_authenticated_telegram_worker_lease",
+      "line": 486
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "function": "_validate_integer",
+      "line": 189
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "function": "_validate_fingerprint",
+      "line": 211
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "function": "_generate_claim_token",
+      "line": 228
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "function": "enqueue_authenticated_telegram_update_atomic",
+      "line": 581
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "function": "_validate_integer",
+      "line": 365
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "function": "_validate_update_id",
+      "line": 385
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "function": "_validate_sha256",
+      "line": 396
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "function": "_validate_key_id",
+      "line": 413
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "function": "_validate_error_code",
+      "line": 428
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "function": "_validate_bytes",
+      "line": 443
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_validate_integer",
+      "line": 368
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_validate_positive_float",
+      "line": 388
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_validate_error_code",
+      "line": 427
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/service.py",
+      "function": "_validate_key_id",
+      "line": 96
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/service.py",
+      "function": "_validate_update_id",
+      "line": 111
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/service.py",
+      "function": "_validate_integer",
+      "line": 127
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/service.py",
+      "function": "_validate_bytes",
+      "line": 147
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/service.py",
+      "function": "_validate_aes_key",
+      "line": 180
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/service.py",
+      "function": "_build_authenticated_data",
+      "line": 494
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/service.py",
+      "function": "encrypt_authenticated_telegram_update",
+      "line": 525
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/service.py",
+      "function": "decrypt_authenticated_telegram_update",
+      "line": 593
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/service.py",
+      "function": "generate_telegram_update_job_lock_token",
+      "line": 717
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_integer",
+      "line": 238
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_sha256",
+      "line": 258
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_key_id",
+      "line": 275
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_bytes",
+      "line": 290
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "claim_next_authenticated_telegram_update_job_atomic",
+      "line": 538
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completion_lease",
+      "line": 961
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completed_job_matches_lease",
+      "line": 1237
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1336
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_worker_error_code",
+      "line": 1926
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_boolean",
+      "line": 1953
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_failed_job_matches_lease",
+      "line": 2217
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2313
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "line": 3077
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "_generate_claim_token",
+      "line": 260
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "claim_authenticated_telegram_update",
+      "line": 275
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "_validate_lease",
+      "line": 381
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "complete_authenticated_telegram_update",
+      "line": 424
+    },
+    {
+      "decorators": [],
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "fail_authenticated_telegram_update",
+      "line": 472
+    }
+  ]
+}

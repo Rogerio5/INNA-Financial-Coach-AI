@@ -1,0 +1,625 @@
+{
+  "failures": [
+    {
+      "error_type": "AttributeError",
+      "file": "src/services/telegram_observability/health_readiness.py",
+      "line": 298,
+      "module": "src.services.telegram_observability.health_readiness",
+      "name": "ready"
+    },
+    {
+      "error_type": "AttributeError",
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 29,
+      "module": "src.services.telegram_observability.productive_operations",
+      "name": "record_receipt"
+    },
+    {
+      "error_type": "AttributeError",
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 38,
+      "module": "src.services.telegram_observability.productive_operations",
+      "name": "record_queue_operation"
+    },
+    {
+      "error_type": "AttributeError",
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 108,
+      "module": "src.services.telegram_observability.productive_operations",
+      "name": "record_receipt"
+    },
+    {
+      "error_type": "AttributeError",
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 155,
+      "module": "src.services.telegram_observability.productive_operations",
+      "name": "record_queue_operation"
+    },
+    {
+      "error_type": "AttributeError",
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 226,
+      "module": "src.services.telegram_observability.productive_operations",
+      "name": "record_receipt"
+    },
+    {
+      "error_type": "AttributeError",
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 237,
+      "module": "src.services.telegram_observability.productive_operations",
+      "name": "record_queue_operation"
+    },
+    {
+      "error_type": "AttributeError",
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 287,
+      "module": "src.services.telegram_observability.productive_operations",
+      "name": "record_receipt"
+    },
+    {
+      "error_type": "AttributeError",
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 303,
+      "module": "src.services.telegram_observability.productive_operations",
+      "name": "record_queue_operation"
+    }
+  ],
+  "resolved": [
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 247,
+      "module": "src.channels.telegram_update_worker",
+      "name": "_observable_bridge_factory_kwargs",
+      "public_methods": [],
+      "signature": "(bridge_factory: 'Callable[..., Any]', *, metrics: 'TelegramConversationMetrics', event_sink: 'TelegramOperationalEventSink', clock: 'Callable[[], float]') -> 'dict[str, object]'"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 508,
+      "module": "src.channels.telegram_update_worker",
+      "name": "load_telegram_processor",
+      "public_methods": [],
+      "signature": "(*, metrics_factory: 'Callable[[], TelegramConversationMetrics]' = <class 'src.services.telegram_observability.metrics.NoOpTelegramConversationMetrics'>, event_sink_factory: 'Callable[[], TelegramOperationalEventSink]' = <class 'src.services.telegram_observability.events.NoOpTelegramOperationalEventSink'>, clock: 'Callable[[], float]' = <built-in function perf_counter>)"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 858,
+      "module": "src.channels.telegram_update_worker",
+      "name": "_productive_receipt_for_runner_result",
+      "public_methods": [],
+      "signature": "(result: 'TelegramUpdateRunnerResult') -> 'tuple[str, str, str | None] | None'"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 966,
+      "module": "src.channels.telegram_update_worker",
+      "name": "_productive_queue_for_runner_result",
+      "public_methods": [],
+      "signature": "(result: 'TelegramUpdateRunnerResult') -> 'tuple[str, str, str | None] | None'"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1115,
+      "module": "src.channels.telegram_update_worker",
+      "name": "record_productive_receipt_and_queue_result",
+      "public_methods": [],
+      "signature": "(result: 'TelegramUpdateRunnerResult', *, operations) -> 'None'"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1417,
+      "module": "src.channels.telegram_update_worker",
+      "name": "_load_productive_telegram_processor",
+      "public_methods": [],
+      "signature": "(*, stderr: 'TextIO', metrics_runtime: 'TelegramProductiveMetricsRuntime | None' = None)"
+    },
+    {
+      "file": "src/services/telegram_observability/health_readiness.py",
+      "line": 627,
+      "module": "src.services.telegram_observability.health_readiness",
+      "name": "create_process_health_service",
+      "public_methods": [],
+      "signature": "(*, clock_check: 'Callable[[], bool]' = <function <lambda> at 0x0000020F11B04720>) -> 'TelegramOperationalStatusService'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "line": 56,
+      "module": "src.services.telegram_update_jobs.execution",
+      "name": "TelegramUpdateExecutionDecryptionError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "line": 486,
+      "module": "src.services.telegram_update_jobs.execution",
+      "name": "decrypt_authenticated_telegram_worker_lease",
+      "public_methods": [],
+      "signature": "(lease: 'worker_module.TelegramUpdateWorkerLease', *, keyring: 'crypto_service.TelegramUpdateEncryptionKeyring | None' = None) -> 'TelegramUpdateWorkerPayload'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 167,
+      "module": "src.services.telegram_update_jobs.ingress",
+      "name": "_ReceiptSnapshot",
+      "public_methods": [],
+      "signature": "(update_id: 'int', status: 'str', attempt_count: 'int', update_fingerprint: 'str | None' = None, lease_active: 'bool' = False) -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 180,
+      "module": "src.services.telegram_update_jobs.ingress",
+      "name": "_JobSnapshot",
+      "public_methods": [],
+      "signature": "(update_id: 'int', status: 'JobState', attempt_count: 'int', max_attempts: 'int', payload_version: 'int') -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 244,
+      "module": "src.services.telegram_update_jobs.ingress",
+      "name": "_set_transaction_timeouts",
+      "public_methods": [],
+      "signature": "(cursor: 'Any') -> 'None'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 256,
+      "module": "src.services.telegram_update_jobs.ingress",
+      "name": "_receipt_snapshot_from_row",
+      "public_methods": [],
+      "signature": "(row: 'Any') -> '_ReceiptSnapshot'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 340,
+      "module": "src.services.telegram_update_jobs.ingress",
+      "name": "_job_snapshot_from_row",
+      "public_methods": [],
+      "signature": "(row: 'Any') -> '_JobSnapshot'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 405,
+      "module": "src.services.telegram_update_jobs.ingress",
+      "name": "_select_existing_job",
+      "public_methods": [],
+      "signature": "(cursor: 'Any', *, update_id: 'int') -> '_JobSnapshot | None'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 470,
+      "module": "src.services.telegram_update_jobs.ingress",
+      "name": "_ensure_encrypted_job",
+      "public_methods": [],
+      "signature": "(cursor: 'Any', *, update: 'dict[str, Any]', update_id: 'int', receipt_state: 'ReceiptState', receipt_attempt_count: 'int', max_attempts: 'int', keyring: 'crypto_service.TelegramUpdateEncryptionKeyring | None') -> 'TelegramUpdateIngressOutcome'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 581,
+      "module": "src.services.telegram_update_jobs.ingress",
+      "name": "enqueue_authenticated_telegram_update_atomic",
+      "public_methods": [],
+      "signature": "(update: 'Mapping[str, Any]', *, receipt_lease_seconds: 'int' = 120, max_attempts: 'int' = 5, keyring: 'crypto_service.TelegramUpdateEncryptionKeyring | None' = None) -> 'TelegramUpdateIngressOutcome'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 280,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "TelegramUpdateJobRepositoryError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 288,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "TelegramUpdateJobOwnershipError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 296,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "TelegramUpdateJobValidationError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 308,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "TelegramUpdateJobRecord",
+      "public_methods": [
+        {
+          "name": "to_safe_dict",
+          "signature": "(self) -> 'dict[str, int | str]'"
+        }
+      ],
+      "signature": "(update_id: 'int', status: 'str', attempt_count: 'int', max_attempts: 'int', payload_version: 'int') -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 331,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "TelegramUpdateJobLease",
+      "public_methods": [
+        {
+          "name": "to_safe_dict",
+          "signature": "(self) -> 'dict[str, int | str]'"
+        }
+      ],
+      "signature": "(update_id: 'int', attempt_count: 'int', max_attempts: 'int', payload_version: 'int', payload_ciphertext: 'bytes', payload_nonce: 'bytes', payload_key_id: 'str', lock_token: 'str') -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 622,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "enqueue_telegram_update_job",
+      "public_methods": [],
+      "signature": "(*, update_id: 'int', payload_ciphertext: 'bytes', payload_nonce: 'bytes', payload_key_id: 'str', payload_version: 'int' = 1, max_attempts: 'int' = 5) -> 'TelegramUpdateJobRecord'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 739,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "claim_next_telegram_update_job",
+      "public_methods": [],
+      "signature": "(*, lock_token: 'str', lease_seconds: 'int' = 120) -> 'TelegramUpdateJobLease | None'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 799,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "renew_telegram_update_job_lease",
+      "public_methods": [],
+      "signature": "(*, update_id: 'int', lock_token: 'str', lease_seconds: 'int' = 120) -> 'TelegramUpdateJobRecord'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 871,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "complete_telegram_update_job",
+      "public_methods": [],
+      "signature": "(*, update_id: 'int', lock_token: 'str') -> 'TelegramUpdateJobRecord'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 932,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "retry_or_dead_letter_telegram_update_job",
+      "public_methods": [],
+      "signature": "(*, update_id: 'int', lock_token: 'str', error_code: 'str', retry_delay_seconds: 'int') -> 'TelegramUpdateJobRecord'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 1012,
+      "module": "src.services.telegram_update_jobs.repository",
+      "name": "recover_expired_telegram_update_jobs",
+      "public_methods": [],
+      "signature": "(*, limit: 'int' = 100) -> 'tuple[TelegramUpdateJobRecord, ...]'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "line": 59,
+      "module": "src.services.telegram_update_jobs.runner",
+      "name": "TelegramUpdateProcessorError",
+      "public_methods": [],
+      "signature": "(error_code: 'str') -> 'None'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "line": 640,
+      "module": "src.services.telegram_update_jobs.runner",
+      "name": "run_one_telegram_update_job",
+      "public_methods": [],
+      "signature": "(processor: 'Callable[[dict[str, Any]], Any]', *, config: 'TelegramUpdateWorkerConfig | None' = None, dependencies: 'TelegramUpdateWorkerDependencies | None' = None, keyring: 'Any' = None) -> 'TelegramUpdateRunnerResult'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 56,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "TelegramUpdateJobServiceError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 64,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "TelegramUpdateJobValidationError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 72,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "TelegramUpdateJobConfigurationError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 80,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "TelegramUpdateJobEncryptionError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 88,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "TelegramUpdateJobDecryptionError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 239,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "TelegramUpdateEncryptionKeyring",
+      "public_methods": [
+        {
+          "name": "get_key",
+          "signature": "(self, key_id: 'str') -> 'bytes'"
+        }
+      ],
+      "signature": "(active_key_id: 'str', keys: 'Mapping[str, bytes]') -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 337,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "EncryptedTelegramUpdatePayload",
+      "public_methods": [
+        {
+          "name": "to_safe_dict",
+          "signature": "(self) -> 'dict[str, int | str]'"
+        }
+      ],
+      "signature": "(update_id: 'int', payload_key_id: 'str', payload_version: 'int', payload_ciphertext: 'bytes', payload_nonce: 'bytes') -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 365,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "load_telegram_update_keyring_from_env",
+      "public_methods": [],
+      "signature": "() -> 'TelegramUpdateEncryptionKeyring'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 525,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "encrypt_authenticated_telegram_update",
+      "public_methods": [],
+      "signature": "(update: 'Any', *, keyring: 'TelegramUpdateEncryptionKeyring | None' = None) -> 'EncryptedTelegramUpdatePayload'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 593,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "decrypt_authenticated_telegram_update",
+      "public_methods": [],
+      "signature": "(*, update_id: 'int', payload_ciphertext: 'bytes', payload_nonce: 'bytes', payload_key_id: 'str', payload_version: 'int', keyring: 'TelegramUpdateEncryptionKeyring | None' = None) -> 'dict[str, Any]'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 717,
+      "module": "src.services.telegram_update_jobs.service",
+      "name": "generate_telegram_update_job_lock_token",
+      "public_methods": [],
+      "signature": "() -> 'str'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 174,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_ReceiptCandidate",
+      "public_methods": [],
+      "signature": "(update_id: 'int', receipt_status: 'str', receipt_attempt_count: 'int') -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 325,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_set_transaction_timeouts",
+      "public_methods": [],
+      "signature": "(cursor: 'Any') -> 'None'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 538,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "claim_next_authenticated_telegram_update_job_atomic",
+      "public_methods": [],
+      "signature": "(*, lease_seconds: 'int' = 120) -> 'TelegramUpdateWorkerLease | None'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 919,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_OwnedReceiptCompletionSnapshot",
+      "public_methods": [],
+      "signature": "(update_id: 'int', status: 'str', attempt_count: 'int', claim_token: 'str', lease_active: 'bool' = False) -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 935,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_CompletedJobSnapshot",
+      "public_methods": [],
+      "signature": "(update_id: 'int', status: 'str', attempt_count: 'int', max_attempts: 'int', payload_version: 'int', payload_cleared: 'bool', ownership_cleared: 'bool', completed_at_set: 'bool') -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 952,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_CompletedReceiptSnapshot",
+      "public_methods": [],
+      "signature": "(update_id: 'int', status: 'str', attempt_count: 'int', completed_at_set: 'bool', lease_closed: 'bool') -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1067,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_owned_receipt_completion_from_row",
+      "public_methods": [],
+      "signature": "(row: 'Any') -> '_OwnedReceiptCompletionSnapshot'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1126,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_completed_job_from_row",
+      "public_methods": [],
+      "signature": "(row: 'Any') -> '_CompletedJobSnapshot'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1187,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_completed_receipt_from_row",
+      "public_methods": [],
+      "signature": "(row: 'Any') -> '_CompletedReceiptSnapshot'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1237,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_validate_completed_job_matches_lease",
+      "public_methods": [],
+      "signature": "(*, lease: 'TelegramUpdateWorkerLease', job: '_CompletedJobSnapshot') -> 'None'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1336,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "complete_authenticated_telegram_update_job_atomic",
+      "public_methods": [],
+      "signature": "(lease: 'TelegramUpdateWorkerLease') -> 'TelegramUpdateWorkerCompletionOutcome'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1764,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_FailureReceiptSnapshot",
+      "public_methods": [],
+      "signature": "(update_id: 'int', status: 'str', attempt_count: 'int', last_error_code: 'str | None', claim_token: 'str', lease_active: 'bool' = False) -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1782,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_FailedJobSnapshot",
+      "public_methods": [],
+      "signature": "(update_id: 'int', status: \"Literal['queued', 'dead_letter']\", attempt_count: 'int', max_attempts: 'int', payload_version: 'int', last_error_code: 'str', payload_retained: 'bool', ownership_cleared: 'bool', completed_at_cleared: 'bool', retry_state_valid: 'bool', dead_letter_state_valid: 'bool') -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1807,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_FailedReceiptResult",
+      "public_methods": [],
+      "signature": "(update_id: 'int', status: \"Literal['failed',]\", attempt_count: 'int', last_error_code: 'str', completed_at_cleared: 'bool', failed_at_set: 'bool', lease_closed: 'bool') -> None"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1969,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_failure_receipt_from_row",
+      "public_methods": [],
+      "signature": "(row: 'Any') -> '_FailureReceiptSnapshot'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2053,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_failed_job_from_row",
+      "public_methods": [],
+      "signature": "(row: 'Any') -> '_FailedJobSnapshot'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2159,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_failed_receipt_result_from_row",
+      "public_methods": [],
+      "signature": "(row: 'Any') -> '_FailedReceiptResult'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2217,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "_validate_failed_job_matches_lease",
+      "public_methods": [],
+      "signature": "(*, lease: 'TelegramUpdateWorkerLease', job: '_FailedJobSnapshot', error_code: 'str') -> 'None'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2313,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "public_methods": [],
+      "signature": "(lease: 'TelegramUpdateWorkerLease', *, error_code: 'str', retry_delay_seconds: 'int', force_dead_letter: 'bool' = False) -> 'TelegramUpdateWorkerFailureOutcome'"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 3077,
+      "module": "src.services.telegram_update_jobs.worker",
+      "name": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "public_methods": [],
+      "signature": "(*, limit: 'int' = 100) -> 'TelegramUpdateWorkerRecoveryBatch'"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 156,
+      "module": "src.services.telegram_update_receipts.repository",
+      "name": "TelegramUpdateReceiptRepositoryError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 26,
+      "module": "src.services.telegram_update_receipts.service",
+      "name": "TelegramUpdateReceiptServiceError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 34,
+      "module": "src.services.telegram_update_receipts.service",
+      "name": "TelegramUpdateReceiptValidationError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 42,
+      "module": "src.services.telegram_update_receipts.service",
+      "name": "TelegramUpdateReceiptConflictError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 51,
+      "module": "src.services.telegram_update_receipts.service",
+      "name": "TelegramUpdateReceiptUnavailableError",
+      "public_methods": [],
+      "signature": null
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 59,
+      "module": "src.services.telegram_update_receipts.service",
+      "name": "TelegramUpdateReceiptOwnershipError",
+      "public_methods": [],
+      "signature": null
+    }
+  ]
+}

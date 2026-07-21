@@ -1,3 +1,4 @@
+from api.telegram_operational_status import router as telegram_operational_router
 from api.telegram_webhook import router as telegram_router
 from api.security import (
     TrustedRequestContext,
@@ -304,13 +305,31 @@ def root():
 
 
 
-@app.get("/health")
+@app.get(
+    "/health",
+    tags=["Operational Status"],
+    summary="Liveness da API INNA",
+    responses={
+        200: {
+            "description": (
+                "Processo da API está ativo."
+            ),
+        },
+        503: {
+            "description": (
+                "Processo indisponível."
+            ),
+        },
+    },
+)
 def health_check():
-    return {
-        "status": "ok",
-        "app": "INNA Financial Coach AI",
-        "message": "API online e pronta para receber requisições."
-    }
+    from api.telegram_operational_status import (
+        create_process_health_starlette_response,
+    )
+
+    return (
+        create_process_health_starlette_response()
+    )
 
 
 def _gerar_e_persistir_diagnostico_canal(
@@ -1119,3 +1138,4 @@ def rag_ask(payload: RagAskRequest):
 
         raise HTTPException(status_code=500, detail=str(exc))
 
+app.include_router(telegram_operational_router)
