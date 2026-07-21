@@ -1,0 +1,90 @@
+{
+  "bindings": {
+    "backlog": {
+      "candidates": [],
+      "description": "Gauge de jobs pendentes.",
+      "required": false,
+      "selected_metric": null,
+      "status": "missing"
+    },
+    "dead_letter_total": {
+      "candidates": [],
+      "description": "Contador ou gauge de dead-letter.",
+      "required": false,
+      "selected_metric": null,
+      "status": "missing"
+    },
+    "duration_histogram": {
+      "candidates": [
+        {
+          "base_metric": "inna_telegram_operation_duration_seconds",
+          "metric": "inna_telegram_operation_duration_seconds",
+          "score": 305
+        }
+      ],
+      "description": "Histograma de duração das operações.",
+      "required": true,
+      "selected_metric": "inna_telegram_operation_duration_seconds",
+      "status": "resolved"
+    },
+    "error_total": {
+      "candidates": [
+        {
+          "base_metric": "inna_telegram_failures_total",
+          "metric": "inna_telegram_failures_total",
+          "score": 205
+        }
+      ],
+      "description": "Contador explícito de falhas.",
+      "required": false,
+      "selected_metric": "inna_telegram_failures_total",
+      "status": "resolved"
+    },
+    "freshness_timestamp": {
+      "candidates": [],
+      "description": "Timestamp da última atualização.",
+      "required": false,
+      "selected_metric": null,
+      "status": "missing"
+    },
+    "operation_total": {
+      "candidates": [
+        {
+          "base_metric": "inna_telegram_operations_total",
+          "metric": "inna_telegram_operations_total",
+          "score": 205
+        }
+      ],
+      "description": "Contador geral de operações Telegram.",
+      "required": true,
+      "selected_metric": "inna_telegram_operations_total",
+      "status": "resolved"
+    },
+    "retry_total": {
+      "candidates": [],
+      "description": "Contador de retries, quando existente.",
+      "required": false,
+      "selected_metric": null,
+      "status": "missing"
+    }
+  },
+  "metric_count": 16,
+  "metric_names": [
+    "inna_telegram_conflicts_total",
+    "inna_telegram_failures_total",
+    "inna_telegram_operation_duration_seconds",
+    "inna_telegram_operations_total",
+    "inna_telegram_queue_operations_total",
+    "inna_telegram_receipts_total",
+    "inna_telegram_worker_cycles_total",
+    "inna_telegram_worker_updates_total",
+    "inna_unknown_metric_total",
+    "telegram_",
+    "telegram_user_id",
+    "telegram_worker_error",
+    "telegram_worker_result",
+    "telegram_worker_started",
+    "telegram_worker_stopped",
+    "telegram_worker_summary"
+  ]
+}

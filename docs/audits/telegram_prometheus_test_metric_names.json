@@ -1,0 +1,59 @@
+{
+  "metrics": [
+    {
+      "file": "tests/unit/test_telegram_productive_metrics.py",
+      "line": 74,
+      "value": "telegram_user_id"
+    },
+    {
+      "file": "tests/unit/test_telegram_productive_metrics.py",
+      "line": 145,
+      "value": "inna_telegram_worker_cycles_total"
+    },
+    {
+      "file": "tests/unit/test_telegram_productive_metrics.py",
+      "line": 206,
+      "value": "inna_telegram_operation_duration_seconds"
+    },
+    {
+      "file": "tests/unit/test_telegram_productive_metrics.py",
+      "line": 268,
+      "value": "inna_telegram_operations_total"
+    },
+    {
+      "file": "tests/unit/test_telegram_productive_metrics.py",
+      "line": 312,
+      "value": "inna_telegram_failures_total"
+    },
+    {
+      "file": "tests/unit/test_telegram_productive_metrics.py",
+      "line": 338,
+      "value": "inna_telegram_conflicts_total"
+    },
+    {
+      "file": "tests/unit/test_telegram_productive_metrics.py",
+      "line": 129,
+      "value": "inna_unknown_metric_total"
+    },
+    {
+      "file": "tests/unit/test_telegram_productive_metrics_counting_matrix.py",
+      "line": 235,
+      "value": "inna_telegram_worker_updates_total"
+    },
+    {
+      "file": "tests/unit/test_telegram_productive_metrics_counting_matrix.py",
+      "line": 240,
+      "value": "inna_telegram_receipts_total"
+    },
+    {
+      "file": "tests/unit/test_telegram_productive_metrics_counting_matrix.py",
+      "line": 245,
+      "value": "inna_telegram_queue_operations_total"
+    },
+    {
+      "file": "tests/unit/test_telegram_prometheus_exporter.py",
+      "line": 76,
+      "value": "inna_telegram_operations_total{"
+    }
+  ]
+}

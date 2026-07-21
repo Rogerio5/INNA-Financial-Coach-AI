@@ -1,0 +1,159 @@
+groups:
+  - name: inna.telegram.recording
+    interval: 30s
+    rules:
+      - record: inna:telegram_worker_updates:rate5m
+        expr: |
+          sum(
+            rate(
+              inna_telegram_worker_updates_total[5m]
+            )
+          )
+
+      - record: inna:telegram_worker_failures:rate5m
+        expr: |
+          sum(
+            rate(
+              inna_telegram_failures_total{
+                component="worker",
+                operation="process_update"
+              }[5m]
+            )
+          )
+
+      - record: inna:telegram_worker_error_ratio:rate5m
+        expr: |
+          (
+            inna:telegram_worker_failures:rate5m
+          )
+          /
+          clamp_min(
+            inna:telegram_worker_updates:rate5m,
+            0.000000001
+          )
+
+      - record: inna:telegram_worker_updates:rate1h
+        expr: |
+          sum(
+            rate(
+              inna_telegram_worker_updates_total[1h]
+            )
+          )
+
+      - record: inna:telegram_worker_failures:rate1h
+        expr: |
+          sum(
+            rate(
+              inna_telegram_failures_total{
+                component="worker",
+                operation="process_update"
+              }[1h]
+            )
+          )
+
+      - record: inna:telegram_worker_error_ratio:rate1h
+        expr: |
+          (
+            inna:telegram_worker_failures:rate1h
+          )
+          /
+          clamp_min(
+            inna:telegram_worker_updates:rate1h,
+            0.000000001
+          )
+
+      - record: inna:telegram_worker_conflicts:rate5m
+        expr: |
+          sum(
+            rate(
+              inna_telegram_worker_updates_total{
+                outcome="conflict"
+              }[5m]
+            )
+          )
+
+      - record: inna:telegram_worker_conflict_ratio:rate5m
+        expr: |
+          (
+            inna:telegram_worker_conflicts:rate5m
+          )
+          /
+          clamp_min(
+            inna:telegram_worker_updates:rate5m,
+            0.000000001
+          )
+
+      - record: inna:telegram_queue_failures:rate5m
+        expr: |
+          sum(
+            rate(
+              inna_telegram_failures_total{
+                component="queue"
+              }[5m]
+            )
+          )
+
+      - record: inna:telegram_receipt_failures:rate5m
+        expr: |
+          sum(
+            rate(
+              inna_telegram_failures_total{
+                component="receipt"
+              }[5m]
+            )
+          )
+
+      - record: inna:telegram_operation_latency:p95_5m
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum by (
+              le,
+              component,
+              operation
+            ) (
+              rate(
+                inna_telegram_operation_duration_seconds_bucket[5m]
+              )
+            )
+          )
+
+      - record: inna:telegram_operation_latency:p99_5m
+        expr: |
+          histogram_quantile(
+            0.99,
+            sum by (
+              le,
+              component,
+              operation
+            ) (
+              rate(
+                inna_telegram_operation_duration_seconds_bucket[5m]
+              )
+            )
+          )
+
+      - record: inna:telegram_operation_failure_ratio:rate5m
+        expr: |
+          (
+            sum by (
+              component,
+              operation
+            ) (
+              rate(
+                inna_telegram_failures_total[5m]
+              )
+            )
+          )
+          /
+          clamp_min(
+            sum by (
+              component,
+              operation
+            ) (
+              rate(
+                inna_telegram_operations_total[5m]
+              )
+            ),
+            0.000000001
+          )

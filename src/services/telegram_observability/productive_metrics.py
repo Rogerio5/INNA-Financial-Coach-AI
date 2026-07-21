@@ -8,6 +8,7 @@ from types import MappingProxyType
 from typing import Mapping, Protocol
 
 from .contracts import (
+    ALLOWED_ERROR_CATEGORIES,
     TelegramConversationMetricRecord,
 )
 
@@ -73,16 +74,11 @@ _ALLOWED_LABEL_VALUES = MappingProxyType(
         ),
         "error_category": frozenset(
             {
-                "none",
-                "validation",
-                "configuration",
-                "persistence",
-                "optimistic_conflict",
-                "encryption",
-                "delivery",
-                "timeout",
+                *ALLOWED_ERROR_CATEGORIES,
                 "dependency",
-                "unknown",
+                "delivery",
+                "encryption",
+                "none",
             }
         ),
         "receipt_status": frozenset(
