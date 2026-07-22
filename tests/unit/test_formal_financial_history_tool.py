@@ -121,6 +121,7 @@ def test_catalog_registers_history_tool():
     assert definition.allowed_agents == (
         frozenset({
             "financial_agent",
+            "report_agent",
         })
     )
 

@@ -24,6 +24,9 @@ from src.agent_tools.runtime import (
 from src.agents.financial_input_resolver import (
     resolver_entrada_financeira,
 )
+from src.agents.report_flow import (
+    executar_fluxo_relatorio,
+)
 from src.agents.schemas import AgentResponse
 from src.agents.state import InnaAgentState
 
@@ -820,20 +823,15 @@ def rag_agent_node(
 def report_agent_node(
     state: InnaAgentState,
 ) -> InnaAgentState:
-    return _finalizar(
-        state,
-        agent="report_agent",
-        summary=(
-            "A solicitação foi encaminhada para "
-            "o agente de relatórios."
-        ),
-        recommendations=[
-            "Consultar diagnóstico salvo.",
-            "Gerar relatório em PDF.",
-        ],
-        next_steps=[
-            "Integrar gerar_relatorio_pdf.",
-        ],
+    """
+    Agente profissional de relatórios da INNA.
+
+    Consulta dados oficiais por tools autorizadas
+    e prepara uma estrutura revisável. Não recalcula
+    indicadores e não gera o PDF diretamente.
+    """
+    return executar_fluxo_relatorio(
+        state
     )
 
 

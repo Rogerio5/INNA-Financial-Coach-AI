@@ -205,6 +205,7 @@ def criar_definicao_consultar_historico_financeiro(
         ),
         allowed_agents=frozenset({
             "financial_agent",
+            "report_agent",
         }),
         timeout_seconds=timeout_seconds,
         idempotent=True,
