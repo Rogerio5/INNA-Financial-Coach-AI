@@ -118,6 +118,26 @@ def preparar_tabelas_documentos(
                 "atualizado_em",
                 "TIMESTAMP DEFAULT NOW()",
             ),
+            (
+                "nome_logico",
+                "TEXT",
+            ),
+            (
+                "content_hash",
+                "VARCHAR(64)",
+            ),
+            (
+                "versao",
+                "INTEGER DEFAULT 1",
+            ),
+            (
+                "documento_raiz_id",
+                "INTEGER",
+            ),
+            (
+                "documento_anterior_id",
+                "INTEGER",
+            ),
         ]
 
         for nome_coluna, tipo_coluna in colunas:
@@ -131,6 +151,48 @@ def preparar_tabelas_documentos(
             UPDATE {TABELA_DOCUMENTOS}
             SET ativo = TRUE
             WHERE ativo IS NULL;
+        """)
+
+        cur.execute(f"""
+            UPDATE {TABELA_DOCUMENTOS}
+            SET versao = 1
+            WHERE versao IS NULL
+               OR versao < 1;
+        """)
+
+        cur.execute(f"""
+            CREATE INDEX IF NOT EXISTS
+                idx_documentos_upload_rag_nome_logico
+            ON {TABELA_DOCUMENTOS} (
+                nome_logico
+            );
+        """)
+
+        cur.execute(f"""
+            CREATE INDEX IF NOT EXISTS
+                idx_documentos_upload_rag_raiz
+            ON {TABELA_DOCUMENTOS} (
+                documento_raiz_id
+            );
+        """)
+
+        cur.execute(f"""
+            CREATE UNIQUE INDEX IF NOT EXISTS
+                uq_documentos_upload_rag_hash
+            ON {TABELA_DOCUMENTOS} (
+                content_hash
+            )
+            WHERE content_hash IS NOT NULL;
+        """)
+
+        cur.execute(f"""
+            CREATE UNIQUE INDEX IF NOT EXISTS
+                uq_documentos_upload_rag_nome_versao
+            ON {TABELA_DOCUMENTOS} (
+                nome_logico,
+                versao
+            )
+            WHERE nome_logico IS NOT NULL;
         """)
 
         cur.execute(f"""
@@ -304,6 +366,11 @@ def registrar_documento(
     extensao: str,
     tamanho_bytes: int,
     total_chunks: int,
+    nome_logico: str | None = None,
+    content_hash: str | None = None,
+    versao: int = 1,
+    documento_raiz_id: int | None = None,
+    documento_anterior_id: int | None = None,
     status: str = "processado",
     origem: str = "dashboard_upload",
 ) -> dict:
@@ -336,12 +403,22 @@ def registrar_documento(
                 extensao,
                 tamanho_bytes,
                 total_chunks,
+                nome_logico,
+                content_hash,
+                versao,
+                documento_raiz_id,
+                documento_anterior_id,
                 status,
                 origem,
                 ativo,
                 atualizado_em
             )
             VALUES (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
                 %s,
                 %s,
                 %s,
@@ -366,6 +443,19 @@ def registrar_documento(
                 extensao,
                 int(tamanho_bytes),
                 int(total_chunks),
+                nome_logico,
+                content_hash,
+                int(versao),
+                (
+                    int(documento_raiz_id)
+                    if documento_raiz_id is not None
+                    else None
+                ),
+                (
+                    int(documento_anterior_id)
+                    if documento_anterior_id is not None
+                    else None
+                ),
                 status,
                 origem,
             ),
@@ -385,6 +475,13 @@ def registrar_documento(
                 "nome_salvo": nome_salvo,
                 "total_chunks": int(total_chunks),
                 "tamanho_bytes": int(tamanho_bytes),
+                "nome_logico": nome_logico,
+                "content_hash": content_hash,
+                "versao": int(versao),
+                "documento_raiz_id": documento_raiz_id,
+                "documento_anterior_id": (
+                    documento_anterior_id
+                ),
             },
             origem=origem,
             conn=conn,
@@ -397,6 +494,18 @@ def registrar_documento(
         return {
             "ok": True,
             "id": documento_id,
+            "documento_id": documento_id,
+            "nome_logico": nome_logico,
+            "content_hash": content_hash,
+            "versao": int(versao),
+            "documento_raiz_id": (
+                documento_raiz_id
+                if documento_raiz_id is not None
+                else documento_id
+            ),
+            "documento_anterior_id": (
+                documento_anterior_id
+            ),
             "message": (
                 "Metadata salva no Neon/PostgreSQL "
                 f"com id {documento_id}."
@@ -418,6 +527,164 @@ def registrar_documento(
                 f"Neon/PostgreSQL: {exc}"
             ),
         }
+
+
+
+def buscar_contexto_versionamento_documento(
+    nome_logico: str,
+) -> dict:
+    """
+    Busca as versões já registradas de um documento lógico.
+
+    Retorna:
+    - versão atual;
+    - documento raiz;
+    - documento anterior;
+    - hashes existentes;
+    - quantidade de versões.
+    """
+    nome_logico_normalizado = str(
+        nome_logico or ""
+    ).strip()
+
+    if not nome_logico_normalizado:
+        return {
+            "ok": False,
+            "message": (
+                "O nome lógico do documento "
+                "não foi informado."
+            ),
+            "contexto": None,
+        }
+
+    conn = None
+
+    try:
+        conn = _conectar_postgres()
+
+        preparacao = preparar_tabelas_documentos(
+            conn
+        )
+
+        if not preparacao.get("ok"):
+            conn.close()
+            return {
+                "ok": False,
+                "message": preparacao.get(
+                    "message"
+                ),
+                "contexto": None,
+            }
+
+        cur = conn.cursor()
+
+        cur.execute(
+            f"""
+            SELECT
+                id,
+                COALESCE(versao, 1),
+                documento_raiz_id,
+                content_hash
+            FROM {TABELA_DOCUMENTOS}
+            WHERE nome_logico = %s
+            ORDER BY
+                COALESCE(versao, 1) DESC,
+                id DESC;
+            """,
+            (
+                nome_logico_normalizado,
+            ),
+        )
+
+        rows = cur.fetchall()
+
+        cur.close()
+        conn.close()
+
+        if not rows:
+            return {
+                "ok": True,
+                "message": (
+                    "Nenhuma versão anterior "
+                    "encontrada."
+                ),
+                "contexto": {
+                    "nome_logico": (
+                        nome_logico_normalizado
+                    ),
+                    "current_version": None,
+                    "root_document_id": None,
+                    "previous_document_id": None,
+                    "existing_content_hashes": [],
+                    "total_versions": 0,
+                },
+            }
+
+        latest = rows[0]
+
+        latest_document_id = int(
+            latest[0]
+        )
+
+        current_version = int(
+            latest[1] or 1
+        )
+
+        root_document_id = (
+            int(latest[2])
+            if latest[2] is not None
+            else latest_document_id
+        )
+
+        existing_hashes = [
+            str(row[3]).strip().lower()
+            for row in rows
+            if row[3]
+        ]
+
+        return {
+            "ok": True,
+            "message": (
+                "Contexto de versionamento "
+                "carregado."
+            ),
+            "contexto": {
+                "nome_logico": (
+                    nome_logico_normalizado
+                ),
+                "current_version": (
+                    current_version
+                ),
+                "root_document_id": (
+                    root_document_id
+                ),
+                "previous_document_id": (
+                    latest_document_id
+                ),
+                "existing_content_hashes": (
+                    existing_hashes
+                ),
+                "total_versions": len(rows),
+            },
+        }
+
+    except Exception as exc:
+        if conn:
+            try:
+                conn.rollback()
+                conn.close()
+            except Exception:
+                pass
+
+        return {
+            "ok": False,
+            "message": (
+                "Erro ao buscar contexto de "
+                f"versionamento: {exc}"
+            ),
+            "contexto": None,
+        }
+
 
 
 def listar_documentos(
@@ -464,6 +731,11 @@ def listar_documentos(
                 status,
                 origem,
                 COALESCE(ativo, TRUE) AS ativo,
+                nome_logico,
+                content_hash,
+                COALESCE(versao, 1) AS versao,
+                documento_raiz_id,
+                documento_anterior_id,
                 caminho_upload,
                 caminho_chunks,
                 caminho_embedding_ready,
@@ -516,6 +788,11 @@ def buscar_documento_por_id(
                 status,
                 origem,
                 COALESCE(ativo, TRUE),
+                nome_logico,
+                content_hash,
+                COALESCE(versao, 1),
+                documento_raiz_id,
+                documento_anterior_id,
                 criado_em,
                 atualizado_em
             FROM {TABELA_DOCUMENTOS}
@@ -549,6 +826,11 @@ def buscar_documento_por_id(
             "status",
             "origem",
             "ativo",
+            "nome_logico",
+            "content_hash",
+            "versao",
+            "documento_raiz_id",
+            "documento_anterior_id",
             "criado_em",
             "atualizado_em",
         ]
@@ -861,6 +1143,7 @@ __all__ = [
     "preparar_tabelas_documentos",
     "registrar_historico_documento",
     "registrar_documento",
+    "buscar_contexto_versionamento_documento",
     "listar_documentos",
     "buscar_documento_por_id",
     "atualizar_processamento_documento",
