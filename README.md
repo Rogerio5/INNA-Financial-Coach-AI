@@ -1,12 +1,5 @@
 # INNA Financial Coach AI
 
-from pathlib import Path
-
-source_path = Path("/mnt/data/Texto colado(282).txt")
-source_text = source_path.read_text(encoding="utf-8", errors="replace")
-
-readme = r"""# INNA Financial Coach AI
-
 <p align="center">
   <strong>Educadora Financeira com IA Generativa, arquitetura multiagente, RAG, memória, FastAPI, Streamlit, PostgreSQL, Neon, Render e observabilidade profissional.</strong>
 </p>
