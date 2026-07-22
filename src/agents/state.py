@@ -115,6 +115,14 @@ class InnaAgentState(TypedDict, total=False):
     generate_report: bool
 
     context: dict[str, Any]
+
+    # Agente especializado responsável pela resposta final.
+    current_agent: str
+
+    # Evidências da utilização de memória semântica.
+    semantic_memory_used: bool
+    semantic_memory_operation: str
+    semantic_memory_sources: dict[str, str]
     tool_results: list[dict[str, Any]]
 
     response: str

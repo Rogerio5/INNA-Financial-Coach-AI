@@ -131,6 +131,7 @@ def classificar_com_gemini_com_deadline(
             input=payload,
             text=True,
             encoding="utf-8",
+            errors="replace",
             capture_output=True,
             cwd=str(PROJECT_ROOT),
             env=os.environ.copy(),

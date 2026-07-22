@@ -1,0 +1,37 @@
+{
+  "audit": "week5_semantic_memory_conversation_continuity",
+  "generated_at": "2026-07-22T07:31:22.518526+00:00",
+  "status": "APPROVED",
+  "controls": {
+    "thread_persistence": true,
+    "conversation_history_continuity": true,
+    "context_engineering": true,
+    "privacy_filtering": true,
+    "token_budget": true,
+    "safe_subprocess_encoding": true,
+    "selected_history_available": true,
+    "financial_history_resolution": true,
+    "semantic_balance_response": true,
+    "current_message_priority": true,
+    "no_expense_split_invention": true,
+    "typed_semantic_memory_contract": true,
+    "semantic_memory_traceability": true
+  },
+  "controls_total": 13,
+  "controls_approved": 13,
+  "tests": {
+    "files": [
+      "tests/unit/test_financial_semantic_memory.py",
+      "tests/unit/test_financial_semantic_memory_graph_integration.py",
+      "tests/unit/test_financial_history_context_integration.py",
+      "tests/unit/test_supervisor_deadline_encoding.py",
+      "tests/unit/test_financial_input_resolver.py",
+      "tests/unit/test_inna_agent_memory.py",
+      "tests/unit/test_memory_extractor.py",
+      "tests/unit/test_memory_evolution.py"
+    ],
+    "returncode": 0,
+    "output": "...................................                                      [100%]\n35 passed in 5.40s",
+    "errors": ""
+  }
+}

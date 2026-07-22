@@ -91,6 +91,23 @@ def financial_agent_node(
     campos ausentes ou executa a ferramenta formal
     de diagnóstico financeiro.
     """
+
+    # Resolução semântica de consultas simples
+    # baseadas em dados financeiros anteriores.
+    # Não substitui a tool formal de diagnóstico.
+    from src.agents.financial_semantic_memory import (
+        resolve_simple_balance_follow_up,
+    )
+
+    semantic_follow_up = (
+        resolve_simple_balance_follow_up(
+            dict(state or {})
+        )
+    )
+
+    if semantic_follow_up is not None:
+        return semantic_follow_up
+
     if str(
         state.get("intent", "")
     ) == "historico_financeiro":

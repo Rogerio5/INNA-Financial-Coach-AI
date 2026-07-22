@@ -573,8 +573,24 @@ def resolver_entrada_financeira(
     ):
         structured_response = {}
 
+    # Histórico conversacional é utilizado como
+    # memória semântica de baixa prioridade.
+    #
+    # A mensagem atual e os dados estruturados explícitos
+    # continuam tendo prioridade e podem sobrescrevê-lo.
+    from src.agents.financial_semantic_memory import (
+        extract_financial_memory_from_history,
+    )
+
+    history_memory = (
+        extract_financial_memory_from_history(
+            state
+        )
+    )
+
     # Memória é a fonte de menor prioridade.
     memory_candidates = [
+        history_memory,
         state.get("memory"),
         state.get("memoria"),
         context.get("memory"),
