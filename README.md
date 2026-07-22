@@ -1232,7 +1232,7 @@ Concluído:
 - runbooks;
 - CI de validação.
 
-# Semana 6 — Produção, integração e entrega
+## Semana 6 — Produção, integração e entrega
 
 Status: 🟡 Em evolução
 
@@ -1257,7 +1257,7 @@ Ainda falta:
 - E2E integral;
 - documentação final de implantação.
 
-## Desenvolvedores
+# Desenvolvedores
 Rogerio
 Ronaldo
 
