@@ -1258,22 +1258,11 @@ Ainda falta:
 - E2E integral;
 - documentação final de implantação.
 
+--- 
+
 ## Desenvolvedores
-Rogerio
-Ronaldo
 
-Áreas:
-
-- Engenharia de Software;
-- Inteligência Artificial;
-- Dados;
-- Automação;
-- APIs;
-- Cloud;
-- PostgreSQL;
-- observabilidade;
-- sistemas multiagentes.
-
+---
 ## Conclusão
 
 A INNA Financial Coach AI evoluiu de um MVP de diagnóstico para uma plataforma financeira educativa com arquitetura multiagente, RAG, memória, ferramentas formais, persistência, múltiplos canais, relatórios, segurança e observabilidade.
