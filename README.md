@@ -1257,7 +1257,7 @@ Ainda falta:
 - E2E integral;
 - documentação final de implantação.
 
-# Desenvolvedores
+## Desenvolvedores
 Rogerio
 Ronaldo
 
