@@ -97,11 +97,11 @@ A INNA evoluiu de um MVP em Streamlit para uma arquitetura modular e profissiona
 
 ---
 
-# Demonstração online
+## Demonstração online
 
 A versão pública utiliza **Render** para os serviços da aplicação e **Neon PostgreSQL** como banco de dados em nuvem.
 
-## Links de produção
+### Links de produção
 
 | Recurso | Link |
 |---|---|
@@ -111,7 +111,7 @@ A versão pública utiliza **Render** para os serviços da aplicação e **Neon 
 | Dashboard analítico | https://inna-dashboard-streamlit.onrender.com |
 | Repositório | https://github.com/Rogerio5/INNA-Financial-Coach-AI |
 
-## Fluxo online validado
+### Fluxo online validado
 
 ```text
 Usuário
@@ -266,7 +266,7 @@ Regressões específicas também foram executadas para:
 
 ## Funcionalidades
 
-# Diagnóstico financeiro
+### Diagnóstico financeiro
 - formulário financeiro;
 - cálculo de renda;
 - gastos fixos;
@@ -283,7 +283,7 @@ Regressões específicas também foram executadas para:
 - fallback seguro;
 - modo mock.
 
-# Histórico e acompanhamento
+### Histórico e acompanhamento
 - histórico individual;
 - recuperação por usuário;
 - evolução do score;
@@ -295,7 +295,7 @@ Regressões específicas também foram executadas para:
 - substituição de fatos antigos;
 - preservação de fatos relevantes.
   
-# Relatórios e exportações
+### Relatórios e exportações
 - PDF;
 - CSV;
 - histórico;
@@ -305,7 +305,7 @@ Regressões específicas também foram executadas para:
 - dashboards;
 - métricas.
 
-# Canais
+### Canais
 - Streamlit;
 - FastAPI;
 - Telegram;
@@ -316,7 +316,7 @@ Regressões específicas também foram executadas para:
 ---
 
 ## Arquitetura
-Arquitetura de alto nível
+### Arquitetura de alto nível
 ```mermaid
 flowchart TD
     U[Usuário] --> Channels[Streamlit / Telegram / API]
@@ -349,7 +349,7 @@ flowchart TD
     Metrics --> Grafana[Grafana]
 ```
 
-# Fluxo principal
+### Fluxo principal
 
 ```
 Usuário
@@ -378,7 +378,7 @@ Resposta
 ---
 
 ## Arquitetura multiagente
-Fluxo do LangGraph
+### Fluxo do LangGraph
 ```
 START
   ↓
@@ -423,7 +423,7 @@ END
 ---
 
 ## RAG, memória e Context Engineering
-# RAG
+### RAG
 - busca vetorial;
 - busca textual;
 - recuperação híbrida;
@@ -445,7 +445,7 @@ END
 - persistência JSONB;
 - integração com API e agentes.
 
-# Memória
+### Memória
 - memória por usuário;
 - memória semântica financeira;
 - recuperação de renda e gastos;
@@ -457,7 +457,7 @@ END
 - rastreabilidade;
 - proteção contra fatos inventados.
 
-# Resumo conversacional incremental
+### Resumo conversacional incremental
 - criado automaticamente;
 - atualizado a cada conversa relevante;
 - versionado;
@@ -471,7 +471,7 @@ END
 ---
 
 ## Tool Calling e persistência
-# Tool Calling
+### Tool Calling
 - Tool Registry;
 - contratos Pydantic;
 - executor formal;
@@ -485,7 +485,7 @@ END
 - histórico financeiro;
 - integração com os agentes.
 
-# Persistência
+### Persistência
 - PostgreSQL;
 - Neon;
 - pgvector;
@@ -509,7 +509,7 @@ END
 
 A INNA também funciona pelo Telegram por meio de webhook integrado à FastAPI.
 
-# Funcionalidades
+### Funcionalidades
 - atendimento guiado;
 - seleção de idioma;
 - moedas por região;
@@ -523,7 +523,7 @@ A INNA também funciona pelo Telegram por meio de webhook integrado à FastAPI.
 - métricas;
 - dashboard operacional.
 
-# Idiomas e moedas
+### Idiomas e moedas
 - Português Brasil — BRL;
 - English US — USD;
 - English UK — GBP;
@@ -532,7 +532,7 @@ A INNA também funciona pelo Telegram por meio de webhook integrado à FastAPI.
 - Français — EUR;
 - Italiano — EUR;
 - Русский — RUB;
-- - العربية — SAR;
+- العربية — SAR;
 - Română — RON;
 - Українська — UAH;
 - Schweiz — CHF.
@@ -583,7 +583,7 @@ A INNA possui uma camada de observabilidade para acompanhar:
 - entrega de e-mails;
 - saúde das integrações.
 
-# Componentes
+### Componentes
 - logs estruturados;
 - sanitização;
 - Prometheus;
@@ -607,7 +607,7 @@ A INNA possui uma camada de observabilidade para acompanhar:
 - reenvio seguro;
 - auditoria das notificações.
 
-# Fluxo de alertas
+### Fluxo de alertas
 ```mermaid
 flowchart LR
     A[Telemetria LLM] --> B[Avaliação dos limites]
@@ -620,7 +620,7 @@ flowchart LR
     H --> I[Dashboard]
 ```
 
-# Eventos do Resend
+### Eventos do Resend
 ```
 email.sent
 email.delivered
@@ -638,7 +638,7 @@ Endpoint:
 POST /webhooks/resend
 ```
 
-# Proteções
+### Proteções
 
 - assinatura criptográfica;
 - idempotência;
@@ -656,7 +656,7 @@ POST /webhooks/resend
 
 A INNA utiliza PostgreSQL localmente e Neon em produção.
 
-# Dados persistidos
+### Dados persistidos
 
 - diagnósticos;
 - feedbacks;
@@ -676,7 +676,7 @@ A INNA utiliza PostgreSQL localmente e Neon em produção.
 - eventos do Resend;
 - observabilidade.
 
-# Tabelas principais conhecidas
+### Tabelas principais conhecidas
 ```
 diagnosticos_financeiros
 feedbacks_usuarios
@@ -697,7 +697,7 @@ Outras tabelas relacionadas a memória, RAG, filas, Telegram e checkpoint podem 
 
 O dashboard utiliza dados reais do PostgreSQL/Neon.
 
-# Indicadores
+### Indicadores
 - total de diagnósticos;
 - usuários únicos;
 - score médio;
@@ -713,7 +713,7 @@ O dashboard utiliza dados reais do PostgreSQL/Neon.
 - filtros;
 - exportação CSV.
 
-# Observabilidade
+### Observabilidade
 
 O dashboard profissional também apresenta:
 
@@ -793,7 +793,7 @@ INNA-Financial-Coach-AI/
 └── README.md
 ```
 
-## Como navegar pelo projeto
+### Como navegar pelo projeto
 ```
 | Interesse             | Pasta                                          |
 | --------------------- | ---------------------------------------------- |
@@ -841,7 +841,7 @@ src/tools/README.md
 - Uvicorn;
 - Requests.
 
-# RAG e memória
+### RAG e memória
 - pgvector;
 - embeddings;
 - busca híbrida;
@@ -851,13 +851,13 @@ src/tools/README.md
 - PostgreSQL;
 - JSONB.
 
-# Interface
+### Interface
 - Streamlit;
 - Pandas;
 - ReportLab;
 - Telegram Bot API.
 
-# Observabilidade
+### Observabilidade
 - Prometheus;
 - OpenMetrics;
 - Grafana;
@@ -865,12 +865,12 @@ src/tools/README.md
 - Svix;
 - logs estruturados.
 
-# Deploy
+### Deploy
 - Render;
 - Neon;
 - GitHub.
 
-# Qualidade
+### Qualidade
 - pytest;
 - testes unitários;
 - testes estruturais;
@@ -909,7 +909,7 @@ pip install -r requirements.txt
 
 Crie .env a partir de .env.example.
 
-Exemplo resumido:
+### Exemplo resumido:
 ```
 APP_NAME=inna-financial-coach-ai
 APP_ENV=development
@@ -941,28 +941,28 @@ Nunca envie chaves reais para o GitHub.
 ---
 
 ## Execução local
-# API
+### API
 ```
 python -m uvicorn api.main:app --reload --port 8000
 ```
-Acesse:
+### Acesse:
 ```
 http://127.0.0.1:8000/docs
 http://127.0.0.1:8000/health
 ```
-# Streamlit
+### Streamlit
 ```
 streamlit run src/app.py --server.port 8504
 ```
-# Dashboard
+### Dashboard
 ```
 streamlit run src/dashboard.py --server.port 8505
 ```
-# Modo mock
+### Modo mock
 ```
 INNA_MOCK_MODE=true
 ```
-# Gemini real
+### Gemini real
 ```
 INNA_MOCK_MODE=false
 GEMINI_API_KEY=sua_chave
@@ -971,25 +971,25 @@ GEMINI_API_KEY=sua_chave
 ---
 
 ## Testes
-# Suíte completa
+### Suíte completa
 ```
 python -m pytest -q
 ```
-Resultado mais recente:
+### Resultado mais recente:
 ```
 2028 passed, 1 skipped
 ```
-# Testes unitários
+### Testes unitários
 ```
 python -m pytest tests\unit -q
 ```
-# Verificações básicas
+### Verificações básicas
 ```
 python -m py_compile api\main.py
 python -m pip check
 git diff --check
 ```
-# Testes específicos
+### Testes específicos
 
 A suíte possui testes para:
 
@@ -1016,21 +1016,21 @@ A suíte possui testes para:
 ---
 
 ## Deploy
-# Serviços
+### Serviços
 ```
 inna-api
 inna-app-streamlit
 inna-dashboard-streamlit
 ```
-# FastAPI
+### FastAPI
 ```
 python -m uvicorn api.main:app --host 0.0.0.0 --port $PORT
 ```
-# Streamlit
+### Streamlit
 ```
 streamlit run src/app.py --server.port $PORT --server.address 0.0.0.0
 ```
-# Dashboard
+### Dashboard
 ```
 streamlit run src/dashboard.py --server.port $PORT --server.address 0.0.0.0
 ```
@@ -1041,12 +1041,12 @@ Deploy Render + Neon/
 ---
 
 ## Documentação técnica
-# Produto
+### Produto
 - Validação do Produto
 - Roadmap
 - Arquitetura geral
 - Pitch
-# RAG e memória
+### RAG e memória
 - Arquitetura RAG
 - Status atual do RAG
 - Roadmap RAG
@@ -1056,10 +1056,10 @@ Deploy Render + Neon/
 - Upload de documentos
 - Memória por usuário
 - Agentic RAG
-# Segurança
+### Segurança
 - Segurança Financeira
 - Diretrizes da INNA
-# Auditorias
+### Auditorias
 - docs/audits/
 
 ---
@@ -1083,7 +1083,7 @@ A INNA:
 - audita operações críticas;
 - evita salvar prompts completos em telemetria.
 
-# Evidências visuais
+### Evidências visuais
 - App online
 - Diagnóstico online
 - Relatório PDF
@@ -1097,7 +1097,8 @@ A INNA:
   ---
 
 ## Roadmap
-# Concluído
+###Concluído:
+ 
 - Streamlit;
 - FastAPI;
 - PostgreSQL;
@@ -1127,7 +1128,7 @@ A INNA:
 - auditorias;
 - testes extensos.
 
-# Próximas prioridades
+### Próximas prioridades
 - Docker da API;
 - Docker do worker;
 - Docker do Streamlit;
@@ -1150,7 +1151,7 @@ A INNA:
 ---
 
 ## Panorama de evolução
-# Semana 1 — LangGraph e núcleo agentic
+### Semana 1 — LangGraph e núcleo agentic
 
 Status: ✅ 100%
 
@@ -1167,7 +1168,7 @@ Concluído:
 - testes;
 - auditoria.
 
-# Semana 2 — RAG, memória e Context Engineering
+### Semana 2 — RAG, memória e Context Engineering
 
 Status: ✅ 100%
 
@@ -1182,7 +1183,7 @@ Concluído:
 - privacidade;
 - testes.
 
-# Semana 3 — Supervisor e arquitetura multiagente
+### Semana 3 — Supervisor e arquitetura multiagente
 
 Status: ✅ 100%
 
@@ -1197,7 +1198,7 @@ Concluído:
 - orçamento;
 - auditoria.
 
-# Semana 4 — Tool Calling e persistência
+### Semana 4 — Tool Calling e persistência
 
 Status: ✅ 100%
 
@@ -1215,7 +1216,7 @@ Concluído:
 - worker;
 - Telegram persistente.
 
-# Semana 5 — Confiabilidade e observabilidade
+### Semana 5 — Confiabilidade e observabilidade
 
 Status: ✅ 100%
 
