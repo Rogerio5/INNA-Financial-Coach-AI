@@ -1261,7 +1261,7 @@ Ainda falta:
 --- 
 
 ## Desenvolvedores
-
+- [Rogerio](https://github.com/Rogerio5)
 ---
 ## Conclusão
 
