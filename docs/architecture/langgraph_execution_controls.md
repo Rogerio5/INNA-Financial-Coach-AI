@@ -50,6 +50,29 @@ Qualquer rota ausente ou desconhecida é convertida em:
 
     fallback_agent
 
+
+## Prevenção de loops
+
+A topologia atual do núcleo LangGraph é acíclica por projeto:
+
+    START
+    → context_builder
+    → supervisor
+    → agente especializado
+    → END
+
+Os agentes especializados não retornam ao supervisor e não possuem transições entre si.
+
+Essa propriedade é validada por testes automatizados de topologia.
+
+Além da garantia estrutural, toda execução utiliza:
+
+    recursion_limit = 25
+
+O limite de recursão funciona como proteção defensiva caso novas transições cíclicas sejam adicionadas futuramente.
+
+Não foi criada uma detecção semântica baseada em repetição de rotas porque o grafo atual executa apenas uma decisão de roteamento por invocação.
+
 ## Roteamento auditável
 
 Cada decisão do supervisor registra:

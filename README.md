@@ -248,6 +248,68 @@ Essa separação deixa o projeto mais próximo de uma aplicação real, permitin
 
 ---
 
+
+## 🧠 Núcleo Agentic com LangGraph
+
+A INNA utiliza LangGraph com estado tipado, supervisor híbrido, roteamento condicional, persistência por conversa e agentes especializados.
+
+```mermaid
+flowchart TD
+    START_NODE([Início]) --> CONTEXT[Context Builder]
+    CONTEXT --> SUPERVISOR[Supervisor híbrido]
+
+    SUPERVISOR -->|Diagnóstico ou histórico| FINANCIAL[Financial Agent]
+    SUPERVISOR -->|Educação financeira| EDUCATION[Education Agent]
+    SUPERVISOR -->|Consulta documental| RAG[RAG Agent]
+    SUPERVISOR -->|Relatório ou PDF| REPORT[Report Agent]
+    SUPERVISOR -->|Ambiguidade ou falha| FALLBACK[Fallback Agent]
+
+    FINANCIAL --> END_NODE([Fim])
+    EDUCATION --> END_NODE
+    RAG --> END_NODE
+    REPORT --> END_NODE
+    FALLBACK --> END_NODE
+```
+
+### Controles profissionais
+
+- estado compartilhado tipado;
+- supervisor híbrido;
+- roteamento condicional;
+- rotas explicitamente permitidas;
+- fallback para rota ausente ou inválida;
+- limite global `recursion_limit = 25`;
+- captura de `GraphRecursionError`;
+- exceção `LangGraphExecutionLimitError`;
+- auditoria com `route_source`;
+- registro do motivo em `routing_reason`;
+- histórico estruturado em `route_history`;
+- persistência e retomada por `thread_id`;
+- topologia acíclica validada por testes;
+- compatibilidade do `trace` preservada.
+
+### Prevenção de loops
+
+O fluxo atual é acíclico:
+
+```text
+START
+→ context_builder
+→ supervisor
+→ agente especializado
+→ END
+```
+
+Os agentes especializados não retornam ao supervisor e não possuem transições entre si.
+
+O limite global de recursão também funciona como proteção defensiva para futuras alterações no grafo.
+
+### Documentação
+
+- [Controles do LangGraph](docs/architecture/langgraph_execution_controls.md)
+- [Fechamento da Semana 1](docs/audits/langgraph_week1_completion.md)
+
+---
 ## 🧰 Tecnologias Utilizadas
 
 ### Backend e IA

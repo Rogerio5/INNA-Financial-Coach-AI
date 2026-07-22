@@ -12,6 +12,9 @@ A Semana 1 cobre o núcleo LangGraph e os fundamentos agentic da INNA.
 - supervisor híbrido;
 - execução persistente e não persistente;
 - limite global de recursão;
+- topologia acíclica validada por testes;
+- proteção estrutural contra loops;
+- visualização atualizada do grafo no README;
 - tratamento de `GraphRecursionError`;
 - exceção de domínio;
 - rotas explicitamente permitidas;
@@ -39,7 +42,7 @@ A Semana 1 cobre o núcleo LangGraph e os fundamentos agentic da INNA.
 
 ### Suíte completa do projeto
 
-    1831 passed, 1 skipped
+    1836 passed, 1 skipped
 
 A suíte completa terminou sem falhas após a correção do contrato do endpoint `/health`.
 
