@@ -1,5 +1,146 @@
 # INNA Financial Coach AI
 
+from pathlib import Path
+
+source_path = Path("/mnt/data/Texto colado(282).txt")
+source_text = source_path.read_text(encoding="utf-8", errors="replace")
+
+readme = r"""# INNA Financial Coach AI
+
+<p align="center">
+  <strong>Educadora Financeira com IA Generativa, arquitetura multiagente, RAG, memória, FastAPI, Streamlit, PostgreSQL, Neon, Render e observabilidade profissional.</strong>
+</p>
+
+<p align="center">
+  Diagnóstico financeiro • Plano de ação • Histórico • Relatórios • Telegram • RAG híbrido • LangGraph • Prometheus • Grafana
+</p>
+
+---
+
+## Sumário
+
+- [Visão geral](#visão-geral)
+- [Demonstração online](#demonstração-online)
+- [Problema](#problema)
+- [Solução](#solução)
+- [Diferenciais](#diferenciais)
+- [Status atual](#status-atual)
+- [Funcionalidades](#funcionalidades)
+- [Arquitetura](#arquitetura)
+- [Arquitetura multiagente](#arquitetura-multiagente)
+- [RAG, memória e Context Engineering](#rag-memória-e-context-engineering)
+- [Tool Calling e persistência](#tool-calling-e-persistência)
+- [Telegram multilíngue](#telegram-multilíngue)
+- [Observabilidade](#observabilidade)
+- [Banco de dados](#banco-de-dados)
+- [Dashboard analítico](#dashboard-analítico)
+- [API](#api)
+- [Estrutura do repositório](#estrutura-do-repositório)
+- [Como navegar pelo projeto](#como-navegar-pelo-projeto)
+- [Tecnologias](#tecnologias)
+- [Instalação local](#instalação-local)
+- [Configuração do ambiente](#configuração-do-ambiente)
+- [Execução local](#execução-local)
+- [Testes](#testes)
+- [Deploy](#deploy)
+- [Documentação técnica](#documentação-técnica)
+- [Segurança e limitações](#segurança-e-limitações)
+- [Evidências visuais](#evidências-visuais)
+- [Roadmap](#roadmap)
+- [Panorama de evolução](#panorama-de-evolução)
+- [Desenvolvedores](#desenvolvedores)
+
+---
+
+# Visão geral
+
+A **INNA Financial Coach AI** é uma plataforma inteligente de educação, diagnóstico e acompanhamento financeiro.
+
+A aplicação ajuda pessoas a:
+
+- entender sua situação financeira;
+- calcular indicadores importantes;
+- identificar riscos;
+- organizar renda, gastos, dívidas e reserva;
+- receber um plano de ação educativo;
+- acompanhar sua evolução;
+- consultar histórico;
+- gerar relatórios;
+- conversar com uma IA com memória e contexto;
+- receber atendimento por diferentes canais.
+
+O projeto nasceu como evolução da **INNA AI Copilot Multichannel**, com foco em:
+
+- hackathons;
+- portfólio profissional;
+- validação técnica;
+- uso educacional;
+- validação com usuários;
+- evolução comercial;
+- futura transformação em produto SaaS.
+
+A INNA evoluiu de um MVP em Streamlit para uma arquitetura modular e profissional com:
+
+- Streamlit;
+- FastAPI;
+- Google Gemini;
+- LangGraph;
+- agentes especializados;
+- RAG híbrido;
+- memória financeira;
+- resumo conversacional incremental;
+- Tool Calling formal;
+- PostgreSQL e Neon;
+- pgvector;
+- Telegram;
+- PDF;
+- e-mail;
+- dashboards;
+- Prometheus;
+- Grafana;
+- alertas;
+- auditoria;
+- testes automatizados.
+
+> A INNA oferece educação financeira. Ela não substitui consultoria financeira profissional e não recomenda compra ou venda de ativos.
+
+---
+
+# Demonstração online
+
+A versão pública utiliza **Render** para os serviços da aplicação e **Neon PostgreSQL** como banco de dados em nuvem.
+
+## Links de produção
+
+| Recurso | Link |
+|---|---|
+| App principal — Streamlit | https://inna-app-streamlit.onrender.com |
+| API e Swagger — FastAPI | https://inna-api.onrender.com/docs |
+| Health Check | https://inna-api.onrender.com/health |
+| Dashboard analítico | https://inna-dashboard-streamlit.onrender.com |
+| Repositório | https://github.com/Rogerio5/INNA-Financial-Coach-AI |
+
+## Fluxo online validado
+
+```text
+Usuário
+  ↓
+Streamlit online — Render
+  ↓
+FastAPI online — Render
+  ↓
+LangGraph / Motor financeiro / RAG / Gemini
+  ↓
+PostgreSQL / Neon / pgvector
+  ↓
+Histórico / PDF / Feedback / Telegram / Dashboard
+````
+
+
+
+
+----
+
 ## 💰 Educadora Financeira com IA Generativa, FastAPI, PostgreSQL, Neon, Render e Dashboard Analítico
 
 A **INNA Financial Coach AI** é uma aplicação inteligente de educação financeira que ajuda pessoas a entenderem sua situação financeira, receberem um diagnóstico personalizado e seguirem um plano de ação simples de 30 dias com apoio de IA Generativa.
