@@ -317,7 +317,8 @@ Regressões específicas também foram executadas para:
 
 ## Arquitetura
 Arquitetura de alto nível
-```flowchart TD
+```mermaid
+flowchart TD
     U[Usuário] --> Channels[Streamlit / Telegram / API]
     Channels --> API[FastAPI]
     API --> Context[Context Engineering]
