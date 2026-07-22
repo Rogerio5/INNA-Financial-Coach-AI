@@ -79,4 +79,3 @@ def test_follow_up_uses_previous_financial_information():
         result.get("current_agent")
         == "financial_agent"
     )
-
