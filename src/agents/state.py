@@ -102,6 +102,14 @@ class InnaAgentState(TypedDict, total=False):
     routing_reason: str
     route_history: list[dict[str, Any]]
 
+    execution_steps: int
+    max_execution_steps: int
+    max_same_agent_visits: int
+    loop_detected: bool
+    execution_budget_exceeded: bool
+    governance_reason: str
+    governance_decision: dict[str, Any]
+
     use_rag: bool
     use_database: bool
     generate_report: bool

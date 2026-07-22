@@ -15,6 +15,11 @@ from typing import Any
 from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, StateGraph
 
+from src.agents.execution_governance import (
+    DEFAULT_MAX_EXECUTION_STEPS,
+    DEFAULT_MAX_SAME_AGENT_VISITS,
+    apply_execution_governance,
+)
 from src.agents.nodes import (
     education_agent_node,
     fallback_agent_node,
@@ -137,6 +142,11 @@ def criar_builder_inna() -> StateGraph:
     )
 
     builder.add_node(
+        "execution_governance",
+        apply_execution_governance,
+    )
+
+    builder.add_node(
         "financial_agent",
         financial_agent_node,
     )
@@ -171,8 +181,13 @@ def criar_builder_inna() -> StateGraph:
         "supervisor",
     )
 
-    builder.add_conditional_edges(
+    builder.add_edge(
         "supervisor",
+        "execution_governance",
+    )
+
+    builder.add_conditional_edges(
+        "execution_governance",
         _selecionar_rota,
         {
             "financial_agent": "financial_agent",
@@ -233,6 +248,17 @@ def _criar_estado_inicial(
         "tool_results": [],
         "errors": [],
         "route_history": [],
+        "execution_steps": 0,
+        "max_execution_steps": (
+            DEFAULT_MAX_EXECUTION_STEPS
+        ),
+        "max_same_agent_visits": (
+            DEFAULT_MAX_SAME_AGENT_VISITS
+        ),
+        "loop_detected": False,
+        "execution_budget_exceeded": False,
+        "governance_reason": "",
+        "governance_decision": {},
         "trace": [],
     }
 
