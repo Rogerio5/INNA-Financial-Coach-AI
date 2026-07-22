@@ -151,8 +151,14 @@ def test_complete_message_reaches_formal_financial_tool():
     )
 
     assert (
-        result["trace"][-1]
-        == "agent:financial_agent"
+        "agent:financial_agent"
+        in result["trace"]
+    )
+
+    assert (
+        result["trace"][-1].startswith(
+            "conversation_summary_node:"
+        )
     )
 
 

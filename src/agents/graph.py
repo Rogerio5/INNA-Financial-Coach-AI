@@ -15,6 +15,9 @@ from typing import Any
 from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, StateGraph
 
+from src.agents.conversation_summary_node import (
+    conversation_summary_node,
+)
 from src.agents.execution_governance import (
     DEFAULT_MAX_EXECUTION_STEPS,
     DEFAULT_MAX_SAME_AGENT_VISITS,
@@ -171,6 +174,11 @@ def criar_builder_inna() -> StateGraph:
         fallback_agent_node,
     )
 
+    builder.add_node(
+        "conversation_summary",
+        conversation_summary_node,
+    )
+
     builder.add_edge(
         START,
         "context_builder",
@@ -205,7 +213,15 @@ def criar_builder_inna() -> StateGraph:
         "report_agent",
         "fallback_agent",
     ]:
-        builder.add_edge(node, END)
+        builder.add_edge(
+            node,
+            "conversation_summary",
+        )
+
+    builder.add_edge(
+        "conversation_summary",
+        END,
+    )
 
     return builder
 

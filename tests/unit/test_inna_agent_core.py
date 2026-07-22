@@ -66,8 +66,14 @@ def test_grafo_executa_agente_financeiro():
     )
 
     assert (
-        resultado["trace"][-1]
-        == "agent:financial_agent"
+        "agent:financial_agent"
+        in resultado["trace"]
+    )
+
+    assert (
+        resultado["trace"][-1].startswith(
+            "conversation_summary_node:"
+        )
     )
 
 

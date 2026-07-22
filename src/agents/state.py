@@ -94,6 +94,12 @@ class InnaAgentState(TypedDict, total=False):
     ]
     conversation_summary: str
 
+    # Controle e rastreabilidade do resumo da thread.
+    conversation_summary_updated: bool
+    conversation_summary_version: int
+    conversation_summary_source_messages: int
+    conversation_summary_source: str
+
     intent: IntentType
     confidence: float
     next_node: str
