@@ -1232,7 +1232,7 @@ Concluído:
 - runbooks;
 - CI de validação.
 
-## Semana 6 — Produção, integração e entrega
+### Semana 6 — Produção, integração e entrega
 
 Status: 🟡 Em evolução
 
