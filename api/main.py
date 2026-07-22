@@ -1114,6 +1114,10 @@ def rag_ask(payload: RagAskRequest):
                 "evento": "rag_ask",
                 "origem": "api",
                 "modo": result.get("modo"),
+                "trace_id": result.get("trace_id"),
+                "retrieval_trace": result.get(
+                    "retrieval_trace"
+                ),
                 "fontes": result.get("fontes", []),
             },
         )

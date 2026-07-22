@@ -1313,15 +1313,118 @@ def save_rag_log(
     tempo_resposta_ms: int | None = None,
 ) -> None:
     """
-    Salva log simples da resposta RAG para observabilidade da INNA.
+    Salva o log da resposta RAG.
+
+    A telemetria nunca pode interromper
+    a resposta entregue ao usuário.
     """
+    import json
+
+    conn = None
+    cur = None
+
     try:
-        modo = resultado.get("modo") or ""
-        resposta = resultado.get("resposta") or ""
-        fontes = resultado.get("fontes") or []
+        resultado = (
+            resultado
+            if isinstance(resultado, dict)
+            else {}
+        )
+
+        modo = str(
+            resultado.get("modo")
+            or ""
+        )
+
+        resposta = str(
+            resultado.get("resposta")
+            or ""
+        )
+
+        fontes = (
+            resultado.get("fontes")
+            or []
+        )
+
+        if not isinstance(
+            fontes,
+            (
+                list,
+                tuple,
+            ),
+        ):
+            fontes = []
+
+        trace_id = (
+            resultado.get("trace_id")
+            or None
+        )
+
+        retrieval_trace = (
+            resultado.get(
+                "retrieval_trace"
+            )
+            or None
+        )
+
+        retrieval_trace_json = (
+            json.dumps(
+                retrieval_trace,
+                ensure_ascii=False,
+                default=str,
+            )
+            if retrieval_trace is not None
+            else None
+        )
 
         conn = get_rag_connection()
         cur = conn.cursor()
+
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS
+                inna_rag_logs (
+                    id SERIAL PRIMARY KEY,
+                    pergunta TEXT,
+                    modo TEXT,
+                    resposta_preview TEXT,
+                    fontes_total INTEGER DEFAULT 0,
+                    usou_gemini BOOLEAN DEFAULT FALSE,
+                    usou_seguranca BOOLEAN DEFAULT FALSE,
+                    usou_fallback BOOLEAN DEFAULT FALSE,
+                    tempo_resposta_ms INTEGER,
+                    trace_id TEXT,
+                    retrieval_trace JSONB,
+                    created_at TIMESTAMP DEFAULT NOW()
+                );
+            """
+        )
+
+        cur.execute(
+            """
+            ALTER TABLE inna_rag_logs
+            ADD COLUMN IF NOT EXISTS
+                trace_id TEXT;
+            """
+        )
+
+        cur.execute(
+            """
+            ALTER TABLE inna_rag_logs
+            ADD COLUMN IF NOT EXISTS
+                retrieval_trace JSONB;
+            """
+        )
+
+        cur.execute(
+            """
+            CREATE INDEX IF NOT EXISTS
+                idx_inna_rag_logs_trace_id
+            ON inna_rag_logs (
+                trace_id
+            )
+            WHERE trace_id IS NOT NULL;
+            """
+        )
 
         cur.execute(
             """
@@ -1333,29 +1436,74 @@ def save_rag_log(
                 usou_gemini,
                 usou_seguranca,
                 usou_fallback,
-                tempo_resposta_ms
+                tempo_resposta_ms,
+                trace_id,
+                retrieval_trace
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+            VALUES (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s::jsonb
+            );
             """,
             (
-                pergunta,
+                str(pergunta or ""),
                 modo,
                 resposta[:500],
                 len(fontes),
                 "_gemini_answer" in modo,
-                "seguranca_financeira" in modo,
-                "fallback" in modo or "rag_local_sem_custo" in modo,
+                (
+                    "seguranca_financeira"
+                    in modo
+                ),
+                (
+                    "fallback" in modo
+                    or (
+                        "rag_local_sem_custo"
+                        in modo
+                    )
+                ),
                 tempo_resposta_ms,
+                (
+                    str(trace_id)
+                    if trace_id
+                    else None
+                ),
+                retrieval_trace_json,
             ),
         )
 
         conn.commit()
-        cur.close()
-        conn.close()
 
     except Exception:
-        # Log não pode quebrar resposta do usuário.
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
+
+        # O log não pode quebrar a resposta.
         return
+
+    finally:
+        if cur:
+            try:
+                cur.close()
+            except Exception:
+                pass
+
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 
 
@@ -1364,20 +1512,87 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     if resposta_seguranca:
         return resposta_seguranca
 
-    results = search_knowledge_base_hybrid(pergunta, idioma=idioma, top_k=top_k)
+    try:
+        from services.rag.retrieval_trace import (
+            start_retrieval_trace,
+        )
+    except ImportError:
+        from src.services.rag.retrieval_trace import (
+            start_retrieval_trace,
+        )
+
+    retrieval_trace = start_retrieval_trace(
+        query=pergunta,
+        language=idioma,
+        search_mode="pending",
+        top_k=top_k,
+    )
+
+    results = search_knowledge_base_hybrid(
+        pergunta,
+        idioma=idioma,
+        top_k=top_k,
+    )
 
     if not results:
-        results = search_knowledge_base(pergunta, idioma=idioma, top_k=top_k)
+        results = search_knowledge_base(
+            pergunta,
+            idioma=idioma,
+            top_k=top_k,
+        )
 
-    modo_busca = results[0].get("modo_busca", "rag_local_fallback") if results else "sem_resultados"
+    modo_busca = (
+        results[0].get(
+            "modo_busca",
+            "rag_local_fallback",
+        )
+        if results
+        else "sem_resultados"
+    )
+
+    retrieval_trace.finish(
+        results,
+        search_mode=modo_busca,
+    )
+
+    def finalizar_resposta_rag(
+        resultado: dict,
+        *,
+        modo: str | None = None,
+    ) -> dict:
+        """
+        Acrescenta rastreabilidade sem alterar
+        os campos históricos da resposta RAG.
+        """
+        payload = dict(resultado or {})
+
+        trace_payload = (
+            retrieval_trace.to_dict()
+        )
+
+        if modo:
+            trace_payload["search_mode"] = modo
+
+        payload["trace_id"] = (
+            retrieval_trace.trace_id
+        )
+
+        payload["retrieval_trace"] = (
+            trace_payload
+        )
+
+        return payload
 
     if not results:
-        return {
+        return finalizar_resposta_rag(
+            {
             "resposta": "Não encontrei informação suficiente na base de conhecimento da INNA para responder com segurança.",
             "fontes": [],
             "contexto_usado": "",
             "modo": modo_busca,
-        }
+        },
+            modo=modo_busca,
+        )
 
     def get_chunk_text(item: dict) -> str:
         return (
@@ -1403,19 +1618,38 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     )
 
     if intencao_continuacao == "cancelar" and not tem_anotacao_financeira:
-        return resposta_cancelar_simples()
+        return finalizar_resposta_rag(
+            resposta_cancelar_simples(),
+            modo=modo_busca,
+        )
 
     if intencao_continuacao == "ajustar_para_menos" and not tem_anotacao_financeira:
-        return resposta_ajustar_valor(menor=True)
+        return finalizar_resposta_rag(
+            resposta_ajustar_valor(
+                menor=True
+            ),
+            modo=modo_busca,
+        )
 
     if intencao_continuacao == "ajustar_para_mais" and not tem_anotacao_financeira:
-        return resposta_ajustar_valor(menor=False)
+        return finalizar_resposta_rag(
+            resposta_ajustar_valor(
+                menor=False
+            ),
+            modo=modo_busca,
+        )
 
     if intencao_continuacao == "meta_semana" and not tem_anotacao_financeira:
-        return resposta_meta_semana_simples()
+        return finalizar_resposta_rag(
+            resposta_meta_semana_simples(),
+            modo=modo_busca,
+        )
 
     if intencao_continuacao == "meta_mes" and not tem_anotacao_financeira:
-        return resposta_meta_mes_simples()
+        return finalizar_resposta_rag(
+            resposta_meta_mes_simples(),
+            modo=modo_busca,
+        )
 
     tem_anotacao_financeira = (
         "anotacao_financeira_do_usuario" in pergunta_normalizada
@@ -1481,12 +1715,15 @@ Se uma semana apertar, guarde menos. O importante é não desistir.
 
 Depois você pode me dizer se quer uma meta menor ou maior."""
 
-        return {
+        return finalizar_resposta_rag(
+            {
             "resposta": resposta,
             "fontes": [],
             "contexto_usado": "",
             "modo": modo_busca,
-        }
+        },
+            modo=modo_busca,
+        )
 
     if usuario_confirmou and pedido_semana:
         resposta = """Claro. Vamos fazer só a meta desta semana.
@@ -1506,12 +1743,15 @@ Se não conseguir guardar tudo, guarde uma parte. O importante é começar.
 
 Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
 
-        return {
+        return finalizar_resposta_rag(
+            {
             "resposta": resposta,
             "fontes": [],
             "contexto_usado": "",
             "modo": modo_busca,
-        }
+        },
+            modo=modo_busca,
+        )
 
     valor_para_guardar = extrair_valor_para_guardar(pergunta)
 
@@ -1560,12 +1800,15 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
         resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
 
         if resposta_gemini:
-            return {
+            return finalizar_resposta_rag(
+                {
                 "resposta": resposta_gemini,
                 "fontes": fontes,
                 "contexto_usado": contexto,
                 "modo": modo_busca + "_gemini_answer",
-            }
+            },
+                modo=modo_busca,
+            )
     # BLOCO_FORCADO_GEMINI_ABERTO_FIM
 
     pergunta_explicativa = (
@@ -1601,12 +1844,15 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
         resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
 
         if resposta_gemini:
-            return {
+            return finalizar_resposta_rag(
+                {
                 "resposta": resposta_gemini,
                 "fontes": fontes,
                 "contexto_usado": contexto,
                 "modo": modo_busca + "_gemini_answer",
-            }
+            },
+                modo=modo_busca,
+            )
 
     if valor_para_guardar and (
         "anotacao_financeira_do_usuario" in pergunta_normalizada
@@ -1680,12 +1926,15 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
             for item in results
         ]
 
-        return {
+        return finalizar_resposta_rag(
+            {
             "resposta": resposta,
             "fontes": fontes,
             "contexto_usado": contexto,
             "modo": modo_busca,
-        }
+        },
+            modo=modo_busca,
+        )
 
     fontes = [
         {
@@ -1717,12 +1966,15 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
 
         if resposta_gemini:
-            return {
+            return finalizar_resposta_rag(
+                {
                 "resposta": resposta_gemini,
                 "fontes": fontes,
                 "contexto_usado": contexto,
                 "modo": modo_busca + "_gemini_answer",
-            }
+            },
+                modo=modo_busca,
+            )
 
     fontes = [
         {
@@ -1766,12 +2018,15 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
 
         if resposta_gemini:
-            return {
+            return finalizar_resposta_rag(
+                {
                 "resposta": resposta_gemini,
                 "fontes": fontes,
                 "contexto_usado": contexto,
                 "modo": modo_busca + "_gemini_answer",
-            }
+            },
+                modo=modo_busca,
+            )
 
     # Perguntas abertas sobre temas financeiros usam Gemini com contexto RAG.
     # Perguntas com números/cálculo continuam controladas pelo código.
@@ -1801,12 +2056,15 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
 
         if resposta_gemini:
-            return {
+            return finalizar_resposta_rag(
+                {
                 "resposta": resposta_gemini,
                 "fontes": fontes,
                 "contexto_usado": contexto,
                 "modo": modo_busca + "_gemini_answer",
-            }
+            },
+                modo=modo_busca,
+            )
 
     if "reserva" in pergunta_normalizada:
         resposta = """Vamos por partes. Vou te orientar de um jeito simples:
@@ -1847,9 +2105,12 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         for item in results
     ]
 
-    return {
+    return finalizar_resposta_rag(
+        {
         "resposta": resposta,
         "fontes": fontes,
         "contexto_usado": contexto,
         "modo": modo_busca,
-    }
+    },
+        modo=modo_busca,
+    )
