@@ -242,16 +242,16 @@ O sistema:
 
 ## Status atual
 ```
-Panorama por semana
-Semana	Área	Situação
-Semana 1	LangGraph e núcleo agentic	✅ 100%
-Semana 2	RAG, memória e Context Engineering	✅ 100%
-Semana 3	Supervisor e arquitetura multiagente	✅ 100%
-Semana 4	Tool Calling e persistência	✅ 100%
-Semana 5	Confiabilidade e observabilidade	✅ 100%
-Semana 6	Produção, integração e entrega	🟡 Em evolução
+| Etapa | Área | Situação |
+|---|---|---|
+| Semana 1 | LangGraph e núcleo agentic | ✅ 100% |
+| Semana 2 | RAG, memória e Context Engineering | ✅ 100% |
+| Semana 3 | Supervisor e arquitetura multiagente | ✅ 100% |
+| Semana 4 | Tool Calling e persistência | ✅ 100% |
+| Semana 5 | Confiabilidade e observabilidade | ✅ 100% |
+| Semana 6 | Produção, integração e entrega | 🟡 Em evolução |
+| Semana adicional 1 | Arquitetura hierárquica e Human-in-the-Loop | 🟡 Núcleo concluído |
 ```
-
 Validação automatizada mais recente
 ```
 2418 passed
@@ -325,26 +325,41 @@ Regressões específicas também foram executadas para:
 ---
 
 ## Arquitetura
+
 ### Arquitetura de alto nível
+
 ```mermaid
 flowchart TD
     U[Usuário] --> Channels[Streamlit / Telegram / API]
     Channels --> API[FastAPI]
     API --> Context[Context Engineering]
-    Context --> Supervisor[Supervisor híbrido]
-    Supervisor --> Governance[Governança de execução]
+    Context --> Supervisor[Supervisor principal]
+    Supervisor --> Router[Team Router]
 
-    Governance --> Financial[Agente financeiro]
-    Governance --> Education[Agente educacional]
-    Governance --> RAGAgent[Agente RAG]
-    Governance --> Report[Agente de relatório]
-    Governance --> Fallback[Agente fallback]
+    Router --> FinancialTeam[Equipe financeira]
+    Router --> KnowledgeTeam[Equipe de conhecimento]
+    Router --> SupportTeam[Equipe de suporte]
 
-    Financial --> Summary[Resumo incremental]
-    Education --> Summary
-    RAGAgent --> Summary
-    Report --> Summary
-    Fallback --> Summary
+    FinancialTeam --> FinancialSupervisor[Supervisor financeiro]
+    KnowledgeTeam --> KnowledgeSupervisor[Supervisor de conhecimento]
+    SupportTeam --> SupportSupervisor[Supervisor de suporte]
+
+    FinancialSupervisor --> Governance[Governança de execução]
+    KnowledgeSupervisor --> Governance
+    SupportSupervisor --> Governance
+
+    Governance --> Agent[Agente especializado]
+    Agent --> Completion[Task Completion]
+    Completion --> ReviewPolicy[Human Review Policy]
+
+    ReviewPolicy -->|Sem revisão| Handoff[Handoff Coordinator]
+    ReviewPolicy -->|Revisão necessária| Interrupt[Human Review Interrupt]
+
+    Interrupt -->|Approve| Handoff
+    Interrupt -->|Correct| Router
+    Interrupt -->|Reject ou Cancel| Summary[Resumo conversacional]
+
+    Handoff --> Summary
 
     Summary --> Tools[Tool Calling]
     Tools --> DB[(PostgreSQL / Neon)]
@@ -358,9 +373,13 @@ flowchart TD
     Metrics --> Grafana[Grafana]
 ```
 
-### Fluxo principal
+---
 
-```
+## 5. Atualizar o fluxo principal
+
+Substitua o fluxo principal atual por:
+
+```text
 Usuário
   ↓
 Interface ou canal
@@ -369,41 +388,66 @@ FastAPI
   ↓
 Context Engineering
   ↓
-Supervisor
+Supervisor principal
   ↓
-Governança
+Team Router
+  ↓
+Supervisor da equipe
+  ↓
+Governança de execução
   ↓
 Agente especializado
+  ↓
+Task Completion
+  ↓
+Human Review Policy
+  ├─ sem revisão → Handoff Coordinator
+  └─ revisão necessária → Human Review Interrupt
+       ├─ approve → Handoff Coordinator
+       ├─ correct → Team Router
+       └─ reject/cancel → Conversation Summary
   ↓
 Ferramentas / RAG / Memória
   ↓
 Persistência
-  ↓
-Resumo incremental
   ↓
 Resposta
 ```
 
 ---
 
-## Arquitetura multiagente
-### Fluxo do LangGraph
-```
+## 6. Atualizar o fluxo do LangGraph
+
+Substitua o fluxo antigo por:
+
+```text
 START
   ↓
 context_builder
   ↓
 supervisor
   ↓
+team_router
+  ↓
+team_supervisor
+  ↓
 execution_governance
   ↓
 agente especializado
+  ↓
+task_completion
+  ↓
+human_review_policy
+  ├─ sem revisão → handoff_coordinator
+  └─ revisão necessária → human_review_interrupt
+       ├─ approve → handoff_coordinator
+       ├─ correct → team_router
+       └─ reject/cancel → conversation_summary
   ↓
 conversation_summary
   ↓
 END
 ```
-
 ---
 
 ## Componentes concluídos
