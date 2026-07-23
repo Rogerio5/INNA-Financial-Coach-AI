@@ -76,8 +76,13 @@ def test_all_specialized_agents_follow_finalization_pipeline():
 
     assert (
         "task_completion",
-        "handoff_coordinator",
+        "human_review_policy",
     ) in edges
+
+    assert (
+        "task_completion",
+        "handoff_coordinator",
+    ) not in edges
 
 
 def test_specialized_agents_do_not_finish_directly():

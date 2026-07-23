@@ -10,10 +10,11 @@ Suporta:
 from __future__ import annotations
 
 import uuid
-from typing import Any
+from typing import Any, Mapping
 
 from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, StateGraph
+from langgraph.types import Command
 
 from src.agents.conversation_summary_node import (
     conversation_summary_node,
@@ -23,6 +24,14 @@ from src.agents.task_completion_node import (
 )
 from src.agents.handoff_coordinator_node import (
     handoff_coordinator_node,
+)
+from src.agents.human_review_interrupt_node import (
+    human_review_interrupt_node,
+    select_route_after_human_review_interrupt,
+)
+from src.agents.human_review_policy_node import (
+    human_review_policy_node,
+    select_route_after_human_review_policy,
 )
 from src.agents.execution_governance import (
     DEFAULT_MAX_EXECUTION_STEPS,
@@ -312,6 +321,16 @@ def criar_builder_inna() -> StateGraph:
     )
 
     builder.add_node(
+        "human_review_policy",
+        human_review_policy_node,
+    )
+
+    builder.add_node(
+        "human_review_interrupt",
+        human_review_interrupt_node,
+    )
+
+    builder.add_node(
         "handoff_coordinator",
         handoff_coordinator_node,
     )
@@ -393,9 +412,39 @@ def criar_builder_inna() -> StateGraph:
             "task_completion",
         )
 
+    # Task Completion → política de revisão humana.
     builder.add_edge(
         "task_completion",
-        "handoff_coordinator",
+        "human_review_policy",
+    )
+
+    # A política segue normalmente ou pausa para revisão.
+    builder.add_conditional_edges(
+        "human_review_policy",
+        select_route_after_human_review_policy,
+        {
+            (
+                "human_review_interrupt"
+            ): "human_review_interrupt",
+            (
+                "handoff_coordinator"
+            ): "handoff_coordinator",
+        },
+    )
+
+    # Após a decisão humana, retoma na rota adequada.
+    builder.add_conditional_edges(
+        "human_review_interrupt",
+        select_route_after_human_review_interrupt,
+        {
+            (
+                "handoff_coordinator"
+            ): "handoff_coordinator",
+            "team_router": "team_router",
+            (
+                "conversation_summary"
+            ): "conversation_summary",
+        },
     )
 
     # Handoff solicitado volta à camada hierárquica.
@@ -472,6 +521,19 @@ def _criar_estado_inicial(
         "team_route_history": [],
         "root_supervisor_visits": 0,
         "max_root_supervisor_visits": 3,
+        "human_review_enabled": True,
+        "human_review_required": False,
+        "human_review_current": {},
+        "human_review_history": [],
+        "human_review_policy_decision": {},
+        "human_review_resume_payload": {},
+        "human_review_decision_action": "",
+        "human_review_corrections": {},
+        "human_review_resume_route": "",
+        "human_review_status": "",
+        "human_review_count": 0,
+        "max_human_reviews": 3,
+        "human_review_limit_exceeded": False,
 
         "context": {},
         "tool_results": [],
@@ -514,6 +576,13 @@ def executar_nucleo_inna(
         moeda=moeda,
     )
 
+    # A retomada Human-in-the-Loop depende de
+    # checkpoint persistente. A execução legada,
+    # sem persistência, continua compatível.
+    estado_inicial[
+        "human_review_enabled"
+    ] = False
+
     config = _criar_config_execucao()
 
     return _invocar_grafo_seguro(
@@ -530,6 +599,7 @@ def executar_nucleo_inna_persistente(
     usuario_id: str | None = None,
     idioma: str = "pt",
     moeda: str = "BRL",
+    human_review_enabled: bool = False,
 ) -> InnaAgentState:
     """
     Executa o grafo com memória PostgreSQL.
@@ -558,6 +628,15 @@ def executar_nucleo_inna_persistente(
         moeda=moeda,
     )
 
+    # Mantém compatibilidade com chamadas síncronas
+    # existentes. O Human-in-the-Loop deve ser
+    # habilitado explicitamente pelo consumidor.
+    estado_inicial[
+        "human_review_enabled"
+    ] = bool(
+        human_review_enabled
+    )
+
     config = _criar_config_execucao(
         thread_id=thread_id,
     )
@@ -572,6 +651,71 @@ def executar_nucleo_inna_persistente(
             estado_inicial,
             config=config,
         )
+
+
+
+
+def retomar_revisao_humana_persistente(
+    *,
+    thread_id: str,
+    decisao: Mapping[str, Any],
+) -> InnaAgentState:
+    """
+    Retoma uma execução interrompida para revisão.
+
+    O mesmo thread_id utilizado na execução inicial
+    é obrigatório para localizar o checkpoint.
+    """
+    normalized_thread_id = str(
+        thread_id or ""
+    ).strip()
+
+    if not normalized_thread_id:
+        raise ValueError(
+            "thread_id é obrigatório para retomar "
+            "uma revisão humana."
+        )
+
+    if len(normalized_thread_id) > 255:
+        raise ValueError(
+            "thread_id deve possuir no máximo "
+            "255 caracteres."
+        )
+
+    if not isinstance(
+        decisao,
+        Mapping,
+    ):
+        raise TypeError(
+            "decisao deve implementar Mapping."
+        )
+
+    normalized_decision = dict(
+        decisao
+    )
+
+    if not normalized_decision:
+        raise ValueError(
+            "decisao não pode ser vazia."
+        )
+
+    config = _criar_config_execucao(
+        thread_id=normalized_thread_id,
+    )
+
+    with abrir_checkpointer_postgres() as checkpointer:
+        grafo = criar_grafo_inna(
+            checkpointer=checkpointer
+        )
+
+        result = grafo.invoke(
+            Command(
+                resume=normalized_decision
+            ),
+            config=config,
+        )
+
+    return result
 
 
 def consultar_estado_conversa(
