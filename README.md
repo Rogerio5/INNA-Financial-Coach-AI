@@ -204,6 +204,11 @@ Ela combina:
 - regras financeiras determinísticas;
 - IA Generativa;
 - arquitetura multiagente;
+- arquitetura hierárquica de equipes;
+- Human-in-the-Loop persistente;
+- revisão humana para operações sensíveis;
+- interrupção e retomada por checkpoint;
+- decisões de aprovação, correção, rejeição e cancelamento;
 - Context Engineering;
 - RAG híbrido;
 - memória por usuário;
@@ -228,8 +233,10 @@ O sistema:
 - gera a resposta;
 - atualiza o resumo da conversa;
 - persiste os dados;
+- registra rastreabilidade e métricas;
 - registra rastreabilidade e métricas.
 
+Quando necessário, o sistema pode interromper uma execução para revisão humana e retomá-la exatamente do checkpoint anterior, mantendo o mesmo `thread_id`.
 ---
 
 ## Status atual
