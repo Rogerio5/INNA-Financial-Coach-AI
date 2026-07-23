@@ -76,7 +76,7 @@ def test_financial_request_creates_explicit_handoff():
     assert result["handoff_count"] == 1
 
 
-def test_requested_financial_handoff_routes_to_report():
+def test_requested_financial_handoff_routes_to_team_router():
     coordinator_result = (
         handoff_coordinator_node(
             _completed_financial_state()
@@ -92,7 +92,7 @@ def test_requested_financial_handoff_routes_to_report():
         state
     )
 
-    assert route == "report_agent"
+    assert route == "team_router"
 
 
 def test_financial_handoff_payload_preserves_evidence():
@@ -152,3 +152,81 @@ def test_report_target_completes_requested_handoff():
     assert result[
         "handoff_current"
     ]["status"] == "completed"
+
+
+def test_requested_financial_handoff_reaches_report_through_team_hierarchy():
+    from src.agents.team_router import (
+        select_team_supervisor_route,
+        team_router_node,
+    )
+    from src.agents.team_supervisor import (
+        financial_team_supervisor_node,
+    )
+
+    coordinator_result = (
+        handoff_coordinator_node(
+            _completed_financial_state()
+        )
+    )
+
+    state = _completed_financial_state()
+    state.update(
+        coordinator_result
+    )
+
+    route = _selecionar_rota_apos_handoff(
+        state
+    )
+
+    assert route == "team_router"
+
+    router_result = team_router_node(
+        state
+    )
+
+    assert (
+        router_result[
+            "team_requested_agent"
+        ]
+        == "report_agent"
+    )
+
+    assert (
+        router_result[
+            "current_team"
+        ]
+        == "financial_team"
+    )
+
+    team_supervisor_route = (
+        select_team_supervisor_route(
+            router_result
+        )
+    )
+
+    assert team_supervisor_route == (
+        "financial_team_supervisor"
+    )
+
+    hierarchical_state = {
+        **state,
+        **router_result,
+    }
+
+    team_result = (
+        financial_team_supervisor_node(
+            hierarchical_state
+        )
+    )
+
+    assert (
+        team_result["next_node"]
+        == "report_agent"
+    )
+
+    assert (
+        team_result[
+            "team_requires_root_supervisor"
+        ]
+        is False
+    )

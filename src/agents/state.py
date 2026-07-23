@@ -253,6 +253,19 @@ class InnaAgentState(TypedDict, total=False):
     handoff_target: str
     handoff_reason: str
 
+    # Hierarquia de equipes
+    hierarchical_routing_enabled: bool
+    current_team: str
+    team_supervisor: str
+    team_route: str
+    team_requested_agent: str
+    team_route_source: str
+    team_routing_reason: str
+    team_requires_root_supervisor: bool
+    team_route_history: list[dict[str, Any]]
+    root_supervisor_visits: int
+    max_root_supervisor_visits: int
+
     response: str
     structured_response: dict[str, Any]
 

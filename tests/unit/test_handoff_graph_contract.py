@@ -93,7 +93,7 @@ def test_no_handoff_routes_to_summary():
     ) == "conversation_summary"
 
 
-def test_requested_handoff_routes_to_target():
+def test_requested_handoff_routes_to_team_router():
     result = _selecionar_rota_apos_handoff({
         "handoff_current": {
             "status": "requested",
@@ -101,7 +101,7 @@ def test_requested_handoff_routes_to_target():
         }
     })
 
-    assert result == "report_agent"
+    assert result == "team_router"
 
 
 def test_terminal_handoff_routes_to_summary():

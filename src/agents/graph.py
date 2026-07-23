@@ -48,6 +48,16 @@ from src.context_engineering.node import (
 
 DEFAULT_LANGGRAPH_RECURSION_LIMIT = 25
 
+from src.agents.team_router import (
+    select_team_supervisor_route,
+    team_router_node,
+)
+from src.agents.team_supervisor import (
+    financial_team_supervisor_node,
+    knowledge_team_supervisor_node,
+    support_team_supervisor_node,
+)
+
 ALLOWED_AGENT_ROUTES = frozenset(
     {
         "financial_agent",
@@ -141,8 +151,9 @@ def _selecionar_rota_apos_handoff(
     state: InnaAgentState,
 ) -> str:
     """
-    Decide se o fluxo deve executar o agente de destino
-    ou seguir para o resumo final.
+    Encaminha handoffs solicitados ao roteador hierárquico.
+
+    Handoffs em estado terminal seguem para o resumo final.
     """
     handoff = state.get(
         "handoff_current"
@@ -159,6 +170,7 @@ def _selecionar_rota_apos_handoff(
             "status",
             "",
         )
+        or ""
     ).strip()
 
     target = str(
@@ -166,20 +178,70 @@ def _selecionar_rota_apos_handoff(
             "to_agent",
             "",
         )
+        or ""
     ).strip()
 
     if (
         status == "requested"
         and target in ALLOWED_AGENT_ROUTES
     ):
-        return target
+        return "team_router"
 
     return "conversation_summary"
 
 
-def criar_builder_inna() -> StateGraph:
-    builder = StateGraph(InnaAgentState)
+def _selecionar_saida_supervisor_equipe(
+    state: InnaAgentState,
+) -> str:
+    """
+    Decide a saída de um supervisor de equipe.
 
+    Rota normal:
+        execution_governance
+
+    Escalonamento entre equipes:
+        supervisor
+
+    Proteção contra retorno excessivo:
+        fallback_agent
+    """
+    requires_root = bool(
+        state.get(
+            "team_requires_root_supervisor",
+            False,
+        )
+    )
+
+    if not requires_root:
+        return "execution_governance"
+
+    visits = int(
+        state.get(
+            "root_supervisor_visits",
+            0,
+        )
+        or 0
+    )
+
+    maximum = int(
+        state.get(
+            "max_root_supervisor_visits",
+            3,
+        )
+        or 3
+    )
+
+    if visits >= maximum:
+        return "fallback_agent"
+
+    return "supervisor"
+
+def criar_builder_inna() -> StateGraph:
+    builder = StateGraph(
+        InnaAgentState
+    )
+
+    # Entrada e supervisão principal
     builder.add_node(
         "context_builder",
         context_builder_node,
@@ -190,11 +252,34 @@ def criar_builder_inna() -> StateGraph:
         supervisor_node,
     )
 
+    # Camada hierárquica
+    builder.add_node(
+        "team_router",
+        team_router_node,
+    )
+
+    builder.add_node(
+        "financial_team_supervisor",
+        financial_team_supervisor_node,
+    )
+
+    builder.add_node(
+        "knowledge_team_supervisor",
+        knowledge_team_supervisor_node,
+    )
+
+    builder.add_node(
+        "support_team_supervisor",
+        support_team_supervisor_node,
+    )
+
+    # Governança de execução
     builder.add_node(
         "execution_governance",
         apply_execution_governance,
     )
 
+    # Agentes especializados
     builder.add_node(
         "financial_agent",
         financial_agent_node,
@@ -220,6 +305,7 @@ def criar_builder_inna() -> StateGraph:
         fallback_agent_node,
     )
 
+    # Finalização e handoffs
     builder.add_node(
         "task_completion",
         task_completion_node,
@@ -235,6 +321,7 @@ def criar_builder_inna() -> StateGraph:
         conversation_summary_node,
     )
 
+    # Entrada principal
     builder.add_edge(
         START,
         "context_builder",
@@ -247,9 +334,46 @@ def criar_builder_inna() -> StateGraph:
 
     builder.add_edge(
         "supervisor",
-        "execution_governance",
+        "team_router",
     )
 
+    # Team Router → Supervisor de equipe
+    builder.add_conditional_edges(
+        "team_router",
+        select_team_supervisor_route,
+        {
+            (
+                "financial_team_supervisor"
+            ): "financial_team_supervisor",
+            (
+                "knowledge_team_supervisor"
+            ): "knowledge_team_supervisor",
+            (
+                "support_team_supervisor"
+            ): "support_team_supervisor",
+        },
+    )
+
+    # Supervisor de equipe → governança, supervisor raiz
+    # ou fallback protegido.
+    for team_supervisor in (
+        "financial_team_supervisor",
+        "knowledge_team_supervisor",
+        "support_team_supervisor",
+    ):
+        builder.add_conditional_edges(
+            team_supervisor,
+            _selecionar_saida_supervisor_equipe,
+            {
+                (
+                    "execution_governance"
+                ): "execution_governance",
+                "supervisor": "supervisor",
+                "fallback_agent": "fallback_agent",
+            },
+        )
+
+    # Governança → agente especializado
     builder.add_conditional_edges(
         "execution_governance",
         _selecionar_rota,
@@ -262,13 +386,8 @@ def criar_builder_inna() -> StateGraph:
         },
     )
 
-    for node in [
-        "financial_agent",
-        "education_agent",
-        "rag_agent",
-        "report_agent",
-        "fallback_agent",
-    ]:
+    # Todos os agentes passam por Task Completion.
+    for node in ALLOWED_AGENT_ROUTES:
         builder.add_edge(
             node,
             "task_completion",
@@ -279,15 +398,12 @@ def criar_builder_inna() -> StateGraph:
         "handoff_coordinator",
     )
 
+    # Handoff solicitado volta à camada hierárquica.
     builder.add_conditional_edges(
         "handoff_coordinator",
         _selecionar_rota_apos_handoff,
         {
-            "financial_agent": "financial_agent",
-            "education_agent": "education_agent",
-            "rag_agent": "rag_agent",
-            "report_agent": "report_agent",
-            "fallback_agent": "fallback_agent",
+            "team_router": "team_router",
             (
                 "conversation_summary"
             ): "conversation_summary",
@@ -300,7 +416,6 @@ def criar_builder_inna() -> StateGraph:
     )
 
     return builder
-
 
 def criar_grafo_inna(
     *,
@@ -344,6 +459,20 @@ def _criar_estado_inicial(
         "handoff_required": False,
         "handoff_target": "",
         "handoff_reason": "",
+
+        # Roteamento hierárquico
+        "hierarchical_routing_enabled": True,
+        "current_team": "",
+        "team_supervisor": "",
+        "team_route": "",
+        "team_requested_agent": "",
+        "team_route_source": "",
+        "team_routing_reason": "",
+        "team_requires_root_supervisor": False,
+        "team_route_history": [],
+        "root_supervisor_visits": 0,
+        "max_root_supervisor_visits": 3,
+
         "context": {},
         "tool_results": [],
         "errors": [],
