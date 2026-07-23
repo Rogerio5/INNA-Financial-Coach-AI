@@ -62,14 +62,24 @@ def test_agents_still_route_to_task_completion():
         ) in edges
 
 
-def test_task_completion_routes_to_handoff_coordinator():
+def test_task_completion_routes_to_human_review_policy():
+    builder = criar_builder_inna()
+    edges = _edge_pairs(builder)
+
+    assert (
+        "task_completion",
+        "human_review_policy",
+    ) in edges
+
+
+def test_task_completion_no_longer_bypasses_human_review_policy():
     builder = criar_builder_inna()
     edges = _edge_pairs(builder)
 
     assert (
         "task_completion",
         "handoff_coordinator",
-    ) in edges
+    ) not in edges
 
 
 def test_task_completion_no_longer_skips_coordinator():

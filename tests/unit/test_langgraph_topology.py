@@ -73,8 +73,13 @@ def test_all_specialized_agents_finish_through_finalization_pipeline():
 
     assert (
         "task_completion",
-        "handoff_coordinator",
+        "human_review_policy",
     ) in edges
+
+    assert (
+        "task_completion",
+        "handoff_coordinator",
+    ) not in edges
 
     assert (
         "conversation_summary",

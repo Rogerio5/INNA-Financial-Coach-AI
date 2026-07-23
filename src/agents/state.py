@@ -266,6 +266,21 @@ class InnaAgentState(TypedDict, total=False):
     root_supervisor_visits: int
     max_root_supervisor_visits: int
 
+    # Human-in-the-Loop
+    human_review_enabled: bool
+    human_review_required: bool
+    human_review_current: dict[str, Any]
+    human_review_history: list[dict[str, Any]]
+    human_review_policy_decision: dict[str, Any]
+    human_review_resume_payload: dict[str, Any]
+    human_review_decision_action: str
+    human_review_corrections: dict[str, Any]
+    human_review_resume_route: str
+    human_review_status: str
+    human_review_count: int
+    max_human_reviews: int
+    human_review_limit_exceeded: bool
+
     response: str
     structured_response: dict[str, Any]
 
