@@ -233,10 +233,11 @@ O sistema:
 - gera a resposta;
 - atualiza o resumo da conversa;
 - persiste os dados;
-- registra rastreabilidade e métricas;
 - registra rastreabilidade e métricas.
 
-Quando necessário, o sistema pode interromper uma execução para revisão humana e retomá-la exatamente do checkpoint anterior, mantendo o mesmo `thread_id`.
+> Quando necessário, o sistema pode interromper uma execução para revisão humana e retomá-la exatamente do checkpoint anterior, mantendo o mesmo `thread_id`.
+
+
 ---
 
 ## Status atual
