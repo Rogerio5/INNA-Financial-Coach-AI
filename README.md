@@ -19,6 +19,7 @@ Diagnóstico financeiro • Plano de ação • Histórico • Relatórios • T
 - [Funcionalidades](#funcionalidades)
 - [Arquitetura](#arquitetura)
 - [Arquitetura multiagente](#arquitetura-multiagente)
+- [Human-in-the-Loop](#human-in-the-loop)
 - [RAG, memória e Context Engineering](#rag-memória-e-context-engineering)
 - [Tool Calling e persistência](#tool-calling-e-persistência)
 - [Telegram multilíngue](#telegram-multilíngue)
@@ -245,7 +246,7 @@ Semana 6	Produção, integração e entrega	🟡 Em evolução
 
 Validação automatizada mais recente
 ```
-2028 passed
+2418 passed
 1 skipped
 0 failed
 ```
