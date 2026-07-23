@@ -454,6 +454,112 @@ def classificar_intencao_hibrida(
         )
 
 
+def _detectar_pedido_diagnostico(
+    mensagem: str,
+) -> bool:
+    """
+    Detecta solicitações explícitas de análise ou
+    diagnóstico da situação financeira do usuário.
+
+    Não classifica perguntas conceituais nem pedidos
+    isolados de relatório.
+    """
+    normalized = str(
+        mensagem or ""
+    ).strip().lower()
+
+    if not normalized:
+        return False
+
+    diagnostic_markers = (
+        "analise minha situação financeira",
+        "analise minha situacao financeira",
+        "análise minha situação financeira",
+        "análise minha situacao financeira",
+        "analisar minha situação financeira",
+        "analisar minha situacao financeira",
+        "faça um diagnóstico financeiro",
+        "faca um diagnostico financeiro",
+        "faça um diagnóstico das minhas finanças",
+        "faca um diagnostico das minhas financas",
+        "diagnóstico da minha situação financeira",
+        "diagnostico da minha situacao financeira",
+        "avalie minha situação financeira",
+        "avalie minha situacao financeira",
+        "avalie minhas finanças",
+        "avalie minhas financas",
+        "verifique minha situação financeira",
+        "verifique minha situacao financeira",
+        "como está minha situação financeira",
+        "como esta minha situacao financeira",
+    )
+
+    return any(
+        marker in normalized
+        for marker in diagnostic_markers
+    )
+
+
+def _detectar_diagnostico_com_relatorio(
+    mensagem: str,
+) -> bool:
+    """
+    Detecta uma solicitação composta que exige primeiro
+    diagnóstico financeiro e depois geração de relatório.
+
+    Um pedido simples de relatório continua seguindo
+    diretamente para o report_agent.
+    """
+    normalized = str(
+        mensagem or ""
+    ).strip().lower()
+
+    if not normalized:
+        return False
+
+    report_markers = (
+        "relatório",
+        "relatorio",
+        "pdf",
+        "exportar",
+        "exportação",
+        "exportacao",
+        "documento",
+    )
+
+    financial_analysis_markers = (
+        "analise minha",
+        "análise minha",
+        "analisar minha",
+        "diagnóstico",
+        "diagnostico",
+        "minha situação financeira",
+        "minha situacao financeira",
+        "meu orçamento",
+        "meu orcamento",
+        "minha renda",
+        "meus gastos",
+        "minhas dívidas",
+        "minhas dividas",
+        "meu saldo",
+    )
+
+    has_report_request = any(
+        marker in normalized
+        for marker in report_markers
+    )
+
+    has_financial_analysis = any(
+        marker in normalized
+        for marker in financial_analysis_markers
+    )
+
+    return (
+        has_report_request
+        and has_financial_analysis
+    )
+
+
 def supervisor_node(
     state: InnaAgentState,
 ) -> dict[str, Any]:
@@ -479,6 +585,76 @@ def supervisor_node(
         mensagem,
         context=context,
     )
+
+    composite_diagnosis_report = (
+        _detectar_diagnostico_com_relatorio(
+            mensagem
+        )
+    )
+
+    explicit_diagnosis_request = (
+        _detectar_pedido_diagnostico(
+            mensagem
+        )
+    )
+
+    if composite_diagnosis_report:
+        decision = SupervisorDecision(
+            intent="diagnostico_financeiro",
+            next_node="financial_agent",
+            confidence=max(
+                float(decision.confidence),
+                0.97,
+            ),
+            use_database=True,
+            use_rag=False,
+            generate_report=True,
+            reason=(
+                "A mensagem solicita primeiro um "
+                "diagnóstico financeiro e depois "
+                "a geração de um relatório."
+            ),
+            classification_source="rule",
+            classification_duration_ms=(
+                decision.classification_duration_ms
+            ),
+            gemini_called=(
+                decision.gemini_called
+            ),
+            fallback_used=False,
+            classification_error=(
+                decision.classification_error
+            ),
+        )
+
+    elif (
+        explicit_diagnosis_request
+        and decision.intent == "desconhecido"
+    ):
+        decision = SupervisorDecision(
+            intent="diagnostico_financeiro",
+            next_node="financial_agent",
+            confidence=0.94,
+            use_database=True,
+            use_rag=False,
+            generate_report=False,
+            reason=(
+                "A mensagem solicita uma análise "
+                "ou diagnóstico da situação "
+                "financeira do usuário."
+            ),
+            classification_source="rule",
+            classification_duration_ms=(
+                decision.classification_duration_ms
+            ),
+            gemini_called=(
+                decision.gemini_called
+            ),
+            fallback_used=False,
+            classification_error=(
+                decision.classification_error
+            ),
+        )
 
     structured_response = dict(
         state.get(

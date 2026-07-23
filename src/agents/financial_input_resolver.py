@@ -463,6 +463,111 @@ def _merge_candidate(
                 )
 
 
+_FINANCIAL_TEXT_PATTERNS = {
+    "renda_mensal": (
+        r"(?i)\b(?:minha\s+)?renda(?:\s+mensal)?"
+        r"\s*(?:é|e|eh|foi|fica|está|esta|:|=)?\s*"
+        r"(?:de\s+)?(?:R\$\s*)?"
+        r"(?P<value>\d[\d.\s]*(?:,\d{1,2})?)"
+        r"\s*(?:reais|real|BRL)?\b",
+    ),
+    "gastos_fixos": (
+        r"(?i)\b(?:meus|minhas|os|as)?\s*"
+        r"(?:gastos?|despesas?)\s+fix(?:os|as)"
+        r"(?:\s+mensais?)?"
+        r"\s*(?:são|sao|é|e|eh|ficam|:|=)?\s*"
+        r"(?:de\s+)?(?:R\$\s*)?"
+        r"(?P<value>\d[\d.\s]*(?:,\d{1,2})?)"
+        r"\s*(?:reais|real|BRL)?\b",
+    ),
+    "gastos_variaveis": (
+        r"(?i)\b(?:meus|minhas|os|as)?\s*"
+        r"(?:gastos?|despesas?)\s+vari[aá]veis"
+        r"(?:\s+mensais?)?"
+        r"\s*(?:são|sao|é|e|eh|ficam|:|=)?\s*"
+        r"(?:de\s+)?(?:R\$\s*)?"
+        r"(?P<value>\d[\d.\s]*(?:,\d{1,2})?)"
+        r"\s*(?:reais|real|BRL)?\b",
+    ),
+    "dividas_mensais": (
+        r"(?i)\b(?:minhas|meus|as|os)?\s*"
+        r"(?:d[ií]vidas?|parcelas?)"
+        r"(?:\s+mensais?)?"
+        r"\s*(?:são|sao|é|e|eh|ficam|:|=)?\s*"
+        r"(?:de\s+)?(?:R\$\s*)?"
+        r"(?P<value>\d[\d.\s]*(?:,\d{1,2})?)"
+        r"\s*(?:reais|real|BRL)?\b",
+    ),
+    "reserva_atual": (
+        r"(?i)\b(?:minha|a)?\s*"
+        r"reserva(?:\s+atual)?"
+        r"\s*(?:é|e|eh|está|esta|fica|:|=)?\s*"
+        r"(?:em\s+|de\s+)?(?:R\$\s*)?"
+        r"(?P<value>\d[\d.\s]*(?:,\d{1,2})?)"
+        r"\s*(?:reais|real|BRL)?\b",
+    ),
+}
+
+
+def _extract_financial_fields_from_text(
+    message: str,
+) -> dict[str, float]:
+    """
+    Extrai campos financeiros explícitos da mensagem.
+
+    Funciona como fallback determinístico quando o parser
+    principal falha ou retorna somente parte dos campos.
+    """
+    text = str(
+        message or ""
+    ).strip()
+
+    if not text:
+        return {}
+
+    extracted: dict[str, float] = {}
+
+    for field_name, patterns in (
+        _FINANCIAL_TEXT_PATTERNS.items()
+    ):
+        pattern_options = (
+            patterns
+            if isinstance(
+                patterns,
+                tuple,
+            )
+            else (
+                patterns,
+            )
+        )
+
+        for pattern in pattern_options:
+            match = re.search(
+                pattern,
+                text,
+            )
+
+            if not match:
+                continue
+
+            normalized = (
+                _to_non_negative_float(
+                    match.group("value")
+                )
+            )
+
+            if normalized is None:
+                continue
+
+            extracted[field_name] = (
+                normalized
+            )
+
+            break
+
+    return extracted
+
+
 def _safe_parse_current_message(
     message: str,
     warnings: list[str],
@@ -656,6 +761,71 @@ def resolver_entrada_financeira(
         warnings=warnings,
         overwrite=True,
     )
+
+    deterministic_fallback = (
+        _extract_financial_fields_from_text(
+            message
+        )
+    )
+
+    fallback_missing_fields = {
+        field: value
+        for field, value
+        in deterministic_fallback.items()
+        if field not in collected
+    }
+
+    _merge_candidate(
+        candidate=fallback_missing_fields,
+        source_name=(
+            "current_message_deterministic_fallback"
+        ),
+        collected=collected,
+        sources=sources,
+        warnings=warnings,
+        overwrite=False,
+    )
+
+    # Corrige resultados claramente inconsistentes
+    # do parser principal. Isso ocorre, por exemplo,
+    # quando "R$ 2.000,00" é interpretado como 0.0.
+    fallback_repairs = {
+        field: fallback_value
+        for field, fallback_value
+        in deterministic_fallback.items()
+        if (
+            field in collected
+            and sources.get(field)
+            == "current_message_parser"
+            and collected.get(field) == 0.0
+            and fallback_value > 0.0
+        )
+    }
+
+    _merge_candidate(
+        candidate=fallback_repairs,
+        source_name=(
+            "current_message_deterministic_fallback"
+        ),
+        collected=collected,
+        sources=sources,
+        warnings=warnings,
+        overwrite=True,
+    )
+
+    if fallback_repairs:
+        warnings.append(
+            "message_parser_values_repaired_by_fallback"
+        )
+
+    if (
+        deterministic_fallback
+        and "message_parser_failed"
+        in warnings
+    ):
+        warnings.append(
+            "message_parser_recovered_by_fallback"
+        )
 
     # Entradas estruturadas atuais possuem
     # a maior prioridade.

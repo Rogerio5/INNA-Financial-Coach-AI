@@ -53,7 +53,7 @@ def test_langgraph_has_expected_linear_entry_flow():
     ) in edges
 
 
-def test_all_specialized_agents_finish_through_summary():
+def test_all_specialized_agents_finish_through_finalization_pipeline():
     builder = criar_builder_inna()
 
     edges = _edge_pairs(
@@ -63,19 +63,23 @@ def test_all_specialized_agents_finish_through_summary():
     for agent in ALLOWED_AGENT_ROUTES:
         assert (
             agent,
-            "conversation_summary",
+            "task_completion",
         ) in edges
 
         assert (
             agent,
-            END,
+            "conversation_summary",
         ) not in edges
 
     assert (
-        "conversation_summary",
-        END,
+        "task_completion",
+        "handoff_coordinator",
     ) in edges
 
+    assert (
+        "conversation_summary",
+        "__end__",
+    ) in edges
 
 def test_agents_do_not_return_to_supervisor():
     builder = criar_builder_inna()

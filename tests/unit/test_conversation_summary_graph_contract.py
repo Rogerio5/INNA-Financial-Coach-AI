@@ -51,7 +51,7 @@ def test_summary_node_is_registered():
     )
 
 
-def test_all_specialized_agents_route_to_summary():
+def test_all_specialized_agents_follow_finalization_pipeline():
     builder = criar_builder_inna()
     edges = _edge_pairs(builder)
 
@@ -66,8 +66,18 @@ def test_all_specialized_agents_route_to_summary():
     for agent in agents:
         assert (
             agent,
-            "conversation_summary",
+            "task_completion",
         ) in edges
+
+        assert (
+            agent,
+            "conversation_summary",
+        ) not in edges
+
+    assert (
+        "task_completion",
+        "handoff_coordinator",
+    ) in edges
 
 
 def test_specialized_agents_do_not_finish_directly():

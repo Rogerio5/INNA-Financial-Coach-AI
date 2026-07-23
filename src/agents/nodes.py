@@ -211,6 +211,9 @@ def financial_agent_node(
             ),
             "tool_results": tool_results,
             "errors": errors,
+            "handoff_required": False,
+            "handoff_target": "",
+            "handoff_reason": "",
             "trace": trace + [
                 "financial_input:incomplete",
                 "agent:financial_agent",
@@ -374,6 +377,9 @@ def financial_agent_node(
             ),
             "tool_results": tool_results,
             "errors": errors,
+            "handoff_required": False,
+            "handoff_target": "",
+            "handoff_reason": "",
             "trace": trace + [
                 "agent:financial_agent:error"
             ],
@@ -508,6 +514,95 @@ def financial_agent_node(
         f"success"
     )
 
+    # ======================================================
+    # Solicitação explícita de handoff para relatório
+    # ======================================================
+
+    existing_handoff = state.get(
+        "handoff_current"
+    )
+
+    existing_handoff_status = ""
+
+    if isinstance(
+        existing_handoff,
+        dict,
+    ):
+        existing_handoff_status = str(
+            existing_handoff.get(
+                "status",
+                "",
+            )
+        ).strip()
+
+    active_handoff_statuses = {
+        "requested",
+        "accepted",
+    }
+
+    handoff_already_active = (
+        existing_handoff_status
+        in active_handoff_statuses
+    )
+
+    report_requested = bool(
+        state.get(
+            "generate_report",
+            False,
+        )
+    )
+
+    diagnosis_intent = (
+        str(
+            state.get(
+                "intent",
+                "",
+            )
+        ).strip()
+        == "diagnostico_financeiro"
+    )
+
+    handoff_limit_exceeded = bool(
+        state.get(
+            "handoff_limit_exceeded",
+            False,
+        )
+    )
+
+    should_request_report_handoff = (
+        report_requested
+        and diagnosis_intent
+        and not handoff_already_active
+        and not handoff_limit_exceeded
+    )
+
+    handoff_reason = ""
+
+    if should_request_report_handoff:
+        handoff_reason = (
+            "O diagnóstico financeiro foi concluído "
+            "com sucesso e o usuário solicitou a "
+            "geração de um relatório."
+        )
+
+        structured_response[
+            "handoff_request"
+        ] = {
+            "from_agent": "financial_agent",
+            "to_agent": "report_agent",
+            "reason": handoff_reason,
+            "trigger": (
+                "diagnosis_completed_with_report_request"
+            ),
+            "diagnosis_available": True,
+            "report_requested": True,
+        }
+
+        trace.append(
+            "handoff:intent:"
+            "financial_agent->report_agent"
+        )
+
     return {
         **state,
         "response": summary,
@@ -522,6 +617,15 @@ def financial_agent_node(
         ),
         "tool_results": tool_results,
         "errors": errors,
+        "handoff_required": (
+            should_request_report_handoff
+        ),
+        "handoff_target": (
+            "report_agent"
+            if should_request_report_handoff
+            else ""
+        ),
+        "handoff_reason": handoff_reason,
         "trace": trace + [
             "agent:financial_agent"
         ],

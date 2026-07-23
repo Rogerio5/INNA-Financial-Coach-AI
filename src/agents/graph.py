@@ -18,6 +18,12 @@ from langgraph.graph import END, START, StateGraph
 from src.agents.conversation_summary_node import (
     conversation_summary_node,
 )
+from src.agents.task_completion_node import (
+    task_completion_node,
+)
+from src.agents.handoff_coordinator_node import (
+    handoff_coordinator_node,
+)
 from src.agents.execution_governance import (
     DEFAULT_MAX_EXECUTION_STEPS,
     DEFAULT_MAX_SAME_AGENT_VISITS,
@@ -131,6 +137,46 @@ def _selecionar_rota(
     return route
 
 
+def _selecionar_rota_apos_handoff(
+    state: InnaAgentState,
+) -> str:
+    """
+    Decide se o fluxo deve executar o agente de destino
+    ou seguir para o resumo final.
+    """
+    handoff = state.get(
+        "handoff_current"
+    )
+
+    if not isinstance(
+        handoff,
+        dict,
+    ):
+        return "conversation_summary"
+
+    status = str(
+        handoff.get(
+            "status",
+            "",
+        )
+    ).strip()
+
+    target = str(
+        handoff.get(
+            "to_agent",
+            "",
+        )
+    ).strip()
+
+    if (
+        status == "requested"
+        and target in ALLOWED_AGENT_ROUTES
+    ):
+        return target
+
+    return "conversation_summary"
+
+
 def criar_builder_inna() -> StateGraph:
     builder = StateGraph(InnaAgentState)
 
@@ -175,6 +221,16 @@ def criar_builder_inna() -> StateGraph:
     )
 
     builder.add_node(
+        "task_completion",
+        task_completion_node,
+    )
+
+    builder.add_node(
+        "handoff_coordinator",
+        handoff_coordinator_node,
+    )
+
+    builder.add_node(
         "conversation_summary",
         conversation_summary_node,
     )
@@ -215,8 +271,28 @@ def criar_builder_inna() -> StateGraph:
     ]:
         builder.add_edge(
             node,
-            "conversation_summary",
+            "task_completion",
         )
+
+    builder.add_edge(
+        "task_completion",
+        "handoff_coordinator",
+    )
+
+    builder.add_conditional_edges(
+        "handoff_coordinator",
+        _selecionar_rota_apos_handoff,
+        {
+            "financial_agent": "financial_agent",
+            "education_agent": "education_agent",
+            "rag_agent": "rag_agent",
+            "report_agent": "report_agent",
+            "fallback_agent": "fallback_agent",
+            (
+                "conversation_summary"
+            ): "conversation_summary",
+        },
+    )
 
     builder.add_edge(
         "conversation_summary",
@@ -260,6 +336,14 @@ def _criar_estado_inicial(
                 "content": mensagem,
             }
         ],
+        "handoff_current": None,
+        "handoff_history": [],
+        "handoff_count": 0,
+        "max_handoffs": 3,
+        "handoff_limit_exceeded": False,
+        "handoff_required": False,
+        "handoff_target": "",
+        "handoff_reason": "",
         "context": {},
         "tool_results": [],
         "errors": [],

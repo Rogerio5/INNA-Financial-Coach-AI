@@ -65,6 +65,106 @@ def merge_conversation_history(
     return resultado
 
 
+def merge_handoff_history(
+    current: list[dict[str, Any]] | None,
+    update: list[dict[str, Any]] | None,
+) -> list[dict[str, Any]]:
+    """
+    Combina o histórico de handoffs sem duplicar registros.
+
+    Quando o mesmo handoff_id aparece novamente, a versão
+    mais recente substitui o registro anterior, preservando
+    a ordem original do histórico.
+    """
+    def normalize_records(
+        records: list[dict[str, Any]] | None,
+    ) -> list[dict[str, Any]]:
+        normalized: list[dict[str, Any]] = []
+
+        for item in records or []:
+            if not isinstance(
+                item,
+                dict,
+            ):
+                continue
+
+            record = dict(item)
+
+            handoff_id = str(
+                record.get(
+                    "handoff_id",
+                    "",
+                )
+            ).strip()
+
+            if not handoff_id:
+                continue
+
+            record["handoff_id"] = handoff_id
+            normalized.append(record)
+
+        return normalized
+
+    current_items = normalize_records(
+        current
+    )
+
+    update_items = normalize_records(
+        update
+    )
+
+    if not update_items:
+        return current_items
+
+    if not current_items:
+        return update_items
+
+    # Alguns nós podem devolver o histórico completo.
+    if (
+        len(update_items) >= len(current_items)
+        and update_items[: len(current_items)]
+        == current_items
+    ):
+        return update_items
+
+    result = list(current_items)
+
+    positions: dict[str, int] = {}
+
+    for index, item in enumerate(result):
+        handoff_id = str(
+            item.get(
+                "handoff_id",
+                "",
+            )
+        ).strip()
+
+        if handoff_id:
+            positions[handoff_id] = index
+
+    for item in update_items:
+        handoff_id = str(
+            item.get(
+                "handoff_id",
+                "",
+            )
+        ).strip()
+
+        if not handoff_id:
+            continue
+
+        if handoff_id in positions:
+            result[
+                positions[handoff_id]
+            ] = item
+            continue
+
+        positions[handoff_id] = len(result)
+        result.append(item)
+
+    return result
+
+
 IntentType = Literal[
     "diagnostico_financeiro",
     "educacao_financeira",
@@ -131,6 +231,28 @@ class InnaAgentState(TypedDict, total=False):
     semantic_memory_sources: dict[str, str]
     tool_results: list[dict[str, Any]]
 
+    # Contrato formal de conclusão da tarefa.
+    task_status: str
+    task_requirements: list[str]
+    completed_requirements: list[str]
+    missing_requirements: list[str]
+    task_block_reason: str
+    task_completion_score: float
+    task_completion_evidence: dict[str, Any]
+
+    # Transferência formal de responsabilidade entre agentes.
+    handoff_current: dict[str, Any] | None
+    handoff_history: Annotated[
+        list[dict[str, Any]],
+        merge_handoff_history,
+    ]
+    handoff_count: int
+    max_handoffs: int
+    handoff_limit_exceeded: bool
+    handoff_required: bool
+    handoff_target: str
+    handoff_reason: str
+
     response: str
     structured_response: dict[str, Any]
 
@@ -142,4 +264,5 @@ __all__ = [
     "IntentType",
     "InnaAgentState",
     "merge_conversation_history",
+    "merge_handoff_history",
 ]
