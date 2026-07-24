@@ -60,6 +60,9 @@ from streamlit_js_eval import streamlit_js_eval
 import requests
 
 from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_relatorio_pdf_api, buscar_historico_usuario_api, verificar_api_online, enviar_relatorio_email
+from src.dashboard_pages.human_review.page import (
+    render_human_review_admin_page,
+)
 
 
 st.set_page_config(
@@ -5532,69 +5535,49 @@ if app_menu == "📊 Observabilidade RAG":
     render_observabilidade_rag_inna()
     st.stop()
 
-if app_menu in ["🔐 Admin", "🔐 Admin Analytics", "Admin", "Admin Analytics"]:
-    st.title("🔐 Admin Analytics — INNA")
-    st.caption("Dashboard administrativo integrado ao painel principal da INNA.")
-
-
-
-    st.markdown(
-        """
-<div style="
-    background: linear-gradient(135deg, #0b1f3a, #102f57);
-    border: 1px solid #d4af37;
-    border-radius: 18px;
-    padding: 22px 26px;
-    margin: 18px 0 22px 0;
-    color: #ffffff;
-">
-    <h3 style="color:#ffd77a; margin-top:0;">🔐 Área administrativa da INNA</h3>
-    <p style="font-size:16px; line-height:1.6; margin-bottom:10px;">
-        Este painel é destinado ao administrador da INNA e não deve aparecer para o usuário comum.
-    </p>
-    <p style="font-size:15px; line-height:1.6; margin-bottom:0;">
-        Aqui você acompanha diagnósticos, eventos multicanal, idiomas, moedas, feedbacks,
-        relatórios PDF, envio por e-mail, Telegram e evolução de uso da plataforma.
-    </p>
-</div>
-        """,
-        unsafe_allow_html=True,
+if app_menu in [
+    "🔐 Admin",
+    "🔐 Admin Analytics",
+    "Admin",
+    "Admin Analytics",
+]:
+    authenticated = bool(
+        st.session_state.get(
+            "logado"
+        )
     )
 
-    col_admin1, col_admin2, col_admin3 = st.columns(3)
-    col_admin1.metric("Área", "Analytics")
-    col_admin2.metric("Canais", "Web + PDF + E-mail + Telegram")
-    col_admin3.metric("Banco", "Neon PostgreSQL")
-
-    st.markdown(
-        f"""
-<a href="{DASHBOARD_ADMIN_URL}" target="_blank" style="
-    display:block;
-    text-align:center;
-    background:#d4af37;
-    color:#0b1f3a;
-    font-weight:800;
-    text-decoration:none;
-    padding:14px 18px;
-    border-radius:14px;
-    margin:18px 0 24px 0;
-    border:1px solid #ffe08a;
-">
-    🚀 Abrir Dashboard Analytics em nova aba
-</a>
-        """,
-        unsafe_allow_html=True,
+    is_admin = (
+        st.session_state.get(
+            "perfil_usuario"
+        )
+        == "admin"
     )
 
-    st.divider()
+    admin_identity = str(
+        st.session_state.get(
+            "usuario",
+            "",
+        )
+    ).strip()
 
-    st.write("### 📊 Dashboard Analytics integrado")
+    if (
+        not authenticated
+        or not is_admin
+        or not admin_identity
+    ):
+        st.error(
+            "Acesso restrito ao administrador "
+            "autenticado da INNA."
+        )
 
-    components.iframe(
-        DASHBOARD_ADMIN_URL,
-        height=950,
-        scrolling=True,
-    )
+        st.session_state[
+            "app_menu_selected"
+        ] = "🔑 Entrar"
+
+        st.stop()
+
+    render_human_review_admin_page()
 
     st.stop()
 
@@ -6771,61 +6754,3 @@ if buscar_historico:
 
     except Exception as error:
         st.error(f"{page_t('history_search_error')}: {error}")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
