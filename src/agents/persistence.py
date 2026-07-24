@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import atexit
 import os
+import socket
 from contextlib import contextmanager
 from pathlib import Path
 from threading import Lock
@@ -16,6 +17,10 @@ from typing import Iterator
 
 from dotenv import load_dotenv
 from langgraph.checkpoint.postgres import PostgresSaver
+from psycopg.conninfo import (
+    conninfo_to_dict,
+    make_conninfo,
+)
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
@@ -43,6 +48,80 @@ def obter_database_url() -> str:
     return database_url
 
 
+def obter_conninfo_pool() -> str:
+    """
+    Prepara a conexão usada pelo pool PostgreSQL.
+
+    No Windows, resolve o endereço do host antes
+    de iniciar os workers em segundo plano do pool.
+    O host original é preservado para SSL e
+    autenticação.
+    """
+    database_url = obter_database_url()
+
+    if os.name != "nt":
+        return database_url
+
+    parameters = conninfo_to_dict(
+        database_url
+    )
+
+    host = str(
+        parameters.get("host") or ""
+    ).strip()
+
+    if not host or "," in host:
+        return database_url
+
+    port_value = str(
+        parameters.get("port") or "5432"
+    ).split(",", maxsplit=1)[0]
+
+    try:
+        port = int(port_value)
+
+        addresses = socket.getaddrinfo(
+            host,
+            port,
+            type=socket.SOCK_STREAM,
+        )
+
+    except (
+        OSError,
+        TypeError,
+        ValueError,
+    ):
+        return database_url
+
+    ipv4_addresses = [
+        address[4][0]
+        for address in addresses
+        if address[0] == socket.AF_INET
+    ]
+
+    other_addresses = [
+        address[4][0]
+        for address in addresses
+        if address[4][0]
+        not in ipv4_addresses
+    ]
+
+    available_addresses = list(
+        dict.fromkeys(
+            ipv4_addresses
+            + other_addresses
+        )
+    )
+
+    if not available_addresses:
+        return database_url
+
+    return make_conninfo(
+        database_url,
+        hostaddr=available_addresses[0],
+    )
+
+
 def obter_pool_postgres() -> ConnectionPool:
     """
     Retorna um único pool reutilizável pela aplicação.
@@ -60,7 +139,7 @@ def obter_pool_postgres() -> ConnectionPool:
             return _pool
 
         _pool = ConnectionPool(
-            conninfo=obter_database_url(),
+            conninfo=obter_conninfo_pool(),
             min_size=1,
             max_size=5,
             timeout=30,
@@ -167,6 +246,7 @@ def inicializar_memoria_agentes() -> dict[str, object]:
 
 __all__ = [
     "obter_database_url",
+    "obter_conninfo_pool",
     "obter_pool_postgres",
     "fechar_pool_postgres",
     "abrir_checkpointer_postgres",
