@@ -632,7 +632,9 @@ A implementação possui:
 ---
 
 ## Tool Calling e persistência
+
 ### Tool Calling
+
 - Tool Registry;
 - contratos Pydantic;
 - executor formal;
@@ -644,9 +646,16 @@ A implementação possui:
 - RAG como ferramenta;
 - diagnóstico financeiro;
 - histórico financeiro;
-- integração com os agentes.
+- integração com os agentes;
+- controle de acesso por ferramenta;
+- tratamento padronizado de falhas;
+- rastreabilidade das execuções;
+- integração com o supervisor;
+- integração com a governança de execução;
+- compatibilidade com agentes especializados.
 
 ### Persistência
+
 - PostgreSQL;
 - Neon;
 - pgvector;
@@ -662,6 +671,19 @@ A implementação possui:
 - replay protection;
 - worker recuperável;
 - concorrência otimista;
+- checkpoint de revisão humana;
+- retomada de execução interrompida;
+- isolamento de revisão por thread;
+- proteção contra retomada na thread incorreta;
+- rastreabilidade das decisões humanas;
+- persistência do estado interrompido;
+- recuperação pelo mesmo `thread_id`;
+- compatibilidade com `Command(resume=...)`;
+- proteção contra retomada duplicada;
+- continuidade segura após aprovação;
+- retorno ao roteamento após correção;
+- encerramento controlado após rejeição ou cancelamento;
+- auditoria de decisões humanas;
 - eventos auditáveis.
 
 ---
@@ -700,7 +722,7 @@ A INNA também funciona pelo Telegram por meio de webhook integrado à FastAPI.
 
 ---
 
-## Arquitetura
+### Arquitetura do Telegram
 ```
 Telegram
   ↓
@@ -955,7 +977,7 @@ INNA-Financial-Coach-AI/
 ```
 
 ### Como navegar pelo projeto
-```
+
 | Interesse             | Pasta                                          |
 | --------------------- | ---------------------------------------------- |
 | Entender a API        | [`api/`](api/)                                 |
@@ -973,7 +995,7 @@ INNA-Financial-Coach-AI/
 | Ver scripts           | [`scripts/`](scripts/)                         |
 | Ver relatórios        | [`reports/`](reports/)                         |
 
-```
+
 
 Índices recomendados
 Para melhorar ainda mais a experiência no GitHub, criar:
