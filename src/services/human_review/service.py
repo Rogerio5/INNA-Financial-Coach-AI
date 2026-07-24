@@ -133,6 +133,28 @@ def _normalize_identifier(
     return normalized
 
 
+def _normalize_pending_status(
+    value: object,
+) -> str:
+    normalized = str(
+        value or "pending"
+    ).strip().lower()
+
+    aliases = {
+        "pending": "pending",
+        "requested": "pending",
+        "waiting": "pending",
+    }
+
+    try:
+        return aliases[normalized]
+    except KeyError as exc:
+        raise HumanReviewValidationError(
+            "Status inicial de revisão humana "
+            "inválido."
+        ) from exc
+
+
 def registrar_revisao_pendente(
     interrupt_payload: Mapping[str, Any],
 ) -> repository.HumanReviewWriteResult:
@@ -180,9 +202,11 @@ def registrar_revisao_pendente(
                 "thread_id",
                 "",
             ),
-            status=payload.get(
-                "status",
-                "pending",
+            status=_normalize_pending_status(
+                payload.get(
+                    "status",
+                    "pending",
+                )
             ),
             requested_by=payload.get(
                 "requested_by",

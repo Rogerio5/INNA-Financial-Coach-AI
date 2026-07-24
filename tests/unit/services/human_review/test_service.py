@@ -342,3 +342,68 @@ def test_registrar_payload_de_interrupt(
     assert result.created is True
     assert len(captured) == 1
     assert captured[0].review_id == "review-001"
+
+
+@pytest.mark.parametrize(
+    "interrupt_status",
+    [
+        "requested",
+        "waiting",
+    ],
+)
+def test_registrar_interrupt_normaliza_status_pendente(
+    monkeypatch: pytest.MonkeyPatch,
+    interrupt_status: str,
+) -> None:
+    captured: list[Any] = []
+
+    def fake_create(record):
+        captured.append(record)
+
+        return repository.HumanReviewWriteResult(
+            record=_record(status="pending"),
+            status="created",
+        )
+
+    monkeypatch.setattr(
+        repository,
+        "criar_revisao_pendente",
+        fake_create,
+    )
+
+    result = service.registrar_revisao_pendente({
+        "type": "human_review",
+        "version": "1.0",
+        "review_id": "review-status-test",
+        "thread_id": "thread-status-test",
+        "status": interrupt_status,
+        "requested_by": "human_review_policy",
+        "reason": "Revisão forçada.",
+        "trigger": "forced_review",
+        "risk_level": "medium",
+        "payload": {},
+        "allowed_actions": [
+            "approve",
+            "correct",
+            "reject",
+            "cancel",
+        ],
+    })
+
+    assert result.created is True
+    assert len(captured) == 1
+    assert captured[0].status == "pending"
+
+
+def test_registrar_interrupt_rejeita_status_desconhecido(
+) -> None:
+    with pytest.raises(
+        HumanReviewValidationError
+    ):
+        service.registrar_revisao_pendente({
+            "type": "human_review",
+            "review_id": "review-invalid-status",
+            "thread_id": "thread-invalid-status",
+            "status": "completed",
+            "payload": {},
+        })
