@@ -1,3 +1,7 @@
+from api.human_review_routes import (
+    router as human_review_router,
+)
+
 from api.telegram_operational_status import router as telegram_operational_router
 from api.telegram_webhook import router as telegram_router
 from api.security import (
@@ -1143,3 +1147,7 @@ def rag_ask(payload: RagAskRequest):
         raise HTTPException(status_code=500, detail=str(exc))
 
 app.include_router(telegram_operational_router)
+
+app.include_router(
+    human_review_router
+)
