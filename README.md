@@ -103,17 +103,17 @@ A INNA evoluiu de um MVP em Streamlit para uma arquitetura modular e profissiona
 
 ## Demonstração online
 
-A versão pública utiliza **Render** para os serviços da aplicação e **Neon PostgreSQL** como banco de dados em nuvem.
+A versão pública utiliza **Render** para hospedar os serviços da aplicação e **Neon PostgreSQL** como banco de dados em nuvem.
 
 ### Links de produção
 
-| Recurso | Link |
+| Recurso | Acesso |
 |---|---|
-| App principal — Streamlit | https://inna-app-streamlit.onrender.com |
-| API e Swagger — FastAPI | https://inna-api.onrender.com/docs |
-| Health Check | https://inna-api.onrender.com/health |
-| Dashboard analítico | https://inna-dashboard-streamlit.onrender.com |
-| Repositório | https://github.com/Rogerio5/INNA-Financial-Coach-AI |
+| App principal — Streamlit | [Abrir aplicação](https://inna-app-streamlit.onrender.com) |
+| API e Swagger — FastAPI | [Abrir documentação da API](https://inna-api.onrender.com/docs) |
+| Health Check | [Verificar status da API](https://inna-api.onrender.com/health) |
+| Dashboard analítico | [Abrir dashboard](https://inna-dashboard-streamlit.onrender.com) |
+| Repositório | [Ver código no GitHub](https://github.com/Rogerio5/INNA-Financial-Coach-AI) |
 
 ### Fluxo online validado
 
@@ -128,7 +128,7 @@ LangGraph / Motor financeiro / RAG / Gemini
   ↓
 PostgreSQL / Neon / pgvector
   ↓
-Histórico /PDF / Feedback / Telegram / Dashboard
+Histórico / PDF / Feedback / Telegram / Dashboard
 ```
 
 ---
@@ -978,43 +978,44 @@ INNA-Financial-Coach-AI/
 
 ### Como navegar pelo projeto
 
-| Interesse             | Pasta                                          |
-| --------------------- | ---------------------------------------------- |
-| Entender a API        | [`api/`](api/)                                 |
-| Ver os agentes        | [`src/agents/`](src/agents/)                   |
-| Ver o RAG e a memória | [`src/services/`](src/services/)               |
-| Ver Tool Calling      | [`src/tools/`](src/tools/)                     |
-| Ver Telegram          | [`src/channels/`](src/channels/)               |
-| Ver banco de dados    | [`src/database/`](src/database/)               |
-| Ver observabilidade   | [`src/observability/`](src/observability/)     |
-| Ver o dashboard       | [`src/dashboard_pages/`](src/dashboard_pages/) |
-| Ver testes            | [`tests/`](tests/)                             |
-| Ver documentação      | [`docs/`](docs/)                               |
-| Ver auditorias        | [`docs/audits/`](docs/audits/)                 |
-| Ver prints            | [`docs/prints/`](docs/prints/)                 |
-| Ver scripts           | [`scripts/`](scripts/)                         |
-| Ver relatórios        | [`reports/`](reports/)                         |
+| Interesse | Pasta |
+|---|---|
+| Entender a API | [`api/`](api/) |
+| Ver a arquitetura de agentes e o Human-in-the-Loop | [`src/agents/`](src/agents/) |
+| Ver o RAG, a memória e os serviços | [`src/services/`](src/services/) |
+| Ver Tool Calling | [`src/tools/`](src/tools/) |
+| Ver Telegram e outros canais | [`src/channels/`](src/channels/) |
+| Ver persistência e banco de dados | [`src/database/`](src/database/) |
+| Ver observabilidade | [`src/observability/`](src/observability/) |
+| Ver o dashboard | [`src/dashboard_pages/`](src/dashboard_pages/) |
+| Ver os testes automatizados | [`tests/`](tests/) |
+| Ver a documentação técnica | [`docs/`](docs/) |
+| Ver auditorias | [`docs/audits/`](docs/audits/) |
+| Ver evidências visuais | [`docs/prints/`](docs/prints/) |
+| Ver scripts operacionais | [`scripts/`](scripts/) |
+| Ver relatórios | [`reports/`](reports/) |
 
 
+### Documentação recomendada por módulo
 
-Índices recomendados
-Para melhorar ainda mais a experiência no GitHub, criar:
-```
-docs/README.md
-docs/audits/README.md
-scripts/README.md
-reports/README.md
-tests/README.md
-src/agents/README.md
-src/services/README.md
-src/observability/README.md
-src/tools/README.md
-```
+Para melhorar a navegação e a experiência no GitHub, o projeto poderá incluir arquivos `README.md` específicos em cada área:
+
+- [`docs/README.md`](docs/README.md)
+- [`docs/audits/README.md`](docs/audits/README.md)
+- [`scripts/README.md`](scripts/README.md)
+- [`reports/README.md`](reports/README.md)
+- [`tests/README.md`](tests/README.md)
+- [`src/agents/README.md`](src/agents/README.md)
+- [`src/services/README.md`](src/services/README.md)
+- [`src/observability/README.md`](src/observability/README.md)
+- [`src/tools/README.md`](src/tools/README.md)
 
 ---
 
 ## Tecnologias
-- Backend, IA e agentes
+
+### Backend, IA e agentes
+
 - Python;
 - FastAPI;
 - Google Gemini;
@@ -1022,44 +1023,107 @@ src/tools/README.md
 - Pydantic;
 - SQLAlchemy;
 - Uvicorn;
-- Requests.
+- Requests;
+- arquitetura multiagente;
+- arquitetura hierárquica de equipes;
+- Human-in-the-Loop;
+- Context Engineering;
+- Tool Calling;
+- checkpoint e retomada por `thread_id`.
 
-### RAG e memória
+### RAG, memória e dados
+
+- PostgreSQL;
+- Neon;
 - pgvector;
+- JSONB;
 - embeddings;
+- busca textual;
+- busca vetorial;
 - busca híbrida;
 - reranking;
-- Context Engineering;
 - memória semântica;
-- PostgreSQL;
-- JSONB.
+- memória financeira;
+- resumo conversacional incremental;
+- versionamento documental.
 
-### Interface
+### Interfaces e canais
+
 - Streamlit;
+- FastAPI Swagger;
 - Pandas;
 - ReportLab;
-- Telegram Bot API.
+- Telegram Bot API;
+- e-mail com Resend;
+- webhooks;
+- dashboard analítico.
 
 ### Observabilidade
+
 - Prometheus;
 - OpenMetrics;
 - Grafana;
+- logs estruturados;
+- métricas de LLM;
+- health check;
+- readiness;
+- SLO;
+- alertas;
 - Resend;
 - Svix;
-- logs estruturados.
+- auditoria de eventos.
 
-### Deploy
+### Persistência e processamento
+
+- PostgreSQL;
+- Neon;
+- pgvector;
+- checkpoints;
+- filas persistentes;
+- receipts;
+- idempotência;
+- replay protection;
+- worker recuperável;
+- concorrência otimista.
+
+### Deploy e infraestrutura
+
 - Render;
 - Neon;
-- GitHub.
+- GitHub;
+- Procfile;
+- variáveis de ambiente;
+- serviços separados para API, Streamlit e dashboard.
 
-### Qualidade
+### Qualidade e testes
+
 - pytest;
 - testes unitários;
 - testes estruturais;
 - testes de integração;
-- regressão;
-- auditorias.
+- testes de regressão;
+- testes reais com `MemorySaver`;
+- testes de arquitetura e topologia;
+- auditorias técnicas;
+- validação com `git diff --check`;
+- 2418 testes aprovados;
+- 1 teste ignorado;
+- 0 falhas.
+
+### Próximas tecnologias planejadas
+
+- Docker;
+- Docker Compose;
+- Ruff;
+- mypy;
+- Bandit;
+- pip-audit;
+- pytest-cov;
+- GitHub Actions;
+- OpenTelemetry;
+- tracing distribuído;
+- testes de carga;
+- CI/CD.
 
 ---
 
@@ -1280,8 +1344,9 @@ A INNA:
   ---
 
 ## Roadmap
-### Concluído:
- 
+
+### Concluído
+
 - Streamlit;
 - FastAPI;
 - PostgreSQL;
@@ -1294,10 +1359,29 @@ A INNA:
 - dashboard;
 - Telegram;
 - LangGraph;
-- supervisor;
-- agentes;
+- supervisor principal;
+- arquitetura multiagente;
+- arquitetura hierárquica de equipes;
+- Team Router;
+- supervisores especializados;
+- roteamento entre equipes;
+- agentes especializados;
+- agente financeiro;
+- agente educacional;
+- agente RAG;
 - agente de relatório;
+- agente fallback;
 - revisor de risco;
+- governança de execução;
+- Handoff Coordinator;
+- Task Completion;
+- Human-in-the-Loop;
+- política de revisão humana;
+- Human Review Interrupt;
+- interrupção persistente com `interrupt()`;
+- retomada com `Command(resume=...)`;
+- checkpoint por `thread_id`;
+- aprovação, correção, rejeição e cancelamento;
 - Tool Calling;
 - RAG híbrido;
 - reranking;
@@ -1309,9 +1393,36 @@ A INNA:
 - alertas;
 - SLO;
 - auditorias;
-- testes extensos.
+- testes unitários;
+- testes de integração;
+- testes reais com `MemorySaver`;
+- testes extensos;
+- 2418 testes aprovados;
+- 1 teste ignorado;
+- 0 falhas.
+
+---
 
 ### Próximas prioridades
+
+#### Human-in-the-Loop em produção
+
+- tabela PostgreSQL de revisões humanas;
+- repository do Human-in-the-Loop;
+- service layer de revisão;
+- endpoints FastAPI para revisões;
+- fila de revisões pendentes;
+- painel administrativo de revisões;
+- autenticação e autorização de revisores;
+- controle de concorrência entre revisores;
+- idempotência das decisões;
+- expiração de revisões pendentes;
+- auditoria das decisões humanas;
+- métricas do fluxo HITL;
+- testes end-to-end do fluxo de revisão.
+
+#### Containerização e qualidade
+
 - Docker da API;
 - Docker do worker;
 - Docker do Streamlit;
@@ -1323,9 +1434,13 @@ A INNA:
 - pytest-cov;
 - CI de qualidade;
 - CI de segurança;
-- build e scan de imagens;
+- build e scan de imagens.
+
+#### Observabilidade e entrega
+
 - testes E2E integrais;
 - OpenTelemetry;
+- tracing distribuído;
 - testes de carga;
 - CD automatizado;
 - documentação final de implantação;
@@ -1334,19 +1449,20 @@ A INNA:
 ---
 
 ## Panorama de evolução
+
 ### Semana 1 — LangGraph e núcleo agentic
 
 Status: ✅ 100%
 
 Concluído:
 
-- núcleo;
-- estado;
-- roteamento;
+- núcleo agentic;
+- estado tipado;
+- roteamento inicial;
 - persistência;
-- retomada;
-- falhas;
-- topologia;
+- retomada por `thread_id`;
+- tratamento de falhas;
+- topologia do grafo;
 - documentação;
 - testes;
 - auditoria.
@@ -1358,11 +1474,15 @@ Status: ✅ 100%
 Concluído:
 
 - RAG seguro;
-- versionamento;
+- busca híbrida;
+- reranking;
+- versionamento documental;
 - rastreabilidade;
-- memória;
-- contexto;
-- resumo incremental;
+- memória por usuário;
+- memória financeira;
+- Context Engineering;
+- resumo conversacional incremental;
+- isolamento por thread;
 - privacidade;
 - testes.
 
@@ -1373,12 +1493,19 @@ Status: ✅ 100%
 Concluído:
 
 - supervisor híbrido;
-- agentes;
-- relatório;
-- risco;
-- governança;
-- loops;
-- orçamento;
+- seleção por intenção;
+- agentes especializados;
+- agente financeiro;
+- agente educacional;
+- agente RAG;
+- agente de relatório;
+- agente fallback;
+- revisor de risco;
+- governança de execução;
+- limite de passos;
+- limite de visitas;
+- detecção de loops;
+- controle de orçamento;
 - auditoria.
 
 ### Semana 4 — Tool Calling e persistência
@@ -1388,15 +1515,21 @@ Status: ✅ 100%
 Concluído:
 
 - Tool Registry;
-- contratos;
-- executor;
+- contratos Pydantic;
+- executor formal;
 - permissões;
-- ferramentas;
+- validação de argumentos;
+- ferramentas financeiras;
+- RAG como ferramenta;
 - PostgreSQL;
+- Neon;
+- pgvector;
 - filas;
 - receipts;
 - idempotência;
-- worker;
+- replay protection;
+- worker recuperável;
+- concorrência otimista;
 - Telegram persistente.
 
 ### Semana 5 — Confiabilidade e observabilidade
@@ -1405,16 +1538,21 @@ Status: ✅ 100%
 
 Concluído:
 
-- logs;
+- logs estruturados;
+- sanitização;
 - métricas;
 - Prometheus;
 - Grafana;
-- health;
+- health check;
 - readiness;
 - SLO;
+- error budget;
 - alertas;
 - runbooks;
-- CI de validação.
+- métricas de LLM;
+- observabilidade do worker;
+- CI de validação;
+- auditoria de cardinalidade.
 
 ### Semana 6 — Produção, integração e entrega
 
@@ -1422,40 +1560,111 @@ Status: 🟡 Em evolução
 
 Já disponível:
 
-- deploy;
-- canais;
-- banco;
+- deploy no Render;
+- PostgreSQL no Neon;
+- Streamlit;
+- FastAPI;
+- Telegram;
+- dashboard;
+- banco de dados;
 - observabilidade;
-- testes;
+- testes automatizados;
 - agentes;
 - memória;
-- relatórios.
+- RAG;
+- relatórios;
+- PDF;
+- e-mail;
+- webhooks.
 
 Ainda falta:
 
-- Docker;
-- Compose;
+- Docker da API;
+- Docker do worker;
+- Docker do Streamlit;
+- Docker Compose;
 - CI/CD completo;
 - OpenTelemetry;
-- carga;
-- E2E integral;
-- documentação final de implantação.
+- tracing distribuído;
+- testes de carga;
+- testes E2E integrais;
+- documentação final de implantação;
+- demonstração final.
+
+### Semana adicional 1 — Arquitetura hierárquica e Human-in-the-Loop
+
+Status: 🟡 Núcleo concluído
+
+Concluído:
+
+- arquitetura hierárquica de equipes;
+- Team Router;
+- supervisor financeiro;
+- supervisor de conhecimento;
+- supervisor de suporte;
+- roteamento entre equipes;
+- Handoff Coordinator;
+- Task Completion;
+- contrato de revisão humana;
+- política de revisão determinística;
+- integração com LangGraph;
+- `interrupt()`;
+- `Command(resume=...)`;
+- checkpoint por `thread_id`;
+- aprovação;
+- correção;
+- rejeição;
+- cancelamento;
+- isolamento entre threads;
+- proteção contra retomada na thread incorreta;
+- testes unitários;
+- testes de integração;
+- testes reais com `MemorySaver`;
+- compatibilidade com o fluxo anterior;
+- Pull Request;
+- merge na branch `feature/inna-agent-core`;
+- 2418 testes aprovados;
+- 1 teste ignorado;
+- 0 falhas.
+
+Próxima evolução:
+
+- tabela PostgreSQL de revisões humanas;
+- repository do Human-in-the-Loop;
+- service layer de revisão;
+- endpoints FastAPI;
+- fila de revisões pendentes;
+- painel administrativo;
+- autenticação de revisores;
+- controle de concorrência;
+- idempotência das decisões;
+- auditoria;
+- métricas;
+- testes end-to-end.
 
 --- 
 
 ## Desenvolvedores
 - [Rogerio](https://github.com/Rogerio5)
+
 ---
+
 ## Conclusão
 
-A INNA Financial Coach AI evoluiu de um MVP de diagnóstico para uma plataforma financeira educativa com arquitetura multiagente, RAG, memória, ferramentas formais, persistência, múltiplos canais, relatórios, segurança e observabilidade.
+A INNA Financial Coach AI evoluiu de um MVP de diagnóstico financeiro para uma plataforma educativa de IA com arquitetura multiagente, equipes hierárquicas, RAG híbrido, memória, Context Engineering, Tool Calling, persistência, múltiplos canais, relatórios, segurança e observabilidade.
+
+O núcleo agentic já possui supervisão, roteamento especializado, governança de execução, agentes por função, checkpoint por `thread_id` e Human-in-the-Loop persistente. Quando necessário, a execução pode ser interrompida para revisão humana e retomada com `Command(resume=...)`, preservando o estado anterior e permitindo aprovação, correção, rejeição ou cancelamento.
+
+A plataforma também integra FastAPI, Streamlit, PostgreSQL, Neon, pgvector, Telegram, PDF, e-mail, dashboards, Prometheus, Grafana, alertas e uma suíte extensa de testes automatizados.
 
 O README principal apresenta a visão geral do produto. Para entender cada módulo em profundidade, navegue pelas pastas:
 
-docs/
-src/
-tests/
-scripts/
-reports/
+- [`docs/`](docs/)
+- [`src/`](src/)
+- [`tests/`](tests/)
+- [`scripts/`](scripts/)
+- [`reports/`](reports/)
 
-O próximo marco do projeto é executar a plataforma integralmente com Docker Compose, CI de qualidade e segurança, testes E2E, tracing distribuído e automação de deploy.
+O próximo marco do projeto é transformar o núcleo de revisão humana em um fluxo completo de produção, com tabela PostgreSQL de revisões, repository, service layer, endpoints FastAPI, fila de revisões pendentes, painel administrativo, autenticação de revisores, auditoria, métricas e testes end-to-end.
+
+Em seguida, a evolução continuará com Docker Compose, CI de qualidade e segurança, OpenTelemetry, tracing distribuído, testes de carga e automação de deploy.
