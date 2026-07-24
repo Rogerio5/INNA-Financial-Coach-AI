@@ -247,8 +247,56 @@ class HumanReviewRecoveryResponse(
     recovered_count: int
 
 
+class HumanReviewAdminPageResponse(
+    BaseModel
+):
+    items: list[HumanReviewRecordResponse]
+    total: int = Field(ge=0)
+    limit: int = Field(ge=1, le=200)
+    offset: int = Field(ge=0)
+    has_next: bool
+    has_previous: bool
+
+
+class HumanReviewAdminMetricsResponse(
+    BaseModel
+):
+    total: int = Field(ge=0)
+    pending: int = Field(ge=0)
+    processing: int = Field(ge=0)
+    approved: int = Field(ge=0)
+    corrected: int = Field(ge=0)
+    rejected: int = Field(ge=0)
+    cancelled: int = Field(ge=0)
+    resume_failed: int = Field(ge=0)
+
+    average_wait_seconds: float | None = None
+    average_resolution_seconds: float | None = None
+
+    approval_rate: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+    correction_rate: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+
+    by_risk: dict[str, int] = Field(
+        default_factory=dict
+    )
+    by_agent: dict[str, int] = Field(
+        default_factory=dict
+    )
+    by_reviewer: dict[str, int] = Field(
+        default_factory=dict
+    )
+
+
 __all__ = [
     "HumanReviewActionApi",
+    "HumanReviewAdminMetricsResponse",
+    "HumanReviewAdminPageResponse",
     "HumanReviewDecisionRequest",
     "HumanReviewListResponse",
     "HumanReviewRecordResponse",
