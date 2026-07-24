@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -53,7 +55,30 @@ from src.services.human_review.service import (
 
 client = TestClient(app)
 
-suffix = uuid4().hex[:12]
+def _resolve_run_suffix() -> str:
+    explicit = str(
+        os.getenv(
+            "HITL_E2E_RUN_ID",
+            "",
+        )
+    ).strip().lower()
+
+    if not explicit:
+        return uuid4().hex[:12]
+
+    if not re.fullmatch(
+        r"[a-z0-9_-]{6,48}",
+        explicit,
+    ):
+        raise RuntimeError(
+            "HITL_E2E_RUN_ID possui formato "
+            "inválido."
+        )
+
+    return explicit
+
+
+suffix = _resolve_run_suffix()
 
 thread_id = (
     f"hitl-e2e-thread-{suffix}"

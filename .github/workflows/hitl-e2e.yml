@@ -1,0 +1,95 @@
+name: INNA HITL E2E validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: "Digite RUN para executar contra o Neon"
+        required: true
+        type: choice
+        options:
+          - CANCEL
+          - RUN
+        default: CANCEL
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inna-hitl-e2e-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  human-review-e2e:
+    name: Human review E2E
+    if: ${{ inputs.confirmation == 'RUN' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    environment:
+      name: hitl-e2e
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      INNA_INTERNAL_API_SIGNING_SECRET: ${{ secrets.INNA_INTERNAL_API_SIGNING_SECRET }}
+      INNA_INTERNAL_API_MAX_CLOCK_SKEW_SECONDS: "300"
+      INNA_POSTGRES_CONNECT_TIMEOUT_SECONDS: "15"
+      INNA_POSTGRES_NETWORK_FAMILY: "system"
+      RUN_HITL_E2E_TESTS: "1"
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -n "${DATABASE_URL}"
+          test -n "${INNA_INTERNAL_API_SIGNING_SECRET}"
+
+          if [ "${#INNA_INTERNAL_API_SIGNING_SECRET}" -lt 32 ]; then
+            echo "Signing secret must contain at least 32 bytes."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate database migration
+        run: |
+          python \
+            scripts/apply_human_reviews_migration.py \
+            check
+
+      - name: Run HITL E2E
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p artifacts/hitl-e2e
+
+          pytest \
+            tests/integration/test_human_review_e2e_live.py \
+            -q \
+            2>&1 |
+            tee artifacts/hitl-e2e/pytest-output.txt
+
+      - name: Upload E2E report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inna-hitl-e2e-report-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/hitl-e2e/
+          if-no-files-found: warn
+          retention-days: 7
