@@ -85,7 +85,7 @@ uritemplate==4.2.0
 urllib3==2.7.0
 uvicorn==0.34.0
 watchdog==6.0.0
-websockets==16.0
+websockets==15.0.1
 wheel==0.47.0
 openpyxl==3.1.5
 svix==1.96.1
