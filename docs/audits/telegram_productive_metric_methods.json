@@ -1,0 +1,84 @@
+{
+  "call_sites": [
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "keywords": {
+        "error_category": "error_category",
+        "operation": "operation",
+        "outcome": "outcome"
+      },
+      "line": 1154,
+      "method": "record_queue_operation",
+      "positional": []
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "keywords": {
+        "result": "cycle_result"
+      },
+      "line": 1176,
+      "method": "record_worker_cycle",
+      "positional": []
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "keywords": {
+        "error_category": "error_category",
+        "outcome": "outcome"
+      },
+      "line": 1193,
+      "method": "record_worker_update",
+      "positional": []
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "keywords": {
+        "result": "result"
+      },
+      "line": 267,
+      "method": "record_worker_cycle",
+      "positional": []
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "keywords": {
+        "error_category": "error_category",
+        "outcome": "outcome"
+      },
+      "line": 280,
+      "method": "record_worker_update",
+      "positional": []
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "keywords": {
+        "error_category": "error_category",
+        "operation": "operation",
+        "outcome": "outcome"
+      },
+      "line": 311,
+      "method": "record_queue_operation",
+      "positional": []
+    }
+  ],
+  "methods": [
+    {
+      "exists": false,
+      "name": "record_worker_cycle"
+    },
+    {
+      "exists": false,
+      "name": "record_worker_update"
+    },
+    {
+      "exists": false,
+      "name": "record_queue_operation"
+    },
+    {
+      "exists": true,
+      "name": "record_conversation_operation",
+      "signature": "(self, metric: 'TelegramConversationMetricRecord') -> 'None'",
+      "source": "    def record_conversation_operation(\n        self,\n        metric: TelegramConversationMetricRecord,\n    ) -> None:\n        error_category = (\n            metric.error_category\n            or \"none\"\n        )\n\n        self.increment(\n            \"inna_telegram_operations_total\",\n            labels={\n                \"component\": metric.component,\n                \"operation\": metric.operation,\n                \"outcome\": metric.outcome,\n                \"error_category\": error_category,\n            },\n        )\n\n        duration_seconds = max(\n            0.0,\n            float(\n                metric.duration_ms\n            )\n            / 1000.0,\n        )\n\n        self.observe(\n            (\n                \"inna_telegram_\"\n                \"operation_duration_seconds\"\n            ),\n            duration_seconds,\n            labels={\n                \"component\": metric.component,\n                \"operation\": metric.operation,\n                \"outcome\": metric.outcome,\n            },\n        )\n\n        if metric.outcome in {\n            \"error\",\n            \"conflict\",\n        }:\n            self.increment(\n                \"inna_telegram_failures_total\",\n                labels={\n                    \"component\": metric.component,\n                    \"operation\": metric.operation,\n                    \"error_category\": (\n                        error_category\n                    ),\n                },\n            )\n\n        if (\n            metric.outcome\n            in {\n                \"conflict\",\n                \"recovered\",\n            }\n            or metric.conflict_recovered\n            is True\n        ):\n            conflict_outcome = (\n                \"recovered\"\n                if metric.conflict_recovered\n                is True\n                else metric.outcome\n            )\n\n            self.increment(\n                \"inna_telegram_conflicts_total\",\n                labels={\n                    \"operation\": metric.operation,\n                    \"outcome\": conflict_outcome,\n                },\n            )\n"
+    }
+  ]
+}

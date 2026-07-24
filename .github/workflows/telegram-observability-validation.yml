@@ -1,0 +1,105 @@
+name: Telegram observability validation
+
+on:
+  pull_request:
+    paths:
+      - "prometheus/**"
+      - "grafana/**"
+      - "src/services/telegram_observability/**"
+      - "tests/unit/test_telegram_*"
+      - "requirements.txt"
+      - ".github/workflows/telegram-observability-validation.yml"
+
+  push:
+    branches:
+      - main
+      - feature/inna-agent-core
+    paths:
+      - "prometheus/**"
+      - "grafana/**"
+      - "src/services/telegram_observability/**"
+      - "tests/unit/test_telegram_*"
+      - "requirements.txt"
+      - ".github/workflows/telegram-observability-validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: telegram-observability-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-contracts:
+    name: Python contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate Python contracts
+        run: |
+          pytest \
+            tests/unit/test_telegram_error_category_contract_alignment.py \
+            tests/unit/test_telegram_operational_slo_policy.py \
+            tests/unit/test_telegram_prometheus_rules_contract.py \
+            tests/unit/test_telegram_prometheus_semantic_bindings.py \
+            tests/unit/test_telegram_grafana_dashboard_contract.py \
+            -q
+
+  prometheus-rules:
+    name: Prometheus rules
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Prometheus
+        env:
+          PROMETHEUS_VERSION: "2.53.5"
+        run: |
+          set -euo pipefail
+
+          curl \
+            --fail \
+            --location \
+            --silent \
+            --show-error \
+            --output prometheus.tar.gz \
+            "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz"
+
+          tar \
+            --extract \
+            --gzip \
+            --file prometheus.tar.gz
+
+          sudo install \
+            "prometheus-${PROMETHEUS_VERSION}.linux-amd64/promtool" \
+            /usr/local/bin/promtool
+
+          promtool --version
+
+      - name: Validate recording rules
+        run: |
+          promtool check rules \
+            prometheus/telegram_recording_rules.yml
+
+      - name: Validate alert rules
+        run: |
+          promtool check rules \
+            prometheus/telegram_alert_rules.yml

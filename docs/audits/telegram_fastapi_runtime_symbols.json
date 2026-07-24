@@ -1,0 +1,604 @@
+{
+  "failures": [],
+  "resolved": [
+    {
+      "module": "api.main",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "fastapi.applications",
+          "kind": "FastAPI",
+          "name": "app",
+          "signature": "(scope: MutableMapping[str, Any], receive: Callable[[], Awaitable[MutableMapping[str, Any]]], send: Callable[[MutableMapping[str, Any]], Awaitable[NoneType]]) -> None"
+        },
+        {
+          "callable": true,
+          "defined_in": "api.main",
+          "kind": "function",
+          "name": "health_check",
+          "signature": "()"
+        },
+        {
+          "callable": true,
+          "defined_in": "fastapi.routing",
+          "kind": "APIRouter",
+          "name": "resend_router",
+          "signature": "(scope: 'Scope', receive: 'Receive', send: 'Send') -> 'None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "fastapi.routing",
+          "kind": "APIRouter",
+          "name": "telegram_router",
+          "signature": "(scope: 'Scope', receive: 'Receive', send: 'Send') -> 'None'"
+        }
+      ]
+    },
+    {
+      "module": "api.resend_webhook",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "fastapi.routing",
+          "kind": "type",
+          "name": "APIRouter",
+          "signature": "(*, prefix: Annotated[str, Doc('An optional path prefix for the router.')] = '', tags: Annotated[Optional[List[Union[str, enum.Enum]]], Doc('\\n                A list of tags to be applied to all the *path operations* in this\\n                router.\\n\\n                It will be added to the generated OpenAPI (e.g. visible at `/docs`).\\n\\n                Read more about it in the\\n                [FastAPI docs for Path Operation Configuration](https://fastapi.tiangolo.com/tutorial/path-operation-configuration/).\\n                ')] = None, dependencies: Annotated[Optional[Sequence[fastapi.params.Depends]], Doc('\\n                A list of dependencies (using `Depends()`) to be applied to all the\\n                *path operations* in this router.\\n\\n                Read more about it in the\\n                [FastAPI docs for Bigger Applications - Multiple Files](https://fastapi.tiangolo.com/tutorial/bigger-applications/#include-an-apirouter-with-a-custom-prefix-tags-responses-and-dependencies).\\n                ')] = None, default_response_class: Annotated[Type[starlette.responses.Response], Doc('\\n                The default response class to be used.\\n\\n                Read more in the\\n                [FastAPI docs for Custom Response - HTML, Stream, File, others](https://fastapi.tiangolo.com/advanced/custom-response/#default-response-class).\\n                ')] = <fastapi.datastructures.DefaultPlaceholder object at 0x0000018DCDE2A570>, responses: Annotated[Optional[Dict[Union[int, str], Dict[str, Any]]], Doc('\\n                Additional responses to be shown in OpenAPI.\\n\\n                It will be added to the generated OpenAPI (e.g. visible at `/docs`).\\n\\n                Read more about it in the\\n                [FastAPI docs for Additional Responses in OpenAPI](https://fastapi.tiangolo.com/advanced/additional-responses/).\\n\\n                And in the\\n                [FastAPI docs for Bigger Applications](https://fastapi.tiangolo.com/tutorial/bigger-applications/#include-an-apirouter-with-a-custom-prefix-tags-responses-and-dependencies).\\n                ')] = None, callbacks: Annotated[Optional[List[starlette.routing.BaseRoute]], Doc('\\n                OpenAPI callbacks that should apply to all *path operations* in this\\n                router.\\n\\n                It will be added to the generated OpenAPI (e.g. visible at `/docs`).\\n\\n                Read more about it in the\\n                [FastAPI docs for OpenAPI Callbacks](https://fastapi.tiangolo.com/advanced/openapi-callbacks/).\\n                ')] = None, routes: Annotated[Optional[List[starlette.routing.BaseRoute]], Doc(\"\\n                **Note**: you probably shouldn't use this parameter, it is inherited\\n                from Starlette and supported for compatibility.\\n\\n                ---\\n\\n                A list of routes to serve incoming HTTP and WebSocket requests.\\n                \"), <typing_extensions.deprecated object at 0x0000018DCDE2A9C0>] = None, redirect_slashes: Annotated[bool, Doc(\"\\n                Whether to detect and redirect slashes in URLs when the client doesn't\\n                use the same format.\\n                \")] = True, default: Annotated[Optional[Callable[[MutableMapping[str, Any], Callable[[], Awaitable[MutableMapping[str, Any]]], Callable[[MutableMapping[str, Any]], Awaitable[NoneType]]], Awaitable[NoneType]]], Doc('\\n                Default function handler for this router. Used to handle\\n                404 Not Found errors.\\n                ')] = None, dependency_overrides_provider: Annotated[Optional[Any], Doc(\"\\n                Only used internally by FastAPI to handle dependency overrides.\\n\\n                You shouldn't need to use it. It normally points to the `FastAPI` app\\n                object.\\n                \")] = None, route_class: Annotated[Type[fastapi.routing.APIRoute], Doc('\\n                Custom route (*path operation*) class to be used by this router.\\n\\n                Read more about it in the\\n                [FastAPI docs for Custom Request and APIRoute class](https://fastapi.tiangolo.com/how-to/custom-request-and-route/#custom-apiroute-class-in-a-router).\\n                ')] = <class 'fastapi.routing.APIRoute'>, on_startup: Annotated[Optional[Sequence[Callable[[], Any]]], Doc('\\n                A list of startup event handler functions.\\n\\n                You should instead use the `lifespan` handlers.\\n\\n                Read more in the [FastAPI docs for `lifespan`](https://fastapi.tiangolo.com/advanced/events/).\\n                ')] = None, on_shutdown: Annotated[Optional[Sequence[Callable[[], Any]]], Doc('\\n                A list of shutdown event handler functions.\\n\\n                You should instead use the `lifespan` handlers.\\n\\n                Read more in the\\n                [FastAPI docs for `lifespan`](https://fastapi.tiangolo.com/advanced/events/).\\n                ')] = None, lifespan: Annotated[Union[Callable[[Any], AsyncContextManager[NoneType]], Callable[[Any], AsyncContextManager[Mapping[str, Any]]], NoneType], Doc('\\n                A `Lifespan` context manager handler. This replaces `startup` and\\n                `shutdown` functions with a single context manager.\\n\\n                Read more in the\\n                [FastAPI docs for `lifespan`](https://fastapi.tiangolo.com/advanced/events/).\\n                ')] = None, deprecated: Annotated[Optional[bool], Doc('\\n                Mark all *path operations* in this router as deprecated.\\n\\n                It will be added to the generated OpenAPI (e.g. visible at `/docs`).\\n\\n                Read more about it in the\\n                [FastAPI docs for Path Operation Configuration](https://fastapi.tiangolo.com/tutorial/path-operation-configuration/).\\n                ')] = None, include_in_schema: Annotated[bool, Doc('\\n                To include (or not) all the *path operations* in this router in the\\n                generated OpenAPI.\\n\\n                This affects the generated OpenAPI (e.g. visible at `/docs`).\\n\\n                Read more about it in the\\n                [FastAPI docs for Query Parameters and String Validations](https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#exclude-from-openapi).\\n                ')] = True, generate_unique_id_function: Annotated[Callable[[fastapi.routing.APIRoute], str], Doc('\\n                Customize the function used to generate unique IDs for the *path\\n                operations* shown in the generated OpenAPI.\\n\\n                This is particularly useful when automatically generating clients or\\n                SDKs for your API.\\n\\n                Read more about it in the\\n                [FastAPI docs about how to Generate Clients](https://fastapi.tiangolo.com/advanced/generate-clients/#custom-generate-unique-id-function).\\n                ')] = <fastapi.datastructures.DefaultPlaceholder object at 0x0000018DCDE2A600>) -> None"
+        },
+        {
+          "callable": true,
+          "defined_in": "fastapi.routing",
+          "kind": "APIRouter",
+          "name": "router",
+          "signature": "(scope: 'Scope', receive: 'Receive', send: 'Send') -> 'None'"
+        }
+      ]
+    },
+    {
+      "module": "api.telegram_webhook",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "fastapi.routing",
+          "kind": "type",
+          "name": "APIRouter",
+          "signature": "(*, prefix: Annotated[str, Doc('An optional path prefix for the router.')] = '', tags: Annotated[Optional[List[Union[str, enum.Enum]]], Doc('\\n                A list of tags to be applied to all the *path operations* in this\\n                router.\\n\\n                It will be added to the generated OpenAPI (e.g. visible at `/docs`).\\n\\n                Read more about it in the\\n                [FastAPI docs for Path Operation Configuration](https://fastapi.tiangolo.com/tutorial/path-operation-configuration/).\\n                ')] = None, dependencies: Annotated[Optional[Sequence[fastapi.params.Depends]], Doc('\\n                A list of dependencies (using `Depends()`) to be applied to all the\\n                *path operations* in this router.\\n\\n                Read more about it in the\\n                [FastAPI docs for Bigger Applications - Multiple Files](https://fastapi.tiangolo.com/tutorial/bigger-applications/#include-an-apirouter-with-a-custom-prefix-tags-responses-and-dependencies).\\n                ')] = None, default_response_class: Annotated[Type[starlette.responses.Response], Doc('\\n                The default response class to be used.\\n\\n                Read more in the\\n                [FastAPI docs for Custom Response - HTML, Stream, File, others](https://fastapi.tiangolo.com/advanced/custom-response/#default-response-class).\\n                ')] = <fastapi.datastructures.DefaultPlaceholder object at 0x0000018DCDE2A570>, responses: Annotated[Optional[Dict[Union[int, str], Dict[str, Any]]], Doc('\\n                Additional responses to be shown in OpenAPI.\\n\\n                It will be added to the generated OpenAPI (e.g. visible at `/docs`).\\n\\n                Read more about it in the\\n                [FastAPI docs for Additional Responses in OpenAPI](https://fastapi.tiangolo.com/advanced/additional-responses/).\\n\\n                And in the\\n                [FastAPI docs for Bigger Applications](https://fastapi.tiangolo.com/tutorial/bigger-applications/#include-an-apirouter-with-a-custom-prefix-tags-responses-and-dependencies).\\n                ')] = None, callbacks: Annotated[Optional[List[starlette.routing.BaseRoute]], Doc('\\n                OpenAPI callbacks that should apply to all *path operations* in this\\n                router.\\n\\n                It will be added to the generated OpenAPI (e.g. visible at `/docs`).\\n\\n                Read more about it in the\\n                [FastAPI docs for OpenAPI Callbacks](https://fastapi.tiangolo.com/advanced/openapi-callbacks/).\\n                ')] = None, routes: Annotated[Optional[List[starlette.routing.BaseRoute]], Doc(\"\\n                **Note**: you probably shouldn't use this parameter, it is inherited\\n                from Starlette and supported for compatibility.\\n\\n                ---\\n\\n                A list of routes to serve incoming HTTP and WebSocket requests.\\n                \"), <typing_extensions.deprecated object at 0x0000018DCDE2A9C0>] = None, redirect_slashes: Annotated[bool, Doc(\"\\n                Whether to detect and redirect slashes in URLs when the client doesn't\\n                use the same format.\\n                \")] = True, default: Annotated[Optional[Callable[[MutableMapping[str, Any], Callable[[], Awaitable[MutableMapping[str, Any]]], Callable[[MutableMapping[str, Any]], Awaitable[NoneType]]], Awaitable[NoneType]]], Doc('\\n                Default function handler for this router. Used to handle\\n                404 Not Found errors.\\n                ')] = None, dependency_overrides_provider: Annotated[Optional[Any], Doc(\"\\n                Only used internally by FastAPI to handle dependency overrides.\\n\\n                You shouldn't need to use it. It normally points to the `FastAPI` app\\n                object.\\n                \")] = None, route_class: Annotated[Type[fastapi.routing.APIRoute], Doc('\\n                Custom route (*path operation*) class to be used by this router.\\n\\n                Read more about it in the\\n                [FastAPI docs for Custom Request and APIRoute class](https://fastapi.tiangolo.com/how-to/custom-request-and-route/#custom-apiroute-class-in-a-router).\\n                ')] = <class 'fastapi.routing.APIRoute'>, on_startup: Annotated[Optional[Sequence[Callable[[], Any]]], Doc('\\n                A list of startup event handler functions.\\n\\n                You should instead use the `lifespan` handlers.\\n\\n                Read more in the [FastAPI docs for `lifespan`](https://fastapi.tiangolo.com/advanced/events/).\\n                ')] = None, on_shutdown: Annotated[Optional[Sequence[Callable[[], Any]]], Doc('\\n                A list of shutdown event handler functions.\\n\\n                You should instead use the `lifespan` handlers.\\n\\n                Read more in the\\n                [FastAPI docs for `lifespan`](https://fastapi.tiangolo.com/advanced/events/).\\n                ')] = None, lifespan: Annotated[Union[Callable[[Any], AsyncContextManager[NoneType]], Callable[[Any], AsyncContextManager[Mapping[str, Any]]], NoneType], Doc('\\n                A `Lifespan` context manager handler. This replaces `startup` and\\n                `shutdown` functions with a single context manager.\\n\\n                Read more in the\\n                [FastAPI docs for `lifespan`](https://fastapi.tiangolo.com/advanced/events/).\\n                ')] = None, deprecated: Annotated[Optional[bool], Doc('\\n                Mark all *path operations* in this router as deprecated.\\n\\n                It will be added to the generated OpenAPI (e.g. visible at `/docs`).\\n\\n                Read more about it in the\\n                [FastAPI docs for Path Operation Configuration](https://fastapi.tiangolo.com/tutorial/path-operation-configuration/).\\n                ')] = None, include_in_schema: Annotated[bool, Doc('\\n                To include (or not) all the *path operations* in this router in the\\n                generated OpenAPI.\\n\\n                This affects the generated OpenAPI (e.g. visible at `/docs`).\\n\\n                Read more about it in the\\n                [FastAPI docs for Query Parameters and String Validations](https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#exclude-from-openapi).\\n                ')] = True, generate_unique_id_function: Annotated[Callable[[fastapi.routing.APIRoute], str], Doc('\\n                Customize the function used to generate unique IDs for the *path\\n                operations* shown in the generated OpenAPI.\\n\\n                This is particularly useful when automatically generating clients or\\n                SDKs for your API.\\n\\n                Read more about it in the\\n                [FastAPI docs about how to Generate Clients](https://fastapi.tiangolo.com/advanced/generate-clients/#custom-generate-unique-id-function).\\n                ')] = <fastapi.datastructures.DefaultPlaceholder object at 0x0000018DCDE2A600>) -> None"
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "TELEGRAM_BOT_TOKEN",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.contracts",
+          "kind": "type",
+          "name": "TelegramConversationMetricRecord",
+          "signature": "(operation: 'str', component: 'str', outcome: 'str', duration_ms: 'float', error_category: 'str | None' = None, conflict_recovered: 'bool | None' = None) -> None"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_receipts.service",
+          "kind": "function",
+          "name": "claim_authenticated_telegram_update",
+          "signature": "(update: 'Mapping[str, Any]', *, lease_seconds: 'int' = 120) -> 'TelegramUpdateClaimDecision'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_receipts.service",
+          "kind": "function",
+          "name": "complete_authenticated_telegram_update",
+          "signature": "(lease: 'TelegramUpdateProcessingLease') -> 'TelegramUpdateTransitionOutcome'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.ingress",
+          "kind": "function",
+          "name": "enqueue_authenticated_telegram_update_atomic",
+          "signature": "(update: 'Mapping[str, Any]', *, receipt_lease_seconds: 'int' = 120, max_attempts: 'int' = 5, keyring: 'crypto_service.TelegramUpdateEncryptionKeyring | None' = None) -> 'TelegramUpdateIngressOutcome'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_receipts.service",
+          "kind": "function",
+          "name": "fail_authenticated_telegram_update",
+          "signature": "(lease: 'TelegramUpdateProcessingLease', *, error_code: 'str' = 'telegram.processing_failed') -> 'TelegramUpdateTransitionOutcome'"
+        },
+        {
+          "callable": true,
+          "defined_in": "fastapi.routing",
+          "kind": "APIRouter",
+          "name": "router",
+          "signature": "(scope: 'Scope', receive: 'Receive', send: 'Send') -> 'None'"
+        }
+      ]
+    },
+    {
+      "module": "src.context_engineering.token_budget",
+      "symbols": [
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "int",
+          "name": "AVERAGE_CHARACTERS_PER_TOKEN",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "int",
+          "name": "DEFAULT_MAX_CONTEXT_TOKENS",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "int",
+          "name": "DEFAULT_RESERVED_OUTPUT_TOKENS",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.context_engineering.token_budget",
+          "kind": "function",
+          "name": "estimate_tokens",
+          "signature": "(value: 'Any') -> 'int'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.context_engineering.token_budget",
+          "kind": "function",
+          "name": "truncate_text_to_token_budget",
+          "signature": "(text: 'str', *, max_tokens: 'int') -> 'str'"
+        }
+      ]
+    },
+    {
+      "module": "src.dashboard",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "src.dashboard",
+          "kind": "function",
+          "name": "normalizar_risco_admin",
+          "signature": "(valor)"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.dashboard",
+          "kind": "function",
+          "name": "render_main_metrics",
+          "signature": "(diagnosticos_df, feedbacks_df)"
+        }
+      ]
+    },
+    {
+      "module": "src.observability.llm_costs",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "src.observability.llm_costs",
+          "kind": "function",
+          "name": "extrair_tokens_resposta",
+          "signature": "(resposta: 'Any') -> 'dict[str, int]'"
+        }
+      ]
+    },
+    {
+      "module": "src.rag_engine",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "src.rag_engine",
+          "kind": "function",
+          "name": "tokenize",
+          "signature": "(text: str) -> list[str]"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_conversation_state.contracts",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "collections.abc",
+          "kind": "ABCMeta",
+          "name": "Mapping",
+          "signature": "()"
+        },
+        {
+          "callable": true,
+          "defined_in": "builtins",
+          "kind": "type",
+          "name": "MappingProxyType",
+          "signature": null
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_conversation_state.store",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "collections.abc",
+          "kind": "ABCMeta",
+          "name": "Mapping",
+          "signature": "()"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_conversation_state.webhook_bridge",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "collections.abc",
+          "kind": "ABCMeta",
+          "name": "Mapping",
+          "signature": "()"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.metrics",
+          "kind": "type",
+          "name": "NoOpTelegramConversationMetrics",
+          "signature": "()"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.contracts",
+          "kind": "type",
+          "name": "TelegramConversationMetricRecord",
+          "signature": "(operation: 'str', component: 'str', outcome: 'str', duration_ms: 'float', error_category: 'str | None' = None, conflict_recovered: 'bool | None' = None) -> None"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.contracts",
+          "kind": "_ProtocolMeta",
+          "name": "TelegramConversationMetrics",
+          "signature": "(*args, **kwargs)"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_conversation_state.webhook_bridge",
+          "kind": "function",
+          "name": "_safe_record_bridge_metric",
+          "signature": "(bridge: 'Any', record: 'TelegramConversationMetricRecord') -> 'None'"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_observability.contracts",
+      "symbols": [
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "frozenset",
+          "name": "ALLOWED_METRIC_COMPONENTS",
+          "signature": null
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "frozenset",
+          "name": "ALLOWED_METRIC_OPERATIONS",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "typing",
+          "kind": "_SpecialGenericAlias",
+          "name": "Mapping",
+          "signature": "(*args, **kwargs)"
+        },
+        {
+          "callable": true,
+          "defined_in": "builtins",
+          "kind": "type",
+          "name": "MappingProxyType",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.contracts",
+          "kind": "type",
+          "name": "TelegramConversationMetricRecord",
+          "signature": "(operation: 'str', component: 'str', outcome: 'str', duration_ms: 'float', error_category: 'str | None' = None, conflict_recovered: 'bool | None' = None) -> None"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.contracts",
+          "kind": "_ProtocolMeta",
+          "name": "TelegramConversationMetrics",
+          "signature": "(*args, **kwargs)"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_observability.operational_http",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "typing",
+          "kind": "_SpecialGenericAlias",
+          "name": "Mapping",
+          "signature": "(*args, **kwargs)"
+        },
+        {
+          "callable": true,
+          "defined_in": "builtins",
+          "kind": "type",
+          "name": "MappingProxyType",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.operational_http",
+          "kind": "function",
+          "name": "_internal_runtime_payload",
+          "signature": "(result: 'TelegramReadinessRuntimeResult', *, probe: 'TelegramOperationalProbeKind') -> 'dict[str, object]'"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_observability.prometheus_exporter",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "typing",
+          "kind": "_SpecialGenericAlias",
+          "name": "Mapping",
+          "signature": "(*args, **kwargs)"
+        },
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "OPENMETRICS_CONTENT_TYPE",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.prometheus_exporter",
+          "kind": "type",
+          "name": "SafeTelegramPrometheusMetricsExporter",
+          "signature": "(delegate: 'TelegramPrometheusMetricsExporter') -> 'None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.prometheus_exporter",
+          "kind": "type",
+          "name": "TelegramMetricsExport",
+          "signature": "(body: 'str', content_type: 'str', format: 'TelegramMetricsExportFormat') -> None"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.prometheus_exporter",
+          "kind": "EnumType",
+          "name": "TelegramMetricsExportFormat",
+          "signature": "(*values)"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.prometheus_exporter",
+          "kind": "type",
+          "name": "TelegramPrometheusMetricsExporter",
+          "signature": "()"
+        },
+        {
+          "callable": false,
+          "defined_in": "re",
+          "kind": "Pattern",
+          "name": "_METRIC_NAME_PATTERN",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_observability.prometheus_exporter",
+          "kind": "function",
+          "name": "_validate_metric_name",
+          "signature": "(name: 'object') -> 'str'"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_observability.readiness_runtime",
+      "symbols": []
+    },
+    {
+      "module": "src.services.telegram_update_jobs.execution",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "collections.abc",
+          "kind": "ABCMeta",
+          "name": "Mapping",
+          "signature": "()"
+        },
+        {
+          "callable": true,
+          "defined_in": "builtins",
+          "kind": "type",
+          "name": "MappingProxyType",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.execution",
+          "kind": "function",
+          "name": "decrypt_authenticated_telegram_worker_lease",
+          "signature": "(lease: 'worker_module.TelegramUpdateWorkerLease', *, keyring: 'crypto_service.TelegramUpdateEncryptionKeyring | None' = None) -> 'TelegramUpdateWorkerPayload'"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_update_jobs.ingress",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "collections.abc",
+          "kind": "ABCMeta",
+          "name": "Mapping",
+          "signature": "()"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.ingress",
+          "kind": "function",
+          "name": "_generate_claim_token",
+          "signature": "() -> 'str'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.ingress",
+          "kind": "function",
+          "name": "enqueue_authenticated_telegram_update_atomic",
+          "signature": "(update: 'Mapping[str, Any]', *, receipt_lease_seconds: 'int' = 120, max_attempts: 'int' = 5, keyring: 'crypto_service.TelegramUpdateEncryptionKeyring | None' = None) -> 'TelegramUpdateIngressOutcome'"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_update_jobs.repository",
+      "symbols": []
+    },
+    {
+      "module": "src.services.telegram_update_jobs.runner",
+      "symbols": []
+    },
+    {
+      "module": "src.services.telegram_update_jobs.service",
+      "symbols": [
+        {
+          "callable": false,
+          "defined_in": "re",
+          "kind": "Pattern",
+          "name": "LOCK_TOKEN_PATTERN",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "typing",
+          "kind": "_SpecialGenericAlias",
+          "name": "Mapping",
+          "signature": "(*args, **kwargs)"
+        },
+        {
+          "callable": true,
+          "defined_in": "builtins",
+          "kind": "type",
+          "name": "MappingProxyType",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "function",
+          "name": "_build_authenticated_data",
+          "signature": "(*, update_id: 'int', payload_key_id: 'str', payload_version: 'int') -> 'bytes'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "function",
+          "name": "decrypt_authenticated_telegram_update",
+          "signature": "(*, update_id: 'int', payload_ciphertext: 'bytes', payload_nonce: 'bytes', payload_key_id: 'str', payload_version: 'int', keyring: 'TelegramUpdateEncryptionKeyring | None' = None) -> 'dict[str, Any]'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "function",
+          "name": "encrypt_authenticated_telegram_update",
+          "signature": "(update: 'Any', *, keyring: 'TelegramUpdateEncryptionKeyring | None' = None) -> 'EncryptedTelegramUpdatePayload'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.service",
+          "kind": "function",
+          "name": "generate_telegram_update_job_lock_token",
+          "signature": "() -> 'str'"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_update_jobs.worker",
+      "symbols": [
+        {
+          "callable": false,
+          "defined_in": null,
+          "kind": "str",
+          "name": "SQL_RECOVER_EXPIRED_AUTHENTICATED_JOBS",
+          "signature": null
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.worker",
+          "kind": "function",
+          "name": "claim_next_authenticated_telegram_update_job_atomic",
+          "signature": "(*, lease_seconds: 'int' = 120) -> 'TelegramUpdateWorkerLease | None'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.worker",
+          "kind": "function",
+          "name": "complete_authenticated_telegram_update_job_atomic",
+          "signature": "(lease: 'TelegramUpdateWorkerLease') -> 'TelegramUpdateWorkerCompletionOutcome'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.worker",
+          "kind": "function",
+          "name": "recover_expired_authenticated_telegram_update_jobs_atomic",
+          "signature": "(*, limit: 'int' = 100) -> 'TelegramUpdateWorkerRecoveryBatch'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_jobs.worker",
+          "kind": "function",
+          "name": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+          "signature": "(lease: 'TelegramUpdateWorkerLease', *, error_code: 'str', retry_delay_seconds: 'int', force_dead_letter: 'bool' = False) -> 'TelegramUpdateWorkerFailureOutcome'"
+        }
+      ]
+    },
+    {
+      "module": "src.services.telegram_update_receipts.service",
+      "symbols": [
+        {
+          "callable": true,
+          "defined_in": "collections.abc",
+          "kind": "ABCMeta",
+          "name": "Mapping",
+          "signature": "()"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_receipts.service",
+          "kind": "function",
+          "name": "_generate_claim_token",
+          "signature": "() -> 'str'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_receipts.service",
+          "kind": "function",
+          "name": "claim_authenticated_telegram_update",
+          "signature": "(update: 'Mapping[str, Any]', *, lease_seconds: 'int' = 120) -> 'TelegramUpdateClaimDecision'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_receipts.service",
+          "kind": "function",
+          "name": "complete_authenticated_telegram_update",
+          "signature": "(lease: 'TelegramUpdateProcessingLease') -> 'TelegramUpdateTransitionOutcome'"
+        },
+        {
+          "callable": true,
+          "defined_in": "src.services.telegram_update_receipts.service",
+          "kind": "function",
+          "name": "fail_authenticated_telegram_update",
+          "signature": "(lease: 'TelegramUpdateProcessingLease', *, error_code: 'str' = 'telegram.processing_failed') -> 'TelegramUpdateTransitionOutcome'"
+        }
+      ]
+    }
+  ]
+}

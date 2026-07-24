@@ -1,0 +1,2168 @@
+{
+  "phase": "F2H5-A",
+  "scope": [
+    "api/telegram_webhook.py",
+    "src/channels/telegram_update_worker.py",
+    "src/services/telegram_conversation_state/__init__.py",
+    "src/services/telegram_conversation_state/contracts.py",
+    "src/services/telegram_conversation_state/repository.py",
+    "src/services/telegram_conversation_state/runtime.py",
+    "src/services/telegram_conversation_state/store.py",
+    "src/services/telegram_conversation_state/webhook_bridge.py"
+  ],
+  "summary": {
+    "bridge_operations": 9,
+    "correlation_references": 71,
+    "exception_handlers": 64,
+    "exception_suppression": 2,
+    "functions": 134,
+    "metric_hints": 4,
+    "prints": 10,
+    "receipt_operations": 2
+  },
+  "prints": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "send_telegram_message",
+      "line": 754,
+      "expression": "print(\"TELEGRAM_BOT_TOKEN não configurado.\")"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "safe_record_telegram_event",
+      "line": 746,
+      "expression": "print( \"[telegram-event-log] \" \"Falha segura ao registrar evento.\" )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1455,
+      "expression": "print( \"[telegram-webhook] \" \"Update inválido descartado.\" )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1792,
+      "expression": "print( \"[telegram-webhook] \" \"Falha segura ao processar atualização.\" )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_fail_claimed_telegram_update_safely",
+      "line": 1821,
+      "expression": "print( \"[telegram-webhook] \" \"Falha segura ao atualizar receipt.\" )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_fail_claimed_telegram_update_safely",
+      "line": 1827,
+      "expression": "print( \"[telegram-webhook] \" \"Falha segura ao atualizar receipt.\" )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 1853,
+      "expression": "print( \"[telegram-webhook] \" \"Falha segura no worker Telegram.\" )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 1875,
+      "expression": "print( \"[telegram-webhook] \" \"Falha segura ao concluir receipt.\" )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 1885,
+      "expression": "print( \"[telegram-webhook] \" \"Falha segura ao concluir receipt.\" )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "_emit_event",
+      "line": 311,
+      "expression": "print( serialized, file=stream, flush=True, )"
+    }
+  ],
+  "logging_calls": [],
+  "exception_handlers": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "<module>",
+      "line": 8,
+      "exception_type": "ImportError",
+      "body": "TelegramConversationStateConflictError = None"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "safe_record_telegram_event",
+      "line": 745,
+      "exception_type": "Exception",
+      "body": "print( \"[telegram-event-log] \" \"Falha segura ao registrar evento.\" )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "format_money",
+      "line": 858,
+      "exception_type": "Exception",
+      "body": "currency = CURRENCY_BY_LANG.get(lang, CURRENCY_BY_LANG[\"pt\"]) return f\"{currency['prefix']}0,00{currency['suffix']}\""
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_sync_and_save_durable_telegram_session",
+      "line": 1285,
+      "exception_type": "Exception",
+      "body": "conflict_type = ( TelegramConversationStateConflictError ) if ( conflict_type is None or not isinstance( error, conflict_type, ) ): raise reloaded_session = ( conversation_bridge.reload_session( durable_session ) ) if reloaded_session is None: raise apply_transition( reloaded_session ) return conversation_bridge.save_session( reloaded_session, only_if_changed=True, )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1454,
+      "exception_type": "TelegramUpdateContextError",
+      "body": "print( \"[telegram-webhook] \" \"Update inválido descartado.\" ) return False"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1788,
+      "exception_type": "ValueError",
+      "body": "send_telegram_message(chat_id, get_text(lang, \"invalid_number\"))"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1791,
+      "exception_type": "Exception",
+      "body": "print( \"[telegram-webhook] \" \"Falha segura ao processar atualização.\" ) send_telegram_message( chat_id, get_text( lang, \"api_error\", ), ) return False"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_fail_claimed_telegram_update_safely",
+      "line": 1820,
+      "exception_type": "TelegramUpdateReceiptServiceError",
+      "body": "print( \"[telegram-webhook] \" \"Falha segura ao atualizar receipt.\" )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_fail_claimed_telegram_update_safely",
+      "line": 1826,
+      "exception_type": "Exception",
+      "body": "print( \"[telegram-webhook] \" \"Falha segura ao atualizar receipt.\" )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 1852,
+      "exception_type": "Exception",
+      "body": "print( \"[telegram-webhook] \" \"Falha segura no worker Telegram.\" ) _fail_claimed_telegram_update_safely( lease ) return"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 1874,
+      "exception_type": "TelegramUpdateReceiptServiceError",
+      "body": "print( \"[telegram-webhook] \" \"Falha segura ao concluir receipt.\" ) _fail_claimed_telegram_update_safely( lease )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 1884,
+      "exception_type": "Exception",
+      "body": "print( \"[telegram-webhook] \" \"Falha segura ao concluir receipt.\" ) _fail_claimed_telegram_update_safely( lease )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "telegram_webhook",
+      "line": 1918,
+      "exception_type": "Exception",
+      "body": "raise HTTPException( status_code=400, detail=( \"Atualização Telegram inválida.\" ), ) from None"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "telegram_webhook",
+      "line": 1944,
+      "exception_type": "TelegramUpdateIngressValidationError",
+      "body": "raise HTTPException( status_code=400, detail=( \"Atualização Telegram inválida.\" ), ) from None"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "telegram_webhook",
+      "line": 1952,
+      "exception_type": "TelegramUpdateIngressConflictError",
+      "body": "raise HTTPException( status_code=409, detail=( \"Conflito no update Telegram.\" ), ) from None"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "telegram_webhook",
+      "line": 1960,
+      "exception_type": "(TelegramUpdateIngressConfigurationError, TelegramUpdateIngressConsistencyError, TelegramUpdateIngressUnavailableError)",
+      "body": "raise HTTPException( status_code=503, detail=( \"Processamento Telegram \" \"temporariamente indisponível.\" ), ) from None"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "telegram_webhook",
+      "line": 1973,
+      "exception_type": "Exception",
+      "body": "raise HTTPException( status_code=503, detail=( \"Processamento Telegram \" \"temporariamente indisponível.\" ), ) from None"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "_read_integer",
+      "line": 100,
+      "exception_type": "(TypeError, ValueError, OverflowError)",
+      "body": "raise _configuration_error() from None"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "_read_float",
+      "line": 132,
+      "exception_type": "(TypeError, ValueError, OverflowError)",
+      "body": "raise _configuration_error() from None"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "load_worker_config_from_env",
+      "line": 221,
+      "exception_type": "TelegramUpdateRunnerConfigurationError",
+      "body": "raise"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "load_worker_config_from_env",
+      "line": 224,
+      "exception_type": "Exception",
+      "body": "raise _configuration_error() from None"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "load_telegram_processor",
+      "line": 265,
+      "exception_type": "Exception",
+      "body": "raise TelegramUpdateRunnerConfigurationError( \"Não foi possível compor o estado conversacional durável.\" ) from None"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "_positive_integer_argument",
+      "line": 476,
+      "exception_type": "(TypeError, ValueError, OverflowError)",
+      "body": "raise argparse.ArgumentTypeError( \"deve ser um inteiro positivo\" ) from None"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 546,
+      "exception_type": "SystemExit",
+      "body": "return int( error.code )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 564,
+      "exception_type": "(TelegramUpdateJobConfigurationError, TelegramUpdateRunnerConfigurationError)",
+      "body": "_emit_event( \"telegram_worker_error\", { \"error_code\": ( \"telegram.worker_\" \"configuration_invalid\" ), }, stream=resolved_stderr, ) return EXIT_CONFIGURATION_ERROR"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 581,
+      "exception_type": "Exception",
+      "body": "_emit_event( \"telegram_worker_error\", { \"error_code\": ( \"telegram.worker_\" \"initialization_failed\" ), }, stream=resolved_stderr, ) return EXIT_RUNTIME_ERROR"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 636,
+      "exception_type": "KeyboardInterrupt",
+      "body": "stop_event.set() _emit_event( \"telegram_worker_stopped\", { \"reason\": \"keyboard_interrupt\", }, stream=resolved_stdout, ) return EXIT_INTERRUPTED"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 649,
+      "exception_type": "(TelegramUpdateJobConfigurationError, TelegramUpdateRunnerConfigurationError)",
+      "body": "_emit_event( \"telegram_worker_error\", { \"error_code\": ( \"telegram.worker_\" \"configuration_invalid\" ), }, stream=resolved_stderr, ) return EXIT_CONFIGURATION_ERROR"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 666,
+      "exception_type": "Exception",
+      "body": "_emit_event( \"telegram_worker_error\", { \"error_code\": ( \"telegram.worker_\" \"runtime_failed\" ), }, stream=resolved_stderr, ) return EXIT_RUNTIME_ERROR"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "_restore_signal_handlers",
+      "line": 463,
+      "exception_type": "Exception",
+      "body": "continue"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "owner": "normalize_telegram_state",
+      "line": 329,
+      "exception_type": "(TypeError, ValueError, OverflowError, RecursionError)",
+      "body": "raise _validation_error( \"state inválido.\" ) from None"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "owner": "normalize_telegram_state",
+      "line": 358,
+      "exception_type": "(TypeError, ValueError)",
+      "body": "raise _validation_error( \"state inválido.\" ) from None"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "_serialize_state",
+      "line": 213,
+      "exception_type": "(TypeError, ValueError, OverflowError, RecursionError)",
+      "body": "raise TelegramConversationStateValidationError( \"state inválido.\" ) from None"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "_deserialize_state",
+      "line": 277,
+      "exception_type": "TelegramConversationStateValidationError",
+      "body": "raise TelegramConversationStateConsistencyError( \"Estado conversacional persistido inválido.\" ) from None"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "_record_from_row",
+      "line": 330,
+      "exception_type": "(KeyError, TypeError)",
+      "body": "raise TelegramConversationStateConsistencyError( \"Registro conversacional persistido incompleto.\" ) from None"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "_record_from_row",
+      "line": 352,
+      "exception_type": "TelegramConversationStateValidationError",
+      "body": "raise TelegramConversationStateConsistencyError( \"Registro conversacional persistido incompatível.\" ) from None"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "_safe_rollback",
+      "line": 402,
+      "exception_type": "Exception",
+      "body": "pass"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "load_telegram_conversation_state",
+      "line": 458,
+      "exception_type": "TelegramConversationStateError",
+      "body": "raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "load_telegram_conversation_state",
+      "line": 461,
+      "exception_type": "Exception",
+      "body": "_raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "create_telegram_conversation_state",
+      "line": 567,
+      "exception_type": "TelegramConversationStateError",
+      "body": "raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "create_telegram_conversation_state",
+      "line": 570,
+      "exception_type": "Exception",
+      "body": "_raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "save_telegram_conversation_state",
+      "line": 672,
+      "exception_type": "TelegramConversationStateError",
+      "body": "raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "save_telegram_conversation_state",
+      "line": 675,
+      "exception_type": "Exception",
+      "body": "_raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "delete_telegram_conversation_state",
+      "line": 732,
+      "exception_type": "TelegramConversationStateError",
+      "body": "raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "delete_telegram_conversation_state",
+      "line": 735,
+      "exception_type": "Exception",
+      "body": "_raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "delete_expired_telegram_conversation_states",
+      "line": 787,
+      "exception_type": "TelegramConversationStateError",
+      "body": "raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "delete_expired_telegram_conversation_states",
+      "line": 790,
+      "exception_type": "Exception",
+      "body": "_raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "_deserialize_state",
+      "line": 249,
+      "exception_type": "UnicodeDecodeError",
+      "body": "raise TelegramConversationStateConsistencyError( \"Estado conversacional persistido inválido.\" ) from None"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "_deserialize_state",
+      "line": 263,
+      "exception_type": "(TypeError, ValueError, json.JSONDecodeError)",
+      "body": "raise TelegramConversationStateConsistencyError( \"Estado conversacional persistido inválido.\" ) from None"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "load_telegram_conversation_state",
+      "line": 446,
+      "exception_type": "TelegramConversationStateError",
+      "body": "_safe_rollback( connection ) raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "load_telegram_conversation_state",
+      "line": 452,
+      "exception_type": "Exception",
+      "body": "_safe_rollback( connection ) _raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "create_telegram_conversation_state",
+      "line": 555,
+      "exception_type": "TelegramConversationStateError",
+      "body": "_safe_rollback( connection ) raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "create_telegram_conversation_state",
+      "line": 561,
+      "exception_type": "Exception",
+      "body": "_safe_rollback( connection ) _raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "save_telegram_conversation_state",
+      "line": 660,
+      "exception_type": "TelegramConversationStateError",
+      "body": "_safe_rollback( connection ) raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "save_telegram_conversation_state",
+      "line": 666,
+      "exception_type": "Exception",
+      "body": "_safe_rollback( connection ) _raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "delete_telegram_conversation_state",
+      "line": 720,
+      "exception_type": "TelegramConversationStateError",
+      "body": "_safe_rollback( connection ) raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "delete_telegram_conversation_state",
+      "line": 726,
+      "exception_type": "Exception",
+      "body": "_safe_rollback( connection ) _raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "delete_expired_telegram_conversation_states",
+      "line": 775,
+      "exception_type": "TelegramConversationStateError",
+      "body": "_safe_rollback( connection ) raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "delete_expired_telegram_conversation_states",
+      "line": 781,
+      "exception_type": "Exception",
+      "body": "_safe_rollback( connection ) _raise_unavailable()"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "open",
+      "line": 280,
+      "exception_type": "TelegramConversationStateConflictError",
+      "body": "recovered = self.load( normalized_user_id, normalized_chat_id, ) if recovered is None: raise return TelegramConversationStateOpenResult( record=recovered, created=False, recovered_from_conflict=True, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "_invoke",
+      "line": 640,
+      "exception_type": "TelegramConversationStateError",
+      "body": "raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "_invoke",
+      "line": 643,
+      "exception_type": "Exception",
+      "body": "raise TelegramConversationStateUnavailableError( \"Persistência conversacional \" \"temporariamente indisponível.\" ) from None"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "_get_runtime",
+      "line": 609,
+      "exception_type": "TelegramConversationStateError",
+      "body": "raise"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "_get_runtime",
+      "line": 612,
+      "exception_type": "Exception",
+      "body": "raise TelegramConversationStateUnavailableError( \"Runtime conversacional \" \"temporariamente indisponível.\" ) from None"
+    }
+  ],
+  "bare_excepts": [],
+  "exception_suppression": [
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 546,
+      "exception_type": "SystemExit",
+      "body": "return int( error.code )",
+      "only_pass": false,
+      "returns_silently": true
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "_safe_rollback",
+      "line": 402,
+      "exception_type": "Exception",
+      "body": "pass",
+      "only_pass": true,
+      "returns_silently": false
+    }
+  ],
+  "timing_calls": [],
+  "metric_hints": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "resposta_curta",
+      "line": 966,
+      "call": "build_summary",
+      "expression": "build_summary(resultado, lang)"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1611,
+      "call": "get_text(lang, 'ask_income').format",
+      "expression": "get_text(lang, \"ask_income\").format(nome=text)"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 685,
+      "call": "emit_runner_summary",
+      "expression": "emit_runner_summary( summary, stream=resolved_stdout, )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "emit_runner_summary",
+      "line": 346,
+      "call": "summary.to_safe_dict",
+      "expression": "summary.to_safe_dict()"
+    }
+  ],
+  "bridge_operations": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_load_or_open_durable_telegram_session",
+      "line": 1187,
+      "operation": "load_or_open_session",
+      "expression": "conversation_bridge.load_or_open_session( telegram_user_id, chat_id, { \"step\": \"idioma\", \"lang\": \"pt\", }, language=\"pt\", )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_delete_durable_telegram_session",
+      "line": 1341,
+      "operation": "delete_session",
+      "expression": "conversation_bridge.delete_session( durable_session )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_resolve_durable_telegram_language",
+      "line": 1396,
+      "operation": "resolve_language",
+      "expression": "conversation_bridge.resolve_language( telegram_user_id, chat_id, fallback_language=\"pt\", )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_sync_and_save_durable_telegram_session",
+      "line": 1280,
+      "operation": "save_session",
+      "expression": "conversation_bridge.save_session( durable_session, only_if_changed=True, )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_sync_and_save_durable_telegram_session",
+      "line": 1300,
+      "operation": "reload_session",
+      "expression": "conversation_bridge.reload_session( durable_session )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_sync_and_save_durable_telegram_session",
+      "line": 1312,
+      "operation": "save_session",
+      "expression": "conversation_bridge.save_session( reloaded_session, only_if_changed=True, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "save_session",
+      "line": 393,
+      "operation": "save_session",
+      "expression": "self._get_runtime().save_session( validated_session, ttl_seconds=normalized_ttl, only_if_changed=( only_if_changed ), )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "reload_session",
+      "line": 424,
+      "operation": "reload_session",
+      "expression": "self._get_runtime().reload_session( validated_session )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "delete_session",
+      "line": 454,
+      "operation": "delete_session",
+      "expression": "self._get_runtime().delete_session( validated_session )"
+    }
+  ],
+  "receipt_operations": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_fail_claimed_telegram_update_safely",
+      "line": 1813,
+      "operation": "fail_authenticated_telegram_update",
+      "expression": "fail_authenticated_telegram_update( lease, error_code=( \"telegram.processing_failed\" ), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 1870,
+      "operation": "complete_authenticated_telegram_update",
+      "expression": "complete_authenticated_telegram_update( lease )"
+    }
+  ],
+  "correlation_references": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "gerar_diagnostico_pelo_payload",
+      "line": 1108,
+      "terms": [
+        "request_id"
+      ],
+      "expression": "gerar_chave_idempotencia( origem=\"telegram\", request_id=request_id, )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "start_language_flow",
+      "line": 1161,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text(lang, \"auto_start\") if auto else get_text(lang, \"choose_language\"), language_keyboard(), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_load_or_open_durable_telegram_session",
+      "line": 1187,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "conversation_bridge.load_or_open_session( telegram_user_id, chat_id, { \"step\": \"idioma\", \"lang\": \"pt\", }, language=\"pt\", )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_resolve_durable_telegram_language",
+      "line": 1396,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "conversation_bridge.resolve_language( telegram_user_id, chat_id, fallback_language=\"pt\", )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1480,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_load_or_open_durable_telegram_session( conversation_bridge=conversation_bridge, telegram_user_id=( trusted_update.usuario_id ), chat_id=chat_id, )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "safe_record_telegram_event",
+      "line": 691,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "record_event( canal=\"telegram\", usuario=str( payload.get( \"nome\" ) or \"telegram-user\" ), usuario_id=( f\"telegram:{chat_id}\" ), idioma=lang, moeda=moeda, status=\"success\", diagnostico_id=( resultado.get( \"id\" ) ), metadata={ \"origem\": ( \"telegram_webhook\" ), \"evento\": ( \"diagnostico_telegram\" ), \"identity_source\": ( \"authenticated_telegram_update\" ), \"simbolo_moeda\": simbolo, \"persistence_status\": ( resultado.get( \"persistence_status\" ) ), \"created\": resultado.get( \"created\" ), \"score_financeiro\": ( resultado.get( \"score_financeiro\" ) ), \"nivel_risco\": ( translate_telegram_risk( resultado.get( \"nivel_risco\" ), lang, ) ), }, )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_resolve_durable_telegram_language",
+      "line": 1385,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "get_chat_lang( chat_id, session, )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1489,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1503,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "start_language_flow( chat_id, lang, )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1510,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1511,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_help_message(lang), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1518,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1519,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_help_message(lang), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1526,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1533,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text( lang, \"cancel\", ), remove_keyboard(), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1544,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=None, conversation_bridge=conversation_bridge, durable_session=durable_session)"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1558,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "start_language_flow( chat_id, lang, auto=True, )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1588,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text(lang, \"start\"), remove_keyboard(), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1789,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message(chat_id, get_text(lang, \"invalid_number\"))"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1797,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text( lang, \"api_error\", ), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1571,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "start_language_flow(chat_id)"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1609,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text(lang, \"ask_income\").format(nome=text), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1596,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message(chat_id, get_text(lang, \"invalid_name\"))"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1629,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text( lang, \"ask_fixed\", ), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1652,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text( lang, \"ask_variable\", ), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1675,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text( lang, \"ask_debts\", ), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1698,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text( lang, \"ask_savings\", ), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1721,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text(lang, \"ask_goal\"), keyboard(TEXTS[lang][\"goal_options\"]), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1754,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message( chat_id, get_text(lang, \"analyzing\"), remove_keyboard(), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1761,
+      "terms": [
+        "request_id"
+      ],
+      "expression": "gerar_diagnostico_pelo_payload( payload, lang, usuario_id_confiavel=( trusted_update.usuario_id ), request_id=( trusted_update.request_id ), )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1773,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message(chat_id, resposta_final)"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1775,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "safe_record_telegram_event( chat_id=chat_id, lang=lang, payload=payload, resultado=resultado, resposta=resposta_final, )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1737,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "send_telegram_message(chat_id, get_text(lang, \"adjust_debt\"))"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "owner": "validate_telegram_identity",
+      "line": 150,
+      "terms": [
+        "telegram_user_id"
+      ],
+      "expression": "_validate_integer( telegram_user_id, field_name=\"telegram_user_id\", minimum=1, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "owner": "validate_telegram_identity",
+      "line": 156,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "_validate_integer( chat_id, field_name=\"chat_id\", allow_zero=False, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "owner": "__post_init__",
+      "line": 528,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( self.telegram_user_id, self.chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "owner": "__post_init__",
+      "line": 578,
+      "terms": [
+        "telegram_user_id"
+      ],
+      "expression": "object.__setattr__( self, \"telegram_user_id\", telegram_user_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "owner": "__post_init__",
+      "line": 584,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "object.__setattr__( self, \"chat_id\", chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "load_telegram_conversation_state",
+      "line": 419,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "create_telegram_conversation_state",
+      "line": 490,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "save_telegram_conversation_state",
+      "line": 587,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "delete_telegram_conversation_state",
+      "line": 686,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "owner": "_record_from_row",
+      "line": 339,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "TelegramConversationState( telegram_user_id=( telegram_user_id ), chat_id=chat_id, state=state, language=language, state_version=state_version, expires_at=expires_at, created_at=created_at, updated_at=updated_at, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "owner": "load_session",
+      "line": 324,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "owner": "open_session",
+      "line": 352,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "owner": "open_session",
+      "line": 373,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "self.store.open( telegram_user_id=( normalized_user_id ), chat_id=normalized_chat_id, initial_state=normalized_state, language=normalized_language, ttl_seconds=resolved_ttl, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "owner": "reload_session",
+      "line": 488,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "self.load_session( validated_session.telegram_user_id, validated_session.chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "owner": "delete_session",
+      "line": 503,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "self.store.delete( validated_session.telegram_user_id, validated_session.chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "owner": "delete_identity",
+      "line": 528,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "load",
+      "line": 192,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "load",
+      "line": 207,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_validate_record_identity( record, telegram_user_id=( normalized_user_id ), chat_id=( normalized_chat_id ), )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "open",
+      "line": 230,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "open",
+      "line": 296,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_validate_record_identity( created, telegram_user_id=( normalized_user_id ), chat_id=( normalized_chat_id ), )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "save",
+      "line": 348,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "save_telegram_conversation_state( telegram_user_id=( validated_current .telegram_user_id ), chat_id=( validated_current.chat_id ), state=normalized_state, language=normalized_language, expected_version=( validated_current .state_version ), ttl_seconds=normalized_ttl, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "save",
+      "line": 367,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_validate_record_identity( saved, telegram_user_id=( validated_current .telegram_user_id ), chat_id=( validated_current.chat_id ), )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "delete",
+      "line": 402,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "owner": "open",
+      "line": 267,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "create_telegram_conversation_state( telegram_user_id=( normalized_user_id ), chat_id=( normalized_chat_id ), state=normalized_state, language=normalized_language, ttl_seconds=normalized_ttl, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "_validate_session",
+      "line": 124,
+      "terms": [
+        "telegram_user_id"
+      ],
+      "expression": "TelegramConversationStateConsistencyError( \"Runtime alterou o telegram_user_id.\" )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "_validate_session",
+      "line": 133,
+      "terms": [
+        "chat_id"
+      ],
+      "expression": "TelegramConversationStateConsistencyError( \"Runtime alterou o chat_id.\" )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "load_session",
+      "line": 207,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "load_session",
+      "line": 222,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_validate_session( result, telegram_user_id=( normalized_user_id ), chat_id=( normalized_chat_id ), )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "open_session",
+      "line": 243,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "open_session",
+      "line": 268,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "self._invoke( lambda: self._get_runtime().open_session( telegram_user_id=( normalized_user_id ), chat_id=( normalized_chat_id ), initial_state=( normalized_state ), language=( normalized_language ), ttl_seconds=( normalized_ttl ), ) )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "open_session",
+      "line": 288,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_validate_session( result, telegram_user_id=( normalized_user_id ), chat_id=( normalized_chat_id ), )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "load_or_open_session",
+      "line": 309,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "load_or_open_session",
+      "line": 342,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "self.open_session( telegram_user_id=( normalized_user_id ), chat_id=normalized_chat_id, initial_state=normalized_state, language=normalized_language, ttl_seconds=normalized_ttl, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "save_session",
+      "line": 402,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_validate_session( result, telegram_user_id=( validated_session .telegram_user_id ), chat_id=( validated_session.chat_id ), )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "reload_session",
+      "line": 432,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "_validate_session( result, telegram_user_id=( validated_session .telegram_user_id ), chat_id=( validated_session.chat_id ), )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "delete_identity",
+      "line": 482,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "resolve_language",
+      "line": 514,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "validate_telegram_identity( telegram_user_id, chat_id, )"
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "owner": "open_session",
+      "line": 269,
+      "terms": [
+        "chat_id",
+        "telegram_user_id"
+      ],
+      "expression": "self._get_runtime().open_session( telegram_user_id=( normalized_user_id ), chat_id=( normalized_chat_id ), initial_state=( normalized_state ), language=( normalized_language ), ttl_seconds=( normalized_ttl ), )"
+    }
+  ],
+  "possible_sensitive_logs": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "send_telegram_message",
+      "line": 754,
+      "expression": "print(\"TELEGRAM_BOT_TOKEN não configurado.\")",
+      "terms": [
+        "telegram_bot_token"
+      ],
+      "kind": "print"
+    }
+  ],
+  "functions": [
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "get_text",
+      "line": 501,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "get_lang_from_session",
+      "line": 505,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "get_chat_lang",
+      "line": 511,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "get_help_message",
+      "line": 534,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "currency_by_telegram_lang",
+      "line": 553,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "translate_telegram_risk",
+      "line": 572,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "safe_record_telegram_event",
+      "line": 669,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "send_telegram_message",
+      "line": 752,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "language_keyboard",
+      "line": 770,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "keyboard",
+      "line": 781,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "remove_keyboard",
+      "line": 789,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "parse_user_number",
+      "line": 793,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "to_float",
+      "line": 835,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "format_money",
+      "line": 839,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "translate_risk",
+      "line": 863,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "build_summary",
+      "line": 868,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "resposta_curta",
+      "line": 954,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "gerar_diagnostico_pelo_payload",
+      "line": 979,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "is_debt_goal",
+      "line": 1143,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "start_language_flow",
+      "line": 1160,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "_load_or_open_durable_telegram_session",
+      "line": 1169,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "_sync_and_save_durable_telegram_session",
+      "line": 1225,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "_delete_durable_telegram_session",
+      "line": 1320,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "_resolve_durable_telegram_language",
+      "line": 1359,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "process_telegram_update",
+      "line": 1404,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "_process_telegram_update_core",
+      "line": 1427,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "_fail_claimed_telegram_update_safely",
+      "line": 1809,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "process_claimed_telegram_update",
+      "line": 1835,
+      "async": false
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "telegram_webhook",
+      "line": 1896,
+      "async": true
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "name": "apply_transition",
+      "line": 1262,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "_configuration_error",
+      "line": 68,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "_read_integer",
+      "line": 77,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "_read_float",
+      "line": 110,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "load_worker_config_from_env",
+      "line": 147,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "load_telegram_processor",
+      "line": 228,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "_emit_event",
+      "line": 287,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "emit_runner_result",
+      "line": 318,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "emit_runner_summary",
+      "line": 339,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "_config_to_safe_dict",
+      "line": 351,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "_install_signal_handlers",
+      "line": 383,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "_restore_signal_handlers",
+      "line": 445,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "_positive_integer_argument",
+      "line": 467,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "_build_parser",
+      "line": 493,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "main",
+      "line": 519,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "process_with_durable_conversation_state",
+      "line": 275,
+      "async": false
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "name": "stop_handler",
+      "line": 404,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "_validation_error",
+      "line": 95,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "_validate_integer",
+      "line": 103,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "validate_telegram_identity",
+      "line": 146,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "normalize_telegram_language",
+      "line": 168,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "_to_json_mutable",
+      "line": 203,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "normalize_telegram_state",
+      "line": 294,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "validate_state_ttl_seconds",
+      "line": 377,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "validate_expected_version",
+      "line": 392,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "validate_cleanup_limit",
+      "line": 402,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "_validate_datetime",
+      "line": 413,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "_freeze_json",
+      "line": 437,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "_thaw_json",
+      "line": 468,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "__post_init__",
+      "line": 522,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "to_processing_state",
+      "line": 628,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "to_safe_dict",
+      "line": 645,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/contracts.py",
+      "name": "is_expired",
+      "line": 668,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "_serialize_state",
+      "line": 194,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "_deserialize_state",
+      "line": 224,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "_record_from_row",
+      "line": 283,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "_require_connection",
+      "line": 379,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "_safe_rollback",
+      "line": 396,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "_raise_unavailable",
+      "line": 406,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "load_telegram_conversation_state",
+      "line": 412,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "create_telegram_conversation_state",
+      "line": 478,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "save_telegram_conversation_state",
+      "line": 574,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "delete_telegram_conversation_state",
+      "line": 679,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "name": "delete_expired_telegram_conversation_states",
+      "line": 739,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "_session_from_record",
+      "line": 243,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "create_postgres_telegram_conversation_state_runtime",
+      "line": 600,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "__post_init__",
+      "line": 49,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "telegram_user_id",
+      "line": 125,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "chat_id",
+      "line": 131,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "state_version",
+      "line": 137,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "replace_state",
+      "line": 142,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "set_language",
+      "line": 152,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "reset_to_persisted",
+      "line": 164,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "is_dirty",
+      "line": 177,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "to_processing_state",
+      "line": 201,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "to_safe_dict",
+      "line": 210,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "_require_active",
+      "line": 234,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "__post_init__",
+      "line": 282,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "_resolve_ttl",
+      "line": 305,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "load_session",
+      "line": 316,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "open_session",
+      "line": 341,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "save_session",
+      "line": 399,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "reload_session",
+      "line": 478,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "delete_session",
+      "line": 493,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "delete_identity",
+      "line": 520,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "cleanup_expired",
+      "line": 548,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/runtime.py",
+      "name": "_require_session",
+      "line": 584,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "_require_record",
+      "line": 139,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "_validate_record_identity",
+      "line": 155,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "__post_init__",
+      "line": 42,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "to_safe_dict",
+      "line": 77,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "load",
+      "line": 95,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "open",
+      "line": 102,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "save",
+      "line": 114,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "delete",
+      "line": 125,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "cleanup_expired",
+      "line": 132,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "load",
+      "line": 184,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "open",
+      "line": 217,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "save",
+      "line": 313,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "delete",
+      "line": 394,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/store.py",
+      "name": "cleanup_expired",
+      "line": 424,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "_validate_session",
+      "line": 100,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "create_postgres_telegram_webhook_conversation_bridge",
+      "line": 650,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "load_session",
+      "line": 48,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "open_session",
+      "line": 55,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "save_session",
+      "line": 65,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "reload_session",
+      "line": 74,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "delete_session",
+      "line": 80,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "delete_identity",
+      "line": 86,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "cleanup_expired",
+      "line": 93,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "__post_init__",
+      "line": 168,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "runtime_initialized",
+      "line": 194,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "load_session",
+      "line": 199,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "open_session",
+      "line": 232,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "load_or_open_session",
+      "line": 298,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "save_session",
+      "line": 352,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "reload_session",
+      "line": 413,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "delete_session",
+      "line": 443,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "delete_identity",
+      "line": 474,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "resolve_language",
+      "line": 504,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "cleanup_expired",
+      "line": 545,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "to_safe_dict",
+      "line": 580,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "_get_runtime",
+      "line": 592,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "_invoke",
+      "line": 631,
+      "async": false
+    },
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "name": "runtime_factory",
+      "line": 674,
+      "async": false
+    }
+  ]
+}

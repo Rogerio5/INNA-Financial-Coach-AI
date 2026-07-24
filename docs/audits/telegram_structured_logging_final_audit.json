@@ -1,0 +1,28 @@
+{
+  "compatible_loader_present": true,
+  "json_sink_exported": true,
+  "json_sink_present": true,
+  "missing_structured_functions": [],
+  "productive_loader_injected": true,
+  "safe_helper_present": true,
+  "sensitive_call_violations": [],
+  "serialization_requirements": {
+    "allow_nan_false": true,
+    "ensure_ascii_false": true,
+    "max_depth_marker": true,
+    "non_finite_marker": true,
+    "non_serializable_marker": true,
+    "recursive_marker": true,
+    "single_line_guard": true,
+    "sort_keys_true": true,
+    "utc_timezone": true
+  },
+  "signature_compatibility_present": true,
+  "webhook_prints": 0,
+  "webhook_structured_calls": 9,
+  "worker_factory_present": true,
+  "worker_print_owners": [
+    "_emit_event"
+  ],
+  "worker_prints": 1
+}

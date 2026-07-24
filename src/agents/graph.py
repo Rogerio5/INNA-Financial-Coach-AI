@@ -1,0 +1,764 @@
+"""
+Grafo principal do núcleo de agentes da INNA.
+
+Suporta:
+- execução sem persistência para testes;
+- memória persistente PostgreSQL por thread_id;
+- histórico acumulado de conversas.
+"""
+
+from __future__ import annotations
+
+import uuid
+from typing import Any, Mapping
+
+from langgraph.errors import GraphRecursionError
+from langgraph.graph import END, START, StateGraph
+from langgraph.types import Command
+
+from src.agents.conversation_summary_node import (
+    conversation_summary_node,
+)
+from src.agents.task_completion_node import (
+    task_completion_node,
+)
+from src.agents.handoff_coordinator_node import (
+    handoff_coordinator_node,
+)
+from src.agents.human_review_interrupt_node import (
+    human_review_interrupt_node,
+    select_route_after_human_review_interrupt,
+)
+from src.agents.human_review_policy_node import (
+    human_review_policy_node,
+    select_route_after_human_review_policy,
+)
+from src.agents.execution_governance import (
+    DEFAULT_MAX_EXECUTION_STEPS,
+    DEFAULT_MAX_SAME_AGENT_VISITS,
+    apply_execution_governance,
+)
+from src.agents.nodes import (
+    education_agent_node,
+    fallback_agent_node,
+    financial_agent_node,
+    rag_agent_node,
+    report_agent_node,
+)
+from src.agents.persistence import (
+    abrir_checkpointer_postgres,
+)
+from src.agents.state import InnaAgentState
+from src.agents.supervisor import supervisor_node
+from src.context_engineering.node import (
+    context_builder_node,
+)
+
+
+DEFAULT_LANGGRAPH_RECURSION_LIMIT = 25
+
+from src.agents.team_router import (
+    select_team_supervisor_route,
+    team_router_node,
+)
+from src.agents.team_supervisor import (
+    financial_team_supervisor_node,
+    knowledge_team_supervisor_node,
+    support_team_supervisor_node,
+)
+
+ALLOWED_AGENT_ROUTES = frozenset(
+    {
+        "financial_agent",
+        "education_agent",
+        "rag_agent",
+        "report_agent",
+        "fallback_agent",
+    }
+)
+
+
+class LangGraphExecutionLimitError(
+    RuntimeError
+):
+    """
+    Indica que a execução do grafo excedeu
+    o limite operacional permitido.
+    """
+
+
+def _criar_config_execucao(
+    *,
+    thread_id: str | None = None,
+) -> dict[str, Any]:
+    """
+    Cria a configuração central de execução.
+
+    recursion_limit é uma chave de nível superior
+    do RunnableConfig do LangGraph.
+    """
+    config: dict[str, Any] = {
+        "recursion_limit": (
+            DEFAULT_LANGGRAPH_RECURSION_LIMIT
+        ),
+    }
+
+    normalized_thread_id = str(
+        thread_id or ""
+    ).strip()
+
+    if normalized_thread_id:
+        config["configurable"] = {
+            "thread_id": normalized_thread_id,
+        }
+
+    return config
+
+
+def _invocar_grafo_seguro(
+    grafo: Any,
+    estado_inicial: InnaAgentState,
+    *,
+    config: dict[str, Any],
+) -> InnaAgentState:
+    """
+    Executa o grafo com limite explícito.
+
+    Não cria resposta parcial silenciosa quando
+    o limite é atingido.
+    """
+    try:
+        return grafo.invoke(
+            estado_inicial,
+            config=config,
+        )
+    except GraphRecursionError as error:
+        raise LangGraphExecutionLimitError(
+            "A execução do núcleo agentic excedeu "
+            "o limite máximo de passos permitido."
+        ) from error
+
+
+def _selecionar_rota(
+    state: InnaAgentState,
+) -> str:
+    route = str(
+        state.get(
+            "next_node",
+            "fallback_agent",
+        )
+        or "fallback_agent"
+    ).strip()
+
+    if route not in ALLOWED_AGENT_ROUTES:
+        return "fallback_agent"
+
+    return route
+
+
+def _selecionar_rota_apos_handoff(
+    state: InnaAgentState,
+) -> str:
+    """
+    Encaminha handoffs solicitados ao roteador hierárquico.
+
+    Handoffs em estado terminal seguem para o resumo final.
+    """
+    handoff = state.get(
+        "handoff_current"
+    )
+
+    if not isinstance(
+        handoff,
+        dict,
+    ):
+        return "conversation_summary"
+
+    status = str(
+        handoff.get(
+            "status",
+            "",
+        )
+        or ""
+    ).strip()
+
+    target = str(
+        handoff.get(
+            "to_agent",
+            "",
+        )
+        or ""
+    ).strip()
+
+    if (
+        status == "requested"
+        and target in ALLOWED_AGENT_ROUTES
+    ):
+        return "team_router"
+
+    return "conversation_summary"
+
+
+def _selecionar_saida_supervisor_equipe(
+    state: InnaAgentState,
+) -> str:
+    """
+    Decide a saída de um supervisor de equipe.
+
+    Rota normal:
+        execution_governance
+
+    Escalonamento entre equipes:
+        supervisor
+
+    Proteção contra retorno excessivo:
+        fallback_agent
+    """
+    requires_root = bool(
+        state.get(
+            "team_requires_root_supervisor",
+            False,
+        )
+    )
+
+    if not requires_root:
+        return "execution_governance"
+
+    visits = int(
+        state.get(
+            "root_supervisor_visits",
+            0,
+        )
+        or 0
+    )
+
+    maximum = int(
+        state.get(
+            "max_root_supervisor_visits",
+            3,
+        )
+        or 3
+    )
+
+    if visits >= maximum:
+        return "fallback_agent"
+
+    return "supervisor"
+
+def criar_builder_inna() -> StateGraph:
+    builder = StateGraph(
+        InnaAgentState
+    )
+
+    # Entrada e supervisão principal
+    builder.add_node(
+        "context_builder",
+        context_builder_node,
+    )
+
+    builder.add_node(
+        "supervisor",
+        supervisor_node,
+    )
+
+    # Camada hierárquica
+    builder.add_node(
+        "team_router",
+        team_router_node,
+    )
+
+    builder.add_node(
+        "financial_team_supervisor",
+        financial_team_supervisor_node,
+    )
+
+    builder.add_node(
+        "knowledge_team_supervisor",
+        knowledge_team_supervisor_node,
+    )
+
+    builder.add_node(
+        "support_team_supervisor",
+        support_team_supervisor_node,
+    )
+
+    # Governança de execução
+    builder.add_node(
+        "execution_governance",
+        apply_execution_governance,
+    )
+
+    # Agentes especializados
+    builder.add_node(
+        "financial_agent",
+        financial_agent_node,
+    )
+
+    builder.add_node(
+        "education_agent",
+        education_agent_node,
+    )
+
+    builder.add_node(
+        "rag_agent",
+        rag_agent_node,
+    )
+
+    builder.add_node(
+        "report_agent",
+        report_agent_node,
+    )
+
+    builder.add_node(
+        "fallback_agent",
+        fallback_agent_node,
+    )
+
+    # Finalização e handoffs
+    builder.add_node(
+        "task_completion",
+        task_completion_node,
+    )
+
+    builder.add_node(
+        "human_review_policy",
+        human_review_policy_node,
+    )
+
+    builder.add_node(
+        "human_review_interrupt",
+        human_review_interrupt_node,
+    )
+
+    builder.add_node(
+        "handoff_coordinator",
+        handoff_coordinator_node,
+    )
+
+    builder.add_node(
+        "conversation_summary",
+        conversation_summary_node,
+    )
+
+    # Entrada principal
+    builder.add_edge(
+        START,
+        "context_builder",
+    )
+
+    builder.add_edge(
+        "context_builder",
+        "supervisor",
+    )
+
+    builder.add_edge(
+        "supervisor",
+        "team_router",
+    )
+
+    # Team Router → Supervisor de equipe
+    builder.add_conditional_edges(
+        "team_router",
+        select_team_supervisor_route,
+        {
+            (
+                "financial_team_supervisor"
+            ): "financial_team_supervisor",
+            (
+                "knowledge_team_supervisor"
+            ): "knowledge_team_supervisor",
+            (
+                "support_team_supervisor"
+            ): "support_team_supervisor",
+        },
+    )
+
+    # Supervisor de equipe → governança, supervisor raiz
+    # ou fallback protegido.
+    for team_supervisor in (
+        "financial_team_supervisor",
+        "knowledge_team_supervisor",
+        "support_team_supervisor",
+    ):
+        builder.add_conditional_edges(
+            team_supervisor,
+            _selecionar_saida_supervisor_equipe,
+            {
+                (
+                    "execution_governance"
+                ): "execution_governance",
+                "supervisor": "supervisor",
+                "fallback_agent": "fallback_agent",
+            },
+        )
+
+    # Governança → agente especializado
+    builder.add_conditional_edges(
+        "execution_governance",
+        _selecionar_rota,
+        {
+            "financial_agent": "financial_agent",
+            "education_agent": "education_agent",
+            "rag_agent": "rag_agent",
+            "report_agent": "report_agent",
+            "fallback_agent": "fallback_agent",
+        },
+    )
+
+    # Todos os agentes passam por Task Completion.
+    for node in ALLOWED_AGENT_ROUTES:
+        builder.add_edge(
+            node,
+            "task_completion",
+        )
+
+    # Task Completion → política de revisão humana.
+    builder.add_edge(
+        "task_completion",
+        "human_review_policy",
+    )
+
+    # A política segue normalmente ou pausa para revisão.
+    builder.add_conditional_edges(
+        "human_review_policy",
+        select_route_after_human_review_policy,
+        {
+            (
+                "human_review_interrupt"
+            ): "human_review_interrupt",
+            (
+                "handoff_coordinator"
+            ): "handoff_coordinator",
+        },
+    )
+
+    # Após a decisão humana, retoma na rota adequada.
+    builder.add_conditional_edges(
+        "human_review_interrupt",
+        select_route_after_human_review_interrupt,
+        {
+            (
+                "handoff_coordinator"
+            ): "handoff_coordinator",
+            "team_router": "team_router",
+            (
+                "conversation_summary"
+            ): "conversation_summary",
+        },
+    )
+
+    # Handoff solicitado volta à camada hierárquica.
+    builder.add_conditional_edges(
+        "handoff_coordinator",
+        _selecionar_rota_apos_handoff,
+        {
+            "team_router": "team_router",
+            (
+                "conversation_summary"
+            ): "conversation_summary",
+        },
+    )
+
+    builder.add_edge(
+        "conversation_summary",
+        END,
+    )
+
+    return builder
+
+def criar_grafo_inna(
+    *,
+    checkpointer: Any | None = None,
+):
+    return criar_builder_inna().compile(
+        checkpointer=checkpointer
+    )
+
+
+inna_agent_graph = criar_grafo_inna()
+
+
+def _criar_estado_inicial(
+    mensagem: str,
+    *,
+    thread_id: str,
+    usuario_id: str | None,
+    idioma: str,
+    moeda: str,
+) -> InnaAgentState:
+    mensagem = str(mensagem or "").strip()
+
+    return {
+        "user_message": mensagem,
+        "user_id": usuario_id,
+        "language": idioma,
+        "currency": moeda,
+        "thread_id": thread_id,
+        "conversation_history": [
+            {
+                "role": "user",
+                "content": mensagem,
+            }
+        ],
+        "handoff_current": None,
+        "handoff_history": [],
+        "handoff_count": 0,
+        "max_handoffs": 3,
+        "handoff_limit_exceeded": False,
+        "handoff_required": False,
+        "handoff_target": "",
+        "handoff_reason": "",
+
+        # Roteamento hierárquico
+        "hierarchical_routing_enabled": True,
+        "current_team": "",
+        "team_supervisor": "",
+        "team_route": "",
+        "team_requested_agent": "",
+        "team_route_source": "",
+        "team_routing_reason": "",
+        "team_requires_root_supervisor": False,
+        "team_route_history": [],
+        "root_supervisor_visits": 0,
+        "max_root_supervisor_visits": 3,
+        "human_review_enabled": True,
+        "human_review_required": False,
+        "human_review_current": {},
+        "human_review_history": [],
+        "human_review_policy_decision": {},
+        "human_review_resume_payload": {},
+        "human_review_decision_action": "",
+        "human_review_corrections": {},
+        "human_review_resume_route": "",
+        "human_review_status": "",
+        "human_review_count": 0,
+        "max_human_reviews": 3,
+        "human_review_limit_exceeded": False,
+
+        "context": {},
+        "tool_results": [],
+        "errors": [],
+        "route_history": [],
+        "execution_steps": 0,
+        "max_execution_steps": (
+            DEFAULT_MAX_EXECUTION_STEPS
+        ),
+        "max_same_agent_visits": (
+            DEFAULT_MAX_SAME_AGENT_VISITS
+        ),
+        "loop_detected": False,
+        "execution_budget_exceeded": False,
+        "governance_reason": "",
+        "governance_decision": {},
+        "trace": [],
+    }
+
+
+def executar_nucleo_inna(
+    mensagem: str,
+    *,
+    usuario_id: str | None = None,
+    idioma: str = "pt",
+    moeda: str = "BRL",
+) -> InnaAgentState:
+    """
+    Execução sem persistência.
+
+    Mantida para compatibilidade e testes unitários.
+    """
+    thread_id = str(uuid.uuid4())
+
+    estado_inicial = _criar_estado_inicial(
+        mensagem,
+        thread_id=thread_id,
+        usuario_id=usuario_id,
+        idioma=idioma,
+        moeda=moeda,
+    )
+
+    # A retomada Human-in-the-Loop depende de
+    # checkpoint persistente. A execução legada,
+    # sem persistência, continua compatível.
+    estado_inicial[
+        "human_review_enabled"
+    ] = False
+
+    config = _criar_config_execucao()
+
+    return _invocar_grafo_seguro(
+        inna_agent_graph,
+        estado_inicial,
+        config=config,
+    )
+
+
+def executar_nucleo_inna_persistente(
+    mensagem: str,
+    *,
+    thread_id: str,
+    usuario_id: str | None = None,
+    idioma: str = "pt",
+    moeda: str = "BRL",
+    human_review_enabled: bool = False,
+) -> InnaAgentState:
+    """
+    Executa o grafo com memória PostgreSQL.
+
+    O mesmo thread_id continua a mesma conversa.
+    """
+    thread_id = str(thread_id or "").strip()
+
+    if not thread_id:
+        raise ValueError(
+            "thread_id é obrigatório para "
+            "execução persistente."
+        )
+
+    if len(thread_id) > 255:
+        raise ValueError(
+            "thread_id deve possuir no máximo "
+            "255 caracteres."
+        )
+
+    estado_inicial = _criar_estado_inicial(
+        mensagem,
+        thread_id=thread_id,
+        usuario_id=usuario_id,
+        idioma=idioma,
+        moeda=moeda,
+    )
+
+    # Mantém compatibilidade com chamadas síncronas
+    # existentes. O Human-in-the-Loop deve ser
+    # habilitado explicitamente pelo consumidor.
+    estado_inicial[
+        "human_review_enabled"
+    ] = bool(
+        human_review_enabled
+    )
+
+    config = _criar_config_execucao(
+        thread_id=thread_id,
+    )
+
+    with abrir_checkpointer_postgres() as checkpointer:
+        grafo = criar_grafo_inna(
+            checkpointer=checkpointer
+        )
+
+        return _invocar_grafo_seguro(
+            grafo,
+            estado_inicial,
+            config=config,
+        )
+
+
+
+
+def retomar_revisao_humana_persistente(
+    *,
+    thread_id: str,
+    decisao: Mapping[str, Any],
+) -> InnaAgentState:
+    """
+    Retoma uma execução interrompida para revisão.
+
+    O mesmo thread_id utilizado na execução inicial
+    é obrigatório para localizar o checkpoint.
+    """
+    normalized_thread_id = str(
+        thread_id or ""
+    ).strip()
+
+    if not normalized_thread_id:
+        raise ValueError(
+            "thread_id é obrigatório para retomar "
+            "uma revisão humana."
+        )
+
+    if len(normalized_thread_id) > 255:
+        raise ValueError(
+            "thread_id deve possuir no máximo "
+            "255 caracteres."
+        )
+
+    if not isinstance(
+        decisao,
+        Mapping,
+    ):
+        raise TypeError(
+            "decisao deve implementar Mapping."
+        )
+
+    normalized_decision = dict(
+        decisao
+    )
+
+    if not normalized_decision:
+        raise ValueError(
+            "decisao não pode ser vazia."
+        )
+
+    config = _criar_config_execucao(
+        thread_id=normalized_thread_id,
+    )
+
+    with abrir_checkpointer_postgres() as checkpointer:
+        grafo = criar_grafo_inna(
+            checkpointer=checkpointer
+        )
+
+        result = grafo.invoke(
+            Command(
+                resume=normalized_decision
+            ),
+            config=config,
+        )
+
+    return result
+
+
+def consultar_estado_conversa(
+    *,
+    thread_id: str,
+) -> dict[str, Any]:
+    """
+    Retorna o checkpoint atual de uma conversa.
+    """
+    config = {
+        "configurable": {
+            "thread_id": thread_id,
+        }
+    }
+
+    with abrir_checkpointer_postgres() as checkpointer:
+        grafo = criar_grafo_inna(
+            checkpointer=checkpointer
+        )
+
+        snapshot = grafo.get_state(config)
+
+        return {
+            "thread_id": thread_id,
+            "values": dict(snapshot.values or {}),
+            "next": list(snapshot.next or []),
+            "created_at": (
+                snapshot.created_at
+            ),
+            "metadata": dict(
+                snapshot.metadata or {}
+            ),
+        }
+
+
+__all__ = [
+    "ALLOWED_AGENT_ROUTES",
+    "DEFAULT_LANGGRAPH_RECURSION_LIMIT",
+    "LangGraphExecutionLimitError",
+    "criar_builder_inna",
+    "criar_grafo_inna",
+    "inna_agent_graph",
+    "executar_nucleo_inna",
+    "executar_nucleo_inna_persistente",
+    "consultar_estado_conversa",
+]

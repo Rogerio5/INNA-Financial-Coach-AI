@@ -6517,9 +6517,28 @@ if submitted:
         "simbolo_moeda": currency_info["simbolo"],
     }
 
+    usuario_id_confiavel = str(
+        st.session_state.get(
+            "usuario"
+        )
+        or ""
+    ).strip()
+
+    if not usuario_id_confiavel:
+        st.error(
+            "Sua sessão não possui uma identidade "
+            "autenticada. Entre novamente."
+        )
+        st.stop()
+
     try:
         with st.spinner(tr("loading")):
-            response = gerar_diagnostico_api(payload)
+            response = gerar_diagnostico_api(
+                payload,
+                usuario_id_confiavel=(
+                    usuario_id_confiavel
+                ),
+            )
 
         # Garante que moeda e símbolo apareçam na interface,
         # mesmo quando a API não devolver esses campos no response.

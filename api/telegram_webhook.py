@@ -1,25 +1,77 @@
 import os
 import re
+import logging
+
+from src.services.telegram_observability import (
+    JsonTelegramOperationalEventSink,
+    TelegramConversationMetricRecord,
+    TelegramOperationalEvent,
+    sanitize_event_fields,
+)
+
+try:
+    from src.services.telegram_conversation_state import (
+        TelegramConversationStateConflictError,
+    )
+except ImportError:
+    TelegramConversationStateConflictError = None
+
 
 import requests
+from typing import Annotated, TYPE_CHECKING
 from dotenv import load_dotenv
-from fastapi import APIRouter, BackgroundTasks, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
+from api.security import (
+    TrustedTelegramWebhookContext,
+    require_trusted_telegram_webhook,
+)
+
+if TYPE_CHECKING:
+    from src.services.telegram_conversation_state import (
+        TelegramWebhookConversationBridge,
+    )
 
 from api.schemas import FinancialInput
+from src.channels.telegram_context import (
+    TelegramUpdateContextError,
+    extrair_contexto_confiavel_telegram,
+    normalizar_update_id_telegram,
+)
 from src.financial_engine import build_financial_diagnosis
+from src.services.financial_diagnosis import (
+    gerar_chave_idempotencia,
+    persistir_diagnostico_financeiro,
+)
 from src.gemini_client import generate_ai_plan
-from src.repository import save_diagnostico_db
 from src.audit_logger import record_event
 
 load_dotenv()
+
+from src.services.telegram_update_receipts import (
+    TelegramUpdateClaimDecision,
+    TelegramUpdateProcessingLease,
+    TelegramUpdateReceiptConflictError,
+    TelegramUpdateReceiptServiceError,
+    TelegramUpdateReceiptUnavailableError,
+    TelegramUpdateReceiptValidationError,
+    claim_authenticated_telegram_update,
+    complete_authenticated_telegram_update,
+    fail_authenticated_telegram_update,
+)
+
+from src.services.telegram_update_jobs import (
+    TelegramUpdateIngressConfigurationError,
+    TelegramUpdateIngressConflictError,
+    TelegramUpdateIngressConsistencyError,
+    TelegramUpdateIngressUnavailableError,
+    TelegramUpdateIngressValidationError,
+    enqueue_authenticated_telegram_update_atomic,
+)
 
 router = APIRouter(prefix="/telegram", tags=["telegram"])
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-USER_SESSIONS = {}
-USER_LAST_LANG = {}
-PROCESSED_UPDATES = set()
 
 LANGUAGE_OPTIONS = {
     "🇧🇷 Português": "pt",
@@ -464,10 +516,27 @@ def get_lang_from_session(session: dict | None) -> str:
     return session.get("lang", "pt")
 
 
-def get_chat_lang(chat_id: int, session: dict | None = None) -> str:
+def get_chat_lang(
+    chat_id: int,
+    session: dict | None = None,
+) -> str:
+    """
+    Resolve idioma somente a partir da sessão fornecida.
+
+    O chat_id permanece na assinatura por compatibilidade com os
+    chamadores atuais, mas não existe mais fallback global em memória.
+    """
+    del chat_id
+
     if session and session.get("lang"):
-        return session.get("lang", "pt")
-    return USER_LAST_LANG.get(chat_id, "pt")
+        return session.get(
+            "lang",
+            "pt",
+        )
+
+    return "pt"
+
+
 
 
 def get_help_message(lang: str) -> str:
@@ -605,6 +674,70 @@ def translate_telegram_risk(risk: str, lang: str) -> str:
     return translations.get(lang, translations["pt"]).get(normalized, str(risk or "Indefinido"))
 
 
+
+_TELEGRAM_OPERATIONAL_LOGGER_NAME = (
+    "inna.telegram.operations"
+)
+
+_telegram_operational_logger = logging.getLogger(
+    _TELEGRAM_OPERATIONAL_LOGGER_NAME
+)
+
+_telegram_operational_event_sink = (
+    JsonTelegramOperationalEventSink(
+        logger=_telegram_operational_logger
+    )
+)
+
+
+def _emit_telegram_operational_event_safely(
+    *,
+    name: str,
+    level: str,
+    component: str,
+    outcome: str,
+    operation: str,
+    error_category: str | None = None,
+    stage: str | None = None,
+) -> None:
+    """
+    Emite evento operacional sem interromper o fluxo principal.
+
+    Não aceita identificadores, mensagens de usuários,
+    payloads, estados financeiros ou texto de exceções.
+    """
+    fields: dict[str, object] = {
+        "operation": operation,
+    }
+
+    if error_category is not None:
+        fields[
+            "error_category"
+        ] = error_category
+
+    if stage is not None:
+        fields["stage"] = stage
+
+    try:
+        event = TelegramOperationalEvent(
+            name=name,
+            level=level,
+            component=component,
+            outcome=outcome,
+            fields=sanitize_event_fields(
+                fields
+            ),
+        )
+
+        _telegram_operational_event_sink.emit(
+            event
+        )
+
+    except Exception:
+        return
+
+
+
 def safe_record_telegram_event(
     chat_id: int,
     lang: str,
@@ -612,35 +745,102 @@ def safe_record_telegram_event(
     resultado: dict,
     resposta: str,
 ) -> None:
+    """
+    Registra somente metadados compactos.
+
+    Não persiste a pergunta, a resposta completa
+    nem dados financeiros detalhados no evento.
+    """
+    del resposta
+
     try:
-        moeda, simbolo = currency_by_telegram_lang(lang)
+        moeda, simbolo = (
+            currency_by_telegram_lang(
+                lang
+            )
+        )
 
         record_event(
             canal="telegram",
-            usuario=str(payload.get("nome") or chat_id),
-            usuario_id=str(chat_id),
+            usuario=str(
+                payload.get(
+                    "nome"
+                )
+                or "telegram-user"
+            ),
+            usuario_id=(
+                f"telegram:{chat_id}"
+            ),
             idioma=lang,
             moeda=moeda,
             status="success",
-            diagnostico_id=resultado.get("id"),
-            pergunta=payload.get("objetivo"),
-            resposta=resposta,
+            diagnostico_id=(
+                resultado.get(
+                    "id"
+                )
+            ),
             metadata={
-                "origem": "telegram_webhook",
-                "evento": "diagnostico_telegram",
+                "origem": (
+                    "telegram_webhook"
+                ),
+                "evento": (
+                    "diagnostico_telegram"
+                ),
+                "identity_source": (
+                    "authenticated_telegram_update"
+                ),
                 "simbolo_moeda": simbolo,
-                "score_financeiro": resultado.get("score_financeiro"),
-                "nivel_risco": translate_telegram_risk(resultado.get("nivel_risco"), lang),
-                "saldo_estimado": resultado.get("saldo_estimado"),
+                "persistence_status": (
+                    resultado.get(
+                        "persistence_status"
+                    )
+                ),
+                "created": resultado.get(
+                    "created"
+                ),
+                "score_financeiro": (
+                    resultado.get(
+                        "score_financeiro"
+                    )
+                ),
+                "nivel_risco": (
+                    translate_telegram_risk(
+                        resultado.get(
+                            "nivel_risco"
+                        ),
+                        lang,
+                    )
+                ),
             },
         )
-    except Exception as exc:
-        print(f"[telegram-event-log] Falha ao registrar evento Telegram: {exc}")
+
+    except Exception:
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_event_persistence_failed"
+            ),
+            level="error",
+            component="webhook",
+            outcome="error",
+            operation="process_update",
+            error_category="persistence",
+            stage="record_event",
+        )
 
 
 def send_telegram_message(chat_id: int, text: str, reply_markup: dict | None = None):
     if not TELEGRAM_BOT_TOKEN:
-        print("TELEGRAM_BOT_TOKEN não configurado.")
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_delivery_configuration_missing"
+            ),
+            level="error",
+            component="webhook",
+            outcome="error",
+            operation="process_update",
+            error_category="configuration",
+            stage="send_message",
+        )
         return
 
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -865,29 +1065,166 @@ def resposta_curta(resultado: dict, lang: str = "pt") -> str:
 """
 
 
-def gerar_diagnostico_pelo_payload(payload: dict, lang: str = "pt") -> dict:
-    financial_input = FinancialInput(**payload)
-    payload_dict = financial_input.model_dump()
+def gerar_diagnostico_pelo_payload(
+    payload: dict,
+    lang: str = "pt",
+    *,
+    usuario_id_confiavel: str,
+    request_id: str,
+) -> dict:
+    """
+    Gera e persiste o diagnóstico Telegram.
 
-    diagnosis = build_financial_diagnosis(payload_dict)
+    Identidade e request_id são recebidos
+    separadamente do payload financeiro.
+    """
+    financial_input = FinancialInput(
+        **payload
+    )
+
+    payload_dict = (
+        financial_input.model_dump()
+    )
+
+    diagnosis = (
+        build_financial_diagnosis(
+            payload_dict
+        )
+    )
 
     objective_with_language = (
         f"{payload_dict['objetivo']}. "
-        f"Responda em {LANGUAGE_NAMES.get(lang, 'português brasileiro')}."
+        f"Responda em "
+        f"{LANGUAGE_NAMES.get(lang, 'português brasileiro')}."
     )
-    ai_payload = {**payload_dict, "objetivo": objective_with_language}
 
-    ai_plan = generate_ai_plan(ai_payload, diagnosis)
+    ai_payload = {
+        **payload_dict,
+        "objetivo": (
+            objective_with_language
+        ),
+    }
+
+    ai_plan = generate_ai_plan(
+        ai_payload,
+        diagnosis,
+    )
 
     response = {
         **diagnosis,
         "nome": payload_dict["nome"],
-        "objetivo": payload_dict["objetivo"],
+        "objetivo": payload_dict[
+            "objetivo"
+        ],
+        "idioma": payload_dict.get(
+            "idioma",
+            lang,
+        ),
+        "moeda": payload_dict.get(
+            "moeda",
+            "BRL",
+        ),
+        "simbolo_moeda": (
+            payload_dict.get(
+                "simbolo_moeda",
+                "R$",
+            )
+        ),
         "plano_30_dias": ai_plan,
     }
 
-    diagnostico_id = save_diagnostico_db(payload_dict, response)
-    response["id"] = diagnostico_id
+    persistence_payload = {
+        "nome": response["nome"],
+        "renda_mensal": payload_dict[
+            "renda_mensal"
+        ],
+        "gastos_fixos": payload_dict[
+            "gastos_fixos"
+        ],
+        "gastos_variaveis": payload_dict[
+            "gastos_variaveis"
+        ],
+        "dividas_mensais": payload_dict[
+            "dividas_mensais"
+        ],
+        "reserva_atual": payload_dict[
+            "reserva_atual"
+        ],
+        "objetivo": response[
+            "objetivo"
+        ],
+        "idioma": response[
+            "idioma"
+        ],
+        "moeda": response[
+            "moeda"
+        ],
+        "simbolo_moeda": response[
+            "simbolo_moeda"
+        ],
+        "saldo_estimado": response[
+            "saldo_estimado"
+        ],
+        (
+            "comprometimento_"
+            "renda_percentual"
+        ): response[
+            (
+                "comprometimento_"
+                "renda_percentual"
+            )
+        ],
+        "meses_reserva_estimados": (
+            response[
+                "meses_reserva_estimados"
+            ]
+        ),
+        "score_financeiro": response[
+            "score_financeiro"
+        ],
+        "nivel_risco": response[
+            "nivel_risco"
+        ],
+        "diagnostico": response[
+            "diagnostico"
+        ],
+        "plano_30_dias": response[
+            "plano_30_dias"
+        ],
+    }
+
+    idempotency_key = (
+        gerar_chave_idempotencia(
+            origem="telegram",
+            request_id=request_id,
+        )
+    )
+
+    persistence = (
+        persistir_diagnostico_financeiro(
+            usuario_id_confiavel=(
+                usuario_id_confiavel
+            ),
+            idempotency_key=(
+                idempotency_key
+            ),
+            diagnostico=(
+                persistence_payload
+            ),
+        )
+    )
+
+    response["id"] = (
+        persistence.id
+    )
+
+    response[
+        "persistence_status"
+    ] = persistence.status
+
+    response[
+        "created"
+    ] = persistence.created
 
     return response
 
@@ -917,49 +1254,676 @@ def start_language_flow(chat_id: int, lang: str = "pt", auto: bool = False):
     )
 
 
-def process_telegram_update(update: dict):
-    message = update.get("message", {})
-    chat = message.get("chat", {})
-    chat_id = chat.get("id")
-    text = message.get("text", "")
 
-    if not chat_id:
+def _load_or_open_durable_telegram_session(
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge",
+    telegram_user_id: int,
+    chat_id: int,
+):
+    """
+    Carrega ou cria a sessão conversacional durável.
+
+    Retorna a sessão de domínio e uma cópia mutável do estado para o
+    processamento da mensagem atual. Não realiza fallback para memória.
+    """
+    if conversation_bridge is None:
+        raise ValueError(
+            "conversation_bridge é obrigatória."
+        )
+
+    durable_session = (
+        conversation_bridge.load_or_open_session(
+            telegram_user_id,
+            chat_id,
+            {
+                "step": "idioma",
+                "lang": "pt",
+            },
+            language="pt",
+        )
+    )
+
+    processing_state = (
+        durable_session.to_processing_state()
+    )
+
+    if not isinstance(
+        processing_state,
+        dict,
+    ):
+        raise TypeError(
+            "O estado conversacional carregado é inválido."
+        )
+
+    if not processing_state.get("step"):
+        processing_state["step"] = "idioma"
+
+    if not processing_state.get("lang"):
+        processing_state["lang"] = (
+            durable_session.language
+            or "pt"
+        )
+
+    return (
+        durable_session,
+        processing_state,
+    )
+
+
+
+def _conflict_observability_now(
+    conversation_bridge,
+) -> float:
+    try:
+        return float(
+            conversation_bridge.clock()
+        )
+    except Exception:
+        return 0.0
+
+
+def _conflict_observability_duration_ms(
+    conversation_bridge,
+    *,
+    started_at: float,
+) -> float:
+    try:
+        duration_ms = (
+            _conflict_observability_now(
+                conversation_bridge
+            )
+            - float(started_at)
+        ) * 1000.0
+    except Exception:
+        return 0.0
+
+    return max(
+        0.0,
+        duration_ms,
+    )
+
+
+def _conflict_error_category(
+    error: BaseException,
+) -> str:
+    error_name = type(
+        error
+    ).__name__.lower()
+
+    if "conflict" in error_name:
+        return "optimistic_conflict"
+
+    if "timeout" in error_name:
+        return "timeout"
+
+    if "unavailable" in error_name:
+        return "unavailable"
+
+    if "validation" in error_name:
+        return "validation"
+
+    if "security" in error_name:
+        return "security"
+
+    if "identity" in error_name:
+        return "identity"
+
+    if (
+        "repository" in error_name
+        or "persistence" in error_name
+    ):
+        return "persistence"
+
+    return "unknown"
+
+
+def _record_conflict_observability(
+    conversation_bridge,
+    *,
+    operation: str,
+    outcome: str,
+    event_name: str,
+    level: str,
+    duration_ms: float,
+    error_category: str | None = None,
+    conflict_recovered: bool | None = None,
+) -> None:
+    try:
+        metric = TelegramConversationMetricRecord(
+            operation=operation,
+            component="webhook",
+            outcome=outcome,
+            duration_ms=duration_ms,
+            error_category=error_category,
+            conflict_recovered=(
+                conflict_recovered
+            ),
+        )
+
+        conversation_bridge.metrics.record_operation(
+            metric
+        )
+    except Exception:
+        pass
+
+    fields = {
+        "operation": operation,
+        "duration_ms": duration_ms,
+    }
+
+    if error_category is not None:
+        fields["error_category"] = (
+            error_category
+        )
+
+    if conflict_recovered is not None:
+        fields["conflict_recovered"] = (
+            conflict_recovered
+        )
+
+    try:
+        event = TelegramOperationalEvent(
+            name=event_name,
+            level=level,
+            component="webhook",
+            outcome=outcome,
+            fields=sanitize_event_fields(
+                fields
+            ),
+        )
+
+        conversation_bridge.event_sink.emit(
+            event
+        )
+    except Exception:
         return
+
+
+
+def _sync_and_save_durable_telegram_session(
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge",
+    durable_session,
+    processing_state: dict,
+    language: str | None = None,
+):
+    """
+    Persiste uma transição com uma única recuperação de conflito.
+    """
+    if conversation_bridge is None:
+        raise ValueError(
+            "conversation_bridge é obrigatória."
+        )
+
+    if durable_session is None:
+        raise ValueError(
+            "durable_session é obrigatória."
+        )
+
+    if not isinstance(
+        processing_state,
+        dict,
+    ):
+        raise TypeError(
+            "processing_state deve ser um dict."
+        )
+
+    resolved_language = (
+        language
+        if language is not None
+        else processing_state.get("lang")
+    )
+
+    def apply_transition(
+        target_session,
+    ):
+        target_session.replace_state(
+            processing_state
+        )
+
+        target_session.set_language(
+            resolved_language
+        )
+
+        return target_session
+
+    apply_transition(
+        durable_session
+    )
+
+    try:
+        return conversation_bridge.save_session(
+            durable_session,
+            only_if_changed=True,
+        )
+
+    except Exception as error:
+        conflict_type = (
+            TelegramConversationStateConflictError
+        )
+
+        if (
+            conflict_type is None
+            or not isinstance(
+                error,
+                conflict_type,
+            )
+        ):
+            raise
+
+        started_at = (
+            _conflict_observability_now(
+                conversation_bridge
+            )
+        )
+
+        _record_conflict_observability(
+            conversation_bridge,
+            operation="save_session",
+            outcome="conflict",
+            event_name=(
+                "telegram_session_conflict_detected"
+            ),
+            level="warning",
+            duration_ms=0.0,
+            error_category=(
+                "optimistic_conflict"
+            ),
+            conflict_recovered=False,
+        )
+
+        try:
+            reloaded_session = (
+                conversation_bridge.reload_session(
+                    durable_session
+                )
+            )
+
+        except Exception as reload_error:
+            _record_conflict_observability(
+                conversation_bridge,
+                operation="reload_session",
+                outcome="error",
+                event_name=(
+                    "telegram_session_conflict_failed"
+                ),
+                level="error",
+                duration_ms=(
+                    _conflict_observability_duration_ms(
+                        conversation_bridge,
+                        started_at=started_at,
+                    )
+                ),
+                error_category=(
+                    _conflict_error_category(
+                        reload_error
+                    )
+                ),
+            )
+
+            raise
+
+        if reloaded_session is None:
+            _record_conflict_observability(
+                conversation_bridge,
+                operation="reload_session",
+                outcome="error",
+                event_name=(
+                    "telegram_session_conflict_failed"
+                ),
+                level="error",
+                duration_ms=(
+                    _conflict_observability_duration_ms(
+                        conversation_bridge,
+                        started_at=started_at,
+                    )
+                ),
+                error_category="persistence",
+            )
+
+            raise
+
+        _record_conflict_observability(
+            conversation_bridge,
+            operation="reload_session",
+            outcome="success",
+            event_name=(
+                "telegram_session_conflict_"
+                "reload_completed"
+            ),
+            level="info",
+            duration_ms=(
+                _conflict_observability_duration_ms(
+                    conversation_bridge,
+                    started_at=started_at,
+                )
+            ),
+        )
+
+        apply_transition(
+            reloaded_session
+        )
+
+        try:
+            recovered_session = (
+                conversation_bridge.save_session(
+                    reloaded_session,
+                    only_if_changed=True,
+                )
+            )
+
+        except Exception as recovery_error:
+            category = (
+                _conflict_error_category(
+                    recovery_error
+                )
+            )
+
+            outcome = (
+                "conflict"
+                if category
+                == "optimistic_conflict"
+                else "error"
+            )
+
+            _record_conflict_observability(
+                conversation_bridge,
+                operation="save_session",
+                outcome=outcome,
+                event_name=(
+                    "telegram_session_conflict_failed"
+                ),
+                level="error",
+                duration_ms=(
+                    _conflict_observability_duration_ms(
+                        conversation_bridge,
+                        started_at=started_at,
+                    )
+                ),
+                error_category=category,
+                conflict_recovered=(
+                    False
+                    if outcome == "conflict"
+                    else None
+                ),
+            )
+
+            raise
+
+        _record_conflict_observability(
+            conversation_bridge,
+            operation="save_session",
+            outcome="recovered",
+            event_name=(
+                "telegram_session_conflict_recovered"
+            ),
+            level="info",
+            duration_ms=(
+                _conflict_observability_duration_ms(
+                    conversation_bridge,
+                    started_at=started_at,
+                )
+            ),
+            conflict_recovered=True,
+        )
+
+        return recovered_session
+
+
+
+
+
+def _delete_durable_telegram_session(
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge",
+    durable_session,
+) -> bool:
+    """
+    Exclui uma sessão conversacional após cancelamento ou conclusão.
+
+    Falhas de infraestrutura são propagadas para que o worker possa
+    realizar retry. A exclusão não utiliza estado local como fallback.
+    """
+    if conversation_bridge is None:
+        raise ValueError(
+            "conversation_bridge é obrigatória."
+        )
+
+    if durable_session is None:
+        raise ValueError(
+            "durable_session é obrigatória."
+        )
+
+    deleted = conversation_bridge.delete_session(
+        durable_session
+    )
+
+    if not isinstance(
+        deleted,
+        bool,
+    ):
+        raise TypeError(
+            "Resultado de delete_session inválido."
+        )
+
+    return deleted
+
+
+
+
+
+def _resolve_durable_telegram_language(
+    *,
+    chat_id: int,
+    telegram_user_id: int,
+    session: dict | None,
+    conversation_bridge: "TelegramWebhookConversationBridge | None",
+    durable_session=None,
+) -> str:
+    """
+    Resolve o idioma sem consultar memória local no caminho durável.
+
+    Prioridade:
+    1. idioma presente no estado de processamento;
+    2. idioma persistido no objeto de sessão;
+    3. idioma resolvido pela bridge;
+    4. fallback validado como português.
+
+    USER_LAST_LANG permanece somente no caminho legado.
+    """
+    if (
+        isinstance(session, dict)
+        and session.get("lang")
+    ):
+        return session["lang"]
+
+    if conversation_bridge is None:
+        return get_chat_lang(
+            chat_id,
+            session,
+        )
+
+    if (
+        durable_session is not None
+        and durable_session.language
+    ):
+        return durable_session.language
+
+    return conversation_bridge.resolve_language(
+        telegram_user_id,
+        chat_id,
+        fallback_language="pt",
+    )
+
+
+
+def process_telegram_update(
+    update: dict,
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge",
+):
+    """
+    Processa uma atualização Telegram usando estado durável.
+
+    A bridge é obrigatória na API pública. Chamadores produtivos não
+    podem executar o fluxo baseado em memória.
+    """
+    if conversation_bridge is None:
+        raise TelegramUpdateIngressConfigurationError(
+            "conversation_bridge é obrigatória "
+            "para o processador Telegram produtivo."
+        )
+
+    return _process_telegram_update_core(
+        update,
+        conversation_bridge=conversation_bridge,
+    )
+
+
+def _process_telegram_update_core(
+    update: dict,
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge",
+):
+    """
+    Processa uma atualização confiável do Telegram.
+
+    ``conversation_bridge`` é uma dependência obrigatória. O estado da
+    conversa deve ser carregado e persistido exclusivamente pela bridge.
+
+    A função não deve construir runtime, store, repository ou conexão
+    PostgreSQL diretamente.
+    """
+    if conversation_bridge is None:
+        raise TelegramUpdateIngressConfigurationError(
+            "conversation_bridge é obrigatória "
+            "para o núcleo Telegram durável."
+        )
+
+    try:
+        trusted_update = (
+            extrair_contexto_confiavel_telegram(
+                update
+            )
+        )
+
+    except TelegramUpdateContextError:
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_update_processing_failed"
+            ),
+            level="warning",
+            component="webhook",
+            outcome="discarded",
+            operation="process_update",
+            error_category="validation",
+            stage="validate_context",
+        )
+        return False
+
+    message = update.get(
+        "message",
+        {},
+    )
+
+    chat_id = (
+        trusted_update.chat_id
+    )
+
+    text = message.get(
+        "text",
+        "",
+    )
 
     text = text.strip()
 
+    (
+        durable_session,
+        session,
+    ) = _load_or_open_durable_telegram_session(
+        conversation_bridge=conversation_bridge,
+        telegram_user_id=(
+            trusted_update.usuario_id
+        ),
+        chat_id=chat_id,
+    )
+
     if text in ["/start", "/idioma", "/language"]:
-        lang = get_chat_lang(chat_id, USER_SESSIONS.get(chat_id))
-        USER_SESSIONS[chat_id] = {"step": "idioma", "lang": lang}
-        start_language_flow(chat_id, lang)
+        lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)
+
+        session = {
+            "step": "idioma",
+            "lang": lang,
+        }
+
+        _sync_and_save_durable_telegram_session(
+            conversation_bridge=conversation_bridge,
+            durable_session=durable_session,
+            processing_state=session,
+            language=lang,
+        )
+
+        start_language_flow(
+            chat_id,
+            lang,
+        )
         return
 
     if text in ["/help", "/ajuda"]:
-        session = USER_SESSIONS.get(chat_id)
-        lang = get_chat_lang(chat_id, session)
-        send_telegram_message(chat_id, get_help_message(lang))
+        lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)
+        send_telegram_message(
+            chat_id,
+            get_help_message(lang),
+        )
         return
 
     if text in ["/help", "/ajuda"]:
-        session = USER_SESSIONS.get(chat_id)
-        lang = get_chat_lang(chat_id, session)
-        send_telegram_message(chat_id, get_help_message(lang))
+        lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)
+        send_telegram_message(
+            chat_id,
+            get_help_message(lang),
+        )
         return
 
     if text in ["/cancelar", "/cancel"]:
-        session = USER_SESSIONS.get(chat_id)
-        lang = get_chat_lang(chat_id, session)
-        USER_LAST_LANG[chat_id] = lang
-        USER_SESSIONS.pop(chat_id, None)
-        send_telegram_message(chat_id, get_text(lang, "cancel"), remove_keyboard())
+        lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=session, conversation_bridge=conversation_bridge, durable_session=durable_session)
+
+        _delete_durable_telegram_session(
+            conversation_bridge=conversation_bridge,
+            durable_session=durable_session,
+        )
+
+        send_telegram_message(
+            chat_id,
+            get_text(
+                lang,
+                "cancel",
+            ),
+            remove_keyboard(),
+        )
         return
 
-    session = USER_SESSIONS.get(chat_id)
-
     if not session:
-        lang = get_chat_lang(chat_id)
-        USER_SESSIONS[chat_id] = {"step": "idioma", "lang": lang}
-        start_language_flow(chat_id, lang, auto=True)
+        lang = _resolve_durable_telegram_language(chat_id=chat_id, telegram_user_id=trusted_update.usuario_id, session=None, conversation_bridge=conversation_bridge, durable_session=durable_session)
+
+        session = {
+            "step": "idioma",
+            "lang": lang,
+        }
+
+        _sync_and_save_durable_telegram_session(
+            conversation_bridge=conversation_bridge,
+            durable_session=durable_session,
+            processing_state=session,
+            language=lang,
+        )
+
+        start_language_flow(
+            chat_id,
+            lang,
+            auto=True,
+        )
         return
 
     step = session.get("step")
@@ -971,10 +1935,19 @@ def process_telegram_update(update: dict):
                 start_language_flow(chat_id)
                 return
 
-            session["lang"] = LANGUAGE_OPTIONS.get(text, "pt")
+            session["lang"] = LANGUAGE_OPTIONS.get(
+                text,
+                "pt",
+            )
             lang = session["lang"]
-            USER_LAST_LANG[chat_id] = lang
             session["step"] = "nome"
+
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
 
             send_telegram_message(
                 chat_id,
@@ -990,6 +1963,13 @@ def process_telegram_update(update: dict):
             session["nome"] = text
             session["step"] = "renda"
 
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
+
             send_telegram_message(
                 chat_id,
                 get_text(lang, "ask_income").format(nome=text),
@@ -1002,7 +1982,21 @@ def process_telegram_update(update: dict):
 
             session["renda_mensal"] = renda
             session["step"] = "gastos_fixos"
-            send_telegram_message(chat_id, get_text(lang, "ask_fixed"))
+
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
+
+            send_telegram_message(
+                chat_id,
+                get_text(
+                    lang,
+                    "ask_fixed",
+                ),
+            )
 
         elif step == "gastos_fixos":
             gastos_fixos = to_float(text)
@@ -1011,7 +2005,21 @@ def process_telegram_update(update: dict):
 
             session["gastos_fixos"] = gastos_fixos
             session["step"] = "gastos_variaveis"
-            send_telegram_message(chat_id, get_text(lang, "ask_variable"))
+
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
+
+            send_telegram_message(
+                chat_id,
+                get_text(
+                    lang,
+                    "ask_variable",
+                ),
+            )
 
         elif step == "gastos_variaveis":
             gastos_variaveis = to_float(text)
@@ -1020,7 +2028,21 @@ def process_telegram_update(update: dict):
 
             session["gastos_variaveis"] = gastos_variaveis
             session["step"] = "dividas"
-            send_telegram_message(chat_id, get_text(lang, "ask_debts"))
+
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
+
+            send_telegram_message(
+                chat_id,
+                get_text(
+                    lang,
+                    "ask_debts",
+                ),
+            )
 
         elif step == "dividas":
             dividas = to_float(text)
@@ -1029,7 +2051,21 @@ def process_telegram_update(update: dict):
 
             session["dividas_mensais"] = dividas
             session["step"] = "reserva"
-            send_telegram_message(chat_id, get_text(lang, "ask_savings"))
+
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
+
+            send_telegram_message(
+                chat_id,
+                get_text(
+                    lang,
+                    "ask_savings",
+                ),
+            )
 
         elif step == "reserva":
             reserva = to_float(text)
@@ -1038,6 +2074,13 @@ def process_telegram_update(update: dict):
 
             session["reserva_atual"] = reserva
             session["step"] = "objetivo"
+
+            _sync_and_save_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+                processing_state=session,
+                language=lang,
+            )
 
             send_telegram_message(
                 chat_id,
@@ -1078,7 +2121,18 @@ def process_telegram_update(update: dict):
                 remove_keyboard(),
             )
 
-            resultado = gerar_diagnostico_pelo_payload(payload, lang)
+            resultado = (
+                gerar_diagnostico_pelo_payload(
+                    payload,
+                    lang,
+                    usuario_id_confiavel=(
+                        trusted_update.usuario_id
+                    ),
+                    request_id=(
+                        trusted_update.request_id
+                    ),
+                )
+            )
             resposta_final = resposta_curta(resultado, lang)
             send_telegram_message(chat_id, resposta_final)
 
@@ -1090,31 +2144,250 @@ def process_telegram_update(update: dict):
                 resposta=resposta_final,
             )
 
-            USER_LAST_LANG[chat_id] = lang
-            USER_SESSIONS.pop(chat_id, None)
+            _delete_durable_telegram_session(
+                conversation_bridge=conversation_bridge,
+                durable_session=durable_session,
+            )
 
     except ValueError:
         send_telegram_message(chat_id, get_text(lang, "invalid_number"))
 
-    except Exception as error:
-        print(f"Erro no webhook Telegram: {error}")
-        send_telegram_message(chat_id, get_text(lang, "api_error"))
+    except Exception:
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_update_processing_failed"
+            ),
+            level="error",
+            component="webhook",
+            outcome="error",
+            operation="process_update",
+            error_category="unknown",
+            stage="process_update",
+        )
+
+        send_telegram_message(
+            chat_id,
+            get_text(
+                lang,
+                "api_error",
+            ),
+        )
+
+        return False
+
+
+
+def _fail_claimed_telegram_update_safely(
+    lease: TelegramUpdateProcessingLease,
+) -> None:
+    try:
+        fail_authenticated_telegram_update(
+            lease,
+            error_code=(
+                "telegram.processing_failed"
+            ),
+        )
+
+    except TelegramUpdateReceiptServiceError:
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_receipt_failure_recording_failed"
+            ),
+            level="error",
+            component="receipt",
+            outcome="error",
+            operation="fail_receipt",
+            error_category="persistence",
+            stage="record_failure",
+        )
+
+    except Exception:
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_receipt_failure_recording_failed"
+            ),
+            level="error",
+            component="receipt",
+            outcome="error",
+            operation="fail_receipt",
+            error_category="persistence",
+            stage="record_failure",
+        )
+
+
+
+
+def process_claimed_telegram_update(
+    update: dict,
+    lease: TelegramUpdateProcessingLease,
+    *,
+    conversation_bridge: "TelegramWebhookConversationBridge",
+) -> None:
+    """
+    Processa um update com claim durável ativo.
+
+    Tokens e fingerprints não são registrados.
+    """
+    try:
+        processing_result = process_telegram_update(
+            update,
+            conversation_bridge=conversation_bridge,
+        )
+
+    except Exception:
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_worker_processing_failed"
+            ),
+            level="error",
+            component="worker",
+            outcome="error",
+            operation="process_update",
+            error_category="unknown",
+            stage="worker_processing",
+        )
+
+        _fail_claimed_telegram_update_safely(
+            lease
+        )
+        return
+
+    if processing_result is False:
+        _fail_claimed_telegram_update_safely(
+            lease
+        )
+        return
+
+    try:
+        complete_authenticated_telegram_update(
+            lease
+        )
+
+    except TelegramUpdateReceiptServiceError:
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_worker_processing_failed"
+            ),
+            level="error",
+            component="receipt",
+            outcome="error",
+            operation="complete_receipt",
+            error_category="persistence",
+            stage="complete_receipt",
+        )
+
+        _fail_claimed_telegram_update_safely(
+            lease
+        )
+
+    except Exception:
+        _emit_telegram_operational_event_safely(
+            name=(
+                "telegram_worker_processing_failed"
+            ),
+            level="error",
+            component="receipt",
+            outcome="error",
+            operation="complete_receipt",
+            error_category="persistence",
+            stage="complete_receipt",
+        )
+
+        _fail_claimed_telegram_update_safely(
+            lease
+        )
 
 
 @router.post("/webhook")
-async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
-    update = await request.json()
-    update_id = update.get("update_id")
+async def telegram_webhook(
+    request: Request,
+    _trusted_webhook: Annotated[
+        TrustedTelegramWebhookContext,
+        Depends(
+            require_trusted_telegram_webhook
+        ),
+    ],
+):
+    """
+    Autentica e registra o update Telegram
+    em uma fila PostgreSQL durável.
 
-    if update_id in PROCESSED_UPDATES:
-        return {"ok": True, "duplicate": True}
+    A resposta HTTP somente é enviada depois que
+    receipt e job criptografado forem confirmados
+    na mesma transação.
 
-    if update_id is not None:
-        PROCESSED_UPDATES.add(update_id)
+    O conteúdo não é processado dentro do request.
+    """
+    try:
+        update = await request.json()
 
-        if len(PROCESSED_UPDATES) > 1000:
-            PROCESSED_UPDATES.clear()
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Atualização Telegram inválida."
+            ),
+        ) from None
 
-    background_tasks.add_task(process_telegram_update, update)
+    if not isinstance(
+        update,
+        dict,
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Atualização Telegram inválida."
+            ),
+        )
 
-    return {"ok": True}
+    try:
+        outcome = (
+            enqueue_authenticated_telegram_update_atomic(
+                update
+            )
+        )
+
+    except TelegramUpdateIngressValidationError:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Atualização Telegram inválida."
+            ),
+        ) from None
+
+    except TelegramUpdateIngressConflictError:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Conflito no update Telegram."
+            ),
+        ) from None
+
+    except (
+        TelegramUpdateIngressConfigurationError,
+        TelegramUpdateIngressConsistencyError,
+        TelegramUpdateIngressUnavailableError,
+    ):
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Processamento Telegram "
+                "temporariamente indisponível."
+            ),
+        ) from None
+
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Processamento Telegram "
+                "temporariamente indisponível."
+            ),
+        ) from None
+
+    return {
+        "ok": True,
+        "accepted": outcome.accepted,
+        "duplicate": outcome.duplicate,
+        "status": outcome.decision,
+    }

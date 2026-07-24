@@ -1,0 +1,314 @@
+{
+  "direct_results": [
+    {
+      "function": "_result_for_lease",
+      "keywords": {
+        "decision": "decision",
+        "error_code": "error_code",
+        "idempotent_replay": "idempotent_replay",
+        "job_attempt_count": "lease.job_attempt_count",
+        "job_max_attempts": "lease.job_max_attempts",
+        "job_status": "job_status",
+        "stage": "stage",
+        "update_id": "lease.update_id"
+      },
+      "line": 500,
+      "source": "TelegramUpdateRunnerResult(decision=decision, stage=stage, update_id=lease.update_id, job_attempt_count=lease.job_attempt_count, job_max_attempts=lease.job_max_attempts, job_status=job_status, error_code=error_code, idempotent_replay=idempotent_replay)"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'idle'",
+        "stage": "'idle'"
+      },
+      "line": 724,
+      "source": "TelegramUpdateRunnerResult(decision='idle', stage='idle')"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'unavailable'",
+        "error_code": "'telegram.claim_unavailable'",
+        "stage": "'claim'"
+      },
+      "line": 692,
+      "source": "TelegramUpdateRunnerResult(decision='unavailable', stage='claim', error_code='telegram.claim_unavailable')"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'consistency_error'",
+        "error_code": "'telegram.claim_inconsistent'",
+        "stage": "'claim'"
+      },
+      "line": 706,
+      "source": "TelegramUpdateRunnerResult(decision='consistency_error', stage='claim', error_code='telegram.claim_inconsistent')"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'unavailable'",
+        "error_code": "'telegram.claim_unavailable'",
+        "stage": "'claim'"
+      },
+      "line": 715,
+      "source": "TelegramUpdateRunnerResult(decision='unavailable', stage='claim', error_code='telegram.claim_unavailable')"
+    },
+    {
+      "function": "run_telegram_update_worker",
+      "keywords": {
+        "decision": "'unavailable'",
+        "error_code": "'telegram.recovery_unavailable'",
+        "stage": "'recovery'"
+      },
+      "line": 1150,
+      "source": "TelegramUpdateRunnerResult(decision='unavailable', stage='recovery', error_code='telegram.recovery_unavailable')"
+    }
+  ],
+  "helper_calls": [
+    {
+      "function": "_finalize_failure",
+      "keywords": {
+        "decision": "'consistency_error'",
+        "error_code": "normalized_error",
+        "lease": "lease",
+        "stage": "'failure'"
+      },
+      "line": 632,
+      "source": "_result_for_lease(lease=lease, decision='consistency_error', stage='failure', error_code=normalized_error)"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'completed'",
+        "idempotent_replay": "bool(getattr(outcome, 'idempotent_replay', False))",
+        "job_status": "'completed'",
+        "lease": "lease",
+        "stage": "'complete'"
+      },
+      "line": 972,
+      "source": "_result_for_lease(lease=lease, decision='completed', stage='complete', job_status='completed', idempotent_replay=bool(getattr(outcome, 'idempotent_replay', False)))"
+    },
+    {
+      "function": "_finalize_failure",
+      "keywords": {
+        "decision": "'retry_scheduled'",
+        "error_code": "normalized_error",
+        "idempotent_replay": "replay",
+        "job_status": "'queued'",
+        "lease": "lease",
+        "stage": "'failure'"
+      },
+      "line": 613,
+      "source": "_result_for_lease(lease=lease, decision='retry_scheduled', stage='failure', job_status='queued', error_code=normalized_error, idempotent_replay=replay)"
+    },
+    {
+      "function": "_finalize_failure",
+      "keywords": {
+        "decision": "'dead_lettered'",
+        "error_code": "normalized_error",
+        "idempotent_replay": "replay",
+        "job_status": "'dead_letter'",
+        "lease": "lease",
+        "stage": "'failure'"
+      },
+      "line": 623,
+      "source": "_result_for_lease(lease=lease, decision='dead_lettered', stage='failure', job_status='dead_letter', error_code=normalized_error, idempotent_replay=replay)"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'consistency_error'",
+        "error_code": "'telegram.completion_inconsistent'",
+        "lease": "lease",
+        "stage": "'complete'"
+      },
+      "line": 963,
+      "source": "_result_for_lease(lease=lease, decision='consistency_error', stage='complete', error_code='telegram.completion_inconsistent')"
+    },
+    {
+      "function": "_finalize_failure",
+      "keywords": {
+        "decision": "'ownership_lost'",
+        "error_code": "normalized_error",
+        "lease": "lease",
+        "stage": "'failure'"
+      },
+      "line": 559,
+      "source": "_result_for_lease(lease=lease, decision='ownership_lost', stage='failure', error_code=normalized_error)"
+    },
+    {
+      "function": "_finalize_failure",
+      "keywords": {
+        "decision": "'unavailable'",
+        "error_code": "normalized_error",
+        "lease": "lease",
+        "stage": "'failure'"
+      },
+      "line": 570,
+      "source": "_result_for_lease(lease=lease, decision='unavailable', stage='failure', error_code=normalized_error)"
+    },
+    {
+      "function": "_finalize_failure",
+      "keywords": {
+        "decision": "'consistency_error'",
+        "error_code": "normalized_error",
+        "lease": "lease",
+        "stage": "'failure'"
+      },
+      "line": 583,
+      "source": "_result_for_lease(lease=lease, decision='consistency_error', stage='failure', error_code=normalized_error)"
+    },
+    {
+      "function": "_finalize_failure",
+      "keywords": {
+        "decision": "'unavailable'",
+        "error_code": "normalized_error",
+        "lease": "lease",
+        "stage": "'failure'"
+      },
+      "line": 591,
+      "source": "_result_for_lease(lease=lease, decision='unavailable', stage='failure', error_code=normalized_error)"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'consistency_error'",
+        "error_code": "'telegram.lease_invalid'",
+        "lease": "lease",
+        "stage": "'decrypt'"
+      },
+      "line": 775,
+      "source": "_result_for_lease(lease=lease, decision='consistency_error', stage='decrypt', error_code='telegram.lease_invalid')"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'ownership_lost'",
+        "error_code": "'telegram.completion_ownership_lost'",
+        "lease": "lease",
+        "stage": "'complete'"
+      },
+      "line": 911,
+      "source": "_result_for_lease(lease=lease, decision='ownership_lost', stage='complete', error_code='telegram.completion_ownership_lost')"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'unavailable'",
+        "error_code": "'telegram.completion_unavailable'",
+        "lease": "lease",
+        "stage": "'complete'"
+      },
+      "line": 924,
+      "source": "_result_for_lease(lease=lease, decision='unavailable', stage='complete', error_code='telegram.completion_unavailable')"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'consistency_error'",
+        "error_code": "'telegram.completion_inconsistent'",
+        "lease": "lease",
+        "stage": "'complete'"
+      },
+      "line": 939,
+      "source": "_result_for_lease(lease=lease, decision='consistency_error', stage='complete', error_code='telegram.completion_inconsistent')"
+    },
+    {
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'unavailable'",
+        "error_code": "'telegram.completion_unavailable'",
+        "lease": "lease",
+        "stage": "'complete'"
+      },
+      "line": 949,
+      "source": "_result_for_lease(lease=lease, decision='unavailable', stage='complete', error_code='telegram.completion_unavailable')"
+    }
+  ],
+  "idempotent_sites": [
+    {
+      "function": "run_one_telegram_update_job",
+      "line": 972,
+      "value": "bool(getattr(outcome, 'idempotent_replay', False))"
+    },
+    {
+      "function": "_finalize_failure",
+      "line": 613,
+      "value": "replay"
+    },
+    {
+      "function": "_finalize_failure",
+      "line": 623,
+      "value": "replay"
+    }
+  ],
+  "resolved_values": {
+    "decisions": [
+      "completed",
+      "consistency_error",
+      "dead_lettered",
+      "idle",
+      "ownership_lost",
+      "retry_scheduled",
+      "unavailable"
+    ],
+    "job_statuses": [
+      "completed",
+      "dead_letter",
+      "queued"
+    ],
+    "stages": [
+      "claim",
+      "complete",
+      "decrypt",
+      "failure",
+      "idle",
+      "process",
+      "recovery"
+    ]
+  },
+  "result_helper": {
+    "line": 491,
+    "parameters": [
+      "lease",
+      "decision",
+      "stage",
+      "job_status",
+      "error_code",
+      "idempotent_replay"
+    ],
+    "source": "def _result_for_lease(\n    *,\n    lease: Any,\n    decision: RunnerDecision,\n    stage: RunnerStage,\n    job_status: str | None = None,\n    error_code: str | None = None,\n    idempotent_replay: bool = False,\n) -> TelegramUpdateRunnerResult:\n    return TelegramUpdateRunnerResult(\n        decision=decision,\n        stage=stage,\n        update_id=lease.update_id,\n        job_attempt_count=(\n            lease.job_attempt_count\n        ),\n        job_max_attempts=(\n            lease.job_max_attempts\n        ),\n        job_status=job_status,\n        error_code=error_code,\n        idempotent_replay=(\n            idempotent_replay\n        ),\n    )"
+  },
+  "runner_file": "src/services/telegram_update_jobs/runner.py",
+  "type_contracts": [
+    {
+      "expression": "Literal['idle', 'completed', 'retry_scheduled', 'dead_lettered', 'ownership_lost', 'unavailable', 'consistency_error']",
+      "line": 17,
+      "literal_values": [
+        "completed",
+        "consistency_error",
+        "dead_lettered",
+        "idle",
+        "ownership_lost",
+        "retry_scheduled",
+        "unavailable"
+      ],
+      "name": "RunnerDecision"
+    },
+    {
+      "expression": "Literal['idle', 'claim', 'decrypt', 'process', 'complete', 'failure', 'recovery']",
+      "line": 27,
+      "literal_values": [
+        "claim",
+        "complete",
+        "decrypt",
+        "failure",
+        "idle",
+        "process",
+        "recovery"
+      ],
+      "name": "RunnerStage"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "audit": "week6_incremental_conversation_summary",
+  "generated_at": "2026-07-22T15:27:17.270817+00:00",
+  "status": "APPROVED",
+  "controls": {
+    "automatic_conversation_summary": true,
+    "incremental_summary_update": true,
+    "thread_checkpoint_persistence": true,
+    "thread_isolation": true,
+    "typed_summary_state_contract": true,
+    "summary_versioning": true,
+    "summary_source_traceability": true,
+    "current_user_fact_priority": true,
+    "previous_facts_preserved": true,
+    "assistant_messages_not_user_facts": true,
+    "sensitive_data_filtering": true,
+    "summary_token_budget": true,
+    "assistant_action_deduplication": true,
+    "context_engineering_integration": true,
+    "specialized_agents_route_through_summary": true
+  },
+  "controls_total": 15,
+  "controls_approved": 15,
+  "tests": {
+    "files": [
+      "tests/unit/test_conversation_summary_manager.py",
+      "tests/unit/test_conversation_summary_node.py",
+      "tests/unit/test_conversation_summary_graph_contract.py",
+      "tests/unit/test_conversation_summary_graph_integration.py",
+      "tests/unit/test_context_engineering.py",
+      "tests/unit/test_inna_agent_memory.py",
+      "tests/unit/test_memory_extractor.py",
+      "tests/unit/test_memory_evolution.py",
+      "tests/unit/test_financial_history_context_integration.py",
+      "tests/unit/test_financial_semantic_memory_graph_integration.py",
+      "tests/unit/test_langgraph_topology.py",
+      "tests/unit/test_inna_agent_core.py"
+    ],
+    "returncode": 0,
+    "output": ".........................................................                [100%]\n57 passed in 9.55s",
+    "errors": ""
+  }
+}

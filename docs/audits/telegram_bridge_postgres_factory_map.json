@@ -1,0 +1,64 @@
+{
+  "factory": "create_postgres_telegram_webhook_conversation_bridge",
+  "matches": [
+    {
+      "file": "src/services/telegram_conversation_state/webhook_bridge.py",
+      "line_start": 965,
+      "line_end": 1004,
+      "signature": "def create_postgres_telegram_webhook_conversation_bridge(*, default_ttl_seconds: int=DEFAULT_STATE_TTL_SECONDS, default_language: str='pt-BR') -> TelegramWebhookConversationBridge",
+      "arguments": [
+        {
+          "name": "default_ttl_seconds",
+          "kind": "keyword_only",
+          "annotation": "int",
+          "default": "DEFAULT_STATE_TTL_SECONDS"
+        },
+        {
+          "name": "default_language",
+          "kind": "keyword_only",
+          "annotation": "str",
+          "default": "'pt-BR'"
+        }
+      ],
+      "returns": "TelegramWebhookConversationBridge",
+      "calls": [
+        {
+          "line": 973,
+          "name": "validate_state_ttl_seconds",
+          "keywords": [],
+          "source": "validate_state_ttl_seconds(\n            default_ttl_seconds\n        )"
+        },
+        {
+          "line": 979,
+          "name": "normalize_telegram_language",
+          "keywords": [],
+          "source": "normalize_telegram_language(\n            default_language\n        )"
+        },
+        {
+          "line": 999,
+          "name": "TelegramWebhookConversationBridge",
+          "keywords": [
+            "runtime_factory",
+            "default_language"
+          ],
+          "source": "TelegramWebhookConversationBridge(\n        runtime_factory=runtime_factory,\n        default_language=(\n            normalized_language\n        ),\n    )"
+        },
+        {
+          "line": 985,
+          "name": "TelegramConversationStateValidationError",
+          "keywords": [],
+          "source": "TelegramConversationStateValidationError(\n            \"default_language é obrigatório.\"\n        )"
+        },
+        {
+          "line": 992,
+          "name": "create_postgres_telegram_conversation_state_runtime",
+          "keywords": [
+            "default_ttl_seconds"
+          ],
+          "source": "create_postgres_telegram_conversation_state_runtime(\n                default_ttl_seconds=(\n                    normalized_ttl\n                )\n            )"
+        }
+      ],
+      "source": "def create_postgres_telegram_webhook_conversation_bridge(\n    *,\n    default_ttl_seconds: int = (\n        DEFAULT_STATE_TTL_SECONDS\n    ),\n    default_language: str = \"pt-BR\",\n) -> TelegramWebhookConversationBridge:\n    normalized_ttl = (\n        validate_state_ttl_seconds(\n            default_ttl_seconds\n        )\n    )\n\n    normalized_language = (\n        normalize_telegram_language(\n            default_language\n        )\n    )\n\n    if normalized_language is None:\n        raise TelegramConversationStateValidationError(\n            \"default_language é obrigatório.\"\n        )\n\n    def runtime_factory(\n    ) -> TelegramConversationStateRuntimePort:\n        return (\n            create_postgres_telegram_conversation_state_runtime(\n                default_ttl_seconds=(\n                    normalized_ttl\n                )\n            )\n        )\n\n    return TelegramWebhookConversationBridge(\n        runtime_factory=runtime_factory,\n        default_language=(\n            normalized_language\n        ),\n    )"
+    }
+  ]
+}

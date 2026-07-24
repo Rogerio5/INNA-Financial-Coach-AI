@@ -1,0 +1,4254 @@
+{
+  "calls": [
+    {
+      "call": "save_feedback_db",
+      "class": null,
+      "file": "api/main.py",
+      "function": "registrar_feedback",
+      "line": 717,
+      "matches": [
+        "ack"
+      ],
+      "source": "save_feedback_db(nome=payload_dict['nome'], util=payload_dict['util'], comentario=payload_dict['comentario'], score_financeiro=payload_dict['score_financeiro'], nivel_risco=payload_dict['nivel_risco'])"
+    },
+    {
+      "call": "list_feedbacks_db",
+      "class": null,
+      "file": "api/main.py",
+      "function": "listar_feedbacks",
+      "line": 738,
+      "matches": [
+        "ack"
+      ],
+      "source": "list_feedbacks_db(limit=limit)"
+    },
+    {
+      "call": "fail_authenticated_telegram_update",
+      "class": null,
+      "file": "api/telegram_webhook.py",
+      "function": "_fail_claimed_telegram_update_safely",
+      "line": 2184,
+      "matches": [
+        "fail"
+      ],
+      "source": "fail_authenticated_telegram_update(lease, error_code='telegram.processing_failed')"
+    },
+    {
+      "call": "_fail_claimed_telegram_update_safely",
+      "class": null,
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2250,
+      "matches": [
+        "claim",
+        "fail"
+      ],
+      "source": "_fail_claimed_telegram_update_safely(lease)"
+    },
+    {
+      "call": "_fail_claimed_telegram_update_safely",
+      "class": null,
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2256,
+      "matches": [
+        "claim",
+        "fail"
+      ],
+      "source": "_fail_claimed_telegram_update_safely(lease)"
+    },
+    {
+      "call": "complete_authenticated_telegram_update",
+      "class": null,
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2262,
+      "matches": [
+        "complete"
+      ],
+      "source": "complete_authenticated_telegram_update(lease)"
+    },
+    {
+      "call": "_fail_claimed_telegram_update_safely",
+      "class": null,
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2279,
+      "matches": [
+        "claim",
+        "fail"
+      ],
+      "source": "_fail_claimed_telegram_update_safely(lease)"
+    },
+    {
+      "call": "_fail_claimed_telegram_update_safely",
+      "class": null,
+      "file": "api/telegram_webhook.py",
+      "function": "process_claimed_telegram_update",
+      "line": 2296,
+      "matches": [
+        "claim",
+        "fail"
+      ],
+      "source": "_fail_claimed_telegram_update_safely(lease)"
+    },
+    {
+      "call": "enqueue_authenticated_telegram_update_atomic",
+      "class": null,
+      "file": "api/telegram_webhook.py",
+      "function": "telegram_webhook",
+      "line": 2345,
+      "matches": [
+        "enqueue",
+        "queue"
+      ],
+      "source": "enqueue_authenticated_telegram_update_atomic(update)"
+    },
+    {
+      "call": "types.HttpRetryOptions",
+      "class": null,
+      "file": "src/agents/gemini_client.py",
+      "function": "get_supervisor_client",
+      "line": 38,
+      "matches": [
+        "retry"
+      ],
+      "source": "types.HttpRetryOptions(attempts=config.retry_attempts, initial_delay=1.0, max_delay=3.0, exp_base=2.0, jitter=0.2, http_status_codes=_TRANSIENT_STATUS_CODES)"
+    },
+    {
+      "call": "_parse_worker_output",
+      "class": null,
+      "file": "src/agents/supervisor_deadline.py",
+      "function": "classificar_com_gemini_com_deadline",
+      "line": 151,
+      "matches": [
+        "worker"
+      ],
+      "source": "_parse_worker_output(completed.stdout)"
+    },
+    {
+      "call": "enviar_feedback_api",
+      "class": null,
+      "file": "src/app.py",
+      "function": "<module>",
+      "line": 6349,
+      "matches": [
+        "ack"
+      ],
+      "source": "enviar_feedback_api(feedback_payload)"
+    },
+    {
+      "call": "enviar_feedback_api",
+      "class": null,
+      "file": "src/app.py",
+      "function": "<module>",
+      "line": 6682,
+      "matches": [
+        "ack"
+      ],
+      "source": "enviar_feedback_api(feedback_payload)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConfig",
+      "class": null,
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_worker_config_from_env",
+      "line": 180,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConfig()"
+    },
+    {
+      "call": "TelegramUpdateWorkerConfig",
+      "class": null,
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "load_worker_config_from_env",
+      "line": 184,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConfig(lease_seconds=_read_integer(resolved_environment, ENV_LEASE_SECONDS, defaults.lease_seconds), idle_sleep_seconds=_read_float(resolved_environment, ENV_IDLE_SLEEP_SECONDS, defaults.idle_sleep_seconds), unavailable_sleep_seconds=_read_float(resolved_environment, ENV_UNAVAILABLE_SLEEP_SECONDS, defaults.unavailable_sleep_seconds), recovery_interval_seconds=_read_float(resolved_environment, ENV_RECOVERY_INTERVAL_SECONDS, defaults.recovery_interval_seconds), recovery_batch_size=_read_integer(resolved_environment, ENV_RECOVERY_BATCH_SIZE, defaults.recovery_batch_size), retry_base_delay_seconds=_read_integer(resolved_environment, ENV_RETRY_BASE_DELAY_SECONDS, defaults.retr"
+    },
+    {
+      "call": "load_worker_config_from_env",
+      "class": null,
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 968,
+      "matches": [
+        "worker"
+      ],
+      "source": "load_worker_config_from_env()"
+    },
+    {
+      "call": "run_telegram_update_worker",
+      "class": null,
+      "file": "src/channels/telegram_update_worker.py",
+      "function": "main",
+      "line": 1039,
+      "matches": [
+        "run_telegram_update_worker",
+        "worker"
+      ],
+      "source": "run_telegram_update_worker(processor, stop_event=stop_event, config=config, keyring=keyring, on_result=lambda result: emit_runner_result(result, stream=resolved_stdout), max_cycles=arguments.max_cycles)"
+    },
+    {
+      "call": "feedbacks_df.head",
+      "class": null,
+      "file": "src/dashboard.py",
+      "function": "render_feedbacks",
+      "line": 3529,
+      "matches": [
+        "ack"
+      ],
+      "source": "feedbacks_df.head(50)"
+    },
+    {
+      "call": "feedbacks_df.to_csv",
+      "class": null,
+      "file": "src/dashboard.py",
+      "function": "render_export",
+      "line": 4615,
+      "matches": [
+        "ack"
+      ],
+      "source": "feedbacks_df.to_csv(index=False)"
+    },
+    {
+      "call": "render_feedbacks",
+      "class": null,
+      "file": "src/dashboard.py",
+      "function": "main",
+      "line": 8002,
+      "matches": [
+        "ack"
+      ],
+      "source": "render_feedbacks(feedbacks_filtrados)"
+    },
+    {
+      "call": "session.rollback",
+      "class": null,
+      "file": "src/database.py",
+      "function": "get_db_session",
+      "line": 43,
+      "matches": [
+        "ack"
+      ],
+      "source": "session.rollback()"
+    },
+    {
+      "call": "conexao.rollback",
+      "class": null,
+      "file": "src/database/connection.py",
+      "function": "conexao_postgres",
+      "line": 526,
+      "matches": [
+        "ack"
+      ],
+      "source": "conexao.rollback()"
+    },
+    {
+      "call": "session.rollback",
+      "class": null,
+      "file": "src/database/legacy.py",
+      "function": "get_db_session",
+      "line": 47,
+      "matches": [
+        "ack"
+      ],
+      "source": "session.rollback()"
+    },
+    {
+      "call": "FEEDBACK_PATH.parent.mkdir",
+      "class": null,
+      "file": "src/feedback.py",
+      "function": "save_feedback",
+      "line": 18,
+      "matches": [
+        "ack"
+      ],
+      "source": "FEEDBACK_PATH.parent.mkdir(parents=True, exist_ok=True)"
+    },
+    {
+      "call": "FEEDBACK_PATH.exists",
+      "class": null,
+      "file": "src/feedback.py",
+      "function": "save_feedback",
+      "line": 20,
+      "matches": [
+        "ack"
+      ],
+      "source": "FEEDBACK_PATH.exists()"
+    },
+    {
+      "call": "FEEDBACK_PATH.open",
+      "class": null,
+      "file": "src/feedback.py",
+      "function": "save_feedback",
+      "line": 22,
+      "matches": [
+        "ack"
+      ],
+      "source": "FEEDBACK_PATH.open('a', newline='', encoding='utf-8')"
+    },
+    {
+      "call": "save_feedback_db",
+      "class": null,
+      "file": "src/feedback.py",
+      "function": "save_feedback",
+      "line": 48,
+      "matches": [
+        "ack"
+      ],
+      "source": "save_feedback_db(nome=nome, util=util, comentario=comentario, score_financeiro=score_financeiro, nivel_risco=nivel_risco)"
+    },
+    {
+      "call": "generate_fallback_plan",
+      "class": null,
+      "file": "src/gemini_client.py",
+      "function": "generate_ai_plan",
+      "line": 661,
+      "matches": [
+        "ack"
+      ],
+      "source": "generate_fallback_plan(payload, diagnosis)"
+    },
+    {
+      "call": "generate_fallback_plan",
+      "class": null,
+      "file": "src/gemini_client.py",
+      "function": "generate_ai_plan",
+      "line": 664,
+      "matches": [
+        "ack"
+      ],
+      "source": "generate_fallback_plan(payload, diagnosis)"
+    },
+    {
+      "call": "generate_fallback_plan",
+      "class": null,
+      "file": "src/gemini_client.py",
+      "function": "generate_ai_plan",
+      "line": 691,
+      "matches": [
+        "ack"
+      ],
+      "source": "generate_fallback_plan(payload, diagnosis)"
+    },
+    {
+      "call": "generate_fallback_plan",
+      "class": null,
+      "file": "src/gemini_client.py",
+      "function": "generate_ai_plan",
+      "line": 696,
+      "matches": [
+        "ack"
+      ],
+      "source": "generate_fallback_plan(payload, diagnosis)"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/observability/timeline.py",
+      "function": "preparar_tabela_timeline",
+      "line": 177,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/observability/timeline.py",
+      "function": "registrar_evento_timeline",
+      "line": 344,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "FeedbackUsuario",
+      "class": null,
+      "file": "src/repository.py",
+      "function": "save_feedback_db",
+      "line": 46,
+      "matches": [
+        "ack"
+      ],
+      "source": "FeedbackUsuario(nome=nome, util=util, comentario=comentario, score_financeiro=int(score_financeiro), nivel_risco=nivel_risco)"
+    },
+    {
+      "call": "FeedbackUsuario.id.desc",
+      "class": null,
+      "file": "src/repository.py",
+      "function": "list_feedbacks_db",
+      "line": 100,
+      "matches": [
+        "ack"
+      ],
+      "source": "FeedbackUsuario.id.desc()"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/services/rag/document_repository.py",
+      "function": "preparar_tabelas_documentos",
+      "line": 169,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/services/rag/document_repository.py",
+      "function": "registrar_historico_documento",
+      "line": 283,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/services/rag/document_repository.py",
+      "function": "registrar_documento",
+      "line": 409,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/services/rag/document_repository.py",
+      "function": "atualizar_processamento_documento",
+      "line": 671,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/services/rag/document_repository.py",
+      "function": "atualizar_status_documento",
+      "line": 778,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/services/rag/vector_store.py",
+      "function": "preparar_tabela_embeddings",
+      "line": 172,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/services/rag/vector_store.py",
+      "function": "excluir_embeddings_documento",
+      "line": 234,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/services/rag/vector_store.py",
+      "function": "salvar_chunks_embeddings",
+      "line": 443,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "connection.rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "_safe_rollback",
+      "line": 400,
+      "matches": [
+        "ack"
+      ],
+      "source": "connection.rollback()"
+    },
+    {
+      "call": "connection.rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "load_telegram_conversation_state",
+      "line": 444,
+      "matches": [
+        "ack"
+      ],
+      "source": "connection.rollback()"
+    },
+    {
+      "call": "_safe_rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "load_telegram_conversation_state",
+      "line": 447,
+      "matches": [
+        "ack"
+      ],
+      "source": "_safe_rollback(connection)"
+    },
+    {
+      "call": "_safe_rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "load_telegram_conversation_state",
+      "line": 453,
+      "matches": [
+        "ack"
+      ],
+      "source": "_safe_rollback(connection)"
+    },
+    {
+      "call": "connection.rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "create_telegram_conversation_state",
+      "line": 535,
+      "matches": [
+        "ack"
+      ],
+      "source": "connection.rollback()"
+    },
+    {
+      "call": "_safe_rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "create_telegram_conversation_state",
+      "line": 556,
+      "matches": [
+        "ack"
+      ],
+      "source": "_safe_rollback(connection)"
+    },
+    {
+      "call": "_safe_rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "create_telegram_conversation_state",
+      "line": 562,
+      "matches": [
+        "ack"
+      ],
+      "source": "_safe_rollback(connection)"
+    },
+    {
+      "call": "connection.rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "save_telegram_conversation_state",
+      "line": 639,
+      "matches": [
+        "ack"
+      ],
+      "source": "connection.rollback()"
+    },
+    {
+      "call": "_safe_rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "save_telegram_conversation_state",
+      "line": 661,
+      "matches": [
+        "ack"
+      ],
+      "source": "_safe_rollback(connection)"
+    },
+    {
+      "call": "_safe_rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "save_telegram_conversation_state",
+      "line": 667,
+      "matches": [
+        "ack"
+      ],
+      "source": "_safe_rollback(connection)"
+    },
+    {
+      "call": "_safe_rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "delete_telegram_conversation_state",
+      "line": 721,
+      "matches": [
+        "ack"
+      ],
+      "source": "_safe_rollback(connection)"
+    },
+    {
+      "call": "_safe_rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "delete_telegram_conversation_state",
+      "line": 727,
+      "matches": [
+        "ack"
+      ],
+      "source": "_safe_rollback(connection)"
+    },
+    {
+      "call": "_safe_rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "delete_expired_telegram_conversation_states",
+      "line": 776,
+      "matches": [
+        "ack"
+      ],
+      "source": "_safe_rollback(connection)"
+    },
+    {
+      "call": "_safe_rollback",
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "function": "delete_expired_telegram_conversation_states",
+      "line": 782,
+      "matches": [
+        "ack"
+      ],
+      "source": "_safe_rollback(connection)"
+    },
+    {
+      "call": "_validate_worker_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "function": "decrypt_authenticated_telegram_worker_lease",
+      "line": 503,
+      "matches": [
+        "lease",
+        "worker"
+      ],
+      "source": "_validate_worker_lease(lease)"
+    },
+    {
+      "call": "TelegramUpdateWorkerPayload",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "function": "decrypt_authenticated_telegram_worker_lease",
+      "line": 610,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerPayload(update_id=normalized_lease.update_id, job_attempt_count=normalized_lease.job_attempt_count, job_max_attempts=normalized_lease.job_max_attempts, receipt_attempt_count=normalized_lease.receipt_attempt_count, payload_version=normalized_lease.payload_version, payload_key_id=normalized_lease.payload_key_id, _payload=frozen_payload)"
+    },
+    {
+      "call": "_ReceiptSnapshot",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "function": "_receipt_snapshot_from_row",
+      "line": 329,
+      "matches": [
+        "receipt"
+      ],
+      "source": "_ReceiptSnapshot(update_id=update_id, status=status, attempt_count=attempt_count, update_fingerprint=fingerprint_value, lease_active=lease_active)"
+    },
+    {
+      "call": "receipt_service.fingerprint_telegram_update",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "function": "enqueue_authenticated_telegram_update_atomic",
+      "line": 650,
+      "matches": [
+        "receipt"
+      ],
+      "source": "receipt_service.fingerprint_telegram_update(normalized_update)"
+    },
+    {
+      "call": "_generate_claim_token",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "function": "enqueue_authenticated_telegram_update_atomic",
+      "line": 669,
+      "matches": [
+        "claim"
+      ],
+      "source": "_generate_claim_token()"
+    },
+    {
+      "call": "_receipt_snapshot_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "function": "enqueue_authenticated_telegram_update_atomic",
+      "line": 701,
+      "matches": [
+        "receipt"
+      ],
+      "source": "_receipt_snapshot_from_row(inserted_receipt_row)"
+    },
+    {
+      "call": "_receipt_snapshot_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "function": "enqueue_authenticated_telegram_update_atomic",
+      "line": 740,
+      "matches": [
+        "receipt"
+      ],
+      "source": "_receipt_snapshot_from_row(existing_row)"
+    },
+    {
+      "call": "_receipt_snapshot_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "function": "enqueue_authenticated_telegram_update_atomic",
+      "line": 823,
+      "matches": [
+        "receipt"
+      ],
+      "source": "_receipt_snapshot_from_row(reclaimed_row)"
+    },
+    {
+      "call": "TelegramUpdateJobLease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "function": "_lease_from_row",
+      "line": 537,
+      "matches": [
+        "lease"
+      ],
+      "source": "TelegramUpdateJobLease(update_id=int(row['update_id']), attempt_count=int(row['attempt_count']), max_attempts=int(row['max_attempts']), payload_version=int(row['payload_version']), payload_ciphertext=bytes(row['payload_ciphertext']), payload_nonce=bytes(row['payload_nonce']), payload_key_id=str(row['payload_key_id']), lock_token=str(row['lock_token']))"
+    },
+    {
+      "call": "_lease_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "function": "claim_next_telegram_update_job",
+      "line": 782,
+      "matches": [
+        "lease"
+      ],
+      "source": "_lease_from_row(row)"
+    },
+    {
+      "call": "calculate_worker_retry_delay_seconds",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_finalize_failure",
+      "line": 535,
+      "matches": [
+        "retry",
+        "worker"
+      ],
+      "source": "calculate_worker_retry_delay_seconds(attempt_count=lease.job_attempt_count, config=config)"
+    },
+    {
+      "call": "dependencies.fail",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_finalize_failure",
+      "line": 544,
+      "matches": [
+        "fail"
+      ],
+      "source": "dependencies.fail(lease, error_code=normalized_error, retry_delay_seconds=retry_delay, force_dead_letter=force_dead_letter)"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_finalize_failure",
+      "line": 559,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='ownership_lost', stage='failure', error_code=normalized_error)"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_finalize_failure",
+      "line": 570,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='unavailable', stage='failure', error_code=normalized_error)"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_finalize_failure",
+      "line": 583,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='consistency_error', stage='failure', error_code=normalized_error)"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_finalize_failure",
+      "line": 591,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='unavailable', stage='failure', error_code=normalized_error)"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_finalize_failure",
+      "line": 613,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='retry_scheduled', stage='failure', job_status='queued', error_code=normalized_error, idempotent_replay=replay)"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_finalize_failure",
+      "line": 623,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='dead_lettered', stage='failure', job_status='dead_letter', error_code=normalized_error, idempotent_replay=replay)"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_finalize_failure",
+      "line": 632,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='consistency_error', stage='failure', error_code=normalized_error)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConfig",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 672,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConfig()"
+    },
+    {
+      "call": "TelegramUpdateWorkerDependencies",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 677,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerDependencies()"
+    },
+    {
+      "call": "resolved_dependencies.claim",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 681,
+      "matches": [
+        "claim"
+      ],
+      "source": "resolved_dependencies.claim(lease_seconds=resolved_config.lease_seconds)"
+    },
+    {
+      "call": "_finalize_failure",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 741,
+      "matches": [
+        "fail"
+      ],
+      "source": "_finalize_failure(lease=lease, dependencies=resolved_dependencies, config=resolved_config, error_code='telegram.keyring_unavailable', force_dead_letter=False)"
+    },
+    {
+      "call": "_finalize_failure",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 759,
+      "matches": [
+        "fail"
+      ],
+      "source": "_finalize_failure(lease=lease, dependencies=resolved_dependencies, config=resolved_config, error_code='telegram.payload_invalid', force_dead_letter=True)"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 775,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='consistency_error', stage='decrypt', error_code='telegram.lease_invalid')"
+    },
+    {
+      "call": "_finalize_failure",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 785,
+      "matches": [
+        "fail"
+      ],
+      "source": "_finalize_failure(lease=lease, dependencies=resolved_dependencies, config=resolved_config, error_code='telegram.decrypt_failed', force_dead_letter=False)"
+    },
+    {
+      "call": "_finalize_failure",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 804,
+      "matches": [
+        "fail"
+      ],
+      "source": "_finalize_failure(lease=lease, dependencies=resolved_dependencies, config=resolved_config, error_code='telegram.payload_invalid', force_dead_letter=True)"
+    },
+    {
+      "call": "_finalize_failure",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 833,
+      "matches": [
+        "fail"
+      ],
+      "source": "_finalize_failure(lease=lease, dependencies=resolved_dependencies, config=resolved_config, error_code='telegram.async_processor_unsupported', force_dead_letter=True)"
+    },
+    {
+      "call": "_finalize_failure",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 848,
+      "matches": [
+        "fail"
+      ],
+      "source": "_finalize_failure(lease=lease, dependencies=resolved_dependencies, config=resolved_config, error_code=error.error_code, force_dead_letter=True)"
+    },
+    {
+      "call": "_finalize_failure",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 861,
+      "matches": [
+        "fail"
+      ],
+      "source": "_finalize_failure(lease=lease, dependencies=resolved_dependencies, config=resolved_config, error_code=error.error_code, force_dead_letter=False)"
+    },
+    {
+      "call": "_finalize_failure",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 872,
+      "matches": [
+        "fail"
+      ],
+      "source": "_finalize_failure(lease=lease, dependencies=resolved_dependencies, config=resolved_config, error_code='telegram.processing_failed', force_dead_letter=False)"
+    },
+    {
+      "call": "_finalize_failure",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 888,
+      "matches": [
+        "fail"
+      ],
+      "source": "_finalize_failure(lease=lease, dependencies=resolved_dependencies, config=resolved_config, error_code='telegram.processing_failed', force_dead_letter=False)"
+    },
+    {
+      "call": "resolved_dependencies.complete",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 902,
+      "matches": [
+        "complete"
+      ],
+      "source": "resolved_dependencies.complete(lease)"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 911,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='ownership_lost', stage='complete', error_code='telegram.completion_ownership_lost')"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 924,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='unavailable', stage='complete', error_code='telegram.completion_unavailable')"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 939,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='consistency_error', stage='complete', error_code='telegram.completion_inconsistent')"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 949,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='unavailable', stage='complete', error_code='telegram.completion_unavailable')"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 963,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='consistency_error', stage='complete', error_code='telegram.completion_inconsistent')"
+    },
+    {
+      "call": "_result_for_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "line": 972,
+      "matches": [
+        "lease"
+      ],
+      "source": "_result_for_lease(lease=lease, decision='completed', stage='complete', job_status='completed', idempotent_replay=bool(getattr(outcome, 'idempotent_replay', False)))"
+    },
+    {
+      "call": "callback",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_notify_safely",
+      "line": 998,
+      "matches": [
+        "ack"
+      ],
+      "source": "callback(result)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConfig",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_telegram_update_worker",
+      "line": 1048,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConfig()"
+    },
+    {
+      "call": "TelegramUpdateWorkerDependencies",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_telegram_update_worker",
+      "line": 1053,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerDependencies()"
+    },
+    {
+      "call": "resolved_dependencies.recover",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_telegram_update_worker",
+      "line": 1118,
+      "matches": [
+        "recover"
+      ],
+      "source": "resolved_dependencies.recover(limit=resolved_config.recovery_batch_size)"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_integer",
+      "line": 251,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError(f'{field_name} inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_sha256",
+      "line": 268,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError(f'{field_name} inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_key_id",
+      "line": 283,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('payload_key_id inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_bytes",
+      "line": 305,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError(f'{field_name} inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_bytes",
+      "line": 318,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError(f'{field_name} inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_candidate_from_row",
+      "line": 358,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um receipt inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_candidate_from_row",
+      "line": 371,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um receipt inválido.')"
+    },
+    {
+      "call": "_ReceiptCandidate",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_candidate_from_row",
+      "line": 375,
+      "matches": [
+        "receipt"
+      ],
+      "source": "_ReceiptCandidate(update_id=update_id, receipt_status=receipt_status, receipt_attempt_count=receipt_attempt_count)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_worker_lease_from_rows",
+      "line": 467,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um lease inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_worker_lease_from_rows",
+      "line": 476,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('Job e receipt pertencem a updates diferentes.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_worker_lease_from_rows",
+      "line": 488,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('Tentativas ou versão inválidas.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_worker_lease_from_rows",
+      "line": 493,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('Receipt não foi transferido ao worker.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_worker_lease_from_rows",
+      "line": 499,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('Tentativas do receipt inválidas.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_worker_lease_from_rows",
+      "line": 504,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('Tentativas do receipt estão atrás do job.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_worker_lease_from_rows",
+      "line": 510,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('A propriedade do job e do receipt não coincide.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerLease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_worker_lease_from_rows",
+      "line": 515,
+      "matches": [
+        "lease",
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerLease(update_id=candidate.update_id, job_status='processing', receipt_status='processing', job_attempt_count=job_attempt_count, job_max_attempts=job_max_attempts, receipt_attempt_count=receipt_attempt_count, payload_version=payload_version, payload_key_id=payload_key_id, payload_ciphertext=payload_ciphertext, payload_nonce=payload_nonce, lock_token=lock_token)"
+    },
+    {
+      "call": "TelegramUpdateWorkerUnavailableError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "claim_next_authenticated_telegram_update_job_atomic",
+      "line": 573,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerUnavailableError('Não foi possível gerar a propriedade do worker.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerUnavailableError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "claim_next_authenticated_telegram_update_job_atomic",
+      "line": 585,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerUnavailableError('Não foi possível gerar a propriedade do worker.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "claim_next_authenticated_telegram_update_job_atomic",
+      "line": 633,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O job deixou de estar disponível durante o claim.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "claim_next_authenticated_telegram_update_job_atomic",
+      "line": 650,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou tentativas do job inválidas.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "claim_next_authenticated_telegram_update_job_atomic",
+      "line": 678,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O receipt não pôde ser transferido ao worker.')"
+    },
+    {
+      "call": "_worker_lease_from_rows",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "claim_next_authenticated_telegram_update_job_atomic",
+      "line": 684,
+      "matches": [
+        "lease",
+        "worker"
+      ],
+      "source": "_worker_lease_from_rows(candidate=candidate, job_row=job_row, receipt_row=receipt_row)"
+    },
+    {
+      "call": "TelegramUpdateWorkerUnavailableError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "claim_next_authenticated_telegram_update_job_atomic",
+      "line": 697,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerUnavailableError('Não foi possível obter um job Telegram.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completion_lease",
+      "line": 968,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError('Lease do worker inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completion_lease",
+      "line": 982,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError('O job não está em processamento.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completion_lease",
+      "line": 987,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError('O receipt não está em processamento.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completion_lease",
+      "line": 1016,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError('As tentativas do job são inválidas.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completion_lease",
+      "line": 1024,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError('As tentativas do receipt estão atrasadas.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completion_lease",
+      "line": 1046,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError('payload_key_id inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completion_lease",
+      "line": 1060,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError('lock_token inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_owned_receipt_completion_from_row",
+      "line": 1096,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um receipt inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_owned_receipt_completion_from_row",
+      "line": 1113,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um receipt inválido.')"
+    },
+    {
+      "call": "_OwnedReceiptCompletionSnapshot",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_owned_receipt_completion_from_row",
+      "line": 1117,
+      "matches": [
+        "receipt"
+      ],
+      "source": "_OwnedReceiptCompletionSnapshot(update_id=update_id, status=status, attempt_count=attempt_count, claim_token=claim_token, lease_active=lease_active)"
+    },
+    {
+      "call": "_CompletedJobSnapshot",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_completed_job_from_row",
+      "line": 1130,
+      "matches": [
+        "complete"
+      ],
+      "source": "_CompletedJobSnapshot(update_id=int(row['update_id']), status=str(row['status']), attempt_count=int(row['attempt_count']), max_attempts=int(row['max_attempts']), payload_version=int(row['payload_version']), payload_cleared=bool(row['payload_cleared']), ownership_cleared=bool(row['ownership_cleared']), completed_at_set=bool(row['completed_at_set']))"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_completed_job_from_row",
+      "line": 1162,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um job concluído inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_completed_job_from_row",
+      "line": 1179,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O job não foi concluído de forma consistente.')"
+    },
+    {
+      "call": "_CompletedReceiptSnapshot",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_completed_receipt_from_row",
+      "line": 1192,
+      "matches": [
+        "complete",
+        "receipt"
+      ],
+      "source": "_CompletedReceiptSnapshot(update_id=int(row['update_id']), status=str(row['status']), attempt_count=int(row['attempt_count']), completed_at_set=bool(row['completed_at_set']), lease_closed=bool(row['lease_closed']))"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_completed_receipt_from_row",
+      "line": 1216,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um receipt concluído inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_completed_receipt_from_row",
+      "line": 1228,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O receipt não foi concluído de forma consistente.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completed_job_matches_lease",
+      "line": 1251,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O job concluído pertence a outro update.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completed_job_matches_lease",
+      "line": 1260,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('A tentativa concluída não corresponde ao lease.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completed_job_matches_lease",
+      "line": 1269,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O limite de tentativas do job não corresponde ao lease.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_completed_job_matches_lease",
+      "line": 1278,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('A versão do payload não corresponde ao lease.')"
+    },
+    {
+      "call": "_validate_completed_job_matches_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_build_completion_outcome",
+      "line": 1290,
+      "matches": [
+        "complete",
+        "lease"
+      ],
+      "source": "_validate_completed_job_matches_lease(lease=lease, job=job)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_build_completion_outcome",
+      "line": 1299,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O job concluído pertence a outro update.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_build_completion_outcome",
+      "line": 1308,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('A tentativa concluída não corresponde ao lease.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerCompletionOutcome",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_build_completion_outcome",
+      "line": 1313,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerCompletionOutcome(update_id=lease.update_id, decision=decision, job_status='completed', receipt_status='completed', job_attempt_count=job.attempt_count, job_max_attempts=job.max_attempts, receipt_attempt_count=receipt_attempt_count, payload_cleared=job.payload_cleared, ownership_cleared=job.ownership_cleared)"
+    },
+    {
+      "call": "_validate_completion_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1350,
+      "matches": [
+        "lease"
+      ],
+      "source": "_validate_completion_lease(lease)"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1385,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O receipt do worker não foi localizado.')"
+    },
+    {
+      "call": "_owned_receipt_completion_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1391,
+      "matches": [
+        "receipt"
+      ],
+      "source": "_owned_receipt_completion_from_row(receipt_row)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1400,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O receipt pertence a outro update.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1409,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O worker não possui mais o receipt.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1433,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('Receipt concluído sem job correspondente.')"
+    },
+    {
+      "call": "_completed_job_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1440,
+      "matches": [
+        "complete"
+      ],
+      "source": "_completed_job_from_row(completed_job_row)"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1459,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O receipt não está mais em processamento.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1465,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O lease do receipt expirou.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1479,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O lease do job não está mais ativo.')"
+    },
+    {
+      "call": "_completed_job_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1485,
+      "matches": [
+        "complete"
+      ],
+      "source": "_completed_job_from_row(completed_job_row)"
+    },
+    {
+      "call": "_validate_completed_job_matches_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1490,
+      "matches": [
+        "complete",
+        "lease"
+      ],
+      "source": "_validate_completed_job_matches_lease(lease=normalized_lease, job=completed_job)"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1505,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O receipt não pôde ser concluído.')"
+    },
+    {
+      "call": "_completed_receipt_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1511,
+      "matches": [
+        "complete",
+        "receipt"
+      ],
+      "source": "_completed_receipt_from_row(completed_receipt_row)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1520,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O receipt concluído pertence a outro update.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1529,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('As tentativas do receipt estão atrás do job.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerUnavailableError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "complete_authenticated_telegram_update_job_atomic",
+      "line": 1552,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerUnavailableError('Não foi possível concluir o job Telegram.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_worker_error_code",
+      "line": 1933,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError('error_code inválido.')"
+    },
+    {
+      "call": "WORKER_ERROR_CODE_PATTERN.fullmatch",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_worker_error_code",
+      "line": 1941,
+      "matches": [
+        "worker"
+      ],
+      "source": "WORKER_ERROR_CODE_PATTERN.fullmatch(normalized)"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_worker_error_code",
+      "line": 1946,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError('error_code inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_boolean",
+      "line": 1962,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerValidationError(f'{field_name} inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failure_receipt_from_row",
+      "line": 2009,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um receipt de falha inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failure_receipt_from_row",
+      "line": 2027,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um receipt de falha inválido.')"
+    },
+    {
+      "call": "WORKER_ERROR_CODE_PATTERN.fullmatch",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failure_receipt_from_row",
+      "line": 2034,
+      "matches": [
+        "worker"
+      ],
+      "source": "WORKER_ERROR_CODE_PATTERN.fullmatch(last_error_code)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failure_receipt_from_row",
+      "line": 2039,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O receipt contém error_code inválido.')"
+    },
+    {
+      "call": "_FailureReceiptSnapshot",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failure_receipt_from_row",
+      "line": 2043,
+      "matches": [
+        "fail",
+        "receipt"
+      ],
+      "source": "_FailureReceiptSnapshot(update_id=update_id, status=status, attempt_count=attempt_count, claim_token=claim_token, last_error_code=last_error_code, lease_active=lease_active)"
+    },
+    {
+      "call": "_FailedJobSnapshot",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_job_from_row",
+      "line": 2061,
+      "matches": [
+        "fail"
+      ],
+      "source": "_FailedJobSnapshot(update_id=int(row['update_id']), status=status, attempt_count=int(row['attempt_count']), max_attempts=int(row['max_attempts']), payload_version=int(row['payload_version']), last_error_code=str(row['last_error_code']), payload_retained=bool(row['payload_retained']), ownership_cleared=bool(row['ownership_cleared']), completed_at_cleared=bool(row['completed_at_cleared']), retry_state_valid=bool(row['retry_state_valid']), dead_letter_state_valid=bool(row['dead_letter_state_valid']))"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_job_from_row",
+      "line": 2100,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um job de falha inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_job_from_row",
+      "line": 2109,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O job retornou estado de falha inválido.')"
+    },
+    {
+      "call": "WORKER_ERROR_CODE_PATTERN.fullmatch",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_job_from_row",
+      "line": 2121,
+      "matches": [
+        "worker"
+      ],
+      "source": "WORKER_ERROR_CODE_PATTERN.fullmatch(snapshot.last_error_code)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_job_from_row",
+      "line": 2129,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O job não foi finalizado de forma consistente.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_job_from_row",
+      "line": 2141,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O estado de retry é inconsistente.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_job_from_row",
+      "line": 2152,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O estado dead-letter é inconsistente.')"
+    },
+    {
+      "call": "_FailedReceiptResult",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_receipt_result_from_row",
+      "line": 2163,
+      "matches": [
+        "fail",
+        "receipt"
+      ],
+      "source": "_FailedReceiptResult(update_id=int(row['update_id']), status=str(row['status']), attempt_count=int(row['attempt_count']), last_error_code=str(row['last_error_code']), completed_at_cleared=bool(row['completed_at_cleared']), failed_at_set=bool(row['failed_at_set']), lease_closed=bool(row['lease_closed']))"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_receipt_result_from_row",
+      "line": 2192,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou um receipt falho inválido.')"
+    },
+    {
+      "call": "WORKER_ERROR_CODE_PATTERN.fullmatch",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_receipt_result_from_row",
+      "line": 2201,
+      "matches": [
+        "worker"
+      ],
+      "source": "WORKER_ERROR_CODE_PATTERN.fullmatch(result.last_error_code)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_failed_receipt_result_from_row",
+      "line": 2209,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O receipt não foi marcado como falho corretamente.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_failed_job_matches_lease",
+      "line": 2224,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O job de falha pertence a outro update.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_failed_job_matches_lease",
+      "line": 2233,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('A tentativa do job não corresponde ao lease.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_failed_job_matches_lease",
+      "line": 2242,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O limite de tentativas não corresponde ao lease.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_failed_job_matches_lease",
+      "line": 2251,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('A versão do payload não corresponde ao lease.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_validate_failed_job_matches_lease",
+      "line": 2257,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O error_code persistido não confere.')"
+    },
+    {
+      "call": "_validate_failed_job_matches_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_build_failure_outcome",
+      "line": 2271,
+      "matches": [
+        "fail",
+        "lease"
+      ],
+      "source": "_validate_failed_job_matches_lease(lease=lease, job=job, error_code=error_code)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_build_failure_outcome",
+      "line": 2278,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('As tentativas do receipt estão atrás do job.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerFailureOutcome",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_build_failure_outcome",
+      "line": 2283,
+      "matches": [
+        "fail",
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerFailureOutcome(update_id=lease.update_id, decision=decision, job_status=job.status, receipt_status='failed', job_attempt_count=job.attempt_count, job_max_attempts=job.max_attempts, receipt_attempt_count=receipt_attempt_count, payload_version=job.payload_version, last_error_code=error_code, retry_delay_seconds=retry_delay_seconds, payload_retained=job.payload_retained, ownership_cleared=job.ownership_cleared)"
+    },
+    {
+      "call": "_validate_completion_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2340,
+      "matches": [
+        "lease"
+      ],
+      "source": "_validate_completion_lease(lease)"
+    },
+    {
+      "call": "_validate_worker_error_code",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2346,
+      "matches": [
+        "worker"
+      ],
+      "source": "_validate_worker_error_code(error_code)"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2415,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O receipt do worker não foi localizado.')"
+    },
+    {
+      "call": "_failure_receipt_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2421,
+      "matches": [
+        "fail",
+        "receipt"
+      ],
+      "source": "_failure_receipt_from_row(receipt_row)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2430,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O receipt pertence a outro update.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2439,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O worker não possui mais o receipt.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2449,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O receipt já foi finalizado com outro error_code.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2468,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('Receipt falho sem job correspondente.')"
+    },
+    {
+      "call": "_failed_job_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2474,
+      "matches": [
+        "fail"
+      ],
+      "source": "_failed_job_from_row(existing_job_row)"
+    },
+    {
+      "call": "_build_failure_outcome",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2491,
+      "matches": [
+        "fail"
+      ],
+      "source": "_build_failure_outcome(lease=normalized_lease, decision=replay_decision, job=existing_job, receipt_attempt_count=receipt.attempt_count, retry_delay_seconds=None, error_code=normalized_error)"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2503,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O receipt não está mais em processamento.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2509,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O lease do receipt expirou.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2521,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O lease do job não está mais ativo.')"
+    },
+    {
+      "call": "_failed_job_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2526,
+      "matches": [
+        "fail"
+      ],
+      "source": "_failed_job_from_row(failed_job_row)"
+    },
+    {
+      "call": "_validate_failed_job_matches_lease",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2530,
+      "matches": [
+        "fail",
+        "lease"
+      ],
+      "source": "_validate_failed_job_matches_lease(lease=normalized_lease, job=failed_job, error_code=normalized_error)"
+    },
+    {
+      "call": "TelegramUpdateWorkerOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2546,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerOwnershipError('O receipt não pôde ser marcado como falho.')"
+    },
+    {
+      "call": "_failed_receipt_result_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2552,
+      "matches": [
+        "fail",
+        "receipt"
+      ],
+      "source": "_failed_receipt_result_from_row(failed_receipt_row)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2561,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O receipt falho pertence a outro update.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2570,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O error_code do receipt não confere.')"
+    },
+    {
+      "call": "_build_failure_outcome",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2588,
+      "matches": [
+        "fail"
+      ],
+      "source": "_build_failure_outcome(lease=normalized_lease, decision=decision, job=failed_job, receipt_attempt_count=failed_receipt.attempt_count, retry_delay_seconds=outcome_delay, error_code=normalized_error)"
+    },
+    {
+      "call": "TelegramUpdateWorkerUnavailableError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "line": 2610,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerUnavailableError('Não foi possível finalizar a falha do job Telegram.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerRecoveryRecord",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_recovery_record_from_row",
+      "line": 2990,
+      "matches": [
+        "recover",
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerRecoveryRecord(update_id=int(row['update_id']), job_status=status, job_attempt_count=int(row['attempt_count']), job_max_attempts=int(row['max_attempts']), receipt_attempt_count=int(row['receipt_attempt_count']), payload_version=int(row['payload_version']), last_error_code=str(row['last_error_code']), payload_retained=bool(row['payload_retained']), ownership_cleared=bool(row['ownership_cleared']))"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_recovery_record_from_row",
+      "line": 3038,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou recuperação Telegram inválida.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_recovery_record_from_row",
+      "line": 3047,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('A recuperação retornou status inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "_recovery_record_from_row",
+      "line": 3069,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('Job e receipt não foram recuperados consistentemente.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "line": 3120,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco não retornou o resumo da recuperação.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "line": 3154,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('O banco retornou resumo de recuperação inválido.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "line": 3169,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('A recuperação de jobs e receipts ficou divergente.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "line": 3178,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('A lista de recuperação é inválida.')"
+    },
+    {
+      "call": "_recovery_record_from_row",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "line": 3184,
+      "matches": [
+        "recover"
+      ],
+      "source": "_recovery_record_from_row(row)"
+    },
+    {
+      "call": "TelegramUpdateWorkerConsistencyError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "line": 3191,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerConsistencyError('A quantidade recuperada não corresponde ao resumo.')"
+    },
+    {
+      "call": "TelegramUpdateWorkerRecoveryBatch",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "line": 3197,
+      "matches": [
+        "recover",
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerRecoveryBatch(records=records)"
+    },
+    {
+      "call": "TelegramUpdateWorkerUnavailableError",
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "function": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "line": 3209,
+      "matches": [
+        "worker"
+      ],
+      "source": "TelegramUpdateWorkerUnavailableError('Não foi possível recuperar leases Telegram expirados.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "_validar_attempt_count",
+      "line": 323,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('O banco retornou attempt_count inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "_extrair_update_id",
+      "line": 343,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('O banco retornou update_id inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "_extrair_status_banco",
+      "line": 358,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('O banco retornou status inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "_extrair_status_banco",
+      "line": 367,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('O banco retornou status inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "_resultado_claim",
+      "line": 396,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('O banco retornou receipt inválido.')"
+    },
+    {
+      "call": "TelegramUpdateClaimResult",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "_resultado_claim",
+      "line": 400,
+      "matches": [
+        "claim"
+      ],
+      "source": "TelegramUpdateClaimResult(update_id=_extrair_update_id(row), status=status, attempt_count=attempt_count, claim_token=claim_token)"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "_resultado_lifecycle",
+      "line": 425,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('O banco retornou transição inválida.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "_resultado_lifecycle",
+      "line": 440,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('O banco retornou receipt inválido.')"
+    },
+    {
+      "call": "TelegramUpdateLifecycleResult",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "_resultado_lifecycle",
+      "line": 444,
+      "matches": [
+        "cycle"
+      ],
+      "source": "TelegramUpdateLifecycleResult(update_id=_extrair_update_id(row), status=expected_status, attempt_count=attempt_count)"
+    },
+    {
+      "call": "_validar_lease_seconds",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "claim_telegram_update",
+      "line": 489,
+      "matches": [
+        "lease"
+      ],
+      "source": "_validar_lease_seconds(lease_seconds)"
+    },
+    {
+      "call": "_resultado_claim",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "claim_telegram_update",
+      "line": 532,
+      "matches": [
+        "claim"
+      ],
+      "source": "_resultado_claim(inserted, status='claimed', claim_token=normalized_claim_token)"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "claim_telegram_update",
+      "line": 553,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('Receipt não localizado após conflito de update_id.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "claim_telegram_update",
+      "line": 571,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('O banco retornou fingerprint inválido.')"
+    },
+    {
+      "call": "_resultado_claim",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "claim_telegram_update",
+      "line": 604,
+      "matches": [
+        "claim"
+      ],
+      "source": "_resultado_claim(existing, status='duplicate', claim_token=None)"
+    },
+    {
+      "call": "_resultado_claim",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "claim_telegram_update",
+      "line": 630,
+      "matches": [
+        "claim"
+      ],
+      "source": "_resultado_claim(existing, status='in_progress', claim_token=None)"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "claim_telegram_update",
+      "line": 645,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('Não foi possível recuperar o receipt Telegram.')"
+    },
+    {
+      "call": "_resultado_claim",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "claim_telegram_update",
+      "line": 651,
+      "matches": [
+        "claim"
+      ],
+      "source": "_resultado_claim(reclaimed, status='reclaimed', claim_token=normalized_claim_token)"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "claim_telegram_update",
+      "line": 666,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('Não foi possível registrar o update Telegram.')"
+    },
+    {
+      "call": "TelegramUpdateClaimOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "complete_telegram_update",
+      "line": 721,
+      "matches": [
+        "claim"
+      ],
+      "source": "TelegramUpdateClaimOwnershipError('O claim não está mais ativo.')"
+    },
+    {
+      "call": "_resultado_lifecycle",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "complete_telegram_update",
+      "line": 726,
+      "matches": [
+        "cycle"
+      ],
+      "source": "_resultado_lifecycle(row, expected_status='completed')"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "complete_telegram_update",
+      "line": 738,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('Não foi possível concluir o update Telegram.')"
+    },
+    {
+      "call": "TelegramUpdateClaimOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "fail_telegram_update",
+      "line": 803,
+      "matches": [
+        "claim"
+      ],
+      "source": "TelegramUpdateClaimOwnershipError('O claim não está mais ativo.')"
+    },
+    {
+      "call": "_resultado_lifecycle",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "fail_telegram_update",
+      "line": 808,
+      "matches": [
+        "cycle"
+      ],
+      "source": "_resultado_lifecycle(row, expected_status='failed')"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "function": "fail_telegram_update",
+      "line": 820,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptRepositoryError('Não foi possível marcar a falha do update Telegram.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "_extract_update_id",
+      "line": 186,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('O update Telegram é inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "serialize_telegram_update_canonical",
+      "line": 205,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('O update Telegram é inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "serialize_telegram_update_canonical",
+      "line": 230,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('O update Telegram é inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "serialize_telegram_update_canonical",
+      "line": 239,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('O update Telegram possui tamanho inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptServiceError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "_generate_claim_token",
+      "line": 268,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptServiceError('Não foi possível criar um lease seguro.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "claim_authenticated_telegram_update",
+      "line": 288,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('O update Telegram é inválido.')"
+    },
+    {
+      "call": "_generate_claim_token",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "claim_authenticated_telegram_update",
+      "line": 303,
+      "matches": [
+        "claim"
+      ],
+      "source": "_generate_claim_token()"
+    },
+    {
+      "call": "repository.claim_telegram_update",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "claim_authenticated_telegram_update",
+      "line": 308,
+      "matches": [
+        "claim"
+      ],
+      "source": "repository.claim_telegram_update(update_id=update_id, update_fingerprint=fingerprint, claim_token=claim_token, lease_seconds=lease_seconds)"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "claim_authenticated_telegram_update",
+      "line": 322,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('Não foi possível validar o claim do update Telegram.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptConflictError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "claim_authenticated_telegram_update",
+      "line": 331,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptConflictError('O update Telegram conflita com um registro existente.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptUnavailableError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "claim_authenticated_telegram_update",
+      "line": 340,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptUnavailableError('O controle de updates Telegram está temporariamente indisponível.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptServiceError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "claim_authenticated_telegram_update",
+      "line": 356,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptServiceError('O repositório retornou um lease inválido.')"
+    },
+    {
+      "call": "TelegramUpdateProcessingLease",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "claim_authenticated_telegram_update",
+      "line": 360,
+      "matches": [
+        "lease"
+      ],
+      "source": "TelegramUpdateProcessingLease(update_id=result.update_id, attempt_count=result.attempt_count, claim_token=claim_token, update_fingerprint=fingerprint)"
+    },
+    {
+      "call": "TelegramUpdateClaimDecision",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "claim_authenticated_telegram_update",
+      "line": 371,
+      "matches": [
+        "claim"
+      ],
+      "source": "TelegramUpdateClaimDecision(update_id=result.update_id, status=result.status, attempt_count=result.attempt_count, lease=lease)"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "_validate_lease",
+      "line": 388,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('O lease Telegram é inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "_validate_lease",
+      "line": 403,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('O lease Telegram é inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "_validate_lease",
+      "line": 410,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('O lease Telegram é inválido.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "_validate_lease",
+      "line": 417,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('O lease Telegram é inválido.')"
+    },
+    {
+      "call": "_validate_lease",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "complete_authenticated_telegram_update",
+      "line": 428,
+      "matches": [
+        "lease"
+      ],
+      "source": "_validate_lease(lease)"
+    },
+    {
+      "call": "repository.complete_telegram_update",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "complete_authenticated_telegram_update",
+      "line": 435,
+      "matches": [
+        "complete"
+      ],
+      "source": "repository.complete_telegram_update(update_id=validated_lease.update_id, claim_token=validated_lease.claim_token)"
+    },
+    {
+      "call": "TelegramUpdateReceiptOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "complete_authenticated_telegram_update",
+      "line": 450,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptOwnershipError('O lease Telegram não está mais ativo.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptUnavailableError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "complete_authenticated_telegram_update",
+      "line": 458,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptUnavailableError('Não foi possível concluir o update Telegram.')"
+    },
+    {
+      "call": "_validate_lease",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "fail_authenticated_telegram_update",
+      "line": 480,
+      "matches": [
+        "lease"
+      ],
+      "source": "_validate_lease(lease)"
+    },
+    {
+      "call": "TelegramUpdateReceiptValidationError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "fail_authenticated_telegram_update",
+      "line": 493,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptValidationError('O código de falha Telegram é inválido.')"
+    },
+    {
+      "call": "repository.fail_telegram_update",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "fail_authenticated_telegram_update",
+      "line": 499,
+      "matches": [
+        "fail"
+      ],
+      "source": "repository.fail_telegram_update(update_id=validated_lease.update_id, claim_token=validated_lease.claim_token, error_code=error_code)"
+    },
+    {
+      "call": "TelegramUpdateReceiptOwnershipError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "fail_authenticated_telegram_update",
+      "line": 515,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptOwnershipError('O lease Telegram não está mais ativo.')"
+    },
+    {
+      "call": "TelegramUpdateReceiptUnavailableError",
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "function": "fail_authenticated_telegram_update",
+      "line": 523,
+      "matches": [
+        "receipt"
+      ],
+      "source": "TelegramUpdateReceiptUnavailableError('Não foi possível registrar a falha do update Telegram.')"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/tools/observability.py",
+      "function": "preparar_tabela_eventos_tools",
+      "line": 137,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    },
+    {
+      "call": "conn.rollback",
+      "class": null,
+      "file": "src/tools/observability.py",
+      "function": "registrar_evento_tool",
+      "line": 298,
+      "matches": [
+        "ack"
+      ],
+      "source": "conn.rollback()"
+    }
+  ],
+  "candidate_calls": 278,
+  "candidate_classes": 38,
+  "candidate_functions": 62,
+  "classes": [
+    {
+      "file": "api/schemas.py",
+      "line": 30,
+      "matches": [
+        "ack"
+      ],
+      "name": "FeedbackInput"
+    },
+    {
+      "file": "api/schemas.py",
+      "line": 38,
+      "matches": [
+        "ack"
+      ],
+      "name": "FeedbackResponse"
+    },
+    {
+      "file": "api/schemas.py",
+      "line": 62,
+      "matches": [
+        "ack"
+      ],
+      "name": "FeedbackItem"
+    },
+    {
+      "file": "src/models.py",
+      "line": 39,
+      "matches": [
+        "ack"
+      ],
+      "name": "FeedbackUsuario"
+    },
+    {
+      "file": "src/models/legacy.py",
+      "line": 39,
+      "matches": [
+        "ack"
+      ],
+      "name": "FeedbackUsuario"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "line": 391,
+      "matches": [
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerPayload"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 167,
+      "matches": [
+        "receipt"
+      ],
+      "name": "_ReceiptSnapshot"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 331,
+      "matches": [
+        "lease"
+      ],
+      "name": "TelegramUpdateJobLease"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "line": 104,
+      "matches": [
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerConfig"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "line": 211,
+      "matches": [
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerDependencies"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 138,
+      "matches": [
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerError"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 146,
+      "matches": [
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerValidationError"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 154,
+      "matches": [
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerConsistencyError"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 162,
+      "matches": [
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerUnavailableError"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 174,
+      "matches": [
+        "receipt"
+      ],
+      "name": "_ReceiptCandidate"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 185,
+      "matches": [
+        "lease",
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerLease"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 833,
+      "matches": [
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerOwnershipError"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 845,
+      "matches": [
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerCompletionOutcome"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 919,
+      "matches": [
+        "receipt"
+      ],
+      "name": "_OwnedReceiptCompletionSnapshot"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 935,
+      "matches": [
+        "complete"
+      ],
+      "name": "_CompletedJobSnapshot"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 952,
+      "matches": [
+        "complete",
+        "receipt"
+      ],
+      "name": "_CompletedReceiptSnapshot"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1764,
+      "matches": [
+        "fail",
+        "receipt"
+      ],
+      "name": "_FailureReceiptSnapshot"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1782,
+      "matches": [
+        "fail"
+      ],
+      "name": "_FailedJobSnapshot"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1807,
+      "matches": [
+        "fail",
+        "receipt"
+      ],
+      "name": "_FailedReceiptResult"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1826,
+      "matches": [
+        "fail",
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerFailureOutcome"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2860,
+      "matches": [
+        "recover",
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerRecoveryRecord"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2933,
+      "matches": [
+        "recover",
+        "worker"
+      ],
+      "name": "TelegramUpdateWorkerRecoveryBatch"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 156,
+      "matches": [
+        "receipt"
+      ],
+      "name": "TelegramUpdateReceiptRepositoryError"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 172,
+      "matches": [
+        "claim"
+      ],
+      "name": "TelegramUpdateClaimOwnershipError"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 184,
+      "matches": [
+        "claim"
+      ],
+      "name": "TelegramUpdateClaimResult"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 230,
+      "matches": [
+        "cycle"
+      ],
+      "name": "TelegramUpdateLifecycleResult"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 26,
+      "matches": [
+        "receipt"
+      ],
+      "name": "TelegramUpdateReceiptServiceError"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 34,
+      "matches": [
+        "receipt"
+      ],
+      "name": "TelegramUpdateReceiptValidationError"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 42,
+      "matches": [
+        "receipt"
+      ],
+      "name": "TelegramUpdateReceiptConflictError"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 51,
+      "matches": [
+        "receipt"
+      ],
+      "name": "TelegramUpdateReceiptUnavailableError"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 59,
+      "matches": [
+        "receipt"
+      ],
+      "name": "TelegramUpdateReceiptOwnershipError"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 71,
+      "matches": [
+        "lease"
+      ],
+      "name": "TelegramUpdateProcessingLease"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 107,
+      "matches": [
+        "claim"
+      ],
+      "name": "TelegramUpdateClaimDecision"
+    }
+  ],
+  "files_scanned": 165,
+  "functions": [
+    {
+      "class": null,
+      "file": "api/main.py",
+      "line": 714,
+      "matches": [
+        "ack"
+      ],
+      "name": "registrar_feedback",
+      "parameters": [
+        "payload"
+      ]
+    },
+    {
+      "class": null,
+      "file": "api/main.py",
+      "line": 737,
+      "matches": [
+        "ack"
+      ],
+      "name": "listar_feedbacks",
+      "parameters": [
+        "limit"
+      ]
+    },
+    {
+      "class": null,
+      "file": "api/telegram_webhook.py",
+      "line": 2180,
+      "matches": [
+        "claim",
+        "fail"
+      ],
+      "name": "_fail_claimed_telegram_update_safely",
+      "parameters": [
+        "lease"
+      ]
+    },
+    {
+      "class": null,
+      "file": "api/telegram_webhook.py",
+      "line": 2220,
+      "matches": [
+        "claim",
+        "process_claimed"
+      ],
+      "name": "process_claimed_telegram_update",
+      "parameters": [
+        "update",
+        "lease",
+        "conversation_bridge"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/agents/nodes.py",
+      "line": 840,
+      "matches": [
+        "ack"
+      ],
+      "name": "fallback_agent_node",
+      "parameters": [
+        "state"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/agents/supervisor_deadline.py",
+      "line": 61,
+      "matches": [
+        "worker"
+      ],
+      "name": "_parse_worker_output",
+      "parameters": [
+        "stdout"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/api_client.py",
+      "line": 372,
+      "matches": [
+        "ack"
+      ],
+      "name": "enviar_feedback_api",
+      "parameters": [
+        "payload"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 163,
+      "matches": [
+        "worker"
+      ],
+      "name": "load_worker_config_from_env",
+      "parameters": [
+        "environment"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/dashboard.py",
+      "line": 3504,
+      "matches": [
+        "ack"
+      ],
+      "name": "render_feedbacks",
+      "parameters": [
+        "feedbacks_df"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/feedback.py",
+      "line": 11,
+      "matches": [
+        "ack"
+      ],
+      "name": "save_feedback",
+      "parameters": [
+        "nome",
+        "util",
+        "comentario",
+        "score_financeiro",
+        "nivel_risco"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/gemini_client.py",
+      "line": 215,
+      "matches": [
+        "ack"
+      ],
+      "name": "generate_fallback_plan",
+      "parameters": [
+        "payload",
+        "diagnosis"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/repository.py",
+      "line": 36,
+      "matches": [
+        "ack"
+      ],
+      "name": "save_feedback_db",
+      "parameters": [
+        "nome",
+        "util",
+        "comentario",
+        "score_financeiro",
+        "nivel_risco"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/repository.py",
+      "line": 94,
+      "matches": [
+        "ack"
+      ],
+      "name": "list_feedbacks_db",
+      "parameters": [
+        "limit"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_conversation_state/repository.py",
+      "line": 396,
+      "matches": [
+        "ack"
+      ],
+      "name": "_safe_rollback",
+      "parameters": [
+        "connection"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "line": 144,
+      "matches": [
+        "lease",
+        "worker"
+      ],
+      "name": "_validate_worker_lease",
+      "parameters": [
+        "lease"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/execution.py",
+      "line": 486,
+      "matches": [
+        "lease",
+        "worker"
+      ],
+      "name": "decrypt_authenticated_telegram_worker_lease",
+      "parameters": [
+        "lease",
+        "keyring"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 228,
+      "matches": [
+        "claim"
+      ],
+      "name": "_generate_claim_token",
+      "parameters": []
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 256,
+      "matches": [
+        "receipt"
+      ],
+      "name": "_receipt_snapshot_from_row",
+      "parameters": [
+        "row"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/ingress.py",
+      "line": 581,
+      "matches": [
+        "enqueue",
+        "queue"
+      ],
+      "name": "enqueue_authenticated_telegram_update_atomic",
+      "parameters": [
+        "update",
+        "receipt_lease_seconds",
+        "max_attempts",
+        "keyring"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 533,
+      "matches": [
+        "lease"
+      ],
+      "name": "_lease_from_row",
+      "parameters": [
+        "row"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 622,
+      "matches": [
+        "enqueue",
+        "queue"
+      ],
+      "name": "enqueue_telegram_update_job",
+      "parameters": [
+        "update_id",
+        "payload_ciphertext",
+        "payload_nonce",
+        "payload_key_id",
+        "payload_version",
+        "max_attempts"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 739,
+      "matches": [
+        "claim"
+      ],
+      "name": "claim_next_telegram_update_job",
+      "parameters": [
+        "lock_token",
+        "lease_seconds"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 799,
+      "matches": [
+        "lease"
+      ],
+      "name": "renew_telegram_update_job_lease",
+      "parameters": [
+        "update_id",
+        "lock_token",
+        "lease_seconds"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 871,
+      "matches": [
+        "complete"
+      ],
+      "name": "complete_telegram_update_job",
+      "parameters": [
+        "update_id",
+        "lock_token"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 932,
+      "matches": [
+        "retry"
+      ],
+      "name": "retry_or_dead_letter_telegram_update_job",
+      "parameters": [
+        "update_id",
+        "lock_token",
+        "error_code",
+        "retry_delay_seconds"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 1012,
+      "matches": [
+        "recover"
+      ],
+      "name": "recover_expired_telegram_update_jobs",
+      "parameters": [
+        "limit"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "line": 454,
+      "matches": [
+        "retry",
+        "worker"
+      ],
+      "name": "calculate_worker_retry_delay_seconds",
+      "parameters": [
+        "attempt_count",
+        "config"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "line": 491,
+      "matches": [
+        "lease"
+      ],
+      "name": "_result_for_lease",
+      "parameters": [
+        "lease",
+        "decision",
+        "stage",
+        "job_status",
+        "error_code",
+        "idempotent_replay"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "line": 518,
+      "matches": [
+        "fail"
+      ],
+      "name": "_finalize_failure",
+      "parameters": [
+        "lease",
+        "dependencies",
+        "config",
+        "error_code",
+        "force_dead_letter"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "line": 1006,
+      "matches": [
+        "run_telegram_update_worker",
+        "worker"
+      ],
+      "name": "run_telegram_update_worker",
+      "parameters": [
+        "processor",
+        "stop_event",
+        "config",
+        "dependencies",
+        "keyring",
+        "on_result",
+        "max_cycles"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 733,
+      "matches": [
+        "retry"
+      ],
+      "name": "calculate_telegram_update_retry_delay",
+      "parameters": [
+        "attempt_count",
+        "base_seconds",
+        "max_seconds"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 384,
+      "matches": [
+        "lease",
+        "worker"
+      ],
+      "name": "_worker_lease_from_rows",
+      "parameters": [
+        "candidate",
+        "job_row",
+        "receipt_row"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 538,
+      "matches": [
+        "claim"
+      ],
+      "name": "claim_next_authenticated_telegram_update_job_atomic",
+      "parameters": [
+        "lease_seconds"
+      ]
+    },
+    {
+      "class": "TelegramUpdateWorkerCompletionOutcome",
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 866,
+      "matches": [
+        "complete"
+      ],
+      "name": "completed",
+      "parameters": [
+        "self"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 961,
+      "matches": [
+        "lease"
+      ],
+      "name": "_validate_completion_lease",
+      "parameters": [
+        "lease"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1067,
+      "matches": [
+        "receipt"
+      ],
+      "name": "_owned_receipt_completion_from_row",
+      "parameters": [
+        "row"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1126,
+      "matches": [
+        "complete"
+      ],
+      "name": "_completed_job_from_row",
+      "parameters": [
+        "row"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1187,
+      "matches": [
+        "complete",
+        "receipt"
+      ],
+      "name": "_completed_receipt_from_row",
+      "parameters": [
+        "row"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1237,
+      "matches": [
+        "complete",
+        "lease"
+      ],
+      "name": "_validate_completed_job_matches_lease",
+      "parameters": [
+        "lease",
+        "job"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1336,
+      "matches": [
+        "complete"
+      ],
+      "name": "complete_authenticated_telegram_update_job_atomic",
+      "parameters": [
+        "lease"
+      ]
+    },
+    {
+      "class": "TelegramUpdateWorkerFailureOutcome",
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1853,
+      "matches": [
+        "retry"
+      ],
+      "name": "retry_scheduled",
+      "parameters": [
+        "self"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1926,
+      "matches": [
+        "worker"
+      ],
+      "name": "_validate_worker_error_code",
+      "parameters": [
+        "value"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 1969,
+      "matches": [
+        "fail",
+        "receipt"
+      ],
+      "name": "_failure_receipt_from_row",
+      "parameters": [
+        "row"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2053,
+      "matches": [
+        "fail"
+      ],
+      "name": "_failed_job_from_row",
+      "parameters": [
+        "row"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2159,
+      "matches": [
+        "fail",
+        "receipt"
+      ],
+      "name": "_failed_receipt_result_from_row",
+      "parameters": [
+        "row"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2217,
+      "matches": [
+        "fail",
+        "lease"
+      ],
+      "name": "_validate_failed_job_matches_lease",
+      "parameters": [
+        "lease",
+        "job",
+        "error_code"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2262,
+      "matches": [
+        "fail"
+      ],
+      "name": "_build_failure_outcome",
+      "parameters": [
+        "lease",
+        "decision",
+        "job",
+        "receipt_attempt_count",
+        "retry_delay_seconds",
+        "error_code"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2313,
+      "matches": [
+        "retry"
+      ],
+      "name": "retry_or_dead_letter_authenticated_telegram_update_job_atomic",
+      "parameters": [
+        "lease",
+        "error_code",
+        "retry_delay_seconds",
+        "force_dead_letter"
+      ]
+    },
+    {
+      "class": "TelegramUpdateWorkerRecoveryRecord",
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2885,
+      "matches": [
+        "retry"
+      ],
+      "name": "retry_scheduled",
+      "parameters": [
+        "self"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 2981,
+      "matches": [
+        "recover"
+      ],
+      "name": "_recovery_record_from_row",
+      "parameters": [
+        "row"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_jobs/worker.py",
+      "line": 3077,
+      "matches": [
+        "recover"
+      ],
+      "name": "recover_expired_authenticated_telegram_update_jobs_atomic",
+      "parameters": [
+        "limit"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 284,
+      "matches": [
+        "lease"
+      ],
+      "name": "_validar_lease_seconds",
+      "parameters": [
+        "value"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 374,
+      "matches": [
+        "claim"
+      ],
+      "name": "_resultado_claim",
+      "parameters": [
+        "row",
+        "status",
+        "claim_token"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 410,
+      "matches": [
+        "cycle"
+      ],
+      "name": "_resultado_lifecycle",
+      "parameters": [
+        "row",
+        "expected_status"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 453,
+      "matches": [
+        "claim"
+      ],
+      "name": "claim_telegram_update",
+      "parameters": [
+        "update_id",
+        "update_fingerprint",
+        "claim_token",
+        "lease_seconds"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 672,
+      "matches": [
+        "complete"
+      ],
+      "name": "complete_telegram_update",
+      "parameters": [
+        "update_id",
+        "claim_token"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 744,
+      "matches": [
+        "fail"
+      ],
+      "name": "fail_telegram_update",
+      "parameters": [
+        "update_id",
+        "claim_token",
+        "error_code"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 260,
+      "matches": [
+        "claim"
+      ],
+      "name": "_generate_claim_token",
+      "parameters": []
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 275,
+      "matches": [
+        "claim"
+      ],
+      "name": "claim_authenticated_telegram_update",
+      "parameters": [
+        "update",
+        "lease_seconds"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 381,
+      "matches": [
+        "lease"
+      ],
+      "name": "_validate_lease",
+      "parameters": [
+        "lease"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 424,
+      "matches": [
+        "complete"
+      ],
+      "name": "complete_authenticated_telegram_update",
+      "parameters": [
+        "lease"
+      ]
+    },
+    {
+      "class": null,
+      "file": "src/services/telegram_update_receipts/service.py",
+      "line": 472,
+      "matches": [
+        "fail"
+      ],
+      "name": "fail_authenticated_telegram_update",
+      "parameters": [
+        "lease",
+        "error_code"
+      ]
+    }
+  ],
+  "summary_by_file": {
+    "api/main.py": 2,
+    "api/telegram_webhook.py": 7,
+    "src/agents/gemini_client.py": 1,
+    "src/agents/supervisor_deadline.py": 1,
+    "src/app.py": 2,
+    "src/channels/telegram_update_worker.py": 4,
+    "src/dashboard.py": 3,
+    "src/database.py": 1,
+    "src/database/connection.py": 1,
+    "src/database/legacy.py": 1,
+    "src/feedback.py": 4,
+    "src/gemini_client.py": 4,
+    "src/observability/timeline.py": 2,
+    "src/repository.py": 2,
+    "src/services/rag/document_repository.py": 5,
+    "src/services/rag/vector_store.py": 3,
+    "src/services/telegram_conversation_state/repository.py": 14,
+    "src/services/telegram_update_jobs/execution.py": 2,
+    "src/services/telegram_update_jobs/ingress.py": 6,
+    "src/services/telegram_update_jobs/repository.py": 2,
+    "src/services/telegram_update_jobs/runner.py": 33,
+    "src/services/telegram_update_jobs/worker.py": 125,
+    "src/services/telegram_update_receipts/repository.py": 24,
+    "src/services/telegram_update_receipts/service.py": 27,
+    "src/tools/observability.py": 2
+  }
+}

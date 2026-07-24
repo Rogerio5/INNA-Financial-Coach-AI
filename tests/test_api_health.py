@@ -13,5 +13,16 @@ def test_health_check():
 
     data = response.json()
 
-    assert data["status"] == "ok"
-    assert data["app"] == "INNA Financial Coach AI"
+    assert data == {
+        "probe": "health",
+        "ready": True,
+        "schema_version": (
+            "telegram-operational-status.v1"
+        ),
+        "status": "healthy",
+    }
+
+    assert (
+        response.headers["cache-control"]
+        == "no-store"
+    )

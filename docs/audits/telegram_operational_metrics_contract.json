@@ -1,0 +1,938 @@
+{
+  "constants": [
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 47,
+      "name": "EXIT_RUNTIME_ERROR",
+      "value": 1
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 48,
+      "name": "EXIT_CONFIGURATION_ERROR",
+      "value": 2
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 294,
+      "name": "_TELEGRAM_OPERATIONAL_LOGGER_NAME",
+      "value": "inna.telegram.operations"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 298,
+      "name": "_TELEGRAM_OPERATIONAL_LOG_LEVEL_ENV",
+      "value": "TELEGRAM_OPERATIONAL_LOG_LEVEL"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 302,
+      "name": "_DEFAULT_TELEGRAM_OPERATIONAL_LOG_LEVEL",
+      "value": "INFO"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 310,
+      "name": "_ALLOWED_TELEGRAM_OPERATIONAL_LOG_LEVELS",
+      "value": null
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 382,
+      "name": "self.operations",
+      "value": null
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 569,
+      "name": "metrics",
+      "value": null
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 682,
+      "name": "error_code",
+      "value": null
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 893,
+      "name": "error_category",
+      "value": null
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 998,
+      "name": "error_category",
+      "value": null
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1120,
+      "name": "receipt",
+      "value": null
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1141,
+      "name": "queue_operation",
+      "value": null
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1432,
+      "name": "resolved_metrics_runtime",
+      "value": null
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1443,
+      "name": "metrics_factory",
+      "value": null
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1543,
+      "name": "metrics_runtime",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 8,
+      "name": "ALLOWED_METRIC_OPERATIONS",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 23,
+      "name": "ALLOWED_METRIC_COMPONENTS",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 33,
+      "name": "ALLOWED_OUTCOMES",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 44,
+      "name": "ALLOWED_ERROR_CATEGORIES",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 89,
+      "name": "duration",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 121,
+      "name": "error_category",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 122,
+      "name": "conflict_recovered",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 15,
+      "name": "TELEGRAM_OPERATION_DURATION_BUCKETS_SECONDS",
+      "value": [
+        0.005,
+        0.01,
+        0.025,
+        0.05,
+        0.1,
+        0.25,
+        0.5,
+        1.0,
+        2.5,
+        5.0,
+        10.0,
+        30.0
+      ]
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 160,
+      "name": "_METRIC_LABELS",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 427,
+      "name": "self._histogram_buckets",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 431,
+      "name": "self._counter_values",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 435,
+      "name": "self._histogram_counts",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 439,
+      "name": "self._histogram_sums",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 443,
+      "name": "self._histogram_bucket_counts",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 555,
+      "name": "error_category",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 570,
+      "name": "duration_seconds",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 615,
+      "name": "conflict_outcome",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 634,
+      "name": "counters_by_metric",
+      "value": {}
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 647,
+      "name": "histograms_by_metric",
+      "value": {}
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 670,
+      "name": "histogram",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 692,
+      "name": "immutable_counters",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 703,
+      "name": "immutable_histograms",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 14,
+      "name": "OPENMETRICS_CONTENT_TYPE",
+      "value": "application/openmetrics-text; version=1.0.0; charset=utf-8"
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 20,
+      "name": "_METRIC_NAME_PATTERN",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 34,
+      "name": "OPENMETRICS",
+      "value": "openmetrics"
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 604,
+      "name": "counters",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 610,
+      "name": "histograms",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 637,
+      "name": "metric_name",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 666,
+      "name": "metric_name",
+      "value": null
+    }
+  ],
+  "export_calls": [
+    {
+      "call": "TelegramHistogramSnapshot",
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "keywords": [
+        "count",
+        "sum",
+        "buckets"
+      ],
+      "line": 671
+    },
+    {
+      "call": "TelegramProductiveMetricsSnapshot",
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "keywords": [
+        "counters",
+        "histograms"
+      ],
+      "line": 715
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 63
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 81
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 120
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 175
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 195
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 207
+    },
+    {
+      "call": "_render_labels",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 276
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 295
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 308
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 345
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 362
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 379
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 387
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 392
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 411
+    },
+    {
+      "call": "_render_sample",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [
+        "labels"
+      ],
+      "line": 444
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 496
+    },
+    {
+      "call": "_render_sample",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [
+        "labels"
+      ],
+      "line": 530
+    },
+    {
+      "call": "_render_sample",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [
+        "labels"
+      ],
+      "line": 550
+    },
+    {
+      "call": "_render_sample",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [
+        "labels"
+      ],
+      "line": 559
+    },
+    {
+      "call": "_render_sample",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [
+        "labels"
+      ],
+      "line": 568
+    },
+    {
+      "call": "TelegramMetricsExportFormat",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 594
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 599
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 620
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 628
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 651
+    },
+    {
+      "call": "_render_counter_family",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 657
+    },
+    {
+      "call": "TelegramPrometheusExportError",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 680
+    },
+    {
+      "call": "_render_histogram_family",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 686
+    },
+    {
+      "call": "TelegramMetricsExport",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [
+        "body",
+        "content_type",
+        "format"
+      ],
+      "line": 720
+    },
+    {
+      "call": "self._delegate.export",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [
+        "format"
+      ],
+      "line": 749
+    },
+    {
+      "call": "TelegramMetricsExportFormat",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [],
+      "line": 756
+    },
+    {
+      "call": "TelegramMetricsExport",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [
+        "body",
+        "content_type",
+        "format"
+      ],
+      "line": 771
+    },
+    {
+      "call": "TelegramMetricsExport",
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "keywords": [
+        "body",
+        "content_type",
+        "format"
+      ],
+      "line": 779
+    }
+  ],
+  "files": [
+    {
+      "exists": true,
+      "file": "src/services/telegram_observability/productive_metrics.py"
+    },
+    {
+      "exists": true,
+      "file": "src/services/telegram_observability/prometheus_exporter.py"
+    },
+    {
+      "exists": true,
+      "file": "src/services/telegram_observability/contracts.py"
+    },
+    {
+      "exists": true,
+      "file": "src/channels/telegram_update_worker.py"
+    }
+  ],
+  "histogram_buckets": [
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 15,
+      "name": "TELEGRAM_OPERATION_DURATION_BUCKETS_SECONDS",
+      "value": [
+        0.005,
+        0.01,
+        0.025,
+        0.05,
+        0.1,
+        0.25,
+        0.5,
+        1.0,
+        2.5,
+        5.0,
+        10.0,
+        30.0
+      ]
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 397,
+      "name": "normalized_buckets",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 427,
+      "name": "self._histogram_buckets",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 443,
+      "name": "self._histogram_bucket_counts",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 655,
+      "name": "buckets",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 325,
+      "name": "raw_buckets",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 500,
+      "name": "buckets",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 517,
+      "name": "bucket_labels",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 539,
+      "name": "bucket_labels",
+      "value": null
+    }
+  ],
+  "label_contracts": [
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 31,
+      "name": "_ALLOWED_LABEL_VALUES",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 124,
+      "name": "_FORBIDDEN_LABEL_NAMES",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 160,
+      "name": "_METRIC_LABELS",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 475,
+      "name": "normalized_labels",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 518,
+      "name": "normalized_labels",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 24,
+      "name": "_LABEL_NAME_PATTERN",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 200,
+      "name": "label_name",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 268,
+      "name": "normalized_labels",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 475,
+      "name": "normalized_labels",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 517,
+      "name": "bucket_labels",
+      "value": null
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 539,
+      "name": "bucket_labels",
+      "value": null
+    }
+  ],
+  "metric_strings": [
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 672,
+      "value": "telegram_worker_result"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 685,
+      "value": "error_code"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 783,
+      "value": "consistency_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1242,
+      "value": "telegram_worker_summary"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1559,
+      "value": "telegram_worker_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1599,
+      "value": "telegram_worker_started"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1631,
+      "value": "telegram_worker_stopped"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1693,
+      "value": "EXIT_CONFIGURATION_ERROR"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1696,
+      "value": "EXIT_RUNTIME_ERROR"
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 93,
+      "value": "duration_ms não pode ser negativa."
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 98,
+      "value": "duration_ms não pode ser NaN."
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 106,
+      "value": "duration_ms deve ser finita."
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 157,
+      "value": "duration_ms"
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 166,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 183,
+      "value": "error_category é obrigatória para outcomes error ou conflict."
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "line": 225,
+      "value": "telegram_"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 127,
+      "value": "telegram_user_id"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 162,
+      "value": "inna_telegram_operations_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 168,
+      "value": "inna_telegram_operation_duration_seconds"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 173,
+      "value": "inna_telegram_conflicts_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 177,
+      "value": "inna_telegram_receipts_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 182,
+      "value": "inna_telegram_worker_cycles_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 185,
+      "value": "inna_telegram_worker_updates_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 189,
+      "value": "inna_telegram_queue_operations_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 194,
+      "value": "inna_telegram_failures_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 777,
+      "value": "TELEGRAM_OPERATION_DURATION_BUCKETS_SECONDS"
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "line": 570,
+      "value": "_count"
+    }
+  ],
+  "record_calls": [
+    {
+      "call": "TelegramProductiveOperationsRecorder",
+      "file": "src/channels/telegram_update_worker.py",
+      "keywords": [],
+      "line": 384
+    },
+    {
+      "call": "operations.record_receipt",
+      "file": "src/channels/telegram_update_worker.py",
+      "keywords": [
+        "status",
+        "outcome",
+        "error_category"
+      ],
+      "line": 1133
+    },
+    {
+      "call": "operations.record_queue_operation",
+      "file": "src/channels/telegram_update_worker.py",
+      "keywords": [
+        "operation",
+        "outcome",
+        "error_category"
+      ],
+      "line": 1154
+    },
+    {
+      "call": "operations.record_worker_cycle",
+      "file": "src/channels/telegram_update_worker.py",
+      "keywords": [
+        "result"
+      ],
+      "line": 1176
+    },
+    {
+      "call": "operations.record_worker_update",
+      "file": "src/channels/telegram_update_worker.py",
+      "keywords": [
+        "outcome",
+        "error_category"
+      ],
+      "line": 1193
+    },
+    {
+      "call": "record_productive_runner_result",
+      "file": "src/channels/telegram_update_worker.py",
+      "keywords": [
+        "operations"
+      ],
+      "line": 1220
+    },
+    {
+      "call": "record_productive_receipt_and_queue_result",
+      "file": "src/channels/telegram_update_worker.py",
+      "keywords": [
+        "operations"
+      ],
+      "line": 1228
+    },
+    {
+      "call": "self.increment",
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "keywords": [
+        "labels"
+      ],
+      "line": 560
+    },
+    {
+      "call": "self.observe",
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "keywords": [
+        "labels"
+      ],
+      "line": 578
+    },
+    {
+      "call": "self.increment",
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "keywords": [
+        "labels"
+      ],
+      "line": 595
+    },
+    {
+      "call": "self.increment",
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "keywords": [
+        "labels"
+      ],
+      "line": 622
+    },
+    {
+      "call": "self._delegate.increment",
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "keywords": [
+        "labels",
+        "value"
+      ],
+      "line": 748
+    },
+    {
+      "call": "self._delegate.observe",
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "keywords": [
+        "labels"
+      ],
+      "line": 764
+    }
+  ]
+}

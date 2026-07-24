@@ -1,0 +1,1798 @@
+{
+  "assignments": [
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 47,
+      "scope": "<module>",
+      "targets": [
+        "EXIT_RUNTIME_ERROR"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 52,
+      "scope": "<module>",
+      "targets": [
+        "ENV_LEASE_SECONDS"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 56,
+      "scope": "<module>",
+      "targets": [
+        "ENV_IDLE_SLEEP_SECONDS"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 60,
+      "scope": "<module>",
+      "targets": [
+        "ENV_UNAVAILABLE_SLEEP_SECONDS"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 65,
+      "scope": "<module>",
+      "targets": [
+        "ENV_RECOVERY_INTERVAL_SECONDS"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 70,
+      "scope": "<module>",
+      "targets": [
+        "ENV_RECOVERY_BATCH_SIZE"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 75,
+      "scope": "<module>",
+      "targets": [
+        "ENV_RETRY_BASE_DELAY_SECONDS"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 80,
+      "scope": "<module>",
+      "targets": [
+        "ENV_RETRY_MAX_DELAY_SECONDS"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 175,
+      "scope": "load_worker_config_from_env",
+      "targets": [
+        "resolved_environment"
+      ],
+      "value_type": "IfExp"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 298,
+      "scope": "<module>",
+      "targets": [
+        "_TELEGRAM_OPERATIONAL_LOG_LEVEL_ENV"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 569,
+      "scope": "load_telegram_processor",
+      "targets": [
+        "metrics"
+      ],
+      "value_type": "Call"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 588,
+      "scope": "load_telegram_processor",
+      "targets": [
+        "bridge_factory_kwargs"
+      ],
+      "value_type": "Call"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1120,
+      "scope": "record_productive_receipt_and_queue_result",
+      "targets": [
+        "receipt"
+      ],
+      "value_type": "Call"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1432,
+      "scope": "_load_productive_telegram_processor",
+      "targets": [
+        "resolved_metrics_runtime"
+      ],
+      "value_type": "BoolOp"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1437,
+      "scope": "_load_productive_telegram_processor",
+      "targets": [
+        "event_sink_factory"
+      ],
+      "value_type": "Lambda"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1443,
+      "scope": "_load_productive_telegram_processor",
+      "targets": [
+        "metrics_factory"
+      ],
+      "value_type": "Lambda"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1486,
+      "scope": "_load_productive_telegram_processor",
+      "targets": [
+        "processor"
+      ],
+      "value_type": "Call"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1539,
+      "scope": "main",
+      "targets": [
+        "keyring"
+      ],
+      "value_type": "Call"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1543,
+      "scope": "main",
+      "targets": [
+        "metrics_runtime"
+      ],
+      "value_type": "Call"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1547,
+      "scope": "main",
+      "targets": [
+        "processor"
+      ],
+      "value_type": "Call"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 38,
+      "scope": "<module>",
+      "targets": [
+        "KEYS_ENV_NAME"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 42,
+      "scope": "<module>",
+      "targets": [
+        "ACTIVE_KEY_ENV_NAME"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 531,
+      "scope": "encrypt_authenticated_telegram_update",
+      "targets": [
+        "resolved_keyring"
+      ],
+      "value_type": "IfExp"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 637,
+      "scope": "decrypt_authenticated_telegram_update",
+      "targets": [
+        "resolved_keyring"
+      ],
+      "value_type": "IfExp"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 22,
+      "scope": "<module>",
+      "targets": [
+        "SQL_INSERT_RECEIPT"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 65,
+      "scope": "<module>",
+      "targets": [
+        "SQL_LOCK_EXISTING_RECEIPT"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 82,
+      "scope": "<module>",
+      "targets": [
+        "SQL_TOUCH_RECEIPT"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 90,
+      "scope": "<module>",
+      "targets": [
+        "SQL_RECLAIM_RECEIPT"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 116,
+      "scope": "<module>",
+      "targets": [
+        "SQL_COMPLETE_RECEIPT"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 136,
+      "scope": "<module>",
+      "targets": [
+        "SQL_FAIL_RECEIPT"
+      ],
+      "value_type": "Constant"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 418,
+      "scope": "_resultado_lifecycle",
+      "targets": [
+        "database_status"
+      ],
+      "value_type": "Call"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 588,
+      "scope": "claim_telegram_update",
+      "targets": [
+        "database_status"
+      ],
+      "value_type": "Call"
+    }
+  ],
+  "calls": [
+    {
+      "call": "environment.get",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 100,
+      "scope": "_read_integer"
+    },
+    {
+      "call": "environment.get",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 133,
+      "scope": "_read_float"
+    },
+    {
+      "call": "os.getenv",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 325,
+      "scope": "_resolve_telegram_operational_log_level"
+    },
+    {
+      "call": "InMemoryTelegramProductiveMetrics",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 365,
+      "scope": "__init__"
+    },
+    {
+      "call": "SafeTelegramProductiveMetrics",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 371,
+      "scope": "__init__"
+    },
+    {
+      "call": "ProductiveTelegramConversationMetricsAdapter",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 377,
+      "scope": "__init__"
+    },
+    {
+      "call": "TelegramProductiveMetricsRuntime",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 393,
+      "scope": "create_production_telegram_metrics_runtime"
+    },
+    {
+      "call": "metrics_factory",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 569,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "event_sink_factory",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 570,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "_observable_bridge_factory_kwargs",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 589,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "create_postgres_telegram_webhook_conversation_bridge",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 598,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "_productive_receipt_for_runner_result",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1121,
+      "scope": "record_productive_receipt_and_queue_result"
+    },
+    {
+      "call": "operations.record_receipt",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1133,
+      "scope": "record_productive_receipt_and_queue_result"
+    },
+    {
+      "call": "record_productive_receipt_and_queue_result",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1228,
+      "scope": "handle_productive_runner_result"
+    },
+    {
+      "call": "create_production_telegram_metrics_runtime",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1434,
+      "scope": "_load_productive_telegram_processor"
+    },
+    {
+      "call": "CompositeTelegramConversationMetrics",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1444,
+      "scope": "_load_productive_telegram_processor"
+    },
+    {
+      "call": "load_telegram_processor",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1486,
+      "scope": "_load_productive_telegram_processor"
+    },
+    {
+      "call": "load_worker_config_from_env",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1536,
+      "scope": "main"
+    },
+    {
+      "call": "load_telegram_update_keyring_from_env",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1540,
+      "scope": "main"
+    },
+    {
+      "call": "create_production_telegram_metrics_runtime",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1544,
+      "scope": "main"
+    },
+    {
+      "call": "_load_productive_telegram_processor",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1548,
+      "scope": "main"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 527,
+      "scope": "_record_from_row"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 604,
+      "scope": "_lease_from_row"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 613,
+      "scope": "_set_timeouts"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 617,
+      "scope": "_set_timeouts"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 670,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 678,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 702,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 705,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 714,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 717,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 733,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 757,
+      "scope": "claim_next_telegram_update_job"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 765,
+      "scope": "claim_next_telegram_update_job"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 777,
+      "scope": "claim_next_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 793,
+      "scope": "claim_next_telegram_update_job"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 822,
+      "scope": "renew_telegram_update_job_lease"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 830,
+      "scope": "renew_telegram_update_job_lease"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 845,
+      "scope": "renew_telegram_update_job_lease"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 865,
+      "scope": "renew_telegram_update_job_lease"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 886,
+      "scope": "complete_telegram_update_job"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 894,
+      "scope": "complete_telegram_update_job"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 906,
+      "scope": "complete_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 926,
+      "scope": "complete_telegram_update_job"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 960,
+      "scope": "retry_or_dead_letter_telegram_update_job"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 968,
+      "scope": "retry_or_dead_letter_telegram_update_job"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 986,
+      "scope": "retry_or_dead_letter_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 1006,
+      "scope": "retry_or_dead_letter_telegram_update_job"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 1027,
+      "scope": "recover_expired_telegram_update_jobs"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 1035,
+      "scope": "recover_expired_telegram_update_jobs"
+    },
+    {
+      "call": "cursor.fetchall",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 1044,
+      "scope": "recover_expired_telegram_update_jobs"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 1058,
+      "scope": "recover_expired_telegram_update_jobs"
+    },
+    {
+      "call": "os.getenv",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 367,
+      "scope": "load_telegram_update_keyring_from_env"
+    },
+    {
+      "call": "os.getenv",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 372,
+      "scope": "load_telegram_update_keyring_from_env"
+    },
+    {
+      "call": "TelegramUpdateEncryptionKeyring",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 430,
+      "scope": "load_telegram_update_keyring_from_env"
+    },
+    {
+      "call": "load_telegram_update_keyring_from_env",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 534,
+      "scope": "encrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "resolved_keyring.get_key",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 547,
+      "scope": "encrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "load_telegram_update_keyring_from_env",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 640,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "resolved_keyring.get_key",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 644,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 323,
+      "scope": "_validar_attempt_count"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 343,
+      "scope": "_extrair_update_id"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 358,
+      "scope": "_extrair_status_banco"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 367,
+      "scope": "_extrair_status_banco"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 396,
+      "scope": "_resultado_claim"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 425,
+      "scope": "_resultado_lifecycle"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 440,
+      "scope": "_resultado_lifecycle"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 510,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 514,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 519,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 524,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 529,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 540,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 549,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 553,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 571,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 595,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 621,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 636,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 641,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 645,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 666,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 691,
+      "scope": "complete_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 695,
+      "scope": "complete_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 700,
+      "scope": "complete_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 705,
+      "scope": "complete_telegram_update"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 717,
+      "scope": "complete_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 738,
+      "scope": "complete_telegram_update"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 770,
+      "scope": "fail_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 774,
+      "scope": "fail_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 779,
+      "scope": "fail_telegram_update"
+    },
+    {
+      "call": "cursor.execute",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 784,
+      "scope": "fail_telegram_update"
+    },
+    {
+      "call": "cursor.fetchone",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 799,
+      "scope": "fail_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 820,
+      "scope": "fail_telegram_update"
+    }
+  ],
+  "definitions": [
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "kind": "function",
+      "line": 165,
+      "name": "load_worker_config_from_env"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "kind": "function",
+      "line": 247,
+      "name": "_observable_bridge_factory_kwargs"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "kind": "class",
+      "line": 357,
+      "name": "TelegramProductiveMetricsRuntime"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "kind": "function",
+      "line": 391,
+      "name": "create_production_telegram_metrics_runtime"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "kind": "function",
+      "line": 508,
+      "name": "load_telegram_processor"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "kind": "function",
+      "line": 858,
+      "name": "_productive_receipt_for_runner_result"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "kind": "function",
+      "line": 1115,
+      "name": "record_productive_receipt_and_queue_result"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "kind": "function",
+      "line": 1417,
+      "name": "_load_productive_telegram_processor"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "kind": "class",
+      "line": 280,
+      "name": "TelegramUpdateJobRepositoryError"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "kind": "class",
+      "line": 239,
+      "name": "TelegramUpdateEncryptionKeyring"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/service.py",
+      "kind": "function",
+      "line": 365,
+      "name": "load_telegram_update_keyring_from_env"
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "kind": "class",
+      "line": 156,
+      "name": "TelegramUpdateReceiptRepositoryError"
+    }
+  ],
+  "environment_reads": [],
+  "files": [
+    {
+      "exists": true,
+      "file": "src/channels/telegram_update_worker.py"
+    },
+    {
+      "exists": true,
+      "file": "src/services/telegram_update_jobs/repository.py"
+    },
+    {
+      "exists": true,
+      "file": "src/services/telegram_update_jobs/service.py"
+    },
+    {
+      "exists": true,
+      "file": "src/services/telegram_update_receipts/repository.py"
+    }
+  ],
+  "forbidden_runtime_operations": [
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 89,
+      "scope": "_configuration_error"
+    },
+    {
+      "call": "TelegramUpdateWorkerConfig",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 182,
+      "scope": "load_worker_config_from_env"
+    },
+    {
+      "call": "TelegramUpdateWorkerConfig",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 186,
+      "scope": "load_worker_config_from_env"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 348,
+      "scope": "_resolve_telegram_operational_log_level"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 420,
+      "scope": "create_production_telegram_event_sink"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 542,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 549,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 554,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 559,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 564,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 604,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 610,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "process_telegram_update",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 617,
+      "scope": "process_with_durable_conversation_state"
+    },
+    {
+      "call": "_productive_update_outcome_for_runner_result",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1181,
+      "scope": "record_productive_runner_result"
+    },
+    {
+      "call": "operations.record_worker_update",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1193,
+      "scope": "record_productive_runner_result"
+    },
+    {
+      "call": "TelegramUpdateRunnerConfigurationError",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1292,
+      "scope": "_install_signal_handlers"
+    },
+    {
+      "call": "load_telegram_update_keyring_from_env",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1540,
+      "scope": "main"
+    },
+    {
+      "call": "run_telegram_update_worker",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1607,
+      "scope": "main"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 378,
+      "scope": "_validate_integer"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 406,
+      "scope": "_validate_sha256"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 421,
+      "scope": "_validate_key_id"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 436,
+      "scope": "_validate_error_code"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 458,
+      "scope": "_validate_bytes"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 469,
+      "scope": "_validate_bytes"
+    },
+    {
+      "call": "TelegramUpdateJobRecord",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 512,
+      "scope": "_record_from_row"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 527,
+      "scope": "_record_from_row"
+    },
+    {
+      "call": "TelegramUpdateJobLease",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 537,
+      "scope": "_lease_from_row"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 604,
+      "scope": "_lease_from_row"
+    },
+    {
+      "call": "_validate_update_id",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 631,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 717,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 733,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 793,
+      "scope": "claim_next_telegram_update_job"
+    },
+    {
+      "call": "_validate_update_id",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 805,
+      "scope": "renew_telegram_update_job_lease"
+    },
+    {
+      "call": "TelegramUpdateJobOwnershipError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 848,
+      "scope": "renew_telegram_update_job_lease"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 865,
+      "scope": "renew_telegram_update_job_lease"
+    },
+    {
+      "call": "_validate_update_id",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 876,
+      "scope": "complete_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobOwnershipError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 909,
+      "scope": "complete_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 926,
+      "scope": "complete_telegram_update_job"
+    },
+    {
+      "call": "_validate_update_id",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 939,
+      "scope": "retry_or_dead_letter_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobOwnershipError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 989,
+      "scope": "retry_or_dead_letter_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 1006,
+      "scope": "retry_or_dead_letter_telegram_update_job"
+    },
+    {
+      "call": "TelegramUpdateJobRepositoryError",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 1058,
+      "scope": "recover_expired_telegram_update_jobs"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 104,
+      "scope": "_validate_key_id"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 120,
+      "scope": "_validate_update_id"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 140,
+      "scope": "_validate_integer"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 162,
+      "scope": "_validate_bytes"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 173,
+      "scope": "_validate_bytes"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 198,
+      "scope": "_decode_base64url_key"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 220,
+      "scope": "_decode_base64url_key"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 230,
+      "scope": "_decode_base64url_key"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 258,
+      "scope": "__post_init__"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 266,
+      "scope": "__post_init__"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 286,
+      "scope": "__post_init__"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 295,
+      "scope": "__post_init__"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 326,
+      "scope": "get_key"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 378,
+      "scope": "load_telegram_update_keyring_from_env"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 383,
+      "scope": "load_telegram_update_keyring_from_env"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 396,
+      "scope": "load_telegram_update_keyring_from_env"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 404,
+      "scope": "load_telegram_update_keyring_from_env"
+    },
+    {
+      "call": "TelegramUpdateJobConfigurationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 420,
+      "scope": "load_telegram_update_keyring_from_env"
+    },
+    {
+      "call": "TelegramUpdateEncryptionKeyring",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 430,
+      "scope": "load_telegram_update_keyring_from_env"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 446,
+      "scope": "canonicalize_telegram_update"
+    },
+    {
+      "call": "_validate_update_id",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 450,
+      "scope": "canonicalize_telegram_update"
+    },
+    {
+      "call": "update.get",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 451,
+      "scope": "canonicalize_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 475,
+      "scope": "canonicalize_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 484,
+      "scope": "canonicalize_telegram_update"
+    },
+    {
+      "call": "_validate_update_id",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 500,
+      "scope": "_build_authenticated_data"
+    },
+    {
+      "call": "load_telegram_update_keyring_from_env",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 534,
+      "scope": "encrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "canonicalize_telegram_update",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 538,
+      "scope": "encrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobEncryptionError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 573,
+      "scope": "encrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobEncryptionError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 579,
+      "scope": "encrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "EncryptedTelegramUpdatePayload",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 584,
+      "scope": "encrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "_validate_update_id",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 603,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobDecryptionError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 633,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "load_telegram_update_keyring_from_env",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 640,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobDecryptionError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 649,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobDecryptionError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 671,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobDecryptionError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 676,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobDecryptionError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 693,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobDecryptionError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 701,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "update.get",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 705,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobDecryptionError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 710,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateJobServiceError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 726,
+      "scope": "generate_telegram_update_job_lock_token"
+    },
+    {
+      "call": "TelegramUpdateJobValidationError",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 765,
+      "scope": "calculate_telegram_update_retry_delay"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 323,
+      "scope": "_validar_attempt_count"
+    },
+    {
+      "call": "_validar_update_id",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 334,
+      "scope": "_extrair_update_id"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 343,
+      "scope": "_extrair_update_id"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 358,
+      "scope": "_extrair_status_banco"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 367,
+      "scope": "_extrair_status_banco"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 396,
+      "scope": "_resultado_claim"
+    },
+    {
+      "call": "TelegramUpdateClaimResult",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 400,
+      "scope": "_resultado_claim"
+    },
+    {
+      "call": "_extrair_update_id",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 401,
+      "scope": "_resultado_claim"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 425,
+      "scope": "_resultado_lifecycle"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 440,
+      "scope": "_resultado_lifecycle"
+    },
+    {
+      "call": "TelegramUpdateLifecycleResult",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 444,
+      "scope": "_resultado_lifecycle"
+    },
+    {
+      "call": "_extrair_update_id",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 445,
+      "scope": "_resultado_lifecycle"
+    },
+    {
+      "call": "_validar_update_id",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 467,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "_resultado_claim",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 532,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 553,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 571,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateFingerprintConflictError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 582,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "_resultado_claim",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 604,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "_resultado_claim",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 630,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 645,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "_resultado_claim",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 651,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 666,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "_validar_update_id",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 678,
+      "scope": "complete_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateClaimOwnershipError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 721,
+      "scope": "complete_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 738,
+      "scope": "complete_telegram_update"
+    },
+    {
+      "call": "_validar_update_id",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 751,
+      "scope": "fail_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateClaimOwnershipError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 803,
+      "scope": "fail_telegram_update"
+    },
+    {
+      "call": "TelegramUpdateReceiptRepositoryError",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 820,
+      "scope": "fail_telegram_update"
+    }
+  ],
+  "imports": [
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "level": 0,
+      "line": 21,
+      "module": "src.services.telegram_observability",
+      "names": [
+        "JsonTelegramOperationalEventSink",
+        "NoOpTelegramConversationMetrics",
+        "NoOpTelegramOperationalEventSink",
+        "TelegramConversationMetrics",
+        "TelegramOperationalEventSink",
+        "CompositeTelegramConversationMetrics",
+        "InMemoryTelegramProductiveMetrics",
+        "ProductiveTelegramConversationMetricsAdapter",
+        "SafeTelegramProductiveMetrics",
+        "SafeTelegramProductiveOperations",
+        "TelegramProductiveOperationsRecorder"
+      ]
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "level": 0,
+      "line": 35,
+      "module": "src.services.telegram_update_jobs",
+      "names": [
+        "TelegramUpdateJobConfigurationError",
+        "TelegramUpdateRunnerConfigurationError",
+        "TelegramUpdateRunnerResult",
+        "TelegramUpdateRunnerSummary",
+        "TelegramUpdateWorkerConfig",
+        "load_telegram_update_keyring_from_env",
+        "run_telegram_update_worker"
+      ]
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "level": 0,
+      "line": 535,
+      "module": "src.services.telegram_conversation_state",
+      "names": [
+        "create_postgres_telegram_webhook_conversation_bridge"
+      ]
+    },
+    {
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "level": 0,
+      "line": 7,
+      "module": "src.database.connection",
+      "names": [
+        "cursor_postgres"
+      ]
+    },
+    {
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "level": 0,
+      "line": 8,
+      "module": "src.database.connection",
+      "names": [
+        "cursor_postgres"
+      ]
+    }
+  ],
+  "safe_wiring_candidates": [
+    {
+      "call": "metrics_factory",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 569,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "event_sink_factory",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 570,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "_observable_bridge_factory_kwargs",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 589,
+      "scope": "load_telegram_processor"
+    },
+    {
+      "call": "create_production_telegram_metrics_runtime",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1434,
+      "scope": "_load_productive_telegram_processor"
+    },
+    {
+      "call": "load_telegram_processor",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1486,
+      "scope": "_load_productive_telegram_processor"
+    },
+    {
+      "call": "load_worker_config_from_env",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1536,
+      "scope": "main"
+    },
+    {
+      "call": "create_production_telegram_metrics_runtime",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1544,
+      "scope": "main"
+    },
+    {
+      "call": "_load_productive_telegram_processor",
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1548,
+      "scope": "main"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 670,
+      "scope": "enqueue_telegram_update_job"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 757,
+      "scope": "claim_next_telegram_update_job"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 822,
+      "scope": "renew_telegram_update_job_lease"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 886,
+      "scope": "complete_telegram_update_job"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 960,
+      "scope": "retry_or_dead_letter_telegram_update_job"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_jobs/repository.py",
+      "line": 1027,
+      "scope": "recover_expired_telegram_update_jobs"
+    },
+    {
+      "call": "resolved_keyring.get_key",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 547,
+      "scope": "encrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "resolved_keyring.get_key",
+      "file": "src/services/telegram_update_jobs/service.py",
+      "line": 644,
+      "scope": "decrypt_authenticated_telegram_update"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 510,
+      "scope": "claim_telegram_update"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 691,
+      "scope": "complete_telegram_update"
+    },
+    {
+      "call": "cursor_postgres",
+      "file": "src/services/telegram_update_receipts/repository.py",
+      "line": 770,
+      "scope": "fail_telegram_update"
+    }
+  ]
+}

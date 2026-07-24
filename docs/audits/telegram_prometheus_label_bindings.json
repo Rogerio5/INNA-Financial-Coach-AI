@@ -1,0 +1,256 @@
+{
+  "labels": [
+    "component",
+    "error_category",
+    "le",
+    "operation",
+    "outcome"
+  ],
+  "occurrences": [
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "component",
+      "line": 33
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "operation",
+      "line": 44
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "outcome",
+      "line": 61
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "error_category",
+      "line": 74
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "component",
+      "line": 163
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "operation",
+      "line": 164
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "outcome",
+      "line": 165
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "error_category",
+      "line": 166
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "component",
+      "line": 169
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "operation",
+      "line": 170
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "outcome",
+      "line": 171
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "operation",
+      "line": 174
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "outcome",
+      "line": 175
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "outcome",
+      "line": 179
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "error_category",
+      "line": 180
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "outcome",
+      "line": 186
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "error_category",
+      "line": 187
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "outcome",
+      "line": 191
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "error_category",
+      "line": 192
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "component",
+      "line": 195
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "operation",
+      "line": 196
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "error_category",
+      "line": 197
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "error_category",
+      "line": 240
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "component",
+      "line": 563
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "operation",
+      "line": 564
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "outcome",
+      "line": 565
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "error_category",
+      "line": 566
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "component",
+      "line": 585
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "operation",
+      "line": 586
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "outcome",
+      "line": 587
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "component",
+      "line": 598
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "operation",
+      "line": 599
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "error_category",
+      "line": 600
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "operation",
+      "line": 625
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "label": "outcome",
+      "line": 626
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "label": "le",
+      "line": 521
+    },
+    {
+      "file": "src/services/telegram_observability/prometheus_exporter.py",
+      "label": "le",
+      "line": 543
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "operation",
+      "line": 127
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "component",
+      "line": 137
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "outcome",
+      "line": 147
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "component",
+      "line": 249
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "outcome",
+      "line": 259
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "error_category",
+      "line": 166
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "operation",
+      "line": 129
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "component",
+      "line": 139
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "outcome",
+      "line": 149
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "component",
+      "line": 251
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "outcome",
+      "line": 261
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "label": "error_category",
+      "line": 168
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "contracts_file": "src/services/telegram_observability/contracts.py",
+  "constants": {
+    "ALLOWED_METRIC_OPERATIONS": {
+      "line": 8,
+      "values": "frozenset({'load_or_open_session', 'save_session', 'reload_session', 'delete_session', 'resolve_language', 'claim_update', 'process_update', 'complete_receipt', 'fail_receipt', 'rollback'})",
+      "source": "ALLOWED_METRIC_OPERATIONS = frozenset(\n    {\n        \"load_or_open_session\",\n        \"save_session\",\n        \"reload_session\",\n        \"delete_session\",\n        \"resolve_language\",\n        \"claim_update\",\n        \"process_update\",\n        \"complete_receipt\",\n        \"fail_receipt\",\n        \"rollback\",\n    }\n)"
+    },
+    "ALLOWED_METRIC_COMPONENTS": {
+      "line": 23,
+      "values": "frozenset({'bridge', 'worker', 'webhook', 'receipt', 'repository'})",
+      "source": "ALLOWED_METRIC_COMPONENTS = frozenset(\n    {\n        \"bridge\",\n        \"worker\",\n        \"webhook\",\n        \"receipt\",\n        \"repository\",\n    }\n)"
+    },
+    "ALLOWED_OUTCOMES": {
+      "line": 33,
+      "values": "frozenset({'success', 'error', 'conflict', 'recovered', 'discarded', 'skipped'})",
+      "source": "ALLOWED_OUTCOMES = frozenset(\n    {\n        \"success\",\n        \"error\",\n        \"conflict\",\n        \"recovered\",\n        \"discarded\",\n        \"skipped\",\n    }\n)"
+    },
+    "ALLOWED_ERROR_CATEGORIES": {
+      "line": 44,
+      "values": "frozenset({'configuration', 'validation', 'security', 'identity', 'persistence', 'external_service', 'optimistic_conflict', 'timeout', 'unavailable', 'unknown'})",
+      "source": "ALLOWED_ERROR_CATEGORIES = frozenset(\n    {\n        \"configuration\",\n        \"validation\",\n        \"security\",\n        \"identity\",\n        \"persistence\",\n        \"external_service\",\n        \"optimistic_conflict\",\n        \"timeout\",\n        \"unavailable\",\n        \"unknown\",\n    }\n)"
+    },
+    "ALLOWED_EVENT_LEVELS": {
+      "line": 59,
+      "values": "frozenset({'debug', 'info', 'warning', 'error', 'critical'})",
+      "source": "ALLOWED_EVENT_LEVELS = frozenset(\n    {\n        \"debug\",\n        \"info\",\n        \"warning\",\n        \"error\",\n        \"critical\",\n    }\n)"
+    }
+  },
+  "required_exports": [
+    "TelegramConversationMetricRecord",
+    "TelegramConversationMetrics",
+    "TelegramOperationalEvent",
+    "TelegramOperationalEventSink",
+    "sanitize_event_fields"
+  ],
+  "exports_found": [
+    "TelegramConversationMetricRecord",
+    "TelegramConversationMetrics",
+    "TelegramOperationalEvent",
+    "TelegramOperationalEventSink",
+    "sanitize_event_fields"
+  ],
+  "missing_constants": [],
+  "missing_exports": []
+}

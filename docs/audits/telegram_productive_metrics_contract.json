@@ -1,0 +1,235 @@
+{
+  "allowed_labels": {
+    "component": [
+      "webhook",
+      "worker",
+      "bridge",
+      "receipt",
+      "queue",
+      "repository",
+      "unknown"
+    ],
+    "error_category": [
+      "none",
+      "validation",
+      "configuration",
+      "persistence",
+      "optimistic_conflict",
+      "encryption",
+      "delivery",
+      "timeout",
+      "dependency",
+      "unknown"
+    ],
+    "operation": [
+      "process_update",
+      "claim_update",
+      "complete_receipt",
+      "fail_receipt",
+      "enqueue_update",
+      "dequeue_update",
+      "load_or_open_session",
+      "save_session",
+      "reload_session",
+      "delete_session",
+      "resolve_language",
+      "worker_cycle",
+      "unknown"
+    ],
+    "outcome": [
+      "success",
+      "error",
+      "conflict",
+      "recovered",
+      "discarded",
+      "duplicate",
+      "skipped",
+      "empty",
+      "unknown"
+    ],
+    "queue_operation": [
+      "enqueue",
+      "claim",
+      "acknowledge",
+      "fail",
+      "release",
+      "recover",
+      "unknown"
+    ],
+    "receipt_status": [
+      "claimed",
+      "completed",
+      "failed",
+      "duplicate",
+      "expired",
+      "released",
+      "unknown"
+    ],
+    "worker_result": [
+      "processed",
+      "failed",
+      "empty",
+      "stopped",
+      "max_cycles",
+      "unknown"
+    ]
+  },
+  "forbidden_labels": [
+    "user_id",
+    "telegram_user_id",
+    "chat_id",
+    "update_id",
+    "message_id",
+    "receipt_id",
+    "claim_token",
+    "lease_token",
+    "session_id",
+    "username",
+    "name",
+    "email",
+    "phone",
+    "language_text",
+    "message_text",
+    "payload",
+    "processing_state",
+    "financial_data",
+    "income",
+    "expenses",
+    "debt",
+    "score",
+    "token",
+    "secret",
+    "password",
+    "authorization",
+    "database_url",
+    "exception",
+    "exception_message",
+    "traceback"
+  ],
+  "metrics": [
+    {
+      "description": "Total de operações produtivas do canal Telegram.",
+      "labels": [
+        "component",
+        "operation",
+        "outcome",
+        "error_category"
+      ],
+      "name": "inna_telegram_operations_total",
+      "sources": [
+        "webhook",
+        "worker",
+        "bridge",
+        "receipt",
+        "queue"
+      ],
+      "type": "counter",
+      "unit": "operations"
+    },
+    {
+      "buckets": [
+        0.005,
+        0.01,
+        0.025,
+        0.05,
+        0.1,
+        0.25,
+        0.5,
+        1.0,
+        2.5,
+        5.0,
+        10.0,
+        30.0
+      ],
+      "description": "Duração das operações produtivas do Telegram.",
+      "labels": [
+        "component",
+        "operation",
+        "outcome"
+      ],
+      "name": "inna_telegram_operation_duration_seconds",
+      "type": "histogram",
+      "unit": "seconds"
+    },
+    {
+      "description": "Total de conflitos otimistas e seus resultados.",
+      "labels": [
+        "operation",
+        "outcome"
+      ],
+      "name": "inna_telegram_conflicts_total",
+      "type": "counter",
+      "unit": "conflicts"
+    },
+    {
+      "description": "Total de transições de receipts duráveis.",
+      "labels": [
+        "receipt_status",
+        "outcome",
+        "error_category"
+      ],
+      "name": "inna_telegram_receipts_total",
+      "type": "counter",
+      "unit": "receipts"
+    },
+    {
+      "description": "Total de ciclos executados pelo worker.",
+      "labels": [
+        "worker_result"
+      ],
+      "name": "inna_telegram_worker_cycles_total",
+      "type": "counter",
+      "unit": "cycles"
+    },
+    {
+      "description": "Total de updates processados pelo worker.",
+      "labels": [
+        "outcome",
+        "error_category"
+      ],
+      "name": "inna_telegram_worker_updates_total",
+      "type": "counter",
+      "unit": "updates"
+    },
+    {
+      "description": "Total de operações da fila criptografada.",
+      "labels": [
+        "queue_operation",
+        "outcome",
+        "error_category"
+      ],
+      "name": "inna_telegram_queue_operations_total",
+      "type": "counter",
+      "unit": "operations"
+    },
+    {
+      "description": "Total agregado de falhas operacionais.",
+      "labels": [
+        "component",
+        "operation",
+        "error_category"
+      ],
+      "name": "inna_telegram_failures_total",
+      "type": "counter",
+      "unit": "failures"
+    }
+  ],
+  "rules": {
+    "business_data_exported": false,
+    "duration_export_unit": "seconds",
+    "duration_input_unit": "milliseconds",
+    "dynamic_label_names": false,
+    "exception_messages_as_labels": false,
+    "exporter_failure_must_be_safe": true,
+    "free_text_as_labels": false,
+    "identifiers_as_labels": false,
+    "maximum_allowed_labels_per_metric": 4,
+    "maximum_values_per_label": 20,
+    "namespace": "inna",
+    "subsystem": "telegram",
+    "timestamps_as_labels": false,
+    "unknown_values_normalized": true
+  },
+  "scope": "telegram_productive_metrics",
+  "version": "1.0.1"
+}

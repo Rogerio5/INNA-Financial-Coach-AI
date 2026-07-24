@@ -6276,13 +6276,22 @@ Conteúdo:
             "resultado"
         )
 
+        from src.services.llm.model_registry import (
+            LLMRole,
+            get_model_for_role,
+        )
+
+        modelo_rag = get_model_for_role(
+            LLMRole.RAG
+        )
+
         etapa_gemini = executar_etapa_timeline(
             trace_id=trace_id,
             etapa="gemini_executado",
             funcao=gerar_texto_gemini,
             argumentos={
                 "prompt": prompt,
-                "modelo": "gemini-2.5-flash",
+                "role": LLMRole.RAG,
                 "temperatura": 0.2,
                 "max_tokens": 4096,
             },
@@ -6290,7 +6299,8 @@ Conteúdo:
             pergunta=pergunta,
             origem="dashboard_rag",
             metadata={
-                "modelo": "gemini-2.5-flash",
+                "modelo": modelo_rag,
+                "role": LLMRole.RAG.value,
                 "temperatura": 0.2,
                 "max_tokens": 4096,
             },
@@ -6534,6 +6544,24 @@ def carregar_documentos_upload_rag():
     )
 
 
+def buscar_contexto_versionamento_rag(
+    nome_logico,
+):
+    try:
+        from services.rag.document_repository import (
+            buscar_contexto_versionamento_documento,
+        )
+    except ImportError:
+        from src.services.rag.document_repository import (
+            buscar_contexto_versionamento_documento,
+        )
+
+    return buscar_contexto_versionamento_documento(
+        nome_logico
+    )
+
+
+
 def registrar_metadata_upload_rag(
     nome_original,
     nome_salvo,
@@ -6543,6 +6571,11 @@ def registrar_metadata_upload_rag(
     extensao,
     tamanho_bytes,
     total_chunks,
+    nome_logico=None,
+    content_hash=None,
+    versao=1,
+    documento_raiz_id=None,
+    documento_anterior_id=None,
 ):
     try:
         from services.rag.document_repository import (
@@ -6562,6 +6595,11 @@ def registrar_metadata_upload_rag(
         extensao=extensao,
         tamanho_bytes=tamanho_bytes,
         total_chunks=total_chunks,
+        nome_logico=nome_logico,
+        content_hash=content_hash,
+        versao=versao,
+        documento_raiz_id=documento_raiz_id,
+        documento_anterior_id=documento_anterior_id,
         status="processado",
         origem="dashboard_upload",
     )
@@ -6600,12 +6638,113 @@ def render_upload_documentos_rag():
         final_path = upload_dir / f"{timestamp}_{safe_name}"
 
         content_bytes = uploaded_file.getvalue()
-        final_path.write_bytes(content_bytes)
-
-        st.success(f"Documento salvo com sucesso: {final_path.name}")
 
         try:
-            preview = content_bytes.decode("utf-8", errors="ignore")
+            try:
+                from services.rag.security import (
+                    RagDocumentSecurityError,
+                    require_safe_rag_document,
+                )
+            except ImportError:
+                from src.services.rag.security import (
+                    RagDocumentSecurityError,
+                    require_safe_rag_document,
+                )
+
+            security_result = require_safe_rag_document(
+                filename=original_name,
+                content=content_bytes,
+            )
+
+            try:
+                from services.rag.versioning import (
+                    RagDocumentVersioningError,
+                    RagDuplicateDocumentError,
+                    create_document_version_from_context,
+                    normalize_logical_document_name,
+                )
+            except ImportError:
+                from src.services.rag.versioning import (
+                    RagDocumentVersioningError,
+                    RagDuplicateDocumentError,
+                    create_document_version_from_context,
+                    normalize_logical_document_name,
+                )
+
+            nome_logico = normalize_logical_document_name(
+                original_name
+            )
+
+            versioning_lookup = (
+                buscar_contexto_versionamento_rag(
+                    nome_logico
+                )
+            )
+
+            if not versioning_lookup.get("ok"):
+                st.error(
+                    "Não foi possível consultar o "
+                    "versionamento do documento."
+                )
+                return
+
+            document_version = (
+                create_document_version_from_context(
+                    filename=original_name,
+                    content_hash=(
+                        security_result.content_hash
+                    ),
+                    repository_context=(
+                        versioning_lookup.get(
+                            "contexto"
+                        )
+                    ),
+                )
+            )
+
+        except RagDuplicateDocumentError as exc:
+            st.warning(str(exc))
+            return
+
+        except RagDocumentVersioningError as exc:
+            st.error(
+                "Não foi possível determinar a "
+                f"versão do documento: {exc}"
+            )
+            return
+
+        except RagDocumentSecurityError as exc:
+            st.error(
+                "Documento rejeitado pela política "
+                f"de segurança: {exc}"
+            )
+            return
+
+        except Exception:
+            st.error(
+                "Não foi possível validar a segurança "
+                "do documento."
+            )
+            return
+
+        final_path.write_bytes(content_bytes)
+
+        st.success(
+            f"Documento salvo com sucesso: "
+            f"{final_path.name}"
+        )
+
+        st.caption(
+            "Validação concluída | "
+            f"{security_result.size_bytes} bytes | "
+            f"SHA-256: "
+            f"{security_result.content_hash[:16]}... | "
+            f"Documento: {document_version.logical_name} | "
+            f"Versão: {document_version.version}"
+        )
+
+        try:
+            preview = content_bytes.decode("utf-8")
             preview_limpo = limpar_texto_documento_rag(preview)
 
             st.markdown("### Prévia do conteúdo")
@@ -6626,6 +6765,21 @@ def render_upload_documentos_rag():
                 extensao=suffix,
                 tamanho_bytes=len(content_bytes),
                 total_chunks=len(chunks),
+                nome_logico=(
+                    document_version.logical_name
+                ),
+                content_hash=(
+                    document_version.content_hash
+                ),
+                versao=(
+                    document_version.version
+                ),
+                documento_raiz_id=(
+                    document_version.root_document_id
+                ),
+                documento_anterior_id=(
+                    document_version.previous_document_id
+                ),
             )
 
             if registro_db.get("ok"):

@@ -2,6 +2,8 @@ import os
 from dataclasses import dataclass
 from dotenv import load_dotenv
 
+from src.services.llm.model_registry import DEFAULT_TEXT_MODEL
+
 
 load_dotenv()
 
@@ -27,7 +29,7 @@ class Settings:
     INNA_MOCK_MODE: bool = get_bool_env("INNA_MOCK_MODE", True)
 
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
-    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", DEFAULT_TEXT_MODEL)
 
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",

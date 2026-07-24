@@ -54,3 +54,8 @@ src/backups_dashboard_antigos/
 src/**/*backup*.py
 src/**/*antes_*.py
 src/dashboard_quebrado_*.py
+
+# Python compiled artifacts
+
+# Relatórios locais do HITL E2E
+artifacts/hitl-e2e/

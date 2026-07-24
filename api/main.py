@@ -1,9 +1,20 @@
+from api.human_review_routes import (
+    router as human_review_router,
+)
+
+from api.telegram_operational_status import router as telegram_operational_router
 from api.telegram_webhook import router as telegram_router
+from api.security import (
+    TrustedRequestContext,
+    require_trusted_request_context,
+)
 from api.resend_webhook import router as resend_router
 import time
+import re
+from typing import Annotated
 
 from src.audit_logger import record_event
-from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi import Depends, FastAPI, HTTPException, Query, Response
 from pydantic import BaseModel
 from api.schemas import DiagnosticoItem, EmailRequest, FeedbackInput, FeedbackItem, FeedbackResponse, FinancialInput, FinancialResponse
 
@@ -18,12 +29,19 @@ from src.rag_engine import (
 from src.pdf_report import gerar_relatorio_pdf
 from src.email_sender import send_diagnostico_email
 from src.interaction_logger import record_interaction
+from src.services.financial_diagnosis import (
+    FinancialDiagnosisIdempotencyConflictError,
+    FinancialDiagnosisServiceError,
+    FinancialDiagnosisValidationError,
+    TrustedDiagnosisIdentityError,
+    gerar_chave_idempotencia,
+    persistir_diagnostico_financeiro,
+)
 from src.repository import (
     get_diagnostico_by_id_db,
     list_diagnosticos_by_nome_db,
     list_diagnosticos_db,
     list_feedbacks_db,
-    save_diagnostico_db,
     save_feedback_db,
 )
 
@@ -291,57 +309,399 @@ def root():
 
 
 
-@app.get("/health")
+@app.get(
+    "/health",
+    tags=["Operational Status"],
+    summary="Liveness da API INNA",
+    responses={
+        200: {
+            "description": (
+                "Processo da API está ativo."
+            ),
+        },
+        503: {
+            "description": (
+                "Processo indisponível."
+            ),
+        },
+    },
+)
 def health_check():
-    return {
-        "status": "ok",
-        "app": "INNA Financial Coach AI",
-        "message": "API online e pronta para receber requisições."
-    }
+    from api.telegram_operational_status import (
+        create_process_health_starlette_response,
+    )
+
+    return (
+        create_process_health_starlette_response()
+    )
 
 
-@app.post("/diagnostico", response_model=FinancialResponse)
-def gerar_diagnostico(payload: FinancialInput):
+def _gerar_e_persistir_diagnostico_canal(
+    *,
+    payload: FinancialInput,
+    trusted_context: TrustedRequestContext,
+    canal: str,
+    origem_evento: str,
+    origem_idempotencia: str,
+    evento: str,
+) -> dict:
+    """
+    Núcleo compartilhado entre canais internos
+    autenticados.
+
+    Identidade e request_id permanecem separados
+    do conteúdo financeiro.
+    """
     inicio = time.time()
+
     payload_dict = payload.model_dump()
 
-    diagnosis = build_financial_diagnosis(payload_dict)
-    diagnosis["diagnostico"] = build_localized_diagnosis_text(payload_dict, diagnosis)
-    ai_plan = generate_ai_plan(payload_dict, diagnosis)
+    diagnosis = build_financial_diagnosis(
+        payload_dict
+    )
+
+    diagnosis[
+        "diagnostico"
+    ] = build_localized_diagnosis_text(
+        payload_dict,
+        diagnosis,
+    )
+
+    ai_plan = generate_ai_plan(
+        payload_dict,
+        diagnosis,
+    )
 
     response = {
         **diagnosis,
         "nome": payload_dict["nome"],
-        "idioma": payload_dict.get("idioma", "pt"),
-        "moeda": payload_dict.get("moeda", "BRL"),
-        "simbolo_moeda": payload_dict.get("simbolo_moeda", "R$"),
+        "idioma": payload_dict.get(
+            "idioma",
+            "pt",
+        ),
+        "moeda": payload_dict.get(
+            "moeda",
+            "BRL",
+        ),
+        "simbolo_moeda": payload_dict.get(
+            "simbolo_moeda",
+            "R$",
+        ),
         "plano_30_dias": ai_plan,
     }
 
-    diagnostico_id = save_diagnostico_db(payload_dict, response)
-    response["id"] = diagnostico_id
+    persistence_payload = {
+        "nome": payload_dict["nome"],
+        "renda_mensal": payload_dict[
+            "renda_mensal"
+        ],
+        "gastos_fixos": payload_dict[
+            "gastos_fixos"
+        ],
+        "gastos_variaveis": payload_dict[
+            "gastos_variaveis"
+        ],
+        "dividas_mensais": payload_dict[
+            "dividas_mensais"
+        ],
+        "reserva_atual": payload_dict[
+            "reserva_atual"
+        ],
+        "objetivo": payload_dict.get(
+            "objetivo"
+        ),
+        "idioma": response["idioma"],
+        "moeda": response["moeda"],
+        "simbolo_moeda": response[
+            "simbolo_moeda"
+        ],
+        "saldo_estimado": response[
+            "saldo_estimado"
+        ],
+        (
+            "comprometimento_"
+            "renda_percentual"
+        ): response[
+            (
+                "comprometimento_"
+                "renda_percentual"
+            )
+        ],
+        "meses_reserva_estimados": (
+            response[
+                "meses_reserva_estimados"
+            ]
+        ),
+        "score_financeiro": response[
+            "score_financeiro"
+        ],
+        "nivel_risco": response[
+            "nivel_risco"
+        ],
+        "diagnostico": response[
+            "diagnostico"
+        ],
+        "plano_30_dias": response[
+            "plano_30_dias"
+        ],
+    }
+
+    idempotency_key = (
+        gerar_chave_idempotencia(
+            origem=origem_idempotencia,
+            request_id=(
+                trusted_context.request_id
+            ),
+        )
+    )
+
+    try:
+        persistence = (
+            persistir_diagnostico_financeiro(
+                usuario_id_confiavel=(
+                    trusted_context.user_id
+                ),
+                idempotency_key=(
+                    idempotency_key
+                ),
+                diagnostico=(
+                    persistence_payload
+                ),
+            )
+        )
+
+    except (
+        FinancialDiagnosisIdempotencyConflictError
+    ):
+        safe_record_event(
+            canal=canal,
+            usuario=payload_dict.get(
+                "nome"
+            ),
+            idioma=payload_dict.get(
+                "idioma"
+            ),
+            moeda=payload_dict.get(
+                "moeda"
+            ),
+            status="conflict",
+            metadata={
+                "evento": (
+                    f"{evento}_idempotency_conflict"
+                ),
+                "origem": origem_evento,
+                "codigo": (
+                    "idempotency_conflict"
+                ),
+                "identity_source": (
+                    "signed_internal_request"
+                ),
+                "tempo_resposta_segundos": (
+                    time.time() - inicio
+                ),
+            },
+        )
+
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "A requisição já foi processada "
+                "com outro conteúdo."
+            ),
+        ) from None
+
+    except (
+        FinancialDiagnosisValidationError,
+        TrustedDiagnosisIdentityError,
+    ):
+        safe_record_event(
+            canal=canal,
+            usuario=payload_dict.get(
+                "nome"
+            ),
+            idioma=payload_dict.get(
+                "idioma"
+            ),
+            moeda=payload_dict.get(
+                "moeda"
+            ),
+            status="error",
+            metadata={
+                "evento": (
+                    f"{evento}_validation_error"
+                ),
+                "origem": origem_evento,
+                "codigo": (
+                    "persistence_validation_error"
+                ),
+                "identity_source": (
+                    "signed_internal_request"
+                ),
+                "tempo_resposta_segundos": (
+                    time.time() - inicio
+                ),
+            },
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Não foi possível validar o "
+                "diagnóstico gerado."
+            ),
+        ) from None
+
+    except FinancialDiagnosisServiceError:
+        safe_record_event(
+            canal=canal,
+            usuario=payload_dict.get(
+                "nome"
+            ),
+            idioma=payload_dict.get(
+                "idioma"
+            ),
+            moeda=payload_dict.get(
+                "moeda"
+            ),
+            status="error",
+            metadata={
+                "evento": (
+                    f"{evento}_persistence_error"
+                ),
+                "origem": origem_evento,
+                "codigo": (
+                    "persistence_unavailable"
+                ),
+                "identity_source": (
+                    "signed_internal_request"
+                ),
+                "tempo_resposta_segundos": (
+                    time.time() - inicio
+                ),
+            },
+        )
+
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "A persistência do diagnóstico "
+                "está temporariamente indisponível."
+            ),
+        ) from None
+
+    response["id"] = persistence.id
 
     safe_record_event(
-        canal="web-app",
-        usuario=payload_dict.get("nome"),
-        idioma=payload_dict.get("idioma"),
-        moeda=payload_dict.get("moeda"),
+        canal=canal,
+        usuario=payload_dict.get(
+            "nome"
+        ),
+        idioma=payload_dict.get(
+            "idioma"
+        ),
+        moeda=payload_dict.get(
+            "moeda"
+        ),
         status="success",
-        diagnostico_id=diagnostico_id,
-        pergunta=payload_dict.get("objetivo"),
-        resposta=response.get("diagnostico"),
+        diagnostico_id=(
+            persistence.id
+        ),
         metadata={
-            "evento": "diagnostico_web_app",
-            "origem": "streamlit",
-            "score_financeiro": response.get("score_financeiro"),
-            "nivel_risco": response.get("nivel_risco"),
-            "saldo_estimado": response.get("saldo_estimado"),
-            "simbolo_moeda": payload_dict.get("simbolo_moeda"),
-            "tempo_resposta_segundos": time.time() - inicio,
+            "evento": evento,
+            "origem": origem_evento,
+            "identity_source": (
+                "signed_internal_request"
+            ),
+            "persistence_status": (
+                persistence.status
+            ),
+            "created": persistence.created,
+            "score_financeiro": (
+                response.get(
+                    "score_financeiro"
+                )
+            ),
+            "nivel_risco": (
+                response.get(
+                    "nivel_risco"
+                )
+            ),
+            "tempo_resposta_segundos": (
+                time.time() - inicio
+            ),
         },
     )
 
     return response
+
+
+@app.post(
+    "/diagnostico",
+    response_model=FinancialResponse,
+)
+def gerar_diagnostico(
+    payload: FinancialInput,
+    trusted_context: Annotated[
+        TrustedRequestContext,
+        Depends(
+            require_trusted_request_context
+        ),
+    ],
+):
+    return _gerar_e_persistir_diagnostico_canal(
+        payload=payload,
+        trusted_context=trusted_context,
+        canal="web-app",
+        origem_evento="streamlit",
+        origem_idempotencia="web-app",
+        evento="diagnostico_web_app",
+    )
+
+
+@app.post(
+    "/internal/telegram/diagnostico",
+    response_model=FinancialResponse,
+)
+def gerar_diagnostico_telegram_interno(
+    payload: FinancialInput,
+    trusted_context: Annotated[
+        TrustedRequestContext,
+        Depends(
+            require_trusted_request_context
+        ),
+    ],
+):
+    if not re.fullmatch(
+        r"telegram:-?[1-9][0-9]*",
+        trusted_context.user_id,
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Identidade Telegram inválida."
+            ),
+        )
+
+    if not re.fullmatch(
+        r"telegram-update:[0-9]+",
+        trusted_context.request_id,
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Identificador do update "
+                "Telegram inválido."
+            ),
+        )
+
+    return _gerar_e_persistir_diagnostico_canal(
+        payload=payload,
+        trusted_context=trusted_context,
+        canal="telegram",
+        origem_evento="telegram_polling",
+        origem_idempotencia="telegram",
+        evento="diagnostico_telegram_polling",
+    )
 
 
 
@@ -758,6 +1118,10 @@ def rag_ask(payload: RagAskRequest):
                 "evento": "rag_ask",
                 "origem": "api",
                 "modo": result.get("modo"),
+                "trace_id": result.get("trace_id"),
+                "retrieval_trace": result.get(
+                    "retrieval_trace"
+                ),
                 "fontes": result.get("fontes", []),
             },
         )
@@ -782,3 +1146,8 @@ def rag_ask(payload: RagAskRequest):
 
         raise HTTPException(status_code=500, detail=str(exc))
 
+app.include_router(telegram_operational_router)
+
+app.include_router(
+    human_review_router
+)

@@ -1,0 +1,65 @@
+{
+  "allowed_levels": {
+    "critical": 50,
+    "debug": 10,
+    "error": 40,
+    "info": 20,
+    "warning": 30
+  },
+  "canonical_example": {
+    "component": "webhook",
+    "event": "telegram_session_conflict_detected",
+    "fields": {
+      "conflict_recovered": false,
+      "error_category": "optimistic_conflict",
+      "operation": "save_session"
+    },
+    "level": "warning",
+    "outcome": "conflict",
+    "timestamp": "2026-07-20T03:15:00.000Z"
+  },
+  "failure_policy": {
+    "invalid_event": "raise TypeError ou ValueError antes de serializar",
+    "invalid_fields": "sanitizar e converter somente tipos seguros",
+    "logger_failure": "não alterar o fluxo principal quando usado por bridge/webhook",
+    "nan_or_infinity": "substituir por marcador seguro",
+    "non_serializable_value": "substituir por marcador seguro",
+    "sensitive_data": "remover ou redigir antes da serialização"
+  },
+  "forbidden_fields": [
+    "authorization",
+    "chat_id",
+    "database_url",
+    "exception_message",
+    "financial_data",
+    "message_text",
+    "password",
+    "payload",
+    "processing_state",
+    "secret",
+    "telegram_user_id",
+    "token",
+    "traceback"
+  ],
+  "required_fields": [
+    "timestamp",
+    "level",
+    "event",
+    "component",
+    "outcome",
+    "fields"
+  ],
+  "schema_version": 1,
+  "serialization_rules": {
+    "allow_nan": false,
+    "ensure_ascii": false,
+    "one_line_per_event": true,
+    "separators": [
+      ",",
+      ":"
+    ],
+    "sort_keys": true,
+    "timestamp_format": "ISO-8601 com sufixo Z e precisão de milissegundos",
+    "timezone": "UTC"
+  }
+}

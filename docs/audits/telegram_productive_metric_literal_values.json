@@ -1,0 +1,1019 @@
+{
+  "values": [
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 90,
+      "value": "A configuração do worker Telegram é inválida."
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 50,
+      "value": "API única para métricas produtivas específicas\n    do worker, receipts e fila.\n\n    Não recebe IDs, tokens, mensagens, payloads,\n    estados financeiros ou exceções livres."
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1205,
+      "value": "Callback único do runner.\n\n    Logging e métricas são isolados: falhas da\n    telemetria nunca interrompem o processamento."
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1425,
+      "value": "Compõe o processador produtivo com:\n\n    - structured logging;\n    - registry produtivo único por processo;\n    - compatibilidade com loaders e mocks antigos."
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 522,
+      "value": "Compõe o processador produtivo do worker.\n\n    Uma única bridge, um único coletor de métricas e um único event sink\n    são criados durante a inicialização do processo e reutilizados por\n    todos os jobs desta instância.\n\n    O runtime PostgreSQL permanece lazy: a composição não abre conexão\n    antecipadamente."
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1688,
+      "value": "ENV_RECOVERY_BATCH_SIZE"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1689,
+      "value": "ENV_RECOVERY_INTERVAL_SECONDS"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1690,
+      "value": "ENV_RETRY_BASE_DELAY_SECONDS"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1691,
+      "value": "ENV_RETRY_MAX_DELAY_SECONDS"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 314,
+      "value": "ERROR"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1693,
+      "value": "EXIT_CONFIGURATION_ERROR"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1696,
+      "value": "EXIT_RUNTIME_ERROR"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1398,
+      "value": "Executa o worker durável da fila Telegram da INNA."
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 57,
+      "value": "INNA_TELEGRAM_WORKER_IDLE_SLEEP_SECONDS"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 53,
+      "value": "INNA_TELEGRAM_WORKER_LEASE_SECONDS"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 71,
+      "value": "INNA_TELEGRAM_WORKER_RECOVERY_BATCH_SIZE"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 66,
+      "value": "INNA_TELEGRAM_WORKER_RECOVERY_INTERVAL_SECONDS"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 76,
+      "value": "INNA_TELEGRAM_WORKER_RETRY_BASE_DELAY_SECONDS"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 81,
+      "value": "INNA_TELEGRAM_WORKER_RETRY_MAX_DELAY_SECONDS"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 61,
+      "value": "INNA_TELEGRAM_WORKER_UNAVAILABLE_SLEEP_SECONDS"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 250,
+      "value": "Impede que falhas da telemetria interrompam\n    worker, receipts ou fila."
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 358,
+      "value": "Mantém uma única instância do registry produtivo\n    durante a vida do processo do worker."
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 543,
+      "value": "O processador Telegram é inválido."
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1293,
+      "value": "O stop_event do worker é inválido."
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 254,
+      "value": "Retorna os argumentos de observabilidade suportados pela factory.\n\n    Factories legadas e doubles de teste sem parâmetros recebem um\n    dicionário vazio. A chamada produtiva da factory permanece dentro\n    de load_telegram_processor."
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 933,
+      "value": "claimed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 939,
+      "value": "claimed"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 90,
+      "value": "claimed"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 136,
+      "value": "claimed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 774,
+      "value": "completed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 831,
+      "value": "completed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 906,
+      "value": "completed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 908,
+      "value": "completed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1049,
+      "value": "completed"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 91,
+      "value": "completed"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 137,
+      "value": "completed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 926,
+      "value": "conflict"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 934,
+      "value": "conflict"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 951,
+      "value": "conflict"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1031,
+      "value": "conflict"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1085,
+      "value": "conflict"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1100,
+      "value": "conflict"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 65,
+      "value": "conflict"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 593,
+      "value": "conflict"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 609,
+      "value": "conflict"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 95,
+      "value": "conflict"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 133,
+      "value": "conflict"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 183,
+      "value": "conflict"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 783,
+      "value": "consistency_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 842,
+      "value": "consistency_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 931,
+      "value": "consistency_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 946,
+      "value": "consistency_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 953,
+      "value": "consistency_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1033,
+      "value": "consistency_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1091,
+      "value": "consistency_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1102,
+      "value": "consistency_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 776,
+      "value": "dead_lettered"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 839,
+      "value": "dead_lettered"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 915,
+      "value": "dead_lettered"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1071,
+      "value": "dead_lettered"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 51,
+      "value": "dequeue_update"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 187,
+      "value": "dequeue_update"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 188,
+      "value": "dequeue_update"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 190,
+      "value": "dequeue_update"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 191,
+      "value": "dequeue_update"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 827,
+      "value": "duplicate"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 901,
+      "value": "duplicate"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 902,
+      "value": "duplicate"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1053,
+      "value": "duplicate"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1064,
+      "value": "duplicate"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1075,
+      "value": "duplicate"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 68,
+      "value": "duplicate"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 93,
+      "value": "duplicate"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 765,
+      "value": "empty"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 70,
+      "value": "empty"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 114,
+      "value": "empty"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 101,
+      "value": "enqueue"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 186,
+      "value": "enqueue"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 50,
+      "value": "enqueue_update"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 186,
+      "value": "enqueue_update"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 845,
+      "value": "error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 919,
+      "value": "error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 940,
+      "value": "error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 954,
+      "value": "error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1008,
+      "value": "error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1034,
+      "value": "error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1103,
+      "value": "error"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 64,
+      "value": "error"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 592,
+      "value": "error"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 94,
+      "value": "error"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 132,
+      "value": "error"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 182,
+      "value": "error"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 74,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 166,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 180,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 187,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 192,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 197,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 240,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 566,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 600,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 87,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 102,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 125,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 149,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 175,
+      "value": "error_category"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 202,
+      "value": "error_category"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 685,
+      "value": "error_code"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1561,
+      "value": "error_code"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1575,
+      "value": "error_code"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1647,
+      "value": "error_code"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1661,
+      "value": "error_code"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 153,
+      "value": "exception"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1073,
+      "value": "fail"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1097,
+      "value": "fail"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 104,
+      "value": "fail"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 189,
+      "value": "fail"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 49,
+      "value": "fail_receipt"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 138,
+      "value": "fail_receipt"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 189,
+      "value": "fail_receipt"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 785,
+      "value": "failed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 918,
+      "value": "failed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 949,
+      "value": "failed"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 92,
+      "value": "failed"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 113,
+      "value": "failed"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 138,
+      "value": "failed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 668,
+      "value": "idle"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 764,
+      "value": "idle"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 820,
+      "value": "idle"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 880,
+      "value": "idle"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 987,
+      "value": "idle"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 194,
+      "value": "inna_telegram_failures_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 596,
+      "value": "inna_telegram_failures_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 98,
+      "value": "inna_telegram_failures_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 145,
+      "value": "inna_telegram_failures_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 198,
+      "value": "inna_telegram_failures_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 189,
+      "value": "inna_telegram_queue_operations_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 169,
+      "value": "inna_telegram_queue_operations_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 182,
+      "value": "inna_telegram_worker_cycles_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 66,
+      "value": "inna_telegram_worker_cycles_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 185,
+      "value": "inna_telegram_worker_updates_total"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 84,
+      "value": "inna_telegram_worker_updates_total"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1699,
+      "value": "load_telegram_processor"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1700,
+      "value": "load_worker_config_from_env"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 46,
+      "value": "process_update"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 101,
+      "value": "process_update"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 771,
+      "value": "processed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 778,
+      "value": "processed"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 112,
+      "value": "processed"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 142,
+      "value": "processing_state"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 39,
+      "value": "queue"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 200,
+      "value": "queue"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 99,
+      "value": "queue_operation"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 190,
+      "value": "queue_operation"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 173,
+      "value": "queue_operation"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 38,
+      "value": "receipt"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 147,
+      "value": "receipt"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1006,
+      "value": "recover"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 106,
+      "value": "recover"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 191,
+      "value": "recover"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 66,
+      "value": "recovered"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 610,
+      "value": "recovered"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 616,
+      "value": "recovered"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 768,
+      "value": "recovery"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 821,
+      "value": "recovery"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 881,
+      "value": "recovery"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1004,
+      "value": "recovery"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1266,
+      "value": "recovery_batch_size"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1262,
+      "value": "recovery_interval_seconds"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1269,
+      "value": "retry_base_delay_seconds"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1273,
+      "value": "retry_max_delay_seconds"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 775,
+      "value": "retry_scheduled"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 838,
+      "value": "retry_scheduled"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 914,
+      "value": "retry_scheduled"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1060,
+      "value": "retry_scheduled"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1395,
+      "value": "run_telegram_update_worker"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 69,
+      "value": "skipped"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 833,
+      "value": "success"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 909,
+      "value": "success"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1010,
+      "value": "success"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1023,
+      "value": "success"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1055,
+      "value": "success"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1066,
+      "value": "success"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1077,
+      "value": "success"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 63,
+      "value": "success"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1562,
+      "value": "telegram.worker_configuration_invalid"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1648,
+      "value": "telegram.worker_configuration_invalid"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1576,
+      "value": "telegram.worker_initialization_failed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1662,
+      "value": "telegram.worker_runtime_failed"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1559,
+      "value": "telegram_worker_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1573,
+      "value": "telegram_worker_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1645,
+      "value": "telegram_worker_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1659,
+      "value": "telegram_worker_error"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 672,
+      "value": "telegram_worker_result"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1599,
+      "value": "telegram_worker_started"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1631,
+      "value": "telegram_worker_stopped"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "line": 1242,
+      "value": "telegram_worker_summary"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 36,
+      "value": "worker"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 100,
+      "value": "worker"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 57,
+      "value": "worker_cycle"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 110,
+      "value": "worker_result"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_metrics.py",
+      "line": 183,
+      "value": "worker_result"
+    },
+    {
+      "file": "src/services/telegram_observability/productive_operations.py",
+      "line": 68,
+      "value": "worker_result"
+    }
+  ]
+}

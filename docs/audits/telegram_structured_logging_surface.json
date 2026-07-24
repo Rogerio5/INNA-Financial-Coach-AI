@@ -1,0 +1,270 @@
+{
+  "files": [
+    "api/telegram_webhook.py",
+    "src/channels/telegram_update_worker.py",
+    "src/services/telegram_observability/events.py",
+    "src/services/telegram_observability/contracts.py",
+    "src/services/telegram_conversation_state/webhook_bridge.py"
+  ],
+  "logging_imports": [],
+  "logger_definitions": [],
+  "logging_calls": [],
+  "print_calls": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "send_telegram_message",
+      "line": 760,
+      "name": "print",
+      "source": "print(\"TELEGRAM_BOT_TOKEN não configurado.\")"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "safe_record_telegram_event",
+      "line": 752,
+      "name": "print",
+      "source": "print(\n            \"[telegram-event-log] \"\n            \"Falha segura ao registrar evento.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1729,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Update inválido descartado.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 2066,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura ao processar atualização.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_fail_claimed_telegram_update_safely",
+      "line": 2095,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura ao atualizar receipt.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_fail_claimed_telegram_update_safely",
+      "line": 2101,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura ao atualizar receipt.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 2127,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura no worker Telegram.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 2149,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura ao concluir receipt.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 2159,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura ao concluir receipt.\"\n        )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "_emit_event",
+      "line": 427,
+      "name": "print",
+      "source": "print(\n        serialized,\n        file=stream,\n        flush=True,\n    )"
+    }
+  ],
+  "event_emitters": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "send_telegram_message",
+      "line": 760,
+      "name": "print",
+      "source": "print(\"TELEGRAM_BOT_TOKEN não configurado.\")"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "safe_record_telegram_event",
+      "line": 752,
+      "name": "print",
+      "source": "print(\n            \"[telegram-event-log] \"\n            \"Falha segura ao registrar evento.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 1729,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Update inválido descartado.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_process_telegram_update_core",
+      "line": 2066,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura ao processar atualização.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_fail_claimed_telegram_update_safely",
+      "line": 2095,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura ao atualizar receipt.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "_fail_claimed_telegram_update_safely",
+      "line": 2101,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura ao atualizar receipt.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 2127,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura no worker Telegram.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 2149,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura ao concluir receipt.\"\n        )"
+    },
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "process_claimed_telegram_update",
+      "line": 2159,
+      "name": "print",
+      "source": "print(\n            \"[telegram-webhook] \"\n            \"Falha segura ao concluir receipt.\"\n        )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "_emit_event",
+      "line": 427,
+      "name": "print",
+      "source": "print(\n        serialized,\n        file=stream,\n        flush=True,\n    )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "emit_runner_result",
+      "line": 448,
+      "name": "_emit_event",
+      "source": "_emit_event(\n        \"telegram_worker_result\",\n        result.to_safe_dict(),\n        stream=stream,\n    )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "emit_runner_summary",
+      "line": 460,
+      "name": "_emit_event",
+      "source": "_emit_event(\n        \"telegram_worker_summary\",\n        summary.to_safe_dict(),\n        stream=stream,\n    )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 801,
+      "name": "emit_runner_summary",
+      "source": "emit_runner_summary(\n        summary,\n        stream=resolved_stdout,\n    )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 724,
+      "name": "_emit_event",
+      "source": "_emit_event(\n            \"telegram_worker_started\",\n            _config_to_safe_dict(\n                config\n            ),\n            stream=resolved_stdout,\n        )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 684,
+      "name": "_emit_event",
+      "source": "_emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"configuration_invalid\"\n                ),\n            },\n            stream=resolved_stderr,\n        )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 698,
+      "name": "_emit_event",
+      "source": "_emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"initialization_failed\"\n                ),\n            },\n            stream=resolved_stderr,\n        )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 755,
+      "name": "_emit_event",
+      "source": "_emit_event(\n            \"telegram_worker_stopped\",\n            {\n                \"reason\": \"keyboard_interrupt\",\n            },\n            stream=resolved_stdout,\n        )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 769,
+      "name": "_emit_event",
+      "source": "_emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"configuration_invalid\"\n                ),\n            },\n            stream=resolved_stderr,\n        )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 783,
+      "name": "_emit_event",
+      "source": "_emit_event(\n            \"telegram_worker_error\",\n            {\n                \"error_code\": (\n                    \"telegram.worker_\"\n                    \"runtime_failed\"\n                ),\n            },\n            stream=resolved_stderr,\n        )"
+    },
+    {
+      "file": "src/channels/telegram_update_worker.py",
+      "owner": "main",
+      "line": 739,
+      "name": "emit_runner_result",
+      "source": "emit_runner_result(\n                        result,\n                        stream=(\n                            resolved_stdout\n                        ),\n                    )"
+    }
+  ],
+  "stdout_writes": [],
+  "stderr_writes": [],
+  "operational_event_sinks": [
+    {
+      "file": "src/services/telegram_observability/events.py",
+      "name": "NoOpTelegramOperationalEventSink",
+      "line_start": 10,
+      "line_end": 21,
+      "source": "class NoOpTelegramOperationalEventSink:\n    \"\"\"\n    Sink padrão sem saída.\n    \"\"\"\n\n    __slots__ = ()\n\n    def emit(\n        self,\n        event: TelegramOperationalEvent,\n    ) -> None:\n        del event"
+    },
+    {
+      "file": "src/services/telegram_observability/events.py",
+      "name": "InMemoryTelegramOperationalEventSink",
+      "line_start": 24,
+      "line_end": 93,
+      "source": "class InMemoryTelegramOperationalEventSink:\n    \"\"\"\n    Armazena eventos sanitizados para testes.\n    \"\"\"\n\n    def __init__(self) -> None:\n        self._events: list[\n            TelegramOperationalEvent\n        ] = []\n\n        self._lock = RLock()\n\n    def emit(\n        self,\n        event: TelegramOperationalEvent,\n    ) -> None:\n        if not isinstance(\n            event,\n            TelegramOperationalEvent,\n        ):\n            raise TypeError(\n                \"event deve ser TelegramOperationalEvent.\"\n            )\n\n        with self._lock:\n            self._events.append(event)\n\n    def snapshot(\n        self,\n    ) -> tuple[\n        TelegramOperationalEvent,\n        ...,\n    ]:\n        with self._lock:\n            return tuple(\n                self._events\n            )\n\n    def clear(self) -> None:\n        with self._lock:\n            self._events.clear()\n\n    def count(\n        self,\n        *,\n        name: str | None = None,\n        component: str | None = None,\n        outcome: str | None = None,\n        level: str | None = None,\n    ) -> int:\n        return sum(\n            1\n            for event in self.snapshot()\n            if (\n                name is None\n                or event.name == name\n            )\n            and (\n                component is None\n                or event.component == component\n            )\n            and (\n                outcome is None\n                or event.outcome == outcome\n            )\n            and (\n                level is None\n                or event.level == level\n            )\n        )"
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "name": "TelegramOperationalEvent",
+      "line_start": 205,
+      "line_end": 273,
+      "source": "class TelegramOperationalEvent:\n    name: str\n    level: str\n    component: str\n    outcome: str\n    fields: Mapping[str, object] = field(\n        default_factory=dict\n    )\n\n    def __post_init__(self) -> None:\n        name = str(\n            self.name\n        ).strip()\n\n        if not name:\n            raise ValueError(\n                \"name não pode ser vazio.\"\n            )\n\n        if not name.startswith(\n            \"telegram_\"\n        ):\n            raise ValueError(\n                \"Eventos Telegram devem começar com telegram_.\"\n            )\n\n        object.__setattr__(\n            self,\n            \"name\",\n            name,\n        )\n\n        object.__setattr__(\n            self,\n            \"level\",\n            _validate_choice(\n                field_name=\"level\",\n                value=self.level,\n                allowed=ALLOWED_EVENT_LEVELS,\n            ),\n        )\n\n        object.__setattr__(\n            self,\n            \"component\",\n            _validate_choice(\n                field_name=\"component\",\n                value=self.component,\n                allowed=ALLOWED_METRIC_COMPONENTS,\n            ),\n        )\n\n        object.__setattr__(\n            self,\n            \"outcome\",\n            _validate_choice(\n                field_name=\"outcome\",\n                value=self.outcome,\n                allowed=ALLOWED_OUTCOMES,\n            ),\n        )\n\n        object.__setattr__(\n            self,\n            \"fields\",\n            MappingProxyType(\n                dict(self.fields)\n            ),\n        )"
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "name": "TelegramOperationalEventSink",
+      "line_start": 288,
+      "line_end": 295,
+      "source": "class TelegramOperationalEventSink(\n    Protocol\n):\n    def emit(\n        self,\n        event: TelegramOperationalEvent,\n    ) -> None:\n        \"\"\"Emite um evento operacional sanitizado.\"\"\""
+    }
+  ],
+  "sensitive_candidates": [
+    {
+      "file": "api/telegram_webhook.py",
+      "owner": "send_telegram_message",
+      "line": 760,
+      "name": "print",
+      "source": "print(\"TELEGRAM_BOT_TOKEN não configurado.\")",
+      "terms": [
+        "token"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+{
+  "contracts": [
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "name": "TelegramConversationMetricRecord",
+      "line_start": 116,
+      "line_end": 198,
+      "bases": [],
+      "source": "class TelegramConversationMetricRecord:\n    operation: str\n    component: str\n    outcome: str\n    duration_ms: float\n    error_category: str | None = None\n    conflict_recovered: bool | None = None\n\n    def __post_init__(self) -> None:\n        object.__setattr__(\n            self,\n            \"operation\",\n            _validate_choice(\n                field_name=\"operation\",\n                value=self.operation,\n                allowed=ALLOWED_METRIC_OPERATIONS,\n            ),\n        )\n\n        object.__setattr__(\n            self,\n            \"component\",\n            _validate_choice(\n                field_name=\"component\",\n                value=self.component,\n                allowed=ALLOWED_METRIC_COMPONENTS,\n            ),\n        )\n\n        object.__setattr__(\n            self,\n            \"outcome\",\n            _validate_choice(\n                field_name=\"outcome\",\n                value=self.outcome,\n                allowed=ALLOWED_OUTCOMES,\n            ),\n        )\n\n        object.__setattr__(\n            self,\n            \"duration_ms\",\n            _validate_duration(\n                self.duration_ms\n            ),\n        )\n\n        if self.error_category is not None:\n            object.__setattr__(\n                self,\n                \"error_category\",\n                _validate_choice(\n                    field_name=\"error_category\",\n                    value=self.error_category,\n                    allowed=ALLOWED_ERROR_CATEGORIES,\n                ),\n            )\n\n        if (\n            self.outcome\n            in {\n                \"error\",\n                \"conflict\",\n            }\n            and self.error_category is None\n        ):\n            raise ValueError(\n                \"error_category é obrigatória \"\n                \"para outcomes error ou conflict.\"\n            )\n\n        if (\n            self.conflict_recovered is not None\n            and self.outcome\n            not in {\n                \"conflict\",\n                \"recovered\",\n            }\n        ):\n            raise ValueError(\n                \"conflict_recovered somente pode ser \"\n                \"usado em conflito ou recuperação.\"\n            )"
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "name": "TelegramOperationalEvent",
+      "line_start": 205,
+      "line_end": 273,
+      "bases": [],
+      "source": "class TelegramOperationalEvent:\n    name: str\n    level: str\n    component: str\n    outcome: str\n    fields: Mapping[str, object] = field(\n        default_factory=dict\n    )\n\n    def __post_init__(self) -> None:\n        name = str(\n            self.name\n        ).strip()\n\n        if not name:\n            raise ValueError(\n                \"name não pode ser vazio.\"\n            )\n\n        if not name.startswith(\n            \"telegram_\"\n        ):\n            raise ValueError(\n                \"Eventos Telegram devem começar com telegram_.\"\n            )\n\n        object.__setattr__(\n            self,\n            \"name\",\n            name,\n        )\n\n        object.__setattr__(\n            self,\n            \"level\",\n            _validate_choice(\n                field_name=\"level\",\n                value=self.level,\n                allowed=ALLOWED_EVENT_LEVELS,\n            ),\n        )\n\n        object.__setattr__(\n            self,\n            \"component\",\n            _validate_choice(\n                field_name=\"component\",\n                value=self.component,\n                allowed=ALLOWED_METRIC_COMPONENTS,\n            ),\n        )\n\n        object.__setattr__(\n            self,\n            \"outcome\",\n            _validate_choice(\n                field_name=\"outcome\",\n                value=self.outcome,\n                allowed=ALLOWED_OUTCOMES,\n            ),\n        )\n\n        object.__setattr__(\n            self,\n            \"fields\",\n            MappingProxyType(\n                dict(self.fields)\n            ),\n        )"
+    }
+  ],
+  "protocols": [
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "name": "TelegramConversationMetrics",
+      "line_start": 277,
+      "line_end": 284,
+      "bases": [
+        "Protocol"
+      ],
+      "source": "class TelegramConversationMetrics(\n    Protocol\n):\n    def record_operation(\n        self,\n        record: TelegramConversationMetricRecord,\n    ) -> None:\n        \"\"\"Registra uma operação observável.\"\"\""
+    },
+    {
+      "file": "src/services/telegram_observability/contracts.py",
+      "name": "TelegramOperationalEventSink",
+      "line_start": 288,
+      "line_end": 295,
+      "bases": [
+        "Protocol"
+      ],
+      "source": "class TelegramOperationalEventSink(\n    Protocol\n):\n    def emit(\n        self,\n        event: TelegramOperationalEvent,\n    ) -> None:\n        \"\"\"Emite um evento operacional sanitizado.\"\"\""
+    }
+  ],
+  "implementations": [
+    {
+      "file": "src/services/telegram_observability/events.py",
+      "name": "NoOpTelegramOperationalEventSink",
+      "line_start": 10,
+      "line_end": 21,
+      "bases": [],
+      "source": "class NoOpTelegramOperationalEventSink:\n    \"\"\"\n    Sink padrão sem saída.\n    \"\"\"\n\n    __slots__ = ()\n\n    def emit(\n        self,\n        event: TelegramOperationalEvent,\n    ) -> None:\n        del event"
+    },
+    {
+      "file": "src/services/telegram_observability/events.py",
+      "name": "InMemoryTelegramOperationalEventSink",
+      "line_start": 24,
+      "line_end": 93,
+      "bases": [],
+      "source": "class InMemoryTelegramOperationalEventSink:\n    \"\"\"\n    Armazena eventos sanitizados para testes.\n    \"\"\"\n\n    def __init__(self) -> None:\n        self._events: list[\n            TelegramOperationalEvent\n        ] = []\n\n        self._lock = RLock()\n\n    def emit(\n        self,\n        event: TelegramOperationalEvent,\n    ) -> None:\n        if not isinstance(\n            event,\n            TelegramOperationalEvent,\n        ):\n            raise TypeError(\n                \"event deve ser TelegramOperationalEvent.\"\n            )\n\n        with self._lock:\n            self._events.append(event)\n\n    def snapshot(\n        self,\n    ) -> tuple[\n        TelegramOperationalEvent,\n        ...,\n    ]:\n        with self._lock:\n            return tuple(\n                self._events\n            )\n\n    def clear(self) -> None:\n        with self._lock:\n            self._events.clear()\n\n    def count(\n        self,\n        *,\n        name: str | None = None,\n        component: str | None = None,\n        outcome: str | None = None,\n        level: str | None = None,\n    ) -> int:\n        return sum(\n            1\n            for event in self.snapshot()\n            if (\n                name is None\n                or event.name == name\n            )\n            and (\n                component is None\n                or event.component == component\n            )\n            and (\n                outcome is None\n                or event.outcome == outcome\n            )\n            and (\n                level is None\n                or event.level == level\n            )\n        )"
+    },
+    {
+      "file": "src/services/telegram_observability/metrics.py",
+      "name": "NoOpTelegramConversationMetrics",
+      "line_start": 11,
+      "line_end": 22,
+      "bases": [],
+      "source": "class NoOpTelegramConversationMetrics:\n    \"\"\"\n    Implementação padrão sem efeitos colaterais.\n    \"\"\"\n\n    __slots__ = ()\n\n    def record_operation(\n        self,\n        record: TelegramConversationMetricRecord,\n    ) -> None:\n        del record"
+    },
+    {
+      "file": "src/services/telegram_observability/metrics.py",
+      "name": "InMemoryTelegramConversationMetrics",
+      "line_start": 25,
+      "line_end": 129,
+      "bases": [],
+      "source": "class InMemoryTelegramConversationMetrics:\n    \"\"\"\n    Coletor determinístico destinado a testes.\n\n    Não realiza I/O e não depende de Prometheus.\n    \"\"\"\n\n    def __init__(self) -> None:\n        self._records: list[\n            TelegramConversationMetricRecord\n        ] = []\n\n        self._lock = RLock()\n\n    def record_operation(\n        self,\n        record: TelegramConversationMetricRecord,\n    ) -> None:\n        if not isinstance(\n            record,\n            TelegramConversationMetricRecord,\n        ):\n            raise TypeError(\n                \"record deve ser \"\n                \"TelegramConversationMetricRecord.\"\n            )\n\n        with self._lock:\n            self._records.append(record)\n\n    def snapshot(\n        self,\n    ) -> tuple[\n        TelegramConversationMetricRecord,\n        ...,\n    ]:\n        with self._lock:\n            return tuple(\n                self._records\n            )\n\n    def clear(self) -> None:\n        with self._lock:\n            self._records.clear()\n\n    def count(\n        self,\n        *,\n        operation: str | None = None,\n        component: str | None = None,\n        outcome: str | None = None,\n        error_category: str | None = None,\n    ) -> int:\n        return sum(\n            1\n            for record in self.snapshot()\n            if (\n                operation is None\n                or record.operation == operation\n            )\n            and (\n                component is None\n                or record.component == component\n            )\n            and (\n                outcome is None\n                or record.outcome == outcome\n            )\n            and (\n                error_category is None\n                or record.error_category\n                == error_category\n            )\n        )\n\n    def operation_counts(\n        self,\n    ) -> dict[\n        tuple[str, str, str],\n        int,\n    ]:\n        counts = Counter(\n            (\n                record.component,\n                record.operation,\n                record.outcome,\n            )\n            for record in self.snapshot()\n        )\n\n        return dict(counts)\n\n    def durations_ms(\n        self,\n        *,\n        operation: str | None = None,\n    ) -> tuple[float, ...]:\n        return tuple(\n            record.duration_ms\n            for record in self.snapshot()\n            if (\n                operation is None\n                or record.operation == operation\n            )\n        )"
+    }
+  ],
+  "webhook_imports": [],
+  "target_function": {
+    "name": "_sync_and_save_durable_telegram_session",
+    "line_start": 1225,
+    "line_end": 1315,
+    "signature": "def _sync_and_save_durable_telegram_session(*, conversation_bridge: 'TelegramWebhookConversationBridge', durable_session, processing_state: dict, language: str | None=None)",
+    "source": "def _sync_and_save_durable_telegram_session(\n    *,\n    conversation_bridge: \"TelegramWebhookConversationBridge\",\n    durable_session,\n    processing_state: dict,\n    language: str | None = None,\n):\n    \"\"\"\n    Persiste uma transição com uma única recuperação de conflito.\n\n    Em conflito otimista, recarrega a sessão mais recente, reaplica a\n    transição atual e tenta salvar uma segunda e última vez.\n    \"\"\"\n    if conversation_bridge is None:\n        raise ValueError(\n            \"conversation_bridge é obrigatória.\"\n        )\n\n    if durable_session is None:\n        raise ValueError(\n            \"durable_session é obrigatória.\"\n        )\n\n    if not isinstance(\n        processing_state,\n        dict,\n    ):\n        raise TypeError(\n            \"processing_state deve ser um dict.\"\n        )\n\n    resolved_language = (\n        language\n        if language is not None\n        else processing_state.get(\"lang\")\n    )\n\n    def apply_transition(\n        target_session,\n    ):\n        target_session.replace_state(\n            processing_state\n        )\n\n        target_session.set_language(\n            resolved_language\n        )\n\n        return target_session\n\n    apply_transition(\n        durable_session\n    )\n\n    try:\n        return conversation_bridge.save_session(\n            durable_session,\n            only_if_changed=True,\n        )\n\n    except Exception as error:\n        conflict_type = (\n            TelegramConversationStateConflictError\n        )\n\n        if (\n            conflict_type is None\n            or not isinstance(\n                error,\n                conflict_type,\n            )\n        ):\n            raise\n\n        reloaded_session = (\n            conversation_bridge.reload_session(\n                durable_session\n            )\n        )\n\n        if reloaded_session is None:\n            raise\n\n        apply_transition(\n            reloaded_session\n        )\n\n        return conversation_bridge.save_session(\n            reloaded_session,\n            only_if_changed=True,\n        )"
+  },
+  "target_calls": [
+    {
+      "line": 1275,
+      "name": "apply_transition",
+      "source": "apply_transition(\n        durable_session\n    )"
+    },
+    {
+      "line": 1239,
+      "name": "ValueError",
+      "source": "ValueError(\n            \"conversation_bridge é obrigatória.\"\n        )"
+    },
+    {
+      "line": 1244,
+      "name": "ValueError",
+      "source": "ValueError(\n            \"durable_session é obrigatória.\"\n        )"
+    },
+    {
+      "line": 1248,
+      "name": "isinstance",
+      "source": "isinstance(\n        processing_state,\n        dict,\n    )"
+    },
+    {
+      "line": 1252,
+      "name": "TypeError",
+      "source": "TypeError(\n            \"processing_state deve ser um dict.\"\n        )"
+    },
+    {
+      "line": 1259,
+      "name": "get",
+      "source": "processing_state.get(\"lang\")"
+    },
+    {
+      "line": 1265,
+      "name": "replace_state",
+      "source": "target_session.replace_state(\n            processing_state\n        )"
+    },
+    {
+      "line": 1269,
+      "name": "set_language",
+      "source": "target_session.set_language(\n            resolved_language\n        )"
+    },
+    {
+      "line": 1280,
+      "name": "save_session",
+      "source": "conversation_bridge.save_session(\n            durable_session,\n            only_if_changed=True,\n        )"
+    },
+    {
+      "line": 1300,
+      "name": "reload_session",
+      "source": "conversation_bridge.reload_session(\n                durable_session\n            )"
+    },
+    {
+      "line": 1308,
+      "name": "apply_transition",
+      "source": "apply_transition(\n            reloaded_session\n        )"
+    },
+    {
+      "line": 1312,
+      "name": "save_session",
+      "source": "conversation_bridge.save_session(\n            reloaded_session,\n            only_if_changed=True,\n        )"
+    },
+    {
+      "line": 1292,
+      "name": "isinstance",
+      "source": "isinstance(\n                error,\n                conflict_type,\n            )"
+    }
+  ],
+  "target_handlers": [
+    {
+      "line": 1285,
+      "exception": "Exception",
+      "source": "except Exception as error:\n        conflict_type = (\n            TelegramConversationStateConflictError\n        )\n\n        if (\n            conflict_type is None\n            or not isinstance(\n                error,\n                conflict_type,\n            )\n        ):\n            raise\n\n        reloaded_session = (\n            conversation_bridge.reload_session(\n                durable_session\n            )\n        )\n\n        if reloaded_session is None:\n            raise\n\n        apply_transition(\n            reloaded_session\n        )\n\n        return conversation_bridge.save_session(\n            reloaded_session,\n            only_if_changed=True,\n        )"
+    }
+  ],
+  "current_observability_references": []
+}

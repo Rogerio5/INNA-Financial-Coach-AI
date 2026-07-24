@@ -1,0 +1,88 @@
+{
+  "target_function": "_sync_and_save_durable_telegram_session",
+  "save_calls": 2,
+  "reload_calls": 1,
+  "observability_calls": 6,
+  "events": {
+    "telegram_session_conflict_detected": 1,
+    "telegram_session_conflict_reload_completed": 1,
+    "telegram_session_conflict_recovered": 1,
+    "telegram_session_conflict_failed": 3
+  },
+  "missing_events": [],
+  "unexpected_events": [],
+  "sensitive_violations": [],
+  "bridge_decorated_methods": {
+    "load_or_open_session": [
+      "_observe_bridge_operation('load_or_open_session')"
+    ],
+    "save_session": [
+      "_observe_bridge_operation('save_session')"
+    ],
+    "reload_session": [
+      "_observe_bridge_operation('reload_session')"
+    ],
+    "delete_session": [
+      "_observe_bridge_operation('delete_session')"
+    ],
+    "resolve_language": [
+      "_observe_bridge_operation('resolve_language')"
+    ]
+  },
+  "calls": [
+    {
+      "line": 1438,
+      "operation": "save_session",
+      "outcome": "conflict",
+      "event_name": "telegram_session_conflict_detected",
+      "level": "warning",
+      "error_category": "optimistic_conflict",
+      "conflict_recovered": false
+    },
+    {
+      "line": 1504,
+      "operation": "reload_session",
+      "outcome": "success",
+      "event_name": "telegram_session_conflict_reload_completed",
+      "level": "info",
+      "error_category": null,
+      "conflict_recovered": null
+    },
+    {
+      "line": 1571,
+      "operation": "save_session",
+      "outcome": "recovered",
+      "event_name": "telegram_session_conflict_recovered",
+      "level": "info",
+      "error_category": null,
+      "conflict_recovered": true
+    },
+    {
+      "line": 1485,
+      "operation": "reload_session",
+      "outcome": "error",
+      "event_name": "telegram_session_conflict_failed",
+      "level": "error",
+      "error_category": "persistence",
+      "conflict_recovered": null
+    },
+    {
+      "line": 1461,
+      "operation": "reload_session",
+      "outcome": "error",
+      "event_name": "telegram_session_conflict_failed",
+      "level": "error",
+      "error_category": "_conflict_error_category(reload_error)",
+      "conflict_recovered": null
+    },
+    {
+      "line": 1547,
+      "operation": "save_session",
+      "outcome": "outcome",
+      "event_name": "telegram_session_conflict_failed",
+      "level": "error",
+      "error_category": "category",
+      "conflict_recovered": "False if outcome == 'conflict' else None"
+    }
+  ]
+}

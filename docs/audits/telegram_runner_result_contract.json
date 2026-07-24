@@ -1,0 +1,145 @@
+{
+  "class": {
+    "fields": [
+      {
+        "default": "<dataclasses._MISSING_TYPE object at 0x000001FF62A70EF0>",
+        "name": "decision",
+        "type": "RunnerDecision"
+      },
+      {
+        "default": "<dataclasses._MISSING_TYPE object at 0x000001FF62A70EF0>",
+        "name": "stage",
+        "type": "RunnerStage"
+      },
+      {
+        "default": "None",
+        "name": "update_id",
+        "type": "int | None"
+      },
+      {
+        "default": "None",
+        "name": "job_attempt_count",
+        "type": "int | None"
+      },
+      {
+        "default": "None",
+        "name": "job_max_attempts",
+        "type": "int | None"
+      },
+      {
+        "default": "None",
+        "name": "job_status",
+        "type": "str | None"
+      },
+      {
+        "default": "None",
+        "name": "error_code",
+        "type": "str | None"
+      },
+      {
+        "default": "False",
+        "name": "idempotent_replay",
+        "type": "bool"
+      }
+    ],
+    "file": "src/services/telegram_update_jobs/runner.py",
+    "is_dataclass": true,
+    "line": 279,
+    "methods": [
+      {
+        "name": "to_safe_dict",
+        "signature": "(self) -> 'dict[str, object]'"
+      }
+    ],
+    "module": "src.services.telegram_update_jobs.runner",
+    "signature": "(decision: 'RunnerDecision', stage: 'RunnerStage', update_id: 'int | None' = None, job_attempt_count: 'int | None' = None, job_max_attempts: 'int | None' = None, job_status: 'str | None' = None, error_code: 'str | None' = None, idempotent_replay: 'bool' = False) -> None"
+  },
+  "construction_sites": [
+    {
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "_result_for_lease",
+      "keywords": {
+        "decision": "decision",
+        "error_code": "error_code",
+        "idempotent_replay": "idempotent_replay",
+        "job_attempt_count": "lease.job_attempt_count",
+        "job_max_attempts": "lease.job_max_attempts",
+        "job_status": "job_status",
+        "stage": "stage",
+        "update_id": "lease.update_id"
+      },
+      "line": 500,
+      "source": "TelegramUpdateRunnerResult(decision=decision, stage=stage, update_id=lease.update_id, job_attempt_count=lease.job_attempt_count, job_max_attempts=lease.job_max_attempts, job_status=job_status, error_code=error_code, idempotent_replay=idempotent_replay)"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'unavailable'",
+        "error_code": "'telegram.claim_unavailable'",
+        "stage": "'claim'"
+      },
+      "line": 692,
+      "source": "TelegramUpdateRunnerResult(decision='unavailable', stage='claim', error_code='telegram.claim_unavailable')"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'consistency_error'",
+        "error_code": "'telegram.claim_inconsistent'",
+        "stage": "'claim'"
+      },
+      "line": 706,
+      "source": "TelegramUpdateRunnerResult(decision='consistency_error', stage='claim', error_code='telegram.claim_inconsistent')"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'unavailable'",
+        "error_code": "'telegram.claim_unavailable'",
+        "stage": "'claim'"
+      },
+      "line": 715,
+      "source": "TelegramUpdateRunnerResult(decision='unavailable', stage='claim', error_code='telegram.claim_unavailable')"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_one_telegram_update_job",
+      "keywords": {
+        "decision": "'idle'",
+        "stage": "'idle'"
+      },
+      "line": 724,
+      "source": "TelegramUpdateRunnerResult(decision='idle', stage='idle')"
+    },
+    {
+      "file": "src/services/telegram_update_jobs/runner.py",
+      "function": "run_telegram_update_worker",
+      "keywords": {
+        "decision": "'unavailable'",
+        "error_code": "'telegram.recovery_unavailable'",
+        "stage": "'recovery'"
+      },
+      "line": 1150,
+      "source": "TelegramUpdateRunnerResult(decision='unavailable', stage='recovery', error_code='telegram.recovery_unavailable')"
+    }
+  ],
+  "literal_decisions": [
+    "consistency_error",
+    "idle",
+    "unavailable"
+  ],
+  "literal_error_codes": [
+    "telegram.claim_inconsistent",
+    "telegram.claim_unavailable",
+    "telegram.recovery_unavailable"
+  ],
+  "literal_stages": [
+    "claim",
+    "idle",
+    "recovery"
+  ],
+  "safe_method_source": "    def to_safe_dict(\n        self,\n    ) -> dict[str, object]:\n        return {\n            \"decision\": self.decision,\n            \"stage\": self.stage,\n            \"update_id\": self.update_id,\n            \"job_attempt_count\": (\n                self.job_attempt_count\n            ),\n            \"job_max_attempts\": (\n                self.job_max_attempts\n            ),\n            \"job_status\": self.job_status,\n            \"error_code\": self.error_code,\n            \"idempotent_replay\": (\n                self.idempotent_replay\n            ),\n        }\n"
+}

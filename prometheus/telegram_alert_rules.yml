@@ -1,0 +1,201 @@
+groups:
+  - name: inna.telegram.alerts
+    interval: 30s
+    rules:
+      - alert: InnaTelegramWorkerHighErrorRate
+        expr: |
+          (
+            inna:telegram_worker_updates:rate5m
+            > 0
+          )
+          and
+          (
+            inna:telegram_worker_error_ratio:rate5m
+            >= 0.05
+          )
+        for: 10m
+        labels:
+          severity: warning
+          service: inna
+          channel: telegram
+          component: worker
+        annotations:
+          summary: Telegram worker com taxa elevada de falhas
+          description: >-
+            A taxa de falhas do worker Telegram permaneceu
+            igual ou acima de 5% durante 10 minutos.
+          runbook: docs/operations/telegram_prometheus_alerts.md
+
+      - alert: InnaTelegramWorkerCriticalErrorRate
+        expr: |
+          (
+            inna:telegram_worker_updates:rate5m
+            > 0
+          )
+          and
+          (
+            inna:telegram_worker_error_ratio:rate5m
+            >= 0.20
+          )
+        for: 5m
+        labels:
+          severity: critical
+          service: inna
+          channel: telegram
+          component: worker
+        annotations:
+          summary: Telegram worker com taxa crítica de falhas
+          description: >-
+            A taxa de falhas do worker Telegram permaneceu
+            igual ou acima de 20% durante 5 minutos.
+          runbook: docs/operations/telegram_prometheus_alerts.md
+
+      - alert: InnaTelegramWorkerFastBurn
+        expr: |
+          (
+            inna:telegram_worker_updates:rate5m
+            > 0
+          )
+          and
+          (
+            (
+              inna:telegram_worker_error_ratio:rate5m
+              / 0.01
+            )
+            >= 6
+          )
+        for: 5m
+        labels:
+          severity: critical
+          service: inna
+          channel: telegram
+          component: worker
+          slo: success-rate
+        annotations:
+          summary: Telegram worker consumindo rapidamente o error budget
+          description: >-
+            O burn rate do SLO de 99% de sucesso do worker
+            está igual ou acima de 6x.
+          runbook: docs/operations/telegram_prometheus_alerts.md
+
+      - alert: InnaTelegramWorkerSustainedBurn
+        expr: |
+          (
+            inna:telegram_worker_updates:rate1h
+            > 0
+          )
+          and
+          (
+            (
+              inna:telegram_worker_error_ratio:rate1h
+              / 0.01
+            )
+            >= 2
+          )
+        for: 30m
+        labels:
+          severity: warning
+          service: inna
+          channel: telegram
+          component: worker
+          slo: success-rate
+        annotations:
+          summary: Telegram worker com consumo sustentado do error budget
+          description: >-
+            O burn rate do SLO de 99% de sucesso do worker
+            permaneceu igual ou acima de 2x.
+          runbook: docs/operations/telegram_prometheus_alerts.md
+
+      - alert: InnaTelegramWorkerConflictRateHigh
+        expr: |
+          (
+            inna:telegram_worker_updates:rate5m
+            > 0
+          )
+          and
+          (
+            inna:telegram_worker_conflict_ratio:rate5m
+            >= 0.10
+          )
+        for: 10m
+        labels:
+          severity: warning
+          service: inna
+          channel: telegram
+          component: worker
+        annotations:
+          summary: Taxa elevada de conflitos no worker Telegram
+          description: >-
+            Dez por cento ou mais das atualizações do worker
+            terminaram em conflito durante 10 minutos.
+          runbook: docs/operations/telegram_prometheus_alerts.md
+
+      - alert: InnaTelegramOperationP95LatencyHigh
+        expr: |
+          inna:telegram_operation_latency:p95_5m
+          > 2
+        for: 10m
+        labels:
+          severity: warning
+          service: inna
+          channel: telegram
+          slo: latency
+        annotations:
+          summary: Latência p95 elevada em operação Telegram
+          description: >-
+            A latência p95 da operação {{ $labels.operation }}
+            no componente {{ $labels.component }} ultrapassou
+            2 segundos durante 10 minutos.
+          runbook: docs/operations/telegram_prometheus_alerts.md
+
+      - alert: InnaTelegramOperationP99LatencyCritical
+        expr: |
+          inna:telegram_operation_latency:p99_5m
+          > 5
+        for: 5m
+        labels:
+          severity: critical
+          service: inna
+          channel: telegram
+          slo: latency
+        annotations:
+          summary: Latência p99 crítica em operação Telegram
+          description: >-
+            A latência p99 da operação {{ $labels.operation }}
+            no componente {{ $labels.component }} ultrapassou
+            5 segundos durante 5 minutos.
+          runbook: docs/operations/telegram_prometheus_alerts.md
+
+      - alert: InnaTelegramQueueFailuresDetected
+        expr: |
+          inna:telegram_queue_failures:rate5m
+          > 0
+        for: 10m
+        labels:
+          severity: warning
+          service: inna
+          channel: telegram
+          component: queue
+        annotations:
+          summary: Falhas persistentes na fila Telegram
+          description: >-
+            Foram detectadas falhas contínuas nas operações
+            da fila Telegram durante 10 minutos.
+          runbook: docs/operations/telegram_prometheus_alerts.md
+
+      - alert: InnaTelegramReceiptFailuresDetected
+        expr: |
+          inna:telegram_receipt_failures:rate5m
+          > 0
+        for: 10m
+        labels:
+          severity: warning
+          service: inna
+          channel: telegram
+          component: receipt
+        annotations:
+          summary: Falhas persistentes em receipts Telegram
+          description: >-
+            Foram detectadas falhas contínuas no ciclo de
+            receipts Telegram durante 10 minutos.
+          runbook: docs/operations/telegram_prometheus_alerts.md
