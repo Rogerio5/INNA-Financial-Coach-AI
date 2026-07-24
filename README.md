@@ -12,6 +12,7 @@ Diagnóstico financeiro • Plano de ação • Histórico • Relatórios • T
 
 - [Visão geral](#visão-geral)
 - [Demonstração online](#demonstração-online)
+- [Status da versão online](#status-da-versão-online)
 - [Problema](#problema)
 - [Solução](#solução)
 - [Diferenciais](#diferenciais)
@@ -20,6 +21,7 @@ Diagnóstico financeiro • Plano de ação • Histórico • Relatórios • T
 - [Arquitetura](#arquitetura)
 - [Arquitetura multiagente](#arquitetura-multiagente)
 - [Human-in-the-Loop](#human-in-the-loop)
+- [Componentes concluídos](#componentes-concluídos)
 - [RAG, memória e Context Engineering](#rag-memória-e-context-engineering)
 - [Tool Calling e persistência](#tool-calling-e-persistência)
 - [Telegram multilíngue](#telegram-multilíngue)
@@ -41,6 +43,7 @@ Diagnóstico financeiro • Plano de ação • Histórico • Relatórios • T
 - [Roadmap](#roadmap)
 - [Panorama de evolução](#panorama-de-evolução)
 - [Desenvolvedores](#desenvolvedores)
+- [Conclusão](#conclusão)
 
 ---
 
@@ -375,9 +378,7 @@ flowchart TD
 
 ---
 
-## 5. Atualizar o fluxo principal
-
-Substitua o fluxo principal atual por:
+## Fluxo principal
 
 ```text
 Usuário
@@ -416,9 +417,9 @@ Resposta
 
 ---
 
-## 6. Atualizar o fluxo do LangGraph
+## Arquitetura multiagente
 
-Substitua o fluxo antigo por:
+### Fluxo do LangGraph
 
 ```text
 START
@@ -450,11 +451,91 @@ END
 ```
 ---
 
+---
+
+## Human-in-the-Loop
+
+A INNA possui um fluxo persistente de revisão humana para execuções que exigem validação adicional antes da continuidade.
+
+A política de revisão pode considerar:
+
+- nível de risco;
+- confiança da resposta;
+- inconsistências encontradas;
+- informações ausentes;
+- tipo da operação;
+- limites de segurança;
+- necessidade de validação humana.
+
+Quando uma revisão é necessária, o LangGraph utiliza `interrupt()` para pausar a execução e preservar seu estado em um checkpoint.
+
+A retomada utiliza:
+
+```python
+Command(resume=decision)
+```
+
+O mesmo `thread_id` é utilizado para localizar o checkpoint correto e continuar a execução.
+
+### Decisões disponíveis
+
+- `approve`: aprova o resultado e continua o fluxo;
+- `correct`: aplica correções e retorna ao roteamento;
+- `reject`: rejeita o resultado e encaminha o fluxo para encerramento;
+- `cancel`: cancela a revisão.
+
+### Fluxo da revisão
+
+```text
+task_completion
+  ↓
+human_review_policy
+  ├─ sem revisão → handoff_coordinator
+  └─ revisão necessária → human_review_interrupt
+       ├─ approve → handoff_coordinator
+       ├─ correct → team_router
+       └─ reject/cancel → conversation_summary
+```
+
+O recurso é opt-in para manter compatibilidade com o fluxo existente:
+
+```python
+executar_nucleo_inna_persistente(
+    mensagem=mensagem,
+    thread_id=thread_id,
+    human_review_enabled=True,
+)
+```
+
+A implementação possui:
+
+- contratos tipados;
+- política determinística;
+- interrupção persistente;
+- retomada com `Command(resume=...)`;
+- isolamento por `thread_id`;
+- testes unitários;
+- testes de integração;
+- testes reais com `MemorySaver`;
+- proteção contra retomada em thread incorreta.
+
+---
+---
+
 ## Componentes concluídos
 
 - estado tipado;
+- Context Engineering;
+- supervisor principal;
 - supervisor híbrido;
+- arquitetura multiagente;
+- arquitetura hierárquica de equipes;
+- Team Router;
+- supervisor financeiro;
+- supervisor de conhecimento;
+- supervisor de suporte;
 - seleção por intenção;
+- roteamento entre equipes;
 - regras determinísticas;
 - Gemini complementar;
 - agente financeiro;
@@ -463,7 +544,18 @@ END
 - agente de relatório;
 - agente fallback;
 - revisor de risco;
-- governança;
+- governança de execução;
+- Handoff Coordinator;
+- Task Completion;
+- política de revisão humana;
+- Human Review Interrupt;
+- interrupção persistente com `interrupt()`;
+- retomada com `Command(resume=...)`;
+- isolamento de checkpoint por `thread_id`;
+- aprovação, correção, rejeição e cancelamento;
+- compatibilidade com o fluxo anterior;
+- Human-in-the-Loop desabilitado por padrão;
+- ativação por `human_review_enabled=True`;
 - limite de passos;
 - limite de visitas;
 - detecção de loops;
@@ -471,7 +563,23 @@ END
 - histórico de rotas;
 - trace;
 - checkpoint;
-- retomada por thread_id.
+- retomada por `thread_id`;
+- persistência de estado;
+- memória conversacional;
+- resumo conversacional incremental;
+- integração com RAG;
+- integração com Tool Calling;
+- testes unitários;
+- testes de integração;
+- testes reais com `MemorySaver`;
+- isolamento entre threads;
+- proteção contra retomada na thread incorreta;
+- auditoria do fluxo;
+- compatibilidade regressiva;
+- Pull Request revisado e mesclado;
+- 2418 testes aprovados;
+- 1 teste ignorado;
+- 0 falhas.
 
 ---
 
