@@ -5572,26 +5572,6 @@ if app_menu in [
         "da plataforma INNA."
     )
 
-    st.markdown(
-        f"""
-<a href="{DASHBOARD_ADMIN_URL}" target="_blank" style="
-    display:block;
-    text-align:center;
-    background:#d4af37;
-    color:#0b1f3a;
-    font-weight:800;
-    text-decoration:none;
-    padding:14px 18px;
-    border-radius:14px;
-    margin:18px 0 24px 0;
-    border:1px solid #ffe08a;
-">
-    🚀 Abrir Dashboard Analytics em nova aba
-</a>
-        """,
-        unsafe_allow_html=True,
-    )
-
     components.iframe(
         DASHBOARD_ADMIN_URL,
         height=950,
