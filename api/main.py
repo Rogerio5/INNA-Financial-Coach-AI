@@ -1,6 +1,9 @@
 from api.human_review_routes import (
     router as human_review_router,
 )
+from api.human_review_admin_routes import (
+    router as human_review_admin_router,
+)
 
 from api.telegram_operational_status import router as telegram_operational_router
 from api.telegram_webhook import router as telegram_router
@@ -1150,4 +1153,8 @@ app.include_router(telegram_operational_router)
 
 app.include_router(
     human_review_router
+)
+
+app.include_router(
+    human_review_admin_router
 )
