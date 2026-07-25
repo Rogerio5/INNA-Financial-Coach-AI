@@ -29,11 +29,12 @@ from dotenv import load_dotenv
 load_dotenv(".env")
 
 
-st.set_page_config(
-    page_title="INNA Analytics",
-    page_icon="📊",
-    layout="wide",
-)
+if __name__ == "__main__":
+    st.set_page_config(
+        page_title="INNA Analytics",
+        page_icon="📊",
+        layout="wide",
+    )
 
 
 LANGUAGE_LABELS = {
@@ -3095,18 +3096,42 @@ def render_header():
         st.rerun()
 
 
-def render_filters(diagnosticos_df, feedbacks_df):
-    st.sidebar.selectbox(
+def render_filters(
+    diagnosticos_df,
+    feedbacks_df,
+    *,
+    embedded=False,
+):
+    if embedded:
+        controls = st.expander(
+            "🧭 Menu e filtros do Dashboard",
+            expanded=False,
+        )
+
+        with controls:
+            menu_col, filters_col = st.columns(
+                [0.9, 1.4],
+                gap="large",
+            )
+
+        menu_container = menu_col
+        filters_container = filters_col
+
+    else:
+        menu_container = st.sidebar
+        filters_container = st.sidebar
+
+    menu_container.selectbox(
         dt("interface_lang"),
         options=list(DASHBOARD_INTERFACE_LANGS.keys()),
         format_func=lambda key: DASHBOARD_INTERFACE_LANGS[key],
         key="dashboard_interface_lang",
     )
 
-    st.sidebar.title(dt("sidebar_title"))
-    st.sidebar.caption(dt("sidebar_caption"))
+    menu_container.title(dt("sidebar_title"))
+    menu_container.caption(dt("sidebar_caption"))
 
-    menu = st.sidebar.radio(
+    menu = menu_container.radio(
         dt("menu"),
         [
             "📌 Visão Geral",
@@ -3130,8 +3155,7 @@ def render_filters(diagnosticos_df, feedbacks_df):
         format_func=dt_menu,
     )
 
-    st.sidebar.divider()
-    st.sidebar.write(dt("filters"))
+    filters_container.write(dt("filters"))
 
     today = date.today()
 
@@ -3142,33 +3166,84 @@ def render_filters(diagnosticos_df, feedbacks_df):
         min_date = today
         max_date = today
 
-    start_date = st.sidebar.date_input(dt("start_date"), value=min_date)
-    end_date = st.sidebar.date_input(dt("end_date"), value=max_date)
+    start_date = filters_container.date_input(
+        dt("start_date"),
+        value=min_date,
+    )
+
+    end_date = filters_container.date_input(
+        dt("end_date"),
+        value=max_date,
+    )
 
     usuarios = ["Todos"]
-    if not diagnosticos_df.empty and "nome" in diagnosticos_df.columns:
-        usuarios += sorted(diagnosticos_df["nome"].dropna().astype(str).unique().tolist())
 
-    filtro_usuario = st.sidebar.selectbox(dt("filter_user"), usuarios, format_func=tv)
+    if not diagnosticos_df.empty and "nome" in diagnosticos_df.columns:
+        usuarios += sorted(
+            diagnosticos_df["nome"]
+            .dropna()
+            .astype(str)
+            .unique()
+            .tolist()
+        )
+
+    filtro_usuario = filters_container.selectbox(
+        dt("filter_user"),
+        usuarios,
+        format_func=tv,
+    )
 
     riscos = ["Todos"]
+
     if not diagnosticos_df.empty and "nivel_risco" in diagnosticos_df.columns:
         temp = add_display_columns(diagnosticos_df)
-        riscos += sorted(temp["risco_exibicao"].dropna().astype(str).unique().tolist())
 
-    filtro_risco = st.sidebar.selectbox(dt("filter_risk"), riscos, format_func=tv)
+        riscos += sorted(
+            temp["risco_exibicao"]
+            .dropna()
+            .astype(str)
+            .unique()
+            .tolist()
+        )
+
+    filtro_risco = filters_container.selectbox(
+        dt("filter_risk"),
+        riscos,
+        format_func=tv,
+    )
 
     feedbacks = ["Todos"]
+
     if not feedbacks_df.empty and "util" in feedbacks_df.columns:
-        feedbacks += sorted(feedbacks_df["util"].dropna().astype(str).unique().tolist())
+        feedbacks += sorted(
+            feedbacks_df["util"]
+            .dropna()
+            .astype(str)
+            .unique()
+            .tolist()
+        )
 
-    filtro_feedback = st.sidebar.selectbox(dt("filter_feedback"), feedbacks, format_func=tv)
+    filtro_feedback = filters_container.selectbox(
+        dt("filter_feedback"),
+        feedbacks,
+        format_func=tv,
+    )
 
-    filtro_idioma = st.sidebar.selectbox(dt("filter_data_language"), FIXED_LANGUAGES, format_func=tv)
-    filtro_moeda = st.sidebar.selectbox(dt("filter_currency"), FIXED_CURRENCIES, format_func=tv)
+    filtro_idioma = filters_container.selectbox(
+        dt("filter_data_language"),
+        FIXED_LANGUAGES,
+        format_func=tv,
+    )
 
-    st.sidebar.divider()
-    st.sidebar.caption(dt("filter_help"))
+    filtro_moeda = filters_container.selectbox(
+        dt("filter_currency"),
+        FIXED_CURRENCIES,
+        format_func=tv,
+    )
+
+    filters_container.caption(
+        dt("filter_help")
+    )
 
     return (
         menu,
@@ -3180,7 +3255,6 @@ def render_filters(diagnosticos_df, feedbacks_df):
         filtro_idioma,
         filtro_moeda,
     )
-
 
 def get_currency_context(df):
     if df.empty or "moeda" not in df.columns:
@@ -8098,7 +8172,10 @@ def render_memoria_usuario_inna():
 
 
 
-def main():
+def main(
+    *,
+    embedded=False,
+):
 
     diagnosticos_df, feedbacks_df, eventos_df = load_data()
 
@@ -8111,7 +8188,11 @@ def main():
         filtro_feedback,
         filtro_idioma,
         filtro_moeda,
-    ) = render_filters(diagnosticos_df, feedbacks_df)
+    ) = render_filters(
+        diagnosticos_df,
+        feedbacks_df,
+        embedded=embedded,
+    )
 
     render_header()
 

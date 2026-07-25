@@ -5572,11 +5572,18 @@ if app_menu in [
         "da plataforma INNA."
     )
 
-    components.iframe(
-        DASHBOARD_ADMIN_URL,
-        height=950,
-        scrolling=True,
-    )
+    try:
+        from src.dashboard import main as render_admin_analytics
+
+        render_admin_analytics(
+            embedded=True,
+        )
+
+    except Exception:
+        st.error(
+            "Não foi possível carregar o Dashboard Analytics "
+            "integrado."
+        )
 
     st.stop()
 
