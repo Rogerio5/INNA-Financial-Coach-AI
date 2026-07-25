@@ -243,6 +243,30 @@ def classificar_intencao_por_regras(
         ),
     }
 
+    explicit_education_match = _contains_any(
+        texto,
+        (
+            "de forma educativa",
+            "explique de forma educativa",
+            "orientação educativa",
+            "orientacao educativa",
+            "passo a passo educativo",
+        ),
+    )
+
+    if explicit_education_match:
+        return SupervisorDecision(
+            intent="educacao_financeira",
+            next_node="education_agent",
+            confidence=0.95,
+            use_rag=False,
+            reason=(
+                "A mensagem solicita explicitamente "
+                "uma explicação educativa."
+            ),
+            classification_source="rule",
+        )
+
     matched_intents = [
         intent
         for intent, matched in matches.items()
