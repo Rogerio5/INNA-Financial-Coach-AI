@@ -3113,12 +3113,16 @@ menu_options_top = [
 if st.session_state.get("perfil_usuario") == "admin":
     menu_options_top.insert(-1, "📊 Observabilidade RAG")
     menu_options_top.insert(-1, "🔐 Admin Analytics")
+    menu_options_top.insert(-1, "🧑‍⚖️ Revisão Humana")
 
     if "📊 Observabilidade RAG" not in APP_MENU_OPTIONS:
         APP_MENU_OPTIONS.append("📊 Observabilidade RAG")
 
     if "🔐 Admin Analytics" not in APP_MENU_OPTIONS:
         APP_MENU_OPTIONS.append("🔐 Admin Analytics")
+
+    if "🧑‍⚖️ Revisão Humana" not in APP_MENU_OPTIONS:
+        APP_MENU_OPTIONS.append("🧑‍⚖️ Revisão Humana")
 
 menu_cols = st.columns(len(menu_options_top))
 
@@ -5542,9 +5546,67 @@ if app_menu in [
     "Admin Analytics",
 ]:
     authenticated = bool(
+        st.session_state.get("logado")
+    )
+
+    is_admin = (
         st.session_state.get(
-            "logado"
+            "perfil_usuario"
         )
+        == "admin"
+    )
+
+    if not authenticated or not is_admin:
+        st.error(
+            "Acesso restrito ao administrador "
+            "autenticado da INNA."
+        )
+        st.stop()
+
+    st.title(
+        "🔐 Admin Analytics — INNA"
+    )
+
+    st.caption(
+        "Dashboard administrativo geral "
+        "da plataforma INNA."
+    )
+
+    st.markdown(
+        f"""
+<a href="{DASHBOARD_ADMIN_URL}" target="_blank" style="
+    display:block;
+    text-align:center;
+    background:#d4af37;
+    color:#0b1f3a;
+    font-weight:800;
+    text-decoration:none;
+    padding:14px 18px;
+    border-radius:14px;
+    margin:18px 0 24px 0;
+    border:1px solid #ffe08a;
+">
+    🚀 Abrir Dashboard Analytics em nova aba
+</a>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    components.iframe(
+        DASHBOARD_ADMIN_URL,
+        height=950,
+        scrolling=True,
+    )
+
+    st.stop()
+
+
+if app_menu in [
+    "🧑‍⚖️ Revisão Humana",
+    "Revisão Humana",
+]:
+    authenticated = bool(
+        st.session_state.get("logado")
     )
 
     is_admin = (
@@ -5570,15 +5632,9 @@ if app_menu in [
             "Acesso restrito ao administrador "
             "autenticado da INNA."
         )
-
-        st.session_state[
-            "app_menu_selected"
-        ] = "🔑 Entrar"
-
         st.stop()
 
     render_human_review_admin_page()
-
     st.stop()
 
 
