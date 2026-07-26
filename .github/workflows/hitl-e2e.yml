@@ -1,10 +1,10 @@
-name: INNA HITL E2E validation
+name: INNA HITL E2E Validation
 
 on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: "Digite RUN para executar contra o Neon"
+        description: "Executa o fluxo Human-in-the-Loop real com Neon, API assinada e retomada do LangGraph"
         required: true
         type: choice
         options:
@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   human-review-e2e:
-    name: Human review E2E
+    name: Real Human Review E2E Validation
     if: ${{ inputs.confirmation == 'RUN' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -39,16 +39,17 @@ jobs:
       PYTHONUNBUFFERED: "1"
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure Python
+      - name: Configure Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: requirements.txt
 
-      - name: Validate required secrets
+      - name: Validate HITL secrets
         shell: bash
         run: |
           set -euo pipefail
@@ -61,31 +62,37 @@ jobs:
             exit 1
           fi
 
-      - name: Install dependencies
+      - name: Install project dependencies
+        shell: bash
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          set -euo pipefail
 
-      - name: Validate database migration
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Validate human review migration
+        shell: bash
         run: |
+          set -euo pipefail
+
           python \
             scripts/apply_human_reviews_migration.py \
             check
 
-      - name: Run HITL E2E
+      - name: Run real HITL E2E validation
         shell: bash
         run: |
           set -euo pipefail
 
           mkdir -p artifacts/hitl-e2e
 
-          pytest \
+          python -m pytest \
             tests/integration/test_human_review_e2e_live.py \
             -q \
             2>&1 |
             tee artifacts/hitl-e2e/pytest-output.txt
 
-      - name: Upload E2E report
+      - name: Upload HITL E2E artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
