@@ -66,4 +66,6 @@ artifacts/internal/
 artifacts/evaluations/*.tmp
 
 # Evaluation runtime artifacts
-artifacts/evaluations/
+
+# Runtime and evaluation artifacts
+/artifacts/
