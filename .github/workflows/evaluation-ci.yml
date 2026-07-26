@@ -1,0 +1,302 @@
+name: INNA LLMOps evaluation
+
+on:
+  workflow_dispatch:
+
+  pull_request:
+    paths:
+      - "src/evaluation/**"
+      - "tests/evaluations/**"
+      - "requirements.txt"
+      - "pyproject.toml"
+      - ".github/workflows/evaluation-ci.yml"
+
+  push:
+    branches:
+      - main
+    paths:
+      - "src/evaluation/**"
+      - "tests/evaluations/**"
+      - "requirements.txt"
+      - "pyproject.toml"
+      - ".github/workflows/evaluation-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inna-evaluation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evaluation-validation:
+    name: LLMOps evaluation validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: inna_test
+          POSTGRES_USER: inna_test
+          POSTGRES_PASSWORD: inna_test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U inna_test -d inna_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      RUN_HITL_E2E_TESTS: "0"
+      RUN_LIVE_GEMINI_TESTS: "0"
+      DATABASE_URL: postgresql://inna_test:inna_test_password@localhost:5432/inna_test
+      INNA_POSTGRES_CONNECT_TIMEOUT_SECONDS: "10"
+      INNA_POSTGRES_NETWORK_FAMILY: "system"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Validate temporary PostgreSQL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python - <<'PY'
+          import os
+          import time
+
+          import psycopg
+
+
+          database_url = os.environ["DATABASE_URL"]
+          last_error = None
+
+          for attempt in range(1, 11):
+              try:
+                  with psycopg.connect(
+                      database_url,
+                      connect_timeout=5,
+                  ) as connection:
+                      with connection.cursor() as cursor:
+                          cursor.execute("SELECT 1")
+                          result = cursor.fetchone()
+
+                  assert result == (1,)
+                  print(
+                      "TEMPORARY_POSTGRES_READY "
+                      f"attempt={attempt}"
+                  )
+                  break
+              except Exception as error:
+                  last_error = error
+                  print(
+                      "PostgreSQL ainda indisponível: "
+                      f"attempt={attempt}"
+                  )
+                  time.sleep(2)
+          else:
+              raise SystemExit(
+                  "PostgreSQL temporário não ficou disponível: "
+                  f"{last_error}"
+              )
+          PY
+
+      - name: Initialize LangGraph checkpoint schema
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python - <<'PY'
+          from src.agents.persistence import abrir_checkpointer_postgres
+
+
+          with abrir_checkpointer_postgres() as checkpointer:
+              checkpointer.setup()
+
+          print("LANGGRAPH_CHECKPOINT_SCHEMA_READY")
+          PY
+
+      - name: Display tool versions
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python --version
+          python -m pytest --version
+          python -m ruff --version
+          python -m pip show deepeval
+
+      - name: Compile evaluation modules
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m compileall \
+            -q \
+            src/evaluation \
+            tests/evaluations
+
+      - name: Run Ruff
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m ruff check \
+            src/evaluation \
+            tests/evaluations
+
+      - name: Run evaluation tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m pytest \
+            tests/evaluations \
+            -q
+
+      - name: Run full regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m pytest -q
+
+      - name: Run official Quality Gate
+        id: quality_gate
+        shell: bash
+        run: |
+          set +e
+
+          mkdir -p artifacts/evaluation-ci
+
+          python -m src.evaluation run-official \
+            --output-directory artifacts/evaluation-ci \
+            --summary-only \
+            --minimum-pass-rate 1.0 \
+            --maximum-failed-cases 0 \
+            --maximum-blocked-cases 0 \
+            --maximum-error-cases 0 \
+            --maximum-total-cost 0
+
+          exit_code=$?
+
+          echo "exit_code=${exit_code}" >> "${GITHUB_OUTPUT}"
+
+          if [ "${exit_code}" -eq 0 ]; then
+            echo "Quality Gate aprovado."
+          else
+            echo "Quality Gate reprovado com código ${exit_code}."
+          fi
+
+          exit 0
+
+      - name: Validate external report
+        if: ${{ always() && steps.quality_gate.outcome != 'skipped' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          reports = tuple(
+              Path("artifacts/evaluation-ci").glob("*.json")
+          )
+
+          if len(reports) != 1:
+              raise SystemExit(
+                  "Era esperado exatamente um relatório externo."
+              )
+
+          report_path = reports[0]
+          payload = json.loads(
+              report_path.read_text(encoding="utf-8")
+          )
+
+          required_keys = {
+              "schema_version",
+              "report_type",
+              "run_reference",
+              "generated_date",
+              "batch",
+              "summary",
+              "quality_gate",
+          }
+
+          missing = required_keys - set(payload)
+
+          if missing:
+              raise SystemExit(
+                  "Campos ausentes no relatório: "
+                  + ", ".join(sorted(missing))
+              )
+
+          batch = payload["batch"]
+          gate = payload["quality_gate"]
+
+          assert payload["generated_at"] is None
+          assert batch["batch_id"] is None
+          assert batch["started_at"] is None
+          assert batch["finished_at"] is None
+          assert gate["batch_id"] is None
+
+          assert payload["run_reference"].startswith("run-")
+          assert batch["run_reference"] == payload["run_reference"]
+          assert gate["run_reference"] == payload["run_reference"]
+
+          print(
+              "EXTERNAL_EVALUATION_REPORT_VALIDATED:",
+              report_path,
+          )
+          PY
+
+      - name: Upload sanitized evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inna-evaluation-report-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/evaluation-ci/*.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Enforce Quality Gate result
+        if: ${{ always() && steps.quality_gate.outcome != 'skipped' }}
+        shell: bash
+        env:
+          QUALITY_GATE_EXIT_CODE: ${{ steps.quality_gate.outputs.exit_code }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${QUALITY_GATE_EXIT_CODE}" ]; then
+            echo "O Quality Gate não produziu código de saída."
+            exit 1
+          fi
+
+          if [ "${QUALITY_GATE_EXIT_CODE}" -ne 0 ]; then
+            echo "O Quality Gate bloqueou esta alteração."
+            exit "${QUALITY_GATE_EXIT_CODE}"
+          fi
+
+          echo "Quality Gate aprovado."

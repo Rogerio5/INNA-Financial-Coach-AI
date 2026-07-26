@@ -59,3 +59,13 @@ src/dashboard_quebrado_*.py
 
 # Relatórios locais do HITL E2E
 artifacts/hitl-e2e/
+
+# DeepEval local
+.deepeval/
+artifacts/internal/
+artifacts/evaluations/*.tmp
+
+# Evaluation runtime artifacts
+
+# Runtime and evaluation artifacts
+/artifacts/
