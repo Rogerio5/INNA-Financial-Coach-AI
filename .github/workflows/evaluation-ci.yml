@@ -102,7 +102,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          python -m pytest -q
+          # Testes que dependem de PostgreSQL real são executados
+          # separadamente em workflows protegidos por environment/secrets.
+          python -m pytest             --ignore=tests/unit/test_conversation_summary_graph_integration.py             --ignore=tests/unit/test_financial_semantic_memory_graph_integration.py             -q
 
       - name: Run official Quality Gate
         id: quality_gate
@@ -134,7 +136,7 @@ jobs:
           exit 0
 
       - name: Validate external report
-        if: always()
+        if: ${{ always() && steps.quality_gate.outcome != 'skipped' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -204,7 +206,7 @@ jobs:
           retention-days: 14
 
       - name: Enforce Quality Gate result
-        if: always()
+        if: ${{ always() && steps.quality_gate.outcome != 'skipped' }}
         shell: bash
         env:
           QUALITY_GATE_EXIT_CODE: ${{ steps.quality_gate.outputs.exit_code }}
