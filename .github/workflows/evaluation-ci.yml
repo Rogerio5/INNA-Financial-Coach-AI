@@ -32,13 +32,31 @@ jobs:
   evaluation-validation:
     name: LLMOps evaluation validation
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: inna_test
+          POSTGRES_USER: inna_test
+          POSTGRES_PASSWORD: inna_test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U inna_test -d inna_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
 
     env:
       PYTHONUNBUFFERED: "1"
       PYTHONDONTWRITEBYTECODE: "1"
       RUN_HITL_E2E_TESTS: "0"
       RUN_LIVE_GEMINI_TESTS: "0"
+      DATABASE_URL: postgresql://inna_test:inna_test_password@localhost:5432/inna_test
+      INNA_POSTGRES_CONNECT_TIMEOUT_SECONDS: "10"
+      INNA_POSTGRES_NETWORK_FAMILY: "system"
 
     steps:
       - name: Checkout repository
@@ -58,6 +76,51 @@ jobs:
 
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
+
+      - name: Validate temporary PostgreSQL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python - <<'PY'
+          import os
+          import time
+
+          import psycopg
+
+
+          database_url = os.environ["DATABASE_URL"]
+          last_error = None
+
+          for attempt in range(1, 11):
+              try:
+                  with psycopg.connect(
+                      database_url,
+                      connect_timeout=5,
+                  ) as connection:
+                      with connection.cursor() as cursor:
+                          cursor.execute("SELECT 1")
+                          result = cursor.fetchone()
+
+                  assert result == (1,)
+                  print(
+                      "TEMPORARY_POSTGRES_READY "
+                      f"attempt={attempt}"
+                  )
+                  break
+              except Exception as error:
+                  last_error = error
+                  print(
+                      "PostgreSQL ainda indisponível: "
+                      f"attempt={attempt}"
+                  )
+                  time.sleep(2)
+          else:
+              raise SystemExit(
+                  "PostgreSQL temporário não ficou disponível: "
+                  f"{last_error}"
+              )
+          PY
 
       - name: Display tool versions
         shell: bash
@@ -102,9 +165,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Testes que dependem de PostgreSQL real são executados
-          # separadamente em workflows protegidos por environment/secrets.
-          python -m pytest             --ignore=tests/unit/test_conversation_summary_graph_integration.py             --ignore=tests/unit/test_financial_semantic_memory_graph_integration.py             -q
+          python -m pytest -q
 
       - name: Run official Quality Gate
         id: quality_gate
