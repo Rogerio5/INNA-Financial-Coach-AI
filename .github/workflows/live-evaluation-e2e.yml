@@ -1,0 +1,116 @@
+name: INNA live evaluation E2E
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: "Digite RUN para executar Gemini, Neon e RAG reais"
+        required: true
+        type: choice
+        options:
+          - CANCEL
+          - RUN
+        default: CANCEL
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inna-live-evaluation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  live-evaluation:
+    if: ${{ inputs.confirmation == 'RUN' }}
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 10
+
+    environment:
+      name: live-evaluation
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      RUN_LIVE_EVALUATION_TESTS: "1"
+      RUN_LIVE_GEMINI_TESTS: "0"
+      RUN_HITL_E2E_TESTS: "0"
+
+      INNA_POSTGRES_CONNECT_TIMEOUT_SECONDS: "20"
+      INNA_POSTGRES_NETWORK_FAMILY: "system"
+
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -n "${DATABASE_URL}"
+          test -n "${GEMINI_API_KEY}"
+
+          echo "Required live evaluation secrets are configured."
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Compile live evaluation modules
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m compileall \
+            -q \
+            src/evaluation \
+            tests/integration/test_live_evaluation_e2e.py
+
+      - name: Validate Ruff
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m ruff check \
+            src/evaluation \
+            tests/integration/test_live_evaluation_e2e.py
+
+      - name: Run live evaluation E2E
+        shell: bash
+        run: |
+          set -o pipefail
+
+          mkdir -p artifacts/live-evaluation-e2e
+
+          python -m pytest \
+            tests/integration/test_live_evaluation_e2e.py \
+            -q \
+            -s \
+            2>&1 |
+            tee artifacts/live-evaluation-e2e/pytest-output.txt
+
+      - name: Upload live evaluation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inna-live-evaluation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/live-evaluation-e2e/
+          if-no-files-found: warn
+          retention-days: 7
