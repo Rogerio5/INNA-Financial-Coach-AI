@@ -129,9 +129,28 @@ def test_task_completion_adds_trace():
         {
             "intent": "educacao_financeira",
             "current_agent": "education_agent",
-            "response": "Resposta educativa.",
-            "structured_response": {},
-            "tool_results": [],
+            "response": (
+                "A reserva de emergência protege "
+                "o orçamento contra despesas inesperadas "
+                "e reduz a necessidade de dívidas."
+            ),
+            "structured_response": {
+                "rag_execution": {
+                    "retrieved_documents": 2,
+                    "sources": [
+                        "guia-reserva.md",
+                    ],
+                }
+            },
+            "tool_results": [
+                {
+                    "tool": (
+                        "buscar_conhecimento_rag"
+                    ),
+                    "status": "success",
+                    "ok": True,
+                }
+            ],
             "errors": [],
             "trace": [
                 "agent:education_agent",
@@ -146,6 +165,7 @@ def test_task_completion_adds_trace():
     assert result["trace"][-1].startswith(
         "task_completion:completed:"
     )
+
 
 
 def test_current_agent_is_inferred_from_next_node():

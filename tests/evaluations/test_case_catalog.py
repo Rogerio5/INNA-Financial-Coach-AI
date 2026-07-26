@@ -423,7 +423,7 @@ def test_financial_calculator_cases(
     )
 
 
-def test_rag_case_uses_rag_search() -> None:
+def test_rag_case_uses_formal_rag_tool() -> None:
     case = build_core_dataset().get_case(
         "rag-financial-education-001"
     )
@@ -433,7 +433,7 @@ def test_rag_case_uses_rag_search() -> None:
     )
     assert (
         case.expected_tools[0].name
-        == "rag_search"
+        == "buscar_conhecimento_rag"
     )
     assert (
         case.minimum_retrieved_documents

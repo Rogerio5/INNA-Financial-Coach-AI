@@ -894,7 +894,7 @@ def test_retrieval_contract_passes(
         retrieval_context=(
             "Material sobre gastos fixos, "
             "gastos variáveis e reserva "
-            "de emergência.",
+            "financeira para emergências.",
         ),
     )
 
@@ -1239,18 +1239,18 @@ def test_real_rag_runner_passes(
         retrieval_context=(
             "Conteúdo sobre gastos fixos, "
             "gastos variáveis e reserva "
-            "de emergência.",
+            "financeira para emergências.",
         ),
         metadata={
-            "actual_agent": "financial_agent",
-            "actual_team": "financial_team",
+            "actual_agent": "education_agent",
+            "actual_team": "knowledge_team",
             "actual_intent": (
                 "educacao_financeira"
             ),
             "actual_task_status": "completed",
             "called_tools": [
                 {
-                    "name": "rag_search",
+                    "name": "buscar_conhecimento_rag",
                     "arguments": {},
                     "call_index": 0,
                 }

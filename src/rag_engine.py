@@ -8,6 +8,7 @@ from typing import Any
 import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extras import Json
+
 try:
     from observability.llm_tracking import (
         executar_generate_content_observado,
@@ -278,6 +279,7 @@ def generate_gemini_embedding(text: str) -> list[float] | None:
     """
     try:
         import os
+
         from google import genai
         from google.genai import types
 
@@ -396,7 +398,7 @@ def load_chunks(idioma: str = "pt") -> list[dict[str, Any]]:
         chunks = []
 
         for row in rows:
-            item = dict(zip(columns, row))
+            item = dict(zip(columns, row, strict=True))
 
             texto = (
                 item.get("texto")
@@ -474,7 +476,7 @@ def search_knowledge_base_pgvector(query: str, idioma: str = "pt", top_k: int = 
         results = []
 
         for row in rows:
-            item = dict(zip(columns, row))
+            item = dict(zip(columns, row, strict=True))
             item["texto"] = item.get("chunk_text", "")
             item["trecho"] = item.get("chunk_text", "")
             item["score"] = float(item.get("score") or 0)
@@ -573,7 +575,7 @@ def search_knowledge_base_text(query: str, idioma: str = "pt", top_k: int = 4) -
         results = []
 
         for row in rows:
-            item = dict(zip(columns, row))
+            item = dict(zip(columns, row, strict=True))
             score_textual = float(item.get("score_textual") or 0)
 
             item["texto"] = item.get("chunk_text", "")
@@ -612,7 +614,7 @@ def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) ->
         "como", "posso", "comecar", "começar", "uma", "um", "para", "por",
         "que", "qual", "quais", "sobre", "minha", "meu", "me", "da", "de",
         "do", "das", "dos", "com", "sem", "isso", "esse", "essa", "estou",
-        "esta", "esse", "aqui", "ali", "voce", "você"
+        "esta", "aqui", "ali", "voce", "você"
     }
 
     termos_query = []
@@ -1212,6 +1214,7 @@ def generate_gemini_rag_answer(pergunta: str, contexto: str, idioma: str = "pt")
     """
     try:
         import os
+
         from google import genai
 
         api_key = os.getenv("GEMINI_API_KEY")
@@ -2066,7 +2069,27 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
                 modo=modo_busca,
             )
 
-    if "reserva" in pergunta_normalizada:
+    pergunta_sobre_tipos_de_gastos = (
+        "gastos fixos" in pergunta_normalizada
+        and (
+            "gastos variaveis"
+            in pergunta_normalizada
+            or "gastos variáveis"
+            in pergunta_normalizada
+        )
+        and "reserva" in pergunta_normalizada
+    )
+
+    if pergunta_sobre_tipos_de_gastos:
+        resposta = """Gastos fixos são despesas recorrentes e geralmente previsíveis, como aluguel, mensalidades e parcelas.
+
+Gastos variáveis mudam conforme o consumo e as escolhas do mês, como mercado, transporte, energia e lazer.
+
+A reserva de emergência é um valor separado para situações inesperadas, como perda de renda, consertos ou despesas urgentes. Ela ajuda a evitar empréstimos e o uso do cartão em momentos de dificuldade.
+
+Uma forma simples de começar é registrar os gastos fixos e variáveis, verificar quanto sobra no orçamento e guardar uma quantia possível todos os meses para construir a reserva."""
+
+    elif "reserva" in pergunta_normalizada:
         resposta = """Vamos por partes. Vou te orientar de um jeito simples:
 
 1. Veja quanto entra e quanto sai todo mês com contas, mercado, transporte, compras e parcelas.

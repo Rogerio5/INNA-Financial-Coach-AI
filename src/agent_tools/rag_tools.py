@@ -18,7 +18,6 @@ from src.agent_tools.core import (
 )
 
 
-
 class RagToolResult(BaseModel):
     ok: bool
 
@@ -33,6 +32,10 @@ class RagToolResult(BaseModel):
     mode: str = "unknown"
     retrieved_documents: int = 0
     duration_ms: int = 0
+
+    retrieval_context: list[str] = Field(
+        default_factory=list
+    )
 
     raw_result: dict[str, Any] = Field(
         default_factory=dict
@@ -81,6 +84,59 @@ def _normalizar_fontes(
             normalizadas.append(valor)
 
     return normalizadas
+
+
+def _extrair_contexto_recuperado(
+    resultado: dict[str, Any],
+) -> list[str]:
+    """
+    Extrai o contexto textual efetivamente usado pelo
+    RAG sem expor embeddings, SQL ou dados técnicos.
+
+    O contexto completo é priorizado porque os trechos
+    individuais das fontes podem estar truncados.
+    """
+    contexto = str(
+        resultado.get(
+            "contexto_usado",
+            "",
+        )
+        or ""
+    ).strip()
+
+    if contexto:
+        return [
+            contexto[:16000]
+        ]
+
+    trechos: list[str] = []
+
+    fontes = resultado.get(
+        "fontes",
+        [],
+    )
+
+    if isinstance(fontes, (list, tuple)):
+        for fonte in fontes:
+            if not isinstance(fonte, dict):
+                continue
+
+            trecho = str(
+                fonte.get("trecho")
+                or fonte.get("chunk_text")
+                or fonte.get("texto")
+                or fonte.get("conteudo")
+                or ""
+            ).strip()
+
+            if trecho and trecho not in trechos:
+                trechos.append(
+                    trecho[:2000]
+                )
+
+    return trechos
+
+
 
 
 def consultar_rag_inna(
@@ -157,6 +213,12 @@ def consultar_rag_inna(
             resultado.get("fontes")
             or resultado.get("sources")
         )
+        contexto_recuperado = (
+            _extrair_contexto_recuperado(
+                resultado
+            )
+        )
+
 
         modo = str(
             resultado.get("modo")
@@ -226,6 +288,9 @@ def consultar_rag_inna(
                 quantidade_documentos
             ),
             duration_ms=duracao_ms,
+            retrieval_context=(
+                contexto_recuperado
+            ),
             raw_result=resultado,
         )
 
@@ -324,6 +389,10 @@ class BuscarConhecimentoRagOutput(BaseModel):
         ge=0,
     )
 
+    contexto_recuperado: list[str] = Field(
+        default_factory=list,
+    )
+
     duracao_rag_ms: int = Field(
         default=0,
         ge=0,
@@ -379,6 +448,9 @@ def executar_busca_conhecimento_rag(
         modo=resultado.mode,
         documentos_recuperados=(
             resultado.retrieved_documents
+        ),
+        contexto_recuperado=list(
+            resultado.retrieval_context
         ),
         duracao_rag_ms=(
             resultado.duration_ms
