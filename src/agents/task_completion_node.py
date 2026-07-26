@@ -15,7 +15,6 @@ from src.agents.task_completion import (
     evaluate_task_completion,
 )
 
-
 SPECIALIZED_AGENTS = {
     "financial_agent",
     "education_agent",
@@ -92,6 +91,7 @@ def _resolve_current_agent(
     return ""
 
 
+
 def _requirements_for_state(
     state: InnaAgentState,
 ) -> list[str]:
@@ -120,10 +120,21 @@ def _requirements_for_state(
             "response_generation",
         ]
 
+    if intent in {
+        "educacao_financeira",
+        "consulta_rag",
+    }:
+        return [
+            "agent_execution",
+            "rag_retrieval_executed",
+            "response_generation",
+        ]
+
     return [
         "agent_execution",
         "response_generation",
     ]
+
 
 
 def _has_report_evidence(
@@ -219,6 +230,110 @@ def _financial_inputs_resolved(
     )
 
 
+
+def _rag_retrieval_executed(
+    state: InnaAgentState,
+) -> bool:
+    """
+    Confirma execução RAG bem-sucedida com evidência
+    de fontes ou documentos recuperados.
+    """
+    tool_results = state.get(
+        "tool_results",
+        [],
+    )
+
+    successful_tool = False
+
+    if isinstance(tool_results, list):
+        for item in tool_results:
+            if not isinstance(item, dict):
+                continue
+
+            tool_name = _normalize_text(
+                item.get(
+                    "tool",
+                    item.get(
+                        "tool_name",
+                        item.get("name", ""),
+                    ),
+                )
+            ).lower()
+
+            successful = (
+                item.get("ok") is True
+                or item.get("status")
+                in {
+                    "success",
+                    "completed",
+                    "ok",
+                }
+            )
+
+            if (
+                tool_name
+                == "buscar_conhecimento_rag"
+                and successful
+            ):
+                successful_tool = True
+                break
+
+    structured_response = state.get(
+        "structured_response",
+        {},
+    )
+
+    if not isinstance(
+        structured_response,
+        dict,
+    ):
+        return False
+
+    rag_execution = structured_response.get(
+        "rag_execution",
+        {},
+    )
+
+    if not isinstance(
+        rag_execution,
+        dict,
+    ):
+        return False
+
+    retrieved_documents = rag_execution.get(
+        "retrieved_documents",
+        0,
+    )
+
+    try:
+        retrieved_documents = int(
+            retrieved_documents or 0
+        )
+    except (TypeError, ValueError):
+        retrieved_documents = 0
+
+    sources = rag_execution.get(
+        "sources",
+        [],
+    )
+
+    has_sources = (
+        isinstance(sources, (list, tuple))
+        and any(
+            _normalize_text(source)
+            for source in sources
+        )
+    )
+
+    return (
+        successful_tool
+        and (
+            retrieved_documents > 0
+            or has_sources
+        )
+    )
+
+
 def _financial_calculation_executed(
     state: InnaAgentState,
 ) -> bool:
@@ -285,6 +400,7 @@ def _financial_calculation_executed(
     return False
 
 
+
 def _completed_requirements(
     state: InnaAgentState,
     requirements: list[str],
@@ -337,7 +453,29 @@ def _completed_requirements(
             "financial_calculation_executed"
         )
 
-    if response:
+    if (
+        "rag_retrieval_executed"
+        in requirements
+        and _rag_retrieval_executed(
+            state
+        )
+    ):
+        completed.append(
+            "rag_retrieval_executed"
+        )
+
+    requires_rag = (
+        "rag_retrieval_executed"
+        in requirements
+    )
+
+    response_generated = (
+        _is_substantive_response(response)
+        if requires_rag
+        else bool(response)
+    )
+
+    if response_generated:
         completed.append(
             "response_generation"
         )
@@ -358,6 +496,44 @@ def _completed_requirements(
         )
 
     return completed
+
+
+
+
+
+def _is_substantive_response(
+    response: str,
+) -> bool:
+    """
+    Impede que placeholders e mensagens de roteamento
+    sejam considerados respostas finais.
+    """
+    normalized = _normalize_text(
+        response
+    ).lower()
+
+    if not normalized:
+        return False
+
+    placeholders = (
+        "a solicitação foi encaminhada",
+        "a solicitacao foi encaminhada",
+        "foi encaminhada para o agente",
+        "integrar conteúdo do rag",
+        "integrar conteudo do rag",
+        "processando sua solicitação",
+        "processando sua solicitacao",
+    )
+
+    if any(
+        marker in normalized
+        for marker in placeholders
+    ):
+        return False
+
+    return len(
+        normalized.split()
+    ) >= 8
 
 
 def _requires_user_input(

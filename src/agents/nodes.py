@@ -12,14 +12,14 @@ from src.agent_tools.core import (
 from src.agent_tools.financial_tools import (
     FINANCIAL_DIAGNOSIS_TOOL_NAME,
 )
-from src.agents.financial_history_flow import (
-    executar_fluxo_historico_financeiro,
-)
 from src.agent_tools.rag_tools import (
     RAG_TOOL_NAME,
 )
 from src.agent_tools.runtime import (
     executar_ferramenta_inna,
+)
+from src.agents.financial_history_flow import (
+    executar_fluxo_historico_financeiro,
 )
 from src.agents.financial_input_resolver import (
     resolver_entrada_financeira,
@@ -631,28 +631,10 @@ def financial_agent_node(
         ],
     }
 
-def education_agent_node(
+def _execute_rag_for_agent(
     state: InnaAgentState,
-) -> InnaAgentState:
-    return _finalizar(
-        state,
-        agent="education_agent",
-        summary=(
-            "A solicitação foi encaminhada para "
-            "o agente de educação financeira."
-        ),
-        recommendations=[
-            "Fornecer explicação educativa.",
-            "Criar passos simples e seguros.",
-        ],
-        next_steps=[
-            "Integrar conteúdo do RAG.",
-        ],
-    )
-
-
-def rag_agent_node(
-    state: InnaAgentState,
+    *,
+    agent: str,
 ) -> InnaAgentState:
     """
     Agente de conhecimento financeiro da INNA.
@@ -703,7 +685,7 @@ def rag_agent_node(
             "top_k": top_k,
         },
         context=ToolExecutionContext(
-            requested_by="rag_agent",
+            requested_by=agent,
             user_id=optional_text(
                 state.get("user_id")
                 or state.get("usuario_id")
@@ -805,7 +787,7 @@ def rag_agent_node(
         )
 
         resposta = AgentResponse(
-            agent="rag_agent",
+            agent=agent,
             intent=state.get(
                 "intent",
                 "consulta_rag",
@@ -844,7 +826,7 @@ def rag_agent_node(
             "tool_results": tool_results,
             "errors": errors,
             "trace": trace + [
-                "agent:rag_agent:error"
+                f"agent:{agent}:error"
             ],
         }
 
@@ -883,6 +865,16 @@ def rag_agent_node(
         or 0
     )
 
+
+    contexto_recuperado = [
+        str(item).strip()
+        for item in output.get(
+            "contexto_recuperado",
+            [],
+        )
+        if str(item).strip()
+    ]
+
     structured_response[
         "rag_execution"
     ].update({
@@ -894,6 +886,9 @@ def rag_agent_node(
             duracao_rag_ms
         ),
         "sources": fontes,
+        "retrieval_context": (
+            contexto_recuperado
+        ),
     })
 
     trace.append(
@@ -901,7 +896,7 @@ def rag_agent_node(
     )
 
     resposta = AgentResponse(
-        agent="rag_agent",
+        agent=agent,
         intent=state.get(
             "intent",
             "consulta_rag",
@@ -937,9 +932,35 @@ def rag_agent_node(
             state.get("errors", [])
         ),
         "trace": trace + [
-            "agent:rag_agent"
+            f"agent:{agent}"
         ],
     }
+
+def education_agent_node(
+    state: InnaAgentState,
+) -> InnaAgentState:
+    """
+    Agente de educação financeira fundamentado
+    no RAG híbrido e formal da INNA.
+    """
+    return _execute_rag_for_agent(
+        state,
+        agent="education_agent",
+    )
+
+
+def rag_agent_node(
+    state: InnaAgentState,
+) -> InnaAgentState:
+    """
+    Agente especializado em consultas diretas
+    à base de conhecimento financeiro.
+    """
+    return _execute_rag_for_agent(
+        state,
+        agent="rag_agent",
+    )
+
 
 def report_agent_node(
     state: InnaAgentState,

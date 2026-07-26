@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
+from src.agent_tools.rag_tools import (
+    RAG_TOOL_NAME,
+)
 from src.evaluation.contracts import (
     ConversationTurn,
     ExpectedToolCall,
@@ -49,7 +52,7 @@ def _rag_search(
     call_order: int | None = None,
 ) -> ExpectedToolCall:
     return ExpectedToolCall(
-        name="rag_search",
+        name=RAG_TOOL_NAME,
         required=True,
         allow_additional_arguments=True,
         call_order=call_order,
@@ -286,8 +289,8 @@ def build_core_cases() -> tuple[InnaEvaluationCase, ...]:
                 "financial-education",
                 "retrieval",
             ),
-            expected_agent="financial_agent",
-            expected_team="financial_team",
+            expected_agent="education_agent",
+            expected_team="knowledge_team",
             expected_intent="educacao_financeira",
             expected_task_status="completed",
             expected_tools=(
@@ -301,7 +304,7 @@ def build_core_cases() -> tuple[InnaEvaluationCase, ...]:
             expected_retrieval_terms=(
                 "gastos fixos",
                 "gastos variáveis",
-                "reserva de emergência",
+                "reserva financeira",
             ),
             minimum_retrieved_documents=1,
             minimum_completion_score=0.80,
