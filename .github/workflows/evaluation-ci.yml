@@ -122,6 +122,21 @@ jobs:
               )
           PY
 
+      - name: Initialize LangGraph checkpoint schema
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python - <<'PY'
+          from src.agents.persistence import abrir_checkpointer_postgres
+
+
+          with abrir_checkpointer_postgres() as checkpointer:
+              checkpointer.setup()
+
+          print("LANGGRAPH_CHECKPOINT_SCHEMA_READY")
+          PY
+
       - name: Display tool versions
         shell: bash
         run: |
