@@ -1,7 +1,16 @@
-name: INNA LLMOps evaluation
+name: INNA LLMOps Evaluation CI
 
 on:
   workflow_dispatch:
+    inputs:
+      confirmation:
+        description: "Executa a validação determinística de métricas, testes, relatórios e Quality Gate da INNA"
+        required: true
+        type: choice
+        options:
+          - CANCEL
+          - RUN
+        default: CANCEL
 
   pull_request:
     paths:
@@ -30,7 +39,8 @@ concurrency:
 
 jobs:
   evaluation-validation:
-    name: LLMOps evaluation validation
+    name: Deterministic LLMOps Evaluation Validation
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.confirmation == 'RUN' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
 

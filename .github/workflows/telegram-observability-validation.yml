@@ -1,6 +1,17 @@
-name: Telegram observability validation
+name: Telegram Observability Validation
 
 on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: "Valida contratos Python, SLOs, regras Prometheus e dashboard Grafana do canal Telegram"
+        required: true
+        type: choice
+        options:
+          - CANCEL
+          - RUN
+        default: CANCEL
+
   pull_request:
     paths:
       - "prometheus/**"
@@ -31,26 +42,31 @@ concurrency:
 
 jobs:
   python-contracts:
-    name: Python contracts
+    name: Telegram Observability Python Contracts
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.confirmation == 'RUN' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure Python
+      - name: Configure Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: requirements.txt
 
-      - name: Install dependencies
+      - name: Install project dependencies
+        shell: bash
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          set -euo pipefail
 
-      - name: Validate Python contracts
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Validate Telegram observability contracts
         run: |
           pytest \
             tests/unit/test_telegram_error_category_contract_alignment.py \
@@ -61,12 +77,13 @@ jobs:
             -q
 
   prometheus-rules:
-    name: Prometheus rules
+    name: Telegram Prometheus Rules Validation
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.confirmation == 'RUN' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install Prometheus
@@ -94,12 +111,12 @@ jobs:
 
           promtool --version
 
-      - name: Validate recording rules
+      - name: Validate Telegram recording rules
         run: |
           promtool check rules \
             prometheus/telegram_recording_rules.yml
 
-      - name: Validate alert rules
+      - name: Validate Telegram alert rules
         run: |
           promtool check rules \
             prometheus/telegram_alert_rules.yml
