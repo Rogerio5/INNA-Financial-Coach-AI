@@ -1,0 +1,67 @@
+{
+  "entries": [
+    {
+      "baseline_id": "inna-production-baseline-v1",
+      "branch": "feat/llmops-evaluation-observability",
+      "case_count": 11,
+      "commit_sha": "de06a6bb9891831a8ed91dece09a5fc623ba6f4d",
+      "dataset_count": 3,
+      "environment": "local-validation",
+      "evaluation_mode": "deterministic-synthetic",
+      "metric_count": 7,
+      "metrics": [
+        {
+          "average_score": 1.0,
+          "delta_from_baseline": 0.0,
+          "metric_id": "contract-validation",
+          "status": "stable"
+        },
+        {
+          "average_score": 1.0,
+          "delta_from_baseline": 0.0,
+          "metric_id": "cost-budget",
+          "status": "stable"
+        },
+        {
+          "average_score": 1.0,
+          "delta_from_baseline": 0.0,
+          "metric_id": "expected-terms",
+          "status": "stable"
+        },
+        {
+          "average_score": 1.0,
+          "delta_from_baseline": 0.0,
+          "metric_id": "forbidden-terms",
+          "status": "stable"
+        },
+        {
+          "average_score": 1.0,
+          "delta_from_baseline": 0.0,
+          "metric_id": "human-review-policy",
+          "status": "stable"
+        },
+        {
+          "average_score": 1.0,
+          "delta_from_baseline": 0.0,
+          "metric_id": "latency-budget",
+          "status": "stable"
+        },
+        {
+          "average_score": 1.0,
+          "delta_from_baseline": 0.0,
+          "metric_id": "retrieval-contract",
+          "status": "stable"
+        }
+      ],
+      "pass_rate": 1.0,
+      "passed": true,
+      "quality_gate_passed": true,
+      "recorded_at": "2026-07-27T03:31:31Z",
+      "regression_count": 0,
+      "report_generated_date": "2026-07-27",
+      "run_reference": "run-7ac10138",
+      "violation_count": 0
+    }
+  ],
+  "history_schema_version": "1.0.0"
+}
