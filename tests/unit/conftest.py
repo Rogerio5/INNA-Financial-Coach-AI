@@ -8,16 +8,54 @@ from src.agents.schemas import (
 
 
 @pytest.fixture(autouse=True)
-def _bloquear_gemini_real_em_testes_unitarios(
+def _bloquear_servicos_externos_em_testes_unitarios(
     monkeypatch,
 ):
     """
-    Impede chamadas externas ao Gemini durante testes
-    unitários.
+    Impede chamadas externas ao Gemini e ao Phoenix durante
+    testes unitários.
 
-    Testes específicos podem sobrescrever este mock
-    usando unittest.mock.patch.
+    Testes específicos podem sobrescrever esses valores ou mocks.
     """
+
+    monkeypatch.setenv(
+        "PHOENIX_ENABLED",
+        "false",
+    )
+    monkeypatch.setenv(
+        "PHOENIX_TRACE_SAMPLE_RATE",
+        "0.0",
+    )
+    monkeypatch.setenv(
+        "PHOENIX_CAPTURE_CONTENT",
+        "false",
+    )
+
+    try:
+        from src.observability import phoenix_runtime
+
+        monkeypatch.setattr(
+            phoenix_runtime,
+            "_INITIALIZED",
+            False,
+        )
+        monkeypatch.setattr(
+            phoenix_runtime,
+            "_TRACER_PROVIDER",
+            None,
+        )
+        monkeypatch.setattr(
+            phoenix_runtime,
+            "_RUNTIME_SETTINGS",
+            None,
+        )
+        monkeypatch.setattr(
+            phoenix_runtime,
+            "_RUNTIME_ERROR",
+            None,
+        )
+    except ImportError:
+        pass
 
     def classificador_simulado(
         *,

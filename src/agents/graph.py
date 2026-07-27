@@ -10,7 +10,8 @@ Suporta:
 from __future__ import annotations
 
 import uuid
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, StateGraph
@@ -19,8 +20,10 @@ from langgraph.types import Command
 from src.agents.conversation_summary_node import (
     conversation_summary_node,
 )
-from src.agents.task_completion_node import (
-    task_completion_node,
+from src.agents.execution_governance import (
+    DEFAULT_MAX_EXECUTION_STEPS,
+    DEFAULT_MAX_SAME_AGENT_VISITS,
+    apply_execution_governance,
 )
 from src.agents.handoff_coordinator_node import (
     handoff_coordinator_node,
@@ -32,11 +35,6 @@ from src.agents.human_review_interrupt_node import (
 from src.agents.human_review_policy_node import (
     human_review_policy_node,
     select_route_after_human_review_policy,
-)
-from src.agents.execution_governance import (
-    DEFAULT_MAX_EXECUTION_STEPS,
-    DEFAULT_MAX_SAME_AGENT_VISITS,
-    apply_execution_governance,
 )
 from src.agents.nodes import (
     education_agent_node,
@@ -50,13 +48,9 @@ from src.agents.persistence import (
 )
 from src.agents.state import InnaAgentState
 from src.agents.supervisor import supervisor_node
-from src.context_engineering.node import (
-    context_builder_node,
+from src.agents.task_completion_node import (
+    task_completion_node,
 )
-
-
-DEFAULT_LANGGRAPH_RECURSION_LIMIT = 25
-
 from src.agents.team_router import (
     select_team_supervisor_route,
     team_router_node,
@@ -66,6 +60,15 @@ from src.agents.team_supervisor import (
     knowledge_team_supervisor_node,
     support_team_supervisor_node,
 )
+from src.context_engineering.node import (
+    context_builder_node,
+)
+from src.observability.langgraph_tracing import (
+    add_langgraph_result_attributes,
+    traced_langgraph_execution,
+)
+
+DEFAULT_LANGGRAPH_RECURSION_LIMIT = 25
 
 ALLOWED_AGENT_ROUTES = frozenset(
     {
@@ -585,11 +588,26 @@ def executar_nucleo_inna(
 
     config = _criar_config_execucao()
 
-    return _invocar_grafo_seguro(
-        inna_agent_graph,
-        estado_inicial,
-        config=config,
-    )
+    with traced_langgraph_execution(
+        execution_mode="non_persistent",
+        thread_id=thread_id,
+        user_id=usuario_id,
+        language=idioma,
+        currency=moeda,
+        human_review_enabled=False,
+    ) as span:
+        result = _invocar_grafo_seguro(
+            inna_agent_graph,
+            estado_inicial,
+            config=config,
+        )
+
+        add_langgraph_result_attributes(
+            span,
+            result,
+        )
+
+        return result
 
 
 def executar_nucleo_inna_persistente(
@@ -646,11 +664,28 @@ def executar_nucleo_inna_persistente(
             checkpointer=checkpointer
         )
 
-        return _invocar_grafo_seguro(
-            grafo,
-            estado_inicial,
-            config=config,
-        )
+        with traced_langgraph_execution(
+            execution_mode="persistent",
+            thread_id=thread_id,
+            user_id=usuario_id,
+            language=idioma,
+            currency=moeda,
+            human_review_enabled=(
+                human_review_enabled
+            ),
+        ) as span:
+            result = _invocar_grafo_seguro(
+                grafo,
+                estado_inicial,
+                config=config,
+            )
+
+            add_langgraph_result_attributes(
+                span,
+                result,
+            )
+
+            return result
 
 
 
@@ -708,12 +743,22 @@ def retomar_revisao_humana_persistente(
             checkpointer=checkpointer
         )
 
-        result = grafo.invoke(
-            Command(
-                resume=normalized_decision
-            ),
-            config=config,
-        )
+        with traced_langgraph_execution(
+            execution_mode="human_review_resume",
+            thread_id=normalized_thread_id,
+            human_review_enabled=True,
+        ) as span:
+            result = grafo.invoke(
+                Command(
+                    resume=normalized_decision
+                ),
+                config=config,
+            )
+
+            add_langgraph_result_attributes(
+                span,
+                result,
+            )
 
     return result
 
