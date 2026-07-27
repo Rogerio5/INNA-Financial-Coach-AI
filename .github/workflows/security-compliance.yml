@@ -1,0 +1,320 @@
+name: INNA Security and Compliance Validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: "Executa validações de segurança, dependências, secrets e governança dos workflows"
+        required: true
+        type: choice
+        options:
+          - CANCEL
+          - RUN
+        default: CANCEL
+
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "scripts/security/**"
+      - "tests/security/**"
+      - "requirements.txt"
+      - "pyproject.toml"
+      - ".gitleaks.toml"
+      - "docs/security/**"
+
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/**"
+      - "scripts/security/**"
+      - "tests/security/**"
+      - "requirements.txt"
+      - "pyproject.toml"
+      - ".gitleaks.toml"
+      - "docs/security/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inna-security-compliance-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ACTIONLINT_VERSION: "1.7.12"
+  GITLEAKS_VERSION: "8.27.2"
+  PIP_AUDIT_VERSION: "2.10.1"
+  PYTHONUNBUFFERED: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  workflow-policy:
+    name: Workflow Security Policy
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.confirmation == 'RUN' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Configure Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install workflow policy test dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m pip install --upgrade pip
+          python -m pip install pytest pyyaml
+
+      - name: Configure Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+          cache: false
+
+      - name: Install actionlint
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          go install             "github.com/rhysd/actionlint/cmd/actionlint@v${ACTIONLINT_VERSION}"
+
+          actionlint -version
+
+      - name: Validate GitHub Actions syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p artifacts/security-compliance
+
+          actionlint \
+            -format '{{json .}}' \
+            .github/workflows/*.yml \
+            > artifacts/security-compliance/actionlint.jsonl
+
+      - name: Run workflow security policy tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m pytest             tests/security/test_validate_workflow_security.py             -q
+
+      - name: Enforce INNA workflow policy
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python \
+            scripts/security/validate_workflow_security.py
+
+      - name: Upload workflow security evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-security-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/security-compliance/actionlint.jsonl
+            artifacts/security-compliance/workflow-policy-report.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  dependency-audit:
+    name: Python Dependency Vulnerability Audit
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.confirmation == 'RUN' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Configure Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependency audit tool
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m pip install --upgrade pip
+          python -m pip install \
+            "pip-audit==${PIP_AUDIT_VERSION}"
+
+          python -m pip_audit --version
+
+      - name: Audit Python dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p artifacts/security-compliance
+
+          python -m pip_audit \
+            --requirement requirements.txt \
+            --format json \
+            --output artifacts/security-compliance/pip-audit.json \
+            --progress-spinner off \
+            --strict
+
+      - name: Generate CycloneDX dependency evidence
+        if: always()
+        shell: bash
+        run: |
+          set +e
+
+          python -m pip_audit \
+            --requirement requirements.txt \
+            --format cyclonedx-json \
+            --output artifacts/security-compliance/python-sbom.cdx.json \
+            --progress-spinner off
+
+          exit 0
+
+      - name: Upload dependency security evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-security-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/security-compliance/pip-audit.json
+            artifacts/security-compliance/python-sbom.cdx.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  secret-detection:
+    name: Repository Secret Detection
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.confirmation == 'RUN' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout complete repository history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Gitleaks with checksum validation
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          archive="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          checksums="gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          base_url="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+
+          curl --fail --location --silent --show-error \
+            --output "${archive}" \
+            "${base_url}/${archive}"
+
+          curl --fail --location --silent --show-error \
+            --output "${checksums}" \
+            "${base_url}/${checksums}"
+
+          grep " ${archive}$" "${checksums}" |
+            sha256sum --check -
+
+          tar --extract --gzip --file "${archive}" gitleaks
+          sudo install gitleaks /usr/local/bin/gitleaks
+
+          gitleaks version
+
+      - name: Scan repository history for secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p artifacts/security-compliance
+
+          gitleaks git \
+            --redact \
+            --report-format json \
+            --report-path artifacts/security-compliance/gitleaks-report.json \
+            --verbose
+
+      - name: Upload secret detection evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: secret-detection-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/security-compliance/gitleaks-report.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  compliance-summary:
+    name: Security and Compliance Summary
+    if: always()
+    needs:
+      - workflow-policy
+      - dependency-audit
+      - secret-detection
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Publish security and compliance summary
+        shell: bash
+        env:
+          WORKFLOW_POLICY_RESULT: ${{ needs.workflow-policy.result }}
+          DEPENDENCY_AUDIT_RESULT: ${{ needs.dependency-audit.result }}
+          SECRET_DETECTION_RESULT: ${{ needs.secret-detection.result }}
+        run: |
+          set -euo pipefail
+
+          {
+            echo "# INNA Security and Compliance"
+            echo
+            echo "| Controle | Resultado |"
+            echo "|---|---|"
+            echo "| Política dos workflows | ${WORKFLOW_POLICY_RESULT} |"
+            echo "| Vulnerabilidades Python | ${DEPENDENCY_AUDIT_RESULT} |"
+            echo "| Detecção de secrets | ${SECRET_DETECTION_RESULT} |"
+            echo
+            echo "## Escopo"
+            echo
+            echo "- sintaxe e expressões do GitHub Actions;"
+            echo "- permissões mínimas e timeouts;"
+            echo "- dependências Python conhecidamente vulneráveis;"
+            echo "- credenciais acidentalmente versionadas;"
+            echo "- produção de evidências JSON e SBOM."
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Enforce compliance result
+        shell: bash
+        env:
+          WORKFLOW_POLICY_RESULT: ${{ needs.workflow-policy.result }}
+          DEPENDENCY_AUDIT_RESULT: ${{ needs.dependency-audit.result }}
+          SECRET_DETECTION_RESULT: ${{ needs.secret-detection.result }}
+        run: |
+          set -euo pipefail
+
+          results=(
+            "${WORKFLOW_POLICY_RESULT}"
+            "${DEPENDENCY_AUDIT_RESULT}"
+            "${SECRET_DETECTION_RESULT}"
+          )
+
+          for result in "${results[@]}"; do
+            if [ "${result}" != "success" ]; then
+              echo "Security and Compliance Gate bloqueado."
+              exit 1
+            fi
+          done
+
+          echo "Security and Compliance Gate aprovado."

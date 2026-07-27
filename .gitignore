@@ -69,3 +69,6 @@ artifacts/evaluations/*.tmp
 
 # Runtime and evaluation artifacts
 /artifacts/
+
+# Security and compliance local evidence
+artifacts/security-compliance/
