@@ -15,6 +15,12 @@ from src.evaluation.dashboard_data import (
     get_metric_ids,
     load_dashboard_history,
 )
+from src.observability.infrastructure_health import (
+    collect_infrastructure_health,
+)
+from src.observability.phoenix_runtime import (
+    initialize_phoenix,
+)
 
 DEFAULT_HISTORY_PATH = Path(
     "evaluation/history/evaluation-history.json"
@@ -40,10 +46,182 @@ def _render_header() -> None:
     )
 
 
-def _render_sidebar(
+def _render_infrastructure_status() -> None:
+    """
+    Exibe saúde operacional sem revelar credenciais,
+    URLs privadas ou identificadores brutos.
+    """
+
+    try:
+        initialize_phoenix()
+        health = collect_infrastructure_health()
+    except Exception as exc:
+        st.warning(
+            "Não foi possível coletar o status da "
+            "infraestrutura neste momento."
+        )
+
+        with st.expander(
+            "Detalhes técnicos",
+            expanded=False,
+        ):
+            st.code(type(exc).__name__)
+
+        return
+
+    st.subheader("Infraestrutura e observabilidade")
+
+    status_labels = {
+        "operational": "Operacional",
+        "degraded": "Degradada",
+        "unavailable": "Indisponível",
+    }
+
+    status_label = status_labels.get(
+        health.status,
+        health.status,
+    )
+
+    if health.status == "operational":
+        st.success(
+            f"Status geral: {status_label}"
+        )
+    elif health.status == "degraded":
+        st.warning(
+            f"Status geral: {status_label}"
+        )
+    else:
+        st.error(
+            f"Status geral: {status_label}"
+        )
+
+    neon_column, phoenix_column, render_column = (
+        st.columns(3)
+    )
+
+    with neon_column:
+        st.metric(
+            "Neon PostgreSQL",
+            (
+                "Disponível"
+                if health.neon.available
+                else "Indisponível"
+            ),
+            (
+                f"{health.neon.latency_ms:.0f} ms"
+                if health.neon.latency_ms is not None
+                else "sem medição"
+            ),
+        )
+
+        st.caption(
+            f"Pool: {health.neon.pool_status}"
+        )
+
+    with phoenix_column:
+        st.metric(
+            "Phoenix",
+            (
+                "Ativo"
+                if health.phoenix.ready
+                else "Inativo"
+            ),
+            (
+                f"Sample {health.phoenix.sample_rate:.0%}"
+            ),
+        )
+
+        st.caption(
+            f"Projeto: "
+            f"{health.phoenix.project_name}"
+        )
+
+    with render_column:
+        st.metric(
+            "Execução",
+            (
+                "Render"
+                if health.render.running_on_render
+                else "Local"
+            ),
+            health.render.environment,
+        )
+
+        st.caption(
+            f"Serviço: {health.render.service_name}"
+        )
+
+    with st.expander(
+        "Detalhes técnicos da infraestrutura",
+        expanded=False,
+    ):
+        detail_column_1, detail_column_2 = (
+            st.columns(2)
+        )
+
+        with detail_column_1:
+            st.write(
+                "**Neon**"
+            )
+            st.write(
+                f"PostgreSQL: "
+                f"{health.neon.server_version or '—'}"
+            )
+            st.write(
+                f"Tamanho do pool: "
+                f"{health.neon.pool_size}"
+            )
+            st.write(
+                f"Conexões disponíveis: "
+                f"{health.neon.pool_available}"
+            )
+            st.write(
+                f"Requisições aguardando: "
+                f"{health.neon.pool_waiting}"
+            )
+
+        with detail_column_2:
+            st.write(
+                "**Aplicação e tracing**"
+            )
+            st.write(
+                f"Ambiente: "
+                f"{health.render.environment}"
+            )
+            st.write(
+                f"Região: {health.render.region}"
+            )
+            st.write(
+                f"Phoenix processor: "
+                f"{health.phoenix.processor}"
+            )
+            st.write(
+                f"Captura de conteúdo: "
+                f"{health.phoenix.capture_content}"
+            )
+
+        if health.unavailable_components:
+            st.error(
+                "Componentes indisponíveis: "
+                + ", ".join(
+                    health.unavailable_components
+                )
+            )
+
+        if health.degraded_components:
+            st.warning(
+                "Componentes degradados: "
+                + ", ".join(
+                    health.degraded_components
+                )
+            )
+
+
+def _render_filters(
     history,
+    controls,
 ):
-    st.sidebar.header("Filtros")
+    controls.header("Filtros")
 
     available_branches = sorted(
         {
@@ -59,19 +237,19 @@ def _render_sidebar(
         }
     )
 
-    branches = st.sidebar.multiselect(
+    branches = controls.multiselect(
         "Branches",
         available_branches,
         default=available_branches,
     )
 
-    environments = st.sidebar.multiselect(
+    environments = controls.multiselect(
         "Ambientes",
         available_environments,
         default=available_environments,
     )
 
-    status_option = st.sidebar.selectbox(
+    status_option = controls.selectbox(
         "Status da execução",
         (
             "Todas",
@@ -364,18 +542,43 @@ def _render_runs_table(history) -> None:
     )
 
 
-def main() -> None:
-    st.set_page_config(
-        page_title="INNA LLMOps",
-        page_icon="📊",
-        layout="wide",
-    )
+def render_llmops_dashboard(
+    *,
+    integrated: bool = False,
+) -> None:
+    """
+    Renderiza o painel LLMOps.
 
+    integrated=False:
+        execução Streamlit independente.
+
+    integrated=True:
+        execução incorporada ao dashboard
+        administrativo principal da INNA.
+    """
     _render_header()
+    _render_infrastructure_status()
 
-    history_path = st.sidebar.text_input(
+    st.divider()
+
+    if integrated:
+        controls = st.expander(
+            "Filtros LLMOps",
+            expanded=False,
+        )
+        history_key = (
+            "llmops_integrated_history_path"
+        )
+    else:
+        controls = st.sidebar
+        history_key = (
+            "llmops_standalone_history_path"
+        )
+
+    history_path = controls.text_input(
         "Arquivo de histórico",
         str(DEFAULT_HISTORY_PATH),
+        key=history_key,
     )
 
     try:
@@ -387,10 +590,11 @@ def main() -> None:
             "Não foi possível carregar o "
             f"histórico: {exc}"
         )
-        st.stop()
+        return
 
-    filtered_history = _render_sidebar(
-        history
+    filtered_history = _render_filters(
+        history,
+        controls,
     )
 
     _render_summary(filtered_history)
@@ -413,6 +617,18 @@ def main() -> None:
 
     _render_runs_table(
         filtered_history
+    )
+
+
+def main() -> None:
+    st.set_page_config(
+        page_title="INNA LLMOps",
+        page_icon="📊",
+        layout="wide",
+    )
+
+    render_llmops_dashboard(
+        integrated=False
     )
 
 

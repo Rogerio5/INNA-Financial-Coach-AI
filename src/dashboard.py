@@ -3147,6 +3147,7 @@ def render_filters(
             "🧭 Timeline Viewer",
             "📊 Analytics Tools",
             "❤️ Health Center",
+            "🛰️ LLMOps & Observabilidade",
             "💰 LLM Cost Center",
             "📄 Upload Documentos",
             "🧠 Memória Usuário",
@@ -8285,6 +8286,20 @@ def main(
             )
 
         render_health_score_page()
+
+    elif menu == "🛰️ LLMOps & Observabilidade":
+        try:
+            from evaluation.dashboard import (
+                render_llmops_dashboard
+            )
+        except ImportError:
+            from src.evaluation.dashboard import (
+                render_llmops_dashboard
+            )
+
+        render_llmops_dashboard(
+            integrated=True
+        )
 
     elif menu == "💰 LLM Cost Center":
         try:
