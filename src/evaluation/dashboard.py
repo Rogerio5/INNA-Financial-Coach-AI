@@ -40,10 +40,11 @@ def _render_header() -> None:
     )
 
 
-def _render_sidebar(
+def _render_filters(
     history,
+    controls,
 ):
-    st.sidebar.header("Filtros")
+    controls.header("Filtros")
 
     available_branches = sorted(
         {
@@ -59,19 +60,19 @@ def _render_sidebar(
         }
     )
 
-    branches = st.sidebar.multiselect(
+    branches = controls.multiselect(
         "Branches",
         available_branches,
         default=available_branches,
     )
 
-    environments = st.sidebar.multiselect(
+    environments = controls.multiselect(
         "Ambientes",
         available_environments,
         default=available_environments,
     )
 
-    status_option = st.sidebar.selectbox(
+    status_option = controls.selectbox(
         "Status da execução",
         (
             "Todas",
@@ -364,18 +365,40 @@ def _render_runs_table(history) -> None:
     )
 
 
-def main() -> None:
-    st.set_page_config(
-        page_title="INNA LLMOps",
-        page_icon="📊",
-        layout="wide",
-    )
+def render_llmops_dashboard(
+    *,
+    integrated: bool = False,
+) -> None:
+    """
+    Renderiza o painel LLMOps.
 
+    integrated=False:
+        execução Streamlit independente.
+
+    integrated=True:
+        execução incorporada ao dashboard
+        administrativo principal da INNA.
+    """
     _render_header()
 
-    history_path = st.sidebar.text_input(
+    if integrated:
+        controls = st.expander(
+            "Filtros LLMOps",
+            expanded=False,
+        )
+        history_key = (
+            "llmops_integrated_history_path"
+        )
+    else:
+        controls = st.sidebar
+        history_key = (
+            "llmops_standalone_history_path"
+        )
+
+    history_path = controls.text_input(
         "Arquivo de histórico",
         str(DEFAULT_HISTORY_PATH),
+        key=history_key,
     )
 
     try:
@@ -387,10 +410,11 @@ def main() -> None:
             "Não foi possível carregar o "
             f"histórico: {exc}"
         )
-        st.stop()
+        return
 
-    filtered_history = _render_sidebar(
-        history
+    filtered_history = _render_filters(
+        history,
+        controls,
     )
 
     _render_summary(filtered_history)
@@ -413,6 +437,18 @@ def main() -> None:
 
     _render_runs_table(
         filtered_history
+    )
+
+
+def main() -> None:
+    st.set_page_config(
+        page_title="INNA LLMOps",
+        page_icon="📊",
+        layout="wide",
+    )
+
+    render_llmops_dashboard(
+        integrated=False
     )
 
 
