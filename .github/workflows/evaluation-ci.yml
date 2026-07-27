@@ -16,6 +16,8 @@ on:
     paths:
       - "src/evaluation/**"
       - "tests/evaluations/**"
+      - "evaluation/**"
+      - "llmops_dashboard.py"
       - "requirements.txt"
       - "pyproject.toml"
       - ".github/workflows/evaluation-ci.yml"
@@ -26,6 +28,8 @@ on:
     paths:
       - "src/evaluation/**"
       - "tests/evaluations/**"
+      - "evaluation/**"
+      - "llmops_dashboard.py"
       - "requirements.txt"
       - "pyproject.toml"
       - ".github/workflows/evaluation-ci.yml"
@@ -165,7 +169,8 @@ jobs:
           python -m compileall \
             -q \
             src/evaluation \
-            tests/evaluations
+            tests/evaluations \
+            llmops_dashboard.py
 
       - name: Run Ruff
         shell: bash
@@ -174,7 +179,8 @@ jobs:
 
           python -m ruff check \
             src/evaluation \
-            tests/evaluations
+            tests/evaluations \
+            llmops_dashboard.py
 
       - name: Run evaluation tests
         shell: bash
@@ -202,7 +208,6 @@ jobs:
 
           python -m src.evaluation run-official \
             --output-directory artifacts/evaluation-ci \
-            --summary-only \
             --minimum-pass-rate 1.0 \
             --maximum-failed-cases 0 \
             --maximum-blocked-cases 0 \
@@ -282,6 +287,45 @@ jobs:
           )
           PY
 
+      - name: Run baseline regression gate
+        id: regression_gate
+        if: ${{ always() && steps.quality_gate.outcome != 'skipped' }}
+        shell: bash
+        env:
+          INNA_CI_BRANCH: ${{ github.head_ref || github.ref_name }}
+          INNA_CI_COMMIT: ${{ github.sha }}
+        run: |
+          set +e
+
+          mkdir -p             artifacts/evaluation-comparison             artifacts/evaluation-history
+
+          python -m src.evaluation.ci_pipeline             --report-directory artifacts/evaluation-ci             --baseline evaluation/baselines/production-baseline.json             --comparison-output-directory artifacts/evaluation-comparison             --history-seed evaluation/history/evaluation-history.json             --history-output artifacts/evaluation-history/evaluation-history.json             --branch "${INNA_CI_BRANCH}"             --commit-sha "${INNA_CI_COMMIT}"             --environment github-actions             --evaluation-mode deterministic-synthetic             --maximum-metric-regression 0.05             --maximum-pass-rate-regression 0.05
+
+          exit_code=$?
+
+          echo "exit_code=${exit_code}" >> "${GITHUB_OUTPUT}"
+
+          if [ "${exit_code}" -eq 0 ]; then
+            echo "Gate de regressão aprovado."
+          else
+            echo "Gate de regressão reprovado."
+          fi
+
+          exit 0
+
+      - name: Upload sanitized LLMOps artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inna-llmops-artifacts-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/evaluation-ci/*.json
+            artifacts/evaluation-comparison/*.json
+            artifacts/evaluation-comparison/*.md
+            artifacts/evaluation-history/*.json
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Upload sanitized evaluation report
         if: always()
         uses: actions/upload-artifact@v4
@@ -291,11 +335,12 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Enforce Quality Gate result
+      - name: Enforce Quality Gate and regression result
         if: ${{ always() && steps.quality_gate.outcome != 'skipped' }}
         shell: bash
         env:
           QUALITY_GATE_EXIT_CODE: ${{ steps.quality_gate.outputs.exit_code }}
+          REGRESSION_GATE_EXIT_CODE: ${{ steps.regression_gate.outputs.exit_code }}
         run: |
           set -euo pipefail
 
@@ -309,4 +354,14 @@ jobs:
             exit "${QUALITY_GATE_EXIT_CODE}"
           fi
 
-          echo "Quality Gate aprovado."
+          if [ -z "${REGRESSION_GATE_EXIT_CODE}" ]; then
+            echo "O gate de regressão não produziu código de saída."
+            exit 1
+          fi
+
+          if [ "${REGRESSION_GATE_EXIT_CODE}" -ne 0 ]; then
+            echo "O gate de regressão bloqueou esta alteração."
+            exit "${REGRESSION_GATE_EXIT_CODE}"
+          fi
+
+          echo "Quality Gate e gate de regressão aprovados."

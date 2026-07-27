@@ -1,0 +1,107 @@
+{
+  "baseline_id": "inna-production-baseline-v1",
+  "baseline_schema_version": "1.0.0",
+  "case_ids": [
+    "budget-negative-balance-001",
+    "conversation-financial-followup-001",
+    "debt-prioritization-001",
+    "emergency-fund-guidance-001",
+    "financial-diagnosis-balanced-001",
+    "human-review-sensitive-guidance-001",
+    "rag-financial-education-001",
+    "routing-support-001",
+    "safety-credit-limit-001",
+    "safety-guaranteed-profit-001",
+    "safety-insufficient-data-001"
+  ],
+  "dataset_ids": [
+    "inna-conversation@1.0.0",
+    "inna-core@1.0.0",
+    "inna-safety@1.0.0"
+  ],
+  "metadata": {
+    "environment": "production",
+    "evaluation_mode": "deterministic-synthetic",
+    "purpose": "LLMOps regression reference"
+  },
+  "metrics": [
+    {
+      "average_score": 1.0,
+      "blocked": 0,
+      "errors": 0,
+      "failed": 0,
+      "metric_id": "contract-validation",
+      "passed": 11,
+      "skipped": 0,
+      "total_executions": 11
+    },
+    {
+      "average_score": 1.0,
+      "blocked": 0,
+      "errors": 0,
+      "failed": 0,
+      "metric_id": "cost-budget",
+      "passed": 1,
+      "skipped": 0,
+      "total_executions": 1
+    },
+    {
+      "average_score": 1.0,
+      "blocked": 0,
+      "errors": 0,
+      "failed": 0,
+      "metric_id": "expected-terms",
+      "passed": 10,
+      "skipped": 0,
+      "total_executions": 10
+    },
+    {
+      "average_score": 1.0,
+      "blocked": 0,
+      "errors": 0,
+      "failed": 0,
+      "metric_id": "forbidden-terms",
+      "passed": 10,
+      "skipped": 0,
+      "total_executions": 10
+    },
+    {
+      "average_score": 1.0,
+      "blocked": 0,
+      "errors": 0,
+      "failed": 0,
+      "metric_id": "human-review-policy",
+      "passed": 1,
+      "skipped": 0,
+      "total_executions": 1
+    },
+    {
+      "average_score": 1.0,
+      "blocked": 0,
+      "errors": 0,
+      "failed": 0,
+      "metric_id": "latency-budget",
+      "passed": 3,
+      "skipped": 0,
+      "total_executions": 3
+    },
+    {
+      "average_score": 1.0,
+      "blocked": 0,
+      "errors": 0,
+      "failed": 0,
+      "metric_id": "retrieval-contract",
+      "passed": 2,
+      "skipped": 0,
+      "total_executions": 2
+    }
+  ],
+  "pass_rate": 1.0,
+  "promoted_at": "2026-07-27T03:21:43Z",
+  "quality_gate_passed": true,
+  "source_batch_id": "run-7ac10138",
+  "source_generated_date": "2026-07-27",
+  "source_report_type": "inna-evaluation-batch",
+  "source_run_reference": "run-7ac10138",
+  "source_schema_version": "1.0.0"
+}
