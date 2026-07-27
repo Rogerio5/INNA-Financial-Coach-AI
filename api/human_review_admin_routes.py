@@ -65,7 +65,7 @@ def _raise_admin_http_error(
     ):
         raise HTTPException(
             status_code=(
-                status.HTTP_422_UNPROCESSABLE_ENTITY
+                status.HTTP_422_UNPROCESSABLE_CONTENT
             ),
             detail=str(exc),
         ) from exc
