@@ -27,9 +27,9 @@ def test_human_review_routes_are_registered_once(
     )
 
     registered_paths = [
-        route.path
-        for route in app.routes
-        if route.path.startswith(
+        registered_path
+        for registered_path in paths
+        if registered_path.startswith(
             "/internal/human-reviews"
         )
     ]
