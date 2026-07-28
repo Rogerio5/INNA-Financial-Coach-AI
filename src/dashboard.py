@@ -3105,7 +3105,7 @@ def render_filters(
     if embedded:
         controls = st.expander(
             "🧭 Menu e filtros do Dashboard",
-            expanded=False,
+            expanded=True,
         )
 
         with controls:
@@ -3154,6 +3154,7 @@ def render_filters(
             "📤 Exportar",
         ],
         format_func=dt_menu,
+        key="dashboard_main_menu",
     )
 
     filters_container.write(dt("filters"))
