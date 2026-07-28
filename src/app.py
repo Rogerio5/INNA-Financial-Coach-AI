@@ -5575,9 +5575,13 @@ if app_menu in [
     try:
         from src.dashboard import main as render_admin_analytics
 
-        render_admin_analytics(
-            embedded=True,
-        )
+        @st.fragment
+        def render_admin_analytics_fragment():
+            render_admin_analytics(
+                embedded=True,
+            )
+
+        render_admin_analytics_fragment()
 
     except Exception:
         st.error(
