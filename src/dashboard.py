@@ -3131,31 +3131,54 @@ def render_filters(
     menu_container.title(dt("sidebar_title"))
     menu_container.caption(dt("sidebar_caption"))
 
-    menu = menu_container.radio(
+    menu_options = [
+        "📌 Visão Geral",
+        "🌐 Eventos Multicanal",
+        "🌍 Visão Internacional",
+        "👤 Diagnósticos",
+        "💬 Feedbacks",
+        "📈 Evolução",
+        "🧠 Leitura Executiva",
+        "🧪 Avaliação do Agente",
+        "📊 Observabilidade RAG",
+        "🛠️ Observabilidade Tools",
+        "🧭 Timeline Viewer",
+        "📊 Analytics Tools",
+        "❤️ Health Center",
+        "🛰️ LLMOps & Observabilidade",
+        "💰 LLM Cost Center",
+        "📄 Upload Documentos",
+        "🧠 Memória Usuário",
+        "📤 Exportar",
+    ]
+
+    persistent_key = "dashboard_menu_selected"
+    widget_key = "_dashboard_main_menu_widget"
+
+    if (
+        persistent_key not in st.session_state
+        or st.session_state[persistent_key] not in menu_options
+    ):
+        st.session_state[persistent_key] = menu_options[0]
+
+    if (
+        widget_key not in st.session_state
+        or st.session_state[widget_key] not in menu_options
+    ):
+        st.session_state[widget_key] = st.session_state[persistent_key]
+
+    def sync_dashboard_menu():
+        st.session_state[persistent_key] = st.session_state[widget_key]
+
+    menu_container.radio(
         dt("menu"),
-        [
-            "📌 Visão Geral",
-            "🌐 Eventos Multicanal",
-            "🌍 Visão Internacional",
-            "👤 Diagnósticos",
-            "💬 Feedbacks",
-            "📈 Evolução",
-            "🧠 Leitura Executiva",
-            "🧪 Avaliação do Agente",
-            "📊 Observabilidade RAG",
-            "🛠️ Observabilidade Tools",
-            "🧭 Timeline Viewer",
-            "📊 Analytics Tools",
-            "❤️ Health Center",
-            "🛰️ LLMOps & Observabilidade",
-            "💰 LLM Cost Center",
-            "📄 Upload Documentos",
-            "🧠 Memória Usuário",
-            "📤 Exportar",
-        ],
+        menu_options,
         format_func=dt_menu,
-        key="dashboard_main_menu",
+        key=widget_key,
+        on_change=sync_dashboard_menu,
     )
+
+    menu = st.session_state[persistent_key]
 
     filters_container.write(dt("filters"))
 
