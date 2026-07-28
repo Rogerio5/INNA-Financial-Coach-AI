@@ -21,12 +21,57 @@ import os
 from datetime import date
 
 import pandas as pd
+import plotly.express as px
 import psycopg2
 import streamlit as st
 from dotenv import load_dotenv
 
 
 load_dotenv(".env")
+
+
+PLOTLY_BG = "#020617"
+PLOTLY_TEXT = "#F8FAFC"
+PLOTLY_ACCENT = "#38BDF8"
+PLOTLY_GRID = "rgba(148, 163, 184, 0.16)"
+
+
+def apply_inna_plotly_theme(fig, *, height=420):
+    """Aplica o padrão visual escuro dos gráficos da INNA."""
+    fig.update_layout(
+        template="plotly_dark",
+        paper_bgcolor=PLOTLY_BG,
+        plot_bgcolor=PLOTLY_BG,
+        font={
+            "color": PLOTLY_TEXT,
+            "family": "Arial",
+        },
+        hoverlabel={
+            "bgcolor": "#0F172A",
+            "font_color": PLOTLY_TEXT,
+        },
+        margin={
+            "l": 24,
+            "r": 24,
+            "t": 16,
+            "b": 24,
+        },
+        height=height,
+    )
+
+    fig.update_xaxes(
+        color=PLOTLY_TEXT,
+        gridcolor=PLOTLY_GRID,
+        zerolinecolor="rgba(148, 163, 184, 0.25)",
+    )
+
+    fig.update_yaxes(
+        color=PLOTLY_TEXT,
+        gridcolor=PLOTLY_GRID,
+        zerolinecolor="rgba(148, 163, 184, 0.25)",
+    )
+
+    return fig
 
 
 if __name__ == "__main__":
@@ -3397,7 +3442,58 @@ def render_events(eventos_df, diagnosticos_df, feedbacks_df):
     if "canal" in eventos_df.columns:
         canal_counts = eventos_df["canal"].fillna("não informado").astype(str).value_counts()
         if len(canal_counts) > 1:
-            st.bar_chart(canal_counts)
+            canal_chart = (
+                canal_counts
+                .rename_axis("canal")
+                .reset_index(name="quantidade")
+                .sort_values(
+                    "quantidade",
+                    ascending=True,
+                )
+            )
+
+            fig_canais = px.bar(
+                canal_chart,
+                x="quantidade",
+                y="canal",
+                orientation="h",
+                text="quantidade",
+                color_discrete_sequence=[
+                    PLOTLY_ACCENT,
+                ],
+            )
+
+            fig_canais.update_traces(
+                textposition="outside",
+                cliponaxis=False,
+                marker_line_width=0,
+                hovertemplate=(
+                    "<b>%{y}</b><br>"
+                    "Eventos: %{x}"
+                    "<extra></extra>"
+                ),
+            )
+
+            fig_canais.update_layout(
+                xaxis_title=None,
+                yaxis_title=None,
+                showlegend=False,
+            )
+
+            apply_inna_plotly_theme(
+                fig_canais,
+                height=400,
+            )
+
+            st.plotly_chart(
+                fig_canais,
+                width="stretch",
+                key="events_by_channel_chart",
+                config={
+                    "displayModeBar": False,
+                    "responsive": True,
+                },
+            )
         else:
             st.caption(dtx("only_one_channel"))
 
@@ -3450,7 +3546,54 @@ def render_funnel(eventos_df, diagnosticos_df, feedbacks_df):
     )
 
     if int(funil["quantidade"].sum()) > 5:
-        st.bar_chart(funil.set_index("etapa"))
+        fig_funil = px.funnel(
+            funil,
+            x="quantidade",
+            y="etapa",
+            color_discrete_sequence=[
+                PLOTLY_ACCENT,
+            ],
+        )
+
+        fig_funil.update_traces(
+            textposition="inside",
+            textinfo="value+percent initial",
+            marker_line_width=0,
+            connector={
+                "line": {
+                    "color": (
+                        "rgba(148, 163, 184, 0.35)"
+                    ),
+                    "width": 1,
+                },
+            },
+            hovertemplate=(
+                "<b>%{y}</b><br>"
+                "Quantidade: %{x}"
+                "<extra></extra>"
+            ),
+        )
+
+        fig_funil.update_layout(
+            xaxis_title=None,
+            yaxis_title=None,
+            showlegend=False,
+        )
+
+        apply_inna_plotly_theme(
+            fig_funil,
+            height=430,
+        )
+
+        st.plotly_chart(
+            fig_funil,
+            width="stretch",
+            key="usage_funnel_chart",
+            config={
+                "displayModeBar": False,
+                "responsive": True,
+            },
+        )
     else:
         st.caption(dtx("few_funnel_records"))
 
@@ -3471,7 +3614,66 @@ def render_international(diagnosticos_df):
         idioma_counts = diagnosticos_df["idioma"].fillna("não informado").astype(str).value_counts()
 
         if len(idioma_counts) > 1:
-            st.bar_chart(idioma_counts)
+            idioma_chart = (
+                idioma_counts
+                .rename_axis("idioma")
+                .reset_index(name="diagnosticos")
+            )
+
+            idioma_chart["idioma_nome"] = (
+                idioma_chart["idioma"].apply(format_lang)
+            )
+
+            idioma_chart = idioma_chart.sort_values(
+                "diagnosticos",
+                ascending=True,
+            )
+
+            fig_idiomas = px.bar(
+                idioma_chart,
+                x="diagnosticos",
+                y="idioma_nome",
+                orientation="h",
+                text="diagnosticos",
+                color="diagnosticos",
+                color_continuous_scale=[
+                    "#0F172A",
+                    "#38BDF8",
+                ],
+            )
+
+            fig_idiomas.update_traces(
+                textposition="outside",
+                cliponaxis=False,
+                marker_line_width=0,
+                hovertemplate=(
+                    "<b>%{y}</b><br>"
+                    "Diagnósticos: %{x}"
+                    "<extra></extra>"
+                ),
+            )
+
+            fig_idiomas.update_layout(
+                xaxis_title=None,
+                yaxis_title=None,
+                coloraxis_showscale=False,
+                showlegend=False,
+            )
+
+            apply_inna_plotly_theme(
+                fig_idiomas,
+                height=390,
+            )
+
+            st.plotly_chart(
+                fig_idiomas,
+                width="stretch",
+                key="diagnostics_by_language_chart",
+                config={
+                    "displayModeBar": False,
+                    "responsive": True,
+                },
+            )
         else:
             st.caption(dtx("only_one_language"))
 
@@ -3485,7 +3687,61 @@ def render_international(diagnosticos_df):
         moeda_counts = diagnosticos_df["moeda"].fillna("não informado").astype(str).value_counts()
 
         if len(moeda_counts) > 1:
-            st.bar_chart(moeda_counts)
+            moeda_chart = (
+                moeda_counts
+                .rename_axis("moeda")
+                .reset_index(name="diagnosticos")
+                .sort_values(
+                    "diagnosticos",
+                    ascending=True,
+                )
+            )
+
+            fig_moedas = px.bar(
+                moeda_chart,
+                x="diagnosticos",
+                y="moeda",
+                orientation="h",
+                text="diagnosticos",
+                color="diagnosticos",
+                color_continuous_scale=[
+                    "#312E81",
+                    "#A78BFA",
+                ],
+            )
+
+            fig_moedas.update_traces(
+                textposition="outside",
+                cliponaxis=False,
+                marker_line_width=0,
+                hovertemplate=(
+                    "<b>%{y}</b><br>"
+                    "Diagnósticos: %{x}"
+                    "<extra></extra>"
+                ),
+            )
+
+            fig_moedas.update_layout(
+                xaxis_title=None,
+                yaxis_title=None,
+                coloraxis_showscale=False,
+                showlegend=False,
+            )
+
+            apply_inna_plotly_theme(
+                fig_moedas,
+                height=390,
+            )
+
+            st.plotly_chart(
+                fig_moedas,
+                width="stretch",
+                key="diagnostics_by_currency_chart",
+                config={
+                    "displayModeBar": False,
+                    "responsive": True,
+                },
+            )
         else:
             st.caption(dtx("only_one_currency"))
 
@@ -3554,7 +3810,68 @@ def render_diagnostics(diagnosticos_df):
         risk_counts = diagnosticos_df["risco_exibicao"].fillna("não informado").astype(str).value_counts()
 
         if len(risk_counts) > 1:
-            st.bar_chart(risk_counts)
+            risk_chart = (
+                risk_counts
+                .rename_axis("risco")
+                .reset_index(name="quantidade")
+            )
+
+            fig_risco = px.pie(
+                risk_chart,
+                names="risco",
+                values="quantidade",
+                hole=0.58,
+                color_discrete_sequence=[
+                    "#34D399",
+                    "#F59E0B",
+                    "#F87171",
+                    "#38BDF8",
+                    "#A78BFA",
+                ],
+            )
+
+            fig_risco.update_traces(
+                textposition="inside",
+                textinfo="label+percent",
+                marker={
+                    "line": {
+                        "color": PLOTLY_BG,
+                        "width": 2,
+                    },
+                },
+                hovertemplate=(
+                    "<b>%{label}</b><br>"
+                    "Quantidade: %{value}<br>"
+                    "Percentual: %{percent}"
+                    "<extra></extra>"
+                ),
+            )
+
+            fig_risco.update_layout(
+                showlegend=True,
+                legend={
+                    "orientation": "h",
+                    "yanchor": "bottom",
+                    "y": -0.12,
+                    "xanchor": "center",
+                    "x": 0.5,
+                },
+            )
+
+            apply_inna_plotly_theme(
+                fig_risco,
+                height=410,
+            )
+
+            st.plotly_chart(
+                fig_risco,
+                width="stretch",
+                key="risk_distribution_chart",
+                config={
+                    "displayModeBar": False,
+                    "responsive": True,
+                },
+            )
         else:
             st.caption(dtx("only_one_risk"))
 
@@ -3613,8 +3930,72 @@ def render_feedbacks(feedbacks_df):
         st.write(dtx("useful_feedbacks"))
         if "util" in feedbacks_df.columns:
             util_counts = feedbacks_df["util"].fillna("não informado").astype(str).value_counts()
-            st.bar_chart(util_counts)
-            st.dataframe(util_counts.reset_index(), use_container_width=True)
+            feedback_chart = (
+                util_counts
+                .rename_axis("avaliacao")
+                .reset_index(name="quantidade")
+            )
+
+            fig_feedback = px.pie(
+                feedback_chart,
+                names="avaliacao",
+                values="quantidade",
+                hole=0.58,
+                color_discrete_sequence=[
+                    "#38BDF8",
+                    "#A78BFA",
+                    "#34D399",
+                    "#F59E0B",
+                ],
+            )
+
+            fig_feedback.update_traces(
+                textposition="inside",
+                textinfo="label+percent",
+                marker={
+                    "line": {
+                        "color": PLOTLY_BG,
+                        "width": 2,
+                    },
+                },
+                hovertemplate=(
+                    "<b>%{label}</b><br>"
+                    "Feedbacks: %{value}<br>"
+                    "Percentual: %{percent}"
+                    "<extra></extra>"
+                ),
+            )
+
+            fig_feedback.update_layout(
+                showlegend=True,
+                legend={
+                    "orientation": "h",
+                    "yanchor": "bottom",
+                    "y": -0.12,
+                    "xanchor": "center",
+                    "x": 0.5,
+                },
+            )
+
+            apply_inna_plotly_theme(
+                fig_feedback,
+                height=400,
+            )
+
+            st.plotly_chart(
+                fig_feedback,
+                width="stretch",
+                key="useful_feedbacks_chart",
+                config={
+                    "displayModeBar": False,
+                    "responsive": True,
+                },
+            )
+
+            st.dataframe(
+                util_counts.reset_index(),
+                use_container_width=True,
+            )
 
     with col2:
         st.write(dtx("received_comments"))
@@ -3648,8 +4029,62 @@ def render_evolution(diagnosticos_df):
     with col1:
         st.write(dtx("score_evolution"))
         if len(df) > 1:
-            st.line_chart(df.set_index("data_label")["score_financeiro"],
-)
+            score_chart = df[
+                [
+                    "data_label",
+                    "score_financeiro",
+                ]
+            ].copy()
+
+            fig_score = px.line(
+                score_chart,
+                x="data_label",
+                y="score_financeiro",
+                markers=True,
+            )
+
+            fig_score.update_traces(
+                line={
+                    "color": "#38BDF8",
+                    "width": 3,
+                },
+                marker={
+                    "color": "#E0F2FE",
+                    "size": 9,
+                    "line": {
+                        "color": "#38BDF8",
+                        "width": 2,
+                    },
+                },
+                fill="tozeroy",
+                fillcolor="rgba(56, 189, 248, 0.13)",
+                hovertemplate=(
+                    "<b>%{x}</b><br>"
+                    "Score: %{y:.1f}"
+                    "<extra></extra>"
+                ),
+            )
+
+            fig_score.update_layout(
+                xaxis_title=None,
+                yaxis_title="Score financeiro",
+                showlegend=False,
+            )
+
+            apply_inna_plotly_theme(
+                fig_score,
+                height=410,
+            )
+
+            st.plotly_chart(
+                fig_score,
+                width="stretch",
+                key="financial_score_evolution_chart",
+                config={
+                    "displayModeBar": False,
+                    "responsive": True,
+                },
+            )
         else:
             st.caption(dtx("evolution_wait"))
             st.dataframe(df[["id", "nome", "score_financeiro"]], use_container_width=True)
@@ -3657,8 +4092,61 @@ def render_evolution(diagnosticos_df):
     with col2:
         st.write(dtx("balance_evolution"))
         if len(df) > 1:
-            st.line_chart(df.set_index("data_label")["saldo_estimado"],
-)
+            balance_chart = df[
+                [
+                    "data_label",
+                    "saldo_estimado",
+                ]
+            ].copy()
+
+            fig_saldo = px.area(
+                balance_chart,
+                x="data_label",
+                y="saldo_estimado",
+                markers=True,
+            )
+
+            fig_saldo.update_traces(
+                line={
+                    "color": "#34D399",
+                    "width": 3,
+                },
+                marker={
+                    "color": "#D1FAE5",
+                    "size": 9,
+                    "line": {
+                        "color": "#34D399",
+                        "width": 2,
+                    },
+                },
+                fillcolor="rgba(52, 211, 153, 0.16)",
+                hovertemplate=(
+                    "<b>%{x}</b><br>"
+                    "Saldo estimado: %{y:,.2f}"
+                    "<extra></extra>"
+                ),
+            )
+
+            fig_saldo.update_layout(
+                xaxis_title=None,
+                yaxis_title="Saldo estimado",
+                showlegend=False,
+            )
+
+            apply_inna_plotly_theme(
+                fig_saldo,
+                height=410,
+            )
+
+            st.plotly_chart(
+                fig_saldo,
+                width="stretch",
+                key="estimated_balance_evolution_chart",
+                config={
+                    "displayModeBar": False,
+                    "responsive": True,
+                },
+            )
         else:
             st.caption(dtx("evolution_wait"))
             st.dataframe(df[["id", "nome", "saldo_formatado"]], use_container_width=True)
