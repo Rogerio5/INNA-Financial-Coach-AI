@@ -1,0 +1,9 @@
+DASHBOARD_VISUAL_AUDIT=OK
+TOTAL_BLOCKS=186
+src\dashboard.py: BLOCKS=59
+src\dashboard_pages\health_score_page.py: BLOCKS=21
+src\dashboard_pages\llm_costs_page.py: BLOCKS=22
+src\dashboard_pages\timeline_viewer_page.py: BLOCKS=11
+src\dashboard_pages\tools_analytics_page.py: BLOCKS=35
+src\dashboard_pages\tools_observability_page.py: BLOCKS=18
+src\evaluation\dashboard.py: BLOCKS=20

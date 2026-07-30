@@ -1,0 +1,35 @@
+===== ETAPAS =====
+Busca RAG concluída
+Gemini executado
+Memória consultada
+Pergunta recebida
+Prompt estruturado
+Resposta entregue
+Resposta formatada
+Router executado
+Tool financeira executada
+
+===== MENSAGENS =====
+Busca RAG concluída concluída com sucesso.
+Etapa concluída com sucesso: Busca RAG concluída.
+Etapa concluída com sucesso: Gemini executado.
+Etapa concluída com sucesso: Memória consultada.
+Etapa concluída com sucesso: Prompt estruturado.
+Etapa concluída com sucesso: Resposta formatada.
+Etapa concluída com sucesso: Router executado.
+Gemini executado concluída com sucesso.
+Memória consultada concluída com sucesso.
+Pergunta recebida pelo fluxo RAG.
+Prompt estruturado concluída com sucesso.
+Resposta final preparada para entrega ao dashboard.
+Resposta formatada concluída com sucesso.
+Resultado da Tool registrado. O tempo total foi contabilizado na etapa do Router/Orquestrador.
+Router executado concluída com sucesso.
+
+===== ORIGENS =====
+dashboard_rag
+teste_manual_timeline
+
+===== STATUS =====
+ignorado
+sucesso

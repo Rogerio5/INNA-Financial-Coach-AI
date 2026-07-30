@@ -144,3 +144,371 @@ def test_gerar_texto_narrativa():
     assert "Resumo operacional automático" in texto
     assert "Destaques" in texto
     assert "Recomendações" in texto
+
+def test_operational_narrative_accepts_interface_language() -> None:
+    resultado = gerar_insights_operacionais(
+        dataframe_saudavel(),
+        idioma="ru",
+    )
+
+    assert resultado["ok"] is True
+    assert resultado["tem_dados"] is True
+    assert resultado["idioma"] == "ru"
+
+
+def test_operational_narrative_defaults_to_portuguese() -> None:
+    resultado = gerar_insights_operacionais(
+        dataframe_saudavel()
+    )
+
+    assert resultado["idioma"] == "pt"
+
+
+def test_operational_narrative_normalizes_language() -> None:
+    resultado = gerar_insights_operacionais(
+        dataframe_saudavel(),
+        idioma=" RU ",
+    )
+
+    assert resultado["idioma"] == "ru"
+
+
+def test_operational_narrative_empty_result_keeps_language() -> None:
+    resultado = gerar_insights_operacionais(
+        pd.DataFrame(),
+        idioma="sa",
+    )
+
+    assert resultado["tem_dados"] is False
+    assert resultado["idioma"] == "sa"
+
+
+def test_health_classification_accepts_language() -> None:
+    resultado = classificar_saude_operacional(
+        taxa_sucesso=100,
+        confianca_media=95,
+        percentual_sem_tool=0,
+        p95_ms=1000,
+        idioma="en_us",
+    )
+
+    assert resultado["score"] == 100.0
+
+
+def test_markdown_narrative_accepts_language() -> None:
+    insights = gerar_insights_operacionais(
+        dataframe_saudavel(),
+        idioma="ru",
+    )
+
+    texto = gerar_texto_narrativa(
+        insights,
+        idioma="ru",
+    )
+
+    assert isinstance(texto, str)
+    assert texto
+
+def test_operational_narrative_language_catalog() -> None:
+    from src.observability.narrative import (
+        NARRATIVE_TEXTS,
+    )
+
+    assert set(
+        NARRATIVE_TEXTS
+    ) == {
+        "pt",
+        "en_us",
+        "en_gb",
+        "ru",
+    }
+
+    reference = set(
+        NARRATIVE_TEXTS["pt"]
+    )
+
+    for texts in NARRATIVE_TEXTS.values():
+        assert set(texts) == reference
+        assert all(
+            str(value).strip()
+            for value in texts.values()
+        )
+
+
+def test_normalizar_idioma_narrativa() -> None:
+    from src.observability.narrative import (
+        normalizar_idioma_narrativa,
+    )
+
+    assert (
+        normalizar_idioma_narrativa(
+            "pt-BR"
+        )
+        == "pt"
+    )
+
+    assert (
+        normalizar_idioma_narrativa(
+            " RU "
+        )
+        == "ru"
+    )
+
+    assert (
+        normalizar_idioma_narrativa(
+            "en-GB"
+        )
+        == "en_gb"
+    )
+
+    assert (
+        normalizar_idioma_narrativa(
+            "ro"
+        )
+        == "en_us"
+    )
+
+
+def test_narrative_t_uses_requested_language() -> None:
+    from src.observability.narrative import (
+        narrative_t,
+    )
+
+    assert (
+        narrative_t(
+            "health_excellent",
+            idioma="pt",
+        )
+        == "Excelente"
+    )
+
+    assert (
+        narrative_t(
+            "health_excellent",
+            idioma="en_us",
+        )
+        == "Excellent"
+    )
+
+    assert (
+        narrative_t(
+            "health_excellent",
+            idioma="ru",
+        )
+        == "Отличное"
+    )
+
+
+def test_narrative_language_dictionaries_are_independent() -> None:
+    from src.observability.narrative import (
+        NARRATIVE_TEXTS,
+    )
+
+    dictionary_ids = [
+        id(texts)
+        for texts in NARRATIVE_TEXTS.values()
+    ]
+
+    assert len(dictionary_ids) == len(
+        set(dictionary_ids)
+    )
+
+def test_operational_health_classification_is_localized() -> None:
+    portuguese = classificar_saude_operacional(
+        taxa_sucesso=100,
+        confianca_media=95,
+        percentual_sem_tool=0,
+        p95_ms=1000,
+        idioma="pt",
+    )
+
+    english = classificar_saude_operacional(
+        taxa_sucesso=100,
+        confianca_media=95,
+        percentual_sem_tool=0,
+        p95_ms=1000,
+        idioma="en_us",
+    )
+
+    russian = classificar_saude_operacional(
+        taxa_sucesso=100,
+        confianca_media=95,
+        percentual_sem_tool=0,
+        p95_ms=1000,
+        idioma="ru",
+    )
+
+    assert portuguese["classificacao"] == "Excelente"
+    assert english["classificacao"] == "Excellent"
+    assert russian["classificacao"] == "Отличное"
+
+    assert portuguese["status"] == "saudavel"
+    assert english["status"] == "saudavel"
+    assert russian["status"] == "saudavel"
+
+
+def test_operational_empty_state_is_localized() -> None:
+    english = gerar_insights_operacionais(
+        pd.DataFrame(),
+        idioma="en_us",
+    )
+
+    russian = gerar_insights_operacionais(
+        pd.DataFrame(),
+        idioma="ru",
+    )
+
+    assert (
+        english["titulo"]
+        == "There is not enough data yet."
+    )
+
+    assert (
+        english["saude"]["classificacao"]
+        == "No data"
+    )
+
+    assert (
+        russian["titulo"]
+        == "Данных пока недостаточно."
+    )
+
+    assert (
+        russian["saude"]["classificacao"]
+        == "Нет данных"
+    )
+
+
+def test_operational_summary_title_is_localized() -> None:
+    english = gerar_insights_operacionais(
+        dataframe_saudavel(),
+        idioma="en_us",
+    )
+
+    russian = gerar_insights_operacionais(
+        dataframe_saudavel(),
+        idioma="ru",
+    )
+
+    assert (
+        english["titulo"]
+        == "Automatic operational summary"
+    )
+
+    assert (
+        russian["titulo"]
+        == "Автоматическая операционная сводка"
+    )
+
+
+def test_markdown_narrative_titles_are_localized() -> None:
+    insights = gerar_insights_operacionais(
+        dataframe_saudavel(),
+        idioma="ru",
+    )
+
+    markdown = gerar_texto_narrativa(
+        insights,
+        idioma="ru",
+    )
+
+    assert "### Сильные стороны" in markdown
+    assert "### Рекомендации" in markdown
+    assert "### Destaques" not in markdown
+    assert "### Recomendações" not in markdown
+
+def test_russian_dynamic_operational_narrative() -> None:
+    resultado = gerar_insights_operacionais(
+        dataframe_saudavel(),
+        idioma="ru",
+    )
+
+    assert resultado["idioma"] == "ru"
+
+    assert (
+        "Проанализировано выполнений"
+        in resultado["resumo_executivo"]
+    )
+
+    assert (
+        "Уровень успешных выполнений"
+        in resultado["resumo_executivo"]
+    )
+
+    assert (
+        "Router"
+        in resultado["resumo_executivo"]
+    )
+
+    assert resultado["destaques"]
+    assert resultado["recomendacoes"]
+
+    combined = " ".join(
+        [
+            resultado["resumo_executivo"],
+            *resultado["destaques"],
+            *resultado["alertas"],
+            *resultado["recomendacoes"],
+        ]
+    )
+
+    assert (
+        "Foram analisadas"
+        not in combined
+    )
+
+    assert (
+        "A taxa de sucesso"
+        not in combined
+    )
+
+    assert (
+        "Todas as execuções"
+        not in combined
+    )
+
+    assert (
+        "Continuar monitorando"
+        not in combined
+    )
+
+
+def test_russian_dynamic_narrative_preserves_tool_name() -> None:
+    resultado = gerar_insights_operacionais(
+        dataframe_saudavel(),
+        idioma="ru",
+    )
+
+    tool = resultado[
+        "metricas"
+    ]["tool_mais_usada"]
+
+    assert tool is not None
+
+    tool_name = tool["nome"]
+
+    combined = " ".join(
+        [
+            resultado["resumo_executivo"],
+            *resultado["destaques"],
+        ]
+    )
+
+    assert tool_name in combined
+
+
+def test_portuguese_dynamic_narrative_remains_compatible() -> None:
+    resultado = gerar_insights_operacionais(
+        dataframe_saudavel(),
+        idioma="pt",
+    )
+
+    assert (
+        "Foram analisadas"
+        in resultado["resumo_executivo"]
+    )
+
+    assert (
+        resultado["saude"]["classificacao"]
+        == "Excelente"
+    )

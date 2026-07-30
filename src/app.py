@@ -54,6 +54,7 @@ INNA_USER_PASSWORD = os.getenv("INNA_USER_PASSWORD", "usuario123")
 INNA_ADMIN_EMAIL = os.getenv("INNA_ADMIN_EMAIL", "admin@inna.ai")
 INNA_ADMIN_PASSWORD = os.getenv("INNA_ADMIN_PASSWORD", "admin123")
 
+import plotly.express as px
 import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_js_eval import streamlit_js_eval
@@ -6761,13 +6762,105 @@ if buscar_historico:
                 key=lambda item: item["id"],
             )
 
-            score_data = {
-                item["id"]: item["score_financeiro"]
+            score_data = [
+                {
+                    "Diagnóstico": (
+                        f"ID {item['id']}"
+                    ),
+                    "Score financeiro": float(
+                        item["score_financeiro"]
+                    ),
+                }
                 for item in historico_ordenado
-            }
+            ]
 
             st.write(page_t("score_evolution"))
-            st.line_chart(score_data)
+
+            fig_score_historico = px.line(
+                score_data,
+                x="Diagnóstico",
+                y="Score financeiro",
+                markers=True,
+                color_discrete_sequence=[
+                    "#38BDF8",
+                ],
+            )
+
+            fig_score_historico.update_traces(
+                line={
+                    "width": 3,
+                },
+                marker={
+                    "size": 9,
+                    "color": "#E0F2FE",
+                    "line": {
+                        "color": "#38BDF8",
+                        "width": 2,
+                    },
+                },
+                fill="tozeroy",
+                fillcolor=(
+                    "rgba(56, 189, 248, 0.15)"
+                ),
+                hovertemplate=(
+                    "<b>%{x}</b><br>"
+                    "Score financeiro: %{y:.1f}/100"
+                    "<extra></extra>"
+                ),
+            )
+
+            fig_score_historico.update_layout(
+                template="plotly_dark",
+                paper_bgcolor="#020617",
+                plot_bgcolor="#020617",
+                font={
+                    "color": "#F8FAFC",
+                    "family": "Arial",
+                },
+                hoverlabel={
+                    "bgcolor": "#0F172A",
+                    "font_color": "#F8FAFC",
+                },
+                xaxis_title=None,
+                yaxis_title="Score financeiro",
+                showlegend=False,
+                hovermode="x unified",
+                height=420,
+                margin={
+                    "l": 35,
+                    "r": 28,
+                    "t": 18,
+                    "b": 38,
+                },
+            )
+
+            fig_score_historico.update_xaxes(
+                color="#F8FAFC",
+                gridcolor=(
+                    "rgba(148, 163, 184, 0.16)"
+                ),
+            )
+
+            fig_score_historico.update_yaxes(
+                range=[0, 100],
+                color="#F8FAFC",
+                gridcolor=(
+                    "rgba(148, 163, 184, 0.16)"
+                ),
+                zerolinecolor=(
+                    "rgba(148, 163, 184, 0.25)"
+                ),
+            )
+
+            st.plotly_chart(
+                fig_score_historico,
+                width="stretch",
+                key="user_financial_score_history_chart",
+                config={
+                    "displayModeBar": False,
+                    "responsive": True,
+                },
+            )
 
             st.write(page_t("diagnoses_found"))
 

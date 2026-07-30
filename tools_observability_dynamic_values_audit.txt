@@ -1,0 +1,35 @@
+===== TOOLS =====
+Cálculo de capacidade semanal
+Simulação de formação de reserva
+calcular_capacidade_semanal
+simular_formacao_reserva
+
+===== MENSAGENS =====
+Ainda faltam dados para executar a ferramenta.
+Ferramenta executada com sucesso.
+
+===== ERROS =====
+
+===== INTENÇÕES =====
+capacidade_semanal
+simulacao_reserva
+
+===== ORIGENS =====
+dashboard_rag
+teste_manual
+
+===== INFRA LABELS =====
+Base vetorial RAG
+Configuração Gemini
+Extensão pgvector
+Memória persistente
+PostgreSQL / Neon
+Tabela de eventos das Tools
+
+===== INFRA MESSAGES =====
+Chave configurada.
+Conexão operacional.
+Extensão ativa.
+Tabela chunks_embeddings_rag disponível.
+Tabela memoria_usuarios_inna disponível.
+Tabela tools_eventos_inna disponível.

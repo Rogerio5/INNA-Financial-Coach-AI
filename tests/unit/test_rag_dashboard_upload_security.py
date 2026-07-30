@@ -50,7 +50,7 @@ def test_dashboard_handles_document_security_error():
     )
 
     assert (
-        "Documento rejeitado pela política"
+        "upload_rag_t('security_rejection')"
         in upload_flow
     )
 

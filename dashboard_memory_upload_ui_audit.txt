@@ -1,0 +1,201 @@
+===== render_upload_documentos_rag =====
+8204: markdown: <dynamic> st.markdown(upload_rag_t("title"))
+8205: caption: <dynamic> st.caption(upload_rag_t("caption"))
+8213: file_uploader: <dynamic> uploaded_file = st.file_uploader(
+8416: markdown: ---
+8417: markdown: ### Documentos enviados
+8432: markdown: ---
+8433: markdown: ### Arquivos de chunks gerados
+8444: markdown: ---
+8445: markdown: ### Arquivos prontos para embeddings
+8460: markdown: ---
+8461: markdown: <dynamic> st.markdown(
+8323: success: <dynamic> st.success(
+8328: caption: <dynamic> st.caption(
+8422: info: Nenhum documento enviado ainda.
+8438: info: Nenhum arquivo de chunks gerado ainda.
+8453: info: Nenhum arquivo pronto para embeddings gerado ainda.
+8468: warning: <dynamic> st.warning(
+8224: error: <dynamic> st.error(upload_rag_t("invalid_format"))
+8343: markdown: <dynamic> st.markdown(
+8346: text_area: <dynamic> st.text_area(
+8354: markdown: <dynamic> st.markdown(
+8357: success: <dynamic> st.success(
+8362: info: <dynamic> st.info(
+8442: caption: <dynamic> st.caption(f"Tamanho: {file.stat().st_size} bytes")
+8457: caption: <dynamic> st.caption(f"Tamanho: {file.stat().st_size} bytes")
+8473: info: <dynamic> st.info(
+8479: metric: <dynamic> st.metric(
+8487: metric: <dynamic> col1.metric(
+8495: metric: <dynamic> col2.metric(
+8504: metric: <dynamic> col3.metric(
+8527: markdown: <dynamic> st.markdown(
+8541: metric: <dynamic> col_local_1.metric(
+8545: metric: <dynamic> col_local_2.metric(
+8549: metric: <dynamic> col_local_3.metric(
+8595: caption: <dynamic> st.caption(
+8607: button: <dynamic> if st.button(
+8621: markdown: <dynamic> st.markdown(
+8635: selectbox: <dynamic> doc_status_escolhido = st.selectbox(
+8687: markdown: <dynamic> st.markdown(
+8696: selectbox: <dynamic> doc_escolhido = st.selectbox(
+8704: button: <dynamic> if st.button(
+8745: markdown: <dynamic> st.markdown(
+8802: markdown: <dynamic> st.markdown(
+8806: caption: <dynamic> st.caption(
+8812: checkbox: <dynamic> forcar_reprocessamento_embeddings = st.checkbox(
+8820: button: <dynamic> if st.button(
+8865: markdown: <dynamic> st.markdown(
+8871: caption: <dynamic> st.caption(
+8877: button: <dynamic> if st.button(
+8891: markdown: <dynamic> st.markdown(
+8895: text_input: <dynamic> pergunta_teste_pgvector = st.text_input(
+8938: button: <dynamic> if st.button(
+8994: markdown: <dynamic> st.markdown(
+8998: text_input: ID do usuário para usar memória
+9004: text_area: <dynamic> pergunta_resposta_rag = st.text_area(
+9011: checkbox: <dynamic> usar_limite_auto_resposta = st.checkbox(
+9039: button: <dynamic> if st.button(
+8276: error: <dynamic> st.error(
+8298: warning: <dynamic> st.warning(str(exc))
+8302: error: <dynamic> st.error(
+8308: error: <dynamic> st.error(
+8314: error: <dynamic> st.error(
+8394: success: <dynamic> st.success(registro_db.get("message"))
+8396: warning: <dynamic> st.warning(registro_db.get("message"))
+8410: info: <dynamic> st.info(f"Foram gerados {len(chunks)} chunks. Exibindo apenas os 5 primeiros.")
+8413: warning: Arquivo salvo, mas não foi possível gerar prévia ou chunks.
+8414: caption: <dynamic> st.caption(str(e))
+8427: caption: <dynamic> st.caption(
+8556: expander: <dynamic> with st.expander(
+8559: caption: <dynamic> st.caption(
+8565: markdown: <dynamic> st.markdown(
+8575: markdown: <dynamic> st.markdown(
+8585: markdown: <dynamic> st.markdown(
+8628: warning: <dynamic> st.warning(resultado_coluna_ativo.get("message"))
+8649: success: <dynamic> st.success(
+8653: warning: <dynamic> st.warning(
+8660: button: <dynamic> if st.button(
+8673: button: <dynamic> if st.button(
+8752: warning: <dynamic> st.warning(resumo_embeddings.get("message"))
+8756: metric: <dynamic> col_emb_1.metric(
+8761: metric: <dynamic> col_emb_2.metric(
+8766: metric: <dynamic> col_emb_3.metric(
+8773: metric: <dynamic> col_doc_1.metric(
+8780: metric: <dynamic> col_doc_2.metric(
+8785: metric: <dynamic> col_doc_3.metric(
+8922: info: <dynamic> st.info(
+9021: info: <dynamic> st.info(
+8401: expander: <dynamic> with st.expander(f"Chunk {idx} | {len(chunk)} caracteres | Categoria: {categoria_chunk}"):
+8402: text_area: Texto do chunk
+8570: caption: <dynamic> st.caption(
+8580: caption: <dynamic> st.caption(
+8590: caption: <dynamic> st.caption(
+8616: success: <dynamic> st.success(resultado_arquivo.get("message"))
+8619: warning: <dynamic> st.warning(resultado_arquivo.get("message"))
+8716: error: <dynamic> st.error(
+8832: error: <dynamic> st.error(
+8887: success: <dynamic> st.success(resultado_indice.get("message"))
+8889: warning: <dynamic> st.warning(resultado_indice.get("message"))
+8953: warning: <dynamic> st.warning(resultado_busca.get("message"))
+8955: success: <dynamic> st.success(resultado_busca.get("message"))
+9057: warning: <dynamic> st.warning(resultado_resposta.get("message"))
+9059: success: <dynamic> st.success(resultado_resposta.get("message"))
+9061: markdown: <dynamic> st.markdown(
+9357: markdown: <dynamic> st.markdown(
+8667: success: <dynamic> st.success(resultado_status.get("message"))
+8670: warning: <dynamic> st.warning(resultado_status.get("message"))
+8682: success: <dynamic> st.success(resultado_status.get("message"))
+8685: warning: <dynamic> st.warning(resultado_status.get("message"))
+8736: success: <dynamic> st.success(resultado_update.get("message"))
+8737: info: <dynamic> st.info(
+8742: warning: <dynamic> st.warning(resultado_update.get("message"))
+8793: expander: <dynamic> with st.expander(
+8841: info: <dynamic> st.info(
+8960: info: <dynamic> st.info(
+9068: markdown: <dynamic> st.markdown(preparar_markdown_resposta_inna(resultado_resposta.get("resposta", "")))
+9088: expander: 🔎 Recursos utilizados pela INNA
+9092: markdown: <dynamic> st.markdown(upload_rag_t("executed_steps"))
+9325: success: <dynamic> st.success(upload_rag_t("memory_updated"))
+9326: caption: <dynamic> st.caption(memoria_auto.get("message"))
+9346: caption: <dynamic> st.caption(
+9362: info: <dynamic> st.info(
+9366: caption: <dynamic> st.caption(
+8860: success: <dynamic> st.success(resultado_embeddings.get("message"))
+8862: warning: <dynamic> st.warning(resultado_embeddings.get("message"))
+9095: markdown: <dynamic> st.markdown(
+9102: markdown: <dynamic> st.markdown(
+9123: markdown: <dynamic> st.markdown(
+9139: caption: <dynamic> st.caption(
+9146: expander: <dynamic> with st.expander(
+9152: markdown: <dynamic> col_tool_1.markdown(
+9157: markdown: <dynamic> col_tool_2.markdown(
+8967: expander: <dynamic> with st.expander(
+8976: caption: <dynamic> st.caption(
+8979: caption: <dynamic> st.caption(
+8983: caption: <dynamic> st.caption(
+8987: caption: <dynamic> st.caption(
+9133: caption: <dynamic> st.caption(
+9163: success: <dynamic> st.success(
+9169: info: <dynamic> st.info(
+9183: warning: <dynamic> st.warning(
+9197: markdown: #### Resultado principal
+9308: checkbox: <dynamic> mostrar_json_tool = st.checkbox(
+9393: expander: <dynamic> with st.expander(
+9403: metric: <dynamic> col_a.metric(
+9407: metric: <dynamic> col_b.metric(
+9413: metric: Chunk
+9418: caption: <dynamic> st.caption(
+9422: text_area: <dynamic> st.text_area(
+9234: metric: <dynamic> col_a.metric(
+9246: metric: <dynamic> col_b.metric(
+9258: metric: <dynamic> col_c.metric(
+9270: caption: <dynamic> st.caption(
+9284: metric: <dynamic> col_a.metric(
+9296: metric: <dynamic> col_b.metric(
+
+===== render_memoria_usuario_inna =====
+10082: markdown: <dynamic> st.markdown(memory_page_t("title"))
+10083: caption: <dynamic> st.caption(memory_page_t("caption"))
+10328: markdown: <dynamic> st.markdown(
+10334: metric: <dynamic> col_saldo.metric(
+10341: metric: <dynamic> col_semanal.metric(
+10352: metric: <dynamic> col_comprometimento.metric(
+10417: markdown: ---
+10418: markdown: <dynamic> st.markdown(
+10110: warning: <dynamic> st.warning(
+10118: error: <dynamic> st.error(resultado_busca.get("message"))
+10124: success: <dynamic> st.success(
+10130: info: <dynamic> st.info(
+10182: markdown: <dynamic> st.markdown(
+10234: checkbox: <dynamic> possui_dividas = col_divida.checkbox(
+10239: checkbox: <dynamic> uso_cartao_credito = col_cartao.checkbox(
+10244: markdown: <dynamic> st.markdown(
+10248: selectbox: <dynamic> perfil_financeiro = st.selectbox(
+10254: text_input: <dynamic> objetivo_principal = st.text_input(
+10259: selectbox: <dynamic> preferencia_linguagem = st.selectbox(
+10269: number_input: <dynamic> ultimo_score = col_score.number_input(
+10277: selectbox: <dynamic> ultimo_risco = col_risco.selectbox(
+10283: text_input: <dynamic> ultima_meta = st.text_input(
+10288: text_area: <dynamic> resumo_contexto = st.text_area(
+10294: text_input: <dynamic> tags_texto = st.text_input(
+10299: text_area: <dynamic> memoria_json_texto = st.text_area(
+10310: checkbox: <dynamic> confirmar = st.checkbox(
+10315: form_submit_button: <dynamic> salvar = st.form_submit_button(
+10430: metric: <dynamic> col_a.metric(
+10438: metric: <dynamic> col_b.metric(
+10446: metric: <dynamic> col_c.metric(
+10461: info: <dynamic> st.info(
+10103: text_input: <dynamic> usuario_id = st.text_input(
+10189: text_input: <dynamic> nome = st.text_input(
+10194: number_input: <dynamic> renda_mensal = st.number_input(
+10203: selectbox: <dynamic> idioma = st.selectbox(
+10209: number_input: <dynamic> gastos_mensais = st.number_input(
+10218: selectbox: <dynamic> moeda = st.selectbox(
+10224: number_input: <dynamic> valor_reserva = st.number_input(
+10359: warning: <dynamic> st.warning(
+10409: success: <dynamic> st.success(resultado.get("message"))
+10410: caption: <dynamic> st.caption(
+10415: error: <dynamic> st.error(resultado.get("message"))
+10454: expander: <dynamic> with st.expander(
+10369: error: <dynamic> st.error(

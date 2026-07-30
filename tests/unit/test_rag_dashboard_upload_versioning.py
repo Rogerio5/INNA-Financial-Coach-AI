@@ -100,6 +100,10 @@ def test_dashboard_displays_version():
     flow = _upload_flow()
 
     assert (
-        "Versão: {document_version.version}"
+        "upload_rag_t('version')"
+        in flow
+    )
+    assert (
+        "document_version.version"
         in flow
     )
