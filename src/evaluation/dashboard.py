@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+from src.dashboard_theme import apply_admin_dark_theme
 
 from src.evaluation.dashboard_data import (
     build_dashboard_summary,
@@ -1548,6 +1549,8 @@ def main() -> None:
         page_icon="📊",
         layout="wide",
     )
+
+    apply_admin_dark_theme()
 
     render_llmops_dashboard(
         integrated=False

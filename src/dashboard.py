@@ -24,6 +24,7 @@ import pandas as pd
 import plotly.express as px
 import psycopg2
 import streamlit as st
+from src.dashboard_theme import apply_admin_dark_theme
 from dotenv import load_dotenv
 
 try:
@@ -105,6 +106,8 @@ if __name__ == "__main__":
         page_icon="📊",
         layout="wide",
     )
+
+    apply_admin_dark_theme()
 
 
 LANGUAGE_LABELS = {
