@@ -191,6 +191,347 @@ class HistoryMetric:
 
 
 @dataclass(frozen=True, slots=True)
+class HistoryRagTriad:
+    """
+    Resumo persistente da RAG Triad de uma execução em lote.
+
+    O histórico armazena somente informações agregadas e
+    técnicas. Conteúdo de usuário, contexto recuperado,
+    respostas e metadados livres não são persistidos aqui.
+    """
+
+    status: str
+    average_score: float | None
+    passed: bool | None
+    total_cases: int
+    complete_cases: int
+    failing_metric_ids: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        if not self.status.strip():
+            raise ValueError(
+                "status da RAG Triad não pode ser vazio."
+            )
+
+        if self.average_score is not None and not (
+            0.0 <= self.average_score <= 1.0
+        ):
+            raise ValueError(
+                "average_score da RAG Triad deve estar "
+                "entre 0 e 1."
+            )
+
+        if self.total_cases < 0:
+            raise ValueError(
+                "total_cases não pode ser negativo."
+            )
+
+        if self.complete_cases < 0:
+            raise ValueError(
+                "complete_cases não pode ser negativo."
+            )
+
+        if self.complete_cases > self.total_cases:
+            raise ValueError(
+                "complete_cases não pode superar "
+                "total_cases."
+            )
+
+    @classmethod
+    def from_dict(
+        cls,
+        payload: Mapping[str, Any],
+    ) -> HistoryRagTriad:
+        average_score = payload.get(
+            "average_score"
+        )
+
+        if average_score is not None:
+            average_score = _required_number(
+                average_score,
+                field_name=(
+                    "rag_triad.average_score"
+                ),
+            )
+
+            if not 0.0 <= average_score <= 1.0:
+                raise EvaluationHistorySchemaError(
+                    "rag_triad.average_score deve estar "
+                    "entre 0 e 1."
+                )
+
+        passed = payload.get("passed")
+
+        if passed is not None:
+            passed = _required_bool(
+                passed,
+                field_name="rag_triad.passed",
+            )
+
+        failing_payload = _required_sequence(
+            payload.get(
+                "failing_metric_ids",
+                [],
+            ),
+            field_name=(
+                "rag_triad.failing_metric_ids"
+            ),
+        )
+
+        failing_metric_ids = tuple(
+            sorted(
+                {
+                    _required_text(
+                        value,
+                        field_name=(
+                            "rag_triad."
+                            "failing_metric_ids[]"
+                        ),
+                    )
+                    for value in failing_payload
+                }
+            )
+        )
+
+        return cls(
+            status=_required_text(
+                payload.get("status"),
+                field_name="rag_triad.status",
+            ),
+            average_score=average_score,
+            passed=passed,
+            total_cases=_required_integer(
+                payload.get("total_cases"),
+                field_name=(
+                    "rag_triad.total_cases"
+                ),
+            ),
+            complete_cases=_required_integer(
+                payload.get("complete_cases"),
+                field_name=(
+                    "rag_triad.complete_cases"
+                ),
+            ),
+            failing_metric_ids=(
+                failing_metric_ids
+            ),
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "status": self.status,
+            "average_score": self.average_score,
+            "passed": self.passed,
+            "total_cases": self.total_cases,
+            "complete_cases": (
+                self.complete_cases
+            ),
+            "failing_metric_ids": list(
+                self.failing_metric_ids
+            ),
+        }
+
+
+def _case_rag_triad_payload(
+    case_payload: Mapping[str, Any],
+) -> Mapping[str, Any] | None:
+    """
+    Localiza a RAG Triad tanto no relatório externo quanto
+    no relatório interno completo.
+    """
+
+    direct = case_payload.get("rag_triad")
+
+    if isinstance(direct, Mapping):
+        return direct
+
+    evaluation = case_payload.get(
+        "evaluation"
+    )
+
+    if not isinstance(evaluation, Mapping):
+        return None
+
+    nested = evaluation.get("rag_triad")
+
+    if isinstance(nested, Mapping):
+        return nested
+
+    return None
+
+
+def _aggregate_history_rag_triad(
+    cases: Sequence[Any],
+) -> HistoryRagTriad | None:
+    """
+    Consolida as RAG Triads dos casos do relatório.
+
+    A prioridade de status preserva falhas operacionais:
+    failed > blocked > error > partial > planned >
+    passed > unavailable.
+    """
+
+    triads: list[Mapping[str, Any]] = []
+
+    for index, raw_case in enumerate(cases):
+        case_payload = _required_mapping(
+            raw_case,
+            field_name=f"cases[{index}]",
+        )
+
+        triad = _case_rag_triad_payload(
+            case_payload
+        )
+
+        if triad is not None:
+            triads.append(triad)
+
+    if not triads:
+        return None
+
+    statuses: list[str] = []
+    scores: list[float] = []
+    passed_values: list[bool | None] = []
+    complete_cases = 0
+    failing_metric_ids: set[str] = set()
+
+    for index, triad in enumerate(triads):
+        status = _required_text(
+            triad.get("status"),
+            field_name=(
+                f"cases[].rag_triad[{index}].status"
+            ),
+        ).lower()
+
+        statuses.append(status)
+
+        score = triad.get(
+            "aggregate_score"
+        )
+
+        if score is not None:
+            normalized_score = _required_number(
+                score,
+                field_name=(
+                    "cases[].rag_triad."
+                    "aggregate_score"
+                ),
+            )
+
+            if not 0.0 <= normalized_score <= 1.0:
+                raise EvaluationHistorySchemaError(
+                    "RAG Triad aggregate_score deve "
+                    "estar entre 0 e 1."
+                )
+
+            scores.append(normalized_score)
+
+        passed = triad.get("passed")
+
+        if passed is not None:
+            passed = _required_bool(
+                passed,
+                field_name=(
+                    "cases[].rag_triad.passed"
+                ),
+            )
+
+        passed_values.append(passed)
+
+        is_complete = triad.get(
+            "is_complete"
+        )
+
+        if is_complete is not None:
+            is_complete = _required_bool(
+                is_complete,
+                field_name=(
+                    "cases[].rag_triad.is_complete"
+                ),
+            )
+
+            if is_complete:
+                complete_cases += 1
+
+        failing = triad.get(
+            "failing_metric_ids",
+            [],
+        )
+
+        for metric_id in _required_sequence(
+            failing,
+            field_name=(
+                "cases[].rag_triad."
+                "failing_metric_ids"
+            ),
+        ):
+            failing_metric_ids.add(
+                _required_text(
+                    metric_id,
+                    field_name=(
+                        "cases[].rag_triad."
+                        "failing_metric_ids[]"
+                    ),
+                )
+            )
+
+    status_priority = (
+        "failed",
+        "blocked",
+        "error",
+        "partial",
+        "planned",
+        "passed",
+        "unavailable",
+    )
+
+    aggregate_status = next(
+        (
+            candidate
+            for candidate in status_priority
+            if candidate in statuses
+        ),
+        "unavailable",
+    )
+
+    aggregate_passed: bool | None
+
+    if any(
+        value is False
+        for value in passed_values
+    ):
+        aggregate_passed = False
+    elif (
+        passed_values
+        and all(
+            value is True
+            for value in passed_values
+        )
+        and complete_cases == len(triads)
+    ):
+        aggregate_passed = True
+    else:
+        aggregate_passed = None
+
+    average_score = (
+        sum(scores) / len(scores)
+        if scores
+        else None
+    )
+
+    return HistoryRagTriad(
+        status=aggregate_status,
+        average_score=average_score,
+        passed=aggregate_passed,
+        total_cases=len(triads),
+        complete_cases=complete_cases,
+        failing_metric_ids=tuple(
+            sorted(failing_metric_ids)
+        ),
+    )
+
+
+@dataclass(frozen=True, slots=True)
 class EvaluationHistoryEntry:
     recorded_at: str
     run_reference: str
@@ -209,6 +550,7 @@ class EvaluationHistoryEntry:
     violation_count: int
     baseline_id: str | None
     metrics: tuple[HistoryMetric, ...]
+    rag_triad: HistoryRagTriad | None = None
 
     @classmethod
     def from_report(
@@ -371,6 +713,11 @@ class EvaluationHistoryEntry:
                     key=lambda item: item.metric_id,
                 )
             ),
+            rag_triad=(
+                _aggregate_history_rag_triad(
+                    cases
+                )
+            ),
         )
 
     @classmethod
@@ -399,6 +746,20 @@ class EvaluationHistoryEntry:
             baseline_id = _required_text(
                 baseline_id,
                 field_name="baseline_id",
+            )
+
+        rag_triad_payload = payload.get(
+            "rag_triad"
+        )
+
+        rag_triad = None
+
+        if rag_triad_payload is not None:
+            rag_triad = HistoryRagTriad.from_dict(
+                _required_mapping(
+                    rag_triad_payload,
+                    field_name="rag_triad",
+                )
             )
 
         return cls(
@@ -470,6 +831,7 @@ class EvaluationHistoryEntry:
             ),
             baseline_id=baseline_id,
             metrics=metrics,
+            rag_triad=rag_triad,
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -504,6 +866,11 @@ class EvaluationHistoryEntry:
                 metric.to_dict()
                 for metric in self.metrics
             ],
+            "rag_triad": (
+                self.rag_triad.to_dict()
+                if self.rag_triad is not None
+                else None
+            ),
         }
 
 

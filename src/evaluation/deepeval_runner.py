@@ -267,6 +267,60 @@ class EvaluationRunResult:
         )
 
 
+    @property
+    def rag_triad(self):
+        """
+        Consolida as métricas oficiais da RAG Triad.
+
+        Retorna None quando a execução não possui nenhuma
+        métrica pertencente à tríade.
+        """
+
+        from src.evaluation.rag_triad import (
+            RAG_TRIAD_METRIC_IDS,
+            aggregate_rag_triad,
+        )
+
+        triad_metric_ids = frozenset(
+            RAG_TRIAD_METRIC_IDS
+        )
+
+        if not any(
+            result.metric_id.strip().lower()
+            in triad_metric_ids
+            for result in self.metric_results
+        ):
+            return None
+
+        return aggregate_rag_triad(
+            self.metric_results,
+            metadata={
+                "run_id": self.run_id,
+                "case_id": self.case_id,
+                "dataset_id": self.dataset_id,
+                "category": self.category,
+                "profile_id": self.profile_id,
+                "mode": self.mode.value,
+                "run_status": self.status.value,
+            },
+        )
+
+    @property
+    def rag_triad_payload(
+        self,
+    ) -> dict[str, Any] | None:
+        """
+        Retorna a representação serializável da RAG Triad.
+        """
+
+        triad = self.rag_triad
+
+        if triad is None:
+            return None
+
+        return triad.to_dict()
+
+
 @dataclass(frozen=True, slots=True)
 class EvaluationRunnerSettings:
     mode: EvaluationRunMode = EvaluationRunMode.DRY_RUN

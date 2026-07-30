@@ -462,6 +462,135 @@ def _validate_external_report_projection(
     return compatible
 
 
+def _safe_external_rag_triad(
+    evaluation: Any,
+) -> dict[str, Any] | None:
+    """
+    Cria uma projeção externa segura da RAG Triad.
+
+    Não exporta motivos, metadados livres, conteúdo recuperado,
+    respostas ou qualquer dado conversacional.
+    """
+
+    if evaluation is None:
+        return None
+
+    triad = evaluation.rag_triad
+
+    if triad is None:
+        return None
+
+    return {
+        "status": triad.status.value,
+        "aggregate_score": triad.aggregate_score,
+        "passed": triad.passed,
+        "is_complete": triad.is_complete,
+        "missing_metric_ids": list(
+            triad.missing_metric_ids
+        ),
+        "failing_metric_ids": list(
+            triad.failing_metric_ids
+        ),
+        "axes": [
+            {
+                "metric_id": axis.metric_id,
+                "status": axis.status.value,
+                "score": axis.score,
+                "threshold": axis.threshold,
+                "passed": axis.passed,
+            }
+            for axis in triad.axes
+        ],
+    }
+
+
+def _safe_external_case_report(
+    case_result: Any,
+) -> dict[str, Any]:
+    """
+    Serializa um caso para exportação externa.
+
+    A estrutura base permanece compatível com o relatório
+    anterior. O campo rag_triad somente é incluído quando
+    uma tríade real estiver disponível.
+    """
+
+    payload = {
+        "dataset_id": case_result.dataset_id,
+        "case_id": case_result.case_id,
+        "category": case_result.category,
+        "status": case_result.status.value,
+        "has_evaluation": (
+            case_result.evaluation is not None
+        ),
+        "error_type": case_result.error_type,
+    }
+
+    triad_payload = _safe_external_rag_triad(
+        case_result.evaluation
+    )
+
+    if triad_payload is not None:
+        payload["rag_triad"] = triad_payload
+
+    return payload
+
+
+def _internal_case_report(
+    case_result: Any,
+) -> dict[str, Any]:
+    """
+    Serializa um caso para o relatório interno completo.
+
+    O payload padrão produzido por to_json_compatible é
+    preservado. A RAG Triad é acrescentada somente quando
+    existir, sem alterar casos não RAG.
+    """
+
+    payload = to_json_compatible(
+        case_result
+    )
+
+    if not isinstance(payload, dict):
+        raise EvaluationReportSerializationError(
+            "O resultado do caso não pôde ser "
+            "serializado como objeto."
+        )
+
+    evaluation = case_result.evaluation
+
+    if evaluation is None:
+        return payload
+
+    triad_payload = (
+        evaluation.rag_triad_payload
+    )
+
+    if triad_payload is None:
+        return payload
+
+    evaluation_payload = payload.get(
+        "evaluation"
+    )
+
+    if not isinstance(
+        evaluation_payload,
+        dict,
+    ):
+        raise EvaluationReportSerializationError(
+            "A avaliação interna do caso possui "
+            "estrutura inválida."
+        )
+
+    evaluation_payload["rag_triad"] = (
+        to_json_compatible(
+            triad_payload
+        )
+    )
+
+    return payload
+
+
 def build_batch_report(
     batch: BatchRunResult,
     *,
@@ -483,29 +612,17 @@ def build_batch_report(
     if include_case_details:
         if sanitize:
             cases = [
-                {
-                    "dataset_id": (
-                        case_result.dataset_id
-                    ),
-                    "case_id": case_result.case_id,
-                    "category": case_result.category,
-                    "status": (
-                        case_result.status.value
-                    ),
-                    "has_evaluation": (
-                        case_result.evaluation
-                        is not None
-                    ),
-                    "error_type": (
-                        case_result.error_type
-                    ),
-                }
+                _safe_external_case_report(
+                    case_result
+                )
                 for case_result
                 in batch.case_results
             ]
         else:
             cases = [
-                to_json_compatible(case_result)
+                _internal_case_report(
+                    case_result
+                )
                 for case_result
                 in batch.case_results
             ]

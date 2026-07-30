@@ -5,13 +5,15 @@ from pathlib import Path
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-from src.dashboard_theme import apply_admin_dark_theme
 
+from src.dashboard_theme import apply_admin_dark_theme
 from src.evaluation.dashboard_data import (
     build_dashboard_summary,
     build_metric_series,
     build_metric_snapshot,
     build_pass_rate_series,
+    build_rag_triad_series,
+    build_rag_triad_snapshot,
     build_runs_table,
     filter_history,
     get_metric_ids,
@@ -643,6 +645,126 @@ def llmops_t(
     )
 
 
+LLMOPS_RAG_TRIAD_TEXTS = {
+    "pt": {
+        "rag_triad_title": "RAG Triad",
+        "rag_triad_runs": "Execuções com RAG Triad",
+        "rag_triad_pass_rate": "Aprovação da RAG Triad",
+        "rag_triad_latest_score": "Score mais recente",
+        "rag_triad_latest_status": "Status mais recente",
+        "rag_triad_chart": "Evolução da RAG Triad",
+        "rag_triad_no_data": (
+            "Ainda não existem execuções com RAG Triad "
+            "no histórico selecionado."
+        ),
+        "rag_triad_snapshot": "Snapshot da RAG Triad",
+        "rag_triad_complete_cases": "Casos completos",
+        "rag_triad_total_cases": "Casos avaliados",
+        "rag_triad_completeness": "Completude",
+        "rag_triad_failing_metrics": (
+            "Métricas reprovadas ou indisponíveis"
+        ),
+        "rag_triad_no_failures": (
+            "Nenhuma métrica reprovada na execução mais recente."
+        ),
+        "rag_triad_approved": "RAG Triad aprovada",
+        "rag_triad_failed": "RAG Triad reprovada",
+        "rag_triad_partial": "RAG Triad parcial",
+        "rag_triad_unknown": "Sem resultado consolidado",
+        "rag_triad_score": "Score da RAG Triad",
+        "rag_triad_status": "Status da RAG Triad",
+        "rag_triad_passed": "RAG Triad aprovada",
+    },
+    "en_us": {
+        "rag_triad_title": "RAG Triad",
+        "rag_triad_runs": "Runs with RAG Triad",
+        "rag_triad_pass_rate": "RAG Triad pass rate",
+        "rag_triad_latest_score": "Latest score",
+        "rag_triad_latest_status": "Latest status",
+        "rag_triad_chart": "RAG Triad evolution",
+        "rag_triad_no_data": (
+            "There are no RAG Triad runs in the "
+            "selected history yet."
+        ),
+        "rag_triad_snapshot": "RAG Triad snapshot",
+        "rag_triad_complete_cases": "Complete cases",
+        "rag_triad_total_cases": "Evaluated cases",
+        "rag_triad_completeness": "Completeness",
+        "rag_triad_failing_metrics": (
+            "Failed or unavailable metrics"
+        ),
+        "rag_triad_no_failures": (
+            "No metric failed in the latest run."
+        ),
+        "rag_triad_approved": "RAG Triad passed",
+        "rag_triad_failed": "RAG Triad failed",
+        "rag_triad_partial": "Partial RAG Triad",
+        "rag_triad_unknown": "No consolidated result",
+        "rag_triad_score": "RAG Triad score",
+        "rag_triad_status": "RAG Triad status",
+        "rag_triad_passed": "RAG Triad passed",
+    },
+    "es": {
+        "rag_triad_title": "RAG Triad",
+        "rag_triad_runs": "Ejecuciones con RAG Triad",
+        "rag_triad_pass_rate": "Aprobación de RAG Triad",
+        "rag_triad_latest_score": "Puntuación más reciente",
+        "rag_triad_latest_status": "Estado más reciente",
+        "rag_triad_chart": "Evolución de RAG Triad",
+        "rag_triad_no_data": (
+            "Todavía no hay ejecuciones con RAG Triad "
+            "en el historial seleccionado."
+        ),
+        "rag_triad_snapshot": "Resumen de RAG Triad",
+        "rag_triad_complete_cases": "Casos completos",
+        "rag_triad_total_cases": "Casos evaluados",
+        "rag_triad_completeness": "Completitud",
+        "rag_triad_failing_metrics": (
+            "Métricas reprobadas o no disponibles"
+        ),
+        "rag_triad_no_failures": (
+            "Ninguna métrica falló en la última ejecución."
+        ),
+        "rag_triad_approved": "RAG Triad aprobada",
+        "rag_triad_failed": "RAG Triad reprobada",
+        "rag_triad_partial": "RAG Triad parcial",
+        "rag_triad_unknown": "Sin resultado consolidado",
+        "rag_triad_score": "Puntuación de RAG Triad",
+        "rag_triad_status": "Estado de RAG Triad",
+        "rag_triad_passed": "RAG Triad aprobada",
+    },
+}
+
+LLMOPS_RAG_TRIAD_TEXTS["en_gb"] = dict(
+    LLMOPS_RAG_TRIAD_TEXTS["en_us"]
+)
+
+for idioma in (
+    "fr",
+    "de",
+    "it",
+    "ro",
+    "ua",
+    "ru",
+    "sa",
+    "ch",
+):
+    LLMOPS_RAG_TRIAD_TEXTS.setdefault(
+        idioma,
+        dict(
+            LLMOPS_RAG_TRIAD_TEXTS["en_us"]
+        ),
+    )
+
+for idioma, textos in (
+    LLMOPS_RAG_TRIAD_TEXTS.items()
+):
+    LLMOPS_TEXTS.setdefault(
+        idioma,
+        {},
+    ).update(textos)
+
+
 LLMOPS_COLUMN_TEXTS = {
     "pt": {
         "metric_id": "Métrica",
@@ -660,6 +782,12 @@ LLMOPS_COLUMN_TEXTS = {
         "quality_gate_passed": "Quality Gate",
         "regressions": "Regressões",
         "violations": "Violações",
+        "rag_triad_status": "Status da RAG Triad",
+        "rag_triad_score": "Score da RAG Triad",
+        "rag_triad_passed": "RAG Triad aprovada",
+        "rag_triad_total_cases": "Casos RAG",
+        "rag_triad_complete_cases": "Casos RAG completos",
+        "rag_triad_failing_metrics": "Métricas RAG reprovadas",
     },
     "en_us": {
         "metric_id": "Metric",
@@ -677,6 +805,12 @@ LLMOPS_COLUMN_TEXTS = {
         "quality_gate_passed": "Quality Gate",
         "regressions": "Regressions",
         "violations": "Violations",
+        "rag_triad_status": "RAG Triad status",
+        "rag_triad_score": "RAG Triad score",
+        "rag_triad_passed": "RAG Triad passed",
+        "rag_triad_total_cases": "RAG cases",
+        "rag_triad_complete_cases": "Complete RAG cases",
+        "rag_triad_failing_metrics": "Failed RAG metrics",
     },
     "es": {
         "metric_id": "Métrica",
@@ -694,6 +828,12 @@ LLMOPS_COLUMN_TEXTS = {
         "quality_gate_passed": "Puerta de calidad",
         "regressions": "Regresiones",
         "violations": "Infracciones",
+        "rag_triad_status": "Estado de RAG Triad",
+        "rag_triad_score": "Puntuación de RAG Triad",
+        "rag_triad_passed": "RAG Triad aprobada",
+        "rag_triad_total_cases": "Casos RAG",
+        "rag_triad_complete_cases": "Casos RAG completos",
+        "rag_triad_failing_metrics": "Métricas RAG reprobadas",
     },
 }
 
@@ -1319,6 +1459,212 @@ def _render_metric_chart(history) -> None:
         },
     )
 
+def _render_rag_triad_section(
+    history,
+) -> None:
+    """
+    Renderiza os indicadores consolidados da RAG Triad.
+
+    Históricos antigos ou execuções sem a tríade continuam
+    sendo aceitos e exibem um estado vazio controlado.
+    """
+
+    st.subheader(
+        llmops_t("rag_triad_title")
+    )
+
+    summary = build_dashboard_summary(
+        history
+    )
+
+    first, second, third, fourth = (
+        st.columns(4)
+    )
+
+    first.metric(
+        llmops_t("rag_triad_runs"),
+        summary.rag_triad_runs,
+    )
+
+    second.metric(
+        llmops_t("rag_triad_pass_rate"),
+        _percentage(
+            summary.rag_triad_pass_rate
+        ),
+    )
+
+    third.metric(
+        llmops_t("rag_triad_latest_score"),
+        _percentage(
+            summary.latest_rag_triad_score
+        ),
+    )
+
+    fourth.metric(
+        llmops_t("rag_triad_latest_status"),
+        (
+            summary.latest_rag_triad_status
+            or "—"
+        ),
+    )
+
+    rows = build_rag_triad_series(
+        history
+    )
+
+    if not rows:
+        st.info(
+            llmops_t("rag_triad_no_data")
+        )
+        return
+
+    frame = pd.DataFrame(rows)
+
+    frame["recorded_at"] = pd.to_datetime(
+        frame["recorded_at"],
+        utc=True,
+    )
+
+    chart_frame = frame.dropna(
+        subset=["average_score"]
+    )
+
+    if not chart_frame.empty:
+        fig_rag_triad = px.line(
+            chart_frame.sort_values(
+                "recorded_at"
+            ),
+            x="recorded_at",
+            y="average_score",
+            markers=True,
+            labels={
+                "recorded_at": llmops_t(
+                    "date"
+                ),
+                "average_score": llmops_t(
+                    "rag_triad_score"
+                ),
+            },
+        )
+
+        fig_rag_triad.update_traces(
+            line={"width": 3},
+            marker={"size": 9},
+            connectgaps=False,
+            hovertemplate=(
+                "<b>%{x|%d/%m/%Y %H:%M}</b><br>"
+                + llmops_t("rag_triad_score")
+                + ": %{y:.2%}<extra></extra>"
+            ),
+        )
+
+        fig_rag_triad.update_layout(
+            xaxis_title=None,
+            yaxis_title=llmops_t(
+                "rag_triad_score"
+            ),
+            showlegend=False,
+            hovermode="x unified",
+        )
+
+        fig_rag_triad.update_xaxes(
+            tickformat="%d/%m<br>%H:%M",
+        )
+
+        fig_rag_triad.update_yaxes(
+            range=[0, 1],
+            tickformat=".0%",
+        )
+
+        aplicar_tema_llmops_chart(
+            fig_rag_triad,
+            height=430,
+        )
+
+        st.plotly_chart(
+            fig_rag_triad,
+            width="stretch",
+            key=(
+                "llmops_rag_triad_"
+                "evolution_chart"
+            ),
+            config={
+                "displayModeBar": False,
+                "responsive": True,
+            },
+        )
+
+    latest = history.latest()
+
+    snapshot = build_rag_triad_snapshot(
+        latest
+    )
+
+    if snapshot is None:
+        return
+
+    st.markdown(
+        f"**{llmops_t('rag_triad_snapshot')}**"
+    )
+
+    snapshot_first, snapshot_second, snapshot_third = (
+        st.columns(3)
+    )
+
+    snapshot_first.metric(
+        llmops_t("rag_triad_total_cases"),
+        snapshot["total_cases"],
+    )
+
+    snapshot_second.metric(
+        llmops_t("rag_triad_complete_cases"),
+        snapshot["complete_cases"],
+    )
+
+    snapshot_third.metric(
+        llmops_t("rag_triad_completeness"),
+        _percentage(
+            snapshot["completeness_rate"]
+        ),
+    )
+
+    status = snapshot["status"]
+
+    if snapshot["passed"] is True:
+        st.success(
+            llmops_t("rag_triad_approved")
+        )
+    elif snapshot["passed"] is False:
+        st.error(
+            llmops_t("rag_triad_failed")
+        )
+    elif status in {
+        "partial",
+        "planned",
+    }:
+        st.warning(
+            llmops_t("rag_triad_partial")
+        )
+    else:
+        st.info(
+            llmops_t("rag_triad_unknown")
+        )
+
+    failing_metrics = snapshot[
+        "failing_metric_ids"
+    ]
+
+    if failing_metrics:
+        st.warning(
+            f"{llmops_t('rag_triad_failing_metrics')}: "
+            + ", ".join(failing_metrics)
+        )
+    else:
+        st.caption(
+            llmops_t("rag_triad_no_failures")
+        )
+
+
 def _render_latest_snapshot(history) -> None:
     st.subheader(
         llmops_t("latest_snapshot")
@@ -1461,6 +1807,51 @@ def _render_runs_table(history) -> None:
                     llmops_t("quality_gate")
                 )
             ),
+            "rag_triad_status": (
+                st.column_config.TextColumn(
+                    column_labels[
+                        "rag_triad_status"
+                    ]
+                )
+            ),
+            "rag_triad_score": (
+                st.column_config.ProgressColumn(
+                    column_labels[
+                        "rag_triad_score"
+                    ],
+                    min_value=0.0,
+                    max_value=1.0,
+                    format="%.2f",
+                )
+            ),
+            "rag_triad_passed": (
+                st.column_config.CheckboxColumn(
+                    column_labels[
+                        "rag_triad_passed"
+                    ]
+                )
+            ),
+            "rag_triad_total_cases": (
+                st.column_config.NumberColumn(
+                    column_labels[
+                        "rag_triad_total_cases"
+                    ]
+                )
+            ),
+            "rag_triad_complete_cases": (
+                st.column_config.NumberColumn(
+                    column_labels[
+                        "rag_triad_complete_cases"
+                    ]
+                )
+            ),
+            "rag_triad_failing_metrics": (
+                st.column_config.ListColumn(
+                    column_labels[
+                        "rag_triad_failing_metrics"
+                    ]
+                )
+            ),
         },
     )
 
@@ -1529,6 +1920,12 @@ def render_llmops_dashboard(
     )
 
     _render_metric_chart(
+        filtered_history
+    )
+
+    st.divider()
+
+    _render_rag_triad_section(
         filtered_history
     )
 

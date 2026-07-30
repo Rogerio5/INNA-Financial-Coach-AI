@@ -22,6 +22,12 @@ class DashboardSummary:
     latest_violations: int
     latest_quality_gate_passed: bool | None
     tracked_metrics: int
+    rag_triad_runs: int = 0
+    rag_triad_approved_runs: int = 0
+    rag_triad_pass_rate: float | None = None
+    latest_rag_triad_status: str | None = None
+    latest_rag_triad_score: float | None = None
+    latest_rag_triad_passed: bool | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -40,6 +46,22 @@ class DashboardSummary:
                 self.latest_quality_gate_passed
             ),
             "tracked_metrics": self.tracked_metrics,
+            "rag_triad_runs": self.rag_triad_runs,
+            "rag_triad_approved_runs": (
+                self.rag_triad_approved_runs
+            ),
+            "rag_triad_pass_rate": (
+                self.rag_triad_pass_rate
+            ),
+            "latest_rag_triad_status": (
+                self.latest_rag_triad_status
+            ),
+            "latest_rag_triad_score": (
+                self.latest_rag_triad_score
+            ),
+            "latest_rag_triad_passed": (
+                self.latest_rag_triad_passed
+            ),
         }
 
 
@@ -82,6 +104,38 @@ def build_dashboard_summary(
         for metric in entry.metrics
     }
 
+    rag_triad_entries = tuple(
+        entry
+        for entry in history.entries
+        if entry.rag_triad is not None
+    )
+
+    rag_triad_runs = len(
+        rag_triad_entries
+    )
+
+    rag_triad_approved_runs = sum(
+        1
+        for entry in rag_triad_entries
+        if (
+            entry.rag_triad is not None
+            and entry.rag_triad.passed is True
+        )
+    )
+
+    rag_triad_pass_rate = (
+        rag_triad_approved_runs
+        / rag_triad_runs
+        if rag_triad_runs
+        else None
+    )
+
+    latest_triad = (
+        latest.rag_triad
+        if latest is not None
+        else None
+    )
+
     return DashboardSummary(
         total_runs=total_runs,
         approved_runs=approved_runs,
@@ -108,6 +162,28 @@ def build_dashboard_summary(
             else None
         ),
         tracked_metrics=len(metric_ids),
+        rag_triad_runs=rag_triad_runs,
+        rag_triad_approved_runs=(
+            rag_triad_approved_runs
+        ),
+        rag_triad_pass_rate=(
+            rag_triad_pass_rate
+        ),
+        latest_rag_triad_status=(
+            latest_triad.status
+            if latest_triad is not None
+            else None
+        ),
+        latest_rag_triad_score=(
+            latest_triad.average_score
+            if latest_triad is not None
+            else None
+        ),
+        latest_rag_triad_passed=(
+            latest_triad.passed
+            if latest_triad is not None
+            else None
+        ),
     )
 
 
@@ -152,6 +228,39 @@ def build_runs_table(
                     entry.violation_count
                 ),
                 "baseline_id": entry.baseline_id,
+                "rag_triad_status": (
+                    entry.rag_triad.status
+                    if entry.rag_triad is not None
+                    else None
+                ),
+                "rag_triad_score": (
+                    entry.rag_triad.average_score
+                    if entry.rag_triad is not None
+                    else None
+                ),
+                "rag_triad_passed": (
+                    entry.rag_triad.passed
+                    if entry.rag_triad is not None
+                    else None
+                ),
+                "rag_triad_total_cases": (
+                    entry.rag_triad.total_cases
+                    if entry.rag_triad is not None
+                    else 0
+                ),
+                "rag_triad_complete_cases": (
+                    entry.rag_triad.complete_cases
+                    if entry.rag_triad is not None
+                    else 0
+                ),
+                "rag_triad_failing_metrics": (
+                    list(
+                        entry.rag_triad
+                        .failing_metric_ids
+                    )
+                    if entry.rag_triad is not None
+                    else []
+                ),
             }
         )
 
@@ -214,6 +323,92 @@ def build_metric_series(
             )
 
     return rows
+
+
+def build_rag_triad_series(
+    history: EvaluationHistory,
+) -> list[dict[str, Any]]:
+    """
+    Constrói a série temporal da RAG Triad.
+
+    Históricos antigos e execuções sem RAG Triad são
+    ignorados sem gerar dados artificiais.
+    """
+
+    rows: list[dict[str, Any]] = []
+
+    for entry in sorted(
+        history.entries,
+        key=lambda item: _parse_recorded_at(
+            item.recorded_at
+        ),
+    ):
+        triad = entry.rag_triad
+
+        if triad is None:
+            continue
+
+        rows.append(
+            {
+                "recorded_at": entry.recorded_at,
+                "run_reference": (
+                    entry.run_reference
+                ),
+                "status": triad.status,
+                "average_score": (
+                    triad.average_score
+                ),
+                "passed": triad.passed,
+                "total_cases": triad.total_cases,
+                "complete_cases": (
+                    triad.complete_cases
+                ),
+                "completeness_rate": (
+                    triad.complete_cases
+                    / triad.total_cases
+                    if triad.total_cases
+                    else 0.0
+                ),
+                "failing_metric_ids": list(
+                    triad.failing_metric_ids
+                ),
+            }
+        )
+
+    return rows
+
+
+def build_rag_triad_snapshot(
+    entry: EvaluationHistoryEntry | None,
+) -> dict[str, Any] | None:
+    """
+    Retorna o snapshot consolidado da RAG Triad mais recente.
+    """
+
+    if (
+        entry is None
+        or entry.rag_triad is None
+    ):
+        return None
+
+    triad = entry.rag_triad
+
+    return {
+        "status": triad.status,
+        "average_score": triad.average_score,
+        "passed": triad.passed,
+        "total_cases": triad.total_cases,
+        "complete_cases": triad.complete_cases,
+        "completeness_rate": (
+            triad.complete_cases
+            / triad.total_cases
+            if triad.total_cases
+            else 0.0
+        ),
+        "failing_metric_ids": list(
+            triad.failing_metric_ids
+        ),
+    }
 
 
 def build_metric_snapshot(
@@ -291,6 +486,8 @@ __all__ = [
     "build_metric_series",
     "build_metric_snapshot",
     "build_pass_rate_series",
+    "build_rag_triad_series",
+    "build_rag_triad_snapshot",
     "build_runs_table",
     "filter_history",
     "get_metric_ids",
