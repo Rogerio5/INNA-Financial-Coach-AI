@@ -5,3 +5,23 @@ enableXsrfProtection = false
 
 [browser]
 gatherUsageStats = false
+
+[theme]
+base = "dark"
+primaryColor = "#38BDF8"
+backgroundColor = "#050D18"
+secondaryBackgroundColor = "#0A1D32"
+textColor = "#FFFFFF"
+borderColor = "#28557D"
+dataframeBorderColor = "#173852"
+dataframeHeaderBackgroundColor = "#10243A"
+codeBackgroundColor = "#030914"
+showWidgetBorder = true
+
+[theme.sidebar]
+backgroundColor = "#071525"
+secondaryBackgroundColor = "#0A1D32"
+textColor = "#FFFFFF"
+borderColor = "#28557D"
+dataframeBorderColor = "#173852"
+dataframeHeaderBackgroundColor = "#10243A"
