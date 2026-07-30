@@ -26,6 +26,31 @@ import psycopg2
 import streamlit as st
 from dotenv import load_dotenv
 
+try:
+    from dashboard_i18n import (
+        MENU_PAGE_IDS as DASHBOARD_MENU_PAGE_IDS,
+        localize_multichannel_dataframe as dashboard_localize_multichannel_dataframe,
+        menu_t as dashboard_menu_t,
+        multichannel_t as dashboard_multichannel_t,
+        normalize_menu_page_id as normalize_dashboard_menu_page_id,
+        page_translate as dashboard_page_translate,
+        translate_channel as dashboard_translate_channel,
+        translate_status as dashboard_translate_status,
+        translate_useful as dashboard_translate_useful,
+    )
+except ImportError:
+    from src.dashboard_i18n import (
+        MENU_PAGE_IDS as DASHBOARD_MENU_PAGE_IDS,
+        localize_multichannel_dataframe as dashboard_localize_multichannel_dataframe,
+        menu_t as dashboard_menu_t,
+        multichannel_t as dashboard_multichannel_t,
+        normalize_menu_page_id as normalize_dashboard_menu_page_id,
+        page_translate as dashboard_page_translate,
+        translate_channel as dashboard_translate_channel,
+        translate_status as dashboard_translate_status,
+        translate_useful as dashboard_translate_useful,
+    )
+
 
 load_dotenv(".env")
 
@@ -84,7 +109,7 @@ if __name__ == "__main__":
 
 LANGUAGE_LABELS = {
     "pt": "BR Português Brasil",
-    "en_us": "US English US",
+    "en_us": "US English",
     "en_gb": "GB English UK",
     "es": "ES Español",
     "fr": "FR Français",
@@ -140,7 +165,7 @@ FIXED_CURRENCIES = [
 
 DASHBOARD_INTERFACE_LANGS = {
     "pt": "BR Português Brasil",
-    "en_us": "US English US",
+    "en_us": "US English",
     "en_gb": "GB English UK",
     "es": "ES Español",
     "fr": "FR Français",
@@ -831,7 +856,7 @@ DASHBOARD_TEXTS.setdefault("ru", {}).update({
     "risk": "Риск",
     "estimated_balance": "Оценочный баланс",
     "summary_help": "Краткое резюме отфильтрованного пользователя с разделением по языку, валюте, каналу, баллу, риску и балансу.",
-    "see_by_currency": "См. по валюте",
+    "see_by_currency": "Несколько валют",
     "all": "Все",
 })
 DASHBOARD_TEXTS.setdefault("it", {}).update({
@@ -843,19 +868,19 @@ DASHBOARD_TEXTS.setdefault("it", {}).update({
     "risk": "Rischio",
     "estimated_balance": "Saldo stimato",
     "summary_help": "Riepilogo esecutivo dell’utente filtrato, separando lingua, valuta, canale, punteggio, rischio e saldo.",
-    "see_by_currency": "Vedi per valuta",
+    "see_by_currency": "Più valute",
     "all": "Tutti",
 })
 DASHBOARD_TEXTS.setdefault("en_us", {}).update({
     "user": "User",
     "language": "Language",
     "currency": "Currency",
-    "latest_channel": "latest_channel_metric",
+    "latest_channel": "Latest channel",
     "financial_score": "Financial score",
     "risk": "Risk",
     "estimated_balance": "Estimated balance",
     "summary_help": "Executive summary of the filtered user, separating language, currency, channel, score, risk and balance.",
-    "see_by_currency": "See by currency",
+    "see_by_currency": "Multiple currencies",
     "all": "All",
 })
 DASHBOARD_TEXTS.setdefault("pt", {}).update({
@@ -867,7 +892,7 @@ DASHBOARD_TEXTS.setdefault("pt", {}).update({
     "risk": "Risco",
     "estimated_balance": "Saldo estimado",
     "summary_help": "Resumo executivo do usuário filtrado, separando idioma, moeda, canal, score, risco e saldo estimado.",
-    "see_by_currency": "Ver por moeda",
+    "see_by_currency": "Múltiplas moedas",
     "all": "Todos",
 })
 
@@ -881,7 +906,7 @@ DASHBOARD_TEXTS.setdefault("sa", {}).update({
     "risk": "المخاطر",
     "estimated_balance": "الرصيد التقديري",
     "summary_help": "ملخص تنفيذي للمستخدم المحدد مع فصل اللغة والعملة والقناة والنتيجة والمخاطر والرصيد.",
-    "see_by_currency": "عرض حسب العملة",
+    "see_by_currency": "عملات متعددة",
 })
 
 
@@ -894,73 +919,73 @@ DASHBOARD_TEXTS.setdefault("sa", {}).update({
 DASHBOARD_TEXTS.setdefault("pt", {}).update({
     "subtitle": "Analytics financeiro, feedbacks e validação com usuários via PostgreSQL",
     "info": "Este dashboard lê dados diretamente do PostgreSQL/Neon e valida uso real por canal, idioma, moeda, diagnóstico, documento PDF, e-mail e Telegram.",
-    "see_by_currency": "Ver por moeda",
+    "see_by_currency": "Múltiplas moedas",
 })
 
 DASHBOARD_TEXTS.setdefault("en_us", {}).update({
     "subtitle": "Financial analytics, feedback and user validation through Postgres SQL",
     "info": "This dashboard reads data directly from Postgres SQL/Neon and validates real usage by channel, language, currency, diagnosis, PDF document, email and Telegram app.",
-    "see_by_currency": "See by currency",
+    "see_by_currency": "Multiple currencies",
 })
 
 DASHBOARD_TEXTS.setdefault("en_gb", {}).update({
     "subtitle": "Financial analytics, feedback and user validation through Postgres SQL",
     "info": "This dashboard reads data directly from Postgres SQL/Neon and validates real usage by channel, language, currency, diagnosis, PDF document, email and Telegram app.",
-    "see_by_currency": "See by currency",
+    "see_by_currency": "Multiple currencies",
 })
 
 DASHBOARD_TEXTS.setdefault("es", {}).update({
     "subtitle": "Analítica financiera, feedback y validación con usuarios mediante Postgres SQL",
     "info": "Este panel lee datos directamente desde Postgres SQL/Neon y valida el uso real por canal, idioma, moneda, diagnóstico, documento PDF, correo electrónico y aplicación Telegram.",
-    "see_by_currency": "Ver por moneda",
+    "see_by_currency": "Múltiples monedas",
 })
 
 DASHBOARD_TEXTS.setdefault("fr", {}).update({
     "subtitle": "Analyses financières, feedbacks et validation des utilisateurs via Postgres SQL",
     "info": "Ce tableau de bord lit les données directement depuis Postgres SQL/Neon et valide l’utilisation réelle par canal, langue, devise, diagnostic, document PDF, e-mail et application Telegram.",
-    "see_by_currency": "Voir par devise",
+    "see_by_currency": "Plusieurs devises",
 })
 
 DASHBOARD_TEXTS.setdefault("de", {}).update({
     "subtitle": "Finanzanalysen, Feedbacks und Benutzervalidierung über Postgres SQL",
     "info": "Dieses Dashboard liest Daten direkt aus Postgres SQL/Neon und validiert die reale Nutzung nach Kanal, Sprache, Währung, Diagnose, PDF-Dokument, E-Mail und Telegram-App.",
-    "see_by_currency": "Nach Währung anzeigen",
+    "see_by_currency": "Mehrere Währungen",
 })
 
 DASHBOARD_TEXTS.setdefault("it", {}).update({
     "subtitle": "Analisi finanziarie, feedback e validazione degli utenti tramite Postgres SQL",
     "info": "Questa dashboard legge i dati direttamente da Postgres SQL/Neon e valida l’uso reale per canale, lingua, valuta, diagnosi, documento PDF, e-mail e app Telegram.",
-    "see_by_currency": "Vedi per valuta",
+    "see_by_currency": "Più valute",
 })
 
 DASHBOARD_TEXTS.setdefault("ro", {}).update({
     "subtitle": "Analize financiare, feedback și validare cu utilizatori prin Postgres SQL",
     "info": "Acest dashboard citește date direct din Postgres SQL/Neon și validează utilizarea reală pe canal, limbă, monedă, diagnostic, document PDF, e-mail și aplicația Telegram.",
-    "see_by_currency": "Vezi după monedă",
+    "see_by_currency": "Mai multe monede",
 })
 
 DASHBOARD_TEXTS.setdefault("ua", {}).update({
     "subtitle": "Фінансова аналітика, відгуки та перевірка користувачів через Postgres SQL",
     "info": "Ця панель читає дані безпосередньо з Postgres SQL/Neon і перевіряє реальне використання за каналом, мовою, валютою, діагностикою, PDF-документом, електронною поштою та додатком Telegram.",
-    "see_by_currency": "Переглянути за валютою",
+    "see_by_currency": "Кілька валют",
 })
 
 DASHBOARD_TEXTS.setdefault("ru", {}).update({
     "subtitle": "Финансовая аналитика, отзывы и проверка пользователей через Postgres SQL",
     "info": "Эта панель читает данные напрямую из Postgres SQL/Neon и проверяет реальное использование по каналу, языку, валюте, диагностике, PDF-документу, электронной почте и приложению Telegram.",
-    "see_by_currency": "Смотреть по валюте",
+    "see_by_currency": "Несколько валют",
 })
 
 DASHBOARD_TEXTS.setdefault("sa", {}).update({
     "subtitle": "تحليلات مالية، ملاحظات المستخدمين والتحقق عبر بوستغري إس كيو إل",
     "info": "تقرأ لوحة التحكم هذه البيانات مباشرة من بوستغري إس كيو إل/Neon وتتحقق من الاستخدام الفعلي حسب القناة واللغة والعملة والتشخيص ووثيقة PDF والبريد الإلكتروني وتطبيق تيليجرام.",
-    "see_by_currency": "عرض حسب العملة",
+    "see_by_currency": "عملات متعددة",
 })
 
 DASHBOARD_TEXTS.setdefault("ch", {}).update({
     "subtitle": "Finanzanalysen, Feedbacks und Benutzervalidierung über Postgres SQL",
     "info": "Dieses Dashboard liest Daten direkt aus Postgres SQL/Neon und validiert die reale Nutzung nach Kanal, Sprache, Währung, Diagnose, PDF-Dokument, E-Mail und Telegram-App.",
-    "see_by_currency": "Nach Währung anzeigen",
+    "see_by_currency": "Mehrere Währungen",
 })
 
 
@@ -985,7 +1010,7 @@ DASHBOARD_TEXTS.setdefault("en_us", {}).update({
     "user": "User",
     "language": "Language",
     "currency": "Currency",
-    "latest_channel": "latest_channel_metric",
+    "latest_channel": "Latest channel",
     "financial_score": "Financial score",
     "risk": "Risk",
     "estimated_balance": "Estimated balance",
@@ -996,7 +1021,7 @@ DASHBOARD_TEXTS.setdefault("en_gb", {}).update({
     "user": "User",
     "language": "Language",
     "currency": "Currency",
-    "latest_channel": "latest_channel_metric",
+    "latest_channel": "Latest channel",
     "financial_score": "Financial score",
     "risk": "Risk",
     "estimated_balance": "Estimated balance",
@@ -1141,6 +1166,9 @@ DASHBOARD_MENU_LABELS.setdefault("en_us", {}).update({
     "🧪 Avaliação do Agente": "🧪 Agent Evaluation",
     "📊 Observabilidade RAG": "📊 RAG Observability",
     "📤 Exportar": "📤 Export",
+    "🛠️ Observabilidade Tools": "🛠️ Tools Observability",
+    "🧭 Timeline Viewer": "🧭 Timeline Viewer",
+    "🧠 Memória Usuário": "🧠 User Memory",
 })
 
 DASHBOARD_MENU_LABELS.setdefault("en_gb", {}).update(DASHBOARD_MENU_LABELS.get("en_us", {}))
@@ -1156,6 +1184,9 @@ DASHBOARD_MENU_LABELS.setdefault("es", {}).update({
     "🧪 Avaliação do Agente": "🧪 Evaluación del Agente",
     "📊 Observabilidade RAG": "📊 Observabilidad RAG",
     "📤 Exportar": "📤 Exportar",
+    "🛠️ Observabilidade Tools": "🛠️ Observabilidad de herramientas",
+    "🧭 Timeline Viewer": "🧭 Visor de línea de tiempo",
+    "🧠 Memória Usuário": "🧠 Memoria del usuario",
 })
 
 DASHBOARD_MENU_LABELS.setdefault("fr", {}).update({
@@ -1169,6 +1200,9 @@ DASHBOARD_MENU_LABELS.setdefault("fr", {}).update({
     "🧪 Avaliação do Agente": "🧪 Évaluation de l’agent",
     "📊 Observabilidade RAG": "📊 Observabilité RAG",
     "📤 Exportar": "📤 Exporter",
+    "🛠️ Observabilidade Tools": "🛠️ Observabilité des outils",
+    "🧭 Timeline Viewer": "🧭 Visionneuse de chronologie",
+    "🧠 Memória Usuário": "🧠 Mémoire utilisateur",
 })
 
 DASHBOARD_MENU_LABELS.setdefault("de", {}).update({
@@ -1182,6 +1216,9 @@ DASHBOARD_MENU_LABELS.setdefault("de", {}).update({
     "🧪 Avaliação do Agente": "🧪 Agentenbewertung",
     "📊 Observabilidade RAG": "📊 RAG-Beobachtbarkeit",
     "📤 Exportar": "📤 Exportieren",
+    "🛠️ Observabilidade Tools": "🛠️ Werkzeugbeobachtung",
+    "🧭 Timeline Viewer": "🧭 Zeitachsenansicht",
+    "🧠 Memória Usuário": "🧠 Benutzerspeicher",
 })
 
 DASHBOARD_MENU_LABELS.setdefault("it", {}).update({
@@ -1195,6 +1232,9 @@ DASHBOARD_MENU_LABELS.setdefault("it", {}).update({
     "🧪 Avaliação do Agente": "🧪 Valutazione agente",
     "📊 Observabilidade RAG": "📊 Osservabilità RAG",
     "📤 Exportar": "📤 Esporta",
+    "🛠️ Observabilidade Tools": "🛠️ Osservabilità degli strumenti",
+    "🧭 Timeline Viewer": "🧭 Visualizzatore della timeline",
+    "🧠 Memória Usuário": "🧠 Memoria utente",
 })
 
 DASHBOARD_MENU_LABELS.setdefault("ro", {}).update({
@@ -1208,6 +1248,9 @@ DASHBOARD_MENU_LABELS.setdefault("ro", {}).update({
     "🧪 Avaliação do Agente": "🧪 Evaluarea agentului",
     "📊 Observabilidade RAG": "📊 Observabilitate RAG",
     "📤 Exportar": "📤 Exportă",
+    "🛠️ Observabilidade Tools": "🛠️ Observabilitatea instrumentelor",
+    "🧭 Timeline Viewer": "🧭 Vizualizator cronologie",
+    "🧠 Memória Usuário": "🧠 Memoria utilizatorului",
 })
 
 DASHBOARD_MENU_LABELS.setdefault("ua", {}).update({
@@ -1221,6 +1264,9 @@ DASHBOARD_MENU_LABELS.setdefault("ua", {}).update({
     "🧪 Avaliação do Agente": "🧪 Оцінка агента",
     "📊 Observabilidade RAG": "📊 Спостережуваність RAG",
     "📤 Exportar": "📤 Експорт",
+    "🛠️ Observabilidade Tools": "🛠️ Спостережуваність інструментів",
+    "🧭 Timeline Viewer": "🧭 Перегляд часової шкали",
+    "🧠 Memória Usuário": "🧠 Пам’ять користувача",
 })
 
 DASHBOARD_MENU_LABELS.setdefault("ru", {}).update({
@@ -1234,6 +1280,9 @@ DASHBOARD_MENU_LABELS.setdefault("ru", {}).update({
     "🧪 Avaliação do Agente": "🧪 Оценка агента",
     "📊 Observabilidade RAG": "📊 Наблюдаемость RAG",
     "📤 Exportar": "📤 Экспорт",
+    "🛠️ Observabilidade Tools": "🛠️ Наблюдаемость инструментов",
+    "🧭 Timeline Viewer": "🧭 Просмотр временной шкалы",
+    "🧠 Memória Usuário": "🧠 Память пользователя",
 })
 
 DASHBOARD_MENU_LABELS.setdefault("sa", {}).update({
@@ -1247,9 +1296,264 @@ DASHBOARD_MENU_LABELS.setdefault("sa", {}).update({
     "🧪 Avaliação do Agente": "🧪 تقييم الوكيل",
     "📊 Observabilidade RAG": "📊 مراقبة RAG",
     "📤 Exportar": "📤 تصدير",
+    "🛠️ Observabilidade Tools": "🛠️ مراقبة الأدوات",
+    "🧭 Timeline Viewer": "🧭 عارض المسار الزمني",
+    "🧠 Memória Usuário": "🧠 ذاكرة المستخدم",
 })
 
 DASHBOARD_MENU_LABELS.setdefault("ch", {}).update(DASHBOARD_MENU_LABELS.get("de", {}))
+
+
+DASHBOARD_MENU_LABELS.setdefault("pt", {}).update({
+    "💰 LLM Cost Center": "💰 Central de Custos de IA",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("en_us", {}).update({
+    "💰 LLM Cost Center": "💰 AI Cost Center",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("en_gb", {}).update({
+    "💰 LLM Cost Center": "💰 AI Cost Centre",
+    "🛠️ Observabilidade Tools": "🛠️ Tools Observability",
+    "🧭 Timeline Viewer": "🧭 Timeline Viewer",
+    "🧠 Memória Usuário": "🧠 User Memory",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("es", {}).update({
+    "💰 LLM Cost Center": "💰 Centro de Costos de IA",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("fr", {}).update({
+    "💰 LLM Cost Center": "💰 Centre des coûts IA",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("de", {}).update({
+    "💰 LLM Cost Center": "💰 KI-Kostenzentrale",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("it", {}).update({
+    "💰 LLM Cost Center": "💰 Centro costi IA",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ro", {}).update({
+    "💰 LLM Cost Center": "💰 Centrul costurilor IA",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ua", {}).update({
+    "💰 LLM Cost Center": "💰 Центр витрат ШІ",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ru", {}).update({
+    "💰 LLM Cost Center": "💰 Центр затрат ИИ",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("sa", {}).update({
+    "💰 LLM Cost Center": (
+        "💰 مركز تكاليف الذكاء الاصطناعي"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ch", {}).update({
+    "💰 LLM Cost Center": "💰 KI-Kostenzentrale",
+    "🛠️ Observabilidade Tools": "🛠️ Werkzeugbeobachtung",
+    "🧭 Timeline Viewer": "🧭 Zeitachsenansicht",
+    "🧠 Memória Usuário": "🧠 Benutzerspeicher",
+})
+
+
+DASHBOARD_MENU_LABELS.setdefault("pt", {}).update({
+    "❤️ Health Center": "❤️ Central de Saúde",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("en_us", {}).update({
+    "❤️ Health Center": "❤️ Health Center",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("en_gb", {}).update({
+    "❤️ Health Center": "❤️ Health Centre",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("es", {}).update({
+    "❤️ Health Center": "❤️ Centro de Salud",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("fr", {}).update({
+    "❤️ Health Center": "❤️ Centre de santé",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("de", {}).update({
+    "❤️ Health Center": "❤️ Systemzustand",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("it", {}).update({
+    "❤️ Health Center": "❤️ Centro salute",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ro", {}).update({
+    "❤️ Health Center": "❤️ Centrul de sănătate",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ua", {}).update({
+    "❤️ Health Center": "❤️ Центр стану системи",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ru", {}).update({
+    "❤️ Health Center": "❤️ Центр состояния системы",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("sa", {}).update({
+    "❤️ Health Center": "❤️ مركز صحة النظام",
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ch", {}).update({
+    "❤️ Health Center": "❤️ Systemzustand",
+})
+
+
+DASHBOARD_MENU_LABELS.setdefault("pt", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ Operações de IA (LLMOps) e Observabilidade"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("en_us", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ AI Operations (LLMOps) and Observability"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("en_gb", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ AI Operations (LLMOps) and Observability"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("es", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ Operaciones de IA (LLMOps) y Observabilidad"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("fr", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ Opérations IA (LLMOps) et Observabilité"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("de", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ KI-Betrieb (LLMOps) und Beobachtbarkeit"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("it", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ Operazioni IA (LLMOps) e Osservabilità"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ro", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ Operațiuni IA (LLMOps) și Observabilitate"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ua", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ Операції ШІ (LLMOps) та спостережуваність"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ru", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ Операции ИИ (LLMOps) и наблюдаемость"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("sa", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ عمليات الذكاء الاصطناعي (LLMOps) والمراقبة"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ch", {}).update({
+    "🛰️ LLMOps & Observabilidade": (
+        "🛰️ KI-Betrieb (LLMOps) und Beobachtbarkeit"
+    ),
+})
+
+
+DASHBOARD_MENU_LABELS.setdefault("pt", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Análise de Ferramentas (Tools)"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("en_us", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Tools Analytics"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("en_gb", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Tools Analytics"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("es", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Análisis de Herramientas (Tools)"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("fr", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Analyse des Outils (Tools)"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("de", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Werkzeuganalyse (Tools)"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("it", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Analisi degli Strumenti (Tools)"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ro", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Analiza Instrumentelor (Tools)"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ua", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Аналіз інструментів (Tools)"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ru", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Анализ инструментов (Tools)"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("sa", {}).update({
+    "📊 Analytics Tools": (
+        "📊 تحليل الأدوات (Tools)"
+    ),
+})
+
+DASHBOARD_MENU_LABELS.setdefault("ch", {}).update({
+    "📊 Analytics Tools": (
+        "📊 Werkzeuganalyse (Tools)"
+    ),
+})
 
 
 def dt_menu(menu_item):
@@ -2991,6 +3295,46 @@ def format_lang(lang):
     return LANGUAGE_LABELS.get(lang, lang)
 
 
+def format_risk_for_interface(value):
+    risk = str(value or "").strip()
+
+    translations = {
+        "en_us": {
+            "baixo": "Low",
+            "moderado": "Moderate",
+            "médio": "Medium",
+            "medio": "Medium",
+            "alto": "High",
+        },
+        "en_gb": {
+            "baixo": "Low",
+            "moderado": "Moderate",
+            "médio": "Medium",
+            "medio": "Medium",
+            "alto": "High",
+        },
+        "ru": {
+            "baixo": "Низкий",
+            "moderado": "Умеренный",
+            "médio": "Средний",
+            "medio": "Средний",
+            "alto": "Высокий",
+        },
+    }
+
+    language = dashboard_lang()
+
+    language_map = translations.get(
+        language,
+        {},
+    )
+
+    return language_map.get(
+        risk.lower(),
+        risk,
+    )
+
+
 def safe_text(value, fallback="não informado"):
     if value is None:
         return fallback
@@ -3176,54 +3520,70 @@ def render_filters(
     menu_container.title(dt("sidebar_title"))
     menu_container.caption(dt("sidebar_caption"))
 
-    menu_options = [
-        "📌 Visão Geral",
-        "🌐 Eventos Multicanal",
-        "🌍 Visão Internacional",
-        "👤 Diagnósticos",
-        "💬 Feedbacks",
-        "📈 Evolução",
-        "🧠 Leitura Executiva",
-        "🧪 Avaliação do Agente",
-        "📊 Observabilidade RAG",
-        "🛠️ Observabilidade Tools",
-        "🧭 Timeline Viewer",
-        "📊 Analytics Tools",
-        "❤️ Health Center",
-        "🛰️ LLMOps & Observabilidade",
-        "💰 LLM Cost Center",
-        "📄 Upload Documentos",
-        "🧠 Memória Usuário",
-        "📤 Exportar",
-    ]
+    menu_options = list(
+        DASHBOARD_MENU_PAGE_IDS
+    )
 
-    persistent_key = "dashboard_menu_selected"
-    widget_key = "_dashboard_main_menu_widget"
+    persistent_key = (
+        "dashboard_menu_selected"
+    )
+    widget_key = (
+        "_dashboard_main_menu_widget"
+    )
 
-    if (
-        persistent_key not in st.session_state
-        or st.session_state[persistent_key] not in menu_options
-    ):
-        st.session_state[persistent_key] = menu_options[0]
+    persisted_page = (
+        normalize_dashboard_menu_page_id(
+            st.session_state.get(
+                persistent_key
+            )
+        )
+    )
 
-    if (
-        widget_key not in st.session_state
-        or st.session_state[widget_key] not in menu_options
-    ):
-        st.session_state[widget_key] = st.session_state[persistent_key]
+    widget_page = (
+        normalize_dashboard_menu_page_id(
+            st.session_state.get(
+                widget_key,
+                persisted_page,
+            )
+        )
+    )
+
+    st.session_state[
+        persistent_key
+    ] = persisted_page
+
+    st.session_state[
+        widget_key
+    ] = widget_page
 
     def sync_dashboard_menu():
-        st.session_state[persistent_key] = st.session_state[widget_key]
+        selected_page = (
+            normalize_dashboard_menu_page_id(
+                st.session_state[
+                    widget_key
+                ]
+            )
+        )
+
+        st.session_state[
+            persistent_key
+        ] = selected_page
 
     menu_container.radio(
         dt("menu"),
         menu_options,
-        format_func=dt_menu,
+        format_func=dashboard_menu_t,
         key=widget_key,
         on_change=sync_dashboard_menu,
     )
 
-    menu = st.session_state[persistent_key]
+    menu = (
+        normalize_dashboard_menu_page_id(
+            st.session_state[
+                persistent_key
+            ]
+        )
+    )
 
     filters_container.write(dt("filters"))
 
@@ -3311,6 +3671,17 @@ def render_filters(
         format_func=tv,
     )
 
+    # Estado global compartilhado pelas páginas do dashboard.
+    # Os valores internos permanecem estáveis; apenas a interface
+    # é traduzida conforme dashboard_interface_lang.
+    st.session_state[
+        "dashboard_filter_language"
+    ] = filtro_idioma
+
+    st.session_state[
+        "dashboard_filter_currency"
+    ] = filtro_moeda
+
     filters_container.caption(
         dt("filter_help")
     )
@@ -3390,7 +3761,14 @@ def render_user_summary(diagnosticos_df, eventos_df):
     idioma = safe_text(ultimo.get("idioma"))
     moeda = safe_text(ultimo.get("moeda"))
     simbolo = safe_text(ultimo.get("simbolo_moeda"), CURRENCY_SYMBOLS.get(moeda, moeda))
-    risco = safe_text(ultimo.get("risco_exibicao", ultimo.get("nivel_risco")))
+    risco = format_risk_for_interface(
+        safe_text(
+            ultimo.get(
+                "risco_exibicao",
+                ultimo.get("nivel_risco"),
+            )
+        )
+    )
     score = float(ultimo.get("score_financeiro") or 0)
     saldo = ultimo.get("saldo_estimado") or 0
 
@@ -3423,6 +3801,374 @@ def render_overview(diagnosticos_df, feedbacks_df, eventos_df):
     render_user_summary(diagnosticos_df, eventos_df)
 
 
+
+MULTICHANNEL_DISPLAY_TEXTS = {
+    "pt": {
+        "channel": "Canal",
+        "quantity": "Quantidade",
+        "events": "Eventos",
+        "id": "ID",
+        "date_time": "Data e hora",
+        "user": "Usuário",
+        "user_id": "ID do usuário",
+        "language": "Idioma",
+        "currency": "Moeda",
+        "status": "Status",
+        "diagnostic_id": "ID do diagnóstico",
+        "metadata": "Metadados",
+        "stage": "Etapa",
+        "diagnostic_generated": "Diagnóstico gerado",
+        "pdf_downloaded": "PDF baixado",
+        "email_sent": "E-mail enviado",
+        "feedback_received": "Feedback recebido",
+        "telegram": "Telegram",
+        "not_informed": "Não informado",
+    },
+    "en_us": {
+        "channel": "Channel",
+        "quantity": "Quantity",
+        "events": "Events",
+        "id": "ID",
+        "date_time": "Date and time",
+        "user": "User",
+        "user_id": "User ID",
+        "language": "Language",
+        "currency": "Currency",
+        "status": "Status",
+        "diagnostic_id": "Diagnostic ID",
+        "metadata": "Metadata",
+        "stage": "Stage",
+        "diagnostic_generated": "Diagnostic generated",
+        "pdf_downloaded": "PDF downloaded",
+        "email_sent": "Email sent",
+        "feedback_received": "Feedback received",
+        "telegram": "Telegram",
+        "not_informed": "Not informed",
+    },
+    "es": {
+        "channel": "Canal",
+        "quantity": "Cantidad",
+        "events": "Eventos",
+        "id": "ID",
+        "date_time": "Fecha y hora",
+        "user": "Usuario",
+        "user_id": "ID del usuario",
+        "language": "Idioma",
+        "currency": "Moneda",
+        "status": "Estado",
+        "diagnostic_id": "ID del diagnóstico",
+        "metadata": "Metadatos",
+        "stage": "Etapa",
+        "diagnostic_generated": "Diagnóstico generado",
+        "pdf_downloaded": "PDF descargado",
+        "email_sent": "Correo enviado",
+        "feedback_received": "Comentario recibido",
+        "telegram": "Telegram",
+        "not_informed": "No informado",
+    },
+    "fr": {
+        "channel": "Canal",
+        "quantity": "Quantité",
+        "events": "Événements",
+        "id": "ID",
+        "date_time": "Date et heure",
+        "user": "Utilisateur",
+        "user_id": "ID utilisateur",
+        "language": "Langue",
+        "currency": "Devise",
+        "status": "Statut",
+        "diagnostic_id": "ID du diagnostic",
+        "metadata": "Métadonnées",
+        "stage": "Étape",
+        "diagnostic_generated": "Diagnostic généré",
+        "pdf_downloaded": "PDF téléchargé",
+        "email_sent": "E-mail envoyé",
+        "feedback_received": "Retour reçu",
+        "telegram": "Telegram",
+        "not_informed": "Non renseigné",
+    },
+    "de": {
+        "channel": "Kanal",
+        "quantity": "Anzahl",
+        "events": "Ereignisse",
+        "id": "ID",
+        "date_time": "Datum und Uhrzeit",
+        "user": "Benutzer",
+        "user_id": "Benutzer-ID",
+        "language": "Sprache",
+        "currency": "Währung",
+        "status": "Status",
+        "diagnostic_id": "Diagnose-ID",
+        "metadata": "Metadaten",
+        "stage": "Stufe",
+        "diagnostic_generated": "Diagnose erstellt",
+        "pdf_downloaded": "PDF heruntergeladen",
+        "email_sent": "E-Mail gesendet",
+        "feedback_received": "Feedback erhalten",
+        "telegram": "Telegram",
+        "not_informed": "Nicht angegeben",
+    },
+    "it": {
+        "channel": "Canale",
+        "quantity": "Quantità",
+        "events": "Eventi",
+        "id": "ID",
+        "date_time": "Data e ora",
+        "user": "Utente",
+        "user_id": "ID utente",
+        "language": "Lingua",
+        "currency": "Valuta",
+        "status": "Stato",
+        "diagnostic_id": "ID diagnosi",
+        "metadata": "Metadati",
+        "stage": "Fase",
+        "diagnostic_generated": "Diagnosi generata",
+        "pdf_downloaded": "PDF scaricato",
+        "email_sent": "E-mail inviata",
+        "feedback_received": "Feedback ricevuto",
+        "telegram": "Telegram",
+        "not_informed": "Non specificato",
+    },
+    "ro": {
+        "channel": "Canal",
+        "quantity": "Cantitate",
+        "events": "Evenimente",
+        "id": "ID",
+        "date_time": "Data și ora",
+        "user": "Utilizator",
+        "user_id": "ID utilizator",
+        "language": "Limbă",
+        "currency": "Monedă",
+        "status": "Stare",
+        "diagnostic_id": "ID diagnostic",
+        "metadata": "Metadate",
+        "stage": "Etapă",
+        "diagnostic_generated": "Diagnostic generat",
+        "pdf_downloaded": "PDF descărcat",
+        "email_sent": "E-mail trimis",
+        "feedback_received": "Feedback primit",
+        "telegram": "Telegram",
+        "not_informed": "Nespecificat",
+    },
+    "ua": {
+        "channel": "Канал",
+        "quantity": "Кількість",
+        "events": "Події",
+        "id": "ID",
+        "date_time": "Дата й час",
+        "user": "Користувач",
+        "user_id": "ID користувача",
+        "language": "Мова",
+        "currency": "Валюта",
+        "status": "Статус",
+        "diagnostic_id": "ID діагностики",
+        "metadata": "Метадані",
+        "stage": "Етап",
+        "diagnostic_generated": "Діагностику створено",
+        "pdf_downloaded": "PDF завантажено",
+        "email_sent": "Електронний лист надіслано",
+        "feedback_received": "Відгук отримано",
+        "telegram": "Telegram",
+        "not_informed": "Не вказано",
+    },
+    "ru": {
+        "channel": "Канал",
+        "quantity": "Количество",
+        "events": "События",
+        "id": "ID",
+        "date_time": "Дата и время",
+        "user": "Пользователь",
+        "user_id": "ID пользователя",
+        "language": "Язык",
+        "currency": "Валюта",
+        "status": "Статус",
+        "diagnostic_id": "ID диагностики",
+        "metadata": "Метаданные",
+        "stage": "Этап",
+        "diagnostic_generated": "Диагностика создана",
+        "pdf_downloaded": "PDF загружен",
+        "email_sent": "Электронное письмо отправлено",
+        "feedback_received": "Отзыв получен",
+        "telegram": "Telegram",
+        "not_informed": "Не указано",
+    },
+    "sa": {
+        "channel": "القناة",
+        "quantity": "الكمية",
+        "events": "الأحداث",
+        "id": "المعرّف",
+        "date_time": "التاريخ والوقت",
+        "user": "المستخدم",
+        "user_id": "معرّف المستخدم",
+        "language": "اللغة",
+        "currency": "العملة",
+        "status": "الحالة",
+        "diagnostic_id": "معرّف التشخيص",
+        "metadata": "البيانات الوصفية",
+        "stage": "المرحلة",
+        "diagnostic_generated": "تم إنشاء التشخيص",
+        "pdf_downloaded": "تم تنزيل PDF",
+        "email_sent": "تم إرسال البريد الإلكتروني",
+        "feedback_received": "تم استلام الملاحظات",
+        "telegram": "Telegram",
+        "not_informed": "غير محدد",
+    },
+}
+
+MULTICHANNEL_DISPLAY_TEXTS["en_gb"] = (
+    MULTICHANNEL_DISPLAY_TEXTS["en_us"]
+)
+
+MULTICHANNEL_DISPLAY_TEXTS["ch"] = (
+    MULTICHANNEL_DISPLAY_TEXTS["de"]
+)
+
+
+def multichannel_t(
+    key: str,
+    default: str | None = None,
+) -> str:
+    return dashboard_multichannel_t(
+        key,
+        language=dashboard_lang(),
+        default=default,
+    )
+
+
+def prepare_multichannel_events_display(
+    eventos_df,
+):
+    return dashboard_localize_multichannel_dataframe(
+        eventos_df,
+        language=dashboard_lang(),
+        translate_channel_values=True,
+        translate_feedback_values=True,
+        translate_status_values=True,
+    )
+
+
+
+MULTICHANNEL_CHANNEL_TEXTS = {
+    "pt": {
+        "rag": "RAG",
+        "web-app": "Aplicação web",
+        "dashboard": "Dashboard",
+        "pdf-download": "Download de PDF",
+        "telegram": "Telegram",
+        "email": "E-mail",
+        "não informado": "Não informado",
+    },
+    "en_us": {
+        "rag": "RAG",
+        "web-app": "Web app",
+        "dashboard": "Dashboard",
+        "pdf-download": "PDF download",
+        "telegram": "Telegram",
+        "email": "Email",
+        "não informado": "Not informed",
+    },
+    "es": {
+        "rag": "RAG",
+        "web-app": "Aplicación web",
+        "dashboard": "Panel",
+        "pdf-download": "Descarga de PDF",
+        "telegram": "Telegram",
+        "email": "Correo electrónico",
+        "não informado": "No informado",
+    },
+    "fr": {
+        "rag": "RAG",
+        "web-app": "Application web",
+        "dashboard": "Tableau de bord",
+        "pdf-download": "Téléchargement PDF",
+        "telegram": "Telegram",
+        "email": "E-mail",
+        "não informado": "Non renseigné",
+    },
+    "de": {
+        "rag": "RAG",
+        "web-app": "Webanwendung",
+        "dashboard": "Dashboard",
+        "pdf-download": "PDF-Download",
+        "telegram": "Telegram",
+        "email": "E-Mail",
+        "não informado": "Nicht angegeben",
+    },
+    "it": {
+        "rag": "RAG",
+        "web-app": "Applicazione web",
+        "dashboard": "Dashboard",
+        "pdf-download": "Download PDF",
+        "telegram": "Telegram",
+        "email": "E-mail",
+        "não informado": "Non specificato",
+    },
+    "ro": {
+        "rag": "RAG",
+        "web-app": "Aplicație web",
+        "dashboard": "Panou",
+        "pdf-download": "Descărcare PDF",
+        "telegram": "Telegram",
+        "email": "E-mail",
+        "não informado": "Nespecificat",
+    },
+    "ua": {
+        "rag": "RAG",
+        "web-app": "Вебзастосунок",
+        "dashboard": "Панель",
+        "pdf-download": "Завантаження PDF",
+        "telegram": "Telegram",
+        "email": "Електронна пошта",
+        "não informado": "Не вказано",
+    },
+    "ru": {
+        "rag": "RAG",
+        "web-app": "Веб-приложение",
+        "dashboard": "Панель",
+        "pdf-download": "Загрузка PDF",
+        "telegram": "Telegram",
+        "email": "Электронная почта",
+        "não informado": "Не указано",
+    },
+    "sa": {
+        "rag": "RAG",
+        "web-app": "تطبيق الويب",
+        "dashboard": "لوحة التحكم",
+        "pdf-download": "تنزيل PDF",
+        "telegram": "Telegram",
+        "email": "البريد الإلكتروني",
+        "não informado": "غير محدد",
+    },
+}
+
+MULTICHANNEL_CHANNEL_TEXTS["en_gb"] = (
+    MULTICHANNEL_CHANNEL_TEXTS["en_us"]
+)
+
+MULTICHANNEL_CHANNEL_TEXTS["ch"] = (
+    MULTICHANNEL_CHANNEL_TEXTS["de"]
+)
+
+
+def multichannel_channel_t(
+    value,
+) -> str:
+    return dashboard_translate_channel(
+        value,
+        language=dashboard_lang(),
+    )
+
+def prepare_multichannel_recent_events(
+    eventos_df,
+):
+    return dashboard_localize_multichannel_dataframe(
+        eventos_df,
+        language=dashboard_lang(),
+        translate_channel_values=True,
+        translate_feedback_values=True,
+        translate_status_values=True,
+    )
+
 def render_events(eventos_df, diagnosticos_df, feedbacks_df):
     st.write(dtx("events_title"))
 
@@ -3432,7 +4178,15 @@ def render_events(eventos_df, diagnosticos_df, feedbacks_df):
 
     eventos_reais = len(eventos_df)
     canais_ativos = eventos_df["canal"].nunique() if "canal" in eventos_df.columns else 0
-    ultimo_canal = eventos_df.iloc[0]["canal"] if "canal" in eventos_df.columns else "não informado"
+    ultimo_canal_bruto = (
+        eventos_df.iloc[0]["canal"]
+        if "canal" in eventos_df.columns
+        else "não informado"
+    )
+
+    ultimo_canal = multichannel_channel_t(
+        ultimo_canal_bruto
+    )
 
     col1, col2, col3 = st.columns(3)
     col1.metric(dtx("real_events"), eventos_reais)
@@ -3452,10 +4206,16 @@ def render_events(eventos_df, diagnosticos_df, feedbacks_df):
                 )
             )
 
+            canal_chart["canal_exibicao"] = (
+                canal_chart["canal"].map(
+                    multichannel_channel_t
+                )
+            )
+
             fig_canais = px.bar(
                 canal_chart,
                 x="quantidade",
-                y="canal",
+                y="canal_exibicao",
                 orientation="h",
                 text="quantidade",
                 color_discrete_sequence=[
@@ -3469,7 +4229,8 @@ def render_events(eventos_df, diagnosticos_df, feedbacks_df):
                 marker_line_width=0,
                 hovertemplate=(
                     "<b>%{y}</b><br>"
-                    "Eventos: %{x}"
+                    + multichannel_t("events")
+                    + ": %{x}"
                     "<extra></extra>"
                 ),
             )
@@ -3498,11 +4259,50 @@ def render_events(eventos_df, diagnosticos_df, feedbacks_df):
             st.caption(dtx("only_one_channel"))
 
         canal_table = canal_counts.reset_index()
-        canal_table.columns = ["canal", "quantidade"]
-        st.dataframe(canal_table, use_container_width=True)
+        canal_table.columns = [
+            "canal",
+            "quantidade",
+        ]
 
-    with st.expander(dtx("last_events")):
-        st.dataframe(eventos_df.head(20), use_container_width=True)
+        canal_table["canal"] = canal_table[
+            "canal"
+        ].map(
+            multichannel_channel_t
+        )
+
+        canal_table_exibicao = (
+            canal_table.rename(
+                columns={
+                    "canal": multichannel_t(
+                        "channel"
+                    ),
+                    "quantidade": multichannel_t(
+                        "quantity"
+                    ),
+                }
+            )
+        )
+
+        st.dataframe(
+            canal_table_exibicao,
+            use_container_width=True,
+            hide_index=True,
+        )
+
+    with st.expander(
+        dtx("last_events")
+    ):
+        eventos_exibicao = (
+            prepare_multichannel_recent_events(
+                eventos_df.head(20)
+            )
+        )
+
+        st.dataframe(
+            eventos_exibicao,
+            use_container_width=True,
+            hide_index=True,
+        )
 
     st.divider()
     render_funnel(eventos_df, diagnosticos_df, feedbacks_df)
@@ -3529,11 +4329,21 @@ def render_funnel(eventos_df, diagnosticos_df, feedbacks_df):
     funil = pd.DataFrame(
         {
             "etapa": [
-                "Diagnóstico gerado",
-                "PDF baixado",
-                "E-mail enviado",
-                "Feedback recebido",
-                "Telegram",
+                multichannel_t(
+                    "diagnostic_generated"
+                ),
+                multichannel_t(
+                    "pdf_downloaded"
+                ),
+                multichannel_t(
+                    "email_sent"
+                ),
+                multichannel_t(
+                    "feedback_received"
+                ),
+                multichannel_t(
+                    "telegram"
+                ),
             ],
             "quantidade": [
                 diagnosticos_count,
@@ -3569,7 +4379,10 @@ def render_funnel(eventos_df, diagnosticos_df, feedbacks_df):
             },
             hovertemplate=(
                 "<b>%{y}</b><br>"
-                "Quantidade: %{x}"
+                + multichannel_t(
+                    "quantity"
+                )
+                + ": %{x}"
                 "<extra></extra>"
             ),
         )
@@ -3597,7 +4410,22 @@ def render_funnel(eventos_df, diagnosticos_df, feedbacks_df):
     else:
         st.caption(dtx("few_funnel_records"))
 
-    st.dataframe(funil, use_container_width=True)
+    funil_exibicao = funil.rename(
+        columns={
+            "etapa": multichannel_t(
+                "stage"
+            ),
+            "quantidade": multichannel_t(
+                "quantity"
+            ),
+        }
+    )
+
+    st.dataframe(
+        funil_exibicao,
+        use_container_width=True,
+        hide_index=True,
+    )
 
 
 def render_international(diagnosticos_df):
@@ -3796,110 +4624,673 @@ def render_international(diagnosticos_df):
     st.dataframe(resumo, use_container_width=True)
 
 
-def render_diagnostics(diagnosticos_df):
-    st.write(dtx("diagnostics_title"))
+
+DASHBOARD_DFE_TEXTS = {
+    "pt": {
+        "quantity": "Quantidade",
+        "percentage": "Percentual",
+        "risk": "Risco",
+        "low": "Baixo",
+        "medium": "Médio",
+        "high": "Alto",
+        "not_informed": "Não informado",
+        "name": "Nome",
+        "total_diagnostics": "Total de diagnósticos",
+        "average_score": "Score médio",
+        "average_balance": "Saldo médio",
+        "id": "ID",
+        "date_time": "Data e hora",
+        "language": "Idioma",
+        "currency": "Moeda",
+        "monthly_income": "Renda mensal",
+        "balance": "Saldo",
+        "income_commitment": "Comprometimento da renda (%)",
+        "financial_score": "Score financeiro",
+        "objective": "Objetivo",
+        "useful": "Útil",
+        "not_useful": "Não útil",
+        "comment": "Comentário",
+        "evaluation": "Avaliação",
+        "feedbacks": "Feedbacks",
+        "estimated_balance": "Saldo estimado",
+        "date": "Data",
+    },
+    "en_us": {
+        "quantity": "Quantity",
+        "percentage": "Percentage",
+        "risk": "Risk",
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "not_informed": "Not informed",
+        "name": "Name",
+        "total_diagnostics": "Total diagnostics",
+        "average_score": "Average score",
+        "average_balance": "Average balance",
+        "id": "ID",
+        "date_time": "Date and time",
+        "language": "Language",
+        "currency": "Currency",
+        "monthly_income": "Monthly income",
+        "balance": "Balance",
+        "income_commitment": "Income commitment (%)",
+        "financial_score": "Financial score",
+        "objective": "Objective",
+        "useful": "Useful",
+        "not_useful": "Not useful",
+        "comment": "Comment",
+        "evaluation": "Evaluation",
+        "feedbacks": "Feedback",
+        "estimated_balance": "Estimated balance",
+        "date": "Date",
+    },
+    "es": {
+        "quantity": "Cantidad",
+        "percentage": "Porcentaje",
+        "risk": "Riesgo",
+        "low": "Bajo",
+        "medium": "Medio",
+        "high": "Alto",
+        "not_informed": "No informado",
+        "name": "Nombre",
+        "total_diagnostics": "Total de diagnósticos",
+        "average_score": "Puntuación media",
+        "average_balance": "Saldo medio",
+        "id": "ID",
+        "date_time": "Fecha y hora",
+        "language": "Idioma",
+        "currency": "Moneda",
+        "monthly_income": "Ingreso mensual",
+        "balance": "Saldo",
+        "income_commitment": "Compromiso de ingresos (%)",
+        "financial_score": "Puntuación financiera",
+        "objective": "Objetivo",
+        "useful": "Útil",
+        "not_useful": "No útil",
+        "comment": "Comentario",
+        "evaluation": "Evaluación",
+        "feedbacks": "Comentarios",
+        "estimated_balance": "Saldo estimado",
+        "date": "Fecha",
+    },
+    "fr": {
+        "quantity": "Quantité",
+        "percentage": "Pourcentage",
+        "risk": "Risque",
+        "low": "Faible",
+        "medium": "Moyen",
+        "high": "Élevé",
+        "not_informed": "Non renseigné",
+        "name": "Nom",
+        "total_diagnostics": "Total des diagnostics",
+        "average_score": "Score moyen",
+        "average_balance": "Solde moyen",
+        "id": "ID",
+        "date_time": "Date et heure",
+        "language": "Langue",
+        "currency": "Devise",
+        "monthly_income": "Revenu mensuel",
+        "balance": "Solde",
+        "income_commitment": "Engagement du revenu (%)",
+        "financial_score": "Score financier",
+        "objective": "Objectif",
+        "useful": "Utile",
+        "not_useful": "Non utile",
+        "comment": "Commentaire",
+        "evaluation": "Évaluation",
+        "feedbacks": "Retours",
+        "estimated_balance": "Solde estimé",
+        "date": "Date",
+    },
+    "de": {
+        "quantity": "Anzahl",
+        "percentage": "Prozentsatz",
+        "risk": "Risiko",
+        "low": "Niedrig",
+        "medium": "Mittel",
+        "high": "Hoch",
+        "not_informed": "Nicht angegeben",
+        "name": "Name",
+        "total_diagnostics": "Diagnosen insgesamt",
+        "average_score": "Durchschnittliche Punktzahl",
+        "average_balance": "Durchschnittlicher Saldo",
+        "id": "ID",
+        "date_time": "Datum und Uhrzeit",
+        "language": "Sprache",
+        "currency": "Währung",
+        "monthly_income": "Monatliches Einkommen",
+        "balance": "Saldo",
+        "income_commitment": "Einkommensbelastung (%)",
+        "financial_score": "Finanzielle Punktzahl",
+        "objective": "Ziel",
+        "useful": "Nützlich",
+        "not_useful": "Nicht nützlich",
+        "comment": "Kommentar",
+        "evaluation": "Bewertung",
+        "feedbacks": "Feedback",
+        "estimated_balance": "Geschätzter Saldo",
+        "date": "Datum",
+    },
+    "it": {
+        "quantity": "Quantità",
+        "percentage": "Percentuale",
+        "risk": "Rischio",
+        "low": "Basso",
+        "medium": "Medio",
+        "high": "Alto",
+        "not_informed": "Non specificato",
+        "name": "Nome",
+        "total_diagnostics": "Totale diagnosi",
+        "average_score": "Punteggio medio",
+        "average_balance": "Saldo medio",
+        "id": "ID",
+        "date_time": "Data e ora",
+        "language": "Lingua",
+        "currency": "Valuta",
+        "monthly_income": "Reddito mensile",
+        "balance": "Saldo",
+        "income_commitment": "Impegno del reddito (%)",
+        "financial_score": "Punteggio finanziario",
+        "objective": "Obiettivo",
+        "useful": "Utile",
+        "not_useful": "Non utile",
+        "comment": "Commento",
+        "evaluation": "Valutazione",
+        "feedbacks": "Feedback",
+        "estimated_balance": "Saldo stimato",
+        "date": "Data",
+    },
+    "ro": {
+        "quantity": "Cantitate",
+        "percentage": "Procent",
+        "risk": "Risc",
+        "low": "Scăzut",
+        "medium": "Mediu",
+        "high": "Ridicat",
+        "not_informed": "Nespecificat",
+        "name": "Nume",
+        "total_diagnostics": "Total diagnosticări",
+        "average_score": "Scor mediu",
+        "average_balance": "Sold mediu",
+        "id": "ID",
+        "date_time": "Data și ora",
+        "language": "Limbă",
+        "currency": "Monedă",
+        "monthly_income": "Venit lunar",
+        "balance": "Sold",
+        "income_commitment": "Angajamentul venitului (%)",
+        "financial_score": "Scor financiar",
+        "objective": "Obiectiv",
+        "useful": "Util",
+        "not_useful": "Neutil",
+        "comment": "Comentariu",
+        "evaluation": "Evaluare",
+        "feedbacks": "Feedback",
+        "estimated_balance": "Sold estimat",
+        "date": "Dată",
+    },
+    "ua": {
+        "quantity": "Кількість",
+        "percentage": "Відсоток",
+        "risk": "Ризик",
+        "low": "Низький",
+        "medium": "Середній",
+        "high": "Високий",
+        "not_informed": "Не вказано",
+        "name": "Ім’я",
+        "total_diagnostics": "Усього діагностик",
+        "average_score": "Середній бал",
+        "average_balance": "Середній баланс",
+        "id": "ID",
+        "date_time": "Дата й час",
+        "language": "Мова",
+        "currency": "Валюта",
+        "monthly_income": "Місячний дохід",
+        "balance": "Баланс",
+        "income_commitment": "Навантаження на дохід (%)",
+        "financial_score": "Фінансовий бал",
+        "objective": "Мета",
+        "useful": "Корисний",
+        "not_useful": "Некорисний",
+        "comment": "Коментар",
+        "evaluation": "Оцінка",
+        "feedbacks": "Відгуки",
+        "estimated_balance": "Орієнтовний баланс",
+        "date": "Дата",
+    },
+    "ru": {
+        "quantity": "Количество",
+        "percentage": "Процент",
+        "risk": "Риск",
+        "low": "Низкий",
+        "medium": "Средний",
+        "high": "Высокий",
+        "not_informed": "Не указано",
+        "name": "Имя",
+        "total_diagnostics": "Всего диагностик",
+        "average_score": "Средний балл",
+        "average_balance": "Средний баланс",
+        "id": "ID",
+        "date_time": "Дата и время",
+        "language": "Язык",
+        "currency": "Валюта",
+        "monthly_income": "Месячный доход",
+        "balance": "Баланс",
+        "income_commitment": "Нагрузка на доход (%)",
+        "financial_score": "Финансовый балл",
+        "objective": "Цель",
+        "useful": "Полезный",
+        "not_useful": "Неполезный",
+        "comment": "Комментарий",
+        "evaluation": "Оценка",
+        "feedbacks": "Отзывы",
+        "estimated_balance": "Расчётный баланс",
+        "date": "Дата",
+    },
+    "sa": {
+        "quantity": "الكمية",
+        "percentage": "النسبة المئوية",
+        "risk": "المخاطر",
+        "low": "منخفض",
+        "medium": "متوسط",
+        "high": "مرتفع",
+        "not_informed": "غير محدد",
+        "name": "الاسم",
+        "total_diagnostics": "إجمالي التشخيصات",
+        "average_score": "متوسط النتيجة",
+        "average_balance": "متوسط الرصيد",
+        "id": "المعرّف",
+        "date_time": "التاريخ والوقت",
+        "language": "اللغة",
+        "currency": "العملة",
+        "monthly_income": "الدخل الشهري",
+        "balance": "الرصيد",
+        "income_commitment": "نسبة الالتزام بالدخل (%)",
+        "financial_score": "النتيجة المالية",
+        "objective": "الهدف",
+        "useful": "مفيد",
+        "not_useful": "غير مفيد",
+        "comment": "التعليق",
+        "evaluation": "التقييم",
+        "feedbacks": "الملاحظات",
+        "estimated_balance": "الرصيد التقديري",
+        "date": "التاريخ",
+    },
+}
+
+DASHBOARD_DFE_TEXTS["en_gb"] = (
+    DASHBOARD_DFE_TEXTS["en_us"]
+)
+
+DASHBOARD_DFE_TEXTS["ch"] = (
+    DASHBOARD_DFE_TEXTS["de"]
+)
+
+
+def dfe_t(
+    key: str,
+    default: str | None = None,
+) -> str:
+    language = dashboard_lang()
+
+    texts = DASHBOARD_DFE_TEXTS.get(
+        language,
+        DASHBOARD_DFE_TEXTS["pt"],
+    )
+
+    if key in texts:
+        return texts[key]
+
+    if default is not None:
+        return default
+
+    return key
+
+
+def dfe_translate_risk(
+    value,
+) -> str:
+    if value is None or pd.isna(value):
+        return dfe_t("not_informed")
+
+    normalized = str(value).strip().casefold()
+
+    low_values = {
+        "baixo",
+        "baixa",
+        "low",
+        "niedrig",
+    }
+
+    medium_values = {
+        "médio",
+        "medio",
+        "média",
+        "media",
+        "medium",
+        "mittel",
+    }
+
+    high_values = {
+        "alto",
+        "alta",
+        "high",
+        "hoch",
+    }
+
+    unknown_values = {
+        "",
+        "none",
+        "nan",
+        "null",
+        "não informado",
+        "nao informado",
+        "not informed",
+    }
+
+    if normalized in low_values:
+        return dfe_t("low")
+
+    if normalized in medium_values:
+        return dfe_t("medium")
+
+    if normalized in high_values:
+        return dfe_t("high")
+
+    if normalized in unknown_values:
+        return dfe_t("not_informed")
+
+    return str(value)
+
+
+def dfe_translate_useful(
+    value,
+) -> str:
+    return dashboard_translate_useful(
+        value,
+        language=dashboard_lang(),
+    )
+
+def dfe_translate_dataframe_values(
+    dataframe,
+):
+    table = dataframe.copy()
+
+    for column in (
+        "risco_exibicao",
+        "nivel_risco",
+        "risco",
+    ):
+        if column in table.columns:
+            table[column] = table[
+                column
+            ].map(
+                dfe_translate_risk
+            )
+
+    if "util" in table.columns:
+        table["util"] = table[
+            "util"
+        ].map(
+            dfe_translate_useful
+        )
+
+    return table
+
+
+DASHBOARD_DFE_COLUMN_KEYS = {
+    "id": "id",
+    "data_hora": "date_time",
+    "data_label": "date",
+    "nome": "name",
+    "idioma": "language",
+    "moeda": "currency",
+    "renda_mensal": "monthly_income",
+    "saldo_formatado": "balance",
+    "saldo_estimado": "estimated_balance",
+    "saldo_medio": "average_balance",
+    "comprometimento_renda_percentual": (
+        "income_commitment"
+    ),
+    "score_financeiro": "financial_score",
+    "score_medio": "average_score",
+    "risco_exibicao": "risk",
+    "nivel_risco": "risk",
+    "risco": "risk",
+    "objetivo": "objective",
+    "total_diagnosticos": "total_diagnostics",
+    "quantidade": "quantity",
+    "avaliacao": "evaluation",
+    "util": "useful",
+    "comentario": "comment",
+}
+
+
+def dfe_rename_dataframe_columns(
+    dataframe,
+):
+    return dataframe.rename(
+        columns={
+            column: dfe_t(key)
+            for column, key
+            in DASHBOARD_DFE_COLUMN_KEYS.items()
+            if column in dataframe.columns
+        }
+    )
+
+
+def render_diagnostics(
+    diagnosticos_df,
+):
+    st.write(
+        dtx("diagnostics_title")
+    )
 
     if diagnosticos_df.empty:
-        st.warning(dtx("no_diagnostics"))
+        st.warning(
+            dtx("no_diagnostics")
+        )
         return
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.write(dtx("risk_distribution"))
-        risk_counts = diagnosticos_df["risco_exibicao"].fillna("não informado").astype(str).value_counts()
+        st.write(
+            dtx("risk_distribution")
+        )
 
-        if len(risk_counts) > 1:
+        risk_column = None
+
+        for candidate in (
+            "risco_exibicao",
+            "nivel_risco",
+            "risco",
+        ):
+            if candidate in diagnosticos_df.columns:
+                risk_column = candidate
+                break
+
+        if risk_column is None:
+            st.caption(
+                dfe_t("not_informed")
+            )
+        else:
+            risk_counts = (
+                diagnosticos_df[
+                    risk_column
+                ]
+                .fillna(
+                    dfe_t("not_informed")
+                )
+                .astype(str)
+                .value_counts()
+            )
+
             risk_chart = (
                 risk_counts
                 .rename_axis("risco")
-                .reset_index(name="quantidade")
+                .reset_index(
+                    name="quantidade"
+                )
             )
 
-            fig_risco = px.pie(
-                risk_chart,
-                names="risco",
-                values="quantidade",
-                hole=0.58,
-                color_discrete_sequence=[
-                    "#34D399",
-                    "#F59E0B",
-                    "#F87171",
-                    "#38BDF8",
-                    "#A78BFA",
-                ],
+            risk_chart[
+                "risco_exibicao"
+            ] = risk_chart[
+                "risco"
+            ].map(
+                dfe_translate_risk
             )
 
-            fig_risco.update_traces(
-                textposition="inside",
-                textinfo="label+percent",
-                marker={
-                    "line": {
-                        "color": PLOTLY_BG,
-                        "width": 2,
+            if len(risk_chart) > 1:
+                fig_risco = px.pie(
+                    risk_chart,
+                    names="risco_exibicao",
+                    values="quantidade",
+                    hole=0.58,
+                    color_discrete_sequence=[
+                        "#34D399",
+                        "#F59E0B",
+                        "#F87171",
+                        "#38BDF8",
+                        "#A78BFA",
+                    ],
+                )
+
+                fig_risco.update_traces(
+                    textposition="inside",
+                    textinfo="label+percent",
+                    marker={
+                        "line": {
+                            "color": PLOTLY_BG,
+                            "width": 2,
+                        },
                     },
-                },
-                hovertemplate=(
-                    "<b>%{label}</b><br>"
-                    "Quantidade: %{value}<br>"
-                    "Percentual: %{percent}"
-                    "<extra></extra>"
-                ),
+                    hovertemplate=(
+                        "<b>%{label}</b><br>"
+                        + dfe_t("quantity")
+                        + ": %{value}<br>"
+                        + dfe_t("percentage")
+                        + ": %{percent}"
+                        + "<extra></extra>"
+                    ),
+                )
+
+                fig_risco.update_layout(
+                    showlegend=True,
+                    legend={
+                        "orientation": "h",
+                        "yanchor": "bottom",
+                        "y": -0.12,
+                        "xanchor": "center",
+                        "x": 0.5,
+                    },
+                )
+
+                apply_inna_plotly_theme(
+                    fig_risco,
+                    height=410,
+                )
+
+                st.plotly_chart(
+                    fig_risco,
+                    width="stretch",
+                    key="risk_distribution_chart",
+                    config={
+                        "displayModeBar": False,
+                        "responsive": True,
+                    },
+                )
+            else:
+                st.caption(
+                    dtx("only_one_risk")
+                )
+
+            risk_table = risk_chart[
+                [
+                    "risco_exibicao",
+                    "quantidade",
+                ]
+            ].rename(
+                columns={
+                    "risco_exibicao": (
+                        dfe_t("risk")
+                    ),
+                    "quantidade": (
+                        dfe_t("quantity")
+                    ),
+                }
             )
 
-            fig_risco.update_layout(
-                showlegend=True,
-                legend={
-                    "orientation": "h",
-                    "yanchor": "bottom",
-                    "y": -0.12,
-                    "xanchor": "center",
-                    "x": 0.5,
-                },
+            st.dataframe(
+                risk_table,
+                use_container_width=True,
+                hide_index=True,
             )
-
-            apply_inna_plotly_theme(
-                fig_risco,
-                height=410,
-            )
-
-            st.plotly_chart(
-                fig_risco,
-                width="stretch",
-                key="risk_distribution_chart",
-                config={
-                    "displayModeBar": False,
-                    "responsive": True,
-                },
-            )
-        else:
-            st.caption(dtx("only_one_risk"))
-
-        risk_table = risk_counts.reset_index()
-        risk_table.columns = ["risco", "quantidade"]
-        st.dataframe(risk_table, use_container_width=True)
 
     with col2:
-        st.write(dtx("user_ranking"))
-        ranking = (
-            diagnosticos_df.groupby("nome", dropna=False)
-            .agg(
-                total_diagnosticos=("id", "count"),
-                score_medio=("score_financeiro", "mean"),
-                saldo_medio=("saldo_estimado", "mean"),
-            )
-            .reset_index()
-            .sort_values("total_diagnosticos", ascending=False)
+        st.write(
+            dtx("user_ranking")
         )
 
-        ranking["score_medio"] = ranking["score_medio"].round(1)
-        ranking["saldo_medio"] = ranking["saldo_medio"].round(2)
+        ranking = (
+            diagnosticos_df
+            .groupby(
+                "nome",
+                dropna=False,
+            )
+            .agg(
+                total_diagnosticos=(
+                    "id",
+                    "count",
+                ),
+                score_medio=(
+                    "score_financeiro",
+                    "mean",
+                ),
+                saldo_medio=(
+                    "saldo_estimado",
+                    "mean",
+                ),
+            )
+            .reset_index()
+            .sort_values(
+                "total_diagnosticos",
+                ascending=False,
+            )
+        )
 
-        st.dataframe(ranking, use_container_width=True)
+        ranking["nome"] = ranking[
+            "nome"
+        ].fillna(
+            dfe_t("not_informed")
+        )
 
-    st.write(dtx("last_diagnostics"))
+        ranking["score_medio"] = ranking[
+            "score_medio"
+        ].round(1)
 
-    cols = [
+        ranking["saldo_medio"] = ranking[
+            "saldo_medio"
+        ].round(2)
+
+        ranking_display = (
+            dfe_rename_dataframe_columns(
+                ranking
+            )
+        )
+
+        st.dataframe(
+            ranking_display,
+            use_container_width=True,
+            hide_index=True,
+        )
+
+    st.write(
+        dtx("last_diagnostics")
+    )
+
+    columns = [
         "id",
         "data_hora",
         "nome",
@@ -3913,27 +5304,76 @@ def render_diagnostics(diagnosticos_df):
         "objetivo",
     ]
 
-    available_cols = [col for col in cols if col in diagnosticos_df.columns]
-    st.dataframe(diagnosticos_df[available_cols].head(50), use_container_width=True)
+    available_columns = [
+        column
+        for column in columns
+        if column in diagnosticos_df.columns
+    ]
+
+    diagnostics_display = (
+        diagnosticos_df[
+            available_columns
+        ]
+        .head(50)
+        .copy()
+    )
+
+    diagnostics_display = (
+        dfe_translate_dataframe_values(
+            diagnostics_display
+        )
+    )
+
+    diagnostics_display = (
+        dfe_rename_dataframe_columns(
+            diagnostics_display
+        )
+    )
+
+    st.dataframe(
+        diagnostics_display,
+        use_container_width=True,
+        hide_index=True,
+    )
 
 
-def render_feedbacks(feedbacks_df):
-    st.write(dtx("feedbacks_title"))
+
+def render_feedbacks(
+    feedbacks_df,
+):
+    st.write(
+        dtx("feedbacks_title")
+    )
 
     if feedbacks_df.empty:
-        st.warning(dtx("no_feedbacks"))
+        st.warning(
+            dtx("no_feedbacks")
+        )
         return
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.write(dtx("useful_feedbacks"))
+        st.write(
+            dtx("useful_feedbacks")
+        )
+
         if "util" in feedbacks_df.columns:
-            util_counts = feedbacks_df["util"].fillna("não informado").astype(str).value_counts()
+            feedback_values = (
+                feedbacks_df[
+                    "util"
+                ].map(
+                    dfe_translate_useful
+                )
+            )
+
             feedback_chart = (
-                util_counts
+                feedback_values
+                .value_counts()
                 .rename_axis("avaliacao")
-                .reset_index(name="quantidade")
+                .reset_index(
+                    name="quantidade"
+                )
             )
 
             fig_feedback = px.pie(
@@ -3960,9 +5400,11 @@ def render_feedbacks(feedbacks_df):
                 },
                 hovertemplate=(
                     "<b>%{label}</b><br>"
-                    "Feedbacks: %{value}<br>"
-                    "Percentual: %{percent}"
-                    "<extra></extra>"
+                    + dfe_t("feedbacks")
+                    + ": %{value}<br>"
+                    + dfe_t("percentage")
+                    + ": %{percent}"
+                    + "<extra></extra>"
                 ),
             )
 
@@ -3992,44 +5434,147 @@ def render_feedbacks(feedbacks_df):
                 },
             )
 
+            feedback_table = (
+                feedback_chart.rename(
+                    columns={
+                        "avaliacao": (
+                            dfe_t("evaluation")
+                        ),
+                        "quantidade": (
+                            dfe_t("quantity")
+                        ),
+                    }
+                )
+            )
+
             st.dataframe(
-                util_counts.reset_index(),
+                feedback_table,
                 use_container_width=True,
+                hide_index=True,
+            )
+        else:
+            st.caption(
+                dfe_t("not_informed")
             )
 
     with col2:
-        st.write(dtx("received_comments"))
-        comentario_cols = [col for col in ["data_hora", "nome", "comentario", "util"] if col in feedbacks_df.columns]
-        if comentario_cols:
-            st.dataframe(feedbacks_df[comentario_cols].head(30), use_container_width=True)
+        st.write(
+            dtx("received_comments")
+        )
+
+        comment_columns = [
+            column
+            for column in (
+                "data_hora",
+                "nome",
+                "comentario",
+                "util",
+            )
+            if column in feedbacks_df.columns
+        ]
+
+        if comment_columns:
+            comments_display = (
+                feedbacks_df[
+                    comment_columns
+                ]
+                .head(30)
+                .copy()
+            )
+
+            comments_display = (
+                dfe_translate_dataframe_values(
+                    comments_display
+                )
+            )
+
+            comments_display = (
+                dfe_rename_dataframe_columns(
+                    comments_display
+                )
+            )
+
+            st.dataframe(
+                comments_display,
+                use_container_width=True,
+                hide_index=True,
+            )
         else:
-            st.caption(dtx("no_comments"))
+            st.caption(
+                dtx("no_comments")
+            )
 
-    st.write(dtx("last_feedbacks"))
-    st.dataframe(feedbacks_df.head(50), use_container_width=True)
+    st.write(
+        dtx("last_feedbacks")
+    )
+
+    latest_feedbacks = (
+        feedbacks_df
+        .head(50)
+        .copy()
+    )
+
+    latest_feedbacks = (
+        dfe_translate_dataframe_values(
+            latest_feedbacks
+        )
+    )
+
+    latest_feedbacks = (
+        dfe_rename_dataframe_columns(
+            latest_feedbacks
+        )
+    )
+
+    st.dataframe(
+        latest_feedbacks,
+        use_container_width=True,
+        hide_index=True,
+    )
 
 
-def render_evolution(diagnosticos_df):
-    st.write(dtx("evolution_title"))
+
+def render_evolution(
+    diagnosticos_df,
+):
+    st.write(
+        dtx("evolution_title")
+    )
 
     if diagnosticos_df.empty:
-        st.warning(dtx("no_diagnostics"))
+        st.warning(
+            dtx("no_diagnostics")
+        )
         return
 
-    df = diagnosticos_df.copy()
+    dataframe = diagnosticos_df.copy()
 
-    if "data_hora" in df.columns:
-        df = df.sort_values("data_hora")
-        df["data_label"] = df["data_hora"].dt.strftime("%d/%m %H:%M")
+    if "data_hora" in dataframe.columns:
+        dataframe = dataframe.sort_values(
+            "data_hora"
+        )
+
+        dataframe["data_label"] = (
+            dataframe[
+                "data_hora"
+            ].dt.strftime(
+                "%d/%m %H:%M"
+            )
+        )
     else:
-        df["data_label"] = df["id"].astype(str)
+        dataframe["data_label"] = (
+            dataframe["id"].astype(str)
+        )
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.write(dtx("score_evolution"))
-        if len(df) > 1:
-            score_chart = df[
+        st.write(
+            dtx("score_evolution")
+        )
+
+        if len(dataframe) > 1:
+            score_chart = dataframe[
                 [
                     "data_label",
                     "score_financeiro",
@@ -4057,17 +5602,24 @@ def render_evolution(diagnosticos_df):
                     },
                 },
                 fill="tozeroy",
-                fillcolor="rgba(56, 189, 248, 0.13)",
+                fillcolor=(
+                    "rgba(56, 189, 248, 0.13)"
+                ),
                 hovertemplate=(
                     "<b>%{x}</b><br>"
-                    "Score: %{y:.1f}"
-                    "<extra></extra>"
+                    + dfe_t(
+                        "financial_score"
+                    )
+                    + ": %{y:.1f}"
+                    + "<extra></extra>"
                 ),
             )
 
             fig_score.update_layout(
                 xaxis_title=None,
-                yaxis_title="Score financeiro",
+                yaxis_title=dfe_t(
+                    "financial_score"
+                ),
                 showlegend=False,
             )
 
@@ -4079,34 +5631,65 @@ def render_evolution(diagnosticos_df):
             st.plotly_chart(
                 fig_score,
                 width="stretch",
-                key="financial_score_evolution_chart",
+                key=(
+                    "financial_score_"
+                    "evolution_chart"
+                ),
                 config={
                     "displayModeBar": False,
                     "responsive": True,
                 },
             )
         else:
-            st.caption(dtx("evolution_wait"))
-            st.dataframe(df[["id", "nome", "score_financeiro"]], use_container_width=True)
+            st.caption(
+                dtx("evolution_wait")
+            )
+
+            score_table = dataframe[
+                [
+                    column
+                    for column in (
+                        "id",
+                        "nome",
+                        "score_financeiro",
+                    )
+                    if column in dataframe.columns
+                ]
+            ].copy()
+
+            score_table = (
+                dfe_rename_dataframe_columns(
+                    score_table
+                )
+            )
+
+            st.dataframe(
+                score_table,
+                use_container_width=True,
+                hide_index=True,
+            )
 
     with col2:
-        st.write(dtx("balance_evolution"))
-        if len(df) > 1:
-            balance_chart = df[
+        st.write(
+            dtx("balance_evolution")
+        )
+
+        if len(dataframe) > 1:
+            balance_chart = dataframe[
                 [
                     "data_label",
                     "saldo_estimado",
                 ]
             ].copy()
 
-            fig_saldo = px.area(
+            fig_balance = px.area(
                 balance_chart,
                 x="data_label",
                 y="saldo_estimado",
                 markers=True,
             )
 
-            fig_saldo.update_traces(
+            fig_balance.update_traces(
                 line={
                     "color": "#34D399",
                     "width": 3,
@@ -4119,37 +5702,73 @@ def render_evolution(diagnosticos_df):
                         "width": 2,
                     },
                 },
-                fillcolor="rgba(52, 211, 153, 0.16)",
+                fillcolor=(
+                    "rgba(52, 211, 153, 0.16)"
+                ),
                 hovertemplate=(
                     "<b>%{x}</b><br>"
-                    "Saldo estimado: %{y:,.2f}"
-                    "<extra></extra>"
+                    + dfe_t(
+                        "estimated_balance"
+                    )
+                    + ": %{y:,.2f}"
+                    + "<extra></extra>"
                 ),
             )
 
-            fig_saldo.update_layout(
+            fig_balance.update_layout(
                 xaxis_title=None,
-                yaxis_title="Saldo estimado",
+                yaxis_title=dfe_t(
+                    "estimated_balance"
+                ),
                 showlegend=False,
             )
 
             apply_inna_plotly_theme(
-                fig_saldo,
+                fig_balance,
                 height=410,
             )
 
             st.plotly_chart(
-                fig_saldo,
+                fig_balance,
                 width="stretch",
-                key="estimated_balance_evolution_chart",
+                key=(
+                    "estimated_balance_"
+                    "evolution_chart"
+                ),
                 config={
                     "displayModeBar": False,
                     "responsive": True,
                 },
             )
         else:
-            st.caption(dtx("evolution_wait"))
-            st.dataframe(df[["id", "nome", "saldo_formatado"]], use_container_width=True)
+            st.caption(
+                dtx("evolution_wait")
+            )
+
+            balance_table = dataframe[
+                [
+                    column
+                    for column in (
+                        "id",
+                        "nome",
+                        "saldo_estimado",
+                    )
+                    if column in dataframe.columns
+                ]
+            ].copy()
+
+            balance_table = (
+                dfe_rename_dataframe_columns(
+                    balance_table
+                )
+            )
+
+            st.dataframe(
+                balance_table,
+                use_container_width=True,
+                hide_index=True,
+            )
+
 
 
 def render_executive_reading(diagnosticos_df, feedbacks_df, eventos_df):
@@ -5184,6 +6803,28 @@ def render_rag_observability(rag_df=None):
     st.dataframe(display_df.head(20), use_container_width=True)
 
 
+# Traduções finais do título da página Exportar
+DASHBOARD_EXTRA_TEXTS.setdefault("pt", {}).update({
+    "export_title": "## 📤 Exportar dados filtrados",
+})
+
+DASHBOARD_EXTRA_TEXTS.setdefault("en_us", {}).update({
+    "export_title": "## 📤 Export filtered data",
+})
+
+DASHBOARD_EXTRA_TEXTS.setdefault("en_gb", {}).update({
+    "export_title": "## 📤 Export filtered data",
+})
+
+DASHBOARD_EXTRA_TEXTS.setdefault("it", {}).update({
+    "export_title": "## 📤 Esporta dati filtrati",
+})
+
+DASHBOARD_EXTRA_TEXTS.setdefault("ch", {}).update({
+    "export_title": "## 📤 Gefilterte Daten exportieren",
+})
+
+
 def render_export(diagnosticos_df, feedbacks_df, eventos_df):
     st.write(dtx("export_title"))
 
@@ -5918,10 +7559,12 @@ DASHBOARD_EXTRA_TEXTS.setdefault("ru", {}).update({
 # ============================================================
 
 DASHBOARD_MENU_LABELS.setdefault("pt", {}).update({
-    "📄 Upload Documentos": "📄 Upload Documentos",
+    "📄 Upload Documentos": "📄 Upload de Documentos",
+    "🧠 Memória Usuário": "🧠 Memória do Usuário",
 })
 DASHBOARD_MENU_LABELS.setdefault("en_us", {}).update({
     "📄 Upload Documentos": "📄 Document Upload",
+    "🧠 Memória Usuário": "🧠 User Memory",
 })
 DASHBOARD_MENU_LABELS.setdefault("en_gb", {}).update({
     "📄 Upload Documentos": "📄 Document Upload",
@@ -6424,8 +8067,8 @@ def renderizar_evolucao_financeira_inna(evolucao, moeda="BRL"):
     }
 
     mapa_titulos = {
-        "renda_mensal": "Renda mensal",
-        "gastos_mensais": "Gastos mensais",
+        "renda_mensal": upload_rag_t("monthly_income"),
+        "gastos_mensais": upload_rag_t("monthly_expenses"),
         "valor_reserva": "Capacidade de guardar",
     }
 
@@ -7192,13 +8835,2839 @@ def registrar_metadata_upload_rag(
     )
 
 
+UPLOAD_RAG_TEXTS = {
+    "pt": {
+        "title": "## 📄 Upload de Documentos para a Base RAG",
+        "caption": (
+            "Envie arquivos .md ou .txt para expandir "
+            "a base de conhecimento da INNA."
+        ),
+        "select_document": "Selecione um documento",
+        "upload_help": (
+            "Nesta versão, a INNA aceita arquivos "
+            "Markdown e TXT."
+        ),
+        "invalid_format": (
+            "Formato não permitido. Envie apenas "
+            "arquivos .md ou .txt."
+        ),
+        "version_lookup_error": (
+            "Não foi possível consultar o "
+            "versionamento do documento."
+        ),
+        "version_error": (
+            "Não foi possível determinar a versão "
+            "do documento"
+        ),
+        "security_rejection": (
+            "Documento rejeitado pela política de segurança"
+        ),
+        "security_validation_error": (
+            "Não foi possível validar a segurança "
+            "do documento."
+        ),
+        "saved_successfully": "Documento salvo com sucesso",
+        "validation_complete": "Validação concluída",
+        "document": "Documento",
+        "version": "Versão",
+        "content_preview": "### Prévia do conteúdo",
+        "loaded_content": "Conteúdo carregado",
+        "generated_chunks": "### Chunks gerados",
+        "chunks_generated": "chunks gerados e salvos em",
+        "embedding_ready": (
+            "Arquivo pronto para embeddings/pgvector"
+        ),
+    },
+    "en_us": {
+        "title": "## 📄 Document Upload for the RAG Knowledge Base",
+        "caption": (
+            "Upload .md or .txt files to expand "
+            "INNA's knowledge base."
+        ),
+        "select_document": "Select a document",
+        "upload_help": (
+            "In this version, INNA accepts Markdown "
+            "and TXT files."
+        ),
+        "invalid_format": (
+            "Unsupported format. Upload only "
+            ".md or .txt files."
+        ),
+        "version_lookup_error": (
+            "The document version information "
+            "could not be retrieved."
+        ),
+        "version_error": (
+            "The document version could not be determined"
+        ),
+        "security_rejection": (
+            "Document rejected by the security policy"
+        ),
+        "security_validation_error": (
+            "The document security validation failed."
+        ),
+        "saved_successfully": "Document saved successfully",
+        "validation_complete": "Validation complete",
+        "document": "Document",
+        "version": "Version",
+        "content_preview": "### Content preview",
+        "loaded_content": "Loaded content",
+        "generated_chunks": "### Generated chunks",
+        "chunks_generated": "chunks generated and saved to",
+        "embedding_ready": (
+            "File ready for embeddings/pgvector"
+        ),
+    },
+    "es": {
+        "title": "## 📄 Carga de Documentos para la Base RAG",
+        "caption": (
+            "Envíe archivos .md o .txt para ampliar "
+            "la base de conocimiento de INNA."
+        ),
+        "select_document": "Seleccione un documento",
+        "upload_help": (
+            "En esta versión, INNA acepta archivos "
+            "Markdown y TXT."
+        ),
+        "invalid_format": (
+            "Formato no permitido. Envíe solamente "
+            "archivos .md o .txt."
+        ),
+        "version_lookup_error": (
+            "No fue posible consultar el versionado "
+            "del documento."
+        ),
+        "version_error": (
+            "No fue posible determinar la versión del documento"
+        ),
+        "security_rejection": (
+            "Documento rechazado por la política de seguridad"
+        ),
+        "security_validation_error": (
+            "No fue posible validar la seguridad del documento."
+        ),
+        "saved_successfully": "Documento guardado correctamente",
+        "validation_complete": "Validación finalizada",
+        "document": "Documento",
+        "version": "Versión",
+        "content_preview": "### Vista previa del contenido",
+        "loaded_content": "Contenido cargado",
+        "generated_chunks": "### Chunks generados",
+        "chunks_generated": "chunks generados y guardados en",
+        "embedding_ready": (
+            "Archivo preparado para embeddings/pgvector"
+        ),
+    },
+    "fr": {
+        "title": "## 📄 Téléversement de Documents pour la Base RAG",
+        "caption": (
+            "Envoyez des fichiers .md ou .txt pour enrichir "
+            "la base de connaissances d’INNA."
+        ),
+        "select_document": "Sélectionnez un document",
+        "upload_help": (
+            "Dans cette version, INNA accepte les fichiers "
+            "Markdown et TXT."
+        ),
+        "invalid_format": (
+            "Format non autorisé. Envoyez uniquement "
+            "des fichiers .md ou .txt."
+        ),
+        "version_lookup_error": (
+            "Impossible de consulter le versionnement "
+            "du document."
+        ),
+        "version_error": (
+            "Impossible de déterminer la version du document"
+        ),
+        "security_rejection": (
+            "Document rejeté par la politique de sécurité"
+        ),
+        "security_validation_error": (
+            "Impossible de valider la sécurité du document."
+        ),
+        "saved_successfully": "Document enregistré avec succès",
+        "validation_complete": "Validation terminée",
+        "document": "Document",
+        "version": "Version",
+        "content_preview": "### Aperçu du contenu",
+        "loaded_content": "Contenu chargé",
+        "generated_chunks": "### Chunks générés",
+        "chunks_generated": "chunks générés et enregistrés dans",
+        "embedding_ready": (
+            "Fichier prêt pour embeddings/pgvector"
+        ),
+    },
+    "de": {
+        "title": "## 📄 Dokumenten-Upload für die RAG-Wissensbasis",
+        "caption": (
+            "Laden Sie .md- oder .txt-Dateien hoch, um "
+            "die INNA-Wissensbasis zu erweitern."
+        ),
+        "select_document": "Dokument auswählen",
+        "upload_help": (
+            "In dieser Version akzeptiert INNA "
+            "Markdown- und TXT-Dateien."
+        ),
+        "invalid_format": (
+            "Nicht unterstütztes Format. Laden Sie nur "
+            ".md- oder .txt-Dateien hoch."
+        ),
+        "version_lookup_error": (
+            "Die Dokumentversion konnte nicht "
+            "abgerufen werden."
+        ),
+        "version_error": (
+            "Die Dokumentversion konnte nicht bestimmt werden"
+        ),
+        "security_rejection": (
+            "Dokument durch Sicherheitsrichtlinie abgelehnt"
+        ),
+        "security_validation_error": (
+            "Die Dokumentsicherheit konnte nicht validiert werden."
+        ),
+        "saved_successfully": "Dokument erfolgreich gespeichert",
+        "validation_complete": "Validierung abgeschlossen",
+        "document": "Dokument",
+        "version": "Version",
+        "content_preview": "### Inhaltsvorschau",
+        "loaded_content": "Geladener Inhalt",
+        "generated_chunks": "### Generierte Chunks",
+        "chunks_generated": "Chunks generiert und gespeichert in",
+        "embedding_ready": (
+            "Datei bereit für Embeddings/pgvector"
+        ),
+    },
+    "it": {
+        "title": "## 📄 Caricamento Documenti per la Base RAG",
+        "caption": (
+            "Carica file .md o .txt per ampliare "
+            "la base di conoscenza di INNA."
+        ),
+        "select_document": "Seleziona un documento",
+        "upload_help": (
+            "In questa versione, INNA accetta file "
+            "Markdown e TXT."
+        ),
+        "invalid_format": (
+            "Formato non consentito. Carica solo "
+            "file .md o .txt."
+        ),
+        "version_lookup_error": (
+            "Impossibile consultare il versionamento "
+            "del documento."
+        ),
+        "version_error": (
+            "Impossibile determinare la versione del documento"
+        ),
+        "security_rejection": (
+            "Documento rifiutato dalla politica di sicurezza"
+        ),
+        "security_validation_error": (
+            "Impossibile validare la sicurezza del documento."
+        ),
+        "saved_successfully": "Documento salvato correttamente",
+        "validation_complete": "Validazione completata",
+        "document": "Documento",
+        "version": "Versione",
+        "content_preview": "### Anteprima del contenuto",
+        "loaded_content": "Contenuto caricato",
+        "generated_chunks": "### Chunks generati",
+        "chunks_generated": "chunks generati e salvati in",
+        "embedding_ready": (
+            "File pronto per embeddings/pgvector"
+        ),
+    },
+}
+
+UPLOAD_RAG_TEXTS["en_gb"] = UPLOAD_RAG_TEXTS["en_us"]
+
+for idioma in (
+    "ro",
+    "ua",
+    "ru",
+    "sa",
+):
+    UPLOAD_RAG_TEXTS[idioma] = (
+        UPLOAD_RAG_TEXTS["en_us"].copy()
+    )
+
+
+UPLOAD_RAG_DOCUMENT_TEXTS = {'pt': {'file_size': 'Tamanho', 'registered_documents': '### Documentos registrados no Neon/PostgreSQL', 'database_documents_error': 'Não foi possível carregar os documentos do banco', 'no_registered_documents': 'Nenhum documento registrado no Neon/PostgreSQL ainda.', 'registered_documents_total': 'Total de documentos registrados', 'total_chunks': 'Total de chunks', 'processed': 'Processados', 'extensions': 'Extensões', 'local_organisation': '### Organização local dos arquivos RAG', 'local_uploads': 'Uploads locais', 'chunk_files': 'Arquivos de chunks', 'embedding_ready_jsonl': 'JSONL para embeddings', 'recent_local_files': 'Ver arquivos locais recentes', 'recent_files_caption': 'Mostrando no máximo os 5 arquivos mais recentes de cada pasta.', 'recent_uploads': '**Uploads recentes**', 'recent_chunks': '**Chunks recentes**', 'recent_jsonl': '**JSONL recentes**', 'archive_caption': 'Arquivar move os arquivos antigos para data/knowledge_base/archive. Nada é apagado definitivamente.', 'files_to_keep': 'Quantos arquivos recentes devem ser mantidos em cada pasta?', 'archive_old_files': '🗂️ Arquivar arquivos locais antigos', 'document_status': '### Status do documento na base RAG', 'select_status_document': 'Escolha um documento para ativar ou desativar', 'active_document': 'Este documento está ATIVO na busca RAG.', 'inactive_document': 'Este documento está INATIVO e será ignorado na busca RAG.', 'activate_document': '✅ Ativar documento', 'deactivate_document': '🚫 Desativar documento', 'reprocess_document': '### Reprocessar documento', 'select_reprocess_document': 'Escolha um documento para reprocessar', 'reprocess_selected': '🔄 Reprocessar documento selecionado', 'original_file_not_found': 'Arquivo original não encontrado', 'new_embedding_ready': 'Novo arquivo pronto para embeddings'}, 'en_us': {'file_size': 'Size', 'registered_documents': '### Documents registered in Neon/PostgreSQL', 'database_documents_error': 'The database documents could not be loaded', 'no_registered_documents': 'No documents have been registered in Neon/PostgreSQL yet.', 'registered_documents_total': 'Total registered documents', 'total_chunks': 'Total chunks', 'processed': 'Processed', 'extensions': 'Extensions', 'local_organisation': '### Local RAG file organisation', 'local_uploads': 'Local uploads', 'chunk_files': 'Chunk files', 'embedding_ready_jsonl': 'Embedding-ready JSONL', 'recent_local_files': 'View recent local files', 'recent_files_caption': 'Showing up to the 5 most recent files from each folder.', 'recent_uploads': '**Recent uploads**', 'recent_chunks': '**Recent chunks**', 'recent_jsonl': '**Recent JSONL files**', 'archive_caption': 'Archiving moves old files to data/knowledge_base/archive. Nothing is permanently deleted.', 'files_to_keep': 'How many recent files should be kept in each folder?', 'archive_old_files': '🗂️ Archive old local files', 'document_status': '### Document status in the RAG knowledge base', 'select_status_document': 'Select a document to activate or deactivate', 'active_document': 'This document is ACTIVE in RAG search.', 'inactive_document': 'This document is INACTIVE and will be ignored by RAG search.', 'activate_document': '✅ Activate document', 'deactivate_document': '🚫 Deactivate document', 'reprocess_document': '### Reprocess document', 'select_reprocess_document': 'Select a document to reprocess', 'reprocess_selected': '🔄 Reprocess selected document', 'original_file_not_found': 'Original file not found', 'new_embedding_ready': 'New file ready for embeddings'}, 'es': {'file_size': 'Tamaño', 'registered_documents': '### Documentos registrados en Neon/PostgreSQL', 'database_documents_error': 'No fue posible cargar los documentos de la base', 'no_registered_documents': 'Todavía no hay documentos registrados en Neon/PostgreSQL.', 'registered_documents_total': 'Total de documentos registrados', 'total_chunks': 'Total de chunks', 'processed': 'Procesados', 'extensions': 'Extensiones', 'local_organisation': '### Organización local de archivos RAG', 'local_uploads': 'Cargas locales', 'chunk_files': 'Archivos de chunks', 'embedding_ready_jsonl': 'JSONL para embeddings', 'recent_local_files': 'Ver archivos locales recientes', 'recent_files_caption': 'Se muestran como máximo los 5 archivos más recientes de cada carpeta.', 'recent_uploads': '**Cargas recientes**', 'recent_chunks': '**Chunks recientes**', 'recent_jsonl': '**JSONL recientes**', 'archive_caption': 'Archivar mueve los archivos antiguos a data/knowledge_base/archive. Nada se elimina definitivamente.', 'files_to_keep': '¿Cuántos archivos recientes deben conservarse en cada carpeta?', 'archive_old_files': '🗂️ Archivar archivos locales antiguos', 'document_status': '### Estado del documento en la base RAG', 'select_status_document': 'Seleccione un documento para activar o desactivar', 'active_document': 'Este documento está ACTIVO en la búsqueda RAG.', 'inactive_document': 'Este documento está INACTIVO y será ignorado en la búsqueda RAG.', 'activate_document': '✅ Activar documento', 'deactivate_document': '🚫 Desactivar documento', 'reprocess_document': '### Reprocesar documento', 'select_reprocess_document': 'Seleccione un documento para reprocesar', 'reprocess_selected': '🔄 Reprocesar documento seleccionado', 'original_file_not_found': 'Archivo original no encontrado', 'new_embedding_ready': 'Nuevo archivo preparado para embeddings'}, 'fr': {'file_size': 'Taille', 'registered_documents': '### Documents enregistrés dans Neon/PostgreSQL', 'database_documents_error': 'Impossible de charger les documents de la base', 'no_registered_documents': 'Aucun document enregistré dans Neon/PostgreSQL.', 'registered_documents_total': 'Total des documents enregistrés', 'total_chunks': 'Total des chunks', 'processed': 'Traités', 'extensions': 'Extensions', 'local_organisation': '### Organisation locale des fichiers RAG', 'local_uploads': 'Téléversements locaux', 'chunk_files': 'Fichiers de chunks', 'embedding_ready_jsonl': 'JSONL pour embeddings', 'recent_local_files': 'Voir les fichiers locaux récents', 'recent_files_caption': 'Affichage des 5 fichiers les plus récents de chaque dossier.', 'recent_uploads': '**Téléversements récents**', 'recent_chunks': '**Chunks récents**', 'recent_jsonl': '**JSONL récents**', 'archive_caption': 'L’archivage déplace les anciens fichiers vers data/knowledge_base/archive. Aucun fichier n’est définitivement supprimé.', 'files_to_keep': 'Combien de fichiers récents conserver dans chaque dossier ?', 'archive_old_files': '🗂️ Archiver les anciens fichiers locaux', 'document_status': '### État du document dans la base RAG', 'select_status_document': 'Sélectionnez un document à activer ou désactiver', 'active_document': 'Ce document est ACTIF dans la recherche RAG.', 'inactive_document': 'Ce document est INACTIF et sera ignoré par la recherche RAG.', 'activate_document': '✅ Activer le document', 'deactivate_document': '🚫 Désactiver le document', 'reprocess_document': '### Retraiter le document', 'select_reprocess_document': 'Sélectionnez un document à retraiter', 'reprocess_selected': '🔄 Retraiter le document sélectionné', 'original_file_not_found': 'Fichier original introuvable', 'new_embedding_ready': 'Nouveau fichier prêt pour les embeddings'}, 'de': {'file_size': 'Größe', 'registered_documents': '### In Neon/PostgreSQL registrierte Dokumente', 'database_documents_error': 'Datenbankdokumente konnten nicht geladen werden', 'no_registered_documents': 'Noch keine Dokumente in Neon/PostgreSQL registriert.', 'registered_documents_total': 'Registrierte Dokumente insgesamt', 'total_chunks': 'Chunks insgesamt', 'processed': 'Verarbeitet', 'extensions': 'Erweiterungen', 'local_organisation': '### Lokale Organisation der RAG-Dateien', 'local_uploads': 'Lokale Uploads', 'chunk_files': 'Chunk-Dateien', 'embedding_ready_jsonl': 'Embedding-fähige JSONL', 'recent_local_files': 'Aktuelle lokale Dateien anzeigen', 'recent_files_caption': 'Es werden höchstens die 5 neuesten Dateien jedes Ordners angezeigt.', 'recent_uploads': '**Aktuelle Uploads**', 'recent_chunks': '**Aktuelle Chunks**', 'recent_jsonl': '**Aktuelle JSONL-Dateien**', 'archive_caption': 'Beim Archivieren werden alte Dateien nach data/knowledge_base/archive verschoben. Nichts wird dauerhaft gelöscht.', 'files_to_keep': 'Wie viele aktuelle Dateien sollen in jedem Ordner behalten werden?', 'archive_old_files': '🗂️ Alte lokale Dateien archivieren', 'document_status': '### Dokumentstatus in der RAG-Wissensbasis', 'select_status_document': 'Dokument zum Aktivieren oder Deaktivieren auswählen', 'active_document': 'Dieses Dokument ist in der RAG-Suche AKTIV.', 'inactive_document': 'Dieses Dokument ist INAKTIV und wird bei der RAG-Suche ignoriert.', 'activate_document': '✅ Dokument aktivieren', 'deactivate_document': '🚫 Dokument deaktivieren', 'reprocess_document': '### Dokument erneut verarbeiten', 'select_reprocess_document': 'Dokument zur erneuten Verarbeitung auswählen', 'reprocess_selected': '🔄 Ausgewähltes Dokument erneut verarbeiten', 'original_file_not_found': 'Originaldatei nicht gefunden', 'new_embedding_ready': 'Neue Datei bereit für Embeddings'}, 'en_gb': {'file_size': 'Size', 'registered_documents': '### Documents registered in Neon/PostgreSQL', 'database_documents_error': 'The database documents could not be loaded', 'no_registered_documents': 'No documents have been registered in Neon/PostgreSQL yet.', 'registered_documents_total': 'Total registered documents', 'total_chunks': 'Total chunks', 'processed': 'Processed', 'extensions': 'Extensions', 'local_organisation': '### Local RAG file organisation', 'local_uploads': 'Local uploads', 'chunk_files': 'Chunk files', 'embedding_ready_jsonl': 'Embedding-ready JSONL', 'recent_local_files': 'View recent local files', 'recent_files_caption': 'Showing up to the 5 most recent files from each folder.', 'recent_uploads': '**Recent uploads**', 'recent_chunks': '**Recent chunks**', 'recent_jsonl': '**Recent JSONL files**', 'archive_caption': 'Archiving moves old files to data/knowledge_base/archive. Nothing is permanently deleted.', 'files_to_keep': 'How many recent files should be kept in each folder?', 'archive_old_files': '🗂️ Archive old local files', 'document_status': '### Document status in the RAG knowledge base', 'select_status_document': 'Select a document to activate or deactivate', 'active_document': 'This document is ACTIVE in RAG search.', 'inactive_document': 'This document is INACTIVE and will be ignored by RAG search.', 'activate_document': '✅ Activate document', 'deactivate_document': '🚫 Deactivate document', 'reprocess_document': '### Reprocess document', 'select_reprocess_document': 'Select a document to reprocess', 'reprocess_selected': '🔄 Reprocess selected document', 'original_file_not_found': 'Original file not found', 'new_embedding_ready': 'New file ready for embeddings'}, 'it': {'file_size': 'Size', 'registered_documents': '### Documents registered in Neon/PostgreSQL', 'database_documents_error': 'The database documents could not be loaded', 'no_registered_documents': 'No documents have been registered in Neon/PostgreSQL yet.', 'registered_documents_total': 'Total registered documents', 'total_chunks': 'Total chunks', 'processed': 'Processed', 'extensions': 'Extensions', 'local_organisation': '### Local RAG file organisation', 'local_uploads': 'Local uploads', 'chunk_files': 'Chunk files', 'embedding_ready_jsonl': 'Embedding-ready JSONL', 'recent_local_files': 'View recent local files', 'recent_files_caption': 'Showing up to the 5 most recent files from each folder.', 'recent_uploads': '**Recent uploads**', 'recent_chunks': '**Recent chunks**', 'recent_jsonl': '**Recent JSONL files**', 'archive_caption': 'Archiving moves old files to data/knowledge_base/archive. Nothing is permanently deleted.', 'files_to_keep': 'How many recent files should be kept in each folder?', 'archive_old_files': '🗂️ Archive old local files', 'document_status': '### Document status in the RAG knowledge base', 'select_status_document': 'Select a document to activate or deactivate', 'active_document': 'This document is ACTIVE in RAG search.', 'inactive_document': 'This document is INACTIVE and will be ignored by RAG search.', 'activate_document': '✅ Activate document', 'deactivate_document': '🚫 Deactivate document', 'reprocess_document': '### Reprocess document', 'select_reprocess_document': 'Select a document to reprocess', 'reprocess_selected': '🔄 Reprocess selected document', 'original_file_not_found': 'Original file not found', 'new_embedding_ready': 'New file ready for embeddings'}, 'ro': {'file_size': 'Size', 'registered_documents': '### Documents registered in Neon/PostgreSQL', 'database_documents_error': 'The database documents could not be loaded', 'no_registered_documents': 'No documents have been registered in Neon/PostgreSQL yet.', 'registered_documents_total': 'Total registered documents', 'total_chunks': 'Total chunks', 'processed': 'Processed', 'extensions': 'Extensions', 'local_organisation': '### Local RAG file organisation', 'local_uploads': 'Local uploads', 'chunk_files': 'Chunk files', 'embedding_ready_jsonl': 'Embedding-ready JSONL', 'recent_local_files': 'View recent local files', 'recent_files_caption': 'Showing up to the 5 most recent files from each folder.', 'recent_uploads': '**Recent uploads**', 'recent_chunks': '**Recent chunks**', 'recent_jsonl': '**Recent JSONL files**', 'archive_caption': 'Archiving moves old files to data/knowledge_base/archive. Nothing is permanently deleted.', 'files_to_keep': 'How many recent files should be kept in each folder?', 'archive_old_files': '🗂️ Archive old local files', 'document_status': '### Document status in the RAG knowledge base', 'select_status_document': 'Select a document to activate or deactivate', 'active_document': 'This document is ACTIVE in RAG search.', 'inactive_document': 'This document is INACTIVE and will be ignored by RAG search.', 'activate_document': '✅ Activate document', 'deactivate_document': '🚫 Deactivate document', 'reprocess_document': '### Reprocess document', 'select_reprocess_document': 'Select a document to reprocess', 'reprocess_selected': '🔄 Reprocess selected document', 'original_file_not_found': 'Original file not found', 'new_embedding_ready': 'New file ready for embeddings'}, 'ua': {'file_size': 'Size', 'registered_documents': '### Documents registered in Neon/PostgreSQL', 'database_documents_error': 'The database documents could not be loaded', 'no_registered_documents': 'No documents have been registered in Neon/PostgreSQL yet.', 'registered_documents_total': 'Total registered documents', 'total_chunks': 'Total chunks', 'processed': 'Processed', 'extensions': 'Extensions', 'local_organisation': '### Local RAG file organisation', 'local_uploads': 'Local uploads', 'chunk_files': 'Chunk files', 'embedding_ready_jsonl': 'Embedding-ready JSONL', 'recent_local_files': 'View recent local files', 'recent_files_caption': 'Showing up to the 5 most recent files from each folder.', 'recent_uploads': '**Recent uploads**', 'recent_chunks': '**Recent chunks**', 'recent_jsonl': '**Recent JSONL files**', 'archive_caption': 'Archiving moves old files to data/knowledge_base/archive. Nothing is permanently deleted.', 'files_to_keep': 'How many recent files should be kept in each folder?', 'archive_old_files': '🗂️ Archive old local files', 'document_status': '### Document status in the RAG knowledge base', 'select_status_document': 'Select a document to activate or deactivate', 'active_document': 'This document is ACTIVE in RAG search.', 'inactive_document': 'This document is INACTIVE and will be ignored by RAG search.', 'activate_document': '✅ Activate document', 'deactivate_document': '🚫 Deactivate document', 'reprocess_document': '### Reprocess document', 'select_reprocess_document': 'Select a document to reprocess', 'reprocess_selected': '🔄 Reprocess selected document', 'original_file_not_found': 'Original file not found', 'new_embedding_ready': 'New file ready for embeddings'}, 'ru': {'file_size': 'Size', 'registered_documents': '### Documents registered in Neon/PostgreSQL', 'database_documents_error': 'The database documents could not be loaded', 'no_registered_documents': 'No documents have been registered in Neon/PostgreSQL yet.', 'registered_documents_total': 'Total registered documents', 'total_chunks': 'Total chunks', 'processed': 'Processed', 'extensions': 'Extensions', 'local_organisation': '### Local RAG file organisation', 'local_uploads': 'Local uploads', 'chunk_files': 'Chunk files', 'embedding_ready_jsonl': 'Embedding-ready JSONL', 'recent_local_files': 'View recent local files', 'recent_files_caption': 'Showing up to the 5 most recent files from each folder.', 'recent_uploads': '**Recent uploads**', 'recent_chunks': '**Recent chunks**', 'recent_jsonl': '**Recent JSONL files**', 'archive_caption': 'Archiving moves old files to data/knowledge_base/archive. Nothing is permanently deleted.', 'files_to_keep': 'How many recent files should be kept in each folder?', 'archive_old_files': '🗂️ Archive old local files', 'document_status': '### Document status in the RAG knowledge base', 'select_status_document': 'Select a document to activate or deactivate', 'active_document': 'This document is ACTIVE in RAG search.', 'inactive_document': 'This document is INACTIVE and will be ignored by RAG search.', 'activate_document': '✅ Activate document', 'deactivate_document': '🚫 Deactivate document', 'reprocess_document': '### Reprocess document', 'select_reprocess_document': 'Select a document to reprocess', 'reprocess_selected': '🔄 Reprocess selected document', 'original_file_not_found': 'Original file not found', 'new_embedding_ready': 'New file ready for embeddings'}, 'sa': {'file_size': 'Size', 'registered_documents': '### Documents registered in Neon/PostgreSQL', 'database_documents_error': 'The database documents could not be loaded', 'no_registered_documents': 'No documents have been registered in Neon/PostgreSQL yet.', 'registered_documents_total': 'Total registered documents', 'total_chunks': 'Total chunks', 'processed': 'Processed', 'extensions': 'Extensions', 'local_organisation': '### Local RAG file organisation', 'local_uploads': 'Local uploads', 'chunk_files': 'Chunk files', 'embedding_ready_jsonl': 'Embedding-ready JSONL', 'recent_local_files': 'View recent local files', 'recent_files_caption': 'Showing up to the 5 most recent files from each folder.', 'recent_uploads': '**Recent uploads**', 'recent_chunks': '**Recent chunks**', 'recent_jsonl': '**Recent JSONL files**', 'archive_caption': 'Archiving moves old files to data/knowledge_base/archive. Nothing is permanently deleted.', 'files_to_keep': 'How many recent files should be kept in each folder?', 'archive_old_files': '🗂️ Archive old local files', 'document_status': '### Document status in the RAG knowledge base', 'select_status_document': 'Select a document to activate or deactivate', 'active_document': 'This document is ACTIVE in RAG search.', 'inactive_document': 'This document is INACTIVE and will be ignored by RAG search.', 'activate_document': '✅ Activate document', 'deactivate_document': '🚫 Deactivate document', 'reprocess_document': '### Reprocess document', 'select_reprocess_document': 'Select a document to reprocess', 'reprocess_selected': '🔄 Reprocess selected document', 'original_file_not_found': 'Original file not found', 'new_embedding_ready': 'New file ready for embeddings'}, 'ch': {'file_size': 'Größe', 'registered_documents': '### In Neon/PostgreSQL registrierte Dokumente', 'database_documents_error': 'Datenbankdokumente konnten nicht geladen werden', 'no_registered_documents': 'Noch keine Dokumente in Neon/PostgreSQL registriert.', 'registered_documents_total': 'Registrierte Dokumente insgesamt', 'total_chunks': 'Chunks insgesamt', 'processed': 'Verarbeitet', 'extensions': 'Erweiterungen', 'local_organisation': '### Lokale Organisation der RAG-Dateien', 'local_uploads': 'Lokale Uploads', 'chunk_files': 'Chunk-Dateien', 'embedding_ready_jsonl': 'Embedding-fähige JSONL', 'recent_local_files': 'Aktuelle lokale Dateien anzeigen', 'recent_files_caption': 'Es werden höchstens die 5 neuesten Dateien jedes Ordners angezeigt.', 'recent_uploads': '**Aktuelle Uploads**', 'recent_chunks': '**Aktuelle Chunks**', 'recent_jsonl': '**Aktuelle JSONL-Dateien**', 'archive_caption': 'Beim Archivieren werden alte Dateien nach data/knowledge_base/archive verschoben. Nichts wird dauerhaft gelöscht.', 'files_to_keep': 'Wie viele aktuelle Dateien sollen in jedem Ordner behalten werden?', 'archive_old_files': '🗂️ Alte lokale Dateien archivieren', 'document_status': '### Dokumentstatus in der RAG-Wissensbasis', 'select_status_document': 'Dokument zum Aktivieren oder Deaktivieren auswählen', 'active_document': 'Dieses Dokument ist in der RAG-Suche AKTIV.', 'inactive_document': 'Dieses Dokument ist INAKTIV und wird bei der RAG-Suche ignoriert.', 'activate_document': '✅ Dokument aktivieren', 'deactivate_document': '🚫 Dokument deaktivieren', 'reprocess_document': '### Dokument erneut verarbeiten', 'select_reprocess_document': 'Dokument zur erneuten Verarbeitung auswählen', 'reprocess_selected': '🔄 Ausgewähltes Dokument erneut verarbeiten', 'original_file_not_found': 'Originaldatei nicht gefunden', 'new_embedding_ready': 'Neue Datei bereit für Embeddings'}}
+
+for idioma, textos in UPLOAD_RAG_DOCUMENT_TEXTS.items():
+    UPLOAD_RAG_TEXTS.setdefault(idioma, {}).update(textos)
+
+
+UPLOAD_RAG_EMBEDDING_TEXTS = {'pt': {'embedding_summary': '### Resumo dos embeddings no pgvector', 'total_embeddings': 'Embeddings totais', 'active_embeddings': 'Embeddings ativos', 'inactive_embeddings': 'Embeddings inativos', 'documents_with_embeddings': 'Documentos com embeddings', 'active_documents': 'Documentos ativos', 'inactive_documents': 'Documentos inativos', 'summary_by_document': 'Ver resumo por documento', 'generate_embeddings': '### Gerar embeddings no pgvector', 'generate_embeddings_caption': 'Este botão lê o arquivo JSONL do documento selecionado, gera embeddings com Gemini e salva no Neon/PostgreSQL usando pgvector.', 'force_embedding_reprocessing': 'Forçar o reprocessamento dos embeddings, mesmo quando já existirem', 'generate_selected_embeddings': '🧠 Gerar embeddings do documento selecionado', 'missing_embedding_path': 'Este documento ainda não possui o caminho embedding_ready registrado.', 'existing_embeddings': 'Este documento já possui {total} embedding(s) no pgvector. Para gerar novamente, marque a opção de forçar o reprocessamento.', 'generating_embeddings': 'Gerando embeddings e salvando no pgvector...', 'pgvector_optimisation': '### Otimização do pgvector', 'pgvector_optimisation_caption': 'Cria índices no pgvector para acelerar buscas semânticas quando a base possuir muitos chunks.', 'create_index': '⚡ Criar ou validar índice pgvector', 'creating_index': 'Criando ou validando o índice pgvector no Neon/PostgreSQL...', 'semantic_search': '### Testar busca semântica no pgvector', 'search_question': 'Digite uma pergunta para buscar nos documentos vetorizados', 'chunk_quantity_mode': 'Modo de quantidade de chunks', 'automatic_mode': 'Automático pela INNA', 'manual_mode': 'Manual', 'automatic_quantity': 'Quantidade escolhida automaticamente pela INNA: {total} chunks', 'returned_chunks': 'Quantidade de chunks retornados', 'search_similar_chunks': '🔎 Buscar chunks mais semelhantes', 'searching_chunks': 'Gerando o embedding da pergunta e buscando no pgvector...', 'no_chunk_found': 'Nenhum chunk encontrado.', 'chunk': 'Chunk', 'category': 'Categoria', 'approx_similarity': 'Similaridade aproximada', 'general': 'geral', 'pgvector_distance': 'Distância pgvector', 'prioritised_categories': 'Categorias priorizadas', 'rag_score': 'Score RAG'}, 'en_us': {'embedding_summary': '### Embedding summary in pgvector', 'total_embeddings': 'Total embeddings', 'active_embeddings': 'Active embeddings', 'inactive_embeddings': 'Inactive embeddings', 'documents_with_embeddings': 'Documents with embeddings', 'active_documents': 'Active documents', 'inactive_documents': 'Inactive documents', 'summary_by_document': 'View summary by document', 'generate_embeddings': '### Generate embeddings in pgvector', 'generate_embeddings_caption': 'This button reads the selected document JSONL file, generates embeddings with Gemini and saves them to Neon/PostgreSQL using pgvector.', 'force_embedding_reprocessing': 'Force embedding reprocessing even when embeddings already exist', 'generate_selected_embeddings': '🧠 Generate embeddings for the selected document', 'missing_embedding_path': 'This document does not have a registered embedding_ready path yet.', 'existing_embeddings': 'This document already has {total} embedding(s) in pgvector. To generate them again, enable forced reprocessing.', 'generating_embeddings': 'Generating embeddings and saving them to pgvector...', 'pgvector_optimisation': '### pgvector optimisation', 'pgvector_optimisation_caption': 'Creates pgvector indexes to accelerate semantic searches when the knowledge base contains many chunks.', 'create_index': '⚡ Create or validate pgvector index', 'creating_index': 'Creating or validating the pgvector index in Neon/PostgreSQL...', 'semantic_search': '### Test semantic search in pgvector', 'search_question': 'Enter a question to search the vectorised documents', 'chunk_quantity_mode': 'Chunk quantity mode', 'automatic_mode': 'Automatic by INNA', 'manual_mode': 'Manual', 'automatic_quantity': 'Quantity automatically selected by INNA: {total} chunks', 'returned_chunks': 'Number of returned chunks', 'search_similar_chunks': '🔎 Search most similar chunks', 'searching_chunks': 'Generating the question embedding and searching pgvector...', 'no_chunk_found': 'No chunk was found.', 'chunk': 'Chunk', 'category': 'Category', 'approx_similarity': 'Approximate similarity', 'general': 'general', 'pgvector_distance': 'pgvector distance', 'prioritised_categories': 'Prioritised categories', 'rag_score': 'RAG score'}, 'es': {'embedding_summary': '### Resumen de embeddings en pgvector', 'total_embeddings': 'Embeddings totales', 'active_embeddings': 'Embeddings activos', 'inactive_embeddings': 'Embeddings inactivos', 'documents_with_embeddings': 'Documentos con embeddings', 'active_documents': 'Documentos activos', 'inactive_documents': 'Documentos inactivos', 'summary_by_document': 'Ver resumen por documento', 'generate_embeddings': '### Generar embeddings en pgvector', 'generate_embeddings_caption': 'Este botón lee el archivo JSONL del documento seleccionado, genera embeddings con Gemini y los guarda en Neon/PostgreSQL usando pgvector.', 'force_embedding_reprocessing': 'Forzar el reprocesamiento de los embeddings, aunque ya existan', 'generate_selected_embeddings': '🧠 Generar embeddings del documento seleccionado', 'missing_embedding_path': 'Este documento todavía no tiene registrado el camino embedding_ready.', 'existing_embeddings': 'Este documento ya posee {total} embedding(s) en pgvector. Para generarlos nuevamente, active el reprocesamiento.', 'generating_embeddings': 'Generando embeddings y guardándolos en pgvector...', 'pgvector_optimisation': '### Optimización de pgvector', 'pgvector_optimisation_caption': 'Crea índices en pgvector para acelerar búsquedas semánticas cuando la base contiene muchos chunks.', 'create_index': '⚡ Crear o validar índice pgvector', 'creating_index': 'Creando o validando el índice pgvector en Neon/PostgreSQL...', 'semantic_search': '### Probar búsqueda semántica en pgvector', 'search_question': 'Escriba una pregunta para buscar en los documentos vectorizados', 'chunk_quantity_mode': 'Modo de cantidad de chunks', 'automatic_mode': 'Automático por INNA', 'manual_mode': 'Manual', 'automatic_quantity': 'Cantidad elegida automáticamente por INNA: {total} chunks', 'returned_chunks': 'Cantidad de chunks devueltos', 'search_similar_chunks': '🔎 Buscar chunks más similares', 'searching_chunks': 'Generando el embedding de la pregunta y buscando en pgvector...', 'no_chunk_found': 'No se encontró ningún chunk.', 'chunk': 'Chunk', 'category': 'Categoría', 'approx_similarity': 'Similitud aproximada', 'general': 'general', 'pgvector_distance': 'Distancia pgvector', 'prioritised_categories': 'Categorías priorizadas', 'rag_score': 'Score RAG'}, 'fr': {'embedding_summary': '### Résumé des embeddings dans pgvector', 'total_embeddings': 'Total des embeddings', 'active_embeddings': 'Embeddings actifs', 'inactive_embeddings': 'Embeddings inactifs', 'documents_with_embeddings': 'Documents avec embeddings', 'active_documents': 'Documents actifs', 'inactive_documents': 'Documents inactifs', 'summary_by_document': 'Voir le résumé par document', 'generate_embeddings': '### Générer les embeddings dans pgvector', 'generate_embeddings_caption': 'Ce bouton lit le fichier JSONL du document sélectionné, génère des embeddings avec Gemini et les enregistre dans Neon/PostgreSQL avec pgvector.', 'force_embedding_reprocessing': 'Forcer le retraitement des embeddings même s’ils existent', 'generate_selected_embeddings': '🧠 Générer les embeddings du document sélectionné', 'missing_embedding_path': 'Ce document ne possède pas encore de chemin embedding_ready enregistré.', 'existing_embeddings': 'Ce document possède déjà {total} embedding(s) dans pgvector. Activez le retraitement forcé pour les générer à nouveau.', 'generating_embeddings': 'Génération et enregistrement des embeddings dans pgvector...', 'pgvector_optimisation': '### Optimisation de pgvector', 'pgvector_optimisation_caption': 'Crée des index pgvector pour accélérer les recherches sémantiques lorsque la base contient beaucoup de chunks.', 'create_index': '⚡ Créer ou valider l’index pgvector', 'creating_index': 'Création ou validation de l’index pgvector dans Neon/PostgreSQL...', 'semantic_search': '### Tester la recherche sémantique dans pgvector', 'search_question': 'Saisissez une question pour rechercher dans les documents vectorisés', 'chunk_quantity_mode': 'Mode de quantité de chunks', 'automatic_mode': 'Automatique par INNA', 'manual_mode': 'Manuel', 'automatic_quantity': 'Quantité choisie automatiquement par INNA : {total} chunks', 'returned_chunks': 'Nombre de chunks retournés', 'search_similar_chunks': '🔎 Rechercher les chunks les plus similaires', 'searching_chunks': 'Génération de l’embedding de la question et recherche dans pgvector...', 'no_chunk_found': 'Aucun chunk trouvé.', 'chunk': 'Chunk', 'category': 'Catégorie', 'approx_similarity': 'Similarité approximative', 'general': 'général', 'pgvector_distance': 'Distance pgvector', 'prioritised_categories': 'Catégories prioritaires', 'rag_score': 'Score RAG'}, 'de': {'embedding_summary': '### Embedding-Zusammenfassung in pgvector', 'total_embeddings': 'Embeddings insgesamt', 'active_embeddings': 'Aktive Embeddings', 'inactive_embeddings': 'Inaktive Embeddings', 'documents_with_embeddings': 'Dokumente mit Embeddings', 'active_documents': 'Aktive Dokumente', 'inactive_documents': 'Inaktive Dokumente', 'summary_by_document': 'Zusammenfassung je Dokument anzeigen', 'generate_embeddings': '### Embeddings in pgvector erzeugen', 'generate_embeddings_caption': 'Diese Schaltfläche liest die JSONL-Datei des ausgewählten Dokuments, erzeugt Embeddings mit Gemini und speichert sie mit pgvector in Neon/PostgreSQL.', 'force_embedding_reprocessing': 'Neuverarbeitung der Embeddings erzwingen, auch wenn sie bereits vorhanden sind', 'generate_selected_embeddings': '🧠 Embeddings für das ausgewählte Dokument erzeugen', 'missing_embedding_path': 'Für dieses Dokument ist noch kein embedding_ready-Pfad registriert.', 'existing_embeddings': 'Dieses Dokument besitzt bereits {total} Embedding(s) in pgvector. Aktivieren Sie die erzwungene Neuverarbeitung.', 'generating_embeddings': 'Embeddings werden erzeugt und in pgvector gespeichert...', 'pgvector_optimisation': '### pgvector-Optimierung', 'pgvector_optimisation_caption': 'Erstellt pgvector-Indizes, um semantische Suchen bei einer großen Anzahl von Chunks zu beschleunigen.', 'create_index': '⚡ pgvector-Index erstellen oder validieren', 'creating_index': 'pgvector-Index wird in Neon/PostgreSQL erstellt oder validiert...', 'semantic_search': '### Semantische Suche in pgvector testen', 'search_question': 'Geben Sie eine Frage ein, um in den vektorisierten Dokumenten zu suchen', 'chunk_quantity_mode': 'Modus der Chunk-Anzahl', 'automatic_mode': 'Automatisch durch INNA', 'manual_mode': 'Manuell', 'automatic_quantity': 'Von INNA automatisch gewählte Anzahl: {total} Chunks', 'returned_chunks': 'Anzahl zurückgegebener Chunks', 'search_similar_chunks': '🔎 Ähnlichste Chunks suchen', 'searching_chunks': 'Frage-Embedding wird erzeugt und pgvector durchsucht...', 'no_chunk_found': 'Kein Chunk gefunden.', 'chunk': 'Chunk', 'category': 'Kategorie', 'approx_similarity': 'Ungefähre Ähnlichkeit', 'general': 'allgemein', 'pgvector_distance': 'pgvector-Distanz', 'prioritised_categories': 'Priorisierte Kategorien', 'rag_score': 'RAG-Score'}, 'en_gb': {'embedding_summary': '### Embedding summary in pgvector', 'total_embeddings': 'Total embeddings', 'active_embeddings': 'Active embeddings', 'inactive_embeddings': 'Inactive embeddings', 'documents_with_embeddings': 'Documents with embeddings', 'active_documents': 'Active documents', 'inactive_documents': 'Inactive documents', 'summary_by_document': 'View summary by document', 'generate_embeddings': '### Generate embeddings in pgvector', 'generate_embeddings_caption': 'This button reads the selected document JSONL file, generates embeddings with Gemini and saves them to Neon/PostgreSQL using pgvector.', 'force_embedding_reprocessing': 'Force embedding reprocessing even when embeddings already exist', 'generate_selected_embeddings': '🧠 Generate embeddings for the selected document', 'missing_embedding_path': 'This document does not have a registered embedding_ready path yet.', 'existing_embeddings': 'This document already has {total} embedding(s) in pgvector. To generate them again, enable forced reprocessing.', 'generating_embeddings': 'Generating embeddings and saving them to pgvector...', 'pgvector_optimisation': '### pgvector optimisation', 'pgvector_optimisation_caption': 'Creates pgvector indexes to accelerate semantic searches when the knowledge base contains many chunks.', 'create_index': '⚡ Create or validate pgvector index', 'creating_index': 'Creating or validating the pgvector index in Neon/PostgreSQL...', 'semantic_search': '### Test semantic search in pgvector', 'search_question': 'Enter a question to search the vectorised documents', 'chunk_quantity_mode': 'Chunk quantity mode', 'automatic_mode': 'Automatic by INNA', 'manual_mode': 'Manual', 'automatic_quantity': 'Quantity automatically selected by INNA: {total} chunks', 'returned_chunks': 'Number of returned chunks', 'search_similar_chunks': '🔎 Search most similar chunks', 'searching_chunks': 'Generating the question embedding and searching pgvector...', 'no_chunk_found': 'No chunk was found.', 'chunk': 'Chunk', 'category': 'Category', 'approx_similarity': 'Approximate similarity', 'general': 'general', 'pgvector_distance': 'pgvector distance', 'prioritised_categories': 'Prioritised categories', 'rag_score': 'RAG score'}, 'it': {'embedding_summary': '### Embedding summary in pgvector', 'total_embeddings': 'Total embeddings', 'active_embeddings': 'Active embeddings', 'inactive_embeddings': 'Inactive embeddings', 'documents_with_embeddings': 'Documents with embeddings', 'active_documents': 'Active documents', 'inactive_documents': 'Inactive documents', 'summary_by_document': 'View summary by document', 'generate_embeddings': '### Generate embeddings in pgvector', 'generate_embeddings_caption': 'This button reads the selected document JSONL file, generates embeddings with Gemini and saves them to Neon/PostgreSQL using pgvector.', 'force_embedding_reprocessing': 'Force embedding reprocessing even when embeddings already exist', 'generate_selected_embeddings': '🧠 Generate embeddings for the selected document', 'missing_embedding_path': 'This document does not have a registered embedding_ready path yet.', 'existing_embeddings': 'This document already has {total} embedding(s) in pgvector. To generate them again, enable forced reprocessing.', 'generating_embeddings': 'Generating embeddings and saving them to pgvector...', 'pgvector_optimisation': '### pgvector optimisation', 'pgvector_optimisation_caption': 'Creates pgvector indexes to accelerate semantic searches when the knowledge base contains many chunks.', 'create_index': '⚡ Create or validate pgvector index', 'creating_index': 'Creating or validating the pgvector index in Neon/PostgreSQL...', 'semantic_search': '### Test semantic search in pgvector', 'search_question': 'Enter a question to search the vectorised documents', 'chunk_quantity_mode': 'Chunk quantity mode', 'automatic_mode': 'Automatic by INNA', 'manual_mode': 'Manual', 'automatic_quantity': 'Quantity automatically selected by INNA: {total} chunks', 'returned_chunks': 'Number of returned chunks', 'search_similar_chunks': '🔎 Search most similar chunks', 'searching_chunks': 'Generating the question embedding and searching pgvector...', 'no_chunk_found': 'No chunk was found.', 'chunk': 'Chunk', 'category': 'Category', 'approx_similarity': 'Approximate similarity', 'general': 'general', 'pgvector_distance': 'pgvector distance', 'prioritised_categories': 'Prioritised categories', 'rag_score': 'RAG score'}, 'ro': {'embedding_summary': '### Embedding summary in pgvector', 'total_embeddings': 'Total embeddings', 'active_embeddings': 'Active embeddings', 'inactive_embeddings': 'Inactive embeddings', 'documents_with_embeddings': 'Documents with embeddings', 'active_documents': 'Active documents', 'inactive_documents': 'Inactive documents', 'summary_by_document': 'View summary by document', 'generate_embeddings': '### Generate embeddings in pgvector', 'generate_embeddings_caption': 'This button reads the selected document JSONL file, generates embeddings with Gemini and saves them to Neon/PostgreSQL using pgvector.', 'force_embedding_reprocessing': 'Force embedding reprocessing even when embeddings already exist', 'generate_selected_embeddings': '🧠 Generate embeddings for the selected document', 'missing_embedding_path': 'This document does not have a registered embedding_ready path yet.', 'existing_embeddings': 'This document already has {total} embedding(s) in pgvector. To generate them again, enable forced reprocessing.', 'generating_embeddings': 'Generating embeddings and saving them to pgvector...', 'pgvector_optimisation': '### pgvector optimisation', 'pgvector_optimisation_caption': 'Creates pgvector indexes to accelerate semantic searches when the knowledge base contains many chunks.', 'create_index': '⚡ Create or validate pgvector index', 'creating_index': 'Creating or validating the pgvector index in Neon/PostgreSQL...', 'semantic_search': '### Test semantic search in pgvector', 'search_question': 'Enter a question to search the vectorised documents', 'chunk_quantity_mode': 'Chunk quantity mode', 'automatic_mode': 'Automatic by INNA', 'manual_mode': 'Manual', 'automatic_quantity': 'Quantity automatically selected by INNA: {total} chunks', 'returned_chunks': 'Number of returned chunks', 'search_similar_chunks': '🔎 Search most similar chunks', 'searching_chunks': 'Generating the question embedding and searching pgvector...', 'no_chunk_found': 'No chunk was found.', 'chunk': 'Chunk', 'category': 'Category', 'approx_similarity': 'Approximate similarity', 'general': 'general', 'pgvector_distance': 'pgvector distance', 'prioritised_categories': 'Prioritised categories', 'rag_score': 'RAG score'}, 'ua': {'embedding_summary': '### Embedding summary in pgvector', 'total_embeddings': 'Total embeddings', 'active_embeddings': 'Active embeddings', 'inactive_embeddings': 'Inactive embeddings', 'documents_with_embeddings': 'Documents with embeddings', 'active_documents': 'Active documents', 'inactive_documents': 'Inactive documents', 'summary_by_document': 'View summary by document', 'generate_embeddings': '### Generate embeddings in pgvector', 'generate_embeddings_caption': 'This button reads the selected document JSONL file, generates embeddings with Gemini and saves them to Neon/PostgreSQL using pgvector.', 'force_embedding_reprocessing': 'Force embedding reprocessing even when embeddings already exist', 'generate_selected_embeddings': '🧠 Generate embeddings for the selected document', 'missing_embedding_path': 'This document does not have a registered embedding_ready path yet.', 'existing_embeddings': 'This document already has {total} embedding(s) in pgvector. To generate them again, enable forced reprocessing.', 'generating_embeddings': 'Generating embeddings and saving them to pgvector...', 'pgvector_optimisation': '### pgvector optimisation', 'pgvector_optimisation_caption': 'Creates pgvector indexes to accelerate semantic searches when the knowledge base contains many chunks.', 'create_index': '⚡ Create or validate pgvector index', 'creating_index': 'Creating or validating the pgvector index in Neon/PostgreSQL...', 'semantic_search': '### Test semantic search in pgvector', 'search_question': 'Enter a question to search the vectorised documents', 'chunk_quantity_mode': 'Chunk quantity mode', 'automatic_mode': 'Automatic by INNA', 'manual_mode': 'Manual', 'automatic_quantity': 'Quantity automatically selected by INNA: {total} chunks', 'returned_chunks': 'Number of returned chunks', 'search_similar_chunks': '🔎 Search most similar chunks', 'searching_chunks': 'Generating the question embedding and searching pgvector...', 'no_chunk_found': 'No chunk was found.', 'chunk': 'Chunk', 'category': 'Category', 'approx_similarity': 'Approximate similarity', 'general': 'general', 'pgvector_distance': 'pgvector distance', 'prioritised_categories': 'Prioritised categories', 'rag_score': 'RAG score'}, 'ru': {'embedding_summary': '### Embedding summary in pgvector', 'total_embeddings': 'Total embeddings', 'active_embeddings': 'Active embeddings', 'inactive_embeddings': 'Inactive embeddings', 'documents_with_embeddings': 'Documents with embeddings', 'active_documents': 'Active documents', 'inactive_documents': 'Inactive documents', 'summary_by_document': 'View summary by document', 'generate_embeddings': '### Generate embeddings in pgvector', 'generate_embeddings_caption': 'This button reads the selected document JSONL file, generates embeddings with Gemini and saves them to Neon/PostgreSQL using pgvector.', 'force_embedding_reprocessing': 'Force embedding reprocessing even when embeddings already exist', 'generate_selected_embeddings': '🧠 Generate embeddings for the selected document', 'missing_embedding_path': 'This document does not have a registered embedding_ready path yet.', 'existing_embeddings': 'This document already has {total} embedding(s) in pgvector. To generate them again, enable forced reprocessing.', 'generating_embeddings': 'Generating embeddings and saving them to pgvector...', 'pgvector_optimisation': '### pgvector optimisation', 'pgvector_optimisation_caption': 'Creates pgvector indexes to accelerate semantic searches when the knowledge base contains many chunks.', 'create_index': '⚡ Create or validate pgvector index', 'creating_index': 'Creating or validating the pgvector index in Neon/PostgreSQL...', 'semantic_search': '### Test semantic search in pgvector', 'search_question': 'Enter a question to search the vectorised documents', 'chunk_quantity_mode': 'Chunk quantity mode', 'automatic_mode': 'Automatic by INNA', 'manual_mode': 'Manual', 'automatic_quantity': 'Quantity automatically selected by INNA: {total} chunks', 'returned_chunks': 'Number of returned chunks', 'search_similar_chunks': '🔎 Search most similar chunks', 'searching_chunks': 'Generating the question embedding and searching pgvector...', 'no_chunk_found': 'No chunk was found.', 'chunk': 'Chunk', 'category': 'Category', 'approx_similarity': 'Approximate similarity', 'general': 'general', 'pgvector_distance': 'pgvector distance', 'prioritised_categories': 'Prioritised categories', 'rag_score': 'RAG score'}, 'sa': {'embedding_summary': '### Embedding summary in pgvector', 'total_embeddings': 'Total embeddings', 'active_embeddings': 'Active embeddings', 'inactive_embeddings': 'Inactive embeddings', 'documents_with_embeddings': 'Documents with embeddings', 'active_documents': 'Active documents', 'inactive_documents': 'Inactive documents', 'summary_by_document': 'View summary by document', 'generate_embeddings': '### Generate embeddings in pgvector', 'generate_embeddings_caption': 'This button reads the selected document JSONL file, generates embeddings with Gemini and saves them to Neon/PostgreSQL using pgvector.', 'force_embedding_reprocessing': 'Force embedding reprocessing even when embeddings already exist', 'generate_selected_embeddings': '🧠 Generate embeddings for the selected document', 'missing_embedding_path': 'This document does not have a registered embedding_ready path yet.', 'existing_embeddings': 'This document already has {total} embedding(s) in pgvector. To generate them again, enable forced reprocessing.', 'generating_embeddings': 'Generating embeddings and saving them to pgvector...', 'pgvector_optimisation': '### pgvector optimisation', 'pgvector_optimisation_caption': 'Creates pgvector indexes to accelerate semantic searches when the knowledge base contains many chunks.', 'create_index': '⚡ Create or validate pgvector index', 'creating_index': 'Creating or validating the pgvector index in Neon/PostgreSQL...', 'semantic_search': '### Test semantic search in pgvector', 'search_question': 'Enter a question to search the vectorised documents', 'chunk_quantity_mode': 'Chunk quantity mode', 'automatic_mode': 'Automatic by INNA', 'manual_mode': 'Manual', 'automatic_quantity': 'Quantity automatically selected by INNA: {total} chunks', 'returned_chunks': 'Number of returned chunks', 'search_similar_chunks': '🔎 Search most similar chunks', 'searching_chunks': 'Generating the question embedding and searching pgvector...', 'no_chunk_found': 'No chunk was found.', 'chunk': 'Chunk', 'category': 'Category', 'approx_similarity': 'Approximate similarity', 'general': 'general', 'pgvector_distance': 'pgvector distance', 'prioritised_categories': 'Prioritised categories', 'rag_score': 'RAG score'}, 'ch': {'embedding_summary': '### Embedding-Zusammenfassung in pgvector', 'total_embeddings': 'Embeddings insgesamt', 'active_embeddings': 'Aktive Embeddings', 'inactive_embeddings': 'Inaktive Embeddings', 'documents_with_embeddings': 'Dokumente mit Embeddings', 'active_documents': 'Aktive Dokumente', 'inactive_documents': 'Inaktive Dokumente', 'summary_by_document': 'Zusammenfassung je Dokument anzeigen', 'generate_embeddings': '### Embeddings in pgvector erzeugen', 'generate_embeddings_caption': 'Diese Schaltfläche liest die JSONL-Datei des ausgewählten Dokuments, erzeugt Embeddings mit Gemini und speichert sie mit pgvector in Neon/PostgreSQL.', 'force_embedding_reprocessing': 'Neuverarbeitung der Embeddings erzwingen, auch wenn sie bereits vorhanden sind', 'generate_selected_embeddings': '🧠 Embeddings für das ausgewählte Dokument erzeugen', 'missing_embedding_path': 'Für dieses Dokument ist noch kein embedding_ready-Pfad registriert.', 'existing_embeddings': 'Dieses Dokument besitzt bereits {total} Embedding(s) in pgvector. Aktivieren Sie die erzwungene Neuverarbeitung.', 'generating_embeddings': 'Embeddings werden erzeugt und in pgvector gespeichert...', 'pgvector_optimisation': '### pgvector-Optimierung', 'pgvector_optimisation_caption': 'Erstellt pgvector-Indizes, um semantische Suchen bei einer großen Anzahl von Chunks zu beschleunigen.', 'create_index': '⚡ pgvector-Index erstellen oder validieren', 'creating_index': 'pgvector-Index wird in Neon/PostgreSQL erstellt oder validiert...', 'semantic_search': '### Semantische Suche in pgvector testen', 'search_question': 'Geben Sie eine Frage ein, um in den vektorisierten Dokumenten zu suchen', 'chunk_quantity_mode': 'Modus der Chunk-Anzahl', 'automatic_mode': 'Automatisch durch INNA', 'manual_mode': 'Manuell', 'automatic_quantity': 'Von INNA automatisch gewählte Anzahl: {total} Chunks', 'returned_chunks': 'Anzahl zurückgegebener Chunks', 'search_similar_chunks': '🔎 Ähnlichste Chunks suchen', 'searching_chunks': 'Frage-Embedding wird erzeugt und pgvector durchsucht...', 'no_chunk_found': 'Kein Chunk gefunden.', 'chunk': 'Chunk', 'category': 'Kategorie', 'approx_similarity': 'Ungefähre Ähnlichkeit', 'general': 'allgemein', 'pgvector_distance': 'pgvector-Distanz', 'prioritised_categories': 'Priorisierte Kategorien', 'rag_score': 'RAG-Score'}}
+
+for idioma, textos in UPLOAD_RAG_EMBEDDING_TEXTS.items():
+    UPLOAD_RAG_TEXTS.setdefault(idioma, {}).update(textos)
+
+
+UPLOAD_RAG_FINAL_RESPONSE_TEXTS = {'pt': {'final_rag_response': '### Gerar resposta final da INNA com RAG', 'rag_user_id': 'Identificação do usuário para memória', 'rag_question': 'Pergunta para a INNA responder usando memória e documentos vetorizados', 'automatic_response_chunks': 'Usar quantidade automática de chunks na resposta', 'automatic_response_limit': 'A INNA usará automaticamente {total} chunks como limite.', 'response_context_chunks': 'Quantidade de chunks para o contexto da resposta', 'generate_final_response': '🤖 Gerar resposta final com RAG', 'generating_final_response': 'Buscando contexto no pgvector e gerando a resposta final da INNA...', 'inna_final_response': '#### 🤖 Resposta final da INNA'}, 'en_us': {'final_rag_response': "### Generate INNA's final response with RAG", 'rag_user_id': 'User identifier for memory', 'rag_question': 'Question for INNA to answer using memory and vectorised documents', 'automatic_response_chunks': 'Use an automatic number of chunks in the response', 'automatic_response_limit': 'INNA will automatically use {total} chunks as the limit.', 'response_context_chunks': 'Number of chunks for the response context', 'generate_final_response': '🤖 Generate final response with RAG', 'generating_final_response': "Searching pgvector for context and generating INNA's final response...", 'inna_final_response': '#### 🤖 INNA final response'}, 'es': {'final_rag_response': '### Generar la respuesta final de INNA con RAG', 'rag_user_id': 'Identificación del usuario para la memoria', 'rag_question': 'Pregunta para que INNA responda usando memoria y documentos vectorizados', 'automatic_response_chunks': 'Usar una cantidad automática de chunks en la respuesta', 'automatic_response_limit': 'INNA utilizará automáticamente {total} chunks como límite.', 'response_context_chunks': 'Cantidad de chunks para el contexto de la respuesta', 'generate_final_response': '🤖 Generar respuesta final con RAG', 'generating_final_response': 'Buscando contexto en pgvector y generando la respuesta final de INNA...', 'inna_final_response': '#### 🤖 Respuesta final de INNA'}, 'fr': {'final_rag_response': '### Générer la réponse finale d’INNA avec RAG', 'rag_user_id': 'Identifiant utilisateur pour la mémoire', 'rag_question': 'Question à laquelle INNA doit répondre avec la mémoire et les documents vectorisés', 'automatic_response_chunks': 'Utiliser un nombre automatique de chunks dans la réponse', 'automatic_response_limit': 'INNA utilisera automatiquement {total} chunks comme limite.', 'response_context_chunks': 'Nombre de chunks pour le contexte de la réponse', 'generate_final_response': '🤖 Générer la réponse finale avec RAG', 'generating_final_response': 'Recherche du contexte dans pgvector et génération de la réponse finale d’INNA...', 'inna_final_response': '#### 🤖 Réponse finale d’INNA'}, 'de': {'final_rag_response': '### INNAs endgültige Antwort mit RAG erzeugen', 'rag_user_id': 'Benutzerkennung für den Speicher', 'rag_question': 'Frage, die INNA mit Speicher und vektorisierten Dokumenten beantworten soll', 'automatic_response_chunks': 'Automatische Chunk-Anzahl für die Antwort verwenden', 'automatic_response_limit': 'INNA verwendet automatisch {total} Chunks als Grenze.', 'response_context_chunks': 'Anzahl der Chunks für den Antwortkontext', 'generate_final_response': '🤖 Endgültige Antwort mit RAG erzeugen', 'generating_final_response': 'Kontext wird in pgvector gesucht und INNAs endgültige Antwort wird erzeugt...', 'inna_final_response': '#### 🤖 Endgültige Antwort von INNA'}, 'en_gb': {'final_rag_response': "### Generate INNA's final response with RAG", 'rag_user_id': 'User identifier for memory', 'rag_question': 'Question for INNA to answer using memory and vectorised documents', 'automatic_response_chunks': 'Use an automatic number of chunks in the response', 'automatic_response_limit': 'INNA will automatically use {total} chunks as the limit.', 'response_context_chunks': 'Number of chunks for the response context', 'generate_final_response': '🤖 Generate final response with RAG', 'generating_final_response': "Searching pgvector for context and generating INNA's final response...", 'inna_final_response': '#### 🤖 INNA final response'}, 'it': {'final_rag_response': "### Generate INNA's final response with RAG", 'rag_user_id': 'User identifier for memory', 'rag_question': 'Question for INNA to answer using memory and vectorised documents', 'automatic_response_chunks': 'Use an automatic number of chunks in the response', 'automatic_response_limit': 'INNA will automatically use {total} chunks as the limit.', 'response_context_chunks': 'Number of chunks for the response context', 'generate_final_response': '🤖 Generate final response with RAG', 'generating_final_response': "Searching pgvector for context and generating INNA's final response...", 'inna_final_response': '#### 🤖 INNA final response'}, 'ro': {'final_rag_response': "### Generate INNA's final response with RAG", 'rag_user_id': 'User identifier for memory', 'rag_question': 'Question for INNA to answer using memory and vectorised documents', 'automatic_response_chunks': 'Use an automatic number of chunks in the response', 'automatic_response_limit': 'INNA will automatically use {total} chunks as the limit.', 'response_context_chunks': 'Number of chunks for the response context', 'generate_final_response': '🤖 Generate final response with RAG', 'generating_final_response': "Searching pgvector for context and generating INNA's final response...", 'inna_final_response': '#### 🤖 INNA final response'}, 'ua': {'final_rag_response': "### Generate INNA's final response with RAG", 'rag_user_id': 'User identifier for memory', 'rag_question': 'Question for INNA to answer using memory and vectorised documents', 'automatic_response_chunks': 'Use an automatic number of chunks in the response', 'automatic_response_limit': 'INNA will automatically use {total} chunks as the limit.', 'response_context_chunks': 'Number of chunks for the response context', 'generate_final_response': '🤖 Generate final response with RAG', 'generating_final_response': "Searching pgvector for context and generating INNA's final response...", 'inna_final_response': '#### 🤖 INNA final response'}, 'ru': {'final_rag_response': "### Generate INNA's final response with RAG", 'rag_user_id': 'User identifier for memory', 'rag_question': 'Question for INNA to answer using memory and vectorised documents', 'automatic_response_chunks': 'Use an automatic number of chunks in the response', 'automatic_response_limit': 'INNA will automatically use {total} chunks as the limit.', 'response_context_chunks': 'Number of chunks for the response context', 'generate_final_response': '🤖 Generate final response with RAG', 'generating_final_response': "Searching pgvector for context and generating INNA's final response...", 'inna_final_response': '#### 🤖 INNA final response'}, 'sa': {'final_rag_response': "### Generate INNA's final response with RAG", 'rag_user_id': 'User identifier for memory', 'rag_question': 'Question for INNA to answer using memory and vectorised documents', 'automatic_response_chunks': 'Use an automatic number of chunks in the response', 'automatic_response_limit': 'INNA will automatically use {total} chunks as the limit.', 'response_context_chunks': 'Number of chunks for the response context', 'generate_final_response': '🤖 Generate final response with RAG', 'generating_final_response': "Searching pgvector for context and generating INNA's final response...", 'inna_final_response': '#### 🤖 INNA final response'}, 'ch': {'final_rag_response': '### INNAs endgültige Antwort mit RAG erzeugen', 'rag_user_id': 'Benutzerkennung für den Speicher', 'rag_question': 'Frage, die INNA mit Speicher und vektorisierten Dokumenten beantworten soll', 'automatic_response_chunks': 'Automatische Chunk-Anzahl für die Antwort verwenden', 'automatic_response_limit': 'INNA verwendet automatisch {total} Chunks als Grenze.', 'response_context_chunks': 'Anzahl der Chunks für den Antwortkontext', 'generate_final_response': '🤖 Endgültige Antwort mit RAG erzeugen', 'generating_final_response': 'Kontext wird in pgvector gesucht und INNAs endgültige Antwort wird erzeugt...', 'inna_final_response': '#### 🤖 Endgültige Antwort von INNA'}}
+
+for idioma, textos in UPLOAD_RAG_FINAL_RESPONSE_TEXTS.items():
+    UPLOAD_RAG_TEXTS.setdefault(idioma, {}).update(textos)
+
+# UPLOAD_RAG_NATIVE_SA_TEXTS
+
+UPLOAD_RAG_NATIVE_SA_TEXTS = {
+    "documents": {
+        "file_size": "الحجم",
+        "registered_documents": (
+            "### المستندات المسجلة في Neon/PostgreSQL"
+        ),
+        "database_documents_error": (
+            "تعذر تحميل المستندات من قاعدة البيانات"
+        ),
+        "no_registered_documents": (
+            "لا توجد مستندات مسجلة بعد "
+            "في Neon/PostgreSQL."
+        ),
+        "registered_documents_total": (
+            "إجمالي المستندات المسجلة"
+        ),
+        "total_chunks": "إجمالي المقاطع",
+        "processed": "تمت المعالجة",
+        "extensions": "الامتدادات",
+        "local_organisation": (
+            "### التنظيم المحلي لملفات RAG"
+        ),
+        "local_uploads": "الملفات المرفوعة محلياً",
+        "chunk_files": "ملفات المقاطع",
+        "embedding_ready_jsonl": (
+            "ملفات JSONL الجاهزة للتضمينات"
+        ),
+        "recent_local_files": (
+            "عرض الملفات المحلية الحديثة"
+        ),
+        "recent_files_caption": (
+            "يتم عرض أحدث 5 ملفات كحد أقصى "
+            "من كل مجلد."
+        ),
+        "recent_uploads": "**الملفات المرفوعة حديثاً**",
+        "recent_chunks": "**المقاطع الحديثة**",
+        "recent_jsonl": "**ملفات JSONL الحديثة**",
+        "archive_caption": (
+            "تنقل الأرشفة الملفات القديمة إلى "
+            "data/knowledge_base/archive. "
+            "ولا يتم حذف أي ملف نهائياً."
+        ),
+        "files_to_keep": (
+            "كم عدد الملفات الحديثة التي يجب الاحتفاظ "
+            "بها في كل مجلد؟"
+        ),
+        "archive_old_files": (
+            "🗂️ أرشفة الملفات المحلية القديمة"
+        ),
+        "document_status": (
+            "### حالة المستند في قاعدة معرفة RAG"
+        ),
+        "select_status_document": (
+            "اختر مستنداً لتفعيله أو تعطيله"
+        ),
+        "active_document": (
+            "هذا المستند نشط في بحث RAG."
+        ),
+        "inactive_document": (
+            "هذا المستند غير نشط وسيتم تجاهله "
+            "في بحث RAG."
+        ),
+        "activate_document": "✅ تفعيل المستند",
+        "deactivate_document": "🚫 تعطيل المستند",
+        "reprocess_document": (
+            "### إعادة معالجة المستند"
+        ),
+        "select_reprocess_document": (
+            "اختر مستنداً لإعادة معالجته"
+        ),
+        "reprocess_selected": (
+            "🔄 إعادة معالجة المستند المحدد"
+        ),
+        "original_file_not_found": (
+            "لم يتم العثور على الملف الأصلي"
+        ),
+        "new_embedding_ready": (
+            "ملف جديد جاهز للتضمينات"
+        ),
+    },
+    "embeddings": {
+        "embedding_summary": (
+            "### ملخص التضمينات في pgvector"
+        ),
+        "total_embeddings": "إجمالي التضمينات",
+        "active_embeddings": "التضمينات النشطة",
+        "inactive_embeddings": "التضمينات غير النشطة",
+        "documents_with_embeddings": (
+            "المستندات التي تحتوي على تضمينات"
+        ),
+        "active_documents": "المستندات النشطة",
+        "inactive_documents": "المستندات غير النشطة",
+        "summary_by_document": (
+            "عرض الملخص حسب المستند"
+        ),
+        "generate_embeddings": (
+            "### إنشاء التضمينات في pgvector"
+        ),
+        "generate_embeddings_caption": (
+            "يقرأ هذا الزر ملف JSONL للمستند المحدد، "
+            "وينشئ التضمينات باستخدام Gemini، "
+            "ثم يحفظها في Neon/PostgreSQL "
+            "باستخدام pgvector."
+        ),
+        "force_embedding_reprocessing": (
+            "فرض إعادة إنشاء التضمينات "
+            "حتى لو كانت موجودة مسبقاً"
+        ),
+        "generate_selected_embeddings": (
+            "🧠 إنشاء تضمينات المستند المحدد"
+        ),
+        "missing_embedding_path": (
+            "لا يحتوي هذا المستند بعد على مسار "
+            "embedding_ready مسجل."
+        ),
+        "existing_embeddings": (
+            "يحتوي هذا المستند بالفعل على {total} "
+            "تضمين في pgvector. ولإنشائها مرة أخرى، "
+            "فعّل إعادة المعالجة الإجبارية."
+        ),
+        "generating_embeddings": (
+            "جارٍ إنشاء التضمينات وحفظها "
+            "في pgvector..."
+        ),
+        "pgvector_optimisation": (
+            "### تحسين pgvector"
+        ),
+        "pgvector_optimisation_caption": (
+            "ينشئ فهارس pgvector لتسريع البحث الدلالي "
+            "عندما تحتوي القاعدة على عدد كبير من المقاطع."
+        ),
+        "create_index": (
+            "⚡ إنشاء فهرس pgvector أو التحقق منه"
+        ),
+        "creating_index": (
+            "جارٍ إنشاء فهرس pgvector أو التحقق منه "
+            "في Neon/PostgreSQL..."
+        ),
+        "semantic_search": (
+            "### اختبار البحث الدلالي في pgvector"
+        ),
+        "search_question": (
+            "أدخل سؤالاً للبحث في المستندات المتجهة"
+        ),
+        "chunk_quantity_mode": (
+            "وضع تحديد عدد المقاطع"
+        ),
+        "automatic_mode": "تلقائي بواسطة INNA",
+        "manual_mode": "يدوي",
+        "automatic_quantity": (
+            "اختارت INNA تلقائياً {total} مقطعاً"
+        ),
+        "returned_chunks": (
+            "عدد المقاطع المعادة"
+        ),
+        "search_similar_chunks": (
+            "🔎 البحث عن أكثر المقاطع تشابهاً"
+        ),
+        "searching_chunks": (
+            "جارٍ إنشاء تضمين السؤال "
+            "والبحث في pgvector..."
+        ),
+        "no_chunk_found": (
+            "لم يتم العثور على أي مقطع."
+        ),
+        "chunk": "المقطع",
+        "category": "الفئة",
+        "approx_similarity": (
+            "التشابه التقريبي"
+        ),
+        "general": "عام",
+        "pgvector_distance": "مسافة pgvector",
+        "prioritised_categories": (
+            "الفئات ذات الأولوية"
+        ),
+        "rag_score": "درجة RAG",
+    },
+    "final_response": {
+        "final_rag_response": (
+            "### إنشاء الإجابة النهائية لـ INNA باستخدام RAG"
+        ),
+        "rag_user_id": (
+            "معرّف المستخدم للذاكرة"
+        ),
+        "rag_question": (
+            "السؤال الذي يجب على INNA الإجابة عنه "
+            "باستخدام الذاكرة والمستندات المتجهة"
+        ),
+        "automatic_response_chunks": (
+            "استخدام عدد تلقائي من المقاطع "
+            "في الإجابة"
+        ),
+        "automatic_response_limit": (
+            "ستستخدم INNA تلقائياً {total} مقطعاً "
+            "كحد أقصى."
+        ),
+        "response_context_chunks": (
+            "عدد المقاطع في سياق الإجابة"
+        ),
+        "generate_final_response": (
+            "🤖 إنشاء الإجابة النهائية باستخدام RAG"
+        ),
+        "generating_final_response": (
+            "جارٍ البحث عن السياق في pgvector "
+            "وإنشاء الإجابة النهائية لـ INNA..."
+        ),
+        "inna_final_response": (
+            "#### 🤖 الإجابة النهائية لـ INNA"
+        ),
+    },
+}
+
+UPLOAD_RAG_DOCUMENT_TEXTS["sa"].update(
+    UPLOAD_RAG_NATIVE_SA_TEXTS["documents"]
+)
+
+UPLOAD_RAG_EMBEDDING_TEXTS["sa"].update(
+    UPLOAD_RAG_NATIVE_SA_TEXTS["embeddings"]
+)
+
+UPLOAD_RAG_FINAL_RESPONSE_TEXTS["sa"].update(
+    UPLOAD_RAG_NATIVE_SA_TEXTS["final_response"]
+)
+
+UPLOAD_RAG_TEXTS.setdefault(
+    "sa",
+    {},
+).update(
+    UPLOAD_RAG_NATIVE_SA_TEXTS["documents"]
+)
+
+UPLOAD_RAG_TEXTS["sa"].update(
+    UPLOAD_RAG_NATIVE_SA_TEXTS["embeddings"]
+)
+
+UPLOAD_RAG_TEXTS["sa"].update(
+    UPLOAD_RAG_NATIVE_SA_TEXTS["final_response"]
+)
+
+# UPLOAD_RAG_NATIVE_RO_TEXTS
+
+UPLOAD_RAG_NATIVE_RO_TEXTS = {
+    "documents": {
+        "file_size": "Dimensiune",
+        "registered_documents": (
+            "### Documente înregistrate în Neon/PostgreSQL"
+        ),
+        "database_documents_error": (
+            "Documentele din baza de date "
+            "nu au putut fi încărcate"
+        ),
+        "no_registered_documents": (
+            "Nu există încă documente înregistrate "
+            "în Neon/PostgreSQL."
+        ),
+        "registered_documents_total": (
+            "Total documente înregistrate"
+        ),
+        "total_chunks": "Total fragmente",
+        "processed": "Procesate",
+        "extensions": "Extensii",
+        "local_organisation": (
+            "### Organizarea locală a fișierelor RAG"
+        ),
+        "local_uploads": "Încărcări locale",
+        "chunk_files": "Fișiere cu fragmente",
+        "embedding_ready_jsonl": (
+            "Fișiere JSONL pregătite pentru embeddinguri"
+        ),
+        "recent_local_files": (
+            "Afișează fișierele locale recente"
+        ),
+        "recent_files_caption": (
+            "Sunt afișate cel mult cele mai recente "
+            "5 fișiere din fiecare dosar."
+        ),
+        "recent_uploads": "**Încărcări recente**",
+        "recent_chunks": "**Fragmente recente**",
+        "recent_jsonl": "**Fișiere JSONL recente**",
+        "archive_caption": (
+            "Arhivarea mută fișierele vechi în "
+            "data/knowledge_base/archive. "
+            "Nimic nu este șters definitiv."
+        ),
+        "files_to_keep": (
+            "Câte fișiere recente trebuie păstrate "
+            "în fiecare dosar?"
+        ),
+        "archive_old_files": (
+            "🗂️ Arhivează fișierele locale vechi"
+        ),
+        "document_status": (
+            "### Starea documentului în baza de cunoștințe RAG"
+        ),
+        "select_status_document": (
+            "Selectează un document pentru activare "
+            "sau dezactivare"
+        ),
+        "active_document": (
+            "Acest document este ACTIV în căutarea RAG."
+        ),
+        "inactive_document": (
+            "Acest document este INACTIV și va fi ignorat "
+            "în căutarea RAG."
+        ),
+        "activate_document": "✅ Activează documentul",
+        "deactivate_document": "🚫 Dezactivează documentul",
+        "reprocess_document": (
+            "### Reprocesează documentul"
+        ),
+        "select_reprocess_document": (
+            "Selectează un document pentru reprocesare"
+        ),
+        "reprocess_selected": (
+            "🔄 Reprocesează documentul selectat"
+        ),
+        "original_file_not_found": (
+            "Fișierul original nu a fost găsit"
+        ),
+        "new_embedding_ready": (
+            "Fișier nou pregătit pentru embeddinguri"
+        ),
+    },
+    "embeddings": {
+        "embedding_summary": (
+            "### Rezumatul embeddingurilor din pgvector"
+        ),
+        "total_embeddings": "Total embeddinguri",
+        "active_embeddings": "Embeddinguri active",
+        "inactive_embeddings": "Embeddinguri inactive",
+        "documents_with_embeddings": (
+            "Documente cu embeddinguri"
+        ),
+        "active_documents": "Documente active",
+        "inactive_documents": "Documente inactive",
+        "summary_by_document": (
+            "Afișează rezumatul pe document"
+        ),
+        "generate_embeddings": (
+            "### Generează embeddinguri în pgvector"
+        ),
+        "generate_embeddings_caption": (
+            "Acest buton citește fișierul JSONL al "
+            "documentului selectat, generează embeddinguri "
+            "cu Gemini și le salvează în Neon/PostgreSQL "
+            "folosind pgvector."
+        ),
+        "force_embedding_reprocessing": (
+            "Forțează regenerarea embeddingurilor "
+            "chiar dacă acestea există deja"
+        ),
+        "generate_selected_embeddings": (
+            "🧠 Generează embeddingurile documentului selectat"
+        ),
+        "missing_embedding_path": (
+            "Acest document nu are încă înregistrată "
+            "calea embedding_ready."
+        ),
+        "existing_embeddings": (
+            "Acest document are deja {total} embedding(uri) "
+            "în pgvector. Pentru a le genera din nou, "
+            "activează reprocesarea forțată."
+        ),
+        "generating_embeddings": (
+            "Se generează embeddingurile și se salvează "
+            "în pgvector..."
+        ),
+        "pgvector_optimisation": (
+            "### Optimizarea pgvector"
+        ),
+        "pgvector_optimisation_caption": (
+            "Creează indexuri pgvector pentru accelerarea "
+            "căutărilor semantice atunci când baza conține "
+            "multe fragmente."
+        ),
+        "create_index": (
+            "⚡ Creează sau validează indexul pgvector"
+        ),
+        "creating_index": (
+            "Se creează sau se validează indexul pgvector "
+            "în Neon/PostgreSQL..."
+        ),
+        "semantic_search": (
+            "### Testează căutarea semantică în pgvector"
+        ),
+        "search_question": (
+            "Introdu o întrebare pentru a căuta "
+            "în documentele vectorizate"
+        ),
+        "chunk_quantity_mode": (
+            "Modul pentru numărul de fragmente"
+        ),
+        "automatic_mode": "Automat prin INNA",
+        "manual_mode": "Manual",
+        "automatic_quantity": (
+            "Număr selectat automat de INNA: "
+            "{total} fragmente"
+        ),
+        "returned_chunks": (
+            "Numărul de fragmente returnate"
+        ),
+        "search_similar_chunks": (
+            "🔎 Caută cele mai similare fragmente"
+        ),
+        "searching_chunks": (
+            "Se generează embeddingul întrebării "
+            "și se caută în pgvector..."
+        ),
+        "no_chunk_found": (
+            "Nu a fost găsit niciun fragment."
+        ),
+        "chunk": "Fragment",
+        "category": "Categorie",
+        "approx_similarity": (
+            "Similaritate aproximativă"
+        ),
+        "general": "generală",
+        "pgvector_distance": "Distanță pgvector",
+        "prioritised_categories": (
+            "Categorii prioritizate"
+        ),
+        "rag_score": "Scor RAG",
+    },
+    "final_response": {
+        "final_rag_response": (
+            "### Generează răspunsul final al INNA cu RAG"
+        ),
+        "rag_user_id": (
+            "Identificatorul utilizatorului pentru memorie"
+        ),
+        "rag_question": (
+            "Întrebarea la care INNA trebuie să răspundă "
+            "folosind memoria și documentele vectorizate"
+        ),
+        "automatic_response_chunks": (
+            "Folosește automat un număr de fragmente "
+            "în răspuns"
+        ),
+        "automatic_response_limit": (
+            "INNA va utiliza automat {total} fragmente "
+            "drept limită."
+        ),
+        "response_context_chunks": (
+            "Numărul de fragmente pentru contextul răspunsului"
+        ),
+        "generate_final_response": (
+            "🤖 Generează răspunsul final cu RAG"
+        ),
+        "generating_final_response": (
+            "Se caută contextul în pgvector și se generează "
+            "răspunsul final al INNA..."
+        ),
+        "inna_final_response": (
+            "#### 🤖 Răspunsul final al INNA"
+        ),
+    },
+}
+
+UPLOAD_RAG_DOCUMENT_TEXTS["ro"].update(
+    UPLOAD_RAG_NATIVE_RO_TEXTS["documents"]
+)
+
+UPLOAD_RAG_EMBEDDING_TEXTS["ro"].update(
+    UPLOAD_RAG_NATIVE_RO_TEXTS["embeddings"]
+)
+
+UPLOAD_RAG_FINAL_RESPONSE_TEXTS["ro"].update(
+    UPLOAD_RAG_NATIVE_RO_TEXTS["final_response"]
+)
+
+UPLOAD_RAG_TEXTS.setdefault(
+    "ro",
+    {},
+).update(
+    UPLOAD_RAG_NATIVE_RO_TEXTS["documents"]
+)
+
+UPLOAD_RAG_TEXTS["ro"].update(
+    UPLOAD_RAG_NATIVE_RO_TEXTS["embeddings"]
+)
+
+UPLOAD_RAG_TEXTS["ro"].update(
+    UPLOAD_RAG_NATIVE_RO_TEXTS["final_response"]
+)
+
+# UPLOAD_RAG_NATIVE_IT_TEXTS
+
+UPLOAD_RAG_NATIVE_IT_TEXTS = {
+    "documents": {
+        "file_size": "Dimensione",
+        "registered_documents": (
+            "### Documenti registrati in Neon/PostgreSQL"
+        ),
+        "database_documents_error": (
+            "Impossibile caricare i documenti dal database"
+        ),
+        "no_registered_documents": (
+            "Nessun documento è ancora registrato "
+            "in Neon/PostgreSQL."
+        ),
+        "registered_documents_total": (
+            "Totale documenti registrati"
+        ),
+        "total_chunks": "Totale chunk",
+        "processed": "Elaborati",
+        "extensions": "Estensioni",
+        "local_organisation": (
+            "### Organizzazione locale dei file RAG"
+        ),
+        "local_uploads": "Caricamenti locali",
+        "chunk_files": "File di chunk",
+        "embedding_ready_jsonl": (
+            "JSONL pronti per gli embedding"
+        ),
+        "recent_local_files": (
+            "Visualizza i file locali recenti"
+        ),
+        "recent_files_caption": (
+            "Sono mostrati al massimo i 5 file più recenti "
+            "di ogni cartella."
+        ),
+        "recent_uploads": "**Caricamenti recenti**",
+        "recent_chunks": "**Chunk recenti**",
+        "recent_jsonl": "**File JSONL recenti**",
+        "archive_caption": (
+            "L’archiviazione sposta i vecchi file in "
+            "data/knowledge_base/archive. "
+            "Nessun file viene eliminato definitivamente."
+        ),
+        "files_to_keep": (
+            "Quanti file recenti devono essere conservati "
+            "in ogni cartella?"
+        ),
+        "archive_old_files": (
+            "🗂️ Archivia i vecchi file locali"
+        ),
+        "document_status": (
+            "### Stato del documento nella base RAG"
+        ),
+        "select_status_document": (
+            "Seleziona un documento da attivare "
+            "o disattivare"
+        ),
+        "active_document": (
+            "Questo documento è ATTIVO nella ricerca RAG."
+        ),
+        "inactive_document": (
+            "Questo documento è INATTIVO e verrà ignorato "
+            "nella ricerca RAG."
+        ),
+        "activate_document": "✅ Attiva documento",
+        "deactivate_document": "🚫 Disattiva documento",
+        "reprocess_document": (
+            "### Rielabora documento"
+        ),
+        "select_reprocess_document": (
+            "Seleziona un documento da rielaborare"
+        ),
+        "reprocess_selected": (
+            "🔄 Rielabora il documento selezionato"
+        ),
+        "original_file_not_found": (
+            "File originale non trovato"
+        ),
+        "new_embedding_ready": (
+            "Nuovo file pronto per gli embedding"
+        ),
+    },
+    "embeddings": {
+        "embedding_summary": (
+            "### Riepilogo degli embedding in pgvector"
+        ),
+        "total_embeddings": "Embedding totali",
+        "active_embeddings": "Embedding attivi",
+        "inactive_embeddings": "Embedding inattivi",
+        "documents_with_embeddings": (
+            "Documenti con embedding"
+        ),
+        "active_documents": "Documenti attivi",
+        "inactive_documents": "Documenti inattivi",
+        "summary_by_document": (
+            "Visualizza il riepilogo per documento"
+        ),
+        "generate_embeddings": (
+            "### Genera embedding in pgvector"
+        ),
+        "generate_embeddings_caption": (
+            "Questo pulsante legge il file JSONL del "
+            "documento selezionato, genera embedding "
+            "con Gemini e li salva in Neon/PostgreSQL "
+            "utilizzando pgvector."
+        ),
+        "force_embedding_reprocessing": (
+            "Forza la rigenerazione degli embedding "
+            "anche quando esistono già"
+        ),
+        "generate_selected_embeddings": (
+            "🧠 Genera gli embedding del documento selezionato"
+        ),
+        "missing_embedding_path": (
+            "Questo documento non possiede ancora un "
+            "percorso embedding_ready registrato."
+        ),
+        "existing_embeddings": (
+            "Questo documento possiede già {total} "
+            "embedding in pgvector. Per generarli di nuovo, "
+            "attiva la rielaborazione forzata."
+        ),
+        "generating_embeddings": (
+            "Generazione degli embedding e salvataggio "
+            "in pgvector..."
+        ),
+        "pgvector_optimisation": (
+            "### Ottimizzazione di pgvector"
+        ),
+        "pgvector_optimisation_caption": (
+            "Crea indici pgvector per accelerare le ricerche "
+            "semantiche quando la base contiene molti chunk."
+        ),
+        "create_index": (
+            "⚡ Crea o convalida l’indice pgvector"
+        ),
+        "creating_index": (
+            "Creazione o convalida dell’indice pgvector "
+            "in Neon/PostgreSQL..."
+        ),
+        "semantic_search": (
+            "### Verifica la ricerca semantica in pgvector"
+        ),
+        "search_question": (
+            "Inserisci una domanda per cercare "
+            "nei documenti vettorializzati"
+        ),
+        "chunk_quantity_mode": (
+            "Modalità quantità di chunk"
+        ),
+        "automatic_mode": "Automatico tramite INNA",
+        "manual_mode": "Manuale",
+        "automatic_quantity": (
+            "Quantità scelta automaticamente da INNA: "
+            "{total} chunk"
+        ),
+        "returned_chunks": (
+            "Numero di chunk restituiti"
+        ),
+        "search_similar_chunks": (
+            "🔎 Cerca i chunk più simili"
+        ),
+        "searching_chunks": (
+            "Generazione dell’embedding della domanda "
+            "e ricerca in pgvector..."
+        ),
+        "no_chunk_found": "Nessun chunk trovato.",
+        "chunk": "Chunk",
+        "category": "Categoria",
+        "approx_similarity": (
+            "Similarità approssimativa"
+        ),
+        "general": "generale",
+        "pgvector_distance": "Distanza pgvector",
+        "prioritised_categories": (
+            "Categorie prioritarie"
+        ),
+        "rag_score": "Punteggio RAG",
+    },
+    "final_response": {
+        "final_rag_response": (
+            "### Genera la risposta finale di INNA con RAG"
+        ),
+        "rag_user_id": (
+            "Identificativo utente per la memoria"
+        ),
+        "rag_question": (
+            "Domanda a cui INNA deve rispondere usando "
+            "la memoria e i documenti vettorializzati"
+        ),
+        "automatic_response_chunks": (
+            "Usa un numero automatico di chunk "
+            "nella risposta"
+        ),
+        "automatic_response_limit": (
+            "INNA utilizzerà automaticamente {total} "
+            "chunk come limite."
+        ),
+        "response_context_chunks": (
+            "Numero di chunk per il contesto della risposta"
+        ),
+        "generate_final_response": (
+            "🤖 Genera la risposta finale con RAG"
+        ),
+        "generating_final_response": (
+            "Ricerca del contesto in pgvector e generazione "
+            "della risposta finale di INNA..."
+        ),
+        "inna_final_response": (
+            "#### 🤖 Risposta finale di INNA"
+        ),
+    },
+}
+
+UPLOAD_RAG_DOCUMENT_TEXTS["it"].update(
+    UPLOAD_RAG_NATIVE_IT_TEXTS["documents"]
+)
+
+UPLOAD_RAG_EMBEDDING_TEXTS["it"].update(
+    UPLOAD_RAG_NATIVE_IT_TEXTS["embeddings"]
+)
+
+UPLOAD_RAG_FINAL_RESPONSE_TEXTS["it"].update(
+    UPLOAD_RAG_NATIVE_IT_TEXTS["final_response"]
+)
+
+UPLOAD_RAG_TEXTS.setdefault(
+    "it",
+    {},
+).update(
+    UPLOAD_RAG_NATIVE_IT_TEXTS["documents"]
+)
+
+UPLOAD_RAG_TEXTS["it"].update(
+    UPLOAD_RAG_NATIVE_IT_TEXTS["embeddings"]
+)
+
+UPLOAD_RAG_TEXTS["it"].update(
+    UPLOAD_RAG_NATIVE_IT_TEXTS["final_response"]
+)
+
+# UPLOAD_RAG_NATIVE_RU_UA_TEXTS
+
+UPLOAD_RAG_NATIVE_RU_UA_TEXTS = {
+    "ru": {
+        "documents": {
+            "file_size": "Размер",
+            "registered_documents": (
+                "### Документы, зарегистрированные "
+                "в Neon/PostgreSQL"
+            ),
+            "database_documents_error": (
+                "Не удалось загрузить документы "
+                "из базы данных"
+            ),
+            "no_registered_documents": (
+                "В Neon/PostgreSQL пока нет "
+                "зарегистрированных документов."
+            ),
+            "registered_documents_total": (
+                "Всего зарегистрированных документов"
+            ),
+            "total_chunks": "Всего фрагментов",
+            "processed": "Обработано",
+            "extensions": "Расширения",
+            "local_organisation": (
+                "### Локальная организация файлов RAG"
+            ),
+            "local_uploads": "Локальные загрузки",
+            "chunk_files": "Файлы фрагментов",
+            "embedding_ready_jsonl": (
+                "JSONL, готовые для эмбеддингов"
+            ),
+            "recent_local_files": (
+                "Показать последние локальные файлы"
+            ),
+            "recent_files_caption": (
+                "Показано не более 5 последних файлов "
+                "из каждой папки."
+            ),
+            "recent_uploads": "**Последние загрузки**",
+            "recent_chunks": "**Последние фрагменты**",
+            "recent_jsonl": "**Последние файлы JSONL**",
+            "archive_caption": (
+                "При архивировании старые файлы "
+                "перемещаются в "
+                "data/knowledge_base/archive. "
+                "Они не удаляются окончательно."
+            ),
+            "files_to_keep": (
+                "Сколько последних файлов нужно "
+                "сохранять в каждой папке?"
+            ),
+            "archive_old_files": (
+                "🗂️ Архивировать старые локальные файлы"
+            ),
+            "document_status": (
+                "### Состояние документа в базе знаний RAG"
+            ),
+            "select_status_document": (
+                "Выберите документ для включения "
+                "или отключения"
+            ),
+            "active_document": (
+                "Этот документ АКТИВЕН в поиске RAG."
+            ),
+            "inactive_document": (
+                "Этот документ НЕАКТИВЕН и будет "
+                "игнорироваться в поиске RAG."
+            ),
+            "activate_document": "✅ Активировать документ",
+            "deactivate_document": (
+                "🚫 Деактивировать документ"
+            ),
+            "reprocess_document": (
+                "### Повторная обработка документа"
+            ),
+            "select_reprocess_document": (
+                "Выберите документ для повторной обработки"
+            ),
+            "reprocess_selected": (
+                "🔄 Повторно обработать выбранный документ"
+            ),
+            "original_file_not_found": (
+                "Исходный файл не найден"
+            ),
+            "new_embedding_ready": (
+                "Новый файл готов для эмбеддингов"
+            ),
+        },
+        "embeddings": {
+            "embedding_summary": (
+                "### Сводка эмбеддингов в pgvector"
+            ),
+            "total_embeddings": "Всего эмбеддингов",
+            "active_embeddings": "Активные эмбеддинги",
+            "inactive_embeddings": "Неактивные эмбеддинги",
+            "documents_with_embeddings": (
+                "Документы с эмбеддингами"
+            ),
+            "active_documents": "Активные документы",
+            "inactive_documents": "Неактивные документы",
+            "summary_by_document": (
+                "Показать сводку по документам"
+            ),
+            "generate_embeddings": (
+                "### Создание эмбеддингов в pgvector"
+            ),
+            "generate_embeddings_caption": (
+                "Эта кнопка читает JSONL выбранного "
+                "документа, создаёт эмбеддинги с Gemini "
+                "и сохраняет их в Neon/PostgreSQL "
+                "с помощью pgvector."
+            ),
+            "force_embedding_reprocessing": (
+                "Принудительно пересоздать эмбеддинги, "
+                "даже если они уже существуют"
+            ),
+            "generate_selected_embeddings": (
+                "🧠 Создать эмбеддинги выбранного документа"
+            ),
+            "missing_embedding_path": (
+                "Для этого документа ещё не указан "
+                "путь embedding_ready."
+            ),
+            "existing_embeddings": (
+                "Для этого документа уже существует "
+                "{total} эмбеддинг(ов) в pgvector. "
+                "Чтобы создать их заново, включите "
+                "принудительную повторную обработку."
+            ),
+            "generating_embeddings": (
+                "Создание эмбеддингов и сохранение "
+                "в pgvector..."
+            ),
+            "pgvector_optimisation": (
+                "### Оптимизация pgvector"
+            ),
+            "pgvector_optimisation_caption": (
+                "Создаёт индексы pgvector для ускорения "
+                "семантического поиска при большом "
+                "количестве фрагментов."
+            ),
+            "create_index": (
+                "⚡ Создать или проверить индекс pgvector"
+            ),
+            "creating_index": (
+                "Создание или проверка индекса pgvector "
+                "в Neon/PostgreSQL..."
+            ),
+            "semantic_search": (
+                "### Проверка семантического поиска "
+                "в pgvector"
+            ),
+            "search_question": (
+                "Введите вопрос для поиска "
+                "в векторизованных документах"
+            ),
+            "chunk_quantity_mode": (
+                "Режим количества фрагментов"
+            ),
+            "automatic_mode": "Автоматически — INNA",
+            "manual_mode": "Вручную",
+            "automatic_quantity": (
+                "INNA автоматически выбрала "
+                "{total} фрагмент(ов)"
+            ),
+            "returned_chunks": (
+                "Количество возвращаемых фрагментов"
+            ),
+            "search_similar_chunks": (
+                "🔎 Найти наиболее похожие фрагменты"
+            ),
+            "searching_chunks": (
+                "Создание эмбеддинга вопроса "
+                "и поиск в pgvector..."
+            ),
+            "no_chunk_found": "Фрагменты не найдены.",
+            "chunk": "Фрагмент",
+            "category": "Категория",
+            "approx_similarity": (
+                "Приблизительное сходство"
+            ),
+            "general": "общая",
+            "pgvector_distance": "Расстояние pgvector",
+            "prioritised_categories": (
+                "Приоритетные категории"
+            ),
+            "rag_score": "Оценка RAG",
+        },
+        "final_response": {
+            "final_rag_response": (
+                "### Создание итогового ответа INNA с RAG"
+            ),
+            "rag_user_id": (
+                "Идентификатор пользователя для памяти"
+            ),
+            "rag_question": (
+                "Вопрос, на который INNA должна ответить "
+                "с использованием памяти и "
+                "векторизованных документов"
+            ),
+            "automatic_response_chunks": (
+                "Автоматически выбирать количество "
+                "фрагментов для ответа"
+            ),
+            "automatic_response_limit": (
+                "INNA автоматически использует "
+                "{total} фрагмент(ов) как предел."
+            ),
+            "response_context_chunks": (
+                "Количество фрагментов в контексте ответа"
+            ),
+            "generate_final_response": (
+                "🤖 Создать итоговый ответ с RAG"
+            ),
+            "generating_final_response": (
+                "Поиск контекста в pgvector "
+                "и создание итогового ответа INNA..."
+            ),
+            "inna_final_response": (
+                "#### 🤖 Итоговый ответ INNA"
+            ),
+        },
+    },
+    "ua": {
+        "documents": {
+            "file_size": "Розмір",
+            "registered_documents": (
+                "### Документи, зареєстровані "
+                "в Neon/PostgreSQL"
+            ),
+            "database_documents_error": (
+                "Не вдалося завантажити документи "
+                "з бази даних"
+            ),
+            "no_registered_documents": (
+                "У Neon/PostgreSQL ще немає "
+                "зареєстрованих документів."
+            ),
+            "registered_documents_total": (
+                "Усього зареєстрованих документів"
+            ),
+            "total_chunks": "Усього фрагментів",
+            "processed": "Оброблено",
+            "extensions": "Розширення",
+            "local_organisation": (
+                "### Локальна організація файлів RAG"
+            ),
+            "local_uploads": "Локальні завантаження",
+            "chunk_files": "Файли фрагментів",
+            "embedding_ready_jsonl": (
+                "JSONL, готові для ембеддингів"
+            ),
+            "recent_local_files": (
+                "Переглянути останні локальні файли"
+            ),
+            "recent_files_caption": (
+                "Показано не більше 5 останніх файлів "
+                "з кожної папки."
+            ),
+            "recent_uploads": "**Останні завантаження**",
+            "recent_chunks": "**Останні фрагменти**",
+            "recent_jsonl": "**Останні файли JSONL**",
+            "archive_caption": (
+                "Під час архівування старі файли "
+                "переміщуються до "
+                "data/knowledge_base/archive. "
+                "Вони не видаляються остаточно."
+            ),
+            "files_to_keep": (
+                "Скільки останніх файлів потрібно "
+                "зберігати в кожній папці?"
+            ),
+            "archive_old_files": (
+                "🗂️ Архівувати старі локальні файли"
+            ),
+            "document_status": (
+                "### Стан документа в базі знань RAG"
+            ),
+            "select_status_document": (
+                "Виберіть документ для активації "
+                "або деактивації"
+            ),
+            "active_document": (
+                "Цей документ АКТИВНИЙ у пошуку RAG."
+            ),
+            "inactive_document": (
+                "Цей документ НЕАКТИВНИЙ і буде "
+                "ігноруватися в пошуку RAG."
+            ),
+            "activate_document": "✅ Активувати документ",
+            "deactivate_document": (
+                "🚫 Деактивувати документ"
+            ),
+            "reprocess_document": (
+                "### Повторна обробка документа"
+            ),
+            "select_reprocess_document": (
+                "Виберіть документ для повторної обробки"
+            ),
+            "reprocess_selected": (
+                "🔄 Повторно обробити вибраний документ"
+            ),
+            "original_file_not_found": (
+                "Початковий файл не знайдено"
+            ),
+            "new_embedding_ready": (
+                "Новий файл готовий для ембеддингів"
+            ),
+        },
+        "embeddings": {
+            "embedding_summary": (
+                "### Зведення ембеддингів у pgvector"
+            ),
+            "total_embeddings": "Усього ембеддингів",
+            "active_embeddings": "Активні ембеддинги",
+            "inactive_embeddings": "Неактивні ембеддинги",
+            "documents_with_embeddings": (
+                "Документи з ембеддингами"
+            ),
+            "active_documents": "Активні документи",
+            "inactive_documents": "Неактивні документи",
+            "summary_by_document": (
+                "Переглянути зведення за документами"
+            ),
+            "generate_embeddings": (
+                "### Створення ембеддингів у pgvector"
+            ),
+            "generate_embeddings_caption": (
+                "Ця кнопка читає JSONL вибраного документа, "
+                "створює ембеддинги за допомогою Gemini "
+                "і зберігає їх у Neon/PostgreSQL "
+                "через pgvector."
+            ),
+            "force_embedding_reprocessing": (
+                "Примусово повторно створити ембеддинги, "
+                "навіть якщо вони вже існують"
+            ),
+            "generate_selected_embeddings": (
+                "🧠 Створити ембеддинги вибраного документа"
+            ),
+            "missing_embedding_path": (
+                "Для цього документа ще не зареєстровано "
+                "шлях embedding_ready."
+            ),
+            "existing_embeddings": (
+                "Для цього документа вже існує "
+                "{total} ембеддинг(ів) у pgvector. "
+                "Щоб створити їх повторно, увімкніть "
+                "примусову повторну обробку."
+            ),
+            "generating_embeddings": (
+                "Створення ембеддингів і збереження "
+                "у pgvector..."
+            ),
+            "pgvector_optimisation": (
+                "### Оптимізація pgvector"
+            ),
+            "pgvector_optimisation_caption": (
+                "Створює індекси pgvector для прискорення "
+                "семантичного пошуку за великої "
+                "кількості фрагментів."
+            ),
+            "create_index": (
+                "⚡ Створити або перевірити індекс pgvector"
+            ),
+            "creating_index": (
+                "Створення або перевірка індексу pgvector "
+                "у Neon/PostgreSQL..."
+            ),
+            "semantic_search": (
+                "### Перевірка семантичного пошуку "
+                "у pgvector"
+            ),
+            "search_question": (
+                "Введіть запитання для пошуку "
+                "у векторизованих документах"
+            ),
+            "chunk_quantity_mode": (
+                "Режим кількості фрагментів"
+            ),
+            "automatic_mode": "Автоматично — INNA",
+            "manual_mode": "Вручну",
+            "automatic_quantity": (
+                "INNA автоматично вибрала "
+                "{total} фрагмент(ів)"
+            ),
+            "returned_chunks": (
+                "Кількість повернених фрагментів"
+            ),
+            "search_similar_chunks": (
+                "🔎 Знайти найбільш схожі фрагменти"
+            ),
+            "searching_chunks": (
+                "Створення ембеддинга запитання "
+                "та пошук у pgvector..."
+            ),
+            "no_chunk_found": "Фрагментів не знайдено.",
+            "chunk": "Фрагмент",
+            "category": "Категорія",
+            "approx_similarity": (
+                "Приблизна схожість"
+            ),
+            "general": "загальна",
+            "pgvector_distance": "Відстань pgvector",
+            "prioritised_categories": (
+                "Пріоритетні категорії"
+            ),
+            "rag_score": "Оцінка RAG",
+        },
+        "final_response": {
+            "final_rag_response": (
+                "### Створення підсумкової відповіді "
+                "INNA з RAG"
+            ),
+            "rag_user_id": (
+                "Ідентифікатор користувача для пам’яті"
+            ),
+            "rag_question": (
+                "Запитання, на яке INNA має відповісти "
+                "з використанням пам’яті та "
+                "векторизованих документів"
+            ),
+            "automatic_response_chunks": (
+                "Автоматично визначати кількість "
+                "фрагментів у відповіді"
+            ),
+            "automatic_response_limit": (
+                "INNA автоматично використає "
+                "{total} фрагмент(ів) як обмеження."
+            ),
+            "response_context_chunks": (
+                "Кількість фрагментів у контексті відповіді"
+            ),
+            "generate_final_response": (
+                "🤖 Створити підсумкову відповідь з RAG"
+            ),
+            "generating_final_response": (
+                "Пошук контексту в pgvector "
+                "і створення підсумкової відповіді INNA..."
+            ),
+            "inna_final_response": (
+                "#### 🤖 Підсумкова відповідь INNA"
+            ),
+        },
+    },
+}
+
+for idioma, catalogos in (
+    UPLOAD_RAG_NATIVE_RU_UA_TEXTS.items()
+):
+    documentos = catalogos["documents"]
+    embeddings = catalogos["embeddings"]
+    resposta_final = catalogos["final_response"]
+
+    UPLOAD_RAG_DOCUMENT_TEXTS[
+        idioma
+    ].update(
+        documentos
+    )
+
+    UPLOAD_RAG_EMBEDDING_TEXTS[
+        idioma
+    ].update(
+        embeddings
+    )
+
+    UPLOAD_RAG_FINAL_RESPONSE_TEXTS[
+        idioma
+    ].update(
+        resposta_final
+    )
+
+    UPLOAD_RAG_TEXTS.setdefault(
+        idioma,
+        {},
+    ).update(
+        documentos
+    )
+
+    UPLOAD_RAG_TEXTS[
+        idioma
+    ].update(
+        embeddings
+    )
+
+    UPLOAD_RAG_TEXTS[
+        idioma
+    ].update(
+        resposta_final
+    )
+
+UPLOAD_RAG_TEXTS["ch"] = UPLOAD_RAG_TEXTS["de"].copy()
+
+# UPLOAD_RAG_RUNTIME_VISUAL_TEXTS
+
+UPLOAD_RAG_RUNTIME_VISUAL_TEXTS = {
+    "pt": {
+        "uploaded_documents": "### Documentos enviados",
+        "no_uploaded_documents": (
+            "Nenhum documento enviado ainda."
+        ),
+        "generated_chunk_files": (
+            "### Arquivos de chunks gerados"
+        ),
+        "no_generated_chunk_files": (
+            "Nenhum arquivo de chunks gerado ainda."
+        ),
+        "embedding_ready_files": (
+            "### Arquivos prontos para embeddings"
+        ),
+        "no_embedding_ready_files": (
+            "Nenhum arquivo pronto para embeddings "
+            "gerado ainda."
+        ),
+        "chunk_preview": (
+            "Chunk {index} | {characters} caracteres | "
+            "Categoria: {category}"
+        ),
+        "chunk_text": "Texto do chunk",
+        "chunk_preview_limit": (
+            "Foram gerados {total} chunks. "
+            "Exibindo apenas os 5 primeiros."
+        ),
+        "preview_generation_failed": (
+            "Arquivo salvo, mas não foi possível "
+            "gerar prévia ou chunks."
+        ),
+    },
+    "en_us": {
+        "uploaded_documents": "### Uploaded documents",
+        "no_uploaded_documents": (
+            "No documents have been uploaded yet."
+        ),
+        "generated_chunk_files": (
+            "### Generated chunk files"
+        ),
+        "no_generated_chunk_files": (
+            "No chunk files have been generated yet."
+        ),
+        "embedding_ready_files": (
+            "### Files ready for embeddings"
+        ),
+        "no_embedding_ready_files": (
+            "No embedding-ready files have been "
+            "generated yet."
+        ),
+        "chunk_preview": (
+            "Chunk {index} | {characters} characters | "
+            "Category: {category}"
+        ),
+        "chunk_text": "Chunk text",
+        "chunk_preview_limit": (
+            "{total} chunks were generated. "
+            "Only the first 5 are shown."
+        ),
+        "preview_generation_failed": (
+            "The file was saved, but its preview or "
+            "chunks could not be generated."
+        ),
+    },
+    "en_gb": {
+        "uploaded_documents": "### Uploaded documents",
+        "no_uploaded_documents": (
+            "No documents have been uploaded yet."
+        ),
+        "generated_chunk_files": (
+            "### Generated chunk files"
+        ),
+        "no_generated_chunk_files": (
+            "No chunk files have been generated yet."
+        ),
+        "embedding_ready_files": (
+            "### Files ready for embeddings"
+        ),
+        "no_embedding_ready_files": (
+            "No embedding-ready files have been "
+            "generated yet."
+        ),
+        "chunk_preview": (
+            "Chunk {index} | {characters} characters | "
+            "Category: {category}"
+        ),
+        "chunk_text": "Chunk text",
+        "chunk_preview_limit": (
+            "{total} chunks were generated. "
+            "Only the first 5 are shown."
+        ),
+        "preview_generation_failed": (
+            "The file was saved, but its preview or "
+            "chunks could not be generated."
+        ),
+    },
+    "es": {
+        "uploaded_documents": "### Documentos enviados",
+        "no_uploaded_documents": (
+            "Todavía no se ha enviado ningún documento."
+        ),
+        "generated_chunk_files": (
+            "### Archivos de chunks generados"
+        ),
+        "no_generated_chunk_files": (
+            "Todavía no se ha generado ningún archivo "
+            "de chunks."
+        ),
+        "embedding_ready_files": (
+            "### Archivos preparados para embeddings"
+        ),
+        "no_embedding_ready_files": (
+            "Todavía no se ha generado ningún archivo "
+            "preparado para embeddings."
+        ),
+        "chunk_preview": (
+            "Chunk {index} | {characters} caracteres | "
+            "Categoría: {category}"
+        ),
+        "chunk_text": "Texto del chunk",
+        "chunk_preview_limit": (
+            "Se generaron {total} chunks. "
+            "Solo se muestran los primeros 5."
+        ),
+        "preview_generation_failed": (
+            "El archivo se guardó, pero no fue posible "
+            "generar la vista previa o los chunks."
+        ),
+    },
+    "fr": {
+        "uploaded_documents": "### Documents téléversés",
+        "no_uploaded_documents": (
+            "Aucun document n’a encore été téléversé."
+        ),
+        "generated_chunk_files": (
+            "### Fichiers de chunks générés"
+        ),
+        "no_generated_chunk_files": (
+            "Aucun fichier de chunks n’a encore "
+            "été généré."
+        ),
+        "embedding_ready_files": (
+            "### Fichiers prêts pour les embeddings"
+        ),
+        "no_embedding_ready_files": (
+            "Aucun fichier prêt pour les embeddings "
+            "n’a encore été généré."
+        ),
+        "chunk_preview": (
+            "Chunk {index} | {characters} caractères | "
+            "Catégorie : {category}"
+        ),
+        "chunk_text": "Texte du chunk",
+        "chunk_preview_limit": (
+            "{total} chunks ont été générés. "
+            "Seuls les 5 premiers sont affichés."
+        ),
+        "preview_generation_failed": (
+            "Le fichier a été enregistré, mais son aperçu "
+            "ou ses chunks n’ont pas pu être générés."
+        ),
+    },
+    "de": {
+        "uploaded_documents": "### Hochgeladene Dokumente",
+        "no_uploaded_documents": (
+            "Noch keine Dokumente hochgeladen."
+        ),
+        "generated_chunk_files": (
+            "### Erzeugte Chunk-Dateien"
+        ),
+        "no_generated_chunk_files": (
+            "Noch keine Chunk-Dateien erzeugt."
+        ),
+        "embedding_ready_files": (
+            "### Für Embeddings vorbereitete Dateien"
+        ),
+        "no_embedding_ready_files": (
+            "Noch keine für Embeddings vorbereiteten "
+            "Dateien erzeugt."
+        ),
+        "chunk_preview": (
+            "Chunk {index} | {characters} Zeichen | "
+            "Kategorie: {category}"
+        ),
+        "chunk_text": "Chunk-Text",
+        "chunk_preview_limit": (
+            "{total} Chunks wurden erzeugt. "
+            "Nur die ersten 5 werden angezeigt."
+        ),
+        "preview_generation_failed": (
+            "Die Datei wurde gespeichert, aber Vorschau "
+            "oder Chunks konnten nicht erzeugt werden."
+        ),
+    },
+    "it": {
+        "uploaded_documents": "### Documenti caricati",
+        "no_uploaded_documents": (
+            "Nessun documento è stato ancora caricato."
+        ),
+        "generated_chunk_files": (
+            "### File di chunk generati"
+        ),
+        "no_generated_chunk_files": (
+            "Nessun file di chunk è stato ancora generato."
+        ),
+        "embedding_ready_files": (
+            "### File pronti per gli embedding"
+        ),
+        "no_embedding_ready_files": (
+            "Nessun file pronto per gli embedding è stato "
+            "ancora generato."
+        ),
+        "chunk_preview": (
+            "Chunk {index} | {characters} caratteri | "
+            "Categoria: {category}"
+        ),
+        "chunk_text": "Testo del chunk",
+        "chunk_preview_limit": (
+            "Sono stati generati {total} chunk. "
+            "Vengono mostrati solo i primi 5."
+        ),
+        "preview_generation_failed": (
+            "Il file è stato salvato, ma non è stato "
+            "possibile generare anteprima o chunk."
+        ),
+    },
+    "ro": {
+        "uploaded_documents": "### Documente încărcate",
+        "no_uploaded_documents": (
+            "Nu a fost încă încărcat niciun document."
+        ),
+        "generated_chunk_files": (
+            "### Fișiere de fragmente generate"
+        ),
+        "no_generated_chunk_files": (
+            "Nu a fost încă generat niciun fișier "
+            "de fragmente."
+        ),
+        "embedding_ready_files": (
+            "### Fișiere pregătite pentru embeddinguri"
+        ),
+        "no_embedding_ready_files": (
+            "Nu a fost încă generat niciun fișier "
+            "pregătit pentru embeddinguri."
+        ),
+        "chunk_preview": (
+            "Fragment {index} | {characters} caractere | "
+            "Categorie: {category}"
+        ),
+        "chunk_text": "Textul fragmentului",
+        "chunk_preview_limit": (
+            "Au fost generate {total} fragmente. "
+            "Sunt afișate doar primele 5."
+        ),
+        "preview_generation_failed": (
+            "Fișierul a fost salvat, dar previzualizarea "
+            "sau fragmentele nu au putut fi generate."
+        ),
+    },
+    "ua": {
+        "uploaded_documents": "### Завантажені документи",
+        "no_uploaded_documents": (
+            "Документи ще не завантажено."
+        ),
+        "generated_chunk_files": (
+            "### Створені файли фрагментів"
+        ),
+        "no_generated_chunk_files": (
+            "Файли фрагментів ще не створено."
+        ),
+        "embedding_ready_files": (
+            "### Файли, готові до створення векторів"
+        ),
+        "no_embedding_ready_files": (
+            "Файли, готові до створення векторів, "
+            "ще не створено."
+        ),
+        "chunk_preview": (
+            "Фрагмент {index} | {characters} символів | "
+            "Категорія: {category}"
+        ),
+        "chunk_text": "Текст фрагмента",
+        "chunk_preview_limit": (
+            "Створено фрагментів: {total}. "
+            "Показано лише перші 5."
+        ),
+        "preview_generation_failed": (
+            "Файл збережено, але не вдалося створити "
+            "попередній перегляд або фрагменти."
+        ),
+    },
+    "ru": {
+        "uploaded_documents": "### Загруженные документы",
+        "no_uploaded_documents": (
+            "Документы ещё не загружены."
+        ),
+        "generated_chunk_files": (
+            "### Созданные файлы фрагментов"
+        ),
+        "no_generated_chunk_files": (
+            "Файлы фрагментов ещё не созданы."
+        ),
+        "embedding_ready_files": (
+            "### Файлы, готовые для эмбеддингов"
+        ),
+        "no_embedding_ready_files": (
+            "Файлы, готовые для эмбеддингов, "
+            "ещё не созданы."
+        ),
+        "chunk_preview": (
+            "Фрагмент {index} | {characters} символов | "
+            "Категория: {category}"
+        ),
+        "chunk_text": "Текст фрагмента",
+        "chunk_preview_limit": (
+            "Создано фрагментов: {total}. "
+            "Показаны только первые 5."
+        ),
+        "preview_generation_failed": (
+            "Файл сохранён, но не удалось создать "
+            "предварительный просмотр или фрагменты."
+        ),
+    },
+    "sa": {
+        "uploaded_documents": "### المستندات المرفوعة",
+        "no_uploaded_documents": (
+            "لم يتم رفع أي مستند بعد."
+        ),
+        "generated_chunk_files": (
+            "### ملفات المقاطع التي تم إنشاؤها"
+        ),
+        "no_generated_chunk_files": (
+            "لم يتم إنشاء أي ملف مقاطع بعد."
+        ),
+        "embedding_ready_files": (
+            "### ملفات جاهزة للتضمينات"
+        ),
+        "no_embedding_ready_files": (
+            "لم يتم إنشاء أي ملف جاهز للتضمينات بعد."
+        ),
+        "chunk_preview": (
+            "المقطع {index} | {characters} حرفاً | "
+            "الفئة: {category}"
+        ),
+        "chunk_text": "نص المقطع",
+        "chunk_preview_limit": (
+            "تم إنشاء {total} مقطعاً. "
+            "يتم عرض أول 5 فقط."
+        ),
+        "preview_generation_failed": (
+            "تم حفظ الملف، ولكن تعذر إنشاء المعاينة "
+            "أو المقاطع."
+        ),
+    },
+}
+
+UPLOAD_RAG_RUNTIME_VISUAL_TEXTS["ch"] = {
+    key: value
+    for key, value
+    in UPLOAD_RAG_RUNTIME_VISUAL_TEXTS["de"].items()
+}
+
+for idioma, textos in (
+    UPLOAD_RAG_RUNTIME_VISUAL_TEXTS.items()
+):
+    UPLOAD_RAG_TEXTS.setdefault(
+        idioma,
+        {},
+    ).update(
+        textos
+    )
+
+
+UPLOAD_RAG_SOURCE_TEXTS = {
+    "pt": {
+        "sources_used": "#### 📚 Fontes usadas pela INNA",
+        "no_context_used": (
+            "Nenhum contexto foi usado na resposta."
+        ),
+        "sources_caption": (
+            "Abaixo estão os trechos da base RAG que "
+            "ajudaram a INNA a montar a resposta."
+        ),
+        "source": "Fonte",
+        "similarity": "Similaridade",
+        "document": "Documento",
+        "context_passage": (
+            "Trecho usado como contexto"
+        ),
+    },
+    "en_us": {
+        "sources_used": "#### 📚 Sources used by INNA",
+        "no_context_used": (
+            "No context was used in the response."
+        ),
+        "sources_caption": (
+            "The passages below were retrieved from "
+            "the RAG knowledge base and helped INNA "
+            "build the response."
+        ),
+        "source": "Source",
+        "similarity": "Similarity",
+        "document": "Document",
+        "context_passage": (
+            "Passage used as context"
+        ),
+    },
+    "es": {
+        "sources_used": (
+            "#### 📚 Fuentes utilizadas por INNA"
+        ),
+        "no_context_used": (
+            "No se utilizó ningún contexto "
+            "en la respuesta."
+        ),
+        "sources_caption": (
+            "Los siguientes fragmentos de la base RAG "
+            "ayudaron a INNA a generar la respuesta."
+        ),
+        "source": "Fuente",
+        "similarity": "Similitud",
+        "document": "Documento",
+        "context_passage": (
+            "Fragmento utilizado como contexto"
+        ),
+    },
+    "fr": {
+        "sources_used": (
+            "#### 📚 Sources utilisées par INNA"
+        ),
+        "no_context_used": (
+            "Aucun contexte n’a été utilisé "
+            "dans la réponse."
+        ),
+        "sources_caption": (
+            "Les extraits suivants de la base RAG "
+            "ont aidé INNA à construire la réponse."
+        ),
+        "source": "Source",
+        "similarity": "Similarité",
+        "document": "Document",
+        "context_passage": (
+            "Extrait utilisé comme contexte"
+        ),
+    },
+    "de": {
+        "sources_used": (
+            "#### 📚 Von INNA verwendete Quellen"
+        ),
+        "no_context_used": (
+            "In der Antwort wurde kein Kontext verwendet."
+        ),
+        "sources_caption": (
+            "Die folgenden Abschnitte aus der "
+            "RAG-Wissensbasis halfen INNA "
+            "bei der Antwort."
+        ),
+        "source": "Quelle",
+        "similarity": "Ähnlichkeit",
+        "document": "Dokument",
+        "context_passage": (
+            "Als Kontext verwendeter Abschnitt"
+        ),
+    },
+    "it": {
+        "sources_used": (
+            "#### 📚 Fonti utilizzate da INNA"
+        ),
+        "no_context_used": (
+            "Nessun contesto è stato utilizzato "
+            "nella risposta."
+        ),
+        "sources_caption": (
+            "I seguenti estratti della base RAG "
+            "hanno aiutato INNA a creare la risposta."
+        ),
+        "source": "Fonte",
+        "similarity": "Somiglianza",
+        "document": "Documento",
+        "context_passage": (
+            "Estratto utilizzato come contesto"
+        ),
+    },
+}
+
+# UPLOAD_RAG_NATIVE_SOURCE_TEXTS
+
+UPLOAD_RAG_NATIVE_SOURCE_TEXTS = {
+    "ro": {
+        "sources_used": (
+            "#### 📚 Surse utilizate de INNA"
+        ),
+        "no_context_used": (
+            "Nu a fost utilizat niciun context "
+            "în răspuns."
+        ),
+        "sources_caption": (
+            "Fragmentele de mai jos au fost preluate "
+            "din baza de cunoștințe RAG și au ajutat "
+            "INNA să construiască răspunsul."
+        ),
+        "source": "Sursă",
+        "similarity": "Similaritate",
+        "document": "Document",
+        "context_passage": (
+            "Fragment utilizat drept context"
+        ),
+    },
+    "ua": {
+        "sources_used": (
+            "#### 📚 Джерела, використані INNA"
+        ),
+        "no_context_used": (
+            "У відповіді не було використано контекст."
+        ),
+        "sources_caption": (
+            "Наведені нижче фрагменти було отримано "
+            "з бази знань RAG. Вони допомогли INNA "
+            "сформувати відповідь."
+        ),
+        "source": "Джерело",
+        "similarity": "Схожість",
+        "document": "Документ",
+        "context_passage": (
+            "Фрагмент, використаний як контекст"
+        ),
+    },
+    "ru": {
+        "sources_used": (
+            "#### 📚 Источники, использованные INNA"
+        ),
+        "no_context_used": (
+            "При формировании ответа контекст "
+            "не использовался."
+        ),
+        "sources_caption": (
+            "Приведённые ниже фрагменты были получены "
+            "из базы знаний RAG и помогли INNA "
+            "сформировать ответ."
+        ),
+        "source": "Источник",
+        "similarity": "Сходство",
+        "document": "Документ",
+        "context_passage": (
+            "Фрагмент, использованный как контекст"
+        ),
+    },
+    "sa": {
+        "sources_used": (
+            "#### 📚 المصادر التي استخدمتها INNA"
+        ),
+        "no_context_used": (
+            "لم يتم استخدام أي سياق في الإجابة."
+        ),
+        "sources_caption": (
+            "تم استرجاع المقاطع أدناه من قاعدة معرفة RAG، "
+            "وساعدت INNA في إنشاء الإجابة."
+        ),
+        "source": "المصدر",
+        "similarity": "التشابه",
+        "document": "المستند",
+        "context_passage": (
+            "المقطع المستخدم كسياق"
+        ),
+    },
+}
+
+for idioma, textos in (
+    UPLOAD_RAG_NATIVE_SOURCE_TEXTS.items()
+):
+    UPLOAD_RAG_SOURCE_TEXTS.setdefault(
+        idioma,
+        {},
+    ).update(
+        textos
+    )
+
+    UPLOAD_RAG_TEXTS.setdefault(
+        idioma,
+        {},
+    ).update(
+        textos
+    )
+
+UPLOAD_RAG_SOURCE_TEXTS["en_gb"] = (
+    UPLOAD_RAG_SOURCE_TEXTS["en_us"].copy()
+)
+
+for idioma in (
+    "ro",
+    "ua",
+    "ru",
+    "sa",
+):
+    UPLOAD_RAG_SOURCE_TEXTS[idioma] = (
+        UPLOAD_RAG_SOURCE_TEXTS["en_us"].copy()
+    )
+
+UPLOAD_RAG_SOURCE_TEXTS["ch"] = (
+    UPLOAD_RAG_SOURCE_TEXTS["de"].copy()
+)
+
+for idioma, textos in (
+    UPLOAD_RAG_SOURCE_TEXTS.items()
+):
+    UPLOAD_RAG_TEXTS.setdefault(
+        idioma,
+        {},
+    ).update(textos)
+
+# UPLOAD_RAG_NATIVE_SOURCE_TEXTS_FINAL_OVERRIDE
+
+for idioma, textos in (
+    UPLOAD_RAG_NATIVE_SOURCE_TEXTS.items()
+):
+    UPLOAD_RAG_SOURCE_TEXTS.setdefault(
+        idioma,
+        {},
+    ).update(
+        textos
+    )
+
+    UPLOAD_RAG_TEXTS.setdefault(
+        idioma,
+        {},
+    ).update(
+        textos
+    )
+
+
+UPLOAD_RAG_RESOURCE_TEXTS = {
+    "pt": {
+        "resources_used": "🔎 Recursos utilizados pela INNA",
+        "executed_steps": "#### Etapas executadas",
+        "persistent_memory": "Memória persistente",
+        "memory_consulted": "contexto do usuário consultado",
+        "semantic_search_used": "Busca semântica RAG",
+        "passages_retrieved": "{total} trecho(s) recuperado(s)",
+        "choice_reason": "Motivo da escolha",
+        "no_calculation_required": (
+            "Nenhum cálculo financeiro determinístico "
+            "foi necessário."
+        ),
+        "calculation_details": (
+            "🧮 Detalhes do cálculo financeiro"
+        ),
+        "tool": "Ferramenta",
+        "routing_confidence": "Confiança do roteamento",
+        "calculation_executed": (
+            "Cálculo determinístico executado antes "
+            "da geração da resposta."
+        ),
+        "tool_not_executed": (
+            "A ferramenta foi identificada, mas não "
+            "precisou ser executada."
+        ),
+        "required_data": "Dados ainda necessários",
+        "main_result": "#### Resultado principal",
+        "monthly_income": "Renda mensal",
+        "monthly_expenses": "Gastos mensais",
+        "estimated_balance": "Saldo estimado",
+        "committed_income": "Renda comprometida",
+        "monthly_capacity": "Capacidade mensal",
+        "weekly_reference": "Referência semanal",
+        "show_json": "Mostrar resultado técnico em JSON",
+        "memory_updated": (
+            "🧠 Memória atualizada automaticamente "
+            "pela conversa."
+        ),
+        "memory_not_updated": (
+            "Memória não atualizada nesta interação."
+        ),
+    },
+    "en_us": {
+        "resources_used": "🔎 Resources used by INNA",
+        "executed_steps": "#### Executed steps",
+        "persistent_memory": "Persistent memory",
+        "memory_consulted": "user context retrieved",
+        "semantic_search_used": "RAG semantic search",
+        "passages_retrieved": "{total} passage(s) retrieved",
+        "choice_reason": "Reason for selection",
+        "no_calculation_required": (
+            "No deterministic financial calculation "
+            "was required."
+        ),
+        "calculation_details": (
+            "🧮 Financial calculation details"
+        ),
+        "tool": "Tool",
+        "routing_confidence": "Routing confidence",
+        "calculation_executed": (
+            "Deterministic calculation executed before "
+            "the response was generated."
+        ),
+        "tool_not_executed": (
+            "The tool was identified but did not need "
+            "to be executed."
+        ),
+        "required_data": "Additional data required",
+        "main_result": "#### Main result",
+        "monthly_income": "Monthly income",
+        "monthly_expenses": "Monthly expenses",
+        "estimated_balance": "Estimated balance",
+        "committed_income": "Committed income",
+        "monthly_capacity": "Monthly capacity",
+        "weekly_reference": "Weekly reference",
+        "show_json": "Show technical result as JSON",
+        "memory_updated": (
+            "🧠 Memory automatically updated from "
+            "the conversation."
+        ),
+        "memory_not_updated": (
+            "Memory was not updated in this interaction."
+        ),
+    },
+    "es": {
+        "resources_used": "🔎 Recursos utilizados por INNA",
+        "executed_steps": "#### Etapas ejecutadas",
+        "persistent_memory": "Memoria persistente",
+        "memory_consulted": "contexto del usuario consultado",
+        "semantic_search_used": "Búsqueda semántica RAG",
+        "passages_retrieved": "{total} fragmento(s) recuperado(s)",
+        "choice_reason": "Motivo de la elección",
+        "no_calculation_required": (
+            "No fue necesario realizar ningún cálculo "
+            "financiero determinístico."
+        ),
+        "calculation_details": (
+            "🧮 Detalles del cálculo financiero"
+        ),
+        "tool": "Herramienta",
+        "routing_confidence": "Confianza del enrutamiento",
+        "calculation_executed": (
+            "Cálculo determinístico ejecutado antes "
+            "de generar la respuesta."
+        ),
+        "tool_not_executed": (
+            "La herramienta fue identificada, pero no "
+            "fue necesario ejecutarla."
+        ),
+        "required_data": "Datos adicionales necesarios",
+        "main_result": "#### Resultado principal",
+        "monthly_income": "Ingresos mensuales",
+        "monthly_expenses": "Gastos mensuales",
+        "estimated_balance": "Saldo estimado",
+        "committed_income": "Ingresos comprometidos",
+        "monthly_capacity": "Capacidad mensual",
+        "weekly_reference": "Referencia semanal",
+        "show_json": "Mostrar resultado técnico en JSON",
+        "memory_updated": (
+            "🧠 Memoria actualizada automáticamente "
+            "por la conversación."
+        ),
+        "memory_not_updated": (
+            "La memoria no fue actualizada en esta interacción."
+        ),
+    },
+    "fr": {
+        "resources_used": "🔎 Ressources utilisées par INNA",
+        "executed_steps": "#### Étapes exécutées",
+        "persistent_memory": "Mémoire persistante",
+        "memory_consulted": "contexte utilisateur consulté",
+        "semantic_search_used": "Recherche sémantique RAG",
+        "passages_retrieved": "{total} extrait(s) récupéré(s)",
+        "choice_reason": "Motif du choix",
+        "no_calculation_required": (
+            "Aucun calcul financier déterministe "
+            "n’a été nécessaire."
+        ),
+        "calculation_details": (
+            "🧮 Détails du calcul financier"
+        ),
+        "tool": "Outil",
+        "routing_confidence": "Confiance du routage",
+        "calculation_executed": (
+            "Calcul déterministe exécuté avant "
+            "la génération de la réponse."
+        ),
+        "tool_not_executed": (
+            "L’outil a été identifié, mais son exécution "
+            "n’était pas nécessaire."
+        ),
+        "required_data": "Données supplémentaires nécessaires",
+        "main_result": "#### Résultat principal",
+        "monthly_income": "Revenu mensuel",
+        "monthly_expenses": "Dépenses mensuelles",
+        "estimated_balance": "Solde estimé",
+        "committed_income": "Revenu engagé",
+        "monthly_capacity": "Capacité mensuelle",
+        "weekly_reference": "Référence hebdomadaire",
+        "show_json": "Afficher le résultat technique en JSON",
+        "memory_updated": (
+            "🧠 Mémoire automatiquement mise à jour "
+            "par la conversation."
+        ),
+        "memory_not_updated": (
+            "La mémoire n’a pas été mise à jour."
+        ),
+    },
+    "de": {
+        "resources_used": "🔎 Von INNA verwendete Ressourcen",
+        "executed_steps": "#### Ausgeführte Schritte",
+        "persistent_memory": "Persistenter Speicher",
+        "memory_consulted": "Benutzerkontext abgerufen",
+        "semantic_search_used": "Semantische RAG-Suche",
+        "passages_retrieved": "{total} Abschnitt(e) abgerufen",
+        "choice_reason": "Grund für die Auswahl",
+        "no_calculation_required": (
+            "Es war keine deterministische "
+            "Finanzberechnung erforderlich."
+        ),
+        "calculation_details": (
+            "🧮 Details der Finanzberechnung"
+        ),
+        "tool": "Werkzeug",
+        "routing_confidence": "Routing-Konfidenz",
+        "calculation_executed": (
+            "Deterministische Berechnung vor der "
+            "Antwortgenerierung ausgeführt."
+        ),
+        "tool_not_executed": (
+            "Das Werkzeug wurde erkannt, musste jedoch "
+            "nicht ausgeführt werden."
+        ),
+        "required_data": "Zusätzlich erforderliche Daten",
+        "main_result": "#### Hauptergebnis",
+        "monthly_income": "Monatliches Einkommen",
+        "monthly_expenses": "Monatliche Ausgaben",
+        "estimated_balance": "Geschätzter Saldo",
+        "committed_income": "Gebundenes Einkommen",
+        "monthly_capacity": "Monatliche Kapazität",
+        "weekly_reference": "Wöchentlicher Richtwert",
+        "show_json": "Technisches Ergebnis als JSON anzeigen",
+        "memory_updated": (
+            "🧠 Speicher automatisch aus dem "
+            "Gespräch aktualisiert."
+        ),
+        "memory_not_updated": (
+            "Der Speicher wurde nicht aktualisiert."
+        ),
+    },
+}
+
+UPLOAD_RAG_RESOURCE_TEXTS["en_gb"] = (
+    UPLOAD_RAG_RESOURCE_TEXTS["en_us"]
+)
+
+for idioma in (
+    "it",
+    "ro",
+    "ua",
+    "ru",
+    "sa",
+):
+    UPLOAD_RAG_RESOURCE_TEXTS[idioma] = (
+        UPLOAD_RAG_RESOURCE_TEXTS["en_us"]
+    )
+
+UPLOAD_RAG_RESOURCE_TEXTS["ch"] = (
+    UPLOAD_RAG_RESOURCE_TEXTS["de"]
+)
+
+for idioma, textos in (
+    UPLOAD_RAG_RESOURCE_TEXTS.items()
+):
+    UPLOAD_RAG_TEXTS.setdefault(
+        idioma,
+        {},
+    ).update(textos)
+
+
+
+# BLOCK_4B_NATIVE_UPLOAD_TRANSLATIONS
+# Traduções nativas finais da página de Upload/RAG.
+# Este bloco é aplicado após todos os pacotes parciais,
+# substituindo os fallbacks indevidos para inglês.
+
+UPLOAD_RAG_NATIVE_TEXTS = {
+    "ro": {
+        "title": (
+            "## 📄 Încărcarea documentelor în baza RAG"
+        ),
+        "caption": (
+            "Încărcați fișiere .md sau .txt pentru "
+            "a extinde baza de cunoștințe INNA."
+        ),
+        "select_document": "Selectați un document",
+        "upload_help": (
+            "În această versiune, INNA acceptă "
+            "fișiere Markdown și TXT."
+        ),
+        "invalid_format": (
+            "Format nepermis. Încărcați numai "
+            "fișiere .md sau .txt."
+        ),
+        "version_lookup_error": (
+            "Versionarea documentului nu a putut "
+            "fi consultată."
+        ),
+        "version_error": (
+            "Versiunea documentului nu a putut "
+            "fi determinată."
+        ),
+        "security_rejection": (
+            "Document respins de politica de securitate."
+        ),
+        "security_validation_error": (
+            "Securitatea documentului nu a putut "
+            "fi validată."
+        ),
+        "saved_successfully": (
+            "Document salvat cu succes."
+        ),
+        "validation_complete": "Validare finalizată",
+        "document": "Document",
+        "version": "Versiune",
+        "content_preview": (
+            "### Previzualizarea conținutului"
+        ),
+        "loaded_content": "Conținut încărcat",
+        "generated_chunks": "### Fragmente generate",
+        "chunks_generated": (
+            "fragmente generate și salvate în"
+        ),
+        "embedding_ready": (
+            "Fișier pregătit pentru embeddings/pgvector"
+        ),
+        "resources_used": (
+            "🔎 Resurse utilizate de INNA"
+        ),
+        "executed_steps": "#### Etape executate",
+        "persistent_memory": "Memorie persistentă",
+        "memory_consulted": (
+            "contextul utilizatorului a fost consultat"
+        ),
+        "semantic_search_used": (
+            "Căutare semantică RAG"
+        ),
+        "passages_retrieved": (
+            "{total} fragment(e) recuperat(e)"
+        ),
+        "tool": "Instrument",
+        "choice_reason": "Motivul alegerii",
+        "no_calculation_required": (
+            "Nu a fost necesar niciun calcul financiar "
+            "determinist."
+        ),
+        "routing_confidence": (
+            "Încrederea rutării"
+        ),
+        "calculation_executed": (
+            "Calcul executat"
+        ),
+        "calculation_details": (
+            "Detaliile calculului"
+        ),
+        "tool_not_executed": (
+            "Instrumentul a fost identificat, dar nu "
+            "a trebuit executat."
+        ),
+        "required_data": (
+            "Date suplimentare necesare"
+        ),
+        "main_result": "#### Rezultatul principal",
+        "monthly_income": "Venit lunar",
+        "monthly_expenses": "Cheltuieli lunare",
+        "estimated_balance": "Sold estimat",
+        "committed_income": "Venit angajat",
+        "monthly_capacity": "Capacitate lunară",
+        "weekly_reference": "Referință săptămânală",
+        "show_json": (
+            "Afișați rezultatul tehnic în JSON"
+        ),
+        "memory_updated": (
+            "🧠 Memoria a fost actualizată automat "
+            "din conversație."
+        ),
+        "memory_not_updated": (
+            "Memoria nu a fost actualizată."
+        ),
+    },
+    "ua": {
+        "title": (
+            "## 📄 Завантаження документів до бази RAG"
+        ),
+        "caption": (
+            "Завантажуйте файли .md або .txt, щоб "
+            "розширити базу знань INNA."
+        ),
+        "select_document": "Виберіть документ",
+        "upload_help": (
+            "У цій версії INNA підтримує файли "
+            "Markdown і TXT."
+        ),
+        "invalid_format": (
+            "Недозволений формат. Завантажуйте лише "
+            "файли .md або .txt."
+        ),
+        "version_lookup_error": (
+            "Не вдалося перевірити версіювання документа."
+        ),
+        "version_error": (
+            "Не вдалося визначити версію документа."
+        ),
+        "security_rejection": (
+            "Документ відхилено політикою безпеки."
+        ),
+        "security_validation_error": (
+            "Не вдалося перевірити безпеку документа."
+        ),
+        "saved_successfully": (
+            "Документ успішно збережено."
+        ),
+        "validation_complete": (
+            "Перевірку завершено"
+        ),
+        "document": "Документ",
+        "version": "Версія",
+        "content_preview": (
+            "### Попередній перегляд вмісту"
+        ),
+        "loaded_content": "Завантажений вміст",
+        "generated_chunks": "### Створені фрагменти",
+        "chunks_generated": (
+            "фрагменти створено та збережено в"
+        ),
+        "embedding_ready": (
+            "Файл готовий для embeddings/pgvector"
+        ),
+        "resources_used": (
+            "🔎 Ресурси, використані INNA"
+        ),
+        "executed_steps": "#### Виконані етапи",
+        "persistent_memory": "Постійна пам’ять",
+        "memory_consulted": (
+            "контекст користувача було отримано"
+        ),
+        "semantic_search_used": (
+            "Семантичний пошук RAG"
+        ),
+        "passages_retrieved": (
+            "отримано фрагментів: {total}"
+        ),
+        "tool": "Інструмент",
+        "choice_reason": "Причина вибору",
+        "no_calculation_required": (
+            "Детермінований фінансовий розрахунок "
+            "не був потрібний."
+        ),
+        "routing_confidence": (
+            "Впевненість маршрутизації"
+        ),
+        "calculation_executed": (
+            "Розрахунок виконано"
+        ),
+        "calculation_details": (
+            "Деталі розрахунку"
+        ),
+        "tool_not_executed": (
+            "Інструмент було визначено, але його "
+            "виконання не знадобилося."
+        ),
+        "required_data": (
+            "Додаткові необхідні дані"
+        ),
+        "main_result": "#### Основний результат",
+        "monthly_income": "Місячний дохід",
+        "monthly_expenses": "Місячні витрати",
+        "estimated_balance": "Орієнтовний баланс",
+        "committed_income": "Зобов’язаний дохід",
+        "monthly_capacity": "Місячна спроможність",
+        "weekly_reference": "Тижневий орієнтир",
+        "show_json": (
+            "Показати технічний результат у JSON"
+        ),
+        "memory_updated": (
+            "🧠 Пам’ять автоматично оновлено "
+            "на основі розмови."
+        ),
+        "memory_not_updated": (
+            "Пам’ять не оновлено."
+        ),
+    },
+    "ru": {
+        "title": (
+            "## 📄 Загрузка документов в базу RAG"
+        ),
+        "caption": (
+            "Загружайте файлы .md или .txt для "
+            "расширения базы знаний INNA."
+        ),
+        "select_document": "Выберите документ",
+        "upload_help": (
+            "В этой версии INNA поддерживает файлы "
+            "Markdown и TXT."
+        ),
+        "invalid_format": (
+            "Недопустимый формат. Загружайте только "
+            "файлы .md или .txt."
+        ),
+        "version_lookup_error": (
+            "Не удалось проверить версионирование "
+            "документа."
+        ),
+        "version_error": (
+            "Не удалось определить версию документа."
+        ),
+        "security_rejection": (
+            "Документ отклонён политикой безопасности."
+        ),
+        "security_validation_error": (
+            "Не удалось проверить безопасность документа."
+        ),
+        "saved_successfully": (
+            "Документ успешно сохранён."
+        ),
+        "validation_complete": (
+            "Проверка завершена"
+        ),
+        "document": "Документ",
+        "version": "Версия",
+        "content_preview": (
+            "### Предварительный просмотр содержимого"
+        ),
+        "loaded_content": "Загруженное содержимое",
+        "generated_chunks": (
+            "### Созданные фрагменты"
+        ),
+        "chunks_generated": (
+            "фрагменты созданы и сохранены в"
+        ),
+        "embedding_ready": (
+            "Файл готов для embeddings/pgvector"
+        ),
+        "resources_used": (
+            "🔎 Ресурсы, использованные INNA"
+        ),
+        "executed_steps": "#### Выполненные этапы",
+        "persistent_memory": "Постоянная память",
+        "memory_consulted": (
+            "контекст пользователя был получен"
+        ),
+        "semantic_search_used": (
+            "Семантический поиск RAG"
+        ),
+        "passages_retrieved": (
+            "получено фрагментов: {total}"
+        ),
+        "tool": "Инструмент",
+        "choice_reason": "Причина выбора",
+        "no_calculation_required": (
+            "Детерминированный финансовый расчёт "
+            "не потребовался."
+        ),
+        "routing_confidence": (
+            "Уверенность маршрутизации"
+        ),
+        "calculation_executed": (
+            "Расчёт выполнен"
+        ),
+        "calculation_details": (
+            "Детали расчёта"
+        ),
+        "tool_not_executed": (
+            "Инструмент был определён, но его "
+            "выполнение не потребовалось."
+        ),
+        "required_data": (
+            "Дополнительно необходимые данные"
+        ),
+        "main_result": "#### Основной результат",
+        "monthly_income": "Месячный доход",
+        "monthly_expenses": "Месячные расходы",
+        "estimated_balance": "Расчётный баланс",
+        "committed_income": "Обязательный доход",
+        "monthly_capacity": "Месячная возможность",
+        "weekly_reference": "Недельный ориентир",
+        "show_json": (
+            "Показать технический результат в JSON"
+        ),
+        "memory_updated": (
+            "🧠 Память автоматически обновлена "
+            "на основе разговора."
+        ),
+        "memory_not_updated": (
+            "Память не была обновлена."
+        ),
+    },
+    "sa": {
+        "title": (
+            "## 📄 تحميل المستندات إلى قاعدة RAG"
+        ),
+        "caption": (
+            "حمّل ملفات .md أو .txt لتوسيع "
+            "قاعدة معرفة INNA."
+        ),
+        "select_document": "اختر مستندًا",
+        "upload_help": (
+            "تدعم INNA في هذا الإصدار ملفات "
+            "Markdown وTXT."
+        ),
+        "invalid_format": (
+            "صيغة غير مسموحة. حمّل ملفات "
+            ".md أو .txt فقط."
+        ),
+        "version_lookup_error": (
+            "تعذر التحقق من إصدارات المستند."
+        ),
+        "version_error": (
+            "تعذر تحديد إصدار المستند."
+        ),
+        "security_rejection": (
+            "تم رفض المستند بواسطة سياسة الأمان."
+        ),
+        "security_validation_error": (
+            "تعذر التحقق من أمان المستند."
+        ),
+        "saved_successfully": (
+            "تم حفظ المستند بنجاح."
+        ),
+        "validation_complete": (
+            "اكتمل التحقق"
+        ),
+        "document": "المستند",
+        "version": "الإصدار",
+        "content_preview": (
+            "### معاينة المحتوى"
+        ),
+        "loaded_content": "المحتوى المحمّل",
+        "generated_chunks": (
+            "### الأجزاء التي تم إنشاؤها"
+        ),
+        "chunks_generated": (
+            "تم إنشاء الأجزاء وحفظها في"
+        ),
+        "embedding_ready": (
+            "الملف جاهز للتضمينات وpgvector"
+        ),
+        "resources_used": (
+            "🔎 الموارد التي استخدمتها INNA"
+        ),
+        "executed_steps": "#### المراحل المنفذة",
+        "persistent_memory": "الذاكرة الدائمة",
+        "memory_consulted": (
+            "تمت قراءة سياق المستخدم"
+        ),
+        "semantic_search_used": (
+            "البحث الدلالي RAG"
+        ),
+        "passages_retrieved": (
+            "عدد المقاطع المسترجعة: {total}"
+        ),
+        "tool": "الأداة",
+        "choice_reason": "سبب الاختيار",
+        "no_calculation_required": (
+            "لم تكن هناك حاجة إلى حساب مالي حتمي."
+        ),
+        "routing_confidence": (
+            "درجة الثقة في التوجيه"
+        ),
+        "calculation_executed": (
+            "تم تنفيذ الحساب"
+        ),
+        "calculation_details": (
+            "تفاصيل الحساب"
+        ),
+        "tool_not_executed": (
+            "تم تحديد الأداة، لكن لم تكن هناك "
+            "حاجة إلى تنفيذها."
+        ),
+        "required_data": (
+            "البيانات الإضافية المطلوبة"
+        ),
+        "main_result": "#### النتيجة الرئيسية",
+        "monthly_income": "الدخل الشهري",
+        "monthly_expenses": "المصروفات الشهرية",
+        "estimated_balance": "الرصيد التقديري",
+        "committed_income": "الدخل الملتزم",
+        "monthly_capacity": "القدرة الشهرية",
+        "weekly_reference": "المرجع الأسبوعي",
+        "show_json": (
+            "عرض النتيجة التقنية بصيغة JSON"
+        ),
+        "memory_updated": (
+            "🧠 تم تحديث الذاكرة تلقائيًا "
+            "من المحادثة."
+        ),
+        "memory_not_updated": (
+            "لم يتم تحديث الذاكرة."
+        ),
+    },
+}
+
+for _language, _texts in (
+    UPLOAD_RAG_NATIVE_TEXTS.items()
+):
+    # Cria um dicionário independente.
+    # Alguns idiomas antigos eram aliases do inglês
+    # e compartilhavam o mesmo objeto em memória.
+    UPLOAD_RAG_TEXTS[
+        _language
+    ] = {
+        **dict(
+            UPLOAD_RAG_TEXTS.get(
+                _language,
+                {},
+            )
+        ),
+        **dict(_texts),
+    }
+
+
+def upload_rag_t(
+    key,
+    default=None,
+    **format_values,
+):
+    return dashboard_page_translate(
+        UPLOAD_RAG_TEXTS,
+        key,
+        language=dashboard_lang(),
+        default=default,
+        **format_values,
+    )
+
 def render_upload_documentos_rag():
     import streamlit as st
     from pathlib import Path
     from datetime import datetime
 
-    st.markdown("## 📄 Upload de Documentos para Base RAG")
-    st.caption("Envie arquivos .md ou .txt para expandir a base de conhecimento da INNA.")
+    st.markdown(upload_rag_t("title"))
+    st.caption(upload_rag_t("caption"))
 
     upload_dir = Path("data/knowledge_base/uploads")
     upload_dir.mkdir(parents=True, exist_ok=True)
@@ -7207,9 +11676,9 @@ def render_upload_documentos_rag():
     chunks_dir.mkdir(parents=True, exist_ok=True)
 
     uploaded_file = st.file_uploader(
-        "Selecione um documento",
+        upload_rag_t("select_document"),
         type=["md", "txt"],
-        help="Nesta primeira versão, a INNA aceita arquivos Markdown e TXT."
+        help=upload_rag_t("upload_help")
     )
 
     if uploaded_file is not None:
@@ -7217,7 +11686,7 @@ def render_upload_documentos_rag():
         suffix = Path(original_name).suffix.lower()
 
         if suffix not in [".md", ".txt"]:
-            st.error("Formato não permitido. Envie apenas arquivos .md ou .txt.")
+            st.error(upload_rag_t("invalid_format"))
             return
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -7270,8 +11739,9 @@ def render_upload_documentos_rag():
 
             if not versioning_lookup.get("ok"):
                 st.error(
-                    "Não foi possível consultar o "
-                    "versionamento do documento."
+                    upload_rag_t(
+                        "version_lookup_error"
+                    )
                 )
                 return
 
@@ -7295,53 +11765,69 @@ def render_upload_documentos_rag():
 
         except RagDocumentVersioningError as exc:
             st.error(
-                "Não foi possível determinar a "
-                f"versão do documento: {exc}"
+                f"{upload_rag_t('version_error')}: {exc}"
             )
             return
 
         except RagDocumentSecurityError as exc:
             st.error(
-                "Documento rejeitado pela política "
-                f"de segurança: {exc}"
+                f"{upload_rag_t('security_rejection')}: {exc}"
             )
             return
 
         except Exception:
             st.error(
-                "Não foi possível validar a segurança "
-                "do documento."
+                upload_rag_t(
+                    "security_validation_error"
+                )
             )
             return
 
         final_path.write_bytes(content_bytes)
 
         st.success(
-            f"Documento salvo com sucesso: "
+            f"{upload_rag_t('saved_successfully')}: "
             f"{final_path.name}"
         )
 
         st.caption(
-            "Validação concluída | "
+            f"{upload_rag_t('validation_complete')} | "
             f"{security_result.size_bytes} bytes | "
             f"SHA-256: "
             f"{security_result.content_hash[:16]}... | "
-            f"Documento: {document_version.logical_name} | "
-            f"Versão: {document_version.version}"
+            f"{upload_rag_t('document')}: "
+            f"{document_version.logical_name} | "
+            f"{upload_rag_t('version')}: "
+            f"{document_version.version}"
         )
 
         try:
             preview = content_bytes.decode("utf-8")
             preview_limpo = limpar_texto_documento_rag(preview)
 
-            st.markdown("### Prévia do conteúdo")
-            st.text_area("Conteúdo carregado", preview_limpo[:3000], height=250)
+            st.markdown(
+                upload_rag_t("content_preview")
+            )
+            st.text_area(
+                upload_rag_t("loaded_content"),
+                preview_limpo[:3000],
+                height=250,
+            )
 
             chunks_path, chunks, embedding_ready_path = salvar_chunks_documento(final_path.name, preview_limpo)
 
-            st.markdown("### Chunks gerados")
-            st.success(f"{len(chunks)} chunks gerados e salvos em: {chunks_path.name}")
-            st.info(f"Arquivo pronto para embeddings/pgvector: {embedding_ready_path.name}")
+            st.markdown(
+                upload_rag_t("generated_chunks")
+            )
+            st.success(
+                f"{len(chunks)} "
+                f"{upload_rag_t('chunks_generated')}: "
+                f"{chunks_path.name}"
+            )
+            st.info(
+                f"{upload_rag_t('embedding_ready')}: "
+                f"{embedding_ready_path.name}"
+            )
 
             registro_db = registrar_metadata_upload_rag(
                 nome_original=original_name,
@@ -7377,48 +11863,94 @@ def render_upload_documentos_rag():
             for idx, chunk in enumerate(chunks[:5], start=1):
                 categoria_chunk = classificar_categoria_chunk_rag(chunk)
 
-                with st.expander(f"Chunk {idx} | {len(chunk)} caracteres | Categoria: {categoria_chunk}"):
+                with st.expander(
+                    upload_rag_t(
+                        "chunk_preview"
+                    ).format(
+                        index=idx,
+                        characters=len(chunk),
+                        category=categoria_chunk,
+                    )
+                ):
                     st.text_area(
-                        "Texto do chunk",
+                        upload_rag_t(
+                            "chunk_text"
+                        ),
                         chunk,
                         height=180,
                         key=f"preview_chunk_upload_rag_{idx}_{final_path.name}"
                     )
 
             if len(chunks) > 5:
-                st.info(f"Foram gerados {len(chunks)} chunks. Exibindo apenas os 5 primeiros.")
+                st.info(
+                    upload_rag_t(
+                        "chunk_preview_limit"
+                    ).format(
+                        total=len(chunks)
+                    )
+                )
 
         except Exception as e:
-            st.warning("Arquivo salvo, mas não foi possível gerar prévia ou chunks.")
+            st.warning(
+                upload_rag_t(
+                    "preview_generation_failed"
+                )
+            )
             st.caption(str(e))
 
     st.markdown("---")
-    st.markdown("### Documentos enviados")
+    st.markdown(
+        upload_rag_t(
+            "uploaded_documents"
+        )
+    )
 
     files = sorted(upload_dir.glob("*"), reverse=True)
 
     if not files:
-        st.info("Nenhum documento enviado ainda.")
+        st.info(
+            upload_rag_t(
+                "no_uploaded_documents"
+            )
+        )
     else:
         for file in files:
             if file.is_file():
                 st.write(f"📄 **{file.name}**")
-                st.caption(f"Tamanho: {file.stat().st_size} bytes")
+                st.caption(
+            f"{upload_rag_t('file_size')}: "
+            f"{file.stat().st_size} bytes"
+        )
 
     st.markdown("---")
-    st.markdown("### Arquivos de chunks gerados")
+    st.markdown(
+        upload_rag_t(
+            "generated_chunk_files"
+        )
+    )
 
     chunk_files = sorted(chunks_dir.glob("*.json"), reverse=True)
 
     if not chunk_files:
-        st.info("Nenhum arquivo de chunks gerado ainda.")
+        st.info(
+            upload_rag_t(
+                "no_generated_chunk_files"
+            )
+        )
     else:
         for file in chunk_files[:10]:
             st.write(f"🧩 **{file.name}**")
-            st.caption(f"Tamanho: {file.stat().st_size} bytes")
+            st.caption(
+                f"{upload_rag_t('file_size')}: "
+                f"{file.stat().st_size} bytes"
+            )
 
     st.markdown("---")
-    st.markdown("### Arquivos prontos para embeddings")
+    st.markdown(
+        upload_rag_t(
+            "embedding_ready_files"
+        )
+    )
 
     embedding_ready_dir = Path("data/knowledge_base/embedding_ready")
     embedding_ready_dir.mkdir(parents=True, exist_ok=True)
@@ -7426,7 +11958,11 @@ def render_upload_documentos_rag():
     embedding_files = sorted(embedding_ready_dir.glob("*.jsonl"), reverse=True)
 
     if not embedding_files:
-        st.info("Nenhum arquivo pronto para embeddings gerado ainda.")
+        st.info(
+            upload_rag_t(
+                "no_embedding_ready_files"
+            )
+        )
     else:
         for file in embedding_files[:10]:
             st.write(f"🧠 **{file.name}**")
@@ -7434,21 +11970,53 @@ def render_upload_documentos_rag():
 
 
     st.markdown("---")
-    st.markdown("### Documentos registrados no Neon/PostgreSQL")
+    st.markdown(
+        upload_rag_t("registered_documents")
+    )
 
     df_docs, erro_docs = carregar_documentos_upload_rag()
 
     if erro_docs:
-        st.warning(f"Não foi possível carregar documentos do banco: {erro_docs}")
+        st.warning(
+            f"{upload_rag_t('database_documents_error')}: "
+            f"{erro_docs}"
+        )
     elif df_docs.empty:
-        st.info("Nenhum documento registrado no Neon/PostgreSQL ainda.")
+        st.info(
+            upload_rag_t(
+                "no_registered_documents"
+            )
+        )
     else:
-        st.metric("Total de documentos registrados", len(df_docs))
+        st.metric(
+            upload_rag_t(
+                "registered_documents_total"
+            ),
+            len(df_docs),
+        )
 
         col1, col2, col3 = st.columns(3)
-        col1.metric("Total de chunks", int(df_docs["total_chunks"].fillna(0).sum()))
-        col2.metric("Processados", int((df_docs["status"] == "processado").sum()))
-        col3.metric("Extensões", df_docs["extensao"].nunique())
+        col1.metric(
+            upload_rag_t("total_chunks"),
+            int(
+                df_docs["total_chunks"]
+                .fillna(0)
+                .sum()
+            ),
+        )
+        col2.metric(
+            upload_rag_t("processed"),
+            int(
+                (
+                    df_docs["status"]
+                    == "processado"
+                ).sum()
+            ),
+        )
+        col3.metric(
+            upload_rag_t("extensions"),
+            df_docs["extensao"].nunique(),
+        )
 
         st.dataframe(
             df_docs[
@@ -7468,7 +12036,9 @@ def render_upload_documentos_rag():
         )
 
 
-        st.markdown("### Organização local dos arquivos RAG")
+        st.markdown(
+            upload_rag_t("local_organisation")
+        )
 
         uploads_dir_local = Path("data/knowledge_base/uploads")
         chunks_dir_local = Path("data/knowledge_base/chunks")
@@ -7480,39 +12050,76 @@ def render_upload_documentos_rag():
 
         col_local_1, col_local_2, col_local_3 = st.columns(3)
 
-        col_local_1.metric("Uploads locais", len(uploads_local))
-        col_local_2.metric("Arquivos de chunks", len(chunks_local))
-        col_local_3.metric("JSONL embedding_ready", len(embeddings_local))
+        col_local_1.metric(
+            upload_rag_t("local_uploads"),
+            len(uploads_local),
+        )
+        col_local_2.metric(
+            upload_rag_t("chunk_files"),
+            len(chunks_local),
+        )
+        col_local_3.metric(
+            upload_rag_t(
+                "embedding_ready_jsonl"
+            ),
+            len(embeddings_local),
+        )
 
-        with st.expander("Ver arquivos locais recentes"):
-            st.caption("Mostrando no máximo os 5 arquivos mais recentes de cada pasta.")
+        with st.expander(
+            upload_rag_t("recent_local_files")
+        ):
+            st.caption(
+                upload_rag_t(
+                    "recent_files_caption"
+                )
+            )
 
-            st.markdown("**Uploads recentes**")
+            st.markdown(
+                upload_rag_t("recent_uploads")
+            )
             for file in sorted(uploads_local, key=lambda f: f.stat().st_mtime, reverse=True)[:5]:
                 st.write(f"📄 {file.name}")
-                st.caption(f"Tamanho: {file.stat().st_size} bytes")
+                st.caption(
+                    f"{upload_rag_t('file_size')}: "
+                    f"{file.stat().st_size} bytes"
+                )
 
-            st.markdown("**Chunks recentes**")
+            st.markdown(
+                upload_rag_t("recent_chunks")
+            )
             for file in sorted(chunks_local, key=lambda f: f.stat().st_mtime, reverse=True)[:5]:
                 st.write(f"🧩 {file.name}")
-                st.caption(f"Tamanho: {file.stat().st_size} bytes")
+                st.caption(
+                    f"{upload_rag_t('file_size')}: "
+                    f"{file.stat().st_size} bytes"
+                )
 
-            st.markdown("**JSONL recentes**")
+            st.markdown(
+                upload_rag_t("recent_jsonl")
+            )
             for file in sorted(embeddings_local, key=lambda f: f.stat().st_mtime, reverse=True)[:5]:
                 st.write(f"🧠 {file.name}")
-                st.caption(f"Tamanho: {file.stat().st_size} bytes")
+                st.caption(
+                    f"{upload_rag_t('file_size')}: "
+                    f"{file.stat().st_size} bytes"
+                )
 
-        st.caption("Arquivar move arquivos antigos para data/knowledge_base/archive. Nada é apagado definitivamente.")
+        st.caption(
+            upload_rag_t("archive_caption")
+        )
 
         manter_ultimos_arquivos = st.slider(
-            "Manter quantos arquivos recentes em cada pasta?",
+            upload_rag_t("files_to_keep"),
             min_value=1,
             max_value=10,
             value=5,
             key="manter_ultimos_arquivos_rag"
         )
 
-        if st.button("🗂️ Arquivar arquivos locais antigos", key="btn_arquivar_arquivos_locais_rag"):
+        if st.button(
+            upload_rag_t("archive_old_files"),
+            key="btn_arquivar_arquivos_locais_rag",
+        ):
             resultado_arquivo = arquivar_arquivos_locais_rag(
                 manter_ultimos=manter_ultimos_arquivos
             )
@@ -7523,7 +12130,9 @@ def render_upload_documentos_rag():
             else:
                 st.warning(resultado_arquivo.get("message"))
 
-        st.markdown("### Status do documento na base RAG")
+        st.markdown(
+            upload_rag_t("document_status")
+        )
 
         resultado_coluna_ativo = garantir_coluna_ativo_documentos_rag()
 
@@ -7536,7 +12145,9 @@ def render_upload_documentos_rag():
         ]
 
         doc_status_escolhido = st.selectbox(
-            "Escolha um documento para ativar/desativar",
+            upload_rag_t(
+                "select_status_document"
+            ),
             opcoes_status_docs,
             key="select_status_documento_rag"
         )
@@ -7547,14 +12158,21 @@ def render_upload_documentos_rag():
         ativo_atual = bool(registro_status.get("ativo", True))
 
         if ativo_atual:
-            st.success("Este documento está ATIVO na busca RAG.")
+            st.success(
+                upload_rag_t("active_document")
+            )
         else:
-            st.warning("Este documento está INATIVO e será ignorado na busca RAG.")
+            st.warning(
+                upload_rag_t("inactive_document")
+            )
 
         col_status_1, col_status_2 = st.columns(2)
 
         with col_status_1:
-            if st.button("✅ Ativar documento", key="btn_ativar_documento_rag"):
+            if st.button(
+                upload_rag_t("activate_document"),
+                key="btn_ativar_documento_rag",
+            ):
                 resultado_status = atualizar_status_documento_rag(documento_status_id, True)
 
                 if resultado_status.get("ok"):
@@ -7564,7 +12182,12 @@ def render_upload_documentos_rag():
                     st.warning(resultado_status.get("message"))
 
         with col_status_2:
-            if st.button("🚫 Desativar documento", key="btn_desativar_documento_rag"):
+            if st.button(
+                upload_rag_t(
+                    "deactivate_document"
+                ),
+                key="btn_desativar_documento_rag",
+            ):
                 resultado_status = atualizar_status_documento_rag(documento_status_id, False)
 
                 if resultado_status.get("ok"):
@@ -7573,7 +12196,9 @@ def render_upload_documentos_rag():
                 else:
                     st.warning(resultado_status.get("message"))
 
-        st.markdown("### Reprocessar documento")
+        st.markdown(
+            upload_rag_t("reprocess_document")
+        )
 
         opcoes_docs = [
             f"{int(row['id'])} - {row['nome_salvo']}"
@@ -7581,12 +12206,17 @@ def render_upload_documentos_rag():
         ]
 
         doc_escolhido = st.selectbox(
-            "Escolha um documento para reprocessar",
+            upload_rag_t(
+                "select_reprocess_document"
+            ),
             opcoes_docs,
             key="select_reprocessar_documento_rag"
         )
 
-        if st.button("🔄 Reprocessar documento selecionado", key="btn_reprocessar_documento_rag"):
+        if st.button(
+            upload_rag_t("reprocess_selected"),
+            key="btn_reprocessar_documento_rag",
+        ):
             from pathlib import Path
 
             documento_id = int(doc_escolhido.split(" - ")[0])
@@ -7595,7 +12225,10 @@ def render_upload_documentos_rag():
             caminho_upload = Path(str(registro["caminho_upload"]))
 
             if not caminho_upload.exists():
-                st.error(f"Arquivo original não encontrado: {caminho_upload}")
+                st.error(
+                    f"{upload_rag_t('original_file_not_found')}: "
+                    f"{caminho_upload}"
+                )
             else:
                 texto_documento = caminho_upload.read_text(encoding="utf-8", errors="ignore")
 
@@ -7613,12 +12246,17 @@ def render_upload_documentos_rag():
 
                 if resultado_update.get("ok"):
                     st.success(resultado_update.get("message"))
-                    st.info(f"Novo arquivo pronto para embeddings: {embedding_ready_path.name}")
+                    st.info(
+                        f"{upload_rag_t('new_embedding_ready')}: "
+                        f"{embedding_ready_path.name}"
+                    )
                 else:
                     st.warning(resultado_update.get("message"))
 
 
-        st.markdown("### Resumo dos embeddings no pgvector")
+        st.markdown(
+            upload_rag_t("embedding_summary")
+        )
 
         resumo_embeddings = carregar_resumo_embeddings_pgvector_rag()
 
@@ -7628,75 +12266,103 @@ def render_upload_documentos_rag():
             col_emb_1, col_emb_2, col_emb_3 = st.columns(3)
 
             col_emb_1.metric(
-                "Embeddings totais",
+                upload_rag_t("total_embeddings"),
                 resumo_embeddings.get("total_embeddings", 0)
             )
 
             col_emb_2.metric(
-                "Embeddings ativos",
+                upload_rag_t("active_embeddings"),
                 resumo_embeddings.get("embeddings_ativos", 0)
             )
 
             col_emb_3.metric(
-                "Embeddings inativos",
+                upload_rag_t("inactive_embeddings"),
                 resumo_embeddings.get("embeddings_inativos", 0)
             )
 
             col_doc_1, col_doc_2, col_doc_3 = st.columns(3)
 
             col_doc_1.metric(
-                "Documentos com embeddings",
+                upload_rag_t(
+                    "documents_with_embeddings"
+                ),
                 resumo_embeddings.get("documentos_com_embeddings", 0)
             )
 
             col_doc_2.metric(
-                "Documentos ativos",
+                upload_rag_t("active_documents"),
                 resumo_embeddings.get("documentos_ativos_com_embeddings", 0)
             )
 
             col_doc_3.metric(
-                "Documentos inativos",
+                upload_rag_t("inactive_documents"),
                 resumo_embeddings.get("documentos_inativos_com_embeddings", 0)
             )
 
             df_resumo_embeddings = resumo_embeddings.get("df")
 
             if df_resumo_embeddings is not None and not df_resumo_embeddings.empty:
-                with st.expander("Ver resumo por documento"):
+                with st.expander(
+                    upload_rag_t("summary_by_document")
+                ):
                     st.dataframe(
                         df_resumo_embeddings,
                         use_container_width=True,
                         hide_index=True
                     )
 
-        st.markdown("### Gerar embeddings no pgvector")
+        st.markdown(
+            upload_rag_t("generate_embeddings")
+        )
 
-        st.caption("Este botão lê o arquivo JSONL do documento selecionado, gera embeddings com Gemini e salva no Neon/PostgreSQL usando pgvector.")
+        st.caption(
+            upload_rag_t(
+                "generate_embeddings_caption"
+            )
+        )
 
         forcar_reprocessamento_embeddings = st.checkbox(
-            "Forçar reprocessamento dos embeddings mesmo se já existirem",
+            upload_rag_t(
+                "force_embedding_reprocessing"
+            ),
             value=False,
             key="forcar_reprocessamento_embeddings_pgvector_rag"
         )
 
-        if st.button("🧠 Gerar embeddings do documento selecionado", key="btn_gerar_embeddings_pgvector_rag"):
+        if st.button(
+            upload_rag_t(
+                "generate_selected_embeddings"
+            ),
+            key="btn_gerar_embeddings_pgvector_rag",
+        ):
             documento_id = int(doc_escolhido.split(" - ")[0])
             registro = df_docs[df_docs["id"] == documento_id].iloc[0]
 
             caminho_embedding_ready = registro.get("caminho_embedding_ready")
 
             if not caminho_embedding_ready:
-                st.error("Este documento ainda não possui caminho_embedding_ready registrado.")
+                st.error(
+                    upload_rag_t(
+                        "missing_embedding_path"
+                    )
+                )
             else:
                 ja_tem_embeddings, total_existente = documento_tem_embeddings_pgvector_rag(documento_id)
 
                 if ja_tem_embeddings and not forcar_reprocessamento_embeddings:
                     st.info(
-                        f"Este documento já possui {total_existente} embedding(s) no pgvector. "
-                        "Para gerar novamente, marque a opção de forçar reprocessamento."
+                        upload_rag_t(
+                            "existing_embeddings"
+                        ).format(
+                            total=total_existente
+                        )
                     )
                 else:
-                    with st.spinner("Gerando embeddings e salvando no pgvector..."):
+                    with st.spinner(
+                        upload_rag_t(
+                            "generating_embeddings"
+                        )
+                    ):
                         resultado_embeddings = salvar_chunks_embeddings_pgvector_rag(
                             documento_id=documento_id,
                             caminho_embedding_ready=caminho_embedding_ready
@@ -7708,12 +12374,25 @@ def render_upload_documentos_rag():
                         st.warning(resultado_embeddings.get("message"))
 
 
-        st.markdown("### Otimização pgvector")
+        st.markdown(
+            upload_rag_t(
+                "pgvector_optimisation"
+            )
+        )
 
-        st.caption("Cria índices no pgvector para acelerar buscas semânticas quando a base tiver muitos chunks.")
+        st.caption(
+            upload_rag_t(
+                "pgvector_optimisation_caption"
+            )
+        )
 
-        if st.button("⚡ Criar/validar índice pgvector", key="btn_criar_indice_pgvector_rag"):
-            with st.spinner("Criando/validando índice pgvector no Neon/PostgreSQL..."):
+        if st.button(
+            upload_rag_t("create_index"),
+            key="btn_criar_indice_pgvector_rag",
+        ):
+            with st.spinner(
+                upload_rag_t("creating_index")
+            ):
                 resultado_indice = criar_indice_pgvector_rag()
 
             if resultado_indice.get("ok"):
@@ -7721,35 +12400,62 @@ def render_upload_documentos_rag():
             else:
                 st.warning(resultado_indice.get("message"))
 
-        st.markdown("### Testar busca semântica no pgvector")
+        st.markdown(
+            upload_rag_t("semantic_search")
+        )
 
         pergunta_teste_pgvector = st.text_input(
-            "Digite uma pergunta para buscar nos documentos vetorizados",
+            upload_rag_t("search_question"),
             value="Recebi um Pix estranho, devo devolver?",
             key="pergunta_teste_pgvector_rag"
         )
 
         modo_limite_chunks = st.radio(
-            "Modo de quantidade de chunks",
-            ["Automático pela INNA", "Manual"],
+            upload_rag_t(
+                "chunk_quantity_mode"
+            ),
+            [
+                "automatic",
+                "manual",
+            ],
+            format_func=lambda value: (
+                upload_rag_t(
+                    "automatic_mode"
+                    if value == "automatic"
+                    else "manual_mode"
+                )
+            ),
             horizontal=True,
             key="modo_limite_chunks_pgvector_rag"
         )
 
-        if modo_limite_chunks == "Automático pela INNA":
+        if modo_limite_chunks == "automatic":
             limite_resultados_pgvector = definir_limite_chunks_automatico_rag(pergunta_teste_pgvector)
-            st.info(f"Quantidade escolhida automaticamente pela INNA: {limite_resultados_pgvector} chunks")
+            st.info(
+                upload_rag_t(
+                    "automatic_quantity"
+                ).format(
+                    total=limite_resultados_pgvector
+                )
+            )
         else:
             limite_resultados_pgvector = st.slider(
-                "Quantidade de chunks retornados",
+                upload_rag_t("returned_chunks"),
                 min_value=1,
                 max_value=10,
                 value=5,
                 key="limite_resultados_pgvector_rag"
             )
 
-        if st.button("🔎 Buscar chunks mais parecidos", key="btn_buscar_chunks_pgvector_rag"):
-            with st.spinner("Gerando embedding da pergunta e buscando no pgvector..."):
+        if st.button(
+            upload_rag_t(
+                "search_similar_chunks"
+            ),
+            key="btn_buscar_chunks_pgvector_rag",
+        ):
+            with st.spinner(
+                upload_rag_t("searching_chunks")
+            ):
                 resultado_busca = buscar_chunks_semanticos_pgvector_rag(
                     pergunta=pergunta_teste_pgvector,
                     limite=limite_resultados_pgvector
@@ -7763,20 +12469,43 @@ def render_upload_documentos_rag():
                 resultados = resultado_busca.get("resultados", [])
 
                 if not resultados:
-                    st.info("Nenhum chunk encontrado.")
+                    st.info(
+                        upload_rag_t(
+                            "no_chunk_found"
+                        )
+                    )
                 else:
                     for item in resultados:
                         with st.expander(
-                            f"Chunk {item['chunk_index']} | Categoria: {item.get('categoria', 'geral')} | Similaridade aprox.: {item['similaridade_aproximada']} | {item['documento_origem']}"
+                            f"{upload_rag_t('chunk')} "
+                            f"{item['chunk_index']} | "
+                            f"{upload_rag_t('category')}: "
+                            f"{item.get('categoria', upload_rag_t('general'))} | "
+                            f"{upload_rag_t('approx_similarity')}: "
+                            f"{item['similaridade_aproximada']} | "
+                            f"{item['documento_origem']}"
                         ):
-                            st.caption(f"chunk_id: {item['chunk_id']}")
-                            st.caption(f"distância pgvector: {item['distancia']}")
-                            st.caption(f"categorias priorizadas: {item.get('categorias_prioritarias', [])}")
-                            st.caption(f"score RAG: {item.get('score_rag')}")
+                            st.caption(
+                                f"chunk_id: {item['chunk_id']}"
+                            )
+                            st.caption(
+                                f"{upload_rag_t('pgvector_distance')}: "
+                                f"{item['distancia']}"
+                            )
+                            st.caption(
+                                f"{upload_rag_t('prioritised_categories')}: "
+                                f"{item.get('categorias_prioritarias', [])}"
+                            )
+                            st.caption(
+                                f"{upload_rag_t('rag_score')}: "
+                                f"{item.get('score_rag')}"
+                            )
                             st.write(item["texto"])
 
 
-        st.markdown("### Gerar resposta final da INNA com RAG")
+        st.markdown(
+            upload_rag_t("final_rag_response")
+        )
 
         usuario_id_resposta_rag = st.text_input(
             "ID do usuário para usar memória",
@@ -7785,32 +12514,51 @@ def render_upload_documentos_rag():
         )
 
         pergunta_resposta_rag = st.text_area(
-            "Pergunta para a INNA responder usando memória + documentos vetorizados",
+            upload_rag_t("rag_question"),
             value="Recebi um Pix estranho, devo devolver?",
             height=100,
             key="pergunta_resposta_final_rag_pgvector"
         )
 
         usar_limite_auto_resposta = st.checkbox(
-            "Usar quantidade automática de chunks na resposta",
+            upload_rag_t(
+                "automatic_response_chunks"
+            ),
             value=True,
             key="usar_limite_auto_resposta_rag_pgvector"
         )
 
         if usar_limite_auto_resposta:
             limite_resposta_rag = definir_limite_chunks_automatico_rag(pergunta_resposta_rag)
-            st.info(f"A INNA usará automaticamente {limite_resposta_rag} chunks como limite.")
+            st.info(
+                upload_rag_t(
+                    "automatic_response_limit"
+                ).format(
+                    total=limite_resposta_rag
+                )
+            )
         else:
             limite_resposta_rag = st.slider(
-                "Quantidade de chunks para contexto da resposta",
+                upload_rag_t(
+                    "response_context_chunks"
+                ),
                 min_value=1,
                 max_value=10,
                 value=5,
                 key="limite_resposta_final_rag_pgvector"
             )
 
-        if st.button("🤖 Gerar resposta final com RAG", key="btn_gerar_resposta_final_rag_pgvector"):
-            with st.spinner("Buscando contexto no pgvector e gerando resposta final da INNA..."):
+        if st.button(
+            upload_rag_t(
+                "generate_final_response"
+            ),
+            key="btn_gerar_resposta_final_rag_pgvector",
+        ):
+            with st.spinner(
+                upload_rag_t(
+                    "generating_final_response"
+                )
+            ):
                 resultado_resposta = gerar_resposta_rag_pgvector_inna(
                     pergunta=pergunta_resposta_rag,
                     limite=limite_resposta_rag,
@@ -7822,7 +12570,11 @@ def render_upload_documentos_rag():
             else:
                 st.success(resultado_resposta.get("message"))
 
-                st.markdown("#### 🤖 Resposta final da INNA")
+                st.markdown(
+                    upload_rag_t(
+                        "inna_final_response"
+                    )
+                )
 
                 with st.container(border=True):
                     st.markdown(preparar_markdown_resposta_inna(resultado_resposta.get("resposta", "")))
@@ -7849,19 +12601,24 @@ def render_upload_documentos_rag():
                     "🔎 Recursos utilizados pela INNA",
                     expanded=False,
                 ):
-                    st.markdown("#### Etapas executadas")
+                    st.markdown(upload_rag_t("executed_steps"))
 
                     if memoria_foi_consultada:
                         st.markdown(
-                            "✅ **Memória persistente:** "
-                            "contexto do usuário consultado"
+                            "✅ **"
+                            f"{upload_rag_t('persistent_memory')}:** "
+                            f"{upload_rag_t('memory_consulted')}"
                         )
 
                     if total_contextos_utilizados > 0:
                         st.markdown(
-                            "✅ **Busca semântica RAG:** "
-                            f"{total_contextos_utilizados} "
-                            "trecho(s) recuperado(s)"
+                            "✅ **"
+                            f"{upload_rag_t('semantic_search_used')}:** "
+                            + upload_rag_t(
+                                "passages_retrieved"
+                            ).format(
+                                total=total_contextos_utilizados
+                            )
                         )
 
                     if tool_utilizada:
@@ -7886,41 +12643,45 @@ def render_upload_documentos_rag():
 
                         if motivo_tool:
                             st.caption(
-                                "Motivo da escolha: "
+                                f"{upload_rag_t('choice_reason')}: "
                                 f"{motivo_tool}"
                             )
 
                     if not tool_utilizada:
                         st.caption(
-                            "Nenhum cálculo financeiro "
-                            "determinístico foi necessário."
+                            upload_rag_t(
+                                "no_calculation_required"
+                            )
                         )
 
                 if tool_utilizada:
                     with st.expander(
-                        "🧮 Detalhes do cálculo financeiro",
+                        upload_rag_t("calculation_details"),
                         expanded=False,
                     ):
                         col_tool_1, col_tool_2 = st.columns(2)
 
                         col_tool_1.markdown(
-                            f"**Ferramenta:** {tool_label}"
+                            f"**{upload_rag_t('tool')}:** "
+                            f"{tool_label}"
                         )
 
                         col_tool_2.markdown(
-                            "**Confiança do roteamento:** "
+                            f"**{upload_rag_t('routing_confidence')}:** "
                             f"{resultado_tools_ui.get('confianca', 0):.0%}"
                         )
 
                         if resultado_tools_ui.get("executada"):
                             st.success(
-                                "Cálculo determinístico executado "
-                                "antes da geração da resposta."
+                                upload_rag_t(
+                                    "calculation_executed"
+                                )
                             )
                         else:
                             st.info(
-                                "A ferramenta foi identificada, "
-                                "mas não precisou ser executada."
+                                upload_rag_t(
+                                    "tool_not_executed"
+                                )
                             )
 
                         dados_ausentes_tools = (
@@ -7932,7 +12693,7 @@ def render_upload_documentos_rag():
 
                         if dados_ausentes_tools:
                             st.warning(
-                                "Dados ainda necessários: "
+                                f"{upload_rag_t('required_data')}: "
                                 + ", ".join(
                                     dados_ausentes_tools
                                 )
@@ -7983,7 +12744,9 @@ def render_upload_documentos_rag():
                                 col_a, col_b, col_c = st.columns(3)
 
                                 col_a.metric(
-                                    "Renda mensal",
+                                    upload_rag_t(
+                                        "monthly_income"
+                                    ),
                                     formatar_moeda(
                                         resultado_calculo.get(
                                             "renda_mensal"
@@ -7993,7 +12756,9 @@ def render_upload_documentos_rag():
                                 )
 
                                 col_b.metric(
-                                    "Gastos mensais",
+                                    upload_rag_t(
+                                        "monthly_expenses"
+                                    ),
                                     formatar_moeda(
                                         resultado_calculo.get(
                                             "gastos_mensais"
@@ -8003,7 +12768,9 @@ def render_upload_documentos_rag():
                                 )
 
                                 col_c.metric(
-                                    "Saldo estimado",
+                                    upload_rag_t(
+                                        "estimated_balance"
+                                    ),
                                     formatar_moeda(
                                         resultado_calculo.get(
                                             "saldo_mensal"
@@ -8013,7 +12780,7 @@ def render_upload_documentos_rag():
                                 )
 
                                 st.caption(
-                                    "Renda comprometida: "
+                                    f"{upload_rag_t('committed_income')}: "
                                     f"{resultado_calculo.get(
                                         'renda_comprometida_percentual',
                                         0,
@@ -8027,7 +12794,9 @@ def render_upload_documentos_rag():
                                 col_a, col_b = st.columns(2)
 
                                 col_a.metric(
-                                    "Capacidade mensal",
+                                    upload_rag_t(
+                                        "monthly_capacity"
+                                    ),
                                     formatar_moeda(
                                         resultado_calculo.get(
                                             "valor_mensal"
@@ -8037,7 +12806,9 @@ def render_upload_documentos_rag():
                                 )
 
                                 col_b.metric(
-                                    "Referência semanal",
+                                    upload_rag_t(
+                                        "weekly_reference"
+                                    ),
                                     formatar_moeda(
                                         resultado_calculo.get(
                                             "valor_semanal_estimado"
@@ -8047,7 +12818,9 @@ def render_upload_documentos_rag():
                                 )
 
                             mostrar_json_tool = st.checkbox(
-                                "Mostrar resultado técnico em JSON",
+                                upload_rag_t(
+                                    "show_json"
+                                ),
                                 value=False,
                                 key=(
                                     "mostrar_json_tool_"
@@ -8061,7 +12834,7 @@ def render_upload_documentos_rag():
                 memoria_auto = resultado_resposta.get("memoria_atualizada", {})
 
                 if memoria_auto.get("ok"):
-                    st.success("🧠 Memória atualizada automaticamente pela conversa.")
+                    st.success(upload_rag_t("memory_updated"))
                     st.caption(memoria_auto.get("message"))
 
                     evolucao = memoria_auto.get("evolucao", {})
@@ -8082,46 +12855,92 @@ def render_upload_documentos_rag():
                         )
 
                 else:
-                    st.caption(memoria_auto.get("message", "Memória não atualizada nesta interação."))
+                    st.caption(
+                        memoria_auto.get(
+                            "message",
+                            upload_rag_t(
+                                "memory_not_updated"
+                            ),
+                        )
+                    )
 
                 contextos_usados = resultado_resposta.get("contextos", [])
 
-                st.markdown("#### 📚 Fontes usadas pela INNA")
+                st.markdown(
+                    upload_rag_t("sources_used")
+                )
 
                 if not contextos_usados:
-                    st.info("Nenhum contexto foi usado na resposta.")
+                    st.info(
+                        upload_rag_t("no_context_used")
+                    )
                 else:
                     st.caption(
-                        "Abaixo estão os trechos da base RAG que ajudaram a INNA a montar a resposta."
+                        upload_rag_t(
+                            "sources_caption"
+                        )
                     )
 
-                    for idx, item in enumerate(contextos_usados, start=1):
-                        similaridade = item.get("similaridade_aproximada")
-                        documento = item.get("documento_origem")
+                    for idx, item in enumerate(
+                        contextos_usados,
+                        start=1,
+                    ):
+                        similaridade = item.get(
+                            "similaridade_aproximada"
+                        )
+                        documento = item.get(
+                            "documento_origem"
+                        )
                         chunk_id = item.get("chunk_id")
-                        texto_contexto = item.get("texto", "")
+                        texto_contexto = item.get(
+                            "texto",
+                            "",
+                        )
 
                         texto_preview = texto_contexto[:900]
 
                         if len(texto_contexto) > 900:
-                            texto_preview = texto_preview + "..."
+                            texto_preview += "..."
 
                         with st.expander(
-                            f"Fonte {idx} | Similaridade: {similaridade} | Documento: {documento}"
+                            f"{upload_rag_t('source')} "
+                            f"{idx} | "
+                            f"{upload_rag_t('similarity')}: "
+                            f"{similaridade} | "
+                            f"{upload_rag_t('document')}: "
+                            f"{documento}"
                         ):
                             col_a, col_b, col_c = st.columns(3)
 
-                            col_a.metric("Fonte", idx)
-                            col_b.metric("Similaridade", similaridade)
-                            col_c.metric("Chunk", item.get("chunk_index"))
+                            col_a.metric(
+                                upload_rag_t("source"),
+                                idx,
+                            )
+                            col_b.metric(
+                                upload_rag_t(
+                                    "similarity"
+                                ),
+                                similaridade,
+                            )
+                            col_c.metric(
+                                "Chunk",
+                                item.get("chunk_index"),
+                            )
 
-                            st.caption(f"chunk_id: {chunk_id}")
+                            st.caption(
+                                f"chunk_id: {chunk_id}"
+                            )
 
                             st.text_area(
-                                "Trecho usado como contexto",
+                                upload_rag_t(
+                                    "context_passage"
+                                ),
                                 texto_preview,
                                 height=180,
-                                key=f"contexto_resposta_rag_{idx}_{chunk_id}"
+                                key=(
+                                    "contexto_resposta_rag_"
+                                    f"{idx}_{chunk_id}"
+                                ),
                             )
 
 
@@ -8323,16 +13142,867 @@ def buscar_memoria_inna(usuario_id):
 
 
 
+MEMORY_PAGE_TEXTS = {
+    "pt": {
+        "title": "## 🧠 Memória do Usuário — INNA",
+        "caption": (
+            "Os campos abaixo são carregados diretamente "
+            "da memória persistente armazenada no "
+            "Neon/PostgreSQL."
+        ),
+        "user_id": "ID do usuário",
+        "user_id_required": (
+            "Informe o ID do usuário para carregar a memória."
+        ),
+        "memory_loaded": (
+            "Memória atual de {user_id} carregada do banco."
+        ),
+        "memory_not_found": (
+            "Nenhuma memória encontrada para {user_id}. "
+            "O formulário será iniciado vazio."
+        ),
+        "main_financial_data": (
+            "### Dados financeiros principais"
+        ),
+        "name": "Nome",
+        "monthly_income": "Renda mensal",
+        "language": "Idioma",
+        "monthly_expenses": "Gastos mensais",
+        "currency": "Moeda",
+        "monthly_savings": (
+            "Valor que consegue guardar por mês"
+        ),
+        "has_debts": "Possui dívidas?",
+        "uses_credit_card": (
+            "Usa cartão de crédito?"
+        ),
+        "profile_context": "### Perfil e contexto",
+        "financial_profile": "Perfil financeiro",
+        "main_goal": "Objetivo principal",
+        "language_preference": (
+            "Preferência de linguagem"
+        ),
+        "latest_score": "Último score",
+        "latest_risk": "Último risco",
+        "latest_goal": "Última meta",
+        "memory_summary": "Resumo da memória",
+    },
+    "en_us": {
+        "title": "## 🧠 User Memory — INNA",
+        "caption": (
+            "The fields below are loaded directly from "
+            "the persistent memory stored in "
+            "Neon/PostgreSQL."
+        ),
+        "user_id": "User ID",
+        "user_id_required": (
+            "Enter the user ID to load the memory."
+        ),
+        "memory_loaded": (
+            "Current memory for {user_id} loaded from the database."
+        ),
+        "memory_not_found": (
+            "No memory was found for {user_id}. "
+            "The form will start empty."
+        ),
+        "main_financial_data": (
+            "### Main financial data"
+        ),
+        "name": "Name",
+        "monthly_income": "Monthly income",
+        "language": "Language",
+        "monthly_expenses": "Monthly expenses",
+        "currency": "Currency",
+        "monthly_savings": (
+            "Amount that can be saved per month"
+        ),
+        "has_debts": "Has debts?",
+        "uses_credit_card": (
+            "Uses a credit card?"
+        ),
+        "profile_context": "### Profile and context",
+        "financial_profile": "Financial profile",
+        "main_goal": "Main goal",
+        "language_preference": (
+            "Language preference"
+        ),
+        "latest_score": "Latest score",
+        "latest_risk": "Latest risk",
+        "latest_goal": "Latest goal",
+        "memory_summary": "Memory summary",
+    },
+    "es": {
+        "title": "## 🧠 Memoria del Usuario — INNA",
+        "caption": (
+            "Los campos siguientes se cargan directamente "
+            "desde la memoria persistente almacenada en "
+            "Neon/PostgreSQL."
+        ),
+        "user_id": "ID del usuario",
+        "user_id_required": (
+            "Informe el ID del usuario para cargar la memoria."
+        ),
+        "memory_loaded": (
+            "Memoria actual de {user_id} cargada desde la base."
+        ),
+        "memory_not_found": (
+            "No se encontró memoria para {user_id}. "
+            "El formulario comenzará vacío."
+        ),
+        "main_financial_data": (
+            "### Datos financieros principales"
+        ),
+        "name": "Nombre",
+        "monthly_income": "Ingresos mensuales",
+        "language": "Idioma",
+        "monthly_expenses": "Gastos mensuales",
+        "currency": "Moneda",
+        "monthly_savings": (
+            "Valor que puede guardar por mes"
+        ),
+        "has_debts": "¿Tiene deudas?",
+        "uses_credit_card": (
+            "¿Usa tarjeta de crédito?"
+        ),
+        "profile_context": "### Perfil y contexto",
+        "financial_profile": "Perfil financiero",
+        "main_goal": "Objetivo principal",
+        "language_preference": (
+            "Preferencia de lenguaje"
+        ),
+        "latest_score": "Último score",
+        "latest_risk": "Último riesgo",
+        "latest_goal": "Última meta",
+        "memory_summary": "Resumen de la memoria",
+    },
+    "fr": {
+        "title": "## 🧠 Mémoire Utilisateur — INNA",
+        "caption": (
+            "Les champs ci-dessous sont chargés directement "
+            "depuis la mémoire persistante stockée dans "
+            "Neon/PostgreSQL."
+        ),
+        "user_id": "ID utilisateur",
+        "user_id_required": (
+            "Saisissez l’ID utilisateur pour charger la mémoire."
+        ),
+        "memory_loaded": (
+            "Mémoire actuelle de {user_id} chargée depuis la base."
+        ),
+        "memory_not_found": (
+            "Aucune mémoire trouvée pour {user_id}. "
+            "Le formulaire sera initialisé vide."
+        ),
+        "main_financial_data": (
+            "### Données financières principales"
+        ),
+        "name": "Nom",
+        "monthly_income": "Revenu mensuel",
+        "language": "Langue",
+        "monthly_expenses": "Dépenses mensuelles",
+        "currency": "Devise",
+        "monthly_savings": (
+            "Montant pouvant être épargné par mois"
+        ),
+        "has_debts": "Possède des dettes ?",
+        "uses_credit_card": (
+            "Utilise une carte de crédit ?"
+        ),
+        "profile_context": "### Profil et contexte",
+        "financial_profile": "Profil financier",
+        "main_goal": "Objectif principal",
+        "language_preference": (
+            "Préférence de langage"
+        ),
+        "latest_score": "Dernier score",
+        "latest_risk": "Dernier risque",
+        "latest_goal": "Dernier objectif",
+        "memory_summary": "Résumé de la mémoire",
+    },
+    "de": {
+        "title": "## 🧠 Benutzerspeicher — INNA",
+        "caption": (
+            "Die folgenden Felder werden direkt aus "
+            "dem persistenten Speicher in "
+            "Neon/PostgreSQL geladen."
+        ),
+        "user_id": "Benutzer-ID",
+        "user_id_required": (
+            "Geben Sie die Benutzer-ID ein, um den Speicher zu laden."
+        ),
+        "memory_loaded": (
+            "Aktueller Speicher für {user_id} aus der Datenbank geladen."
+        ),
+        "memory_not_found": (
+            "Kein Speicher für {user_id} gefunden. "
+            "Das Formular wird leer gestartet."
+        ),
+        "main_financial_data": (
+            "### Wichtigste Finanzdaten"
+        ),
+        "name": "Name",
+        "monthly_income": "Monatliches Einkommen",
+        "language": "Sprache",
+        "monthly_expenses": "Monatliche Ausgaben",
+        "currency": "Währung",
+        "monthly_savings": (
+            "Monatlich möglicher Sparbetrag"
+        ),
+        "has_debts": "Hat Schulden?",
+        "uses_credit_card": (
+            "Verwendet eine Kreditkarte?"
+        ),
+        "profile_context": "### Profil und Kontext",
+        "financial_profile": "Finanzprofil",
+        "main_goal": "Hauptziel",
+        "language_preference": (
+            "Sprachpräferenz"
+        ),
+        "latest_score": "Letzter Score",
+        "latest_risk": "Letztes Risiko",
+        "latest_goal": "Letztes Ziel",
+        "memory_summary": "Speicherzusammenfassung",
+    },
+}
+
+MEMORY_PAGE_TEXTS["en_gb"] = MEMORY_PAGE_TEXTS["en_us"]
+
+for idioma in (
+    "it",
+    "ro",
+    "ua",
+    "ru",
+    "sa",
+):
+    MEMORY_PAGE_TEXTS[idioma] = MEMORY_PAGE_TEXTS["en_us"]
+
+MEMORY_PAGE_TEXTS["ch"] = MEMORY_PAGE_TEXTS["de"]
+
+
+MEMORY_PAGE_EXTRA_TEXTS = {
+    "pt": {
+        "tags": "Tags separadas por vírgula",
+        "advanced_json": "Memória JSON avançada",
+        "confirm_update": (
+            "Confirmo que revisei os dados e desejo "
+            "atualizar a memória"
+        ),
+        "save_memory": "💾 Salvar memória revisada",
+        "calculated_summary": "### Resumo calculado",
+        "estimated_monthly_balance": (
+            "Saldo mensal estimado"
+        ),
+        "weekly_capacity": "Capacidade semanal",
+        "committed_income": "Renda comprometida",
+        "confirmation_required": (
+            "Marque a confirmação antes de atualizar "
+            "a memória."
+        ),
+        "invalid_json": "Memória JSON inválida",
+        "event_registered": "Evento registrado",
+        "stored_memory": "### Memória atual armazenada",
+        "current_income": "Renda atual",
+        "current_expenses": "Gastos atuais",
+        "current_reserve": "Reserva atual",
+        "view_database_record": (
+            "Ver registro completo do banco"
+        ),
+        "no_stored_memory": (
+            "Nenhuma memória armazenada para este usuário."
+        ),
+    },
+    "en_us": {
+        "tags": "Comma-separated tags",
+        "advanced_json": "Advanced memory JSON",
+        "confirm_update": (
+            "I confirm that I reviewed the data and "
+            "want to update the memory"
+        ),
+        "save_memory": "💾 Save reviewed memory",
+        "calculated_summary": "### Calculated summary",
+        "estimated_monthly_balance": (
+            "Estimated monthly balance"
+        ),
+        "weekly_capacity": "Weekly capacity",
+        "committed_income": "Committed income",
+        "confirmation_required": (
+            "Select the confirmation before updating "
+            "the memory."
+        ),
+        "invalid_json": "Invalid memory JSON",
+        "event_registered": "Event registered",
+        "stored_memory": "### Currently stored memory",
+        "current_income": "Current income",
+        "current_expenses": "Current expenses",
+        "current_reserve": "Current reserve",
+        "view_database_record": (
+            "View complete database record"
+        ),
+        "no_stored_memory": (
+            "No memory is stored for this user."
+        ),
+    },
+    "es": {
+        "tags": "Tags separadas por comas",
+        "advanced_json": "Memoria JSON avanzada",
+        "confirm_update": (
+            "Confirmo que revisé los datos y deseo "
+            "actualizar la memoria"
+        ),
+        "save_memory": "💾 Guardar memoria revisada",
+        "calculated_summary": "### Resumen calculado",
+        "estimated_monthly_balance": (
+            "Saldo mensual estimado"
+        ),
+        "weekly_capacity": "Capacidad semanal",
+        "committed_income": "Ingresos comprometidos",
+        "confirmation_required": (
+            "Marque la confirmación antes de actualizar "
+            "la memoria."
+        ),
+        "invalid_json": "Memoria JSON inválida",
+        "event_registered": "Evento registrado",
+        "stored_memory": "### Memoria almacenada actualmente",
+        "current_income": "Ingresos actuales",
+        "current_expenses": "Gastos actuales",
+        "current_reserve": "Reserva actual",
+        "view_database_record": (
+            "Ver registro completo de la base"
+        ),
+        "no_stored_memory": (
+            "No hay memoria almacenada para este usuario."
+        ),
+    },
+    "fr": {
+        "tags": "Tags séparés par des virgules",
+        "advanced_json": "Mémoire JSON avancée",
+        "confirm_update": (
+            "Je confirme avoir vérifié les données et "
+            "souhaite mettre à jour la mémoire"
+        ),
+        "save_memory": "💾 Enregistrer la mémoire révisée",
+        "calculated_summary": "### Résumé calculé",
+        "estimated_monthly_balance": (
+            "Solde mensuel estimé"
+        ),
+        "weekly_capacity": "Capacité hebdomadaire",
+        "committed_income": "Revenu engagé",
+        "confirmation_required": (
+            "Cochez la confirmation avant de mettre "
+            "la mémoire à jour."
+        ),
+        "invalid_json": "Mémoire JSON invalide",
+        "event_registered": "Événement enregistré",
+        "stored_memory": "### Mémoire actuellement stockée",
+        "current_income": "Revenu actuel",
+        "current_expenses": "Dépenses actuelles",
+        "current_reserve": "Réserve actuelle",
+        "view_database_record": (
+            "Voir l’enregistrement complet de la base"
+        ),
+        "no_stored_memory": (
+            "Aucune mémoire stockée pour cet utilisateur."
+        ),
+    },
+    "de": {
+        "tags": "Kommagetrennte Tags",
+        "advanced_json": "Erweiterter Speicher-JSON",
+        "confirm_update": (
+            "Ich bestätige, dass ich die Daten geprüft "
+            "habe und den Speicher aktualisieren möchte"
+        ),
+        "save_memory": "💾 Geprüften Speicher speichern",
+        "calculated_summary": "### Berechnete Zusammenfassung",
+        "estimated_monthly_balance": (
+            "Geschätzter monatlicher Saldo"
+        ),
+        "weekly_capacity": "Wöchentliche Kapazität",
+        "committed_income": "Gebundenes Einkommen",
+        "confirmation_required": (
+            "Bestätigen Sie die Prüfung, bevor Sie "
+            "den Speicher aktualisieren."
+        ),
+        "invalid_json": "Ungültiger Speicher-JSON",
+        "event_registered": "Ereignis registriert",
+        "stored_memory": "### Aktuell gespeicherter Speicher",
+        "current_income": "Aktuelles Einkommen",
+        "current_expenses": "Aktuelle Ausgaben",
+        "current_reserve": "Aktuelle Rücklage",
+        "view_database_record": (
+            "Vollständigen Datenbankeintrag anzeigen"
+        ),
+        "no_stored_memory": (
+            "Für diesen Benutzer ist kein Speicher vorhanden."
+        ),
+    },
+}
+
+MEMORY_PAGE_EXTRA_TEXTS["en_gb"] = (
+    MEMORY_PAGE_EXTRA_TEXTS["en_us"]
+)
+
+for idioma in (
+    "it",
+    "ro",
+    "ua",
+    "ru",
+    "sa",
+):
+    MEMORY_PAGE_EXTRA_TEXTS[idioma] = (
+        MEMORY_PAGE_EXTRA_TEXTS["en_us"]
+    )
+
+MEMORY_PAGE_EXTRA_TEXTS["ch"] = (
+    MEMORY_PAGE_EXTRA_TEXTS["de"]
+)
+
+for idioma, textos in (
+    MEMORY_PAGE_EXTRA_TEXTS.items()
+):
+    MEMORY_PAGE_TEXTS.setdefault(
+        idioma,
+        {},
+    ).update(textos)
+
+
+
+# BLOCK_4B_NATIVE_MEMORY_TRANSLATIONS
+# Traduções nativas finais da página Memória do Usuário.
+
+MEMORY_PAGE_NATIVE_TEXTS = {
+    "it": {
+        "title": "## 🧠 Memoria Utente — INNA",
+        "caption": (
+            "Consulta, revisione e aggiornamento controllato "
+            "della memoria finanziaria persistente."
+        ),
+        "user_id": "ID utente",
+        "user_id_required": (
+            "Inserisci l’ID utente per caricare la memoria."
+        ),
+        "memory_loaded": (
+            "Memoria corrente di {user_id} caricata "
+            "dal database."
+        ),
+        "memory_not_found": (
+            "Nessuna memoria trovata per {user_id}. "
+            "Il modulo verrà avviato vuoto."
+        ),
+        "main_financial_data": (
+            "### Dati finanziari principali"
+        ),
+        "name": "Nome",
+        "monthly_income": "Reddito mensile",
+        "language": "Lingua",
+        "monthly_expenses": "Spese mensili",
+        "currency": "Valuta",
+        "monthly_savings": (
+            "Importo mensile disponibile per il risparmio"
+        ),
+        "has_debts": "Ha debiti?",
+        "uses_credit_card": (
+            "Utilizza una carta di credito?"
+        ),
+        "profile_context": "### Profilo e contesto",
+        "financial_profile": "Profilo finanziario",
+        "main_goal": "Obiettivo principale",
+        "language_preference": (
+            "Preferenza linguistica"
+        ),
+        "latest_score": "Punteggio più recente",
+        "latest_risk": "Rischio più recente",
+        "latest_goal": "Ultimo obiettivo",
+        "memory_summary": "Riepilogo della memoria",
+        "tags": "Tag separati da virgole",
+        "advanced_json": "JSON avanzato della memoria",
+        "confirm_update": (
+            "Confermo di aver revisionato i dati e "
+            "di voler aggiornare la memoria"
+        ),
+        "save_memory": (
+            "💾 Salva memoria revisionata"
+        ),
+        "calculated_summary": (
+            "### Riepilogo calcolato"
+        ),
+        "estimated_monthly_balance": (
+            "Saldo mensile stimato"
+        ),
+        "weekly_capacity": "Capacità settimanale",
+        "committed_income": "Reddito impegnato",
+        "confirmation_required": (
+            "Seleziona la conferma prima di aggiornare "
+            "la memoria."
+        ),
+        "invalid_json": "JSON della memoria non valido",
+        "event_registered": "Evento registrato",
+        "stored_memory": (
+            "### Memoria attualmente archiviata"
+        ),
+        "current_income": "Reddito attuale",
+        "current_expenses": "Spese attuali",
+        "current_reserve": "Riserva attuale",
+        "view_database_record": (
+            "Visualizza il record completo del database"
+        ),
+        "no_stored_memory": (
+            "Nessuna memoria archiviata per questo utente."
+        ),
+    },
+    "ro": {
+        "title": "## 🧠 Memoria Utilizatorului — INNA",
+        "caption": (
+            "Consultarea, revizuirea și actualizarea controlată "
+            "a memoriei financiare persistente."
+        ),
+        "user_id": "ID utilizator",
+        "user_id_required": (
+            "Introduceți ID-ul utilizatorului pentru "
+            "a încărca memoria."
+        ),
+        "memory_loaded": (
+            "Memoria curentă pentru {user_id} a fost "
+            "încărcată din baza de date."
+        ),
+        "memory_not_found": (
+            "Nu a fost găsită nicio memorie pentru {user_id}. "
+            "Formularul va porni gol."
+        ),
+        "main_financial_data": (
+            "### Date financiare principale"
+        ),
+        "name": "Nume",
+        "monthly_income": "Venit lunar",
+        "language": "Limbă",
+        "monthly_expenses": "Cheltuieli lunare",
+        "currency": "Monedă",
+        "monthly_savings": (
+            "Sumă lunară disponibilă pentru economisire"
+        ),
+        "has_debts": "Are datorii?",
+        "uses_credit_card": (
+            "Folosește un card de credit?"
+        ),
+        "profile_context": "### Profil și context",
+        "financial_profile": "Profil financiar",
+        "main_goal": "Obiectiv principal",
+        "language_preference": (
+            "Preferință lingvistică"
+        ),
+        "latest_score": "Cel mai recent scor",
+        "latest_risk": "Cel mai recent risc",
+        "latest_goal": "Cel mai recent obiectiv",
+        "memory_summary": "Rezumatul memoriei",
+        "tags": "Etichete separate prin virgulă",
+        "advanced_json": "JSON avansat al memoriei",
+        "confirm_update": (
+            "Confirm că am revizuit datele și doresc "
+            "să actualizez memoria"
+        ),
+        "save_memory": (
+            "💾 Salvați memoria revizuită"
+        ),
+        "calculated_summary": "### Rezumat calculat",
+        "estimated_monthly_balance": (
+            "Sold lunar estimat"
+        ),
+        "weekly_capacity": (
+            "Capacitate săptămânală"
+        ),
+        "committed_income": "Venit angajat",
+        "confirmation_required": (
+            "Selectați confirmarea înainte de "
+            "actualizarea memoriei."
+        ),
+        "invalid_json": "JSON de memorie nevalid",
+        "event_registered": "Eveniment înregistrat",
+        "stored_memory": (
+            "### Memorie stocată în prezent"
+        ),
+        "current_income": "Venit curent",
+        "current_expenses": "Cheltuieli curente",
+        "current_reserve": "Rezervă curentă",
+        "view_database_record": (
+            "Vizualizați înregistrarea completă din bază"
+        ),
+        "no_stored_memory": (
+            "Nu există memorie stocată pentru acest utilizator."
+        ),
+    },
+    "ua": {
+        "title": "## 🧠 Пам’ять Користувача — INNA",
+        "caption": (
+            "Перегляд, перевірка та контрольоване оновлення "
+            "постійної фінансової пам’яті."
+        ),
+        "user_id": "ID користувача",
+        "user_id_required": (
+            "Введіть ID користувача, щоб завантажити пам’ять."
+        ),
+        "memory_loaded": (
+            "Поточну пам’ять для {user_id} завантажено "
+            "з бази даних."
+        ),
+        "memory_not_found": (
+            "Пам’ять для {user_id} не знайдено. "
+            "Форму буде відкрито порожньою."
+        ),
+        "main_financial_data": (
+            "### Основні фінансові дані"
+        ),
+        "name": "Ім’я",
+        "monthly_income": "Місячний дохід",
+        "language": "Мова",
+        "monthly_expenses": "Місячні витрати",
+        "currency": "Валюта",
+        "monthly_savings": (
+            "Місячна сума, доступна для заощаджень"
+        ),
+        "has_debts": "Має борги?",
+        "uses_credit_card": (
+            "Користується кредитною карткою?"
+        ),
+        "profile_context": "### Профіль і контекст",
+        "financial_profile": "Фінансовий профіль",
+        "main_goal": "Основна мета",
+        "language_preference": "Мовні налаштування",
+        "latest_score": "Останній бал",
+        "latest_risk": "Останній ризик",
+        "latest_goal": "Остання мета",
+        "memory_summary": "Підсумок пам’яті",
+        "tags": "Теги, розділені комами",
+        "advanced_json": "Розширений JSON пам’яті",
+        "confirm_update": (
+            "Підтверджую, що перевірив дані та "
+            "бажаю оновити пам’ять"
+        ),
+        "save_memory": (
+            "💾 Зберегти перевірену пам’ять"
+        ),
+        "calculated_summary": (
+            "### Розрахований підсумок"
+        ),
+        "estimated_monthly_balance": (
+            "Орієнтовний місячний баланс"
+        ),
+        "weekly_capacity": "Тижнева спроможність",
+        "committed_income": "Зобов’язаний дохід",
+        "confirmation_required": (
+            "Перед оновленням пам’яті встановіть "
+            "прапорець підтвердження."
+        ),
+        "invalid_json": "Недійсний JSON пам’яті",
+        "event_registered": "Подію зареєстровано",
+        "stored_memory": (
+            "### Поточна збережена пам’ять"
+        ),
+        "current_income": "Поточний дохід",
+        "current_expenses": "Поточні витрати",
+        "current_reserve": "Поточний резерв",
+        "view_database_record": (
+            "Переглянути повний запис бази даних"
+        ),
+        "no_stored_memory": (
+            "Для цього користувача немає збереженої пам’яті."
+        ),
+    },
+    "ru": {
+        "title": "## 🧠 Память Пользователя — INNA",
+        "caption": (
+            "Просмотр, проверка и контролируемое обновление "
+            "постоянной финансовой памяти."
+        ),
+        "user_id": "ID пользователя",
+        "user_id_required": (
+            "Введите ID пользователя для загрузки памяти."
+        ),
+        "memory_loaded": (
+            "Текущая память для {user_id} загружена "
+            "из базы данных."
+        ),
+        "memory_not_found": (
+            "Память для {user_id} не найдена. "
+            "Форма будет открыта пустой."
+        ),
+        "main_financial_data": (
+            "### Основные финансовые данные"
+        ),
+        "name": "Имя",
+        "monthly_income": "Месячный доход",
+        "language": "Язык",
+        "monthly_expenses": "Месячные расходы",
+        "currency": "Валюта",
+        "monthly_savings": (
+            "Месячная сумма, доступная для накоплений"
+        ),
+        "has_debts": "Есть долги?",
+        "uses_credit_card": (
+            "Использует кредитную карту?"
+        ),
+        "profile_context": "### Профиль и контекст",
+        "financial_profile": "Финансовый профиль",
+        "main_goal": "Основная цель",
+        "language_preference": (
+            "Языковые предпочтения"
+        ),
+        "latest_score": "Последний балл",
+        "latest_risk": "Последний риск",
+        "latest_goal": "Последняя цель",
+        "memory_summary": "Сводка памяти",
+        "tags": "Теги через запятую",
+        "advanced_json": "Расширенный JSON памяти",
+        "confirm_update": (
+            "Подтверждаю, что проверил данные и "
+            "хочу обновить память"
+        ),
+        "save_memory": (
+            "💾 Сохранить проверенную память"
+        ),
+        "calculated_summary": (
+            "### Рассчитанная сводка"
+        ),
+        "estimated_monthly_balance": (
+            "Расчётный месячный баланс"
+        ),
+        "weekly_capacity": "Недельная возможность",
+        "committed_income": "Обязательный доход",
+        "confirmation_required": (
+            "Перед обновлением памяти установите "
+            "флажок подтверждения."
+        ),
+        "invalid_json": "Недопустимый JSON памяти",
+        "event_registered": "Событие зарегистрировано",
+        "stored_memory": (
+            "### Текущая сохранённая память"
+        ),
+        "current_income": "Текущий доход",
+        "current_expenses": "Текущие расходы",
+        "current_reserve": "Текущий резерв",
+        "view_database_record": (
+            "Показать полную запись базы данных"
+        ),
+        "no_stored_memory": (
+            "Для этого пользователя нет сохранённой памяти."
+        ),
+    },
+    "sa": {
+        "title": "## 🧠 ذاكرة المستخدم — INNA",
+        "caption": (
+            "عرض الذاكرة المالية الدائمة ومراجعتها "
+            "وتحديثها بصورة خاضعة للتحكم."
+        ),
+        "user_id": "معرّف المستخدم",
+        "user_id_required": (
+            "أدخل معرّف المستخدم لتحميل الذاكرة."
+        ),
+        "memory_loaded": (
+            "تم تحميل الذاكرة الحالية للمستخدم "
+            "{user_id} من قاعدة البيانات."
+        ),
+        "memory_not_found": (
+            "لم يتم العثور على ذاكرة للمستخدم {user_id}. "
+            "سيتم فتح النموذج فارغًا."
+        ),
+        "main_financial_data": (
+            "### البيانات المالية الرئيسية"
+        ),
+        "name": "الاسم",
+        "monthly_income": "الدخل الشهري",
+        "language": "اللغة",
+        "monthly_expenses": "المصروفات الشهرية",
+        "currency": "العملة",
+        "monthly_savings": (
+            "المبلغ الشهري المتاح للادخار"
+        ),
+        "has_debts": "هل توجد ديون؟",
+        "uses_credit_card": (
+            "هل يستخدم بطاقة ائتمان؟"
+        ),
+        "profile_context": "### الملف والسياق",
+        "financial_profile": "الملف المالي",
+        "main_goal": "الهدف الرئيسي",
+        "language_preference": "تفضيل اللغة",
+        "latest_score": "أحدث نتيجة",
+        "latest_risk": "أحدث مستوى مخاطر",
+        "latest_goal": "أحدث هدف",
+        "memory_summary": "ملخص الذاكرة",
+        "tags": "وسوم مفصولة بفواصل",
+        "advanced_json": "JSON متقدم للذاكرة",
+        "confirm_update": (
+            "أؤكد أنني راجعت البيانات وأرغب "
+            "في تحديث الذاكرة"
+        ),
+        "save_memory": (
+            "💾 حفظ الذاكرة بعد المراجعة"
+        ),
+        "calculated_summary": (
+            "### الملخص المحسوب"
+        ),
+        "estimated_monthly_balance": (
+            "الرصيد الشهري التقديري"
+        ),
+        "weekly_capacity": "القدرة الأسبوعية",
+        "committed_income": "الدخل الملتزم",
+        "confirmation_required": (
+            "حدد التأكيد قبل تحديث الذاكرة."
+        ),
+        "invalid_json": "JSON الذاكرة غير صالح",
+        "event_registered": "تم تسجيل الحدث",
+        "stored_memory": (
+            "### الذاكرة المحفوظة حاليًا"
+        ),
+        "current_income": "الدخل الحالي",
+        "current_expenses": "المصروفات الحالية",
+        "current_reserve": "الاحتياطي الحالي",
+        "view_database_record": (
+            "عرض سجل قاعدة البيانات الكامل"
+        ),
+        "no_stored_memory": (
+            "لا توجد ذاكرة محفوظة لهذا المستخدم."
+        ),
+    },
+}
+
+for _language, _texts in (
+    MEMORY_PAGE_NATIVE_TEXTS.items()
+):
+    # Cria um dicionário independente para impedir
+    # sobrescrita entre idiomas que antes compartilhavam
+    # o mesmo fallback em inglês.
+    MEMORY_PAGE_TEXTS[
+        _language
+    ] = {
+        **dict(
+            MEMORY_PAGE_TEXTS.get(
+                _language,
+                {},
+            )
+        ),
+        **dict(_texts),
+    }
+
+
+def memory_page_t(
+    key,
+    default=None,
+    **format_values,
+):
+    return dashboard_page_translate(
+        MEMORY_PAGE_TEXTS,
+        key,
+        language=dashboard_lang(),
+        default=default,
+        **format_values,
+    )
+
 def render_memoria_usuario_inna():
+
     import json
     import streamlit as st
     from decimal import Decimal
 
-    st.markdown("## 🧠 Memória do Usuário — INNA")
-    st.caption(
-        "Os campos abaixo são carregados diretamente da memória persistente "
-        "armazenada no Neon/PostgreSQL."
-    )
+    st.markdown(memory_page_t("title"))
+    st.caption(memory_page_t("caption"))
 
     def para_float(valor, padrao=0.0):
         if valor is None:
@@ -8353,13 +14023,15 @@ def render_memoria_usuario_inna():
             return padrao
 
     usuario_id = st.text_input(
-        "ID do usuário",
+        memory_page_t("user_id"),
         value="demo_user",
         key="memoria_usuario_id_inna"
     ).strip()
 
     if not usuario_id:
-        st.warning("Informe o ID do usuário para carregar a memória.")
+        st.warning(
+            memory_page_t("user_id_required")
+        )
         return
 
     resultado_busca = buscar_memoria_inna(usuario_id)
@@ -8371,11 +14043,16 @@ def render_memoria_usuario_inna():
     memoria = resultado_busca.get("memoria") or {}
 
     if memoria:
-        st.success(f"Memória atual de {usuario_id} carregada do banco.")
+        st.success(
+            memory_page_t("memory_loaded").format(
+                user_id=usuario_id
+            )
+        )
     else:
         st.info(
-            f"Nenhuma memória encontrada para {usuario_id}. "
-            "O formulário será iniciado vazio."
+            memory_page_t("memory_not_found").format(
+                user_id=usuario_id
+            )
         )
 
     idiomas = ["pt", "en", "es", "fr", "de", "it", "ru", "ar"]
@@ -8424,18 +14101,20 @@ def render_memoria_usuario_inna():
             }
 
     with st.form("form_memoria_usuario_inna"):
-        st.markdown("### Dados financeiros principais")
+        st.markdown(
+            memory_page_t("main_financial_data")
+        )
 
         col1, col2, col3 = st.columns(3)
 
         with col1:
             nome = st.text_input(
-                "Nome",
+                memory_page_t("name"),
                 value=memoria.get("nome") or ""
             )
 
             renda_mensal = st.number_input(
-                "Renda mensal",
+                memory_page_t("monthly_income"),
                 min_value=0.0,
                 value=para_float(memoria.get("renda_mensal")),
                 step=100.0,
@@ -8444,13 +14123,13 @@ def render_memoria_usuario_inna():
 
         with col2:
             idioma = st.selectbox(
-                "Idioma",
+                memory_page_t("language"),
                 idiomas,
                 index=indice_seguro(idiomas, idioma_atual)
             )
 
             gastos_mensais = st.number_input(
-                "Gastos mensais",
+                memory_page_t("monthly_expenses"),
                 min_value=0.0,
                 value=para_float(memoria.get("gastos_mensais")),
                 step=100.0,
@@ -8459,13 +14138,13 @@ def render_memoria_usuario_inna():
 
         with col3:
             moeda = st.selectbox(
-                "Moeda",
+                memory_page_t("currency"),
                 moedas,
                 index=indice_seguro(moedas, moeda_atual)
             )
 
             valor_reserva = st.number_input(
-                "Valor que consegue guardar por mês",
+                memory_page_t("monthly_savings"),
                 min_value=0.0,
                 value=para_float(memoria.get("valor_reserva")),
                 step=50.0,
@@ -8475,30 +14154,34 @@ def render_memoria_usuario_inna():
         col_divida, col_cartao = st.columns(2)
 
         possui_dividas = col_divida.checkbox(
-            "Possui dívidas?",
+            memory_page_t("has_debts"),
             value=bool(memoria.get("possui_dividas"))
         )
 
         uso_cartao_credito = col_cartao.checkbox(
-            "Usa cartão de crédito?",
+            memory_page_t("uses_credit_card"),
             value=bool(memoria.get("uso_cartao_credito"))
         )
 
-        st.markdown("### Perfil e contexto")
+        st.markdown(
+            memory_page_t("profile_context")
+        )
 
         perfil_financeiro = st.selectbox(
-            "Perfil financeiro",
+            memory_page_t("financial_profile"),
             perfis,
             index=indice_seguro(perfis, perfil_atual)
         )
 
         objetivo_principal = st.text_input(
-            "Objetivo principal",
+            memory_page_t("main_goal"),
             value=memoria.get("objetivo_principal") or ""
         )
 
         preferencia_linguagem = st.selectbox(
-            "Preferência de linguagem",
+            memory_page_t(
+                "language_preference"
+            ),
             linguagens,
             index=indice_seguro(linguagens, linguagem_atual)
         )
@@ -8506,7 +14189,7 @@ def render_memoria_usuario_inna():
         col_score, col_risco = st.columns(2)
 
         ultimo_score = col_score.number_input(
-            "Último score",
+            memory_page_t("latest_score"),
             min_value=0.0,
             max_value=100.0,
             value=para_float(memoria.get("ultimo_score")),
@@ -8514,29 +14197,29 @@ def render_memoria_usuario_inna():
         )
 
         ultimo_risco = col_risco.selectbox(
-            "Último risco",
+            memory_page_t("latest_risk"),
             riscos,
             index=indice_seguro(riscos, risco_atual)
         )
 
         ultima_meta = st.text_input(
-            "Última meta",
+            memory_page_t("latest_goal"),
             value=memoria.get("ultima_meta") or ""
         )
 
         resumo_contexto = st.text_area(
-            "Resumo da memória",
+            memory_page_t("memory_summary"),
             value=memoria.get("resumo_contexto") or "",
             height=140
         )
 
         tags_texto = st.text_input(
-            "Tags separadas por vírgula",
+            memory_page_t("tags"),
             value=tags_texto_atual
         )
 
         memoria_json_texto = st.text_area(
-            "Memória JSON avançada",
+            memory_page_t("advanced_json"),
             value=json.dumps(
                 memoria_json_atual,
                 ensure_ascii=False,
@@ -8547,12 +14230,12 @@ def render_memoria_usuario_inna():
         )
 
         confirmar = st.checkbox(
-            "Confirmo que revisei os dados e desejo atualizar a memória",
+            memory_page_t("confirm_update"),
             value=False
         )
 
         salvar = st.form_submit_button(
-            "💾 Salvar memória revisada",
+            memory_page_t("save_memory"),
             use_container_width=True
         )
 
@@ -8564,17 +14247,21 @@ def render_memoria_usuario_inna():
     saldo_estimado = renda_mensal - gastos_mensais
     reserva_semanal = valor_reserva / 4 if valor_reserva else 0.0
 
-    st.markdown("### Resumo calculado")
+    st.markdown(
+        memory_page_t("calculated_summary")
+    )
 
     col_saldo, col_semanal, col_comprometimento = st.columns(3)
 
     col_saldo.metric(
-        "Saldo mensal estimado",
+        memory_page_t(
+            "estimated_monthly_balance"
+        ),
         formatar_moeda(saldo_estimado, moeda)
     )
 
     col_semanal.metric(
-        "Capacidade semanal",
+        memory_page_t("weekly_capacity"),
         formatar_moeda(reserva_semanal, moeda)
     )
 
@@ -8585,21 +14272,26 @@ def render_memoria_usuario_inna():
     )
 
     col_comprometimento.metric(
-        "Renda comprometida",
+        memory_page_t("committed_income"),
         f"{percentual_comprometido:.1f}%"
     )
 
     if salvar:
         if not confirmar:
             st.warning(
-                "Marque a confirmação antes de atualizar a memória."
+                memory_page_t(
+                    "confirmation_required"
+                )
             )
             return
 
         try:
             memoria_json = json.loads(memoria_json_texto or "{}")
         except json.JSONDecodeError as erro:
-            st.error(f"Memória JSON inválida: {erro}")
+            st.error(
+                f"{memory_page_t('invalid_json')}: "
+                f"{erro}"
+            )
             return
 
         tags = [
@@ -8638,13 +14330,16 @@ def render_memoria_usuario_inna():
         if resultado.get("ok"):
             st.success(resultado.get("message"))
             st.caption(
-                f"Evento registrado: {resultado.get('tipo_evento')}"
+                f"{memory_page_t('event_registered')}: "
+                f"{resultado.get('tipo_evento')}"
             )
         else:
             st.error(resultado.get("message"))
 
     st.markdown("---")
-    st.markdown("### Memória atual armazenada")
+    st.markdown(
+        memory_page_t("stored_memory")
+    )
 
     memoria_banco = (
         buscar_memoria_inna(usuario_id).get("memoria")
@@ -8655,7 +14350,7 @@ def render_memoria_usuario_inna():
         col_a, col_b, col_c = st.columns(3)
 
         col_a.metric(
-            "Renda atual",
+            memory_page_t("current_income"),
             formatar_moeda(
                 memoria_banco.get("renda_mensal"),
                 memoria_banco.get("moeda") or "BRL"
@@ -8663,7 +14358,7 @@ def render_memoria_usuario_inna():
         )
 
         col_b.metric(
-            "Gastos atuais",
+            memory_page_t("current_expenses"),
             formatar_moeda(
                 memoria_banco.get("gastos_mensais"),
                 memoria_banco.get("moeda") or "BRL"
@@ -8671,17 +14366,23 @@ def render_memoria_usuario_inna():
         )
 
         col_c.metric(
-            "Reserva atual",
+            memory_page_t("current_reserve"),
             formatar_moeda(
                 memoria_banco.get("valor_reserva"),
                 memoria_banco.get("moeda") or "BRL"
             )
         )
 
-        with st.expander("Ver registro completo do banco"):
+        with st.expander(
+            memory_page_t(
+                "view_database_record"
+            )
+        ):
             st.json(memoria_banco, expanded=False)
     else:
-        st.info("Nenhuma memória armazenada para este usuário.")
+        st.info(
+            memory_page_t("no_stored_memory")
+        )
 
 
 
@@ -8724,34 +14425,34 @@ def main(
 
     st.divider()
 
-    if menu == "📌 Visão Geral":
+    if menu == "overview":
         render_overview(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
 
-    elif menu == "🌐 Eventos Multicanal":
+    elif menu == "multichannel_events":
         render_events(eventos_filtrados, diagnosticos_filtrados, feedbacks_filtrados)
 
-    elif menu == "🌍 Visão Internacional":
+    elif menu == "international_view":
         render_international(diagnosticos_filtrados)
 
-    elif menu == "👤 Diagnósticos":
+    elif menu == "diagnostics":
         render_diagnostics(diagnosticos_filtrados)
 
-    elif menu == "💬 Feedbacks":
+    elif menu == "feedbacks":
         render_feedbacks(feedbacks_filtrados)
 
-    elif menu == "📈 Evolução":
+    elif menu == "evolution":
         render_evolution(diagnosticos_filtrados)
 
-    elif menu == "🧠 Leitura Executiva":
+    elif menu == "executive_reading":
         render_executive_reading(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
 
-    elif menu == "🧪 Avaliação do Agente":
+    elif menu == "agent_evaluation":
         render_agent_evaluation(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
 
-    elif menu == "📊 Observabilidade RAG":
+    elif menu == "rag_observability":
         render_rag_observability()
 
-    elif menu == "🛠️ Observabilidade Tools":
+    elif menu == "tools_observability":
         try:
             from dashboard_pages.tools_observability_page import (
                 render_tools_observability_page
@@ -8763,7 +14464,7 @@ def main(
 
         render_tools_observability_page()
 
-    elif menu == "🧭 Timeline Viewer":
+    elif menu == "timeline_viewer":
         try:
             from dashboard_pages.timeline_viewer_page import (
                 render_timeline_viewer_page
@@ -8775,7 +14476,7 @@ def main(
 
         render_timeline_viewer_page()
 
-    elif menu == "📊 Analytics Tools":
+    elif menu == "tools_analytics":
         try:
             from dashboard_pages.tools_analytics_page import (
                 render_tools_analytics_page
@@ -8787,7 +14488,7 @@ def main(
 
         render_tools_analytics_page()
 
-    elif menu == "❤️ Health Center":
+    elif menu == "health_center":
         try:
             from dashboard_pages.health_score_page import (
                 render_health_score_page
@@ -8799,7 +14500,7 @@ def main(
 
         render_health_score_page()
 
-    elif menu == "🛰️ LLMOps & Observabilidade":
+    elif menu == "llmops_observability":
         try:
             from evaluation.dashboard import (
                 render_llmops_dashboard
@@ -8813,7 +14514,7 @@ def main(
             integrated=True
         )
 
-    elif menu == "💰 LLM Cost Center":
+    elif menu == "ai_cost_center":
         try:
             from dashboard_pages.llm_costs_page import (
                 render_llm_costs_page
@@ -8825,13 +14526,13 @@ def main(
 
         render_llm_costs_page()
 
-    elif menu == "📄 Upload Documentos":
+    elif menu == "document_upload":
         render_upload_documentos_rag()
 
-    elif menu == "🧠 Memória Usuário":
+    elif menu == "user_memory":
         render_memoria_usuario_inna()
 
-    elif menu == "📤 Exportar":
+    elif menu == "export":
         render_export(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
 
 

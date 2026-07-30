@@ -1,0 +1,1625 @@
+===== render_memoria_usuario_inna =====
+def render_memoria_usuario_inna():
+
+    import json
+    import streamlit as st
+    from decimal import Decimal
+
+    st.markdown(memory_page_t("title"))
+    st.caption(memory_page_t("caption"))
+
+    def para_float(valor, padrao=0.0):
+        if valor is None:
+            return float(padrao)
+
+        try:
+            if isinstance(valor, Decimal):
+                return float(valor)
+
+            return float(valor)
+        except (TypeError, ValueError):
+            return float(padrao)
+
+    def indice_seguro(opcoes, valor, padrao=0):
+        try:
+            return opcoes.index(valor)
+        except ValueError:
+            return padrao
+
+    usuario_id = st.text_input(
+        memory_page_t("user_id"),
+        value="demo_user",
+        key="memoria_usuario_id_inna"
+    ).strip()
+
+    if not usuario_id:
+        st.warning(
+            memory_page_t("user_id_required")
+        )
+        return
+
+    resultado_busca = buscar_memoria_inna(usuario_id)
+
+    if not resultado_busca.get("ok"):
+        st.error(resultado_busca.get("message"))
+        return
+
+    memoria = resultado_busca.get("memoria") or {}
+
+    if memoria:
+        st.success(
+            memory_page_t("memory_loaded").format(
+                user_id=usuario_id
+            )
+        )
+    else:
+        st.info(
+            memory_page_t("memory_not_found").format(
+                user_id=usuario_id
+            )
+        )
+
+    idiomas = ["pt", "en", "es", "fr", "de", "it", "ru", "ar"]
+    moedas = ["BRL", "USD", "EUR"]
+    perfis = [
+        "iniciante",
+        "organizando",
+        "endividado",
+        "equilibrado",
+        "avancado"
+    ]
+    linguagens = ["simples", "detalhada", "técnica"]
+    riscos = ["baixo", "moderado", "alto"]
+
+    idioma_atual = memoria.get("idioma") or "pt"
+    moeda_atual = memoria.get("moeda") or "BRL"
+    perfil_atual = memoria.get("perfil_financeiro") or "organizando"
+    linguagem_atual = memoria.get("preferencia_linguagem") or "simples"
+    risco_atual = memoria.get("ultimo_risco") or "moderado"
+
+    for valor, lista in [
+        (idioma_atual, idiomas),
+        (moeda_atual, moedas),
+        (perfil_atual, perfis),
+        (linguagem_atual, linguagens),
+        (risco_atual, riscos),
+    ]:
+        if valor not in lista:
+            lista.insert(0, valor)
+
+    tags_atuais = memoria.get("tags") or []
+
+    if isinstance(tags_atuais, list):
+        tags_texto_atual = ",".join(str(tag) for tag in tags_atuais)
+    else:
+        tags_texto_atual = str(tags_atuais)
+
+    memoria_json_atual = memoria.get("memoria_json") or {}
+
+    if isinstance(memoria_json_atual, str):
+        try:
+            memoria_json_atual = json.loads(memoria_json_atual)
+        except Exception:
+            memoria_json_atual = {
+                "conteudo_original": memoria_json_atual
+            }
+
+    with st.form("form_memoria_usuario_inna"):
+        st.markdown(
+            memory_page_t("main_financial_data")
+        )
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            nome = st.text_input(
+                memory_page_t("name"),
+                value=memoria.get("nome") or ""
+            )
+
+            renda_mensal = st.number_input(
+                memory_page_t("monthly_income"),
+                min_value=0.0,
+                value=para_float(memoria.get("renda_mensal")),
+                step=100.0,
+                format="%.2f"
+            )
+
+        with col2:
+            idioma = st.selectbox(
+                memory_page_t("language"),
+                idiomas,
+                index=indice_seguro(idiomas, idioma_atual)
+            )
+
+            gastos_mensais = st.number_input(
+                memory_page_t("monthly_expenses"),
+                min_value=0.0,
+                value=para_float(memoria.get("gastos_mensais")),
+                step=100.0,
+                format="%.2f"
+            )
+
+        with col3:
+            moeda = st.selectbox(
+                memory_page_t("currency"),
+                moedas,
+                index=indice_seguro(moedas, moeda_atual)
+            )
+
+            valor_reserva = st.number_input(
+                memory_page_t("monthly_savings"),
+                min_value=0.0,
+                value=para_float(memoria.get("valor_reserva")),
+                step=50.0,
+                format="%.2f"
+            )
+
+        col_divida, col_cartao = st.columns(2)
+
+        possui_dividas = col_divida.checkbox(
+            memory_page_t("has_debts"),
+            value=bool(memoria.get("possui_dividas"))
+        )
+
+        uso_cartao_credito = col_cartao.checkbox(
+            memory_page_t("uses_credit_card"),
+            value=bool(memoria.get("uso_cartao_credito"))
+        )
+
+        st.markdown(
+            memory_page_t("profile_context")
+        )
+
+        perfil_financeiro = st.selectbox(
+            memory_page_t("financial_profile"),
+            perfis,
+            index=indice_seguro(perfis, perfil_atual)
+        )
+
+        objetivo_principal = st.text_input(
+            memory_page_t("main_goal"),
+            value=memoria.get("objetivo_principal") or ""
+        )
+
+        preferencia_linguagem = st.selectbox(
+            memory_page_t(
+                "language_preference"
+            ),
+            linguagens,
+            index=indice_seguro(linguagens, linguagem_atual)
+        )
+
+        col_score, col_risco = st.columns(2)
+
+        ultimo_score = col_score.number_input(
+            memory_page_t("latest_score"),
+            min_value=0.0,
+            max_value=100.0,
+            value=para_float(memoria.get("ultimo_score")),
+            step=1.0
+        )
+
+        ultimo_risco = col_risco.selectbox(
+            memory_page_t("latest_risk"),
+            riscos,
+            index=indice_seguro(riscos, risco_atual)
+        )
+
+        ultima_meta = st.text_input(
+            memory_page_t("latest_goal"),
+            value=memoria.get("ultima_meta") or ""
+        )
+
+        resumo_contexto = st.text_area(
+            memory_page_t("memory_summary"),
+            value=memoria.get("resumo_contexto") or "",
+            height=140
+        )
+
+        tags_texto = st.text_input(
+            memory_page_t("tags"),
+            value=tags_texto_atual
+        )
+
+        memoria_json_texto = st.text_area(
+            memory_page_t("advanced_json"),
+            value=json.dumps(
+                memoria_json_atual,
+                ensure_ascii=False,
+                indent=2,
+                default=str
+            ),
+            height=220
+        )
+
+        confirmar = st.checkbox(
+            memory_page_t("confirm_update"),
+            value=False
+        )
+
+        salvar = st.form_submit_button(
+            memory_page_t("save_memory"),
+            use_container_width=True
+        )
+
+    try:
+        from services.formatter_inna import formatar_moeda
+    except ImportError:
+        from src.services.formatter_inna import formatar_moeda
+
+    saldo_estimado = renda_mensal - gastos_mensais
+    reserva_semanal = valor_reserva / 4 if valor_reserva else 0.0
+
+    st.markdown(
+        memory_page_t("calculated_summary")
+    )
+
+    col_saldo, col_semanal, col_comprometimento = st.columns(3)
+
+    col_saldo.metric(
+        memory_page_t(
+            "estimated_monthly_balance"
+        ),
+        formatar_moeda(saldo_estimado, moeda)
+    )
+
+    col_semanal.metric(
+        memory_page_t("weekly_capacity"),
+        formatar_moeda(reserva_semanal, moeda)
+    )
+
+    percentual_comprometido = (
+        (gastos_mensais / renda_mensal) * 100
+        if renda_mensal > 0
+        else 0.0
+    )
+
+    col_comprometimento.metric(
+        memory_page_t("committed_income"),
+        f"{percentual_comprometido:.1f}%"
+    )
+
+    if salvar:
+        if not confirmar:
+            st.warning(
+                memory_page_t(
+                    "confirmation_required"
+                )
+            )
+            return
+
+        try:
+            memoria_json = json.loads(memoria_json_texto or "{}")
+        except json.JSONDecodeError as erro:
+            st.error(
+                f"{memory_page_t('invalid_json')}: "
+                f"{erro}"
+            )
+            return
+
+        tags = [
+            tag.strip()
+            for tag in tags_texto.split(",")
+            if tag.strip()
+        ]
+
+        dados = {
+            "nome": nome,
+            "idioma": idioma,
+            "moeda": moeda,
+            "renda_mensal": renda_mensal,
+            "gastos_mensais": gastos_mensais,
+            "valor_reserva": valor_reserva,
+            "possui_dividas": possui_dividas,
+            "uso_cartao_credito": uso_cartao_credito,
+            "ultimo_score": ultimo_score,
+            "ultimo_risco": ultimo_risco,
+            "ultima_meta": ultima_meta,
+            "resumo_contexto": resumo_contexto,
+            "perfil_financeiro": perfil_financeiro,
+            "objetivo_principal": objetivo_principal,
+            "preferencia_linguagem": preferencia_linguagem,
+            "nivel_confianca": 1.0,
+            "memoria_json": memoria_json,
+            "tags": tags,
+        }
+
+        resultado = salvar_ou_atualizar_memoria_inna(
+            usuario_id=usuario_id,
+            dados_memoria=dados,
+            origem="dashboard_memoria_revisada"
+        )
+
+        if resultado.get("ok"):
+            st.success(resultado.get("message"))
+            st.caption(
+                f"{memory_page_t('event_registered')}: "
+                f"{resultado.get('tipo_evento')}"
+            )
+        else:
+            st.error(resultado.get("message"))
+
+    st.markdown("---")
+    st.markdown(
+        memory_page_t("stored_memory")
+    )
+
+    memoria_banco = (
+        buscar_memoria_inna(usuario_id).get("memoria")
+        or memoria
+    )
+
+    if memoria_banco:
+        col_a, col_b, col_c = st.columns(3)
+
+        col_a.metric(
+            memory_page_t("current_income"),
+            formatar_moeda(
+                memoria_banco.get("renda_mensal"),
+                memoria_banco.get("moeda") or "BRL"
+            )
+        )
+
+        col_b.metric(
+            memory_page_t("current_expenses"),
+            formatar_moeda(
+                memoria_banco.get("gastos_mensais"),
+                memoria_banco.get("moeda") or "BRL"
+            )
+        )
+
+        col_c.metric(
+            memory_page_t("current_reserve"),
+            formatar_moeda(
+                memoria_banco.get("valor_reserva"),
+                memoria_banco.get("moeda") or "BRL"
+            )
+        )
+
+        with st.expander(
+            memory_page_t(
+                "view_database_record"
+            )
+        ):
+            st.json(memoria_banco, expanded=False)
+    else:
+        st.info(
+            memory_page_t("no_stored_memory")
+        )
+
+===== render_upload_documentos_rag =====
+def render_upload_documentos_rag():
+    import streamlit as st
+    from pathlib import Path
+    from datetime import datetime
+
+    st.markdown(upload_rag_t("title"))
+    st.caption(upload_rag_t("caption"))
+
+    upload_dir = Path("data/knowledge_base/uploads")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    chunks_dir = Path("data/knowledge_base/chunks")
+    chunks_dir.mkdir(parents=True, exist_ok=True)
+
+    uploaded_file = st.file_uploader(
+        upload_rag_t("select_document"),
+        type=["md", "txt"],
+        help=upload_rag_t("upload_help")
+    )
+
+    if uploaded_file is not None:
+        original_name = uploaded_file.name
+        suffix = Path(original_name).suffix.lower()
+
+        if suffix not in [".md", ".txt"]:
+            st.error(upload_rag_t("invalid_format"))
+            return
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_name = original_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
+        final_path = upload_dir / f"{timestamp}_{safe_name}"
+
+        content_bytes = uploaded_file.getvalue()
+
+        try:
+            try:
+                from services.rag.security import (
+                    RagDocumentSecurityError,
+                    require_safe_rag_document,
+                )
+            except ImportError:
+                from src.services.rag.security import (
+                    RagDocumentSecurityError,
+                    require_safe_rag_document,
+                )
+
+            security_result = require_safe_rag_document(
+                filename=original_name,
+                content=content_bytes,
+            )
+
+            try:
+                from services.rag.versioning import (
+                    RagDocumentVersioningError,
+                    RagDuplicateDocumentError,
+                    create_document_version_from_context,
+                    normalize_logical_document_name,
+                )
+            except ImportError:
+                from src.services.rag.versioning import (
+                    RagDocumentVersioningError,
+                    RagDuplicateDocumentError,
+                    create_document_version_from_context,
+                    normalize_logical_document_name,
+                )
+
+            nome_logico = normalize_logical_document_name(
+                original_name
+            )
+
+            versioning_lookup = (
+                buscar_contexto_versionamento_rag(
+                    nome_logico
+                )
+            )
+
+            if not versioning_lookup.get("ok"):
+                st.error(
+                    upload_rag_t(
+                        "version_lookup_error"
+                    )
+                )
+                return
+
+            document_version = (
+                create_document_version_from_context(
+                    filename=original_name,
+                    content_hash=(
+                        security_result.content_hash
+                    ),
+                    repository_context=(
+                        versioning_lookup.get(
+                            "contexto"
+                        )
+                    ),
+                )
+            )
+
+        except RagDuplicateDocumentError as exc:
+            st.warning(str(exc))
+            return
+
+        except RagDocumentVersioningError as exc:
+            st.error(
+                f"{upload_rag_t('version_error')}: {exc}"
+            )
+            return
+
+        except RagDocumentSecurityError as exc:
+            st.error(
+                f"{upload_rag_t('security_rejection')}: {exc}"
+            )
+            return
+
+        except Exception:
+            st.error(
+                upload_rag_t(
+                    "security_validation_error"
+                )
+            )
+            return
+
+        final_path.write_bytes(content_bytes)
+
+        st.success(
+            f"{upload_rag_t('saved_successfully')}: "
+            f"{final_path.name}"
+        )
+
+        st.caption(
+            f"{upload_rag_t('validation_complete')} | "
+            f"{security_result.size_bytes} bytes | "
+            f"SHA-256: "
+            f"{security_result.content_hash[:16]}... | "
+            f"{upload_rag_t('document')}: "
+            f"{document_version.logical_name} | "
+            f"{upload_rag_t('version')}: "
+            f"{document_version.version}"
+        )
+
+        try:
+            preview = content_bytes.decode("utf-8")
+            preview_limpo = limpar_texto_documento_rag(preview)
+
+            st.markdown(
+                upload_rag_t("content_preview")
+            )
+            st.text_area(
+                upload_rag_t("loaded_content"),
+                preview_limpo[:3000],
+                height=250,
+            )
+
+            chunks_path, chunks, embedding_ready_path = salvar_chunks_documento(final_path.name, preview_limpo)
+
+            st.markdown(
+                upload_rag_t("generated_chunks")
+            )
+            st.success(
+                f"{len(chunks)} "
+                f"{upload_rag_t('chunks_generated')}: "
+                f"{chunks_path.name}"
+            )
+            st.info(
+                f"{upload_rag_t('embedding_ready')}: "
+                f"{embedding_ready_path.name}"
+            )
+
+            registro_db = registrar_metadata_upload_rag(
+                nome_original=original_name,
+                nome_salvo=final_path.name,
+                caminho_upload=str(final_path),
+                caminho_chunks=str(chunks_path),
+                caminho_embedding_ready=str(embedding_ready_path),
+                extensao=suffix,
+                tamanho_bytes=len(content_bytes),
+                total_chunks=len(chunks),
+                nome_logico=(
+                    document_version.logical_name
+                ),
+                content_hash=(
+                    document_version.content_hash
+                ),
+                versao=(
+                    document_version.version
+                ),
+                documento_raiz_id=(
+                    document_version.root_document_id
+                ),
+                documento_anterior_id=(
+                    document_version.previous_document_id
+                ),
+            )
+
+            if registro_db.get("ok"):
+                st.success(registro_db.get("message"))
+            else:
+                st.warning(registro_db.get("message"))
+
+            for idx, chunk in enumerate(chunks[:5], start=1):
+                categoria_chunk = classificar_categoria_chunk_rag(chunk)
+
+                with st.expander(f"Chunk {idx} | {len(chunk)} caracteres | Categoria: {categoria_chunk}"):
+                    st.text_area(
+                        "Texto do chunk",
+                        chunk,
+                        height=180,
+                        key=f"preview_chunk_upload_rag_{idx}_{final_path.name}"
+                    )
+
+            if len(chunks) > 5:
+                st.info(f"Foram gerados {len(chunks)} chunks. Exibindo apenas os 5 primeiros.")
+
+        except Exception as e:
+            st.warning("Arquivo salvo, mas não foi possível gerar prévia ou chunks.")
+            st.caption(str(e))
+
+    st.markdown("---")
+    st.markdown("### Documentos enviados")
+
+    files = sorted(upload_dir.glob("*"), reverse=True)
+
+    if not files:
+        st.info("Nenhum documento enviado ainda.")
+    else:
+        for file in files:
+            if file.is_file():
+                st.write(f"📄 **{file.name}**")
+                st.caption(
+            f"{upload_rag_t('file_size')}: "
+            f"{file.stat().st_size} bytes"
+        )
+
+    st.markdown("---")
+    st.markdown("### Arquivos de chunks gerados")
+
+    chunk_files = sorted(chunks_dir.glob("*.json"), reverse=True)
+
+    if not chunk_files:
+        st.info("Nenhum arquivo de chunks gerado ainda.")
+    else:
+        for file in chunk_files[:10]:
+            st.write(f"🧩 **{file.name}**")
+            st.caption(f"Tamanho: {file.stat().st_size} bytes")
+
+    st.markdown("---")
+    st.markdown("### Arquivos prontos para embeddings")
+
+    embedding_ready_dir = Path("data/knowledge_base/embedding_ready")
+    embedding_ready_dir.mkdir(parents=True, exist_ok=True)
+
+    embedding_files = sorted(embedding_ready_dir.glob("*.jsonl"), reverse=True)
+
+    if not embedding_files:
+        st.info("Nenhum arquivo pronto para embeddings gerado ainda.")
+    else:
+        for file in embedding_files[:10]:
+            st.write(f"🧠 **{file.name}**")
+            st.caption(f"Tamanho: {file.stat().st_size} bytes")
+
+
+    st.markdown("---")
+    st.markdown(
+        upload_rag_t("registered_documents")
+    )
+
+    df_docs, erro_docs = carregar_documentos_upload_rag()
+
+    if erro_docs:
+        st.warning(
+            f"{upload_rag_t('database_documents_error')}: "
+            f"{erro_docs}"
+        )
+    elif df_docs.empty:
+        st.info(
+            upload_rag_t(
+                "no_registered_documents"
+            )
+        )
+    else:
+        st.metric(
+            upload_rag_t(
+                "registered_documents_total"
+            ),
+            len(df_docs),
+        )
+
+        col1, col2, col3 = st.columns(3)
+        col1.metric(
+            upload_rag_t("total_chunks"),
+            int(
+                df_docs["total_chunks"]
+                .fillna(0)
+                .sum()
+            ),
+        )
+        col2.metric(
+            upload_rag_t("processed"),
+            int(
+                (
+                    df_docs["status"]
+                    == "processado"
+                ).sum()
+            ),
+        )
+        col3.metric(
+            upload_rag_t("extensions"),
+            df_docs["extensao"].nunique(),
+        )
+
+        st.dataframe(
+            df_docs[
+                [
+                    "id",
+                    "nome_salvo",
+                    "extensao",
+                    "total_chunks",
+                    "status",
+                    "ativo",
+                    "criado_em",
+                    "caminho_embedding_ready",
+                ]
+            ],
+            use_container_width=True,
+            hide_index=True
+        )
+
+
+        st.markdown(
+            upload_rag_t("local_organisation")
+        )
+
+        uploads_dir_local = Path("data/knowledge_base/uploads")
+        chunks_dir_local = Path("data/knowledge_base/chunks")
+        embedding_ready_dir_local = Path("data/knowledge_base/embedding_ready")
+
+        uploads_local = [f for f in uploads_dir_local.glob("*") if f.is_file() and f.name != ".gitkeep"] if uploads_dir_local.exists() else []
+        chunks_local = [f for f in chunks_dir_local.glob("*") if f.is_file() and f.name != ".gitkeep"] if chunks_dir_local.exists() else []
+        embeddings_local = [f for f in embedding_ready_dir_local.glob("*") if f.is_file() and f.name != ".gitkeep"] if embedding_ready_dir_local.exists() else []
+
+        col_local_1, col_local_2, col_local_3 = st.columns(3)
+
+        col_local_1.metric(
+            upload_rag_t("local_uploads"),
+            len(uploads_local),
+        )
+        col_local_2.metric(
+            upload_rag_t("chunk_files"),
+            len(chunks_local),
+        )
+        col_local_3.metric(
+            upload_rag_t(
+                "embedding_ready_jsonl"
+            ),
+            len(embeddings_local),
+        )
+
+        with st.expander(
+            upload_rag_t("recent_local_files")
+        ):
+            st.caption(
+                upload_rag_t(
+                    "recent_files_caption"
+                )
+            )
+
+            st.markdown(
+                upload_rag_t("recent_uploads")
+            )
+            for file in sorted(uploads_local, key=lambda f: f.stat().st_mtime, reverse=True)[:5]:
+                st.write(f"📄 {file.name}")
+                st.caption(
+                    f"{upload_rag_t('file_size')}: "
+                    f"{file.stat().st_size} bytes"
+                )
+
+            st.markdown(
+                upload_rag_t("recent_chunks")
+            )
+            for file in sorted(chunks_local, key=lambda f: f.stat().st_mtime, reverse=True)[:5]:
+                st.write(f"🧩 {file.name}")
+                st.caption(
+                    f"{upload_rag_t('file_size')}: "
+                    f"{file.stat().st_size} bytes"
+                )
+
+            st.markdown(
+                upload_rag_t("recent_jsonl")
+            )
+            for file in sorted(embeddings_local, key=lambda f: f.stat().st_mtime, reverse=True)[:5]:
+                st.write(f"🧠 {file.name}")
+                st.caption(
+                    f"{upload_rag_t('file_size')}: "
+                    f"{file.stat().st_size} bytes"
+                )
+
+        st.caption(
+            upload_rag_t("archive_caption")
+        )
+
+        manter_ultimos_arquivos = st.slider(
+            upload_rag_t("files_to_keep"),
+            min_value=1,
+            max_value=10,
+            value=5,
+            key="manter_ultimos_arquivos_rag"
+        )
+
+        if st.button(
+            upload_rag_t("archive_old_files"),
+            key="btn_arquivar_arquivos_locais_rag",
+        ):
+            resultado_arquivo = arquivar_arquivos_locais_rag(
+                manter_ultimos=manter_ultimos_arquivos
+            )
+
+            if resultado_arquivo.get("ok"):
+                st.success(resultado_arquivo.get("message"))
+                st.rerun()
+            else:
+                st.warning(resultado_arquivo.get("message"))
+
+        st.markdown(
+            upload_rag_t("document_status")
+        )
+
+        resultado_coluna_ativo = garantir_coluna_ativo_documentos_rag()
+
+        if not resultado_coluna_ativo.get("ok"):
+            st.warning(resultado_coluna_ativo.get("message"))
+
+        opcoes_status_docs = [
+            f"{int(row['id'])} - {row['nome_salvo']}"
+            for _, row in df_docs.iterrows()
+        ]
+
+        doc_status_escolhido = st.selectbox(
+            upload_rag_t(
+                "select_status_document"
+            ),
+            opcoes_status_docs,
+            key="select_status_documento_rag"
+        )
+
+        documento_status_id = int(doc_status_escolhido.split(" - ")[0])
+        registro_status = df_docs[df_docs["id"] == documento_status_id].iloc[0]
+
+        ativo_atual = bool(registro_status.get("ativo", True))
+
+        if ativo_atual:
+            st.success(
+                upload_rag_t("active_document")
+            )
+        else:
+            st.warning(
+                upload_rag_t("inactive_document")
+            )
+
+        col_status_1, col_status_2 = st.columns(2)
+
+        with col_status_1:
+            if st.button(
+                upload_rag_t("activate_document"),
+                key="btn_ativar_documento_rag",
+            ):
+                resultado_status = atualizar_status_documento_rag(documento_status_id, True)
+
+                if resultado_status.get("ok"):
+                    st.success(resultado_status.get("message"))
+                    st.rerun()
+                else:
+                    st.warning(resultado_status.get("message"))
+
+        with col_status_2:
+            if st.button(
+                upload_rag_t(
+                    "deactivate_document"
+                ),
+                key="btn_desativar_documento_rag",
+            ):
+                resultado_status = atualizar_status_documento_rag(documento_status_id, False)
+
+                if resultado_status.get("ok"):
+                    st.success(resultado_status.get("message"))
+                    st.rerun()
+                else:
+                    st.warning(resultado_status.get("message"))
+
+        st.markdown(
+            upload_rag_t("reprocess_document")
+        )
+
+        opcoes_docs = [
+            f"{int(row['id'])} - {row['nome_salvo']}"
+            for _, row in df_docs.iterrows()
+        ]
+
+        doc_escolhido = st.selectbox(
+            upload_rag_t(
+                "select_reprocess_document"
+            ),
+            opcoes_docs,
+            key="select_reprocessar_documento_rag"
+        )
+
+        if st.button(
+            upload_rag_t("reprocess_selected"),
+            key="btn_reprocessar_documento_rag",
+        ):
+            from pathlib import Path
+
+            documento_id = int(doc_escolhido.split(" - ")[0])
+            registro = df_docs[df_docs["id"] == documento_id].iloc[0]
+
+            caminho_upload = Path(str(registro["caminho_upload"]))
+
+            if not caminho_upload.exists():
+                st.error(
+                    f"{upload_rag_t('original_file_not_found')}: "
+                    f"{caminho_upload}"
+                )
+            else:
+                texto_documento = caminho_upload.read_text(encoding="utf-8", errors="ignore")
+
+                chunks_path, chunks, embedding_ready_path = salvar_chunks_documento(
+                    caminho_upload.name,
+                    texto_documento
+                )
+
+                resultado_update = atualizar_metadata_reprocessamento_rag(
+                    documento_id=documento_id,
+                    caminho_chunks=str(chunks_path),
+                    caminho_embedding_ready=str(embedding_ready_path),
+                    total_chunks=len(chunks),
+                )
+
+                if resultado_update.get("ok"):
+                    st.success(resultado_update.get("message"))
+                    st.info(
+                        f"{upload_rag_t('new_embedding_ready')}: "
+                        f"{embedding_ready_path.name}"
+                    )
+                else:
+                    st.warning(resultado_update.get("message"))
+
+
+        st.markdown(
+            upload_rag_t("embedding_summary")
+        )
+
+        resumo_embeddings = carregar_resumo_embeddings_pgvector_rag()
+
+        if not resumo_embeddings.get("ok"):
+            st.warning(resumo_embeddings.get("message"))
+        else:
+            col_emb_1, col_emb_2, col_emb_3 = st.columns(3)
+
+            col_emb_1.metric(
+                upload_rag_t("total_embeddings"),
+                resumo_embeddings.get("total_embeddings", 0)
+            )
+
+            col_emb_2.metric(
+                upload_rag_t("active_embeddings"),
+                resumo_embeddings.get("embeddings_ativos", 0)
+            )
+
+            col_emb_3.metric(
+                upload_rag_t("inactive_embeddings"),
+                resumo_embeddings.get("embeddings_inativos", 0)
+            )
+
+            col_doc_1, col_doc_2, col_doc_3 = st.columns(3)
+
+            col_doc_1.metric(
+                upload_rag_t(
+                    "documents_with_embeddings"
+                ),
+                resumo_embeddings.get("documentos_com_embeddings", 0)
+            )
+
+            col_doc_2.metric(
+                upload_rag_t("active_documents"),
+                resumo_embeddings.get("documentos_ativos_com_embeddings", 0)
+            )
+
+            col_doc_3.metric(
+                upload_rag_t("inactive_documents"),
+                resumo_embeddings.get("documentos_inativos_com_embeddings", 0)
+            )
+
+            df_resumo_embeddings = resumo_embeddings.get("df")
+
+            if df_resumo_embeddings is not None and not df_resumo_embeddings.empty:
+                with st.expander(
+                    upload_rag_t("summary_by_document")
+                ):
+                    st.dataframe(
+                        df_resumo_embeddings,
+                        use_container_width=True,
+                        hide_index=True
+                    )
+
+        st.markdown(
+            upload_rag_t("generate_embeddings")
+        )
+
+        st.caption(
+            upload_rag_t(
+                "generate_embeddings_caption"
+            )
+        )
+
+        forcar_reprocessamento_embeddings = st.checkbox(
+            upload_rag_t(
+                "force_embedding_reprocessing"
+            ),
+            value=False,
+            key="forcar_reprocessamento_embeddings_pgvector_rag"
+        )
+
+        if st.button(
+            upload_rag_t(
+                "generate_selected_embeddings"
+            ),
+            key="btn_gerar_embeddings_pgvector_rag",
+        ):
+            documento_id = int(doc_escolhido.split(" - ")[0])
+            registro = df_docs[df_docs["id"] == documento_id].iloc[0]
+
+            caminho_embedding_ready = registro.get("caminho_embedding_ready")
+
+            if not caminho_embedding_ready:
+                st.error(
+                    upload_rag_t(
+                        "missing_embedding_path"
+                    )
+                )
+            else:
+                ja_tem_embeddings, total_existente = documento_tem_embeddings_pgvector_rag(documento_id)
+
+                if ja_tem_embeddings and not forcar_reprocessamento_embeddings:
+                    st.info(
+                        upload_rag_t(
+                            "existing_embeddings"
+                        ).format(
+                            total=total_existente
+                        )
+                    )
+                else:
+                    with st.spinner(
+                        upload_rag_t(
+                            "generating_embeddings"
+                        )
+                    ):
+                        resultado_embeddings = salvar_chunks_embeddings_pgvector_rag(
+                            documento_id=documento_id,
+                            caminho_embedding_ready=caminho_embedding_ready
+                        )
+
+                    if resultado_embeddings.get("ok"):
+                        st.success(resultado_embeddings.get("message"))
+                    else:
+                        st.warning(resultado_embeddings.get("message"))
+
+
+        st.markdown(
+            upload_rag_t(
+                "pgvector_optimisation"
+            )
+        )
+
+        st.caption(
+            upload_rag_t(
+                "pgvector_optimisation_caption"
+            )
+        )
+
+        if st.button(
+            upload_rag_t("create_index"),
+            key="btn_criar_indice_pgvector_rag",
+        ):
+            with st.spinner(
+                upload_rag_t("creating_index")
+            ):
+                resultado_indice = criar_indice_pgvector_rag()
+
+            if resultado_indice.get("ok"):
+                st.success(resultado_indice.get("message"))
+            else:
+                st.warning(resultado_indice.get("message"))
+
+        st.markdown(
+            upload_rag_t("semantic_search")
+        )
+
+        pergunta_teste_pgvector = st.text_input(
+            upload_rag_t("search_question"),
+            value="Recebi um Pix estranho, devo devolver?",
+            key="pergunta_teste_pgvector_rag"
+        )
+
+        modo_limite_chunks = st.radio(
+            upload_rag_t(
+                "chunk_quantity_mode"
+            ),
+            [
+                "automatic",
+                "manual",
+            ],
+            format_func=lambda value: (
+                upload_rag_t(
+                    "automatic_mode"
+                    if value == "automatic"
+                    else "manual_mode"
+                )
+            ),
+            horizontal=True,
+            key="modo_limite_chunks_pgvector_rag"
+        )
+
+        if modo_limite_chunks == "automatic":
+            limite_resultados_pgvector = definir_limite_chunks_automatico_rag(pergunta_teste_pgvector)
+            st.info(
+                upload_rag_t(
+                    "automatic_quantity"
+                ).format(
+                    total=limite_resultados_pgvector
+                )
+            )
+        else:
+            limite_resultados_pgvector = st.slider(
+                upload_rag_t("returned_chunks"),
+                min_value=1,
+                max_value=10,
+                value=5,
+                key="limite_resultados_pgvector_rag"
+            )
+
+        if st.button(
+            upload_rag_t(
+                "search_similar_chunks"
+            ),
+            key="btn_buscar_chunks_pgvector_rag",
+        ):
+            with st.spinner(
+                upload_rag_t("searching_chunks")
+            ):
+                resultado_busca = buscar_chunks_semanticos_pgvector_rag(
+                    pergunta=pergunta_teste_pgvector,
+                    limite=limite_resultados_pgvector
+                )
+
+            if not resultado_busca.get("ok"):
+                st.warning(resultado_busca.get("message"))
+            else:
+                st.success(resultado_busca.get("message"))
+
+                resultados = resultado_busca.get("resultados", [])
+
+                if not resultados:
+                    st.info(
+                        upload_rag_t(
+                            "no_chunk_found"
+                        )
+                    )
+                else:
+                    for item in resultados:
+                        with st.expander(
+                            f"{upload_rag_t('chunk')} "
+                            f"{item['chunk_index']} | "
+                            f"{upload_rag_t('category')}: "
+                            f"{item.get('categoria', upload_rag_t('general'))} | "
+                            f"{upload_rag_t('approx_similarity')}: "
+                            f"{item['similaridade_aproximada']} | "
+                            f"{item['documento_origem']}"
+                        ):
+                            st.caption(
+                                f"chunk_id: {item['chunk_id']}"
+                            )
+                            st.caption(
+                                f"{upload_rag_t('pgvector_distance')}: "
+                                f"{item['distancia']}"
+                            )
+                            st.caption(
+                                f"{upload_rag_t('prioritised_categories')}: "
+                                f"{item.get('categorias_prioritarias', [])}"
+                            )
+                            st.caption(
+                                f"{upload_rag_t('rag_score')}: "
+                                f"{item.get('score_rag')}"
+                            )
+                            st.write(item["texto"])
+
+
+        st.markdown(
+            upload_rag_t("final_rag_response")
+        )
+
+        usuario_id_resposta_rag = st.text_input(
+            "ID do usuário para usar memória",
+            value="demo_user",
+            key="usuario_id_resposta_final_rag"
+        )
+
+        pergunta_resposta_rag = st.text_area(
+            upload_rag_t("rag_question"),
+            value="Recebi um Pix estranho, devo devolver?",
+            height=100,
+            key="pergunta_resposta_final_rag_pgvector"
+        )
+
+        usar_limite_auto_resposta = st.checkbox(
+            upload_rag_t(
+                "automatic_response_chunks"
+            ),
+            value=True,
+            key="usar_limite_auto_resposta_rag_pgvector"
+        )
+
+        if usar_limite_auto_resposta:
+            limite_resposta_rag = definir_limite_chunks_automatico_rag(pergunta_resposta_rag)
+            st.info(
+                upload_rag_t(
+                    "automatic_response_limit"
+                ).format(
+                    total=limite_resposta_rag
+                )
+            )
+        else:
+            limite_resposta_rag = st.slider(
+                upload_rag_t(
+                    "response_context_chunks"
+                ),
+                min_value=1,
+                max_value=10,
+                value=5,
+                key="limite_resposta_final_rag_pgvector"
+            )
+
+        if st.button(
+            upload_rag_t(
+                "generate_final_response"
+            ),
+            key="btn_gerar_resposta_final_rag_pgvector",
+        ):
+            with st.spinner(
+                upload_rag_t(
+                    "generating_final_response"
+                )
+            ):
+                resultado_resposta = gerar_resposta_rag_pgvector_inna(
+                    pergunta=pergunta_resposta_rag,
+                    limite=limite_resposta_rag,
+                    usuario_id=usuario_id_resposta_rag
+                )
+
+            if not resultado_resposta.get("ok"):
+                st.warning(resultado_resposta.get("message"))
+            else:
+                st.success(resultado_resposta.get("message"))
+
+                st.markdown(
+                    upload_rag_t(
+                        "inna_final_response"
+                    )
+                )
+
+                with st.container(border=True):
+                    st.markdown(preparar_markdown_resposta_inna(resultado_resposta.get("resposta", "")))
+
+                resultado_tools_ui = (
+                    resultado_resposta.get("tools")
+                    or {}
+                )
+
+                tool_utilizada = resultado_tools_ui.get(
+                    "tool_identificada"
+                )
+
+                total_contextos_utilizados = len(
+                    resultado_resposta.get("contextos")
+                    or []
+                )
+
+                memoria_foi_consultada = bool(
+                    usuario_id_resposta_rag
+                )
+
+                with st.expander(
+                    "🔎 Recursos utilizados pela INNA",
+                    expanded=False,
+                ):
+                    st.markdown(upload_rag_t("executed_steps"))
+
+                    if memoria_foi_consultada:
+                        st.markdown(
+                            "✅ **"
+                            f"{upload_rag_t('persistent_memory')}:** "
+                            f"{upload_rag_t('memory_consulted')}"
+                        )
+
+                    if total_contextos_utilizados > 0:
+                        st.markdown(
+                            "✅ **"
+                            f"{upload_rag_t('semantic_search_used')}:** "
+                            + upload_rag_t(
+                                "passages_retrieved"
+                            ).format(
+                                total=total_contextos_utilizados
+                            )
+                        )
+
+                    if tool_utilizada:
+                        try:
+                            from tools.registry import TOOL_LABELS
+                        except ImportError:
+                            from src.tools.registry import TOOL_LABELS
+
+                        tool_label = TOOL_LABELS.get(
+                            tool_utilizada,
+                            tool_utilizada,
+                        )
+
+                        st.markdown(
+                            "✅ **Tool financeira:** "
+                            f"{tool_label}"
+                        )
+
+                        motivo_tool = resultado_tools_ui.get(
+                            "motivo_tool"
+                        )
+
+                        if motivo_tool:
+                            st.caption(
+                                f"{upload_rag_t('choice_reason')}: "
+                                f"{motivo_tool}"
+                            )
+
+                    if not tool_utilizada:
+                        st.caption(
+                            upload_rag_t(
+                                "no_calculation_required"
+                            )
+                        )
+
+                if tool_utilizada:
+                    with st.expander(
+                        upload_rag_t("calculation_details"),
+                        expanded=False,
+                    ):
+                        col_tool_1, col_tool_2 = st.columns(2)
+
+                        col_tool_1.markdown(
+                            f"**{upload_rag_t('tool')}:** "
+                            f"{tool_label}"
+                        )
+
+                        col_tool_2.markdown(
+                            f"**{upload_rag_t('routing_confidence')}:** "
+                            f"{resultado_tools_ui.get('confianca', 0):.0%}"
+                        )
+
+                        if resultado_tools_ui.get("executada"):
+                            st.success(
+                                upload_rag_t(
+                                    "calculation_executed"
+                                )
+                            )
+                        else:
+                            st.info(
+                                upload_rag_t(
+                                    "tool_not_executed"
+                                )
+                            )
+
+                        dados_ausentes_tools = (
+                            resultado_tools_ui.get(
+                                "dados_ausentes",
+                                [],
+                            )
+                        )
+
+                        if dados_ausentes_tools:
+                            st.warning(
+                                f"{upload_rag_t('required_data')}: "
+                                + ", ".join(
+                                    dados_ausentes_tools
+                                )
+                            )
+
+                        resultado_calculo = (
+                            resultado_tools_ui.get(
+                                "resultado"
+                            )
+                        )
+
+                        if resultado_calculo is not None:
+                            st.markdown(
+                                "#### Resultado principal"
+                            )
+
+                            try:
+                                from services.formatter_inna import (
+                                    formatar_moeda
+                                )
+                            except ImportError:
+                                from src.services.formatter_inna import (
+                                    formatar_moeda
+                                )
+
+                            moeda_tool = "BRL"
+
+                            try:
+                                memoria_resultado_tool = (
+                                    buscar_memoria_inna(
+                                        usuario_id_resposta_rag
+                                    )
+                                )
+
+                                moeda_tool = (
+                                    memoria_resultado_tool
+                                    .get("memoria", {})
+                                    .get("moeda")
+                                    or "BRL"
+                                )
+                            except Exception:
+                                moeda_tool = "BRL"
+
+                            if (
+                                "saldo_mensal"
+                                in resultado_calculo
+                            ):
+                                col_a, col_b, col_c = st.columns(3)
+
+                                col_a.metric(
+                                    upload_rag_t(
+                                        "monthly_income"
+                                    ),
+                                    formatar_moeda(
+                                        resultado_calculo.get(
+                                            "renda_mensal"
+                                        ),
+                                        moeda_tool,
+                                    ),
+                                )
+
+                                col_b.metric(
+                                    upload_rag_t(
+                                        "monthly_expenses"
+                                    ),
+                                    formatar_moeda(
+                                        resultado_calculo.get(
+                                            "gastos_mensais"
+                                        ),
+                                        moeda_tool,
+                                    ),
+                                )
+
+                                col_c.metric(
+                                    upload_rag_t(
+                                        "estimated_balance"
+                                    ),
+                                    formatar_moeda(
+                                        resultado_calculo.get(
+                                            "saldo_mensal"
+                                        ),
+                                        moeda_tool,
+                                    ),
+                                )
+
+                                st.caption(
+                                    f"{upload_rag_t('committed_income')}: "
+                                    f"{resultado_calculo.get(
+                                        'renda_comprometida_percentual',
+                                        0,
+                                    ):.2f}%"
+                                )
+
+                            elif (
+                                "valor_semanal_estimado"
+                                in resultado_calculo
+                            ):
+                                col_a, col_b = st.columns(2)
+
+                                col_a.metric(
+                                    upload_rag_t(
+                                        "monthly_capacity"
+                                    ),
+                                    formatar_moeda(
+                                        resultado_calculo.get(
+                                            "valor_mensal"
+                                        ),
+                                        moeda_tool,
+                                    ),
+                                )
+
+                                col_b.metric(
+                                    upload_rag_t(
+                                        "weekly_reference"
+                                    ),
+                                    formatar_moeda(
+                                        resultado_calculo.get(
+                                            "valor_semanal_estimado"
+                                        ),
+                                        moeda_tool,
+                                    ),
+                                )
+
+                            mostrar_json_tool = st.checkbox(
+                                upload_rag_t(
+                                    "show_json"
+                                ),
+                                value=False,
+                                key=(
+                                    "mostrar_json_tool_"
+                                    f"{tool_utilizada}"
+                                ),
+                            )
+
+                            if mostrar_json_tool:
+                                st.json(resultado_calculo)
+
+                memoria_auto = resultado_resposta.get("memoria_atualizada", {})
+
+                if memoria_auto.get("ok"):
+                    st.success(upload_rag_t("memory_updated"))
+                    st.caption(memoria_auto.get("message"))
+
+                    evolucao = memoria_auto.get("evolucao", {})
+
+                    if evolucao.get("tem_evolucao"):
+                        moeda_memoria = "BRL"
+
+                        try:
+                            memoria_resultado = buscar_memoria_inna(usuario_id_resposta_rag)
+                            memoria_atual = memoria_resultado.get("memoria") or {}
+                            moeda_memoria = memoria_atual.get("moeda") or "BRL"
+                        except Exception:
+                            moeda_memoria = "BRL"
+
+                        renderizar_evolucao_financeira_inna(
+                            evolucao=evolucao,
+                            moeda=moeda_memoria
+                        )
+
+                else:
+                    st.caption(
+                        memoria_auto.get(
+                            "message",
+                            upload_rag_t(
+                                "memory_not_updated"
+                            ),
+                        )
+                    )
+
+                contextos_usados = resultado_resposta.get("contextos", [])
+
+                st.markdown(
+                    upload_rag_t("sources_used")
+                )
+
+                if not contextos_usados:
+                    st.info(
+                        upload_rag_t("no_context_used")
+                    )
+                else:
+                    st.caption(
+                        upload_rag_t(
+                            "sources_caption"
+                        )
+                    )
+
+                    for idx, item in enumerate(
+                        contextos_usados,
+                        start=1,
+                    ):
+                        similaridade = item.get(
+                            "similaridade_aproximada"
+                        )
+                        documento = item.get(
+                            "documento_origem"
+                        )
+                        chunk_id = item.get("chunk_id")
+                        texto_contexto = item.get(
+                            "texto",
+                            "",
+                        )
+
+                        texto_preview = texto_contexto[:900]
+
+                        if len(texto_contexto) > 900:
+                            texto_preview += "..."
+
+                        with st.expander(
+                            f"{upload_rag_t('source')} "
+                            f"{idx} | "
+                            f"{upload_rag_t('similarity')}: "
+                            f"{similaridade} | "
+                            f"{upload_rag_t('document')}: "
+                            f"{documento}"
+                        ):
+                            col_a, col_b, col_c = st.columns(3)
+
+                            col_a.metric(
+                                upload_rag_t("source"),
+                                idx,
+                            )
+                            col_b.metric(
+                                upload_rag_t(
+                                    "similarity"
+                                ),
+                                similaridade,
+                            )
+                            col_c.metric(
+                                "Chunk",
+                                item.get("chunk_index"),
+                            )
+
+                            st.caption(
+                                f"chunk_id: {chunk_id}"
+                            )
+
+                            st.text_area(
+                                upload_rag_t(
+                                    "context_passage"
+                                ),
+                                texto_preview,
+                                height=180,
+                                key=(
+                                    "contexto_resposta_rag_"
+                                    f"{idx}_{chunk_id}"
+                                ),
+                            )

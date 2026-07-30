@@ -1,0 +1,175 @@
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:825:                st.error(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:826:                    str(erro)
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:827:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:828:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:829:            metadata = evento.get(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:830:                "metadata"
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:834:                with st.popover(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:835:                    timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:836:                        "view_metadata"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:837:                    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:838:                ):
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:839:                    if isinstance(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:906:        st.info(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:907:            timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:908:                "minimum_two_traces"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:909:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:910:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:911:        return
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:915:    ignorar_cold_start = st.checkbox(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:916:        timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:917:            "ignore_cold_start"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:918:        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:919:        value=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:920:        key="timeline_compare_ignore_cold_start",
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:932:        st.warning(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:933:            timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:934:                "not_enough_after_filter"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:935:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:936:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:937:        return
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:939:    escala = st.radio(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:940:        timeline_t("chart_scale"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:941:        options=[
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:942:            "linear",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:943:            "logarithmic",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:944:        ],
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:976:        st.warning(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:977:            timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:978:                "different_traces"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:979:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:980:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:981:        return
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1124:        st.warning(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1125:            timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1126:                "trace_b_slower"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1127:            ).format(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1128:                percent=abs(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1129:                    diferenca_percentual
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1135:        st.success(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1136:            timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1137:                "trace_b_faster"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1138:            ).format(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1139:                percent=abs(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1140:                    diferenca_percentual
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1146:        st.info(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1147:            timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1148:                "same_duration"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1149:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1150:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1151:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1227:        st.caption(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1228:            timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1229:                "log_caption"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1230:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1231:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1232:    else:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1375:    st.title(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1376:        timeline_t("page_title")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1377:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1378:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1379:    st.caption(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1380:        timeline_t("page_caption")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1381:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1382:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1383:    col_1, col_2 = st.columns(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1384:        [1, 3]
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1414:        st.error(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1415:            resultado_traces.get(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1416:                "message"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1417:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1418:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1419:        return
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1426:        st.info(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1427:            timeline_t("no_traces")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1428:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1429:        return
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1430:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1431:    st.markdown(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1432:        timeline_t("search_filters")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1433:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1434:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1435:    pesquisa = st.text_input(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1436:        timeline_t("search_label"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1437:        placeholder=timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1438:            "search_placeholder"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1439:        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1440:        key="timeline_viewer_search",
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1483:    somente_falhas = st.checkbox(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1484:        timeline_t("only_failures"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1485:        value=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1486:        key="timeline_viewer_failures",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1487:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1488:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1541:    st.caption(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1542:        timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1543:            "traces_found"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1544:        ).format(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1545:            count=len(filtrado)
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1546:        )
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1549:    st.markdown(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1550:        timeline_t("recent_traces")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1551:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1552:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1553:    traces_exibicao = (
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1554:        preparar_traces_exibicao(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1602:    trace_selecionado = st.selectbox(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1603:        timeline_t("select_trace"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1604:        options=opcoes_trace,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1605:        key="timeline_viewer_trace",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1606:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1607:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1615:        st.error(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1616:            resultado_timeline.get(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1617:                "message"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1618:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1619:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1620:        return
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1631:    st.markdown(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1632:        timeline_t("execution_summary")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1633:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1634:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1635:    linha_1 = st.columns(4)
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1636:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1660:        st.warning(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1661:            timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1662:                "cold_start_warning"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1663:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1664:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1665:    else:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1666:        st.success(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1667:            timeline_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1668:                "execution_ok"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1669:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1670:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1671:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1681:        st.info(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1682:            timeline_t("slowest_step")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1683:            + ": "
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1684:            + str(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1685:                resumo["etapa_mais_lenta"]
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1686:            )
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1698:        st.markdown(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1699:            timeline_t("question")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1700:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1701:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1702:        st.code(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1703:            pergunta.iloc[0],
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1707:    st.markdown(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1708:        timeline_t("execution_path")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1709:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1710:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1711:    render_etapas_timeline(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1712:        timeline_df
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1715:    st.markdown(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1716:        timeline_t("technical_table")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1717:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1718:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1719:    timeline_exibicao = (
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1720:        preparar_timeline_exibicao(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1756:    st.markdown(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1757:        timeline_t("compare_traces")
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1758:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1759:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1760:    render_comparacao_traces(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:1761:        traces_df

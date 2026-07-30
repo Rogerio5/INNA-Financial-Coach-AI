@@ -31,7 +31,7 @@ def test_preparar_componentes_exibicao():
     assert "Componente" in tabela.columns
     assert "Score" in tabela.columns
     assert "Peso (%)" in tabela.columns
-    assert tabela.iloc[0]["Componente"] == "Tools"
+    assert tabela.iloc[0]["Componente"] == "Ferramentas"
     assert tabela.iloc[0]["Peso (%)"] == 25.0
 
 

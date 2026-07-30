@@ -1,0 +1,747 @@
+01487: 
+01488: DASHBOARD_MENU_LABELS.setdefault("sa", {}).update({
+01489:     "📊 Analytics Tools": (
+01490:         "📊 تحليل الأدوات (Tools)"
+01491:     ),
+01492: })
+01493: 
+01494: DASHBOARD_MENU_LABELS.setdefault("ch", {}).update({
+01495:     "📊 Analytics Tools": (
+01496:         "📊 Werkzeuganalyse (Tools)"
+01497:     ),
+01498: })
+01499: 
+01500: 
+01501: def dt_menu(menu_item):
+01502:     lang = dashboard_lang()
+01503:     return DASHBOARD_MENU_LABELS.get(lang, {}).get(menu_item, menu_item)
+01504: 
+01505: DASHBOARD_EXTRA_TEXTS = {
+01506:     "pt": {
+01507:         "no_diagnostics": "Nenhum diagnóstico encontrado para os filtros selecionados.",
+01508:         "events_title": "## 🌐 Eventos multicanal reais",
+01509:         "no_events": "Nenhum evento encontrado para os filtros selecionados.",
+01510:         "only_one_channel": "Somente um canal encontrado no filtro atual.",
+01511:         "last_events": "Ver últimos eventos reais",
+01512:         "funnel_title": "## 🧭 Funil de uso",
+01513:         "few_funnel_records": "Poucos registros no filtro atual. O funil foi exibido em tabela para evitar gráfico exagerado.",
+01514:         "international_title": "## 🌍 Visão internacional",
+01515:         "no_international": "Nenhum dado internacional encontrado para os filtros selecionados.",
+01516:         "diagnostics_by_language": "### Diagnósticos por idioma",
+01517:         "only_one_language": "Somente um idioma encontrado nos filtros atuais.",
+01518:         "diagnostics_by_currency": "### Diagnósticos por moeda",
+01519:         "only_one_currency": "Somente uma moeda encontrada nos filtros atuais.",
+01520:         "avg_balance_by_currency": "### 💱 Saldo médio por moeda",
+01521:         "summary_language_currency": "### 🌐 Resumo por idioma e moeda",
+01522:         "diagnostics_title": "## 👤 Diagnósticos",
+01523:         "risk_distribution": "### ⚠️ Distribuição por risco",
+01524:         "only_one_risk": "Somente um nível de risco encontrado nos filtros atuais.",
+01525:         "user_ranking": "### 🏆 Ranking de usuários por diagnósticos",
+01526:         "last_diagnostics": "### 🧾 Últimos diagnósticos",
+01527:         "feedbacks_title": "## 💬 Feedbacks",
+01528:         "no_feedbacks": "Nenhum feedback encontrado para os filtros selecionados.",
+01529:         "useful_feedbacks": "### 👍 Feedbacks úteis",
+01530:         "received_comments": "### 💬 Comentários recebidos",
+01531:         "no_comments": "Ainda não há comentários preenchidos.",
+01532:         "last_feedbacks": "### 🧾 Últimos feedbacks",
+01533:         "evolution_title": "## 📈 Evolução",
+01534:         "score_evolution": "### 📈 Evolução dos scores",
+01535:         "balance_evolution": "### 💵 Evolução do saldo estimado",
+01536:         "evolution_wait": "A evolução aparecerá quando houver mais de um diagnóstico no filtro.",
+01537:         "executive_title": "## 🧠 Leitura executiva",
+01540:         "quality_indicators": "### 📌 Indicadores reais de qualidade",
+01541:         "register_eval": "### 📝 Registrar avaliação real",
+01542:         "saved_evaluations": "### 🗃️ Tabela real — avaliações salvas no Neon",
+01543:         "no_saved_evaluations": "Nenhuma avaliação real salva ainda.",
+01544:         "quality_metrics": "### 📋 Métricas de qualidade",
+01545:         "test_scenarios": "### 🧪 Cenários de teste sugeridos",
+01546:         "technical_observability": "### 📈 Métricas técnicas de observabilidade",
+01547:         "advanced_observability": "### ⚙️ Métricas avançadas de observabilidade",
+01548:         "planned_metrics": "### ⏳ Próximas métricas planejadas",
+01549:         "rag_title": "## 📊 Observabilidade RAG",
+01550:         "mode_distribution": "### Distribuição por modo",
+01551:         "no_mode_logs": "Ainda não há logs por modo.",
+01552:         "last_questions": "### Últimas perguntas",
+01553:         "no_questions": "Ainda não há perguntas registradas.",
+01554:         "export_title": "## 📤 Exportar dados filtrados",
+01555:         "no_diag_export": "Sem diagnósticos filtrados para exportar.",
+01556:         "no_feedback_export": "Sem feedbacks filtrados para exportar.",
+01557:         "no_events_export": "Sem eventos filtrados para exportar."
+01558:     },
+01559:     "en_us": {
+01560:         "no_diagnostics": "No diagnoses found for the selected filters.",
+01561:         "events_title": "## 🌐 Real multichannel events",
+01562:         "no_events": "No events found for the selected filters.",
+01563:         "only_one_channel": "Only one channel found in the current filter.",
+01564:         "last_events": dtx("view_latest_real_events"),
+01565:         "funnel_title": "## 🧭 Usage funnel",
+01566:         "few_funnel_records": "Few records in the current filter. The funnel was shown as a table to avoid an exaggerated chart.",
+01567:         "international_title": "## 🌍 International view",
+01568:         "no_international": "No international data found for the selected filters.",
+01569:         "diagnostics_by_language": "### Diagnoses by language",
+01570:         "only_one_language": "Only one language found in the current filters.",
+01571:         "diagnostics_by_currency": "### Diagnoses by currency",
+01572:         "only_one_currency": "Only one currency found in the current filters.",
+01573:         "avg_balance_by_currency": "### 💱 Average balance by currency",
+01574:         "summary_language_currency": "### 🌐 Summary by language and currency",
+01575:         "diagnostics_title": "## 👤 Diagnoses",
+01576:         "risk_distribution": "### ⚠️ Risk distribution",
+01577:         "only_one_risk": "Only one risk level found in the current filters.",
+01578:         "user_ranking": "### 🏆 User ranking by diagnoses",
+01579:         "last_diagnostics": "### 🧾 Latest diagnoses",
+01580:         "feedbacks_title": "## 💬 Feedback",
+01581:         "no_feedbacks": dtx("no_feedback_found"),
+01582:         "useful_feedbacks": "### 👍 Useful feedback",
+01583:         "received_comments": "### 💬 Received comments",
+01584:         "no_comments": "There are no comments yet.",
+01585:         "last_feedbacks": "### 🧾 Latest feedback",
+01586:         "evolution_title": "## 📈 Evolution",
+01587:         "score_evolution": "### 📈 Score evolution",
+01588:         "balance_evolution": "### 💵 Estimated balance evolution",
+01589:         "evolution_wait": "Evolution will appear when there is more than one diagnosis in the filter.",
+01590:         "executive_title": "## 🧠 Executive reading",
+02006:     "conviction": "القناعة",
+02007:     "clarity": "الوضوح",
+02008:     "utility": "الفائدة",
+02009:     "open_comment": "تعليق مفتوح",
+02010:     "save_evaluation": "حفظ التقييم في Neon",
+02011: 
+02012:     "suggested_test_scenarios": "سيناريوهات اختبار مقترحة",
+02013:     "technical_observability": "مقاييس المراقبة التقنية",
+02014:     "advanced_observability": "مقاييس المراقبة المتقدمة",
+02015:     "planned_metrics": "المقاييس المخطط لها",
+02016: 
+02017:     "questions": "الأسئلة",
+02018:     "average_time": "متوسط الوقت",
+02019:     "largest_response_time": "أطول وقت استجابة",
+02020: 
+02021:     "export_diagnostics_csv": "تنزيل التشخيصات المفلترة CSV",
+02022:     "export_feedbacks_csv": "تنزيل الملاحظات المفلترة CSV",
+02023:     "export_events_csv": "تنزيل الأحداث المفلترة CSV",
+02024:     "no_feedback_export": "لا توجد ملاحظات مفلترة للتصدير.",
+02025: })
+02026: 
+02027: DASHBOARD_EXTRA_TEXTS.setdefault("en_us", {}).update({
+02028:     "real_events": "real_events",
+02029:     "active_channels": "active_channels",
+02030:     "latest_channel_metric": "latest_channel_metric",
+02031:     "usage_funnel": "Usage funnel",
+02032:     "downloaded_pdfs": "downloaded_pdfs",
+02033:     "emails": "emails",
+02034:     "pdf_rate": "pdf_rate",
+02035:     "real_quality_indicators": "Real quality indicators",
+02036:     "evaluator_name": "Evaluator name",
+02037:     "assertiveness": "Assertiveness",
+02038:     "security": "Security",
+02039:     "conviction": "Conviction",
+02040:     "clarity": "Clarity",
+02041:     "utility": "Utility",
+02042:     "open_comment": "Open comment",
+02043:     "save_evaluation": "Save evaluation in Neon",
+02044:     "suggested_test_scenarios": "Suggested test scenarios",
+02045:     "technical_observability": "Technical observability metrics",
+02046:     "advanced_observability": "Advanced observability metrics",
+02047:     "planned_metrics": "Planned next metrics",
+02048:     "questions": "Questions",
+02049:     "average_time": "Average time",
+02050:     "largest_response_time": "Largest response time",
+02051:     "export_diagnostics_csv": "Download filtered diagnoses CSV",
+02052:     "export_feedbacks_csv": "Download filtered feedback CSV",
+02053:     "export_events_csv": "Download filtered events CSV",
+02054: })
+02055: 
+02056: DASHBOARD_EXTRA_TEXTS.setdefault("en_gb", {}).update(DASHBOARD_EXTRA_TEXTS.get("en_us", {}))
+02057: 
+02058: DASHBOARD_EXTRA_TEXTS.setdefault("pt", {}).update({
+02059:     "real_events": "Eventos reais",
+02060:     "active_channels": "Canais ativos",
+02061:     "latest_channel_metric": "Último canal",
+02062:     "usage_funnel": "Funil de uso",
+02063:     "downloaded_pdfs": "PDFs baixados",
+02064:     "emails": "emails",
+02065:     "pdf_rate": "Taxa PDF",
+02066:     "real_quality_indicators": "Indicadores reais de qualidade",
+02067:     "evaluator_name": "Nome do avaliador",
+02068:     "assertiveness": "Assertividade",
+02069:     "security": "Segurança",
+02070:     "conviction": "Convicção",
+02071:     "clarity": "Clareza",
+02072:     "utility": "Utilidade",
+02073:     "open_comment": "Comentário aberto",
+02074:     "save_evaluation": "Salvar avaliação no Neon",
+02075:     "suggested_test_scenarios": "Cenários de teste sugeridos",
+02076:     "technical_observability": "Métricas técnicas de observabilidade",
+02077:     "advanced_observability": "Métricas avançadas de observabilidade",
+02078:     "planned_metrics": "Próximas métricas planejadas",
+02079:     "questions": "Perguntas",
+02080:     "average_time": "Tempo médio",
+02081:     "largest_response_time": "Maior tempo de resposta",
+02082:     "export_diagnostics_csv": "Baixar diagnósticos filtrados CSV",
+02083:     "export_feedbacks_csv": "Baixar feedbacks filtrados CSV",
+02084:     "export_events_csv": "Baixar eventos filtrados CSV",
+02085: })
+02086: 
+02087: DASHBOARD_EXTRA_TEXTS.setdefault("es", {}).update({
+02390:     "export_diagnostics_csv": "تنزيل التشخيصات المفلترة CSV",
+02391:     "export_feedbacks_csv": "تنزيل الملاحظات المفلترة CSV",
+02392:     "export_events_csv": "تنزيل الأحداث المفلترة CSV",
+02393:     "no_diag_export": "لا توجد تشخيصات مفلترة للتصدير.",
+02394:     "no_feedback_export": "لا توجد ملاحظات مفلترة للتصدير.",
+02395:     "no_events_export": "لا توجد أحداث مفلترة للتصدير.",
+02396: })
+02397: 
+02398: DASHBOARD_EXTRA_TEXTS.setdefault("ch", {}).update({
+02399:     "export_diagnostics_csv": "Gefilterte Diagnosen als CSV herunterladen",
+02400:     "export_feedbacks_csv": "Gefiltertes Feedback als CSV herunterladen",
+02401:     "export_events_csv": "Gefilterte Ereignisse als CSV herunterladen",
+02402:     "no_diag_export": "Keine gefilterten Diagnosen zum Exportieren.",
+02403:     "no_feedback_export": "Kein gefiltertes Feedback zum Exportieren.",
+02404:     "no_events_export": "Keine gefilterten Ereignisse zum Exportieren.",
+02405: })
+02406: 
+02407: 
+02408: # =============================
+02409: # Tradução visual das etapas do funil/eventos
+02410: # Não altera dados reais do banco
+02411: # =============================
+02412: 
+02413: FUNNEL_VALUE_TRANSLATIONS = {
+02414:     "pt": {
+02415:         "Diagnóstico gerado": "Diagnóstico gerado",
+02416:         "PDF baixado": "PDF baixado",
+02417:         "E-mail enviado": "E-mail enviado",
+02418:         "Feedback recebido": "Feedback recebido",
+02419:         "Telegram": "Telegram",
+02420:     },
+02421:     "en_us": {
+02422:         "Diagnóstico gerado": "Diagnosis generated",
+02423:         "PDF baixado": "PDF downloaded",
+02424:         "E-mail enviado": "Email sent",
+02425:         "Feedback recebido": "Feedback received",
+02426:         "Telegram": "Telegram",
+02427:     },
+02428:     "en_gb": {
+02429:         "Diagnóstico gerado": "Diagnosis generated",
+02430:         "PDF baixado": "PDF downloaded",
+02431:         "E-mail enviado": "Email sent",
+02432:         "Feedback recebido": "Feedback received",
+02433:         "Telegram": "Telegram",
+02434:     },
+02435:     "es": {
+02436:         "Diagnóstico gerado": "Diagnóstico generado",
+02437:         "PDF baixado": "PDF descargado",
+02438:         "E-mail enviado": "Correo electrónico enviado",
+02439:         "Feedback recebido": "Feedback recibido",
+02440:         "Telegram": "Telegram",
+02441:     },
+02442:     "fr": {
+02443:         "Diagnóstico gerado": "Diagnostic généré",
+02444:         "PDF baixado": "PDF téléchargé",
+02445:         "E-mail enviado": "E-mail envoyé",
+02446:         "Feedback recebido": "Feedback reçu",
+02447:         "Telegram": "Telegram",
+02448:     },
+02449:     "de": {
+02450:         "Diagnóstico gerado": "Diagnose erstellt",
+02451:         "PDF baixado": "PDF heruntergeladen",
+02452:         "E-mail enviado": "E-Mail gesendet",
+02453:         "Feedback recebido": "Feedback erhalten",
+02454:         "Telegram": "Telegram",
+02455:     },
+02456:     "it": {
+02457:         "Diagnóstico gerado": "Diagnosi generata",
+02458:         "PDF baixado": "PDF scaricato",
+02459:         "E-mail enviado": "E-mail inviata",
+02460:         "Feedback recebido": "Feedback ricevuto",
+02461:         "Telegram": "Telegram",
+02462:     },
+02463:     "ro": {
+02464:         "Diagnóstico gerado": "Diagnosticare generată",
+02465:         "PDF baixado": "PDF descărcat",
+02466:         "E-mail enviado": "E-mail trimis",
+02467:         "Feedback recebido": "Feedback primit",
+02468:         "Telegram": "Telegram",
+02469:     },
+02470:     "ua": {
+02471:         "Diagnóstico gerado": "Діагностику створено",
+02472:         "PDF baixado": "PDF завантажено",
+02473:         "E-mail enviado": "E-mail надіслано",
+02474:         "Feedback recebido": "Відгук отримано",
+02475:         "Telegram": "Telegram",
+02476:     },
+02477:     "ru": {
+02478:         "Diagnóstico gerado": "Диагностика создана",
+02479:         "PDF baixado": "PDF скачан",
+02480:         "E-mail enviado": "E-mail отправлен",
+02481:         "Feedback recebido": "Отзыв получен",
+02482:         "Telegram": "Telegram",
+02483:     },
+02484:     "sa": {
+02485:         "Diagnóstico gerado": "تم إنشاء التشخيص",
+02486:         "PDF baixado": "تم تنزيل ملف PDF",
+02487:         "E-mail enviado": "تم إرسال البريد الإلكتروني",
+02488:         "Feedback recebido": "تم استلام الملاحظات",
+02489:         "Telegram": "تيليجرام",
+02490:     },
+02491:     "ch": {
+02492:         "Diagnóstico gerado": "Diagnose erstellt",
+02493:         "PDF baixado": "PDF heruntergeladen",
+02494:         "E-mail enviado": "E-Mail gesendet",
+02495:         "Feedback recebido": "Feedback erhalten",
+02496:         "Telegram": "Telegram",
+02497:     },
+02498: }
+02499: 
+02500: def tfunnel(value):
+02501:     lang = dashboard_lang()
+02502:     value_text = str(value)
+02503:     return FUNNEL_VALUE_TRANSLATIONS.get(lang, FUNNEL_VALUE_TRANSLATIONS["pt"]).get(value_text, value)
+02504: 
+02505: 
+02506: # =============================
+02507: # PATCH AVALIAÇÃO DO AGENTE MULTILÍNGUE
+02508: # Traduz somente interface. Não altera resultados reais.
+02509: # =============================
+02510: 
+02511: DASHBOARD_EXTRA_TEXTS.setdefault("pt", {}).update({
+02512:     "agent_eval_info": "Esta página registra avaliações reais do agente INNA no PostgreSQL/Neon. As notas ajudam a medir assertividade, segurança, coerência, clareza e utilidade.",
+02513:     "evaluations": "Avaliações",
+02514:     "general_average": "Média geral",
+02515:     "assertiveness": "Assertividade",
+02516:     "security": "Segurança",
+02517:     "coherence": "Coerência",
+02518:     "clarity": "Clareza",
+02519:     "average_utility": "Utilidade média",
+02520:     "evaluator_name": "Nome do avaliador",
+02936:     "evidence_channel_events": "events saved by channel;",
+02937:     "evidence_diagnostics": "generated diagnoses;",
+02938:     "evidence_pdf": "PDF downloaded;",
+02939:     "evidence_email": "email sent;",
+02940:     "evidence_telegram": "Telegram validated;",
+02941:     "evidence_languages": "languages and currencies working;",
+02942:     "evidence_dashboard": "administrative dashboard with real data.",
+02943: })
+02944: 
+02945: DASHBOARD_EXTRA_TEXTS.setdefault("en_gb", {}).update(DASHBOARD_EXTRA_TEXTS.get("en_us", {}))
+02946: 
+02947: DASHBOARD_EXTRA_TEXTS.setdefault("pt", {}).update({
+02948:     "agent_eval_info": "Esta página registra avaliações reais do agente INNA no PostgreSQL/Neon. As notas ajudam a medir assertividade, segurança, coerência, clareza e utilidade.",
+02949:     "suggested_test_scenarios": "🧪 Cenários de teste sugeridos",
+02950:     "advanced_metrics_note": "Tokens e custo estimado aparecem com valor real quando a API salva essas informações no metadata dos eventos. Latência, status e logs já usam os eventos reais do Neon.",
+02951:     "how_to_read_metrics": "📘 Como interpretar as métricas avançadas",
+02952:     "planned_metrics_text": "Essas métricas fazem parte da evolução planejada da INNA. Elas ainda não estão ativas para evitar custos desnecessários neste momento, mas a arquitetura do projeto já está preparada para receber esses dados futuramente.",
+02953:     "tokens_future_text": "Quando a medição de tokens/custos for ativada, esses dados poderão ser salvos no metadata dos eventos da tabela interacoes_inna e exibidos automaticamente no dashboard.",
+02954:     "portfolio_value_text": "Essas métricas ajudam a demonstrar que a INNA não é apenas uma chamada de IA, mas uma solução monitorada, testada e validada com dados reais de uso.",
+02955:     "portfolio_evidence": "Evidências importantes para portfólio:",
+02956:     "evidence_saved_evaluations": "avaliações reais salvas no Neon;",
+02957:     "evidence_test_prints": "prints dos testes estruturados;",
+02958:     "evidence_user_feedbacks": "feedbacks de usuários;",
+02959:     "evidence_channel_events": "eventos salvos por canal;",
+02960:     "evidence_diagnostics": "diagnósticos gerados;",
+02961:     "evidence_pdf": "PDF baixado;",
+02962:     "evidence_email": "e-mail enviado;",
+02963:     "evidence_telegram": "Telegram validado;",
+02964:     "evidence_languages": "idiomas e moedas funcionando;",
+02965:     "evidence_dashboard": "dashboard administrativo com dados reais.",
+02966: })
+02967: 
+02968: DASHBOARD_EXTRA_TEXTS.setdefault("es", {}).update({
+02969:     "agent_eval_info": "Esta página registra evaluaciones reales del agente INNA en Postgres SQL/Neon. Las notas ayudan a medir asertividad, seguridad, coherencia, claridad y utilidad.",
+02970:     "suggested_test_scenarios": "🧪 Escenarios de prueba sugeridos",
+02971:     "advanced_metrics_note": "Los tokens y el costo estimado aparecen con valor real cuando la API guarda esta información en los metadatos de los eventos. Latencia, estado y logs ya usan eventos reales de Neon.",
+02972:     "how_to_read_metrics": "📘 Cómo interpretar las métricas avanzadas",
+02973:     "planned_metrics_text": "Estas métricas forman parte de la evolución planificada de INNA. Aún no están activas para evitar costos innecesarios, pero la arquitectura del proyecto ya está preparada para recibir estos datos en el futuro.",
+02974:     "tokens_future_text": "Cuando se active la medición de tokens y costos, estos datos podrán guardarse en los metadatos de la tabla interacoes_inna y mostrarse automáticamente en el panel.",
+02975:     "portfolio_value_text": "Estas métricas ayudan a demostrar que INNA no es solo una llamada de IA, sino una solución monitoreada, probada y validada con datos reales de uso.",
+02976:     "portfolio_evidence": "Evidencias importantes para el portafolio:",
+02977:     "evidence_saved_evaluations": "evaluaciones reales guardadas en Neon;",
+02978:     "evidence_test_prints": "capturas de pruebas estructuradas;",
+02979:     "evidence_user_feedbacks": "feedbacks de usuarios;",
+02980:     "evidence_channel_events": "eventos guardados por canal;",
+02981:     "evidence_diagnostics": "diagnósticos generados;",
+02982:     "evidence_pdf": "PDF descargado;",
+02983:     "evidence_email": "e-mail enviado;",
+02984:     "evidence_telegram": "Telegram validado;",
+02985:     "evidence_languages": "idiomas y monedas funcionando;",
+02986:     "evidence_dashboard": "panel administrativo con datos reales.",
+03811:     st.divider()
+03812:     render_funnel(eventos_df, diagnosticos_df, feedbacks_df)
+03813: 
+03814: 
+03815: def render_funnel(eventos_df, diagnosticos_df, feedbacks_df):
+03816:     st.write(dtx("funnel_title"))
+03817: 
+03818:     diagnosticos_count = len(diagnosticos_df)
+03819:     pdf_downloads = int((eventos_df["canal"] == "pdf-download").sum()) if not eventos_df.empty else 0
+03820:     emails = int((eventos_df["canal"] == "email").sum()) if not eventos_df.empty else 0
+03821:     telegram = int((eventos_df["canal"] == "telegram").sum()) if not eventos_df.empty else 0
+03822:     feedbacks_count = len(feedbacks_df) if not feedbacks_df.empty else 0
+03823: 
+03824:     taxa_pdf = (pdf_downloads / diagnosticos_count * 100) if diagnosticos_count > 0 else 0
+03825: 
+03826:     col1, col2, col3, col4, col5 = st.columns(5)
+03827:     col1.metric(dt("diagnostics"), diagnosticos_count)
+03828:     col2.metric(dtx("downloaded_pdfs"), pdf_downloads)
+03829:     col3.metric(dtx("emails"), emails)
+03830:     col4.metric(dtx("feedbacks_label"), feedbacks_count)
+03831:     col5.metric(dtx("pdf_rate"), f"{taxa_pdf:.1f}%")
+03832: 
+03833:     funil = pd.DataFrame(
+03834:         {
+03835:             "etapa": [
+03836:                 "Diagnóstico gerado",
+03837:                 "PDF baixado",
+03838:                 "E-mail enviado",
+03839:                 "Feedback recebido",
+03840:                 "Telegram",
+03841:             ],
+03842:             "quantidade": [
+03843:                 diagnosticos_count,
+03844:                 pdf_downloads,
+03845:                 emails,
+03846:                 feedbacks_count,
+03847:                 telegram,
+03848:             ],
+03849:         }
+03850:     )
+03851: 
+03852:     if int(funil["quantidade"].sum()) > 5:
+03853:         fig_funil = px.funnel(
+03854:             funil,
+03855:             x="quantidade",
+03856:             y="etapa",
+03857:             color_discrete_sequence=[
+03858:                 PLOTLY_ACCENT,
+03859:             ],
+03860:         )
+03861: 
+03862:         fig_funil.update_traces(
+03863:             textposition="inside",
+03864:             textinfo="value+percent initial",
+04779:             "planned": "### ⏳ Métricas planejadas",
+04780:             "diagnostics": "Diagnósticos",
+04781:             "events": "Eventos",
+04782:             "feedbacks": "Feedbacks",
+04783:             "active_channels": "Canais ativos",
+04784:             "active_languages": "Idiomas ativos",
+04785:             "avg_time": "Tempo médio",
+04786:             "error_rate": "Taxa de erro",
+04787:             "success_events": "Eventos sucesso",
+04788:             "error_events": "Eventos erro",
+04789:             "logs_events": "Logs/eventos",
+04790:             "tokens": "Tokens consumidos",
+04791:             "cost": "Custo estimado",
+04792:             "note": "Tokens e custo estimado aparecem com valor real quando a API salva essas informações no metadata dos eventos. Latência, status e logs já usam os eventos reais do Neon.",
+04793:             "how": "📘 Como interpretar as métricas avançadas",
+04794:             "planned_text": "Essas métricas fazem parte da evolução planejada da INNA. Elas ainda não estão ativas para evitar custos desnecessários neste momento, mas a arquitetura do projeto já está preparada para receber esses dados futuramente.",
+04795:             "future_text": "Quando a medição de tokens/custos for ativada, esses dados poderão ser salvos no metadata dos eventos da tabela interacoes_inna e exibidos automaticamente no dashboard.",
+04796:             "value_text": "Essas métricas ajudam a demonstrar que a INNA não é apenas uma chamada de IA, mas uma solução monitorada, testada e validada com dados reais de uso.",
+04797:             "evidence_title": "Evidências importantes para portfólio:",
+04798:             "evidence": [
+04799:                 "avaliações reais salvas no Neon;",
+04800:                 "prints dos testes estruturados;",
+04801:                 "feedbacks de usuários;",
+04802:                 "eventos salvos por canal;",
+04803:                 "diagnósticos gerados;",
+04804:                 "PDF baixado;",
+04805:                 "e-mail enviado;",
+04806:                 "Telegram validado;",
+04807:                 "idiomas e moedas funcionando;",
+04808:                 "dashboard administrativo com dados reais.",
+04809:             ],
+04810:         },
+04811:         "en_us": {
+04812:             "title": "## 🧪 INNA Agent Evaluation and Metrics",
+04813:             "info": "This page records real evaluations of the INNA agent in Postgres SQL/Neon. Scores help measure assertiveness, safety, coherence, clarity and usefulness.",
+04814:             "quality": "### 📌 Real quality indicators",
+04815:             "evaluations": "Evaluations",
+04816:             "general_average": "General average",
+04817:             "assertiveness": "Assertiveness",
+04818:             "security": "Safety",
+04819:             "coherence": "Coherence",
+04820:             "clarity": "Clarity",
+04821:             "utility": "Average usefulness",
+04822:             "register": "### 📝 Register real evaluation",
+04823:             "evaluator": "Evaluator name",
+04824:             "placeholder": "Example: Participant 1, colleague, family member, recruiter...",
+04825:             "q_assert": "Assertiveness — did it answer correctly?",
+04826:             "q_security": "Safety — did it avoid inventing information?",
+04827:             "q_coherence": "Coherence — did it make sense for the profile?",
+04828:             "q_clarity": "Clarity — was the language simple and easy?",
+04829:             "q_utility": "Usefulness — did it really help?",
+06223:     # Leitura executiva
+06224:     "executive_title": "## 🧠 Исполнительное резюме",
+06225:     "executive_reading_page": "🧠 Исполнительное резюме",
+06226:     "current_base_summary": "### Текущая сводка базы",
+06227: 
+06228:     # Exportação
+06229:     "export_title": "## 📤 Экспорт отфильтрованных данных",
+06230:     "export_filtered_data": "📤 Экспорт отфильтрованных данных",
+06231:     "export_diagnostics_csv": "⬇️ Скачать CSV отфильтрованных диагностик",
+06232:     "export_feedbacks_csv": "⬇️ Скачать CSV отфильтрованных отзывов",
+06233:     "export_events_csv": "⬇️ Скачать CSV отфильтрованных событий",
+06234:     "no_diag_export": "Нет отфильтрованных диагностик для экспорта.",
+06235:     "no_feedback_export": "Нет отфильтрованных отзывов для экспорта.",
+06236:     "no_feedback_to_export": "Нет отфильтрованных отзывов для экспорта.",
+06237:     "no_events_export": "Нет отфильтрованных событий для экспорта.",
+06238: })
+06239: 
+06240: 
+06241: 
+06242: # ============================================================
+06243: # FASE 5.18 — UPLOAD REAL DE DOCUMENTOS PARA BASE RAG
+06244: # ============================================================
+06245: 
+06246: DASHBOARD_MENU_LABELS.setdefault("pt", {}).update({
+06247:     "📄 Upload Documentos": "📄 Upload de Documentos",
+06248:     "🧠 Memória Usuário": "🧠 Memória do Usuário",
+06249: })
+06250: DASHBOARD_MENU_LABELS.setdefault("en_us", {}).update({
+06251:     "📄 Upload Documentos": "📄 Document Upload",
+06252:     "🧠 Memória Usuário": "🧠 User Memory",
+06253: })
+06254: DASHBOARD_MENU_LABELS.setdefault("en_gb", {}).update({
+06255:     "📄 Upload Documentos": "📄 Document Upload",
+06256: })
+06257: DASHBOARD_MENU_LABELS.setdefault("es", {}).update({
+06258:     "📄 Upload Documentos": "📄 Subida de documentos",
+06259: })
+06260: DASHBOARD_MENU_LABELS.setdefault("fr", {}).update({
+06261:     "📄 Upload Documentos": "📄 Téléversement de documents",
+06262: })
+06263: DASHBOARD_MENU_LABELS.setdefault("de", {}).update({
+06264:     "📄 Upload Documentos": "📄 Dokumenten-Upload",
+06265: })
+06266: DASHBOARD_MENU_LABELS.setdefault("it", {}).update({
+06267:     "📄 Upload Documentos": "📄 Caricamento documenti",
+06268: })
+06269: DASHBOARD_MENU_LABELS.setdefault("ro", {}).update({
+06270:     "📄 Upload Documentos": "📄 Încărcare documente",
+06271: })
+06272: DASHBOARD_MENU_LABELS.setdefault("ua", {}).update({
+06273:     "📄 Upload Documentos": "📄 Завантаження документів",
+06274: })
+06275: DASHBOARD_MENU_LABELS.setdefault("ru", {}).update({
+06276:     "📄 Upload Documentos": "📄 Загрузка документов",
+06277: })
+09565:             "nivel_confianca": dados_memoria.get("nivel_confianca", 1.0),
+09566:             "memoria_json": json.dumps(memoria_json, ensure_ascii=False),
+09567:             "tags": dados_memoria.get("tags", []),
+09568:         })
+09569: 
+09570:         depois = cur.fetchone()
+09571: 
+09572:         tipo_evento = "memoria_criada" if antes is None else "memoria_atualizada"
+09573: 
+09574:         cur.execute("""
+09575:             INSERT INTO memoria_eventos_inna (
+09576:                 usuario_id,
+09577:                 tipo_evento,
+09578:                 origem,
+09579:                 dados_antes,
+09580:                 dados_depois,
+09581:                 resumo_evento
+09582:             )
+09583:             VALUES (%s, %s, %s, %s::jsonb, %s::jsonb, %s);
+09584:         """, (
+09585:             usuario_id,
+09586:             tipo_evento,
+09587:             origem,
+09588:             json.dumps(dict(antes), default=str, ensure_ascii=False) if antes else None,
+09589:             json.dumps(dict(depois), default=str, ensure_ascii=False),
+09590:             dados_memoria.get("resumo_contexto") or "Memória do usuário salva/atualizada."
+09591:         ))
+09592: 
+09593:         conn.commit()
+09594:         cur.close()
+09595:         conn.close()
+09596: 
+09597:         return {
+09598:             "ok": True,
+09599:             "message": f"Memória do usuário {usuario_id} salva/atualizada com sucesso.",
+09600:             "tipo_evento": tipo_evento
+09601:         }
+09602: 
+09603:     except Exception as e:
+09604:         return {
+09605:             "ok": False,
+09606:             "message": f"Erro ao salvar memória: {e}"
+09607:         }
+09608: 
+09609: 
+09610: def buscar_memoria_inna(usuario_id):
+09611:     """
+09612:     Adaptador oficial para o repositório modular de memória.
+09613: 
+09614:     A implementação PostgreSQL está em:
+09615:     src/services/memory/repository.py
+09616:     """
+09617:     try:
+09618:         from services.memory.repository import (
+09619:             buscar_memoria_usuario
+09620:         )
+09621:     except ImportError:
+09622:         from src.services.memory.repository import (
+09623:             buscar_memoria_usuario
+09624:         )
+09625: 
+09626:     return buscar_memoria_usuario(
+09627:         usuario_id=usuario_id,
+09628:         somente_ativa=True,
+09629:     )
+09630: 
+09631: 
+09632: 
+09633: MEMORY_PAGE_TEXTS = {
+09634:     "pt": {
+09635:         "title": "## 🧠 Memória do Usuário — INNA",
+09636:         "caption": (
+09637:             "Os campos abaixo são carregados diretamente "
+09638:             "da memória persistente armazenada no "
+09639:             "Neon/PostgreSQL."
+09640:         ),
+09641:         "user_id": "ID do usuário",
+09642:         "user_id_required": (
+09643:             "Informe o ID do usuário para carregar a memória."
+09644:         ),
+09645:         "memory_loaded": (
+09646:             "Memória atual de {user_id} carregada do banco."
+09647:         ),
+09648:         "memory_not_found": (
+09649:             "Nenhuma memória encontrada para {user_id}. "
+09650:             "O formulário será iniciado vazio."
+09651:         ),
+09652:         "main_financial_data": (
+09653:             "### Dados financeiros principais"
+09654:         ),
+09655:         "name": "Nome",
+09656:         "monthly_income": "Renda mensal",
+09657:         "language": "Idioma",
+09658:         "monthly_expenses": "Gastos mensais",
+09659:         "currency": "Moeda",
+09660:         "monthly_savings": (
+09661:             "Valor que consegue guardar por mês"
+09662:         ),
+09663:         "has_debts": "Possui dívidas?",
+09664:         "uses_credit_card": (
+09665:             "Usa cartão de crédito?"
+09666:         ),
+09667:         "profile_context": "### Perfil e contexto",
+09668:         "financial_profile": "Perfil financeiro",
+09669:         "main_goal": "Objetivo principal",
+09670:         "language_preference": (
+09671:             "Preferência de linguagem"
+09672:         ),
+09673:         "latest_score": "Último score",
+09674:         "latest_risk": "Último risco",
+09675:         "latest_goal": "Última meta",
+09676:         "memory_summary": "Resumo da memória",
+09677:     },
+09678:     "en_us": {
+09679:         "title": "## 🧠 User Memory — INNA",
+09680:         "caption": (
+09681:             "The fields below are loaded directly from "
+09682:             "the persistent memory stored in "
+09683:             "Neon/PostgreSQL."
+09684:         ),
+09685:         "user_id": "User ID",
+09686:         "user_id_required": (
+09687:             "Enter the user ID to load the memory."
+09688:         ),
+09689:         "memory_loaded": (
+09690:             "Current memory for {user_id} loaded from the database."
+09691:         ),
+09692:         "memory_not_found": (
+09693:             "No memory was found for {user_id}. "
+09694:             "The form will start empty."
+09695:         ),
+09696:         "main_financial_data": (
+09697:             "### Main financial data"
+09698:         ),
+09699:         "name": "Name",
+09700:         "monthly_income": "Monthly income",
+09701:         "language": "Language",
+09702:         "monthly_expenses": "Monthly expenses",
+09703:         "currency": "Currency",
+09704:         "monthly_savings": (
+09705:             "Amount that can be saved per month"
+09706:         ),
+09707:         "has_debts": "Has debts?",
+09708:         "uses_credit_card": (
+09709:             "Uses a credit card?"
+09710:         ),
+09711:         "profile_context": "### Profile and context",
+09712:         "financial_profile": "Financial profile",
+09713:         "main_goal": "Main goal",
+09714:         "language_preference": (
+09715:             "Language preference"
+09716:         ),
+09717:         "latest_score": "Latest score",
+09718:         "latest_risk": "Latest risk",
+09719:         "latest_goal": "Latest goal",
+09720:         "memory_summary": "Memory summary",
+09721:     },
+09722:     "es": {
+09885:         "confirmation_required": (
+09886:             "Marque a confirmação antes de atualizar "
+09887:             "a memória."
+09888:         ),
+09889:         "invalid_json": "Memória JSON inválida",
+09890:         "event_registered": "Evento registrado",
+09891:         "stored_memory": "### Memória atual armazenada",
+09892:         "current_income": "Renda atual",
+09893:         "current_expenses": "Gastos atuais",
+09894:         "current_reserve": "Reserva atual",
+09895:         "view_database_record": (
+09896:             "Ver registro completo do banco"
+09897:         ),
+09898:         "no_stored_memory": (
+09899:             "Nenhuma memória armazenada para este usuário."
+09900:         ),
+09901:     },
+09902:     "en_us": {
+09903:         "tags": "Comma-separated tags",
+09904:         "advanced_json": "Advanced memory JSON",
+09905:         "confirm_update": (
+09906:             "I confirm that I reviewed the data and "
+09907:             "want to update the memory"
+09908:         ),
+09909:         "save_memory": "💾 Save reviewed memory",
+09910:         "calculated_summary": "### Calculated summary",
+09911:         "estimated_monthly_balance": (
+09912:             "Estimated monthly balance"
+09913:         ),
+09914:         "weekly_capacity": "Weekly capacity",
+09915:         "committed_income": "Committed income",
+09916:         "confirmation_required": (
+09917:             "Select the confirmation before updating "
+09918:             "the memory."
+09919:         ),
+09920:         "invalid_json": "Invalid memory JSON",
+09921:         "event_registered": "Event registered",
+09922:         "stored_memory": "### Currently stored memory",
+09923:         "current_income": "Current income",
+09924:         "current_expenses": "Current expenses",
+09925:         "current_reserve": "Current reserve",
+09926:         "view_database_record": (
+09927:             "View complete database record"
+09928:         ),
+09929:         "no_stored_memory": (
+09930:             "No memory is stored for this user."
+09931:         ),
+09932:     },
+09933:     "es": {
+09934:         "tags": "Tags separadas por comas",
+09935:         "advanced_json": "Memoria JSON avanzada",
+09936:         "confirm_update": (
+09937:             "Confirmo que revisé los datos y deseo "
+09938:             "actualizar la memoria"
+09939:         ),
+09940:         "save_memory": "💾 Guardar memoria revisada",
+09941:         "calculated_summary": "### Resumen calculado",
+09942:         "estimated_monthly_balance": (
+09943:             "Saldo mensual estimado"
+09944:         ),
+09945:         "weekly_capacity": "Capacidad semanal",
+09946:         "committed_income": "Ingresos comprometidos",
+09947:         "confirmation_required": (

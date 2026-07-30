@@ -1,0 +1,61 @@
+HEALTH SCORE VISUAL I18N AUDIT
+============================================================
+FILE=src\dashboard_pages\health_score_page.py
+TOTAL_FINDINGS=8
+
+[1]
+FUNCTION=render_health_score_page
+LINE=3367
+VISUAL_CALL=metric
+MATCHES=componente, forte
+TEXT=componente_mais_forte
+
+[2]
+FUNCTION=render_health_score_page
+LINE=3367
+VISUAL_CALL=metric
+MATCHES=componente, forte
+TEXT=componente_mais_forte
+
+[3]
+FUNCTION=render_health_score_page
+LINE=3381
+VISUAL_CALL=metric
+MATCHES=componente, fraco
+TEXT=componente_mais_fraco
+
+[4]
+FUNCTION=render_health_score_page
+LINE=3381
+VISUAL_CALL=metric
+MATCHES=componente, fraco
+TEXT=componente_mais_fraco
+
+[5]
+FUNCTION=render_health_score_page
+LINE=3656
+VISUAL_CALL=markdown
+MATCHES=recomendações
+TEXT=## Recomendações prioritárias
+
+[6]
+FUNCTION=render_health_score_page
+LINE=3600
+VISUAL_CALL=bar
+MATCHES=componente
+TEXT=Componente
+
+[7]
+FUNCTION=render_health_score_page
+LINE=3417
+VISUAL_CALL=warning
+MATCHES=componente, componentes
+TEXT=A INNA apresenta componentes que precisam de atenção.
+
+[8]
+FUNCTION=render_health_score_page
+LINE=3423
+VISUAL_CALL=error
+MATCHES=componente, componentes, saúde
+TEXT=A saúde global está crítica. Priorize os componentes com menor score.
+

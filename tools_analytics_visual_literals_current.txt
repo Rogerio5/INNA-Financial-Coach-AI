@@ -1,0 +1,56 @@
+TOOLS_ANALYTICS_VISUAL_LITERALS_CURRENT
+========================================================================================
+SOURCE=src\dashboard_pages\tools_analytics_page.py
+TOTAL_CALLS=7
+
+LINE=806 FUNCTION=metric
+  arg: Valor atual
+
+LINE=814 FUNCTION=metric
+  arg: Referência
+
+LINE=958 FUNCTION=write
+  arg: 
+
+LINE=1328 FUNCTION=bar
+  x: execucoes
+  y: ferramenta
+  text: execucoes
+  color: execucoes
+
+LINE=1408 FUNCTION=bar
+  x: p95_ms
+  y: ferramenta
+  text: p95_ms
+  color: p95_ms
+
+LINE=1515 FUNCTION=bar
+  x: total
+  y: intencao
+  text: total
+  color: total
+
+LINE=1602 FUNCTION=bar
+  x: total
+  y: origem
+  text: total
+  color: total
+
+
+DIRECT_TERM_OCCURRENCES
+========================================================================================
+'Valor atual': [807]
+'Referência': [815]
+'Visão analítica': [267]
+'Atual': [88, 237]
+'Anterior': [237]
+'Execuções': [237, 243, 249, 267]
+'Falhas': [237, 243, 261]
+'Ferramenta': [79, 249, 267]
+'Usuário': [261, 267]
+'Período': [237, 261]
+'Duração': [237, 243, 267]
+'Confiança': [243, 249, 267]
+'Sucesso': [249, 261]
+'Eventos': [84, 132, 255, 267]
+'Total': [255, 278]

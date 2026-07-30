@@ -1,0 +1,1297 @@
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:69:st.set_page_config(
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:70:    page_title="INNA Financial Coach AI",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:71:    page_icon="💰",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:72:    layout="wide",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:73:)
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:74:
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:885:
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:886:APP_LANG_LABELS = {
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:887:    "pt": "🇧🇷 Português Brasil",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:888:    "en_us": "🇺🇸 English US",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:889:    "en_gb": "🇬🇧 English UK",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:890:    "es": "🇪🇸 Español",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:2962:def top_menu_t(menu_item: str) -> str:
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:2963:    top_labels = {
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:2964:        "pt": {
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:2965:            "🏠 Início": "🏠 Início",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:2966:            "🧾 Diagnóstico": "🧾 Diagnóstico",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:2967:            "📊 Panorama": "📊 Panorama",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4488:    landing_cta_bg = "linear-gradient(135deg, #FFFFFF 0%, #EEF6FF 100%)"
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:4489:    landing_cta_title = "#071C36"
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:4490:    landing_cta_subtitle = "#334155"
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4491:    landing_cta_border = "#D4AF37"
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4492:
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4493:elif landing_theme_name in ["Escuro preto", "Preto dourado", "Preto vermelho"]:
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4494:    landing_warning_bg = "linear-gradient(135deg, #101010 0%, #050505 100%)"
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4499:    landing_cta_bg = "linear-gradient(135deg, #141414 0%, #050505 100%)"
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:4500:    landing_cta_title = "#F6D889"
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:4501:    landing_cta_subtitle = "#FFFFFF"
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4502:    landing_cta_border = "#D4AF37"
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4503:
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4504:else:
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4505:    landing_warning_bg = "linear-gradient(135deg, #164A86 0%, #071C36 48%, #03101E 100%)"
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4510:    landing_cta_bg = "linear-gradient(135deg, #164A86 0%, #071C36 45%, #03101E 100%)"
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:4511:    landing_cta_title = "#F6D889"
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:4512:    landing_cta_subtitle = "#FFFFFF"
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4513:    landing_cta_border = "#D4AF37"
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4514:
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4515:
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:4516:st.markdown(f"""
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:6823:                },
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:6824:                xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\app.py:6825:                yaxis_title="Score financeiro",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:6826:                showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:6827:                hovermode="x unified",
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:6828:                height=420,
+  C:\Users\roger\inna-financial-coach-ai\src\app.py:6829:                margin={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:78:    st.set_page_config(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:79:        page_title="INNA Analytics",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:80:        page_icon="📊",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:81:        layout="wide",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:82:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:83:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:84:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:85:LANGUAGE_LABELS = {
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:86:    "pt": "BR Português Brasil",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:87:    "en_us": "US English",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:88:    "en_gb": "GB English UK",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:89:    "es": "ES Español",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:483:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:484:DASHBOARD_MENU_LABELS = {
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:485:    "pt": {},
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:486:    "en_us": {
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:487:        "📌 Visão Geral": "📌 Overview",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:488:        "🌐 Eventos Multicanal": "🌐 Multichannel Events",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3781:            fig_canais.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3782:                xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3783:                yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3784:                showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3785:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3786:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3787:            apply_inna_plotly_theme(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3881:        fig_funil.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3882:            xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3883:            yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3884:            showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3885:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3886:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3887:        apply_inna_plotly_theme(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3960:            fig_idiomas.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3961:                xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3962:                yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3963:                coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3964:                showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3965:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:3966:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4028:            fig_moedas.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4029:                xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4030:                yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4031:                coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4032:                showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4033:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4034:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4372:            fig_score.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4373:                xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4374:                yaxis_title="Score financeiro",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4375:                showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4376:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4377:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4378:            apply_inna_plotly_theme(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4434:            fig_saldo.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4435:                xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4436:                yaxis_title="Saldo estimado",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4437:                showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4438:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4439:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:4440:            apply_inna_plotly_theme(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5466:            .reset_index(name=t["total"])
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5467:            .rename(columns={"modo": t["mode"]})
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5468:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5469:        st.dataframe(modo_df, use_container_width=True)
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5470:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5471:    st.write(t["latest_questions"])
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5485:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5486:    display_df = display_df.rename(columns={k: v for k, v in rename_map.items() if k in display_df.columns})
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5487:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5488:    st.dataframe(display_df.head(20), use_container_width=True)
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5489:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard.py:5490:
+  C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:45:
+> C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:46:FIELD_LABELS = {
+  C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:47:    "renda_mensal": "renda mensal",
+  C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:48:    "gastos_fixos": "gastos fixos mensais",
+  C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:49:    "gastos_variaveis": (
+  C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:50:        "gastos variáveis mensais"
+  C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:625:) -> str:
+> C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:626:    labels = [
+  C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:627:        FIELD_LABELS[field]
+  C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:628:        for field in missing_fields
+  C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:629:    ]
+  C:\Users\roger\inna-financial-coach-ai\src\agents\financial_input_resolver.py:630:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1215:        ]
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1216:        .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1217:            columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1218:                "criado_em": "Data",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1219:                "score_global": (
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1220:                    "Health Score"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1258:    fig_global.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1259:        xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1260:        yaxis_title="Health Score",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1261:        showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1262:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1263:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1264:    fig_global.update_yaxes(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1311:            ]
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1312:            .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1313:                columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1314:                    "criado_em": "Data",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1315:                    **colunas_componentes,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1316:                }
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1349:        fig_componentes.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1350:            xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1351:            yaxis_title="Score do componente",
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1352:            legend_title_text="Componente",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1353:            legend={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1354:                "orientation": "h",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1355:                "yanchor": "bottom",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1356:                "y": -0.28,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1414:        )
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1415:        .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1416:            columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1417:                "id": health_table_t("id"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1418:                "criado_em": health_table_t("date"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1419:                "score_global": health_table_t("global"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1457:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1458:    history_column_config = {
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1459:        health_table_t("id"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1460:            st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1461:                health_table_t("id"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1462:                format="%d",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1463:                width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1464:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1466:        health_table_t("date"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1467:            st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1468:                health_table_t("date"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1469:                format=health_date_format(),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1470:                width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1471:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1473:        health_table_t("anomalies"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1474:            st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1475:                health_table_t("anomalies"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1476:                format="%d",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1477:                width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1478:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1480:        health_table_t("classification"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1481:            st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1482:                health_table_t("classification"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1483:                width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1484:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1485:        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1486:        health_table_t("priority_component"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1487:            st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1488:                health_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1489:                    "priority_component"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1490:                ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1491:                width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1494:        health_table_t("origin"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1495:            st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1496:                health_table_t("origin"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1497:                width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1498:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1499:        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1503:        if score_column in tabela.columns:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1504:            history_column_config[
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1505:                score_column
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1506:            ] = st.column_config.ProgressColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1507:                score_column,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1508:                min_value=0.0,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1509:                max_value=100.0,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1510:                format="%.1f",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1520:        height=430,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1521:        column_config=history_column_config,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1522:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1523:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1524:    csv = tabela.to_csv(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1525:        index=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1907:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1908:    tabela_exibicao = tabela.rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1909:        columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1910:            "Componente": health_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1911:                "component"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1912:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1935:        height=300,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1936:        column_config={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1937:            health_table_t("component"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1938:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1939:                    health_table_t("component"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1940:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1941:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1942:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1943:            health_table_t("score"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1944:                st.column_config.ProgressColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1945:                    health_table_t("score"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1946:                    min_value=0.0,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1947:                    max_value=100.0,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1948:                    format="%.1f",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1952:            health_table_t("weight"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1953:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1954:                    health_table_t("weight"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1955:                    format="%.1f%%",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1956:                    width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1957:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1959:            health_table_t("contribution"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1960:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1961:                    health_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1962:                        "contribution"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1963:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1964:                    format="%.2f",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1968:            health_table_t("classification"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1969:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1970:                    health_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1971:                        "classification"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1972:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1973:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1976:            health_table_t("status"): (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1977:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1978:                    health_table_t("status"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1979:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1980:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:1981:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:2018:        fig_comparativo.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:2019:            xaxis_title="Score",
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:2020:            yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:2021:            coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:2022:            showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:2023:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\health_score_page.py:2024:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4709:                .copy()
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4710:                .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4711:                    columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4712:                        "id": "ID",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4713:                        "evento_tipo": (
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4714:                            "Tipo do evento"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4799:                height=420,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4800:                column_config={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4801:                    "ID": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4802:                        st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4803:                            "ID",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4804:                            format="%d",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4805:                            width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4806:                        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4808:                    "Tipo do evento": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4809:                        st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4810:                            llm_resend_event_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4811:                                "event_type"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4812:                            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4813:                            help=llm_resend_event_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4819:                    "Message ID": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4820:                        st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4821:                            llm_resend_event_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4822:                                "message_id"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4823:                            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4824:                            width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4827:                    "Recebido em": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4828:                        st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4829:                            llm_resend_event_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4830:                                "received_at"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4831:                            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4832:                            format=(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4838:                    "Processado": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4839:                        st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4840:                            llm_resend_event_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4841:                                "processed"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4842:                            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4843:                            width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4846:                    "Processado em": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4847:                        st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4848:                            llm_resend_event_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4849:                                "processed_at"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4850:                            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4851:                            format=(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4857:                    "Resultado": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4858:                        st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4859:                            llm_resend_event_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4860:                                "result"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4861:                            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4862:                            width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4865:                    "Erro": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4866:                        st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4867:                            llm_resend_event_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4868:                                "error"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4869:                            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4870:                            width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4873:                    "Svix ID": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4874:                        st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4875:                            llm_resend_event_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4876:                                "svix_id"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4877:                            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:4878:                            help=llm_resend_event_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5129:        tabela_notificacoes = (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5130:            tabela_notificacoes.rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5131:                columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5132:                    "id": "ID",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5133:                    "alerta_id": "Alerta",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5134:                    "status": "Status do envio",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5244:            height=460,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5245:            column_config={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5246:                "ID": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5247:                    st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5248:                        "ID",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5249:                        format="%d",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5250:                        width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5251:                    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5253:                "Alerta": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5254:                    st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5255:                        llm_notification_t("alert"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5256:                        format="%d",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5257:                        width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5258:                    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5260:                "Status do envio": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5261:                    st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5262:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5263:                            "send_status"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5264:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5265:                        width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5268:                "Status da entrega": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5269:                    st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5270:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5271:                            "delivery_status"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5272:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5273:                        width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5276:                "Evento do Resend": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5277:                    st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5278:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5279:                            "resend_event"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5280:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5281:                        width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5284:                "Destinatário": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5285:                    st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5286:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5287:                            "recipient"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5288:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5289:                        help=llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5295:                "Assunto": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5296:                    st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5297:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5298:                            "subject"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5299:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5300:                        width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5303:                "Tentativas": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5304:                    st.column_config.ProgressColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5305:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5306:                            "attempts"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5307:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5308:                        help=llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5317:                "Message ID": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5318:                    st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5319:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5320:                            "message_id"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5321:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5322:                        width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5325:                "Criado em": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5326:                    st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5327:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5328:                            "created_at"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5329:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5330:                        format="DD/MM/YYYY HH:mm:ss",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5334:                "Enviado em": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5335:                    st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5336:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5337:                            "sent_at"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5338:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5339:                        format="DD/MM/YYYY HH:mm:ss",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5343:                "Entregue em": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5344:                    st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5345:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5346:                            "delivered_at"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5347:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5348:                        format="DD/MM/YYYY HH:mm:ss",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5352:                "Devolvido em": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5353:                    st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5354:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5355:                            "returned_at"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5356:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5357:                        format="DD/MM/YYYY HH:mm:ss",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5361:                "Webhook recebido em": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5362:                    st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5363:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5364:                            "webhook_at"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5365:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5366:                        format="DD/MM/YYYY HH:mm:ss",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5370:                "Motivo da entrega/falha": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5371:                    st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5372:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5373:                            "delivery_reason"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5374:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5375:                        width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5378:                "Tipo do erro": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5379:                    st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5380:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5381:                            "error_type"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5382:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5383:                        width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5386:                "Mensagem de erro": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5387:                    st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5388:                        llm_notification_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5389:                            "error_message"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5390:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5391:                        width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5577:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5578:    tabela = tabela.rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5579:        columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5580:            "id": "ID",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5581:            "criado_em": "Criado em",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5582:            "atualizado_em": "Atualizado em",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5657:        height=420,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5658:        column_config={
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5659:            "ID": st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5660:                "ID",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5661:                format="%d",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5662:                width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5663:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5664:            "Criado em": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5665:                st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5666:                    llm_alert_t("created_at"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5667:                    format="DD/MM/YYYY HH:mm:ss",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5668:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5669:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5671:            "Atualizado em": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5672:                st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5673:                    llm_alert_t("updated_at"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5674:                    format="DD/MM/YYYY HH:mm:ss",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5675:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5676:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5677:            ),
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5678:            "Título": st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5679:                llm_alert_t("title"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5680:                width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5681:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5682:            "Categoria": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5683:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5684:                    llm_alert_t("category"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5685:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5686:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5687:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5688:            "Severidade": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5689:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5690:                    llm_alert_t("severity"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5691:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5692:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5693:            ),
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5694:            "Status": st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5695:                llm_alert_t("status"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5696:                width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5697:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5698:            "Valor atual": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5699:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5700:                    llm_alert_t("current_value"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5701:                    format="%.4f",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5702:                    width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5703:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5705:            "Valor limite": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5706:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5707:                    llm_alert_t("limit_value"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5708:                    format="%.4f",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5709:                    width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5710:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5711:            ),
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5712:            "Modelo": st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5713:                llm_table_t("model"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5714:                width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5715:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5716:            "Operação": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5717:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5718:                    llm_table_t("operation"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5719:                    width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5720:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5721:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5722:            "Resolvido em": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5723:                st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5724:                    llm_alert_t("resolved_at"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5725:                    format="DD/MM/YYYY HH:mm:ss",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5726:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:5727:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7234:        )
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7235:        .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7236:            columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7237:                "modelo": coluna_modelo,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7238:                "Chamadas": coluna_chamadas,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7239:                "Tokens": coluna_tokens,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7255:        height=300,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7256:        column_config={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7257:            coluna_modelo: (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7258:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7259:                    coluna_modelo,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7260:                    help=llm_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7261:                        "model_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7262:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7266:            coluna_chamadas: (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7267:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7268:                    coluna_chamadas,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7269:                    help=llm_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7270:                        "calls_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7271:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7276:            coluna_tokens: (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7277:                st.column_config.ProgressColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7278:                    coluna_tokens,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7279:                    help=llm_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7280:                        "tokens_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7281:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7295:            coluna_custo: (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7296:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7297:                    coluna_custo,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7298:                    help=llm_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7299:                        "cost_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7300:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7305:            coluna_duracao: (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7306:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7307:                    coluna_duracao,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7308:                    help=llm_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7309:                        "duration_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7310:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7349:    fig_modelos.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7350:        xaxis_title=llm_cost_page_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7351:            "consumed_tokens"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7352:        ),
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7353:        yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7354:        coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7355:        showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7356:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7357:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7428:        )
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7429:        .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7430:            columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7431:                "operacao": coluna_operacao,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7432:                "Chamadas": coluna_chamadas,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7433:                "Tokens": coluna_tokens,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7449:        height=330,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7450:        column_config={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7451:            coluna_operacao: (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7452:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7453:                    coluna_operacao,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7454:                    help=llm_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7455:                        "operation_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7456:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7460:            coluna_chamadas: (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7461:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7462:                    coluna_chamadas,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7463:                    help=llm_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7464:                        "calls_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7465:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7470:            coluna_tokens: (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7471:                st.column_config.ProgressColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7472:                    coluna_tokens,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7473:                    help=llm_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7474:                        "tokens_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7475:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7489:            coluna_custo: (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7490:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7491:                    coluna_custo,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7492:                    help=llm_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7493:                        "cost_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7494:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7499:            coluna_duracao: (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7500:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7501:                    coluna_duracao,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7502:                    help=llm_table_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7503:                        "duration_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7504:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7531:        .sum()
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7532:        .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7533:            columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7534:                "data": "Data",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7535:                "tokens_totais": "Tokens",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7536:            }
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7578:    fig_tokens.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7579:        xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7580:        yaxis_title="Tokens",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7581:        showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7582:        hovermode="x unified",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7583:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7584:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7623:        ]
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7624:        .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7625:            columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7626:                "data": "Data",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7627:            }
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7628:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7668:    fig_duracao.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7669:        xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7670:        yaxis_title=llm_cost_page_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7671:            "average_duration_seconds"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7672:        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7673:        showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7674:        hovermode="x unified",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7736:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7737:    tabela = tabela.rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7738:        columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7739:            "id": "ID",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7740:            "criado_em": "Data",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7741:            "provider": "Provider",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7784:        height=460,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7785:        column_config={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7786:            "ID": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7787:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7788:                    "ID",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7789:                    format="%d",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7790:                    width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7791:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7793:            "Data": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7794:                st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7795:                    llm_detail_t("date"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7796:                    format="DD/MM/YYYY HH:mm:ss",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7797:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7798:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7800:            "Provider": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7801:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7802:                    llm_detail_t("provider"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7803:                    help=llm_detail_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7804:                        "provider_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7805:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7809:            "Modelo": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7810:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7811:                    llm_table_t("model"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7812:                    width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7813:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7814:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7815:            "Operação": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7816:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7817:                    llm_cost_page_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7818:                        "operation_column"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7819:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7820:                    width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7823:            "Origem": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7824:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7825:                    llm_detail_t("origin"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7826:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7827:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7828:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7829:            "Usuário": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7830:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7831:                    llm_detail_t("user"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7832:                    width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7833:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7834:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7835:            "Trace": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7836:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7837:                    llm_detail_t("trace"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7838:                    help=llm_detail_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7839:                        "trace_help"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7840:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7844:            "Tokens entrada": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7845:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7846:                    llm_detail_t("input_tokens"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7847:                    format="%d",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7848:                    width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7849:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7851:            "Tokens saída": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7852:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7853:                    llm_detail_t("output_tokens"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7854:                    format="%d",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7855:                    width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7856:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7858:            "Tokens totais": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7859:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7860:                    llm_detail_t("total_tokens"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7861:                    format="%d",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7862:                    width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7863:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7865:            "Custo USD": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7866:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7867:                    llm_detail_t("estimated_cost"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7868:                    format="US$ %.6f",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7869:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7870:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7872:            "Duração (s)": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7873:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7874:                    llm_detail_t("duration"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7875:                    format="%.3f s",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7876:                    width="small",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7877:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7879:            "Sucesso": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7880:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7881:                    llm_detail_t("result"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7882:                    width="medium",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7883:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7884:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7885:            "Tipo do erro": (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7886:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7887:                    llm_detail_t("error_type"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7888:                    width="large",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7889:                )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\llm_costs_page.py:7890:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:75:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:76:STATUS_LABELS = {
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:77:    "sucesso": "✅ Sucesso",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:78:    "falha": "❌ Falha",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:79:    "ignorado": "⏭️ Ignorado",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:80:    "iniciado": "🔄 Iniciado",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:248:        ]
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:249:    ].rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:250:        columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:251:            "trace_id": "Trace ID",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:252:            "usuario_id": "Usuário",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:253:            "pergunta": "Pergunta",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:308:        ]
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:309:    ].rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:310:        columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:311:            "ordem": "Ordem",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:312:            "etapa_label": "Etapa",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:313:            "mensagem": "Mensagem",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:681:        ]
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:682:        .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:683:            columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:684:                "duracao_ms": "Trace A",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:685:            }
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:686:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:695:        ]
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:696:        .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:697:            columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:698:                "duracao_ms": "Trace B",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:699:            }
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:700:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:826:    fig_comparacao.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:827:        xaxis_title=titulo_eixo,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:828:        yaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:829:        legend_title_text=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:830:        legend={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:831:            "orientation": "h",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:832:            "yanchor": "bottom",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\timeline_viewer_page.py:833:            "y": 1.02,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:341:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:342:    return tabela[list(existentes)].rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:343:        columns=existentes
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:344:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:345:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:346:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:728:            outliers.copy()
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:729:            .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:730:                columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:731:                    "indice": tools_analytics_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:732:                        "event_index"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:733:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1233:            fig_uso_tools.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1234:                xaxis_title=tools_analytics_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1235:                    "executions"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1236:                ),
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1237:                yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1238:                coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1239:                showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1240:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1241:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1310:            fig_p95_tools.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1311:                xaxis_title=tools_analytics_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1312:                    "p95_latency"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1313:                ),
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1314:                yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1315:                coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1316:                showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1317:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1318:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1364:            tabela_intencoes = (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1365:                distribuicao_intencoes.rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1366:                    columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1367:                        "intencao": tools_analytics_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1368:                            "intention"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1369:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1418:            fig_intencoes.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1419:                xaxis_title=tools_analytics_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1420:                    "events"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1421:                ),
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1422:                yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1423:                coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1424:                showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1425:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1426:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1451:            tabela_origens = (
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1452:                distribuicao_origens.rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1453:                    columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1454:                        "origem": tools_analytics_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1455:                            "origin"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1456:                        ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1505:            fig_origens.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1506:                xaxis_title=tools_analytics_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1507:                    "events"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1508:                ),
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1509:                yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1510:                coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1511:                showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1512:            )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1513:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1545:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1546:    frequency_labels = {
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1547:        "hour": tools_analytics_t("hour"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1548:        "day": tools_analytics_t("day"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1549:        "week": tools_analytics_t("week"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1550:        "month": tools_analytics_t("month"),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1608:            ]
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1609:            .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1610:                columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1611:                    "execucoes": tools_analytics_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1612:                        "executions"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1613:                    ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1658:        fig_evolucao.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1659:            xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1660:            yaxis_title=tools_analytics_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1661:                "events"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1662:            ),
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1663:            legend_title_text=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1664:            hovermode="x unified",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1665:            legend={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1666:                "orientation": "h",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1667:                "yanchor": "bottom",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1752:    fig_usuarios.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1753:        xaxis_title=tools_analytics_t(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1754:            "executions"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1755:        ),
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1756:        yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1757:        coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1758:        showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1759:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_analytics_page.py:1760:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:121:        .reset_index()
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:122:        .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:123:            columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:124:                "tool_label": "Ferramenta",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:125:            }
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:126:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:259:        ]
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:260:    ].rename(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:261:        columns={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:262:            "usuario_id": "Usuário",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:263:            "pergunta": "Pergunta",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:264:            "intencao": "Intenção",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:743:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:744:    labels = filtrado[
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:745:        "tool_label"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:746:    ].fillna(
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:747:        filtrado["tool_nome"]
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:748:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:751:        filtrado = filtrado[
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:752:            labels == ferramenta
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:753:        ]
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:754:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:755:    if origem != "Todas":
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:756:        filtrado = filtrado[
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:827:        fig_evolucao.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:828:            xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:829:            yaxis_title="Eventos",
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:830:            legend_title_text=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:831:            hovermode="x unified",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:832:            legend={
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:833:                "orientation": "h",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:834:                "yanchor": "bottom",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:914:        fig_performance.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:915:            xaxis_title="Execuções",
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:916:            yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:917:            coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:918:            showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:919:        )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:920:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:984:    fig_usuarios.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:985:        xaxis_title="Execuções",
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:986:        yaxis_title=None,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:987:        coloraxis_showscale=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:988:        showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:989:    )
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\tools_observability_page.py:990:
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\components.py:183:                formatar_risco_hitl(key)
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\components.py:184:                if title == "Distribuição por risco"
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\components.py:185:                else key
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\components.py:186:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\components.py:187:            "Quantidade": value,
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\components.py:188:        }
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:6:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:7:STATUS_LABELS = {
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:8:    "pending": "Pendente",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:9:    "processing": "Em processamento",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:10:    "approved": "Aprovada",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:11:    "corrected": "Corrigida",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:16:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:17:RISK_LABELS = {
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:18:    "": "Não informado",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:19:    "low": "Baixo",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:20:    "medium": "Médio",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:21:    "high": "Alto",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:24:
+> C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:25:ACTION_LABELS = {
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:26:    "approve": "Aprovar",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:27:    "correct": "Corrigir",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:28:    "reject": "Rejeitar",
+  C:\Users\roger\inna-financial-coach-ai\src\dashboard_pages\human_review\formatters.py:29:    "cancel": "Cancelar",
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:688:    if result.production_evaluation:
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:689:        title = (
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:690:            "INNA LLMOps — Avaliação Real"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:691:        )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:692:        execution_label = "aplicação real"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:693:        production_label = "sim"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:694:    else:
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:695:        title = (
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:696:            "INNA LLMOps — Avaliação Oficial"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:697:        )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:698:        execution_label = (
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\cli.py:699:            "validação sintética da "
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:406:) -> pd.DataFrame:
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:407:    return frame.rename(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:408:        columns=llmops_column_labels()
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:409:    )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:410:
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:411:
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:456:
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:457:    status_labels = {
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:458:        "operational": llmops_t(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:459:            "operational"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:460:        ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:461:        "degraded": llmops_t(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:660:
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:661:    status_labels = {
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:662:        "all": llmops_t("all_runs"),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:663:        "approved": llmops_t(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:664:            "approved_runs_option"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:665:        ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:808:        ],
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:809:        labels={
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:810:            "recorded_at": llmops_t("date"),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:811:            "pass_rate": llmops_t(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:812:                "approval_rate"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:813:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:836:    fig_pass_rate.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:837:        xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:838:        yaxis_title=llmops_t(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:839:            "approval_rate"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:840:        ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:841:        showlegend=False,
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:842:        hovermode="x unified",
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:936:        ),
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:937:        labels={
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:938:            "recorded_at": llmops_t("date"),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:939:            "value": llmops_t(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:940:                "average_score"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:941:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:957:    fig_metricas.update_layout(
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:958:        xaxis_title=None,
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:959:        yaxis_title=llmops_t(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:960:            "average_score"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:961:        ),
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:962:        legend_title_text=llmops_t(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:963:            "metric"
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:964:        ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:965:        hovermode="x unified",
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:966:        legend={
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1011:
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1012:    column_labels = llmops_column_labels()
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1013:
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1014:    st.write(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1015:        {
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1016:            column_labels["run_reference"]: (
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1070:    frame = pd.DataFrame(rows)
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1071:    column_labels = llmops_column_labels()
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1072:
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1073:    st.dataframe(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1074:        frame,
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1075:        width="stretch",
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1076:        hide_index=True,
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1077:        column_config={
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1078:            "run_reference": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1079:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1080:                    column_labels["run_reference"]
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1081:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1082:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1083:            "branch": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1084:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1085:                    column_labels["branch"]
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1086:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1087:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1088:            "commit_sha": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1089:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1090:                    column_labels["commit_sha"]
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1091:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1092:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1093:            "environment": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1094:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1095:                    column_labels["environment"]
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1096:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1097:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1098:            "evaluation_mode": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1099:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1100:                    column_labels["evaluation_mode"]
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1101:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1102:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1103:            "baseline_id": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1104:                st.column_config.TextColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1105:                    column_labels["baseline_id"]
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1106:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1107:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1108:            "recorded_at": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1109:                st.column_config.DatetimeColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1110:                    column_labels["recorded_at"]
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1111:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1112:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1113:            "regressions": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1114:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1115:                    column_labels["regressions"]
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1116:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1117:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1118:            "violations": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1119:                st.column_config.NumberColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1120:                    column_labels["violations"]
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1121:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1122:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1123:            "pass_rate": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1124:                st.column_config.ProgressColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1125:                    llmops_t("pass_rate"),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1126:                    min_value=0.0,
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1127:                    max_value=1.0,
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1128:                    format="%.2f",
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1131:            "passed": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1132:                st.column_config.CheckboxColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1133:                    llmops_t("approved")
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1134:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1135:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1136:            "quality_gate_passed": (
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1137:                st.column_config.CheckboxColumn(
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1138:                    llmops_t("quality_gate")
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1139:                )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1140:            ),
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1141:        },
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1224:    st.set_page_config(
+> C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1225:        page_title="INNA LLMOps",
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1226:        page_icon="📊",
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1227:        layout="wide",
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1228:    )
+  C:\Users\roger\inna-financial-coach-ai\src\evaluation\dashboard.py:1229:
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:117:    if "tool_label" in base.columns:
+> C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:118:        labels = base["tool_label"].copy()
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:119:    else:
+> C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:120:        labels = pd.Series(
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:121:            None,
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:122:            index=base.index,
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:123:            dtype="object",
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:124:        )
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:126:    if "tool_nome" in base.columns:
+> C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:127:        labels = labels.fillna(
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:128:            base["tool_nome"]
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:129:        )
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:130:
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:131:    base["tool_exibicao"] = labels.fillna(
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:182:        .reset_index()
+> C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:183:        .rename(
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:184:            columns={
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:185:                "tool_exibicao": "ferramenta",
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:186:            }
+  C:\Users\roger\inna-financial-coach-ai\src\observability\analytics.py:187:        )
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:116:    if "tool_label" in df.columns:
+> C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:117:        labels = df["tool_label"].copy()
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:118:    else:
+> C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:119:        labels = pd.Series(
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:120:            None,
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:121:            index=df.index,
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:122:            dtype="object",
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:123:        )
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:125:    if "tool_nome" in df.columns:
+> C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:126:        labels = labels.fillna(
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:127:            df["tool_nome"]
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:128:        )
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:129:
+> C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:130:    labels = labels.dropna()
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:131:
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:132:    if labels.empty:
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:133:        return {
+  C:\Users\roger\inna-financial-coach-ai\src\observability\metrics.py:134:            "nome": None,
+  C:\Users\roger\inna-financial-coach-ai\src\services\memory\conversation_summary.py:35:
+> C:\Users\roger\inna-financial-coach-ai\src\services\memory\conversation_summary.py:36:_FINANCIAL_LABELS = {
+  C:\Users\roger\inna-financial-coach-ai\src\services\memory\conversation_summary.py:37:    "renda_mensal": "Renda mensal",
+  C:\Users\roger\inna-financial-coach-ai\src\services\memory\conversation_summary.py:38:    "gastos_mensais": "Gastos mensais",
+  C:\Users\roger\inna-financial-coach-ai\src\services\memory\conversation_summary.py:39:    "valor_reserva": "Reserva ou capacidade de guardar",
+  C:\Users\roger\inna-financial-coach-ai\src\services\memory\conversation_summary.py:40:    "possui_dividas": "Possui dívidas",
+  C:\Users\roger\inna-financial-coach-ai\src\services\rag\retrieval_trace.py:153:                ),
+> C:\Users\roger\inna-financial-coach-ai\src\services\rag\retrieval_trace.py:154:                title=(
+  C:\Users\roger\inna-financial-coach-ai\src\services\rag\retrieval_trace.py:155:                    item.get("titulo")
+  C:\Users\roger\inna-financial-coach-ai\src\services\rag\retrieval_trace.py:156:                    or item.get("title")
+  C:\Users\roger\inna-financial-coach-ai\src\services\rag\retrieval_trace.py:157:                ),
+  C:\Users\roger\inna-financial-coach-ai\src\services\rag\retrieval_trace.py:158:                source=(
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:51:            "inna_telegram_operations_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:52:            labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:53:                "component": metric.component,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:54:                "operation": metric.operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:55:                "outcome": metric.outcome,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:56:                "error_category": error_category,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:71:            duration_seconds,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:72:            labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:73:                "component": metric.component,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:74:                "operation": metric.operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:75:                "outcome": metric.outcome,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:76:            },
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:84:                "inna_telegram_failures_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:85:                labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:86:                    "component": metric.component,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:87:                    "operation": metric.operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:88:                    "error_category": error_category,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:89:                },
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:109:                "inna_telegram_conflicts_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:110:                labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:111:                    "operation": metric.operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:112:                    "outcome": conflict_outcome,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:113:                },
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_adapter.py:114:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:155:
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:156:_METRIC_LABELS = MappingProxyType(
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:157:    {
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:158:        "inna_telegram_operations_total": (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:159:            "component",
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:160:            "operation",
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:470:
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:471:        normalized_labels = (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:472:            normalize_metric_labels(
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:473:                metric_name=metric_name,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:474:                labels=labels,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:475:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:476:        )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:477:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:478:        key = (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:513:
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:514:        normalized_labels = (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:515:            normalize_metric_labels(
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:516:                metric_name=metric_name,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:517:                labels=labels,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:518:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:519:        )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:520:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:521:        key = (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:557:            "inna_telegram_operations_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:558:            labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:559:                "component": metric.component,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:560:                "operation": metric.operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:561:                "outcome": metric.outcome,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:562:                "error_category": error_category,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:579:            duration_seconds,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:580:            labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:581:                "component": metric.component,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:582:                "operation": metric.operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:583:                "outcome": metric.outcome,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:584:            },
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:592:                "inna_telegram_failures_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:593:                labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:594:                    "component": metric.component,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:595:                    "operation": metric.operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:596:                    "error_category": (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:597:                        error_category
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:619:                "inna_telegram_conflicts_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:620:                labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:621:                    "operation": metric.operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:622:                    "outcome": conflict_outcome,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:623:                },
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:624:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:745:                metric_name,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:746:                labels=labels,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:747:                value=value,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:748:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:749:        except Exception:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:750:            return
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:762:                value,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:763:                labels=labels,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:764:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:765:        except Exception:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:766:            return
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_metrics.py:767:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:66:            "inna_telegram_worker_cycles_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:67:            labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:68:                "worker_result": result,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:69:            },
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:70:        )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:71:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:84:            "inna_telegram_worker_updates_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:85:            labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:86:                "outcome": outcome,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:87:                "error_category": (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:88:                    resolved_error_category
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:89:                ),
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:98:                "inna_telegram_failures_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:99:                labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:100:                    "component": "worker",
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:101:                    "operation": "process_update",
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:102:                    "error_category": (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:103:                        resolved_error_category
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:121:            "inna_telegram_receipts_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:122:            labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:123:                "receipt_status": status,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:124:                "outcome": outcome,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:125:                "error_category": (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:126:                    resolved_error_category
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:145:                "inna_telegram_failures_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:146:                labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:147:                    "component": "receipt",
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:148:                    "operation": operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:149:                    "error_category": (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:150:                        resolved_error_category
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:171:            ),
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:172:            labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:173:                "queue_operation": operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:174:                "outcome": outcome,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:175:                "error_category": (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:176:                    resolved_error_category
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:198:                "inna_telegram_failures_total",
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:199:                labels={
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:200:                    "component": "queue",
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:201:                    "operation": mapped_operation,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:202:                    "error_category": (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\productive_operations.py:203:                        resolved_error_category
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:267:
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:268:    normalized_labels = (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:269:        _normalize_labels(
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:270:            labels
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:271:        )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:272:    )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:446:                value,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:447:                labels=labels,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:448:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:449:        )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:450:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:451:    return lines
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:474:    for labels, histogram in ordered_series:
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:475:        normalized_labels = (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:476:            _normalize_labels(
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:477:                labels
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:478:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:479:        )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:516:
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:517:            bucket_labels = (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:518:                normalized_labels
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:519:                + (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:520:                    (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:521:                        "le",
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:533:                    bucket_count,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:534:                    labels=bucket_labels,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:535:                )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:536:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:537:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:538:        if not has_positive_infinity:
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:539:            bucket_labels = (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:540:                normalized_labels
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:541:                + (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:542:                    (
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:543:                        "le",
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:553:                    count,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:554:                    labels=bucket_labels,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:555:                )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:556:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:557:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:558:        lines.append(
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:562:                total_sum,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:563:                labels=normalized_labels,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:564:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:565:        )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:566:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:567:        lines.append(
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:571:                count,
+> C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:572:                labels=normalized_labels,
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:573:            )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:574:        )
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:575:
+  C:\Users\roger\inna-financial-coach-ai\src\services\telegram_observability\prometheus_exporter.py:576:    return lines
+  C:\Users\roger\inna-financial-coach-ai\src\tools\registry.py:35:
+> C:\Users\roger\inna-financial-coach-ai\src\tools\registry.py:36:TOOL_LABELS = {
+  C:\Users\roger\inna-financial-coach-ai\src\tools\registry.py:37:    "analisar_orcamento": "Análise do orçamento mensal",
+  C:\Users\roger\inna-financial-coach-ai\src\tools\registry.py:38:    "calcular_capacidade_semanal": "Cálculo de capacidade semanal",
+  C:\Users\roger\inna-financial-coach-ai\src\tools\registry.py:39:    "simular_formacao_reserva": "Simulação de formação de reserva",
+  C:\Users\roger\inna-financial-coach-ai\src\tools\registry.py:40:    "analisar_divida_educativamente": "Análise educativa de dívida",

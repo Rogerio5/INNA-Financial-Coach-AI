@@ -326,3 +326,182 @@ def test_security_response_skips_retrieval(
     assert resultado == security_response
     assert "trace_id" not in resultado
     assert "retrieval_trace" not in resultado
+
+
+# RAG_MULTILINGUAL_RESPONSE_PROMPT_TESTS
+
+
+@pytest.mark.parametrize(
+    (
+        "language",
+        "expected_instruction",
+    ),
+    [
+        (
+            "ru",
+            "Responda obrigatoriamente em russo.",
+        ),
+        (
+            "sa",
+            "Responda obrigatoriamente em árabe.",
+        ),
+        (
+            "en-US",
+            (
+                "Responda obrigatoriamente em "
+                "inglês dos Estados Unidos."
+            ),
+        ),
+        (
+            "de-CH",
+            (
+                "Responda obrigatoriamente em "
+                "alemão da Suíça."
+            ),
+        ),
+    ],
+)
+def test_generate_gemini_rag_answer_uses_requested_language(
+    monkeypatch: pytest.MonkeyPatch,
+    language: str,
+    expected_instruction: str,
+):
+    from google import genai
+
+    captured = {}
+
+    monkeypatch.setenv(
+        "GEMINI_API_KEY",
+        "test-key",
+    )
+
+    monkeypatch.setattr(
+        genai,
+        "Client",
+        lambda api_key: object(),
+    )
+
+    monkeypatch.setattr(
+        rag_engine,
+        "get_model_for_role",
+        lambda role: "test-model",
+    )
+
+    def fake_generate_content(
+        client,
+        *,
+        modelo,
+        contents,
+        operacao,
+        origem,
+        metadados,
+    ):
+        captured["contents"] = contents
+        captured["modelo"] = modelo
+        captured["operacao"] = operacao
+        captured["origem"] = origem
+        captured["metadados"] = metadados
+
+        return type(
+            "FakeResponse",
+            (),
+            {
+                "text": "Resposta simulada",
+            },
+        )()
+
+    monkeypatch.setattr(
+        rag_engine,
+        "executar_generate_content_observado",
+        fake_generate_content,
+    )
+
+    result = rag_engine.generate_gemini_rag_answer(
+        pergunta="Como organizar meu orçamento?",
+        contexto=(
+            "A pessoa informou renda mensal "
+            "e despesas recorrentes."
+        ),
+        idioma=language,
+    )
+
+    assert result == "Resposta simulada"
+    assert expected_instruction in captured["contents"]
+    assert captured["modelo"] == "test-model"
+    assert captured["operacao"] == "rag_answer"
+    assert captured["origem"] == "rag_engine"
+
+
+def test_generate_gemini_rag_answer_preserves_context_currency(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    from google import genai
+
+    captured = {}
+
+    monkeypatch.setenv(
+        "GEMINI_API_KEY",
+        "test-key",
+    )
+
+    monkeypatch.setattr(
+        genai,
+        "Client",
+        lambda api_key: object(),
+    )
+
+    monkeypatch.setattr(
+        rag_engine,
+        "get_model_for_role",
+        lambda role: "test-model",
+    )
+
+    def fake_generate_content(
+        client,
+        *,
+        modelo,
+        contents,
+        operacao,
+        origem,
+        metadados,
+    ):
+        captured["contents"] = contents
+
+        return type(
+            "FakeResponse",
+            (),
+            {
+                "text": "Resposta simulada",
+            },
+        )()
+
+    monkeypatch.setattr(
+        rag_engine,
+        "executar_generate_content_observado",
+        fake_generate_content,
+    )
+
+    result = rag_engine.generate_gemini_rag_answer(
+        pergunta="How should I organise this amount?",
+        contexto="Monthly income: USD 2,500.",
+        idioma="en_us",
+    )
+
+    assert result == "Resposta simulada"
+
+    prompt = captured["contents"]
+
+    assert (
+        "Preserve a moeda apresentada pelo usuário "
+        "ou pelo contexto."
+        in prompt
+    )
+    assert (
+        "Não converta valores e não invente moedas."
+        in prompt
+    )
+    assert (
+        "mantenha o formato R$"
+        not in prompt
+    )
+

@@ -1,0 +1,1192 @@
+00001: """
+00002: Timeline Viewer das execuções da INNA.
+00003: 
+00004: Permite:
+00005: - listar traces recentes;
+00006: - filtrar execuções;
+00007: - visualizar etapas em ordem;
+00008: - identificar gargalos;
+00009: - inspecionar metadata e erros;
+00010: - comparar traces.
+00011: """
+00012: 
+00013: from __future__ import annotations
+00014: 
+00015: import json
+00016: from typing import Any
+00017: 
+00018: import pandas as pd
+00019: import plotly.express as px
+00020: import streamlit as st
+00021: 
+00022: 
+00023: TIMELINE_CHART_BG = "#020617"
+00024: TIMELINE_CHART_TEXT = "#F8FAFC"
+00025: TIMELINE_CHART_GRID = (
+00026:     "rgba(148, 163, 184, 0.16)"
+00027: )
+00028: 
+00029: 
+00030: def aplicar_tema_timeline_chart(
+00031:     fig,
+00032:     *,
+00033:     height=440,
+00034: ):
+00035:     """Aplica o tema visual do Timeline Viewer."""
+00036:     fig.update_layout(
+00037:         template="plotly_dark",
+00038:         paper_bgcolor=TIMELINE_CHART_BG,
+00039:         plot_bgcolor=TIMELINE_CHART_BG,
+00040:         font={
+00041:             "color": TIMELINE_CHART_TEXT,
+00042:             "family": "Arial",
+00043:         },
+00044:         hoverlabel={
+00045:             "bgcolor": "#0F172A",
+00046:             "font_color": TIMELINE_CHART_TEXT,
+00047:         },
+00048:         margin={
+00049:             "l": 30,
+00050:             "r": 55,
+00051:             "t": 22,
+00052:             "b": 42,
+00053:         },
+00054:         height=height,
+00055:     )
+00056: 
+00057:     fig.update_xaxes(
+00058:         color=TIMELINE_CHART_TEXT,
+00059:         gridcolor=TIMELINE_CHART_GRID,
+00060:         zerolinecolor=(
+00061:             "rgba(148, 163, 184, 0.25)"
+00062:         ),
+00063:     )
+00064: 
+00065:     fig.update_yaxes(
+00066:         color=TIMELINE_CHART_TEXT,
+00067:         gridcolor=TIMELINE_CHART_GRID,
+00068:         zerolinecolor=(
+00069:             "rgba(148, 163, 184, 0.25)"
+00070:         ),
+00071:     )
+00072: 
+00073:     return fig
+00074: 
+00075: 
+00076: STATUS_LABELS = {
+00077:     "sucesso": "✅ Sucesso",
+00078:     "falha": "❌ Falha",
+00079:     "ignorado": "⏭️ Ignorado",
+00080:     "iniciado": "🔄 Iniciado",
+00081: }
+00082: 
+00083: 
+00084: def formatar_duracao_ms(
+00085:     valor: Any,
+00086: ) -> str:
+00087:     """
+00088:     Formata duração em ms ou segundos.
+00089:     """
+00090:     if valor is None or pd.isna(valor):
+00091:         return "Não medida"
+00092: 
+00093:     duracao = float(valor)
+00094: 
+00095:     if duracao >= 1000:
+00096:         return f"{duracao / 1000:.3f} s"
+00097: 
+00098:     return f"{duracao:.3f} ms"
+00099: 
+00100: 
+00101: def calcular_resumo_trace(
+00102:     df: pd.DataFrame | None,
+00103: ) -> dict[str, Any]:
+00104:     """
+00105:     Calcula os indicadores principais de um trace.
+00106:     """
+00107:     if df is None or df.empty:
+00108:         return {
+00109:             "total_etapas": 0,
+00110:             "total_falhas": 0,
+00111:             "total_ignoradas": 0,
+00112:             "duracao_total_ms": 0.0,
+00113:             "etapa_mais_lenta": None,
+00114:             "duracao_etapa_mais_lenta_ms": 0.0,
+00115:             "possivel_cold_start": False,
+00116:         }
+00117: 
+00118:     base = df.copy()
+00119: 
+00120:     duracoes = pd.to_numeric(
+00121:         base.get(
+00122:             "duracao_ms",
+00123:             pd.Series(dtype=float),
+00124:         ),
+00125:         errors="coerce",
+00126:     )
+00127: 
+00128:     duracao_total = float(
+00129:         duracoes.fillna(0).sum()
+00130:     )
+00131: 
+00132:     etapa_mais_lenta = None
+00133:     duracao_mais_lenta = 0.0
+00134: 
+00135:     if duracoes.notna().any():
+00136:         indice = duracoes.idxmax()
+00137: 
+00138:         etapa_mais_lenta = base.loc[
+00139:             indice,
+00140:             "etapa_label",
+00141:         ]
+00142: 
+00143:         duracao_mais_lenta = float(
+00144:             duracoes.loc[indice]
+00145:         )
+00146: 
+00147:     total_falhas = int(
+00148:         (
+00149:             base.get(
+00150:                 "status",
+00151:                 pd.Series(dtype=str),
+00152:             )
+00153:             == "falha"
+00154:         ).sum()
+00155:     )
+00156: 
+00157:     total_ignoradas = int(
+00158:         (
+00159:             base.get(
+00160:                 "status",
+00161:                 pd.Series(dtype=str),
+00162:             )
+00163:             == "ignorado"
+00164:         ).sum()
+00165:     )
+00166: 
+00167:     return {
+00168:         "total_etapas": len(base),
+00169:         "total_falhas": total_falhas,
+00170:         "total_ignoradas": total_ignoradas,
+00171:         "duracao_total_ms": round(
+00172:             duracao_total,
+00173:             3,
+00174:         ),
+00175:         "etapa_mais_lenta": etapa_mais_lenta,
+00176:         "duracao_etapa_mais_lenta_ms": round(
+00177:             duracao_mais_lenta,
+00178:             3,
+00179:         ),
+00180:         "possivel_cold_start": (
+00181:             duracao_total >= 30000
+00182:         ),
+00183:     }
+00184: 
+00185: 
+00186: def preparar_traces_exibicao(
+00187:     df: pd.DataFrame | None,
+00188: ) -> pd.DataFrame:
+00189:     """
+00190:     Prepara a tabela de traces recentes.
+00191:     """
+00192:     if df is None or df.empty:
+00193:         return pd.DataFrame()
+00194: 
+00195:     tabela = df.copy()
+00196: 
+00197:     tabela["Início"] = pd.to_datetime(
+00198:         tabela["inicio_trace"],
+00199:         errors="coerce",
+00200:     ).dt.strftime(
+00201:         "%d/%m/%Y %H:%M:%S"
+00202:     )
+00203: 
+00204:     tabela["Duração total"] = tabela[
+00205:         "duracao_total_ms"
+00206:     ].apply(
+00207:         formatar_duracao_ms
+00208:     )
+00209: 
+00210:     tabela["Status"] = tabela[
+00211:         "total_falhas"
+00212:     ].apply(
+00213:         lambda total: (
+00214:             "❌ Com falha"
+00215:             if int(total or 0) > 0
+00216:             else "✅ Sucesso"
+00217:         )
+00218:     )
+00219: 
+00220:     tabela["Cold start"] = tabela[
+00221:         "duracao_total_ms"
+00222:     ].apply(
+00223:         lambda valor: (
+00224:             "Possível"
+00225:             if float(valor or 0) >= 30000
+00226:             else "Não"
+00227:         )
+00228:     )
+00229: 
+00230:     colunas = [
+00231:         "trace_id",
+00232:         "Início",
+00233:         "usuario_id",
+00234:         "pergunta",
+00235:         "total_etapas",
+00236:         "total_falhas",
+00237:         "Duração total",
+00238:         "Cold start",
+00239:         "origem",
+00240:         "Status",
+00241:     ]
+00242: 
+00243:     return tabela[
+00244:         [
+00245:             coluna
+00246:             for coluna in colunas
+00247:             if coluna in tabela.columns
+00248:         ]
+00249:     ].rename(
+00250:         columns={
+00251:             "trace_id": "Trace ID",
+00252:             "usuario_id": "Usuário",
+00253:             "pergunta": "Pergunta",
+00254:             "total_etapas": "Etapas",
+00255:             "total_falhas": "Falhas",
+00256:             "origem": "Origem",
+00257:         }
+00258:     )
+00259: 
+00260: 
+00261: def preparar_timeline_exibicao(
+00262:     df: pd.DataFrame | None,
+00263: ) -> pd.DataFrame:
+00264:     """
+00265:     Prepara as etapas de um trace.
+00266:     """
+00267:     if df is None or df.empty:
+00268:         return pd.DataFrame()
+00269: 
+00270:     tabela = df.copy()
+00271: 
+00272:     tabela["Status visual"] = tabela[
+00273:         "status"
+00274:     ].map(
+00275:         STATUS_LABELS
+00276:     ).fillna(
+00277:         tabela["status"]
+00278:     )
+00279: 
+00280:     tabela["Duração"] = tabela[
+00281:         "duracao_ms"
+00282:     ].apply(
+00283:         formatar_duracao_ms
+00284:     )
+00285: 
+00286:     tabela["Início"] = pd.to_datetime(
+00287:         tabela["inicio_em"],
+00288:         errors="coerce",
+00289:     ).dt.strftime(
+00290:         "%H:%M:%S.%f"
+00291:     ).str[:-3]
+00292: 
+00293:     colunas = [
+00294:         "ordem",
+00295:         "etapa_label",
+00296:         "Status visual",
+00297:         "Duração",
+00298:         "Início",
+00299:         "mensagem",
+00300:         "erro",
+00301:     ]
+00302: 
+00303:     return tabela[
+00304:         [
+00305:             coluna
+00306:             for coluna in colunas
+00307:             if coluna in tabela.columns
+00308:         ]
+00309:     ].rename(
+00310:         columns={
+00311:             "ordem": "Ordem",
+00312:             "etapa_label": "Etapa",
+00313:             "mensagem": "Mensagem",
+00314:             "erro": "Erro",
+00315:         }
+00316:     )
+00317: 
+00318: 
+00319: def render_etapas_timeline(
+00320:     df: pd.DataFrame,
+00321: ) -> None:
+00322:     """
+00323:     Renderiza a sequência visual das etapas.
+00324:     """
+00325:     for _, evento in df.sort_values(
+00326:         by=[
+00327:             "ordem",
+00328:             "criado_em",
+00329:         ]
+00330:     ).iterrows():
+00331: 
+00332:         status = str(
+00333:             evento.get("status")
+00334:             or ""
+00335:         )
+00336: 
+00337:         simbolo = {
+00338:             "sucesso": "✅",
+00339:             "falha": "❌",
+00340:             "ignorado": "⏭️",
+00341:             "iniciado": "🔄",
+00342:         }.get(
+00343:             status,
+00344:             "ℹ️",
+00345:         )
+00346: 
+00347:         etapa = evento.get(
+00348:             "etapa_label"
+00349:         )
+00350: 
+00351:         duracao = formatar_duracao_ms(
+00352:             evento.get("duracao_ms")
+00353:         )
+00354: 
+00355:         with st.container(
+00356:             border=True
+00357:         ):
+00358:             col_1, col_2, col_3 = st.columns(
+00359:                 [0.5, 3, 1.2]
+00360:             )
+00361: 
+00362:             col_1.markdown(
+00363:                 f"### {simbolo}"
+00364:             )
+00365: 
+00366:             col_2.markdown(
+00367:                 f"**{etapa}**"
+00368:             )
+00369: 
+00370:             col_2.caption(
+00371:                 evento.get("mensagem")
+00372:                 or ""
+00373:             )
+00374: 
+00375:             col_3.metric(
+00376:                 "Duração",
+00377:                 duracao,
+00378:             )
+00379: 
+00380:             erro = evento.get("erro")
+00381: 
+00382:             if erro and not pd.isna(erro):
+00383:                 st.error(
+00384:                     str(erro)
+00385:                 )
+00386: 
+00387:             metadata = evento.get(
+00388:                 "metadata"
+00389:             )
+00390: 
+00391:             if metadata:
+00392:                 with st.popover(
+00393:                     "Ver metadata"
+00394:                 ):
+00395:                     if isinstance(
+00396:                         metadata,
+00397:                         str,
+00398:                     ):
+00399:                         try:
+00400:                             metadata = json.loads(
+00401:                                 metadata
+00402:                             )
+00403:                         except Exception:
+00404:                             pass
+00405: 
+00406:                     st.json(
+00407:                         metadata
+00408:                     )
+00409: 
+00410: 
+00411: def calcular_diferenca_traces(
+00412:     duracao_a_ms: float,
+00413:     duracao_b_ms: float,
+00414: ) -> dict[str, float]:
+00415:     """
+00416:     Calcula diferença absoluta e percentual entre traces.
+00417: 
+00418:     O percentual usa o Trace A como referência.
+00419:     """
+00420:     duracao_a = float(
+00421:         duracao_a_ms or 0
+00422:     )
+00423: 
+00424:     duracao_b = float(
+00425:         duracao_b_ms or 0
+00426:     )
+00427: 
+00428:     diferenca_absoluta = (
+00429:         duracao_b - duracao_a
+00430:     )
+00431: 
+00432:     diferenca_percentual = (
+00433:         (
+00434:             diferenca_absoluta
+00435:             / duracao_a
+00436:         )
+00437:         * 100
+00438:         if duracao_a > 0
+00439:         else 0.0
+00440:     )
+00441: 
+00442:     return {
+00443:         "diferenca_absoluta_ms": round(
+00444:             diferenca_absoluta,
+00445:             3,
+00446:         ),
+00447:         "diferenca_percentual": round(
+00448:             diferenca_percentual,
+00449:             2,
+00450:         ),
+00451:     }
+00452: 
+00453: 
+00454: def render_comparacao_traces(
+00455:     traces_df: pd.DataFrame,
+00456: ) -> None:
+00457:     """
+00458:     Compara dois traces com filtro de cold start,
+00459:     escala selecionável e diferença percentual.
+00460:     """
+00461:     if traces_df is None or len(traces_df) < 2:
+00462:         st.info(
+00463:             "São necessários pelo menos dois traces "
+00464:             "para fazer uma comparação."
+00465:         )
+00466:         return
+00467: 
+00468:     base = traces_df.copy()
+00469: 
+00470:     ignorar_cold_start = st.checkbox(
+00471:         "Ignorar traces classificados como cold start",
+00472:         value=False,
+00473:         key="timeline_compare_ignore_cold_start",
+00474:     )
+00475: 
+00476:     if ignorar_cold_start:
+00477:         base = base[
+00478:             pd.to_numeric(
+00479:                 base["duracao_total_ms"],
+00480:                 errors="coerce",
+00481:             ).fillna(0) < 30000
+00482:         ]
+00483: 
+00484:     if len(base) < 2:
+00485:         st.warning(
+00486:             "Não existem dois traces disponíveis após "
+00487:             "aplicar o filtro de cold start."
+00488:         )
+00489:         return
+00490: 
+00491:     escala = st.radio(
+00492:         "Escala do gráfico",
+00493:         options=[
+00494:             "Linear",
+00495:             "Logarítmica",
+00496:         ],
+00497:         horizontal=True,
+00498:         key="timeline_compare_scale",
+00499:     )
+00500: 
+00501:     opcoes = base[
+00502:         "trace_id"
+00503:     ].astype(str).tolist()
+00504: 
+00505:     col_1, col_2 = st.columns(2)
+00506: 
+00507:     trace_a = col_1.selectbox(
+00508:         "Trace A",
+00509:         options=opcoes,
+00510:         index=0,
+00511:         key="timeline_compare_a",
+00512:     )
+00513: 
+00514:     trace_b = col_2.selectbox(
+00515:         "Trace B",
+00516:         options=opcoes,
+00517:         index=min(
+00518:             1,
+00519:             len(opcoes) - 1,
+00520:         ),
+00521:         key="timeline_compare_b",
+00522:     )
+00523: 
+00524:     if trace_a == trace_b:
+00525:         st.warning(
+00526:             "Selecione dois traces diferentes."
+00527:         )
+00528:         return
+00529: 
+00530:     try:
+00531:         from observability.timeline import (
+00532:             carregar_timeline_trace,
+00533:         )
+00534:     except ImportError:
+00535:         from src.observability.timeline import (
+00536:             carregar_timeline_trace,
+00537:         )
+00538: 
+00539:     resultado_a = carregar_timeline_trace(
+00540:         trace_a
+00541:     )
+00542: 
+00543:     resultado_b = carregar_timeline_trace(
+00544:         trace_b
+00545:     )
+00546: 
+00547:     df_a = resultado_a.get("df")
+00548:     df_b = resultado_b.get("df")
+00549: 
+00550:     resumo_a = calcular_resumo_trace(
+00551:         df_a
+00552:     )
+00553: 
+00554:     resumo_b = calcular_resumo_trace(
+00555:         df_b
+00556:     )
+00557: 
+00558:     duracao_a = float(
+00559:         resumo_a["duracao_total_ms"]
+00560:     )
+00561: 
+00562:     duracao_b = float(
+00563:         resumo_b["duracao_total_ms"]
+00564:     )
+00565: 
+00566:     diferenca = calcular_diferenca_traces(
+00567:         duracao_a,
+00568:         duracao_b,
+00569:     )
+00570: 
+00571:     diferenca_absoluta = diferenca[
+00572:         "diferenca_absoluta_ms"
+00573:     ]
+00574: 
+00575:     diferenca_percentual = diferenca[
+00576:         "diferenca_percentual"
+00577:     ]
+00578: 
+00579:     comparacao = pd.DataFrame([
+00580:         {
+00581:             "Trace": "A",
+00582:             "Trace ID": trace_a,
+00583:             "Etapas": resumo_a[
+00584:                 "total_etapas"
+00585:             ],
+00586:             "Falhas": resumo_a[
+00587:                 "total_falhas"
+00588:             ],
+00589:             "Duração total": (
+00590:                 formatar_duracao_ms(
+00591:                     duracao_a
+00592:                 )
+00593:             ),
+00594:             "Etapa mais lenta": (
+00595:                 resumo_a[
+00596:                     "etapa_mais_lenta"
+00597:                 ]
+00598:             ),
+00599:             "Cold start": (
+00600:                 "Possível"
+00601:                 if resumo_a[
+00602:                     "possivel_cold_start"
+00603:                 ]
+00604:                 else "Não"
+00605:             ),
+00606:         },
+00607:         {
+00608:             "Trace": "B",
+00609:             "Trace ID": trace_b,
+00610:             "Etapas": resumo_b[
+00611:                 "total_etapas"
+00612:             ],
+00613:             "Falhas": resumo_b[
+00614:                 "total_falhas"
+00615:             ],
+00616:             "Duração total": (
+00617:                 formatar_duracao_ms(
+00618:                     duracao_b
+00619:                 )
+00620:             ),
+00621:             "Etapa mais lenta": (
+00622:                 resumo_b[
+00623:                     "etapa_mais_lenta"
+00624:                 ]
+00625:             ),
+00626:             "Cold start": (
+00627:                 "Possível"
+00628:                 if resumo_b[
+00629:                     "possivel_cold_start"
+00630:                 ]
+00631:                 else "Não"
+00632:             ),
+00633:         },
+00634:     ])
+00635: 
+00636:     st.dataframe(
+00637:         comparacao,
+00638:         use_container_width=True,
+00639:         hide_index=True,
+00640:     )
+00641: 
+00642:     if diferenca_percentual > 0:
+00643:         st.warning(
+00644:             f"O Trace B foi "
+00645:             f"{abs(diferenca_percentual):.2f}% "
+00646:             "mais lento que o Trace A."
+00647:         )
+00648: 
+00649:     elif diferenca_percentual < 0:
+00650:         st.success(
+00651:             f"O Trace B foi "
+00652:             f"{abs(diferenca_percentual):.2f}% "
+00653:             "mais rápido que o Trace A."
+00654:         )
+00655: 
+00656:     else:
+00657:         st.info(
+00658:             "Os dois traces tiveram a mesma duração total."
+00659:         )
+00660: 
+00661:     col_delta_1, col_delta_2 = st.columns(2)
+00662: 
+00663:     col_delta_1.metric(
+00664:         "Diferença absoluta",
+00665:         formatar_duracao_ms(
+00666:             abs(diferenca_absoluta)
+00667:         ),
+00668:     )
+00669: 
+00670:     col_delta_2.metric(
+00671:         "Diferença percentual",
+00672:         f"{abs(diferenca_percentual):.2f}%",
+00673:     )
+00674: 
+00675:     etapas_a = (
+00676:         df_a[
+00677:             [
+00678:                 "etapa_label",
+00679:                 "duracao_ms",
+00680:             ]
+00681:         ]
+00682:         .rename(
+00683:             columns={
+00684:                 "duracao_ms": "Trace A",
+00685:             }
+00686:         )
+00687:     )
+00688: 
+00689:     etapas_b = (
+00690:         df_b[
+00691:             [
+00692:                 "etapa_label",
+00693:                 "duracao_ms",
+00694:             ]
+00695:         ]
+00696:         .rename(
+00697:             columns={
+00698:                 "duracao_ms": "Trace B",
+00699:             }
+00700:         )
+00701:     )
+00702: 
+00703:     grafico = etapas_a.merge(
+00704:         etapas_b,
+00705:         on="etapa_label",
+00706:         how="outer",
+00707:     ).fillna(0)
+00708: 
+00709:     grafico["Trace A"] = pd.to_numeric(
+00710:         grafico["Trace A"],
+00711:         errors="coerce",
+00712:     ).fillna(0)
+00713: 
+00714:     grafico["Trace B"] = pd.to_numeric(
+00715:         grafico["Trace B"],
+00716:         errors="coerce",
+00717:     ).fillna(0)
+00718: 
+00719:     if escala == "Logarítmica":
+00720:         import numpy as np
+00721: 
+00722:         grafico_plot = grafico.copy()
+00723: 
+00724:         grafico_plot["Trace A"] = np.log10(
+00725:             grafico_plot["Trace A"] + 1
+00726:         )
+00727: 
+00728:         grafico_plot["Trace B"] = np.log10(
+00729:             grafico_plot["Trace B"] + 1
+00730:         )
+00731: 
+00732:         st.caption(
+00733:             "Escala logarítmica: os valores exibidos "
+00734:             "representam log10(duração em ms + 1)."
+00735:         )
+00736:     else:
+00737:         grafico_plot = grafico
+00738: 
+00739:     grafico_real_longo = grafico.melt(
+00740:         id_vars="etapa_label",
+00741:         value_vars=[
+00742:             "Trace A",
+00743:             "Trace B",
+00744:         ],
+00745:         var_name="Trace",
+00746:         value_name="Duracao_real_ms",
+00747:     )
+00748: 
+00749:     grafico_plot_longo = grafico_plot.melt(
+00750:         id_vars="etapa_label",
+00751:         value_vars=[
+00752:             "Trace A",
+00753:             "Trace B",
+00754:         ],
+00755:         var_name="Trace",
+00756:         value_name="Valor_grafico",
+00757:     )
+00758: 
+00759:     grafico_longo = grafico_plot_longo.merge(
+00760:         grafico_real_longo,
+00761:         on=[
+00762:             "etapa_label",
+00763:             "Trace",
+00764:         ],
+00765:         how="left",
+00766:     )
+00767: 
+00768:     grafico_longo[
+00769:         "Duração formatada"
+00770:     ] = grafico_longo[
+00771:         "Duracao_real_ms"
+00772:     ].map(formatar_duracao_ms)
+00773: 
+00774:     ordem_etapas = (
+00775:         grafico.assign(
+00776:             duracao_maxima=grafico[
+00777:                 [
+00778:                     "Trace A",
+00779:                     "Trace B",
+00780:                 ]
+00781:             ].max(axis=1)
+00782:         )
+00783:         .sort_values(
+00784:             "duracao_maxima",
+00785:             ascending=True,
+00786:         )["etapa_label"]
+00787:         .tolist()
+00788:     )
+00789: 
+00790:     fig_comparacao = px.bar(
+00791:         grafico_longo,
+00792:         x="Valor_grafico",
+00793:         y="etapa_label",
+00794:         color="Trace",
+00795:         orientation="h",
+00796:         barmode="group",
+00797:         text="Duração formatada",
+00798:         custom_data=[
+00799:             "Duração formatada",
+00800:             "Duracao_real_ms",
+00801:         ],
+00802:         color_discrete_map={
+00803:             "Trace A": "#38BDF8",
+00804:             "Trace B": "#A78BFA",
+00805:         },
+00806:     )
+00807: 
+00808:     fig_comparacao.update_traces(
+00809:         textposition="outside",
+00810:         cliponaxis=False,
+00811:         marker_line_width=0,
+00812:         hovertemplate=(
+00813:             "<b>%{y}</b><br>"
+00814:             "%{fullData.name}: "
+00815:             "%{customdata[0]}"
+00816:             "<extra></extra>"
+00817:         ),
+00818:     )
+00819: 
+00820:     titulo_eixo = (
+00821:         "log10(duração em ms + 1)"
+00822:         if escala == "Logarítmica"
+00823:         else "Duração (ms)"
+00824:     )
+00825: 
+00826:     fig_comparacao.update_layout(
+00827:         xaxis_title=titulo_eixo,
+00828:         yaxis_title=None,
+00829:         legend_title_text=None,
+00830:         legend={
+00831:             "orientation": "h",
+00832:             "yanchor": "bottom",
+00833:             "y": 1.02,
+00834:             "xanchor": "center",
+00835:             "x": 0.5,
+00836:         },
+00837:     )
+00838: 
+00839:     fig_comparacao.update_yaxes(
+00840:         categoryorder="array",
+00841:         categoryarray=ordem_etapas,
+00842:     )
+00843: 
+00844:     aplicar_tema_timeline_chart(
+00845:         fig_comparacao,
+00846:         height=max(
+00847:             420,
+00848:             150 + len(ordem_etapas) * 62,
+00849:         ),
+00850:     )
+00851: 
+00852:     st.plotly_chart(
+00853:         fig_comparacao,
+00854:         width="stretch",
+00855:         key="timeline_trace_comparison_chart",
+00856:         config={
+00857:             "displayModeBar": False,
+00858:             "responsive": True,
+00859:         },
+00860:     )
+00861: 
+00862: def render_timeline_viewer_page() -> None:
+00863:     """
+00864:     Renderiza o Timeline Viewer.
+00865:     """
+00866:     try:
+00867:         from observability.timeline import (
+00868:             carregar_timeline_trace,
+00869:             carregar_traces_recentes,
+00870:         )
+00871:     except ImportError:
+00872:         from src.observability.timeline import (
+00873:             carregar_timeline_trace,
+00874:             carregar_traces_recentes,
+00875:         )
+00876: 
+00877:     st.title(
+00878:         "🧭 Timeline Viewer — INNA"
+00879:     )
+00880: 
+00881:     st.caption(
+00882:         "Visualize o caminho completo de cada resposta: "
+00883:         "memória, Router, Tools, RAG, Gemini e entrega."
+00884:     )
+00885: 
+00886:     col_1, col_2 = st.columns(
+00887:         [1, 3]
+00888:     )
+00889: 
+00890:     limite = col_1.selectbox(
+00891:         "Quantidade de traces",
+00892:         options=[
+00893:             10,
+00894:             25,
+00895:             50,
+00896:             100,
+00897:         ],
+00898:         index=1,
+00899:         key="timeline_viewer_limit",
+00900:     )
+00901: 
+00902:     with col_2:
+00903:         st.write("")
+00904: 
+00905:         if st.button(
+00906:             "🔄 Atualizar Timeline",
+00907:             use_container_width=True,
+00908:             key="timeline_viewer_refresh",
+00909:         ):
+00910:             st.rerun()
+00911: 
+00912:     resultado_traces = carregar_traces_recentes(
+00913:         limite=int(limite)
+00914:     )
+00915: 
+00916:     if not resultado_traces.get("ok"):
+00917:         st.error(
+00918:             resultado_traces.get(
+00919:                 "message"
+00920:             )
+00921:         )
+00922:         return
+00923: 
+00924:     traces_df = resultado_traces.get(
+00925:         "df"
+00926:     )
+00927: 
+00928:     if traces_df is None or traces_df.empty:
+00929:         st.info(
+00930:             "Ainda não existem traces registrados."
+00931:         )
+00932:         return
+00933: 
+00934:     st.markdown(
+00935:         "## Pesquisa e filtros"
+00936:     )
+00937: 
+00938:     pesquisa = st.text_input(
+00939:         "Pesquisar usuário, pergunta ou Trace ID",
+00940:         placeholder=(
+00941:             "Ex.: demo_user, quanto sobra..."
+00942:         ),
+00943:         key="timeline_viewer_search",
+00944:     )
+00945: 
+00946:     filtro_1, filtro_2 = st.columns(2)
+00947: 
+00948:     usuarios = sorted(
+00949:         traces_df["usuario_id"]
+00950:         .dropna()
+00951:         .astype(str)
+00952:         .unique()
+00953:         .tolist()
+00954:     )
+00955: 
+00956:     origens = sorted(
+00957:         traces_df["origem"]
+00958:         .dropna()
+00959:         .astype(str)
+00960:         .unique()
+00961:         .tolist()
+00962:     )
+00963: 
+00964:     usuario = filtro_1.selectbox(
+00965:         "Usuário",
+00966:         options=["Todos"] + usuarios,
+00967:         key="timeline_viewer_user",
+00968:     )
+00969: 
+00970:     origem = filtro_2.selectbox(
+00971:         "Origem",
+00972:         options=["Todas"] + origens,
+00973:         key="timeline_viewer_origin",
+00974:     )
+00975: 
+00976:     somente_falhas = st.checkbox(
+00977:         "Mostrar somente traces com falhas",
+00978:         value=False,
+00979:         key="timeline_viewer_failures",
+00980:     )
+00981: 
+00982:     filtrado = traces_df.copy()
+00983: 
+00984:     if pesquisa.strip():
+00985:         termo = pesquisa.strip().lower()
+00986: 
+00987:         mascara = (
+00988:             filtrado["trace_id"]
+00989:             .astype(str)
+00990:             .str.lower()
+00991:             .str.contains(
+00992:                 termo,
+00993:                 regex=False,
+00994:             )
+00995:         )
+00996: 
+00997:         for coluna in [
+00998:             "usuario_id",
+00999:             "pergunta",
+01000:         ]:
+01001:             if coluna in filtrado.columns:
+01002:                 mascara = mascara | (
+01003:                     filtrado[coluna]
+01004:                     .fillna("")
+01005:                     .astype(str)
+01006:                     .str.lower()
+01007:                     .str.contains(
+01008:                         termo,
+01009:                         regex=False,
+01010:                     )
+01011:                 )
+01012: 
+01013:         filtrado = filtrado[
+01014:             mascara
+01015:         ]
+01016: 
+01017:     if usuario != "Todos":
+01018:         filtrado = filtrado[
+01019:             filtrado["usuario_id"].astype(str)
+01020:             == usuario
+01021:         ]
+01022: 
+01023:     if origem != "Todas":
+01024:         filtrado = filtrado[
+01025:             filtrado["origem"].astype(str)
+01026:             == origem
+01027:         ]
+01028: 
+01029:     if somente_falhas:
+01030:         filtrado = filtrado[
+01031:             filtrado["total_falhas"] > 0
+01032:         ]
+01033: 
+01034:     st.caption(
+01035:         f"{len(filtrado)} trace(s) encontrado(s)."
+01036:     )
+01037: 
+01038:     st.markdown(
+01039:         "## Traces recentes"
+01040:     )
+01041: 
+01042:     st.dataframe(
+01043:         preparar_traces_exibicao(
+01044:             filtrado
+01045:         ),
+01046:         use_container_width=True,
+01047:         hide_index=True,
+01048:     )
+01049: 
+01050:     if filtrado.empty:
+01051:         return
+01052: 
+01053:     opcoes_trace = filtrado[
+01054:         "trace_id"
+01055:     ].astype(str).tolist()
+01056: 
+01057:     trace_selecionado = st.selectbox(
+01058:         "Selecione um Trace ID",
+01059:         options=opcoes_trace,
+01060:         key="timeline_viewer_trace",
+01061:     )
+01062: 
+01063:     resultado_timeline = (
+01064:         carregar_timeline_trace(
+01065:             trace_selecionado
+01066:         )
+01067:     )
+01068: 
+01069:     if not resultado_timeline.get("ok"):
+01070:         st.error(
+01071:             resultado_timeline.get(
+01072:                 "message"
+01073:             )
+01074:         )
+01075:         return
+01076: 
+01077:     timeline_df = resultado_timeline.get(
+01078:         "df"
+01079:     )
+01080: 
+01081:     resumo = calcular_resumo_trace(
+01082:         timeline_df
+01083:     )
+01084: 
+01085:     st.divider()
+01086:     st.markdown(
+01087:         "## Resumo da execução"
+01088:     )
+01089: 
+01090:     linha_1 = st.columns(4)
+01091: 
+01092:     linha_1[0].metric(
+01093:         "Etapas",
+01094:         resumo["total_etapas"],
+01095:     )
+01096: 
+01097:     linha_1[1].metric(
+01098:         "Falhas",
+01099:         resumo["total_falhas"],
+01100:     )
+01101: 
+01102:     linha_1[2].metric(
+01103:         "Ignoradas",
+01104:         resumo["total_ignoradas"],
+01105:     )
+01106: 
+01107:     linha_1[3].metric(
+01108:         "Duração total",
+01109:         formatar_duracao_ms(
+01110:             resumo["duracao_total_ms"]
+01111:         ),
+01112:     )
+01113: 
+01114:     if resumo["possivel_cold_start"]:
+01115:         st.warning(
+01116:             "Possível cold start detectado: "
+01117:             "a execução ultrapassou 30 segundos."
+01118:         )
+01119:     else:
+01120:         st.success(
+01121:             "Execução dentro do limite esperado "
+01122:             "para o ambiente atual."
+01123:         )
+01124: 
+01125:     if resumo["etapa_mais_lenta"]:
+01126:         st.info(
+01127:             "Etapa mais lenta: "
+01128:             f"{resumo['etapa_mais_lenta']} — "
+01129:             f"{formatar_duracao_ms(
+01130:                 resumo[
+01131:                     'duracao_etapa_mais_lenta_ms'
+01132:                 ]
+01133:             )}"
+01134:         )
+01135: 
+01136:     pergunta = (
+01137:         timeline_df["pergunta"]
+01138:         .dropna()
+01139:         .astype(str)
+01140:     )
+01141: 
+01142:     if not pergunta.empty:
+01143:         st.markdown(
+01144:             "### Pergunta"
+01145:         )
+01146: 
+01147:         st.code(
+01148:             pergunta.iloc[0],
+01149:             language=None,
+01150:         )
+01151: 
+01152:     st.markdown(
+01153:         "## Caminho da execução"
+01154:     )
+01155: 
+01156:     render_etapas_timeline(
+01157:         timeline_df
+01158:     )
+01159: 
+01160:     st.markdown(
+01161:         "## Tabela técnica"
+01162:     )
+01163: 
+01164:     st.dataframe(
+01165:         preparar_timeline_exibicao(
+01166:             timeline_df
+01167:         ),
+01168:         use_container_width=True,
+01169:         hide_index=True,
+01170:     )
+01171: 
+01172:     st.divider()
+01173:     st.markdown(
+01174:         "## Comparar traces"
+01175:     )
+01176: 
+01177:     render_comparacao_traces(
+01178:         traces_df
+01179:     )
+01180: 
+01181: 
+01182: __all__ = [
+01183:     "STATUS_LABELS",
+01184:     "formatar_duracao_ms",
+01185:     "calcular_resumo_trace",
+01186:     "calcular_diferenca_traces",
+01187:     "preparar_traces_exibicao",
+01188:     "preparar_timeline_exibicao",
+01189:     "render_etapas_timeline",
+01190:     "render_comparacao_traces",
+01191:     "render_timeline_viewer_page",
+01192: ]

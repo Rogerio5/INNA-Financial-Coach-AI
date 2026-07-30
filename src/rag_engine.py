@@ -1224,6 +1224,53 @@ def generate_gemini_rag_answer(pergunta: str, contexto: str, idioma: str = "pt")
 
         client = genai.Client(api_key=api_key)
 
+        idioma_normalizado = str(
+            idioma or "pt"
+        ).strip().lower().replace("-", "_")
+
+        aliases_idioma = {
+            "pt_br": "pt",
+            "en": "en_us",
+            "en_us": "en_us",
+            "en_gb": "en_gb",
+            "es_es": "es",
+            "fr_fr": "fr",
+            "de_de": "de",
+            "it_it": "it",
+            "ro_ro": "ro",
+            "uk": "ua",
+            "uk_ua": "ua",
+            "ru_ru": "ru",
+            "ar": "sa",
+            "ar_sa": "sa",
+            "de_ch": "ch",
+        }
+
+        idioma_normalizado = aliases_idioma.get(
+            idioma_normalizado,
+            idioma_normalizado,
+        )
+
+        nomes_idioma = {
+            "pt": "português do Brasil",
+            "en_us": "inglês dos Estados Unidos",
+            "en_gb": "inglês do Reino Unido",
+            "es": "espanhol",
+            "fr": "francês",
+            "de": "alemão",
+            "it": "italiano",
+            "ro": "romeno",
+            "ua": "ucraniano",
+            "ru": "russo",
+            "sa": "árabe",
+            "ch": "alemão da Suíça",
+        }
+
+        idioma_resposta = nomes_idioma.get(
+            idioma_normalizado,
+            nomes_idioma["pt"],
+        )
+
         prompt = f"""
 Você é a INNA, uma educadora financeira com IA.
 
@@ -1253,14 +1300,17 @@ Contexto recuperado da base da INNA:
 Pergunta do usuário:
 {pergunta}
 
-Responda em português do Brasil.
+Responda obrigatoriamente em {idioma_resposta}.
+Não misture o idioma solicitado com português ou inglês,
+exceto em nomes técnicos, marcas, códigos e identificadores.
+
 A resposta deve:
 1. Ser simples e clara.
 2. Usar o contexto recuperado quando fizer sentido.
 3. Mostrar passos práticos.
 4. Manter tom educativo.
 5. Não inventar dados que o usuário não informou.
-6. Se citar valores, mantenha o formato R$.
+6. Preserve a moeda apresentada pelo usuário ou pelo contexto. Não converta valores e não invente moedas.
 7. Terminar com uma pergunta curta para continuar a conversa, quando fizer sentido.
 """
 

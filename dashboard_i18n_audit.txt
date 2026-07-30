@@ -1,0 +1,124 @@
+src\dashboard.py:6746 | st.info | 📈 Evolução financeira detectada
+src\dashboard.py:8417 | st.markdown | ### Documentos enviados
+src\dashboard.py:8433 | st.markdown | ### Arquivos de chunks gerados
+src\dashboard.py:8445 | st.markdown | ### Arquivos prontos para embeddings
+src\dashboard.py:3437 | st.expander | 🧭 Menu e filtros do Dashboard
+src\dashboard.py:5540 | st.download_button | inna_eventos_filtrados.csv
+src\dashboard.py:6798 | st.expander | Ver detalhes da evolução
+src\dashboard.py:8422 | st.info | Nenhum documento enviado ainda.
+src\dashboard.py:8438 | st.info | Nenhum arquivo de chunks gerado ainda.
+src\dashboard.py:8453 | st.info | Nenhum arquivo pronto para embeddings gerado ainda.
+src\dashboard.py:8599 | st.slider | manter_ultimos_arquivos_rag
+src\dashboard.py:8607 | st.button | btn_arquivar_arquivos_locais_rag
+src\dashboard.py:8635 | st.selectbox | select_status_documento_rag
+src\dashboard.py:8696 | st.selectbox | select_reprocessar_documento_rag
+src\dashboard.py:8704 | st.button | btn_reprocessar_documento_rag
+src\dashboard.py:8998 | st.text_input | ID do usuário para usar memória
+src\dashboard.py:8413 | st.warning | Arquivo salvo, mas não foi possível gerar prévia ou chunks.
+src\dashboard.py:8660 | st.button | btn_ativar_documento_rag
+src\dashboard.py:8673 | st.button | btn_desativar_documento_rag
+src\dashboard.py:6829 | st.caption | Sem alteração.
+src\dashboard_pages\health_score_page.py:1004 | st.markdown | ## 📈 Histórico do Health Score
+src\dashboard_pages\health_score_page.py:1008 | st.caption | Acompanhe a evolução da saúde operacional da INNA ao longo do tempo.
+src\dashboard_pages\health_score_page.py:1019 | controle_1.selectbox | Período histórico
+src\dashboard_pages\health_score_page.py:1205 | st.markdown | ### Evolução do score global
+src\dashboard_pages\health_score_page.py:1283 | st.markdown | ### Evolução por componente
+src\dashboard_pages\health_score_page.py:1381 | st.markdown | ### Auditoria dos snapshots
+src\dashboard_pages\health_score_page.py:1678 | controle_1.selectbox | Eventos das Tools
+src\dashboard_pages\health_score_page.py:1690 | controle_2.selectbox | Traces analisados
+src\dashboard_pages\health_score_page.py:1690 | controle_2.selectbox | health_traces_limit
+src\dashboard_pages\health_score_page.py:1743 | st.markdown | ## Saúde global
+src\dashboard_pages\health_score_page.py:1756 | col_2.metric | Classificação
+src\dashboard_pages\health_score_page.py:1761 | col_3.metric | Componente mais forte
+src\dashboard_pages\health_score_page.py:1775 | col_4.metric | Componente prioritário
+src\dashboard_pages\health_score_page.py:1828 | st.markdown | ## Scores por componente
+src\dashboard_pages\health_score_page.py:2045 | st.markdown | ## Recomendações prioritárias
+src\dashboard_pages\health_score_page.py:1110 | st.info | Nenhum snapshot foi encontrado para o período selecionado.
+src\dashboard_pages\health_score_page.py:1349 | fig_componentes.update_layout | Score do componente
+src\dashboard_pages\health_score_page.py:1349 | fig_componentes.update_layout | Componente
+src\dashboard_pages\health_score_page.py:1705 | st.button | 🔄 Atualizar Health Score
+src\dashboard_pages\health_score_page.py:2080 | st.expander | ⚠️ Alertas durante a coleta
+src\dashboard_pages\health_score_page.py:1811 | st.warning | A INNA apresenta componentes que precisam de atenção.
+src\dashboard_pages\health_score_page.py:1817 | st.error | A saúde global está crítica. Priorize os componentes com menor score.
+src\dashboard_pages\llm_costs_page.py:3861 | controle_1.selectbox | Status dos alertas
+src\dashboard_pages\llm_costs_page.py:3872 | controle_2.selectbox | Limite de alertas
+src\dashboard_pages\llm_costs_page.py:4499 | controle_evento_2.selectbox | Limite de eventos
+src\dashboard_pages\llm_costs_page.py:5738 | st.download_button | inna_llm_alertas.csv
+src\dashboard_pages\llm_costs_page.py:3947 | st.info | Nenhum alerta encontrado para o filtro atual.
+src\dashboard_pages\llm_costs_page.py:4049 | st.warning | As notificações por e-mail estão desabilitadas no ambiente.
+src\dashboard_pages\llm_costs_page.py:4365 | saude_col_4.metric | Alertas por e-mail
+src\dashboard_pages\llm_costs_page.py:4391 | detalhe_2.metric | Falhas de webhook em 24h
+src\dashboard_pages\llm_costs_page.py:4413 | detalhe_4.metric | E-mails com falha
+src\dashboard_pages\llm_costs_page.py:5434 | st.info | Nenhuma notificação disponível para reenvio.
+src\dashboard_pages\llm_costs_page.py:3916 | st.error | Não foi possível concluir a avaliação.
+src\dashboard_pages\llm_costs_page.py:4056 | st.warning | O destinatário dos alertas não está configurado.
+src\dashboard_pages\llm_costs_page.py:4424 | st.expander | Detalhes técnicos das integrações
+src\dashboard_pages\llm_costs_page.py:4586 | evento_col_1.metric | Total de eventos
+src\dashboard_pages\llm_costs_page.py:4596 | evento_col_3.metric | Falhas
+src\dashboard_pages\llm_costs_page.py:4893 | st.download_button | inna_resend_webhook_eventos.csv
+src\dashboard_pages\llm_costs_page.py:4920 | st.info | Nenhuma notificação registrada.
+src\dashboard_pages\llm_costs_page.py:5467 | st.success | Não existem notificações com falha aguardando reenvio.
+src\dashboard_pages\llm_costs_page.py:5473 | st.warning | O reenvio é limitado a três tentativas por notificação.
+src\dashboard_pages\llm_costs_page.py:4062 | st.warning | A integração com o Resend não está configurada.
+src\dashboard_pages\llm_costs_page.py:4066 | st.success | Notificações por e-mail habilitadas. Alertas altos e críticos podem ser enviados.
+src\dashboard_pages\llm_costs_page.py:4215 | st.info | 📧 Envio reservado para alertas altos e críticos.
+src\dashboard_pages\llm_costs_page.py:4220 | st.button | 📧 Enviar alerta por e-mail
+src\dashboard_pages\llm_costs_page.py:4304 | st.success | Alerta resolvido.
+src\dashboard_pages\llm_costs_page.py:4243 | st.success | Alerta enviado por e-mail.
+src\dashboard_pages\llm_costs_page.py:4251 | st.info | Este alerta já foi enviado por e-mail.
+src\dashboard_pages\timeline_viewer_page.py:470 | st.checkbox | Ignorar traces classificados como cold start
+src\dashboard_pages\timeline_viewer_page.py:881 | st.caption | Visualize o caminho completo de cada resposta: memória, Router, Tools, RAG, Gemini e entrega.
+src\dashboard_pages\timeline_viewer_page.py:890 | col_1.selectbox | Quantidade de traces
+src\dashboard_pages\timeline_viewer_page.py:934 | st.markdown | ## Pesquisa e filtros
+src\dashboard_pages\timeline_viewer_page.py:938 | st.text_input | Pesquisar usuário, pergunta ou Trace ID
+src\dashboard_pages\timeline_viewer_page.py:964 | filtro_1.selectbox | Usuário
+src\dashboard_pages\timeline_viewer_page.py:970 | filtro_2.selectbox | Origem
+src\dashboard_pages\timeline_viewer_page.py:976 | st.checkbox | Mostrar somente traces com falhas
+src\dashboard_pages\timeline_viewer_page.py:1038 | st.markdown | ## Traces recentes
+src\dashboard_pages\timeline_viewer_page.py:1057 | st.selectbox | Selecione um Trace ID
+src\dashboard_pages\timeline_viewer_page.py:1086 | st.markdown | ## Resumo da execução
+src\dashboard_pages\timeline_viewer_page.py:1097 | metric | Falhas
+src\dashboard_pages\timeline_viewer_page.py:1107 | metric | Duração total
+src\dashboard_pages\timeline_viewer_page.py:1152 | st.markdown | ## Caminho da execução
+src\dashboard_pages\timeline_viewer_page.py:1160 | st.markdown | ## Tabela técnica
+src\dashboard_pages\timeline_viewer_page.py:1173 | st.markdown | ## Comparar traces
+src\dashboard_pages\timeline_viewer_page.py:462 | st.info | São necessários pelo menos dois traces para fazer uma comparação.
+src\dashboard_pages\timeline_viewer_page.py:485 | st.warning | Não existem dois traces disponíveis após aplicar o filtro de cold start.
+src\dashboard_pages\timeline_viewer_page.py:525 | st.warning | Selecione dois traces diferentes.
+src\dashboard_pages\timeline_viewer_page.py:732 | st.caption | Escala logarítmica: os valores exibidos representam log10(duração em ms + 1).
+src\dashboard_pages\timeline_viewer_page.py:905 | st.button | 🔄 Atualizar Timeline
+src\dashboard_pages\timeline_viewer_page.py:929 | st.info | Ainda não existem traces registrados.
+src\dashboard_pages\timeline_viewer_page.py:1115 | st.warning | Possível cold start detectado: a execução ultrapassou 30 segundos.
+src\dashboard_pages\timeline_viewer_page.py:1120 | st.success | Execução dentro do limite esperado para o ambiente atual.
+src\dashboard_pages\timeline_viewer_page.py:375 | col_3.metric | Duração
+src\dashboard_pages\timeline_viewer_page.py:657 | st.info | Os dois traces tiveram a mesma duração total.
+src\dashboard_pages\tools_observability_page.py:307 | st.markdown | ## Visão executiva
+src\dashboard_pages\tools_observability_page.py:311 | metric | Eventos registrados
+src\dashboard_pages\tools_observability_page.py:316 | metric | Execuções hoje
+src\dashboard_pages\tools_observability_page.py:326 | metric | Usuários ativos
+src\dashboard_pages\tools_observability_page.py:333 | metric | Taxa de sucesso
+src\dashboard_pages\tools_observability_page.py:342 | metric | Execuções com sucesso
+src\dashboard_pages\tools_observability_page.py:347 | metric | Falhas
+src\dashboard_pages\tools_observability_page.py:363 | metric | Duração média
+src\dashboard_pages\tools_observability_page.py:372 | metric | Duração mínima
+src\dashboard_pages\tools_observability_page.py:381 | metric | Duração P95
+src\dashboard_pages\tools_observability_page.py:381 | metric | 95% das execuções terminaram abaixo deste tempo.
+src\dashboard_pages\tools_observability_page.py:394 | metric | Duração máxima
+src\dashboard_pages\tools_observability_page.py:527 | controle_1.selectbox | Eventos carregados
+src\dashboard_pages\tools_observability_page.py:654 | st.markdown | ## Pesquisa e filtros
+src\dashboard_pages\tools_observability_page.py:656 | st.text_input | Pesquisar usuário, pergunta, Tool ou intenção
+src\dashboard_pages\tools_observability_page.py:692 | filtro_2.selectbox | Origem
+src\dashboard_pages\tools_observability_page.py:697 | filtro_3.selectbox | Usuário
+src\dashboard_pages\tools_observability_page.py:780 | st.markdown | ## Evolução temporal
+src\dashboard_pages\tools_observability_page.py:940 | st.markdown | ## Usuários mais ativos
+src\dashboard_pages\tools_observability_page.py:984 | fig_usuarios.update_layout | Execuções
+src\dashboard_pages\tools_observability_page.py:1010 | st.markdown | ## Histórico pesquisável
+src\dashboard_pages\tools_observability_page.py:1023 | st.markdown | ## Exportar dados
+src\dashboard_pages\tools_observability_page.py:1031 | export_1.download_button | inna_tools_eventos.csv
+src\dashboard_pages\tools_observability_page.py:1048 | export_2.download_button | inna_tools_eventos.json
+src\dashboard_pages\tools_observability_page.py:428 | st.markdown | ### Última execução
+src\dashboard_pages\tools_observability_page.py:541 | st.button | 🔄 Atualizar Operations Center
+src\dashboard_pages\tools_observability_page.py:648 | st.info | Ainda não existem eventos para análise.
+src\dashboard_pages\tools_observability_page.py:827 | fig_evolucao.update_layout | Eventos
+src\dashboard_pages\tools_observability_page.py:914 | fig_performance.update_layout | Execuções
+src\dashboard_pages\tools_observability_page.py:445 | st.info | Nenhuma execução registrada.
