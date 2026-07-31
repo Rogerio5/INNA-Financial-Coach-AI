@@ -335,6 +335,7 @@ def test_menu_page_ids_are_stable() -> None:
         "tools_analytics",
         "health_center",
         "llmops_observability",
+        "rag_evaluation_lab",
         "ai_cost_center",
         "document_upload",
         "user_memory",

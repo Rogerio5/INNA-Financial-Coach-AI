@@ -3241,6 +3241,47 @@ def traduzir_recomendacao_health(
     return texto
 
 
+# Ajustes finais dos textos visíveis do Health Score.
+HEALTH_HISTORY_TEXTS["pt"].update(
+    {
+        "snapshots": "Registros históricos",
+    }
+)
+
+HEALTH_HISTORY_TEXTS["es"].update(
+    {
+        "snapshots": "Registros históricos",
+    }
+)
+
+HEALTH_HISTORY_TEXTS["fr"].update(
+    {
+        "snapshots": "Instantanés historiques",
+    }
+)
+
+HEALTH_HISTORY_TEXTS["de"].update(
+    {
+        "snapshots": "Historische Momentaufnahmen",
+    }
+)
+
+HEALTH_RUNTIME_MESSAGE_TEXTS["pt"].update(
+    {
+        "cold_starts": "Inicializações a frio",
+    }
+)
+
+# O código ch segue os catálogos alemães do projeto.
+HEALTH_HISTORY_TEXTS["ch"] = dict(
+    HEALTH_HISTORY_TEXTS["de"]
+)
+
+HEALTH_RUNTIME_MESSAGE_TEXTS["ch"] = dict(
+    HEALTH_RUNTIME_MESSAGE_TEXTS["de"]
+)
+
+
 def health_page_t(
     key: str,
     default: str | None = None,

@@ -14453,7 +14453,16 @@ def main(
         render_agent_evaluation(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
 
     elif menu == "rag_observability":
-        render_rag_observability()
+        try:
+            from dashboard_pages.rag_observability_page import (
+                render_rag_observability_page,
+            )
+        except ImportError:
+            from src.dashboard_pages.rag_observability_page import (
+                render_rag_observability_page,
+            )
+
+        render_rag_observability_page()
 
     elif menu == "tools_observability":
         try:
@@ -14516,6 +14525,18 @@ def main(
         render_llmops_dashboard(
             integrated=True
         )
+
+    elif menu == "rag_evaluation_lab":
+        try:
+            from dashboard_pages.rag_evaluation_lab_page import (
+                render_rag_evaluation_lab_page,
+            )
+        except ImportError:
+            from src.dashboard_pages.rag_evaluation_lab_page import (
+                render_rag_evaluation_lab_page,
+            )
+
+        render_rag_evaluation_lab_page()
 
     elif menu == "ai_cost_center":
         try:

@@ -3796,6 +3796,17 @@ for language_key, dynamic_texts in (
 
 # LLM_COST_ALERT_VISUAL_I18N
 
+# Complementos do catálogo de erro desconhecido.
+LLM_ALERT_UNKNOWN_ERROR_TEXTS["en_gb"] = (
+    LLM_ALERT_UNKNOWN_ERROR_TEXTS["en_us"]
+)
+
+# O código ch segue o alemão utilizado pelo projeto.
+LLM_ALERT_UNKNOWN_ERROR_TEXTS["ch"] = (
+    LLM_ALERT_UNKNOWN_ERROR_TEXTS["de"]
+)
+
+
 LLM_COST_ALERT_VISUAL_TEXTS = {
     "pt": {
         "alert_status": "Status dos alertas",
@@ -7973,6 +7984,29 @@ for language_key, lower_texts in (
         language_key,
         {},
     ).update(lower_texts)
+
+
+# Ajuste final de terminologia nativa da seção de alertas.
+LLM_ALERT_SECTION_TEXTS["it"].update(
+    {
+        "database": "Banca dati",
+    }
+)
+
+LLM_ALERT_SECTION_DYNAMIC_TEXTS["it"].update(
+    {
+        "database": "Banca dati",
+    }
+)
+
+# O código ch continua seguindo o alemão do projeto.
+LLM_ALERT_SECTION_TEXTS["ch"] = dict(
+    LLM_ALERT_SECTION_TEXTS["de"]
+)
+
+LLM_ALERT_SECTION_DYNAMIC_TEXTS["ch"] = dict(
+    LLM_ALERT_SECTION_DYNAMIC_TEXTS["de"]
+)
 
 
 def llm_cost_page_t(

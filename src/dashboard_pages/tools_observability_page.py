@@ -828,6 +828,49 @@ TOOLS_OBSERVABILITY_TEXTS["ch"] = (
 )
 
 
+# Ajustes finais dos textos visíveis conforme o seletor.
+TOOLS_OBSERVABILITY_TEXTS["pt"].update(
+    {
+        "page_title": (
+            "🛠️ Centro de Operações — "
+            "Ferramentas da INNA"
+        ),
+    }
+)
+
+TOOLS_OBSERVABILITY_TEXTS["en_us"].update(
+    {
+        "page_title": (
+            "🛠️ Operations Center — "
+            "INNA Tools"
+        ),
+    }
+)
+
+TOOLS_OBSERVABILITY_TEXTS["en_gb"] = dict(
+    TOOLS_OBSERVABILITY_TEXTS["en_us"]
+)
+
+TOOLS_OBSERVABILITY_TEXTS["fr"].update(
+    {
+        "minimum_ms": "Minimum (ms)",
+        "maximum_ms": "Maximum (ms)",
+    }
+)
+
+TOOLS_OBSERVABILITY_TEXTS["de"].update(
+    {
+        "minimum_ms": "Minimum (ms)",
+        "maximum_ms": "Maximum (ms)",
+    }
+)
+
+# O código ch segue o alemão utilizado pelo projeto.
+TOOLS_OBSERVABILITY_TEXTS["ch"] = dict(
+    TOOLS_OBSERVABILITY_TEXTS["de"]
+)
+
+
 def tools_observability_lang() -> str:
     language = st.session_state.get(
         "dashboard_interface_lang",

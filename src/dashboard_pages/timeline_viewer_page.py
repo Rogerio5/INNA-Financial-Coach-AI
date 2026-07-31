@@ -967,7 +967,103 @@ TIMELINE_TEXTS["ru"] = {
     "formatted_duration": "Форматированная длительность",
 }
 
-TIMELINE_TEXTS["ch"] = TIMELINE_TEXTS["de"]
+# Ajustes finais dos textos visíveis conforme o seletor.
+TIMELINE_TEXTS["pt"].update(
+    {
+        "page_title": (
+            "🧭 Linha do tempo das execuções — INNA"
+        ),
+        "status": "Situação",
+        "linear": "Escala linear",
+    }
+)
+
+TIMELINE_TEXTS["en_us"].update(
+    {
+        "page_title": (
+            "🧭 Execution timeline — INNA"
+        ),
+    }
+)
+
+TIMELINE_TEXTS["en_gb"] = dict(
+    TIMELINE_TEXTS["en_us"]
+)
+
+TIMELINE_TEXTS["es"].update(
+    {
+        "page_title": (
+            "🧭 Línea de tiempo de las ejecuciones — INNA"
+        ),
+    }
+)
+
+TIMELINE_TEXTS["fr"].update(
+    {
+        "page_title": (
+            "🧭 Chronologie des exécutions — INNA"
+        ),
+        "question": "### Question posée",
+        "possible": "Éventuel",
+        "message": "Message technique",
+    }
+)
+
+TIMELINE_TEXTS["de"].update(
+    {
+        "page_title": (
+            "🧭 Zeitachse der Ausführungen — INNA"
+        ),
+        "start": "Beginn",
+        "status": "Zustand",
+        "linear": "Lineare Skala",
+    }
+)
+
+TIMELINE_TEXTS["it"].update(
+    {
+        "page_title": (
+            "🧭 Cronologia delle esecuzioni — INNA"
+        ),
+    }
+)
+
+TIMELINE_TEXTS["ro"].update(
+    {
+        "page_title": (
+            "🧭 Cronologia execuțiilor — INNA"
+        ),
+    }
+)
+
+TIMELINE_TEXTS["ua"].update(
+    {
+        "page_title": (
+            "🧭 Хронологія виконань — INNA"
+        ),
+    }
+)
+
+TIMELINE_TEXTS["ru"].update(
+    {
+        "page_title": (
+            "🧭 Хронология выполнений — INNA"
+        ),
+    }
+)
+
+TIMELINE_TEXTS["sa"].update(
+    {
+        "page_title": (
+            "🧭 المخطط الزمني لعمليات التنفيذ — INNA"
+        ),
+    }
+)
+
+# O código ch segue o alemão utilizado pelo projeto.
+TIMELINE_TEXTS["ch"] = dict(
+    TIMELINE_TEXTS["de"]
+)
 
 
 def timeline_lang() -> str:

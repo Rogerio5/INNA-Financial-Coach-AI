@@ -484,6 +484,906 @@ for _language in (
             ]
         )
 
+# Traduções nativas da seção de detecção de anomalias.
+TOOLS_ANALYTICS_ANOMALY_TEXTS["it"].update(
+    {
+        "anomaly_detection": "## 🚨 Rilevamento delle anomalie",
+        "insufficient_anomaly_data": (
+            "Non sono ancora disponibili dati sufficienti "
+            "per rilevare anomalie operative."
+        ),
+        "none": "Nessuna",
+        "detected_anomalies": "Anomalie rilevate",
+        "highest_severity": "Gravità più elevata",
+        "current_period_failures": "Errori del periodo corrente",
+        "current_p95": "P95 corrente",
+        "current_failure_rate": "Tasso di errore corrente",
+        "baseline_failure_rate": "Tasso di errore di riferimento",
+        "current_confidence": "Confidenza corrente",
+        "baseline_confidence": "Confidenza di riferimento",
+        "no_relevant_anomalies": (
+            "Non sono state rilevate anomalie operative "
+            "rilevanti nelle finestre analizzate."
+        ),
+        "anomalies_by_severity": "### Anomalie per gravità",
+        "critical": "Critica",
+        "high": "Alta",
+        "medium": "Media",
+        "low": "Bassa",
+        "informational": "Informativa",
+        "detected_alerts": "### Avvisi rilevati",
+        "anomaly": "Anomalia",
+        "severity": "Gravità",
+        "metric": "Metrica",
+        "recommendation": "Raccomandazione",
+        "outlier_executions": "### Esecuzioni anomale",
+        "event_index": "Indice dell’evento",
+        "duration_ms": "Durata (ms)",
+        "modified_z_score": "Modified Z-Score",
+        "how_detection_works": "Come funziona il rilevamento",
+        "detection_explanation": """
+INNA confronta il periodo corrente con un periodo precedente
+utilizzato come riferimento.
+
+Vengono analizzati:
+
+- tasso di errore;
+- confidenza media del Router;
+- latenza P95;
+- volume delle esecuzioni;
+- singole esecuzioni anomale.
+
+Le anomalie di durata utilizzano **mediana e MAD**, un approccio
+più resistente ai valori estremi rispetto a media e deviazione standard.
+""",
+    }
+)
+
+TOOLS_ANALYTICS_ANOMALY_TEXTS["ro"].update(
+    {
+        "anomaly_detection": "## 🚨 Detectarea anomaliilor",
+        "insufficient_anomaly_data": (
+            "Nu există încă suficiente date pentru "
+            "detectarea anomaliilor operaționale."
+        ),
+        "none": "Niciuna",
+        "detected_anomalies": "Anomalii detectate",
+        "highest_severity": "Cea mai mare severitate",
+        "current_period_failures": "Eșecuri în perioada curentă",
+        "current_p95": "P95 curent",
+        "current_failure_rate": "Rata curentă de eșec",
+        "baseline_failure_rate": "Rata de eșec de referință",
+        "current_confidence": "Încredere curentă",
+        "baseline_confidence": "Încredere de referință",
+        "no_relevant_anomalies": (
+            "Nu a fost detectată nicio anomalie operațională "
+            "relevantă în intervalele analizate."
+        ),
+        "anomalies_by_severity": "### Anomalii după severitate",
+        "critical": "Critică",
+        "high": "Ridicată",
+        "medium": "Medie",
+        "low": "Scăzută",
+        "informational": "Informativă",
+        "detected_alerts": "### Alerte detectate",
+        "anomaly": "Anomalie",
+        "severity": "Severitate",
+        "metric": "Metrică",
+        "recommendation": "Recomandare",
+        "outlier_executions": "### Execuții atipice",
+        "event_index": "Indexul evenimentului",
+        "duration_ms": "Durată (ms)",
+        "modified_z_score": "Modified Z-Score",
+        "how_detection_works": "Cum funcționează detectarea",
+        "detection_explanation": """
+INNA compară perioada curentă cu o perioadă anterioară
+folosită drept referință.
+
+Sunt analizate:
+
+- rata de eșec;
+- încrederea medie a Routerului;
+- latența P95;
+- volumul execuțiilor;
+- execuțiile individuale atipice.
+
+Valorile atipice de durată folosesc **mediana și MAD**, o abordare
+mai rezistentă la valori extreme decât media și abaterea standard.
+""",
+    }
+)
+
+TOOLS_ANALYTICS_ANOMALY_TEXTS["ua"].update(
+    {
+        "anomaly_detection": "## 🚨 Виявлення аномалій",
+        "insufficient_anomaly_data": (
+            "Поки що недостатньо даних для виявлення "
+            "операційних аномалій."
+        ),
+        "none": "Немає",
+        "detected_anomalies": "Виявлені аномалії",
+        "highest_severity": "Найвищий рівень серйозності",
+        "current_period_failures": "Помилки поточного періоду",
+        "current_p95": "Поточний P95",
+        "current_failure_rate": "Поточна частота помилок",
+        "baseline_failure_rate": "Базова частота помилок",
+        "current_confidence": "Поточна впевненість",
+        "baseline_confidence": "Базова впевненість",
+        "no_relevant_anomalies": (
+            "У проаналізованих часових вікнах не виявлено "
+            "суттєвих операційних аномалій."
+        ),
+        "anomalies_by_severity": "### Аномалії за рівнем серйозності",
+        "critical": "Критична",
+        "high": "Висока",
+        "medium": "Середня",
+        "low": "Низька",
+        "informational": "Інформаційна",
+        "detected_alerts": "### Виявлені попередження",
+        "anomaly": "Аномалія",
+        "severity": "Серйозність",
+        "metric": "Метрика",
+        "recommendation": "Рекомендація",
+        "outlier_executions": "### Нетипові виконання",
+        "event_index": "Індекс події",
+        "duration_ms": "Тривалість (ms)",
+        "modified_z_score": "Modified Z-Score",
+        "how_detection_works": "Як працює виявлення",
+        "detection_explanation": """
+INNA порівнює поточний період із попереднім базовим періодом.
+
+Аналізуються:
+
+- частота помилок;
+- середня впевненість Router;
+- затримка P95;
+- обсяг виконань;
+- окремі нетипові виконання.
+
+Для виявлення аномалій тривалості використовуються
+**медіана та MAD** — підхід, стійкіший до екстремальних значень,
+ніж середнє значення та стандартне відхилення.
+""",
+    }
+)
+
+TOOLS_ANALYTICS_ANOMALY_TEXTS["ru"].update(
+    {
+        "anomaly_detection": "## 🚨 Обнаружение аномалий",
+        "insufficient_anomaly_data": (
+            "Пока недостаточно данных для обнаружения "
+            "операционных аномалий."
+        ),
+        "none": "Нет",
+        "detected_anomalies": "Обнаруженные аномалии",
+        "highest_severity": "Наивысшая серьёзность",
+        "current_period_failures": "Ошибки текущего периода",
+        "current_p95": "Текущий P95",
+        "current_failure_rate": "Текущая частота ошибок",
+        "baseline_failure_rate": "Базовая частота ошибок",
+        "current_confidence": "Текущая уверенность",
+        "baseline_confidence": "Базовая уверенность",
+        "no_relevant_anomalies": (
+            "В проанализированных временных окнах не обнаружено "
+            "значимых операционных аномалий."
+        ),
+        "anomalies_by_severity": "### Аномалии по уровню серьёзности",
+        "critical": "Критическая",
+        "high": "Высокая",
+        "medium": "Средняя",
+        "low": "Низкая",
+        "informational": "Информационная",
+        "detected_alerts": "### Обнаруженные предупреждения",
+        "anomaly": "Аномалия",
+        "severity": "Серьёзность",
+        "metric": "Метрика",
+        "recommendation": "Рекомендация",
+        "outlier_executions": "### Нетипичные выполнения",
+        "event_index": "Индекс события",
+        "duration_ms": "Длительность (ms)",
+        "modified_z_score": "Modified Z-Score",
+        "how_detection_works": "Как работает обнаружение",
+        "detection_explanation": """
+INNA сравнивает текущий период с предыдущим базовым периодом.
+
+Анализируются:
+
+- частота ошибок;
+- средняя уверенность Router;
+- задержка P95;
+- объём выполнений;
+- отдельные нетипичные выполнения.
+
+Для аномалий длительности используются **медиана и MAD** —
+подход, более устойчивый к экстремальным значениям,
+чем среднее значение и стандартное отклонение.
+""",
+    }
+)
+
+TOOLS_ANALYTICS_ANOMALY_TEXTS["sa"].update(
+    {
+        "anomaly_detection": "## 🚨 اكتشاف الحالات الشاذة",
+        "insufficient_anomaly_data": (
+            "لا تتوفر بيانات كافية بعد لاكتشاف "
+            "الحالات التشغيلية الشاذة."
+        ),
+        "none": "لا يوجد",
+        "detected_anomalies": "الحالات الشاذة المكتشفة",
+        "highest_severity": "أعلى درجة خطورة",
+        "current_period_failures": "إخفاقات الفترة الحالية",
+        "current_p95": "قيمة P95 الحالية",
+        "current_failure_rate": "معدل الإخفاق الحالي",
+        "baseline_failure_rate": "معدل الإخفاق المرجعي",
+        "current_confidence": "الثقة الحالية",
+        "baseline_confidence": "الثقة المرجعية",
+        "no_relevant_anomalies": (
+            "لم يتم اكتشاف حالات تشغيلية شاذة مهمة "
+            "ضمن الفترات التي جرى تحليلها."
+        ),
+        "anomalies_by_severity": "### الحالات الشاذة حسب الخطورة",
+        "critical": "حرجة",
+        "high": "مرتفعة",
+        "medium": "متوسطة",
+        "low": "منخفضة",
+        "informational": "معلوماتية",
+        "detected_alerts": "### التنبيهات المكتشفة",
+        "anomaly": "حالة شاذة",
+        "severity": "الخطورة",
+        "metric": "المقياس",
+        "recommendation": "التوصية",
+        "outlier_executions": "### عمليات التنفيذ الشاذة",
+        "event_index": "فهرس الحدث",
+        "duration_ms": "المدة (ms)",
+        "modified_z_score": "Modified Z-Score",
+        "how_detection_works": "كيفية عمل الاكتشاف",
+        "detection_explanation": """
+تقارن INNA الفترة الحالية بفترة سابقة تُستخدم كمرجع.
+
+يتم تحليل ما يلي:
+
+- معدل الإخفاق؛
+- متوسط ثقة Router؛
+- زمن الاستجابة P95؛
+- حجم عمليات التنفيذ؛
+- عمليات التنفيذ الفردية الشاذة.
+
+تستخدم القيم الشاذة للمدة **الوسيط وMAD**، وهي طريقة
+أكثر مقاومة للقيم المتطرفة من المتوسط والانحراف المعياري.
+""",
+    }
+)
+
+# O código ch segue o catálogo alemão do projeto.
+TOOLS_ANALYTICS_ANOMALY_TEXTS["ch"] = dict(
+    TOOLS_ANALYTICS_ANOMALY_TEXTS["de"]
+)
+
+
+# Traduções nativas da comparação entre períodos.
+TOOLS_ANALYTICS_PERIOD_TEXTS["ro"].update(
+    {
+        "period_comparison": (
+            "## Comparație între perioade"
+        ),
+        "executions": "Execuții",
+        "failures": "Eșecuri",
+        "average_duration": "Durată medie",
+        "detailed_comparison": (
+            "Vizualizează comparația detaliată"
+        ),
+        "period": "Perioadă",
+        "current": "Curentă",
+        "previous": "Anterioară",
+        "average_duration_ms": (
+            "Durată medie (ms)"
+        ),
+    }
+)
+
+TOOLS_ANALYTICS_PERIOD_TEXTS["ua"].update(
+    {
+        "period_comparison": (
+            "## Порівняння періодів"
+        ),
+        "executions": "Виконання",
+        "failures": "Помилки",
+        "average_duration": (
+            "Середня тривалість"
+        ),
+        "detailed_comparison": (
+            "Переглянути детальне порівняння"
+        ),
+        "period": "Період",
+        "current": "Поточний",
+        "previous": "Попередній",
+        "average_duration_ms": (
+            "Середня тривалість (ms)"
+        ),
+    }
+)
+
+TOOLS_ANALYTICS_PERIOD_TEXTS["ru"].update(
+    {
+        "period_comparison": (
+            "## Сравнение периодов"
+        ),
+        "executions": "Выполнения",
+        "failures": "Ошибки",
+        "average_duration": (
+            "Средняя длительность"
+        ),
+        "detailed_comparison": (
+            "Показать подробное сравнение"
+        ),
+        "period": "Период",
+        "current": "Текущий",
+        "previous": "Предыдущий",
+        "average_duration_ms": (
+            "Средняя длительность (ms)"
+        ),
+    }
+)
+
+TOOLS_ANALYTICS_PERIOD_TEXTS["sa"].update(
+    {
+        "period_comparison": (
+            "## مقارنة الفترات"
+        ),
+        "executions": "عمليات التنفيذ",
+        "failures": "الإخفاقات",
+        "average_duration": (
+            "متوسط المدة"
+        ),
+        "detailed_comparison": (
+            "عرض المقارنة التفصيلية"
+        ),
+        "period": "الفترة",
+        "current": "الحالية",
+        "previous": "السابقة",
+        "average_duration_ms": (
+            "متوسط المدة (ms)"
+        ),
+    }
+)
+
+# الرمز ch يتبع اللغة الألمانية في المشروع.
+TOOLS_ANALYTICS_PERIOD_TEXTS["ch"] = dict(
+    TOOLS_ANALYTICS_PERIOD_TEXTS["de"]
+)
+
+
+# Traduções nativas do ranking e desempenho por ferramenta.
+TOOLS_ANALYTICS_RANKING_TEXTS["ro"].update(
+    {
+        "successes": "Succese",
+        "success_rate": "Rată de succes (%)",
+        "average_confidence": "Încredere medie (%)",
+        "average_ms": "Medie (ms)",
+        "minimum_ms": "Minim (ms)",
+        "maximum_ms": "Maxim (ms)",
+        "ranking_performance": (
+            "## Clasamentul și performanța instrumentelor"
+        ),
+        "no_tool_found": (
+            "Nu a fost găsit niciun instrument."
+        ),
+        "usage_by_tool": (
+            "### Utilizare după instrument"
+        ),
+        "executions_hover": "Execuții",
+        "p95_by_tool": (
+            "### P95 după instrument"
+        ),
+        "p95_latency": "Latență P95 (ms)",
+    }
+)
+
+TOOLS_ANALYTICS_RANKING_TEXTS["ua"].update(
+    {
+        "successes": "Успішні виконання",
+        "success_rate": "Рівень успіху (%)",
+        "average_confidence": (
+            "Середня впевненість (%)"
+        ),
+        "average_ms": "Середнє (ms)",
+        "minimum_ms": "Мінімум (ms)",
+        "maximum_ms": "Максимум (ms)",
+        "ranking_performance": (
+            "## Рейтинг і продуктивність інструментів"
+        ),
+        "no_tool_found": (
+            "Інструментів не знайдено."
+        ),
+        "usage_by_tool": (
+            "### Використання за інструментами"
+        ),
+        "executions_hover": "Виконання",
+        "p95_by_tool": (
+            "### P95 за інструментами"
+        ),
+        "p95_latency": "Затримка P95 (ms)",
+    }
+)
+
+TOOLS_ANALYTICS_RANKING_TEXTS["ru"].update(
+    {
+        "successes": "Успешные выполнения",
+        "success_rate": "Уровень успешности (%)",
+        "average_confidence": (
+            "Средняя уверенность (%)"
+        ),
+        "average_ms": "Среднее (ms)",
+        "minimum_ms": "Минимум (ms)",
+        "maximum_ms": "Максимум (ms)",
+        "ranking_performance": (
+            "## Рейтинг и производительность инструментов"
+        ),
+        "no_tool_found": (
+            "Инструменты не найдены."
+        ),
+        "usage_by_tool": (
+            "### Использование по инструментам"
+        ),
+        "executions_hover": "Выполнения",
+        "p95_by_tool": (
+            "### P95 по инструментам"
+        ),
+        "p95_latency": "Задержка P95 (ms)",
+    }
+)
+
+TOOLS_ANALYTICS_RANKING_TEXTS["sa"].update(
+    {
+        "successes": "عمليات التنفيذ الناجحة",
+        "success_rate": "معدل النجاح (%)",
+        "average_confidence": (
+            "متوسط الثقة (%)"
+        ),
+        "average_ms": "المتوسط (ms)",
+        "minimum_ms": "الحد الأدنى (ms)",
+        "maximum_ms": "الحد الأقصى (ms)",
+        "ranking_performance": (
+            "## ترتيب الأدوات وأداؤها"
+        ),
+        "no_tool_found": (
+            "لم يتم العثور على أي أداة."
+        ),
+        "usage_by_tool": (
+            "### الاستخدام حسب الأداة"
+        ),
+        "executions_hover": "عمليات التنفيذ",
+        "p95_by_tool": (
+            "### قيمة P95 حسب الأداة"
+        ),
+        "p95_latency": "زمن الاستجابة P95 (ms)",
+    }
+)
+
+# O código ch segue o alemão utilizado pelo projeto.
+TOOLS_ANALYTICS_RANKING_TEXTS["ch"] = dict(
+    TOOLS_ANALYTICS_RANKING_TEXTS["de"]
+)
+
+
+# Traduções nativas das distribuições.
+TOOLS_ANALYTICS_DISTRIBUTION_TEXTS["ro"].update(
+    {
+        "distributions": "## Distribuții",
+        "intentions": "### Intenții",
+        "origins": "### Origini",
+        "intention": "Intenție",
+        "origin": "Origine",
+        "total": "Total",
+        "events": "Evenimente",
+    }
+)
+
+TOOLS_ANALYTICS_DISTRIBUTION_TEXTS["ua"].update(
+    {
+        "distributions": "## Розподіли",
+        "intentions": "### Наміри",
+        "origins": "### Джерела",
+        "intention": "Намір",
+        "origin": "Джерело",
+        "total": "Загалом",
+        "events": "Події",
+    }
+)
+
+TOOLS_ANALYTICS_DISTRIBUTION_TEXTS["ru"].update(
+    {
+        "distributions": "## Распределения",
+        "intentions": "### Намерения",
+        "origins": "### Источники",
+        "intention": "Намерение",
+        "origin": "Источник",
+        "total": "Всего",
+        "events": "События",
+    }
+)
+
+TOOLS_ANALYTICS_DISTRIBUTION_TEXTS["sa"].update(
+    {
+        "distributions": "## التوزيعات",
+        "intentions": "### النوايا",
+        "origins": "### المصادر",
+        "intention": "النية",
+        "origin": "المصدر",
+        "total": "الإجمالي",
+        "events": "الأحداث",
+    }
+)
+
+# O código ch segue o alemão utilizado pelo projeto.
+TOOLS_ANALYTICS_DISTRIBUTION_TEXTS["ch"] = dict(
+    TOOLS_ANALYTICS_DISTRIBUTION_TEXTS["de"]
+)
+
+
+# Traduções nativas da evolução temporal.
+TOOLS_ANALYTICS_TEMPORAL_TEXTS["ro"].update(
+    {
+        "temporal_evolution": (
+            "## Evoluție temporală"
+        ),
+        "grouping": "Grupare",
+        "hour": "Oră",
+        "day": "Zi",
+        "week": "Săptămână",
+        "month": "Lună",
+        "insufficient_time_series": (
+            "Nu există suficiente evenimente "
+            "pentru seria temporală."
+        ),
+        "period_label": "Perioadă",
+        "successful_executions": (
+            "Execuții reușite"
+        ),
+        "failed_executions": (
+            "Execuții eșuate"
+        ),
+        "most_active_users": (
+            "## Cei mai activi utilizatori"
+        ),
+        "user": "Utilizator",
+        "no_user": "fără utilizator",
+    }
+)
+
+TOOLS_ANALYTICS_TEMPORAL_TEXTS["ua"].update(
+    {
+        "temporal_evolution": (
+            "## Часова динаміка"
+        ),
+        "grouping": "Групування",
+        "hour": "Година",
+        "day": "День",
+        "week": "Тиждень",
+        "month": "Місяць",
+        "insufficient_time_series": (
+            "Недостатньо подій для побудови "
+            "часового ряду."
+        ),
+        "period_label": "Період",
+        "successful_executions": (
+            "Успішні виконання"
+        ),
+        "failed_executions": (
+            "Невдалі виконання"
+        ),
+        "most_active_users": (
+            "## Найактивніші користувачі"
+        ),
+        "user": "Користувач",
+        "no_user": "без користувача",
+    }
+)
+
+TOOLS_ANALYTICS_TEMPORAL_TEXTS["ru"].update(
+    {
+        "temporal_evolution": (
+            "## Временная динамика"
+        ),
+        "grouping": "Группировка",
+        "hour": "Час",
+        "day": "День",
+        "week": "Неделя",
+        "month": "Месяц",
+        "insufficient_time_series": (
+            "Недостаточно событий для построения "
+            "временного ряда."
+        ),
+        "period_label": "Период",
+        "successful_executions": (
+            "Успешные выполнения"
+        ),
+        "failed_executions": (
+            "Неудачные выполнения"
+        ),
+        "most_active_users": (
+            "## Самые активные пользователи"
+        ),
+        "user": "Пользователь",
+        "no_user": "без пользователя",
+    }
+)
+
+TOOLS_ANALYTICS_TEMPORAL_TEXTS["sa"].update(
+    {
+        "temporal_evolution": (
+            "## التطور الزمني"
+        ),
+        "grouping": "التجميع",
+        "hour": "الساعة",
+        "day": "اليوم",
+        "week": "الأسبوع",
+        "month": "الشهر",
+        "insufficient_time_series": (
+            "لا توجد أحداث كافية لإنشاء "
+            "السلسلة الزمنية."
+        ),
+        "period_label": "الفترة",
+        "successful_executions": (
+            "عمليات التنفيذ الناجحة"
+        ),
+        "failed_executions": (
+            "عمليات التنفيذ الفاشلة"
+        ),
+        "most_active_users": (
+            "## المستخدمون الأكثر نشاطًا"
+        ),
+        "user": "المستخدم",
+        "no_user": "من دون مستخدم",
+    }
+)
+
+# O código ch segue o alemão utilizado pelo projeto.
+TOOLS_ANALYTICS_TEMPORAL_TEXTS["ch"] = dict(
+    TOOLS_ANALYTICS_TEMPORAL_TEXTS["de"]
+)
+
+
+# Traduções nativas da visão geral analítica.
+TOOLS_ANALYTICS_OVERVIEW_TEXTS["ro"].update(
+    {
+        "analytic_overview": (
+            "## Prezentare generală analitică"
+        ),
+        "analysed_events": (
+            "Evenimente analizate"
+        ),
+        "success_rate_metric": (
+            "Rată de succes"
+        ),
+        "executions_without_tool": (
+            "Execuții fără instrument"
+        ),
+        "average_confidence_metric": (
+            "Încredere medie"
+        ),
+        "average_duration_metric": (
+            "Durată medie"
+        ),
+        "distinct_tools": (
+            "Instrumente distincte"
+        ),
+        "unique_users": (
+            "Utilizatori unici"
+        ),
+        "detection_explanation": """
+INNA compară perioada curentă cu o perioadă anterioară
+folosită drept referință.
+
+Sunt analizate:
+
+- rata de eșec;
+- încrederea medie a Routerului;
+- durata P95;
+- procentul evenimentelor fără instrument;
+- volumul mediu pe oră;
+- execuțiile individuale atipice.
+
+Valorile atipice de durată folosesc **mediana și MAD**, o abordare
+mai rezistentă la valori extreme decât media și abaterea standard.
+""",
+    }
+)
+
+TOOLS_ANALYTICS_OVERVIEW_TEXTS["ua"].update(
+    {
+        "analytic_overview": (
+            "## Аналітичний огляд"
+        ),
+        "analysed_events": (
+            "Проаналізовані події"
+        ),
+        "success_rate_metric": (
+            "Рівень успіху"
+        ),
+        "executions_without_tool": (
+            "Виконання без інструмента"
+        ),
+        "average_confidence_metric": (
+            "Середня впевненість"
+        ),
+        "average_duration_metric": (
+            "Середня тривалість"
+        ),
+        "distinct_tools": (
+            "Різні інструменти"
+        ),
+        "unique_users": (
+            "Унікальні користувачі"
+        ),
+        "detection_explanation": """
+INNA порівнює поточний період із попереднім базовим періодом.
+
+Аналізуються:
+
+- частота помилок;
+- середня впевненість Router;
+- тривалість P95;
+- частка подій без інструмента;
+- середній погодинний обсяг;
+- окремі нетипові виконання.
+
+Для виявлення аномалій тривалості використовуються
+**медіана та MAD** — підхід, стійкіший до екстремальних значень,
+ніж середнє значення та стандартне відхилення.
+""",
+    }
+)
+
+TOOLS_ANALYTICS_OVERVIEW_TEXTS["ru"].update(
+    {
+        "analytic_overview": (
+            "## Аналитический обзор"
+        ),
+        "analysed_events": (
+            "Проанализированные события"
+        ),
+        "success_rate_metric": (
+            "Уровень успешности"
+        ),
+        "executions_without_tool": (
+            "Выполнения без инструмента"
+        ),
+        "average_confidence_metric": (
+            "Средняя уверенность"
+        ),
+        "average_duration_metric": (
+            "Средняя длительность"
+        ),
+        "distinct_tools": (
+            "Различные инструменты"
+        ),
+        "unique_users": (
+            "Уникальные пользователи"
+        ),
+        "detection_explanation": """
+INNA сравнивает текущий период с предыдущим базовым периодом.
+
+Анализируются:
+
+- частота ошибок;
+- средняя уверенность Router;
+- длительность P95;
+- доля событий без инструмента;
+- средний почасовой объём;
+- отдельные нетипичные выполнения.
+
+Для аномалий длительности используются **медиана и MAD** —
+подход, более устойчивый к экстремальным значениям,
+чем среднее значение и стандартное отклонение.
+""",
+    }
+)
+
+TOOLS_ANALYTICS_OVERVIEW_TEXTS["sa"].update(
+    {
+        "analytic_overview": (
+            "## النظرة العامة التحليلية"
+        ),
+        "analysed_events": (
+            "الأحداث التي جرى تحليلها"
+        ),
+        "success_rate_metric": (
+            "معدل النجاح"
+        ),
+        "executions_without_tool": (
+            "عمليات التنفيذ من دون أداة"
+        ),
+        "average_confidence_metric": (
+            "متوسط الثقة"
+        ),
+        "average_duration_metric": (
+            "متوسط المدة"
+        ),
+        "distinct_tools": (
+            "الأدوات المختلفة"
+        ),
+        "unique_users": (
+            "المستخدمون الفريدون"
+        ),
+        "detection_explanation": """
+تقارن INNA الفترة الحالية بفترة سابقة تُستخدم كمرجع.
+
+يتم تحليل ما يلي:
+
+- معدل الإخفاق؛
+- متوسط ثقة Router؛
+- مدة P95؛
+- نسبة الأحداث التي لم تستخدم أداة؛
+- متوسط الحجم في الساعة؛
+- عمليات التنفيذ الفردية الشاذة.
+
+تستخدم القيم الشاذة للمدة **الوسيط وMAD**، وهي طريقة
+أكثر مقاومة للقيم المتطرفة من المتوسط والانحراف المعياري.
+""",
+    }
+)
+
+# O código ch segue o alemão utilizado pelo projeto.
+TOOLS_ANALYTICS_OVERVIEW_TEXTS["ch"] = dict(
+    TOOLS_ANALYTICS_OVERVIEW_TEXTS["de"]
+)
+
+
+# Ajustes finais dos rótulos nativos da análise de ferramentas.
+TOOLS_ANALYTICS_TEXTS["fr"].update(
+    {
+        "minimum_ms": "Minimum (ms)",
+        "maximum_ms": "Maximum (ms)",
+        "distributions": "## Répartitions",
+        "intentions": "### Intentions détectées",
+        "intention": "Intention détectée",
+    }
+)
+
+TOOLS_ANALYTICS_TEXTS["de"].update(
+    {
+        "minimum_ms": "Minimalwert (ms)",
+        "maximum_ms": "Maximalwert (ms)",
+    }
+)
+
+TOOLS_ANALYTICS_RANKING_TEXTS["fr"].update(
+    {
+        "minimum_ms": "Minimum (ms)",
+        "maximum_ms": "Maximum (ms)",
+    }
+)
+
+TOOLS_ANALYTICS_RANKING_TEXTS["de"].update(
+    {
+        "minimum_ms": "Minimalwert (ms)",
+        "maximum_ms": "Maximalwert (ms)",
+    }
+)
+
+TOOLS_ANALYTICS_DISTRIBUTION_TEXTS["fr"].update(
+    {
+        "distributions": "## Répartitions",
+        "intentions": "### Intentions détectées",
+        "intention": "Intention détectée",
+    }
+)
+
+# O código ch segue os catálogos alemães do projeto.
+TOOLS_ANALYTICS_TEXTS["ch"] = dict(
+    TOOLS_ANALYTICS_TEXTS["de"]
+)
+
+TOOLS_ANALYTICS_RANKING_TEXTS["ch"] = dict(
+    TOOLS_ANALYTICS_RANKING_TEXTS["de"]
+)
+
+TOOLS_ANALYTICS_DISTRIBUTION_TEXTS["ch"] = dict(
+    TOOLS_ANALYTICS_DISTRIBUTION_TEXTS["de"]
+)
+
+
 def tools_analytics_lang() -> str:
     return normalize_language(
         st.session_state.get(

@@ -6,6 +6,9 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+from src.dashboard_pages.technical_labels_i18n import (
+    technical_label,
+)
 from src.dashboard_theme import apply_admin_dark_theme
 from src.evaluation.dashboard_data import (
     build_dashboard_summary,
@@ -617,6 +620,14 @@ for idioma, textos in LLMOPS_CHART_TEXTS.items():
 
 LLMOPS_TEXTS["ch"] = LLMOPS_TEXTS["de"]
 
+for language in LLMOPS_TEXTS:
+    LLMOPS_TEXTS[language]["quality_gate"] = (
+        technical_label(
+            language,
+            "quality_gate",
+        )
+    )
+
 
 def llmops_lang() -> str:
     idioma = st.session_state.get(
@@ -635,6 +646,20 @@ def llmops_t(
     default: str | None = None,
 ) -> str:
     idioma = llmops_lang()
+
+    technical_keys = {
+        "quality_gate": "quality_gate",
+    }
+
+    technical_key = technical_keys.get(
+        key
+    )
+
+    if technical_key is not None:
+        return technical_label(
+            idioma,
+            technical_key,
+        )
 
     return LLMOPS_TEXTS.get(
         idioma,
@@ -737,6 +762,452 @@ LLMOPS_RAG_TRIAD_TEXTS = {
 
 LLMOPS_RAG_TRIAD_TEXTS["en_gb"] = dict(
     LLMOPS_RAG_TRIAD_TEXTS["en_us"]
+)
+
+LLMOPS_RAG_TRIAD_TEXTS.update(
+    {
+        "fr": {
+            "rag_triad_title": "RAG Triad",
+            "rag_triad_runs": (
+                "Exécutions avec RAG Triad"
+            ),
+            "rag_triad_pass_rate": (
+                "Taux de réussite de RAG Triad"
+            ),
+            "rag_triad_latest_score": (
+                "Dernier score"
+            ),
+            "rag_triad_latest_status": (
+                "Dernier statut"
+            ),
+            "rag_triad_chart": (
+                "Évolution de RAG Triad"
+            ),
+            "rag_triad_no_data": (
+                "Aucune exécution avec RAG Triad "
+                "n’est encore disponible dans "
+                "l’historique sélectionné."
+            ),
+            "rag_triad_snapshot": (
+                "Aperçu de RAG Triad"
+            ),
+            "rag_triad_complete_cases": (
+                "Cas complets"
+            ),
+            "rag_triad_total_cases": (
+                "Cas évalués"
+            ),
+            "rag_triad_completeness": (
+                "Complétude"
+            ),
+            "rag_triad_failing_metrics": (
+                "Métriques échouées ou indisponibles"
+            ),
+            "rag_triad_no_failures": (
+                "Aucune métrique n’a échoué lors "
+                "de la dernière exécution."
+            ),
+            "rag_triad_approved": (
+                "RAG Triad approuvée"
+            ),
+            "rag_triad_failed": (
+                "RAG Triad échouée"
+            ),
+            "rag_triad_partial": (
+                "RAG Triad partielle"
+            ),
+            "rag_triad_unknown": (
+                "Aucun résultat consolidé"
+            ),
+            "rag_triad_score": (
+                "Score de RAG Triad"
+            ),
+            "rag_triad_status": (
+                "Statut de RAG Triad"
+            ),
+            "rag_triad_passed": (
+                "RAG Triad approuvée"
+            ),
+        },
+        "de": {
+            "rag_triad_title": "RAG Triad",
+            "rag_triad_runs": (
+                "Ausführungen mit RAG Triad"
+            ),
+            "rag_triad_pass_rate": (
+                "Erfolgsquote der RAG Triad"
+            ),
+            "rag_triad_latest_score": (
+                "Neuester Wert"
+            ),
+            "rag_triad_latest_status": (
+                "Neuester Status"
+            ),
+            "rag_triad_chart": (
+                "Entwicklung der RAG Triad"
+            ),
+            "rag_triad_no_data": (
+                "Im ausgewählten Verlauf sind "
+                "noch keine Ausführungen mit "
+                "RAG Triad vorhanden."
+            ),
+            "rag_triad_snapshot": (
+                "Momentaufnahme der RAG Triad"
+            ),
+            "rag_triad_complete_cases": (
+                "Vollständige Fälle"
+            ),
+            "rag_triad_total_cases": (
+                "Bewertete Fälle"
+            ),
+            "rag_triad_completeness": (
+                "Vollständigkeit"
+            ),
+            "rag_triad_failing_metrics": (
+                "Fehlgeschlagene oder nicht "
+                "verfügbare Metriken"
+            ),
+            "rag_triad_no_failures": (
+                "Bei der neuesten Ausführung ist "
+                "keine Metrik fehlgeschlagen."
+            ),
+            "rag_triad_approved": (
+                "RAG Triad bestanden"
+            ),
+            "rag_triad_failed": (
+                "RAG Triad fehlgeschlagen"
+            ),
+            "rag_triad_partial": (
+                "Teilweise RAG Triad"
+            ),
+            "rag_triad_unknown": (
+                "Kein konsolidiertes Ergebnis"
+            ),
+            "rag_triad_score": (
+                "Wert der RAG Triad"
+            ),
+            "rag_triad_status": (
+                "Status der RAG Triad"
+            ),
+            "rag_triad_passed": (
+                "RAG Triad bestanden"
+            ),
+        },
+        "it": {
+            "rag_triad_title": "RAG Triad",
+            "rag_triad_runs": (
+                "Esecuzioni con RAG Triad"
+            ),
+            "rag_triad_pass_rate": (
+                "Tasso di approvazione di RAG Triad"
+            ),
+            "rag_triad_latest_score": (
+                "Punteggio più recente"
+            ),
+            "rag_triad_latest_status": (
+                "Stato più recente"
+            ),
+            "rag_triad_chart": (
+                "Evoluzione di RAG Triad"
+            ),
+            "rag_triad_no_data": (
+                "Non sono ancora presenti esecuzioni "
+                "con RAG Triad nello storico selezionato."
+            ),
+            "rag_triad_snapshot": (
+                "Riepilogo di RAG Triad"
+            ),
+            "rag_triad_complete_cases": (
+                "Casi completi"
+            ),
+            "rag_triad_total_cases": (
+                "Casi valutati"
+            ),
+            "rag_triad_completeness": (
+                "Completezza"
+            ),
+            "rag_triad_failing_metrics": (
+                "Metriche non approvate o non disponibili"
+            ),
+            "rag_triad_no_failures": (
+                "Nessuna metrica è stata respinta "
+                "nell’esecuzione più recente."
+            ),
+            "rag_triad_approved": (
+                "RAG Triad approvata"
+            ),
+            "rag_triad_failed": (
+                "RAG Triad non approvata"
+            ),
+            "rag_triad_partial": (
+                "RAG Triad parziale"
+            ),
+            "rag_triad_unknown": (
+                "Nessun risultato consolidato"
+            ),
+            "rag_triad_score": (
+                "Punteggio di RAG Triad"
+            ),
+            "rag_triad_status": (
+                "Stato di RAG Triad"
+            ),
+            "rag_triad_passed": (
+                "RAG Triad approvata"
+            ),
+        },
+        "ro": {
+            "rag_triad_title": "RAG Triad",
+            "rag_triad_runs": (
+                "Execuții cu RAG Triad"
+            ),
+            "rag_triad_pass_rate": (
+                "Rata de aprobare RAG Triad"
+            ),
+            "rag_triad_latest_score": (
+                "Cel mai recent scor"
+            ),
+            "rag_triad_latest_status": (
+                "Cea mai recentă stare"
+            ),
+            "rag_triad_chart": (
+                "Evoluția RAG Triad"
+            ),
+            "rag_triad_no_data": (
+                "Nu există încă execuții cu RAG Triad "
+                "în istoricul selectat."
+            ),
+            "rag_triad_snapshot": (
+                "Rezumat RAG Triad"
+            ),
+            "rag_triad_complete_cases": (
+                "Cazuri complete"
+            ),
+            "rag_triad_total_cases": (
+                "Cazuri evaluate"
+            ),
+            "rag_triad_completeness": (
+                "Completitudine"
+            ),
+            "rag_triad_failing_metrics": (
+                "Metrici respinse sau indisponibile"
+            ),
+            "rag_triad_no_failures": (
+                "Nicio metrică nu a fost respinsă "
+                "în cea mai recentă execuție."
+            ),
+            "rag_triad_approved": (
+                "RAG Triad aprobată"
+            ),
+            "rag_triad_failed": (
+                "RAG Triad respinsă"
+            ),
+            "rag_triad_partial": (
+                "RAG Triad parțială"
+            ),
+            "rag_triad_unknown": (
+                "Fără rezultat consolidat"
+            ),
+            "rag_triad_score": (
+                "Scor RAG Triad"
+            ),
+            "rag_triad_status": (
+                "Stare RAG Triad"
+            ),
+            "rag_triad_passed": (
+                "RAG Triad aprobată"
+            ),
+        },
+        "ua": {
+            "rag_triad_title": "RAG Triad",
+            "rag_triad_runs": (
+                "Виконання з RAG Triad"
+            ),
+            "rag_triad_pass_rate": (
+                "Рівень успішності RAG Triad"
+            ),
+            "rag_triad_latest_score": (
+                "Остання оцінка"
+            ),
+            "rag_triad_latest_status": (
+                "Останній статус"
+            ),
+            "rag_triad_chart": (
+                "Динаміка RAG Triad"
+            ),
+            "rag_triad_no_data": (
+                "У вибраній історії ще немає "
+                "виконань із RAG Triad."
+            ),
+            "rag_triad_snapshot": (
+                "Знімок RAG Triad"
+            ),
+            "rag_triad_complete_cases": (
+                "Повні випадки"
+            ),
+            "rag_triad_total_cases": (
+                "Оцінені випадки"
+            ),
+            "rag_triad_completeness": (
+                "Повнота"
+            ),
+            "rag_triad_failing_metrics": (
+                "Невдалі або недоступні метрики"
+            ),
+            "rag_triad_no_failures": (
+                "Під час останнього виконання "
+                "жодна метрика не завершилася невдало."
+            ),
+            "rag_triad_approved": (
+                "RAG Triad пройдено"
+            ),
+            "rag_triad_failed": (
+                "RAG Triad не пройдено"
+            ),
+            "rag_triad_partial": (
+                "Частковий результат RAG Triad"
+            ),
+            "rag_triad_unknown": (
+                "Немає консолідованого результату"
+            ),
+            "rag_triad_score": (
+                "Оцінка RAG Triad"
+            ),
+            "rag_triad_status": (
+                "Статус RAG Triad"
+            ),
+            "rag_triad_passed": (
+                "RAG Triad пройдено"
+            ),
+        },
+        "ru": {
+            "rag_triad_title": "RAG Triad",
+            "rag_triad_runs": (
+                "Запуски с RAG Triad"
+            ),
+            "rag_triad_pass_rate": (
+                "Уровень успешности RAG Triad"
+            ),
+            "rag_triad_latest_score": (
+                "Последняя оценка"
+            ),
+            "rag_triad_latest_status": (
+                "Последний статус"
+            ),
+            "rag_triad_chart": (
+                "Динамика RAG Triad"
+            ),
+            "rag_triad_no_data": (
+                "В выбранной истории пока нет "
+                "запусков с RAG Triad."
+            ),
+            "rag_triad_snapshot": (
+                "Снимок RAG Triad"
+            ),
+            "rag_triad_complete_cases": (
+                "Полные случаи"
+            ),
+            "rag_triad_total_cases": (
+                "Оценённые случаи"
+            ),
+            "rag_triad_completeness": (
+                "Полнота"
+            ),
+            "rag_triad_failing_metrics": (
+                "Неуспешные или недоступные метрики"
+            ),
+            "rag_triad_no_failures": (
+                "В последнем запуске ни одна "
+                "метрика не завершилась неуспешно."
+            ),
+            "rag_triad_approved": (
+                "RAG Triad пройдена"
+            ),
+            "rag_triad_failed": (
+                "RAG Triad не пройдена"
+            ),
+            "rag_triad_partial": (
+                "Частичный результат RAG Triad"
+            ),
+            "rag_triad_unknown": (
+                "Нет консолидированного результата"
+            ),
+            "rag_triad_score": (
+                "Оценка RAG Triad"
+            ),
+            "rag_triad_status": (
+                "Статус RAG Triad"
+            ),
+            "rag_triad_passed": (
+                "RAG Triad пройдена"
+            ),
+        },
+        "sa": {
+            "rag_triad_title": "RAG Triad",
+            "rag_triad_runs": (
+                "عمليات التشغيل باستخدام RAG Triad"
+            ),
+            "rag_triad_pass_rate": (
+                "معدل نجاح RAG Triad"
+            ),
+            "rag_triad_latest_score": (
+                "أحدث نتيجة"
+            ),
+            "rag_triad_latest_status": (
+                "أحدث حالة"
+            ),
+            "rag_triad_chart": (
+                "تطور RAG Triad"
+            ),
+            "rag_triad_no_data": (
+                "لا توجد حتى الآن عمليات تشغيل "
+                "باستخدام RAG Triad في السجل المحدد."
+            ),
+            "rag_triad_snapshot": (
+                "ملخص RAG Triad"
+            ),
+            "rag_triad_complete_cases": (
+                "الحالات المكتملة"
+            ),
+            "rag_triad_total_cases": (
+                "الحالات التي تم تقييمها"
+            ),
+            "rag_triad_completeness": (
+                "الاكتمال"
+            ),
+            "rag_triad_failing_metrics": (
+                "المقاييس الفاشلة أو غير المتاحة"
+            ),
+            "rag_triad_no_failures": (
+                "لم يفشل أي مقياس في أحدث عملية تشغيل."
+            ),
+            "rag_triad_approved": (
+                "تم اجتياز RAG Triad"
+            ),
+            "rag_triad_failed": (
+                "لم يتم اجتياز RAG Triad"
+            ),
+            "rag_triad_partial": (
+                "نتيجة جزئية لـ RAG Triad"
+            ),
+            "rag_triad_unknown": (
+                "لا توجد نتيجة موحدة"
+            ),
+            "rag_triad_score": (
+                "نتيجة RAG Triad"
+            ),
+            "rag_triad_status": (
+                "حالة RAG Triad"
+            ),
+            "rag_triad_passed": (
+                "تم اجتياز RAG Triad"
+            ),
+        },
+    }
+)
+
+# O código ch segue o alemão utilizado pelo projeto.
+LLMOPS_RAG_TRIAD_TEXTS["ch"] = dict(
+    LLMOPS_RAG_TRIAD_TEXTS["de"]
 )
 
 for idioma in (

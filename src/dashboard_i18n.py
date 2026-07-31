@@ -963,11 +963,63 @@ MENU_PAGE_IDS: tuple[str, ...] = (
     "tools_analytics",
     "health_center",
     "llmops_observability",
+    "rag_evaluation_lab",
     "ai_cost_center",
     "document_upload",
     "user_memory",
     "export",
 )
+
+
+MENU_GROUP_PAGE_IDS: dict[str, tuple[str, ...]] = {
+    "overview": (
+        "overview",
+        "executive_reading",
+        "evolution",
+        "international_view",
+    ),
+    "financial_solutions": (
+        "diagnostics",
+        "feedbacks",
+        "user_memory",
+    ),
+    "enterprise_rag": (
+        "document_upload",
+        "rag_observability",
+        "rag_evaluation_lab",
+        "agent_evaluation",
+    ),
+    "ai_operations": (
+        "health_center",
+        "llmops_observability",
+        "timeline_viewer",
+        "ai_cost_center",
+    ),
+    "tools_automation": (
+        "tools_observability",
+        "tools_analytics",
+        "multichannel_events",
+    ),
+    "administration": (
+        "export",
+    ),
+}
+
+
+def menu_group_for_page(
+    page_id: str,
+) -> str:
+    normalized_page_id = normalize_menu_page_id(
+        page_id
+    )
+
+    for group_id, page_ids in (
+        MENU_GROUP_PAGE_IDS.items()
+    ):
+        if normalized_page_id in page_ids:
+            return group_id
+
+    return "overview"
 
 
 MENU_TEXTS: dict[str, dict[str, str]] = {
@@ -1308,6 +1360,31 @@ MENU_TEXTS["en_gb"]["health_center"] = (
 MENU_TEXTS["ch"] = dict(
     MENU_TEXTS["de"]
 )
+
+
+RAG_EVALUATION_LAB_MENU_TEXTS: dict[str, str] = {
+    "pt": "🧪 Laboratório de Qualidade RAG",
+    "en_us": "🧪 RAG Quality Laboratory",
+    "en_gb": "🧪 RAG Quality Laboratory",
+    "es": "🧪 Laboratorio de Calidad RAG",
+    "fr": "🧪 Laboratoire de Qualité RAG",
+    "de": "🧪 RAG-Qualitätslabor",
+    "it": "🧪 Laboratorio di Qualità RAG",
+    "ro": "🧪 Laborator de Calitate RAG",
+    "ua": "🧪 Лабораторія якості RAG",
+    "ru": "🧪 Лаборатория качества RAG",
+    "sa": "🧪 مختبر جودة RAG",
+    "ch": "🧪 RAG-Qualitätslabor",
+}
+
+
+for _language, _label in (
+    RAG_EVALUATION_LAB_MENU_TEXTS.items()
+):
+    MENU_TEXTS.setdefault(
+        _language,
+        {},
+    )["rag_evaluation_lab"] = _label
 
 
 LEGACY_MENU_PAGE_IDS: dict[str, str] = {
