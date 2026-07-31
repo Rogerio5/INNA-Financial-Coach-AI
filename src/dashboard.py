@@ -53,6 +53,30 @@ except ImportError:
     )
 
 
+try:
+    from dashboard_navigation import (
+        NAVIGATION_GROUP_IDS,
+        default_page_for_navigation_group,
+        navigation_group_for_page,
+        pages_for_navigation_group,
+    )
+    from dashboard_navigation_i18n import (
+        navigation_group_t,
+        navigation_ui_t,
+    )
+except ImportError:
+    from src.dashboard_navigation import (
+        NAVIGATION_GROUP_IDS,
+        default_page_for_navigation_group,
+        navigation_group_for_page,
+        pages_for_navigation_group,
+    )
+    from src.dashboard_navigation_i18n import (
+        navigation_group_t,
+        navigation_ui_t,
+    )
+
+
 load_dotenv(".env")
 
 
@@ -3523,15 +3547,14 @@ def render_filters(
     menu_container.title(dt("sidebar_title"))
     menu_container.caption(dt("sidebar_caption"))
 
-    menu_options = list(
-        DASHBOARD_MENU_PAGE_IDS
-    )
-
     persistent_key = (
         "dashboard_menu_selected"
     )
-    widget_key = (
-        "_dashboard_main_menu_widget"
+    group_widget_key = (
+        "_dashboard_navigation_group_widget"
+    )
+    page_widget_key = (
+        "_dashboard_navigation_page_widget"
     )
 
     persisted_page = (
@@ -3542,28 +3565,99 @@ def render_filters(
         )
     )
 
-    widget_page = (
+    persisted_group = (
+        navigation_group_for_page(
+            persisted_page
+        )
+    )
+
+    current_language = st.session_state.get(
+        "dashboard_interface_lang",
+        "pt",
+    )
+
+    stored_group = st.session_state.get(
+        group_widget_key,
+        persisted_group,
+    )
+
+    if stored_group not in NAVIGATION_GROUP_IDS:
+        stored_group = persisted_group
+
+    st.session_state[group_widget_key] = (
+        stored_group
+    )
+
+    def sync_dashboard_group():
+        selected_group = st.session_state[
+            group_widget_key
+        ]
+
+        selected_page = (
+            default_page_for_navigation_group(
+                selected_group
+            )
+        )
+
+        st.session_state[
+            persistent_key
+        ] = selected_page
+
+        st.session_state[
+            page_widget_key
+        ] = selected_page
+
+    menu_container.radio(
+        navigation_ui_t(
+            "platform_area",
+            current_language,
+        ),
+        options=list(NAVIGATION_GROUP_IDS),
+        format_func=lambda group_id: (
+            navigation_group_t(
+                group_id,
+                current_language,
+            )
+        ),
+        key=group_widget_key,
+        on_change=sync_dashboard_group,
+    )
+
+    selected_group = st.session_state[
+        group_widget_key
+    ]
+
+    page_options = list(
+        pages_for_navigation_group(
+            selected_group
+        )
+    )
+
+    stored_page = (
         normalize_dashboard_menu_page_id(
             st.session_state.get(
-                widget_key,
+                page_widget_key,
                 persisted_page,
             )
         )
     )
 
-    st.session_state[
-        persistent_key
-    ] = persisted_page
+    if stored_page not in page_options:
+        stored_page = (
+            default_page_for_navigation_group(
+                selected_group
+            )
+        )
 
     st.session_state[
-        widget_key
-    ] = widget_page
+        page_widget_key
+    ] = stored_page
 
-    def sync_dashboard_menu():
+    def sync_dashboard_page():
         selected_page = (
             normalize_dashboard_menu_page_id(
                 st.session_state[
-                    widget_key
+                    page_widget_key
                 ]
             )
         )
@@ -3573,11 +3667,14 @@ def render_filters(
         ] = selected_page
 
     menu_container.radio(
-        dt("menu"),
-        menu_options,
+        navigation_ui_t(
+            "area_pages",
+            current_language,
+        ),
+        options=page_options,
         format_func=dashboard_menu_t,
-        key=widget_key,
-        on_change=sync_dashboard_menu,
+        key=page_widget_key,
+        on_change=sync_dashboard_page,
     )
 
     menu = (
