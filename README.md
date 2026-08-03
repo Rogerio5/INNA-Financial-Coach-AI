@@ -1679,18 +1679,19 @@ Próxima evolução:
 
 Status: ✅ Concluída
 
-Conteúdos estudados e aplicados:
+Conteúdos estudados:
 
 - fundamentos de agentes de IA;
+- observação, raciocínio e execução de ações;
 - uso de ferramentas por agentes;
 - Context Engineering;
 - saídas estruturadas;
-- estudo de SmolAgents;
-- estudo de LlamaIndex;
+- SmolAgents;
+- LlamaIndex;
 - LangGraph;
-- integração com Gemini.
+- integração com modelos de linguagem.
 
-Implementações na INNA:
+Conteúdos aplicados na INNA:
 
 - núcleo agentic;
 - agentes especializados;
@@ -1699,7 +1700,7 @@ Implementações na INNA:
 - ferramentas formais;
 - contexto estruturado;
 - respostas com contratos;
-- integração com o Gemini.
+- integração com o Google Gemini.
 
 ---
 
@@ -1707,7 +1708,7 @@ Implementações na INNA:
 
 Status: ✅ Concluída
 
-Conteúdos estudados e aplicados:
+Conteúdos estudados:
 
 - LangGraph;
 - State Machines;
@@ -1717,11 +1718,12 @@ Conteúdos estudados e aplicados:
 - persistência de estado;
 - checkpoints;
 - Human-in-the-Loop;
-- avaliação e observabilidade de agentes;
+- avaliação de agentes;
+- observabilidade;
 - Arize Phoenix;
 - DeepEval.
 
-Implementações na INNA:
+Conteúdos aplicados na INNA:
 
 - supervisor principal;
 - arquitetura multiagente;
@@ -1730,10 +1732,11 @@ Implementações na INNA:
 - agentes por domínio;
 - Handoff Coordinator;
 - Task Completion;
-- governança da execução;
+- governança de execução;
 - persistência por `thread_id`;
 - interrupção com `interrupt()`;
 - retomada com `Command(resume=...)`;
+- checkpoints;
 - Phoenix e OpenTelemetry;
 - avaliação automatizada com DeepEval;
 - testes de arquitetura e regressão.
@@ -1744,7 +1747,7 @@ Implementações na INNA:
 
 Status: 🟡 Em finalização
 
-Conteúdos estudados e aplicados:
+Conteúdos estudados:
 
 - chunking;
 - embeddings;
@@ -1756,60 +1759,104 @@ Conteúdos estudados e aplicados:
 - Sentence-Window Retrieval;
 - Auto-Merging Retrieval;
 - RAG Triad;
-- Knowledge Graphs;
+- Knowledge Graphs para RAG;
 - Neo4j;
 - Cypher;
 - GraphRAG;
-- análise de qualidade, custo e performance.
+- trade-offs entre qualidade, custo e performance.
 
-Implementações concluídas na INNA:
+Conteúdos aplicados na INNA:
 
 - RAG híbrido;
 - PostgreSQL e pgvector;
 - recuperação textual e vetorial;
 - reranking;
 - Sentence-Window Retrieval;
-- ativação controlada por feature flag;
-- comparação A/B entre baseline e Sentence-Window;
-- integração real com DeepEval;
-- executores para Answer Relevancy;
-- executores para Faithfulness;
-- executores para Contextual Relevancy;
+- comparação A/B entre estratégias de retrieval;
+- estrutura de avaliação com RAG Triad;
+- Answer Relevancy;
+- Faithfulness;
+- Contextual Relevancy;
 - Quality Gate;
-- relatórios JSON e Markdown;
-- histórico de experimentos;
-- proteção de respostas e contextos brutos;
 - controle de custo;
 - controle de latência;
+- análise do tamanho do contexto;
+- relatórios JSON e Markdown;
+- histórico de experimentos;
+- proteção de privacidade;
+- controle de cota da Gemini API.
+
+Implementações concluídas:
+
+- RAG híbrido operacional;
+- busca textual e vetorial integradas;
+- reranking;
+- Sentence-Window Retrieval;
+- feature flag para ativação segura;
+- comparação A/B entre baseline e Sentence-Window;
+- integração real com DeepEval;
+- três executores da RAG Triad;
+- Quality Gate;
+- relatórios de avaliação;
+- histórico de execuções;
+- proteção contra armazenamento de respostas e contextos brutos;
 - limitador compartilhado da Gemini API;
-- tratamento e retentativa de erros HTTP 429;
+- tratamento de erros HTTP 429;
+- retentativas automáticas;
 - 29 testes específicos aprovados.
 
-Pendências da Semana 3:
+Implementações ainda pendentes:
 
-- repetir o Smoke Test após a renovação da cota diária;
-- obter os seis scores válidos da RAG Triad;
-- executar o experimento com cinco perguntas;
-- decidir se Sentence-Window será promovido;
-- implementar Auto-Merging Retrieval;
-- comparar Auto-Merging com o RAG híbrido atual;
-- concluir a análise de Knowledge Graphs;
-- avaliar se Neo4j, Cypher ou GraphRAG trariam ganho real;
-- finalizar documentação e evidências.
+- Auto-Merging Retrieval;
+- comparação entre Auto-Merging e o RAG híbrido atual;
+- Knowledge Graph integrado ao RAG;
+- Neo4j integrado ao projeto;
+- consultas Cypher;
+- GraphRAG;
+- experimento completo com cinco perguntas;
+- decisão final sobre ativação do Sentence-Window;
+- documentação final da Semana 3.
+
+Limitação encontrada:
+
+O Smoke Test real da RAG Triad foi iniciado, mas não foi concluído porque a cota diária gratuita do modelo `gemini-2.5-flash` foi esgotada.
+
+Por isso:
+
+- a arquitetura da avaliação foi validada;
+- os executores foram registrados corretamente;
+- o controle de cota funcionou;
+- os seis scores finais ainda não foram obtidos;
+- o resultado sobre Sentence-Window permanece inconclusivo;
+- Sentence-Window continua desativado em produção.
 
 Situação atual:
 
 ```text
 RAG_HIBRIDO=CONCLUIDO
+BUSCA_TEXTUAL=CONCLUIDA
+BUSCA_VETORIAL=CONCLUIDA
 RERANKING=CONCLUIDO
+
 SENTENCE_WINDOW=IMPLEMENTADO
+SENTENCE_WINDOW_TESTADO=SIM
 SENTENCE_WINDOW_PRODUCAO=DESATIVADO
+
 RAG_TRIAD_ARQUITETURA=CONCLUIDA
-DEEPEVAL_EXECUTORS=CONCLUIDOS
+ANSWER_RELEVANCY_EXECUTOR=CONCLUIDO
+FAITHFULNESS_EXECUTOR=CONCLUIDO
+CONTEXTUAL_RELEVANCY_EXECUTOR=CONCLUIDO
 QUALITY_GATE=IMPLEMENTADO
-SMOKE_TEST_REAL=INCONCLUSIVO_POR_COTA_DIARIA
+
+SMOKE_TEST_REAL=INCONCLUSIVO
+MOTIVO_SMOKE_TEST=COTA_DIARIA_GEMINI_ESGOTADA
+
 AUTO_MERGING=PENDENTE
-KNOWLEDGE_GRAPH_ANALYSIS=PENDENTE
+KNOWLEDGE_GRAPH_INTEGRADO=PENDENTE
+NEO4J_INTEGRADO=PENDENTE
+CYPHER_IMPLEMENTADO=PENDENTE
+GRAPHRAG_IMPLEMENTADO=PENDENTE
+
 SEMANA_3=EM_FINALIZACAO
 ```
 
