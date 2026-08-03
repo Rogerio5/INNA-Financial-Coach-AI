@@ -42,6 +42,7 @@ Diagnóstico financeiro • Plano de ação • Histórico • Relatórios • T
 - [Evidências visuais](#evidências-visuais)
 - [Roadmap](#roadmap)
 - [Panorama de evolução interna da Inna](#panorama-de-evolução-interna-da-Inna)
+- [Aplicação do Bootcamp 2026 — Engenharia de IA na INNA](#Aplicação-do-Bootcamp-2026—Engenharia-de-IA-na-INNA)
 - [Desenvolvedores](#desenvolvedores)
 - [Conclusão](#conclusão)
 
