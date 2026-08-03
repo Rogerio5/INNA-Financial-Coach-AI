@@ -41,7 +41,7 @@ Diagnóstico financeiro • Plano de ação • Histórico • Relatórios • T
 - [Segurança e limitações](#segurança-e-limitações)
 - [Evidências visuais](#evidências-visuais)
 - [Roadmap](#roadmap)
-- [Panorama de evolução](#panorama-de-evolução)
+- [Panorama de evolução interna da Inna](#panorama-de-evolução-interna-da-Inna)
 - [Desenvolvedores](#desenvolvedores)
 - [Conclusão](#conclusão)
 
@@ -1448,9 +1448,25 @@ A INNA:
 
 ---
 
-## Panorama de evolução
+## Panorama de evolução interna da INNA
 
-### Semana 1 — LangGraph e núcleo agentic
+### Fase interna 1 — LangGraph e núcleo agentic
+
+### Fase interna 2 — RAG, memória e Context Engineering
+
+### Fase interna 3 — Supervisor e arquitetura multiagente
+
+### Fase interna 4 — Tool Calling e persistência
+
+### Fase interna 5 — Confiabilidade e observabilidade
+
+### Fase interna 6 — Produção, integração e entrega
+
+### Fase adicional — Arquitetura hierárquica e Human-in-the-Loop
+
+## Panorama de evolução interna da INNA
+
+### Fase interna 1 — LangGraph e núcleo agentic
 
 Status: ✅ 100%
 
@@ -1467,7 +1483,9 @@ Concluído:
 - testes;
 - auditoria.
 
-### Semana 2 — RAG, memória e Context Engineering
+---
+
+### Fase interna 2 — RAG, memória e Context Engineering
 
 Status: ✅ 100%
 
@@ -1486,7 +1504,9 @@ Concluído:
 - privacidade;
 - testes.
 
-### Semana 3 — Supervisor e arquitetura multiagente
+---
+
+### Fase interna 3 — Supervisor e arquitetura multiagente
 
 Status: ✅ 100%
 
@@ -1508,7 +1528,9 @@ Concluído:
 - controle de orçamento;
 - auditoria.
 
-### Semana 4 — Tool Calling e persistência
+---
+
+### Fase interna 4 — Tool Calling e persistência
 
 Status: ✅ 100%
 
@@ -1532,7 +1554,9 @@ Concluído:
 - concorrência otimista;
 - Telegram persistente.
 
-### Semana 5 — Confiabilidade e observabilidade
+---
+
+### Fase interna 5 — Confiabilidade e observabilidade
 
 Status: ✅ 100%
 
@@ -1554,7 +1578,9 @@ Concluído:
 - CI de validação;
 - auditoria de cardinalidade.
 
-### Semana 6 — Produção, integração e entrega
+---
+
+### Fase interna 6 — Produção, integração e entrega
 
 Status: 🟡 Em evolução
 
@@ -1591,7 +1617,9 @@ Ainda falta:
 - documentação final de implantação;
 - demonstração final.
 
-### Semana adicional 1 — Arquitetura hierárquica e Human-in-the-Loop
+---
+
+### Fase adicional — Arquitetura hierárquica e Human-in-the-Loop
 
 Status: 🟡 Núcleo concluído
 
