@@ -1671,6 +1671,148 @@ Próxima evolução:
 - métricas;
 - testes end-to-end.
 
+---
+
+## Aplicação do Bootcamp 2026 — Engenharia de IA na INNA
+
+### Semana 1 — Agentes, fundamentos
+
+Status: ✅ Concluída
+
+Conteúdos estudados e aplicados:
+
+- fundamentos de agentes de IA;
+- uso de ferramentas por agentes;
+- Context Engineering;
+- saídas estruturadas;
+- estudo de SmolAgents;
+- estudo de LlamaIndex;
+- LangGraph;
+- integração com Gemini.
+
+Implementações na INNA:
+
+- núcleo agentic;
+- agentes especializados;
+- estado tipado;
+- roteamento por intenção;
+- ferramentas formais;
+- contexto estruturado;
+- respostas com contratos;
+- integração com o Gemini.
+
+---
+
+### Semana 2 — Agentes, multiagente e produção
+
+Status: ✅ Concluída
+
+Conteúdos estudados e aplicados:
+
+- LangGraph;
+- State Machines;
+- arquiteturas multiagentes;
+- supervisão;
+- handoffs;
+- persistência de estado;
+- checkpoints;
+- Human-in-the-Loop;
+- avaliação e observabilidade de agentes;
+- Arize Phoenix;
+- DeepEval.
+
+Implementações na INNA:
+
+- supervisor principal;
+- arquitetura multiagente;
+- Team Router;
+- supervisores especializados;
+- agentes por domínio;
+- Handoff Coordinator;
+- Task Completion;
+- governança da execução;
+- persistência por `thread_id`;
+- interrupção com `interrupt()`;
+- retomada com `Command(resume=...)`;
+- Phoenix e OpenTelemetry;
+- avaliação automatizada com DeepEval;
+- testes de arquitetura e regressão.
+
+---
+
+### Semana 3 — RAG, fundamentos e retrieval avançado
+
+Status: 🟡 Em finalização
+
+Conteúdos estudados e aplicados:
+
+- chunking;
+- embeddings;
+- busca textual;
+- busca vetorial;
+- busca híbrida;
+- reranking;
+- grounding;
+- Sentence-Window Retrieval;
+- Auto-Merging Retrieval;
+- RAG Triad;
+- Knowledge Graphs;
+- Neo4j;
+- Cypher;
+- GraphRAG;
+- análise de qualidade, custo e performance.
+
+Implementações concluídas na INNA:
+
+- RAG híbrido;
+- PostgreSQL e pgvector;
+- recuperação textual e vetorial;
+- reranking;
+- Sentence-Window Retrieval;
+- ativação controlada por feature flag;
+- comparação A/B entre baseline e Sentence-Window;
+- integração real com DeepEval;
+- executores para Answer Relevancy;
+- executores para Faithfulness;
+- executores para Contextual Relevancy;
+- Quality Gate;
+- relatórios JSON e Markdown;
+- histórico de experimentos;
+- proteção de respostas e contextos brutos;
+- controle de custo;
+- controle de latência;
+- limitador compartilhado da Gemini API;
+- tratamento e retentativa de erros HTTP 429;
+- 29 testes específicos aprovados.
+
+Pendências da Semana 3:
+
+- repetir o Smoke Test após a renovação da cota diária;
+- obter os seis scores válidos da RAG Triad;
+- executar o experimento com cinco perguntas;
+- decidir se Sentence-Window será promovido;
+- implementar Auto-Merging Retrieval;
+- comparar Auto-Merging com o RAG híbrido atual;
+- concluir a análise de Knowledge Graphs;
+- avaliar se Neo4j, Cypher ou GraphRAG trariam ganho real;
+- finalizar documentação e evidências.
+
+Situação atual:
+
+```text
+RAG_HIBRIDO=CONCLUIDO
+RERANKING=CONCLUIDO
+SENTENCE_WINDOW=IMPLEMENTADO
+SENTENCE_WINDOW_PRODUCAO=DESATIVADO
+RAG_TRIAD_ARQUITETURA=CONCLUIDA
+DEEPEVAL_EXECUTORS=CONCLUIDOS
+QUALITY_GATE=IMPLEMENTADO
+SMOKE_TEST_REAL=INCONCLUSIVO_POR_COTA_DIARIA
+AUTO_MERGING=PENDENTE
+KNOWLEDGE_GRAPH_ANALYSIS=PENDENTE
+SEMANA_3=EM_FINALIZACAO
+```
+
 --- 
 
 ## Desenvolvedores
