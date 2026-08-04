@@ -153,25 +153,6 @@ Histórico / PDF / Feedback / Telegram / Dashboard
 - observabilidade configurada;
 - RAG híbrido e memória integrados ao núcleo agentic.
 
-### Principais melhorias:
-
-```
-Gemini ativa
-→ Gemini validada
-
-diagnóstico funcionando
-→ diagnóstico operacional
-
-dashboard lendo dados reais
-→ dashboard integrado a dados reais
-
-observabilidade operacional
-→ observabilidade configurada
-
-RAG
-→ RAG híbrido
-```
-
 ---
 
 ## Problema
@@ -216,24 +197,6 @@ A aplicação oferece:
 - atendimento via Telegram;
 - alertas e observabilidade.
 
-### Principais melhorias:
-```
-"Minhas dívidas estão perigosas?"
-→ "Minhas dívidas representam um risco?"
-
-"plano de ação"
-→ "plano de ação educativo"
-
-"RAG"
-→ "RAG híbrido"
-
-"feedback"
-→ "registro de feedback"
-
-"dashboard"
-→ "dashboard analítico"
-```
-
 ---
 
 ## Diferenciais
@@ -277,24 +240,6 @@ O sistema:
 - registra rastreabilidade, métricas e eventos de auditoria.
 
 > Quando necessário, o sistema pode interromper uma execução para revisão humana e retomá-la a partir do checkpoint persistido, utilizando o mesmo `thread_id`.
-
-### As principais melhorias são:
-```
-Human-in-the-Loop persistente
-→ Human-in-the-Loop com persistência de estado
-
-resumo incremental
-→ resumo conversacional incremental
-
-Tool Calling
-→ Tool Calling formal
-
-busca vetorial
-→ busca textual e vetorial
-
-canais múltiplos
-→ múltiplos canais
-```
 
 ---
 
@@ -385,27 +330,6 @@ Regressões específicas também foram executadas para:
 - e-mail;
 - dashboard analítico;
 - API preparada para integração com outros frontends.
-
-### Principais melhorias:
-```
-reserva
-→ reserva financeira
-
-risco baixo, médio ou alto
-→ classificação de risco: baixo, médio ou alto
-
-plano de ação
-→ plano de ação personalizado
-
-resumo incremental
-→ resumo conversacional incremental
-
-persistência por thread
-→ persistência por thread_id
-
-dashboard
-→ dashboard analítico
-```
 
 ---
 
@@ -500,6 +424,8 @@ Governança de execução
   ↓
 Agente especializado
   ↓
+Ferramentas formais / RAG híbrido / Memória
+  ↓
 Task Completion
   ↓
 Human Review Policy
@@ -509,12 +435,11 @@ Human Review Policy
        ├─ correct → Team Router
        └─ reject/cancel → Conversation Summary
   ↓
-Ferramentas / RAG / Memória
+Resumo conversacional
   ↓
-Persistência
+Checkpoint e persistência por thread_id
   ↓
-Resposta
-```
+Resposta ao usuário
 
 ---
 
@@ -550,7 +475,44 @@ conversation_summary
   ↓
 END
 ```
+
 ---
+
+## Arquitetura multiagente
+
+### Fluxo do LangGraph
+```
+START
+  ↓
+context_builder
+  ↓
+supervisor
+  ↓
+team_router
+  ↓
+team_supervisor
+  ↓
+execution_governance
+  ↓
+agente especializado
+  ↓
+tool_calling / rag / memory
+  ↓
+task_completion
+  ↓
+human_review_policy
+  ├─ sem revisão → handoff_coordinator
+  └─ revisão necessária → human_review_interrupt
+       ├─ approve → handoff_coordinator
+       ├─ correct → team_router
+       └─ reject/cancel → conversation_summary
+  ↓
+conversation_summary
+  ↓
+checkpoint_persistence
+  ↓
+END
+```
 
 ---
 
@@ -621,9 +583,9 @@ A implementação possui:
 - proteção contra retomada em thread incorreta.
 
 ---
----
-
 ## Componentes concluídos
+
+### Núcleo agentic e arquitetura
 
 - estado tipado;
 - Context Engineering;
@@ -632,182 +594,182 @@ A implementação possui:
 - arquitetura multiagente;
 - arquitetura hierárquica de equipes;
 - Team Router;
-- supervisor financeiro;
-- supervisor de conhecimento;
-- supervisor de suporte;
+- supervisores financeiro, de conhecimento e de suporte;
 - seleção por intenção;
 - roteamento entre equipes;
 - regras determinísticas;
-- Gemini complementar;
-- agente financeiro;
-- agente educacional;
-- agente RAG;
-- agente de relatório;
-- agente fallback;
+- Gemini como componente complementar;
+- agentes financeiro, educacional, RAG, de relatório e fallback;
 - revisor de risco;
 - governança de execução;
 - Handoff Coordinator;
-- Task Completion;
+- Task Completion.
+
+### Human-in-the-Loop
+
 - política de revisão humana;
 - Human Review Interrupt;
 - interrupção persistente com `interrupt()`;
 - retomada com `Command(resume=...)`;
-- isolamento de checkpoint por `thread_id`;
+- checkpoint por `thread_id`;
+- isolamento entre threads;
 - aprovação, correção, rejeição e cancelamento;
-- compatibilidade com o fluxo anterior;
 - Human-in-the-Loop desabilitado por padrão;
 - ativação por `human_review_enabled=True`;
+- proteção contra retomada em uma thread incorreta;
+- proteção contra retomada duplicada;
+- compatibilidade com o fluxo anterior.
+
+### Segurança e controle de execução
+
 - limite de passos;
 - limite de visitas;
 - detecção de loops;
 - bloqueio por orçamento;
 - histórico de rotas;
-- trace;
-- checkpoint;
-- retomada por `thread_id`;
-- persistência de estado;
+- rastreabilidade de execução;
+- auditoria do fluxo;
+- compatibilidade regressiva.
+
+### Integrações principais
+
 - memória conversacional;
 - resumo conversacional incremental;
-- integração com RAG;
-- integração com Tool Calling;
+- RAG híbrido;
+- Tool Calling formal;
+- persistência de estado;
+- PostgreSQL;
+- Neon;
+- pgvector.
+
+### Evidências técnicas
+
 - testes unitários;
 - testes de integração;
 - testes reais com `MemorySaver`;
-- isolamento entre threads;
-- proteção contra retomada na thread incorreta;
-- auditoria do fluxo;
-- compatibilidade regressiva;
 - Pull Request revisado e mesclado;
-- 2418 testes aprovados;
-- 1 teste ignorado;
-- 0 falhas.
+- regressão automatizada mais recente:
 
----
+```text
+3649 passed
+3 skipped
+0 failed
+```
 
-## RAG, memória e Context Engineering
-### RAG
-- busca vetorial;
-- busca textual;
-- recuperação híbrida;
-- reranking;
-- pgvector;
-- versionamento documental;
-- hash SHA-256;
-- bloqueio de duplicidade;
-- relação entre versões;
-- validação de tipo;
-- validação de tamanho;
-- validação UTF-8;
-- bloqueio de documento vazio;
-- proteção contra prompt injection;
-- documento e chunk IDs;
-- scores;
-- trace_id;
-- retrieval_trace;
-- persistência JSONB;
-- integração com API e agentes.
+### RAG, memória e Context Engineering
+
+#### RAG híbrido
+
+busca textual;
+busca vetorial;
+recuperação híbrida;
+fusão e reranking dos resultados;
+PostgreSQL com pgvector;
+versionamento documental;
+hash SHA-256;
+bloqueio de duplicidade;
+relacionamento entre versões;
+validação de tipo, tamanho e codificação UTF-8;
+bloqueio de documentos vazios;
+proteção contra prompt injection;
+identificação de documentos e chunks;
+scores de recuperação;
+trace_id;
+retrieval_trace;
+persistência em JSONB;
+integração com API, agentes e Tool Calling.
 
 ### Memória
-- memória por usuário;
-- memória semântica financeira;
-- recuperação de renda e gastos;
-- prioridade para fatos mais novos;
-- preservação de fatos anteriores;
-- isolamento por usuário;
-- isolamento por thread;
-- eventos de evolução;
-- rastreabilidade;
-- proteção contra fatos inventados.
+memória por usuário;
+memória semântica financeira;
+recuperação de renda, gastos e informações relevantes;
+prioridade para fatos mais recentes;
+preservação de fatos anteriores relevantes;
+isolamento por usuário;
+isolamento por thread_id;
+eventos de evolução;
+rastreabilidade;
+proteção contra fatos inventados.
 
 ### Resumo conversacional incremental
-- criado automaticamente;
-- atualizado a cada conversa relevante;
-- versionado;
-- persistido pelo checkpoint;
-- limitado por tokens;
-- sanitizado;
-- sem duplicação de ações;
-- sem transformar mensagens do assistente em fatos pessoais;
-- integrado ao Context Engineering.
+criação automática;
+atualização após conversas relevantes;
+versionamento;
+persistência por checkpoint;
+controle de tamanho por tokens;
+sanitização;
+prevenção de duplicação de ações;
+proteção contra transformar respostas do assistente em fatos pessoais;
+integração com Context Engineering.
 
----
-
-## Tool Calling e persistência
-
-### Tool Calling
-
-- Tool Registry;
-- contratos Pydantic;
-- executor formal;
-- permissões;
-- validação de argumentos;
-- contexto de execução;
-- resultados estruturados;
-- erros estruturados;
-- RAG como ferramenta;
-- diagnóstico financeiro;
-- histórico financeiro;
-- integração com os agentes;
-- controle de acesso por ferramenta;
-- tratamento padronizado de falhas;
-- rastreabilidade das execuções;
-- integração com o supervisor;
-- integração com a governança de execução;
-- compatibilidade com agentes especializados.
+### Tool Calling e persistência
+#### Tool Calling formal
+Tool Registry;
+contratos Pydantic;
+executor formal;
+permissões por ferramenta;
+validação de argumentos;
+contexto estruturado de execução;
+resultados estruturados;
+erros estruturados;
+RAG como ferramenta;
+diagnóstico financeiro;
+consulta ao histórico financeiro;
+integração com agentes especializados;
+controle de acesso;
+tratamento padronizado de falhas;
+rastreabilidade das execuções;
+integração com supervisor e governança de execução.
 
 ### Persistência
-
-- PostgreSQL;
-- Neon;
-- pgvector;
-- JSONB;
-- checkpoint;
-- thread;
-- histórico;
-- memória;
-- Telegram;
-- filas;
-- receipts;
-- idempotência;
-- replay protection;
-- worker recuperável;
-- concorrência otimista;
-- checkpoint de revisão humana;
-- retomada de execução interrompida;
-- isolamento de revisão por thread;
-- proteção contra retomada na thread incorreta;
-- rastreabilidade das decisões humanas;
-- persistência do estado interrompido;
-- recuperação pelo mesmo `thread_id`;
-- compatibilidade com `Command(resume=...)`;
-- proteção contra retomada duplicada;
-- continuidade segura após aprovação;
-- retorno ao roteamento após correção;
-- encerramento controlado após rejeição ou cancelamento;
-- auditoria de decisões humanas;
-- eventos auditáveis.
+PostgreSQL;
+Neon;
+pgvector;
+JSONB;
+checkpoints;
+thread_id;
+histórico;
+memória;
+Telegram;
+filas persistentes;
+receipts;
+idempotência;
+proteção contra replay;
+worker recuperável;
+concorrência otimista;
+persistência de revisões humanas;
+recuperação de execução interrompida;
+isolamento de revisão por thread_id;
+rastreabilidade das decisões humanas;
+continuidade segura após aprovação;
+retorno ao roteamento após correção;
+encerramento controlado após rejeição ou cancelamento;
+eventos auditáveis.
 
 ---
 
 ## Telegram multilíngue
 
-A INNA também funciona pelo Telegram por meio de webhook integrado à FastAPI.
+A INNA também oferece atendimento pelo Telegram por meio de um webhook integrado à FastAPI.
 
 ### Funcionalidades
+
 - atendimento guiado;
 - seleção de idioma;
-- moedas por região;
-- diagnóstico persistido;
+- definição de moeda por região;
+- diagnóstico financeiro persistido;
 - resumo da resposta;
-- plano completo disponível nos outros canais;
-- comandos /start, /idioma, /help e /cancelar;
-- fila e worker;
-- estado persistido;
+- plano completo disponível nos demais canais;
+- comandos `/start`, `/idioma`, `/help` e `/cancelar`;
+- fila persistente;
+- worker de processamento;
+- estado da conversa persistido;
 - recuperação após falhas;
-- métricas;
-- dashboard operacional.
+- métricas operacionais;
+- dashboard de acompanhamento.
 
 ### Idiomas e moedas
+
 - Português Brasil — BRL;
 - English US — USD;
 - English UK — GBP;
@@ -821,10 +783,9 @@ A INNA também funciona pelo Telegram por meio de webhook integrado à FastAPI.
 - Українська — UAH;
 - Schweiz — CHF.
 
----
-
 ### Arquitetura do Telegram
-```
+
+```text
 Telegram
   ↓
 Webhook FastAPI
@@ -835,18 +796,16 @@ Worker
   ↓
 LangGraph
   ↓
-Ferramentas / Gemini / RAG
+Ferramentas formais / Gemini / RAG híbrido
   ↓
 PostgreSQL / Neon
   ↓
-Resposta / Dashboard / PDF
+Resposta ao usuário / Dashboard / Relatório PDF
 ```
-
-Endpoint:
-```
+### Endpoint
+```http
 POST /telegram/webhook
 ```
-
 ---
 
 ## Observabilidade
@@ -854,7 +813,7 @@ POST /telegram/webhook
 A INNA possui uma camada de observabilidade para acompanhar:
 
 - custos;
-- tokens;
+- consumo de tokens;
 - latência;
 - erros;
 - disponibilidade;
@@ -862,43 +821,45 @@ A INNA possui uma camada de observabilidade para acompanhar:
 - worker;
 - Telegram;
 - filas;
-- conflitos;
-- recuperação;
+- conflitos de concorrência;
+- recuperação após falhas;
 - entrega de e-mails;
 - saúde das integrações.
 
 ### Componentes
+
 - logs estruturados;
-- sanitização;
+- sanitização de dados sensíveis;
 - Prometheus;
 - OpenMetrics;
 - Grafana;
-- health;
-- readiness;
+- health checks;
+- readiness checks;
 - recording rules;
 - alert rules;
 - SLO;
 - error budget;
 - burn rate;
 - runbooks;
-- dashboard Grafana;
+- dashboard no Grafana;
 - auditoria de cardinalidade;
 - métricas de LLM;
 - alertas por severidade;
 - Resend;
 - Svix;
 - webhook assinado;
-- reenvio seguro;
+- reenvio controlado;
 - auditoria das notificações.
 
 ### Fluxo de alertas
+
 ```mermaid
 flowchart LR
-    A[Telemetria LLM] --> B[Avaliação dos limites]
-    B --> C[Alerta no PostgreSQL]
+    A[Telemetria de LLM] --> B[Avaliação dos limites]
+    B --> C[Alerta persistido no PostgreSQL]
     C --> D[Envio pelo Resend]
     D --> E[Webhook assinado]
-    E --> F[FastAPI valida]
+    E --> F[Validação pela FastAPI]
     F --> G[Evento persistido]
     G --> H[Status atualizado]
     H --> I[Dashboard]
@@ -917,51 +878,51 @@ email.opened
 email.clicked
 ```
 
-Endpoint:
-```
+### Endpoint
+```http
 POST /webhooks/resend
 ```
 
 ### Proteções
-
-- assinatura criptográfica;
-- idempotência;
-- proteção contra replay;
-- eventos fora de ordem;
-- preservação do status entregue;
-- máximo de tentativas;
-- bloqueio de reenvio indevido;
-- destinatário mascarado;
-- segredos fora do código.
-
+```
+assinatura criptográfica;
+idempotência;
+proteção contra replay;
+tratamento de eventos fora de ordem;
+preservação do status de entrega;
+limite máximo de tentativas;
+bloqueio de reenvio indevido;
+mascaramento de destinatários;
+segredos mantidos fora do código.
+```
 ---
 
 ## Banco de dados
 
-A INNA utiliza PostgreSQL localmente e Neon em produção.
+A INNA utiliza PostgreSQL no ambiente local e Neon PostgreSQL nos ambientes em nuvem.
 
 ### Dados persistidos
 
-- diagnósticos;
+- diagnósticos financeiros;
 - feedbacks;
-- histórico;
-- usuários;
-- memória;
-- checkpoints;
+- histórico de usuários;
+- memória conversacional e financeira;
+- checkpoints do LangGraph;
 - documentos;
 - chunks;
 - embeddings;
-- traces;
-- Telegram;
-- filas;
+- traces de recuperação;
+- dados do Telegram;
+- filas persistentes;
 - receipts;
 - alertas;
 - notificações;
 - eventos do Resend;
-- observabilidade.
+- dados de observabilidade.
 
 ### Tabelas principais conhecidas
-```
+
+```text
 diagnosticos_financeiros
 feedbacks_usuarios
 llm_alerts_inna
@@ -969,7 +930,7 @@ llm_alert_notifications_inna
 resend_webhook_events_inna
 ```
 
-Outras tabelas relacionadas a memória, RAG, filas, Telegram e checkpoint podem ser consultadas diretamente em:
+Outras tabelas relacionadas a memória, RAG, filas, Telegram, checkpoints e observabilidade podem ser consultadas diretamente em:
 
 - src/database/
 - src/models/
@@ -979,54 +940,55 @@ Outras tabelas relacionadas a memória, RAG, filas, Telegram e checkpoint podem 
 
 ## Dashboard analítico
 
-O dashboard utiliza dados reais do PostgreSQL/Neon.
+O dashboard utiliza dados reais persistidos no PostgreSQL/Neon.
 
-### Indicadores
+### Indicadores financeiros e de uso
+
 - total de diagnósticos;
-- usuários únicos;
-- score médio;
-- saldo médio;
-- feedback útil;
-- risco;
-- evolução de score;
-- evolução de saldo;
-- ranking;
-- últimos diagnósticos;
-- últimos feedbacks;
-- leitura executiva;
-- filtros;
-- exportação CSV.
+- total de usuários únicos;
+- score financeiro médio;
+- saldo mensal médio;
+- taxa de feedback útil;
+- distribuição por nível de risco;
+- evolução do score financeiro;
+- evolução do saldo mensal;
+- ranking de usuários ou diagnósticos;
+- diagnósticos mais recentes;
+- feedbacks mais recentes;
+- leitura executiva dos indicadores;
+- filtros por período e categoria;
+- exportação em CSV.
 
-### Observabilidade
+### Observabilidade operacional
 
-O dashboard profissional também apresenta:
+O dashboard também apresenta:
 
 - custos de LLM;
-- projeção mensal;
-- uso de orçamento;
+- projeção mensal de custos;
+- percentual de uso do orçamento;
 - consumo por modelo;
 - consumo por operação;
-- alertas;
+- alertas ativos;
 - notificações;
-- taxa de entrega;
+- taxa de entrega de e-mails;
 - eventos de webhook;
 - saúde do PostgreSQL;
-- saúde do Resend;
-- saúde do webhook;
-- falhas nas últimas 24 horas;
-- reenvio controlado.
+- saúde da integração com Resend;
+- saúde dos webhooks;
+- falhas registradas nas últimas 24 horas;
+- reenvio controlado de notificações.
 
 ---
 
 ## API
 
-Swagger:
-```
-https://inna-api.onrender.com/docs
-```
+### Documentação Swagger
 
-Endpoints principais
-```
+[https://inna-api.onrender.com/docs](https://inna-api.onrender.com/docs)
+
+### Endpoints principais
+
+```http
 GET  /
 GET  /health
 POST /diagnostico
@@ -1038,36 +1000,38 @@ GET  /diagnosticos/usuario/{nome}
 POST /telegram/webhook
 POST /webhooks/resend
 ```
-Como a API evolui continuamente, utilize o Swagger como fonte principal para schemas, parâmetros e respostas atualizadas.
+
+Como a API evolui continuamente, utilize o Swagger como fonte principal para consultar schemas, parâmetros, códigos de resposta e exemplos atualizados
 
 ---
 
 ## Estrutura do repositório
-```
+
+```text
 INNA-Financial-Coach-AI/
 ├── .streamlit/               # Configurações do Streamlit
 ├── api/                      # FastAPI, schemas, rotas e webhooks
-├── assets/                   # Imagens e recursos
+├── assets/                   # Imagens e recursos visuais
 ├── data/                     # Dados locais e arquivos de apoio
 ├── docs/                     # Documentação técnica
-│   ├── audits/               # Auditorias profissionais
+│   ├── audits/               # Auditorias técnicas
 │   └── prints/               # Evidências visuais
 ├── reports/                  # Relatórios e saídas de auditoria
-├── scripts/                  # Scripts operacionais
+├── scripts/                  # Scripts operacionais e de validação
 ├── src/
-│   ├── agents/               # LangGraph, agentes, supervisor e governança
-│   ├── channels/             # Telegram e canais
+│   ├── agents/               # LangGraph, agentes, supervisão e governança
+│   ├── channels/             # Telegram e outros canais
 │   ├── dashboard_pages/      # Páginas do dashboard
-│   ├── database/             # Persistência
-│   ├── models/               # Modelos
-│   ├── observability/        # Métricas, alertas e saúde
+│   ├── database/             # Persistência e acesso ao banco de dados
+│   ├── models/               # Modelos e contratos de dados
+│   ├── observability/        # Métricas, alertas e health checks
 │   ├── services/             # Memória, RAG, filas e integrações
-│   ├── tools/                # Tool Calling
+│   ├── tools/                # Tool Calling formal
 │   ├── utils/                # Utilitários
-│   ├── app.py                # App Streamlit
-│   └── dashboard.py          # Dashboard
+│   ├── app.py                # Aplicação principal em Streamlit
+│   └── dashboard.py          # Dashboard analítico
 ├── tests/                    # Testes automatizados
-├── .env.example
+├── .env.example              # Exemplo de configuração do ambiente
 ├── .gitignore
 ├── Procfile.api
 ├── Procfile.streamlit
@@ -1082,8 +1046,8 @@ INNA-Financial-Coach-AI/
 | Interesse | Pasta |
 |---|---|
 | Entender a API | [`api/`](api/) |
-| Ver a arquitetura de agentes e o Human-in-the-Loop | [`src/agents/`](src/agents/) |
-| Ver o RAG, a memória e os serviços | [`src/services/`](src/services/) |
+| Ver agentes, LangGraph e Human-in-the-Loop | [`src/agents/`](src/agents/) |
+| Ver RAG, memória e serviços | [`src/services/`](src/services/) |
 | Ver Tool Calling | [`src/tools/`](src/tools/) |
 | Ver Telegram e outros canais | [`src/channels/`](src/channels/) |
 | Ver persistência e banco de dados | [`src/database/`](src/database/) |
@@ -1095,21 +1059,6 @@ INNA-Financial-Coach-AI/
 | Ver evidências visuais | [`docs/prints/`](docs/prints/) |
 | Ver scripts operacionais | [`scripts/`](scripts/) |
 | Ver relatórios | [`reports/`](reports/) |
-
-
-### Documentação recomendada por módulo
-
-Para melhorar a navegação e a experiência no GitHub, o projeto poderá incluir arquivos `README.md` específicos em cada área:
-
-- [`docs/README.md`](docs/README.md)
-- [`docs/audits/README.md`](docs/audits/README.md)
-- [`scripts/README.md`](scripts/README.md)
-- [`reports/README.md`](reports/README.md)
-- [`tests/README.md`](tests/README.md)
-- [`src/agents/README.md`](src/agents/README.md)
-- [`src/services/README.md`](src/services/README.md)
-- [`src/observability/README.md`](src/observability/README.md)
-- [`src/tools/README.md`](src/tools/README.md)
 
 ---
 
@@ -1129,20 +1078,20 @@ Para melhorar a navegação e a experiência no GitHub, o projeto poderá inclui
 - arquitetura hierárquica de equipes;
 - Human-in-the-Loop;
 - Context Engineering;
-- Tool Calling;
-- checkpoint e retomada por `thread_id`.
+- Tool Calling formal;
+- checkpoints e retomada por `thread_id`.
 
 ### RAG, memória e dados
 
 - PostgreSQL;
-- Neon;
+- Neon PostgreSQL;
 - pgvector;
 - JSONB;
 - embeddings;
 - busca textual;
 - busca vetorial;
 - busca híbrida;
-- reranking;
+- fusão e reranking;
 - memória semântica;
 - memória financeira;
 - resumo conversacional incremental;
@@ -1151,7 +1100,7 @@ Para melhorar a navegação e a experiência no GitHub, o projeto poderá inclui
 ### Interfaces e canais
 
 - Streamlit;
-- FastAPI Swagger;
+- FastAPI com Swagger;
 - Pandas;
 - ReportLab;
 - Telegram Bot API;
@@ -1164,10 +1113,12 @@ Para melhorar a navegação e a experiência no GitHub, o projeto poderá inclui
 - Prometheus;
 - OpenMetrics;
 - Grafana;
+- OpenTelemetry;
+- Arize Phoenix;
 - logs estruturados;
 - métricas de LLM;
-- health check;
-- readiness;
+- health checks;
+- readiness checks;
 - SLO;
 - alertas;
 - Resend;
@@ -1177,13 +1128,13 @@ Para melhorar a navegação e a experiência no GitHub, o projeto poderá inclui
 ### Persistência e processamento
 
 - PostgreSQL;
-- Neon;
+- Neon PostgreSQL;
 - pgvector;
 - checkpoints;
 - filas persistentes;
 - receipts;
 - idempotência;
-- replay protection;
+- proteção contra replay;
 - worker recuperável;
 - concorrência otimista.
 
@@ -1196,9 +1147,12 @@ Para melhorar a navegação e a experiência no GitHub, o projeto poderá inclui
 - variáveis de ambiente;
 - serviços separados para API, Streamlit e dashboard.
 
-### Qualidade e testes
+### Qualidade, avaliação e testes
 
 - pytest;
+- Ruff;
+- DeepEval;
+- RAG Triad;
 - testes unitários;
 - testes estruturais;
 - testes de integração;
@@ -1206,59 +1160,70 @@ Para melhorar a navegação e a experiência no GitHub, o projeto poderá inclui
 - testes reais com `MemorySaver`;
 - testes de arquitetura e topologia;
 - auditorias técnicas;
-- validação com `git diff --check`;
-- 2418 testes aprovados;
-- 1 teste ignorado;
-- 0 falhas.
+- validação com `git diff --check`.
 
-### Próximas tecnologias planejadas
+### Validação automatizada mais recente
 
+```text
+3649 passed
+3 skipped
+0 failed
+```
+
+> Os testes ignorados dependem da ativação explícita de integrações reais, como Gemini, avaliação live e Human-in-the-Loop E2E.
+
+### Próximas tecnologias e melhorias planejadas
 - Docker;
 - Docker Compose;
-- Ruff;
 - mypy;
 - Bandit;
 - pip-audit;
 - pytest-cov;
 - GitHub Actions;
-- OpenTelemetry;
-- tracing distribuído;
+- tracing distribuído completo;
 - testes de carga;
-- CI/CD.
+- CI/CD completo.
 
 ---
 
 ## Instalação local
-1. Clonar
-```
+
+### 1. Clonar o repositório
+
+```bash
 git clone https://github.com/Rogerio5/INNA-Financial-Coach-AI.git
 cd INNA-Financial-Coach-AI
 ```
-2. Criar o ambiente virtual
-```
+
+### 2. Criar o ambiente virtual
+```bash
 python -m venv .venv
 ```
-3. Ativar no Windows
-```
+### 3. Ativar o ambiente virtual no Windows PowerShell
+```PowerShell
 .\.venv\Scripts\Activate.ps1
 ```
-4. Atualizar o pip
-```
+### 4. Atualizar o pip
+```PowerShell
 python -m pip install --upgrade pip
 ```
-5. Instalar dependências
-```
+### 5. Instalar dependências
+```PowerShell
 pip install -r requirements.txt
 ```
 
 ---
-
 ## Configuração do ambiente
 
-Crie .env a partir de .env.example.
+Crie o arquivo `.env` com base no exemplo fornecido em `.env.example`.
 
-### Exemplo resumido:
+No Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
 ```
+### Exemplo resumido
+```env
 APP_NAME=inna-financial-coach-ai
 APP_ENV=development
 
@@ -1284,7 +1249,7 @@ LLM_ALERT_EMAIL_TO=
 
 LOG_LEVEL=INFO
 ```
-Nunca envie chaves reais para o GitHub.
+> Nunca envie chaves, tokens, senhas ou URLs privadas para o GitHub. O arquivo .env deve permanecer fora do versionamento.
 
 ---
 
