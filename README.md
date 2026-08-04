@@ -1254,126 +1254,164 @@ LOG_LEVEL=INFO
 ---
 
 ## Execução local
+
+Execute cada serviço em um terminal separado, com o ambiente virtual ativado.
+
 ### API
-```
+```powershell
 python -m uvicorn api.main:app --reload --port 8000
 ```
-### Acesse:
+### Acessos da API
+Swagger: http://127.0.0.1:8000/docs/
+Health Check: http://127.0.0.1:8000/health/
+
+### Aplicação Streamlit
+```powershell
+python -m streamlit run src/app.py --server.port 8504
 ```
-http://127.0.0.1:8000/docs
-http://127.0.0.1:8000/health
+### Dashboard analítico
+```powershell
+python -m streamlit run src/dashboard.py --server.port 8505
 ```
-### Streamlit
+### Executar em modo mock
+No Windows PowerShell:
+```powershell
+$env:INNA_MOCK_MODE = "true"
+python -m streamlit run src/app.py --server.port 8504
 ```
-streamlit run src/app.py --server.port 8504
-```
-### Dashboard
-```
-streamlit run src/dashboard.py --server.port 8505
-```
-### Modo mock
-```
-INNA_MOCK_MODE=true
-```
-### Gemini real
-```
+### Executar com Gemini real
+Configure a chave no arquivo .env:
+```env
 INNA_MOCK_MODE=false
 GEMINI_API_KEY=sua_chave
 ```
+Depois execute a aplicação normalmente:
+```powershell
+python -m streamlit run src/app.py --server.port 8504
+```
+> Nunca coloque uma chave real diretamente no README ou em arquivos versionados.
+
 
 ---
 
 ## Testes
+
 ### Suíte completa
-```
+
+```powershell
 python -m pytest -q
 ```
-### Resultado mais recente:
+### Resultado mais recente
 ```
-2028 passed, 1 skipped
+3649 passed
+3 skipped
+0 failed
 ```
+> Os testes ignorados dependem da ativação explícita de integrações reais, como Gemini, avaliação live e Human-in-the-Loop E2E
+
 ### Testes unitários
-```
+```powershell
 python -m pytest tests\unit -q
 ```
 ### Verificações básicas
-```
+```powershell
 python -m py_compile api\main.py
 python -m pip check
 git diff --check
 ```
-### Testes específicos
+### Áreas cobertas pela suíte
+```
+A suíte automatizada possui testes para:
 
-A suíte possui testes para:
-
-- motor financeiro;
-- API;
-- LangGraph;
-- supervisor;
-- agentes;
-- memória;
-- resumo incremental;
-- RAG;
-- retrieval trace;
-- tools;
-- persistência;
-- Telegram;
-- filas;
-- observabilidade;
-- alertas;
-- webhooks;
-- segurança;
-- topologia;
-- regressão.
+motor financeiro;
+API FastAPI;
+LangGraph;
+supervisor;
+agentes especializados;
+arquitetura multiagente;
+memória;
+resumo conversacional incremental;
+Context Engineering;
+RAG híbrido;
+retrieval trace;
+Tool Calling;
+persistência;
+checkpoints;
+Human-in-the-Loop;
+Telegram;
+filas e workers;
+observabilidade;
+alertas;
+webhooks;
+segurança;
+topologia do grafo;
+testes de regressão.
+```
 
 ---
 
 ## Deploy
+
+A aplicação está publicada no Render em serviços separados e utiliza Neon PostgreSQL como banco de dados em nuvem.
+
 ### Serviços
-```
+
+```text
 inna-api
 inna-app-streamlit
 inna-dashboard-streamlit
 ```
 ### FastAPI
-```
+```bash
 python -m uvicorn api.main:app --host 0.0.0.0 --port $PORT
 ```
 ### Streamlit
-```
-streamlit run src/app.py --server.port $PORT --server.address 0.0.0.0
+```bash
+python -m streamlit run src/app.py --server.port $PORT --server.address 0.0.0.0
 ```
 ### Dashboard
+```bash
+python -m streamlit run src/dashboard.py --server.port $PORT --server.address 0.0.0.0
 ```
-streamlit run src/dashboard.py --server.port $PORT --server.address 0.0.0.0
+### Documentação de deploy
+Consulte a documentação específica em:
 ```
-Consulte:
-
 Deploy Render + Neon/
+```
 
 ---
 
 ## Documentação técnica
+
 ### Produto
-- Validação do Produto
-- Roadmap
-- Arquitetura geral
-- Pitch
+
+- validação do produto;
+- roadmap;
+- arquitetura geral;
+- pitch.
+
 ### RAG e memória
-- Arquitetura RAG
-- Status atual do RAG
-- Roadmap RAG
-- RAG híbrido
-- Reranking
-- Testes RAG
-- Upload de documentos
-- Memória por usuário
-- Agentic RAG
+
+- arquitetura RAG;
+- status atual do RAG;
+- roadmap RAG;
+- RAG híbrido;
+- reranking;
+- testes de RAG;
+- upload de documentos;
+- memória por usuário;
+- Agentic RAG.
+
 ### Segurança
-- Segurança Financeira
-- Diretrizes da INNA
+
+- segurança financeira;
+- diretrizes da INNA.
+
 ### Auditorias
-- docs/audits/
+
+- [`docs/audits/`](docs/audits/).
+
+> Os links específicos devem ser adicionados conforme os documentos forem organizados e versionados no repositório.
 
 ---
 
@@ -1383,29 +1421,30 @@ A INNA:
 
 - não recomenda compra ou venda de ativos;
 - não promete rentabilidade;
-- não substitui consultores certificados;
+- não substitui consultoria financeira profissional;
 - não solicita senhas;
-- não toma decisões pelo usuário;
-- não deve ser a única fonte para decisões financeiras;
+- não toma decisões financeiras pelo usuário;
+- não deve ser utilizada como única fonte para decisões financeiras;
 - utiliza linguagem educativa;
 - protege dados sensíveis;
 - mantém segredos fora do repositório;
-- valida documentos;
-- protege contra prompt injection;
-- usa permissões nas ferramentas;
+- valida documentos antes do processamento;
+- possui proteção contra prompt injection;
+- utiliza permissões nas ferramentas;
 - audita operações críticas;
-- evita salvar prompts completos em telemetria.
+- evita armazenar prompts e respostas completas na telemetria.
 
 ### Evidências visuais
-- App online
-- Diagnóstico online
-- Relatório PDF
-- Histórico
-- Swagger
-- Dashboard
-- Dashboard com dados
-- Serviços Render
-- Dados no Neon
+
+- aplicação online;
+- diagnóstico financeiro;
+- relatório PDF;
+- histórico individual;
+- documentação Swagger;
+- dashboard analítico;
+- dashboard com dados reais;
+- serviços publicados no Render;
+- dados persistidos no Neon.
 
   ---
 
@@ -1413,17 +1452,22 @@ A INNA:
 
 ### Concluído
 
+#### Produto e canais
+
 - Streamlit;
 - FastAPI;
 - PostgreSQL;
-- Neon;
+- Neon PostgreSQL;
 - Render;
-- Gemini;
-- PDF;
-- histórico;
-- feedback;
-- dashboard;
-- Telegram;
+- Google Gemini;
+- relatório PDF;
+- histórico individual;
+- feedback persistido;
+- dashboard analítico;
+- Telegram.
+
+#### Arquitetura agentic
+
 - LangGraph;
 - supervisor principal;
 - arquitetura multiagente;
@@ -1440,74 +1484,113 @@ A INNA:
 - revisor de risco;
 - governança de execução;
 - Handoff Coordinator;
-- Task Completion;
-- Human-in-the-Loop;
+- Task Completion.
+
+#### Human-in-the-Loop
+
 - política de revisão humana;
 - Human Review Interrupt;
 - interrupção persistente com `interrupt()`;
 - retomada com `Command(resume=...)`;
 - checkpoint por `thread_id`;
-- aprovação, correção, rejeição e cancelamento;
-- Tool Calling;
+- decisões de aprovação, correção, rejeição e cancelamento;
+- isolamento entre threads;
+- proteção contra retomada incorreta.
+
+#### RAG, memória e ferramentas
+
+- Tool Calling formal;
 - RAG híbrido;
+- busca textual e vetorial;
 - reranking;
 - versionamento documental;
-- memória;
-- resumo incremental;
+- memória por usuário;
+- memória financeira;
+- resumo conversacional incremental;
+- Context Engineering;
+- Sentence-Window Retrieval;
+- comparação A/B;
+- RAG Triad;
+- DeepEval;
+- Quality Gate.
+
+#### Observabilidade e qualidade
+
 - Prometheus;
+- OpenMetrics;
 - Grafana;
+- OpenTelemetry;
+- Arize Phoenix;
+- logs estruturados;
+- métricas de LLM;
 - alertas;
 - SLO;
 - auditorias;
+- Ruff;
 - testes unitários;
 - testes de integração;
 - testes reais com `MemorySaver`;
-- testes extensos;
-- 2418 testes aprovados;
-- 1 teste ignorado;
-- 0 falhas.
+- testes de regressão.
 
----
+### Validação automatizada mais recente
+
+```text
+3649 passed
+3 skipped
+0 failed
+```
+> Os testes ignorados dependem da ativação explícita de integrações reais, como Gemini, avaliação live e Human-in-the-Loop E2E.
 
 ### Próximas prioridades
+#### Finalização da Semana 3 — Retrieval avançado
 
-#### Human-in-the-Loop em produção
+- executar as quatro perguntas reais restantes;
+- consolidar o experimento com cinco perguntas;
+- avaliar qualidade, custo, latência e tamanho do contexto;
+- decidir sobre a ativação do Sentence-Window;
+- implementar Auto-Merging Retrieval;
+- comparar Auto-Merging com o RAG híbrido atual;
+- finalizar o Quality Gate consolidado;
+- documentar os resultados e limitações;
+- avaliar Knowledge Graph, Neo4j, Cypher e GraphRAG somente se houver ganho comprovado.
+
+#### Human-in-the-Loop administrativo em produção
 
 - tabela PostgreSQL de revisões humanas;
-- repository do Human-in-the-Loop;
-- service layer de revisão;
-- endpoints FastAPI para revisões;
+- repository de revisões;
+- service layer;
+- endpoints FastAPI;
 - fila de revisões pendentes;
-- painel administrativo de revisões;
+- painel administrativo;
 - autenticação e autorização de revisores;
-- controle de concorrência entre revisores;
+- controle de concorrência;
 - idempotência das decisões;
-- expiração de revisões pendentes;
-- auditoria das decisões humanas;
-- métricas do fluxo HITL;
-- testes end-to-end do fluxo de revisão.
+- expiração de revisões;
+- auditoria operacional;
+- métricas do fluxo;
+- testes end-to-end.
 
-#### Containerização e qualidade
+#### Containerização e segurança
 
 - Docker da API;
 - Docker do worker;
 - Docker do Streamlit;
 - Docker Compose;
-- Ruff;
 - mypy;
 - Bandit;
 - pip-audit;
 - pytest-cov;
+- build e scan de imagens;
 - CI de qualidade;
-- CI de segurança;
-- build e scan de imagens.
+- CI de segurança.
 
 #### Observabilidade e entrega
 
-- testes E2E integrais;
-- OpenTelemetry;
-- tracing distribuído;
+- tracing distribuído completo;
+- correlação de traces entre API, agentes, ferramentas e banco;
 - testes de carga;
+- testes E2E integrais;
+- GitHub Actions;
 - CD automatizado;
 - documentação final de implantação;
 - demonstração final.
@@ -1518,25 +1601,9 @@ A INNA:
 
 ### Fase interna 1 — LangGraph e núcleo agentic
 
-### Fase interna 2 — RAG, memória e Context Engineering
+**Status: ✅ Concluída**
 
-### Fase interna 3 — Supervisor e arquitetura multiagente
-
-### Fase interna 4 — Tool Calling e persistência
-
-### Fase interna 5 — Confiabilidade e observabilidade
-
-### Fase interna 6 — Produção, integração e entrega
-
-### Fase adicional — Arquitetura hierárquica e Human-in-the-Loop
-
-## Panorama de evolução interna da INNA
-
-### Fase interna 1 — LangGraph e núcleo agentic
-
-Status: ✅ concluida
-
-Concluído:
+Principais entregas:
 
 - núcleo agentic;
 - estado tipado;
@@ -1545,38 +1612,39 @@ Concluído:
 - retomada por `thread_id`;
 - tratamento de falhas;
 - topologia do grafo;
-- documentação;
-- testes;
-- auditoria.
+- documentação técnica;
+- testes automatizados;
+- auditoria da arquitetura.
 
 ---
 
 ### Fase interna 2 — RAG, memória e Context Engineering
 
-Status: ✅ concluida
+**Status: ✅ Concluída**
 
-Concluído:
+Principais entregas:
 
 - RAG seguro;
-- busca híbrida;
+- busca textual e vetorial;
+- recuperação híbrida;
 - reranking;
 - versionamento documental;
-- rastreabilidade;
+- rastreabilidade da recuperação;
 - memória por usuário;
 - memória financeira;
 - Context Engineering;
 - resumo conversacional incremental;
-- isolamento por thread;
-- privacidade;
-- testes.
+- isolamento por `thread_id`;
+- proteção de privacidade;
+- testes automatizados.
 
 ---
 
 ### Fase interna 3 — Supervisor e arquitetura multiagente
 
-Status: ✅ concluida
+**Status: ✅ Concluída**
 
-Concluído:
+Principais entregas:
 
 - supervisor híbrido;
 - seleção por intenção;
@@ -1592,30 +1660,30 @@ Concluído:
 - limite de visitas;
 - detecção de loops;
 - controle de orçamento;
-- auditoria.
+- auditoria do fluxo.
 
 ---
 
 ### Fase interna 4 — Tool Calling e persistência
 
-Status: ✅ concluida
+**Status: ✅ Concluída**
 
-Concluído:
+Principais entregas:
 
 - Tool Registry;
 - contratos Pydantic;
 - executor formal;
-- permissões;
+- permissões por ferramenta;
 - validação de argumentos;
 - ferramentas financeiras;
 - RAG como ferramenta;
 - PostgreSQL;
-- Neon;
+- Neon PostgreSQL;
 - pgvector;
-- filas;
+- filas persistentes;
 - receipts;
 - idempotência;
-- replay protection;
+- proteção contra replay;
 - worker recuperável;
 - concorrência otimista;
 - Telegram persistente.
@@ -1624,17 +1692,20 @@ Concluído:
 
 ### Fase interna 5 — Confiabilidade e observabilidade
 
-Status: ✅ concluida
+**Status: ✅ Concluída**
 
-Concluído:
+Principais entregas:
 
 - logs estruturados;
-- sanitização;
+- sanitização de dados sensíveis;
 - métricas;
 - Prometheus;
+- OpenMetrics;
 - Grafana;
-- health check;
-- readiness;
+- OpenTelemetry;
+- Arize Phoenix;
+- health checks;
+- readiness checks;
 - SLO;
 - error budget;
 - alertas;
@@ -1648,7 +1719,7 @@ Concluído:
 
 ### Fase interna 6 — Produção, integração e entrega
 
-Status: 🟡 Em evolução
+**Status: 🟡 Em evolução**
 
 Já disponível:
 
@@ -1657,13 +1728,13 @@ Já disponível:
 - Streamlit;
 - FastAPI;
 - Telegram;
-- dashboard;
-- banco de dados;
+- dashboard analítico;
+- persistência em banco de dados;
 - observabilidade;
 - testes automatizados;
 - agentes;
 - memória;
-- RAG;
+- RAG híbrido;
 - relatórios;
 - PDF;
 - e-mail;
@@ -1676,8 +1747,7 @@ Ainda falta:
 - Docker do Streamlit;
 - Docker Compose;
 - CI/CD completo;
-- OpenTelemetry;
-- tracing distribuído;
+- tracing distribuído completo;
 - testes de carga;
 - testes E2E integrais;
 - documentação final de implantação;
@@ -1687,9 +1757,9 @@ Ainda falta:
 
 ### Fase adicional — Arquitetura hierárquica e Human-in-the-Loop
 
-Status: 🟡 Núcleo concluído
+**Status: 🟡 Núcleo concluído**
 
-Concluído:
+Principais entregas:
 
 - arquitetura hierárquica de equipes;
 - Team Router;
@@ -1699,43 +1769,35 @@ Concluído:
 - roteamento entre equipes;
 - Handoff Coordinator;
 - Task Completion;
-- contrato de revisão humana;
-- política de revisão determinística;
+- contratos de revisão humana;
+- política determinística de revisão;
 - integração com LangGraph;
-- `interrupt()`;
-- `Command(resume=...)`;
+- interrupção com `interrupt()`;
+- retomada com `Command(resume=...)`;
 - checkpoint por `thread_id`;
-- aprovação;
-- correção;
-- rejeição;
-- cancelamento;
+- aprovação, correção, rejeição e cancelamento;
 - isolamento entre threads;
-- proteção contra retomada na thread incorreta;
+- proteção contra retomada em uma thread incorreta;
 - testes unitários;
 - testes de integração;
 - testes reais com `MemorySaver`;
 - compatibilidade com o fluxo anterior;
-- Pull Request;
-- merge na branch `feature/inna-agent-core`;
-- 2418 testes aprovados;
-- 1 teste ignorado;
-- 0 falhas.
+- Pull Request revisado e mesclado.
 
 Próxima evolução:
 
 - tabela PostgreSQL de revisões humanas;
-- repository do Human-in-the-Loop;
-- service layer de revisão;
+- repository de revisões;
+- service layer;
 - endpoints FastAPI;
 - fila de revisões pendentes;
 - painel administrativo;
-- autenticação de revisores;
+- autenticação e autorização de revisores;
 - controle de concorrência;
 - idempotência das decisões;
-- auditoria;
+- auditoria operacional;
 - métricas;
 - testes end-to-end.
-
 ---
 
 ## Aplicação do Bootcamp 2026 — Engenharia de IA na INNA
@@ -1966,11 +2028,11 @@ SEMANA_3=EM_FINALIZACAO
 
 ## Conclusão
 
-A INNA Financial Coach AI evoluiu de um MVP de diagnóstico financeiro para uma plataforma educativa de IA com arquitetura multiagente, equipes hierárquicas, RAG híbrido, memória, Context Engineering, Tool Calling, persistência, múltiplos canais, relatórios, segurança e observabilidade.
+A INNA Financial Coach AI evoluiu de um MVP de diagnóstico financeiro para uma plataforma educativa de IA com arquitetura multiagente, equipes hierárquicas, RAG híbrido, memória, Context Engineering, Tool Calling formal, persistência, múltiplos canais, relatórios, segurança e observabilidade.
 
-O núcleo agentic já possui supervisão, roteamento especializado, governança de execução, agentes por função, checkpoint por `thread_id` e Human-in-the-Loop persistente. Quando necessário, a execução pode ser interrompida para revisão humana e retomada com `Command(resume=...)`, preservando o estado anterior e permitindo aprovação, correção, rejeição ou cancelamento.
+O núcleo agentic possui supervisão, roteamento especializado, governança de execução, agentes por função, checkpoint por `thread_id` e Human-in-the-Loop com persistência de estado. Quando necessário, a execução pode ser interrompida para revisão humana e retomada com `Command(resume=...)`, preservando o checkpoint correspondente e permitindo aprovação, correção, rejeição ou cancelamento.
 
-A plataforma também integra FastAPI, Streamlit, PostgreSQL, Neon, pgvector, Telegram, PDF, e-mail, dashboards, Prometheus, Grafana, alertas e uma suíte extensa de testes automatizados.
+A plataforma integra FastAPI, Streamlit, PostgreSQL, Neon PostgreSQL, pgvector, Google Gemini, Telegram, PDF, e-mail, dashboards, Prometheus, Grafana, OpenTelemetry, Arize Phoenix, alertas e uma suíte extensa de testes automatizados.
 
 O README principal apresenta a visão geral do produto. Para entender cada módulo em profundidade, navegue pelas pastas:
 
@@ -1980,6 +2042,16 @@ O README principal apresenta a visão geral do produto. Para entender cada módu
 - [`scripts/`](scripts/)
 - [`reports/`](reports/)
 
-O próximo marco do projeto é transformar o núcleo de revisão humana em um fluxo completo de produção, com tabela PostgreSQL de revisões, repository, service layer, endpoints FastAPI, fila de revisões pendentes, painel administrativo, autenticação de revisores, auditoria, métricas e testes end-to-end.
+Os próximos marcos do projeto são:
 
-Em seguida, a evolução continuará com Docker Compose, CI de qualidade e segurança, OpenTelemetry, tracing distribuído, testes de carga e automação de deploy.
+- concluir os experimentos reais da Semana 3;
+- consolidar a avaliação do Sentence-Window Retrieval;
+- implementar e comparar o Auto-Merging Retrieval;
+- finalizar a documentação e o Quality Gate da Semana 3;
+- evoluir o Human-in-the-Loop para um fluxo administrativo completo em produção;
+- containerizar os serviços;
+- ampliar a automação de qualidade, segurança e deploy;
+- concluir tracing distribuído, testes de carga e testes end-to-end;
+- avançar com Agentic RAG e integração MCP em uma etapa separada.
+
+A evolução do projeto seguirá de forma incremental, com testes, auditoria, observabilidade e decisões técnicas baseadas em evidências.
