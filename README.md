@@ -586,7 +586,7 @@ A implementação possui:
 ## Componentes concluídos
 
 ### Núcleo agentic e arquitetura
-
+```
 - estado tipado;
 - Context Engineering;
 - supervisor principal;
@@ -604,9 +604,9 @@ A implementação possui:
 - governança de execução;
 - Handoff Coordinator;
 - Task Completion.
-
+```
 ### Human-in-the-Loop
-
+```
 - política de revisão humana;
 - Human Review Interrupt;
 - interrupção persistente com `interrupt()`;
@@ -619,9 +619,9 @@ A implementação possui:
 - proteção contra retomada em uma thread incorreta;
 - proteção contra retomada duplicada;
 - compatibilidade com o fluxo anterior.
-
+```
 ### Segurança e controle de execução
-
+```
 - limite de passos;
 - limite de visitas;
 - detecção de loops;
@@ -630,9 +630,9 @@ A implementação possui:
 - rastreabilidade de execução;
 - auditoria do fluxo;
 - compatibilidade regressiva.
-
+```
 ### Integrações principais
-
+```
 - memória conversacional;
 - resumo conversacional incremental;
 - RAG híbrido;
@@ -641,15 +641,15 @@ A implementação possui:
 - PostgreSQL;
 - Neon;
 - pgvector.
-
+```
 ### Evidências técnicas
-
+```
 - testes unitários;
 - testes de integração;
 - testes reais com `MemorySaver`;
 - Pull Request revisado e mesclado;
 - regressão automatizada mais recente:
-
+```
 ```text
 3649 passed
 3 skipped
@@ -659,7 +659,7 @@ A implementação possui:
 ### RAG, memória e Context Engineering
 
 #### RAG híbrido
-
+```
 busca textual;
 busca vetorial;
 recuperação híbrida;
@@ -678,8 +678,9 @@ trace_id;
 retrieval_trace;
 persistência em JSONB;
 integração com API, agentes e Tool Calling.
-
+```
 ### Memória
+```
 memória por usuário;
 memória semântica financeira;
 recuperação de renda, gastos e informações relevantes;
@@ -690,8 +691,9 @@ isolamento por thread_id;
 eventos de evolução;
 rastreabilidade;
 proteção contra fatos inventados.
-
+```
 ### Resumo conversacional incremental
+```
 criação automática;
 atualização após conversas relevantes;
 versionamento;
@@ -701,9 +703,10 @@ sanitização;
 prevenção de duplicação de ações;
 proteção contra transformar respostas do assistente em fatos pessoais;
 integração com Context Engineering.
-
+```
 ### Tool Calling e persistência
 #### Tool Calling formal
+```
 Tool Registry;
 contratos Pydantic;
 executor formal;
@@ -720,8 +723,9 @@ controle de acesso;
 tratamento padronizado de falhas;
 rastreabilidade das execuções;
 integração com supervisor e governança de execução.
-
+```
 ### Persistência
+```
 PostgreSQL;
 Neon;
 pgvector;
@@ -745,7 +749,7 @@ continuidade segura após aprovação;
 retorno ao roteamento após correção;
 encerramento controlado após rejeição ou cancelamento;
 eventos auditáveis.
-
+```
 ---
 
 ## Telegram multilíngue
