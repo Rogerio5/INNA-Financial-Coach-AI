@@ -1940,87 +1940,138 @@ Status: 🟡 Em finalização
 - commit técnico da Semana 3 criado.
 - Resultado do Smoke Test real
 
-### Pergunta avaliada:
+### Experimento real — Pergunta 1 de 5
 
-Como montar uma reserva financeira?
+#### Pergunta avaliada
+
+> Como montar uma reserva financeira?
+
+| Métrica | RAG híbrido atual | Sentence-Window | Delta |
+|---|---:|---:|---:|
+| Answer Relevancy | 1.0000 | 1.0000 | 0.0000 |
+| Faithfulness | 1.0000 | 1.0000 | 0.0000 |
+| Contextual Relevancy | 0.3143 | 0.8125 | +0.4982 |
+
+#### Quality Gate
+
+```text
+QUALITY_GATE_COMPLETE=True
+QUALITY_GATE_PASSED=True
+RAG_TRIAD_AVERAGE=0.9375
+MAXIMUM_REGRESSION=APROVADA
 ```
-- Baseline — RAG híbrido atual
-- Answer Relevancy = 1.0
-- Faithfulness = 1.0
-- Contextual Relevancy = 0.3142857
-- RAG híbrido com Sentence-Window
-- Answer Relevancy = 1.0
-- Faithfulness = 1.0
-- Contextual Relevancy = 0.8125
-- Deltas
-- Answer Relevancy = 0.0
-- Faithfulness = 0.0
-- Contextual Relevancy = +0.498214
-- Quality Gate
-- QUALITY_GATE_COMPLETE=True
-- QUALITY_GATE_PASSED=True
-- RAG_TRIAD_AVERAGE=0.9375
-- MAXIMUM_REGRESSION=APROVADA
+> O Sentence-Window não apresentou regressão em Answer Relevancy ou Faithfulness e melhorou significativamente a Contextual Relevancy neste primeiro caso
+
+### Experimento real — Pergunta 2 de 5
+
+#### Pergunta avaliada
+
+> Tenho renda mensal de R$ 3.000 e gastos de R$ 2.500. Como posso organizar meu orçamento?
+
+#### Comparação da RAG Triad
+
+| Métrica | RAG híbrido atual | Sentence-Window | Delta |
+|---|---:|---:|---:|
+| Answer Relevancy | 1.0000 | 1.0000 | 0.0000 |
+| Faithfulness | 1.0000 | 1.0000 | 0.0000 |
+| Contextual Relevancy | 0.5000 | 0.8750 | +0.3750 |
+
+#### Quality Gate
+
+```text
+COMPLETED=1
+FAILED=0
+QUALITY_GATE_PASSED=True
+RECOMMENDATION=promote_sentence_window
 ```
-O Sentence-Window não apresentou regressão em Answer Relevancy ou Faithfulness e melhorou significativamente a Contextual Relevancy neste primeiro caso.
+#### Desempenho, contexto e custo
+```text
+- MEDIAN_LATENCY_DELTA_MS=-2605
+- AVERAGE_CONTEXT_CHARACTER_DELTA=-1394
+- TOTAL_ESTIMATED_COST=0.0040689
+- RAW_OUTPUTS_STORED=False
+- RAW_CONTEXTS_STORED=False
+```
+
+#### Nesta segunda pergunta, o Sentence-Window:
+
+- manteve o **Answer Relevancy** em `1.0000`;
+- manteve a **Faithfulness** em `1.0000`;
+- aumentou a **Contextual Relevancy** de `0.5000` para `0.8750`;
+- obteve melhoria de **`+0.3750`** em Contextual Relevancy;
+- reduziu o tamanho médio do contexto em **`1.394 caracteres`**;
+- apresentou menor latência nesta execução;
+- passou no **Quality Gate**;
+- recebeu a recomendação técnica **`promote_sentence_window`**;
+- não armazenou respostas ou contextos brutos.
+
+A execução terminou com:
+```
+COMPLETED=1
+FAILED=0
+EXIT_CODE=0
+```
+
+### Resultado parcial do experimento
+
+| Pergunta | Quality Gate | Resultado |
+|---|---|---|
+| Pergunta 1 | ✅ Aprovado | Melhorou Contextual Relevancy |
+| Pergunta 2 | ✅ Aprovado | Melhorou Contextual Relevancy |
+| Pergunta 3 | ⏳ Pendente | Ainda não executada |
+| Pergunta 4 | ⏳ Pendente | Ainda não executada |
+| Pergunta 5 | ⏳ Pendente | Ainda não executada |
+
+Até o momento, o Sentence-Window manteve **Answer Relevancy** e **Faithfulness** nas duas perguntas avaliadas e melhorou a **Contextual Relevancy** em ambos os casos.
+
+> ⚠️ **Resultado parcial:** a decisão final sobre ativação em produção será tomada somente após a execução e consolidação das cinco perguntas.
 
 ### Implementações ainda pendentes
-- executar as quatro perguntas financeiras restantes;
+
+- executar as três perguntas financeiras restantes;
 - consolidar o experimento completo com cinco perguntas;
-- analisar estabilidade entre os cinco casos;
-- comparar médias, regressões, latência, custo e tamanho de contexto;
+- analisar a estabilidade dos resultados entre os cinco casos;
+- calcular as médias da RAG Triad;
+- comparar regressões entre baseline e Sentence-Window;
+- comparar latência;
+- comparar custo estimado;
+- comparar tamanho do contexto;
+- revisar tentativas intermediárias e o uso de `axis_scores_fallback`;
 - tomar a decisão final sobre ativação do Sentence-Window;
 - implementar Auto-Merging Retrieval;
-- comparar Auto-Merging com o RAG híbrido atual;
+- comparar Auto-Merging Retrieval com o RAG híbrido atual;
 - finalizar o Quality Gate consolidado da Semana 3;
-- gerar documentação e evidências finais;
-- atualizar README e relatório técnico;
+- gerar a documentação e as evidências finais;
+- atualizar o README principal;
+- atualizar o relatório técnico;
 - analisar Knowledge Graph e GraphRAG;
-- avaliar Neo4j e Cypher somente caso haja ganho técnico comprovado.
--Decisão atual sobre produção
+- avaliar Neo4j e Cypher somente caso exista ganho técnico comprovado.
 
-Apesar do resultado positivo no smoke test, o Sentence-Window ainda permanece desativado em produção:
-```
+### Decisão atual sobre produção
+
+Apesar dos resultados positivos nas duas primeiras perguntas, o Sentence-Window permanece desativado em produção:
+
+```env
 INNA_RAG_SENTENCE_WINDOW_ENABLED=false
 ```
-A ativação somente será considerada após o experimento completo com cinco perguntas não apresentar regressão relevante.
 
-Situação atual
-```
-RAG_HIBRIDO=CONCLUIDO
-BUSCA_TEXTUAL=CONCLUIDA
-BUSCA_VETORIAL=CONCLUIDA
-RERANKING=CONCLUIDO
+### Situação atual
 
-SENTENCE_WINDOW=IMPLEMENTADO
-SENTENCE_WINDOW_TESTADO=SIM
-SENTENCE_WINDOW_SMOKE_TEST=APROVADO
-SENTENCE_WINDOW_PRODUCAO=DESATIVADO
+```text
+✅ PERGUNTAS_CONCLUIDAS=2_DE_5
+⏳ PERGUNTAS_RESTANTES=3
+⏳ EXPERIMENTO_COMPLETO_5_PERGUNTAS=PENDENTE
 
-RAG_TRIAD_ARQUITETURA=CONCLUIDA
-ANSWER_RELEVANCY_EXECUTOR=CONCLUIDO
-FAITHFULNESS_EXECUTOR=CONCLUIDO
-CONTEXTUAL_RELEVANCY_EXECUTOR=CONCLUIDO
+✅ PERGUNTA_1_QUALITY_GATE=APROVADO
+✅ PERGUNTA_2_QUALITY_GATE=APROVADO
 
-QUALITY_GATE=CONCLUIDO
-QUALITY_GATE_SMOKE_TEST=APROVADO
+🔴 SENTENCE_WINDOW_PRODUCAO=DESATIVADO
+⏳ DECISAO_FINAL_PRODUCAO=PENDENTE
 
-GEMINI_REAL=VALIDADO
-NEON_POSTGRESQL_REAL=VALIDADO
-DEEPEVAL_REAL=VALIDADO
-
-PERGUNTAS_CONCLUIDAS=1_DE_5
-PERGUNTAS_RESTANTES=4
-EXPERIMENTO_COMPLETO_5_PERGUNTAS=PENDENTE
-
-AUTO_MERGING=PENDENTE
-KNOWLEDGE_GRAPH_INTEGRADO=PENDENTE
-NEO4J_INTEGRADO=PENDENTE
-CYPHER_IMPLEMENTADO=PENDENTE
-GRAPHRAG_IMPLEMENTADO=PENDENTE
-
-DOCUMENTACAO_FINAL=PENDENTE
-SEMANA_3=EM_FINALIZACAO
+⏳ AUTO_MERGING=PENDENTE
+⏳ QUALITY_GATE_CONSOLIDADO=PENDENTE
+⏳ DOCUMENTACAO_FINAL=PENDENTE
+🟡 SEMANA_3=EM_FINALIZACAO
 ```
 
 --- 
