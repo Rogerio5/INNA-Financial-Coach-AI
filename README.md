@@ -1469,7 +1469,7 @@ A INNA:
 
 ### Fase interna 1 — LangGraph e núcleo agentic
 
-Status: ✅ 100%
+Status: ✅ concluida
 
 Concluído:
 
@@ -1488,7 +1488,7 @@ Concluído:
 
 ### Fase interna 2 — RAG, memória e Context Engineering
 
-Status: ✅ 100%
+Status: ✅ concluida
 
 Concluído:
 
@@ -1509,7 +1509,7 @@ Concluído:
 
 ### Fase interna 3 — Supervisor e arquitetura multiagente
 
-Status: ✅ 100%
+Status: ✅ concluida
 
 Concluído:
 
@@ -1533,7 +1533,7 @@ Concluído:
 
 ### Fase interna 4 — Tool Calling e persistência
 
-Status: ✅ 100%
+Status: ✅ concluida
 
 Concluído:
 
@@ -1559,7 +1559,7 @@ Concluído:
 
 ### Fase interna 5 — Confiabilidade e observabilidade
 
-Status: ✅ 100%
+Status: ✅ concluida
 
 Concluído:
 
