@@ -1743,12 +1743,11 @@ Conteúdos aplicados na INNA:
 
 ---
 
-### Semana 3 — RAG, fundamentos e retrieval avançado
+## Semana 3 — RAG, fundamentos e retrieval avançado
 
 Status: 🟡 Em finalização
 
-Conteúdos estudados:
-
+Conteúdos estudados
 - chunking;
 - embeddings;
 - busca textual;
@@ -1765,8 +1764,7 @@ Conteúdos estudados:
 - GraphRAG;
 - trade-offs entre qualidade, custo e performance.
 
-Conteúdos aplicados na INNA:
-
+### Conteúdos aplicados na INNA
 - RAG híbrido;
 - PostgreSQL e pgvector;
 - recuperação textual e vetorial;
@@ -1786,8 +1784,7 @@ Conteúdos aplicados na INNA:
 - proteção de privacidade;
 - controle de cota da Gemini API.
 
-Implementações concluídas:
-
+### Implementações concluídas
 - RAG híbrido operacional;
 - busca textual e vetorial integradas;
 - reranking;
@@ -1796,43 +1793,68 @@ Implementações concluídas:
 - comparação A/B entre baseline e Sentence-Window;
 - integração real com DeepEval;
 - três executores da RAG Triad;
+- Gemini como modelo avaliador;
+- recuperação real no Neon/PostgreSQL;
 - Quality Gate;
 - relatórios de avaliação;
 - histórico de execuções;
 - proteção contra armazenamento de respostas e contextos brutos;
 - limitador compartilhado da Gemini API;
 - tratamento de erros HTTP 429;
-- retentativas automáticas;
-- 29 testes específicos aprovados.
+- controle de intervalo entre chamadas;
+- retentativas controladas;
+- testes unitários e de regressão;
+- 109 testes relacionados à Semana 3 aprovados em ambiente offline;
+- smoke test real aprovado com Gemini e Neon;
+- commit técnico da Semana 3 criado.
+- Resultado do Smoke Test real
 
-Implementações ainda pendentes:
+Pergunta avaliada:
 
-- Auto-Merging Retrieval;
-- comparação entre Auto-Merging e o RAG híbrido atual;
-- Knowledge Graph integrado ao RAG;
-- Neo4j integrado ao projeto;
-- consultas Cypher;
-- GraphRAG;
-- experimento completo com cinco perguntas;
-- decisão final sobre ativação do Sentence-Window;
-- documentação final da Semana 3.
+Como montar uma reserva financeira?
+Baseline — RAG híbrido atual
+Answer Relevancy = 1.0
+Faithfulness = 1.0
+Contextual Relevancy = 0.3142857
+RAG híbrido com Sentence-Window
+Answer Relevancy = 1.0
+Faithfulness = 1.0
+Contextual Relevancy = 0.8125
+Deltas
+Answer Relevancy = 0.0
+Faithfulness = 0.0
+Contextual Relevancy = +0.498214
+Quality Gate
+QUALITY_GATE_COMPLETE=True
+QUALITY_GATE_PASSED=True
+RAG_TRIAD_AVERAGE=0.9375
+MAXIMUM_REGRESSION=APROVADA
 
-Limitação encontrada:
+O Sentence-Window não apresentou regressão em Answer Relevancy ou Faithfulness e melhorou significativamente a Contextual Relevancy neste primeiro caso.
 
-O Smoke Test real da RAG Triad foi iniciado, mas não foi concluído porque a cota diária gratuita do modelo `gemini-2.5-flash` foi esgotada.
+Implementações ainda pendentes
+executar as quatro perguntas financeiras restantes;
+consolidar o experimento completo com cinco perguntas;
+analisar estabilidade entre os cinco casos;
+comparar médias, regressões, latência, custo e tamanho de contexto;
+tomar a decisão final sobre ativação do Sentence-Window;
+implementar Auto-Merging Retrieval;
+comparar Auto-Merging com o RAG híbrido atual;
+finalizar o Quality Gate consolidado da Semana 3;
+gerar documentação e evidências finais;
+atualizar README e relatório técnico;
+analisar Knowledge Graph e GraphRAG;
+avaliar Neo4j e Cypher somente caso haja ganho técnico comprovado.
+Decisão atual sobre produção
 
-Por isso:
+Apesar do resultado positivo no smoke test, o Sentence-Window ainda permanece desativado em produção:
 
-- a arquitetura da avaliação foi validada;
-- os executores foram registrados corretamente;
-- o controle de cota funcionou;
-- os seis scores finais ainda não foram obtidos;
-- o resultado sobre Sentence-Window permanece inconclusivo;
-- Sentence-Window continua desativado em produção.
+INNA_RAG_SENTENCE_WINDOW_ENABLED=false
 
-Situação atual:
+A ativação somente será considerada após o experimento completo com cinco perguntas não apresentar regressão relevante.
 
-```text
+Situação atual
+```
 RAG_HIBRIDO=CONCLUIDO
 BUSCA_TEXTUAL=CONCLUIDA
 BUSCA_VETORIAL=CONCLUIDA
@@ -1840,16 +1862,24 @@ RERANKING=CONCLUIDO
 
 SENTENCE_WINDOW=IMPLEMENTADO
 SENTENCE_WINDOW_TESTADO=SIM
+SENTENCE_WINDOW_SMOKE_TEST=APROVADO
 SENTENCE_WINDOW_PRODUCAO=DESATIVADO
 
 RAG_TRIAD_ARQUITETURA=CONCLUIDA
 ANSWER_RELEVANCY_EXECUTOR=CONCLUIDO
 FAITHFULNESS_EXECUTOR=CONCLUIDO
 CONTEXTUAL_RELEVANCY_EXECUTOR=CONCLUIDO
-QUALITY_GATE=IMPLEMENTADO
 
-SMOKE_TEST_REAL=INCONCLUSIVO
-MOTIVO_SMOKE_TEST=COTA_DIARIA_GEMINI_ESGOTADA
+QUALITY_GATE=CONCLUIDO
+QUALITY_GATE_SMOKE_TEST=APROVADO
+
+GEMINI_REAL=VALIDADO
+NEON_POSTGRESQL_REAL=VALIDADO
+DEEPEVAL_REAL=VALIDADO
+
+PERGUNTAS_CONCLUIDAS=1_DE_5
+PERGUNTAS_RESTANTES=4
+EXPERIMENTO_COMPLETO_5_PERGUNTAS=PENDENTE
 
 AUTO_MERGING=PENDENTE
 KNOWLEDGE_GRAPH_INTEGRADO=PENDENTE
@@ -1857,6 +1887,7 @@ NEO4J_INTEGRADO=PENDENTE
 CYPHER_IMPLEMENTADO=PENDENTE
 GRAPHRAG_IMPLEMENTADO=PENDENTE
 
+DOCUMENTACAO_FINAL=PENDENTE
 SEMANA_3=EM_FINALIZACAO
 ```
 
