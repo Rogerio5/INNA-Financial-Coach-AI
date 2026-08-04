@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
 import ast
-
+from pathlib import Path
 
 RAG_ENGINE_PATH = Path(
     "src/rag_engine.py"
