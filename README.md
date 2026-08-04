@@ -1809,8 +1809,8 @@ Conteúdos estudados
 - commit técnico da Semana 3 criado.
 - Resultado do Smoke Test real
 
-Pergunta avaliada:
-
+### Pergunta avaliada:
+```
 Como montar uma reserva financeira?
 Baseline — RAG híbrido atual
 Answer Relevancy = 1.0
@@ -1829,28 +1829,28 @@ QUALITY_GATE_COMPLETE=True
 QUALITY_GATE_PASSED=True
 RAG_TRIAD_AVERAGE=0.9375
 MAXIMUM_REGRESSION=APROVADA
-
+```
 O Sentence-Window não apresentou regressão em Answer Relevancy ou Faithfulness e melhorou significativamente a Contextual Relevancy neste primeiro caso.
 
-Implementações ainda pendentes
-executar as quatro perguntas financeiras restantes;
-consolidar o experimento completo com cinco perguntas;
-analisar estabilidade entre os cinco casos;
-comparar médias, regressões, latência, custo e tamanho de contexto;
-tomar a decisão final sobre ativação do Sentence-Window;
-implementar Auto-Merging Retrieval;
-comparar Auto-Merging com o RAG híbrido atual;
-finalizar o Quality Gate consolidado da Semana 3;
-gerar documentação e evidências finais;
-atualizar README e relatório técnico;
-analisar Knowledge Graph e GraphRAG;
-avaliar Neo4j e Cypher somente caso haja ganho técnico comprovado.
-Decisão atual sobre produção
+### Implementações ainda pendentes
+- executar as quatro perguntas financeiras restantes;
+- consolidar o experimento completo com cinco perguntas;
+- analisar estabilidade entre os cinco casos;
+- comparar médias, regressões, latência, custo e tamanho de contexto;
+- tomar a decisão final sobre ativação do Sentence-Window;
+- implementar Auto-Merging Retrieval;
+- comparar Auto-Merging com o RAG híbrido atual;
+- finalizar o Quality Gate consolidado da Semana 3;
+- gerar documentação e evidências finais;
+- atualizar README e relatório técnico;
+- analisar Knowledge Graph e GraphRAG;
+- avaliar Neo4j e Cypher somente caso haja ganho técnico comprovado.
+-Decisão atual sobre produção
 
 Apesar do resultado positivo no smoke test, o Sentence-Window ainda permanece desativado em produção:
-
+```
 INNA_RAG_SENTENCE_WINDOW_ENABLED=false
-
+```
 A ativação somente será considerada após o experimento completo com cinco perguntas não apresentar regressão relevante.
 
 Situação atual
