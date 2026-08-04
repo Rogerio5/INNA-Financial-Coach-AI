@@ -1,10 +1,10 @@
 # INNA Financial Coach AI
 
-A **INNA Financial Coach AI** é uma aplicação inteligente de educação financeira que ajuda pessoas a entenderem sua situação financeira, receberem um diagnóstico personalizado e seguirem um plano de ação simples de 30 dias com apoio de IA Generativa.
+Plataforma de educação financeira com IA Generativa, arquitetura multiagente, RAG híbrido, memória, Human-in-the-Loop, FastAPI, Streamlit, PostgreSQL/Neon e observabilidade.
 
-Educadora Financeira com IA Generativa, arquitetura multiagente, RAG, memória, FastAPI, Streamlit, PostgreSQL, Neon, Render e observabilidade profissional.
+A INNA gera diagnósticos financeiros educativos, planos de ação, histórico, relatórios e respostas contextualizadas, combinando cálculos determinísticos com Google Gemini.
 
-Diagnóstico financeiro • Plano de ação • Histórico • Relatórios • Telegram • RAG híbrido • LangGraph • Prometheus • Grafana
+> Projeto educacional. Não substitui consultoria financeira profissional nem recomenda compra ou venda de ativos.
 
 ---
 
@@ -60,7 +60,7 @@ A aplicação ajuda pessoas a:
 - organizar renda, gastos, dívidas e reserva;
 - receber um plano de ação educativo;
 - acompanhar sua evolução;
-- consultar histórico;
+- consultar o histórico;
 - gerar relatórios;
 - conversar com uma IA com memória e contexto;
 - receber atendimento por diferentes canais.
@@ -136,66 +136,103 @@ Histórico / PDF / Feedback / Telegram / Dashboard
 
 ## Status da versão online
 
-- App principal publicado no Render;
+- app principal publicado no Render;
 - API FastAPI publicada no Render;
 - dashboard publicado no Render;
 - PostgreSQL configurado no Neon;
-- integração com Gemini ativa;
-- diagnóstico financeiro funcionando;
+- integração com Gemini validada;
+- diagnóstico financeiro operacional;
 - plano de ação gerado por IA;
-- histórico individual funcionando;
-- relatório PDF funcionando;
-- feedback persistido;
-- dashboard lendo dados reais;
-- Swagger público;
+- histórico individual disponível;
+- geração de relatório PDF validada;
+- feedback persistido no banco de dados;
+- dashboard integrado a dados reais;
+- documentação Swagger pública;
 - health check validado;
-- Telegram integrado;
-- observabilidade operacional;
-- RAG e memória integrados ao núcleo agentic.
+- integração com Telegram configurada;
+- observabilidade configurada;
+- RAG híbrido e memória integrados ao núcleo agentic.
+
+### Principais melhorias:
+
+```
+Gemini ativa
+→ Gemini validada
+
+diagnóstico funcionando
+→ diagnóstico operacional
+
+dashboard lendo dados reais
+→ dashboard integrado a dados reais
+
+observabilidade operacional
+→ observabilidade configurada
+
+RAG
+→ RAG híbrido
+```
 
 ---
 
 ## Problema
 
-Muitas pessoas não sabem por onde começar a organizar sua vida financeira.
+Muitas pessoas têm dificuldade para entender sua situação financeira e não sabem por onde começar a organizar renda, gastos, dívidas e objetivos.
 
 Dúvidas comuns:
 
 - Estou gastando mais do que ganho?
-- Minhas dívidas estão perigosas?
+- Minhas dívidas representam um risco?
 - Quanto consigo guardar por mês?
-- Minha reserva é suficiente?
+- Minha reserva financeira é suficiente?
 - Qual deve ser meu primeiro passo?
-- Como criar um plano simples?
-- Como acompanhar minha evolução?
+- Como criar um plano simples e realista?
+- Como acompanhar minha evolução financeira?
 - Como manter contexto entre diferentes conversas?
-- Como obter orientação educativa sem receber recomendações financeiras indevidas?
+- Como receber orientação educativa sem recomendações financeiras indevidas?
 
 ---
 
 ## Solução
 
-A INNA recebe informações financeiras básicas, calcula indicadores de forma determinística e utiliza IA Generativa para produzir orientações educativas.
+A INNA recebe informações financeiras básicas, calcula indicadores de forma determinística e utiliza IA Generativa para transformar esses dados em orientações educativas, contextualizadas e fáceis de entender.
 
-A aplicação entrega:
+A aplicação oferece:
 
 - diagnóstico financeiro;
 - score de 0 a 100;
-- nível de risco;
+- classificação de risco;
 - saldo mensal estimado;
 - comprometimento da renda;
-- estimativa de reserva;
-- plano de ação;
+- estimativa de reserva financeira;
+- plano de ação educativo;
 - histórico individual;
 - memória conversacional;
 - relatório PDF;
-- respostas contextualizadas por RAG;
-- feedback;
+- respostas contextualizadas por RAG híbrido;
+- registro de feedback;
 - exportação CSV;
-- dashboard;
+- dashboard analítico;
 - API para integrações;
 - atendimento via Telegram;
 - alertas e observabilidade.
+
+### Principais melhorias:
+```
+"Minhas dívidas estão perigosas?"
+→ "Minhas dívidas representam um risco?"
+
+"plano de ação"
+→ "plano de ação educativo"
+
+"RAG"
+→ "RAG híbrido"
+
+"feedback"
+→ "registro de feedback"
+
+"dashboard"
+→ "dashboard analítico"
+```
 
 ---
 
@@ -209,59 +246,78 @@ Ela combina:
 - IA Generativa;
 - arquitetura multiagente;
 - arquitetura hierárquica de equipes;
-- Human-in-the-Loop persistente;
+- Human-in-the-Loop com persistência de estado;
 - revisão humana para operações sensíveis;
 - interrupção e retomada por checkpoint;
 - decisões de aprovação, correção, rejeição e cancelamento;
 - Context Engineering;
 - RAG híbrido;
 - memória por usuário;
-- resumo incremental;
-- Tool Calling;
-- banco relacional;
-- busca vetorial;
-- histórico;
+- resumo conversacional incremental;
+- Tool Calling formal;
+- banco de dados relacional;
+- busca textual e vetorial;
+- histórico individual;
 - relatórios;
-- canais múltiplos;
+- múltiplos canais;
 - observabilidade;
 - segurança financeira;
-- testes e auditorias.
+- testes automatizados e auditorias técnicas.
 
 O sistema:
 
-- entende a intenção;
-- monta o contexto;
-- seleciona o agente;
+- identifica a intenção do usuário;
+- constrói o contexto da execução;
+- seleciona o agente ou a equipe responsável;
 - executa ferramentas formais;
-- usa memória e RAG;
-- gera a resposta;
+- utiliza memória e RAG híbrido;
+- gera uma resposta contextualizada;
 - atualiza o resumo da conversa;
 - persiste os dados;
-- registra rastreabilidade e métricas.
+- registra rastreabilidade, métricas e eventos de auditoria.
 
-> Quando necessário, o sistema pode interromper uma execução para revisão humana e retomá-la exatamente do checkpoint anterior, mantendo o mesmo `thread_id`.
+> Quando necessário, o sistema pode interromper uma execução para revisão humana e retomá-la a partir do checkpoint persistido, utilizando o mesmo `thread_id`.
 
+### As principais melhorias são:
+```
+Human-in-the-Loop persistente
+→ Human-in-the-Loop com persistência de estado
+
+resumo incremental
+→ resumo conversacional incremental
+
+Tool Calling
+→ Tool Calling formal
+
+busca vetorial
+→ busca textual e vetorial
+
+canais múltiplos
+→ múltiplos canais
+```
 
 ---
 
 ## Status atual
-```
-| Etapa | Área | Situação |
+
+| Fase interna | Área | Situação |
 |---|---|---|
-| Semana 1 | LangGraph e núcleo agentic | ✅ 100% |
-| Semana 2 | RAG, memória e Context Engineering | ✅ 100% |
-| Semana 3 | Supervisor e arquitetura multiagente | ✅ 100% |
-| Semana 4 | Tool Calling e persistência | ✅ 100% |
-| Semana 5 | Confiabilidade e observabilidade | ✅ 100% |
-| Semana 6 | Produção, integração e entrega | 🟡 Em evolução |
-| Semana adicional 1 | Arquitetura hierárquica e Human-in-the-Loop | 🟡 Núcleo concluído |
-```
-Validação automatizada mais recente
-```
-2418 passed
-1 skipped
+| Fase 1 | LangGraph e núcleo agentic | ✅ Concluída |
+| Fase 2 | RAG, memória e Context Engineering | ✅ Concluída |
+| Fase 3 | Supervisor e arquitetura multiagente | ✅ Concluída |
+| Fase 4 | Tool Calling e persistência | ✅ Concluída |
+| Fase 5 | Confiabilidade e observabilidade | ✅ Concluída |
+| Fase 6 | Produção, integração e entrega | 🟡 Em evolução |
+| Fase adicional | Arquitetura hierárquica e Human-in-the-Loop | 🟡 Núcleo concluído |
+
+### Validação automatizada mais recente
+
+```text
+3649 passed
+3 skipped
 0 failed
 ```
+
 Regressões específicas também foram executadas para:
 
 - memória;
@@ -280,51 +336,76 @@ Regressões específicas também foram executadas para:
 ## Funcionalidades
 
 ### Diagnóstico financeiro
+
 - formulário financeiro;
 - cálculo de renda;
-- gastos fixos;
-- gastos variáveis;
-- dívidas;
-- reserva;
-- saldo mensal;
+- registro de gastos fixos;
+- registro de gastos variáveis;
+- registro de dívidas;
+- registro de reserva financeira;
+- saldo mensal estimado;
 - comprometimento da renda;
 - meses estimados de reserva;
 - score financeiro;
-- risco baixo, médio ou alto;
+- classificação de risco: baixo, médio ou alto;
 - diagnóstico educativo;
-- plano de ação;
+- plano de ação personalizado;
 - fallback seguro;
-- modo mock.
+- modo mock para testes e demonstrações.
 
 ### Histórico e acompanhamento
+
 - histórico individual;
-- recuperação por usuário;
-- evolução do score;
-- evolução de saldo;
-- persistência por thread;
+- recuperação de dados por usuário;
+- evolução do score financeiro;
+- evolução do saldo mensal;
+- persistência por `thread_id`;
 - retomada de conversas;
 - memória financeira;
-- resumo incremental;
-- substituição de fatos antigos;
-- preservação de fatos relevantes.
-  
+- resumo conversacional incremental;
+- atualização de fatos antigos;
+- preservação de informações relevantes.
+
 ### Relatórios e exportações
-- PDF;
-- CSV;
-- histórico;
-- feedback;
+
+- relatório em PDF;
+- exportação em CSV;
+- histórico de diagnósticos;
+- registro de feedback;
 - relatórios técnicos;
 - auditorias;
 - dashboards;
-- métricas.
+- métricas operacionais e de uso.
 
 ### Canais
+
 - Streamlit;
 - FastAPI;
 - Telegram;
 - e-mail;
-- dashboard;
-- API preparada para outros frontends.
+- dashboard analítico;
+- API preparada para integração com outros frontends.
+
+### Principais melhorias:
+```
+reserva
+→ reserva financeira
+
+risco baixo, médio ou alto
+→ classificação de risco: baixo, médio ou alto
+
+plano de ação
+→ plano de ação personalizado
+
+resumo incremental
+→ resumo conversacional incremental
+
+persistência por thread
+→ persistência por thread_id
+
+dashboard
+→ dashboard analítico
+```
 
 ---
 
@@ -336,6 +417,7 @@ Regressões específicas também foram executadas para:
 flowchart TD
     U[Usuário] --> Channels[Streamlit / Telegram / API]
     Channels --> API[FastAPI]
+
     API --> Context[Context Engineering]
     Context --> Supervisor[Supervisor principal]
     Supervisor --> Router[Team Router]
@@ -353,6 +435,21 @@ flowchart TD
     SupportSupervisor --> Governance
 
     Governance --> Agent[Agente especializado]
+
+    Agent --> Tools[Tool Calling formal]
+    Tools --> FinancialEngine[Motor financeiro]
+    Tools --> RAG[RAG híbrido]
+    Tools --> Memory[Memória e histórico]
+    Tools --> Reports[Relatórios e integrações]
+
+    RAG --> Database[(PostgreSQL / Neon + pgvector)]
+    Memory --> Database
+    FinancialEngine --> Database
+    Reports --> Database
+
+    RAG --> Gemini[Google Gemini]
+    Agent --> Gemini
+
     Agent --> Completion[Task Completion]
     Completion --> ReviewPolicy[Human Review Policy]
 
@@ -364,16 +461,19 @@ flowchart TD
     Interrupt -->|Reject ou Cancel| Summary[Resumo conversacional]
 
     Handoff --> Summary
-
-    Summary --> Tools[Tool Calling]
-    Tools --> DB[(PostgreSQL / Neon)]
-    Tools --> Vector[(pgvector)]
-    Tools --> Gemini[Google Gemini]
+    Summary --> Checkpoint[Checkpoint e persistência por thread_id]
+    Checkpoint --> Database
+    Summary --> Response[Resposta ao usuário]
+    Response --> API
 
     API --> PDF[Relatório PDF]
     API --> Email[E-mail / Resend]
-    API --> Dashboard[Dashboard]
-    API --> Metrics[Prometheus]
+    API --> Dashboard[Dashboard analítico]
+
+    API -. telemetria .-> Metrics[Prometheus / OpenMetrics]
+    Agent -. telemetria .-> Metrics
+    Tools -. telemetria .-> Metrics
+    Database -. saúde .-> Metrics
     Metrics --> Grafana[Grafana]
 ```
 
