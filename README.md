@@ -1747,7 +1747,7 @@ Conteúdos aplicados na INNA:
 
 Status: 🟡 Em finalização
 
-Conteúdos estudados
+### Conteúdos estudados
 - chunking;
 - embeddings;
 - busca textual;
@@ -1810,25 +1810,26 @@ Conteúdos estudados
 - Resultado do Smoke Test real
 
 ### Pergunta avaliada:
-```
+
 Como montar uma reserva financeira?
-Baseline — RAG híbrido atual
-Answer Relevancy = 1.0
-Faithfulness = 1.0
-Contextual Relevancy = 0.3142857
-RAG híbrido com Sentence-Window
-Answer Relevancy = 1.0
-Faithfulness = 1.0
-Contextual Relevancy = 0.8125
-Deltas
-Answer Relevancy = 0.0
-Faithfulness = 0.0
-Contextual Relevancy = +0.498214
-Quality Gate
-QUALITY_GATE_COMPLETE=True
-QUALITY_GATE_PASSED=True
-RAG_TRIAD_AVERAGE=0.9375
-MAXIMUM_REGRESSION=APROVADA
+```
+- Baseline — RAG híbrido atual
+- Answer Relevancy = 1.0
+- Faithfulness = 1.0
+- Contextual Relevancy = 0.3142857
+- RAG híbrido com Sentence-Window
+- Answer Relevancy = 1.0
+- Faithfulness = 1.0
+- Contextual Relevancy = 0.8125
+- Deltas
+- Answer Relevancy = 0.0
+- Faithfulness = 0.0
+- Contextual Relevancy = +0.498214
+- Quality Gate
+- QUALITY_GATE_COMPLETE=True
+- QUALITY_GATE_PASSED=True
+- RAG_TRIAD_AVERAGE=0.9375
+- MAXIMUM_REGRESSION=APROVADA
 ```
 O Sentence-Window não apresentou regressão em Answer Relevancy ou Faithfulness e melhorou significativamente a Contextual Relevancy neste primeiro caso.
 
