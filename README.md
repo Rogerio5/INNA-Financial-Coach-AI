@@ -2298,7 +2298,62 @@ O Sentence-Window com window_size=5:
 
 > A Pergunta 3 foi validada oficialmente na comparação entre o RAG híbrido atual e o Sentence-Window com window_size=5.
 
-A feature flag permanece desativada em produção enquanto as Perguntas 4 e 5 ainda não forem concluídas.
+---
+
+## Experimento oficial — Pergunta 4 de 5
+### Pergunta avaliada
+
+> Qual a diferença entre gastos fixos e gastos variáveis?
+
+### Configuração utilizada
+```
+MODELO=gemini-3.5-flash-lite
+TOP_K=2
+WINDOW_SIZE=5
+CHUNK_RADIUS=1
+MAX_CHARACTERS=4000
+```
+### Resultado da RAG Triad
+
+| Métrica              | Delta do Sentence-Window |
+| -------------------- | -----------------------: |
+| Answer Relevancy     |                +0.300000 |
+| Faithfulness         |                 0.000000 |
+| Contextual Relevancy |                +0.357143 |
+
+### Resultado do Quality Gate
+```
+COMPLETED=1
+FAILED=0
+CASE_QUALITY_GATE_PASSED=True
+RECOMMENDATION=promote_sentence_window
+```
+
+### Desempenho e contexto
+```
+MEDIAN_LATENCY_DELTA_MS=-3080
+AVERAGE_CONTEXT_CHARACTER_DELTA=-790
+RAW_OUTPUTS_STORED=False
+RAW_CONTEXTS_STORED=False
+```
+
+### Análise
+
+O Sentence-Window com window_size=5 e top_k=2:
+
+- melhorou o Answer Relevancy em +0.300000;
+- manteve a Faithfulness sem regressão;
+- melhorou o Contextual Relevancy em +0.357143;
+- utilizou 790 caracteres a menos de contexto;
+- apresentou menor latência nesta execução;
+- passou em todos os Quality Gates;
+- recebeu a recomendação técnica promote_sentence_window
+
+A redução de top_k=4 para top_k=2 evitou a inclusão de chunks secundários menos relevantes e manteve o contexto concentrado nos documentos sobre gastos fixos, variáveis e orçamento.
+
+> A Pergunta 4 foi validada oficialmente na comparação entre o RAG híbrido atual e o Sentence-Window com window_size=5 e top_k=2.
+
+A feature flag permanece desativada em produção enquanto as Perguntas 5 ainda não forem concluídas.
 
 ---
 
