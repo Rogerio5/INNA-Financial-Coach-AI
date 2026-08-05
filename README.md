@@ -2212,6 +2212,7 @@ MAX_CHARACTERS=4000
 | Faithfulness         |                 0.000000 |
 | Contextual Relevancy |                 0.000000 |
 
+> > Os deltas iguais a `0.000000` indicam que o Sentence-Window manteve exatamente a mesma qualidade do RAG híbrido baseline nas três métricas avaliadas. Como também reduziu o tamanho do contexto e apresentou menor latência, o resultado foi considerado positivo e aprovado no Quality Gate.
 
 ### Resultado do Quality Gate
 ```
