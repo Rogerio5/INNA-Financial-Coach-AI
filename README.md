@@ -2243,7 +2243,62 @@ O Sentence-Window com window_size=5:
 
 > A Pergunta 2 foi validada oficialmente na comparação entre o RAG híbrido atual e o Sentence-Window com window_size=5.
 
-A feature flag permanece desativada em produção enquanto as Perguntas 3, 4 e 5 ainda não forem concluídas.
+---
+
+## Experimento oficial — Pergunta 3 de 5
+
+### Pergunta avaliada
+
+> Como usar o cartão de crédito sem perder o controle?
+
+### Configuração utilizada
+
+```text
+MODELO=gemini-3.5-flash-lite
+TOP_K=4
+WINDOW_SIZE=5
+CHUNK_RADIUS=1
+MAX_CHARACTERS=4000
+```
+
+### Resultado da RAG Triad
+| Métrica              | Delta do Sentence-Window |
+| -------------------- | -----------------------: |
+| Answer Relevancy     |                +0.100000 |
+| Faithfulness         |                 0.000000 |
+| Contextual Relevancy |                 0.000000 |
+
+### Resultado do Quality Gate
+```
+COMPLETED=1
+FAILED=0
+CASE_QUALITY_GATE_PASSED=True
+RECOMMENDATION=promote_sentence_window
+```
+
+### Desempenho e contexto
+```
+MEDIAN_LATENCY_DELTA_MS=-2885
+AVERAGE_CONTEXT_CHARACTER_DELTA=30
+RAW_OUTPUTS_STORED=False
+RAW_CONTEXTS_STORED=False
+```
+
+### Análise
+
+O Sentence-Window com window_size=5:
+
+- melhorou o Answer Relevancy em +0.100000;
+- manteve a Faithfulness sem regressão;
+- manteve a Contextual Relevancy sem regressão;
+- utilizou apenas 30 caracteres adicionais de contexto;
+- apresentou menor latência nesta execução;
+- passou no Quality Gate;
+- recebeu a recomendação técnica promote_sentence_window
+
+> A Pergunta 3 foi validada oficialmente na comparação entre o RAG híbrido atual e o Sentence-Window com window_size=5.
+
+A feature flag permanece desativada em produção enquanto as Perguntas 4 e 5 ainda não forem concluídas.
 
 ---
 
