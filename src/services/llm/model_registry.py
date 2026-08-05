@@ -7,17 +7,16 @@ mesmo quando todos utilizam inicialmente o mesmo modelo.
 
 from __future__ import annotations
 
-from enum import Enum
-from functools import lru_cache
 import os
-
+from enum import StrEnum
+from functools import cache
 
 DEFAULT_TEXT_MODEL = (
-    "gemini-2.5-flash-lite"
+    "gemini-3.5-flash-lite"
 )
 
 
-class LLMRole(str, Enum):
+class LLMRole(StrEnum):
     DEFAULT = "default"
     SUPERVISOR = "supervisor"
     EDUCATION = "education"
@@ -50,7 +49,7 @@ def _normalize_model_name(
     return str(value or "").strip()
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_model_for_role(
     role: LLMRole | str,
 ) -> str:
