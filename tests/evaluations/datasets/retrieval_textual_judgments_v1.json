@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "name": "inna-neon-textual-human-judgment-v1",
+  "binary_relevance_threshold": 2,
+  "relevance_scale": {
+    "0": "irrelevante",
+    "1": "parcialmente relacionado, mas insuficiente",
+    "2": "relevante",
+    "3": "altamente relevante"
+  },
+  "cases": {
+    "reserva-financeira-001": {
+      "question": "Como montar uma reserva financeira?",
+      "chunk_index_grades": {
+        "1": 0,
+        "4": 3
+      },
+      "review": "O chunk 4 responde diretamente. O chunk 1 sobre Pix e irrelevante."
+    },
+    "orcamento-mensal-001": {
+      "question": "Como organizar renda e despesas mensais?",
+      "chunk_index_grades": {
+        "2": 1,
+        "3": 3
+      },
+      "review": "O chunk 3 responde diretamente. O chunk 2 sobre cartao possui relacao parcial com orcamento."
+    },
+    "cartao-credito-001": {
+      "question": "Como usar cartão de crédito sem me endividar?",
+      "chunk_index_grades": {
+        "2": 3
+      },
+      "review": "O chunk 2 responde diretamente sobre uso do cartao e comprometimento da renda."
+    },
+    "dividas-priorizacao-001": {
+      "question": "Qual dívida devo pagar primeiro?",
+      "chunk_index_grades": {
+        "1": 0,
+        "3": 1
+      },
+      "review": "A base menciona dividas de forma generica, mas nao explica criterios de priorizacao."
+    },
+    "gastos-fixos-variaveis-001": {
+      "question": "Qual a diferença entre gastos fixos e variáveis?",
+      "chunk_index_grades": {
+        "3": 1
+      },
+      "review": "O chunk cita gastos fixos e variaveis, mas nao explica a diferenca entre eles."
+    }
+  }
+}
