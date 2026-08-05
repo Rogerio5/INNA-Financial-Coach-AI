@@ -15,18 +15,13 @@ EXCLUDED_DIRECTORIES = {
     "node_modules",
 }
 
-LEGACY_PROCESSOR = (
-    "_process_legacy_telegram_update"
-)
+LEGACY_PROCESSOR = "_process_legacy_telegram_update"
 
 
 def _ignored(
     path: Path,
 ) -> bool:
-    return any(
-        part in EXCLUDED_DIRECTORIES
-        for part in path.parts
-    )
+    return any(part in EXCLUDED_DIRECTORIES for part in path.parts)
 
 
 def _call_name(
@@ -53,9 +48,7 @@ def _build_parent_map(
     parents = {}
 
     for parent in ast.walk(tree):
-        for child in ast.iter_child_nodes(
-            parent
-        ):
+        for child in ast.iter_child_nodes(parent):
             parents[child] = parent
 
     return parents
@@ -65,9 +58,7 @@ def _find_owner(
     node: ast.AST,
     parents: dict[ast.AST, ast.AST],
 ):
-    current = parents.get(
-        node
-    )
+    current = parents.get(node)
 
     while current is not None:
         if isinstance(
@@ -79,20 +70,13 @@ def _find_owner(
         ):
             return current
 
-        current = parents.get(
-            current
-        )
+        current = parents.get(current)
 
     return None
 
 
 def test_worker_creates_one_bridge_and_forwards_it():
-    target = (
-        ROOT
-        / "src"
-        / "channels"
-        / "telegram_update_worker.py"
-    )
+    target = ROOT / "src" / "channels" / "telegram_update_worker.py"
 
     source = target.read_text(
         encoding="utf-8",
@@ -113,8 +97,7 @@ def test_worker_creates_one_bridge_and_forwards_it():
                 ast.AsyncFunctionDef,
             ),
         )
-        and node.name
-        == "load_telegram_processor"
+        and node.name == "load_telegram_processor"
     )
 
     factory_calls = 0
@@ -127,56 +110,34 @@ def test_worker_creates_one_bridge_and_forwards_it():
         ):
             continue
 
-        name = _call_name(
-            node
-        )
+        name = _call_name(node)
 
-        if name == (
-            "create_postgres_telegram_webhook_"
-            "conversation_bridge"
-        ):
+        if name == ("create_postgres_telegram_webhook_conversation_bridge"):
             factory_calls += 1
 
         if name == "process_telegram_update":
             keyword_names = {
-                keyword.arg
-                for keyword in node.keywords
-                if keyword.arg is not None
+                keyword.arg for keyword in node.keywords if keyword.arg is not None
             }
 
-            bridge_forwarded = (
-                "conversation_bridge"
-                in keyword_names
-            )
+            bridge_forwarded = "conversation_bridge" in keyword_names
 
     assert factory_calls == 1
     assert bridge_forwarded is True
 
 
 def test_worker_does_not_import_or_call_legacy_processor():
-    target = (
-        ROOT
-        / "src"
-        / "channels"
-        / "telegram_update_worker.py"
-    )
+    target = ROOT / "src" / "channels" / "telegram_update_worker.py"
 
     source = target.read_text(
         encoding="utf-8",
     )
 
-    assert (
-        LEGACY_PROCESSOR
-        not in source
-    )
+    assert LEGACY_PROCESSOR not in source
 
 
 def test_durable_helpers_do_not_reference_legacy_globals():
-    target = (
-        ROOT
-        / "api"
-        / "telegram_webhook.py"
-    )
+    target = ROOT / "api" / "telegram_webhook.py"
 
     source = target.read_text(
         encoding="utf-8",
@@ -230,20 +191,15 @@ def test_durable_helpers_do_not_reference_legacy_globals():
 
     assert violations == []
 
+
 def test_tests_do_not_call_main_processor_without_bridge_except_negative_contract_test():
     violations = []
 
     allowed_negative_test = (
-        "tests/unit/"
-        "test_telegram_webhook_required_durable_bridge.py"
+        "tests/unit/test_telegram_webhook_required_durable_bridge.py"
     )
 
-    for path in (
-        ROOT
-        / "tests"
-    ).rglob(
-        "*.py"
-    ):
+    for path in (ROOT / "tests").rglob("*.py"):
         relative = path.relative_to(ROOT)
 
         if _ignored(relative):
@@ -271,22 +227,14 @@ def test_tests_do_not_call_main_processor_without_bridge_except_negative_contrac
             ):
                 continue
 
-            if (
-                _call_name(node)
-                != "process_telegram_update"
-            ):
+            if _call_name(node) != "process_telegram_update":
                 continue
 
             keyword_names = {
-                keyword.arg
-                for keyword in node.keywords
-                if keyword.arg is not None
+                keyword.arg for keyword in node.keywords if keyword.arg is not None
             }
 
-            if (
-                "conversation_bridge"
-                in keyword_names
-            ):
+            if "conversation_bridge" in keyword_names:
                 continue
 
             owner = _find_owner(
@@ -294,17 +242,11 @@ def test_tests_do_not_call_main_processor_without_bridge_except_negative_contrac
                 parents,
             )
 
-            owner_name = (
-                owner.name
-                if owner is not None
-                else "<module>"
-            )
+            owner_name = owner.name if owner is not None else "<module>"
 
             is_allowed_negative_contract_test = (
-                relative.as_posix()
-                == allowed_negative_test
-                and owner_name
-                == "test_public_processor_requires_bridge_argument"
+                relative.as_posix() == allowed_negative_test
+                and owner_name == "test_public_processor_requires_bridge_argument"
             )
 
             if is_allowed_negative_contract_test:
@@ -319,4 +261,3 @@ def test_tests_do_not_call_main_processor_without_bridge_except_negative_contrac
             )
 
     assert violations == []
-

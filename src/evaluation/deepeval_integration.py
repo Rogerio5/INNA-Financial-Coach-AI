@@ -25,9 +25,7 @@ DEEPEVAL_PACKAGE_NAME = "deepeval"
 
 DEEPEVAL_ENABLED_ENV = "INNA_DEEPEVAL_ENABLED"
 DEEPEVAL_LIVE_ENV = "INNA_DEEPEVAL_LIVE"
-DEEPEVAL_EXTERNAL_ONLY_ENV = (
-    "INNA_DEEPEVAL_EXTERNAL_ONLY"
-)
+DEEPEVAL_EXTERNAL_ONLY_ENV = "INNA_DEEPEVAL_EXTERNAL_ONLY"
 
 _TRUE_VALUES = frozenset(
     {
@@ -58,21 +56,15 @@ class DeepEvalIntegrationError(RuntimeError):
     """Erro base da integração da INNA com DeepEval."""
 
 
-class DeepEvalUnavailableError(
-    DeepEvalIntegrationError
-):
+class DeepEvalUnavailableError(DeepEvalIntegrationError):
     """DeepEval não está disponível no ambiente."""
 
 
-class DeepEvalPrivacyError(
-    DeepEvalIntegrationError
-):
+class DeepEvalPrivacyError(DeepEvalIntegrationError):
     """Um caso não está autorizado para avaliação externa."""
 
 
-class DeepEvalConfigurationError(
-    DeepEvalIntegrationError
-):
+class DeepEvalConfigurationError(DeepEvalIntegrationError):
     """Configuração inválida da integração."""
 
 
@@ -94,11 +86,7 @@ class DeepEvalSettings:
         cls,
         environment: Mapping[str, str] | None = None,
     ) -> DeepEvalSettings:
-        values = (
-            os.environ
-            if environment is None
-            else environment
-        )
+        values = os.environ if environment is None else environment
 
         return cls(
             enabled=_parse_environment_bool(
@@ -112,13 +100,9 @@ class DeepEvalSettings:
                 variable_name=DEEPEVAL_LIVE_ENV,
             ),
             external_only=_parse_environment_bool(
-                values.get(
-                    DEEPEVAL_EXTERNAL_ONLY_ENV
-                ),
+                values.get(DEEPEVAL_EXTERNAL_ONLY_ENV),
                 default=True,
-                variable_name=(
-                    DEEPEVAL_EXTERNAL_ONLY_ENV
-                ),
+                variable_name=(DEEPEVAL_EXTERNAL_ONLY_ENV),
             ),
         )
 
@@ -173,9 +157,7 @@ class DeepEvalCasePayload:
     expected_output: str | None = None
     context: tuple[str, ...] = ()
     retrieval_context: tuple[str, ...] = ()
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         case_id = self.case_id.strip()
@@ -183,22 +165,13 @@ class DeepEvalCasePayload:
         actual_output = self.actual_output.strip()
 
         if not case_id:
-            raise ValueError(
-                "DeepEvalCasePayload.case_id "
-                "não pode ser vazio."
-            )
+            raise ValueError("DeepEvalCasePayload.case_id não pode ser vazio.")
 
         if not input_text:
-            raise ValueError(
-                "DeepEvalCasePayload.input_text "
-                "não pode ser vazio."
-            )
+            raise ValueError("DeepEvalCasePayload.input_text não pode ser vazio.")
 
         if not actual_output:
-            raise ValueError(
-                "DeepEvalCasePayload.actual_output "
-                "não pode ser vazio."
-            )
+            raise ValueError("DeepEvalCasePayload.actual_output não pode ser vazio.")
 
         object.__setattr__(
             self,
@@ -218,30 +191,22 @@ class DeepEvalCasePayload:
         object.__setattr__(
             self,
             "expected_output",
-            _optional_text(
-                self.expected_output
-            ),
+            _optional_text(self.expected_output),
         )
         object.__setattr__(
             self,
             "context",
-            _normalize_text_sequence(
-                self.context
-            ),
+            _normalize_text_sequence(self.context),
         )
         object.__setattr__(
             self,
             "retrieval_context",
-            _normalize_text_sequence(
-                self.retrieval_context
-            ),
+            _normalize_text_sequence(self.retrieval_context),
         )
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
 
@@ -272,8 +237,7 @@ def _parse_environment_bool(
         return False
 
     raise DeepEvalConfigurationError(
-        f"{variable_name} possui valor booleano "
-        f"inválido: {value!r}."
+        f"{variable_name} possui valor booleano inválido: {value!r}."
     )
 
 
@@ -303,8 +267,7 @@ def _normalize_text_sequence(
         ),
     ):
         raise ValueError(
-            "Era esperada uma sequência de textos, "
-            "não uma string isolada."
+            "Era esperada uma sequência de textos, não uma string isolada."
         )
 
     normalized: list[str] = []
@@ -320,9 +283,7 @@ def _normalize_text_sequence(
 
 def deepeval_availability() -> DeepEvalAvailability:
     try:
-        package_version = version(
-            DEEPEVAL_PACKAGE_NAME
-        )
+        package_version = version(DEEPEVAL_PACKAGE_NAME)
     except PackageNotFoundError:
         return DeepEvalAvailability(
             installed=False,
@@ -333,12 +294,8 @@ def deepeval_availability() -> DeepEvalAvailability:
         )
 
     try:
-        test_case_module = import_module(
-            "deepeval.test_case"
-        )
-        deepeval_module = import_module(
-            "deepeval"
-        )
+        test_case_module = import_module("deepeval.test_case")
+        deepeval_module = import_module("deepeval")
 
         llm_test_case_available = hasattr(
             test_case_module,
@@ -352,21 +309,14 @@ def deepeval_availability() -> DeepEvalAvailability:
         error = None
 
         if not llm_test_case_available:
-            error = (
-                "deepeval.test_case.LLMTestCase "
-                "não está disponível."
-            )
+            error = "deepeval.test_case.LLMTestCase não está disponível."
         elif not evaluate_available:
-            error = (
-                "deepeval.evaluate não está disponível."
-            )
+            error = "deepeval.evaluate não está disponível."
 
         return DeepEvalAvailability(
             installed=True,
             package_version=package_version,
-            llm_test_case_available=(
-                llm_test_case_available
-            ),
+            llm_test_case_available=(llm_test_case_available),
             evaluate_available=evaluate_available,
             error=error,
         )
@@ -376,10 +326,7 @@ def deepeval_availability() -> DeepEvalAvailability:
             package_version=package_version,
             llm_test_case_available=False,
             evaluate_available=False,
-            error=(
-                f"{type(exception).__name__}: "
-                f"{exception}"
-            ),
+            error=(f"{type(exception).__name__}: {exception}"),
         )
 
 
@@ -388,8 +335,7 @@ def require_deepeval() -> DeepEvalAvailability:
 
     if not availability.ready:
         raise DeepEvalUnavailableError(
-            availability.error
-            or "DeepEval não está disponível."
+            availability.error or "DeepEval não está disponível."
         )
 
     return availability
@@ -398,10 +344,7 @@ def require_deepeval() -> DeepEvalAvailability:
 def _render_conversation_turn(
     turn: ConversationTurn,
 ) -> str:
-    return (
-        f"[{turn.turn_index}] "
-        f"{turn.role}: {turn.content}"
-    )
+    return f"[{turn.turn_index}] {turn.role}: {turn.content}"
 
 
 def render_case_input(
@@ -417,15 +360,11 @@ def render_case_input(
     if case.input_text.strip():
         return case.input_text.strip()
 
-    rendered = tuple(
-        _render_conversation_turn(turn)
-        for turn in case.conversation
-    )
+    rendered = tuple(_render_conversation_turn(turn) for turn in case.conversation)
 
     if not rendered:
         raise ValueError(
-            f"O caso {case.case_id!r} não possui "
-            "input_text nem conversation."
+            f"O caso {case.case_id!r} não possui input_text nem conversation."
         )
 
     return "\n".join(rendered)
@@ -434,10 +373,7 @@ def render_case_input(
 def render_conversation_context(
     case: InnaEvaluationCase,
 ) -> tuple[str, ...]:
-    return tuple(
-        _render_conversation_turn(turn)
-        for turn in case.conversation
-    )
+    return tuple(_render_conversation_turn(turn) for turn in case.conversation)
 
 
 def ensure_external_case_allowed(
@@ -449,26 +385,22 @@ def ensure_external_case_allowed(
 
     if not case.external_evaluation_allowed:
         raise DeepEvalPrivacyError(
-            f"O caso {case.case_id!r} não está "
-            "autorizado para avaliação externa."
+            f"O caso {case.case_id!r} não está autorizado para avaliação externa."
         )
 
     if case.privacy_level is not PrivacyLevel.PUBLIC:
         raise DeepEvalPrivacyError(
-            f"O caso {case.case_id!r} não possui "
-            "nível de privacidade público."
+            f"O caso {case.case_id!r} não possui nível de privacidade público."
         )
 
     if case.metadata.get("synthetic") is not True:
         raise DeepEvalPrivacyError(
-            f"O caso {case.case_id!r} não está "
-            "marcado como sintético."
+            f"O caso {case.case_id!r} não está marcado como sintético."
         )
 
     if case.metadata.get("external_safe") is not True:
         raise DeepEvalPrivacyError(
-            f"O caso {case.case_id!r} não está "
-            "marcado como external_safe."
+            f"O caso {case.case_id!r} não está marcado como external_safe."
         )
 
 
@@ -484,13 +416,9 @@ def build_deepeval_payload(
     if external_run:
         ensure_external_case_allowed(case)
 
-    conversation_context = (
-        render_conversation_context(case)
-    )
+    conversation_context = render_conversation_context(case)
 
-    supplied_context = _normalize_text_sequence(
-        context
-    )
+    supplied_context = _normalize_text_sequence(context)
 
     combined_context = tuple(
         dict.fromkeys(
@@ -501,9 +429,7 @@ def build_deepeval_payload(
         )
     )
 
-    supplied_metadata = dict(
-        metadata or {}
-    )
+    supplied_metadata = dict(metadata or {})
 
     case_metadata = {
         "case_id": case.case_id,
@@ -513,33 +439,23 @@ def build_deepeval_payload(
         "category": case.category,
         "language": case.language,
         "currency": case.currency,
-        "privacy_level": (
-            case.privacy_level.value
-        ),
-        "synthetic": (
-            case.metadata.get("synthetic")
-            is True
-        ),
+        "privacy_level": (case.privacy_level.value),
+        "synthetic": (case.metadata.get("synthetic") is True),
         **supplied_metadata,
     }
 
     if external_run:
-        sanitized_metadata = prepare_external_payload(
-            case_metadata
-        )
+        sanitized_metadata = prepare_external_payload(case_metadata)
 
         if not isinstance(
             sanitized_metadata,
             Mapping,
         ):
             raise DeepEvalPrivacyError(
-                "A sanitização externa não retornou "
-                "um mapping válido."
+                "A sanitização externa não retornou um mapping válido."
             )
 
-        case_metadata = dict(
-            sanitized_metadata
-        )
+        case_metadata = dict(sanitized_metadata)
 
     return DeepEvalCasePayload(
         case_id=case.case_id,
@@ -547,11 +463,7 @@ def build_deepeval_payload(
         actual_output=actual_output,
         expected_output=case.expected_output,
         context=combined_context,
-        retrieval_context=(
-            _normalize_text_sequence(
-                retrieval_context
-            )
-        ),
+        retrieval_context=(_normalize_text_sequence(retrieval_context)),
         metadata=case_metadata,
     )
 
@@ -567,26 +479,19 @@ def _supported_constructor_arguments(
     versões do DeepEval.
     """
 
-    signature = inspect.signature(
-        constructor
-    )
+    signature = inspect.signature(constructor)
 
     parameters = signature.parameters
 
     supports_kwargs = any(
-        parameter.kind
-        is inspect.Parameter.VAR_KEYWORD
+        parameter.kind is inspect.Parameter.VAR_KEYWORD
         for parameter in parameters.values()
     )
 
     if supports_kwargs:
         return dict(values)
 
-    return {
-        key: value
-        for key, value in values.items()
-        if key in parameters
-    }
+    return {key: value for key, value in values.items() if key in parameters}
 
 
 def create_llm_test_case(
@@ -594,32 +499,22 @@ def create_llm_test_case(
 ) -> Any:
     availability = require_deepeval()
 
-    test_case_module = import_module(
-        "deepeval.test_case"
-    )
+    test_case_module = import_module("deepeval.test_case")
 
     llm_test_case_class = test_case_module.LLMTestCase
 
     candidate_arguments: dict[str, Any] = {
         "input": payload.input_text,
         "actual_output": payload.actual_output,
-        "expected_output": (
-            payload.expected_output
-        ),
+        "expected_output": (payload.expected_output),
         "context": list(payload.context),
-        "retrieval_context": list(
-            payload.retrieval_context
-        ),
-        "additional_metadata": dict(
-            payload.metadata
-        ),
+        "retrieval_context": list(payload.retrieval_context),
+        "additional_metadata": dict(payload.metadata),
     }
 
-    constructor_arguments = (
-        _supported_constructor_arguments(
-            llm_test_case_class,
-            candidate_arguments,
-        )
+    constructor_arguments = _supported_constructor_arguments(
+        llm_test_case_class,
+        candidate_arguments,
     )
 
     required_arguments = {
@@ -627,10 +522,7 @@ def create_llm_test_case(
         "actual_output",
     }
 
-    missing_arguments = (
-        required_arguments
-        - set(constructor_arguments)
-    )
+    missing_arguments = required_arguments - set(constructor_arguments)
 
     if missing_arguments:
         raise DeepEvalUnavailableError(
@@ -639,14 +531,11 @@ def create_llm_test_case(
             f"{sorted(missing_arguments)}."
         )
 
-    test_case = llm_test_case_class(
-        **constructor_arguments
-    )
+    test_case = llm_test_case_class(**constructor_arguments)
 
     if availability.package_version is None:
         raise DeepEvalUnavailableError(
-            "Não foi possível identificar a versão "
-            "instalada do DeepEval."
+            "Não foi possível identificar a versão instalada do DeepEval."
         )
 
     return test_case
@@ -672,22 +561,16 @@ def convert_case_to_deepeval(
         external_run=external_run,
     )
 
-    llm_test_case = create_llm_test_case(
-        payload
-    )
+    llm_test_case = create_llm_test_case(payload)
 
     if availability.package_version is None:
-        raise DeepEvalUnavailableError(
-            "Versão do DeepEval indisponível."
-        )
+        raise DeepEvalUnavailableError("Versão do DeepEval indisponível.")
 
     return DeepEvalConversion(
         case_id=case.case_id,
         payload=payload,
         llm_test_case=llm_test_case,
-        deepeval_version=(
-            availability.package_version
-        ),
+        deepeval_version=(availability.package_version),
         external_run=external_run,
     )
 

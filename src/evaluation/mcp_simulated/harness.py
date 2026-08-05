@@ -178,25 +178,18 @@ class SimulatedMCPClient:
             agent_name=self._agent_name,
             user_id=self._user_id,
             session_id=self._session_id,
-            trace_id=(
-                trace_id
-                or f"trace-{uuid.uuid4().hex}"
-            ),
+            trace_id=(trace_id or f"trace-{uuid.uuid4().hex}"),
             call_id=f"call-{uuid.uuid4().hex}",
         )
 
-        context = build_execution_context(
-            request
-        )
+        context = build_execution_context(request)
 
         call = build_tool_call(
             request,
             context=context,
         )
 
-        return self._harness.executor.execute(
-            call
-        )
+        return self._harness.executor.execute(call)
 
 
 def _construct_compatible(
@@ -205,9 +198,7 @@ def _construct_compatible(
 ) -> Any:
     """Constrói um contrato usando seus parâmetros reais."""
 
-    signature = inspect.signature(
-        target
-    )
+    signature = inspect.signature(target)
 
     kwargs: dict[str, Any] = {}
 
@@ -225,18 +216,12 @@ def _construct_compatible(
             kwargs[name] = candidates[name]
             continue
 
-        if (
-            parameter.default
-            is inspect.Parameter.empty
-        ):
+        if parameter.default is inspect.Parameter.empty:
             raise TypeError(
-                "Parâmetro obrigatório não mapeado em "
-                f"{target.__name__}: {name}"
+                f"Parâmetro obrigatório não mapeado em {target.__name__}: {name}"
             )
 
-    return target(
-        **kwargs
-    )
+    return target(**kwargs)
 
 
 def build_execution_context(
@@ -244,9 +229,7 @@ def build_execution_context(
 ) -> ToolExecutionContext:
     """Cria ToolExecutionContext usando aliases conhecidos."""
 
-    now = datetime.now(
-        UTC
-    )
+    now = datetime.now(UTC)
 
     candidates = {
         "agent_name": request.agent_name,
@@ -289,9 +272,7 @@ def build_tool_call(
 ) -> ToolCall:
     """Cria ToolCall usando os campos reais do contrato."""
 
-    now = datetime.now(
-        UTC
-    )
+    now = datetime.now(UTC)
 
     candidates = {
         "call_id": request.call_id,
@@ -390,14 +371,9 @@ def _payload_mapping(
         value,
         "model_dump",
     ):
-        return dict(
-            value.model_dump()
-        )
+        return dict(value.model_dump())
 
-    raise TypeError(
-        "Entrada não suportada: "
-        f"{type(value).__name__}"
-    )
+    raise TypeError(f"Entrada não suportada: {type(value).__name__}")
 
 
 def _context_value(
@@ -448,9 +424,7 @@ def _health_handler(
         kwargs,
     )
 
-    _, _, trace_id = _context_identifiers(
-        context
-    )
+    _, _, trace_id = _context_identifiers(context)
 
     return {
         "status": "ok",
@@ -475,11 +449,7 @@ def _rag_handler(
         )
     )
 
-    user_id, session_id, trace_id = (
-        _context_identifiers(
-            context
-        )
-    )
+    user_id, session_id, trace_id = _context_identifiers(context)
 
     question = str(
         payload.get(
@@ -489,10 +459,7 @@ def _rag_handler(
     )
 
     return {
-        "answer": (
-            "Resposta simulada fundamentada para: "
-            f"{question}"
-        ),
+        "answer": (f"Resposta simulada fundamentada para: {question}"),
         "sources": [
             "synthetic-financial-education",
             "synthetic-budget-guide",
@@ -520,9 +487,7 @@ def _financial_handler(
         )
     )
 
-    income = float(
-        payload["monthly_income"]
-    )
+    income = float(payload["monthly_income"])
 
     expenses = (
         float(payload["fixed_expenses"])
@@ -541,20 +506,10 @@ def _financial_handler(
     )
 
     risk_level = (
-        "low"
-        if balance >= income * 0.2
-        else (
-            "medium"
-            if balance >= 0
-            else "high"
-        )
+        "low" if balance >= income * 0.2 else ("medium" if balance >= 0 else "high")
     )
 
-    user_id, session_id, trace_id = (
-        _context_identifiers(
-            context
-        )
-    )
+    user_id, session_id, trace_id = _context_identifiers(context)
 
     return {
         "estimated_balance": balance,
@@ -572,9 +527,7 @@ def _controlled_error_handler(
     del args
     del kwargs
 
-    raise RuntimeError(
-        "simulated controlled MCP failure"
-    )
+    raise RuntimeError("simulated controlled MCP failure")
 
 
 def _timeout_handler(
@@ -614,9 +567,7 @@ def build_tool_definition(
 ) -> ToolDefinition:
     """Cria ToolDefinition compatível com o registry real."""
 
-    agents = frozenset(
-        allowed_agents
-    )
+    agents = frozenset(allowed_agents)
 
     candidates = {
         "name": name,
@@ -721,9 +672,7 @@ def build_simulated_mcp_harness() -> SimulatedMCPHarness:
     )
 
     for definition in definitions:
-        registry.register(
-            definition
-        )
+        registry.register(definition)
 
     permission_policy = ToolPermissionPolicy()
 
@@ -780,14 +729,9 @@ def output_mapping(
         output,
         "model_dump",
     ):
-        return dict(
-            output.model_dump()
-        )
+        return dict(output.model_dump())
 
-    raise TypeError(
-        "Saída MCP não suportada: "
-        f"{type(output).__name__}"
-    )
+    raise TypeError(f"Saída MCP não suportada: {type(output).__name__}")
 
 
 def error_code(

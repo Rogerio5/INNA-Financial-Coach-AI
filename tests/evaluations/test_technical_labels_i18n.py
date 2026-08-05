@@ -37,18 +37,12 @@ EXPECTED_KEYS = {
 
 
 def test_all_languages_are_available():
-    assert set(
-        TECHNICAL_LABELS
-    ) == EXPECTED_LANGUAGES
+    assert set(TECHNICAL_LABELS) == EXPECTED_LANGUAGES
 
 
 def test_all_languages_have_complete_contract():
     for language in EXPECTED_LANGUAGES:
-        assert set(
-            TECHNICAL_LABELS[
-                language
-            ]
-        ) == EXPECTED_KEYS
+        assert set(TECHNICAL_LABELS[language]) == EXPECTED_KEYS
 
 
 def test_all_labels_are_non_empty():
@@ -62,33 +56,42 @@ def test_all_labels_are_non_empty():
 
 
 def test_russian_labels_keep_technical_terms():
-    assert technical_label(
-        "ru",
-        "fallback",
-    ) == "Резервный режим (Fallback)"
-
-    assert technical_label(
-        "ru",
-        "gemini",
-    ) == "Модель Gemini"
-
-
-def test_ch_follows_german_contract():
     assert (
-        TECHNICAL_LABELS["ch"]
-        == TECHNICAL_LABELS["de"]
+        technical_label(
+            "ru",
+            "fallback",
+        )
+        == "Резервный режим (Fallback)"
+    )
+
+    assert (
+        technical_label(
+            "ru",
+            "gemini",
+        )
+        == "Модель Gemini"
     )
 
 
+def test_ch_follows_german_contract():
+    assert TECHNICAL_LABELS["ch"] == TECHNICAL_LABELS["de"]
+
+
 def test_unknown_language_uses_portuguese():
-    assert technical_label(
-        "unknown",
-        "latency",
-    ) == "Latência"
+    assert (
+        technical_label(
+            "unknown",
+            "latency",
+        )
+        == "Latência"
+    )
 
 
 def test_unknown_key_is_preserved():
-    assert technical_label(
-        "pt",
-        "unknown_term",
-    ) == "unknown_term"
+    assert (
+        technical_label(
+            "pt",
+            "unknown_term",
+        )
+        == "unknown_term"
+    )

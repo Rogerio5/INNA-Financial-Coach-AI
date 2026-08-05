@@ -63,16 +63,13 @@ def formatar_numero(
 
     texto = f"{numero:,.{casas_decimais}f}"
 
-    separador_milhar, separador_decimal = _separadores_por_idioma(
-        idioma
-    )
+    separador_milhar, separador_decimal = _separadores_por_idioma(idioma)
 
     if separador_milhar == "," and separador_decimal == ".":
         return texto
 
     texto = (
-        texto
-        .replace(",", "__MILHAR__")
+        texto.replace(",", "__MILHAR__")
         .replace(".", separador_decimal)
         .replace("__MILHAR__", separador_milhar)
     )
@@ -184,25 +181,15 @@ def formatar_data(
 
     if isinstance(valor, str):
         try:
-            valor = datetime.fromisoformat(
-                valor.replace("Z", "+00:00")
-            )
+            valor = datetime.fromisoformat(valor.replace("Z", "+00:00"))
         except ValueError:
             return valor
 
     if isinstance(valor, datetime):
         if str(idioma).lower().startswith("en"):
-            formato = (
-                "%Y-%m-%d %H:%M"
-                if incluir_hora
-                else "%Y-%m-%d"
-            )
+            formato = "%Y-%m-%d %H:%M" if incluir_hora else "%Y-%m-%d"
         else:
-            formato = (
-                "%d/%m/%Y %H:%M"
-                if incluir_hora
-                else "%d/%m/%Y"
-            )
+            formato = "%d/%m/%Y %H:%M" if incluir_hora else "%d/%m/%Y"
 
         return valor.strftime(formato)
 
@@ -286,10 +273,7 @@ def formatar_comparacao_monetaria(
     )
 
     if percentual is None:
-        return (
-            f"{anterior_fmt} → {atual_fmt} "
-            f"({variacao_fmt})"
-        )
+        return f"{anterior_fmt} → {atual_fmt} ({variacao_fmt})"
 
     percentual_fmt = formatar_percentual(
         percentual,
@@ -298,10 +282,7 @@ def formatar_comparacao_monetaria(
         incluir_sinal=True,
     )
 
-    return (
-        f"{anterior_fmt} → {atual_fmt} "
-        f"({variacao_fmt}; {percentual_fmt})"
-    )
+    return f"{anterior_fmt} → {atual_fmt} ({variacao_fmt}; {percentual_fmt})"
 
 
 __all__ = [

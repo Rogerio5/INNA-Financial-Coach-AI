@@ -73,19 +73,12 @@ def test_detects_complete_improvement():
     )
 
     assert comparison.complete is True
-    assert (
-        comparison.status
-        == RagLabComparisonStatus.IMPROVED
-    )
-    assert comparison.delta == pytest.approx(
-        0.096
-    )
+    assert comparison.status == RagLabComparisonStatus.IMPROVED
+    assert comparison.delta == pytest.approx(0.096)
     assert comparison.has_improvement is True
     assert comparison.has_regression is False
 
-    assert set(
-        comparison.improved_metric_ids
-    ) == {
+    assert set(comparison.improved_metric_ids) == {
         "answer-relevancy",
         "faithfulness",
         "contextual-relevancy",
@@ -114,14 +107,9 @@ def test_detects_axis_regression():
         candidate,
     )
 
-    assert (
-        comparison.status
-        == RagLabComparisonStatus.REGRESSED
-    )
+    assert comparison.status == RagLabComparisonStatus.REGRESSED
     assert comparison.has_regression is True
-    assert comparison.regressed_metric_ids == (
-        "faithfulness",
-    )
+    assert comparison.regressed_metric_ids == ("faithfulness",)
 
 
 def test_classifies_small_delta_as_stable():
@@ -147,14 +135,9 @@ def test_classifies_small_delta_as_stable():
         tolerance=0.005,
     )
 
-    assert (
-        comparison.status
-        == RagLabComparisonStatus.STABLE
-    )
+    assert comparison.status == RagLabComparisonStatus.STABLE
 
-    assert set(
-        comparison.stable_metric_ids
-    ) == {
+    assert set(comparison.stable_metric_ids) == {
         "answer-relevancy",
         "faithfulness",
         "contextual-relevancy",
@@ -183,14 +166,9 @@ def test_marks_missing_triad_as_unavailable():
 
     assert comparison.complete is False
 
-    assert (
-        comparison.status
-        == RagLabComparisonStatus.UNAVAILABLE
-    )
+    assert comparison.status == RagLabComparisonStatus.UNAVAILABLE
 
-    assert set(
-        comparison.unavailable_metric_ids
-    ) == {
+    assert set(comparison.unavailable_metric_ids) == {
         "answer-relevancy",
         "faithfulness",
         "contextual-relevancy",
@@ -245,13 +223,9 @@ def test_serialization_is_dashboard_safe():
 
     payload = comparison.to_dict()
 
-    assert payload[
-        "baseline_reference"
-    ] == "baseline"
+    assert payload["baseline_reference"] == "baseline"
 
-    assert payload[
-        "candidate_reference"
-    ] == "candidate"
+    assert payload["candidate_reference"] == "candidate"
 
     assert payload["status"] == "improved"
     assert len(payload["axes"]) == 3

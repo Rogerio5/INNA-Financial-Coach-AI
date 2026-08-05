@@ -22,10 +22,7 @@ def _handoff():
     return create_handoff(
         from_agent="financial_agent",
         to_agent="report_agent",
-        reason=(
-            "O diagnóstico foi concluído e "
-            "precisa ser transformado em relatório."
-        ),
+        reason=("O diagnóstico foi concluído e precisa ser transformado em relatório."),
         payload={
             "diagnosis_id": "diag-001",
         },
@@ -40,21 +37,13 @@ def _handoff():
 def test_create_handoff():
     handoff = _handoff()
 
-    assert handoff["handoff_id"] == (
-        "handoff-001"
-    )
+    assert handoff["handoff_id"] == ("handoff-001")
 
-    assert handoff["from_agent"] == (
-        "financial_agent"
-    )
+    assert handoff["from_agent"] == ("financial_agent")
 
-    assert handoff["to_agent"] == (
-        "report_agent"
-    )
+    assert handoff["to_agent"] == ("report_agent")
 
-    assert handoff["status"] == (
-        "requested"
-    )
+    assert handoff["status"] == ("requested")
 
     assert handoff["payload"] == {
         "diagnosis_id": "diag-001",
@@ -70,17 +59,11 @@ def test_handoff_can_be_accepted():
         timestamp=ACCEPTED_AT,
     )
 
-    assert accepted["status"] == (
-        "accepted"
-    )
+    assert accepted["status"] == ("accepted")
 
-    assert accepted["accepted_at"] == (
-        ACCEPTED_AT
-    )
+    assert accepted["accepted_at"] == (ACCEPTED_AT)
 
-    assert accepted["updated_at"] == (
-        ACCEPTED_AT
-    )
+    assert accepted["updated_at"] == (ACCEPTED_AT)
 
 
 def test_accepted_handoff_can_be_completed():
@@ -97,13 +80,9 @@ def test_accepted_handoff_can_be_completed():
         timestamp=COMPLETED_AT,
     )
 
-    assert completed["status"] == (
-        "completed"
-    )
+    assert completed["status"] == ("completed")
 
-    assert completed["completed_at"] == (
-        COMPLETED_AT
-    )
+    assert completed["completed_at"] == (COMPLETED_AT)
 
     assert completed["result"] == {
         "report_id": "report-001",
@@ -113,20 +92,13 @@ def test_accepted_handoff_can_be_completed():
 def test_requested_handoff_can_be_rejected():
     rejected = reject_handoff(
         _handoff(),
-        reason=(
-            "O payload não contém dados suficientes."
-        ),
+        reason=("O payload não contém dados suficientes."),
         timestamp=ACCEPTED_AT,
     )
 
-    assert rejected["status"] == (
-        "rejected"
-    )
+    assert rejected["status"] == ("rejected")
 
-    assert (
-        "payload"
-        in rejected["error"].lower()
-    )
+    assert "payload" in rejected["error"].lower()
 
 
 def test_accepted_handoff_can_fail():
@@ -152,9 +124,7 @@ def test_requested_handoff_can_be_cancelled():
         timestamp=ACCEPTED_AT,
     )
 
-    assert cancelled["status"] == (
-        "cancelled"
-    )
+    assert cancelled["status"] == ("cancelled")
 
 
 def test_agent_cannot_handoff_to_itself():
@@ -237,15 +207,11 @@ def test_original_handoff_is_not_mutated():
         timestamp=ACCEPTED_AT,
     )
 
-    assert requested["status"] == (
-        "requested"
-    )
+    assert requested["status"] == ("requested")
 
     assert requested["accepted_at"] is None
 
-    assert accepted["status"] == (
-        "accepted"
-    )
+    assert accepted["status"] == ("accepted")
 
 
 def test_payload_and_metadata_are_copied():

@@ -66,10 +66,7 @@ def _bloquear_servicos_externos_em_testes_unitarios(
             intent="desconhecido",
             next_node="fallback_agent",
             confidence=0.20,
-            reason=(
-                "Classificação LLM simulada durante "
-                "os testes unitários."
-            ),
+            reason=("Classificação LLM simulada durante os testes unitários."),
             classification_source="fallback",
             classification_duration_ms=0,
             gemini_called=False,
@@ -78,9 +75,6 @@ def _bloquear_servicos_externos_em_testes_unitarios(
         )
 
     monkeypatch.setattr(
-        (
-            "src.agents.supervisor."
-            "classificar_com_gemini"
-        ),
+        ("src.agents.supervisor.classificar_com_gemini"),
         classificador_simulado,
     )

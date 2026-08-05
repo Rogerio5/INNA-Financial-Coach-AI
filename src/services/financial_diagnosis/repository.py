@@ -90,17 +90,13 @@ LIMIT 1;
 """
 
 
-class FinancialDiagnosisRepositoryError(
-    RuntimeError
-):
+class FinancialDiagnosisRepositoryError(RuntimeError):
     """
     Falha sanitizada na persistência do diagnóstico.
     """
 
 
-class IdempotencyConflictError(
-    FinancialDiagnosisRepositoryError
-):
+class IdempotencyConflictError(FinancialDiagnosisRepositoryError):
     """
     A mesma chave foi reutilizada com conteúdo
     financeiro diferente.
@@ -150,60 +146,27 @@ def _montar_parametros(
 
     return {
         "usuario_id": context.usuario_id,
-        "idempotency_key": (
-            context.idempotency_key
-        ),
-        "request_fingerprint": (
-            command.request_fingerprint
-        ),
+        "idempotency_key": (context.idempotency_key),
+        "request_fingerprint": (command.request_fingerprint),
         "nome": diagnosis.nome,
-        "renda_mensal": (
-            diagnosis.renda_mensal
-        ),
-        "gastos_fixos": (
-            diagnosis.gastos_fixos
-        ),
-        "gastos_variaveis": (
-            diagnosis.gastos_variaveis
-        ),
-        "dividas_mensais": (
-            diagnosis.dividas_mensais
-        ),
-        "reserva_atual": (
-            diagnosis.reserva_atual
-        ),
+        "renda_mensal": (diagnosis.renda_mensal),
+        "gastos_fixos": (diagnosis.gastos_fixos),
+        "gastos_variaveis": (diagnosis.gastos_variaveis),
+        "dividas_mensais": (diagnosis.dividas_mensais),
+        "reserva_atual": (diagnosis.reserva_atual),
         "objetivo": diagnosis.objetivo,
         "idioma": diagnosis.idioma,
         "moeda": diagnosis.moeda,
-        "simbolo_moeda": (
-            diagnosis.simbolo_moeda
+        "simbolo_moeda": (diagnosis.simbolo_moeda),
+        "saldo_estimado": (diagnosis.saldo_estimado),
+        ("comprometimento_renda_percentual"): (
+            diagnosis.comprometimento_renda_percentual
         ),
-        "saldo_estimado": (
-            diagnosis.saldo_estimado
-        ),
-        (
-            "comprometimento_"
-            "renda_percentual"
-        ): (
-            diagnosis
-            .comprometimento_renda_percentual
-        ),
-        "meses_reserva_estimados": (
-            diagnosis
-            .meses_reserva_estimados
-        ),
-        "score_financeiro": (
-            diagnosis.score_financeiro
-        ),
-        "nivel_risco": (
-            diagnosis.nivel_risco
-        ),
-        "diagnostico": (
-            diagnosis.diagnostico
-        ),
-        "plano_30_dias": (
-            diagnosis.plano_30_dias
-        ),
+        "meses_reserva_estimados": (diagnosis.meses_reserva_estimados),
+        "score_financeiro": (diagnosis.score_financeiro),
+        "nivel_risco": (diagnosis.nivel_risco),
+        "diagnostico": (diagnosis.diagnostico),
+        "plano_30_dias": (diagnosis.plano_30_dias),
     }
 
 
@@ -223,18 +186,12 @@ def _extrair_resultado(
         TypeError,
     ):
         raise FinancialDiagnosisRepositoryError(
-            "O banco retornou um registro "
-            "de diagnóstico inválido."
+            "O banco retornou um registro de diagnóstico inválido."
         ) from None
 
-    if (
-        isinstance(raw_id, bool)
-        or not isinstance(raw_id, int)
-        or raw_id < 1
-    ):
+    if isinstance(raw_id, bool) or not isinstance(raw_id, int) or raw_id < 1:
         raise FinancialDiagnosisRepositoryError(
-            "O banco retornou um identificador "
-            "de diagnóstico inválido."
+            "O banco retornou um identificador de diagnóstico inválido."
         )
 
     if not isinstance(
@@ -242,8 +199,7 @@ def _extrair_resultado(
         datetime,
     ):
         raise FinancialDiagnosisRepositoryError(
-            "O banco retornou uma data de "
-            "diagnóstico inválida."
+            "O banco retornou uma data de diagnóstico inválida."
         )
 
     return FinancialDiagnosisWriteResult(
@@ -257,25 +213,18 @@ def _fingerprint_do_registro(
     registro: Mapping[str, Any],
 ) -> str:
     try:
-        value = registro[
-            "request_fingerprint"
-        ]
+        value = registro["request_fingerprint"]
     except (
         KeyError,
         TypeError,
     ):
         raise FinancialDiagnosisRepositoryError(
-            "O banco não retornou o fingerprint "
-            "do diagnóstico."
+            "O banco não retornou o fingerprint do diagnóstico."
         ) from None
 
-    if (
-        not isinstance(value, str)
-        or len(value) != 64
-    ):
+    if not isinstance(value, str) or len(value) != 64:
         raise FinancialDiagnosisRepositoryError(
-            "O banco retornou um fingerprint "
-            "de diagnóstico inválido."
+            "O banco retornou um fingerprint de diagnóstico inválido."
         )
 
     return value
@@ -300,32 +249,21 @@ def salvar_diagnostico_financeiro(
         FinancialDiagnosisPersistenceCommand,
     ):
         raise TypeError(
-            "command deve ser uma instância de "
-            "FinancialDiagnosisPersistenceCommand."
+            "command deve ser uma instância de FinancialDiagnosisPersistenceCommand."
         )
 
-    parameters = _montar_parametros(
-        command
-    )
+    parameters = _montar_parametros(command)
 
-    expected_fingerprint = parameters[
-        "request_fingerprint"
-    ]
+    expected_fingerprint = parameters["request_fingerprint"]
 
     try:
         with cursor_postgres(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            cursor.execute(
-                "SET LOCAL lock_timeout "
-                "= '3000ms';"
-            )
+            cursor.execute("SET LOCAL lock_timeout = '3000ms';")
 
-            cursor.execute(
-                "SET LOCAL statement_timeout "
-                "= '5000ms';"
-            )
+            cursor.execute("SET LOCAL statement_timeout = '5000ms';")
 
             cursor.execute(
                 SQL_INSERT_DIAGNOSTICO,
@@ -335,20 +273,12 @@ def salvar_diagnostico_financeiro(
             inserted = cursor.fetchone()
 
             if inserted is not None:
-                inserted_fingerprint = (
-                    _fingerprint_do_registro(
-                        inserted
-                    )
-                )
+                inserted_fingerprint = _fingerprint_do_registro(inserted)
 
-                if (
-                    inserted_fingerprint
-                    != expected_fingerprint
-                ):
+                if inserted_fingerprint != expected_fingerprint:
                     raise (
                         FinancialDiagnosisRepositoryError(
-                            "O banco retornou um "
-                            "fingerprint inesperado."
+                            "O banco retornou um fingerprint inesperado."
                         )
                     )
 
@@ -360,14 +290,8 @@ def salvar_diagnostico_financeiro(
             cursor.execute(
                 SQL_CONSULTAR_IDEMPOTENCIA,
                 {
-                    "usuario_id": (
-                        command.context.usuario_id
-                    ),
-                    "idempotency_key": (
-                        command
-                        .context
-                        .idempotency_key
-                    ),
+                    "usuario_id": (command.context.usuario_id),
+                    "idempotency_key": (command.context.idempotency_key),
                 },
             )
 
@@ -382,16 +306,9 @@ def salvar_diagnostico_financeiro(
                     )
                 )
 
-            existing_fingerprint = (
-                _fingerprint_do_registro(
-                    existing
-                )
-            )
+            existing_fingerprint = _fingerprint_do_registro(existing)
 
-            if (
-                existing_fingerprint
-                != expected_fingerprint
-            ):
+            if existing_fingerprint != expected_fingerprint:
                 raise IdempotencyConflictError(
                     "A chave de idempotência já "
                     "foi utilizada com outro "
@@ -411,8 +328,7 @@ def salvar_diagnostico_financeiro(
 
     except Exception:
         raise FinancialDiagnosisRepositoryError(
-            "Não foi possível persistir o "
-            "diagnóstico financeiro."
+            "Não foi possível persistir o diagnóstico financeiro."
         ) from None
 
 

@@ -8,12 +8,7 @@ from src.observability.llm_costs import (
 
 
 def test_normalizar_modelo():
-    assert (
-        normalizar_modelo(
-            "Gemini-2.5-Flash"
-        )
-        == "gemini_2_5_flash"
-    )
+    assert normalizar_modelo("Gemini-2.5-Flash") == "gemini_2_5_flash"
 
 
 def test_calcular_custo_estimado():
@@ -24,26 +19,11 @@ def test_calcular_custo_estimado():
         preco_saida_usd_por_1m=2.00,
     )
 
-    assert (
-        resultado[
-            "custo_entrada_usd"
-        ]
-        == 0.5
-    )
+    assert resultado["custo_entrada_usd"] == 0.5
 
-    assert (
-        resultado[
-            "custo_saida_usd"
-        ]
-        == 1.0
-    )
+    assert resultado["custo_saida_usd"] == 1.0
 
-    assert (
-        resultado[
-            "custo_total_usd"
-        ]
-        == 1.5
-    )
+    assert resultado["custo_total_usd"] == 1.5
 
 
 def test_custo_com_tokens_negativos():
@@ -54,10 +34,7 @@ def test_custo_com_tokens_negativos():
         preco_saida_usd_por_1m=1,
     )
 
-    assert (
-        resultado["custo_total_usd"]
-        == 0.0
-    )
+    assert resultado["custo_total_usd"] == 0.0
 
 
 def test_extrair_tokens_objeto():
@@ -69,9 +46,7 @@ def test_extrair_tokens_objeto():
         )
     )
 
-    resultado = extrair_tokens_resposta(
-        resposta
-    )
+    resultado = extrair_tokens_resposta(resposta)
 
     assert resultado == {
         "tokens_entrada": 100,
@@ -88,20 +63,12 @@ def test_extrair_tokens_dicionario():
         }
     }
 
-    resultado = extrair_tokens_resposta(
-        resposta
-    )
+    resultado = extrair_tokens_resposta(resposta)
 
-    assert resultado[
-        "tokens_totais"
-    ] == 100
+    assert resultado["tokens_totais"] == 100
 
 
 def test_extrair_tokens_sem_metadata():
-    resultado = extrair_tokens_resposta(
-        object()
-    )
+    resultado = extrair_tokens_resposta(object())
 
-    assert resultado[
-        "tokens_totais"
-    ] == 0
+    assert resultado["tokens_totais"] == 0

@@ -18,9 +18,7 @@ RAG_TRIAD_METRIC_IDS = (
 )
 
 
-class RagTriadAggregationError(
-    RuntimeError
-):
+class RagTriadAggregationError(RuntimeError):
     """Erro ao consolidar métricas da RAG Triad."""
 
 
@@ -74,46 +72,25 @@ class RagTriadAxisResult:
     reason: str | None
     duration_ms: float
     estimated_cost: float
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        normalized_metric_id = (
-            self.metric_id.strip().lower()
-        )
+        normalized_metric_id = self.metric_id.strip().lower()
 
-        if (
-            normalized_metric_id
-            not in RAG_TRIAD_METRIC_IDS
-        ):
-            raise ValueError(
-                "metric_id não pertence à RAG Triad."
-            )
+        if normalized_metric_id not in RAG_TRIAD_METRIC_IDS:
+            raise ValueError("metric_id não pertence à RAG Triad.")
 
-        if self.score is not None and not (
-            0.0 <= float(self.score) <= 1.0
-        ):
-            raise ValueError(
-                "score deve estar entre 0 e 1."
-            )
+        if self.score is not None and not (0.0 <= float(self.score) <= 1.0):
+            raise ValueError("score deve estar entre 0 e 1.")
 
-        if self.threshold is not None and not (
-            0.0 <= float(self.threshold) <= 1.0
-        ):
-            raise ValueError(
-                "threshold deve estar entre 0 e 1."
-            )
+        if self.threshold is not None and not (0.0 <= float(self.threshold) <= 1.0):
+            raise ValueError("threshold deve estar entre 0 e 1.")
 
         if self.duration_ms < 0:
-            raise ValueError(
-                "duration_ms não pode ser negativo."
-            )
+            raise ValueError("duration_ms não pode ser negativo.")
 
         if self.estimated_cost < 0:
-            raise ValueError(
-                "estimated_cost não pode ser negativo."
-            )
+            raise ValueError("estimated_cost não pode ser negativo.")
 
         object.__setattr__(
             self,
@@ -123,9 +100,7 @@ class RagTriadAxisResult:
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
     @classmethod
@@ -174,44 +149,29 @@ class RagTriadResult:
     failing_metric_ids: tuple[str, ...]
     total_duration_ms: float
     total_estimated_cost: float
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        axis_ids = tuple(
-            axis.metric_id
-            for axis in self.axes
-        )
+        axis_ids = tuple(axis.metric_id for axis in self.axes)
 
         if len(axis_ids) != len(set(axis_ids)):
-            raise ValueError(
-                "A RAG Triad não aceita métricas duplicadas."
-            )
+            raise ValueError("A RAG Triad não aceita métricas duplicadas.")
 
         if self.aggregate_score is not None and not (
             0.0 <= self.aggregate_score <= 1.0
         ):
-            raise ValueError(
-                "aggregate_score deve estar entre 0 e 1."
-            )
+            raise ValueError("aggregate_score deve estar entre 0 e 1.")
 
         if self.total_duration_ms < 0:
-            raise ValueError(
-                "total_duration_ms não pode ser negativo."
-            )
+            raise ValueError("total_duration_ms não pode ser negativo.")
 
         if self.total_estimated_cost < 0:
-            raise ValueError(
-                "total_estimated_cost não pode ser negativo."
-            )
+            raise ValueError("total_estimated_cost não pode ser negativo.")
 
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
     @property
@@ -222,37 +182,19 @@ class RagTriadResult:
     def scores_by_metric(
         self,
     ) -> Mapping[str, float | None]:
-        return MappingProxyType(
-            {
-                axis.metric_id: axis.score
-                for axis in self.axes
-            }
-        )
+        return MappingProxyType({axis.metric_id: axis.score for axis in self.axes})
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "status": self.status.value,
-            "aggregate_score": (
-                self.aggregate_score
-            ),
+            "aggregate_score": (self.aggregate_score),
             "passed": self.passed,
             "is_complete": self.is_complete,
-            "missing_metric_ids": list(
-                self.missing_metric_ids
-            ),
-            "failing_metric_ids": list(
-                self.failing_metric_ids
-            ),
-            "total_duration_ms": (
-                self.total_duration_ms
-            ),
-            "total_estimated_cost": (
-                self.total_estimated_cost
-            ),
-            "axes": [
-                axis.to_dict()
-                for axis in self.axes
-            ],
+            "missing_metric_ids": list(self.missing_metric_ids),
+            "failing_metric_ids": list(self.failing_metric_ids),
+            "total_duration_ms": (self.total_duration_ms),
+            "total_estimated_cost": (self.total_estimated_cost),
+            "axes": [axis.to_dict() for axis in self.axes],
             "metadata": dict(self.metadata),
         }
 
@@ -282,26 +224,18 @@ def aggregate_rag_triad(
 
         if metric_id in selected:
             raise RagTriadAggregationError(
-                "Resultado duplicado para a métrica "
-                f"{metric_id!r}."
+                f"Resultado duplicado para a métrica {metric_id!r}."
             )
 
-        selected[metric_id] = (
-            RagTriadAxisResult.from_metric_result(
-                result
-            )
-        )
+        selected[metric_id] = RagTriadAxisResult.from_metric_result(result)
 
     missing_metric_ids = tuple(
-        metric_id
-        for metric_id in RAG_TRIAD_METRIC_IDS
-        if metric_id not in selected
+        metric_id for metric_id in RAG_TRIAD_METRIC_IDS if metric_id not in selected
     )
 
     if require_complete and missing_metric_ids:
         raise RagTriadAggregationError(
-            "RAG Triad incompleta. Métricas ausentes: "
-            + ", ".join(missing_metric_ids)
+            "RAG Triad incompleta. Métricas ausentes: " + ", ".join(missing_metric_ids)
         )
 
     axes = tuple(
@@ -315,17 +249,9 @@ def aggregate_rag_triad(
         missing_metric_ids=missing_metric_ids,
     )
 
-    scores = tuple(
-        axis.score
-        for axis in axes
-        if axis.score is not None
-    )
+    scores = tuple(axis.score for axis in axes if axis.score is not None)
 
-    aggregate_score = (
-        None
-        if not scores
-        else sum(scores) / len(scores)
-    )
+    aggregate_score = None if not scores else sum(scores) / len(scores)
 
     failing_metric_ids = tuple(
         axis.metric_id
@@ -358,14 +284,8 @@ def aggregate_rag_triad(
         passed=passed,
         missing_metric_ids=missing_metric_ids,
         failing_metric_ids=failing_metric_ids,
-        total_duration_ms=sum(
-            axis.duration_ms
-            for axis in axes
-        ),
-        total_estimated_cost=sum(
-            axis.estimated_cost
-            for axis in axes
-        ),
+        total_duration_ms=sum(axis.duration_ms for axis in axes),
+        total_estimated_cost=sum(axis.estimated_cost for axis in axes),
         metadata=dict(metadata or {}),
     )
 
@@ -378,10 +298,7 @@ def _resolve_triad_status(
     if not axes:
         return RagTriadStatus.UNAVAILABLE
 
-    statuses = {
-        axis.status
-        for axis in axes
-    }
+    statuses = {axis.status for axis in axes}
 
     if MetricRunStatus.FAILED in statuses:
         return RagTriadStatus.FAILED
@@ -392,22 +309,10 @@ def _resolve_triad_status(
     if MetricRunStatus.ERROR in statuses:
         return RagTriadStatus.ERROR
 
-    if (
-        not missing_metric_ids
-        and statuses
-        == {
-            MetricRunStatus.PASSED
-        }
-    ):
+    if not missing_metric_ids and statuses == {MetricRunStatus.PASSED}:
         return RagTriadStatus.PASSED
 
-    if (
-        not missing_metric_ids
-        and statuses
-        == {
-            MetricRunStatus.PLANNED
-        }
-    ):
+    if not missing_metric_ids and statuses == {MetricRunStatus.PLANNED}:
         return RagTriadStatus.PLANNED
 
     return RagTriadStatus.PARTIAL

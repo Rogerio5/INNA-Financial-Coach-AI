@@ -5,13 +5,9 @@ import unicodedata
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-_SENTENCE_SPLIT_PATTERN = re.compile(
-    r"(?<=[.!?])\s+"
-)
+_SENTENCE_SPLIT_PATTERN = re.compile(r"(?<=[.!?])\s+")
 
-_WORD_PATTERN = re.compile(
-    r"[A-Za-zÀ-ÿ0-9]+"
-)
+_WORD_PATTERN = re.compile(r"[A-Za-zÀ-ÿ0-9]+")
 
 _STOPWORDS = {
     "a",
@@ -70,11 +66,7 @@ def normalize_sentence_window_text(
     )
 
     rendered = "".join(
-        character
-        for character in rendered
-        if unicodedata.category(
-            character
-        ) != "Mn"
+        character for character in rendered if unicodedata.category(character) != "Mn"
     )
 
     return re.sub(
@@ -101,11 +93,7 @@ def split_sentences(
         return []
 
     parts = [
-        part.strip()
-        for part in _SENTENCE_SPLIT_PATTERN.split(
-            rendered
-        )
-        if part.strip()
+        part.strip() for part in _SENTENCE_SPLIT_PATTERN.split(rendered) if part.strip()
     ]
 
     return parts or [rendered]
@@ -155,21 +143,12 @@ def _safe_int(
 def _query_terms(
     query: object,
 ) -> set[str]:
-    normalized_query = (
-        normalize_sentence_window_text(
-            query
-        )
-    )
+    normalized_query = normalize_sentence_window_text(query)
 
     return {
         token
-        for token in _WORD_PATTERN.findall(
-            normalized_query
-        )
-        if (
-            len(token) >= 3
-            and token not in _STOPWORDS
-        )
+        for token in _WORD_PATTERN.findall(normalized_query)
+        if (len(token) >= 3 and token not in _STOPWORDS)
     }
 
 
@@ -177,22 +156,11 @@ def _sentence_score(
     sentence: str,
     query_terms: set[str],
 ) -> float:
-    normalized_sentence = (
-        normalize_sentence_window_text(
-            sentence
-        )
-    )
+    normalized_sentence = normalize_sentence_window_text(sentence)
 
-    sentence_terms = set(
-        _WORD_PATTERN.findall(
-            normalized_sentence
-        )
-    )
+    sentence_terms = set(_WORD_PATTERN.findall(normalized_sentence))
 
-    overlap = len(
-        sentence_terms
-        & query_terms
-    )
+    overlap = len(sentence_terms & query_terms)
 
     score = float(overlap * 4)
 
@@ -238,10 +206,7 @@ def build_sentence_window(
     )
 
     ordered_chunks = sorted(
-        (
-            dict(chunk)
-            for chunk in chunks
-        ),
+        (dict(chunk) for chunk in chunks),
         key=lambda chunk: _safe_int(
             chunk.get(
                 "chunk_index",
@@ -250,9 +215,7 @@ def build_sentence_window(
         ),
     )
 
-    sentence_records: list[
-        dict[str, Any]
-    ] = []
+    sentence_records: list[dict[str, Any]] = []
 
     for chunk in ordered_chunks:
         chunk_index = _safe_int(
@@ -262,22 +225,14 @@ def build_sentence_window(
             )
         )
 
-        chunk_text = extract_result_text(
-            chunk
-        )
+        chunk_text = extract_result_text(chunk)
 
-        for sentence_position, sentence in enumerate(
-            split_sentences(
-                chunk_text
-            )
-        ):
+        for sentence_position, sentence in enumerate(split_sentences(chunk_text)):
             sentence_records.append(
                 {
                     "sentence": sentence,
                     "chunk_index": chunk_index,
-                    "sentence_position": (
-                        sentence_position
-                    ),
+                    "sentence_position": (sentence_position),
                 }
             )
 
@@ -289,136 +244,81 @@ def build_sentence_window(
             "sentence_count": 0,
         }
 
-    query_terms = _query_terms(
-        query
-    )
+    query_terms = _query_terms(query)
 
     candidate_indices = [
         index
-        for index, record in enumerate(
-            sentence_records
-        )
-        if record["chunk_index"]
-        == matched_chunk_index
+        for index, record in enumerate(sentence_records)
+        if record["chunk_index"] == matched_chunk_index
     ]
 
     if not candidate_indices:
-        candidate_indices = list(
-            range(
-                len(sentence_records)
-            )
-        )
+        candidate_indices = list(range(len(sentence_records)))
 
     anchor_index = max(
         candidate_indices,
         key=lambda index: (
             _sentence_score(
-                sentence_records[
-                    index
-                ]["sentence"],
+                sentence_records[index]["sentence"],
                 query_terms,
             ),
-            -abs(
-                sentence_records[
-                    index
-                ]["chunk_index"]
-                - matched_chunk_index
-            ),
-            -sentence_records[
-                index
-            ]["sentence_position"],
+            -abs(sentence_records[index]["chunk_index"] - matched_chunk_index),
+            -sentence_records[index]["sentence_position"],
         ),
     )
 
     start_index = max(
         0,
-        anchor_index
-        - safe_window_size,
+        anchor_index - safe_window_size,
     )
 
     end_index = min(
         len(sentence_records),
-        anchor_index
-        + safe_window_size
-        + 1,
+        anchor_index + safe_window_size + 1,
     )
 
-    selected_records = (
-        sentence_records[
-            start_index:end_index
-        ]
-    )
+    selected_records = sentence_records[start_index:end_index]
 
     selected_sentences: list[str] = []
 
     current_length = 0
 
     for record in selected_records:
-        sentence = str(
-            record["sentence"]
-        ).strip()
+        sentence = str(record["sentence"]).strip()
 
         if not sentence:
             continue
 
         projected_length = (
-            current_length
-            + len(sentence)
-            + (
-                1
-                if selected_sentences
-                else 0
-            )
+            current_length + len(sentence) + (1 if selected_sentences else 0)
         )
 
-        if (
-            projected_length
-            > safe_max_characters
-            and selected_sentences
-        ):
+        if projected_length > safe_max_characters and selected_sentences:
             break
 
-        remaining = (
-            safe_max_characters
-            - current_length
-        )
+        remaining = safe_max_characters - current_length
 
         if len(sentence) > remaining:
-            sentence = sentence[
-                :remaining
-            ].rstrip()
+            sentence = sentence[:remaining].rstrip()
 
         if sentence:
-            selected_sentences.append(
-                sentence
-            )
+            selected_sentences.append(sentence)
 
-            current_length += (
-                len(sentence)
-                + 1
-            )
+            current_length += len(sentence) + 1
 
     chunk_indices: list[int] = []
 
     for record in selected_records:
-        chunk_index = int(
-            record["chunk_index"]
-        )
+        chunk_index = int(record["chunk_index"])
 
         if chunk_index not in chunk_indices:
-            chunk_indices.append(
-                chunk_index
-            )
+            chunk_indices.append(chunk_index)
 
     return {
-        "text": " ".join(
-            selected_sentences
-        ).strip(),
+        "text": " ".join(selected_sentences).strip(),
         "anchor_index": anchor_index,
         "chunk_indices": chunk_indices,
-        "sentence_count": len(
-            selected_sentences
-        ),
+        "sentence_count": len(selected_sentences),
     }
 
 
@@ -438,9 +338,7 @@ def expand_result_with_sentence_window(
 
     expanded = dict(result)
 
-    original_text = extract_result_text(
-        expanded
-    )
+    original_text = extract_result_text(expanded)
 
     matched_chunk_index = _safe_int(
         expanded.get(
@@ -452,9 +350,7 @@ def expand_result_with_sentence_window(
     window = build_sentence_window(
         query=query,
         chunks=chunks,
-        matched_chunk_index=(
-            matched_chunk_index
-        ),
+        matched_chunk_index=(matched_chunk_index),
         window_size=window_size,
         max_characters=max_characters,
     )
@@ -468,51 +364,31 @@ def expand_result_with_sentence_window(
     ).strip()
 
     if not window_text:
-        expanded[
-            "sentence_window_applied"
-        ] = False
+        expanded["sentence_window_applied"] = False
 
         return expanded
 
-    expanded[
-        "matched_chunk_text"
-    ] = original_text
+    expanded["matched_chunk_text"] = original_text
 
-    expanded[
-        "sentence_window_text"
-    ] = window_text
+    expanded["sentence_window_text"] = window_text
 
-    expanded[
-        "sentence_window_applied"
-    ] = True
+    expanded["sentence_window_applied"] = True
 
-    expanded[
-        "sentence_window_version"
-    ] = "native_v1"
+    expanded["sentence_window_version"] = "native_v1"
 
-    expanded[
-        "sentence_window_size"
-    ] = max(
+    expanded["sentence_window_size"] = max(
         0,
         int(window_size),
     )
 
-    expanded[
-        "sentence_window_anchor_index"
-    ] = window.get(
-        "anchor_index"
-    )
+    expanded["sentence_window_anchor_index"] = window.get("anchor_index")
 
-    expanded[
-        "sentence_window_chunk_indices"
-    ] = window.get(
+    expanded["sentence_window_chunk_indices"] = window.get(
         "chunk_indices",
         [],
     )
 
-    expanded[
-        "sentence_window_sentence_count"
-    ] = window.get(
+    expanded["sentence_window_sentence_count"] = window.get(
         "sentence_count",
         0,
     )
@@ -530,17 +406,7 @@ def expand_result_with_sentence_window(
         or ""
     ).strip()
 
-    if (
-        current_mode
-        and not current_mode.endswith(
-            "_sentence_window"
-        )
-    ):
-        expanded[
-            "modo_busca"
-        ] = (
-            current_mode
-            + "_sentence_window"
-        )
+    if current_mode and not current_mode.endswith("_sentence_window"):
+        expanded["modo_busca"] = current_mode + "_sentence_window"
 
     return expanded

@@ -34,13 +34,7 @@ class CIPipelineError(RuntimeError):
 def _find_single_report(
     directory: Path,
 ) -> Path:
-    reports = tuple(
-        sorted(
-            directory.glob(
-                "inna-evaluation-*.json"
-            )
-        )
-    )
+    reports = tuple(sorted(directory.glob("inna-evaluation-*.json")))
 
     if len(reports) != 1:
         raise CIPipelineError(
@@ -68,29 +62,19 @@ def run_ci_pipeline(
     maximum_pass_rate_regression: float,
     critical_metric_ids: frozenset[str],
 ) -> dict[str, Any]:
-    report_path = _find_single_report(
-        report_directory
-    )
+    report_path = _find_single_report(report_directory)
 
     comparison = compare_report_files(
         baseline_path,
         report_path,
-        maximum_metric_regression=(
-            maximum_metric_regression
-        ),
-        maximum_pass_rate_regression=(
-            maximum_pass_rate_regression
-        ),
-        critical_metric_ids=(
-            critical_metric_ids
-        ),
+        maximum_metric_regression=(maximum_metric_regression),
+        maximum_pass_rate_regression=(maximum_pass_rate_regression),
+        critical_metric_ids=(critical_metric_ids),
     )
 
-    json_report, markdown_report = (
-        write_comparison_reports(
-            comparison,
-            comparison_output_directory,
-        )
+    json_report, markdown_report = write_comparison_reports(
+        comparison,
+        comparison_output_directory,
     )
 
     history_output_path.parent.mkdir(
@@ -119,46 +103,25 @@ def run_ci_pipeline(
         replace_existing=True,
     )
 
-    history = load_history(
-        history_output_path
-    )
+    history = load_history(history_output_path)
 
     result = {
         "passed": comparison.passed,
         "report_path": str(report_path),
         "baseline_path": str(baseline_path),
         "comparison_json": str(json_report),
-        "comparison_markdown": str(
-            markdown_report
-        ),
-        "history_path": str(
-            history_output_path
-        ),
-        "history_entries": len(
-            history.entries
-        ),
-        "run_reference": (
-            entry.run_reference
-        ),
+        "comparison_markdown": str(markdown_report),
+        "history_path": str(history_output_path),
+        "history_entries": len(history.entries),
+        "run_reference": (entry.run_reference),
         "pass_rate": entry.pass_rate,
-        "regression_count": (
-            entry.regression_count
-        ),
-        "violation_count": (
-            entry.violation_count
-        ),
-        "missing_case_count": len(
-            comparison.missing_case_ids
-        ),
-        "missing_dataset_count": len(
-            comparison.missing_dataset_ids
-        ),
+        "regression_count": (entry.regression_count),
+        "violation_count": (entry.violation_count),
+        "missing_case_count": len(comparison.missing_case_ids),
+        "missing_dataset_count": len(comparison.missing_dataset_ids),
     }
 
-    summary_path = (
-        comparison_output_directory
-        / "ci-pipeline-summary.json"
-    )
+    summary_path = comparison_output_directory / "ci-pipeline-summary.json"
 
     summary_path.write_text(
         json.dumps(
@@ -179,8 +142,7 @@ def run_ci_pipeline(
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Executa comparação, gate de regressão "
-            "e histórico sanitizado da INNA."
+            "Executa comparação, gate de regressão e histórico sanitizado da INNA."
         )
     )
 
@@ -249,49 +211,28 @@ def main(
     parser = build_parser()
     args = parser.parse_args(argv)
 
-    critical_metrics = frozenset(
-        args.critical_metric
-    ) or DEFAULT_CRITICAL_METRICS
+    critical_metrics = frozenset(args.critical_metric) or DEFAULT_CRITICAL_METRICS
 
     try:
         result = run_ci_pipeline(
-            report_directory=(
-                args.report_directory
-            ),
+            report_directory=(args.report_directory),
             baseline_path=args.baseline,
-            comparison_output_directory=(
-                args.comparison_output_directory
-            ),
-            history_seed_path=(
-                args.history_seed
-            ),
-            history_output_path=(
-                args.history_output
-            ),
+            comparison_output_directory=(args.comparison_output_directory),
+            history_seed_path=(args.history_seed),
+            history_output_path=(args.history_output),
             branch=args.branch,
             commit_sha=args.commit_sha,
             environment=args.environment,
-            evaluation_mode=(
-                args.evaluation_mode
-            ),
-            maximum_metric_regression=(
-                args.maximum_metric_regression
-            ),
-            maximum_pass_rate_regression=(
-                args.maximum_pass_rate_regression
-            ),
-            critical_metric_ids=(
-                critical_metrics
-            ),
+            evaluation_mode=(args.evaluation_mode),
+            maximum_metric_regression=(args.maximum_metric_regression),
+            maximum_pass_rate_regression=(args.maximum_pass_rate_regression),
+            critical_metric_ids=(critical_metrics),
         )
     except (
         CIPipelineError,
         EvaluationRegressionError,
     ) as exc:
-        print(
-            "LLMOPS_CI_PIPELINE_REJECTED: "
-            f"{exc}"
-        )
+        print(f"LLMOPS_CI_PIPELINE_REJECTED: {exc}")
         return 1
 
     print(

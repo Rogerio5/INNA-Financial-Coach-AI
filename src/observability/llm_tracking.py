@@ -71,7 +71,6 @@ def _build_phoenix_attributes(
         "openinference.span.kind": "LLM",
         "llm.model_name": modelo,
         "llm.provider": provider,
-
         # Metadados técnicos próprios da INNA.
         "inna.llm.operation": operacao,
         "inna.llm.origin": origem or "unknown",
@@ -127,9 +126,7 @@ def executar_llm_observado(
         request_id=request_id,
     )
 
-    span_name = (
-        f"inna.llm.{provider}.{operacao}"
-    )
+    span_name = f"inna.llm.{provider}.{operacao}"
 
     with traced_operation(
         span_name,
@@ -140,17 +137,11 @@ def executar_llm_observado(
             resposta = chamada()
 
             duracao_ms = round(
-                (
-                    time.perf_counter()
-                    - inicio
-                )
-                * 1000,
+                (time.perf_counter() - inicio) * 1000,
                 3,
             )
 
-            tokens = extrair_tokens_resposta(
-                resposta
-            )
+            tokens = extrair_tokens_resposta(resposta)
 
             span.set_attribute(
                 "llm.token_count.prompt",
@@ -181,15 +172,9 @@ def executar_llm_observado(
                 usuario_id=usuario_id,
                 trace_id=trace_id,
                 request_id=request_id,
-                tokens_entrada=tokens[
-                    "tokens_entrada"
-                ],
-                tokens_saida=tokens[
-                    "tokens_saida"
-                ],
-                tokens_totais=tokens[
-                    "tokens_totais"
-                ],
+                tokens_entrada=tokens["tokens_entrada"],
+                tokens_saida=tokens["tokens_saida"],
+                tokens_totais=tokens["tokens_totais"],
                 duracao_ms=duracao_ms,
                 sucesso=True,
                 metadados={
@@ -203,11 +188,7 @@ def executar_llm_observado(
 
         except Exception as exc:
             duracao_ms = round(
-                (
-                    time.perf_counter()
-                    - inicio
-                )
-                * 1000,
+                (time.perf_counter() - inicio) * 1000,
                 3,
             )
 
@@ -281,9 +262,7 @@ def executar_generate_content_observado(
         if config is not None:
             argumentos["config"] = config
 
-        return client.models.generate_content(
-            **argumentos
-        )
+        return client.models.generate_content(**argumentos)
 
     return executar_llm_observado(
         chamada,

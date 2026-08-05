@@ -83,8 +83,7 @@ def count_agent_visits(
     return sum(
         1
         for record in list(route_history or [])
-        if _extract_route_name(record)
-        == normalized_agent
+        if _extract_route_name(record) == normalized_agent
     )
 
 
@@ -93,12 +92,8 @@ def evaluate_execution_governance(
     requested_agent: str,
     route_history: Sequence[Any] | None = None,
     execution_steps: Any = 0,
-    max_execution_steps: Any = (
-        DEFAULT_MAX_EXECUTION_STEPS
-    ),
-    max_same_agent_visits: Any = (
-        DEFAULT_MAX_SAME_AGENT_VISITS
-    ),
+    max_execution_steps: Any = (DEFAULT_MAX_EXECUTION_STEPS),
+    max_same_agent_visits: Any = (DEFAULT_MAX_SAME_AGENT_VISITS),
     fallback_agent: str = SAFE_FALLBACK_AGENT,
 ) -> ExecutionGovernanceDecision:
     """
@@ -107,13 +102,9 @@ def evaluate_execution_governance(
     O passo atual é incrementado antes da avaliação,
     representando a próxima execução solicitada.
     """
-    requested_agent = str(
-        requested_agent or fallback_agent
-    ).strip()
+    requested_agent = str(requested_agent or fallback_agent).strip()
 
-    fallback_agent = str(
-        fallback_agent or SAFE_FALLBACK_AGENT
-    ).strip()
+    fallback_agent = str(fallback_agent or SAFE_FALLBACK_AGENT).strip()
 
     current_step = (
         _normalize_positive_integer(
@@ -141,14 +132,9 @@ def evaluate_execution_governance(
 
     repeated_visits = previous_visits + 1
 
-    budget_exceeded = (
-        current_step > max_steps
-    )
+    budget_exceeded = current_step > max_steps
 
-    loop_detected = (
-        requested_agent != fallback_agent
-        and repeated_visits > max_visits
-    )
+    loop_detected = requested_agent != fallback_agent and repeated_visits > max_visits
 
     if budget_exceeded:
         return ExecutionGovernanceDecision(
@@ -161,9 +147,7 @@ def evaluate_execution_governance(
             max_same_agent_visits=max_visits,
             loop_detected=False,
             budget_exceeded=True,
-            reason=(
-                "execution_step_budget_exceeded"
-            ),
+            reason=("execution_step_budget_exceeded"),
         )
 
     if loop_detected:
@@ -177,9 +161,7 @@ def evaluate_execution_governance(
             max_same_agent_visits=max_visits,
             loop_detected=True,
             budget_exceeded=False,
-            reason=(
-                "repeated_agent_route_detected"
-            ),
+            reason=("repeated_agent_route_detected"),
         )
 
     return ExecutionGovernanceDecision(
@@ -229,10 +211,7 @@ def apply_execution_governance(
         ),
     )
 
-    trace = list(
-        state.get("trace", [])
-        or []
-    )
+    trace = list(state.get("trace", []) or [])
 
     trace.append(
         "governance:"
@@ -241,34 +220,18 @@ def apply_execution_governance(
         f"{decision.selected_agent}"
     )
 
-    errors = list(
-        state.get("errors", [])
-        or []
-    )
+    errors = list(state.get("errors", []) or [])
 
     if not decision.allowed:
-        errors.append(
-            "A rota solicitada foi interrompida "
-            "pela governança de execução."
-        )
+        errors.append("A rota solicitada foi interrompida pela governança de execução.")
 
     return {
         "next_node": decision.selected_agent,
-        "execution_steps": (
-            decision.current_step
-        ),
-        "loop_detected": (
-            decision.loop_detected
-        ),
-        "execution_budget_exceeded": (
-            decision.budget_exceeded
-        ),
-        "governance_reason": (
-            decision.reason
-        ),
-        "governance_decision": (
-            decision.to_dict()
-        ),
+        "execution_steps": (decision.current_step),
+        "loop_detected": (decision.loop_detected),
+        "execution_budget_exceeded": (decision.budget_exceeded),
+        "governance_reason": (decision.reason),
+        "governance_decision": (decision.to_dict()),
         "trace": trace,
         "errors": errors,
     }

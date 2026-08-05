@@ -87,17 +87,13 @@ def test_claimed_processor_fails_claim_when_processor_returns_false(
     monkeypatch.setattr(
         telegram_webhook,
         "_fail_claimed_telegram_update_safely",
-        lambda received_lease: failures.append(
-            received_lease
-        ),
+        lambda received_lease: failures.append(received_lease),
     )
 
     monkeypatch.setattr(
         telegram_webhook,
         "complete_authenticated_telegram_update",
-        lambda received_lease: completions.append(
-            received_lease
-        ),
+        lambda received_lease: completions.append(received_lease),
     )
 
     telegram_webhook.process_claimed_telegram_update(
@@ -124,9 +120,7 @@ def test_claimed_processor_fails_claim_when_processor_raises(
         *,
         conversation_bridge,
     ):
-        raise RuntimeError(
-            "processing failure"
-        )
+        raise RuntimeError("processing failure")
 
     monkeypatch.setattr(
         telegram_webhook,
@@ -137,9 +131,7 @@ def test_claimed_processor_fails_claim_when_processor_raises(
     monkeypatch.setattr(
         telegram_webhook,
         "_fail_claimed_telegram_update_safely",
-        lambda received_lease: failures.append(
-            received_lease
-        ),
+        lambda received_lease: failures.append(received_lease),
     )
 
     telegram_webhook.process_claimed_telegram_update(

@@ -10,8 +10,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from src.channels import (
-    telegram_update_worker
-    as entrypoint,
+    telegram_update_worker as entrypoint,
 )
 
 from src.services.telegram_update_jobs import (
@@ -28,19 +27,14 @@ class SafeResult:
         payload=None,
     ):
         self.decision = decision
-        self._payload = (
-            payload
-            or {
-                "decision": decision,
-                "stage": "complete",
-                "update_id": 1001,
-            }
-        )
+        self._payload = payload or {
+            "decision": decision,
+            "stage": "complete",
+            "update_id": 1001,
+        }
 
     def to_safe_dict(self):
-        return dict(
-            self._payload
-        )
+        return dict(self._payload)
 
 
 class SafeSummary:
@@ -73,18 +67,12 @@ class FakeSignalModule:
         signal_number,
         handler,
     ):
-        previous = (
-            f"previous-{signal_number}"
-        )
+        previous = f"previous-{signal_number}"
 
         if signal_number in self.handlers:
-            self.restored[
-                signal_number
-            ] = handler
+            self.restored[signal_number] = handler
 
-        self.handlers[
-            signal_number
-        ] = handler
+        self.handlers[signal_number] = handler
 
         return previous
 
@@ -92,95 +80,41 @@ class FakeSignalModule:
 def _records(
     stream: io.StringIO,
 ):
-    return [
-        json.loads(line)
-        for line in stream
-        .getvalue()
-        .splitlines()
-        if line.strip()
-    ]
+    return [json.loads(line) for line in stream.getvalue().splitlines() if line.strip()]
 
 
 def test_worker_config_uses_defaults():
-    config = (
-        entrypoint
-        .load_worker_config_from_env(
-            {}
-        )
-    )
+    config = entrypoint.load_worker_config_from_env({})
 
-    assert config == (
-        TelegramUpdateWorkerConfig()
-    )
+    assert config == (TelegramUpdateWorkerConfig())
 
 
 def test_worker_config_accepts_environment():
-    config = (
-        entrypoint
-        .load_worker_config_from_env(
-            {
-                entrypoint
-                .ENV_LEASE_SECONDS:
-                    "180",
-
-                entrypoint
-                .ENV_IDLE_SLEEP_SECONDS:
-                    "0.5",
-
-                entrypoint
-                .ENV_UNAVAILABLE_SLEEP_SECONDS:
-                    "7.5",
-
-                entrypoint
-                .ENV_RECOVERY_INTERVAL_SECONDS:
-                    "45",
-
-                entrypoint
-                .ENV_RECOVERY_BATCH_SIZE:
-                    "50",
-
-                entrypoint
-                .ENV_RETRY_BASE_DELAY_SECONDS:
-                    "10",
-
-                entrypoint
-                .ENV_RETRY_MAX_DELAY_SECONDS:
-                    "1200",
-            }
-        )
+    config = entrypoint.load_worker_config_from_env(
+        {
+            entrypoint.ENV_LEASE_SECONDS: "180",
+            entrypoint.ENV_IDLE_SLEEP_SECONDS: "0.5",
+            entrypoint.ENV_UNAVAILABLE_SLEEP_SECONDS: "7.5",
+            entrypoint.ENV_RECOVERY_INTERVAL_SECONDS: "45",
+            entrypoint.ENV_RECOVERY_BATCH_SIZE: "50",
+            entrypoint.ENV_RETRY_BASE_DELAY_SECONDS: "10",
+            entrypoint.ENV_RETRY_MAX_DELAY_SECONDS: "1200",
+        }
     )
 
     assert config.lease_seconds == 180
 
-    assert (
-        config.idle_sleep_seconds
-        == 0.5
-    )
+    assert config.idle_sleep_seconds == 0.5
 
-    assert (
-        config.unavailable_sleep_seconds
-        == 7.5
-    )
+    assert config.unavailable_sleep_seconds == 7.5
 
-    assert (
-        config.recovery_interval_seconds
-        == 45.0
-    )
+    assert config.recovery_interval_seconds == 45.0
 
-    assert (
-        config.recovery_batch_size
-        == 50
-    )
+    assert config.recovery_batch_size == 50
 
-    assert (
-        config.retry_base_delay_seconds
-        == 10
-    )
+    assert config.retry_base_delay_seconds == 10
 
-    assert (
-        config.retry_max_delay_seconds
-        == 1200
-    )
+    assert config.retry_max_delay_seconds == 1200
 
 
 @pytest.mark.parametrize(
@@ -190,18 +124,15 @@ def test_worker_config_accepts_environment():
     ),
     [
         (
-            entrypoint
-            .ENV_LEASE_SECONDS,
+            entrypoint.ENV_LEASE_SECONDS,
             "invalid",
         ),
         (
-            entrypoint
-            .ENV_IDLE_SLEEP_SECONDS,
+            entrypoint.ENV_IDLE_SLEEP_SECONDS,
             "nan",
         ),
         (
-            entrypoint
-            .ENV_RECOVERY_BATCH_SIZE,
+            entrypoint.ENV_RECOVERY_BATCH_SIZE,
             "",
         ),
     ],
@@ -210,15 +141,11 @@ def test_invalid_environment_is_rejected(
     environment_name,
     invalid_value,
 ):
-    with pytest.raises(
-        TelegramUpdateRunnerConfigurationError
-    ):
+    with pytest.raises(TelegramUpdateRunnerConfigurationError):
         (
-            entrypoint
-            .load_worker_config_from_env(
+            entrypoint.load_worker_config_from_env(
                 {
-                    environment_name:
-                        invalid_value,
+                    environment_name: invalid_value,
                 }
             )
         )
@@ -252,14 +179,11 @@ def test_result_log_uses_safe_contract():
         stream=stream,
     )
 
-    records = _records(
-        stream
-    )
+    records = _records(stream)
 
     assert records == [
         {
-            "event":
-                "telegram_worker_result",
+            "event": "telegram_worker_result",
             "data": {
                 "decision": "completed",
                 "stage": "complete",
@@ -269,28 +193,19 @@ def test_result_log_uses_safe_contract():
         },
     ]
 
-    assert "payload" not in (
-        stream.getvalue()
-    )
+    assert "payload" not in (stream.getvalue())
 
-    assert "ciphertext" not in (
-        stream.getvalue()
-    )
+    assert "ciphertext" not in (stream.getvalue())
 
 
 def test_signal_handlers_set_stop_event():
     stop_event = Event()
 
-    fake_signal = (
-        FakeSignalModule()
-    )
+    fake_signal = FakeSignalModule()
 
-    previous = (
-        entrypoint
-        ._install_signal_handlers(
-            stop_event,
-            signal_module=fake_signal,
-        )
+    previous = entrypoint._install_signal_handlers(
+        stop_event,
+        signal_module=fake_signal,
     )
 
     assert set(previous) == {
@@ -298,9 +213,7 @@ def test_signal_handlers_set_stop_event():
         fake_signal.SIGTERM,
     }
 
-    fake_signal.handlers[
-        fake_signal.SIGTERM
-    ](
+    fake_signal.handlers[fake_signal.SIGTERM](
         fake_signal.SIGTERM,
         None,
     )
@@ -314,9 +227,7 @@ def test_main_runs_worker_and_emits_summary(
     stdout = io.StringIO()
     stderr = io.StringIO()
 
-    config = (
-        TelegramUpdateWorkerConfig()
-    )
+    config = TelegramUpdateWorkerConfig()
 
     keyring = object()
     processor = MagicMock()
@@ -330,10 +241,7 @@ def test_main_runs_worker_and_emits_summary(
 
     monkeypatch.setattr(
         entrypoint,
-        (
-            "load_telegram_update_"
-            "keyring_from_env"
-        ),
+        ("load_telegram_update_keyring_from_env"),
         lambda: keyring,
     )
 
@@ -374,47 +282,25 @@ def test_main_runs_worker_and_emits_summary(
         stderr=stderr,
     )
 
-    assert exit_code == (
-        entrypoint.EXIT_OK
-    )
+    assert exit_code == (entrypoint.EXIT_OK)
 
     runner.assert_called_once()
 
-    positional, keyword = (
-        runner.call_args
-    )
+    positional, keyword = runner.call_args
 
-    assert positional == (
-        processor,
-    )
+    assert positional == (processor,)
 
-    assert (
-        keyword["config"]
-        is config
-    )
+    assert keyword["config"] is config
 
-    assert (
-        keyword["keyring"]
-        is keyring
-    )
+    assert keyword["keyring"] is keyring
 
-    assert (
-        keyword["max_cycles"]
-        == 1
-    )
+    assert keyword["max_cycles"] == 1
 
-    assert callable(
-        keyword["on_result"]
-    )
+    assert callable(keyword["on_result"])
 
     assert stderr.getvalue() == ""
 
-    events = [
-        record["event"]
-        for record in _records(
-            stdout
-        )
-    ]
+    events = [record["event"] for record in _records(stdout)]
 
     assert events == [
         "telegram_worker_started",
@@ -429,11 +315,7 @@ def test_main_sanitizes_configuration_failure(
     stderr = io.StringIO()
 
     def fail_config():
-        raise (
-            TelegramUpdateRunnerConfigurationError(
-                "postgresql://secret"
-            )
-        )
+        raise (TelegramUpdateRunnerConfigurationError("postgresql://secret"))
 
     monkeypatch.setattr(
         entrypoint,
@@ -447,19 +329,11 @@ def test_main_sanitizes_configuration_failure(
         stderr=stderr,
     )
 
-    assert exit_code == (
-        entrypoint
-        .EXIT_CONFIGURATION_ERROR
-    )
+    assert exit_code == (entrypoint.EXIT_CONFIGURATION_ERROR)
 
-    assert "postgresql://secret" not in (
-        stderr.getvalue()
-    )
+    assert "postgresql://secret" not in (stderr.getvalue())
 
-    assert (
-        "configuration_invalid"
-        in stderr.getvalue()
-    )
+    assert "configuration_invalid" in stderr.getvalue()
 
 
 def test_main_sanitizes_runtime_failure(
@@ -471,17 +345,12 @@ def test_main_sanitizes_runtime_failure(
     monkeypatch.setattr(
         entrypoint,
         "load_worker_config_from_env",
-        lambda: (
-            TelegramUpdateWorkerConfig()
-        ),
+        lambda: TelegramUpdateWorkerConfig(),
     )
 
     monkeypatch.setattr(
         entrypoint,
-        (
-            "load_telegram_update_"
-            "keyring_from_env"
-        ),
+        ("load_telegram_update_keyring_from_env"),
         lambda: object(),
     )
 
@@ -504,9 +373,7 @@ def test_main_sanitizes_runtime_failure(
     )
 
     def fail_runner(*args, **kwargs):
-        raise RuntimeError(
-            "private-financial-message"
-        )
+        raise RuntimeError("private-financial-message")
 
     monkeypatch.setattr(
         entrypoint,
@@ -520,28 +387,17 @@ def test_main_sanitizes_runtime_failure(
         stderr=stderr,
     )
 
-    assert exit_code == (
-        entrypoint.EXIT_RUNTIME_ERROR
-    )
+    assert exit_code == (entrypoint.EXIT_RUNTIME_ERROR)
 
-    assert (
-        "private-financial-message"
-        not in stderr.getvalue()
-    )
+    assert "private-financial-message" not in stderr.getvalue()
 
-    assert (
-        "runtime_failed"
-        in stderr.getvalue()
-    )
+    assert "runtime_failed" in stderr.getvalue()
 
 
 def test_worker_script_exists():
     from pathlib import Path
 
-    path = Path(
-        "scripts/"
-        "run_telegram_update_worker.py"
-    )
+    path = Path("scripts/run_telegram_update_worker.py")
 
     assert path.is_file()
 
@@ -549,9 +405,6 @@ def test_worker_script_exists():
         encoding="utf-8",
     )
 
-    assert (
-        'if __name__ == "__main__":'
-        in source
-    )
+    assert 'if __name__ == "__main__":' in source
 
     assert "main()" in source

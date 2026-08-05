@@ -30,9 +30,7 @@ def build_result(
     return MetricRunResult(
         metric_id=metric_id,
         status=status,
-        execution_mode=(
-            MetricExecutionMode.LIVE_OPT_IN
-        ),
+        execution_mode=(MetricExecutionMode.LIVE_OPT_IN),
         score=score,
         threshold=threshold,
         passed=passed,
@@ -42,12 +40,8 @@ def build_result(
     )
 
 
-def build_complete_results(
-) -> tuple[MetricRunResult, ...]:
-    return tuple(
-        build_result(metric_id)
-        for metric_id in RAG_TRIAD_METRIC_IDS
-    )
+def build_complete_results() -> tuple[MetricRunResult, ...]:
+    return tuple(build_result(metric_id) for metric_id in RAG_TRIAD_METRIC_IDS)
 
 
 def test_rag_triad_metric_ids_are_stable() -> None:
@@ -69,13 +63,9 @@ def test_complete_passing_triad_is_approved() -> None:
     assert result.is_complete is True
     assert result.missing_metric_ids == ()
     assert result.failing_metric_ids == ()
-    assert result.aggregate_score == pytest.approx(
-        0.90
-    )
+    assert result.aggregate_score == pytest.approx(0.90)
     assert result.total_duration_ms == 30.0
-    assert result.total_estimated_cost == (
-        pytest.approx(0.03)
-    )
+    assert result.total_estimated_cost == (pytest.approx(0.03))
 
 
 def test_failed_axis_fails_triad() -> None:
@@ -91,9 +81,7 @@ def test_failed_axis_fails_triad() -> None:
 
     assert result.status == RagTriadStatus.FAILED
     assert result.passed is False
-    assert result.failing_metric_ids == (
-        "faithfulness",
-    )
+    assert result.failing_metric_ids == ("faithfulness",)
 
 
 def test_blocked_axis_blocks_triad() -> None:
@@ -109,9 +97,7 @@ def test_blocked_axis_blocks_triad() -> None:
 
     assert result.status == RagTriadStatus.BLOCKED
     assert result.passed is False
-    assert result.aggregate_score == pytest.approx(
-        0.90
-    )
+    assert result.aggregate_score == pytest.approx(0.90)
 
 
 def test_error_axis_marks_triad_error() -> None:
@@ -149,50 +135,33 @@ def test_dry_run_triad_is_planned() -> None:
 
 
 def test_incomplete_triad_is_partial() -> None:
-    result = aggregate_rag_triad(
-        build_complete_results()[:2]
-    )
+    result = aggregate_rag_triad(build_complete_results()[:2])
 
     assert result.status == RagTriadStatus.PARTIAL
     assert result.passed is None
     assert result.is_complete is False
-    assert result.missing_metric_ids == (
-        "contextual-relevancy",
-    )
+    assert result.missing_metric_ids == ("contextual-relevancy",)
 
 
 def test_empty_results_are_unavailable() -> None:
     result = aggregate_rag_triad(())
 
-    assert result.status == (
-        RagTriadStatus.UNAVAILABLE
-    )
+    assert result.status == (RagTriadStatus.UNAVAILABLE)
     assert result.axes == ()
     assert result.aggregate_score is None
     assert result.passed is None
-    assert result.missing_metric_ids == (
-        RAG_TRIAD_METRIC_IDS
-    )
+    assert result.missing_metric_ids == (RAG_TRIAD_METRIC_IDS)
 
 
 def test_unrelated_metrics_are_ignored() -> None:
     result = aggregate_rag_triad(
         (
-            build_result(
-                "answer-relevancy"
-            ),
-            build_result(
-                "financial-quality"
-            ),
+            build_result("answer-relevancy"),
+            build_result("financial-quality"),
         )
     )
 
-    assert tuple(
-        axis.metric_id
-        for axis in result.axes
-    ) == (
-        "answer-relevancy",
-    )
+    assert tuple(axis.metric_id for axis in result.axes) == ("answer-relevancy",)
 
 
 def test_duplicate_triad_metric_is_rejected() -> None:
@@ -202,12 +171,8 @@ def test_duplicate_triad_metric_is_rejected() -> None:
     ):
         aggregate_rag_triad(
             (
-                build_result(
-                    "faithfulness"
-                ),
-                build_result(
-                    "faithfulness"
-                ),
+                build_result("faithfulness"),
+                build_result("faithfulness"),
             )
         )
 
@@ -245,11 +210,7 @@ def test_result_serialization_is_auditable() -> None:
 
 
 def test_scores_by_metric_is_read_only() -> None:
-    result = aggregate_rag_triad(
-        build_complete_results()
-    )
+    result = aggregate_rag_triad(build_complete_results())
 
     with pytest.raises(TypeError):
-        result.scores_by_metric[
-            "faithfulness"
-        ] = 0.0
+        result.scores_by_metric["faithfulness"] = 0.0

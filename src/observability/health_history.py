@@ -27,29 +27,21 @@ def _carregar_database_url() -> str:
     """
     Obtém DATABASE_URL do ambiente ou do arquivo .env.
     """
-    database_url = os.getenv(
-        "DATABASE_URL"
-    )
+    database_url = os.getenv("DATABASE_URL")
 
     if not database_url:
         try:
             from dotenv import load_dotenv
 
-            load_dotenv(
-                dotenv_path=Path(".env")
-            )
+            load_dotenv(dotenv_path=Path(".env"))
 
-            database_url = os.getenv(
-                "DATABASE_URL"
-            )
+            database_url = os.getenv("DATABASE_URL")
 
         except Exception:
             database_url = None
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não encontrada."
-        )
+        raise RuntimeError("DATABASE_URL não encontrada.")
 
     return database_url
 
@@ -145,20 +137,14 @@ def inicializar_tabela_health_history() -> dict[str, Any]:
 
         return {
             "ok": True,
-            "message": (
-                "Tabela de histórico do Health Score "
-                "inicializada."
-            ),
+            "message": ("Tabela de histórico do Health Score inicializada."),
             "tabela": NOME_TABELA,
         }
 
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro ao inicializar histórico: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao inicializar histórico: {exc}"),
             "tabela": NOME_TABELA,
         }
 
@@ -277,9 +263,7 @@ def preparar_snapshot(
                 0,
             )
         ),
-        "origem": str(
-            origem or "manual"
-        )[:50],
+        "origem": str(origem or "manual")[:50],
         "metricas_json": resultado.get(
             "metricas",
             {},
@@ -304,9 +288,7 @@ def salvar_health_snapshot(
     Quando configurado, evita salvar outro registro muito
     próximo com o mesmo score global e a mesma origem.
     """
-    inicializacao = (
-        inicializar_tabela_health_history()
-    )
+    inicializacao = inicializar_tabela_health_history()
 
     if not inicializacao.get("ok"):
         return inicializacao
@@ -397,21 +379,21 @@ def salvar_health_snapshot(
         }
 
         with engine.begin() as connection:
-            duplicado = connection.execute(
-                consulta_duplicado,
-                {
-                    "score_global": snapshot[
-                        "score_global"
-                    ],
-                    "origem": snapshot["origem"],
-                    "minutos": max(
-                        int(
-                            evitar_duplicado_minutos
+            duplicado = (
+                connection.execute(
+                    consulta_duplicado,
+                    {
+                        "score_global": snapshot["score_global"],
+                        "origem": snapshot["origem"],
+                        "minutos": max(
+                            int(evitar_duplicado_minutos),
+                            0,
                         ),
-                        0,
-                    ),
-                },
-            ).mappings().first()
+                    },
+                )
+                .mappings()
+                .first()
+            )
 
             if duplicado:
                 engine.dispose()
@@ -420,22 +402,19 @@ def salvar_health_snapshot(
                     "ok": True,
                     "salvo": False,
                     "duplicado": True,
-                    "id": int(
-                        duplicado["id"]
-                    ),
-                    "criado_em": duplicado[
-                        "criado_em"
-                    ],
-                    "message": (
-                        "Snapshot semelhante já foi salvo "
-                        "recentemente."
-                    ),
+                    "id": int(duplicado["id"]),
+                    "criado_em": duplicado["criado_em"],
+                    "message": ("Snapshot semelhante já foi salvo recentemente."),
                 }
 
-            registro = connection.execute(
-                inserir,
-                parametros,
-            ).mappings().first()
+            registro = (
+                connection.execute(
+                    inserir,
+                    parametros,
+                )
+                .mappings()
+                .first()
+            )
 
         engine.dispose()
 
@@ -443,15 +422,9 @@ def salvar_health_snapshot(
             "ok": True,
             "salvo": True,
             "duplicado": False,
-            "id": int(
-                registro["id"]
-            ),
-            "criado_em": registro[
-                "criado_em"
-            ],
-            "message": (
-                "Snapshot do Health Score salvo."
-            ),
+            "id": int(registro["id"]),
+            "criado_em": registro["criado_em"],
+            "message": ("Snapshot do Health Score salvo."),
         }
 
     except Exception as exc:
@@ -459,10 +432,7 @@ def salvar_health_snapshot(
             "ok": False,
             "salvo": False,
             "duplicado": False,
-            "message": (
-                "Erro ao salvar snapshot: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao salvar snapshot: {exc}"),
         }
 
 
@@ -474,9 +444,7 @@ def carregar_health_history(
     """
     Carrega os snapshots históricos mais recentes.
     """
-    inicializacao = (
-        inicializar_tabela_health_history()
-    )
+    inicializacao = inicializar_tabela_health_history()
 
     if not inicializacao.get("ok"):
         return {
@@ -574,9 +542,7 @@ def carregar_health_history(
 
         return {
             "ok": True,
-            "message": (
-                "Histórico carregado."
-            ),
+            "message": ("Histórico carregado."),
             "df": df,
             "total": len(df),
         }
@@ -584,10 +550,7 @@ def carregar_health_history(
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro ao carregar histórico: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao carregar histórico: {exc}"),
             "df": pd.DataFrame(),
             "total": 0,
         }
@@ -606,8 +569,7 @@ def calcular_tendencia_health(
             "direcao": "estavel",
             "icone": "➖",
             "mensagem": (
-                "Ainda não existem snapshots suficientes "
-                "para calcular tendência."
+                "Ainda não existem snapshots suficientes para calcular tendência."
             ),
         }
 
@@ -624,13 +586,9 @@ def calcular_tendencia_health(
         ascending=False,
     )
 
-    atual = float(
-        base.iloc[0]["score_global"]
-    )
+    atual = float(base.iloc[0]["score_global"])
 
-    anterior = float(
-        base.iloc[1]["score_global"]
-    )
+    anterior = float(base.iloc[1]["score_global"])
 
     delta = round(
         atual - anterior,
@@ -641,24 +599,20 @@ def calcular_tendencia_health(
         direcao = "melhora"
         icone = "📈"
         mensagem = (
-            f"O Health Score melhorou {delta:.2f} "
-            "ponto(s) desde o snapshot anterior."
+            f"O Health Score melhorou {delta:.2f} ponto(s) desde o snapshot anterior."
         )
 
     elif delta < 0:
         direcao = "piora"
         icone = "📉"
         mensagem = (
-            f"O Health Score caiu {abs(delta):.2f} "
-            "ponto(s) desde o snapshot anterior."
+            f"O Health Score caiu {abs(delta):.2f} ponto(s) desde o snapshot anterior."
         )
 
     else:
         direcao = "estavel"
         icone = "➖"
-        mensagem = (
-            "O Health Score permaneceu estável."
-        )
+        mensagem = "O Health Score permaneceu estável."
 
     return {
         "tem_comparacao": True,

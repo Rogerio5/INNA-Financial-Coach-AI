@@ -95,10 +95,7 @@ def validate_workflow(path: Path) -> list[Finding]:
                 severity="error",
                 rule_id="least-privilege-contents",
                 file=str(path),
-                message=(
-                    "O workflow precisa declarar "
-                    "'permissions: contents: read'."
-                ),
+                message=("O workflow precisa declarar 'permissions: contents: read'."),
             )
         )
 
@@ -108,9 +105,7 @@ def validate_workflow(path: Path) -> list[Finding]:
                 severity="error",
                 rule_id="job-timeout",
                 file=str(path),
-                message=(
-                    "Ao menos um job não possui timeout explícito."
-                ),
+                message=("Ao menos um job não possui timeout explícito."),
             )
         )
 
@@ -120,10 +115,7 @@ def validate_workflow(path: Path) -> list[Finding]:
                 severity="error",
                 rule_id="concurrency-cancellation-policy",
                 file=str(path),
-                message=(
-                    "O workflow precisa declarar "
-                    "'cancel-in-progress'."
-                ),
+                message=("O workflow precisa declarar 'cancel-in-progress'."),
             )
         )
 
@@ -138,8 +130,7 @@ def validate_workflow(path: Path) -> list[Finding]:
                     rule_id="forbidden-trigger",
                     file=str(path),
                     message=(
-                        f"O gatilho '{trigger}' não é permitido "
-                        f"pela política da INNA."
+                        f"O gatilho '{trigger}' não é permitido pela política da INNA."
                     ),
                 )
             )
@@ -154,10 +145,7 @@ def validate_workflow(path: Path) -> list[Finding]:
                     severity="error",
                     rule_id="forbidden-permission",
                     file=str(path),
-                    message=(
-                        f"A permissão global '{permission}' "
-                        f"não é permitida."
-                    ),
+                    message=(f"A permissão global '{permission}' não é permitida."),
                 )
             )
 
@@ -170,10 +158,7 @@ def validate_workflow(path: Path) -> list[Finding]:
                     severity="error",
                     rule_id="untrusted-action",
                     file=str(path),
-                    message=(
-                        f"Action não autorizada: "
-                        f"'{action_reference}'."
-                    ),
+                    message=(f"Action não autorizada: '{action_reference}'."),
                 )
             )
             continue
@@ -184,10 +169,7 @@ def validate_workflow(path: Path) -> list[Finding]:
                     severity="error",
                     rule_id="action-without-version",
                     file=str(path),
-                    message=(
-                        f"Action sem versão: "
-                        f"'{action_reference}'."
-                    ),
+                    message=(f"Action sem versão: '{action_reference}'."),
                 )
             )
             continue
@@ -198,10 +180,7 @@ def validate_workflow(path: Path) -> list[Finding]:
                     severity="warning",
                     rule_id="action-not-pinned-by-sha",
                     file=str(path),
-                    message=(
-                        f"'{action_reference}' usa tag em vez "
-                        f"de SHA completo."
-                    ),
+                    message=(f"'{action_reference}' usa tag em vez de SHA completo."),
                 )
             )
 
@@ -218,8 +197,7 @@ def validate_workflow(path: Path) -> list[Finding]:
                     rule_id="possible-hardcoded-secret",
                     file=str(path),
                     message=(
-                        "Possível credencial real encontrada "
-                        "diretamente no workflow."
+                        "Possível credencial real encontrada diretamente no workflow."
                     ),
                 )
             )
@@ -267,23 +245,11 @@ def main() -> int:
         print("Nenhum workflow foi encontrado.")
         return 1
 
-    findings = [
-        finding
-        for path in paths
-        for finding in validate_workflow(path)
-    ]
+    findings = [finding for path in paths for finding in validate_workflow(path)]
 
-    errors = [
-        finding
-        for finding in findings
-        if finding.severity == "error"
-    ]
+    errors = [finding for finding in findings if finding.severity == "error"]
 
-    warnings = [
-        finding
-        for finding in findings
-        if finding.severity == "warning"
-    ]
+    warnings = [finding for finding in findings if finding.severity == "warning"]
 
     payload = {
         "schema_version": "1.0",
@@ -292,10 +258,7 @@ def main() -> int:
         "error_count": len(errors),
         "warning_count": len(warnings),
         "status": "failed" if errors else "passed",
-        "findings": [
-            asdict(finding)
-            for finding in findings
-        ],
+        "findings": [asdict(finding) for finding in findings],
     }
 
     REPORT_PATH.write_text(

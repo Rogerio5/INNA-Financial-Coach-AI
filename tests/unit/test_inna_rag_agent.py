@@ -41,10 +41,7 @@ def test_consultar_rag_rejeita_pergunta_curta():
     )
 
     assert resultado.ok is False
-    assert (
-        resultado.error_type
-        == "ValidationError"
-    )
+    assert resultado.error_type == "ValidationError"
 
 
 def test_rag_agent_node_sucesso():
@@ -53,21 +50,13 @@ def test_rag_agent_node_sucesso():
         tool_name=RAG_TOOL_NAME,
         status=ToolStatus.SUCCESS,
         output={
-            "pergunta": (
-                "Como criar uma reserva?"
-            ),
+            "pergunta": ("Como criar uma reserva?"),
             "idioma": "pt",
-            "resposta": (
-                "Comece reservando uma parte "
-                "da renda todos os meses."
-            ),
+            "resposta": ("Comece reservando uma parte da renda todos os meses."),
             "fontes": [
                 "reserva_financeira.md",
             ],
-            "modo": (
-                "rag_hibrido_pgvector_text_"
-                "neon_rerank"
-            ),
+            "modo": ("rag_hibrido_pgvector_text_neon_rerank"),
             "documentos_recuperados": 3,
             "duracao_rag_ms": 120,
         },
@@ -75,9 +64,7 @@ def test_rag_agent_node_sucesso():
     )
 
     state = {
-        "user_message": (
-            "Como criar uma reserva?"
-        ),
+        "user_message": ("Como criar uma reserva?"),
         "language": "pt",
         "user_id": "user-test",
         "thread_id": "thread-test",
@@ -91,8 +78,7 @@ def test_rag_agent_node_sucesso():
     }
 
     with patch(
-        "src.agents.nodes."
-        "executar_ferramenta_inna",
+        "src.agents.nodes.executar_ferramenta_inna",
         return_value=tool_result,
     ) as mock_execute:
         result = rag_agent_node(state)
@@ -101,35 +87,19 @@ def test_rag_agent_node_sucesso():
 
     call = mock_execute.call_args.args[0]
 
-    assert call.tool_name == (
-        RAG_TOOL_NAME
-    )
+    assert call.tool_name == (RAG_TOOL_NAME)
 
-    assert (
-        call.context.requested_by
-        == "rag_agent"
-    )
+    assert call.context.requested_by == "rag_agent"
 
     assert result["response"] == (
-        "Comece reservando uma parte "
-        "da renda todos os meses."
+        "Comece reservando uma parte da renda todos os meses."
     )
 
-    assert result[
-        "structured_response"
-    ]["rag_execution"][
-        "retrieved_documents"
-    ] == 3
+    assert result["structured_response"]["rag_execution"]["retrieved_documents"] == 3
 
-    assert (
-        "tool:buscar_conhecimento_rag:success"
-        in result["trace"]
-    )
+    assert "tool:buscar_conhecimento_rag:success" in result["trace"]
 
-    assert (
-        "agent:rag_agent"
-        in result["trace"]
-    )
+    assert "agent:rag_agent" in result["trace"]
 
 
 def test_rag_agent_node_falha_controlada():
@@ -140,19 +110,14 @@ def test_rag_agent_node_falha_controlada():
         output=None,
         error=ToolError(
             code="tool_execution_error",
-            message=(
-                "A ferramenta falhou durante "
-                "a execução."
-            ),
+            message=("A ferramenta falhou durante a execução."),
             retryable=False,
         ),
         duration_ms=20.0,
     )
 
     state = {
-        "user_message": (
-            "Como organizar minhas finanças?"
-        ),
+        "user_message": ("Como organizar minhas finanças?"),
         "language": "pt",
         "user_id": "user-test",
         "thread_id": "thread-test",
@@ -166,8 +131,7 @@ def test_rag_agent_node_falha_controlada():
     }
 
     with patch(
-        "src.agents.nodes."
-        "executar_ferramenta_inna",
+        "src.agents.nodes.executar_ferramenta_inna",
         return_value=tool_result,
     ) as mock_execute:
         result = rag_agent_node(state)
@@ -175,27 +139,13 @@ def test_rag_agent_node_falha_controlada():
     mock_execute.assert_called_once()
 
     assert result["response"] == (
-        "Não foi possível consultar a base "
-        "de conhecimento neste momento."
+        "Não foi possível consultar a base de conhecimento neste momento."
     )
 
-    assert result["errors"] == [
-        (
-            "A ferramenta falhou durante "
-            "a execução."
-        )
-    ]
+    assert result["errors"] == [("A ferramenta falhou durante a execução.")]
 
-    assert result["tool_results"][0][
-        "error_code"
-    ] == "tool_execution_error"
+    assert result["tool_results"][0]["error_code"] == "tool_execution_error"
 
-    assert (
-        "tool:buscar_conhecimento_rag:error"
-        in result["trace"]
-    )
+    assert "tool:buscar_conhecimento_rag:error" in result["trace"]
 
-    assert (
-        "agent:rag_agent:error"
-        in result["trace"]
-    )
+    assert "agent:rag_agent:error" in result["trace"]

@@ -34,13 +34,9 @@ def _normalize_message(
     if not isinstance(message, dict):
         return None
 
-    role = str(
-        message.get("role", "")
-    ).strip().lower()
+    role = str(message.get("role", "")).strip().lower()
 
-    content = str(
-        message.get("content", "")
-    ).strip()
+    content = str(message.get("content", "")).strip()
 
     if role not in _ALLOWED_ROLES:
         return None
@@ -84,18 +80,14 @@ def select_relevant_history(
     normalized: list[dict[str, str]] = []
 
     for raw_message in history or []:
-        message = _normalize_message(
-            raw_message
-        )
+        message = _normalize_message(raw_message)
 
         if message is None:
             continue
 
         normalized.append(message)
 
-    current_message = str(
-        current_message or ""
-    ).strip()
+    current_message = str(current_message or "").strip()
 
     # Evita repetir a mensagem atual no contexto selecionado.
     if (
@@ -117,37 +109,25 @@ def select_relevant_history(
         original_content = message["content"]
 
         if sanitize:
-            content, privacy_report = (
-                sanitize_sensitive_text(
-                    original_content
-                )
-            )
+            content, privacy_report = sanitize_sensitive_text(original_content)
         else:
             content = original_content
             privacy_report = PrivacyReport()
 
-        remaining_tokens = (
-            max_tokens - tokens_used
-        )
+        remaining_tokens = max_tokens - tokens_used
 
         if remaining_tokens <= 0:
             break
 
-        message_tokens = estimate_tokens(
-            content
-        )
+        message_tokens = estimate_tokens(content)
 
         if message_tokens > remaining_tokens:
-            content = (
-                truncate_text_to_token_budget(
-                    content,
-                    max_tokens=remaining_tokens,
-                )
+            content = truncate_text_to_token_budget(
+                content,
+                max_tokens=remaining_tokens,
             )
 
-            message_tokens = estimate_tokens(
-                content
-            )
+            message_tokens = estimate_tokens(content)
 
         if not content:
             continue
@@ -156,30 +136,20 @@ def select_relevant_history(
             ContextMessage(
                 role=message["role"],
                 content=content,
-                original_characters=len(
-                    original_content
-                ),
-                sanitized=(
-                    content != original_content
-                ),
+                original_characters=len(original_content),
+                sanitized=(content != original_content),
             )
         )
 
-        privacy_reports.append(
-            privacy_report
-        )
+        privacy_reports.append(privacy_report)
 
         tokens_used += message_tokens
 
-    selected = list(
-        reversed(selected_reversed)
-    )
+    selected = list(reversed(selected_reversed))
 
     return (
         selected,
-        merge_privacy_reports(
-            privacy_reports
-        ),
+        merge_privacy_reports(privacy_reports),
     )
 
 

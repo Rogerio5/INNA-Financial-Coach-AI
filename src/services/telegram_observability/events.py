@@ -27,9 +27,7 @@ class InMemoryTelegramOperationalEventSink:
     """
 
     def __init__(self) -> None:
-        self._events: list[
-            TelegramOperationalEvent
-        ] = []
+        self._events: list[TelegramOperationalEvent] = []
 
         self._lock = RLock()
 
@@ -41,9 +39,7 @@ class InMemoryTelegramOperationalEventSink:
             event,
             TelegramOperationalEvent,
         ):
-            raise TypeError(
-                "event deve ser TelegramOperationalEvent."
-            )
+            raise TypeError("event deve ser TelegramOperationalEvent.")
 
         with self._lock:
             self._events.append(event)
@@ -55,9 +51,7 @@ class InMemoryTelegramOperationalEventSink:
         ...,
     ]:
         with self._lock:
-            return tuple(
-                self._events
-            )
+            return tuple(self._events)
 
     def clear(self) -> None:
         with self._lock:
@@ -74,20 +68,8 @@ class InMemoryTelegramOperationalEventSink:
         return sum(
             1
             for event in self.snapshot()
-            if (
-                name is None
-                or event.name == name
-            )
-            and (
-                component is None
-                or event.component == component
-            )
-            and (
-                outcome is None
-                or event.outcome == outcome
-            )
-            and (
-                level is None
-                or event.level == level
-            )
+            if (name is None or event.name == name)
+            and (component is None or event.component == component)
+            and (outcome is None or event.outcome == outcome)
+            and (level is None or event.level == level)
         )

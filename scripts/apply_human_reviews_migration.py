@@ -7,9 +7,7 @@ from pathlib import Path
 from typing import Any
 
 
-PROJECT_ROOT = Path(
-    __file__
-).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(
@@ -24,13 +22,9 @@ from src.database.connection import (
 )
 
 
-MIGRATION_PATH = Path(
-    "scripts/sql/create_human_reviews.sql"
-)
+MIGRATION_PATH = Path("scripts/sql/create_human_reviews.sql")
 
-MIGRATION_NAME = (
-    "inna:human_reviews:migration:v1"
-)
+MIGRATION_NAME = "inna:human_reviews:migration:v1"
 
 EXPECTED_COLUMNS = {
     "id",
@@ -68,20 +62,12 @@ EXPECTED_INDEXES = {
 
 def _read_migration() -> str:
     if not MIGRATION_PATH.is_file():
-        raise RuntimeError(
-            "Arquivo da migration não encontrado: "
-            f"{MIGRATION_PATH}"
-        )
+        raise RuntimeError(f"Arquivo da migration não encontrado: {MIGRATION_PATH}")
 
-    sql = MIGRATION_PATH.read_text(
-        encoding="utf-8-sig"
-    ).strip()
+    sql = MIGRATION_PATH.read_text(encoding="utf-8-sig").strip()
 
     required = [
-        (
-            "CREATE TABLE IF NOT EXISTS "
-            "public.human_reviews"
-        ),
+        ("CREATE TABLE IF NOT EXISTS public.human_reviews"),
         "UNIQUE (review_id)",
         "payload JSONB",
         "corrections JSONB",
@@ -89,17 +75,10 @@ def _read_migration() -> str:
         "resume_failed",
     ]
 
-    missing = [
-        item
-        for item in required
-        if item not in sql
-    ]
+    missing = [item for item in required if item not in sql]
 
     if missing:
-        raise RuntimeError(
-            "Migration incompleta. Elementos "
-            f"ausentes: {missing}"
-        )
+        raise RuntimeError(f"Migration incompleta. Elementos ausentes: {missing}")
 
     return sql
 
@@ -123,15 +102,10 @@ def _controlled_sql(
         }
     ]
 
-    sql = "\n".join(
-        normalized
-    ).strip()
+    sql = "\n".join(normalized).strip()
 
     if not sql:
-        raise RuntimeError(
-            "A migration ficou vazia após a "
-            "normalização."
-        )
+        raise RuntimeError("A migration ficou vazia após a normalização.")
 
     return sql
 
@@ -139,11 +113,7 @@ def _controlled_sql(
 def _checksum(
     content: str,
 ) -> str:
-    return hashlib.sha256(
-        content.encode(
-            "utf-8"
-        )
-    ).hexdigest()
+    return hashlib.sha256(content.encode("utf-8")).hexdigest()
 
 
 def _table_exists(
@@ -162,11 +132,7 @@ def _table_exists(
 
     row = cursor.fetchone()
 
-    return bool(
-        row[0]
-        if row
-        else False
-    )
+    return bool(row[0] if row else False)
 
 
 def _columns(
@@ -182,10 +148,7 @@ def _columns(
         """
     )
 
-    return {
-        str(row[0])
-        for row in cursor.fetchall()
-    }
+    return {str(row[0]) for row in cursor.fetchall()}
 
 
 def _indexes(
@@ -200,46 +163,30 @@ def _indexes(
         """
     )
 
-    return {
-        str(row[0])
-        for row in cursor.fetchall()
-    }
+    return {str(row[0]) for row in cursor.fetchall()}
 
 
 def _print_database_preflight() -> None:
     result = testar_conexao_postgres()
 
-    if not result.get(
-        "ok"
-    ):
-        raise RuntimeError(
-            "A conexão PostgreSQL não foi "
-            "validada."
-        )
+    if not result.get("ok"):
+        raise RuntimeError("A conexão PostgreSQL não foi validada.")
 
-    print(
-        "DATABASE_CONNECTION_OK"
-    )
+    print("DATABASE_CONNECTION_OK")
 
     print(
         "DATABASE:",
-        result.get(
-            "database"
-        ),
+        result.get("database"),
     )
 
     print(
         "USER:",
-        result.get(
-            "user"
-        ),
+        result.get("user"),
     )
 
     print(
         "SERVER_TIME:",
-        result.get(
-            "server_time"
-        ),
+        result.get("server_time"),
     )
 
 
@@ -253,9 +200,7 @@ def check() -> None:
 
     print(
         "MIGRATION_SHA256:",
-        _checksum(
-            migration_sql
-        ),
+        _checksum(migration_sql),
     )
 
     _print_database_preflight()
@@ -264,9 +209,7 @@ def check() -> None:
         commit_automatico=False,
     ) as connection:
         with connection.cursor() as cursor:
-            exists = _table_exists(
-                cursor
-            )
+            exists = _table_exists(cursor)
 
             print(
                 "TABLE_EXISTS:",
@@ -274,33 +217,19 @@ def check() -> None:
             )
 
             if not exists:
-                print(
-                    "MIGRATION_REQUIRED: True"
-                )
+                print("MIGRATION_REQUIRED: True")
 
-                print(
-                    "HUMAN_REVIEW_MIGRATION_PREFLIGHT_OK"
-                )
+                print("HUMAN_REVIEW_MIGRATION_PREFLIGHT_OK")
 
                 return
 
-            columns = _columns(
-                cursor
-            )
+            columns = _columns(cursor)
 
-            indexes = _indexes(
-                cursor
-            )
+            indexes = _indexes(cursor)
 
-            missing_columns = sorted(
-                EXPECTED_COLUMNS
-                - columns
-            )
+            missing_columns = sorted(EXPECTED_COLUMNS - columns)
 
-            missing_indexes = sorted(
-                EXPECTED_INDEXES
-                - indexes
-            )
+            missing_indexes = sorted(EXPECTED_INDEXES - indexes)
 
             print(
                 "COLUMN_COUNT:",
@@ -322,27 +251,20 @@ def check() -> None:
                 missing_indexes,
             )
 
-            migration_required = bool(
-                missing_columns
-                or missing_indexes
-            )
+            migration_required = bool(missing_columns or missing_indexes)
 
             print(
                 "MIGRATION_REQUIRED:",
                 migration_required,
             )
 
-            print(
-                "HUMAN_REVIEW_MIGRATION_PREFLIGHT_OK"
-            )
+            print("HUMAN_REVIEW_MIGRATION_PREFLIGHT_OK")
 
 
 def apply() -> None:
     migration_sql = _read_migration()
 
-    executable_sql = _controlled_sql(
-        migration_sql
-    )
+    executable_sql = _controlled_sql(migration_sql)
 
     _print_database_preflight()
 
@@ -357,63 +279,34 @@ def apply() -> None:
                         hashtext(%s)
                     );
                     """,
-                    (
-                        MIGRATION_NAME,
-                    ),
+                    (MIGRATION_NAME,),
                 )
 
-                cursor.execute(
-                    "SET LOCAL lock_timeout "
-                    "= '5000ms';"
-                )
+                cursor.execute("SET LOCAL lock_timeout = '5000ms';")
 
-                cursor.execute(
-                    "SET LOCAL statement_timeout "
-                    "= '30000ms';"
-                )
+                cursor.execute("SET LOCAL statement_timeout = '30000ms';")
 
-                cursor.execute(
-                    executable_sql
-                )
+                cursor.execute(executable_sql)
 
-                if not _table_exists(
-                    cursor
-                ):
-                    raise RuntimeError(
-                        "A tabela human_reviews "
-                        "não foi criada."
-                    )
+                if not _table_exists(cursor):
+                    raise RuntimeError("A tabela human_reviews não foi criada.")
 
-                columns = _columns(
-                    cursor
-                )
+                columns = _columns(cursor)
 
-                indexes = _indexes(
-                    cursor
-                )
+                indexes = _indexes(cursor)
 
-                missing_columns = (
-                    EXPECTED_COLUMNS
-                    - columns
-                )
+                missing_columns = EXPECTED_COLUMNS - columns
 
-                missing_indexes = (
-                    EXPECTED_INDEXES
-                    - indexes
-                )
+                missing_indexes = EXPECTED_INDEXES - indexes
 
                 if missing_columns:
                     raise RuntimeError(
-                        "Colunas ausentes após a "
-                        "migration: "
-                        f"{sorted(missing_columns)}"
+                        f"Colunas ausentes após a migration: {sorted(missing_columns)}"
                     )
 
                 if missing_indexes:
                     raise RuntimeError(
-                        "Índices ausentes após a "
-                        "migration: "
-                        f"{sorted(missing_indexes)}"
+                        f"Índices ausentes após a migration: {sorted(missing_indexes)}"
                     )
 
             connection.commit()
@@ -424,22 +317,15 @@ def apply() -> None:
 
     print(
         "MIGRATION_SHA256:",
-        _checksum(
-            migration_sql
-        ),
+        _checksum(migration_sql),
     )
 
-    print(
-        "HUMAN_REVIEW_MIGRATION_APPLIED"
-    )
+    print("HUMAN_REVIEW_MIGRATION_APPLIED")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description=(
-            "Valida ou aplica a migration das "
-            "revisões humanas da INNA."
-        )
+        description=("Valida ou aplica a migration das revisões humanas da INNA.")
     )
 
     parser.add_argument(
@@ -472,6 +358,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(
-        main()
-    )
+    raise SystemExit(main())

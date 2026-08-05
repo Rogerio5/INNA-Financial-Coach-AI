@@ -23,17 +23,13 @@ class FakeSession:
         self,
         state,
     ) -> None:
-        self.states.append(
-            dict(state)
-        )
+        self.states.append(dict(state))
 
     def set_language(
         self,
         language,
     ) -> None:
-        self.languages.append(
-            language
-        )
+        self.languages.append(language)
 
 
 class FakeBridge:
@@ -44,13 +40,9 @@ class FakeBridge:
         reload_result=None,
         reload_error=None,
     ) -> None:
-        self.metrics = (
-            InMemoryTelegramConversationMetrics()
-        )
+        self.metrics = InMemoryTelegramConversationMetrics()
 
-        self.event_sink = (
-            InMemoryTelegramOperationalEventSink()
-        )
+        self.event_sink = InMemoryTelegramOperationalEventSink()
 
         self._clock_value = 1.0
         self._saves = iter(saves)
@@ -76,9 +68,7 @@ class FakeBridge:
 
         self.save_calls += 1
 
-        result = next(
-            self._saves
-        )
+        result = next(self._saves)
 
         if isinstance(
             result,
@@ -105,11 +95,7 @@ class FakeBridge:
 def event_names(
     bridge: FakeBridge,
 ) -> list[str]:
-    return [
-        event.name
-        for event
-        in bridge.event_sink.snapshot()
-    ]
+    return [event.name for event in bridge.event_sink.snapshot()]
 
 
 def metric_summary(
@@ -121,8 +107,7 @@ def metric_summary(
             metric.outcome,
             metric.conflict_recovered,
         )
-        for metric
-        in bridge.metrics.snapshot()
+        for metric in bridge.metrics.snapshot()
     ]
 
 
@@ -133,23 +118,19 @@ def test_conflict_is_recovered():
 
     bridge = FakeBridge(
         saves=[
-            TelegramConversationStateConflictError(
-                "first conflict"
-            ),
+            TelegramConversationStateConflictError("first conflict"),
             recovered,
         ],
         reload_result=reloaded,
     )
 
-    result = (
-        _sync_and_save_durable_telegram_session(
-            conversation_bridge=bridge,
-            durable_session=original,
-            processing_state={
-                "lang": "pt-BR",
-                "step": "completed",
-            },
-        )
+    result = _sync_and_save_durable_telegram_session(
+        conversation_bridge=bridge,
+        durable_session=original,
+        processing_state={
+            "lang": "pt-BR",
+            "step": "completed",
+        },
     )
 
     assert result is recovered
@@ -165,10 +146,7 @@ def test_conflict_is_recovered():
 
     assert event_names(bridge) == [
         "telegram_session_conflict_detected",
-        (
-            "telegram_session_conflict_"
-            "reload_completed"
-        ),
+        ("telegram_session_conflict_reload_completed"),
         "telegram_session_conflict_recovered",
     ]
 
@@ -192,11 +170,7 @@ def test_conflict_is_recovered():
 
 
 def test_reload_none_records_failure():
-    original_conflict = (
-        TelegramConversationStateConflictError(
-            "conflict"
-        )
-    )
+    original_conflict = TelegramConversationStateConflictError("conflict")
 
     bridge = FakeBridge(
         saves=[
@@ -216,33 +190,20 @@ def test_reload_none_records_failure():
 
     assert captured.value is original_conflict
 
-    assert event_names(bridge)[-1] == (
-        "telegram_session_conflict_failed"
-    )
+    assert event_names(bridge)[-1] == ("telegram_session_conflict_failed")
 
-    last_metric = (
-        bridge.metrics.snapshot()[-1]
-    )
+    last_metric = bridge.metrics.snapshot()[-1]
 
     assert last_metric.operation == "reload_session"
     assert last_metric.outcome == "error"
-    assert (
-        last_metric.error_category
-        == "persistence"
-    )
+    assert last_metric.error_category == "persistence"
 
 
 def test_reload_error_is_preserved():
-    expected = RuntimeError(
-        "reload failure"
-    )
+    expected = RuntimeError("reload failure")
 
     bridge = FakeBridge(
-        saves=[
-            TelegramConversationStateConflictError(
-                "conflict"
-            )
-        ],
+        saves=[TelegramConversationStateConflictError("conflict")],
         reload_error=expected,
     )
 
@@ -257,23 +218,15 @@ def test_reload_error_is_preserved():
 
     assert captured.value is expected
 
-    assert event_names(bridge)[-1] == (
-        "telegram_session_conflict_failed"
-    )
+    assert event_names(bridge)[-1] == ("telegram_session_conflict_failed")
 
 
 def test_second_conflict_records_failure():
-    second_conflict = (
-        TelegramConversationStateConflictError(
-            "second conflict"
-        )
-    )
+    second_conflict = TelegramConversationStateConflictError("second conflict")
 
     bridge = FakeBridge(
         saves=[
-            TelegramConversationStateConflictError(
-                "first conflict"
-            ),
+            TelegramConversationStateConflictError("first conflict"),
             second_conflict,
         ],
         reload_result=FakeSession(),
@@ -290,32 +243,21 @@ def test_second_conflict_records_failure():
 
     assert captured.value is second_conflict
 
-    assert event_names(bridge)[-1] == (
-        "telegram_session_conflict_failed"
-    )
+    assert event_names(bridge)[-1] == ("telegram_session_conflict_failed")
 
-    last_metric = (
-        bridge.metrics.snapshot()[-1]
-    )
+    last_metric = bridge.metrics.snapshot()[-1]
 
     assert last_metric.operation == "save_session"
     assert last_metric.outcome == "conflict"
-    assert (
-        last_metric.conflict_recovered
-        is False
-    )
+    assert last_metric.conflict_recovered is False
 
 
 def test_second_non_conflict_failure_is_preserved():
-    expected = RuntimeError(
-        "persistence failed"
-    )
+    expected = RuntimeError("persistence failed")
 
     bridge = FakeBridge(
         saves=[
-            TelegramConversationStateConflictError(
-                "first conflict"
-            ),
+            TelegramConversationStateConflictError("first conflict"),
             expected,
         ],
         reload_result=FakeSession(),
@@ -332,18 +274,14 @@ def test_second_non_conflict_failure_is_preserved():
 
     assert captured.value is expected
 
-    last_metric = (
-        bridge.metrics.snapshot()[-1]
-    )
+    last_metric = bridge.metrics.snapshot()[-1]
 
     assert last_metric.operation == "save_session"
     assert last_metric.outcome == "error"
 
 
 def test_non_conflict_initial_error_does_not_recover():
-    expected = RuntimeError(
-        "normal failure"
-    )
+    expected = RuntimeError("normal failure")
 
     bridge = FakeBridge(
         saves=[
@@ -374,9 +312,7 @@ class BrokenMetrics:
     ) -> None:
         del record
 
-        raise RuntimeError(
-            "metrics unavailable"
-        )
+        raise RuntimeError("metrics unavailable")
 
 
 class BrokenEventSink:
@@ -386,9 +322,7 @@ class BrokenEventSink:
     ) -> None:
         del event
 
-        raise RuntimeError(
-            "event sink unavailable"
-        )
+        raise RuntimeError("event sink unavailable")
 
 
 def test_telemetry_failure_does_not_break_recovery():
@@ -396,9 +330,7 @@ def test_telemetry_failure_does_not_break_recovery():
 
     bridge = FakeBridge(
         saves=[
-            TelegramConversationStateConflictError(
-                "conflict"
-            ),
+            TelegramConversationStateConflictError("conflict"),
             recovered,
         ],
         reload_result=FakeSession(),
@@ -407,14 +339,12 @@ def test_telemetry_failure_does_not_break_recovery():
     bridge.metrics = BrokenMetrics()
     bridge.event_sink = BrokenEventSink()
 
-    result = (
-        _sync_and_save_durable_telegram_session(
-            conversation_bridge=bridge,
-            durable_session=FakeSession(),
-            processing_state={
-                "lang": "pt-BR",
-            },
-        )
+    result = _sync_and_save_durable_telegram_session(
+        conversation_bridge=bridge,
+        durable_session=FakeSession(),
+        processing_state={
+            "lang": "pt-BR",
+        },
     )
 
     assert result is recovered

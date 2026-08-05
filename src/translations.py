@@ -7,7 +7,6 @@ TRANSLATIONS = {
         "dashboard_title": "INNA Analytics",
         "admin_dashboard": "Dashboard administrativo",
         "menu": "Menu",
-
         "overview": "📌 Visão Geral",
         "multichannel_events": "🌐 Eventos Multicanal",
         "international_view": "🌍 Visão Internacional",
@@ -18,7 +17,6 @@ TRANSLATIONS = {
         "agent_evaluation": "🧪 Avaliação do Agente",
         "rag_observability": "📊 Observabilidade RAG",
         "export": "📤 Exportar",
-
         "filters": "🔎 Filtros",
         "start_date": "Data inicial",
         "end_date": "Data final",
@@ -27,7 +25,6 @@ TRANSLATIONS = {
         "filter_feedback": "Filtrar por feedback",
         "filter_data_language": "Filtrar por idioma dos dados",
         "filter_currency": "Filtrar por moeda",
-
         "all": "Todos",
         "low": "Baixo",
         "medium": "Médio",
@@ -35,7 +32,6 @@ TRANSLATIONS = {
         "useful": "Útil",
         "not_useful": "Não útil",
         "neutral": "Neutro",
-
         "update_data": "🔄 Atualizar dados",
         "main_indicators": "📌 Indicadores principais",
         "filtered_user_summary": "👤 Resumo do usuário filtrado",
@@ -50,13 +46,11 @@ TRANSLATIONS = {
         "average_balance": "Saldo médio",
         "useful_feedback": "Feedback útil",
     },
-
     "EN English": {
         "interface_language": "🌍 Interface language",
         "dashboard_title": "INNA Analytics",
         "admin_dashboard": "Administrative Dashboard",
         "menu": "Menu",
-
         "overview": "📌 Overview",
         "multichannel_events": "🌐 Multichannel Events",
         "international_view": "🌍 International View",
@@ -67,7 +61,6 @@ TRANSLATIONS = {
         "agent_evaluation": "🧪 Agent Evaluation",
         "rag_observability": "📊 RAG Observability",
         "export": "📤 Export",
-
         "filters": "🔎 Filters",
         "start_date": "Start date",
         "end_date": "End date",
@@ -76,7 +69,6 @@ TRANSLATIONS = {
         "filter_feedback": "Filter by feedback",
         "filter_data_language": "Filter by data language",
         "filter_currency": "Filter by currency",
-
         "all": "All",
         "low": "Low",
         "medium": "Medium",
@@ -84,7 +76,6 @@ TRANSLATIONS = {
         "useful": "Useful",
         "not_useful": "Not useful",
         "neutral": "Neutral",
-
         "update_data": "🔄 Update data",
         "main_indicators": "📌 Main indicators",
         "filtered_user_summary": "👤 Filtered user summary",
@@ -99,13 +90,11 @@ TRANSLATIONS = {
         "average_balance": "Average balance",
         "useful_feedback": "Useful feedback",
     },
-
     "ES Español": {
         "interface_language": "🌍 Idioma de la interfaz",
         "dashboard_title": "INNA Analytics",
         "admin_dashboard": "Panel administrativo",
         "menu": "Menú",
-
         "overview": "📌 Resumen",
         "multichannel_events": "🌐 Eventos multicanal",
         "international_view": "🌍 Vista internacional",
@@ -116,7 +105,6 @@ TRANSLATIONS = {
         "agent_evaluation": "🧪 Evaluación del agente",
         "rag_observability": "📊 Observabilidad RAG",
         "export": "📤 Exportar",
-
         "filters": "🔎 Filtros",
         "start_date": "Fecha inicial",
         "end_date": "Fecha final",
@@ -125,7 +113,6 @@ TRANSLATIONS = {
         "filter_feedback": "Filtrar por comentario",
         "filter_data_language": "Filtrar por idioma de los datos",
         "filter_currency": "Filtrar por moneda",
-
         "all": "Todos",
         "low": "Bajo",
         "medium": "Medio",
@@ -133,7 +120,6 @@ TRANSLATIONS = {
         "useful": "Útil",
         "not_useful": "No útil",
         "neutral": "Neutral",
-
         "update_data": "🔄 Actualizar datos",
         "main_indicators": "📌 Indicadores principales",
         "filtered_user_summary": "👤 Resumen del usuario filtrado",
@@ -148,13 +134,11 @@ TRANSLATIONS = {
         "average_balance": "Saldo medio",
         "useful_feedback": "Comentario útil",
     },
-
     "DE Deutsch": {
         "interface_language": "🌍 Sprache der Oberfläche",
         "dashboard_title": "INNA Analytics",
         "admin_dashboard": "Administratives Dashboard",
         "menu": "Menü",
-
         "overview": "📌 Übersicht",
         "multichannel_events": "🌐 Multichannel-Ereignisse",
         "international_view": "🌍 Internationale Ansicht",
@@ -165,7 +149,6 @@ TRANSLATIONS = {
         "agent_evaluation": "🧪 Agentenbewertung",
         "rag_observability": "📊 RAG-Beobachtbarkeit",
         "export": "📤 Exportieren",
-
         "filters": "🔎 Filter",
         "start_date": "Startdatum",
         "end_date": "Enddatum",
@@ -174,7 +157,6 @@ TRANSLATIONS = {
         "filter_feedback": "Nach Feedback filtern",
         "filter_data_language": "Nach Datensprache filtern",
         "filter_currency": "Nach Währung filtern",
-
         "all": "Alle",
         "low": "Niedrig",
         "medium": "Mittel",
@@ -182,7 +164,6 @@ TRANSLATIONS = {
         "useful": "Nützlich",
         "not_useful": "Nicht nützlich",
         "neutral": "Neutral",
-
         "update_data": "🔄 Daten aktualisieren",
         "main_indicators": "📌 Hauptindikatoren",
         "filtered_user_summary": "👤 Zusammenfassung des gefilterten Benutzers",

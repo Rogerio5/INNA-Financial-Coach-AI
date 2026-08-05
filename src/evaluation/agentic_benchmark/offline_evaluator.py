@@ -83,14 +83,10 @@ class OfflineMetricResult:
 
     def __post_init__(self) -> None:
         if not 0.0 <= self.score <= 1.0:
-            raise ValueError(
-                "score deve estar entre 0.0 e 1.0."
-            )
+            raise ValueError("score deve estar entre 0.0 e 1.0.")
 
         if not 0.0 <= self.threshold <= 1.0:
-            raise ValueError(
-                "threshold deve estar entre 0.0 e 1.0."
-            )
+            raise ValueError("threshold deve estar entre 0.0 e 1.0.")
 
 
 @dataclass(frozen=True, slots=True)
@@ -113,14 +109,10 @@ class OfflineEvaluationReport:
 
     def __post_init__(self) -> None:
         if not 0.0 <= self.overall_score <= 1.0:
-            raise ValueError(
-                "overall_score deve estar entre 0.0 e 1.0."
-            )
+            raise ValueError("overall_score deve estar entre 0.0 e 1.0.")
 
         if self.invalid_citation_count < 0:
-            raise ValueError(
-                "invalid_citation_count não pode ser negativo."
-            )
+            raise ValueError("invalid_citation_count não pode ser negativo.")
 
     def metric(
         self,
@@ -132,9 +124,7 @@ class OfflineEvaluationReport:
             if metric.name == name:
                 return metric
 
-        raise KeyError(
-            f"Métrica não encontrada: {name}"
-        )
+        raise KeyError(f"Métrica não encontrada: {name}")
 
 
 def _strip_accents(
@@ -146,11 +136,7 @@ def _strip_accents(
     )
 
     return "".join(
-        character
-        for character in normalized
-        if not unicodedata.combining(
-            character
-        )
+        character for character in normalized if not unicodedata.combining(character)
     )
 
 
@@ -159,13 +145,7 @@ def normalize_text(
 ) -> str:
     """Normaliza texto para comparação determinística."""
 
-    return " ".join(
-        _strip_accents(
-            value
-        )
-        .casefold()
-        .split()
-    )
+    return " ".join(_strip_accents(value).casefold().split())
 
 
 def _canonicalize_token(
@@ -186,25 +166,13 @@ def _canonicalize_token(
     )
 
     for suffix in plural_suffixes:
-        if (
-            normalized.endswith(suffix)
-            and len(normalized) - len(suffix) >= 4
-        ):
+        if normalized.endswith(suffix) and len(normalized) - len(suffix) >= 4:
             if suffix in {"oes", "aes"}:
-                normalized = (
-                    normalized[: -len(suffix)]
-                    + "ao"
-                )
+                normalized = normalized[: -len(suffix)] + "ao"
             elif suffix == "ais":
-                normalized = (
-                    normalized[:-3]
-                    + "al"
-                )
+                normalized = normalized[:-3] + "al"
             elif suffix == "eis":
-                normalized = (
-                    normalized[:-3]
-                    + "el"
-                )
+                normalized = normalized[:-3] + "el"
             elif suffix == "is":
                 normalized = normalized[:-2]
             else:
@@ -232,10 +200,7 @@ def _canonicalize_token(
     )
 
     for suffix in verbal_suffixes:
-        if (
-            normalized.endswith(suffix)
-            and len(normalized) - len(suffix) >= 5
-        ):
+        if normalized.endswith(suffix) and len(normalized) - len(suffix) >= 5:
             normalized = normalized[: -len(suffix)]
             break
 
@@ -247,28 +212,15 @@ def tokenize(
 ) -> frozenset[str]:
     """Extrai e canonicaliza tokens informativos."""
 
-    normalized = normalize_text(
-        value
-    )
+    normalized = normalize_text(value)
 
     tokens = (
-        _canonicalize_token(
-            token
-        )
-        for token in _TOKEN_PATTERN.findall(
-            normalized
-        )
-        if (
-            len(token) > 1
-            and token not in _STOPWORDS
-        )
+        _canonicalize_token(token)
+        for token in _TOKEN_PATTERN.findall(normalized)
+        if (len(token) > 1 and token not in _STOPWORDS)
     )
 
-    return frozenset(
-        token
-        for token in tokens
-        if len(token) > 1
-    )
+    return frozenset(token for token in tokens if len(token) > 1)
 
 
 def _safe_ratio(
@@ -284,8 +236,7 @@ def _safe_ratio(
         1.0,
         max(
             0.0,
-            float(numerator)
-            / float(denominator),
+            float(numerator) / float(denominator),
         ),
     )
 
@@ -294,22 +245,15 @@ def _token_overlap(
     first: str,
     second: str,
 ) -> float:
-    first_tokens = tokenize(
-        first
-    )
+    first_tokens = tokenize(first)
 
-    second_tokens = tokenize(
-        second
-    )
+    second_tokens = tokenize(second)
 
     if not first_tokens:
         return 1.0
 
     return _safe_ratio(
-        len(
-            first_tokens
-            & second_tokens
-        ),
+        len(first_tokens & second_tokens),
         len(first_tokens),
     )
 
@@ -318,34 +262,18 @@ def _contains_all_terms(
     answer: str,
     terms: Iterable[str],
 ) -> bool:
-    normalized_answer = normalize_text(
-        answer
-    )
+    normalized_answer = normalize_text(answer)
 
-    return all(
-        normalize_text(
-            term
-        )
-        in normalized_answer
-        for term in terms
-    )
+    return all(normalize_text(term) in normalized_answer for term in terms)
 
 
 def _contains_any_term(
     answer: str,
     terms: Iterable[str],
 ) -> bool:
-    normalized_answer = normalize_text(
-        answer
-    )
+    normalized_answer = normalize_text(answer)
 
-    return any(
-        normalize_text(
-            term
-        )
-        in normalized_answer
-        for term in terms
-    )
+    return any(normalize_text(term) in normalized_answer for term in terms)
 
 
 def calculate_citation_coverage(
@@ -354,31 +282,18 @@ def calculate_citation_coverage(
     """Calcula cobertura de citações sobre evidências."""
 
     if not result.evidences:
-        return (
-            1.0
-            if not result.citations
-            else 0.0
-        )
+        return 1.0 if not result.citations else 0.0
 
     cited_evidence_ids = {
         citation.evidence_id
         for citation in result.citations
-        if (
-            citation.valid
-            and citation.evidence_id
-        )
+        if (citation.valid and citation.evidence_id)
     }
 
-    evidence_ids = {
-        evidence.evidence_id
-        for evidence in result.evidences
-    }
+    evidence_ids = {evidence.evidence_id for evidence in result.evidences}
 
     return _safe_ratio(
-        len(
-            cited_evidence_ids
-            & evidence_ids
-        ),
+        len(cited_evidence_ids & evidence_ids),
         len(evidence_ids),
         empty_value=1.0,
     )
@@ -392,30 +307,20 @@ def calculate_groundedness(
     if not result.answer.strip():
         return 0.0
 
-    evidence_text = " ".join(
-        evidence.content
-        for evidence in result.evidences
-    )
+    evidence_text = " ".join(evidence.content for evidence in result.evidences)
 
     if not evidence_text.strip():
         return 0.0
 
-    answer_tokens = tokenize(
-        result.answer
-    )
+    answer_tokens = tokenize(result.answer)
 
-    evidence_tokens = tokenize(
-        evidence_text
-    )
+    evidence_tokens = tokenize(evidence_text)
 
     if not answer_tokens:
         return 0.0
 
     return _safe_ratio(
-        len(
-            answer_tokens
-            & evidence_tokens
-        ),
+        len(answer_tokens & evidence_tokens),
         len(answer_tokens),
         empty_value=0.0,
     )
@@ -447,10 +352,7 @@ def calculate_context_relevance(
     if not result.evidences:
         return 0.0
 
-    context = " ".join(
-        evidence.content
-        for evidence in result.evidences
-    )
+    context = " ".join(evidence.content for evidence in result.evidences)
 
     return _token_overlap(
         question,
@@ -465,9 +367,7 @@ def calculate_sufficiency(
 ) -> float:
     """Calcula suficiência estrutural da execução."""
 
-    required_count = (
-        case.thresholds.minimum_evidence_count
-    )
+    required_count = case.thresholds.minimum_evidence_count
 
     if required_count == 0:
         evidence_score = 1.0
@@ -478,22 +378,15 @@ def calculate_sufficiency(
             empty_value=1.0,
         )
 
-    expected_routes = set(
-        case.expectations.routes
-    )
+    expected_routes = set(case.expectations.routes)
 
-    actual_routes = set(
-        result.routes
-    )
+    actual_routes = set(result.routes)
 
     route_score = (
         1.0
         if not expected_routes
         else _safe_ratio(
-            len(
-                expected_routes
-                & actual_routes
-            ),
+            len(expected_routes & actual_routes),
             len(expected_routes),
         )
     )
@@ -512,12 +405,7 @@ def calculate_sufficiency(
     )
 
     return round(
-        (
-            evidence_score
-            + route_score
-            + answer_score
-        )
-        / 3.0,
+        (evidence_score + route_score + answer_score) / 3.0,
         6,
     )
 
@@ -545,13 +433,9 @@ def evaluate_offline(
 ) -> OfflineEvaluationReport:
     """Avalia uma execução sem LLM judge ou serviços externos."""
 
-    citation_coverage = calculate_citation_coverage(
-        result
-    )
+    citation_coverage = calculate_citation_coverage(result)
 
-    groundedness = calculate_groundedness(
-        result
-    )
+    groundedness = calculate_groundedness(result)
 
     answer_relevance = calculate_answer_relevance(
         question=case.question,
@@ -619,13 +503,9 @@ def evaluate_offline(
         actual=result.security_outcome,
     )
 
-    expected_routes = set(
-        case.expectations.routes
-    )
+    expected_routes = set(case.expectations.routes)
 
-    actual_routes = set(
-        result.routes
-    )
+    actual_routes = set(result.routes)
 
     routes_match = expected_routes <= actual_routes
 
@@ -639,24 +519,15 @@ def evaluate_offline(
         case.expectations.forbidden_terms,
     )
 
-    latency_match = (
-        result.latency_ms
-        <= case.thresholds.maximum_latency_ms
-    )
+    latency_match = result.latency_ms <= case.thresholds.maximum_latency_ms
 
     evidence_count_match = (
-        result.evidence_count
-        >= case.thresholds.minimum_evidence_count
+        result.evidence_count >= case.thresholds.minimum_evidence_count
     )
 
-    fallback_match = (
-        result.fallback_used
-        == case.expectations.expected_fallback
-    )
+    fallback_match = result.fallback_used == case.expectations.expected_fallback
 
-    invalid_citation_count = (
-        result.invalid_citation_count
-    )
+    invalid_citation_count = result.invalid_citation_count
 
     findings: list[OfflineFinding] = []
 
@@ -721,11 +592,7 @@ def evaluate_offline(
         findings.append(
             OfflineFinding(
                 code=code,
-                message=(
-                    success_message
-                    if passed
-                    else failure_message
-                ),
+                message=(success_message if passed else failure_message),
                 severity=(
                     OfflineFindingSeverity.INFO
                     if passed
@@ -736,10 +603,7 @@ def evaluate_offline(
         )
 
     metric_pass_rate = _safe_ratio(
-        sum(
-            metric.passed
-            for metric in metrics
-        ),
+        sum(metric.passed for metric in metrics),
         len(metrics),
     )
 
@@ -761,20 +625,11 @@ def evaluate_offline(
     )
 
     overall_score = round(
-        (
-            metric_pass_rate * 0.6
-            + structural_pass_rate * 0.4
-        ),
+        (metric_pass_rate * 0.6 + structural_pass_rate * 0.4),
         6,
     )
 
-    passed = (
-        all(
-            metric.passed
-            for metric in metrics
-        )
-        and all(structural_checks)
-    )
+    passed = all(metric.passed for metric in metrics) and all(structural_checks)
 
     return OfflineEvaluationReport(
         case_id=case.case_id,

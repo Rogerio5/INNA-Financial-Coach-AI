@@ -13,9 +13,7 @@ from src.services.rag.versioning import (
 HASH_A = "a" * 64
 HASH_B = "b" * 64
 
-REPOSITORY_PATH = Path(
-    "src/services/rag/document_repository.py"
-)
+REPOSITORY_PATH = Path("src/services/rag/document_repository.py")
 
 
 def test_repository_exposes_versioning_context_query():
@@ -23,30 +21,15 @@ def test_repository_exposes_versioning_context_query():
         encoding="utf-8-sig",
     )
 
-    assert (
-        "def buscar_contexto_versionamento_documento"
-        in source
-    )
+    assert "def buscar_contexto_versionamento_documento" in source
 
-    assert (
-        "WHERE nome_logico = %s"
-        in source
-    )
+    assert "WHERE nome_logico = %s" in source
 
-    assert (
-        "existing_content_hashes"
-        in source
-    )
+    assert "existing_content_hashes" in source
 
-    assert (
-        "previous_document_id"
-        in source
-    )
+    assert "previous_document_id" in source
 
-    assert (
-        "root_document_id"
-        in source
-    )
+    assert "root_document_id" in source
 
 
 def test_creates_first_version_from_empty_context():

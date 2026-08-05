@@ -52,28 +52,22 @@ def test_resume_invokes_command_with_same_thread(
         lambda **kwargs: graph,
     )
 
-    result = (
-        retomar_revisao_humana_persistente(
-            thread_id="thread-resume-001",
-            decisao={
-                "action": "approve",
-                "reviewer_id": "user-001",
-            },
-        )
+    result = retomar_revisao_humana_persistente(
+        thread_id="thread-resume-001",
+        decisao={
+            "action": "approve",
+            "reviewer_id": "user-001",
+        },
     )
 
-    assert result[
-        "human_review_status"
-    ] == "approved"
+    assert result["human_review_status"] == "approved"
 
     assert graph.command.resume == {
         "action": "approve",
         "reviewer_id": "user-001",
     }
 
-    assert graph.config[
-        "configurable"
-    ]["thread_id"] == "thread-resume-001"
+    assert graph.config["configurable"]["thread_id"] == "thread-resume-001"
 
 
 @pytest.mark.parametrize(

@@ -28,9 +28,7 @@ MAX_RECEIPT_LEASE_SECONDS = 900
 MIN_JOB_ATTEMPTS = 1
 MAX_JOB_ATTEMPTS = 20
 
-SHA256_PATTERN = re.compile(
-    r"^[0-9a-f]{64}$"
-)
+SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 IngressDecision = Literal[
@@ -55,49 +53,37 @@ JobState = Literal[
 ]
 
 
-class TelegramUpdateIngressError(
-    RuntimeError
-):
+class TelegramUpdateIngressError(RuntimeError):
     """
     Erro sanitizado da entrada durável.
     """
 
 
-class TelegramUpdateIngressValidationError(
-    TelegramUpdateIngressError
-):
+class TelegramUpdateIngressValidationError(TelegramUpdateIngressError):
     """
     Update ou configuração operacional inválida.
     """
 
 
-class TelegramUpdateIngressConflictError(
-    TelegramUpdateIngressError
-):
+class TelegramUpdateIngressConflictError(TelegramUpdateIngressError):
     """
     O update_id já pertence a outro conteúdo.
     """
 
 
-class TelegramUpdateIngressConsistencyError(
-    TelegramUpdateIngressError
-):
+class TelegramUpdateIngressConsistencyError(TelegramUpdateIngressError):
     """
     Receipt e job possuem estados incompatíveis.
     """
 
 
-class TelegramUpdateIngressConfigurationError(
-    TelegramUpdateIngressError
-):
+class TelegramUpdateIngressConfigurationError(TelegramUpdateIngressError):
     """
     Configuração criptográfica indisponível.
     """
 
 
-class TelegramUpdateIngressUnavailableError(
-    TelegramUpdateIngressError
-):
+class TelegramUpdateIngressUnavailableError(TelegramUpdateIngressError):
     """
     A entrada durável está temporariamente indisponível.
     """
@@ -142,19 +128,11 @@ class TelegramUpdateIngressOutcome:
         return {
             "update_id": self.update_id,
             "decision": self.decision,
-            "receipt_state": (
-                self.receipt_state
-            ),
-            "receipt_attempt_count": (
-                self.receipt_attempt_count
-            ),
+            "receipt_state": (self.receipt_state),
+            "receipt_attempt_count": (self.receipt_attempt_count),
             "job_state": self.job_state,
-            "job_attempt_count": (
-                self.job_attempt_count
-            ),
-            "job_created": (
-                self.job_created
-            ),
+            "job_attempt_count": (self.job_attempt_count),
+            "job_created": (self.job_created),
             "accepted": self.accepted,
             "duplicate": self.duplicate,
         }
@@ -199,11 +177,7 @@ def _validate_integer(
         or value < minimum
         or value > maximum
     ):
-        raise (
-            TelegramUpdateIngressValidationError(
-                f"{field_name} inválido."
-            )
-        )
+        raise (TelegramUpdateIngressValidationError(f"{field_name} inválido."))
 
     return value
 
@@ -211,32 +185,17 @@ def _validate_integer(
 def _validate_fingerprint(
     value: Any,
 ) -> str:
-    if (
-        not isinstance(value, str)
-        or SHA256_PATTERN.fullmatch(value)
-        is None
-    ):
-        raise (
-            TelegramUpdateIngressValidationError(
-                "Fingerprint do update inválido."
-            )
-        )
+    if not isinstance(value, str) or SHA256_PATTERN.fullmatch(value) is None:
+        raise (TelegramUpdateIngressValidationError("Fingerprint do update inválido."))
 
     return value
 
 
-def _generate_claim_token(
-) -> str:
-    token = secrets.token_hex(
-        32
-    )
+def _generate_claim_token() -> str:
+    token = secrets.token_hex(32)
 
-    if SHA256_PATTERN.fullmatch(
-        token
-    ) is None:
-        raise TelegramUpdateIngressError(
-            "Não foi possível gerar o claim_token."
-        )
+    if SHA256_PATTERN.fullmatch(token) is None:
+        raise TelegramUpdateIngressError("Não foi possível gerar o claim_token.")
 
     return token
 
@@ -244,41 +203,25 @@ def _generate_claim_token(
 def _set_transaction_timeouts(
     cursor: Any,
 ) -> None:
-    cursor.execute(
-        "SET LOCAL lock_timeout = '3000ms';"
-    )
+    cursor.execute("SET LOCAL lock_timeout = '3000ms';")
 
-    cursor.execute(
-        "SET LOCAL statement_timeout = '5000ms';"
-    )
+    cursor.execute("SET LOCAL statement_timeout = '5000ms';")
 
 
 def _receipt_snapshot_from_row(
     row: Any,
 ) -> _ReceiptSnapshot:
     try:
-        update_id = int(
-            row["update_id"]
-        )
+        update_id = int(row["update_id"])
 
-        status = str(
-            row["status"]
-        )
+        status = str(row["status"])
 
-        attempt_count = int(
-            row["attempt_count"]
-        )
+        attempt_count = int(row["attempt_count"])
 
         fingerprint_value = None
 
-        if (
-            "update_fingerprint" in row
-            and row["update_fingerprint"]
-            is not None
-        ):
-            fingerprint_value = str(
-                row["update_fingerprint"]
-            )
+        if "update_fingerprint" in row and row["update_fingerprint"] is not None:
+            fingerprint_value = str(row["update_fingerprint"])
 
         lease_active = bool(
             row.get(
@@ -300,7 +243,8 @@ def _receipt_snapshot_from_row(
 
     if (
         update_id < 0
-        or status not in {
+        or status
+        not in {
             "processing",
             "completed",
             "failed",
@@ -313,11 +257,7 @@ def _receipt_snapshot_from_row(
 
     if fingerprint_value is not None:
         try:
-            fingerprint_value = (
-                _validate_fingerprint(
-                    fingerprint_value
-                )
-            )
+            fingerprint_value = _validate_fingerprint(fingerprint_value)
 
         except TelegramUpdateIngressValidationError:
             raise (
@@ -330,9 +270,7 @@ def _receipt_snapshot_from_row(
         update_id=update_id,
         status=status,
         attempt_count=attempt_count,
-        update_fingerprint=(
-            fingerprint_value
-        ),
+        update_fingerprint=(fingerprint_value),
         lease_active=lease_active,
     )
 
@@ -341,25 +279,15 @@ def _job_snapshot_from_row(
     row: Any,
 ) -> _JobSnapshot:
     try:
-        update_id = int(
-            row["update_id"]
-        )
+        update_id = int(row["update_id"])
 
-        status = str(
-            row["status"]
-        )
+        status = str(row["status"])
 
-        attempt_count = int(
-            row["attempt_count"]
-        )
+        attempt_count = int(row["attempt_count"])
 
-        max_attempts = int(
-            row["max_attempts"]
-        )
+        max_attempts = int(row["max_attempts"])
 
-        payload_version = int(
-            row["payload_version"]
-        )
+        payload_version = int(row["payload_version"])
 
     except (
         KeyError,
@@ -367,9 +295,7 @@ def _job_snapshot_from_row(
         ValueError,
     ):
         raise (
-            TelegramUpdateIngressConsistencyError(
-                "O banco retornou um job inválido."
-            )
+            TelegramUpdateIngressConsistencyError("O banco retornou um job inválido.")
         ) from None
 
     if status not in {
@@ -378,9 +304,7 @@ def _job_snapshot_from_row(
         "completed",
         "dead_letter",
     }:
-        raise TelegramUpdateIngressConsistencyError(
-            "O banco retornou um job inválido."
-        )
+        raise TelegramUpdateIngressConsistencyError("O banco retornou um job inválido.")
 
     if (
         update_id < 0
@@ -389,9 +313,7 @@ def _job_snapshot_from_row(
         or attempt_count > max_attempts
         or payload_version < 1
     ):
-        raise TelegramUpdateIngressConsistencyError(
-            "O banco retornou um job inválido."
-        )
+        raise TelegramUpdateIngressConsistencyError("O banco retornou um job inválido.")
 
     return _JobSnapshot(
         update_id=update_id,
@@ -419,9 +341,7 @@ def _select_existing_job(
     if row is None:
         return None
 
-    return _job_snapshot_from_row(
-        row
-    )
+    return _job_snapshot_from_row(row)
 
 
 def _build_duplicate_outcome(
@@ -434,15 +354,10 @@ def _build_duplicate_outcome(
         update_id=receipt.update_id,
     )
 
-    if (
-        existing_job is not None
-        and existing_job.status
-        != "completed"
-    ):
+    if existing_job is not None and existing_job.status != "completed":
         raise (
             TelegramUpdateIngressConsistencyError(
-                "Receipt concluído possui job ativo "
-                "ou incompatível."
+                "Receipt concluído possui job ativo ou incompatível."
             )
         )
 
@@ -450,18 +365,10 @@ def _build_duplicate_outcome(
         update_id=receipt.update_id,
         decision="duplicate",
         receipt_state="completed",
-        receipt_attempt_count=(
-            receipt.attempt_count
-        ),
-        job_state=(
-            existing_job.status
-            if existing_job is not None
-            else None
-        ),
+        receipt_attempt_count=(receipt.attempt_count),
+        job_state=(existing_job.status if existing_job is not None else None),
         job_attempt_count=(
-            existing_job.attempt_count
-            if existing_job is not None
-            else None
+            existing_job.attempt_count if existing_job is not None else None
         ),
         job_created=False,
     )
@@ -475,18 +382,11 @@ def _ensure_encrypted_job(
     receipt_state: ReceiptState,
     receipt_attempt_count: int,
     max_attempts: int,
-    keyring: (
-        crypto_service
-        .TelegramUpdateEncryptionKeyring
-        | None
-    ),
+    keyring: (crypto_service.TelegramUpdateEncryptionKeyring | None),
 ) -> TelegramUpdateIngressOutcome:
-    encrypted = (
-        crypto_service
-        .encrypt_authenticated_telegram_update(
-            update,
-            keyring=keyring,
-        )
+    encrypted = crypto_service.encrypt_authenticated_telegram_update(
+        update,
+        keyring=keyring,
     )
 
     if encrypted.update_id != update_id:
@@ -498,18 +398,10 @@ def _ensure_encrypted_job(
         job_repository.SQL_INSERT_JOB,
         {
             "update_id": update_id,
-            "payload_ciphertext": (
-                encrypted.payload_ciphertext
-            ),
-            "payload_nonce": (
-                encrypted.payload_nonce
-            ),
-            "payload_key_id": (
-                encrypted.payload_key_id
-            ),
-            "payload_version": (
-                encrypted.payload_version
-            ),
+            "payload_ciphertext": (encrypted.payload_ciphertext),
+            "payload_nonce": (encrypted.payload_nonce),
+            "payload_key_id": (encrypted.payload_key_id),
+            "payload_version": (encrypted.payload_version),
             "max_attempts": max_attempts,
         },
     )
@@ -533,9 +425,7 @@ def _ensure_encrypted_job(
             "O job não foi criado nem localizado."
         )
 
-    job = _job_snapshot_from_row(
-        row
-    )
+    job = _job_snapshot_from_row(row)
 
     if job.update_id != update_id:
         raise TelegramUpdateIngressConsistencyError(
@@ -553,9 +443,7 @@ def _ensure_encrypted_job(
         )
 
     if job_created:
-        decision: IngressDecision = (
-            "enqueued"
-        )
+        decision: IngressDecision = "enqueued"
 
     elif job.status == "processing":
         decision = "in_progress"
@@ -567,13 +455,9 @@ def _ensure_encrypted_job(
         update_id=update_id,
         decision=decision,
         receipt_state=receipt_state,
-        receipt_attempt_count=(
-            receipt_attempt_count
-        ),
+        receipt_attempt_count=(receipt_attempt_count),
         job_state=job.status,
-        job_attempt_count=(
-            job.attempt_count
-        ),
+        job_attempt_count=(job.attempt_count),
         job_created=job_created,
     )
 
@@ -583,11 +467,7 @@ def enqueue_authenticated_telegram_update_atomic(
     *,
     receipt_lease_seconds: int = 120,
     max_attempts: int = 5,
-    keyring: (
-        crypto_service
-        .TelegramUpdateEncryptionKeyring
-        | None
-    ) = None,
+    keyring: (crypto_service.TelegramUpdateEncryptionKeyring | None) = None,
 ) -> TelegramUpdateIngressOutcome:
     """
     Registra o receipt e o job criptografado na
@@ -603,9 +483,7 @@ def enqueue_authenticated_telegram_update_atomic(
         update,
         Mapping,
     ):
-        raise TelegramUpdateIngressValidationError(
-            "O update Telegram é inválido."
-        )
+        raise TelegramUpdateIngressValidationError("O update Telegram é inválido.")
 
     normalized_lease = _validate_integer(
         receipt_lease_seconds,
@@ -614,65 +492,40 @@ def enqueue_authenticated_telegram_update_atomic(
         maximum=MAX_RECEIPT_LEASE_SECONDS,
     )
 
-    normalized_max_attempts = (
-        _validate_integer(
-            max_attempts,
-            field_name="max_attempts",
-            minimum=MIN_JOB_ATTEMPTS,
-            maximum=MAX_JOB_ATTEMPTS,
-        )
+    normalized_max_attempts = _validate_integer(
+        max_attempts,
+        field_name="max_attempts",
+        minimum=MIN_JOB_ATTEMPTS,
+        maximum=MAX_JOB_ATTEMPTS,
     )
 
-    normalized_update = dict(
-        update
-    )
+    normalized_update = dict(update)
 
     try:
-        update_id, _ = (
-            crypto_service
-            .canonicalize_telegram_update(
-                normalized_update
-            )
-        )
+        update_id, _ = crypto_service.canonicalize_telegram_update(normalized_update)
 
-    except (
-        crypto_service
-        .TelegramUpdateJobValidationError
-    ):
+    except crypto_service.TelegramUpdateJobValidationError:
         raise (
-            TelegramUpdateIngressValidationError(
-                "O update Telegram é inválido."
-            )
+            TelegramUpdateIngressValidationError("O update Telegram é inválido.")
         ) from None
 
     try:
-        update_fingerprint = (
-            receipt_service
-            .fingerprint_telegram_update(
-                normalized_update
-            )
+        update_fingerprint = receipt_service.fingerprint_telegram_update(
+            normalized_update
         )
 
     except Exception:
         raise (
-            TelegramUpdateIngressValidationError(
-                "Não foi possível validar o update."
-            )
+            TelegramUpdateIngressValidationError("Não foi possível validar o update.")
         ) from None
 
-    normalized_fingerprint = (
-        _validate_fingerprint(
-            update_fingerprint
-        )
-    )
+    normalized_fingerprint = _validate_fingerprint(update_fingerprint)
 
     claim_token = _generate_claim_token()
 
     receipt_parameters = {
         "update_id": update_id,
-        "update_fingerprint": (
-            normalized_fingerprint
-        ),
+        "update_fingerprint": (normalized_fingerprint),
         "claim_token": claim_token,
         "lease_seconds": normalized_lease,
     }
@@ -682,45 +535,30 @@ def enqueue_authenticated_telegram_update_atomic(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            _set_transaction_timeouts(
-                cursor
-            )
+            _set_transaction_timeouts(cursor)
 
             cursor.execute(
-                receipt_repository
-                .SQL_INSERT_RECEIPT,
+                receipt_repository.SQL_INSERT_RECEIPT,
                 receipt_parameters,
             )
 
-            inserted_receipt_row = (
-                cursor.fetchone()
-            )
+            inserted_receipt_row = cursor.fetchone()
 
             if inserted_receipt_row is not None:
-                inserted_receipt = (
-                    _receipt_snapshot_from_row(
-                        inserted_receipt_row
-                    )
-                )
+                inserted_receipt = _receipt_snapshot_from_row(inserted_receipt_row)
 
                 return _ensure_encrypted_job(
                     cursor,
                     update=normalized_update,
                     update_id=update_id,
                     receipt_state="claimed",
-                    receipt_attempt_count=(
-                        inserted_receipt
-                        .attempt_count
-                    ),
-                    max_attempts=(
-                        normalized_max_attempts
-                    ),
+                    receipt_attempt_count=(inserted_receipt.attempt_count),
+                    max_attempts=(normalized_max_attempts),
                     keyring=keyring,
                 )
 
             cursor.execute(
-                receipt_repository
-                .SQL_LOCK_EXISTING_RECEIPT,
+                receipt_repository.SQL_LOCK_EXISTING_RECEIPT,
                 {
                     "update_id": update_id,
                 },
@@ -731,42 +569,29 @@ def enqueue_authenticated_telegram_update_atomic(
             if existing_row is None:
                 raise (
                     TelegramUpdateIngressConsistencyError(
-                        "O receipt não foi criado "
-                        "nem localizado."
+                        "O receipt não foi criado nem localizado."
                     )
                 )
 
-            existing = (
-                _receipt_snapshot_from_row(
-                    existing_row
-                )
-            )
+            existing = _receipt_snapshot_from_row(existing_row)
 
-            if (
-                existing.update_id
-                != update_id
-            ):
+            if existing.update_id != update_id:
                 raise (
                     TelegramUpdateIngressConsistencyError(
                         "O banco retornou outro receipt."
                     )
                 )
 
-            if (
-                existing.update_fingerprint
-                != normalized_fingerprint
-            ):
+            if existing.update_fingerprint != normalized_fingerprint:
                 raise (
                     TelegramUpdateIngressConflictError(
-                        "O update_id já está associado "
-                        "a outro conteúdo."
+                        "O update_id já está associado a outro conteúdo."
                     )
                 )
 
             if existing.status == "completed":
                 cursor.execute(
-                    receipt_repository
-                    .SQL_TOUCH_RECEIPT,
+                    receipt_repository.SQL_TOUCH_RECEIPT,
                     {
                         "update_id": update_id,
                     },
@@ -777,13 +602,9 @@ def enqueue_authenticated_telegram_update_atomic(
                     receipt=existing,
                 )
 
-            if (
-                existing.status == "processing"
-                and existing.lease_active
-            ):
+            if existing.status == "processing" and existing.lease_active:
                 cursor.execute(
-                    receipt_repository
-                    .SQL_TOUCH_RECEIPT,
+                    receipt_repository.SQL_TOUCH_RECEIPT,
                     {
                         "update_id": update_id,
                     },
@@ -794,18 +615,13 @@ def enqueue_authenticated_telegram_update_atomic(
                     update=normalized_update,
                     update_id=update_id,
                     receipt_state="processing",
-                    receipt_attempt_count=(
-                        existing.attempt_count
-                    ),
-                    max_attempts=(
-                        normalized_max_attempts
-                    ),
+                    receipt_attempt_count=(existing.attempt_count),
+                    max_attempts=(normalized_max_attempts),
                     keyring=keyring,
                 )
 
             cursor.execute(
-                receipt_repository
-                .SQL_RECLAIM_RECEIPT,
+                receipt_repository.SQL_RECLAIM_RECEIPT,
                 receipt_parameters,
             )
 
@@ -814,28 +630,19 @@ def enqueue_authenticated_telegram_update_atomic(
             if reclaimed_row is None:
                 raise (
                     TelegramUpdateIngressConsistencyError(
-                        "Não foi possível recuperar "
-                        "o receipt Telegram."
+                        "Não foi possível recuperar o receipt Telegram."
                     )
                 )
 
-            reclaimed = (
-                _receipt_snapshot_from_row(
-                    reclaimed_row
-                )
-            )
+            reclaimed = _receipt_snapshot_from_row(reclaimed_row)
 
             return _ensure_encrypted_job(
                 cursor,
                 update=normalized_update,
                 update_id=update_id,
                 receipt_state="reclaimed",
-                receipt_attempt_count=(
-                    reclaimed.attempt_count
-                ),
-                max_attempts=(
-                    normalized_max_attempts
-                ),
+                receipt_attempt_count=(reclaimed.attempt_count),
+                max_attempts=(normalized_max_attempts),
                 keyring=keyring,
             )
 
@@ -846,32 +653,24 @@ def enqueue_authenticated_telegram_update_atomic(
     ):
         raise
 
-    except (
-        crypto_service
-        .TelegramUpdateJobConfigurationError
-    ):
+    except crypto_service.TelegramUpdateJobConfigurationError:
         raise (
             TelegramUpdateIngressConfigurationError(
                 "A criptografia da fila não está configurada."
             )
         ) from None
 
-    except (
-        crypto_service
-        .TelegramUpdateJobEncryptionError
-    ):
+    except crypto_service.TelegramUpdateJobEncryptionError:
         raise (
             TelegramUpdateIngressUnavailableError(
-                "Não foi possível proteger "
-                "o update Telegram."
+                "Não foi possível proteger o update Telegram."
             )
         ) from None
 
     except Exception:
         raise (
             TelegramUpdateIngressUnavailableError(
-                "Não foi possível registrar "
-                "o update Telegram."
+                "Não foi possível registrar o update Telegram."
             )
         ) from None
 

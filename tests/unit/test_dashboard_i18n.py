@@ -258,11 +258,9 @@ def test_localize_dataframe_does_not_change_original() -> None:
         },
         column_texts=column_texts,
         value_transforms={
-            "util": lambda value: (
-                translate_useful(
-                    value,
-                    language="ru",
-                )
+            "util": lambda value: translate_useful(
+                value,
+                language="ru",
             ),
         },
         language="ru",
@@ -290,12 +288,7 @@ def test_localize_dataframe_does_not_change_original() -> None:
 
 
 def test_value_texts_have_language_parity() -> None:
-    assert (
-        ensure_language_parity(
-            VALUE_TEXTS
-        )
-        == {}
-    )
+    assert ensure_language_parity(VALUE_TEXTS) == {}
 
 
 def test_value_t_uses_regional_aliases() -> None:
@@ -315,6 +308,7 @@ def test_value_t_uses_regional_aliases() -> None:
         == "Konfiguriert"
     )
 
+
 def test_menu_page_ids_are_stable() -> None:
     from src.dashboard_i18n import (
         MENU_PAGE_IDS,
@@ -322,6 +316,7 @@ def test_menu_page_ids_are_stable() -> None:
 
     assert MENU_PAGE_IDS == (
         "overview",
+        "platform_modules_catalog",
         "multichannel_events",
         "international_view",
         "diagnostics",
@@ -340,6 +335,7 @@ def test_menu_page_ids_are_stable() -> None:
         "document_upload",
         "user_memory",
         "export",
+        "relationship_graph",
     )
 
 
@@ -349,12 +345,7 @@ def test_menu_texts_have_language_parity() -> None:
         ensure_language_parity,
     )
 
-    assert (
-        ensure_language_parity(
-            MENU_TEXTS
-        )
-        == {}
-    )
+    assert ensure_language_parity(MENU_TEXTS) == {}
 
 
 @pytest.mark.parametrize(
@@ -454,12 +445,8 @@ def test_normalize_menu_page_id(
         normalize_menu_page_id,
     )
 
-    assert (
-        normalize_menu_page_id(
-            legacy_value
-        )
-        == expected
-    )
+    assert normalize_menu_page_id(legacy_value) == expected
+
 
 def test_multichannel_texts_have_language_parity() -> None:
     from src.dashboard_i18n import (
@@ -467,12 +454,7 @@ def test_multichannel_texts_have_language_parity() -> None:
         ensure_language_parity,
     )
 
-    assert (
-        ensure_language_parity(
-            MULTICHANNEL_UI_TEXTS
-        )
-        == {}
-    )
+    assert ensure_language_parity(MULTICHANNEL_UI_TEXTS) == {}
 
 
 def test_channel_texts_have_language_parity() -> None:
@@ -481,12 +463,7 @@ def test_channel_texts_have_language_parity() -> None:
         ensure_language_parity,
     )
 
-    assert (
-        ensure_language_parity(
-            CHANNEL_TEXTS
-        )
-        == {}
-    )
+    assert ensure_language_parity(CHANNEL_TEXTS) == {}
 
 
 @pytest.mark.parametrize(
@@ -673,11 +650,9 @@ def test_localize_multichannel_dataframe() -> None:
         }
     )
 
-    localized = (
-        localize_multichannel_dataframe(
-            original,
-            language="ru",
-        )
+    localized = localize_multichannel_dataframe(
+        original,
+        language="ru",
     )
 
     assert list(original.columns) == [
@@ -692,30 +667,22 @@ def test_localize_multichannel_dataframe() -> None:
         False,
     ]
 
-    assert localized[
-        "Канал"
-    ].tolist() == [
+    assert localized["Канал"].tolist() == [
         "Веб-приложение",
         "Загрузка PDF",
     ]
 
-    assert localized[
-        "Статус"
-    ].tolist() == [
+    assert localized["Статус"].tolist() == [
         "Успех",
         "Ошибка",
     ]
 
-    assert localized[
-        "Оценка"
-    ].tolist() == [
+    assert localized["Оценка"].tolist() == [
         "Полезный",
         "Неполезный",
     ]
 
-    assert localized[
-        "Количество"
-    ].tolist() == [
+    assert localized["Количество"].tolist() == [
         4,
         1,
     ]
@@ -811,6 +778,7 @@ def test_true_false_are_never_exposed_visually(
     assert translated_true.casefold() != "true"
     assert translated_false.casefold() != "false"
 
+
 def test_audit_page_language_pack_detects_english_fallback() -> None:
     from src.dashboard_i18n import (
         audit_page_language_pack,
@@ -831,16 +799,9 @@ def test_audit_page_language_pack_detects_english_fallback() -> None:
         },
     }
 
-    report = audit_page_language_pack(
-        texts
-    )
+    report = audit_page_language_pack(texts)
 
-    assert (
-        report["ru"][
-            "same_as_english"
-        ]
-        is True
-    )
+    assert report["ru"]["same_as_english"] is True
 
 
 def test_audit_page_language_pack_detects_missing_keys() -> None:
@@ -862,9 +823,7 @@ def test_audit_page_language_pack_detects_missing_keys() -> None:
         },
     }
 
-    report = audit_page_language_pack(
-        texts
-    )
+    report = audit_page_language_pack(texts)
 
     assert report["it"]["missing"] == {
         "button",
@@ -913,15 +872,10 @@ def test_page_translate_uses_interface_language() -> None:
 
     texts = {
         "pt": {
-            "message": (
-                "Memória de {user_id} carregada."
-            ),
+            "message": ("Memória de {user_id} carregada."),
         },
         "ru": {
-            "message": (
-                "Память пользователя "
-                "{user_id} загружена."
-            ),
+            "message": ("Память пользователя {user_id} загружена."),
         },
     }
 
@@ -932,10 +886,8 @@ def test_page_translate_uses_interface_language() -> None:
         user_id="demo_user",
     )
 
-    assert result == (
-        "Память пользователя "
-        "demo_user загружена."
-    )
+    assert result == ("Память пользователя demo_user загружена.")
+
 
 def test_block_4b_native_page_translations() -> None:
     import src.dashboard as dashboard
@@ -943,13 +895,9 @@ def test_block_4b_native_page_translations() -> None:
         audit_page_language_pack,
     )
 
-    upload_report = audit_page_language_pack(
-        dashboard.UPLOAD_RAG_TEXTS
-    )
+    upload_report = audit_page_language_pack(dashboard.UPLOAD_RAG_TEXTS)
 
-    memory_report = audit_page_language_pack(
-        dashboard.MEMORY_PAGE_TEXTS
-    )
+    memory_report = audit_page_language_pack(dashboard.MEMORY_PAGE_TEXTS)
 
     for language in (
         "ro",
@@ -991,17 +939,12 @@ def test_block_4b_russian_page_titles() -> None:
     import src.dashboard as dashboard
 
     assert (
-        dashboard.UPLOAD_RAG_TEXTS[
-            "ru"
-        ]["title"]
+        dashboard.UPLOAD_RAG_TEXTS["ru"]["title"]
         == "## 📄 Загрузка документов в базу RAG"
     )
 
     assert (
-        dashboard.MEMORY_PAGE_TEXTS[
-            "ru"
-        ]["title"]
-        == "## 🧠 Память Пользователя — INNA"
+        dashboard.MEMORY_PAGE_TEXTS["ru"]["title"] == "## 🧠 Память Пользователя — INNA"
     )
 
 
@@ -1009,18 +952,11 @@ def test_block_4b_arabic_page_titles() -> None:
     import src.dashboard as dashboard
 
     assert (
-        dashboard.UPLOAD_RAG_TEXTS[
-            "sa"
-        ]["title"]
+        dashboard.UPLOAD_RAG_TEXTS["sa"]["title"]
         == "## 📄 تحميل المستندات إلى قاعدة RAG"
     )
 
-    assert (
-        dashboard.MEMORY_PAGE_TEXTS[
-            "sa"
-        ]["title"]
-        == "## 🧠 ذاكرة المستخدم — INNA"
-    )
+    assert dashboard.MEMORY_PAGE_TEXTS["sa"]["title"] == "## 🧠 ذاكرة المستخدم — INNA"
 
 
 def test_block_4b_memory_placeholders() -> None:
@@ -1033,19 +969,10 @@ def test_block_4b_memory_placeholders() -> None:
         "ru",
         "sa",
     ):
-        assert (
-            "{user_id}"
-            in dashboard.MEMORY_PAGE_TEXTS[
-                language
-            ]["memory_loaded"]
-        )
+        assert "{user_id}" in dashboard.MEMORY_PAGE_TEXTS[language]["memory_loaded"]
 
-        assert (
-            "{user_id}"
-            in dashboard.MEMORY_PAGE_TEXTS[
-                language
-            ]["memory_not_found"]
-        )
+        assert "{user_id}" in dashboard.MEMORY_PAGE_TEXTS[language]["memory_not_found"]
+
 
 def test_tools_analytics_language_packs_are_independent() -> None:
     from src.dashboard_pages.tools_analytics_page import (
@@ -1061,18 +988,9 @@ def test_tools_analytics_language_packs_are_independent() -> None:
         "sa",
     )
 
-    object_ids = {
-        id(
-            TOOLS_ANALYTICS_TEXTS[
-                language
-            ]
-        )
-        for language in languages
-    }
+    object_ids = {id(TOOLS_ANALYTICS_TEXTS[language]) for language in languages}
 
-    assert len(object_ids) == len(
-        languages
-    )
+    assert len(object_ids) == len(languages)
 
 
 def test_tools_analytics_translator_uses_interface_language(
@@ -1088,19 +1006,9 @@ def test_tools_analytics_translator_uses_interface_language(
         },
     )
 
-    assert (
-        page.tools_analytics_lang()
-        == "ru"
-    )
+    assert page.tools_analytics_lang() == "ru"
 
-    assert (
-        page.tools_analytics_t(
-            "title"
-        )
-        == page.TOOLS_ANALYTICS_TEXTS[
-            "ru"
-        ]["title"]
-    )
+    assert page.tools_analytics_t("title") == page.TOOLS_ANALYTICS_TEXTS["ru"]["title"]
 
 
 def test_tools_analytics_language_audit_structure() -> None:
@@ -1108,9 +1016,7 @@ def test_tools_analytics_language_audit_structure() -> None:
         audit_tools_analytics_language_packs,
     )
 
-    report = (
-        audit_tools_analytics_language_packs()
-    )
+    report = audit_tools_analytics_language_packs()
 
     assert set(report) == {
         "pt",
@@ -1135,40 +1041,27 @@ def test_tools_analytics_language_audit_structure() -> None:
         assert "same_as_english" in details
         assert "object_id" in details
 
+
 def test_tools_analytics_italian_anomaly_translations() -> None:
     from src.dashboard_pages.tools_analytics_page import (
         TOOLS_ANALYTICS_TEXTS,
     )
 
-    texts = TOOLS_ANALYTICS_TEXTS[
-        "it"
-    ]
+    texts = TOOLS_ANALYTICS_TEXTS["it"]
 
     expected = {
-        "anomaly_detection": (
-            "## 🚨 Rilevamento delle anomalie"
-        ),
-        "detected_anomalies": (
-            "Anomalie rilevate"
-        ),
-        "highest_severity": (
-            "Gravità massima"
-        ),
+        "anomaly_detection": ("## 🚨 Rilevamento delle anomalie"),
+        "detected_anomalies": ("Anomalie rilevate"),
+        "highest_severity": ("Gravità massima"),
         "critical": "Critiche",
         "high": "Elevate",
         "medium": "Medie",
         "low": "Basse",
-        "detected_alerts": (
-            "### Avvisi rilevati"
-        ),
+        "detected_alerts": ("### Avvisi rilevati"),
         "severity": "Gravità",
         "metric": "Metrica",
-        "recommendation": (
-            "Raccomandazione"
-        ),
-        "how_detection_works": (
-            "Come funziona il rilevamento"
-        ),
+        "recommendation": ("Raccomandazione"),
+        "how_detection_works": ("Come funziona il rilevamento"),
     }
 
     for key, value in expected.items():
@@ -1180,9 +1073,7 @@ def test_tools_analytics_native_languages_are_not_english() -> None:
         audit_tools_analytics_language_packs,
     )
 
-    report = (
-        audit_tools_analytics_language_packs()
-    )
+    report = audit_tools_analytics_language_packs()
 
     for language in (
         "it",
@@ -1191,12 +1082,8 @@ def test_tools_analytics_native_languages_are_not_english() -> None:
         "ru",
         "sa",
     ):
-        assert (
-            report[language][
-                "same_as_english"
-            ]
-            is False
-        )
+        assert report[language]["same_as_english"] is False
+
 
 def test_tools_analytics_visual_labels_are_translated() -> None:
     from src.dashboard_pages.tools_analytics_page import (
@@ -1247,33 +1134,21 @@ def test_tools_analytics_visual_labels_are_translated() -> None:
     }
 
     for language, values in expected.items():
-        assert (
-            TOOLS_ANALYTICS_TEXTS[
-                language
-            ]["current_value"]
-            == values[0]
-        )
+        assert TOOLS_ANALYTICS_TEXTS[language]["current_value"] == values[0]
 
-        assert (
-            TOOLS_ANALYTICS_TEXTS[
-                language
-            ]["reference"]
-            == values[1]
-        )
+        assert TOOLS_ANALYTICS_TEXTS[language]["reference"] == values[1]
 
 
-def test_tools_analytics_has_no_fixed_portuguese_metric_labels(
-) -> None:
+def test_tools_analytics_has_no_fixed_portuguese_metric_labels() -> None:
     from pathlib import Path
 
-    source = Path(
-        "src/dashboard_pages/tools_analytics_page.py"
-    ).read_text(
+    source = Path("src/dashboard_pages/tools_analytics_page.py").read_text(
         encoding="utf-8"
     )
 
     assert 'st.metric("Valor atual"' not in source
     assert 'st.metric("Referência"' not in source
+
 
 def test_tools_dynamic_values_are_localized() -> None:
     from src.dashboard_i18n import (
@@ -1376,23 +1251,16 @@ def test_tools_dynamic_language_dictionaries_are_independent() -> None:
         TOOLS_VALUE_TEXTS,
     )
 
-    dictionary_ids = [
-        id(texts)
-        for texts in TOOLS_VALUE_TEXTS.values()
-    ]
+    dictionary_ids = [id(texts) for texts in TOOLS_VALUE_TEXTS.values()]
 
-    assert len(dictionary_ids) == len(
-        set(dictionary_ids)
-    )
+    assert len(dictionary_ids) == len(set(dictionary_ids))
 
     assert len(TOOLS_VALUE_TEXTS) == 12
 
     for texts in TOOLS_VALUE_TEXTS.values():
         assert len(texts) == 6
-        assert all(
-            str(value).strip()
-            for value in texts.values()
-        )
+        assert all(str(value).strip() for value in texts.values())
+
 
 def test_tools_dynamic_friendly_names_are_localized() -> None:
     from src.dashboard_i18n import (
@@ -1444,82 +1312,49 @@ def test_tools_dynamic_name_normalization() -> None:
     )
 
     assert (
-        normalize_dynamic_value_key(
-            "Cálculo de capacidade semanal"
-        )
+        normalize_dynamic_value_key("Cálculo de capacidade semanal")
         == "calculo_capacidade_semanal"
     )
 
     assert (
-        normalize_dynamic_value_key(
-            "Simulação de formação de reserva"
-        )
+        normalize_dynamic_value_key("Simulação de formação de reserva")
         == "simulacao_reserva"
     )
 
     assert (
-        normalize_dynamic_value_key(
-            "calculo_capacidade_semanal"
-        )
+        normalize_dynamic_value_key("calculo_capacidade_semanal")
         == "calculo_capacidade_semanal"
     )
+
 
 def test_tools_temporal_table_headers_use_i18n() -> None:
     from pathlib import Path
 
-    source = Path(
-        "src/dashboard_pages/tools_analytics_page.py"
-    ).read_text(
+    source = Path("src/dashboard_pages/tools_analytics_page.py").read_text(
         encoding="utf-8"
     )
 
-    assert (
-        '"criado_em": tools_analytics_t('
-        in source
-    )
+    assert '"criado_em": tools_analytics_t(' in source
 
-    assert (
-        '"execucoes": tools_analytics_t('
-        in source
-    )
+    assert '"execucoes": tools_analytics_t(' in source
 
-    assert (
-        '"sucessos": tools_analytics_t('
-        in source
-    )
+    assert '"sucessos": tools_analytics_t(' in source
 
-    assert (
-        '"falhas": tools_analytics_t('
-        in source
-    )
+    assert '"falhas": tools_analytics_t(' in source
 
-    assert (
-        '"duracao_media_ms": tools_analytics_t('
-        in source
-    )
+    assert '"duracao_media_ms": tools_analytics_t(' in source
 
-    assert (
-        '"confianca_media": tools_analytics_t('
-        in source
-    )
+    assert '"confianca_media": tools_analytics_t(' in source
 
-    assert (
-        '"usuarios_ativos": tools_analytics_t('
-        in source
-    )
+    assert '"usuarios_ativos": tools_analytics_t(' in source
 
-    assert (
-        "st.dataframe(\n"
-        "            tabela_temporal,"
-        in source
-    )
+    assert "st.dataframe(\n            tabela_temporal," in source
+
 
 def test_health_main_panel_uses_interface_i18n() -> None:
     from pathlib import Path
 
-    source = Path(
-        "src/dashboard_pages/health_score_page.py"
-    ).read_text(
+    source = Path("src/dashboard_pages/health_score_page.py").read_text(
         encoding="utf-8"
     )
 
@@ -1561,30 +1396,20 @@ def test_health_main_panel_language_catalog_is_complete() -> None:
         "ch",
     }
 
-    assert set(
-        HEALTH_PAGE_MAIN_TEXTS
-    ) == expected_languages
+    assert set(HEALTH_PAGE_MAIN_TEXTS) == expected_languages
 
-    reference = set(
-        HEALTH_PAGE_MAIN_TEXTS["pt"]
-    )
+    reference = set(HEALTH_PAGE_MAIN_TEXTS["pt"])
 
     dictionary_ids = []
 
     for texts in HEALTH_PAGE_MAIN_TEXTS.values():
         assert set(texts) == reference
-        assert all(
-            str(value).strip()
-            for value in texts.values()
-        )
+        assert all(str(value).strip() for value in texts.values())
 
-        dictionary_ids.append(
-            id(texts)
-        )
+        dictionary_ids.append(id(texts))
 
-    assert len(dictionary_ids) == len(
-        set(dictionary_ids)
-    )
+    assert len(dictionary_ids) == len(set(dictionary_ids))
+
 
 def test_health_history_catalog_is_complete() -> None:
     from src.dashboard_pages.health_score_page import (
@@ -1606,38 +1431,25 @@ def test_health_history_catalog_is_complete() -> None:
         "ch",
     }
 
-    assert set(
-        HEALTH_HISTORY_TEXTS
-    ) == expected_languages
+    assert set(HEALTH_HISTORY_TEXTS) == expected_languages
 
-    reference = set(
-        HEALTH_HISTORY_TEXTS["pt"]
-    )
+    reference = set(HEALTH_HISTORY_TEXTS["pt"])
 
     dictionary_ids = []
 
     for texts in HEALTH_HISTORY_TEXTS.values():
         assert set(texts) == reference
-        assert all(
-            str(value).strip()
-            for value in texts.values()
-        )
+        assert all(str(value).strip() for value in texts.values())
 
-        dictionary_ids.append(
-            id(texts)
-        )
+        dictionary_ids.append(id(texts))
 
-    assert len(dictionary_ids) == len(
-        set(dictionary_ids)
-    )
+    assert len(dictionary_ids) == len(set(dictionary_ids))
 
 
 def test_health_history_uses_stable_period_values() -> None:
     from pathlib import Path
 
-    source = Path(
-        "src/dashboard_pages/health_score_page.py"
-    ).read_text(
+    source = Path("src/dashboard_pages/health_score_page.py").read_text(
         encoding="utf-8"
     )
 
@@ -1645,6 +1457,7 @@ def test_health_history_uses_stable_period_values() -> None:
     assert 'health_history_t("period_all")' in source
     assert "dias_selecionados = periodo_label" in source
     assert "dias=dias_selecionados" in source
+
 
 def test_health_history_dynamic_catalog_is_complete() -> None:
     from src.dashboard_pages.health_score_page import (
@@ -1666,39 +1479,26 @@ def test_health_history_dynamic_catalog_is_complete() -> None:
         "ch",
     }
 
-    assert set(
-        HEALTH_HISTORY_DYNAMIC_TEXTS
-    ) == expected_languages
+    assert set(HEALTH_HISTORY_DYNAMIC_TEXTS) == expected_languages
 
-    reference = set(
-        HEALTH_HISTORY_DYNAMIC_TEXTS["pt"]
-    )
+    reference = set(HEALTH_HISTORY_DYNAMIC_TEXTS["pt"])
 
     dictionary_ids = []
 
     for texts in HEALTH_HISTORY_DYNAMIC_TEXTS.values():
         assert set(texts) == reference
-        assert all(
-            str(value).strip()
-            for value in texts.values()
-        )
+        assert all(str(value).strip() for value in texts.values())
 
-        dictionary_ids.append(
-            id(texts)
-        )
+        dictionary_ids.append(id(texts))
 
-    assert len(dictionary_ids) == len(
-        set(dictionary_ids)
-    )
+    assert len(dictionary_ids) == len(set(dictionary_ids))
 
 
 def test_health_history_dynamic_visuals_use_i18n() -> None:
     import ast
     from pathlib import Path
 
-    source = Path(
-        "src/dashboard_pages/health_score_page.py"
-    ).read_text(
+    source = Path("src/dashboard_pages/health_score_page.py").read_text(
         encoding="utf-8"
     )
 
@@ -1717,10 +1517,7 @@ def test_health_history_dynamic_visuals_use_i18n() -> None:
         else:
             continue
 
-        if (
-            function_name
-            == "traduzir_tendencia_historico_health"
-        ):
+        if function_name == "traduzir_tendencia_historico_health":
             trend_translation_connected = True
 
         if not node.args:
@@ -1741,14 +1538,10 @@ def test_health_history_dynamic_visuals_use_i18n() -> None:
             continue
 
         if function_name == "health_history_dynamic_t":
-            translated_dynamic_keys.add(
-                first_argument.value
-            )
+            translated_dynamic_keys.add(first_argument.value)
 
         if function_name == "health_table_t":
-            translated_table_keys.add(
-                first_argument.value
-            )
+            translated_table_keys.add(first_argument.value)
 
     assert {
         "save_error",
@@ -1757,19 +1550,16 @@ def test_health_history_dynamic_visuals_use_i18n() -> None:
         "load_error",
         "empty_history",
         "minimum_snapshots",
-    }.issubset(
-        translated_dynamic_keys
-    )
+    }.issubset(translated_dynamic_keys)
 
     assert {
         "tools",
         "memory",
         "infrastructure",
-    }.issubset(
-        translated_table_keys
-    )
+    }.issubset(translated_table_keys)
 
     assert trend_translation_connected
+
 
 def test_health_runtime_messages_catalog_is_complete() -> None:
     from src.dashboard_pages.health_score_page import (
@@ -1791,30 +1581,19 @@ def test_health_runtime_messages_catalog_is_complete() -> None:
         "ch",
     }
 
-    assert set(
-        HEALTH_RUNTIME_MESSAGE_TEXTS
-    ) == expected_languages
+    assert set(HEALTH_RUNTIME_MESSAGE_TEXTS) == expected_languages
 
-    reference = set(
-        HEALTH_RUNTIME_MESSAGE_TEXTS["pt"]
-    )
+    reference = set(HEALTH_RUNTIME_MESSAGE_TEXTS["pt"])
 
     dictionary_ids = []
 
     for texts in HEALTH_RUNTIME_MESSAGE_TEXTS.values():
         assert set(texts) == reference
-        assert all(
-            str(value).strip()
-            for value in texts.values()
-        )
+        assert all(str(value).strip() for value in texts.values())
 
-        dictionary_ids.append(
-            id(texts)
-        )
+        dictionary_ids.append(id(texts))
 
-    assert len(dictionary_ids) == len(
-        set(dictionary_ids)
-    )
+    assert len(dictionary_ids) == len(set(dictionary_ids))
 
 
 def test_health_runtime_penalty_translation_preserves_value(
@@ -1828,18 +1607,10 @@ def test_health_runtime_penalty_translation_preserves_value(
         "ru",
     )
 
-    translated = (
-        health_score_page.traduzir_penalidade_health(
-            "Taxa de sucesso: -12.5"
-        )
-    )
+    translated = health_score_page.traduzir_penalidade_health("Taxa de sucesso: -12.5")
 
-    assert translated.startswith(
-        "Доля успешных выполнений"
-    )
-    assert translated.endswith(
-        ": -12.5"
-    )
+    assert translated.startswith("Доля успешных выполнений")
+    assert translated.endswith(": -12.5")
 
 
 def test_health_runtime_recommendation_translates_component(
@@ -1853,24 +1624,19 @@ def test_health_runtime_recommendation_translates_component(
         "ru",
     )
 
-    translated = (
-        health_score_page.traduzir_recomendacao_health(
-            "Priorizar melhorias no componente memoria, "
-            "atualmente com score 72.5/100."
-        )
+    translated = health_score_page.traduzir_recomendacao_health(
+        "Priorizar melhorias no componente memoria, atualmente com score 72.5/100."
     )
 
     assert "Память" in translated
     assert "72.5/100" in translated
 
-def test_health_score_render_has_no_remaining_portuguese_visual_literals(
-) -> None:
+
+def test_health_score_render_has_no_remaining_portuguese_visual_literals() -> None:
     import ast
     from pathlib import Path
 
-    source = Path(
-        "src/dashboard_pages/health_score_page.py"
-    ).read_text(
+    source = Path("src/dashboard_pages/health_score_page.py").read_text(
         encoding="utf-8"
     )
 
@@ -1886,35 +1652,20 @@ def test_health_score_render_has_no_remaining_portuguese_visual_literals(
     )
 
     forbidden = {
-        (
-            "A INNA apresenta componentes que "
-            "precisam de atenção."
-        ),
-        (
-            "A saúde global está crítica. Priorize os "
-            "componentes com menor score."
-        ),
+        ("A INNA apresenta componentes que precisam de atenção."),
+        ("A saúde global está crítica. Priorize os componentes com menor score."),
         "## Recomendações prioritárias",
     }
 
     literals = {
         node.value
         for node in ast.walk(target)
-        if (
-            isinstance(node, ast.Constant)
-            and isinstance(node.value, str)
-        )
+        if (isinstance(node, ast.Constant) and isinstance(node.value, str))
     }
 
-    assert forbidden.isdisjoint(
-        literals
-    )
+    assert forbidden.isdisjoint(literals)
 
-    calls = [
-        node
-        for node in ast.walk(target)
-        if isinstance(node, ast.Call)
-    ]
+    calls = [node for node in ast.walk(target) if isinstance(node, ast.Call)]
 
     translated_keys = set()
 
@@ -1933,25 +1684,18 @@ def test_health_score_render_has_no_remaining_portuguese_visual_literals(
 
         argument = call.args[0]
 
-        if (
-            isinstance(argument, ast.Constant)
-            and isinstance(argument.value, str)
-        ):
-            translated_keys.add(
-                argument.value
-            )
+        if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
+            translated_keys.add(argument.value)
 
     assert {
         "attention_message",
         "critical_message",
         "priority_recommendations",
         "component",
-    }.issubset(
-        translated_keys
-    )
+    }.issubset(translated_keys)
 
-def test_llmops_native_infrastructure_catalog_is_complete(
-) -> None:
+
+def test_llmops_native_infrastructure_catalog_is_complete() -> None:
     from src.evaluation.dashboard import (
         LLMOPS_INFRA_TEXTS,
     )
@@ -1971,24 +1715,16 @@ def test_llmops_native_infrastructure_catalog_is_complete(
         "ch",
     }
 
-    assert set(
-        LLMOPS_INFRA_TEXTS
-    ) == expected_languages
+    assert set(LLMOPS_INFRA_TEXTS) == expected_languages
 
-    reference_keys = set(
-        LLMOPS_INFRA_TEXTS["pt"]
-    )
+    reference_keys = set(LLMOPS_INFRA_TEXTS["pt"])
 
     for texts in LLMOPS_INFRA_TEXTS.values():
         assert set(texts) == reference_keys
-        assert all(
-            str(value).strip()
-            for value in texts.values()
-        )
+        assert all(str(value).strip() for value in texts.values())
 
 
-def test_llmops_russian_infrastructure_is_not_english(
-) -> None:
+def test_llmops_russian_infrastructure_is_not_english() -> None:
     from src.evaluation.dashboard import (
         LLMOPS_INFRA_TEXTS,
     )
@@ -2009,10 +1745,8 @@ def test_llmops_russian_infrastructure_is_not_english(
     for key in keys:
         assert russian[key] != english[key]
 
-    assert (
-        russian["infrastructure_title"]
-        == "Инфраструктура и наблюдаемость"
-    )
+    assert russian["infrastructure_title"] == "Инфраструктура и наблюдаемость"
+
 
 def test_llm_cost_alert_visual_catalog_is_complete() -> None:
     from src.dashboard_pages.llm_costs_page import (
@@ -2034,70 +1768,45 @@ def test_llm_cost_alert_visual_catalog_is_complete() -> None:
         "ch",
     }
 
-    assert set(
-        LLM_COST_ALERT_VISUAL_TEXTS
-    ) == expected_languages
+    assert set(LLM_COST_ALERT_VISUAL_TEXTS) == expected_languages
 
-    reference = set(
-        LLM_COST_ALERT_VISUAL_TEXTS["pt"]
-    )
+    reference = set(LLM_COST_ALERT_VISUAL_TEXTS["pt"])
 
     dictionary_ids = []
 
     for texts in LLM_COST_ALERT_VISUAL_TEXTS.values():
         assert set(texts) == reference
-        assert all(
-            str(value).strip()
-            for value in texts.values()
-        )
+        assert all(str(value).strip() for value in texts.values())
 
-        dictionary_ids.append(
-            id(texts)
-        )
+        dictionary_ids.append(id(texts))
 
-    assert len(dictionary_ids) == len(
-        set(dictionary_ids)
-    )
+    assert len(dictionary_ids) == len(set(dictionary_ids))
 
 
 def test_llm_alert_filter_uses_stable_internal_values() -> None:
     from pathlib import Path
 
-    source = Path(
-        "src/dashboard_pages/llm_costs_page.py"
-    ).read_text(
-        encoding="utf-8"
-    )
+    source = Path("src/dashboard_pages/llm_costs_page.py").read_text(encoding="utf-8")
 
     assert 'options=[\n            "aberto",' in source
     assert '"resolvido",' in source
     assert '"todos",' in source
-    assert (
-        "format_func=formatar_status_filtro_alerta"
-        in source
-    )
+    assert "format_func=formatar_status_filtro_alerta" in source
+
 
 def test_llm_cost_alert_dynamic_visuals_are_localized() -> None:
     from pathlib import Path
 
-    source = Path(
-        "src/dashboard_pages/llm_costs_page.py"
-    ).read_text(
-        encoding="utf-8"
-    )
+    source = Path("src/dashboard_pages/llm_costs_page.py").read_text(encoding="utf-8")
 
-    start = source.index(
-        "def render_alertas_llm_section("
-    )
+    start = source.index("def render_alertas_llm_section(")
 
     end = source.index(
         "\ndef llm_cost_page_t(",
         start,
     )
 
-    render_source = source[
-        start:end
-    ]
+    render_source = source[start:end]
 
     forbidden_visuals = {
         '"Nenhum alerta encontrado para o filtro atual."',
@@ -2115,59 +1824,35 @@ def test_llm_cost_alert_dynamic_visuals_are_localized() -> None:
     for visual in forbidden_visuals:
         assert visual not in render_source
 
-    assert (
-        "traduzir_status_alerta_visual"
-        in render_source
-    )
+    assert "traduzir_status_alerta_visual" in render_source
 
-    assert (
-        "traduzir_severidade_alerta_visual"
-        in render_source
-    )
+    assert "traduzir_severidade_alerta_visual" in render_source
 
 
-def test_llm_cost_alert_dynamic_helpers_preserve_unknown_values(
-) -> None:
+def test_llm_cost_alert_dynamic_helpers_preserve_unknown_values() -> None:
     from src.dashboard_pages.llm_costs_page import (
         traduzir_severidade_alerta_visual,
         traduzir_status_alerta_visual,
     )
 
-    assert (
-        traduzir_status_alerta_visual(
-            "custom_status"
-        )
-        == "custom_status"
-    )
+    assert traduzir_status_alerta_visual("custom_status") == "custom_status"
 
-    assert (
-        traduzir_severidade_alerta_visual(
-            "custom_severity"
-        )
-        == "custom_severity"
-    )
+    assert traduzir_severidade_alerta_visual("custom_severity") == "custom_severity"
+
 
 def test_llm_cost_remaining_messages_are_localized() -> None:
     from pathlib import Path
 
-    source = Path(
-        "src/dashboard_pages/llm_costs_page.py"
-    ).read_text(
-        encoding="utf-8"
-    )
+    source = Path("src/dashboard_pages/llm_costs_page.py").read_text(encoding="utf-8")
 
-    start = source.index(
-        "def render_alertas_llm_section("
-    )
+    start = source.index("def render_alertas_llm_section(")
 
     end = source.index(
         "\ndef llm_cost_page_t(",
         start,
     )
 
-    render_source = source[
-        start:end
-    ]
+    render_source = source[start:end]
 
     forbidden = {
         '"Notificações por e-mail habilitadas. "',
@@ -2201,19 +1886,13 @@ def test_llm_cost_remaining_messages_are_localized() -> None:
     for call in required_calls:
         assert call in render_source
 
+
 def test_llm_alert_dynamic_content_display_i18n() -> None:
     from pathlib import Path
 
-    source = Path(
-        "src/dashboard_pages/llm_costs_page.py"
-    ).read_text(
-        encoding="utf-8"
-    )
+    source = Path("src/dashboard_pages/llm_costs_page.py").read_text(encoding="utf-8")
 
-    assert (
-        "# LLM_COST_ALERT_CONTENT_DISPLAY_I18N"
-        in source
-    )
+    assert "# LLM_COST_ALERT_CONTENT_DISPLAY_I18N" in source
 
     for language in {
         "pt",
@@ -2230,10 +1909,7 @@ def test_llm_alert_dynamic_content_display_i18n() -> None:
         "ch",
     }:
         if language == "ch":
-            assert (
-                'LLM_ALERT_CONTENT_TEXTS["ch"]'
-                in source
-            )
+            assert 'LLM_ALERT_CONTENT_TEXTS["ch"]' in source
         else:
             assert f'    "{language}": {{' in source
 
@@ -2244,47 +1920,29 @@ def test_llm_alert_dynamic_content_display_i18n() -> None:
         "falhas_llm",
         "tokens_elevados",
     }:
-        assert source.count(
-            f'        "{code}": {{'
-        ) >= 11
+        assert source.count(f'        "{code}": {{') >= 11
 
-    start = source.index(
-        "def render_alertas_llm_section("
-    )
+    start = source.index("def render_alertas_llm_section(")
 
     end = source.index(
         "\ndef llm_cost_page_t(",
         start,
     )
 
-    render_source = source[
-        start:end
-    ]
+    render_source = source[start:end]
 
-    assert (
-        "traduzir_conteudo_alerta_visual("
-        in render_source
-    )
+    assert "traduzir_conteudo_alerta_visual(" in render_source
 
-    assert (
-        'conteudo_visual[\n            "titulo"\n        ]'
-        in render_source
-    )
+    assert 'conteudo_visual[\n            "titulo"\n        ]' in render_source
 
     assert (
         'conteudo_visual[\n                    "descricao"\n                ]'
         in render_source
     )
 
-    assert (
-        'f"{conteudo_visual[\'recomendacao\']}"'
-        in render_source
-    )
+    assert "f\"{conteudo_visual['recomendacao']}\"" in render_source
 
-    assert (
-        'f"{conteudo_visual[\'categoria\']} | "'
-        in render_source
-    )
+    assert "f\"{conteudo_visual['categoria']} | \"" in render_source
 
 
 # BLOCK_7A_UPLOAD_RAG_I18N_REGRESSION_TESTS
@@ -2293,15 +1951,9 @@ def test_llm_alert_dynamic_content_display_i18n() -> None:
 def _load_effective_upload_rag_catalogs():
     from pathlib import Path
 
-    dashboard_source = Path(
-        "src/dashboard.py"
-    ).read_text(
-        encoding="utf-8"
-    )
+    dashboard_source = Path("src/dashboard.py").read_text(encoding="utf-8")
 
-    start = dashboard_source.index(
-        "UPLOAD_RAG_TEXTS = {"
-    )
+    start = dashboard_source.index("UPLOAD_RAG_TEXTS = {")
 
     end = dashboard_source.index(
         "\ndef upload_rag_t(",
@@ -2350,29 +2002,21 @@ def test_block_7a_upload_rag_native_catalog_coverage():
 
     for catalog_name in catalog_names:
         catalog = catalogs[catalog_name]
-        expected_keys = set(
-            catalog["en_us"]
-        )
+        expected_keys = set(catalog["en_us"])
 
         for language in languages:
             assert language in catalog, (
-                f"{catalog_name}: catálogo ausente "
-                f"para {language}"
+                f"{catalog_name}: catálogo ausente para {language}"
             )
 
             values = catalog[language]
 
             assert set(values) == expected_keys, (
-                f"{catalog_name}/{language}: "
-                "cobertura de chaves divergente"
+                f"{catalog_name}/{language}: cobertura de chaves divergente"
             )
 
-            assert all(
-                str(value).strip()
-                for value in values.values()
-            ), (
-                f"{catalog_name}/{language}: "
-                "valor vazio encontrado"
+            assert all(str(value).strip() for value in values.values()), (
+                f"{catalog_name}/{language}: valor vazio encontrado"
             )
 
 
@@ -2420,8 +2064,7 @@ def test_block_7a_upload_rag_native_texts_not_overwritten():
 
             unexpected_reuse = {
                 key
-                for key, english_value
-                in english.items()
+                for key, english_value in english.items()
                 if (
                     values.get(key) == english_value
                     and (
@@ -2443,9 +2086,7 @@ def test_block_7a_upload_rag_native_texts_not_overwritten():
 def test_block_7a_upload_rag_language_dictionaries_are_isolated():
     catalogs = _load_effective_upload_rag_catalogs()
 
-    upload_texts = catalogs[
-        "UPLOAD_RAG_TEXTS"
-    ]
+    upload_texts = catalogs["UPLOAD_RAG_TEXTS"]
 
     isolated_languages = (
         "ro",
@@ -2455,53 +2096,21 @@ def test_block_7a_upload_rag_language_dictionaries_are_isolated():
     )
 
     for language in isolated_languages:
-        assert (
-            upload_texts[language]
-            is not upload_texts["en_us"]
-        )
+        assert upload_texts[language] is not upload_texts["en_us"]
 
-    for index, language in enumerate(
-        isolated_languages
-    ):
-        for other_language in (
-            isolated_languages[
-                index + 1:
-            ]
-        ):
-            assert (
-                upload_texts[language]
-                is not upload_texts[
-                    other_language
-                ]
-            )
+    for index, language in enumerate(isolated_languages):
+        for other_language in isolated_languages[index + 1 :]:
+            assert upload_texts[language] is not upload_texts[other_language]
 
-    assert (
-        upload_texts["ch"]
-        is not upload_texts["de"]
-    )
+    assert upload_texts["ch"] is not upload_texts["de"]
 
 
 def test_block_7a_upload_rag_source_native_languages():
     catalogs = _load_effective_upload_rag_catalogs()
 
-    source_texts = catalogs[
-        "UPLOAD_RAG_SOURCE_TEXTS"
-    ]
+    source_texts = catalogs["UPLOAD_RAG_SOURCE_TEXTS"]
 
-    assert (
-        source_texts["ro"]["sources_used"]
-        == "#### 📚 Surse utilizate de INNA"
-    )
-    assert (
-        source_texts["ua"]["source"]
-        == "Джерело"
-    )
-    assert (
-        source_texts["ru"]["source"]
-        == "Источник"
-    )
-    assert (
-        source_texts["sa"]["source"]
-        == "المصدر"
-    )
-
+    assert source_texts["ro"]["sources_used"] == "#### 📚 Surse utilizate de INNA"
+    assert source_texts["ua"]["source"] == "Джерело"
+    assert source_texts["ru"]["source"] == "Источник"
+    assert source_texts["sa"]["source"] == "المصدر"

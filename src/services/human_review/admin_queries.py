@@ -62,17 +62,11 @@ def _normalize_row(
         if isinstance(value, datetime):
             result[key] = value.isoformat()
 
-    result["payload"] = dict(
-        result.get("payload") or {}
-    )
+    result["payload"] = dict(result.get("payload") or {})
 
-    result["corrections"] = dict(
-        result.get("corrections") or {}
-    )
+    result["corrections"] = dict(result.get("corrections") or {})
 
-    result["allowed_actions"] = list(
-        result.get("allowed_actions") or []
-    )
+    result["allowed_actions"] = list(result.get("allowed_actions") or [])
 
     return result
 
@@ -84,60 +78,32 @@ def _build_where(
     parameters: dict[str, Any] = {}
 
     if filters.statuses:
-        conditions.append(
-            "status = ANY(%(statuses)s)"
-        )
-        parameters["statuses"] = list(
-            filters.statuses
-        )
+        conditions.append("status = ANY(%(statuses)s)")
+        parameters["statuses"] = list(filters.statuses)
 
     if filters.risk_levels:
-        conditions.append(
-            "risk_level = ANY(%(risk_levels)s)"
-        )
-        parameters["risk_levels"] = list(
-            filters.risk_levels
-        )
+        conditions.append("risk_level = ANY(%(risk_levels)s)")
+        parameters["risk_levels"] = list(filters.risk_levels)
 
     if filters.requested_by:
-        conditions.append(
-            "requested_by = %(requested_by)s"
-        )
-        parameters["requested_by"] = (
-            filters.requested_by
-        )
+        conditions.append("requested_by = %(requested_by)s")
+        parameters["requested_by"] = filters.requested_by
 
     if filters.reviewer_id:
-        conditions.append(
-            "reviewer_id = %(reviewer_id)s"
-        )
-        parameters["reviewer_id"] = (
-            filters.reviewer_id
-        )
+        conditions.append("reviewer_id = %(reviewer_id)s")
+        parameters["reviewer_id"] = filters.reviewer_id
 
     if filters.thread_id:
-        conditions.append(
-            "thread_id = %(thread_id)s"
-        )
-        parameters["thread_id"] = (
-            filters.thread_id
-        )
+        conditions.append("thread_id = %(thread_id)s")
+        parameters["thread_id"] = filters.thread_id
 
     if filters.created_from is not None:
-        conditions.append(
-            "created_at >= %(created_from)s"
-        )
-        parameters["created_from"] = (
-            filters.created_from
-        )
+        conditions.append("created_at >= %(created_from)s")
+        parameters["created_from"] = filters.created_from
 
     if filters.created_to is not None:
-        conditions.append(
-            "created_at <= %(created_to)s"
-        )
-        parameters["created_to"] = (
-            filters.created_to
-        )
+        conditions.append("created_at <= %(created_to)s")
+        parameters["created_to"] = filters.created_to
 
     if filters.search:
         conditions.append("""
@@ -151,16 +117,13 @@ def _build_where(
             )
         """)
 
-        parameters["search"] = (
-            f"%{filters.search}%"
-        )
+        parameters["search"] = f"%{filters.search}%"
 
     if not conditions:
         return "", parameters
 
     return (
-        " WHERE "
-        + " AND ".join(conditions),
+        " WHERE " + " AND ".join(conditions),
         parameters,
     )
 
@@ -172,19 +135,11 @@ def listar_revisoes_admin(
         filters,
         HumanReviewAdminFilters,
     ):
-        raise TypeError(
-            "filters deve ser HumanReviewAdminFilters."
-        )
+        raise TypeError("filters deve ser HumanReviewAdminFilters.")
 
-    where_sql, parameters = _build_where(
-        filters
-    )
+    where_sql, parameters = _build_where(filters)
 
-    count_sql = (
-        "SELECT COUNT(*) AS total "
-        "FROM public.human_reviews"
-        + where_sql
-    )
+    count_sql = "SELECT COUNT(*) AS total FROM public.human_reviews" + where_sql
 
     list_sql = (
         BASE_ADMIN_SELECT
@@ -231,21 +186,13 @@ def listar_revisoes_admin(
 
     except Exception as exc:
         raise HumanReviewRepositoryError(
-            "Não foi possível listar as revisões "
-            "administrativas."
+            "Não foi possível listar as revisões administrativas."
         ) from exc
 
-    total = int(
-        count_row["total"]
-        if count_row
-        else 0
-    )
+    total = int(count_row["total"] if count_row else 0)
 
     return HumanReviewAdminPage(
-        items=[
-            _normalize_row(row)
-            for row in rows
-        ],
+        items=[_normalize_row(row) for row in rows],
         total=total,
         limit=filters.limit,
         offset=filters.offset,
@@ -262,11 +209,10 @@ def obter_metricas_admin(
         created_to=created_to,
     )
 
-    where_sql, parameters = _build_where(
-        filters
-    )
+    where_sql, parameters = _build_where(filters)
 
-    summary_sql = """
+    summary_sql = (
+        """
     SELECT
         COUNT(*) AS total,
         COUNT(*) FILTER (
@@ -312,9 +258,12 @@ def obter_metricas_admin(
             WHERE resolved_at IS NOT NULL
         ) AS average_resolution_seconds
     FROM public.human_reviews
-    """ + where_sql
+    """
+        + where_sql
+    )
 
-    risk_sql = """
+    risk_sql = (
+        """
     SELECT
         COALESCE(
             NULLIF(risk_level, ''),
@@ -322,12 +271,16 @@ def obter_metricas_admin(
         ) AS dimension,
         COUNT(*) AS total
     FROM public.human_reviews
-    """ + where_sql + """
+    """
+        + where_sql
+        + """
     GROUP BY 1
     ORDER BY total DESC, dimension ASC
     """
+    )
 
-    agent_sql = """
+    agent_sql = (
+        """
     SELECT
         COALESCE(
             NULLIF(requested_by, ''),
@@ -335,13 +288,17 @@ def obter_metricas_admin(
         ) AS dimension,
         COUNT(*) AS total
     FROM public.human_reviews
-    """ + where_sql + """
+    """
+        + where_sql
+        + """
     GROUP BY 1
     ORDER BY total DESC, dimension ASC
     LIMIT 20
     """
+    )
 
-    reviewer_sql = """
+    reviewer_sql = (
+        """
     SELECT
         COALESCE(
             NULLIF(reviewer_id, ''),
@@ -349,11 +306,14 @@ def obter_metricas_admin(
         ) AS dimension,
         COUNT(*) AS total
     FROM public.human_reviews
-    """ + where_sql + """
+    """
+        + where_sql
+        + """
     GROUP BY 1
     ORDER BY total DESC, dimension ASC
     LIMIT 20
     """
+    )
 
     try:
         with cursor_postgres(
@@ -386,28 +346,23 @@ def obter_metricas_admin(
 
     except Exception as exc:
         raise HumanReviewRepositoryError(
-            "Não foi possível calcular as métricas "
-            "administrativas."
+            "Não foi possível calcular as métricas administrativas."
         ) from exc
 
-    total = int(
-        summary.get("total") or 0
-    )
+    total = int(summary.get("total") or 0)
 
-    approved = int(
-        summary.get("approved") or 0
-    )
+    approved = int(summary.get("approved") or 0)
 
-    corrected = int(
-        summary.get("corrected") or 0
-    )
+    corrected = int(summary.get("corrected") or 0)
 
-    terminal_total = sum([
-        approved,
-        corrected,
-        int(summary.get("rejected") or 0),
-        int(summary.get("cancelled") or 0),
-    ])
+    terminal_total = sum(
+        [
+            approved,
+            corrected,
+            int(summary.get("rejected") or 0),
+            int(summary.get("cancelled") or 0),
+        ]
+    )
 
     def rate(value: int) -> float:
         if terminal_total == 0:
@@ -421,61 +376,32 @@ def obter_metricas_admin(
     def dimension_map(
         rows: list[Mapping[str, Any]],
     ) -> dict[str, int]:
-        return {
-            str(row["dimension"]): int(
-                row["total"]
-            )
-            for row in rows
-        }
+        return {str(row["dimension"]): int(row["total"]) for row in rows}
 
     return HumanReviewAdminMetrics(
         total=total,
-        pending=int(
-            summary.get("pending") or 0
-        ),
-        processing=int(
-            summary.get("processing") or 0
-        ),
+        pending=int(summary.get("pending") or 0),
+        processing=int(summary.get("processing") or 0),
         approved=approved,
         corrected=corrected,
-        rejected=int(
-            summary.get("rejected") or 0
-        ),
-        cancelled=int(
-            summary.get("cancelled") or 0
-        ),
-        resume_failed=int(
-            summary.get("resume_failed") or 0
-        ),
+        rejected=int(summary.get("rejected") or 0),
+        cancelled=int(summary.get("cancelled") or 0),
+        resume_failed=int(summary.get("resume_failed") or 0),
         average_wait_seconds=(
-            float(
-                summary[
-                    "average_wait_seconds"
-                ]
-            )
-            if summary.get(
-                "average_wait_seconds"
-            ) is not None
+            float(summary["average_wait_seconds"])
+            if summary.get("average_wait_seconds") is not None
             else None
         ),
         average_resolution_seconds=(
-            float(
-                summary[
-                    "average_resolution_seconds"
-                ]
-            )
-            if summary.get(
-                "average_resolution_seconds"
-            ) is not None
+            float(summary["average_resolution_seconds"])
+            if summary.get("average_resolution_seconds") is not None
             else None
         ),
         approval_rate=rate(approved),
         correction_rate=rate(corrected),
         by_risk=dimension_map(risks),
         by_agent=dimension_map(agents),
-        by_reviewer=dimension_map(
-            reviewers
-        ),
+        by_reviewer=dimension_map(reviewers),
     )
 
 

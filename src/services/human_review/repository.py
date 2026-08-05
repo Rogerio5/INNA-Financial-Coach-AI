@@ -22,12 +22,14 @@ from .exceptions import (
 )
 
 
-FINAL_STATUSES = frozenset({
-    "approved",
-    "corrected",
-    "rejected",
-    "cancelled",
-})
+FINAL_STATUSES = frozenset(
+    {
+        "approved",
+        "corrected",
+        "rejected",
+        "cancelled",
+    }
+)
 
 
 SQL_INSERT_PENDING = """
@@ -224,8 +226,7 @@ def _json_dumps(
         ValueError,
     ) as exc:
         raise HumanReviewRepositoryError(
-            "Não foi possível serializar os dados "
-            "da revisão humana."
+            "Não foi possível serializar os dados da revisão humana."
         ) from exc
 
 
@@ -241,9 +242,7 @@ def _mapping_to_dict(
     ):
         return dict(value)
 
-    raise HumanReviewRepositoryError(
-        "O banco retornou um objeto JSON inválido."
-    )
+    raise HumanReviewRepositoryError("O banco retornou um objeto JSON inválido.")
 
 
 def _record_from_row(
@@ -254,40 +253,24 @@ def _record_from_row(
         Mapping,
     ):
         raise HumanReviewRepositoryError(
-            "O banco retornou uma revisão humana "
-            "em formato inválido."
+            "O banco retornou uma revisão humana em formato inválido."
         )
 
     try:
         normalized = dict(row)
 
-        normalized["payload"] = (
-            _mapping_to_dict(
-                normalized.get(
-                    "payload"
-                )
-            )
-        )
+        normalized["payload"] = _mapping_to_dict(normalized.get("payload"))
 
-        normalized["corrections"] = (
-            _mapping_to_dict(
-                normalized.get(
-                    "corrections"
-                )
-            )
-        )
+        normalized["corrections"] = _mapping_to_dict(normalized.get("corrections"))
 
-        return HumanReviewRecord(
-            **normalized
-        )
+        return HumanReviewRecord(**normalized)
 
     except HumanReviewRepositoryError:
         raise
 
     except Exception as exc:
         raise HumanReviewRepositoryError(
-            "O banco retornou uma revisão humana "
-            "em formato inválido."
+            "O banco retornou uma revisão humana em formato inválido."
         ) from exc
 
 
@@ -301,12 +284,8 @@ def _pending_parameters(
         "reason": record.reason,
         "trigger": record.trigger,
         "risk_level": record.risk_level,
-        "payload": _json_dumps(
-            record.payload
-        ),
-        "allowed_actions": _json_dumps(
-            record.allowed_actions
-        ),
+        "payload": _json_dumps(record.payload),
+        "allowed_actions": _json_dumps(record.allowed_actions),
         "created_at": record.created_at,
     }
 
@@ -314,20 +293,13 @@ def _pending_parameters(
 def obter_revisao(
     review_id: str,
 ) -> HumanReviewRecord | None:
-    normalized_review_id = str(
-        review_id or ""
-    ).strip()
+    normalized_review_id = str(review_id or "").strip()
 
     if not normalized_review_id:
-        raise ValueError(
-            "review_id é obrigatório."
-        )
+        raise ValueError("review_id é obrigatório.")
 
     if len(normalized_review_id) > 255:
-        raise ValueError(
-            "review_id deve possuir no máximo "
-            "255 caracteres."
-        )
+        raise ValueError("review_id deve possuir no máximo 255 caracteres.")
 
     try:
         with cursor_postgres(
@@ -337,9 +309,7 @@ def obter_revisao(
             cursor.execute(
                 SQL_SELECT_BY_REVIEW_ID,
                 {
-                    "review_id": (
-                        normalized_review_id
-                    ),
+                    "review_id": (normalized_review_id),
                 },
             )
 
@@ -347,16 +317,13 @@ def obter_revisao(
 
     except Exception as exc:
         raise HumanReviewRepositoryError(
-            "Não foi possível consultar a revisão "
-            "humana."
+            "Não foi possível consultar a revisão humana."
         ) from exc
 
     if row is None:
         return None
 
-    return _record_from_row(
-        row
-    )
+    return _record_from_row(row)
 
 
 def criar_revisao_pendente(
@@ -366,29 +333,18 @@ def criar_revisao_pendente(
         record,
         HumanReviewPendingRecord,
     ):
-        raise TypeError(
-            "record deve ser uma instância de "
-            "HumanReviewPendingRecord."
-        )
+        raise TypeError("record deve ser uma instância de HumanReviewPendingRecord.")
 
-    parameters = _pending_parameters(
-        record
-    )
+    parameters = _pending_parameters(record)
 
     try:
         with cursor_postgres(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            cursor.execute(
-                "SET LOCAL lock_timeout "
-                "= '3000ms';"
-            )
+            cursor.execute("SET LOCAL lock_timeout = '3000ms';")
 
-            cursor.execute(
-                "SET LOCAL statement_timeout "
-                "= '5000ms';"
-            )
+            cursor.execute("SET LOCAL statement_timeout = '5000ms';")
 
             cursor.execute(
                 SQL_INSERT_PENDING,
@@ -399,18 +355,14 @@ def criar_revisao_pendente(
 
             if inserted is not None:
                 return HumanReviewWriteResult(
-                    record=_record_from_row(
-                        inserted
-                    ),
+                    record=_record_from_row(inserted),
                     status="created",
                 )
 
             cursor.execute(
                 SQL_SELECT_BY_REVIEW_ID,
                 {
-                    "review_id": (
-                        record.review_id
-                    ),
+                    "review_id": (record.review_id),
                 },
             )
 
@@ -418,23 +370,14 @@ def criar_revisao_pendente(
 
             if existing is None:
                 raise HumanReviewRepositoryError(
-                    "A revisão não foi encontrada "
-                    "após o conflito de criação."
+                    "A revisão não foi encontrada após o conflito de criação."
                 )
 
-            existing_record = (
-                _record_from_row(
-                    existing
-                )
-            )
+            existing_record = _record_from_row(existing)
 
-            if (
-                existing_record.thread_id
-                != record.thread_id
-            ):
+            if existing_record.thread_id != record.thread_id:
                 raise HumanReviewConflictError(
-                    "review_id já está associado "
-                    "a outro thread_id."
+                    "review_id já está associado a outro thread_id."
                 )
 
             return HumanReviewWriteResult(
@@ -450,8 +393,7 @@ def criar_revisao_pendente(
 
     except Exception as exc:
         raise HumanReviewRepositoryError(
-            "Não foi possível criar a revisão "
-            "humana pendente."
+            "Não foi possível criar a revisão humana pendente."
         ) from exc
 
 
@@ -464,27 +406,19 @@ def listar_revisoes_pendentes(
         limit,
         int,
     ):
-        raise TypeError(
-            "limit deve ser inteiro."
-        )
+        raise TypeError("limit deve ser inteiro.")
 
     if not isinstance(
         offset,
         int,
     ):
-        raise TypeError(
-            "offset deve ser inteiro."
-        )
+        raise TypeError("offset deve ser inteiro.")
 
     if not 1 <= limit <= 200:
-        raise ValueError(
-            "limit deve estar entre 1 e 200."
-        )
+        raise ValueError("limit deve estar entre 1 e 200.")
 
     if offset < 0:
-        raise ValueError(
-            "offset não pode ser negativo."
-        )
+        raise ValueError("offset não pode ser negativo.")
 
     try:
         with cursor_postgres(
@@ -503,14 +437,10 @@ def listar_revisoes_pendentes(
 
     except Exception as exc:
         raise HumanReviewRepositoryError(
-            "Não foi possível listar as revisões "
-            "humanas pendentes."
+            "Não foi possível listar as revisões humanas pendentes."
         ) from exc
 
-    return [
-        _record_from_row(row)
-        for row in rows
-    ]
+    return [_record_from_row(row) for row in rows]
 
 
 def reivindicar_revisao(
@@ -521,19 +451,14 @@ def reivindicar_revisao(
         HumanReviewResolutionCommand,
     ):
         raise TypeError(
-            "command deve ser uma instância de "
-            "HumanReviewResolutionCommand."
+            "command deve ser uma instância de HumanReviewResolutionCommand."
         )
 
     parameters = {
         "review_id": command.review_id,
         "thread_id": command.thread_id,
-        "reviewer_id": (
-            command.context.reviewer_id
-        ),
-        "processing_request_id": (
-            command.context.request_id
-        ),
+        "reviewer_id": (command.context.reviewer_id),
+        "processing_request_id": (command.context.request_id),
     }
 
     try:
@@ -541,15 +466,9 @@ def reivindicar_revisao(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            cursor.execute(
-                "SET LOCAL lock_timeout "
-                "= '3000ms';"
-            )
+            cursor.execute("SET LOCAL lock_timeout = '3000ms';")
 
-            cursor.execute(
-                "SET LOCAL statement_timeout "
-                "= '5000ms';"
-            )
+            cursor.execute("SET LOCAL statement_timeout = '5000ms';")
 
             cursor.execute(
                 SQL_CLAIM_REVIEW,
@@ -559,16 +478,12 @@ def reivindicar_revisao(
             row = cursor.fetchone()
 
             if row is not None:
-                return _record_from_row(
-                    row
-                )
+                return _record_from_row(row)
 
             cursor.execute(
                 SQL_SELECT_BY_REVIEW_ID,
                 {
-                    "review_id": (
-                        command.review_id
-                    ),
+                    "review_id": (command.review_id),
                 },
             )
 
@@ -576,31 +491,19 @@ def reivindicar_revisao(
 
     except Exception as exc:
         raise HumanReviewRepositoryError(
-            "Não foi possível reivindicar a revisão "
-            "humana."
+            "Não foi possível reivindicar a revisão humana."
         ) from exc
 
     if existing is None:
-        raise HumanReviewNotFoundError(
-            "A revisão humana não foi encontrada."
-        )
+        raise HumanReviewNotFoundError("A revisão humana não foi encontrada.")
 
-    existing_record = _record_from_row(
-        existing
-    )
+    existing_record = _record_from_row(existing)
 
-    if (
-        existing_record.thread_id
-        != command.thread_id
-    ):
-        raise HumanReviewConflictError(
-            "A revisão não pertence ao thread "
-            "informado."
-        )
+    if existing_record.thread_id != command.thread_id:
+        raise HumanReviewConflictError("A revisão não pertence ao thread informado.")
 
     raise HumanReviewConflictError(
-        "A revisão humana já está sendo processada "
-        "ou já foi concluída."
+        "A revisão humana já está sendo processada ou já foi concluída."
     )
 
 
@@ -615,18 +518,13 @@ def finalizar_revisao(
         HumanReviewResolutionCommand,
     ):
         raise TypeError(
-            "command deve ser uma instância de "
-            "HumanReviewResolutionCommand."
+            "command deve ser uma instância de HumanReviewResolutionCommand."
         )
 
-    normalized_status = str(
-        status or ""
-    ).strip().lower()
+    normalized_status = str(status or "").strip().lower()
 
     if normalized_status not in FINAL_STATUSES:
-        raise ValueError(
-            "Status final de revisão inválido."
-        )
+        raise ValueError("Status final de revisão inválido.")
 
     decision = command.decision
 
@@ -635,20 +533,12 @@ def finalizar_revisao(
         "thread_id": command.thread_id,
         "status": normalized_status,
         "decision_action": decision.action,
-        "reviewer_id": (
-            command.context.reviewer_id
-        ),
+        "reviewer_id": (command.context.reviewer_id),
         "reviewer_comment": decision.comment,
         "rejection_reason": decision.reason,
-        "corrections": _json_dumps(
-            decision.corrections
-        ),
-        "resume_route": str(
-            resume_route or ""
-        ).strip(),
-        "processing_request_id": (
-            command.context.request_id
-        ),
+        "corrections": _json_dumps(decision.corrections),
+        "resume_route": str(resume_route or "").strip(),
+        "processing_request_id": (command.context.request_id),
     }
 
     try:
@@ -665,19 +555,13 @@ def finalizar_revisao(
 
     except Exception as exc:
         raise HumanReviewRepositoryError(
-            "Não foi possível finalizar a revisão "
-            "humana."
+            "Não foi possível finalizar a revisão humana."
         ) from exc
 
     if row is None:
-        raise HumanReviewConflictError(
-            "O claim da revisão não está mais "
-            "válido."
-        )
+        raise HumanReviewConflictError("O claim da revisão não está mais válido.")
 
-    return _record_from_row(
-        row
-    )
+    return _record_from_row(row)
 
 
 def registrar_falha_retomada(
@@ -690,23 +574,15 @@ def registrar_falha_retomada(
         HumanReviewResolutionCommand,
     ):
         raise TypeError(
-            "command deve ser uma instância de "
-            "HumanReviewResolutionCommand."
+            "command deve ser uma instância de HumanReviewResolutionCommand."
         )
 
-    sanitized_reason = str(
-        failure_reason or ""
-    ).strip()
+    sanitized_reason = str(failure_reason or "").strip()
 
     if not sanitized_reason:
-        sanitized_reason = (
-            "Falha não identificada durante "
-            "a retomada."
-        )
+        sanitized_reason = "Falha não identificada durante a retomada."
 
-    sanitized_reason = (
-        sanitized_reason[:2_000]
-    )
+    sanitized_reason = sanitized_reason[:2_000]
 
     try:
         with cursor_postgres(
@@ -716,20 +592,10 @@ def registrar_falha_retomada(
             cursor.execute(
                 SQL_MARK_RESUME_FAILURE,
                 {
-                    "review_id": (
-                        command.review_id
-                    ),
-                    "thread_id": (
-                        command.thread_id
-                    ),
-                    "processing_request_id": (
-                        command
-                        .context
-                        .request_id
-                    ),
-                    "failure_reason": (
-                        sanitized_reason
-                    ),
+                    "review_id": (command.review_id),
+                    "thread_id": (command.thread_id),
+                    "processing_request_id": (command.context.request_id),
+                    "failure_reason": (sanitized_reason),
                 },
             )
 
@@ -737,19 +603,13 @@ def registrar_falha_retomada(
 
     except Exception as exc:
         raise HumanReviewRepositoryError(
-            "Não foi possível registrar a falha "
-            "de retomada."
+            "Não foi possível registrar a falha de retomada."
         ) from exc
 
     if row is None:
-        raise HumanReviewConflictError(
-            "O claim da revisão não está mais "
-            "válido."
-        )
+        raise HumanReviewConflictError("O claim da revisão não está mais válido.")
 
-    return _record_from_row(
-        row
-    )
+    return _record_from_row(row)
 
 
 def liberar_claims_expirados(
@@ -760,15 +620,10 @@ def liberar_claims_expirados(
         timeout_seconds,
         int,
     ):
-        raise TypeError(
-            "timeout_seconds deve ser inteiro."
-        )
+        raise TypeError("timeout_seconds deve ser inteiro.")
 
     if not 30 <= timeout_seconds <= 86_400:
-        raise ValueError(
-            "timeout_seconds deve estar entre "
-            "30 e 86400."
-        )
+        raise ValueError("timeout_seconds deve estar entre 30 e 86400.")
 
     try:
         with cursor_postgres(
@@ -778,9 +633,7 @@ def liberar_claims_expirados(
             cursor.execute(
                 SQL_RELEASE_STALE_CLAIMS,
                 {
-                    "timeout_seconds": (
-                        timeout_seconds
-                    ),
+                    "timeout_seconds": (timeout_seconds),
                 },
             )
 
@@ -788,14 +641,10 @@ def liberar_claims_expirados(
 
     except Exception as exc:
         raise HumanReviewRepositoryError(
-            "Não foi possível liberar claims "
-            "expirados."
+            "Não foi possível liberar claims expirados."
         ) from exc
 
-    return [
-        str(row["review_id"])
-        for row in rows
-    ]
+    return [str(row["review_id"]) for row in rows]
 
 
 __all__ = [

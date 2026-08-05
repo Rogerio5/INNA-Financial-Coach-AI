@@ -10,9 +10,7 @@ def _context_builder_stub(
 ) -> dict[str, Any]:
     return {
         "context": {
-            "rendered_prompt": (
-                "Contexto de teste."
-            ),
+            "rendered_prompt": ("Contexto de teste."),
         },
         "trace": [
             *list(
@@ -35,9 +33,7 @@ def _supervisor_stub(
         "generate_report": True,
         "use_database": True,
         "route_source": "test",
-        "routing_reason": (
-            "Diagnóstico seguido de relatório."
-        ),
+        "routing_reason": ("Diagnóstico seguido de relatório."),
         "trace": [
             *list(
                 state.get(
@@ -45,10 +41,7 @@ def _supervisor_stub(
                     [],
                 )
             ),
-            (
-                "supervisor:test:"
-                "diagnostico_financeiro"
-            ),
+            ("supervisor:test:diagnostico_financeiro"),
         ],
         "trace": [
             *list(
@@ -57,10 +50,7 @@ def _supervisor_stub(
                     [],
                 )
             ),
-            (
-                "supervisor:test:"
-                "diagnostico_financeiro"
-            ),
+            ("supervisor:test:diagnostico_financeiro"),
             "e2e:supervisor",
         ],
     }
@@ -99,22 +89,15 @@ def _financial_agent_stub(
         )
     )
 
-    structured_response[
-        "diagnostico_financeiro"
-    ] = diagnosis
+    structured_response["diagnostico_financeiro"] = diagnosis
 
     return {
-        "response": (
-            "Diagnóstico financeiro concluído."
-        ),
-        "structured_response": (
-            structured_response
-        ),
+        "response": ("Diagnóstico financeiro concluído."),
+        "structured_response": (structured_response),
         "handoff_required": True,
         "handoff_target": "report_agent",
         "handoff_reason": (
-            "O diagnóstico foi concluído e "
-            "o usuário solicitou relatório."
+            "O diagnóstico foi concluído e o usuário solicitou relatório."
         ),
         "errors": [],
         "trace": [
@@ -151,31 +134,21 @@ def _report_agent_stub(
         )
     )
 
-    diagnosis = structured_response.get(
-        "diagnostico_financeiro"
-    )
+    diagnosis = structured_response.get("diagnostico_financeiro")
 
     assert isinstance(
         diagnosis,
         dict,
     )
 
-    structured_response[
-        "relatorio_financeiro"
-    ] = {
+    structured_response["relatorio_financeiro"] = {
         "generated": True,
-        "source_score": diagnosis[
-            "score_financeiro"
-        ],
+        "source_score": diagnosis["score_financeiro"],
     }
 
     return {
-        "response": (
-            "Relatório financeiro concluído."
-        ),
-        "structured_response": (
-            structured_response
-        ),
+        "response": ("Relatório financeiro concluído."),
+        "structured_response": (structured_response),
         "handoff_required": False,
         "errors": [],
         "trace": [
@@ -215,13 +188,9 @@ def _task_completion_stub(
             )
         )
     ):
-        normalized = str(
-            item or ""
-        ).strip()
+        normalized = str(item or "").strip()
 
-        if normalized.startswith(
-            "agent:"
-        ):
+        if normalized.startswith("agent:"):
             current_agent = normalized.split(
                 ":",
                 1,
@@ -259,10 +228,7 @@ def _task_completion_stub(
                     [],
                 )
             ),
-            (
-                "e2e:task_completion:"
-                f"{current_agent}"
-            ),
+            (f"e2e:task_completion:{current_agent}"),
         ],
     }
 
@@ -271,9 +237,7 @@ def _summary_stub(
     state: dict[str, Any],
 ) -> dict[str, Any]:
     return {
-        "conversation_summary": (
-            "Diagnóstico e relatório concluídos."
-        ),
+        "conversation_summary": ("Diagnóstico e relatório concluídos."),
         "trace": [
             *list(
                 state.get(
@@ -288,10 +252,7 @@ def _summary_stub(
 
 def _initial_state() -> dict[str, Any]:
     return {
-        "user_message": (
-            "Analise minha situação financeira "
-            "e gere um relatório."
-        ),
+        "user_message": ("Analise minha situação financeira e gere um relatório."),
         "thread_id": "thread-e2e-handoff",
         "user_id": "user-test",
         "language": "pt-BR",
@@ -358,11 +319,7 @@ def test_complete_financial_report_handoff_flow(
         _summary_stub,
     )
 
-    graph = (
-        graph_module
-        .criar_builder_inna()
-        .compile()
-    )
+    graph = graph_module.criar_builder_inna().compile()
 
     result = graph.invoke(
         _initial_state(),
@@ -371,40 +328,26 @@ def test_complete_financial_report_handoff_flow(
         },
     )
 
-    assert result["response"] == (
-        "Relatório financeiro concluído."
-    )
+    assert result["response"] == ("Relatório financeiro concluído.")
 
-    assert result["conversation_summary"] == (
-        "Diagnóstico e relatório concluídos."
-    )
+    assert result["conversation_summary"] == ("Diagnóstico e relatório concluídos.")
 
     assert result["handoff_count"] == 1
 
-    handoff = result[
-        "handoff_current"
-    ]
+    handoff = result["handoff_current"]
 
     assert handoff["status"] == "completed"
 
-    assert handoff["from_agent"] == (
-        "financial_agent"
-    )
+    assert handoff["from_agent"] == ("financial_agent")
 
-    assert handoff["to_agent"] == (
-        "report_agent"
-    )
+    assert handoff["to_agent"] == ("report_agent")
 
     assert handoff["accepted_at"] is not None
     assert handoff["completed_at"] is not None
 
-    assert handoff["result"][
-        "task_status"
-    ] == "completed"
+    assert handoff["result"]["task_status"] == "completed"
 
-    report = result[
-        "structured_response"
-    ]["relatorio_financeiro"]
+    report = result["structured_response"]["relatorio_financeiro"]
 
     assert report["generated"] is True
     assert report["source_score"] == 82
@@ -455,11 +398,7 @@ def test_execution_trace_contains_both_agents(
         _summary_stub,
     )
 
-    graph = (
-        graph_module
-        .criar_builder_inna()
-        .compile()
-    )
+    graph = graph_module.criar_builder_inna().compile()
 
     result = graph.invoke(
         _initial_state(),
@@ -478,29 +417,18 @@ def test_execution_trace_contains_both_agents(
     assert "e2e:financial_agent" in trace
     assert "e2e:report_agent" in trace
 
-    financial_index = trace.index(
-        "e2e:financial_agent"
-    )
+    financial_index = trace.index("e2e:financial_agent")
 
-    report_index = trace.index(
-        "e2e:report_agent"
-    )
+    report_index = trace.index("e2e:report_agent")
 
     assert financial_index < report_index
 
-    assert (
-        "e2e:task_completion:financial_agent"
-        in trace
-    )
+    assert "e2e:task_completion:financial_agent" in trace
 
-    assert (
-        "e2e:task_completion:report_agent"
-        in trace
-    )
+    assert "e2e:task_completion:report_agent" in trace
 
-    assert trace[-1] == (
-        "e2e:conversation_summary"
-    )
+    assert trace[-1] == ("e2e:conversation_summary")
+
 
 def test_handoff_history_contains_single_logical_transfer(
     monkeypatch,
@@ -547,11 +475,7 @@ def test_handoff_history_contains_single_logical_transfer(
         _summary_stub,
     )
 
-    graph = (
-        graph_module
-        .criar_builder_inna()
-        .compile()
-    )
+    graph = graph_module.criar_builder_inna().compile()
 
     result = graph.invoke(
         _initial_state(),
@@ -560,18 +484,10 @@ def test_handoff_history_contains_single_logical_transfer(
         },
     )
 
-    history = result[
-        "handoff_history"
-    ]
+    history = result["handoff_history"]
 
     assert len(history) == 1
 
-    assert history[0]["status"] == (
-        "completed"
-    )
+    assert history[0]["status"] == ("completed")
 
-    assert history[0]["handoff_id"] == (
-        result["handoff_current"][
-            "handoff_id"
-        ]
-    )
+    assert history[0]["handoff_id"] == (result["handoff_current"]["handoff_id"])

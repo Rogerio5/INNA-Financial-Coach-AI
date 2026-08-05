@@ -20,13 +20,9 @@ import re
 from typing import Final
 
 
-DEFAULT_MAX_DOCUMENT_SIZE_BYTES: Final[int] = (
-    5 * 1024 * 1024
-)
+DEFAULT_MAX_DOCUMENT_SIZE_BYTES: Final[int] = 5 * 1024 * 1024
 
-ALLOWED_DOCUMENT_EXTENSIONS: Final[
-    frozenset[str]
-] = frozenset(
+ALLOWED_DOCUMENT_EXTENSIONS: Final[frozenset[str]] = frozenset(
     {
         ".md",
         ".txt",
@@ -35,9 +31,7 @@ ALLOWED_DOCUMENT_EXTENSIONS: Final[
 
 MIN_DOCUMENT_SIZE_BYTES: Final[int] = 1
 
-_PROMPT_INJECTION_PATTERNS: Final[
-    tuple[tuple[str, re.Pattern[str]], ...]
-] = (
+_PROMPT_INJECTION_PATTERNS: Final[tuple[tuple[str, re.Pattern[str]], ...]] = (
     (
         "ignore_previous_instructions",
         re.compile(
@@ -131,9 +125,7 @@ def get_max_document_size_bytes() -> int:
     Variável:
         INNA_RAG_MAX_DOCUMENT_SIZE_BYTES
     """
-    raw_value = os.getenv(
-        "INNA_RAG_MAX_DOCUMENT_SIZE_BYTES"
-    )
+    raw_value = os.getenv("INNA_RAG_MAX_DOCUMENT_SIZE_BYTES")
 
     if not raw_value:
         return DEFAULT_MAX_DOCUMENT_SIZE_BYTES
@@ -155,9 +147,7 @@ def normalize_document_extension(
     """
     Extrai e normaliza a extensão do documento.
     """
-    return Path(
-        str(filename or "")
-    ).suffix.lower().strip()
+    return Path(str(filename or "")).suffix.lower().strip()
 
 
 def validate_document_extension(
@@ -166,18 +156,13 @@ def validate_document_extension(
     """
     Valida a extensão e retorna o valor normalizado.
     """
-    extension = normalize_document_extension(
-        filename
-    )
+    extension = normalize_document_extension(filename)
 
     if extension not in ALLOWED_DOCUMENT_EXTENSIONS:
-        allowed = ", ".join(
-            sorted(ALLOWED_DOCUMENT_EXTENSIONS)
-        )
+        allowed = ", ".join(sorted(ALLOWED_DOCUMENT_EXTENSIONS))
 
         raise RagDocumentSecurityError(
-            "Formato de documento não permitido. "
-            f"Formatos aceitos: {allowed}."
+            f"Formato de documento não permitido. Formatos aceitos: {allowed}."
         )
 
     return extension
@@ -194,25 +179,18 @@ def validate_document_size(
     size_bytes = len(content)
 
     effective_limit = (
-        get_max_document_size_bytes()
-        if max_size_bytes is None
-        else int(max_size_bytes)
+        get_max_document_size_bytes() if max_size_bytes is None else int(max_size_bytes)
     )
 
     if effective_limit < MIN_DOCUMENT_SIZE_BYTES:
-        raise RagDocumentSecurityError(
-            "O limite de tamanho configurado é inválido."
-        )
+        raise RagDocumentSecurityError("O limite de tamanho configurado é inválido.")
 
     if size_bytes < MIN_DOCUMENT_SIZE_BYTES:
-        raise RagDocumentSecurityError(
-            "O documento está vazio."
-        )
+        raise RagDocumentSecurityError("O documento está vazio.")
 
     if size_bytes > effective_limit:
         raise RagDocumentSecurityError(
-            "O documento excede o limite máximo "
-            f"de {effective_limit} bytes."
+            f"O documento excede o limite máximo de {effective_limit} bytes."
         )
 
     return size_bytes
@@ -273,14 +251,10 @@ def inspect_rag_document(
     """
     Executa a inspeção completa antes da persistência.
     """
-    extension = validate_document_extension(
-        filename
-    )
+    extension = validate_document_extension(filename)
 
     effective_limit = (
-        get_max_document_size_bytes()
-        if max_size_bytes is None
-        else int(max_size_bytes)
+        get_max_document_size_bytes() if max_size_bytes is None else int(max_size_bytes)
     )
 
     size_bytes = validate_document_size(
@@ -288,29 +262,19 @@ def inspect_rag_document(
         max_size_bytes=effective_limit,
     )
 
-    content_hash = calculate_content_sha256(
-        content
-    )
+    content_hash = calculate_content_sha256(content)
 
     text = decode_document_text(content)
 
-    injection_patterns = (
-        detect_prompt_injection_patterns(text)
-    )
+    injection_patterns = detect_prompt_injection_patterns(text)
 
-    injection_detected = bool(
-        injection_patterns
-    )
+    injection_detected = bool(injection_patterns)
 
     rejection_reason = None
 
-    if (
-        reject_prompt_injection
-        and injection_detected
-    ):
+    if reject_prompt_injection and injection_detected:
         rejection_reason = (
-            "O documento contém padrões que podem "
-            "tentar modificar as instruções da IA."
+            "O documento contém padrões que podem tentar modificar as instruções da IA."
         )
 
     return RagDocumentSecurityResult(
@@ -343,8 +307,7 @@ def require_safe_rag_document(
 
     if not result.accepted:
         raise RagDocumentSecurityError(
-            result.rejection_reason
-            or "Documento rejeitado."
+            result.rejection_reason or "Documento rejeitado."
         )
 
     return result

@@ -17,32 +17,22 @@ from api.security.telegram_webhook import (
 )
 
 
-SECRET = (
-    "Telegram_Webhook_Secret_"
-    "0123456789abcdef0123456789"
-)
+SECRET = "Telegram_Webhook_Secret_0123456789abcdef0123456789"
 
 
 def test_valid_secret_is_accepted():
-    context = (
-        verificar_segredo_webhook_telegram(
-            SECRET,
-            expected_secret=SECRET,
-        )
+    context = verificar_segredo_webhook_telegram(
+        SECRET,
+        expected_secret=SECRET,
     )
 
     assert context.authenticated is True
 
-    assert (
-        context.authentication_method
-        == "telegram_secret_token"
-    )
+    assert context.authentication_method == "telegram_secret_token"
 
 
 def test_wrong_secret_is_rejected():
-    with pytest.raises(
-        TelegramWebhookSecurityError
-    ):
+    with pytest.raises(TelegramWebhookSecurityError):
         verificar_segredo_webhook_telegram(
             "Wrong_Secret_0123456789abcdef0123456789",
             expected_secret=SECRET,
@@ -62,9 +52,7 @@ def test_wrong_secret_is_rejected():
 def test_invalid_received_secret_is_rejected(
     value,
 ):
-    with pytest.raises(
-        TelegramWebhookSecurityError
-    ):
+    with pytest.raises(TelegramWebhookSecurityError):
         verificar_segredo_webhook_telegram(
             value,
             expected_secret=SECRET,
@@ -72,12 +60,8 @@ def test_invalid_received_secret_is_rejected(
 
 
 def test_invalid_configuration_is_rejected():
-    with pytest.raises(
-        TelegramWebhookConfigurationError
-    ):
-        obter_segredo_webhook_telegram(
-            "short"
-        )
+    with pytest.raises(TelegramWebhookConfigurationError):
+        obter_segredo_webhook_telegram("short")
 
 
 def test_environment_configuration(
@@ -88,18 +72,13 @@ def test_environment_configuration(
         SECRET,
     )
 
-    assert (
-        obter_segredo_webhook_telegram()
-        == SECRET
-    )
+    assert obter_segredo_webhook_telegram() == SECRET
 
 
 def test_safe_context_does_not_expose_secret():
-    context = (
-        verificar_segredo_webhook_telegram(
-            SECRET,
-            expected_secret=SECRET,
-        )
+    context = verificar_segredo_webhook_telegram(
+        SECRET,
+        expected_secret=SECRET,
     )
 
     safe = context.to_safe_dict()
@@ -111,20 +90,15 @@ def test_safe_context_does_not_expose_secret():
 def _build_client() -> TestClient:
     app = FastAPI()
 
-    app.include_router(
-        telegram_webhook.router
-    )
+    app.include_router(telegram_webhook.router)
 
-    return TestClient(
-        app
-    )
+    return TestClient(app)
 
 
 def _webhook_path() -> str:
     route = next(
         route
-        for route
-        in telegram_webhook.router.routes
+        for route in telegram_webhook.router.routes
         if route.name == "telegram_webhook"
     )
 
@@ -181,10 +155,7 @@ def test_real_webhook_rejects_wrong_header(
             "update_id": 1002,
         },
         headers={
-            TELEGRAM_SECRET_HEADER: (
-                "Wrong_Secret_"
-                "0123456789abcdef0123456789"
-            ),
+            TELEGRAM_SECRET_HEADER: ("Wrong_Secret_0123456789abcdef0123456789"),
         },
     )
 
@@ -216,10 +187,7 @@ def test_real_webhook_accepts_valid_header(
 
     monkeypatch.setattr(
         telegram_webhook,
-        (
-            "enqueue_authenticated_"
-            "telegram_update_atomic"
-        ),
+        ("enqueue_authenticated_telegram_update_atomic"),
         enqueue,
     )
 
@@ -240,20 +208,13 @@ def test_real_webhook_accepts_valid_header(
         "status": "enqueued",
     }
 
-    enqueue.assert_called_once_with(
-        update
-    )
+    enqueue.assert_called_once_with(update)
 
 
 def test_route_declares_trusted_dependency():
-    signature = inspect.signature(
-        telegram_webhook.telegram_webhook
-    )
+    signature = inspect.signature(telegram_webhook.telegram_webhook)
 
-    assert (
-        "_trusted_webhook"
-        in signature.parameters
-    )
+    assert "_trusted_webhook" in signature.parameters
 
 
 def test_error_response_does_not_expose_secret(
@@ -270,10 +231,7 @@ def test_error_response_does_not_expose_secret(
             "update_id": 1004,
         },
         headers={
-            TELEGRAM_SECRET_HEADER: (
-                "Wrong_Secret_"
-                "0123456789abcdef0123456789"
-            ),
+            TELEGRAM_SECRET_HEADER: ("Wrong_Secret_0123456789abcdef0123456789"),
         },
     )
 

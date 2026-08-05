@@ -26,18 +26,14 @@ from src.agent_tools.core import (
 )
 
 
-PREPARE_FINANCIAL_REPORT_TOOL_NAME = (
-    "preparar_relatorio_financeiro"
-)
+PREPARE_FINANCIAL_REPORT_TOOL_NAME = "preparar_relatorio_financeiro"
 
 MAX_REPORT_DIAGNOSES = 20
 MAX_REPORT_RECOMMENDATIONS = 10
 MAX_REPORT_TEXT_LENGTH = 2_000
 
 
-class RelatorioDiagnosticoItem(
-    BaseModel
-):
+class RelatorioDiagnosticoItem(BaseModel):
     """
     Diagnóstico financeiro oficial permitido
     para composição de relatório.
@@ -55,13 +51,9 @@ class RelatorioDiagnosticoItem(
 
     saldo_estimado: float | None = None
 
-    comprometimento_renda_percentual: (
-        float | None
-    ) = None
+    comprometimento_renda_percentual: float | None = None
 
-    meses_reserva_estimados: (
-        float | None
-    ) = None
+    meses_reserva_estimados: float | None = None
 
     score_financeiro: int | None = Field(
         default=None,
@@ -85,9 +77,7 @@ class RelatorioDiagnosticoItem(
     )
 
 
-class PrepararRelatorioFinanceiroInput(
-    BaseModel
-):
+class PrepararRelatorioFinanceiroInput(BaseModel):
     """
     Dados oficiais fornecidos ao agente de relatório.
 
@@ -100,9 +90,7 @@ class PrepararRelatorioFinanceiroInput(
         frozen=True,
     )
 
-    diagnosticos: list[
-        RelatorioDiagnosticoItem
-    ] = Field(
+    diagnosticos: list[RelatorioDiagnosticoItem] = Field(
         default_factory=list,
         max_length=MAX_REPORT_DIAGNOSES,
     )
@@ -138,38 +126,20 @@ class PrepararRelatorioFinanceiroInput(
     def validar_conteudo(
         self,
     ):
-        recommendations = [
-            item.strip()
-            for item in self.recomendacoes
-            if item.strip()
-        ]
+        recommendations = [item.strip() for item in self.recomendacoes if item.strip()]
 
-        next_steps = [
-            item.strip()
-            for item in self.proximos_passos
-            if item.strip()
-        ]
+        next_steps = [item.strip() for item in self.proximos_passos if item.strip()]
 
-        if len(recommendations) != len(
-            self.recomendacoes
-        ):
-            raise ValueError(
-                "Recomendações vazias não são permitidas."
-            )
+        if len(recommendations) != len(self.recomendacoes):
+            raise ValueError("Recomendações vazias não são permitidas.")
 
-        if len(next_steps) != len(
-            self.proximos_passos
-        ):
-            raise ValueError(
-                "Próximos passos vazios não são permitidos."
-            )
+        if len(next_steps) != len(self.proximos_passos):
+            raise ValueError("Próximos passos vazios não são permitidos.")
 
         return self
 
 
-class RelatorioIndicadoresOficiais(
-    BaseModel
-):
+class RelatorioIndicadoresOficiais(BaseModel):
     """
     Indicadores copiados do diagnóstico mais recente.
 
@@ -184,13 +154,9 @@ class RelatorioIndicadoresOficiais(
     data_hora: str | None = None
     saldo_estimado: float | None = None
 
-    comprometimento_renda_percentual: (
-        float | None
-    ) = None
+    comprometimento_renda_percentual: float | None = None
 
-    meses_reserva_estimados: (
-        float | None
-    ) = None
+    meses_reserva_estimados: float | None = None
 
     score_financeiro: int | None = None
     nivel_risco: str | None = None
@@ -198,9 +164,7 @@ class RelatorioIndicadoresOficiais(
     idioma: str | None = None
 
 
-class PrepararRelatorioFinanceiroOutput(
-    BaseModel
-):
+class PrepararRelatorioFinanceiroOutput(BaseModel):
     """
     Estrutura final revisável antes da geração do PDF.
     """
@@ -220,13 +184,9 @@ class PrepararRelatorioFinanceiroOutput(
         le=MAX_REPORT_DIAGNOSES,
     )
 
-    indicadores_oficiais: (
-        RelatorioIndicadoresOficiais | None
-    ) = None
+    indicadores_oficiais: RelatorioIndicadoresOficiais | None = None
 
-    historico: list[
-        RelatorioDiagnosticoItem
-    ] = Field(
+    historico: list[RelatorioDiagnosticoItem] = Field(
         default_factory=list,
         max_length=MAX_REPORT_DIAGNOSES,
     )
@@ -246,47 +206,24 @@ class PrepararRelatorioFinanceiroOutput(
         total = len(self.historico)
 
         if self.total_diagnosticos != total:
-            raise ValueError(
-                "total_diagnosticos está inconsistente."
-            )
+            raise ValueError("total_diagnosticos está inconsistente.")
 
-        if self.possui_diagnostico != (
-            total > 0
-        ):
-            raise ValueError(
-                "possui_diagnostico está inconsistente."
-            )
+        if self.possui_diagnostico != (total > 0):
+            raise ValueError("possui_diagnostico está inconsistente.")
 
-        if (
-            total == 0
-            and self.indicadores_oficiais
-            is not None
-        ):
-            raise ValueError(
-                "Não pode haver indicadores sem diagnóstico."
-            )
+        if total == 0 and self.indicadores_oficiais is not None:
+            raise ValueError("Não pode haver indicadores sem diagnóstico.")
 
-        if (
-            total > 0
-            and self.indicadores_oficiais
-            is None
-        ):
-            raise ValueError(
-                "Diagnóstico existente exige indicadores."
-            )
+        if total > 0 and self.indicadores_oficiais is None:
+            raise ValueError("Diagnóstico existente exige indicadores.")
 
         if self.financial_values_recalculated:
-            raise ValueError(
-                "O relatório não pode recalcular "
-                "valores financeiros."
-            )
+            raise ValueError("O relatório não pode recalcular valores financeiros.")
 
         return self
 
 
-class ReportPreparationError(
-    RuntimeError
-):
+class ReportPreparationError(RuntimeError):
     """Falha segura na preparação do relatório."""
 
 
@@ -295,9 +232,7 @@ def _normalized_text(
     *,
     default: str,
 ) -> str:
-    normalized = str(
-        value or ""
-    ).strip()
+    normalized = str(value or "").strip()
 
     return normalized or default
 
@@ -337,63 +272,36 @@ def executar_preparacao_relatorio_financeiro(
     relatórios sejam preparados fora de um contexto
     autenticado.
     """
-    trusted_user_id = str(
-        context.user_id or ""
-    ).strip()
+    trusted_user_id = str(context.user_id or "").strip()
 
     if not trusted_user_id:
-        raise ReportPreparationError(
-            "missing_trusted_user_identity"
-        )
+        raise ReportPreparationError("missing_trusted_user_identity")
 
-    diagnostics = list(
-        payload.diagnosticos
-    )
+    diagnostics = list(payload.diagnosticos)
 
-    latest = (
-        diagnostics[0]
-        if diagnostics
-        else None
-    )
+    latest = diagnostics[0] if diagnostics else None
 
     official_indicators = None
 
     if latest is not None:
-        official_indicators = (
-            RelatorioIndicadoresOficiais(
-                data_hora=latest.data_hora,
-                saldo_estimado=(
-                    latest.saldo_estimado
-                ),
-                comprometimento_renda_percentual=(
-                    latest
-                    .comprometimento_renda_percentual
-                ),
-                meses_reserva_estimados=(
-                    latest.meses_reserva_estimados
-                ),
-                score_financeiro=(
-                    latest.score_financeiro
-                ),
-                nivel_risco=latest.nivel_risco,
-                moeda=latest.moeda,
-                idioma=latest.idioma,
-            )
+        official_indicators = RelatorioIndicadoresOficiais(
+            data_hora=latest.data_hora,
+            saldo_estimado=(latest.saldo_estimado),
+            comprometimento_renda_percentual=(latest.comprometimento_renda_percentual),
+            meses_reserva_estimados=(latest.meses_reserva_estimados),
+            score_financeiro=(latest.score_financeiro),
+            nivel_risco=latest.nivel_risco,
+            moeda=latest.moeda,
+            idioma=latest.idioma,
         )
 
-    possui_diagnostico = bool(
-        diagnostics
-    )
+    possui_diagnostico = bool(diagnostics)
 
     summary = _normalized_text(
         payload.resumo_executivo,
         default=_default_summary(
-            possui_diagnostico=(
-                possui_diagnostico
-            ),
-            total_diagnosticos=len(
-                diagnostics
-            ),
+            possui_diagnostico=(possui_diagnostico),
+            total_diagnosticos=len(diagnostics),
         ),
     )
 
@@ -406,23 +314,13 @@ def executar_preparacao_relatorio_financeiro(
             payload.idioma,
             default="pt",
         ),
-        possui_diagnostico=(
-            possui_diagnostico
-        ),
-        total_diagnosticos=len(
-            diagnostics
-        ),
-        indicadores_oficiais=(
-            official_indicators
-        ),
+        possui_diagnostico=(possui_diagnostico),
+        total_diagnosticos=len(diagnostics),
+        indicadores_oficiais=(official_indicators),
         historico=diagnostics,
         resumo_executivo=summary,
-        recomendacoes=list(
-            payload.recomendacoes
-        ),
-        proximos_passos=list(
-            payload.proximos_passos
-        ),
+        recomendacoes=list(payload.recomendacoes),
+        proximos_passos=list(payload.proximos_passos),
         financial_values_recalculated=False,
         ready_for_risk_review=True,
         ready_for_pdf_rendering=False,
@@ -443,28 +341,26 @@ def criar_definicao_preparar_relatorio_financeiro(
             "em uma estrutura de relatório. Não recalcula "
             "indicadores e não gera o PDF diretamente."
         ),
-        input_model=(
-            PrepararRelatorioFinanceiroInput
+        input_model=(PrepararRelatorioFinanceiroInput),
+        output_model=(PrepararRelatorioFinanceiroOutput),
+        handler=(executar_preparacao_relatorio_financeiro),
+        allowed_agents=frozenset(
+            {
+                "report_agent",
+            }
         ),
-        output_model=(
-            PrepararRelatorioFinanceiroOutput
-        ),
-        handler=(
-            executar_preparacao_relatorio_financeiro
-        ),
-        allowed_agents=frozenset({
-            "report_agent",
-        }),
         timeout_seconds=timeout_seconds,
         idempotent=True,
         sensitive_output=True,
-        tags=frozenset({
-            "financial_report",
-            "deterministic",
-            "user_scoped",
-            "no_recalculation",
-            "pre_render",
-        }),
+        tags=frozenset(
+            {
+                "financial_report",
+                "deterministic",
+                "user_scoped",
+                "no_recalculation",
+                "pre_render",
+            }
+        ),
     )
 
 

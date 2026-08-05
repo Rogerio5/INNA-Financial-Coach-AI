@@ -52,15 +52,9 @@ def _read_pool_stats(
         stats = {}
 
     return {
-        "pool_size": _safe_integer(
-            stats.get("pool_size")
-        ),
-        "pool_available": _safe_integer(
-            stats.get("pool_available")
-        ),
-        "pool_waiting": _safe_integer(
-            stats.get("requests_waiting")
-        ),
+        "pool_size": _safe_integer(stats.get("pool_size")),
+        "pool_available": _safe_integer(stats.get("pool_available")),
+        "pool_waiting": _safe_integer(stats.get("requests_waiting")),
     }
 
 
@@ -94,9 +88,7 @@ def collect_neon_runtime_status(
     stats = _read_pool_stats(pool)
 
     try:
-        with pool.connection(
-            timeout=timeout_seconds
-        ) as connection:
+        with pool.connection(timeout=timeout_seconds) as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
                     """
@@ -125,9 +117,7 @@ def collect_neon_runtime_status(
                 connection_ok = result_values[0] == 1
 
             if len(result_values) > 1:
-                server_version = str(
-                    result_values[1]
-                )
+                server_version = str(result_values[1])
 
         elif isinstance(result, (tuple, list)):
             if result:

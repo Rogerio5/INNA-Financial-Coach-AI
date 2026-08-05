@@ -34,8 +34,7 @@ def _require_mapping(
 ) -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
         raise DatasetValidationError(
-            f"Linha {line_number}: "
-            f"{field_name} deve ser um objeto."
+            f"Linha {line_number}: {field_name} deve ser um objeto."
         )
 
     return value
@@ -49,16 +48,14 @@ def _require_string(
 ) -> str:
     if not isinstance(value, str):
         raise DatasetValidationError(
-            f"Linha {line_number}: "
-            f"{field_name} deve ser texto."
+            f"Linha {line_number}: {field_name} deve ser texto."
         )
 
     normalized = value.strip()
 
     if not normalized:
         raise DatasetValidationError(
-            f"Linha {line_number}: "
-            f"{field_name} é obrigatório."
+            f"Linha {line_number}: {field_name} é obrigatório."
         )
 
     return normalized
@@ -73,26 +70,16 @@ def _string_sequence(
     if value is None:
         return ()
 
-    if (
-        not isinstance(value, list)
-        or any(
-            not isinstance(item, str)
-            for item in value
-        )
-    ):
+    if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
         raise DatasetValidationError(
-            f"Linha {line_number}: "
-            f"{field_name} deve ser uma lista de textos."
+            f"Linha {line_number}: {field_name} deve ser uma lista de textos."
         )
 
     try:
-        return normalize_string_sequence(
-            value
-        )
+        return normalize_string_sequence(value)
     except ValueError as exc:
         raise DatasetValidationError(
-            f"Linha {line_number}: "
-            f"{field_name}: {exc}"
+            f"Linha {line_number}: {field_name}: {exc}"
         ) from exc
 
 
@@ -122,33 +109,23 @@ def parse_case(
 
     if not isinstance(metadata, Mapping):
         raise DatasetValidationError(
-            f"Linha {line_number}: "
-            "metadata deve ser um objeto."
+            f"Linha {line_number}: metadata deve ser um objeto."
         )
 
     try:
         expectations = BenchmarkExpectations(
             complexity=ExpectedComplexity(
                 _require_string(
-                    expectations_payload.get(
-                        "complexity"
-                    ),
-                    field_name=(
-                        "expectations.complexity"
-                    ),
+                    expectations_payload.get("complexity"),
+                    field_name=("expectations.complexity"),
                     line_number=line_number,
                 )
             ),
             gateway_decision=(
                 ExpectedGatewayDecision(
                     _require_string(
-                        expectations_payload.get(
-                            "gateway_decision"
-                        ),
-                        field_name=(
-                            "expectations."
-                            "gateway_decision"
-                        ),
+                        expectations_payload.get("gateway_decision"),
+                        field_name=("expectations.gateway_decision"),
                         line_number=line_number,
                     )
                 )
@@ -166,9 +143,7 @@ def parse_case(
                     "required_terms",
                     [],
                 ),
-                field_name=(
-                    "expectations.required_terms"
-                ),
+                field_name=("expectations.required_terms"),
                 line_number=line_number,
             ),
             forbidden_terms=_string_sequence(
@@ -176,9 +151,7 @@ def parse_case(
                     "forbidden_terms",
                     [],
                 ),
-                field_name=(
-                    "expectations.forbidden_terms"
-                ),
+                field_name=("expectations.forbidden_terms"),
                 line_number=line_number,
             ),
             expected_fallback=bool(
@@ -243,9 +216,7 @@ def parse_case(
                 line_number=line_number,
             ),
             dataset_version=_require_string(
-                payload.get(
-                    "dataset_version"
-                ),
+                payload.get("dataset_version"),
                 field_name="dataset_version",
                 line_number=line_number,
             ),
@@ -286,9 +257,7 @@ def parse_case(
         ):
             raise
 
-        raise DatasetValidationError(
-            f"Linha {line_number}: {exc}"
-        ) from exc
+        raise DatasetValidationError(f"Linha {line_number}: {exc}") from exc
 
 
 def load_benchmark_dataset(
@@ -296,19 +265,13 @@ def load_benchmark_dataset(
 ) -> BenchmarkDataset:
     """Carrega e valida um dataset JSONL."""
 
-    dataset_path = Path(
-        path
-    ).resolve()
+    dataset_path = Path(path).resolve()
 
     if not dataset_path.exists():
-        raise FileNotFoundError(
-            f"Dataset não encontrado: {dataset_path}"
-        )
+        raise FileNotFoundError(f"Dataset não encontrado: {dataset_path}")
 
     if not dataset_path.is_file():
-        raise DatasetValidationError(
-            f"O caminho não é um arquivo: {dataset_path}"
-        )
+        raise DatasetValidationError(f"O caminho não é um arquivo: {dataset_path}")
 
     cases: list[AgenticBenchmarkCase] = []
 
@@ -326,13 +289,10 @@ def load_benchmark_dataset(
                 continue
 
             try:
-                payload = json.loads(
-                    line
-                )
+                payload = json.loads(line)
             except json.JSONDecodeError as exc:
                 raise DatasetValidationError(
-                    f"Linha {line_number}: "
-                    f"JSON inválido: {exc.msg}"
+                    f"Linha {line_number}: JSON inválido: {exc.msg}"
                 ) from exc
 
             mapping = _require_mapping(
@@ -349,24 +309,16 @@ def load_benchmark_dataset(
             )
 
     if not cases:
-        raise DatasetValidationError(
-            "O dataset não contém casos."
-        )
+        raise DatasetValidationError("O dataset não contém casos.")
 
-    versions = {
-        case.dataset_version
-        for case in cases
-    }
+    versions = {case.dataset_version for case in cases}
 
     if len(versions) != 1:
         raise DatasetValidationError(
-            "O dataset possui múltiplas versões: "
-            + ", ".join(sorted(versions))
+            "O dataset possui múltiplas versões: " + ", ".join(sorted(versions))
         )
 
-    version = next(
-        iter(versions)
-    )
+    version = next(iter(versions))
 
     return BenchmarkDataset(
         version=version,

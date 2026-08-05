@@ -25,7 +25,9 @@ class Settings:
 
     INNA_APP_NAME: str = os.getenv("INNA_APP_NAME", "INNA Financial Coach AI")
     INNA_NOME: str = os.getenv("INNA_NOME", "INNA")
-    INNA_TITULO: str = os.getenv("INNA_TITULO", "Educadora Financeira com IA Generativa")
+    INNA_TITULO: str = os.getenv(
+        "INNA_TITULO", "Educadora Financeira com IA Generativa"
+    )
     INNA_MOCK_MODE: bool = get_bool_env("INNA_MOCK_MODE", True)
 
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
@@ -37,7 +39,9 @@ class Settings:
     )
 
     DATA_DIR: str = os.getenv("DATA_DIR", "data")
-    INTERACTIONS_LOG_FILE: str = os.getenv("INTERACTIONS_LOG_FILE", "data/interacoes.csv")
+    INTERACTIONS_LOG_FILE: str = os.getenv(
+        "INTERACTIONS_LOG_FILE", "data/interacoes.csv"
+    )
     FEEDBACK_FILE: str = os.getenv("FEEDBACK_FILE", "data/feedbacks.csv")
 
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")

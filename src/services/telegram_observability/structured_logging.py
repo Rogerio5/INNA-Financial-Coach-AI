@@ -39,34 +39,23 @@ _LEVEL_TO_LOGGING = MappingProxyType(
 
 _MAX_NORMALIZATION_DEPTH = 8
 
-_NON_SERIALIZABLE_MARKER = (
-    "<non-serializable>"
-)
+_NON_SERIALIZABLE_MARKER = "<non-serializable>"
 
-_NON_FINITE_NUMBER_MARKER = (
-    "<non-finite-number>"
-)
+_NON_FINITE_NUMBER_MARKER = "<non-finite-number>"
 
-_RECURSIVE_VALUE_MARKER = (
-    "<recursive-value>"
-)
+_RECURSIVE_VALUE_MARKER = "<recursive-value>"
 
-_MAX_DEPTH_MARKER = (
-    "<max-depth-exceeded>"
-)
+_MAX_DEPTH_MARKER = "<max-depth-exceeded>"
 
 
-def telegram_structured_logging_utc_now(
-) -> datetime:
+def telegram_structured_logging_utc_now() -> datetime:
     """
     Retorna o instante atual em UTC.
 
     A função é separada para permitir injeção
     determinística em testes.
     """
-    return datetime.now(
-        timezone.utc
-    )
+    return datetime.now(timezone.utc)
 
 
 def format_telegram_log_timestamp(
@@ -80,27 +69,16 @@ def format_telegram_log_timestamp(
         value,
         datetime,
     ):
-        raise TypeError(
-            "clock deve retornar datetime."
-        )
+        raise TypeError("clock deve retornar datetime.")
 
     if value.tzinfo is None:
-        raise ValueError(
-            "datetime do clock deve possuir timezone."
-        )
+        raise ValueError("datetime do clock deve possuir timezone.")
 
-    normalized = value.astimezone(
-        timezone.utc
-    )
+    normalized = value.astimezone(timezone.utc)
 
-    return (
-        normalized.isoformat(
-            timespec="milliseconds"
-        )
-        .replace(
-            "+00:00",
-            "Z",
-        )
+    return normalized.isoformat(timespec="milliseconds").replace(
+        "+00:00",
+        "Z",
     )
 
 
@@ -157,13 +135,9 @@ def _safe_json_value(
         datetime,
     ):
         if value.tzinfo is None:
-            return value.isoformat(
-                timespec="milliseconds"
-            )
+            return value.isoformat(timespec="milliseconds")
 
-        return format_telegram_log_timestamp(
-            value
-        )
+        return format_telegram_log_timestamp(value)
 
     if isinstance(
         value,
@@ -196,34 +170,24 @@ def _safe_json_value(
         value,
         Mapping,
     ):
-        active_ids.add(
-            object_id
-        )
+        active_ids.add(object_id)
 
         try:
             normalized = {}
 
-            for raw_key, raw_value in (
-                value.items()
-            ):
-                key = str(
-                    raw_key
-                )
+            for raw_key, raw_value in value.items():
+                key = str(raw_key)
 
-                normalized[key] = (
-                    _safe_json_value(
-                        raw_value,
-                        depth=depth + 1,
-                        active_ids=active_ids,
-                    )
+                normalized[key] = _safe_json_value(
+                    raw_value,
+                    depth=depth + 1,
+                    active_ids=active_ids,
                 )
 
             return normalized
 
         finally:
-            active_ids.discard(
-                object_id
-            )
+            active_ids.discard(object_id)
 
     if isinstance(
         value,
@@ -234,9 +198,7 @@ def _safe_json_value(
             frozenset,
         ),
     ):
-        active_ids.add(
-            object_id
-        )
+        active_ids.add(object_id)
 
         try:
             items = [
@@ -268,9 +230,7 @@ def _safe_json_value(
             return items
 
         finally:
-            active_ids.discard(
-                object_id
-            )
+            active_ids.discard(object_id)
 
     if isinstance(
         value,
@@ -283,9 +243,7 @@ def _safe_json_value(
             bytearray,
         ),
     ):
-        active_ids.add(
-            object_id
-        )
+        active_ids.add(object_id)
 
         try:
             return [
@@ -298,9 +256,7 @@ def _safe_json_value(
             ]
 
         finally:
-            active_ids.discard(
-                object_id
-            )
+            active_ids.discard(object_id)
 
     return _NON_SERIALIZABLE_MARKER
 
@@ -317,15 +273,9 @@ def build_telegram_structured_log_payload(
         event,
         TelegramOperationalEvent,
     ):
-        raise TypeError(
-            "event deve ser TelegramOperationalEvent."
-        )
+        raise TypeError("event deve ser TelegramOperationalEvent.")
 
-    normalized_fields = (
-        _safe_json_value(
-            event.fields
-        )
-    )
+    normalized_fields = _safe_json_value(event.fields)
 
     if not isinstance(
         normalized_fields,
@@ -333,9 +283,7 @@ def build_telegram_structured_log_payload(
     ):
         normalized_fields = {}
 
-    safe_fields = sanitize_event_fields(
-        normalized_fields
-    )
+    safe_fields = sanitize_event_fields(normalized_fields)
 
     if not isinstance(
         safe_fields,
@@ -344,11 +292,7 @@ def build_telegram_structured_log_payload(
         safe_fields = {}
 
     return {
-        "timestamp": (
-            format_telegram_log_timestamp(
-                timestamp
-            )
-        ),
+        "timestamp": (format_telegram_log_timestamp(timestamp)),
         "level": event.level,
         "event": event.name,
         "component": event.component,
@@ -365,11 +309,9 @@ def serialize_telegram_structured_log(
     """
     Serializa exatamente uma linha JSON.
     """
-    payload = (
-        build_telegram_structured_log_payload(
-            event,
-            timestamp=timestamp,
-        )
+    payload = build_telegram_structured_log_payload(
+        event,
+        timestamp=timestamp,
     )
 
     serialized = json.dumps(
@@ -383,13 +325,8 @@ def serialize_telegram_structured_log(
         ),
     )
 
-    if (
-        "\n" in serialized
-        or "\r" in serialized
-    ):
-        raise ValueError(
-            "O log estruturado deve ocupar uma única linha."
-        )
+    if "\n" in serialized or "\r" in serialized:
+        raise ValueError("O log estruturado deve ocupar uma única linha.")
 
     return serialized
 
@@ -420,14 +357,10 @@ class JsonTelegramOperationalEventSink:
             logger,
             logging.Logger,
         ):
-            raise TypeError(
-                "logger deve ser logging.Logger."
-            )
+            raise TypeError("logger deve ser logging.Logger.")
 
         if not callable(clock):
-            raise TypeError(
-                "clock deve ser callable."
-            )
+            raise TypeError("clock deve ser callable.")
 
         self._logger = logger
         self._clock = clock
@@ -446,22 +379,16 @@ class JsonTelegramOperationalEventSink:
             event,
             TelegramOperationalEvent,
         ):
-            raise TypeError(
-                "event deve ser TelegramOperationalEvent."
-            )
+            raise TypeError("event deve ser TelegramOperationalEvent.")
 
         timestamp = self._clock()
 
-        serialized = (
-            serialize_telegram_structured_log(
-                event,
-                timestamp=timestamp,
-            )
+        serialized = serialize_telegram_structured_log(
+            event,
+            timestamp=timestamp,
         )
 
-        level = _LEVEL_TO_LOGGING[
-            event.level
-        ]
+        level = _LEVEL_TO_LOGGING[event.level]
 
         self._logger.log(
             level,

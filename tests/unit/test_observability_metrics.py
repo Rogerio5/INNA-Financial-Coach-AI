@@ -22,93 +22,86 @@ AGORA = datetime(
 
 
 def dataframe_teste():
-    return pd.DataFrame([
-        {
-            "id": 1,
-            "criado_em": "2026-07-13T10:00:00Z",
-            "usuario_id": "demo_user",
-            "tool_nome": "analisar_orcamento",
-            "tool_label": (
-                "Análise do orçamento mensal"
-            ),
-            "executada": True,
-            "sucesso": True,
-            "confianca": 0.95,
-            "duracao_ms": 10.0,
-        },
-        {
-            "id": 2,
-            "criado_em": "2026-07-13T11:00:00Z",
-            "usuario_id": "demo_user",
-            "tool_nome": (
-                "calcular_capacidade_semanal"
-            ),
-            "tool_label": (
-                "Cálculo de capacidade semanal"
-            ),
-            "executada": True,
-            "sucesso": True,
-            "confianca": 0.85,
-            "duracao_ms": 20.0,
-        },
-        {
-            "id": 3,
-            "criado_em": "2026-07-12T15:00:00Z",
-            "usuario_id": "outro_user",
-            "tool_nome": "analisar_orcamento",
-            "tool_label": (
-                "Análise do orçamento mensal"
-            ),
-            "executada": True,
-            "sucesso": False,
-            "confianca": 0.75,
-            "duracao_ms": 30.0,
-        },
-        {
-            "id": 4,
-            "criado_em": "2026-07-10T15:00:00Z",
-            "usuario_id": None,
-            "tool_nome": None,
-            "tool_label": None,
-            "executada": False,
-            "sucesso": False,
-            "confianca": None,
-            "duracao_ms": None,
-        },
-    ])
+    return pd.DataFrame(
+        [
+            {
+                "id": 1,
+                "criado_em": "2026-07-13T10:00:00Z",
+                "usuario_id": "demo_user",
+                "tool_nome": "analisar_orcamento",
+                "tool_label": ("Análise do orçamento mensal"),
+                "executada": True,
+                "sucesso": True,
+                "confianca": 0.95,
+                "duracao_ms": 10.0,
+            },
+            {
+                "id": 2,
+                "criado_em": "2026-07-13T11:00:00Z",
+                "usuario_id": "demo_user",
+                "tool_nome": ("calcular_capacidade_semanal"),
+                "tool_label": ("Cálculo de capacidade semanal"),
+                "executada": True,
+                "sucesso": True,
+                "confianca": 0.85,
+                "duracao_ms": 20.0,
+            },
+            {
+                "id": 3,
+                "criado_em": "2026-07-12T15:00:00Z",
+                "usuario_id": "outro_user",
+                "tool_nome": "analisar_orcamento",
+                "tool_label": ("Análise do orçamento mensal"),
+                "executada": True,
+                "sucesso": False,
+                "confianca": 0.75,
+                "duracao_ms": 30.0,
+            },
+            {
+                "id": 4,
+                "criado_em": "2026-07-10T15:00:00Z",
+                "usuario_id": None,
+                "tool_nome": None,
+                "tool_label": None,
+                "executada": False,
+                "sucesso": False,
+                "confianca": None,
+                "duracao_ms": None,
+            },
+        ]
+    )
 
 
 def test_calcular_taxa_sucesso():
-    assert calcular_taxa_sucesso(
-        9,
-        10,
-    ) == 90.0
+    assert (
+        calcular_taxa_sucesso(
+            9,
+            10,
+        )
+        == 90.0
+    )
 
 
 def test_calcular_taxa_sem_execucoes():
-    assert calcular_taxa_sucesso(
-        0,
-        0,
-    ) == 0.0
+    assert (
+        calcular_taxa_sucesso(
+            0,
+            0,
+        )
+        == 0.0
+    )
 
 
 def test_calcular_percentil_95():
-    resultado = calcular_percentil_95(
-        [10, 20, 30]
-    )
+    resultado = calcular_percentil_95([10, 20, 30])
 
     assert resultado == 29.0
 
 
 def test_identificar_tool_mais_utilizada():
-    resultado = identificar_tool_mais_utilizada(
-        dataframe_teste()
-    )
+    resultado = identificar_tool_mais_utilizada(dataframe_teste())
 
-    assert (
-        resultado["nome"]
-        == "Análise do orçamento mensal"
-    )
+    assert resultado["nome"] == "Análise do orçamento mensal"
 
     assert resultado["total"] == 2
 
@@ -124,23 +117,14 @@ def test_metricas_executivas():
     assert metricas["total_sucesso"] == 2
     assert metricas["total_falhas"] == 1
 
-    assert (
-        metricas["taxa_sucesso_percentual"]
-        == 66.67
-    )
+    assert metricas["taxa_sucesso_percentual"] == 66.67
 
     assert metricas["usuarios_ativos"] == 2
     assert metricas["execucoes_hoje"] == 2
 
-    assert (
-        metricas["execucoes_ultimas_24h"]
-        == 3
-    )
+    assert metricas["execucoes_ultimas_24h"] == 3
 
-    assert (
-        metricas["confianca_media_percentual"]
-        == 85.0
-    )
+    assert metricas["confianca_media_percentual"] == 85.0
 
     assert metricas["duracao_media_ms"] == 20.0
     assert metricas["duracao_minima_ms"] == 10.0
@@ -163,9 +147,7 @@ def test_metricas_dataframe_vazio():
 def test_metricas_com_datas_invalidas():
     df = dataframe_teste()
 
-    df.loc[0, "criado_em"] = (
-        "data-invalida"
-    )
+    df.loc[0, "criado_em"] = "data-invalida"
 
     metricas = calcular_metricas_executivas(
         df,

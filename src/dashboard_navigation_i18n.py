@@ -55,13 +55,9 @@ NAVIGATION_NAVIGATION_TEXTS: dict[
 }
 
 
-NAVIGATION_NAVIGATION_TEXTS["en_gb"] = dict(
-    NAVIGATION_NAVIGATION_TEXTS["en_us"]
-)
+NAVIGATION_NAVIGATION_TEXTS["en_gb"] = dict(NAVIGATION_NAVIGATION_TEXTS["en_us"])
 
-NAVIGATION_NAVIGATION_TEXTS["ch"] = dict(
-    NAVIGATION_NAVIGATION_TEXTS["de"]
-)
+NAVIGATION_NAVIGATION_TEXTS["ch"] = dict(NAVIGATION_NAVIGATION_TEXTS["de"])
 
 
 def navigation_ui_t(
@@ -70,15 +66,9 @@ def navigation_ui_t(
 ) -> str:
     """Traduz rótulos auxiliares da navegação."""
 
-    selected_language = (
-        language
-        if language in NAVIGATION_NAVIGATION_TEXTS
-        else "pt"
-    )
+    selected_language = language if language in NAVIGATION_NAVIGATION_TEXTS else "pt"
 
-    return NAVIGATION_NAVIGATION_TEXTS[
-        selected_language
-    ].get(
+    return NAVIGATION_NAVIGATION_TEXTS[selected_language].get(
         key,
         NAVIGATION_NAVIGATION_TEXTS["pt"].get(
             key,
@@ -93,162 +83,111 @@ NAVIGATION_GROUP_TEXTS: dict[
 ] = {
     "pt": {
         "overview": "🏠 Visão Geral",
-        "financial_solutions": (
-            "💰 Soluções Financeiras"
-        ),
+        "financial_solutions": ("💰 Soluções Financeiras"),
         "enterprise_rag": "📚 Enterprise RAG",
-        "ai_operations": (
-            "⚙️ Operação e Governança de IA"
-        ),
-        "tools_analytics": (
-            "🛠️ Ferramentas e Analytics"
-        ),
+        "ai_operations": ("⚙️ Operação e Governança de IA"),
+        "tools_analytics": ("🛠️ Ferramentas e Analytics"),
         "administration": "🔐 Administração",
     },
     "en_us": {
         "overview": "🏠 Overview",
-        "financial_solutions": (
-            "💰 Financial Solutions"
-        ),
+        "financial_solutions": ("💰 Financial Solutions"),
         "enterprise_rag": "📚 Enterprise RAG",
-        "ai_operations": (
-            "⚙️ AI Operations and Governance"
-        ),
-        "tools_analytics": (
-            "🛠️ Tools and Analytics"
-        ),
+        "ai_operations": ("⚙️ AI Operations and Governance"),
+        "tools_analytics": ("🛠️ Tools and Analytics"),
         "administration": "🔐 Administration",
     },
     "es": {
         "overview": "🏠 Vista general",
-        "financial_solutions": (
-            "💰 Soluciones financieras"
-        ),
+        "financial_solutions": ("💰 Soluciones financieras"),
         "enterprise_rag": "📚 RAG empresarial",
-        "ai_operations": (
-            "⚙️ Operación y gobernanza de IA"
-        ),
-        "tools_analytics": (
-            "🛠️ Herramientas y analítica"
-        ),
+        "ai_operations": ("⚙️ Operación y gobernanza de IA"),
+        "tools_analytics": ("🛠️ Herramientas y analítica"),
         "administration": "🔐 Administración",
     },
     "fr": {
         "overview": "🏠 Vue d’ensemble",
-        "financial_solutions": (
-            "💰 Solutions financières"
-        ),
+        "financial_solutions": ("💰 Solutions financières"),
         "enterprise_rag": "📚 RAG d’entreprise",
-        "ai_operations": (
-            "⚙️ Opérations et gouvernance IA"
-        ),
-        "tools_analytics": (
-            "🛠️ Outils et analytique"
-        ),
+        "ai_operations": ("⚙️ Opérations et gouvernance IA"),
+        "tools_analytics": ("🛠️ Outils et analytique"),
         "administration": "🔐 Administration",
     },
     "de": {
         "overview": "🏠 Übersicht",
-        "financial_solutions": (
-            "💰 Finanzlösungen"
-        ),
+        "financial_solutions": ("💰 Finanzlösungen"),
         "enterprise_rag": "📚 Enterprise RAG",
-        "ai_operations": (
-            "⚙️ KI-Betrieb und Governance"
-        ),
-        "tools_analytics": (
-            "🛠️ Werkzeuge und Analysen"
-        ),
+        "ai_operations": ("⚙️ KI-Betrieb und Governance"),
+        "tools_analytics": ("🛠️ Werkzeuge und Analysen"),
         "administration": "🔐 Administration",
     },
     "it": {
         "overview": "🏠 Panoramica",
-        "financial_solutions": (
-            "💰 Soluzioni finanziarie"
-        ),
+        "financial_solutions": ("💰 Soluzioni finanziarie"),
         "enterprise_rag": "📚 RAG aziendale",
-        "ai_operations": (
-            "⚙️ Operazioni e governance IA"
-        ),
-        "tools_analytics": (
-            "🛠️ Strumenti e analisi"
-        ),
+        "ai_operations": ("⚙️ Operazioni e governance IA"),
+        "tools_analytics": ("🛠️ Strumenti e analisi"),
         "administration": "🔐 Amministrazione",
     },
     "ro": {
         "overview": "🏠 Prezentare generală",
-        "financial_solutions": (
-            "💰 Soluții financiare"
-        ),
-        "enterprise_rag": (
-            "📚 RAG pentru întreprinderi"
-        ),
-        "ai_operations": (
-            "⚙️ Operațiuni și guvernanță IA"
-        ),
-        "tools_analytics": (
-            "🛠️ Instrumente și analiză"
-        ),
+        "financial_solutions": ("💰 Soluții financiare"),
+        "enterprise_rag": ("📚 RAG pentru întreprinderi"),
+        "ai_operations": ("⚙️ Operațiuni și guvernanță IA"),
+        "tools_analytics": ("🛠️ Instrumente și analiză"),
         "administration": "🔐 Administrare",
     },
     "ua": {
         "overview": "🏠 Загальний огляд",
-        "financial_solutions": (
-            "💰 Фінансові рішення"
-        ),
-        "enterprise_rag": (
-            "📚 Корпоративний RAG"
-        ),
-        "ai_operations": (
-            "⚙️ Операції та управління ШІ"
-        ),
-        "tools_analytics": (
-            "🛠️ Інструменти й аналітика"
-        ),
+        "financial_solutions": ("💰 Фінансові рішення"),
+        "enterprise_rag": ("📚 Корпоративний RAG"),
+        "ai_operations": ("⚙️ Операції та управління ШІ"),
+        "tools_analytics": ("🛠️ Інструменти й аналітика"),
         "administration": "🔐 Адміністрування",
     },
     "ru": {
         "overview": "🏠 Общий обзор",
-        "financial_solutions": (
-            "💰 Финансовые решения"
-        ),
-        "enterprise_rag": (
-            "📚 Корпоративный RAG"
-        ),
-        "ai_operations": (
-            "⚙️ Операции и управление ИИ"
-        ),
-        "tools_analytics": (
-            "🛠️ Инструменты и аналитика"
-        ),
+        "financial_solutions": ("💰 Финансовые решения"),
+        "enterprise_rag": ("📚 Корпоративный RAG"),
+        "ai_operations": ("⚙️ Операции и управление ИИ"),
+        "tools_analytics": ("🛠️ Инструменты и аналитика"),
         "administration": "🔐 Администрирование",
     },
     "sa": {
         "overview": "🏠 نظرة عامة",
-        "financial_solutions": (
-            "💰 الحلول المالية"
-        ),
-        "enterprise_rag": (
-            "📚 نظام RAG للمؤسسات"
-        ),
-        "ai_operations": (
-            "⚙️ عمليات وحوكمة الذكاء الاصطناعي"
-        ),
-        "tools_analytics": (
-            "🛠️ الأدوات والتحليلات"
-        ),
+        "financial_solutions": ("💰 الحلول المالية"),
+        "enterprise_rag": ("📚 نظام RAG للمؤسسات"),
+        "ai_operations": ("⚙️ عمليات وحوكمة الذكاء الاصطناعي"),
+        "tools_analytics": ("🛠️ الأدوات والتحليلات"),
         "administration": "🔐 الإدارة",
     },
 }
 
 
-NAVIGATION_GROUP_TEXTS["en_gb"] = dict(
-    NAVIGATION_GROUP_TEXTS["en_us"]
-)
+PLATFORM_MODULES_GROUP_TEXTS: dict[
+    str,
+    str,
+] = {
+    "pt": "🧩 Módulos da Plataforma",
+    "en_us": "🧩 Platform Modules",
+    "es": "🧩 Módulos de la Plataforma",
+    "fr": "🧩 Modules de la Plateforme",
+    "de": "🧩 Plattformmodule",
+    "it": "🧩 Moduli della Piattaforma",
+    "ro": "🧩 Modulele Platformei",
+    "ua": "🧩 Модулі Платформи",
+    "ru": "🧩 Модули Платформы",
+    "sa": "🧩 وحدات المنصة",
+}
 
-NAVIGATION_GROUP_TEXTS["ch"] = dict(
-    NAVIGATION_GROUP_TEXTS["de"]
-)
+
+for _language, _label in PLATFORM_MODULES_GROUP_TEXTS.items():
+    NAVIGATION_GROUP_TEXTS[_language]["platform_modules"] = _label
+
+
+NAVIGATION_GROUP_TEXTS["en_gb"] = dict(NAVIGATION_GROUP_TEXTS["en_us"])
+
+NAVIGATION_GROUP_TEXTS["ch"] = dict(NAVIGATION_GROUP_TEXTS["de"])
 
 
 def navigation_group_t(
@@ -257,15 +196,9 @@ def navigation_group_t(
 ) -> str:
     """Traduz um grupo com fallback seguro."""
 
-    selected_language = (
-        language
-        if language in NAVIGATION_GROUP_TEXTS
-        else "pt"
-    )
+    selected_language = language if language in NAVIGATION_GROUP_TEXTS else "pt"
 
-    language_texts = NAVIGATION_GROUP_TEXTS[
-        selected_language
-    ]
+    language_texts = NAVIGATION_GROUP_TEXTS[selected_language]
 
     return language_texts.get(
         group_id,
@@ -279,31 +212,18 @@ def navigation_group_t(
 def validate_navigation_group_texts() -> None:
     """Valida cobertura e conteúdo das traduções."""
 
-    expected_group_ids = set(
-        NAVIGATION_GROUP_IDS
-    )
+    expected_group_ids = set(NAVIGATION_GROUP_IDS)
 
-    for language, texts in (
-        NAVIGATION_GROUP_TEXTS.items()
-    ):
+    for language, texts in NAVIGATION_GROUP_TEXTS.items():
         if set(texts) != expected_group_ids:
-            raise ValueError(
-                "Contrato inválido de tradução: "
-                f"{language}"
-            )
+            raise ValueError(f"Contrato inválido de tradução: {language}")
 
         for group_id, label in texts.items():
             if not isinstance(label, str):
-                raise TypeError(
-                    "Rótulo inválido: "
-                    f"{language}.{group_id}"
-                )
+                raise TypeError(f"Rótulo inválido: {language}.{group_id}")
 
             if not label.strip():
-                raise ValueError(
-                    "Rótulo vazio: "
-                    f"{language}.{group_id}"
-                )
+                raise ValueError(f"Rótulo vazio: {language}.{group_id}")
 
 
 validate_navigation_group_texts()

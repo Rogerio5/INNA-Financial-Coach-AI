@@ -30,9 +30,7 @@ class InMemoryTelegramConversationMetrics:
     """
 
     def __init__(self) -> None:
-        self._records: list[
-            TelegramConversationMetricRecord
-        ] = []
+        self._records: list[TelegramConversationMetricRecord] = []
 
         self._lock = RLock()
 
@@ -44,10 +42,7 @@ class InMemoryTelegramConversationMetrics:
             record,
             TelegramConversationMetricRecord,
         ):
-            raise TypeError(
-                "record deve ser "
-                "TelegramConversationMetricRecord."
-            )
+            raise TypeError("record deve ser TelegramConversationMetricRecord.")
 
         with self._lock:
             self._records.append(record)
@@ -59,9 +54,7 @@ class InMemoryTelegramConversationMetrics:
         ...,
     ]:
         with self._lock:
-            return tuple(
-                self._records
-            )
+            return tuple(self._records)
 
     def clear(self) -> None:
         with self._lock:
@@ -78,23 +71,10 @@ class InMemoryTelegramConversationMetrics:
         return sum(
             1
             for record in self.snapshot()
-            if (
-                operation is None
-                or record.operation == operation
-            )
-            and (
-                component is None
-                or record.component == component
-            )
-            and (
-                outcome is None
-                or record.outcome == outcome
-            )
-            and (
-                error_category is None
-                or record.error_category
-                == error_category
-            )
+            if (operation is None or record.operation == operation)
+            and (component is None or record.component == component)
+            and (outcome is None or record.outcome == outcome)
+            and (error_category is None or record.error_category == error_category)
         )
 
     def operation_counts(
@@ -122,8 +102,5 @@ class InMemoryTelegramConversationMetrics:
         return tuple(
             record.duration_ms
             for record in self.snapshot()
-            if (
-                operation is None
-                or record.operation == operation
-            )
+            if (operation is None or record.operation == operation)
         )

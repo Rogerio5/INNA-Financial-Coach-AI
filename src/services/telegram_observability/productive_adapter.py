@@ -10,14 +10,11 @@ from .productive_metrics import (
 )
 
 
-class TelegramConversationMetricsRecorder(
-    Protocol
-):
+class TelegramConversationMetricsRecorder(Protocol):
     def record_operation(
         self,
         metric: TelegramConversationMetricRecord,
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 class ProductiveTelegramConversationMetricsAdapter:
@@ -34,18 +31,13 @@ class ProductiveTelegramConversationMetricsAdapter:
         self,
         productive_metrics: TelegramProductiveMetricsSink,
     ) -> None:
-        self._productive_metrics = (
-            productive_metrics
-        )
+        self._productive_metrics = productive_metrics
 
     def record_operation(
         self,
         metric: TelegramConversationMetricRecord,
     ) -> None:
-        error_category = (
-            metric.error_category
-            or "none"
-        )
+        error_category = metric.error_category or "none"
 
         self._productive_metrics.increment(
             "inna_telegram_operations_total",
@@ -59,15 +51,11 @@ class ProductiveTelegramConversationMetricsAdapter:
 
         duration_seconds = max(
             0.0,
-            float(metric.duration_ms)
-            / 1000.0,
+            float(metric.duration_ms) / 1000.0,
         )
 
         self._productive_metrics.observe(
-            (
-                "inna_telegram_"
-                "operation_duration_seconds"
-            ),
+            ("inna_telegram_operation_duration_seconds"),
             duration_seconds,
             labels={
                 "component": metric.component,
@@ -95,14 +83,10 @@ class ProductiveTelegramConversationMetricsAdapter:
                 "conflict",
                 "recovered",
             }
-            or metric.conflict_recovered
-            is True
+            or metric.conflict_recovered is True
         ):
             conflict_outcome = (
-                "recovered"
-                if metric.conflict_recovered
-                is True
-                else metric.outcome
+                "recovered" if metric.conflict_recovered is True else metric.outcome
             )
 
             self._productive_metrics.increment(
@@ -124,13 +108,9 @@ class CompositeTelegramConversationMetrics:
 
     def __init__(
         self,
-        recorders: Iterable[
-            TelegramConversationMetricsRecorder
-        ],
+        recorders: Iterable[TelegramConversationMetricsRecorder],
     ) -> None:
-        self._recorders = tuple(
-            recorders
-        )
+        self._recorders = tuple(recorders)
 
     def record_operation(
         self,
@@ -138,9 +118,7 @@ class CompositeTelegramConversationMetrics:
     ) -> None:
         for recorder in self._recorders:
             try:
-                recorder.record_operation(
-                    metric
-                )
+                recorder.record_operation(metric)
             except Exception:
                 continue
 

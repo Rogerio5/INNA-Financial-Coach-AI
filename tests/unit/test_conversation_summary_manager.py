@@ -29,16 +29,12 @@ def test_builds_summary_from_user_financial_facts():
 def test_newer_user_fact_overwrites_old_summary():
     summary = build_conversation_summary(
         previous_summary=(
-            "Resumo incremental da conversa:\n"
-            "- Renda mensal: R$ 5.000,00"
+            "Resumo incremental da conversa:\n- Renda mensal: R$ 5.000,00"
         ),
         conversation_history=[
             {
                 "role": "user",
-                "content": (
-                    "Minha renda mensal agora "
-                    "é 7000 reais."
-                ),
+                "content": ("Minha renda mensal agora é 7000 reais."),
             }
         ],
     )
@@ -52,9 +48,7 @@ def test_assistant_message_does_not_create_user_income():
         conversation_history=[
             {
                 "role": "assistant",
-                "content": (
-                    "Sua renda é de R$ 999.999,00."
-                ),
+                "content": ("Sua renda é de R$ 999.999,00."),
             }
         ]
     )
@@ -72,10 +66,7 @@ def test_preserves_old_fact_not_mentioned_again():
         conversation_history=[
             {
                 "role": "user",
-                "content": (
-                    "Minha renda mensal agora "
-                    "é 6500 reais."
-                ),
+                "content": ("Minha renda mensal agora é 6500 reais."),
             }
         ],
     )
@@ -106,10 +97,7 @@ def test_summary_respects_token_limit():
         conversation_history=[
             {
                 "role": "assistant",
-                "content": (
-                    "Diagnóstico financeiro "
-                    + "detalhado " * 1000
-                ),
+                "content": ("Diagnóstico financeiro " + "detalhado " * 1000),
             }
         ],
         max_summary_tokens=80,
@@ -119,25 +107,21 @@ def test_summary_respects_token_limit():
 
 
 def test_state_update_returns_langgraph_partial_state():
-    result = update_conversation_summary_state({
-        "conversation_summary": "",
-        "conversation_history": [
-            {
-                "role": "user",
-                "content": (
-                    "Minha renda mensal é "
-                    "5000 reais."
-                ),
-            }
-        ],
-        "trace": [],
-    })
+    result = update_conversation_summary_state(
+        {
+            "conversation_summary": "",
+            "conversation_history": [
+                {
+                    "role": "user",
+                    "content": ("Minha renda mensal é 5000 reais."),
+                }
+            ],
+            "trace": [],
+        }
+    )
 
     assert result["conversation_summary"]
-    assert (
-        "conversation_summary:updated"
-        in result["trace"]
-    )
+    assert "conversation_summary:updated" in result["trace"]
 
 
 def test_state_update_is_idempotent():
@@ -146,32 +130,22 @@ def test_state_update_is_idempotent():
         "conversation_history": [
             {
                 "role": "user",
-                "content": (
-                    "Minha renda mensal é "
-                    "5000 reais."
-                ),
+                "content": ("Minha renda mensal é 5000 reais."),
             }
         ],
         "trace": [],
     }
 
-    first = update_conversation_summary_state(
-        state
-    )
+    first = update_conversation_summary_state(state)
 
-    second = (
-        update_conversation_summary_state({
+    second = update_conversation_summary_state(
+        {
             **state,
-            "conversation_summary": (
-                first["conversation_summary"]
-            ),
-        })
+            "conversation_summary": (first["conversation_summary"]),
+        }
     )
 
-    assert (
-        second["conversation_summary"]
-        == first["conversation_summary"]
-    )
+    assert second["conversation_summary"] == first["conversation_summary"]
 
 
 def test_latest_assistant_action_is_not_duplicated():
@@ -187,23 +161,11 @@ def test_latest_assistant_action_is_not_duplicated():
         conversation_history=[
             {
                 "role": "assistant",
-                "content": (
-                    "Seu saldo estimado foi "
-                    "calculado com segurança."
-                ),
+                "content": ("Seu saldo estimado foi calculado com segurança."),
             }
         ],
     )
 
-    assert (
-        summary.count(
-            "- Última ação da INNA:"
-        )
-        == 1
-    )
+    assert summary.count("- Última ação da INNA:") == 1
 
-    assert (
-        "saldo estimado"
-        in summary.lower()
-    )
-
+    assert "saldo estimado" in summary.lower()

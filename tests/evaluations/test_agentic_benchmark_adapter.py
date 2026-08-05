@@ -58,10 +58,7 @@ def test_adapts_flat_agentic_output() -> None:
     assert result.decision is ActualGatewayDecision.AGENTIC
     assert result.status is ExecutionStatus.SUCCESS
 
-    assert (
-        result.security_outcome
-        is ActualSecurityOutcome.ALLOW
-    )
+    assert result.security_outcome is ActualSecurityOutcome.ALLOW
 
     assert result.routes == (
         "financial_knowledge",
@@ -150,10 +147,7 @@ def test_infers_fallback_status_and_security() -> None:
     assert result.status is ExecutionStatus.FALLBACK
     assert result.fallback_used is True
 
-    assert (
-        result.security_outcome
-        is ActualSecurityOutcome.SAFE_FALLBACK
-    )
+    assert result.security_outcome is ActualSecurityOutcome.SAFE_FALLBACK
 
 
 def test_infers_rejected_status_and_denied_security() -> None:
@@ -169,10 +163,7 @@ def test_infers_rejected_status_and_denied_security() -> None:
 
     assert result.status is ExecutionStatus.REJECTED
 
-    assert (
-        result.security_outcome
-        is ActualSecurityOutcome.DENY
-    )
+    assert result.security_outcome is ActualSecurityOutcome.DENY
 
 
 def test_infers_error_from_error_payload() -> None:
@@ -192,10 +183,7 @@ def test_infers_error_from_error_payload() -> None:
     assert result.status is ExecutionStatus.ERROR
     assert result.error_code == "TOOL_TIMEOUT"
 
-    assert (
-        result.error_message
-        == "A ferramenta excedeu o limite."
-    )
+    assert result.error_message == "A ferramenta excedeu o limite."
 
     assert result.successful is False
 
@@ -302,10 +290,7 @@ def test_raw_metadata_is_immutable_copy() -> None:
 
     source_metadata["environment"] = "modified"
 
-    assert (
-        result.raw_metadata["environment"]
-        == "offline"
-    )
+    assert result.raw_metadata["environment"] == "offline"
 
     assert isinstance(
         result.raw_metadata,

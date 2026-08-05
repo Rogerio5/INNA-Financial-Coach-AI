@@ -13,52 +13,42 @@ from . import repository
 
 MAX_CANONICAL_UPDATE_BYTES = 1_000_000
 
-SHA256_PATTERN = re.compile(
-    r"^[0-9a-f]{64}$"
+SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+
+ALLOWED_FAILURE_CODES = frozenset(
+    {
+        "telegram.processing_failed",
+        "telegram.delivery_failed",
+    }
 )
 
-ALLOWED_FAILURE_CODES = frozenset({
-    "telegram.processing_failed",
-    "telegram.delivery_failed",
-})
 
-
-class TelegramUpdateReceiptServiceError(
-    RuntimeError
-):
+class TelegramUpdateReceiptServiceError(RuntimeError):
     """
     Erro sanitizado da camada de serviço.
     """
 
 
-class TelegramUpdateReceiptValidationError(
-    TelegramUpdateReceiptServiceError
-):
+class TelegramUpdateReceiptValidationError(TelegramUpdateReceiptServiceError):
     """
     O update ou argumento recebido é inválido.
     """
 
 
-class TelegramUpdateReceiptConflictError(
-    TelegramUpdateReceiptServiceError
-):
+class TelegramUpdateReceiptConflictError(TelegramUpdateReceiptServiceError):
     """
     O mesmo update_id foi associado a outro
     conteúdo autenticado.
     """
 
 
-class TelegramUpdateReceiptUnavailableError(
-    TelegramUpdateReceiptServiceError
-):
+class TelegramUpdateReceiptUnavailableError(TelegramUpdateReceiptServiceError):
     """
     O armazenamento de receipts está indisponível.
     """
 
 
-class TelegramUpdateReceiptOwnershipError(
-    TelegramUpdateReceiptServiceError
-):
+class TelegramUpdateReceiptOwnershipError(TelegramUpdateReceiptServiceError):
     """
     O worker perdeu a propriedade do lease.
     """
@@ -93,9 +83,7 @@ class TelegramUpdateProcessingLease:
     ) -> dict[str, object]:
         return {
             "update_id": self.update_id,
-            "attempt_count": (
-                self.attempt_count
-            ),
+            "attempt_count": (self.attempt_count),
             "lease_owned": True,
         }
 
@@ -116,10 +104,7 @@ class TelegramUpdateClaimDecision:
 
     attempt_count: int
 
-    lease: (
-        TelegramUpdateProcessingLease
-        | None
-    ) = field(
+    lease: TelegramUpdateProcessingLease | None = field(
         default=None,
         repr=False,
     )
@@ -136,12 +121,8 @@ class TelegramUpdateClaimDecision:
         return {
             "update_id": self.update_id,
             "status": self.status,
-            "attempt_count": (
-                self.attempt_count
-            ),
-            "should_process": (
-                self.should_process
-            ),
+            "attempt_count": (self.attempt_count),
+            "should_process": (self.should_process),
         }
 
 
@@ -165,27 +146,17 @@ class TelegramUpdateTransitionOutcome:
         return {
             "update_id": self.update_id,
             "status": self.status,
-            "attempt_count": (
-                self.attempt_count
-            ),
+            "attempt_count": (self.attempt_count),
         }
 
 
 def _extract_update_id(
     update: Mapping[str, Any],
 ) -> int:
-    value = update.get(
-        "update_id"
-    )
+    value = update.get("update_id")
 
-    if (
-        isinstance(value, bool)
-        or not isinstance(value, int)
-        or value < 0
-    ):
-        raise TelegramUpdateReceiptValidationError(
-            "O update Telegram é inválido."
-        )
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise TelegramUpdateReceiptValidationError("O update Telegram é inválido.")
 
     return value
 
@@ -202,15 +173,11 @@ def serialize_telegram_update_canonical(
         update,
         Mapping,
     ):
-        raise TelegramUpdateReceiptValidationError(
-            "O update Telegram é inválido."
-        )
+        raise TelegramUpdateReceiptValidationError("O update Telegram é inválido.")
 
     try:
         serialized = json.dumps(
-            dict(
-                update
-            ),
+            dict(update),
             ensure_ascii=False,
             sort_keys=True,
             separators=(
@@ -218,9 +185,7 @@ def serialize_telegram_update_canonical(
                 ":",
             ),
             allow_nan=False,
-        ).encode(
-            "utf-8"
-        )
+        ).encode("utf-8")
 
     except (
         TypeError,
@@ -231,11 +196,7 @@ def serialize_telegram_update_canonical(
             "O update Telegram é inválido."
         ) from None
 
-    if not (
-        2
-        <= len(serialized)
-        <= MAX_CANONICAL_UPDATE_BYTES
-    ):
+    if not (2 <= len(serialized) <= MAX_CANONICAL_UPDATE_BYTES):
         raise TelegramUpdateReceiptValidationError(
             "O update Telegram possui tamanho inválido."
         )
@@ -246,25 +207,15 @@ def serialize_telegram_update_canonical(
 def fingerprint_telegram_update(
     update: Mapping[str, Any],
 ) -> str:
-    serialized = (
-        serialize_telegram_update_canonical(
-            update
-        )
-    )
+    serialized = serialize_telegram_update_canonical(update)
 
-    return hashlib.sha256(
-        serialized
-    ).hexdigest()
+    return hashlib.sha256(serialized).hexdigest()
 
 
 def _generate_claim_token() -> str:
-    token = secrets.token_hex(
-        32
-    )
+    token = secrets.token_hex(32)
 
-    if not SHA256_PATTERN.fullmatch(
-        token
-    ):
+    if not SHA256_PATTERN.fullmatch(token):
         raise TelegramUpdateReceiptServiceError(
             "Não foi possível criar um lease seguro."
         )
@@ -285,95 +236,58 @@ def claim_authenticated_telegram_update(
         update,
         Mapping,
     ):
-        raise TelegramUpdateReceiptValidationError(
-            "O update Telegram é inválido."
-        )
+        raise TelegramUpdateReceiptValidationError("O update Telegram é inválido.")
 
-    update_id = _extract_update_id(
-        update
-    )
+    update_id = _extract_update_id(update)
 
-    fingerprint = (
-        fingerprint_telegram_update(
-            update
-        )
-    )
+    fingerprint = fingerprint_telegram_update(update)
 
-    claim_token = (
-        _generate_claim_token()
-    )
+    claim_token = _generate_claim_token()
 
     try:
-        result = (
-            repository
-            .claim_telegram_update(
-                update_id=update_id,
-                update_fingerprint=(
-                    fingerprint
-                ),
-                claim_token=claim_token,
-                lease_seconds=(
-                    lease_seconds
-                ),
-            )
+        result = repository.claim_telegram_update(
+            update_id=update_id,
+            update_fingerprint=(fingerprint),
+            claim_token=claim_token,
+            lease_seconds=(lease_seconds),
         )
 
     except ValueError:
         raise TelegramUpdateReceiptValidationError(
-            "Não foi possível validar o claim "
-            "do update Telegram."
+            "Não foi possível validar o claim do update Telegram."
         ) from None
 
-    except (
-        repository
-        .TelegramUpdateFingerprintConflictError
-    ):
+    except repository.TelegramUpdateFingerprintConflictError:
         raise TelegramUpdateReceiptConflictError(
-            "O update Telegram conflita com um "
-            "registro existente."
+            "O update Telegram conflita com um registro existente."
         ) from None
 
-    except (
-        repository
-        .TelegramUpdateReceiptRepositoryError
-    ):
+    except repository.TelegramUpdateReceiptRepositoryError:
         raise TelegramUpdateReceiptUnavailableError(
-            "O controle de updates Telegram está "
-            "temporariamente indisponível."
+            "O controle de updates Telegram está temporariamente indisponível."
         ) from None
 
     lease = None
 
     if result.should_process:
-        returned_token = (
-            result.claim_token
-        )
+        returned_token = result.claim_token
 
-        if (
-            returned_token
-            != claim_token
-        ):
+        if returned_token != claim_token:
             raise TelegramUpdateReceiptServiceError(
                 "O repositório retornou um lease inválido."
             )
 
         lease = TelegramUpdateProcessingLease(
             update_id=result.update_id,
-            attempt_count=(
-                result.attempt_count
-            ),
+            attempt_count=(result.attempt_count),
             claim_token=claim_token,
-            update_fingerprint=(
-                fingerprint
-            ),
+            update_fingerprint=(fingerprint),
         )
 
     return TelegramUpdateClaimDecision(
         update_id=result.update_id,
         status=result.status,
-        attempt_count=(
-            result.attempt_count
-        ),
+        attempt_count=(result.attempt_count),
         lease=lease,
     )
 
@@ -385,9 +299,7 @@ def _validate_lease(
         lease,
         TelegramUpdateProcessingLease,
     ):
-        raise TelegramUpdateReceiptValidationError(
-            "O lease Telegram é inválido."
-        )
+        raise TelegramUpdateReceiptValidationError("O lease Telegram é inválido.")
 
     if (
         isinstance(
@@ -400,23 +312,13 @@ def _validate_lease(
         )
         or lease.update_id < 0
     ):
-        raise TelegramUpdateReceiptValidationError(
-            "O lease Telegram é inválido."
-        )
+        raise TelegramUpdateReceiptValidationError("O lease Telegram é inválido.")
 
-    if not SHA256_PATTERN.fullmatch(
-        lease.claim_token
-    ):
-        raise TelegramUpdateReceiptValidationError(
-            "O lease Telegram é inválido."
-        )
+    if not SHA256_PATTERN.fullmatch(lease.claim_token):
+        raise TelegramUpdateReceiptValidationError("O lease Telegram é inválido.")
 
-    if not SHA256_PATTERN.fullmatch(
-        lease.update_fingerprint
-    ):
-        raise TelegramUpdateReceiptValidationError(
-            "O lease Telegram é inválido."
-        )
+    if not SHA256_PATTERN.fullmatch(lease.update_fingerprint):
+        raise TelegramUpdateReceiptValidationError("O lease Telegram é inválido.")
 
     return lease
 
@@ -424,113 +326,70 @@ def _validate_lease(
 def complete_authenticated_telegram_update(
     lease: TelegramUpdateProcessingLease,
 ) -> TelegramUpdateTransitionOutcome:
-    validated_lease = (
-        _validate_lease(
-            lease
-        )
-    )
+    validated_lease = _validate_lease(lease)
 
     try:
-        result = (
-            repository
-            .complete_telegram_update(
-                update_id=(
-                    validated_lease.update_id
-                ),
-                claim_token=(
-                    validated_lease.claim_token
-                ),
-            )
+        result = repository.complete_telegram_update(
+            update_id=(validated_lease.update_id),
+            claim_token=(validated_lease.claim_token),
         )
 
-    except (
-        repository
-        .TelegramUpdateClaimOwnershipError
-    ):
+    except repository.TelegramUpdateClaimOwnershipError:
         raise TelegramUpdateReceiptOwnershipError(
             "O lease Telegram não está mais ativo."
         ) from None
 
-    except (
-        repository
-        .TelegramUpdateReceiptRepositoryError
-    ):
+    except repository.TelegramUpdateReceiptRepositoryError:
         raise TelegramUpdateReceiptUnavailableError(
-            "Não foi possível concluir o "
-            "update Telegram."
+            "Não foi possível concluir o update Telegram."
         ) from None
 
     return TelegramUpdateTransitionOutcome(
         update_id=result.update_id,
         status="completed",
-        attempt_count=(
-            result.attempt_count
-        ),
+        attempt_count=(result.attempt_count),
     )
 
 
 def fail_authenticated_telegram_update(
     lease: TelegramUpdateProcessingLease,
     *,
-    error_code: str = (
-        "telegram.processing_failed"
-    ),
+    error_code: str = ("telegram.processing_failed"),
 ) -> TelegramUpdateTransitionOutcome:
-    validated_lease = (
-        _validate_lease(
-            lease
-        )
-    )
+    validated_lease = _validate_lease(lease)
 
     if (
         not isinstance(
             error_code,
             str,
         )
-        or error_code
-        not in ALLOWED_FAILURE_CODES
+        or error_code not in ALLOWED_FAILURE_CODES
     ):
         raise TelegramUpdateReceiptValidationError(
             "O código de falha Telegram é inválido."
         )
 
     try:
-        result = (
-            repository
-            .fail_telegram_update(
-                update_id=(
-                    validated_lease.update_id
-                ),
-                claim_token=(
-                    validated_lease.claim_token
-                ),
-                error_code=error_code,
-            )
+        result = repository.fail_telegram_update(
+            update_id=(validated_lease.update_id),
+            claim_token=(validated_lease.claim_token),
+            error_code=error_code,
         )
 
-    except (
-        repository
-        .TelegramUpdateClaimOwnershipError
-    ):
+    except repository.TelegramUpdateClaimOwnershipError:
         raise TelegramUpdateReceiptOwnershipError(
             "O lease Telegram não está mais ativo."
         ) from None
 
-    except (
-        repository
-        .TelegramUpdateReceiptRepositoryError
-    ):
+    except repository.TelegramUpdateReceiptRepositoryError:
         raise TelegramUpdateReceiptUnavailableError(
-            "Não foi possível registrar a falha "
-            "do update Telegram."
+            "Não foi possível registrar a falha do update Telegram."
         ) from None
 
     return TelegramUpdateTransitionOutcome(
         update_id=result.update_id,
         status="failed",
-        attempt_count=(
-            result.attempt_count
-        ),
+        attempt_count=(result.attempt_count),
     )
 
 

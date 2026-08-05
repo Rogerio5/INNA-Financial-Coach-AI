@@ -18,10 +18,7 @@ def _rag_result(
         "documento_id": 5,
         "titulo": "Guia financeiro",
         "fonte": "guia.md",
-        "chunk_text": (
-            "Organize sua renda, seus gastos "
-            "e sua reserva financeira."
-        ),
+        "chunk_text": ("Organize sua renda, seus gastos e sua reserva financeira."),
         "score": 0.82,
         "score_hibrido": 1.15,
         "score_rerank": 1.31,
@@ -62,9 +59,7 @@ def test_hybrid_result_exposes_retrieval_trace(
     monkeypatch.setattr(
         rag_engine,
         "search_knowledge_base_hybrid",
-        lambda pergunta, idioma="pt", top_k=4: [
-            _rag_result()
-        ],
+        lambda pergunta, idioma="pt", top_k=4: [_rag_result()],
     )
 
     def local_search_must_not_run(
@@ -72,9 +67,7 @@ def test_hybrid_result_exposes_retrieval_trace(
         idioma="pt",
         top_k=4,
     ):
-        raise AssertionError(
-            "Fallback local não deveria executar."
-        )
+        raise AssertionError("Fallback local não deveria executar.")
 
     monkeypatch.setattr(
         rag_engine,
@@ -98,9 +91,7 @@ def test_hybrid_result_exposes_retrieval_trace(
     trace = resultado["retrieval_trace"]
 
     assert trace["trace_id"] == trace_id
-    assert trace["query"] == (
-        "planejamento financeiro"
-    )
+    assert trace["query"] == ("planejamento financeiro")
     assert trace["language"] == "pt"
     assert trace["search_mode"] == "rag_hibrido"
     assert trace["top_k"] == 4
@@ -175,21 +166,15 @@ def test_local_fallback_is_traced(
         "local": 1,
     }
 
-    assert resultado["modo"] == (
-        "rag_local_fallback"
-    )
+    assert resultado["modo"] == ("rag_local_fallback")
 
     trace = resultado["retrieval_trace"]
 
-    assert trace["search_mode"] == (
-        "rag_local_fallback"
-    )
+    assert trace["search_mode"] == ("rag_local_fallback")
 
     assert trace["top_k"] == 3
     assert trace["results_total"] == 1
-    assert trace["results"][0][
-        "chunk_id"
-    ] == 20
+    assert trace["results"][0]["chunk_id"] == 20
 
 
 def test_no_results_response_is_traced(
@@ -221,9 +206,7 @@ def test_no_results_response_is_traced(
 
     trace = resultado["retrieval_trace"]
 
-    assert trace["search_mode"] == (
-        "sem_resultados"
-    )
+    assert trace["search_mode"] == ("sem_resultados")
 
     assert trace["results_total"] == 0
     assert trace["results"] == []
@@ -238,9 +221,7 @@ def test_continuation_response_keeps_trace(
     monkeypatch.setattr(
         rag_engine,
         "search_knowledge_base_hybrid",
-        lambda pergunta, idioma="pt", top_k=4: [
-            _rag_result()
-        ],
+        lambda pergunta, idioma="pt", top_k=4: [_rag_result()],
     )
 
     monkeypatch.setattr(
@@ -279,9 +260,7 @@ def test_continuation_response_keeps_trace(
     trace = resultado["retrieval_trace"]
 
     assert trace["results_total"] == 1
-    assert trace["search_mode"] == (
-        "rag_hibrido"
-    )
+    assert trace["search_mode"] == ("rag_hibrido")
 
 
 def test_security_response_skips_retrieval(
@@ -301,9 +280,7 @@ def test_security_response_skips_retrieval(
     )
 
     def search_must_not_run(*args, **kwargs):
-        raise AssertionError(
-            "A recuperação não deveria executar."
-        )
+        raise AssertionError("A recuperação não deveria executar.")
 
     monkeypatch.setattr(
         rag_engine,
@@ -347,17 +324,11 @@ def test_security_response_skips_retrieval(
         ),
         (
             "en-US",
-            (
-                "Responda obrigatoriamente em "
-                "inglês dos Estados Unidos."
-            ),
+            ("Responda obrigatoriamente em inglês dos Estados Unidos."),
         ),
         (
             "de-CH",
-            (
-                "Responda obrigatoriamente em "
-                "alemão da Suíça."
-            ),
+            ("Responda obrigatoriamente em alemão da Suíça."),
         ),
     ],
 )
@@ -418,10 +389,7 @@ def test_generate_gemini_rag_answer_uses_requested_language(
 
     result = rag_engine.generate_gemini_rag_answer(
         pergunta="Como organizar meu orçamento?",
-        contexto=(
-            "A pessoa informou renda mensal "
-            "e despesas recorrentes."
-        ),
+        contexto=("A pessoa informou renda mensal e despesas recorrentes."),
         idioma=language,
     )
 
@@ -491,17 +459,6 @@ def test_generate_gemini_rag_answer_preserves_context_currency(
 
     prompt = captured["contents"]
 
-    assert (
-        "Preserve a moeda apresentada pelo usuário "
-        "ou pelo contexto."
-        in prompt
-    )
-    assert (
-        "Não converta valores e não invente moedas."
-        in prompt
-    )
-    assert (
-        "mantenha o formato R$"
-        not in prompt
-    )
-
+    assert "Preserve a moeda apresentada pelo usuário ou pelo contexto." in prompt
+    assert "Não converta valores e não invente moedas." in prompt
+    assert "mantenha o formato R$" not in prompt

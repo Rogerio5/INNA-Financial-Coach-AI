@@ -35,9 +35,7 @@ from src.evaluation.quality_gate import (
 def build_official_batch():
     return EvaluationBatchRunner(
         runner=build_deterministic_runner(),
-        payload_provider=(
-            SyntheticPassingPayloadProvider()
-        ),
+        payload_provider=(SyntheticPassingPayloadProvider()),
     ).run(
         official_datasets(),
         runner_settings=(
@@ -46,18 +44,14 @@ def build_official_batch():
             )
         ),
         metadata={
-            "execution_type": (
-                "synthetic-infrastructure-validation"
-            ),
+            "execution_type": ("synthetic-infrastructure-validation"),
             "production_evaluation": False,
         },
     )
 
 
 def test_default_gate_passes() -> None:
-    result = evaluate_quality_gate(
-        build_official_batch()
-    )
+    result = evaluate_quality_gate(build_official_batch())
 
     assert result.passed is True
     assert result.violations == ()
@@ -66,9 +60,7 @@ def test_default_gate_passes() -> None:
 
 
 def test_gate_evaluates_rules() -> None:
-    result = evaluate_quality_gate(
-        build_official_batch()
-    )
+    result = evaluate_quality_gate(build_official_batch())
 
     assert result.evaluated_rules > 0
     assert result.batch_id
@@ -85,11 +77,7 @@ def test_gate_rejects_synthetic_as_production() -> None:
     assert result.passed is False
 
     assert any(
-        violation.rule
-        == (
-            QualityGateRule
-            .SYNTHETIC_PRODUCTION_MISMATCH
-        )
+        violation.rule == (QualityGateRule.SYNTHETIC_PRODUCTION_MISMATCH)
         for violation in result.violations
     )
 
@@ -105,33 +93,24 @@ def test_production_violation_is_critical() -> None:
     violation = next(
         violation
         for violation in result.violations
-        if violation.rule
-        == (
-            QualityGateRule
-            .SYNTHETIC_PRODUCTION_MISMATCH
-        )
+        if violation.rule == (QualityGateRule.SYNTHETIC_PRODUCTION_MISMATCH)
     )
 
-    assert violation.severity == (
-        QualityGateSeverity.CRITICAL
-    )
+    assert violation.severity == (QualityGateSeverity.CRITICAL)
 
 
 def test_gate_rejects_missing_dataset() -> None:
     result = evaluate_quality_gate(
         build_official_batch(),
         QualityGateSettings(
-            required_dataset_ids=(
-                "missing-dataset@1.0.0",
-            ),
+            required_dataset_ids=("missing-dataset@1.0.0",),
         ),
     )
 
     assert result.passed is False
 
     assert any(
-        violation.rule
-        == QualityGateRule.REQUIRED_DATASET
+        violation.rule == QualityGateRule.REQUIRED_DATASET
         for violation in result.violations
     )
 
@@ -140,9 +119,7 @@ def test_missing_critical_metric_is_warning() -> None:
     result = evaluate_quality_gate(
         build_official_batch(),
         QualityGateSettings(
-            critical_metric_ids=(
-                "missing-metric",
-            ),
+            critical_metric_ids=("missing-metric",),
             fail_on_warning=False,
         ),
     )
@@ -152,21 +129,15 @@ def test_missing_critical_metric_is_warning() -> None:
 
     violation = result.warning_violations[0]
 
-    assert violation.rule == (
-        QualityGateRule.CRITICAL_METRIC
-    )
-    assert violation.metadata[
-        "metric_id"
-    ] == "missing-metric"
+    assert violation.rule == (QualityGateRule.CRITICAL_METRIC)
+    assert violation.metadata["metric_id"] == "missing-metric"
 
 
 def test_warning_can_fail_gate() -> None:
     result = evaluate_quality_gate(
         build_official_batch(),
         QualityGateSettings(
-            critical_metric_ids=(
-                "missing-metric",
-            ),
+            critical_metric_ids=("missing-metric",),
             fail_on_warning=True,
         ),
     )
@@ -213,9 +184,7 @@ def test_settings_reject_negative_case_limits(
         ValueError,
         match=field_name,
     ):
-        QualityGateSettings(
-            **arguments
-        )
+        QualityGateSettings(**arguments)
 
 
 def test_settings_reject_negative_cost() -> None:
@@ -251,9 +220,7 @@ def test_settings_remove_duplicate_datasets() -> None:
         ),
     )
 
-    assert settings.required_dataset_ids == (
-        "inna-core@1.0.0",
-    )
+    assert settings.required_dataset_ids == ("inna-core@1.0.0",)
 
 
 def test_violation_metadata_is_immutable() -> None:
@@ -282,9 +249,7 @@ def test_violation_message_is_normalized() -> None:
         message="  Falha sintética.  ",
     )
 
-    assert violation.message == (
-        "Falha sintética."
-    )
+    assert violation.message == ("Falha sintética.")
 
 
 def test_violation_rejects_empty_message() -> None:
@@ -322,8 +287,7 @@ def test_gate_rejects_batch_error_count() -> None:
     assert result.critical_violations
 
     assert any(
-        violation.rule
-        == QualityGateRule.MAXIMUM_ERROR_CASES
+        violation.rule == QualityGateRule.MAXIMUM_ERROR_CASES
         for violation in result.violations
     )
 
@@ -347,20 +311,11 @@ def test_gate_rejects_failed_case() -> None:
 
     assert result.passed is False
 
-    rules = {
-        violation.rule
-        for violation in result.violations
-    }
+    rules = {violation.rule for violation in result.violations}
 
     assert QualityGateRule.BATCH_STATUS in rules
-    assert (
-        QualityGateRule.MINIMUM_PASS_RATE
-        in rules
-    )
-    assert (
-        QualityGateRule.MAXIMUM_FAILED_CASES
-        in rules
-    )
+    assert QualityGateRule.MINIMUM_PASS_RATE in rules
+    assert QualityGateRule.MAXIMUM_FAILED_CASES in rules
 
 
 def test_gate_rejects_blocked_case() -> None:
@@ -382,8 +337,7 @@ def test_gate_rejects_blocked_case() -> None:
     assert result.passed is False
 
     assert any(
-        violation.rule
-        == QualityGateRule.MAXIMUM_BLOCKED_CASES
+        violation.rule == QualityGateRule.MAXIMUM_BLOCKED_CASES
         for violation in result.violations
     )
 
@@ -411,9 +365,7 @@ def test_gate_allows_configured_pass_rate() -> None:
         ),
     )
 
-    assert altered.pass_rate == pytest.approx(
-        10 / 11
-    )
+    assert altered.pass_rate == pytest.approx(10 / 11)
     assert altered.failed_cases == 1
     assert result.passed is True
     assert result.violations == ()
@@ -439,13 +391,8 @@ def test_gate_checks_maximum_cost() -> None:
     violation = next(
         violation
         for violation in result.violations
-        if violation.rule
-        == QualityGateRule.MAXIMUM_TOTAL_COST
+        if violation.rule == QualityGateRule.MAXIMUM_TOTAL_COST
     )
 
-    assert violation.actual == pytest.approx(
-        0.10
-    )
-    assert violation.expected == pytest.approx(
-        0.05
-    )
+    assert violation.actual == pytest.approx(0.10)
+    assert violation.expected == pytest.approx(0.05)

@@ -46,19 +46,14 @@ def estimate_tokens(
 
     return max(
         1,
-        math.ceil(
-            len(text)
-            / AVERAGE_CHARACTERS_PER_TOKEN
-        ),
+        math.ceil(len(text) / AVERAGE_CHARACTERS_PER_TOKEN),
     )
 
 
 def create_context_budget(
     *,
     max_tokens: int = DEFAULT_MAX_CONTEXT_TOKENS,
-    reserved_output_tokens: int = (
-        DEFAULT_RESERVED_OUTPUT_TOKENS
-    ),
+    reserved_output_tokens: int = (DEFAULT_RESERVED_OUTPUT_TOKENS),
     estimated_input_tokens: int = 0,
 ) -> ContextBudget:
     max_tokens = max(256, int(max_tokens))
@@ -77,27 +72,14 @@ def create_context_budget(
         int(estimated_input_tokens),
     )
 
-    utilization = (
-        estimated_input_tokens
-        / available_input_tokens
-        * 100
-    )
+    utilization = estimated_input_tokens / available_input_tokens * 100
 
     return ContextBudget(
         max_tokens=max_tokens,
-        reserved_output_tokens=(
-            reserved_output_tokens
-        ),
-        available_input_tokens=(
-            available_input_tokens
-        ),
-        estimated_input_tokens=(
-            estimated_input_tokens
-        ),
-        within_budget=(
-            estimated_input_tokens
-            <= available_input_tokens
-        ),
+        reserved_output_tokens=(reserved_output_tokens),
+        available_input_tokens=(available_input_tokens),
+        estimated_input_tokens=(estimated_input_tokens),
+        within_budget=(estimated_input_tokens <= available_input_tokens),
         utilization_percent=round(
             utilization,
             2,
@@ -120,18 +102,12 @@ def truncate_text_to_token_budget(
     if estimate_tokens(text) <= max_tokens:
         return text
 
-    max_characters = (
-        max_tokens
-        * AVERAGE_CHARACTERS_PER_TOKEN
-    )
+    max_characters = max_tokens * AVERAGE_CHARACTERS_PER_TOKEN
 
     if max_characters <= 20:
         return text[:max_characters]
 
-    return (
-        text[: max_characters - 15].rstrip()
-        + " [TRUNCADO]"
-    )
+    return text[: max_characters - 15].rstrip() + " [TRUNCADO]"
 
 
 __all__ = [

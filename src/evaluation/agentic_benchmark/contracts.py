@@ -63,9 +63,7 @@ class BenchmarkThresholds:
 
     def __post_init__(self) -> None:
         if self.minimum_evidence_count < 0:
-            raise ValueError(
-                "minimum_evidence_count não pode ser negativo."
-            )
+            raise ValueError("minimum_evidence_count não pode ser negativo.")
 
         for field_name in (
             "minimum_citation_coverage",
@@ -76,14 +74,10 @@ class BenchmarkThresholds:
             value = getattr(self, field_name)
 
             if not 0.0 <= value <= 1.0:
-                raise ValueError(
-                    f"{field_name} deve estar entre 0.0 e 1.0."
-                )
+                raise ValueError(f"{field_name} deve estar entre 0.0 e 1.0.")
 
         if self.maximum_latency_ms <= 0:
-            raise ValueError(
-                "maximum_latency_ms deve ser positivo."
-            )
+            raise ValueError("maximum_latency_ms deve ser positivo.")
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,20 +90,13 @@ class BenchmarkExpectations:
     required_terms: tuple[str, ...] = ()
     forbidden_terms: tuple[str, ...] = ()
     expected_fallback: bool = False
-    security_outcome: ExpectedSecurityOutcome = (
-        ExpectedSecurityOutcome.ALLOW
-    )
+    security_outcome: ExpectedSecurityOutcome = ExpectedSecurityOutcome.ALLOW
 
     def __post_init__(self) -> None:
         if len(set(self.routes)) != len(self.routes):
-            raise ValueError(
-                "As rotas esperadas não podem estar duplicadas."
-            )
+            raise ValueError("As rotas esperadas não podem estar duplicadas.")
 
-        overlap = (
-            set(self.required_terms)
-            & set(self.forbidden_terms)
-        )
+        overlap = set(self.required_terms) & set(self.forbidden_terms)
 
         if overlap:
             raise ValueError(
@@ -129,30 +116,20 @@ class AgenticBenchmarkCase:
     expectations: BenchmarkExpectations
     thresholds: BenchmarkThresholds
     synthetic_contexts: tuple[str, ...] = ()
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.case_id.strip():
-            raise ValueError(
-                "case_id é obrigatório."
-            )
+            raise ValueError("case_id é obrigatório.")
 
         if not self.dataset_version.strip():
-            raise ValueError(
-                "dataset_version é obrigatório."
-            )
+            raise ValueError("dataset_version é obrigatório.")
 
         if not self.question.strip():
-            raise ValueError(
-                "question é obrigatória."
-            )
+            raise ValueError("question é obrigatória.")
 
         if len(self.question) < 8:
-            raise ValueError(
-                "question é curta demais para o benchmark."
-            )
+            raise ValueError("question é curta demais para o benchmark.")
 
 
 @dataclass(frozen=True, slots=True)
@@ -164,42 +141,25 @@ class BenchmarkDataset:
 
     def __post_init__(self) -> None:
         if not self.version.strip():
-            raise ValueError(
-                "A versão do dataset é obrigatória."
-            )
+            raise ValueError("A versão do dataset é obrigatória.")
 
         if not self.cases:
-            raise ValueError(
-                "O dataset não pode estar vazio."
-            )
+            raise ValueError("O dataset não pode estar vazio.")
 
-        case_ids = [
-            case.case_id
-            for case in self.cases
-        ]
+        case_ids = [case.case_id for case in self.cases]
 
-        duplicates = {
-            case_id
-            for case_id in case_ids
-            if case_ids.count(case_id) > 1
-        }
+        duplicates = {case_id for case_id in case_ids if case_ids.count(case_id) > 1}
 
         if duplicates:
-            raise ValueError(
-                "case_id duplicado: "
-                + ", ".join(sorted(duplicates))
-            )
+            raise ValueError("case_id duplicado: " + ", ".join(sorted(duplicates)))
 
         invalid_versions = [
-            case.case_id
-            for case in self.cases
-            if case.dataset_version != self.version
+            case.case_id for case in self.cases if case.dataset_version != self.version
         ]
 
         if invalid_versions:
             raise ValueError(
-                "Casos com versão divergente: "
-                + ", ".join(invalid_versions)
+                "Casos com versão divergente: " + ", ".join(invalid_versions)
             )
 
     def by_category(
@@ -208,11 +168,7 @@ class BenchmarkDataset:
     ) -> tuple[AgenticBenchmarkCase, ...]:
         """Retorna os casos de uma categoria."""
 
-        return tuple(
-            case
-            for case in self.cases
-            if case.category is category
-        )
+        return tuple(case for case in self.cases if case.category is category)
 
     def get(
         self,
@@ -224,9 +180,7 @@ class BenchmarkDataset:
             if case.case_id == case_id:
                 return case
 
-        raise KeyError(
-            f"Caso não encontrado: {case_id}"
-        )
+        raise KeyError(f"Caso não encontrado: {case_id}")
 
 
 def normalize_string_sequence(
@@ -237,15 +191,9 @@ def normalize_string_sequence(
     if value is None:
         return ()
 
-    normalized = tuple(
-        item.strip()
-        for item in value
-        if item.strip()
-    )
+    normalized = tuple(item.strip() for item in value if item.strip())
 
     if len(set(normalized)) != len(normalized):
-        raise ValueError(
-            "A sequência contém valores duplicados."
-        )
+        raise ValueError("A sequência contém valores duplicados.")
 
     return normalized

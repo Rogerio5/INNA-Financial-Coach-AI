@@ -195,9 +195,7 @@ def technical_label(
     if key in texts:
         return texts[key]
 
-    return TECHNICAL_LABELS[
-        "en_us"
-    ].get(
+    return TECHNICAL_LABELS["en_us"].get(
         key,
         key,
     )

@@ -78,20 +78,12 @@ def _load_json(
     path: Path,
 ) -> dict[str, Any]:
     if not path.exists():
-        raise OfflineDashboardDataError(
-            f"Relatório não encontrado: {path}"
-        )
+        raise OfflineDashboardDataError(f"Relatório não encontrado: {path}")
 
     try:
-        payload = json.loads(
-            path.read_text(
-                encoding="utf-8-sig"
-            )
-        )
+        payload = json.loads(path.read_text(encoding="utf-8-sig"))
     except json.JSONDecodeError as exc:
-        raise OfflineDashboardDataError(
-            f"JSON inválido em {path}: {exc}"
-        ) from exc
+        raise OfflineDashboardDataError(f"JSON inválido em {path}: {exc}") from exc
 
     if not isinstance(
         payload,
@@ -112,12 +104,7 @@ def load_offline_dashboard_snapshot(
 ) -> OfflineDashboardSnapshot:
     """Carrega os quatro relatórios utilizados pelo dashboard."""
 
-    resolved_paths = (
-        paths
-        or default_dashboard_paths(
-            project_root
-        )
-    )
+    resolved_paths = paths or default_dashboard_paths(project_root)
 
     loaded: dict[str, dict[str, Any]] = {}
     errors: list[str] = []
@@ -131,28 +118,20 @@ def load_offline_dashboard_snapshot(
 
     for name, path in sources.items():
         try:
-            loaded[name] = _load_json(
-                path
-            )
+            loaded[name] = _load_json(path)
         except OfflineDashboardDataError as exc:
             if strict:
                 raise
 
             loaded[name] = {}
-            errors.append(
-                str(exc)
-            )
+            errors.append(str(exc))
 
     return OfflineDashboardSnapshot(
-        loaded_at=datetime.now(
-            UTC
-        ).isoformat(),
+        loaded_at=datetime.now(UTC).isoformat(),
         paths=resolved_paths,
         benchmark=loaded["benchmark"],
         quality_gate=loaded["quality_gate"],
-        quality_summary=loaded[
-            "quality_summary"
-        ],
+        quality_summary=loaded["quality_summary"],
         mcp_e2e=loaded["mcp_e2e"],
         errors=tuple(errors),
     )
@@ -297,11 +276,7 @@ def _quality_check_actual(
             "count",
             "result",
         ):
-            if (
-                nested_key in candidate
-                and candidate[nested_key]
-                is not None
-            ):
+            if nested_key in candidate and candidate[nested_key] is not None:
                 return candidate[nested_key]
 
         return candidate
@@ -316,10 +291,7 @@ def _quality_check_actual(
             declared_names = {
                 str(value[key]).casefold()
                 for key in name_keys
-                if (
-                    key in value
-                    and value[key] is not None
-                )
+                if (key in value and value[key] is not None)
             }
 
             string_values = {
@@ -334,38 +306,25 @@ def _quality_check_actual(
             matches_target = (
                 target in declared_names
                 or target in string_values
-                or target
-                in {
-                    str(key).casefold()
-                    for key in value
-                }
+                or target in {str(key).casefold() for key in value}
             )
 
             if matches_target:
                 for key in value_keys:
-                    if (
-                        key in value
-                        and value[key] is not None
-                    ):
+                    if key in value and value[key] is not None:
                         return (
                             True,
-                            extract_candidate(
-                                value[key]
-                            ),
+                            extract_candidate(value[key]),
                         )
 
                 if check_name in value:
                     return (
                         True,
-                        extract_candidate(
-                            value[check_name]
-                        ),
+                        extract_candidate(value[check_name]),
                     )
 
             for nested in value.values():
-                found, actual = walk(
-                    nested
-                )
+                found, actual = walk(nested)
 
                 if found:
                     return found, actual
@@ -381,9 +340,7 @@ def _quality_check_actual(
             ),
         ):
             for nested in value:
-                found, actual = walk(
-                    nested
-                )
+                found, actual = walk(nested)
 
                 if found:
                     return found, actual
@@ -391,9 +348,7 @@ def _quality_check_actual(
         return False, default
 
     for payload in payloads:
-        found, actual = walk(
-            payload
-        )
+        found, actual = walk(payload)
 
         if found:
             return actual
@@ -516,15 +471,13 @@ def build_overview(
     )
 
     if category_count_value is None:
-        category_count_value = (
-            _quality_check_actual(
-                (
-                    quality_gate,
-                    quality_summary,
-                ),
-                "dataset_category_count",
-                default=None,
-            )
+        category_count_value = _quality_check_actual(
+            (
+                quality_gate,
+                quality_summary,
+            ),
+            "dataset_category_count",
+            default=None,
         )
 
     if category_count_value is None:
@@ -539,9 +492,7 @@ def build_overview(
             default=(),
         )
 
-        category_count_value = _count_value(
-            category_groups
-        )
+        category_count_value = _count_value(category_groups)
 
     return {
         "dataset_version": _first_value(
@@ -571,9 +522,7 @@ def build_overview(
                 default=0,
             )
         ),
-        "category_count": _as_int(
-            category_count_value
-        ),
+        "category_count": _as_int(category_count_value),
         "legacy_pass_rate": _as_float(
             _first_value(
                 (legacy,),
@@ -676,12 +625,8 @@ def build_overview(
                 default=0,
             )
         ),
-        "quality_gate_passed": bool(
-            quality_gate_passed
-        ),
-        "quality_check_count": _count_value(
-            gate_checks
-        ),
+        "quality_gate_passed": bool(quality_gate_passed),
+        "quality_check_count": _count_value(gate_checks),
         "mcp_scenario_count": _as_int(
             mcp_e2e.get(
                 "scenario_count",

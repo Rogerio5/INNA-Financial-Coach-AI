@@ -52,11 +52,7 @@ def _state(
         "trace": [],
         "human_review_required": True,
         "human_review_current": review,
-        "human_review_history": [
-            deepcopy(
-                review
-            )
-        ],
+        "human_review_history": [deepcopy(review)],
         "human_review_status": "requested",
         "human_review_resume_payload": {},
         "human_review_decision_action": "",
@@ -64,9 +60,7 @@ def _state(
         "human_review_resume_route": "",
     }
 
-    state.update(
-        overrides
-    )
+    state.update(overrides)
 
     return state
 
@@ -80,13 +74,9 @@ def _set_resume(
     def fake_interrupt(
         interrupt_payload,
     ):
-        captured[
-            "payload"
-        ] = interrupt_payload
+        captured["payload"] = interrupt_payload
 
-        return deepcopy(
-            payload
-        )
+        return deepcopy(payload)
 
     monkeypatch.setattr(
         module,
@@ -109,31 +99,17 @@ def test_approve_review(
         },
     )
 
-    result = human_review_interrupt_node(
-        _state()
-    )
+    result = human_review_interrupt_node(_state())
 
-    assert result[
-        "human_review_status"
-    ] == "approved"
+    assert result["human_review_status"] == "approved"
 
-    assert result[
-        "human_review_required"
-    ] is False
+    assert result["human_review_required"] is False
 
-    assert result[
-        "human_review_decision_action"
-    ] == "approve"
+    assert result["human_review_decision_action"] == "approve"
 
-    assert result[
-        "human_review_resume_route"
-    ] == "handoff_coordinator"
+    assert result["human_review_resume_route"] == "handoff_coordinator"
 
-    assert captured[
-        "payload"
-    ]["review_id"] == (
-        "review-interrupt-001"
-    )
+    assert captured["payload"]["review_id"] == ("review-interrupt-001")
 
 
 def test_interrupt_payload_is_auditable(
@@ -147,33 +123,19 @@ def test_interrupt_payload_is_auditable(
         },
     )
 
-    human_review_interrupt_node(
-        _state()
-    )
+    human_review_interrupt_node(_state())
 
-    payload = captured[
-        "payload"
-    ]
+    payload = captured["payload"]
 
-    assert payload[
-        "type"
-    ] == "human_review"
+    assert payload["type"] == "human_review"
 
-    assert payload[
-        "version"
-    ] == "1.0"
+    assert payload["version"] == "1.0"
 
-    assert payload[
-        "thread_id"
-    ] == "thread-interrupt-001"
+    assert payload["thread_id"] == "thread-interrupt-001"
 
-    assert payload[
-        "risk_level"
-    ] == "high"
+    assert payload["risk_level"] == "high"
 
-    assert payload[
-        "allowed_actions"
-    ] == [
+    assert payload["allowed_actions"] == [
         "approve",
         "correct",
         "reject",
@@ -196,23 +158,15 @@ def test_correct_review_routes_to_team_router(
         },
     )
 
-    result = human_review_interrupt_node(
-        _state()
-    )
+    result = human_review_interrupt_node(_state())
 
-    assert result[
-        "human_review_status"
-    ] == "corrected"
+    assert result["human_review_status"] == "corrected"
 
-    assert result[
-        "human_review_corrections"
-    ] == {
+    assert result["human_review_corrections"] == {
         "expenses": 3500,
     }
 
-    assert result[
-        "human_review_resume_route"
-    ] == "team_router"
+    assert result["human_review_resume_route"] == "team_router"
 
 
 def test_reject_review_routes_to_summary(
@@ -227,17 +181,11 @@ def test_reject_review_routes_to_summary(
         },
     )
 
-    result = human_review_interrupt_node(
-        _state()
-    )
+    result = human_review_interrupt_node(_state())
 
-    assert result[
-        "human_review_status"
-    ] == "rejected"
+    assert result["human_review_status"] == "rejected"
 
-    assert result[
-        "human_review_resume_route"
-    ] == "conversation_summary"
+    assert result["human_review_resume_route"] == "conversation_summary"
 
 
 def test_cancel_review_routes_to_summary(
@@ -252,17 +200,11 @@ def test_cancel_review_routes_to_summary(
         },
     )
 
-    result = human_review_interrupt_node(
-        _state()
-    )
+    result = human_review_interrupt_node(_state())
 
-    assert result[
-        "human_review_status"
-    ] == "cancelled"
+    assert result["human_review_status"] == "cancelled"
 
-    assert result[
-        "human_review_resume_route"
-    ] == "conversation_summary"
+    assert result["human_review_resume_route"] == "conversation_summary"
 
 
 def test_history_is_updated_in_place(
@@ -276,23 +218,15 @@ def test_history_is_updated_in_place(
         },
     )
 
-    result = human_review_interrupt_node(
-        _state()
-    )
+    result = human_review_interrupt_node(_state())
 
-    history = result[
-        "human_review_history"
-    ]
+    history = result["human_review_history"]
 
     assert len(history) == 1
 
-    assert history[0][
-        "review_id"
-    ] == "review-interrupt-001"
+    assert history[0]["review_id"] == "review-interrupt-001"
 
-    assert history[0][
-        "status"
-    ] == "approved"
+    assert history[0]["status"] == "approved"
 
 
 def test_original_state_is_not_mutated(
@@ -308,17 +242,11 @@ def test_original_state_is_not_mutated(
 
     state = _state()
 
-    human_review_interrupt_node(
-        state
-    )
+    human_review_interrupt_node(state)
 
-    assert state[
-        "human_review_current"
-    ]["status"] == "requested"
+    assert state["human_review_current"]["status"] == "requested"
 
-    assert state[
-        "human_review_history"
-    ][0]["status"] == "requested"
+    assert state["human_review_history"][0]["status"] == "requested"
 
 
 def test_structured_response_is_preserved(
@@ -332,21 +260,13 @@ def test_structured_response_is_preserved(
         },
     )
 
-    result = human_review_interrupt_node(
-        _state()
-    )
+    result = human_review_interrupt_node(_state())
 
-    structured = result[
-        "structured_response"
-    ]
+    structured = result["structured_response"]
 
-    assert structured[
-        "existing"
-    ] is True
+    assert structured["existing"] is True
 
-    assert structured[
-        "human_review_result"
-    ]["status"] == "approved"
+    assert structured["human_review_result"]["status"] == "approved"
 
 
 @pytest.mark.parametrize(
@@ -402,9 +322,7 @@ def test_invalid_resume_payloads(
         HumanReviewError,
         match=expected_message,
     ):
-        human_review_interrupt_node(
-            _state()
-        )
+        human_review_interrupt_node(_state())
 
 
 def test_missing_current_review_is_rejected():
@@ -426,9 +344,7 @@ def test_invalid_pending_status_is_rejected():
     ):
         human_review_interrupt_node(
             _state(
-                human_review_current=_review(
-                    status="unknown"
-                ),
+                human_review_current=_review(status="unknown"),
             )
         )
 
@@ -470,9 +386,7 @@ def test_already_resolved_review_does_not_interrupt(
     def fail_interrupt(
         payload,
     ):
-        raise AssertionError(
-            "interrupt não deveria ser chamado."
-        )
+        raise AssertionError("interrupt não deveria ser chamado.")
 
     monkeypatch.setattr(
         module,
@@ -482,15 +396,11 @@ def test_already_resolved_review_does_not_interrupt(
 
     result = human_review_interrupt_node(
         _state(
-            human_review_current=_review(
-                status=status
-            ),
+            human_review_current=_review(status=status),
         )
     )
 
-    assert result[
-        "human_review_resume_route"
-    ] == expected_route
+    assert result["human_review_resume_route"] == expected_route
 
 
 @pytest.mark.parametrize(
@@ -505,9 +415,11 @@ def test_route_selector_accepts_known_routes(
     route,
 ):
     assert (
-        select_route_after_human_review_interrupt({
-            "human_review_resume_route": route,
-        })
+        select_route_after_human_review_interrupt(
+            {
+                "human_review_resume_route": route,
+            }
+        )
         == route
     )
 
@@ -517,6 +429,8 @@ def test_route_selector_rejects_unknown_route():
         HumanReviewError,
         match="Rota de retomada",
     ):
-        select_route_after_human_review_interrupt({
-            "human_review_resume_route": "unknown",
-        })
+        select_route_after_human_review_interrupt(
+            {
+                "human_review_resume_route": "unknown",
+            }
+        )

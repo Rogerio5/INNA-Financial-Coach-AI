@@ -39,9 +39,7 @@ def _number(
         value,
         (int, float),
     ):
-        raise BaselineSchemaError(
-            f"{field_name} deve ser numérico."
-        )
+        raise BaselineSchemaError(f"{field_name} deve ser numérico.")
 
     return float(value)
 
@@ -52,9 +50,7 @@ def _text(
     field_name: str,
 ) -> str:
     if not isinstance(value, str) or not value.strip():
-        raise BaselineSchemaError(
-            f"{field_name} deve ser texto não vazio."
-        )
+        raise BaselineSchemaError(f"{field_name} deve ser texto não vazio.")
 
     return value.strip()
 
@@ -65,9 +61,7 @@ def _mapping(
     field_name: str,
 ) -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
-        raise BaselineSchemaError(
-            f"{field_name} deve ser um objeto."
-        )
+        raise BaselineSchemaError(f"{field_name} deve ser um objeto.")
 
     return value
 
@@ -78,9 +72,7 @@ def _sequence(
     field_name: str,
 ) -> Sequence[Any]:
     if not isinstance(value, list):
-        raise BaselineSchemaError(
-            f"{field_name} deve ser uma lista."
-        )
+        raise BaselineSchemaError(f"{field_name} deve ser uma lista.")
 
     return value
 
@@ -96,9 +88,7 @@ def _extract_identifiers(
     for index, raw_item in enumerate(items):
         item = _mapping(
             raw_item,
-            field_name=(
-                f"{collection_name}[{index}]"
-            ),
+            field_name=(f"{collection_name}[{index}]"),
         )
 
         identifier: object = None
@@ -113,17 +103,13 @@ def _extract_identifiers(
         identifiers.append(
             _text(
                 identifier,
-                field_name=(
-                    f"{collection_name}[{index}]"
-                    f".{candidate_fields[0]}"
-                ),
+                field_name=(f"{collection_name}[{index}].{candidate_fields[0]}"),
             )
         )
 
     if len(identifiers) != len(set(identifiers)):
         raise BaselineSchemaError(
-            f"{collection_name} possui identificadores "
-            "duplicados."
+            f"{collection_name} possui identificadores duplicados."
         )
 
     return tuple(sorted(identifiers))
@@ -167,29 +153,24 @@ class CurrentMetric:
                 int,
             ):
                 raise BaselineSchemaError(
-                    f"metrics[{metric_id}]."
-                    f"{field_name} deve ser inteiro."
+                    f"metrics[{metric_id}].{field_name} deve ser inteiro."
                 )
 
             if value < 0:
                 raise BaselineSchemaError(
-                    f"metrics[{metric_id}]."
-                    f"{field_name} não pode ser negativo."
+                    f"metrics[{metric_id}].{field_name} não pode ser negativo."
                 )
 
             integer_values[field_name] = value
 
         average_score = _number(
             payload.get("average_score"),
-            field_name=(
-                f"metrics[{metric_id}].average_score"
-            ),
+            field_name=(f"metrics[{metric_id}].average_score"),
         )
 
         if not 0.0 <= average_score <= 1.0:
             raise BaselineSchemaError(
-                f"metrics[{metric_id}].average_score "
-                "deve estar entre 0 e 1."
+                f"metrics[{metric_id}].average_score deve estar entre 0 e 1."
             )
 
         return cls(
@@ -216,9 +197,7 @@ class MetricComparison:
             "baseline_score": self.baseline_score,
             "current_score": self.current_score,
             "delta": self.delta,
-            "allowed_regression": (
-                self.allowed_regression
-            ),
+            "allowed_regression": (self.allowed_regression),
             "status": self.status,
             "blocking": self.blocking,
             "critical": self.critical,
@@ -245,58 +224,29 @@ class EvaluationComparison:
     def regressed_metrics(
         self,
     ) -> tuple[MetricComparison, ...]:
-        return tuple(
-            metric
-            for metric in self.metrics
-            if metric.status == "regressed"
-        )
+        return tuple(metric for metric in self.metrics if metric.status == "regressed")
 
     @property
     def blocking_metrics(
         self,
     ) -> tuple[MetricComparison, ...]:
-        return tuple(
-            metric
-            for metric in self.metrics
-            if metric.blocking
-        )
+        return tuple(metric for metric in self.metrics if metric.blocking)
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "comparison_schema_version": "1.0.0",
             "baseline_id": self.baseline_id,
-            "current_run_reference": (
-                self.current_run_reference
-            ),
-            "baseline_pass_rate": (
-                self.baseline_pass_rate
-            ),
-            "current_pass_rate": (
-                self.current_pass_rate
-            ),
-            "pass_rate_delta": (
-                self.pass_rate_delta
-            ),
-            "quality_gate_passed": (
-                self.quality_gate_passed
-            ),
+            "current_run_reference": (self.current_run_reference),
+            "baseline_pass_rate": (self.baseline_pass_rate),
+            "current_pass_rate": (self.current_pass_rate),
+            "pass_rate_delta": (self.pass_rate_delta),
+            "quality_gate_passed": (self.quality_gate_passed),
             "passed": self.passed,
-            "metrics": [
-                metric.to_dict()
-                for metric in self.metrics
-            ],
-            "missing_case_ids": list(
-                self.missing_case_ids
-            ),
-            "new_case_ids": list(
-                self.new_case_ids
-            ),
-            "missing_dataset_ids": list(
-                self.missing_dataset_ids
-            ),
-            "new_dataset_ids": list(
-                self.new_dataset_ids
-            ),
+            "metrics": [metric.to_dict() for metric in self.metrics],
+            "missing_case_ids": list(self.missing_case_ids),
+            "new_case_ids": list(self.new_case_ids),
+            "missing_dataset_ids": list(self.missing_dataset_ids),
+            "new_dataset_ids": list(self.new_dataset_ids),
             "violations": list(self.violations),
         }
 
@@ -313,16 +263,10 @@ def compare_report_to_baseline(
     block_missing_metrics: bool = True,
 ) -> EvaluationComparison:
     if not 0.0 <= maximum_metric_regression <= 1.0:
-        raise ValueError(
-            "maximum_metric_regression deve estar "
-            "entre 0 e 1."
-        )
+        raise ValueError("maximum_metric_regression deve estar entre 0 e 1.")
 
     if not 0.0 <= maximum_pass_rate_regression <= 1.0:
-        raise ValueError(
-            "maximum_pass_rate_regression deve estar "
-            "entre 0 e 1."
-        )
+        raise ValueError("maximum_pass_rate_regression deve estar entre 0 e 1.")
 
     critical_ids = critical_metric_ids or frozenset()
 
@@ -342,16 +286,12 @@ def compare_report_to_baseline(
     )
 
     if not 0.0 <= current_pass_rate <= 1.0:
-        raise BaselineSchemaError(
-            "summary.pass_rate deve estar entre 0 e 1."
-        )
+        raise BaselineSchemaError("summary.pass_rate deve estar entre 0 e 1.")
 
     quality_gate_passed = quality_gate.get("passed")
 
     if not isinstance(quality_gate_passed, bool):
-        raise BaselineSchemaError(
-            "quality_gate.passed deve ser booleano."
-        )
+        raise BaselineSchemaError("quality_gate.passed deve ser booleano.")
 
     current_run_reference = _text(
         report.get("run_reference"),
@@ -397,32 +337,21 @@ def compare_report_to_baseline(
 
         if metric.metric_id in current_metrics:
             raise BaselineSchemaError(
-                "O relatório atual possui metric_id "
-                f"duplicado: {metric.metric_id}."
+                f"O relatório atual possui metric_id duplicado: {metric.metric_id}."
             )
 
         current_metrics[metric.metric_id] = metric
 
-    baseline_metrics = {
-        metric.metric_id: metric
-        for metric in baseline.metrics
-    }
+    baseline_metrics = {metric.metric_id: metric for metric in baseline.metrics}
 
     comparisons: list[MetricComparison] = []
     violations: list[str] = []
 
-    metric_ids = sorted(
-        set(baseline_metrics)
-        | set(current_metrics)
-    )
+    metric_ids = sorted(set(baseline_metrics) | set(current_metrics))
 
     for metric_id in metric_ids:
-        baseline_metric = baseline_metrics.get(
-            metric_id
-        )
-        current_metric = current_metrics.get(
-            metric_id
-        )
+        baseline_metric = baseline_metrics.get(metric_id)
+        current_metric = current_metrics.get(metric_id)
         critical = metric_id in critical_ids
 
         if baseline_metric is None:
@@ -431,14 +360,10 @@ def compare_report_to_baseline(
                     metric_id=metric_id,
                     baseline_score=None,
                     current_score=(
-                        current_metric.average_score
-                        if current_metric
-                        else None
+                        current_metric.average_score if current_metric else None
                     ),
                     delta=None,
-                    allowed_regression=(
-                        maximum_metric_regression
-                    ),
+                    allowed_regression=(maximum_metric_regression),
                     status="new",
                     blocking=False,
                     critical=critical,
@@ -447,21 +372,15 @@ def compare_report_to_baseline(
             continue
 
         if current_metric is None:
-            blocking = (
-                block_missing_metrics or critical
-            )
+            blocking = block_missing_metrics or critical
 
             comparisons.append(
                 MetricComparison(
                     metric_id=metric_id,
-                    baseline_score=(
-                        baseline_metric.average_score
-                    ),
+                    baseline_score=(baseline_metric.average_score),
                     current_score=None,
                     delta=None,
-                    allowed_regression=(
-                        maximum_metric_regression
-                    ),
+                    allowed_regression=(maximum_metric_regression),
                     status="missing",
                     blocking=blocking,
                     critical=critical,
@@ -469,17 +388,11 @@ def compare_report_to_baseline(
             )
 
             if blocking:
-                violations.append(
-                    "Métrica obrigatória ausente: "
-                    f"{metric_id}."
-                )
+                violations.append(f"Métrica obrigatória ausente: {metric_id}.")
 
             continue
 
-        delta = (
-            current_metric.average_score
-            - baseline_metric.average_score
-        )
+        delta = current_metric.average_score - baseline_metric.average_score
 
         if delta < -maximum_metric_regression:
             status: ComparisonStatus = "regressed"
@@ -502,35 +415,22 @@ def compare_report_to_baseline(
         if critical and current_metric.failed > 0:
             blocking = True
             violations.append(
-                "Métrica crítica possui falhas: "
-                f"{metric_id}="
-                f"{current_metric.failed}."
+                f"Métrica crítica possui falhas: {metric_id}={current_metric.failed}."
             )
 
-        if critical and (
-            current_metric.blocked > 0
-            or current_metric.errors > 0
-        ):
+        if critical and (current_metric.blocked > 0 or current_metric.errors > 0):
             blocking = True
             violations.append(
-                "Métrica crítica possui bloqueios "
-                "ou erros: "
-                f"{metric_id}."
+                f"Métrica crítica possui bloqueios ou erros: {metric_id}."
             )
 
         comparisons.append(
             MetricComparison(
                 metric_id=metric_id,
-                baseline_score=(
-                    baseline_metric.average_score
-                ),
-                current_score=(
-                    current_metric.average_score
-                ),
+                baseline_score=(baseline_metric.average_score),
+                current_score=(current_metric.average_score),
                 delta=delta,
-                allowed_regression=(
-                    maximum_metric_regression
-                ),
+                allowed_regression=(maximum_metric_regression),
                 status=status,
                 blocking=blocking,
                 critical=critical,
@@ -540,65 +440,30 @@ def compare_report_to_baseline(
     baseline_case_ids = set(baseline.case_ids)
     current_case_ids = set(current_cases)
 
-    missing_case_ids = tuple(
-        sorted(
-            baseline_case_ids
-            - current_case_ids
-        )
-    )
+    missing_case_ids = tuple(sorted(baseline_case_ids - current_case_ids))
 
-    new_case_ids = tuple(
-        sorted(
-            current_case_ids
-            - baseline_case_ids
-        )
-    )
+    new_case_ids = tuple(sorted(current_case_ids - baseline_case_ids))
 
-    baseline_dataset_ids = set(
-        baseline.dataset_ids
-    )
+    baseline_dataset_ids = set(baseline.dataset_ids)
     current_dataset_ids = set(current_datasets)
 
-    missing_dataset_ids = tuple(
-        sorted(
-            baseline_dataset_ids
-            - current_dataset_ids
-        )
-    )
+    missing_dataset_ids = tuple(sorted(baseline_dataset_ids - current_dataset_ids))
 
-    new_dataset_ids = tuple(
-        sorted(
-            current_dataset_ids
-            - baseline_dataset_ids
-        )
-    )
+    new_dataset_ids = tuple(sorted(current_dataset_ids - baseline_dataset_ids))
 
     if block_missing_cases and missing_case_ids:
         violations.append(
-            "Casos da baseline ausentes: "
-            + ", ".join(missing_case_ids)
-            + "."
+            "Casos da baseline ausentes: " + ", ".join(missing_case_ids) + "."
         )
 
-    if (
-        block_missing_datasets
-        and missing_dataset_ids
-    ):
+    if block_missing_datasets and missing_dataset_ids:
         violations.append(
-            "Datasets da baseline ausentes: "
-            + ", ".join(missing_dataset_ids)
-            + "."
+            "Datasets da baseline ausentes: " + ", ".join(missing_dataset_ids) + "."
         )
 
-    pass_rate_delta = (
-        current_pass_rate
-        - baseline.pass_rate
-    )
+    pass_rate_delta = current_pass_rate - baseline.pass_rate
 
-    if (
-        pass_rate_delta
-        < -maximum_pass_rate_regression
-    ):
+    if pass_rate_delta < -maximum_pass_rate_regression:
         violations.append(
             "Regressão da taxa de aprovação: "
             f"{baseline.pass_rate:.4f} → "
@@ -607,21 +472,13 @@ def compare_report_to_baseline(
         )
 
     if not quality_gate_passed:
-        violations.append(
-            "O quality gate da avaliação atual "
-            "foi reprovado."
-        )
+        violations.append("O quality gate da avaliação atual foi reprovado.")
 
-    passed = not violations and not any(
-        metric.blocking
-        for metric in comparisons
-    )
+    passed = not violations and not any(metric.blocking for metric in comparisons)
 
     return EvaluationComparison(
         baseline_id=baseline.baseline_id,
-        current_run_reference=(
-            current_run_reference
-        ),
+        current_run_reference=(current_run_reference),
         baseline_pass_rate=baseline.pass_rate,
         current_pass_rate=current_pass_rate,
         pass_rate_delta=pass_rate_delta,
@@ -629,9 +486,7 @@ def compare_report_to_baseline(
         metrics=tuple(comparisons),
         missing_case_ids=missing_case_ids,
         new_case_ids=new_case_ids,
-        missing_dataset_ids=(
-            missing_dataset_ids
-        ),
+        missing_dataset_ids=(missing_dataset_ids),
         new_dataset_ids=new_dataset_ids,
         violations=tuple(violations),
         passed=passed,
@@ -653,11 +508,7 @@ def compare_report_files(
 def render_comparison_markdown(
     comparison: EvaluationComparison,
 ) -> str:
-    status = (
-        "APROVADO"
-        if comparison.passed
-        else "REPROVADO"
-    )
+    status = "APROVADO" if comparison.passed else "REPROVADO"
 
     lines = [
         "# Relatório de Regressão LLMOps — INNA",
@@ -665,58 +516,29 @@ def render_comparison_markdown(
         f"**Status:** {status}",
         "",
         f"- Baseline: `{comparison.baseline_id}`",
-        (
-            "- Execução atual: "
-            f"`{comparison.current_run_reference}`"
-        ),
-        (
-            "- Taxa de aprovação da baseline: "
-            f"{comparison.baseline_pass_rate:.2%}"
-        ),
-        (
-            "- Taxa de aprovação atual: "
-            f"{comparison.current_pass_rate:.2%}"
-        ),
-        (
-            "- Variação da taxa de aprovação: "
-            f"{comparison.pass_rate_delta:+.2%}"
-        ),
+        (f"- Execução atual: `{comparison.current_run_reference}`"),
+        (f"- Taxa de aprovação da baseline: {comparison.baseline_pass_rate:.2%}"),
+        (f"- Taxa de aprovação atual: {comparison.current_pass_rate:.2%}"),
+        (f"- Variação da taxa de aprovação: {comparison.pass_rate_delta:+.2%}"),
         (
             "- Quality Gate atual: "
-            + (
-                "aprovado"
-                if comparison.quality_gate_passed
-                else "reprovado"
-            )
+            + ("aprovado" if comparison.quality_gate_passed else "reprovado")
         ),
         "",
         "## Métricas",
         "",
-        (
-            "| Métrica | Baseline | Atual | Delta | "
-            "Status | Bloqueante |"
-        ),
-        (
-            "|---|---:|---:|---:|---|---|"
-        ),
+        ("| Métrica | Baseline | Atual | Delta | Status | Bloqueante |"),
+        ("|---|---:|---:|---:|---|---|"),
     ]
 
     for metric in comparison.metrics:
         baseline_score = (
-            f"{metric.baseline_score:.4f}"
-            if metric.baseline_score is not None
-            else "-"
+            f"{metric.baseline_score:.4f}" if metric.baseline_score is not None else "-"
         )
         current_score = (
-            f"{metric.current_score:.4f}"
-            if metric.current_score is not None
-            else "-"
+            f"{metric.current_score:.4f}" if metric.current_score is not None else "-"
         )
-        delta = (
-            f"{metric.delta:+.4f}"
-            if metric.delta is not None
-            else "-"
-        )
+        delta = f"{metric.delta:+.4f}" if metric.delta is not None else "-"
 
         lines.append(
             "| "
@@ -736,9 +558,7 @@ def render_comparison_markdown(
             (
                 "- Casos removidos: "
                 + (
-                    ", ".join(
-                        comparison.missing_case_ids
-                    )
+                    ", ".join(comparison.missing_case_ids)
                     if comparison.missing_case_ids
                     else "nenhum"
                 )
@@ -746,9 +566,7 @@ def render_comparison_markdown(
             (
                 "- Casos novos: "
                 + (
-                    ", ".join(
-                        comparison.new_case_ids
-                    )
+                    ", ".join(comparison.new_case_ids)
                     if comparison.new_case_ids
                     else "nenhum"
                 )
@@ -756,9 +574,7 @@ def render_comparison_markdown(
             (
                 "- Datasets removidos: "
                 + (
-                    ", ".join(
-                        comparison.missing_dataset_ids
-                    )
+                    ", ".join(comparison.missing_dataset_ids)
                     if comparison.missing_dataset_ids
                     else "nenhum"
                 )
@@ -766,9 +582,7 @@ def render_comparison_markdown(
             (
                 "- Datasets novos: "
                 + (
-                    ", ".join(
-                        comparison.new_dataset_ids
-                    )
+                    ", ".join(comparison.new_dataset_ids)
                     if comparison.new_dataset_ids
                     else "nenhum"
                 )
@@ -780,14 +594,9 @@ def render_comparison_markdown(
     )
 
     if comparison.violations:
-        lines.extend(
-            f"- {violation}"
-            for violation in comparison.violations
-        )
+        lines.extend(f"- {violation}" for violation in comparison.violations)
     else:
-        lines.append(
-            "- Nenhuma regressão bloqueante."
-        )
+        lines.append("- Nenhuma regressão bloqueante.")
 
     return "\n".join(lines) + "\n"
 
@@ -802,12 +611,8 @@ def write_comparison_reports(
         exist_ok=True,
     )
 
-    json_path = (
-        directory / "comparison-report.json"
-    )
-    markdown_path = (
-        directory / "comparison-report.md"
-    )
+    json_path = directory / "comparison-report.json"
+    markdown_path = directory / "comparison-report.md"
 
     json_path.write_text(
         json.dumps(
@@ -821,9 +626,7 @@ def write_comparison_reports(
     )
 
     markdown_path.write_text(
-        render_comparison_markdown(
-            comparison
-        ),
+        render_comparison_markdown(comparison),
         encoding="utf-8",
     )
 
@@ -836,9 +639,7 @@ def enforce_comparison(
     if comparison.passed:
         return
 
-    details = "; ".join(
-        comparison.violations
-    ) or "Regressão bloqueante identificada."
+    details = "; ".join(comparison.violations) or "Regressão bloqueante identificada."
 
     raise EvaluationRegressionError(details)
 

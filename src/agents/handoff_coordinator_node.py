@@ -30,9 +30,7 @@ SPECIALIZED_AGENTS = {
 def _normalize_text(
     value: Any,
 ) -> str:
-    return str(
-        value or ""
-    ).strip()
+    return str(value or "").strip()
 
 
 def _resolve_current_agent(
@@ -66,16 +64,10 @@ def _resolve_current_agent(
         [],
     )
 
-    for item in reversed(
-        list(trace or [])
-    ):
-        normalized = _normalize_text(
-            item
-        )
+    for item in reversed(list(trace or [])):
+        normalized = _normalize_text(item)
 
-        if not normalized.startswith(
-            "agent:"
-        ):
+        if not normalized.startswith("agent:"):
             continue
 
         candidate = normalized.split(
@@ -132,15 +124,9 @@ def _handoff_payload(
     Evita copiar todo o estado para o handoff.
     """
     return {
-        "intent": state.get(
-            "intent"
-        ),
-        "task_status": state.get(
-            "task_status"
-        ),
-        "task_completion_score": state.get(
-            "task_completion_score"
-        ),
+        "intent": state.get("intent"),
+        "task_status": state.get("task_status"),
+        "task_completion_score": state.get("task_completion_score"),
         "completed_requirements": list(
             state.get(
                 "completed_requirements",
@@ -166,15 +152,9 @@ def _handoff_metadata(
     state: InnaAgentState,
 ) -> dict[str, Any]:
     return {
-        "thread_id": state.get(
-            "thread_id"
-        ),
-        "route_source": state.get(
-            "route_source"
-        ),
-        "routing_reason": state.get(
-            "routing_reason"
-        ),
+        "thread_id": state.get("thread_id"),
+        "route_source": state.get("route_source"),
+        "routing_reason": state.get("routing_reason"),
     }
 
 
@@ -239,10 +219,7 @@ def _has_reverse_handoff_cycle(
             )
         )
 
-        if (
-            previous_from == to_agent
-            and previous_to == from_agent
-        ):
+        if previous_from == to_agent and previous_to == from_agent:
             return True
 
     return False
@@ -268,10 +245,7 @@ def _request_handoff(
     )
 
     if not current_agent:
-        error = (
-            "Não foi possível identificar o "
-            "agente de origem do handoff."
-        )
+        error = "Não foi possível identificar o agente de origem do handoff."
 
         return {
             "errors": _append_error(
@@ -285,10 +259,7 @@ def _request_handoff(
         }
 
     if target not in SPECIALIZED_AGENTS:
-        error = (
-            "O agente de destino do handoff "
-            "é inválido ou não foi informado."
-        )
+        error = "O agente de destino do handoff é inválido ou não foi informado."
 
         return {
             "errors": _append_error(
@@ -302,10 +273,7 @@ def _request_handoff(
         }
 
     if target == current_agent:
-        error = (
-            "O agente de origem e o agente "
-            "de destino do handoff são iguais."
-        )
+        error = "O agente de origem e o agente de destino do handoff são iguais."
 
         return {
             "errors": _append_error(
@@ -319,9 +287,7 @@ def _request_handoff(
         }
 
     if not reason:
-        error = (
-            "O motivo do handoff não foi informado."
-        )
+        error = "O motivo do handoff não foi informado."
 
         return {
             "errors": _append_error(
@@ -342,15 +308,10 @@ def _request_handoff(
         or 0
     )
 
-    max_handoffs = _max_handoffs(
-        state
-    )
+    max_handoffs = _max_handoffs(state)
 
     if handoff_count >= max_handoffs:
-        error = (
-            "O limite máximo de handoffs "
-            "da execução foi atingido."
-        )
+        error = "O limite máximo de handoffs da execução foi atingido."
 
         return {
             "handoff_required": False,
@@ -370,10 +331,7 @@ def _request_handoff(
         from_agent=current_agent,
         to_agent=target,
     ):
-        error = (
-            "O handoff foi bloqueado porque "
-            "criaria um ciclo entre agentes."
-        )
+        error = "O handoff foi bloqueado porque criaria um ciclo entre agentes."
 
         return {
             "handoff_required": False,
@@ -391,12 +349,8 @@ def _request_handoff(
         from_agent=current_agent,
         to_agent=target,
         reason=reason,
-        payload=_handoff_payload(
-            state
-        ),
-        metadata=_handoff_metadata(
-            state
-        ),
+        payload=_handoff_payload(state),
+        metadata=_handoff_metadata(state),
     )
 
     handoff_count += 1
@@ -410,11 +364,7 @@ def _request_handoff(
         "handoff_required": False,
         "trace": _append_trace(
             state,
-            (
-                "handoff:requested:"
-                f"{current_agent}->{target}:"
-                f"{handoff['handoff_id']}"
-            ),
+            (f"handoff:requested:{current_agent}->{target}:{handoff['handoff_id']}"),
         ),
     }
 
@@ -490,9 +440,7 @@ def _accept_requested_handoff(
             accepted,
             result={
                 "task_status": task_status,
-                "task_completion_score": state.get(
-                    "task_completion_score"
-                ),
+                "task_completion_score": state.get("task_completion_score"),
                 "response_generated": bool(
                     _normalize_text(
                         state.get(
@@ -540,7 +488,6 @@ def _accept_requested_handoff(
     }
 
 
-
 def _finalize_accepted_handoff(
     state: InnaAgentState,
     *,
@@ -579,10 +526,7 @@ def _finalize_accepted_handoff(
             ],
             "trace": _append_trace(
                 state,
-                (
-                    "handoff:failed:"
-                    f"{failed['handoff_id']}"
-                ),
+                (f"handoff:failed:{failed['handoff_id']}"),
             ),
         }
 
@@ -600,9 +544,7 @@ def _finalize_accepted_handoff(
         handoff,
         result={
             "task_status": task_status,
-            "task_completion_score": state.get(
-                "task_completion_score"
-            ),
+            "task_completion_score": state.get("task_completion_score"),
             "response_generated": bool(
                 _normalize_text(
                     state.get(
@@ -623,10 +565,7 @@ def _finalize_accepted_handoff(
         "handoff_reason": "",
         "trace": _append_trace(
             state,
-            (
-                "handoff:completed:"
-                f"{completed['handoff_id']}"
-            ),
+            (f"handoff:completed:{completed['handoff_id']}"),
         ),
     }
 
@@ -643,15 +582,9 @@ def handoff_coordinator_node(
     3. conclui quando a tarefa do destino está completed;
     4. falha quando o destino registra erros.
     """
-    current_agent = (
-        _resolve_current_agent(
-            state
-        )
-    )
+    current_agent = _resolve_current_agent(state)
 
-    current_handoff = state.get(
-        "handoff_current"
-    )
+    current_handoff = state.get("handoff_current")
 
     if isinstance(
         current_handoff,

@@ -42,9 +42,7 @@ def calcular_percentis(
     """
     Calcula P50, P95 e P99.
     """
-    serie = _serie_numerica(
-        valores
-    )
+    serie = _serie_numerica(valores)
 
     if serie.empty:
         return {
@@ -101,18 +99,10 @@ def preparar_eventos_analytics(
         )
 
     if "sucesso" in base.columns:
-        base["sucesso"] = (
-            base["sucesso"]
-            .fillna(False)
-            .astype(bool)
-        )
+        base["sucesso"] = base["sucesso"].fillna(False).astype(bool)
 
     if "executada" in base.columns:
-        base["executada"] = (
-            base["executada"]
-            .fillna(False)
-            .astype(bool)
-        )
+        base["executada"] = base["executada"].fillna(False).astype(bool)
 
     if "tool_label" in base.columns:
         labels = base["tool_label"].copy()
@@ -124,13 +114,9 @@ def preparar_eventos_analytics(
         )
 
     if "tool_nome" in base.columns:
-        labels = labels.fillna(
-            base["tool_nome"]
-        )
+        labels = labels.fillna(base["tool_nome"])
 
-    base["tool_exibicao"] = labels.fillna(
-        "Sem Tool"
-    )
+    base["tool_exibicao"] = labels.fillna("Sem Tool")
 
     return base
 
@@ -141,9 +127,7 @@ def calcular_ranking_tools(
     """
     Produz ranking completo por Tool.
     """
-    base = preparar_eventos_analytics(
-        df
-    )
+    base = preparar_eventos_analytics(df)
 
     if base.empty:
         return pd.DataFrame()
@@ -158,9 +142,7 @@ def calcular_ranking_tools(
             sucessos=("sucesso", "sum"),
             falhas=(
                 "sucesso",
-                lambda serie: int(
-                    (~serie.astype(bool)).sum()
-                ),
+                lambda serie: int((~serie.astype(bool)).sum()),
             ),
             confianca_media=(
                 "confianca",
@@ -187,29 +169,20 @@ def calcular_ranking_tools(
         )
     )
 
-    agrupado["taxa_sucesso_percentual"] = (
-        agrupado.apply(
-            lambda row: (
-                round(
-                    (
-                        float(row["sucessos"])
-                        / float(row["execucoes"])
-                    )
-                    * 100,
-                    2,
-                )
-                if row["execucoes"] > 0
-                else 0.0
-            ),
-            axis=1,
-        )
+    agrupado["taxa_sucesso_percentual"] = agrupado.apply(
+        lambda row: (
+            round(
+                (float(row["sucessos"]) / float(row["execucoes"])) * 100,
+                2,
+            )
+            if row["execucoes"] > 0
+            else 0.0
+        ),
+        axis=1,
     )
 
     agrupado["confianca_media_percentual"] = (
-        agrupado["confianca_media"]
-        .fillna(0)
-        .mul(100)
-        .round(2)
+        agrupado["confianca_media"].fillna(0).mul(100).round(2)
     )
 
     for coluna in [
@@ -217,27 +190,21 @@ def calcular_ranking_tools(
         "duracao_minima_ms",
         "duracao_maxima_ms",
     ]:
-        agrupado[coluna] = (
-            agrupado[coluna]
-            .fillna(0)
-            .round(3)
-        )
+        agrupado[coluna] = agrupado[coluna].fillna(0).round(3)
 
     percentis = []
 
-    for ferramenta, grupo in base.groupby(
-        "tool_exibicao"
-    ):
-        valores = calcular_percentis(
-            grupo["duracao_ms"]
-        )
+    for ferramenta, grupo in base.groupby("tool_exibicao"):
+        valores = calcular_percentis(grupo["duracao_ms"])
 
-        percentis.append({
-            "ferramenta": ferramenta,
-            "p50_ms": valores["p50"],
-            "p95_ms": valores["p95"],
-            "p99_ms": valores["p99"],
-        })
+        percentis.append(
+            {
+                "ferramenta": ferramenta,
+                "p50_ms": valores["p50"],
+                "p95_ms": valores["p95"],
+                "p99_ms": valores["p99"],
+            }
+        )
 
     if percentis:
         agrupado = agrupado.merge(
@@ -271,9 +238,7 @@ def calcular_distribuicao_coluna(
     """
     Gera frequência absoluta e percentual.
     """
-    base = preparar_eventos_analytics(
-        df
-    )
+    base = preparar_eventos_analytics(df)
 
     if base.empty or coluna not in base.columns:
         return pd.DataFrame(
@@ -284,37 +249,20 @@ def calcular_distribuicao_coluna(
             ]
         )
 
-    serie = (
-        base[coluna]
-        .fillna(valor_padrao)
-        .astype(str)
-    )
+    serie = base[coluna].fillna(valor_padrao).astype(str)
 
-    resultado = (
-        serie.value_counts()
-        .rename_axis(coluna)
-        .reset_index(name="total")
-    )
+    resultado = serie.value_counts().rename_axis(coluna).reset_index(name="total")
 
-    total_geral = int(
-        resultado["total"].sum()
-    )
+    total_geral = int(resultado["total"].sum())
 
-    resultado["percentual"] = (
-        resultado["total"]
-        .apply(
-            lambda valor: (
-                round(
-                    (
-                        int(valor)
-                        / total_geral
-                    )
-                    * 100,
-                    2,
-                )
-                if total_geral > 0
-                else 0.0
+    resultado["percentual"] = resultado["total"].apply(
+        lambda valor: (
+            round(
+                (int(valor) / total_geral) * 100,
+                2,
             )
+            if total_geral > 0
+            else 0.0
         )
     )
 
@@ -327,9 +275,7 @@ def calcular_execucoes_sem_tool(
     """
     Identifica eventos sem Tool reconhecida.
     """
-    base = preparar_eventos_analytics(
-        df
-    )
+    base = preparar_eventos_analytics(df)
 
     if base.empty:
         return {
@@ -337,23 +283,14 @@ def calcular_execucoes_sem_tool(
             "percentual": 0.0,
         }
 
-    mascara = (
-        base["tool_exibicao"]
-        == "Sem Tool"
-    )
+    mascara = base["tool_exibicao"] == "Sem Tool"
 
-    total_sem_tool = int(
-        mascara.sum()
-    )
+    total_sem_tool = int(mascara.sum())
 
     return {
         "total": total_sem_tool,
         "percentual": round(
-            (
-                total_sem_tool
-                / len(base)
-            )
-            * 100,
+            (total_sem_tool / len(base)) * 100,
             2,
         ),
     }
@@ -372,26 +309,17 @@ def calcular_serie_temporal_analytics(
     - W: semana
     - ME: mês
     """
-    base = preparar_eventos_analytics(
-        df
-    )
+    base = preparar_eventos_analytics(df)
 
-    if (
-        base.empty
-        or "criado_em" not in base.columns
-    ):
+    if base.empty or "criado_em" not in base.columns:
         return pd.DataFrame()
 
-    base = base.dropna(
-        subset=["criado_em"]
-    )
+    base = base.dropna(subset=["criado_em"])
 
     if base.empty:
         return pd.DataFrame()
 
-    base = base.set_index(
-        "criado_em"
-    )
+    base = base.set_index("criado_em")
 
     serie = (
         base.resample(frequencia)
@@ -414,40 +342,24 @@ def calcular_serie_temporal_analytics(
         .reset_index()
     )
 
-    serie["falhas"] = (
-        serie["execucoes"]
-        - serie["sucessos"]
+    serie["falhas"] = serie["execucoes"] - serie["sucessos"]
+
+    serie["taxa_sucesso_percentual"] = serie.apply(
+        lambda row: (
+            round(
+                (row["sucessos"] / row["execucoes"]) * 100,
+                2,
+            )
+            if row["execucoes"] > 0
+            else 0.0
+        ),
+        axis=1,
     )
 
-    serie["taxa_sucesso_percentual"] = (
-        serie.apply(
-            lambda row: (
-                round(
-                    (
-                        row["sucessos"]
-                        / row["execucoes"]
-                    )
-                    * 100,
-                    2,
-                )
-                if row["execucoes"] > 0
-                else 0.0
-            ),
-            axis=1,
-        )
-    )
-
-    serie["duracao_media_ms"] = (
-        serie["duracao_media_ms"]
-        .fillna(0)
-        .round(3)
-    )
+    serie["duracao_media_ms"] = serie["duracao_media_ms"].fillna(0).round(3)
 
     serie["confianca_media_percentual"] = (
-        serie["confianca_media"]
-        .fillna(0)
-        .mul(100)
-        .round(2)
+        serie["confianca_media"].fillna(0).mul(100).round(2)
     )
 
     return serie
@@ -462,27 +374,16 @@ def comparar_periodos(
     """
     Compara o período atual com o período anterior.
     """
-    base = preparar_eventos_analytics(
-        df
-    )
+    base = preparar_eventos_analytics(df)
 
-    agora_utc = agora or datetime.now(
-        timezone.utc
-    )
+    agora_utc = agora or datetime.now(timezone.utc)
 
     if agora_utc.tzinfo is None:
-        agora_utc = agora_utc.replace(
-            tzinfo=timezone.utc
-        )
+        agora_utc = agora_utc.replace(tzinfo=timezone.utc)
     else:
-        agora_utc = agora_utc.astimezone(
-            timezone.utc
-        )
+        agora_utc = agora_utc.astimezone(timezone.utc)
 
-    if (
-        base.empty
-        or "criado_em" not in base.columns
-    ):
+    if base.empty or "criado_em" not in base.columns:
         return {
             "periodo_atual": {},
             "periodo_anterior": {},
@@ -491,29 +392,14 @@ def comparar_periodos(
             "variacao_duracao_percentual": 0.0,
         }
 
-    inicio_atual = agora_utc - pd.Timedelta(
-        hours=horas
-    )
+    inicio_atual = agora_utc - pd.Timedelta(hours=horas)
 
-    inicio_anterior = (
-        inicio_atual
-        - pd.Timedelta(hours=horas)
-    )
+    inicio_anterior = inicio_atual - pd.Timedelta(hours=horas)
 
-    atual = base[
-        (base["criado_em"] >= inicio_atual)
-        & (base["criado_em"] <= agora_utc)
-    ]
+    atual = base[(base["criado_em"] >= inicio_atual) & (base["criado_em"] <= agora_utc)]
 
     anterior = base[
-        (
-            base["criado_em"]
-            >= inicio_anterior
-        )
-        & (
-            base["criado_em"]
-            < inicio_atual
-        )
+        (base["criado_em"] >= inicio_anterior) & (base["criado_em"] < inicio_atual)
     ]
 
     def resumir(
@@ -526,22 +412,14 @@ def comparar_periodos(
                 "duracao_media_ms": 0.0,
             }
 
-        falhas = int(
-            (~periodo["sucesso"]).sum()
-        )
+        falhas = int((~periodo["sucesso"]).sum())
 
         duracao_media = (
             round(
-                float(
-                    periodo[
-                        "duracao_ms"
-                    ].dropna().mean()
-                ),
+                float(periodo["duracao_ms"].dropna().mean()),
                 3,
             )
-            if periodo[
-                "duracao_ms"
-            ].notna().any()
+            if periodo["duracao_ms"].notna().any()
             else 0.0
         )
 
@@ -559,21 +437,10 @@ def comparar_periodos(
         anterior_valor: float,
     ) -> float:
         if anterior_valor == 0:
-            return (
-                100.0
-                if atual_valor > 0
-                else 0.0
-            )
+            return 100.0 if atual_valor > 0 else 0.0
 
         return round(
-            (
-                (
-                    atual_valor
-                    - anterior_valor
-                )
-                / anterior_valor
-            )
-            * 100,
+            ((atual_valor - anterior_valor) / anterior_valor) * 100,
             2,
         )
 

@@ -44,9 +44,7 @@ def _get_database_url() -> str:
     database_url = os.getenv("DATABASE_URL")
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não configurada."
-        )
+        raise RuntimeError("DATABASE_URL não configurada.")
 
     return database_url
 
@@ -59,25 +57,24 @@ def _criar_engine():
 
 
 def carregar_configuracao() -> dict[str, Any]:
-    habilitado = (
-        os.getenv(
-            "LLM_ALERT_EMAIL_ENABLED",
-            "false",
-        )
-        .strip()
-        .lower()
-        in {"true", "1", "yes", "sim", "on"}
-    )
+    habilitado = os.getenv(
+        "LLM_ALERT_EMAIL_ENABLED",
+        "false",
+    ).strip().lower() in {"true", "1", "yes", "sim", "on"}
 
     destinatario = os.getenv(
         "LLM_ALERT_EMAIL_TO",
         "",
     ).strip()
 
-    severidade_minima = os.getenv(
-        "LLM_ALERT_MIN_SEVERITY",
-        "alta",
-    ).strip().lower()
+    severidade_minima = (
+        os.getenv(
+            "LLM_ALERT_MIN_SEVERITY",
+            "alta",
+        )
+        .strip()
+        .lower()
+    )
 
     if severidade_minima not in ORDEM_SEVERIDADE:
         severidade_minima = "alta"
@@ -86,9 +83,7 @@ def carregar_configuracao() -> dict[str, Any]:
         "habilitado": habilitado,
         "destinatario": destinatario,
         "severidade_minima": severidade_minima,
-        "resend_configurado": bool(
-            os.getenv("RESEND_API_KEY")
-        ),
+        "resend_configurado": bool(os.getenv("RESEND_API_KEY")),
     }
 
 
@@ -103,11 +98,7 @@ def mascarar_email(email: str) -> str:
     if len(usuario) <= 2:
         usuario_mascarado = usuario[:1] + "***"
     else:
-        usuario_mascarado = (
-            usuario[:2]
-            + "***"
-            + usuario[-1:]
-        )
+        usuario_mascarado = usuario[:2] + "***" + usuario[-1:]
 
     return f"{usuario_mascarado}@{dominio}"
 
@@ -165,18 +156,13 @@ def inicializar_tabela_notificacoes() -> dict[str, Any]:
 
         return {
             "ok": True,
-            "message": (
-                "Tabela de notificações inicializada."
-            ),
+            "message": ("Tabela de notificações inicializada."),
         }
 
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro ao inicializar tabela: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao inicializar tabela: {exc}"),
         }
 
 
@@ -185,9 +171,7 @@ def alerta_deve_ser_enviado(
     *,
     severidade_minima: str,
 ) -> bool:
-    status = str(
-        alerta.get("status", "aberto")
-    ).lower()
+    status = str(alerta.get("status", "aberto")).lower()
 
     severidade = str(
         alerta.get(
@@ -196,9 +180,7 @@ def alerta_deve_ser_enviado(
         )
     ).lower()
 
-    minimo = str(
-        severidade_minima or "alta"
-    ).lower()
+    minimo = str(severidade_minima or "alta").lower()
 
     if minimo not in ORDEM_SEVERIDADE:
         minimo = "alta"
@@ -237,13 +219,9 @@ def montar_email_alerta(
         )
     ).title()
 
-    descricao = str(
-        alerta.get("descricao", "")
-    )
+    descricao = str(alerta.get("descricao", ""))
 
-    recomendacao = str(
-        alerta.get("recomendacao", "")
-    )
+    recomendacao = str(alerta.get("recomendacao", ""))
 
     valor_atual = alerta.get(
         "valor_atual",
@@ -255,13 +233,9 @@ def montar_email_alerta(
         0,
     )
 
-    unidade = str(
-        alerta.get("unidade", "")
-    )
+    unidade = str(alerta.get("unidade", ""))
 
-    assunto = (
-        f"[INNA] Alerta {severidade}: {titulo}"
-    )[:255]
+    assunto = (f"[INNA] Alerta {severidade}: {titulo}")[:255]
 
     corpo_texto = f"""INNA Financial Coach AI
 
@@ -365,52 +339,37 @@ def notificar_alerta_email(
             "ok": True,
             "enviado": False,
             "ignorado": True,
-            "message": (
-                "Notificações por e-mail desabilitadas."
-            ),
+            "message": ("Notificações por e-mail desabilitadas."),
         }
 
     if not configuracao["destinatario"]:
         return {
             "ok": False,
             "enviado": False,
-            "message": (
-                "LLM_ALERT_EMAIL_TO não configurado."
-            ),
+            "message": ("LLM_ALERT_EMAIL_TO não configurado."),
         }
 
     if not alerta_deve_ser_enviado(
         alerta,
-        severidade_minima=configuracao[
-            "severidade_minima"
-        ],
+        severidade_minima=configuracao["severidade_minima"],
     ):
         return {
             "ok": True,
             "enviado": False,
             "ignorado": True,
-            "message": (
-                "Alerta não atende aos critérios "
-                "de envio."
-            ),
+            "message": ("Alerta não atende aos critérios de envio."),
         }
 
-    alerta_id = int(
-        alerta.get("id", 0)
-    )
+    alerta_id = int(alerta.get("id", 0))
 
     if alerta_id <= 0:
         return {
             "ok": False,
             "enviado": False,
-            "message": (
-                "O alerta precisa possuir um ID."
-            ),
+            "message": ("O alerta precisa possuir um ID."),
         }
 
-    inicializacao = (
-        inicializar_tabela_notificacoes()
-    )
+    inicializacao = inicializar_tabela_notificacoes()
 
     if not inicializacao.get("ok"):
         return {
@@ -446,11 +405,7 @@ def notificar_alerta_email(
                 inserir,
                 {
                     "alerta_id": alerta_id,
-                    "destinatario": mascarar_email(
-                        configuracao[
-                            "destinatario"
-                        ]
-                    ),
+                    "destinatario": mascarar_email(configuracao["destinatario"]),
                     "assunto": email["assunto"],
                 },
             )
@@ -462,17 +417,12 @@ def notificar_alerta_email(
             "ok": True,
             "enviado": False,
             "duplicado": True,
-            "message": (
-                "Este alerta já foi processado "
-                "por e-mail."
-            ),
+            "message": ("Este alerta já foi processado por e-mail."),
         }
 
     try:
         resultado_envio = send_text_email(
-            to_email=configuracao[
-                "destinatario"
-            ],
+            to_email=configuracao["destinatario"],
             subject=email["assunto"],
             body=email["texto"],
             html_body=email["html"],
@@ -495,11 +445,7 @@ def notificar_alerta_email(
                 atualizar,
                 {
                     "alerta_id": alerta_id,
-                    "provider_message_id": (
-                        resultado_envio.get(
-                            "message_id"
-                        )
-                    ),
+                    "provider_message_id": (resultado_envio.get("message_id")),
                 },
             )
 
@@ -567,11 +513,9 @@ def avaliar_persistir_e_notificar_alertas(
                 avaliar_e_persistir_alertas,
             )
 
-        resultado_alertas = (
-            avaliar_e_persistir_alertas(
-                df,
-                finops,
-            )
+        resultado_alertas = avaliar_e_persistir_alertas(
+            df,
+            finops,
         )
 
         detectados = resultado_alertas.get(
@@ -595,15 +539,9 @@ def avaliar_persistir_e_notificar_alertas(
                     {
                         "ok": True,
                         "enviado": False,
-                        "duplicado": bool(
-                            persistencia.get(
-                                "duplicado"
-                            )
-                        ),
+                        "duplicado": bool(persistencia.get("duplicado")),
                         "ignorado": True,
-                        "codigo": alerta.get(
-                            "codigo"
-                        ),
+                        "codigo": alerta.get("codigo"),
                         "message": (
                             "Alerta não notificado porque "
                             "não foi criado um novo registro."
@@ -614,72 +552,39 @@ def avaliar_persistir_e_notificar_alertas(
 
             alerta_persistido = {
                 **alerta,
-                "id": int(
-                    persistencia["id"]
-                ),
+                "id": int(persistencia["id"]),
                 "status": "aberto",
-                "criado_em": persistencia.get(
-                    "criado_em"
-                ),
+                "criado_em": persistencia.get("criado_em"),
             }
 
-            resultado_notificacao = (
-                notificar_alerta_email(
-                    alerta_persistido
-                )
-            )
+            resultado_notificacao = notificar_alerta_email(alerta_persistido)
 
             notificacoes.append(
                 {
                     **resultado_notificacao,
-                    "alerta_id": (
-                        alerta_persistido["id"]
-                    ),
-                    "codigo": alerta.get(
-                        "codigo"
-                    ),
-                    "severidade": alerta.get(
-                        "severidade"
-                    ),
+                    "alerta_id": (alerta_persistido["id"]),
+                    "codigo": alerta.get("codigo"),
+                    "severidade": alerta.get("severidade"),
                 }
             )
 
-        total_enviados = sum(
-            1
-            for item in notificacoes
-            if item.get("enviado")
-        )
+        total_enviados = sum(1 for item in notificacoes if item.get("enviado"))
 
-        total_ignorados = sum(
-            1
-            for item in notificacoes
-            if item.get("ignorado")
-        )
+        total_ignorados = sum(1 for item in notificacoes if item.get("ignorado"))
 
         total_falhas = sum(
             1
             for item in notificacoes
-            if (
-                not item.get("ok")
-                and not item.get("ignorado")
-            )
+            if (not item.get("ok") and not item.get("ignorado"))
         )
 
         return {
             **resultado_alertas,
             "notificacoes": notificacoes,
-            "total_notificacoes_enviadas": (
-                total_enviados
-            ),
-            "total_notificacoes_ignoradas": (
-                total_ignorados
-            ),
-            "total_notificacoes_falhas": (
-                total_falhas
-            ),
-            "ok_notificacoes": (
-                total_falhas == 0
-            ),
+            "total_notificacoes_enviadas": (total_enviados),
+            "total_notificacoes_ignoradas": (total_ignorados),
+            "total_notificacoes_falhas": (total_falhas),
+            "ok_notificacoes": (total_falhas == 0),
         }
 
     except Exception as exc:
@@ -695,10 +600,7 @@ def avaliar_persistir_e_notificar_alertas(
             "total_notificacoes_enviadas": 0,
             "total_notificacoes_ignoradas": 0,
             "total_notificacoes_falhas": 1,
-            "message": (
-                "Erro na automação de alertas: "
-                f"{exc}"
-            ),
+            "message": (f"Erro na automação de alertas: {exc}"),
         }
 
 
@@ -717,9 +619,7 @@ def reenviar_notificacao_email(
     - atualiza o provider_message_id;
     - aguarda o novo webhook do Resend.
     """
-    inicializacao = (
-        inicializar_tabela_notificacoes()
-    )
+    inicializacao = inicializar_tabela_notificacoes()
 
     if not inicializacao.get("ok"):
         return {
@@ -733,20 +633,14 @@ def reenviar_notificacao_email(
         return {
             "ok": False,
             "reenviado": False,
-            "message": (
-                "Notificações por e-mail "
-                "estão desabilitadas."
-            ),
+            "message": ("Notificações por e-mail estão desabilitadas."),
         }
 
     if not configuracao.get("destinatario"):
         return {
             "ok": False,
             "reenviado": False,
-            "message": (
-                "LLM_ALERT_EMAIL_TO "
-                "não configurado."
-            ),
+            "message": ("LLM_ALERT_EMAIL_TO não configurado."),
         }
 
     try:
@@ -802,9 +696,7 @@ def reenviar_notificacao_email(
             connection.execute(
                 consulta,
                 {
-                    "notificacao_id": (
-                        notificacao_id
-                    ),
+                    "notificacao_id": (notificacao_id),
                 },
             )
             .mappings()
@@ -817,20 +709,12 @@ def reenviar_notificacao_email(
         return {
             "ok": False,
             "reenviado": False,
-            "message": (
-                "Notificação não encontrada."
-            ),
+            "message": ("Notificação não encontrada."),
         }
 
-    status_entrega = str(
-        registro.get("status_entrega")
-        or ""
-    ).strip().lower()
+    status_entrega = str(registro.get("status_entrega") or "").strip().lower()
 
-    status_envio = str(
-        registro.get("status")
-        or ""
-    ).strip().lower()
+    status_envio = str(registro.get("status") or "").strip().lower()
 
     status_permitidos = {
         "falhou",
@@ -844,34 +728,22 @@ def reenviar_notificacao_email(
         return {
             "ok": False,
             "reenviado": False,
-            "message": (
-                "E-mails entregues não podem "
-                "ser reenviados."
-            ),
+            "message": ("E-mails entregues não podem ser reenviados."),
         }
 
-    if (
-        status_entrega not in status_permitidos
-        and status_envio not in {
-            "erro",
-            "falhou",
-        }
-    ):
+    if status_entrega not in status_permitidos and status_envio not in {
+        "erro",
+        "falhou",
+    }:
         engine.dispose()
 
         return {
             "ok": False,
             "reenviado": False,
-            "message": (
-                "O reenvio é permitido somente "
-                "para notificações com falha."
-            ),
+            "message": ("O reenvio é permitido somente para notificações com falha."),
         }
 
-    tentativas = int(
-        registro.get("tentativas")
-        or 0
-    )
+    tentativas = int(registro.get("tentativas") or 0)
 
     if tentativas >= max_tentativas:
         engine.dispose()
@@ -880,10 +752,7 @@ def reenviar_notificacao_email(
             "ok": False,
             "reenviado": False,
             "limite_atingido": True,
-            "message": (
-                "Limite máximo de tentativas "
-                f"atingido: {max_tentativas}."
-            ),
+            "message": (f"Limite máximo de tentativas atingido: {max_tentativas}."),
         }
 
     alerta = dict(registro)
@@ -914,12 +783,8 @@ def reenviar_notificacao_email(
             connection.execute(
                 bloquear,
                 {
-                    "notificacao_id": (
-                        notificacao_id
-                    ),
-                    "max_tentativas": (
-                        max_tentativas
-                    ),
+                    "notificacao_id": (notificacao_id),
+                    "max_tentativas": (max_tentativas),
                 },
             )
             .mappings()
@@ -933,29 +798,22 @@ def reenviar_notificacao_email(
             "ok": False,
             "reenviado": False,
             "message": (
-                "A notificação já está sendo "
-                "processada ou não pode ser reenviada."
+                "A notificação já está sendo processada ou não pode ser reenviada."
             ),
         }
 
     try:
         resultado_envio = send_text_email(
-            to_email=configuracao[
-                "destinatario"
-            ],
+            to_email=configuracao["destinatario"],
             subject=email["assunto"],
             body=email["texto"],
             html_body=email["html"],
         )
 
         provider_message_id = (
-            resultado_envio.get(
-                "provider_message_id"
-            )
+            resultado_envio.get("provider_message_id")
             or resultado_envio.get("id")
-            or resultado_envio.get(
-                "message_id"
-            )
+            or resultado_envio.get("message_id")
         )
 
         atualizar_sucesso = text(f"""
@@ -981,12 +839,8 @@ def reenviar_notificacao_email(
             connection.execute(
                 atualizar_sucesso,
                 {
-                    "notificacao_id": (
-                        notificacao_id
-                    ),
-                    "provider_message_id": (
-                        provider_message_id
-                    ),
+                    "notificacao_id": (notificacao_id),
+                    "provider_message_id": (provider_message_id),
                 },
             )
 
@@ -996,16 +850,9 @@ def reenviar_notificacao_email(
             "ok": True,
             "reenviado": True,
             "notificacao_id": notificacao_id,
-            "tentativas": int(
-                bloqueio["tentativas"]
-            ),
-            "provider_message_id": (
-                provider_message_id
-            ),
-            "message": (
-                "Notificação reenviada "
-                "com sucesso."
-            ),
+            "tentativas": int(bloqueio["tentativas"]),
+            "provider_message_id": (provider_message_id),
+            "message": ("Notificação reenviada com sucesso."),
         }
 
     except Exception as exc:
@@ -1024,15 +871,9 @@ def reenviar_notificacao_email(
             connection.execute(
                 atualizar_erro,
                 {
-                    "notificacao_id": (
-                        notificacao_id
-                    ),
-                    "erro_tipo": (
-                        type(exc).__name__
-                    ),
-                    "erro_mensagem": (
-                        str(exc)[:4000]
-                    ),
+                    "notificacao_id": (notificacao_id),
+                    "erro_tipo": (type(exc).__name__),
+                    "erro_mensagem": (str(exc)[:4000]),
                 },
             )
 
@@ -1042,21 +883,15 @@ def reenviar_notificacao_email(
             "ok": False,
             "reenviado": False,
             "notificacao_id": notificacao_id,
-            "message": (
-                "Falha ao reenviar: "
-                f"{exc}"
-            ),
+            "message": (f"Falha ao reenviar: {exc}"),
         }
-
 
 
 def carregar_notificacoes(
     *,
     limite: int = 500,
 ) -> dict[str, Any]:
-    inicializacao = (
-        inicializar_tabela_notificacoes()
-    )
+    inicializacao = inicializar_tabela_notificacoes()
 
     if not inicializacao.get("ok"):
         return {
@@ -1111,9 +946,7 @@ def carregar_notificacoes(
             "ok": True,
             "df": df,
             "total": len(df),
-            "message": (
-                "Notificações carregadas."
-            ),
+            "message": ("Notificações carregadas."),
         }
 
     except Exception as exc:
@@ -1121,10 +954,7 @@ def carregar_notificacoes(
             "ok": False,
             "df": pd.DataFrame(),
             "total": 0,
-            "message": (
-                "Erro ao carregar notificações: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao carregar notificações: {exc}"),
         }
 
 

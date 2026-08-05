@@ -56,9 +56,7 @@ def test_prepares_report_without_recalculating_values():
         diagnosticos=[
             _official_diagnosis(),
         ],
-        resumo_executivo=(
-            "Resumo aprovado para o relatório."
-        ),
+        resumo_executivo=("Resumo aprovado para o relatório."),
         recomendacoes=[
             "Fortalecer gradualmente a reserva.",
         ],
@@ -67,31 +65,19 @@ def test_prepares_report_without_recalculating_values():
         ],
     )
 
-    result = (
-        executar_preparacao_relatorio_financeiro(
-            payload,
-            _trusted_context(),
-        )
+    result = executar_preparacao_relatorio_financeiro(
+        payload,
+        _trusted_context(),
     )
 
     assert result.possui_diagnostico
     assert result.total_diagnosticos == 1
 
-    assert (
-        result.indicadores_oficiais
-        .saldo_estimado
-        == 800.0
-    )
+    assert result.indicadores_oficiais.saldo_estimado == 800.0
 
-    assert (
-        result.indicadores_oficiais
-        .score_financeiro
-        == 72
-    )
+    assert result.indicadores_oficiais.score_financeiro == 72
 
-    assert not (
-        result.financial_values_recalculated
-    )
+    assert not (result.financial_values_recalculated)
 
     assert result.ready_for_risk_review
     assert not result.ready_for_pdf_rendering
@@ -109,24 +95,14 @@ def test_latest_official_diagnosis_is_first_item():
         ],
     )
 
-    result = (
-        executar_preparacao_relatorio_financeiro(
-            payload,
-            _trusted_context(),
-        )
+    result = executar_preparacao_relatorio_financeiro(
+        payload,
+        _trusted_context(),
     )
 
-    assert (
-        result.indicadores_oficiais
-        .saldo_estimado
-        == 800.0
-    )
+    assert result.indicadores_oficiais.saldo_estimado == 800.0
 
-    assert (
-        result.indicadores_oficiais
-        .score_financeiro
-        == 72
-    )
+    assert result.indicadores_oficiais.score_financeiro == 72
 
 
 def test_empty_history_returns_safe_report():
@@ -134,19 +110,15 @@ def test_empty_history_returns_safe_report():
         diagnosticos=[],
     )
 
-    result = (
-        executar_preparacao_relatorio_financeiro(
-            payload,
-            _trusted_context(),
-        )
+    result = executar_preparacao_relatorio_financeiro(
+        payload,
+        _trusted_context(),
     )
 
     assert not result.possui_diagnostico
     assert result.total_diagnosticos == 0
     assert result.indicadores_oficiais is None
-    assert "não existem" in (
-        result.resumo_executivo.lower()
-    )
+    assert "não existem" in (result.resumo_executivo.lower())
 
 
 def test_requires_trusted_user_identity():
@@ -193,22 +165,17 @@ def test_rejects_unknown_input_fields():
 
 
 def test_catalog_contains_report_preparation_tool():
-    registry = (
-        criar_registro_ferramentas_inna()
-    )
+    registry = criar_registro_ferramentas_inna()
 
-    definition = registry.get(
-        PREPARE_FINANCIAL_REPORT_TOOL_NAME
-    )
+    definition = registry.get(PREPARE_FINANCIAL_REPORT_TOOL_NAME)
 
-    assert (
-        definition.name
-        == PREPARE_FINANCIAL_REPORT_TOOL_NAME
-    )
+    assert definition.name == PREPARE_FINANCIAL_REPORT_TOOL_NAME
 
-    assert definition.allowed_agents == frozenset({
-        "report_agent",
-    })
+    assert definition.allowed_agents == frozenset(
+        {
+            "report_agent",
+        }
+    )
 
     assert definition.idempotent
     assert definition.sensitive_output
@@ -217,9 +184,7 @@ def test_catalog_contains_report_preparation_tool():
 def test_report_agent_executes_tool_successfully():
     result = executar_ferramenta_inna(
         ToolCall(
-            tool_name=(
-                PREPARE_FINANCIAL_REPORT_TOOL_NAME
-            ),
+            tool_name=(PREPARE_FINANCIAL_REPORT_TOOL_NAME),
             arguments={
                 "diagnosticos": [
                     _official_diagnosis(),
@@ -235,14 +200,9 @@ def test_report_agent_executes_tool_successfully():
     assert result.status == ToolStatus.SUCCESS
     assert result.ok
 
-    assert (
-        result.output["total_diagnosticos"]
-        == 1
-    )
+    assert result.output["total_diagnosticos"] == 1
 
-    assert not result.output[
-        "financial_values_recalculated"
-    ]
+    assert not result.output["financial_values_recalculated"]
 
 
 def test_other_agent_cannot_prepare_report():
@@ -250,9 +210,7 @@ def test_other_agent_cannot_prepare_report():
 
     result = executar_ferramenta_inna(
         ToolCall(
-            tool_name=(
-                PREPARE_FINANCIAL_REPORT_TOOL_NAME
-            ),
+            tool_name=(PREPARE_FINANCIAL_REPORT_TOOL_NAME),
             arguments={
                 "diagnosticos": [],
             },
@@ -272,18 +230,11 @@ def test_other_agent_cannot_prepare_report():
 
 
 def test_public_schema_does_not_expose_identity():
-    registry = (
-        criar_registro_ferramentas_inna()
-    )
+    registry = criar_registro_ferramentas_inna()
 
-    definition = registry.get(
-        PREPARE_FINANCIAL_REPORT_TOOL_NAME
-    )
+    definition = registry.get(PREPARE_FINANCIAL_REPORT_TOOL_NAME)
 
-    schema = (
-        definition.input_model
-        .model_json_schema()
-    )
+    schema = definition.input_model.model_json_schema()
 
     properties = schema.get(
         "properties",

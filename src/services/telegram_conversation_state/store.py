@@ -46,17 +46,13 @@ class TelegramConversationStateOpenResult:
             self.record,
             TelegramConversationState,
         ):
-            raise TelegramConversationStateValidationError(
-                "record inválido."
-            )
+            raise TelegramConversationStateValidationError("record inválido.")
 
         if not isinstance(
             self.created,
             bool,
         ):
-            raise TelegramConversationStateValidationError(
-                "created inválido."
-            )
+            raise TelegramConversationStateValidationError("created inválido.")
 
         if not isinstance(
             self.recovered_from_conflict,
@@ -66,10 +62,7 @@ class TelegramConversationStateOpenResult:
                 "recovered_from_conflict inválido."
             )
 
-        if (
-            self.created
-            and self.recovered_from_conflict
-        ):
+        if self.created and self.recovered_from_conflict:
             raise TelegramConversationStateValidationError(
                 "Resultado de abertura inconsistente."
             )
@@ -78,26 +71,19 @@ class TelegramConversationStateOpenResult:
         self,
     ) -> dict[str, object]:
         return {
-            "record": (
-                self.record.to_safe_dict()
-            ),
+            "record": (self.record.to_safe_dict()),
             "created": self.created,
-            "recovered_from_conflict": (
-                self.recovered_from_conflict
-            ),
+            "recovered_from_conflict": (self.recovered_from_conflict),
         }
 
 
 @runtime_checkable
-class TelegramConversationStateStore(
-    Protocol
-):
+class TelegramConversationStateStore(Protocol):
     def load(
         self,
         telegram_user_id: int,
         chat_id: int,
-    ) -> TelegramConversationState | None:
-        ...
+    ) -> TelegramConversationState | None: ...
 
     def open(
         self,
@@ -105,35 +91,27 @@ class TelegramConversationStateStore(
         chat_id: int,
         initial_state: Mapping[str, Any],
         language: str | None = None,
-        ttl_seconds: int = (
-            DEFAULT_STATE_TTL_SECONDS
-        ),
-    ) -> TelegramConversationStateOpenResult:
-        ...
+        ttl_seconds: int = (DEFAULT_STATE_TTL_SECONDS),
+    ) -> TelegramConversationStateOpenResult: ...
 
     def save(
         self,
         current: TelegramConversationState,
         state: Mapping[str, Any],
         language: str | None,
-        ttl_seconds: int = (
-            DEFAULT_STATE_TTL_SECONDS
-        ),
-    ) -> TelegramConversationState:
-        ...
+        ttl_seconds: int = (DEFAULT_STATE_TTL_SECONDS),
+    ) -> TelegramConversationState: ...
 
     def delete(
         self,
         telegram_user_id: int,
         chat_id: int,
-    ) -> bool:
-        ...
+    ) -> bool: ...
 
     def cleanup_expired(
         self,
         limit: int = 100,
-    ) -> int:
-        ...
+    ) -> int: ...
 
 
 def _require_record(
@@ -145,9 +123,7 @@ def _require_record(
         value,
         TelegramConversationState,
     ):
-        raise TelegramConversationStateValidationError(
-            f"{field_name} inválido."
-        )
+        raise TelegramConversationStateValidationError(f"{field_name} inválido.")
 
     return value
 
@@ -163,12 +139,7 @@ def _validate_record_identity(
         field_name="record",
     )
 
-    if (
-        validated.telegram_user_id
-        != telegram_user_id
-        or validated.chat_id
-        != chat_id
-    ):
+    if validated.telegram_user_id != telegram_user_id or validated.chat_id != chat_id:
         raise TelegramConversationStateConsistencyError(
             "Identidade conversacional inconsistente."
         )
@@ -194,11 +165,9 @@ class PostgresTelegramConversationStateStore:
             chat_id,
         )
 
-        record = (
-            load_telegram_conversation_state(
-                normalized_user_id,
-                normalized_chat_id,
-            )
+        record = load_telegram_conversation_state(
+            normalized_user_id,
+            normalized_chat_id,
         )
 
         if record is None:
@@ -206,12 +175,8 @@ class PostgresTelegramConversationStateStore:
 
         return _validate_record_identity(
             record,
-            telegram_user_id=(
-                normalized_user_id
-            ),
-            chat_id=(
-                normalized_chat_id
-            ),
+            telegram_user_id=(normalized_user_id),
+            chat_id=(normalized_chat_id),
         )
 
     def open(
@@ -220,9 +185,7 @@ class PostgresTelegramConversationStateStore:
         chat_id: int,
         initial_state: Mapping[str, Any],
         language: str | None = None,
-        ttl_seconds: int = (
-            DEFAULT_STATE_TTL_SECONDS
-        ),
+        ttl_seconds: int = (DEFAULT_STATE_TTL_SECONDS),
     ) -> TelegramConversationStateOpenResult:
         (
             normalized_user_id,
@@ -232,23 +195,11 @@ class PostgresTelegramConversationStateStore:
             chat_id,
         )
 
-        normalized_state = (
-            normalize_telegram_state(
-                initial_state
-            )
-        )
+        normalized_state = normalize_telegram_state(initial_state)
 
-        normalized_language = (
-            normalize_telegram_language(
-                language
-            )
-        )
+        normalized_language = normalize_telegram_language(language)
 
-        normalized_ttl = (
-            validate_state_ttl_seconds(
-                ttl_seconds
-            )
-        )
+        normalized_ttl = validate_state_ttl_seconds(ttl_seconds)
 
         existing = self.load(
             normalized_user_id,
@@ -263,18 +214,12 @@ class PostgresTelegramConversationStateStore:
             )
 
         try:
-            created = (
-                create_telegram_conversation_state(
-                    telegram_user_id=(
-                        normalized_user_id
-                    ),
-                    chat_id=(
-                        normalized_chat_id
-                    ),
-                    state=normalized_state,
-                    language=normalized_language,
-                    ttl_seconds=normalized_ttl,
-                )
+            created = create_telegram_conversation_state(
+                telegram_user_id=(normalized_user_id),
+                chat_id=(normalized_chat_id),
+                state=normalized_state,
+                language=normalized_language,
+                ttl_seconds=normalized_ttl,
             )
 
         except TelegramConversationStateConflictError:
@@ -292,16 +237,10 @@ class PostgresTelegramConversationStateStore:
                 recovered_from_conflict=True,
             )
 
-        validated_created = (
-            _validate_record_identity(
-                created,
-                telegram_user_id=(
-                    normalized_user_id
-                ),
-                chat_id=(
-                    normalized_chat_id
-                ),
-            )
+        validated_created = _validate_record_identity(
+            created,
+            telegram_user_id=(normalized_user_id),
+            chat_id=(normalized_chat_id),
         )
 
         return TelegramConversationStateOpenResult(
@@ -315,76 +254,37 @@ class PostgresTelegramConversationStateStore:
         current: TelegramConversationState,
         state: Mapping[str, Any],
         language: str | None,
-        ttl_seconds: int = (
-            DEFAULT_STATE_TTL_SECONDS
-        ),
+        ttl_seconds: int = (DEFAULT_STATE_TTL_SECONDS),
     ) -> TelegramConversationState:
-        validated_current = (
-            _require_record(
-                current,
-                field_name="current",
-            )
+        validated_current = _require_record(
+            current,
+            field_name="current",
         )
 
-        normalized_state = (
-            normalize_telegram_state(
-                state
-            )
+        normalized_state = normalize_telegram_state(state)
+
+        normalized_language = normalize_telegram_language(language)
+
+        normalized_ttl = validate_state_ttl_seconds(ttl_seconds)
+
+        saved = save_telegram_conversation_state(
+            telegram_user_id=(validated_current.telegram_user_id),
+            chat_id=(validated_current.chat_id),
+            state=normalized_state,
+            language=normalized_language,
+            expected_version=(validated_current.state_version),
+            ttl_seconds=normalized_ttl,
         )
 
-        normalized_language = (
-            normalize_telegram_language(
-                language
-            )
+        validated_saved = _validate_record_identity(
+            saved,
+            telegram_user_id=(validated_current.telegram_user_id),
+            chat_id=(validated_current.chat_id),
         )
 
-        normalized_ttl = (
-            validate_state_ttl_seconds(
-                ttl_seconds
-            )
-        )
+        expected_next_version = validated_current.state_version + 1
 
-        saved = (
-            save_telegram_conversation_state(
-                telegram_user_id=(
-                    validated_current
-                    .telegram_user_id
-                ),
-                chat_id=(
-                    validated_current.chat_id
-                ),
-                state=normalized_state,
-                language=normalized_language,
-                expected_version=(
-                    validated_current
-                    .state_version
-                ),
-                ttl_seconds=normalized_ttl,
-            )
-        )
-
-        validated_saved = (
-            _validate_record_identity(
-                saved,
-                telegram_user_id=(
-                    validated_current
-                    .telegram_user_id
-                ),
-                chat_id=(
-                    validated_current.chat_id
-                ),
-            )
-        )
-
-        expected_next_version = (
-            validated_current.state_version
-            + 1
-        )
-
-        if (
-            validated_saved.state_version
-            != expected_next_version
-        ):
+        if validated_saved.state_version != expected_next_version:
             raise TelegramConversationStateConsistencyError(
                 "Versão conversacional persistida inconsistente."
             )
@@ -404,11 +304,9 @@ class PostgresTelegramConversationStateStore:
             chat_id,
         )
 
-        deleted = (
-            delete_telegram_conversation_state(
-                normalized_user_id,
-                normalized_chat_id,
-            )
+        deleted = delete_telegram_conversation_state(
+            normalized_user_id,
+            normalized_chat_id,
         )
 
         if not isinstance(
@@ -425,17 +323,9 @@ class PostgresTelegramConversationStateStore:
         self,
         limit: int = 100,
     ) -> int:
-        normalized_limit = (
-            validate_cleanup_limit(
-                limit
-            )
-        )
+        normalized_limit = validate_cleanup_limit(limit)
 
-        deleted_count = (
-            delete_expired_telegram_conversation_states(
-                normalized_limit
-            )
-        )
+        deleted_count = delete_expired_telegram_conversation_states(normalized_limit)
 
         if (
             isinstance(
@@ -447,8 +337,7 @@ class PostgresTelegramConversationStateStore:
                 int,
             )
             or deleted_count < 0
-            or deleted_count
-            > normalized_limit
+            or deleted_count > normalized_limit
         ):
             raise TelegramConversationStateConsistencyError(
                 "Resultado de limpeza inconsistente."

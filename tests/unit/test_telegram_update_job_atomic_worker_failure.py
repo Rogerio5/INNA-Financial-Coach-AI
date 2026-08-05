@@ -55,9 +55,7 @@ def locked_receipt_row(
         "status": status,
         "attempt_count": attempt_count,
         "claim_token": claim_token,
-        "last_error_code": (
-            last_error_code
-        ),
+        "last_error_code": (last_error_code),
         "lease_active": lease_active,
     }
 
@@ -77,14 +75,10 @@ def failed_job_row(
     dead_letter_state_valid=None,
 ):
     if retry_state_valid is None:
-        retry_state_valid = (
-            status == "queued"
-        )
+        retry_state_valid = status == "queued"
 
     if dead_letter_state_valid is None:
-        dead_letter_state_valid = (
-            status == "dead_letter"
-        )
+        dead_letter_state_valid = status == "dead_letter"
 
     return {
         "update_id": update_id,
@@ -92,24 +86,12 @@ def failed_job_row(
         "attempt_count": attempt_count,
         "max_attempts": max_attempts,
         "payload_version": payload_version,
-        "last_error_code": (
-            last_error_code
-        ),
-        "payload_retained": (
-            payload_retained
-        ),
-        "ownership_cleared": (
-            ownership_cleared
-        ),
-        "completed_at_cleared": (
-            completed_at_cleared
-        ),
-        "retry_state_valid": (
-            retry_state_valid
-        ),
-        "dead_letter_state_valid": (
-            dead_letter_state_valid
-        ),
+        "last_error_code": (last_error_code),
+        "payload_retained": (payload_retained),
+        "ownership_cleared": (ownership_cleared),
+        "completed_at_cleared": (completed_at_cleared),
+        "retry_state_valid": (retry_state_valid),
+        "dead_letter_state_valid": (dead_letter_state_valid),
     }
 
 
@@ -126,12 +108,8 @@ def failed_receipt_row(
         "update_id": update_id,
         "status": "failed",
         "attempt_count": attempt_count,
-        "last_error_code": (
-            last_error_code
-        ),
-        "completed_at_cleared": (
-            completed_at_cleared
-        ),
+        "last_error_code": (last_error_code),
+        "completed_at_cleared": (completed_at_cleared),
         "failed_at_set": failed_at_set,
         "lease_closed": lease_closed,
     }
@@ -217,29 +195,16 @@ def finalize_failure(
     retry_delay_seconds=60,
     force_dead_letter=False,
 ):
-    cursor, tracker = (
-        install_transaction(
-            monkeypatch,
-            rows,
-        )
+    cursor, tracker = install_transaction(
+        monkeypatch,
+        rows,
     )
 
-    outcome = (
-        worker
-        .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
-            (
-                lease
-                if lease is not None
-                else make_lease()
-            ),
-            error_code=error_code,
-            retry_delay_seconds=(
-                retry_delay_seconds
-            ),
-            force_dead_letter=(
-                force_dead_letter
-            ),
-        )
+    outcome = worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+        (lease if lease is not None else make_lease()),
+        error_code=error_code,
+        retry_delay_seconds=(retry_delay_seconds),
+        force_dead_letter=(force_dead_letter),
     )
 
     return outcome, cursor, tracker
@@ -251,11 +216,8 @@ def business_executions(cursor):
             str(sql),
             parameters,
         )
-        for sql, parameters
-        in cursor.executions
-        if not str(sql).startswith(
-            "SET LOCAL"
-        )
+        for sql, parameters in cursor.executions
+        if not str(sql).startswith("SET LOCAL")
     ]
 
 
@@ -271,10 +233,7 @@ def test_schedules_retry_atomically(
         ],
     )
 
-    assert (
-        outcome.decision
-        == "retry_scheduled"
-    )
+    assert outcome.decision == "retry_scheduled"
 
     assert outcome.job_status == "queued"
     assert outcome.receipt_status == "failed"
@@ -342,16 +301,9 @@ def test_force_dead_letter_before_max_attempts(
 
     assert outcome.dead_lettered is True
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
-    assert (
-        executions[1][1][
-            "force_dead_letter"
-        ]
-        is True
-    )
+    assert executions[1][1]["force_dead_letter"] is True
 
 
 def test_receipt_is_locked_before_job(
@@ -366,22 +318,14 @@ def test_receipt_is_locked_before_job(
         ],
     )
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
     assert len(executions) == 3
     assert "FOR UPDATE" in executions[0][0]
 
-    assert (
-        "UPDATE public.telegram_update_jobs"
-        in executions[1][0]
-    )
+    assert "UPDATE public.telegram_update_jobs" in executions[1][0]
 
-    assert (
-        "UPDATE public.telegram_update_receipts"
-        in executions[2][0]
-    )
+    assert "UPDATE public.telegram_update_receipts" in executions[2][0]
 
 
 def test_same_token_is_used_for_both_updates(
@@ -396,42 +340,25 @@ def test_same_token_is_used_for_both_updates(
         ],
     )
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
-    assert (
-        executions[1][1]["lock_token"]
-        == LOCK_TOKEN
-    )
+    assert executions[1][1]["lock_token"] == LOCK_TOKEN
 
-    assert (
-        executions[2][1]["lock_token"]
-        == LOCK_TOKEN
-    )
+    assert executions[2][1]["lock_token"] == LOCK_TOKEN
 
 
 def test_payload_is_preserved_for_retry():
-    sql = (
-        worker
-        .SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB
-    )
+    sql = worker.SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB
 
     assert "payload_ciphertext = NULL" not in sql
     assert "payload_nonce = NULL" not in sql
     assert "payload_key_id = NULL" not in sql
 
-    assert (
-        "payload_ciphertext IS NOT NULL"
-        in sql
-    )
+    assert "payload_ciphertext IS NOT NULL" in sql
 
 
 def test_payload_is_preserved_for_dead_letter():
-    sql = (
-        worker
-        .SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB
-    )
+    sql = worker.SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB
 
     assert "payload_retained" in sql
 
@@ -449,57 +376,29 @@ def test_retry_uses_requested_backoff(
         retry_delay_seconds=900,
     )
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
-    assert (
-        executions[1][1][
-            "retry_delay_seconds"
-        ]
-        == 900
-    )
+    assert executions[1][1]["retry_delay_seconds"] == 900
 
 
 def test_job_update_requires_active_lease():
-    sql = (
-        worker
-        .SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB
-    )
+    sql = worker.SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB
 
-    assert (
-        "job.status = 'processing'"
-        in sql
-    )
+    assert "job.status = 'processing'" in sql
 
-    assert (
-        "job.lock_token = %(lock_token)s"
-        in sql
-    )
+    assert "job.lock_token = %(lock_token)s" in sql
 
-    assert (
-        "job.lock_expires_at > NOW()"
-        in sql
-    )
+    assert "job.lock_expires_at > NOW()" in sql
 
 
 def test_receipt_update_requires_active_lease():
     sql = worker.SQL_FAIL_OWNED_RECEIPT
 
-    assert (
-        "receipt.status = 'processing'"
-        in sql
-    )
+    assert "receipt.status = 'processing'" in sql
 
-    assert (
-        "receipt.claim_token = %(lock_token)s"
-        in sql
-    )
+    assert "receipt.claim_token = %(lock_token)s" in sql
 
-    assert (
-        "receipt.lease_expires_at > NOW()"
-        in sql
-    )
+    assert "receipt.lease_expires_at > NOW()" in sql
 
 
 def test_retry_idempotent_replay(
@@ -517,10 +416,7 @@ def test_retry_idempotent_replay(
         ],
     )
 
-    assert (
-        outcome.decision
-        == "already_retry_scheduled"
-    )
+    assert outcome.decision == "already_retry_scheduled"
 
     assert outcome.idempotent_replay is True
     assert outcome.retry_delay_seconds is None
@@ -528,9 +424,7 @@ def test_retry_idempotent_replay(
     assert tracker.committed == 1
     assert tracker.rolled_back == 0
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
     assert len(executions) == 2
     assert "SELECT" in executions[1][0]
@@ -553,10 +447,7 @@ def test_dead_letter_idempotent_replay(
         ],
     )
 
-    assert (
-        outcome.decision
-        == "already_dead_lettered"
-    )
+    assert outcome.decision == "already_dead_lettered"
 
     assert outcome.idempotent_replay is True
     assert outcome.dead_lettered is True
@@ -577,13 +468,9 @@ def test_replay_requires_same_token(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -601,21 +488,15 @@ def test_replay_rejects_different_error_code(
         [
             locked_receipt_row(
                 status="failed",
-                last_error_code=(
-                    "telegram.other_error"
-                ),
+                last_error_code=("telegram.other_error"),
                 lease_active=False,
             ),
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -633,13 +514,9 @@ def test_missing_receipt_rolls_back(
         [None],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -661,13 +538,9 @@ def test_wrong_receipt_owner_rolls_back(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -689,13 +562,9 @@ def test_expired_receipt_rolls_back(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -718,13 +587,9 @@ def test_completed_receipt_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -745,13 +610,9 @@ def test_job_update_failure_rolls_back(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -773,13 +634,9 @@ def test_receipt_update_failure_rolls_back_job(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -815,19 +672,13 @@ def test_job_metadata_mismatch_is_rejected(
         monkeypatch,
         [
             locked_receipt_row(),
-            failed_job_row(
-                **values
-            ),
+            failed_job_row(**values),
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -861,13 +712,9 @@ def test_incomplete_job_state_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -891,13 +738,9 @@ def test_invalid_retry_state_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -921,13 +764,9 @@ def test_invalid_dead_letter_state_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -951,13 +790,9 @@ def test_invalid_receipt_result_rolls_back(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -996,10 +831,7 @@ def test_database_error_is_sanitized(
 ):
     @contextmanager
     def failing_cursor(**_kwargs):
-        raise RuntimeError(
-            "postgresql://user:"
-            "secret-password@host/database"
-        )
+        raise RuntimeError("postgresql://user:secret-password@host/database")
 
         yield
 
@@ -1009,13 +841,9 @@ def test_database_error_is_sanitized(
         failing_cursor,
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerUnavailableError
-    ) as captured:
+    with pytest.raises(worker.TelegramUpdateWorkerUnavailableError) as captured:
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -1041,13 +869,9 @@ def test_database_error_is_sanitized(
 def test_invalid_error_code_is_rejected(
     value,
 ):
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerValidationError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerValidationError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=value,
                 retry_delay_seconds=60,
@@ -1067,13 +891,9 @@ def test_invalid_error_code_is_rejected(
 def test_invalid_retry_delay_is_rejected(
     value,
 ):
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerValidationError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerValidationError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=value,
@@ -1093,13 +913,9 @@ def test_invalid_retry_delay_is_rejected(
 def test_force_dead_letter_requires_boolean(
     value,
 ):
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerValidationError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerValidationError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 make_lease(),
                 error_code=ERROR_CODE,
                 retry_delay_seconds=60,
@@ -1109,13 +925,9 @@ def test_force_dead_letter_requires_boolean(
 
 
 def test_wrong_lease_type_is_rejected():
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerValidationError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerValidationError):
         (
-            worker
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic(
+            worker.retry_or_dead_letter_authenticated_telegram_update_job_atomic(
                 {
                     "update_id": UPDATE_ID,
                 },
@@ -1126,27 +938,18 @@ def test_wrong_lease_type_is_rejected():
 
 
 def test_sql_has_explicit_dead_letter_transition():
-    sql = (
-        worker
-        .SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB
-    )
+    sql = worker.SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB
 
     assert "THEN 'dead_letter'" in sql
     assert "ELSE 'queued'" in sql
 
-    assert (
-        "job.attempt_count >= job.max_attempts"
-        in sql
-    )
+    assert "job.attempt_count >= job.max_attempts" in sql
 
     assert "%(force_dead_letter)s" in sql
 
 
 def test_sql_clears_ownership():
-    sql = (
-        worker
-        .SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB
-    )
+    sql = worker.SQL_RETRY_OR_DEAD_LETTER_OWNED_JOB
 
     assert "locked_at = NULL" in sql
     assert "lock_expires_at = NULL" in sql

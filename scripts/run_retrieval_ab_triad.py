@@ -17,20 +17,12 @@ from src.evaluation.retrieval_ab_triad import (
 def _load_callable(
     specification: str,
 ):
-    module_name, separator, attribute_name = (
-        specification.partition(
-            ":"
-        )
-    )
+    module_name, separator, attribute_name = specification.partition(":")
 
     if not separator:
-        raise ValueError(
-            "Use o formato modulo:funcao."
-        )
+        raise ValueError("Use o formato modulo:funcao.")
 
-    module = importlib.import_module(
-        module_name
-    )
+    module = importlib.import_module(module_name)
 
     value = getattr(
         module,
@@ -38,9 +30,7 @@ def _load_callable(
     )
 
     if not callable(value):
-        raise TypeError(
-            f"{specification} não é chamável."
-        )
+        raise TypeError(f"{specification} não é chamável.")
 
     return value
 
@@ -50,18 +40,13 @@ def _call_provider(
     *,
     case_id: str,
 ) -> Any:
-    signature = inspect.signature(
-        provider
-    )
+    signature = inspect.signature(provider)
 
     required_parameters = [
         parameter
-        for parameter in (
-            signature.parameters.values()
-        )
+        for parameter in (signature.parameters.values())
         if (
-            parameter.default
-            is inspect.Signature.empty
+            parameter.default is inspect.Signature.empty
             and parameter.kind
             not in {
                 inspect.Parameter.VAR_POSITIONAL,
@@ -73,22 +58,16 @@ def _call_provider(
     if not required_parameters:
         provided = provider()
     else:
-        provided = provider(
-            case_id
-        )
+        provided = provider(case_id)
 
     if isinstance(
         provided,
         dict,
     ):
         if case_id not in provided:
-            raise KeyError(
-                f"Caso não encontrado: {case_id}"
-            )
+            raise KeyError(f"Caso não encontrado: {case_id}")
 
-        return provided[
-            case_id
-        ]
+        return provided[case_id]
 
     return provided
 
@@ -97,17 +76,13 @@ def _variant_from_payload(
     payload: dict[str, Any],
     field_name: str,
 ) -> TriadVariantInput:
-    value = payload.get(
-        field_name
-    )
+    value = payload.get(field_name)
 
     if not isinstance(
         value,
         dict,
     ):
-        raise ValueError(
-            f"Campo obrigatório ausente: {field_name}"
-        )
+        raise ValueError(f"Campo obrigatório ausente: {field_name}")
 
     return TriadVariantInput(
         actual_output=str(
@@ -142,10 +117,7 @@ def _variant_from_payload(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description=(
-            "Executa comparação A/B com a RAG Triad "
-            "real da INNA."
-        )
+        description=("Executa comparação A/B com a RAG Triad real da INNA.")
     )
 
     parser.add_argument(
@@ -157,10 +129,7 @@ def main() -> int:
     parser.add_argument(
         "--case-provider",
         required=True,
-        help=(
-            "Função que fornece o InnaEvaluationCase. "
-            "Formato: modulo:funcao"
-        ),
+        help=("Função que fornece o InnaEvaluationCase. Formato: modulo:funcao"),
     )
 
     parser.add_argument(
@@ -170,24 +139,18 @@ def main() -> int:
 
     parser.add_argument(
         "--runner-settings-provider",
-        help=(
-            "Fornecedor opcional de EvaluationRunnerSettings."
-        ),
+        help=("Fornecedor opcional de EvaluationRunnerSettings."),
     )
 
     parser.add_argument(
         "--quality-thresholds-provider",
-        help=(
-            "Fornecedor opcional de QualityGateThresholds."
-        ),
+        help=("Fornecedor opcional de QualityGateThresholds."),
     )
 
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path(
-            "artifacts/evaluation/retrieval_ab_triad"
-        ),
+        default=Path("artifacts/evaluation/retrieval_ab_triad"),
     )
 
     parser.add_argument(
@@ -214,9 +177,7 @@ def main() -> int:
         )
     )
 
-    case_provider = _load_callable(
-        args.case_provider
-    )
+    case_provider = _load_callable(args.case_provider)
 
     case = _call_provider(
         case_provider,
@@ -226,9 +187,7 @@ def main() -> int:
     runner_settings = None
 
     if args.runner_settings_provider:
-        provider = _load_callable(
-            args.runner_settings_provider
-        )
+        provider = _load_callable(args.runner_settings_provider)
 
         runner_settings = _call_provider(
             provider,
@@ -238,9 +197,7 @@ def main() -> int:
     thresholds = None
 
     if args.quality_thresholds_provider:
-        provider = _load_callable(
-            args.quality_thresholds_provider
-        )
+        provider = _load_callable(args.quality_thresholds_provider)
 
         thresholds = _call_provider(
             provider,
@@ -263,9 +220,7 @@ def main() -> int:
         tolerance=args.tolerance,
         metadata={
             "case_id": args.case_id,
-            "input_file": str(
-                args.input_json
-            ),
+            "input_file": str(args.input_json),
         },
     )
 
@@ -275,55 +230,26 @@ def main() -> int:
         run_label=args.label,
     )
 
-    print(
-        "RUN_ID="
-        + reports["run_id"]
-    )
+    print("RUN_ID=" + reports["run_id"])
 
-    print(
-        "RECOMMENDATION="
-        + result.recommendation
-    )
+    print("RECOMMENDATION=" + result.recommendation)
 
     for reason in result.recommendation_reasons:
-        print(
-            "RECOMMENDATION_REASON="
-            + reason
-        )
+        print("RECOMMENDATION_REASON=" + reason)
 
-    for axis_name, delta in (
-        result.axis_deltas.items()
-    ):
-        print(
-            "AXIS_DELTA_"
-            + axis_name.upper()
-            + "="
-            + str(delta)
-        )
+    for axis_name, delta in result.axis_deltas.items():
+        print("AXIS_DELTA_" + axis_name.upper() + "=" + str(delta))
 
-    print(
-        "JSON_REPORT="
-        + reports["json_path"]
-    )
+    print("JSON_REPORT=" + reports["json_path"])
 
-    print(
-        "MARKDOWN_REPORT="
-        + reports["markdown_path"]
-    )
+    print("MARKDOWN_REPORT=" + reports["markdown_path"])
 
-    print(
-        "HISTORY="
-        + reports["history_path"]
-    )
+    print("HISTORY=" + reports["history_path"])
 
-    print(
-        "WEEK3_RETRIEVAL_AB_TRIAD_RUN=OK"
-    )
+    print("WEEK3_RETRIEVAL_AB_TRIAD_RUN=OK")
 
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(
-        main()
-    )
+    raise SystemExit(main())

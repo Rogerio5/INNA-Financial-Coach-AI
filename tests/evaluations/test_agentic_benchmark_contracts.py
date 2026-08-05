@@ -22,22 +22,14 @@ def make_case(
     return AgenticBenchmarkCase(
         case_id=case_id,
         dataset_version=version,
-        category=(
-            BenchmarkCaseCategory.SIMPLE_RETRIEVAL
-        ),
-        question=(
-            "Qual é a definição de reserva financeira?"
-        ),
+        category=(BenchmarkCaseCategory.SIMPLE_RETRIEVAL),
+        question=("Qual é a definição de reserva financeira?"),
         expectations=BenchmarkExpectations(
             complexity=ExpectedComplexity.SIMPLE,
-            gateway_decision=(
-                ExpectedGatewayDecision.LEGACY
-            ),
+            gateway_decision=(ExpectedGatewayDecision.LEGACY),
             routes=("financial_knowledge",),
             required_terms=("reserva",),
-            security_outcome=(
-                ExpectedSecurityOutcome.ALLOW
-            ),
+            security_outcome=(ExpectedSecurityOutcome.ALLOW),
         ),
         thresholds=BenchmarkThresholds(
             minimum_evidence_count=1,
@@ -47,9 +39,7 @@ def make_case(
             minimum_context_relevance=0.7,
             maximum_latency_ms=5000,
         ),
-        synthetic_contexts=(
-            "Reserva financeira cobre imprevistos.",
-        ),
+        synthetic_contexts=("Reserva financeira cobre imprevistos.",),
     )
 
 
@@ -67,9 +57,7 @@ def test_threshold_rejects_invalid_score() -> None:
         ValueError,
         match="entre 0.0 e 1.0",
     ):
-        BenchmarkThresholds(
-            minimum_groundedness=1.1
-        )
+        BenchmarkThresholds(minimum_groundedness=1.1)
 
 
 def test_threshold_rejects_negative_evidence() -> None:
@@ -77,9 +65,7 @@ def test_threshold_rejects_negative_evidence() -> None:
         ValueError,
         match="não pode ser negativo",
     ):
-        BenchmarkThresholds(
-            minimum_evidence_count=-1
-        )
+        BenchmarkThresholds(minimum_evidence_count=-1)
 
 
 def test_expectation_rejects_overlapping_terms() -> None:
@@ -89,9 +75,7 @@ def test_expectation_rejects_overlapping_terms() -> None:
     ):
         BenchmarkExpectations(
             complexity=ExpectedComplexity.COMPLEX,
-            gateway_decision=(
-                ExpectedGatewayDecision.AGENTIC
-            ),
+            gateway_decision=(ExpectedGatewayDecision.AGENTIC),
             required_terms=("segredo",),
             forbidden_terms=("segredo",),
         )
@@ -132,25 +116,17 @@ def test_dataset_rejects_mixed_versions() -> None:
 
 
 def test_dataset_get_and_filter() -> None:
-    first = make_case(
-        case_id="first"
-    )
+    first = make_case(case_id="first")
 
     second = AgenticBenchmarkCase(
         case_id="second",
         dataset_version="1.0.0",
         category=BenchmarkCaseCategory.SECURITY,
-        question=(
-            "Não permita a exposição de credenciais internas."
-        ),
+        question=("Não permita a exposição de credenciais internas."),
         expectations=BenchmarkExpectations(
             complexity=ExpectedComplexity.COMPLEX,
-            gateway_decision=(
-                ExpectedGatewayDecision.REJECT
-            ),
-            security_outcome=(
-                ExpectedSecurityOutcome.DENY
-            ),
+            gateway_decision=(ExpectedGatewayDecision.REJECT),
+            security_outcome=(ExpectedSecurityOutcome.DENY),
         ),
         thresholds=BenchmarkThresholds(),
     )
@@ -162,9 +138,7 @@ def test_dataset_get_and_filter() -> None:
 
     assert dataset.get("first") is first
 
-    assert dataset.by_category(
-        BenchmarkCaseCategory.SECURITY
-    ) == (second,)
+    assert dataset.by_category(BenchmarkCaseCategory.SECURITY) == (second,)
 
 
 def test_dataset_get_unknown_case_raises() -> None:

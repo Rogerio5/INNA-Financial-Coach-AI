@@ -11,31 +11,18 @@ import pytest
 from dotenv import load_dotenv
 
 
-PROJECT_ROOT = Path(
-    __file__
-).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 load_dotenv(
     PROJECT_ROOT / ".env",
     override=False,
 )
 
-E2E_SCRIPT = (
-    PROJECT_ROOT
-    / "scripts"
-    / "test_human_review_e2e_resume.py"
-)
+E2E_SCRIPT = PROJECT_ROOT / "scripts" / "test_human_review_e2e_resume.py"
 
-REPORT_DIRECTORY = (
-    PROJECT_ROOT
-    / "artifacts"
-    / "hitl-e2e"
-)
+REPORT_DIRECTORY = PROJECT_ROOT / "artifacts" / "hitl-e2e"
 
-REPORT_PATH = (
-    REPORT_DIRECTORY
-    / "hitl-e2e-report.txt"
-)
+REPORT_PATH = REPORT_DIRECTORY / "hitl-e2e-report.txt"
 
 RUN_FLAG = "RUN_HITL_E2E_TESTS"
 
@@ -63,36 +50,37 @@ pytestmark = [
 
 
 def _live_test_enabled() -> bool:
-    return str(
-        os.getenv(
-            RUN_FLAG,
-            "",
-        )
-    ).strip() == "1"
+    return (
+        str(
+            os.getenv(
+                RUN_FLAG,
+                "",
+            )
+        ).strip()
+        == "1"
+    )
 
 
 def _run_suffix() -> str:
-    seed = "|".join([
-        str(
-            os.getenv(
-                "GITHUB_RUN_ID",
-                "",
-            )
-        ),
-        str(
-            os.getenv(
-                "GITHUB_RUN_ATTEMPT",
-                "",
-            )
-        ),
-        uuid4().hex,
-    ])
+    seed = "|".join(
+        [
+            str(
+                os.getenv(
+                    "GITHUB_RUN_ID",
+                    "",
+                )
+            ),
+            str(
+                os.getenv(
+                    "GITHUB_RUN_ATTEMPT",
+                    "",
+                )
+            ),
+            uuid4().hex,
+        ]
+    )
 
-    return hashlib.sha256(
-        seed.encode(
-            "utf-8"
-        )
-    ).hexdigest()[:12]
+    return hashlib.sha256(seed.encode("utf-8")).hexdigest()[:12]
 
 
 def _write_report(
@@ -107,21 +95,23 @@ def _write_report(
         exist_ok=True,
     )
 
-    report = "\n".join([
-        "INNA HITL E2E REPORT",
-        "====================",
-        f"timeout={timeout}",
-        f"return_code={return_code}",
-        "",
-        "STDOUT",
-        "------",
-        stdout,
-        "",
-        "STDERR",
-        "------",
-        stderr,
-        "",
-    ])
+    report = "\n".join(
+        [
+            "INNA HITL E2E REPORT",
+            "====================",
+            f"timeout={timeout}",
+            f"return_code={return_code}",
+            "",
+            "STDOUT",
+            "------",
+            stdout,
+            "",
+            "STDERR",
+            "------",
+            stderr,
+            "",
+        ]
+    )
 
     REPORT_PATH.write_text(
         report,
@@ -139,13 +129,9 @@ def _cleanup_test_data(
     O script E2E também limpa seus dados, mas esta
     rotina cobre falhas abruptas e timeout.
     """
-    review_id = (
-        f"hitl-e2e-review-{suffix}"
-    )
+    review_id = f"hitl-e2e-review-{suffix}"
 
-    thread_id = (
-        f"hitl-e2e-thread-{suffix}"
-    )
+    thread_id = f"hitl-e2e-thread-{suffix}"
 
     try:
         from src.database.connection import (
@@ -161,9 +147,7 @@ def _cleanup_test_data(
                 DELETE FROM public.human_reviews
                 WHERE review_id = %s;
                 """,
-                (
-                    review_id,
-                ),
+                (review_id,),
             )
 
     except Exception:
@@ -182,9 +166,7 @@ def _cleanup_test_data(
             )
 
             if callable(delete_thread):
-                delete_thread(
-                    thread_id
-                )
+                delete_thread(thread_id)
 
     except Exception:
         pass
@@ -192,10 +174,7 @@ def _cleanup_test_data(
 
 @pytest.mark.skipif(
     not _live_test_enabled(),
-    reason=(
-        "Teste HITL E2E real desativado. "
-        "Defina RUN_HITL_E2E_TESTS=1."
-    ),
+    reason=("Teste HITL E2E real desativado. Defina RUN_HITL_E2E_TESTS=1."),
 )
 def test_human_review_e2e_live() -> None:
     missing = sorted(
@@ -209,22 +188,12 @@ def test_human_review_e2e_live() -> None:
         ).strip()
     )
 
-    assert not missing, (
-        "Variáveis obrigatórias ausentes: "
-        f"{missing}"
-    )
+    assert not missing, f"Variáveis obrigatórias ausentes: {missing}"
 
-    secret = str(
-        os.environ[
-            "INNA_INTERNAL_API_SIGNING_SECRET"
-        ]
-    ).encode(
-        "utf-8"
-    )
+    secret = str(os.environ["INNA_INTERNAL_API_SIGNING_SECRET"]).encode("utf-8")
 
     assert len(secret) >= 32, (
-        "INNA_INTERNAL_API_SIGNING_SECRET deve "
-        "possuir pelo menos 32 bytes."
+        "INNA_INTERNAL_API_SIGNING_SECRET deve possuir pelo menos 32 bytes."
     )
 
     assert E2E_SCRIPT.is_file()
@@ -233,10 +202,12 @@ def test_human_review_e2e_live() -> None:
 
     environment = os.environ.copy()
 
-    environment.update({
-        "HITL_E2E_RUN_ID": suffix,
-        "PYTHONUNBUFFERED": "1",
-    })
+    environment.update(
+        {
+            "HITL_E2E_RUN_ID": suffix,
+            "PYTHONUNBUFFERED": "1",
+        }
+    )
 
     stdout = ""
     stderr = ""
@@ -261,40 +232,26 @@ def test_human_review_e2e_live() -> None:
         stderr = completed.stderr
 
         _write_report(
-            return_code=(
-                completed.returncode
-            ),
+            return_code=(completed.returncode),
             stdout=stdout,
             stderr=stderr,
             timeout=False,
         )
 
         assert completed.returncode == 0, (
-            "O subprocesso HITL E2E falhou.\n"
-            f"STDOUT:\n{stdout}\n"
-            f"STDERR:\n{stderr}"
+            f"O subprocesso HITL E2E falhou.\nSTDOUT:\n{stdout}\nSTDERR:\n{stderr}"
         )
 
-        missing_markers = [
-            marker
-            for marker in SUCCESS_MARKERS
-            if marker not in stdout
-        ]
+        missing_markers = [marker for marker in SUCCESS_MARKERS if marker not in stdout]
 
         assert not missing_markers, (
-            "Marcadores E2E ausentes: "
-            f"{missing_markers}\n"
-            f"STDOUT:\n{stdout}"
+            f"Marcadores E2E ausentes: {missing_markers}\nSTDOUT:\n{stdout}"
         )
 
     except subprocess.TimeoutExpired as exc:
-        stdout = str(
-            exc.stdout or ""
-        )
+        stdout = str(exc.stdout or "")
 
-        stderr = str(
-            exc.stderr or ""
-        )
+        stderr = str(exc.stderr or "")
 
         _write_report(
             return_code=None,
@@ -304,12 +261,9 @@ def test_human_review_e2e_live() -> None:
         )
 
         pytest.fail(
-            "O teste HITL E2E excedeu 180 "
-            "segundos.",
+            "O teste HITL E2E excedeu 180 segundos.",
             pytrace=False,
         )
 
     finally:
-        _cleanup_test_data(
-            suffix=suffix
-        )
+        _cleanup_test_data(suffix=suffix)

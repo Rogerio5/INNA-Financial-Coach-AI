@@ -55,32 +55,22 @@ class EvidenceRecord:
     source: str | None = None
     citation: str | None = None
     score: float | None = None
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.evidence_id.strip():
-            raise ValueError(
-                "evidence_id é obrigatório."
-            )
+            raise ValueError("evidence_id é obrigatório.")
 
         if not self.content.strip():
-            raise ValueError(
-                "content da evidência é obrigatório."
-            )
+            raise ValueError("content da evidência é obrigatório.")
 
         if self.score is not None and not 0.0 <= self.score <= 1.0:
-            raise ValueError(
-                "score da evidência deve estar entre 0.0 e 1.0."
-            )
+            raise ValueError("score da evidência deve estar entre 0.0 e 1.0.")
 
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
 
@@ -96,9 +86,7 @@ class CitationRecord:
 
     def __post_init__(self) -> None:
         if not self.citation_id.strip():
-            raise ValueError(
-                "citation_id é obrigatório."
-            )
+            raise ValueError("citation_id é obrigatório.")
 
 
 @dataclass(frozen=True, slots=True)
@@ -125,9 +113,7 @@ class AgenticMetricSnapshot:
             )
 
             if value is not None and not 0.0 <= value <= 1.0:
-                raise ValueError(
-                    f"{field_name} deve estar entre 0.0 e 1.0."
-                )
+                raise ValueError(f"{field_name} deve estar entre 0.0 e 1.0.")
 
 
 @dataclass(frozen=True, slots=True)
@@ -150,99 +136,61 @@ class AgenticEvaluationResult:
     trace_id: str | None = None
     error_code: str | None = None
     error_message: str | None = None
-    raw_metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    raw_metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.case_id.strip():
-            raise ValueError(
-                "case_id é obrigatório."
-            )
+            raise ValueError("case_id é obrigatório.")
 
         if not self.question.strip():
-            raise ValueError(
-                "question é obrigatória."
-            )
+            raise ValueError("question é obrigatória.")
 
         if self.latency_ms < 0:
-            raise ValueError(
-                "latency_ms não pode ser negativa."
-            )
+            raise ValueError("latency_ms não pode ser negativa.")
 
         if len(set(self.routes)) != len(self.routes):
-            raise ValueError(
-                "As rotas não podem estar duplicadas."
-            )
+            raise ValueError("As rotas não podem estar duplicadas.")
 
-        evidence_ids = [
-            evidence.evidence_id
-            for evidence in self.evidences
-        ]
+        evidence_ids = [evidence.evidence_id for evidence in self.evidences]
 
-        if len(evidence_ids) != len(
-            set(evidence_ids)
+        if len(evidence_ids) != len(set(evidence_ids)):
+            raise ValueError("As evidências não podem possuir IDs duplicados.")
+
+        citation_ids = [citation.citation_id for citation in self.citations]
+
+        if len(citation_ids) != len(set(citation_ids)):
+            raise ValueError("As citações não podem possuir IDs duplicados.")
+
+        if self.status is ExecutionStatus.ERROR and not (
+            self.error_code or self.error_message
         ):
             raise ValueError(
-                "As evidências não podem possuir IDs duplicados."
-            )
-
-        citation_ids = [
-            citation.citation_id
-            for citation in self.citations
-        ]
-
-        if len(citation_ids) != len(
-            set(citation_ids)
-        ):
-            raise ValueError(
-                "As citações não podem possuir IDs duplicados."
-            )
-
-        if (
-            self.status is ExecutionStatus.ERROR
-            and not (
-                self.error_code
-                or self.error_message
-            )
-        ):
-            raise ValueError(
-                "Resultados com erro precisam informar "
-                "error_code ou error_message."
+                "Resultados com erro precisam informar error_code ou error_message."
             )
 
         object.__setattr__(
             self,
             "raw_metadata",
-            MappingProxyType(
-                dict(self.raw_metadata)
-            ),
+            MappingProxyType(dict(self.raw_metadata)),
         )
 
     @property
     def evidence_count(self) -> int:
         """Quantidade de evidências normalizadas."""
 
-        return len(
-            self.evidences
-        )
+        return len(self.evidences)
 
     @property
     def citation_count(self) -> int:
         """Quantidade de citações normalizadas."""
 
-        return len(
-            self.citations
-        )
+        return len(self.citations)
 
     @property
     def invalid_citation_count(self) -> int:
         """Quantidade de citações inválidas."""
 
-        return sum(
-            not citation.valid
-            for citation in self.citations
-        )
+        return sum(not citation.valid for citation in self.citations)
 
     @property
     def successful(self) -> bool:

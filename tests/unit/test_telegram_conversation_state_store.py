@@ -41,9 +41,7 @@ def _record(
     state_version=1,
 ):
     return TelegramConversationState(
-        telegram_user_id=(
-            telegram_user_id
-        ),
+        telegram_user_id=(telegram_user_id),
         chat_id=chat_id,
         state=(
             state
@@ -55,25 +53,13 @@ def _record(
         language=language,
         state_version=state_version,
         created_at=NOW,
-        updated_at=(
-            NOW
-            + timedelta(
-                seconds=1
-            )
-        ),
-        expires_at=(
-            NOW
-            + timedelta(
-                hours=1
-            )
-        ),
+        updated_at=(NOW + timedelta(seconds=1)),
+        expires_at=(NOW + timedelta(hours=1)),
     )
 
 
 def test_postgres_store_implements_protocol():
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
     assert isinstance(
         store,
@@ -107,9 +93,7 @@ def test_load_delegates_to_repository(
         fake_load,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
     result = store.load(
         1001,
@@ -135,14 +119,15 @@ def test_load_returns_none_when_absent(
         lambda *_: None,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    assert store.load(
-        1001,
-        -2001,
-    ) is None
+    assert (
+        store.load(
+            1001,
+            -2001,
+        )
+        is None
+    )
 
 
 @pytest.mark.parametrize(
@@ -170,20 +155,14 @@ def test_load_rejects_repository_identity_mismatch(
         store_module,
         "load_telegram_conversation_state",
         lambda *_: _record(
-            telegram_user_id=(
-                returned_user_id
-            ),
+            telegram_user_id=(returned_user_id),
             chat_id=returned_chat_id,
         ),
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         store.load(
             1001,
             -2001,
@@ -193,9 +172,7 @@ def test_load_rejects_repository_identity_mismatch(
 def test_open_returns_existing_without_create(
     monkeypatch,
 ):
-    existing = _record(
-        state_version=4
-    )
+    existing = _record(state_version=4)
 
     create_calls = []
 
@@ -208,13 +185,9 @@ def test_open_returns_existing_without_create(
     def fake_create(
         **kwargs,
     ):
-        create_calls.append(
-            kwargs
-        )
+        create_calls.append(kwargs)
 
-        raise AssertionError(
-            "create não deveria ser chamado"
-        )
+        raise AssertionError("create não deveria ser chamado")
 
     monkeypatch.setattr(
         store_module,
@@ -222,9 +195,7 @@ def test_open_returns_existing_without_create(
         fake_create,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
     result = store.open(
         telegram_user_id=1001,
@@ -239,10 +210,7 @@ def test_open_returns_existing_without_create(
     assert result.record is existing
     assert result.created is False
 
-    assert (
-        result.recovered_from_conflict
-        is False
-    )
+    assert result.recovered_from_conflict is False
 
     assert create_calls == []
 
@@ -266,9 +234,7 @@ def test_open_creates_when_absent(
     def fake_create(
         **kwargs,
     ):
-        calls["create"].append(
-            kwargs
-        )
+        calls["create"].append(kwargs)
 
         return created
 
@@ -284,9 +250,7 @@ def test_open_creates_when_absent(
         fake_create,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
     source_state = {
         "step": "language",
@@ -306,19 +270,12 @@ def test_open_creates_when_absent(
         ttl_seconds=600,
     )
 
-    source_state[
-        "nested"
-    ]["items"].append(
-        3
-    )
+    source_state["nested"]["items"].append(3)
 
     assert result.record is created
     assert result.created is True
 
-    assert (
-        result.recovered_from_conflict
-        is False
-    )
+    assert result.recovered_from_conflict is False
 
     assert calls["load"] == 1
 
@@ -344,9 +301,7 @@ def test_open_creates_when_absent(
 def test_open_recovers_single_concurrent_create(
     monkeypatch,
 ):
-    recovered = _record(
-        state_version=3
-    )
+    recovered = _record(state_version=3)
 
     load_results = iter(
         [
@@ -369,20 +324,14 @@ def test_open_recovers_single_concurrent_create(
             )
         )
 
-        return next(
-            load_results
-        )
+        return next(load_results)
 
     def fake_create(
         **kwargs,
     ):
-        create_calls.append(
-            kwargs
-        )
+        create_calls.append(kwargs)
 
-        raise TelegramConversationStateConflictError(
-            "Estado ativo já existe."
-        )
+        raise TelegramConversationStateConflictError("Estado ativo já existe.")
 
     monkeypatch.setattr(
         store_module,
@@ -396,9 +345,7 @@ def test_open_recovers_single_concurrent_create(
         fake_create,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
     result = store.open(
         1001,
@@ -413,18 +360,11 @@ def test_open_recovers_single_concurrent_create(
     assert result.record is recovered
     assert result.created is False
 
-    assert (
-        result.recovered_from_conflict
-        is True
-    )
+    assert result.recovered_from_conflict is True
 
-    assert len(
-        load_calls
-    ) == 2
+    assert len(load_calls) == 2
 
-    assert len(
-        create_calls
-    ) == 1
+    assert len(create_calls) == 1
 
 
 def test_open_does_not_loop_when_conflict_cannot_be_recovered(
@@ -436,22 +376,16 @@ def test_open_does_not_loop_when_conflict_cannot_be_recovered(
     def fake_load(
         *_,
     ):
-        load_calls.append(
-            True
-        )
+        load_calls.append(True)
 
         return None
 
     def fake_create(
         **kwargs,
     ):
-        create_calls.append(
-            kwargs
-        )
+        create_calls.append(kwargs)
 
-        raise TelegramConversationStateConflictError(
-            "Conflito."
-        )
+        raise TelegramConversationStateConflictError("Conflito.")
 
     monkeypatch.setattr(
         store_module,
@@ -465,13 +399,9 @@ def test_open_does_not_loop_when_conflict_cannot_be_recovered(
         fake_create,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    with pytest.raises(
-        TelegramConversationStateConflictError
-    ):
+    with pytest.raises(TelegramConversationStateConflictError):
         store.open(
             1001,
             -2001,
@@ -480,44 +410,30 @@ def test_open_does_not_loop_when_conflict_cannot_be_recovered(
             600,
         )
 
-    assert len(
-        load_calls
-    ) == 2
+    assert len(load_calls) == 2
 
-    assert len(
-        create_calls
-    ) == 1
+    assert len(create_calls) == 1
 
 
 def test_open_result_repr_and_safe_dict_do_not_expose_state():
-    secret = (
-        "private-financial-message"
+    secret = "private-financial-message"
+
+    result = TelegramConversationStateOpenResult(
+        record=_record(
+            state={
+                "secret": secret,
+            }
+        ),
+        created=True,
     )
 
-    result = (
-        TelegramConversationStateOpenResult(
-            record=_record(
-                state={
-                    "secret": secret,
-                }
-            ),
-            created=True,
-        )
-    )
-
-    assert secret not in repr(
-        result
-    )
+    assert secret not in repr(result)
 
     safe = result.to_safe_dict()
 
-    assert secret not in str(
-        safe
-    )
+    assert secret not in str(safe)
 
-    assert "state" not in safe[
-        "record"
-    ]
+    assert "state" not in safe["record"]
 
 
 @pytest.mark.parametrize(
@@ -544,24 +460,18 @@ def test_open_result_rejects_invalid_flags(
     created,
     recovered,
 ):
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         TelegramConversationStateOpenResult(
             record=_record(),
             created=created,
-            recovered_from_conflict=(
-                recovered
-            ),
+            recovered_from_conflict=(recovered),
         )
 
 
 def test_save_uses_identity_and_version_from_current_record(
     monkeypatch,
 ):
-    current = _record(
-        state_version=7
-    )
+    current = _record(state_version=7)
 
     expected = _record(
         state={
@@ -576,9 +486,7 @@ def test_save_uses_identity_and_version_from_current_record(
     def fake_save(
         **kwargs,
     ):
-        calls.append(
-            kwargs
-        )
+        calls.append(kwargs)
 
         return expected
 
@@ -588,9 +496,7 @@ def test_save_uses_identity_and_version_from_current_record(
         fake_save,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
     state = {
         "step": "financial_data",
@@ -627,18 +533,12 @@ def test_save_rejects_invalid_current_before_repository(
     monkeypatch.setattr(
         store_module,
         "save_telegram_conversation_state",
-        lambda **kwargs: calls.append(
-            kwargs
-        ),
+        lambda **kwargs: calls.append(kwargs),
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         store.save(
             current={
                 "state_version": 1,
@@ -672,29 +572,21 @@ def test_save_rejects_identity_change(
     returned_user_id,
     returned_chat_id,
 ):
-    current = _record(
-        state_version=1
-    )
+    current = _record(state_version=1)
 
     monkeypatch.setattr(
         store_module,
         "save_telegram_conversation_state",
         lambda **_: _record(
-            telegram_user_id=(
-                returned_user_id
-            ),
+            telegram_user_id=(returned_user_id),
             chat_id=returned_chat_id,
             state_version=2,
         ),
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         store.save(
             current,
             {},
@@ -715,27 +607,17 @@ def test_save_requires_exact_next_version(
     monkeypatch,
     returned_version,
 ):
-    current = _record(
-        state_version=1
-    )
+    current = _record(state_version=1)
 
     monkeypatch.setattr(
         store_module,
         "save_telegram_conversation_state",
-        lambda **_: _record(
-            state_version=(
-                returned_version
-            )
-        ),
+        lambda **_: _record(state_version=(returned_version)),
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         store.save(
             current,
             {},
@@ -768,14 +650,15 @@ def test_delete_delegates_to_repository(
         fake_delete,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    assert store.delete(
-        1001,
-        -2001,
-    ) is True
+    assert (
+        store.delete(
+            1001,
+            -2001,
+        )
+        is True
+    )
 
     assert calls == [
         (
@@ -804,13 +687,9 @@ def test_delete_rejects_invalid_repository_result(
         lambda *_: invalid_result,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         store.delete(
             1001,
             -2001,
@@ -825,9 +704,7 @@ def test_cleanup_delegates_bounded_limit(
     def fake_cleanup(
         limit,
     ):
-        calls.append(
-            limit
-        )
+        calls.append(limit)
 
         return 3
 
@@ -837,17 +714,11 @@ def test_cleanup_delegates_bounded_limit(
         fake_cleanup,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    assert store.cleanup_expired(
-        100
-    ) == 3
+    assert store.cleanup_expired(100) == 3
 
-    assert calls == [
-        100
-    ]
+    assert calls == [100]
 
 
 @pytest.mark.parametrize(
@@ -870,16 +741,10 @@ def test_cleanup_rejects_invalid_repository_result(
         lambda *_: invalid_result,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
-        store.cleanup_expired(
-            100
-        )
+    with pytest.raises(TelegramConversationStateConsistencyError):
+        store.cleanup_expired(100)
 
 
 @pytest.mark.parametrize(
@@ -914,9 +779,7 @@ def test_cleanup_rejects_invalid_repository_result(
         ),
         (
             "cleanup",
-            (
-                0,
-            ),
+            (0,),
         ),
     ],
 )
@@ -930,38 +793,28 @@ def test_validation_happens_before_repository(
     monkeypatch.setattr(
         store_module,
         "load_telegram_conversation_state",
-        lambda *_: calls.append(
-            "load"
-        ),
+        lambda *_: calls.append("load"),
     )
 
     monkeypatch.setattr(
         store_module,
         "create_telegram_conversation_state",
-        lambda **_: calls.append(
-            "create"
-        ),
+        lambda **_: calls.append("create"),
     )
 
     monkeypatch.setattr(
         store_module,
         "delete_telegram_conversation_state",
-        lambda *_: calls.append(
-            "delete"
-        ),
+        lambda *_: calls.append("delete"),
     )
 
     monkeypatch.setattr(
         store_module,
         "delete_expired_telegram_conversation_states",
-        lambda *_: calls.append(
-            "cleanup"
-        ),
+        lambda *_: calls.append("cleanup"),
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
     methods = {
         "load": store.load,
@@ -970,14 +823,8 @@ def test_validation_happens_before_repository(
         "cleanup": store.cleanup_expired,
     }
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        methods[
-            operation
-        ](
-            *arguments
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        methods[operation](*arguments)
 
     assert calls == []
 
@@ -1001,18 +848,12 @@ def test_repository_unavailable_error_propagates_safely(
         unavailable,
     )
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
-    with pytest.raises(
-        TelegramConversationStateUnavailableError
-    ) as captured:
+    with pytest.raises(TelegramConversationStateUnavailableError) as captured:
         store.load(
             1001,
             -2001,
         )
 
-    assert secret not in str(
-        captured.value
-    )
+    assert secret not in str(captured.value)

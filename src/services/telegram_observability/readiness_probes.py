@@ -12,11 +12,7 @@ from .health_readiness import (
 )
 
 
-ReadinessCheckResult = (
-    bool
-    | Mapping[str, object]
-    | TelegramProbeResult
-)
+ReadinessCheckResult = bool | Mapping[str, object] | TelegramProbeResult
 
 ReadinessCheck = Callable[
     [],
@@ -135,26 +131,18 @@ def create_factory_readiness_check(
     *,
     detail_name: str,
 ) -> ReadinessCheck:
-    normalized_detail_name = str(
-        detail_name
-    ).strip()
+    normalized_detail_name = str(detail_name).strip()
 
     if not normalized_detail_name:
-        raise ValueError(
-            "Nome do detalhe obrigatório."
-        )
+        raise ValueError("Nome do detalhe obrigatório.")
 
     def check() -> Mapping[str, object]:
         instance = factory()
 
         return {
-            "passed": (
-                instance is not None
-            ),
+            "passed": (instance is not None),
             normalized_detail_name: (
-                type(instance).__name__
-                if instance is not None
-                else "unavailable"
+                type(instance).__name__ if instance is not None else "unavailable"
             ),
         }
 
@@ -165,20 +153,12 @@ def create_attribute_readiness_check(
     supplier: Callable[[], object],
     *,
     attribute: str,
-    expected_type: (
-        type
-        | tuple[type, ...]
-        | None
-    ) = None,
+    expected_type: (type | tuple[type, ...] | None) = None,
 ) -> ReadinessCheck:
-    normalized_attribute = str(
-        attribute
-    ).strip()
+    normalized_attribute = str(attribute).strip()
 
     if not normalized_attribute:
-        raise ValueError(
-            "Nome do atributo obrigatório."
-        )
+        raise ValueError("Nome do atributo obrigatório.")
 
     def check() -> Mapping[str, object]:
         instance = supplier()
@@ -186,9 +166,7 @@ def create_attribute_readiness_check(
         if instance is None:
             return {
                 "passed": False,
-                "attribute": (
-                    normalized_attribute
-                ),
+                "attribute": (normalized_attribute),
                 "available": False,
             }
 
@@ -198,14 +176,9 @@ def create_attribute_readiness_check(
             None,
         )
 
-        available = (
-            value is not None
-        )
+        available = value is not None
 
-        if (
-            available
-            and expected_type is not None
-        ):
+        if available and expected_type is not None:
             available = isinstance(
                 value,
                 expected_type,
@@ -213,9 +186,7 @@ def create_attribute_readiness_check(
 
         return {
             "passed": available,
-            "attribute": (
-                normalized_attribute
-            ),
+            "attribute": (normalized_attribute),
             "available": available,
         }
 
@@ -227,14 +198,10 @@ def create_callable_attribute_check(
     *,
     attribute: str,
 ) -> ReadinessCheck:
-    normalized_attribute = str(
-        attribute
-    ).strip()
+    normalized_attribute = str(attribute).strip()
 
     if not normalized_attribute:
-        raise ValueError(
-            "Nome do atributo obrigatório."
-        )
+        raise ValueError("Nome do atributo obrigatório.")
 
     def check() -> Mapping[str, object]:
         instance = supplier()
@@ -245,15 +212,11 @@ def create_callable_attribute_check(
             None,
         )
 
-        available = callable(
-            value
-        )
+        available = callable(value)
 
         return {
             "passed": available,
-            "attribute": (
-                normalized_attribute
-            ),
+            "attribute": (normalized_attribute),
             "callable": available,
         }
 
@@ -274,9 +237,7 @@ def create_database_select_check(
     """
 
     def check() -> Mapping[str, object]:
-        connection = (
-            connection_factory()
-        )
+        connection = connection_factory()
 
         if connection is None:
             return {
@@ -293,15 +254,10 @@ def create_database_select_check(
                 None,
             )
 
-            if not callable(
-                cursor_factory
-            ):
+            if not callable(cursor_factory):
                 return {
                     "passed": False,
-                    "driver": (
-                        type(connection)
-                        .__name__
-                    ),
+                    "driver": (type(connection).__name__),
                     "cursor": False,
                 }
 
@@ -313,21 +269,14 @@ def create_database_select_check(
                 None,
             )
 
-            if not callable(
-                execute
-            ):
+            if not callable(execute):
                 return {
                     "passed": False,
-                    "driver": (
-                        type(connection)
-                        .__name__
-                    ),
+                    "driver": (type(connection).__name__),
                     "execute": False,
                 }
 
-            execute(
-                "SELECT 1"
-            )
+            execute("SELECT 1")
 
             fetchone = getattr(
                 cursor,
@@ -335,25 +284,13 @@ def create_database_select_check(
                 None,
             )
 
-            row = (
-                fetchone()
-                if callable(fetchone)
-                else None
-            )
+            row = fetchone() if callable(fetchone) else None
 
-            passed = (
-                row is None
-                or row == (1,)
-                or row == [1]
-                or row == 1
-            )
+            passed = row is None or row == (1,) or row == [1] or row == 1
 
             return {
                 "passed": passed,
-                "driver": (
-                    type(connection)
-                    .__name__
-                ),
+                "driver": (type(connection).__name__),
                 "query": "select_1",
             }
 
@@ -365,9 +302,7 @@ def create_database_select_check(
                     None,
                 )
 
-                if callable(
-                    close_cursor
-                ):
+                if callable(close_cursor):
                     close_cursor()
 
             close_connection = getattr(
@@ -376,13 +311,10 @@ def create_database_select_check(
                 None,
             )
 
-            if callable(
-                close_connection
-            ):
+            if callable(close_connection):
                 close_connection()
 
     return check
-
 
 
 def create_context_cursor_select_check(
@@ -400,9 +332,7 @@ def create_context_cursor_select_check(
     """
 
     def check() -> Mapping[str, object]:
-        context = (
-            cursor_context_factory()
-        )
+        context = cursor_context_factory()
 
         enter = getattr(
             context,
@@ -416,15 +346,10 @@ def create_context_cursor_select_check(
             None,
         )
 
-        if (
-            not callable(enter)
-            or not callable(exit_method)
-        ):
+        if not callable(enter) or not callable(exit_method):
             return {
                 "passed": False,
-                "contract": (
-                    "cursor_context"
-                ),
+                "contract": ("cursor_context"),
                 "context_manager": False,
             }
 
@@ -435,20 +360,14 @@ def create_context_cursor_select_check(
                 None,
             )
 
-            if not callable(
-                execute
-            ):
+            if not callable(execute):
                 return {
                     "passed": False,
-                    "contract": (
-                        "cursor_context"
-                    ),
+                    "contract": ("cursor_context"),
                     "execute": False,
                 }
 
-            execute(
-                "SELECT 1"
-            )
+            execute("SELECT 1")
 
             fetchone = getattr(
                 cursor,
@@ -456,18 +375,9 @@ def create_context_cursor_select_check(
                 None,
             )
 
-            row = (
-                fetchone()
-                if callable(fetchone)
-                else None
-            )
+            row = fetchone() if callable(fetchone) else None
 
-        passed = (
-            row is None
-            or row == (1,)
-            or row == [1]
-            or row == 1
-        )
+        passed = row is None or row == (1,) or row == [1] or row == 1
 
         return {
             "passed": passed,
@@ -477,47 +387,23 @@ def create_context_cursor_select_check(
 
     return check
 
+
 def create_worker_readiness_service(
     checks: TelegramWorkerReadinessChecks,
 ) -> TelegramOperationalStatusService:
-    probes: list[
-        TelegramProbe
-    ] = [
-        create_configuration_readiness_probe(
-            checks.configuration
-        ),
-        create_database_readiness_probe(
-            checks.database
-        ),
-        create_job_repository_readiness_probe(
-            checks.job_repository
-        ),
-        create_receipt_repository_readiness_probe(
-            checks.receipt_repository
-        ),
-        create_keyring_readiness_probe(
-            checks.keyring
-        ),
-        create_processor_readiness_probe(
-            checks.processor
-        ),
+    probes: list[TelegramProbe] = [
+        create_configuration_readiness_probe(checks.configuration),
+        create_database_readiness_probe(checks.database),
+        create_job_repository_readiness_probe(checks.job_repository),
+        create_receipt_repository_readiness_probe(checks.receipt_repository),
+        create_keyring_readiness_probe(checks.keyring),
+        create_processor_readiness_probe(checks.processor),
     ]
 
-    if (
-        checks.metrics_runtime
-        is not None
-    ):
-        probes.append(
-            create_metrics_runtime_readiness_probe(
-                checks.metrics_runtime
-            )
-        )
+    if checks.metrics_runtime is not None:
+        probes.append(create_metrics_runtime_readiness_probe(checks.metrics_runtime))
 
-    return TelegramOperationalStatusService(
-        probes=tuple(
-            probes
-        )
-    )
+    return TelegramOperationalStatusService(probes=tuple(probes))
 
 
 __all__ = [

@@ -20,13 +20,8 @@ def build_deepeval_payload(
         "input": case.question,
         "actual_output": result.answer,
         "expected_output": None,
-        "retrieval_context": [
-            evidence.content
-            for evidence in result.evidences
-        ],
-        "context": list(
-            case.synthetic_contexts
-        ),
+        "retrieval_context": [evidence.content for evidence in result.evidences],
+        "context": list(case.synthetic_contexts),
         "additional_metadata": {
             "case_id": case.case_id,
             "dataset_version": case.dataset_version,
@@ -36,9 +31,7 @@ def build_deepeval_payload(
             "trace_id": result.trace_id,
             "routes": list(result.routes),
             "fallback_used": result.fallback_used,
-            "security_outcome": (
-                result.security_outcome.value
-            ),
+            "security_outcome": (result.security_outcome.value),
             "offline": True,
         },
     }
@@ -54,24 +47,13 @@ def build_ragas_payload(
     return {
         "user_input": case.question,
         "response": result.answer,
-        "retrieved_contexts": [
-            evidence.content
-            for evidence in result.evidences
-        ],
+        "retrieved_contexts": [evidence.content for evidence in result.evidences],
         "reference": None,
         "rubrics": {
-            "required_terms": list(
-                case.expectations.required_terms
-            ),
-            "forbidden_terms": list(
-                case.expectations.forbidden_terms
-            ),
-            "minimum_groundedness": (
-                case.thresholds.minimum_groundedness
-            ),
-            "minimum_citation_coverage": (
-                case.thresholds.minimum_citation_coverage
-            ),
+            "required_terms": list(case.expectations.required_terms),
+            "forbidden_terms": list(case.expectations.forbidden_terms),
+            "minimum_groundedness": (case.thresholds.minimum_groundedness),
+            "minimum_citation_coverage": (case.thresholds.minimum_citation_coverage),
         },
         "metadata": {
             "case_id": case.case_id,
@@ -94,10 +76,7 @@ def build_trulens_record(
 
     return {
         "app_id": "inna-agentic-rag-offline",
-        "record_id": (
-            result.trace_id
-            or f"offline-{case.case_id}"
-        ),
+        "record_id": (result.trace_id or f"offline-{case.case_id}"),
         "main_input": case.question,
         "main_output": result.answer,
         "meta": {
@@ -107,9 +86,7 @@ def build_trulens_record(
             "mode": result.mode.value,
             "decision": result.decision.value,
             "status": result.status.value,
-            "security_outcome": (
-                result.security_outcome.value
-            ),
+            "security_outcome": (result.security_outcome.value),
             "routes": list(result.routes),
             "evidence_count": result.evidence_count,
             "citation_count": result.citation_count,

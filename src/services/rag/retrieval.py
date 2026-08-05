@@ -131,10 +131,7 @@ def inferir_categorias_pergunta(
     categorias = []
 
     for termos, categorias_regra in regras:
-        if any(
-            termo in pergunta_lower
-            for termo in termos
-        ):
+        if any(termo in pergunta_lower for termo in termos):
             for categoria in categorias_regra:
                 if categoria not in categorias:
                     categorias.append(categoria)
@@ -161,14 +158,9 @@ def _converter_embedding_pgvector(
     Converte a lista numérica para a representação aceita pelo pgvector.
     """
     if not embedding:
-        raise ValueError(
-            "O modelo não retornou um embedding válido."
-        )
+        raise ValueError("O modelo não retornou um embedding válido.")
 
-    valores = [
-        str(float(valor))
-        for valor in embedding
-    ]
+    valores = [str(float(valor)) for valor in embedding]
 
     return "[" + ",".join(valores) + "]"
 
@@ -197,11 +189,7 @@ def _calcular_score_rag(
     Combina similaridade semântica e bônus de categoria.
     """
     return round(
-        float(similaridade)
-        + (
-            float(bonus_categoria)
-            * int(prioridade_categoria)
-        ),
+        float(similaridade) + (float(bonus_categoria) * int(prioridade_categoria)),
         4,
     )
 
@@ -247,16 +235,12 @@ def buscar_chunks_semanticos(
     limite_final = _validar_limite(limite)
     limite_busca = max(limite_final * 4, 10)
 
-    categorias_prioritarias = (
-        inferir_categorias_pergunta(pergunta)
-    )
+    categorias_prioritarias = inferir_categorias_pergunta(pergunta)
 
     try:
         embedding_pergunta = gerar_embedding(pergunta)
 
-        vetor_pgvector = _converter_embedding_pgvector(
-            embedding_pergunta
-        )
+        vetor_pgvector = _converter_embedding_pgvector(embedding_pergunta)
 
         sql = f"""
             SELECT
@@ -301,39 +285,28 @@ def buscar_chunks_semanticos(
             item = dict(registro)
 
             texto = item.get("texto") or ""
-            distancia = float(
-                item.get("distancia") or 0
-            )
+            distancia = float(item.get("distancia") or 0)
 
-            categoria = (
-                classificar_chunk(texto)
-                or "geral"
-            )
+            categoria = classificar_chunk(texto) or "geral"
 
-            similaridade = _calcular_similaridade(
-                distancia
-            )
+            similaridade = _calcular_similaridade(distancia)
 
-            prioridade_categoria = int(
-                categoria in categorias_prioritarias
-            )
+            prioridade_categoria = int(categoria in categorias_prioritarias)
 
-            item.update({
-                "distancia": distancia,
-                "similaridade_aproximada": similaridade,
-                "categoria": categoria,
-                "categorias_prioritarias": (
-                    categorias_prioritarias
-                ),
-                "prioridade_categoria": (
-                    prioridade_categoria
-                ),
-                "score_rag": _calcular_score_rag(
-                    similaridade,
-                    prioridade_categoria,
-                    bonus_categoria=bonus_categoria,
-                ),
-            })
+            item.update(
+                {
+                    "distancia": distancia,
+                    "similaridade_aproximada": similaridade,
+                    "categoria": categoria,
+                    "categorias_prioritarias": (categorias_prioritarias),
+                    "prioridade_categoria": (prioridade_categoria),
+                    "score_rag": _calcular_score_rag(
+                        similaridade,
+                        prioridade_categoria,
+                        bonus_categoria=bonus_categoria,
+                    ),
+                }
+            )
 
             resultados.append(item)
 
@@ -352,9 +325,7 @@ def buscar_chunks_semanticos(
             reverse=True,
         )[:limite_final]
 
-        categorias_texto = ", ".join(
-            categorias_prioritarias
-        )
+        categorias_texto = ", ".join(categorias_prioritarias)
 
         return {
             "ok": True,
@@ -363,9 +334,7 @@ def buscar_chunks_semanticos(
                 f"Categorias priorizadas: {categorias_texto}."
             ),
             "resultados": resultados,
-            "categorias_prioritarias": (
-                categorias_prioritarias
-            ),
+            "categorias_prioritarias": (categorias_prioritarias),
             "limite_utilizado": limite_final,
             "total_candidatos": len(registros),
         }
@@ -373,10 +342,7 @@ def buscar_chunks_semanticos(
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro na busca semântica pgvector: "
-                f"{exc}"
-            ),
+            "message": (f"Erro na busca semântica pgvector: {exc}"),
             "resultados": [],
         }
 

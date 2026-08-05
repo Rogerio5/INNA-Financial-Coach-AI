@@ -34,9 +34,7 @@ class QualityGatePolicy:
 
     def __post_init__(self) -> None:
         if not self.policy_version.strip():
-            raise ValueError(
-                "policy_version é obrigatória."
-            )
+            raise ValueError("policy_version é obrigatória.")
 
         for field_name in (
             "minimum_agentic_pass_rate",
@@ -49,9 +47,7 @@ class QualityGatePolicy:
             )
 
             if not 0.0 <= value <= 1.0:
-                raise ValueError(
-                    f"{field_name} deve estar entre 0.0 e 1.0."
-                )
+                raise ValueError(f"{field_name} deve estar entre 0.0 e 1.0.")
 
         for field_name in (
             "maximum_regression_count",
@@ -64,14 +60,10 @@ class QualityGatePolicy:
             )
 
             if value < 0:
-                raise ValueError(
-                    f"{field_name} não pode ser negativo."
-                )
+                raise ValueError(f"{field_name} não pode ser negativo.")
 
         if self.maximum_latency_delta_ms < 0:
-            raise ValueError(
-                "maximum_latency_delta_ms não pode ser negativo."
-            )
+            raise ValueError("maximum_latency_delta_ms não pode ser negativo.")
 
 
 @dataclass(frozen=True, slots=True)
@@ -101,27 +93,20 @@ class QualityGateResult:
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
     @property
     def total_checks(self) -> int:
         """Quantidade total de verificações."""
 
-        return len(
-            self.checks
-        )
+        return len(self.checks)
 
     @property
     def passed_checks(self) -> int:
         """Quantidade de verificações aprovadas."""
 
-        return sum(
-            check.passed
-            for check in self.checks
-        )
+        return sum(check.passed for check in self.checks)
 
     @property
     def failed_checks(self) -> int:
@@ -139,9 +124,7 @@ class QualityGateResult:
             if item.code == code:
                 return item
 
-        raise KeyError(
-            f"Verificação não encontrada: {code}"
-        )
+        raise KeyError(f"Verificação não encontrada: {code}")
 
 
 def load_quality_gate_policy(
@@ -149,32 +132,20 @@ def load_quality_gate_policy(
 ) -> QualityGatePolicy:
     """Carrega política JSON validada."""
 
-    policy_path = Path(
-        path
-    )
+    policy_path = Path(path)
 
     if not policy_path.exists():
-        raise FileNotFoundError(
-            f"Política não encontrada: {policy_path}"
-        )
+        raise FileNotFoundError(f"Política não encontrada: {policy_path}")
 
-    payload = json.loads(
-        policy_path.read_text(
-            encoding="utf-8-sig"
-        )
-    )
+    payload = json.loads(policy_path.read_text(encoding="utf-8-sig"))
 
     if not isinstance(
         payload,
         dict,
     ):
-        raise ValueError(
-            "A política deve ser um objeto JSON."
-        )
+        raise ValueError("A política deve ser um objeto JSON.")
 
-    return QualityGatePolicy(
-        **payload
-    )
+    return QualityGatePolicy(**payload)
 
 
 def evaluate_benchmark_quality_gate(
@@ -186,189 +157,107 @@ def evaluate_benchmark_quality_gate(
 ) -> QualityGateResult:
     """Avalia o benchmark contra uma política determinística."""
 
-    agentic = benchmark.summary(
-        BenchmarkProfile.AGENTIC
-    )
+    agentic = benchmark.summary(BenchmarkProfile.AGENTIC)
 
     comparison = benchmark.comparison
 
-    category_rates = dict(
-        agentic.category_pass_rates
-    )
+    category_rates = dict(agentic.category_pass_rates)
 
     minimum_observed_category_rate = (
-        min(
-            category_rates.values()
-        )
-        if category_rates
-        else 0.0
+        min(category_rates.values()) if category_rates else 0.0
     )
 
-    observed_case_count = (
-        agentic.total_cases
-    )
+    observed_case_count = agentic.total_cases
 
-    observed_category_count = len(
-        category_rates
-    )
+    observed_category_count = len(category_rates)
 
     all_cases_present = (
-        expected_case_count is None
-        or observed_case_count
-        == expected_case_count
+        expected_case_count is None or observed_case_count == expected_case_count
     )
 
     all_categories_present = (
         expected_category_count is None
-        or observed_category_count
-        == expected_category_count
+        or observed_category_count == expected_category_count
     )
 
     checks = (
         QualityGateCheck(
             code="agentic_pass_rate",
-            description=(
-                "Taxa de aprovação mínima do perfil Agentic."
-            ),
+            description=("Taxa de aprovação mínima do perfil Agentic."),
             actual=agentic.pass_rate,
-            expected=(
-                f">={policy.minimum_agentic_pass_rate}"
-            ),
-            passed=(
-                agentic.pass_rate
-                >= policy.minimum_agentic_pass_rate
-            ),
+            expected=(f">={policy.minimum_agentic_pass_rate}"),
+            passed=(agentic.pass_rate >= policy.minimum_agentic_pass_rate),
         ),
         QualityGateCheck(
             code="agentic_average_score",
-            description=(
-                "Score médio mínimo do perfil Agentic."
-            ),
+            description=("Score médio mínimo do perfil Agentic."),
             actual=agentic.average_score,
-            expected=(
-                f">={policy.minimum_agentic_average_score}"
-            ),
-            passed=(
-                agentic.average_score
-                >= policy.minimum_agentic_average_score
-            ),
+            expected=(f">={policy.minimum_agentic_average_score}"),
+            passed=(agentic.average_score >= policy.minimum_agentic_average_score),
         ),
         QualityGateCheck(
             code="score_delta",
-            description=(
-                "O Agentic não pode regredir no score médio."
-            ),
+            description=("O Agentic não pode regredir no score médio."),
             actual=comparison.average_score_delta,
-            expected=(
-                f">={policy.minimum_score_delta}"
-            ),
-            passed=(
-                comparison.average_score_delta
-                >= policy.minimum_score_delta
-            ),
+            expected=(f">={policy.minimum_score_delta}"),
+            passed=(comparison.average_score_delta >= policy.minimum_score_delta),
         ),
         QualityGateCheck(
             code="regression_count",
-            description=(
-                "Quantidade máxima de regressões funcionais."
-            ),
-            actual=len(
-                comparison.regressions
-            ),
-            expected=(
-                f"<={policy.maximum_regression_count}"
-            ),
-            passed=(
-                len(comparison.regressions)
-                <= policy.maximum_regression_count
-            ),
+            description=("Quantidade máxima de regressões funcionais."),
+            actual=len(comparison.regressions),
+            expected=(f"<={policy.maximum_regression_count}"),
+            passed=(len(comparison.regressions) <= policy.maximum_regression_count),
         ),
         QualityGateCheck(
             code="invalid_citation_count",
-            description=(
-                "Quantidade máxima de citações inválidas."
-            ),
+            description=("Quantidade máxima de citações inválidas."),
             actual=agentic.invalid_citation_count,
-            expected=(
-                "<="
-                f"{policy.maximum_invalid_citation_count}"
-            ),
+            expected=(f"<={policy.maximum_invalid_citation_count}"),
             passed=(
-                agentic.invalid_citation_count
-                <= policy.maximum_invalid_citation_count
+                agentic.invalid_citation_count <= policy.maximum_invalid_citation_count
             ),
         ),
         QualityGateCheck(
             code="agentic_error_count",
-            description=(
-                "Quantidade máxima de erros no perfil Agentic."
-            ),
+            description=("Quantidade máxima de erros no perfil Agentic."),
             actual=agentic.error_count,
-            expected=(
-                f"<={policy.maximum_agentic_error_count}"
-            ),
-            passed=(
-                agentic.error_count
-                <= policy.maximum_agentic_error_count
-            ),
+            expected=(f"<={policy.maximum_agentic_error_count}"),
+            passed=(agentic.error_count <= policy.maximum_agentic_error_count),
         ),
         QualityGateCheck(
             code="latency_delta",
-            description=(
-                "Aumento máximo permitido de latência simulada."
-            ),
+            description=("Aumento máximo permitido de latência simulada."),
             actual=comparison.latency_delta_ms,
-            expected=(
-                f"<={policy.maximum_latency_delta_ms}"
-            ),
-            passed=(
-                comparison.latency_delta_ms
-                <= policy.maximum_latency_delta_ms
-            ),
+            expected=(f"<={policy.maximum_latency_delta_ms}"),
+            passed=(comparison.latency_delta_ms <= policy.maximum_latency_delta_ms),
         ),
         QualityGateCheck(
             code="category_pass_rate",
-            description=(
-                "Taxa mínima de aprovação em cada categoria."
-            ),
+            description=("Taxa mínima de aprovação em cada categoria."),
             actual=minimum_observed_category_rate,
-            expected=(
-                f">={policy.minimum_category_pass_rate}"
-            ),
+            expected=(f">={policy.minimum_category_pass_rate}"),
             passed=(
-                minimum_observed_category_rate
-                >= policy.minimum_category_pass_rate
+                minimum_observed_category_rate >= policy.minimum_category_pass_rate
             ),
         ),
         QualityGateCheck(
             code="dataset_case_count",
-            description=(
-                "Todos os casos esperados devem ser executados."
-            ),
+            description=("Todos os casos esperados devem ser executados."),
             actual=observed_case_count,
             expected=expected_case_count,
-            passed=(
-                all_cases_present
-                or not policy.require_all_dataset_cases
-            ),
+            passed=(all_cases_present or not policy.require_all_dataset_cases),
         ),
         QualityGateCheck(
             code="dataset_category_count",
-            description=(
-                "Todas as categorias esperadas devem ser executadas."
-            ),
+            description=("Todas as categorias esperadas devem ser executadas."),
             actual=observed_category_count,
             expected=expected_category_count,
-            passed=(
-                all_categories_present
-                or not policy.require_all_categories
-            ),
+            passed=(all_categories_present or not policy.require_all_categories),
         ),
         QualityGateCheck(
             code="offline_execution",
-            description=(
-                "O Quality Gate desta fase deve permanecer offline."
-            ),
+            description=("O Quality Gate desta fase deve permanecer offline."),
             actual=True,
             expected=True,
             passed=True,
@@ -376,12 +265,7 @@ def evaluate_benchmark_quality_gate(
     )
 
     failed_blocking_codes = tuple(
-        check.code
-        for check in checks
-        if (
-            check.blocking
-            and not check.passed
-        )
+        check.code for check in checks if (check.blocking and not check.passed)
     )
 
     return QualityGateResult(
@@ -393,12 +277,8 @@ def evaluate_benchmark_quality_gate(
         metadata={
             "offline": True,
             "live_services_used": False,
-            "agentic_total_cases": (
-                agentic.total_cases
-            ),
-            "agentic_total_categories": (
-                observed_category_count
-            ),
+            "agentic_total_cases": (agentic.total_cases),
+            "agentic_total_categories": (observed_category_count),
         },
     )
 
@@ -415,18 +295,9 @@ def quality_gate_to_dict(
         "total_checks": result.total_checks,
         "passed_checks": result.passed_checks,
         "failed_checks": result.failed_checks,
-        "failed_blocking_codes": list(
-            result.failed_blocking_codes
-        ),
-        "metadata": dict(
-            result.metadata
-        ),
-        "checks": [
-            asdict(
-                check
-            )
-            for check in result.checks
-        ],
+        "failed_blocking_codes": list(result.failed_blocking_codes),
+        "metadata": dict(result.metadata),
+        "checks": [asdict(check) for check in result.checks],
     }
 
 
@@ -436,9 +307,7 @@ def write_quality_gate_report(
 ) -> Path:
     """Grava o relatório do Quality Gate."""
 
-    output_path = Path(
-        path
-    )
+    output_path = Path(path)
 
     output_path.parent.mkdir(
         parents=True,
@@ -447,9 +316,7 @@ def write_quality_gate_report(
 
     output_path.write_text(
         json.dumps(
-            quality_gate_to_dict(
-                result
-            ),
+            quality_gate_to_dict(result),
             ensure_ascii=False,
             indent=2,
             sort_keys=True,

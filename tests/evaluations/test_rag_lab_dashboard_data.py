@@ -36,19 +36,11 @@ def _entry(
 ):
     total_cases = 10
 
-    complete_cases = (
-        total_cases
-        if complete
-        else 7
-    )
+    complete_cases = total_cases if complete else 7
 
     triad = SimpleNamespace(
         status=(
-            "passed"
-            if passed is True
-            else "failed"
-            if passed is False
-            else "partial"
+            "passed" if passed is True else "failed" if passed is False else "partial"
         ),
         average_score=aggregate,
         passed=passed,
@@ -57,11 +49,7 @@ def _entry(
         failing_metric_ids=(),
     )
 
-    base_score = (
-        aggregate
-        if aggregate is not None
-        else 0.0
-    )
+    base_score = aggregate if aggregate is not None else 0.0
 
     return SimpleNamespace(
         run_reference=reference,
@@ -113,10 +101,7 @@ def test_selects_only_rag_triad_entries():
         )
     )
 
-    assert tuple(
-        item.run_reference
-        for item in entries
-    ) == ("current",)
+    assert tuple(item.run_reference for item in entries) == ("current",)
 
 
 def test_orders_entries_from_newest_to_oldest():
@@ -139,10 +124,7 @@ def test_orders_entries_from_newest_to_oldest():
         )
     )
 
-    assert tuple(
-        item.run_reference
-        for item in entries
-    ) == (
+    assert tuple(item.run_reference for item in entries) == (
         "newer",
         "older",
     )
@@ -171,10 +153,7 @@ def test_complete_only_removes_partial_runs():
         complete_only=True,
     )
 
-    assert tuple(
-        item.run_reference
-        for item in entries
-    ) == ("complete",)
+    assert tuple(item.run_reference for item in entries) == ("complete",)
 
 
 def test_builds_professional_summary():
@@ -211,14 +190,10 @@ def test_builds_professional_summary():
     assert summary.comparable_runs == 3
     assert summary.approved_runs == 2
     assert summary.failed_runs == 1
-    assert summary.approval_rate == pytest.approx(
-        2 / 3
-    )
+    assert summary.approval_rate == pytest.approx(2 / 3)
     assert summary.latest_reference == "run-003"
     assert summary.best_reference == "run-002"
-    assert summary.best_score == pytest.approx(
-        0.92
-    )
+    assert summary.best_score == pytest.approx(0.92)
     assert summary.worst_reference == "run-003"
 
 
@@ -231,14 +206,10 @@ def test_builds_run_options_with_labels():
         environment="ci",
     )
 
-    options = build_rag_lab_run_options(
-        _history(entry)
-    )
+    options = build_rag_lab_run_options(_history(entry))
 
     assert len(options) == 1
-    assert options[0].score == pytest.approx(
-        0.91
-    )
+    assert options[0].score == pytest.approx(0.91)
     assert "run-001" in options[0].label
     assert "91.00%" in options[0].label
     assert "feature/rag" in options[0].label
@@ -277,9 +248,7 @@ def test_returns_none_with_less_than_two_runs():
         _history(
             _entry(
                 "only",
-                recorded_at=(
-                    "2026-07-01T00:00:00Z"
-                ),
+                recorded_at=("2026-07-01T00:00:00Z"),
                 aggregate=0.80,
             )
         )
@@ -315,14 +284,10 @@ def test_builds_selected_comparison_and_rows():
     assert comparison is not None
     assert comparison.status.value == "improved"
 
-    rows = build_rag_lab_comparison_rows(
-        comparison
-    )
+    rows = build_rag_lab_comparison_rows(comparison)
 
     assert len(rows) == 4
-    assert rows[-1]["metric_id"] == (
-        "rag-triad-average"
-    )
+    assert rows[-1]["metric_id"] == ("rag-triad-average")
 
 
 def test_rejects_same_baseline_and_candidate():
@@ -383,39 +348,26 @@ def test_builds_chronological_timeline():
         )
     )
 
-    assert [
-        row["run_reference"]
-        for row in rows
-    ] == [
+    assert [row["run_reference"] for row in rows] == [
         "older",
         "newer",
     ]
 
-    assert rows[0][
-        "rag_triad_score"
-    ] == pytest.approx(0.80)
+    assert rows[0]["rag_triad_score"] == pytest.approx(0.80)
 
-    assert rows[1][
-        "answer-relevancy"
-    ] == pytest.approx(0.91)
+    assert rows[1]["answer-relevancy"] == pytest.approx(0.91)
 
 
 def test_empty_history_is_supported():
     history = _history()
 
-    summary = build_rag_lab_summary(
-        history
-    )
+    summary = build_rag_lab_summary(history)
 
     assert summary.total_history_runs == 0
     assert summary.comparable_runs == 0
     assert summary.approval_rate is None
     assert summary.latest_reference is None
 
-    assert build_rag_lab_run_options(
-        history
-    ) == ()
+    assert build_rag_lab_run_options(history) == ()
 
-    assert build_rag_lab_timeline(
-        history
-    ) == []
+    assert build_rag_lab_timeline(history) == []

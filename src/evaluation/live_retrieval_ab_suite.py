@@ -63,11 +63,7 @@ PairReportWriter = Callable[..., Mapping[str, str]]
 def _sha256(
     value: str,
 ) -> str:
-    return hashlib.sha256(
-        value.encode(
-            "utf-8"
-        )
-    ).hexdigest()
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
 def _safe_external(
@@ -112,13 +108,7 @@ def _safe_external(
         value,
         Mapping,
     ):
-        return {
-            str(key): _safe_external(
-                item
-            )
-            for key, item
-            in value.items()
-        }
+        return {str(key): _safe_external(item) for key, item in value.items()}
 
     if isinstance(
         value,
@@ -129,12 +119,7 @@ def _safe_external(
             frozenset,
         ),
     ):
-        return [
-            _safe_external(
-                item
-            )
-            for item in value
-        ]
+        return [_safe_external(item) for item in value]
 
     model_dump = getattr(
         value,
@@ -143,20 +128,11 @@ def _safe_external(
     )
 
     if callable(model_dump):
-        return _safe_external(
-            model_dump(
-                mode="json"
-            )
-        )
+        return _safe_external(model_dump(mode="json"))
 
-    if (
-        dataclasses.is_dataclass(
-            value
-        )
-        and not isinstance(
-            value,
-            type,
-        )
+    if dataclasses.is_dataclass(value) and not isinstance(
+        value,
+        type,
     ):
         return {
             field_definition.name: (
@@ -167,10 +143,7 @@ def _safe_external(
                     )
                 )
             )
-            for field_definition
-            in dataclasses.fields(
-                value
-            )
+            for field_definition in dataclasses.fields(value)
         }
 
     value_dict = getattr(
@@ -184,12 +157,7 @@ def _safe_external(
         dict,
     ):
         return _safe_external(
-            {
-                key: item
-                for key, item
-                in value_dict.items()
-                if not key.startswith("_")
-            }
+            {key: item for key, item in value_dict.items() if not key.startswith("_")}
         )
 
     return repr(value)
@@ -217,17 +185,13 @@ def temporary_environment(
             missing,
         )
 
-        os.environ[name] = str(
-            value
-        )
+        os.environ[name] = str(value)
 
     try:
         yield
 
     finally:
-        for name, previous_value in (
-            previous.items()
-        ):
+        for name, previous_value in previous.items():
             if previous_value is missing:
                 os.environ.pop(
                     name,
@@ -235,19 +199,14 @@ def temporary_environment(
                 )
 
             else:
-                os.environ[name] = str(
-                    previous_value
-                )
+                os.environ[name] = str(previous_value)
 
 
 def _resolve_enum_member(
     enum_type: type[enum.Enum],
     preferred_values: Sequence[str],
 ) -> enum.Enum:
-    preferred = {
-        str(value).strip().lower()
-        for value in preferred_values
-    }
+    preferred = {str(value).strip().lower() for value in preferred_values}
 
     for member in enum_type:
         tokens = {
@@ -259,18 +218,10 @@ def _resolve_enum_member(
             return member
 
     available = ", ".join(
-        (
-            str(member.name)
-            + "="
-            + str(member.value)
-        )
-        for member in enum_type
+        (str(member.name) + "=" + str(member.value)) for member in enum_type
     )
 
-    raise RuntimeError(
-        "Valor de enum não localizado. "
-        f"Disponíveis: {available}"
-    )
+    raise RuntimeError(f"Valor de enum não localizado. Disponíveis: {available}")
 
 
 def _public_privacy_level():
@@ -291,11 +242,7 @@ def _public_privacy_level():
         )
 
     except RuntimeError:
-        return next(
-            iter(
-                PrivacyLevel
-            )
-        )
+        return next(iter(PrivacyLevel))
 
 
 def build_live_evaluation_case(
@@ -313,38 +260,23 @@ def build_live_evaluation_case(
         InnaEvaluationCase,
     )
 
-    rendered_question = str(
-        question or ""
-    ).strip()
+    rendered_question = str(question or "").strip()
 
     if len(rendered_question) < 3:
-        raise ValueError(
-            "Pergunta inválida."
-        )
+        raise ValueError("Pergunta inválida.")
 
-    question_digest = _sha256(
-        rendered_question
-    )[:12]
+    question_digest = _sha256(rendered_question)[:12]
 
     return InnaEvaluationCase(
-        case_id=(
-            f"week3-live-rag-ab-"
-            f"{index:03d}-"
-            f"{question_digest}"
-        ),
+        case_id=(f"week3-live-rag-ab-{index:03d}-{question_digest}"),
         input_text=rendered_question,
         case_version="1.0.0",
-        dataset_name=(
-            "week3-live-rag-ab"
-        ),
+        dataset_name=("week3-live-rag-ab"),
         dataset_version="1.0.0",
         description=(
-            "Comparação real entre o RAG híbrido "
-            "atual e Sentence-Window Retrieval."
+            "Comparação real entre o RAG híbrido atual e Sentence-Window Retrieval."
         ),
-        category=(
-            "rag"
-        ),
+        category=("rag"),
         tags=(
             "week3",
             "rag",
@@ -354,25 +286,17 @@ def build_live_evaluation_case(
         ),
         language="pt",
         currency="BRL",
-        privacy_level=(
-            _public_privacy_level()
-        ),
+        privacy_level=(_public_privacy_level()),
         external_evaluation_allowed=True,
         minimum_retrieved_documents=1,
         metadata={
-            "experiment": (
-                "week3_live_retrieval_ab"
-            ),
-            "question_sha256": (
-                _sha256(
-                    rendered_question
-                )
-            ),
+            "experiment": ("week3_live_retrieval_ab"),
+            "question_sha256": (_sha256(rendered_question)),
             "question_index": index,
             "raw_outputs_persisted": False,
             "raw_contexts_persisted": False,
-            'synthetic': True,
-            'external_safe': True,
+            "synthetic": True,
+            "external_safe": True,
         },
     )
 
@@ -395,9 +319,7 @@ def execute_rag_variant(
     )
 
     variant_name = (
-        "hybrid_sentence_window"
-        if sentence_window_enabled
-        else "hybrid_baseline"
+        "hybrid_sentence_window" if sentence_window_enabled else "hybrid_baseline"
     )
 
     started_at = perf_counter()
@@ -405,9 +327,7 @@ def execute_rag_variant(
     with temporary_environment(
         {
             "INNA_RAG_SENTENCE_WINDOW_ENABLED": (
-                "true"
-                if sentence_window_enabled
-                else "false"
+                "true" if sentence_window_enabled else "false"
             )
         }
     ):
@@ -417,10 +337,7 @@ def execute_rag_variant(
             top_k=top_k,
         )
 
-    elapsed_ms = (
-        perf_counter()
-        - started_at
-    ) * 1000
+    elapsed_ms = (perf_counter() - started_at) * 1000
 
     if not bool(
         getattr(
@@ -438,11 +355,7 @@ def execute_rag_variant(
             or "Falha controlada no RAG."
         )
 
-        raise RuntimeError(
-            variant_name
-            + ": "
-            + error_message
-        )
+        raise RuntimeError(variant_name + ": " + error_message)
 
     answer = str(
         getattr(
@@ -454,10 +367,7 @@ def execute_rag_variant(
     ).strip()
 
     if not answer:
-        raise RuntimeError(
-            variant_name
-            + " não retornou resposta."
-        )
+        raise RuntimeError(variant_name + " não retornou resposta.")
 
     raw_context = getattr(
         result,
@@ -466,25 +376,20 @@ def execute_rag_variant(
     )
 
     retrieval_context = tuple(
-        str(item).strip()
-        for item in (
-            raw_context
-            or ()
-        )
-        if str(item).strip()
+        str(item).strip() for item in (raw_context or ()) if str(item).strip()
     )
 
     if not retrieval_context:
-        raise RuntimeError(
-            variant_name
-            + " não retornou contexto recuperado."
-        )
+        raise RuntimeError(variant_name + " não retornou contexto recuperado.")
 
-    sources = getattr(
-        result,
-        "sources",
-        (),
-    ) or ()
+    sources = (
+        getattr(
+            result,
+            "sources",
+            (),
+        )
+        or ()
+    )
 
     result_duration = getattr(
         result,
@@ -493,26 +398,18 @@ def execute_rag_variant(
     )
 
     try:
-        normalized_duration = float(
-            result_duration
-        )
+        normalized_duration = float(result_duration)
     except (
         TypeError,
         ValueError,
     ):
-        normalized_duration = (
-            elapsed_ms
-        )
+        normalized_duration = elapsed_ms
 
     return LiveVariantExecution(
         name=variant_name,
-        sentence_window_enabled=(
-            sentence_window_enabled
-        ),
+        sentence_window_enabled=(sentence_window_enabled),
         answer=answer,
-        retrieval_context=(
-            retrieval_context
-        ),
+        retrieval_context=(retrieval_context),
         mode=str(
             getattr(
                 result,
@@ -525,9 +422,7 @@ def execute_rag_variant(
             normalized_duration,
             3,
         ),
-        source_count=len(
-            sources
-        ),
+        source_count=len(sources),
         retrieved_documents=int(
             getattr(
                 result,
@@ -546,42 +441,20 @@ def safe_variant_payload(
     Serialização segura: apenas hashes e medidas.
     """
 
-    combined_context = "\n".join(
-        variant.retrieval_context
-    )
+    combined_context = "\n".join(variant.retrieval_context)
 
     return {
         "name": variant.name,
-        "sentence_window_enabled": (
-            variant.sentence_window_enabled
-        ),
+        "sentence_window_enabled": (variant.sentence_window_enabled),
         "mode": variant.mode,
-        "duration_ms": (
-            variant.duration_ms
-        ),
-        "source_count": (
-            variant.source_count
-        ),
-        "retrieved_documents": (
-            variant.retrieved_documents
-        ),
-        "answer_characters": len(
-            variant.answer
-        ),
-        "answer_sha256": _sha256(
-            variant.answer
-        ),
-        "context_count": len(
-            variant.retrieval_context
-        ),
-        "context_characters": sum(
-            len(item)
-            for item
-            in variant.retrieval_context
-        ),
-        "context_sha256": _sha256(
-            combined_context
-        ),
+        "duration_ms": (variant.duration_ms),
+        "source_count": (variant.source_count),
+        "retrieved_documents": (variant.retrieved_documents),
+        "answer_characters": len(variant.answer),
+        "answer_sha256": _sha256(variant.answer),
+        "context_count": len(variant.retrieval_context),
+        "context_characters": sum(len(item) for item in variant.retrieval_context),
+        "context_sha256": _sha256(combined_context),
         "raw_answer_stored": False,
         "raw_context_stored": False,
     }
@@ -622,13 +495,9 @@ def _build_real_runner_bundle(
         ),
     )
 
-    registry = (
-        build_default_metric_registry()
-    )
+    registry = build_default_metric_registry()
 
-    profile = registry.profile_for_category(
-        "rag"
-    )
+    profile = registry.profile_for_category("rag")
 
     required_triad_metrics = {
         "answer-relevancy",
@@ -636,50 +505,22 @@ def _build_real_runner_bundle(
         "contextual-relevancy",
     }
 
-    missing_profile_metrics = (
-        required_triad_metrics
-        - set(
-            profile.metric_ids
-        )
-    )
+    missing_profile_metrics = required_triad_metrics - set(profile.metric_ids)
 
     if missing_profile_metrics:
         raise RuntimeError(
-            "O rag-profile não contém: "
-            + ", ".join(
-                sorted(
-                    missing_profile_metrics
-                )
-            )
+            "O rag-profile não contém: " + ", ".join(sorted(missing_profile_metrics))
         )
 
-    executors = dict(
-        build_default_deterministic_executors()
-    )
+    executors = dict(build_default_deterministic_executors())
 
-    executors.update(
-        dict(
-            build_default_deepeval_live_executors()
-        )
-    )
+    executors.update(dict(build_default_deepeval_live_executors()))
 
-    missing_executors = (
-        set(
-            profile.metric_ids
-        )
-        - set(
-            executors
-        )
-    )
+    missing_executors = set(profile.metric_ids) - set(executors)
 
     if missing_executors:
         raise RuntimeError(
-            "Executores ausentes: "
-            + ", ".join(
-                sorted(
-                    missing_executors
-                )
-            )
+            "Executores ausentes: " + ", ".join(sorted(missing_executors))
         )
 
     runner = EvaluationRunner(
@@ -701,9 +542,7 @@ def _build_real_runner_bundle(
         external_run=True,
         maximum_total_cost=max(
             0.01,
-            float(
-                maximum_total_cost
-            ),
+            float(maximum_total_cost),
         ),
     )
 
@@ -717,9 +556,7 @@ def _build_real_runner_bundle(
 def _gate_passed(
     value: Any,
 ) -> bool | None:
-    external = _safe_external(
-        value
-    )
+    external = _safe_external(value)
 
     def visit(
         current: Any,
@@ -728,9 +565,7 @@ def _gate_passed(
             current,
             Mapping,
         ):
-            direct = current.get(
-                "passed"
-            )
+            direct = current.get("passed")
 
             if isinstance(
                 direct,
@@ -738,13 +573,17 @@ def _gate_passed(
             ):
                 return direct
 
-            status = str(
-                current.get(
-                    "status",
-                    "",
+            status = (
+                str(
+                    current.get(
+                        "status",
+                        "",
+                    )
+                    or ""
                 )
-                or ""
-            ).strip().lower()
+                .strip()
+                .lower()
+            )
 
             if status in {
                 "passed",
@@ -765,9 +604,7 @@ def _gate_passed(
                 return False
 
             for item in current.values():
-                nested = visit(
-                    item
-                )
+                nested = visit(item)
 
                 if nested is not None:
                     return nested
@@ -776,31 +613,19 @@ def _gate_passed(
             current,
             list,
         ):
-            results = [
-                visit(item)
-                for item in current
-            ]
+            results = [visit(item) for item in current]
 
-            known = [
-                item
-                for item in results
-                if item is not None
-            ]
+            known = [item for item in results if item is not None]
 
             if False in known:
                 return False
 
-            if known and all(
-                item is True
-                for item in known
-            ):
+            if known and all(item is True for item in known):
                 return True
 
         return None
 
-    return visit(
-        external
-    )
+    return visit(external)
 
 
 def _estimated_cost(
@@ -828,8 +653,6 @@ def _estimated_cost(
         return 0.0
 
 
-
-
 def _quality_gate_from_axis_scores(
     *,
     axis_scores: Any,
@@ -842,13 +665,9 @@ def _quality_gate_from_axis_scores(
     incompleto.
     """
 
-    safe_scores = _safe_external(
-        axis_scores
-    )
+    safe_scores = _safe_external(axis_scores)
 
-    safe_deltas = _safe_external(
-        axis_deltas
-    )
+    safe_deltas = _safe_external(axis_deltas)
 
     if not isinstance(
         safe_scores,
@@ -919,14 +738,10 @@ def _quality_gate_from_axis_scores(
         source_key,
         threshold,
     ) in metric_configuration:
-        raw_score = candidate.get(
-            source_key
-        )
+        raw_score = candidate.get(source_key)
 
         try:
-            score = float(
-                raw_score
-            )
+            score = float(raw_score)
         except (
             TypeError,
             ValueError,
@@ -936,31 +751,19 @@ def _quality_gate_from_axis_scores(
         if score is None:
             passed = None
 
-            unavailable_keys.append(
-                output_key
-            )
+            unavailable_keys.append(output_key)
 
-            reason = (
-                "Score não registrado nesta execução."
-            )
+            reason = "Score não registrado nesta execução."
 
         else:
             passed = score >= threshold
 
-            metric_scores.append(
-                score
-            )
+            metric_scores.append(score)
 
             if not passed:
-                failed_keys.append(
-                    output_key
-                )
+                failed_keys.append(output_key)
 
-            reason = (
-                "Score aprovado."
-                if passed
-                else "Score abaixo do limite."
-            )
+            reason = "Score aprovado." if passed else "Score abaixo do limite."
 
         checks.append(
             {
@@ -981,47 +784,25 @@ def _quality_gate_from_axis_scores(
     )
 
     aggregate_score = (
-        sum(
-            metric_scores
-        )
-        / len(
-            metric_scores
-        )
-        if len(
-            metric_scores
-        ) == 3
-        else None
+        sum(metric_scores) / len(metric_scores) if len(metric_scores) == 3 else None
     )
 
     aggregate_passed = (
-        aggregate_score
-        >= aggregate_threshold
-        if aggregate_score is not None
-        else None
+        aggregate_score >= aggregate_threshold if aggregate_score is not None else None
     )
 
     if aggregate_passed is None:
-        unavailable_keys.append(
-            "rag-triad-average"
-        )
+        unavailable_keys.append("rag-triad-average")
 
-        aggregate_reason = (
-            "Média indisponível por métricas ausentes."
-        )
+        aggregate_reason = "Média indisponível por métricas ausentes."
 
     elif aggregate_passed:
-        aggregate_reason = (
-            "Média da RAG Triad aprovada."
-        )
+        aggregate_reason = "Média da RAG Triad aprovada."
 
     else:
-        failed_keys.append(
-            "rag-triad-average"
-        )
+        failed_keys.append("rag-triad-average")
 
-        aggregate_reason = (
-            "Média da RAG Triad abaixo do limite."
-        )
+        aggregate_reason = "Média da RAG Triad abaixo do limite."
 
     checks.append(
         {
@@ -1048,61 +829,34 @@ def _quality_gate_from_axis_scores(
         "faithfulness",
         "contextual_relevancy",
     ):
-        raw_delta = safe_deltas.get(
-            source_key
-        )
+        raw_delta = safe_deltas.get(source_key)
 
         try:
-            regression_values.append(
-                float(
-                    raw_delta
-                )
-            )
+            regression_values.append(float(raw_delta))
         except (
             TypeError,
             ValueError,
         ):
             pass
 
-    worst_delta = (
-        min(
-            regression_values
-        )
-        if len(
-            regression_values
-        ) == 3
-        else None
-    )
+    worst_delta = min(regression_values) if len(regression_values) == 3 else None
 
     regression_passed = (
-        worst_delta
-        >= -maximum_regression
-        if worst_delta is not None
-        else None
+        worst_delta >= -maximum_regression if worst_delta is not None else None
     )
 
     if regression_passed is None:
-        unavailable_keys.append(
-            "maximum-regression"
-        )
+        unavailable_keys.append("maximum-regression")
 
-        regression_reason = (
-            "Comparação de regressão indisponível."
-        )
+        regression_reason = "Comparação de regressão indisponível."
 
     elif regression_passed:
-        regression_reason = (
-            "Nenhuma regressão superou o limite."
-        )
+        regression_reason = "Nenhuma regressão superou o limite."
 
     else:
-        failed_keys.append(
-            "maximum-regression"
-        )
+        failed_keys.append("maximum-regression")
 
-        regression_reason = (
-            "Ao menos uma regressão superou o limite."
-        )
+        regression_reason = "Ao menos uma regressão superou o limite."
 
     checks.append(
         {
@@ -1116,16 +870,7 @@ def _quality_gate_from_axis_scores(
 
     complete = not unavailable_keys
 
-    passed = (
-        all(
-            check.get(
-                "passed"
-            ) is True
-            for check in checks
-        )
-        if complete
-        else None
-    )
+    passed = all(check.get("passed") is True for check in checks) if complete else None
 
     return {
         "run_reference": "axis_scores_fallback",
@@ -1139,18 +884,14 @@ def _quality_gate_from_axis_scores(
 
 def _overall_recommendation(
     *,
-    completed_cases: Sequence[
-        Mapping[str, Any]
-    ],
+    completed_cases: Sequence[Mapping[str, Any]],
     failed_case_count: int,
     maximum_median_latency_regression_ms: float,
 ) -> tuple[str, list[str]]:
     reasons: list[str] = []
 
     if failed_case_count:
-        reasons.append(
-            "Existem casos que não concluíram a avaliação."
-        )
+        reasons.append("Existem casos que não concluíram a avaliação.")
 
         return (
             "manual_review",
@@ -1167,23 +908,12 @@ def _overall_recommendation(
         for item in completed_cases
     ]
 
-    gate_results = [
-        item.get(
-            "quality_gate_passed"
-        )
-        for item in completed_cases
-    ]
+    gate_results = [item.get("quality_gate_passed") for item in completed_cases]
 
     if any(
-        recommendation
-        == "reject_sentence_window"
-        for recommendation
-        in recommendations
+        recommendation == "reject_sentence_window" for recommendation in recommendations
     ):
-        reasons.append(
-            "Ao menos um caso apresentou regressão "
-            "na RAG Triad."
-        )
+        reasons.append("Ao menos um caso apresentou regressão na RAG Triad.")
 
         return (
             "reject_sentence_window",
@@ -1191,10 +921,7 @@ def _overall_recommendation(
         )
 
     if False in gate_results:
-        reasons.append(
-            "Ao menos um caso foi reprovado "
-            "pelo Quality Gate."
-        )
+        reasons.append("Ao menos um caso foi reprovado pelo Quality Gate.")
 
         return (
             "reject_sentence_window",
@@ -1211,21 +938,11 @@ def _overall_recommendation(
         for item in completed_cases
     ]
 
-    median_latency_delta = (
-        statistics.median(
-            latency_deltas
-        )
-        if latency_deltas
-        else 0.0
-    )
+    median_latency_delta = statistics.median(latency_deltas) if latency_deltas else 0.0
 
-    if (
-        median_latency_delta
-        > maximum_median_latency_regression_ms
-    ):
+    if median_latency_delta > maximum_median_latency_regression_ms:
         reasons.append(
-            "A mediana da regressão de latência "
-            "superou o limite configurado."
+            "A mediana da regressão de latência superou o limite configurado."
         )
 
         return (
@@ -1235,8 +952,7 @@ def _overall_recommendation(
 
     if None in gate_results:
         reasons.append(
-            "O Quality Gate não retornou decisão "
-            "completa para todos os casos."
+            "O Quality Gate não retornou decisão completa para todos os casos."
         )
 
         return (
@@ -1245,33 +961,23 @@ def _overall_recommendation(
         )
 
     if all(
-        recommendation
-        == "promote_sentence_window"
-        for recommendation
-        in recommendations
+        recommendation == "promote_sentence_window"
+        for recommendation in recommendations
     ):
         reasons.append(
-            "Todos os casos foram aprovados sem regressão "
-            "relevante na RAG Triad."
+            "Todos os casos foram aprovados sem regressão relevante na RAG Triad."
         )
 
-        reasons.append(
-            "Todos os Quality Gates foram aprovados."
-        )
+        reasons.append("Todos os Quality Gates foram aprovados.")
 
-        reasons.append(
-            "A regressão mediana de latência permaneceu "
-            "dentro do limite."
-        )
+        reasons.append("A regressão mediana de latência permaneceu dentro do limite.")
 
         return (
             "promote_sentence_window",
             reasons,
         )
 
-    reasons.append(
-        "Os resultados não permitem promoção automática."
-    )
+    reasons.append("Os resultados não permitem promoção automática.")
 
     return (
         "manual_review",
@@ -1287,15 +993,7 @@ def _markdown_report(
         "",
         f"- Execução: `{payload['run_id']}`",
         f"- Gerado em: `{payload['generated_at']}`",
-        (
-            "- Recomendação final: `"
-            + str(
-                payload[
-                    "recommendation"
-                ]
-            )
-            + "`"
-        ),
+        ("- Recomendação final: `" + str(payload["recommendation"]) + "`"),
         "",
         "## Casos",
         "",
@@ -1303,12 +1001,8 @@ def _markdown_report(
         "|---|---|---:|---:|---:|---:|---|---|",
     ]
 
-    for case in payload[
-        "cases"
-    ]:
-        if case.get(
-            "status"
-        ) != "completed":
+    for case in payload["cases"]:
+        if case.get("status") != "completed":
             lines.append(
                 "| `"
                 + str(
@@ -1332,48 +1026,30 @@ def _markdown_report(
             *,
             _bound_deltas: Mapping[str, Any] = deltas,
         ) -> str:
-            value = _bound_deltas.get(
-                name
-            )
+            value = _bound_deltas.get(name)
 
             if value is None:
                 return "-"
 
             return f"{float(value):+.4f}"
 
-        gate = case.get(
-            "quality_gate_passed"
-        )
+        gate = case.get("quality_gate_passed")
 
         lines.append(
             "| `"
-            + str(
-                case["case_id"]
-            )
+            + str(case["case_id"])
             + "` | completed | "
-            + score(
-                "answer_relevancy"
-            )
+            + score("answer_relevancy")
             + " | "
-            + score(
-                "faithfulness"
-            )
+            + score("faithfulness")
             + " | "
-            + score(
-                "contextual_relevancy"
-            )
+            + score("contextual_relevancy")
             + " | "
-            + (
-                f"{float(case['latency_delta_ms']):+.2f} ms"
-            )
+            + (f"{float(case['latency_delta_ms']):+.2f} ms")
             + " | "
             + str(gate)
             + " | `"
-            + str(
-                case[
-                    "recommendation"
-                ]
-            )
+            + str(case["recommendation"])
             + "` |"
         )
 
@@ -1385,12 +1061,8 @@ def _markdown_report(
         )
     )
 
-    for reason in payload[
-        "recommendation_reasons"
-    ]:
-        lines.append(
-            "- " + str(reason)
-        )
+    for reason in payload["recommendation_reasons"]:
+        lines.append("- " + str(reason))
 
     lines.extend(
         (
@@ -1405,53 +1077,29 @@ def _markdown_report(
             "",
             (
                 "- Custo estimado registrado: `"
-                + str(
-                    payload[
-                        "total_estimated_cost"
-                    ]
-                )
+                + str(payload["total_estimated_cost"])
                 + "`."
             ),
             (
                 "- Limite por variante: `"
-                + str(
-                    payload[
-                        "configuration"
-                    ][
-                        "maximum_total_cost_per_variant"
-                    ]
-                )
+                + str(payload["configuration"]["maximum_total_cost_per_variant"])
                 + "`."
             ),
             "",
         )
     )
 
-    return "\n".join(
-        lines
-    )
+    return "\n".join(lines)
 
 
 def run_live_retrieval_ab_suite(
     *,
     questions: Sequence[str],
     output_directory: str | Path,
-    configuration: (
-        LiveSuiteConfiguration
-        | None
-    ) = None,
-    variant_executor: (
-        VariantExecutor
-        | None
-    ) = None,
-    pair_evaluator: (
-        PairEvaluator
-        | None
-    ) = None,
-    pair_report_writer: (
-        PairReportWriter
-        | None
-    ) = None,
+    configuration: (LiveSuiteConfiguration | None) = None,
+    variant_executor: (VariantExecutor | None) = None,
+    pair_evaluator: (PairEvaluator | None) = None,
+    pair_report_writer: (PairReportWriter | None) = None,
     runner: Any | None = None,
     runner_settings: Any | None = None,
     quality_gate_thresholds: Any | None = None,
@@ -1460,49 +1108,30 @@ def run_live_retrieval_ab_suite(
     Executa a suíte real e gera evidências versionadas.
     """
 
-    config = (
-        configuration
-        or LiveSuiteConfiguration()
-    )
+    config = configuration or LiveSuiteConfiguration()
 
     normalized_questions: list[str] = []
 
     for question in questions:
-        rendered = str(
-            question or ""
-        ).strip()
+        rendered = str(question or "").strip()
 
-        if (
-            len(rendered) >= 3
-            and rendered not in normalized_questions
-        ):
-            normalized_questions.append(
-                rendered
-            )
+        if len(rendered) >= 3 and rendered not in normalized_questions:
+            normalized_questions.append(rendered)
 
     if not normalized_questions:
-        raise ValueError(
-            "Nenhuma pergunta válida foi fornecida."
-        )
+        raise ValueError("Nenhuma pergunta válida foi fornecida.")
 
     safe_top_k = max(
         1,
         min(
-            int(
-                config.top_k
-            ),
+            int(config.top_k),
             20,
         ),
     )
 
-    output_path = Path(
-        output_directory
-    )
+    output_path = Path(output_directory)
 
-    pair_output_path = (
-        output_path
-        / "pairs"
-    )
+    pair_output_path = output_path / "pairs"
 
     output_path.mkdir(
         parents=True,
@@ -1515,27 +1144,21 @@ def run_live_retrieval_ab_suite(
     )
 
     if variant_executor is None:
-        variant_executor = (
-            execute_rag_variant
-        )
+        variant_executor = execute_rag_variant
 
     if pair_evaluator is None:
         from src.evaluation.retrieval_ab_triad import (
             evaluate_retrieval_ab_with_rag_triad,
         )
 
-        pair_evaluator = (
-            evaluate_retrieval_ab_with_rag_triad
-        )
+        pair_evaluator = evaluate_retrieval_ab_with_rag_triad
 
     if pair_report_writer is None:
         from src.evaluation.retrieval_ab_triad import (
             write_retrieval_ab_triad_report,
         )
 
-        pair_report_writer = (
-            write_retrieval_ab_triad_report
-        )
+        pair_report_writer = write_retrieval_ab_triad_report
 
     if runner is None:
         (
@@ -1543,36 +1166,23 @@ def run_live_retrieval_ab_suite(
             runner_settings,
             quality_gate_thresholds,
         ) = _build_real_runner_bundle(
-            maximum_total_cost=(
-                config
-                .maximum_total_cost_per_variant
-            )
+            maximum_total_cost=(config.maximum_total_cost_per_variant)
         )
 
     from src.evaluation.retrieval_ab_triad import (
         TriadVariantInput,
     )
 
-    generated_at = datetime.now(
-        UTC
-    )
+    generated_at = datetime.now(UTC)
 
     run_id = (
         "week3-live-rag-ab-"
-        + generated_at.strftime(
-            "%Y%m%dT%H%M%SZ"
-        )
+        + generated_at.strftime("%Y%m%dT%H%M%SZ")
         + "-"
-        + _sha256(
-            "\n".join(
-                normalized_questions
-            )
-        )[:10]
+        + _sha256("\n".join(normalized_questions))[:10]
     )
 
-    cases: list[
-        dict[str, Any]
-    ] = []
+    cases: list[dict[str, Any]] = []
 
     total_estimated_cost = 0.0
 
@@ -1606,305 +1216,136 @@ def run_live_retrieval_ab_suite(
             ] = {}
 
             for enabled in generation_order:
-                executions[
-                    enabled
-                ] = variant_executor(
+                executions[enabled] = variant_executor(
                     question=question,
-                    language=(
-                        config.language
-                    ),
+                    language=(config.language),
                     top_k=safe_top_k,
-                    sentence_window_enabled=(
-                        enabled
-                    ),
+                    sentence_window_enabled=(enabled),
                 )
 
-            baseline = executions[
-                False
-            ]
+            baseline = executions[False]
 
-            candidate = executions[
-                True
-            ]
+            candidate = executions[True]
 
             pair_result = pair_evaluator(
                 case=case,
                 baseline=TriadVariantInput(
-                    actual_output=(
-                        baseline.answer
-                    ),
-                    context=(
-                        baseline
-                        .retrieval_context
-                    ),
-                    retrieval_context=(
-                        baseline
-                        .retrieval_context
-                    ),
+                    actual_output=(baseline.answer),
+                    context=(baseline.retrieval_context),
+                    retrieval_context=(baseline.retrieval_context),
                     metadata={
-                        "variant": (
-                            baseline.name
-                        ),
-                        "answer_sha256": (
-                            _sha256(
-                                baseline.answer
-                            )
-                        ),
+                        "variant": (baseline.name),
+                        "answer_sha256": (_sha256(baseline.answer)),
                         "context_sha256": (
-                            _sha256(
-                                "\n".join(
-                                    baseline
-                                    .retrieval_context
-                                )
-                            )
+                            _sha256("\n".join(baseline.retrieval_context))
                         ),
                     },
                 ),
                 candidate=TriadVariantInput(
-                    actual_output=(
-                        candidate.answer
-                    ),
-                    context=(
-                        candidate
-                        .retrieval_context
-                    ),
-                    retrieval_context=(
-                        candidate
-                        .retrieval_context
-                    ),
+                    actual_output=(candidate.answer),
+                    context=(candidate.retrieval_context),
+                    retrieval_context=(candidate.retrieval_context),
                     metadata={
-                        "variant": (
-                            candidate.name
-                        ),
-                        "answer_sha256": (
-                            _sha256(
-                                candidate.answer
-                            )
-                        ),
+                        "variant": (candidate.name),
+                        "answer_sha256": (_sha256(candidate.answer)),
                         "context_sha256": (
-                            _sha256(
-                                "\n".join(
-                                    candidate
-                                    .retrieval_context
-                                )
-                            )
+                            _sha256("\n".join(candidate.retrieval_context))
                         ),
                     },
                 ),
                 runner=runner,
-                runner_settings=(
-                    runner_settings
-                ),
-                quality_gate_thresholds=(
-                    quality_gate_thresholds
-                ),
+                runner_settings=(runner_settings),
+                quality_gate_thresholds=(quality_gate_thresholds),
                 external_run=True,
-                tolerance=(
-                    config.tolerance
-                ),
+                tolerance=(config.tolerance),
                 metadata={
                     "suite_run_id": run_id,
                     "case_index": index,
-                    "question_sha256": (
-                        _sha256(
-                            question
-                        )
-                    ),
+                    "question_sha256": (_sha256(question)),
                     "generation_order": [
-                        (
-                            "hybrid_sentence_window"
-                            if enabled
-                            else "hybrid_baseline"
-                        )
-                        for enabled
-                        in generation_order
+                        ("hybrid_sentence_window" if enabled else "hybrid_baseline")
+                        for enabled in generation_order
                     ],
                 },
             )
 
-            pair_reports = (
-                pair_report_writer(
-                    pair_result,
-                    output_directory=(
-                        pair_output_path
-                    ),
-                    run_label=(
-                        f"case-{index:03d}"
-                    ),
-                )
+            pair_reports = pair_report_writer(
+                pair_result,
+                output_directory=(pair_output_path),
+                run_label=(f"case-{index:03d}"),
             )
 
-            baseline_cost = (
-                _estimated_cost(
-                    pair_result.baseline
-                )
-            )
+            baseline_cost = _estimated_cost(pair_result.baseline)
 
-            candidate_cost = (
-                _estimated_cost(
-                    pair_result.candidate
-                )
-            )
+            candidate_cost = _estimated_cost(pair_result.candidate)
 
-            case_cost = (
-                baseline_cost
-                + candidate_cost
-            )
+            case_cost = baseline_cost + candidate_cost
 
-            total_estimated_cost += (
-                case_cost
-            )
+            total_estimated_cost += case_cost
 
-            effective_quality_gate = (
-                _safe_external(
-                    pair_result.quality_gate
-                )
-            )
+            effective_quality_gate = _safe_external(pair_result.quality_gate)
 
-            gate_passed = _gate_passed(
-                effective_quality_gate
-            )
+            gate_passed = _gate_passed(effective_quality_gate)
 
             if gate_passed is None:
-                effective_quality_gate = (
-                    _quality_gate_from_axis_scores(
-                        axis_scores=(
-                            pair_result.axis_scores
-                        ),
-                        axis_deltas=(
-                            pair_result.axis_deltas
-                        ),
-                        thresholds=(
-                            quality_gate_thresholds
-                        ),
-                    )
+                effective_quality_gate = _quality_gate_from_axis_scores(
+                    axis_scores=(pair_result.axis_scores),
+                    axis_deltas=(pair_result.axis_deltas),
+                    thresholds=(quality_gate_thresholds),
                 )
 
-                gate_passed = (
-                    effective_quality_gate.get(
-                        "passed"
-                    )
-                )
+                gate_passed = effective_quality_gate.get("passed")
 
-            effective_recommendation = (
-                pair_result.recommendation
-            )
+            effective_recommendation = pair_result.recommendation
 
-            effective_recommendation_reasons = list(
-                pair_result.recommendation_reasons
-            )
+            effective_recommendation_reasons = list(pair_result.recommendation_reasons)
 
             if gate_passed is True:
-                effective_recommendation = (
-                    "promote_sentence_window"
-                )
+                effective_recommendation = "promote_sentence_window"
 
                 effective_recommendation_reasons = [
-                    (
-                        "O Sentence-Window atingiu "
-                        "os limites da RAG Triad."
-                    ),
-                    (
-                        "Nenhuma regressão superou "
-                        "o limite configurado."
-                    ),
+                    ("O Sentence-Window atingiu os limites da RAG Triad."),
+                    ("Nenhuma regressão superou o limite configurado."),
                 ]
 
             elif gate_passed is False:
-                effective_recommendation = (
-                    "reject_sentence_window"
-                )
+                effective_recommendation = "reject_sentence_window"
 
                 effective_recommendation_reasons = [
-                    (
-                        "O Sentence-Window não atingiu "
-                        "todos os limites do Quality Gate."
-                    )
+                    ("O Sentence-Window não atingiu todos os limites do Quality Gate.")
                 ]
 
             cases.append(
                 {
-                    "case_id": (
-                        case.case_id
-                    ),
+                    "case_id": (case.case_id),
                     "question": question,
-                    "question_sha256": (
-                        _sha256(
-                            question
-                        )
-                    ),
+                    "question_sha256": (_sha256(question)),
                     "status": "completed",
                     "generation_order": [
-                        (
-                            "hybrid_sentence_window"
-                            if enabled
-                            else "hybrid_baseline"
-                        )
-                        for enabled
-                        in generation_order
+                        ("hybrid_sentence_window" if enabled else "hybrid_baseline")
+                        for enabled in generation_order
                     ],
-                    "baseline": (
-                        safe_variant_payload(
-                            baseline
-                        )
-                    ),
-                    "candidate": (
-                        safe_variant_payload(
-                            candidate
-                        )
-                    ),
+                    "baseline": (safe_variant_payload(baseline)),
+                    "candidate": (safe_variant_payload(candidate)),
                     "latency_delta_ms": round(
-                        candidate.duration_ms
-                        - baseline.duration_ms,
+                        candidate.duration_ms - baseline.duration_ms,
                         3,
                     ),
                     "context_character_delta": (
-                        sum(
-                            len(item)
-                            for item
-                            in candidate
-                            .retrieval_context
-                        )
-                        - sum(
-                            len(item)
-                            for item
-                            in baseline
-                            .retrieval_context
-                        )
+                        sum(len(item) for item in candidate.retrieval_context)
+                        - sum(len(item) for item in baseline.retrieval_context)
                     ),
-                    "axis_scores": (
-                        _safe_external(
-                            pair_result
-                            .axis_scores
-                        )
-                    ),
-                    "axis_deltas": (
-                        _safe_external(
-                            pair_result
-                            .axis_deltas
-                        )
-                    ),
-                    "quality_gate": (
-                        effective_quality_gate
-                    ),
-                    "quality_gate_passed": (
-                        gate_passed
-                    ),
-                    "recommendation": (
-                        effective_recommendation
-                    ),
-                    "recommendation_reasons": (
-                        effective_recommendation_reasons
-                    ),
+                    "axis_scores": (_safe_external(pair_result.axis_scores)),
+                    "axis_deltas": (_safe_external(pair_result.axis_deltas)),
+                    "quality_gate": (effective_quality_gate),
+                    "quality_gate_passed": (gate_passed),
+                    "recommendation": (effective_recommendation),
+                    "recommendation_reasons": (effective_recommendation_reasons),
                     "estimated_cost": round(
                         case_cost,
                         8,
                     ),
-                    "pair_reports": (
-                        _safe_external(
-                            pair_reports
-                        )
-                    ),
+                    "pair_reports": (_safe_external(pair_reports)),
                     "raw_outputs_stored": False,
                     "raw_contexts_stored": False,
                 }
@@ -1913,22 +1354,12 @@ def run_live_retrieval_ab_suite(
         except Exception as exc:
             cases.append(
                 {
-                    "case_id": (
-                        case.case_id
-                    ),
+                    "case_id": (case.case_id),
                     "question": question,
-                    "question_sha256": (
-                        _sha256(
-                            question
-                        )
-                    ),
+                    "question_sha256": (_sha256(question)),
                     "status": "failed",
-                    "error_type": (
-                        type(exc).__name__
-                    ),
-                    "error_message": str(
-                        exc
-                    )[:1000],
+                    "error_type": (type(exc).__name__),
+                    "error_message": str(exc)[:1000],
                     "raw_outputs_stored": False,
                     "raw_contexts_stored": False,
                 }
@@ -1937,101 +1368,44 @@ def run_live_retrieval_ab_suite(
             if config.fail_fast:
                 raise
 
-    completed_cases = [
-        item
-        for item in cases
-        if item.get(
-            "status"
-        ) == "completed"
-    ]
+    completed_cases = [item for item in cases if item.get("status") == "completed"]
 
-    failed_cases = [
-        item
-        for item in cases
-        if item.get(
-            "status"
-        ) != "completed"
-    ]
+    failed_cases = [item for item in cases if item.get("status") != "completed"]
 
-    recommendation, reasons = (
-        _overall_recommendation(
-            completed_cases=(
-                completed_cases
-            ),
-            failed_case_count=len(
-                failed_cases
-            ),
-            maximum_median_latency_regression_ms=(
-                config
-                .maximum_median_latency_regression_ms
-            ),
-        )
+    recommendation, reasons = _overall_recommendation(
+        completed_cases=(completed_cases),
+        failed_case_count=len(failed_cases),
+        maximum_median_latency_regression_ms=(
+            config.maximum_median_latency_regression_ms
+        ),
     )
 
-    latency_deltas = [
-        float(
-            item[
-                "latency_delta_ms"
-            ]
-        )
-        for item in completed_cases
-    ]
+    latency_deltas = [float(item["latency_delta_ms"]) for item in completed_cases]
 
-    context_deltas = [
-        int(
-            item[
-                "context_character_delta"
-            ]
-        )
-        for item in completed_cases
-    ]
+    context_deltas = [int(item["context_character_delta"]) for item in completed_cases]
 
     payload: dict[str, Any] = {
         "schema_version": 1,
         "run_id": run_id,
-        "generated_at": (
-            generated_at.isoformat()
-        ),
-        "experiment": (
-            "week3_live_retrieval_ab"
-        ),
+        "generated_at": (generated_at.isoformat()),
+        "experiment": ("week3_live_retrieval_ab"),
         "configuration": {
             "top_k": safe_top_k,
-            "language": (
-                config.language
-            ),
-            "tolerance": (
-                config.tolerance
-            ),
-            "maximum_total_cost_per_variant": (
-                config
-                .maximum_total_cost_per_variant
-            ),
+            "language": (config.language),
+            "tolerance": (config.tolerance),
+            "maximum_total_cost_per_variant": (config.maximum_total_cost_per_variant),
             "maximum_median_latency_regression_ms": (
-                config
-                .maximum_median_latency_regression_ms
+                config.maximum_median_latency_regression_ms
             ),
         },
-        "question_count": len(
-            normalized_questions
-        ),
-        "completed_count": len(
-            completed_cases
-        ),
-        "failed_count": len(
-            failed_cases
-        ),
-        "recommendation": (
-            recommendation
-        ),
-        "recommendation_reasons": (
-            reasons
-        ),
+        "question_count": len(normalized_questions),
+        "completed_count": len(completed_cases),
+        "failed_count": len(failed_cases),
+        "recommendation": (recommendation),
+        "recommendation_reasons": (reasons),
         "median_latency_delta_ms": (
             round(
-                statistics.median(
-                    latency_deltas
-                ),
+                statistics.median(latency_deltas),
                 3,
             )
             if latency_deltas
@@ -2039,9 +1413,7 @@ def run_live_retrieval_ab_suite(
         ),
         "average_latency_delta_ms": (
             round(
-                statistics.mean(
-                    latency_deltas
-                ),
+                statistics.mean(latency_deltas),
                 3,
             )
             if latency_deltas
@@ -2049,9 +1421,7 @@ def run_live_retrieval_ab_suite(
         ),
         "average_context_character_delta": (
             round(
-                statistics.mean(
-                    context_deltas
-                ),
+                statistics.mean(context_deltas),
                 3,
             )
             if context_deltas
@@ -2069,20 +1439,11 @@ def run_live_retrieval_ab_suite(
         },
     }
 
-    json_path = (
-        output_path
-        / f"{run_id}.json"
-    )
+    json_path = output_path / f"{run_id}.json"
 
-    markdown_path = (
-        output_path
-        / f"{run_id}.md"
-    )
+    markdown_path = output_path / f"{run_id}.md"
 
-    history_path = (
-        output_path
-        / "history.jsonl"
-    )
+    history_path = output_path / "history.jsonl"
 
     json_path.write_text(
         json.dumps(
@@ -2094,50 +1455,20 @@ def run_live_retrieval_ab_suite(
     )
 
     markdown_path.write_text(
-        _markdown_report(
-            payload
-        ),
+        _markdown_report(payload),
         encoding="utf-8",
     )
 
     history_record = {
         "run_id": run_id,
-        "generated_at": (
-            payload[
-                "generated_at"
-            ]
-        ),
-        "completed_count": (
-            payload[
-                "completed_count"
-            ]
-        ),
-        "failed_count": (
-            payload[
-                "failed_count"
-            ]
-        ),
-        "recommendation": (
-            payload[
-                "recommendation"
-            ]
-        ),
-        "median_latency_delta_ms": (
-            payload[
-                "median_latency_delta_ms"
-            ]
-        ),
-        "total_estimated_cost": (
-            payload[
-                "total_estimated_cost"
-            ]
-        ),
-        "json_report": str(
-            json_path
-        ),
-        "markdown_report": str(
-            markdown_path
-        ),
+        "generated_at": (payload["generated_at"]),
+        "completed_count": (payload["completed_count"]),
+        "failed_count": (payload["failed_count"]),
+        "recommendation": (payload["recommendation"]),
+        "median_latency_delta_ms": (payload["median_latency_delta_ms"]),
+        "total_estimated_cost": (payload["total_estimated_cost"]),
+        "json_report": str(json_path),
+        "markdown_report": str(markdown_path),
     }
 
     with history_path.open(
@@ -2155,13 +1486,7 @@ def run_live_retrieval_ab_suite(
     return {
         "payload": payload,
         "run_id": run_id,
-        "json_path": str(
-            json_path
-        ),
-        "markdown_path": str(
-            markdown_path
-        ),
-        "history_path": str(
-            history_path
-        ),
+        "json_path": str(json_path),
+        "markdown_path": str(markdown_path),
+        "history_path": str(history_path),
     }

@@ -17,6 +17,9 @@ from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command
 
+from src.agentic_rag.langgraph_integration import (
+    agentic_rag_gateway_node as rag_agent_node,
+)
 from src.agents.conversation_summary_node import (
     conversation_summary_node,
 )
@@ -40,7 +43,6 @@ from src.agents.nodes import (
     education_agent_node,
     fallback_agent_node,
     financial_agent_node,
-    rag_agent_node,
     report_agent_node,
 )
 from src.agents.persistence import (
@@ -81,9 +83,7 @@ ALLOWED_AGENT_ROUTES = frozenset(
 )
 
 
-class LangGraphExecutionLimitError(
-    RuntimeError
-):
+class LangGraphExecutionLimitError(RuntimeError):
     """
     Indica que a execução do grafo excedeu
     o limite operacional permitido.
@@ -101,14 +101,10 @@ def _criar_config_execucao(
     do RunnableConfig do LangGraph.
     """
     config: dict[str, Any] = {
-        "recursion_limit": (
-            DEFAULT_LANGGRAPH_RECURSION_LIMIT
-        ),
+        "recursion_limit": (DEFAULT_LANGGRAPH_RECURSION_LIMIT),
     }
 
-    normalized_thread_id = str(
-        thread_id or ""
-    ).strip()
+    normalized_thread_id = str(thread_id or "").strip()
 
     if normalized_thread_id:
         config["configurable"] = {
@@ -137,8 +133,7 @@ def _invocar_grafo_seguro(
         )
     except GraphRecursionError as error:
         raise LangGraphExecutionLimitError(
-            "A execução do núcleo agentic excedeu "
-            "o limite máximo de passos permitido."
+            "A execução do núcleo agentic excedeu o limite máximo de passos permitido."
         ) from error
 
 
@@ -167,9 +162,7 @@ def _selecionar_rota_apos_handoff(
 
     Handoffs em estado terminal seguem para o resumo final.
     """
-    handoff = state.get(
-        "handoff_current"
-    )
+    handoff = state.get("handoff_current")
 
     if not isinstance(
         handoff,
@@ -193,10 +186,7 @@ def _selecionar_rota_apos_handoff(
         or ""
     ).strip()
 
-    if (
-        status == "requested"
-        and target in ALLOWED_AGENT_ROUTES
-    ):
+    if status == "requested" and target in ALLOWED_AGENT_ROUTES:
         return "team_router"
 
     return "conversation_summary"
@@ -248,10 +238,9 @@ def _selecionar_saida_supervisor_equipe(
 
     return "supervisor"
 
+
 def criar_builder_inna() -> StateGraph:
-    builder = StateGraph(
-        InnaAgentState
-    )
+    builder = StateGraph(InnaAgentState)
 
     # Entrada e supervisão principal
     builder.add_node(
@@ -364,15 +353,9 @@ def criar_builder_inna() -> StateGraph:
         "team_router",
         select_team_supervisor_route,
         {
-            (
-                "financial_team_supervisor"
-            ): "financial_team_supervisor",
-            (
-                "knowledge_team_supervisor"
-            ): "knowledge_team_supervisor",
-            (
-                "support_team_supervisor"
-            ): "support_team_supervisor",
+            ("financial_team_supervisor"): "financial_team_supervisor",
+            ("knowledge_team_supervisor"): "knowledge_team_supervisor",
+            ("support_team_supervisor"): "support_team_supervisor",
         },
     )
 
@@ -387,9 +370,7 @@ def criar_builder_inna() -> StateGraph:
             team_supervisor,
             _selecionar_saida_supervisor_equipe,
             {
-                (
-                    "execution_governance"
-                ): "execution_governance",
+                ("execution_governance"): "execution_governance",
                 "supervisor": "supervisor",
                 "fallback_agent": "fallback_agent",
             },
@@ -426,12 +407,8 @@ def criar_builder_inna() -> StateGraph:
         "human_review_policy",
         select_route_after_human_review_policy,
         {
-            (
-                "human_review_interrupt"
-            ): "human_review_interrupt",
-            (
-                "handoff_coordinator"
-            ): "handoff_coordinator",
+            ("human_review_interrupt"): "human_review_interrupt",
+            ("handoff_coordinator"): "handoff_coordinator",
         },
     )
 
@@ -440,13 +417,9 @@ def criar_builder_inna() -> StateGraph:
         "human_review_interrupt",
         select_route_after_human_review_interrupt,
         {
-            (
-                "handoff_coordinator"
-            ): "handoff_coordinator",
+            ("handoff_coordinator"): "handoff_coordinator",
             "team_router": "team_router",
-            (
-                "conversation_summary"
-            ): "conversation_summary",
+            ("conversation_summary"): "conversation_summary",
         },
     )
 
@@ -456,9 +429,7 @@ def criar_builder_inna() -> StateGraph:
         _selecionar_rota_apos_handoff,
         {
             "team_router": "team_router",
-            (
-                "conversation_summary"
-            ): "conversation_summary",
+            ("conversation_summary"): "conversation_summary",
         },
     )
 
@@ -469,13 +440,12 @@ def criar_builder_inna() -> StateGraph:
 
     return builder
 
+
 def criar_grafo_inna(
     *,
     checkpointer: Any | None = None,
 ):
-    return criar_builder_inna().compile(
-        checkpointer=checkpointer
-    )
+    return criar_builder_inna().compile(checkpointer=checkpointer)
 
 
 inna_agent_graph = criar_grafo_inna()
@@ -511,7 +481,6 @@ def _criar_estado_inicial(
         "handoff_required": False,
         "handoff_target": "",
         "handoff_reason": "",
-
         # Roteamento hierárquico
         "hierarchical_routing_enabled": True,
         "current_team": "",
@@ -537,18 +506,13 @@ def _criar_estado_inicial(
         "human_review_count": 0,
         "max_human_reviews": 3,
         "human_review_limit_exceeded": False,
-
         "context": {},
         "tool_results": [],
         "errors": [],
         "route_history": [],
         "execution_steps": 0,
-        "max_execution_steps": (
-            DEFAULT_MAX_EXECUTION_STEPS
-        ),
-        "max_same_agent_visits": (
-            DEFAULT_MAX_SAME_AGENT_VISITS
-        ),
+        "max_execution_steps": (DEFAULT_MAX_EXECUTION_STEPS),
+        "max_same_agent_visits": (DEFAULT_MAX_SAME_AGENT_VISITS),
         "loop_detected": False,
         "execution_budget_exceeded": False,
         "governance_reason": "",
@@ -582,9 +546,7 @@ def executar_nucleo_inna(
     # A retomada Human-in-the-Loop depende de
     # checkpoint persistente. A execução legada,
     # sem persistência, continua compatível.
-    estado_inicial[
-        "human_review_enabled"
-    ] = False
+    estado_inicial["human_review_enabled"] = False
 
     config = _criar_config_execucao()
 
@@ -627,16 +589,10 @@ def executar_nucleo_inna_persistente(
     thread_id = str(thread_id or "").strip()
 
     if not thread_id:
-        raise ValueError(
-            "thread_id é obrigatório para "
-            "execução persistente."
-        )
+        raise ValueError("thread_id é obrigatório para execução persistente.")
 
     if len(thread_id) > 255:
-        raise ValueError(
-            "thread_id deve possuir no máximo "
-            "255 caracteres."
-        )
+        raise ValueError("thread_id deve possuir no máximo 255 caracteres.")
 
     estado_inicial = _criar_estado_inicial(
         mensagem,
@@ -649,20 +605,14 @@ def executar_nucleo_inna_persistente(
     # Mantém compatibilidade com chamadas síncronas
     # existentes. O Human-in-the-Loop deve ser
     # habilitado explicitamente pelo consumidor.
-    estado_inicial[
-        "human_review_enabled"
-    ] = bool(
-        human_review_enabled
-    )
+    estado_inicial["human_review_enabled"] = bool(human_review_enabled)
 
     config = _criar_config_execucao(
         thread_id=thread_id,
     )
 
     with abrir_checkpointer_postgres() as checkpointer:
-        grafo = criar_grafo_inna(
-            checkpointer=checkpointer
-        )
+        grafo = criar_grafo_inna(checkpointer=checkpointer)
 
         with traced_langgraph_execution(
             execution_mode="persistent",
@@ -670,9 +620,7 @@ def executar_nucleo_inna_persistente(
             user_id=usuario_id,
             language=idioma,
             currency=moeda,
-            human_review_enabled=(
-                human_review_enabled
-            ),
+            human_review_enabled=(human_review_enabled),
         ) as span:
             result = _invocar_grafo_seguro(
                 grafo,
@@ -688,8 +636,6 @@ def executar_nucleo_inna_persistente(
             return result
 
 
-
-
 def retomar_revisao_humana_persistente(
     *,
     thread_id: str,
@@ -701,47 +647,31 @@ def retomar_revisao_humana_persistente(
     O mesmo thread_id utilizado na execução inicial
     é obrigatório para localizar o checkpoint.
     """
-    normalized_thread_id = str(
-        thread_id or ""
-    ).strip()
+    normalized_thread_id = str(thread_id or "").strip()
 
     if not normalized_thread_id:
-        raise ValueError(
-            "thread_id é obrigatório para retomar "
-            "uma revisão humana."
-        )
+        raise ValueError("thread_id é obrigatório para retomar uma revisão humana.")
 
     if len(normalized_thread_id) > 255:
-        raise ValueError(
-            "thread_id deve possuir no máximo "
-            "255 caracteres."
-        )
+        raise ValueError("thread_id deve possuir no máximo 255 caracteres.")
 
     if not isinstance(
         decisao,
         Mapping,
     ):
-        raise TypeError(
-            "decisao deve implementar Mapping."
-        )
+        raise TypeError("decisao deve implementar Mapping.")
 
-    normalized_decision = dict(
-        decisao
-    )
+    normalized_decision = dict(decisao)
 
     if not normalized_decision:
-        raise ValueError(
-            "decisao não pode ser vazia."
-        )
+        raise ValueError("decisao não pode ser vazia.")
 
     config = _criar_config_execucao(
         thread_id=normalized_thread_id,
     )
 
     with abrir_checkpointer_postgres() as checkpointer:
-        grafo = criar_grafo_inna(
-            checkpointer=checkpointer
-        )
+        grafo = criar_grafo_inna(checkpointer=checkpointer)
 
         with traced_langgraph_execution(
             execution_mode="human_review_resume",
@@ -749,9 +679,7 @@ def retomar_revisao_humana_persistente(
             human_review_enabled=True,
         ) as span:
             result = grafo.invoke(
-                Command(
-                    resume=normalized_decision
-                ),
+                Command(resume=normalized_decision),
                 config=config,
             )
 
@@ -777,9 +705,7 @@ def consultar_estado_conversa(
     }
 
     with abrir_checkpointer_postgres() as checkpointer:
-        grafo = criar_grafo_inna(
-            checkpointer=checkpointer
-        )
+        grafo = criar_grafo_inna(checkpointer=checkpointer)
 
         snapshot = grafo.get_state(config)
 
@@ -787,12 +713,8 @@ def consultar_estado_conversa(
             "thread_id": thread_id,
             "values": dict(snapshot.values or {}),
             "next": list(snapshot.next or []),
-            "created_at": (
-                snapshot.created_at
-            ),
-            "metadata": dict(
-                snapshot.metadata or {}
-            ),
+            "created_at": (snapshot.created_at),
+            "metadata": dict(snapshot.metadata or {}),
         }
 
 

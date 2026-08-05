@@ -26,33 +26,21 @@ def _event(
 def test_noop_event_sink_accepts_event():
     sink = NoOpTelegramOperationalEventSink()
 
-    sink.emit(
-        _event()
-    )
+    sink.emit(_event())
 
 
 def test_in_memory_sink_records_event():
-    sink = (
-        InMemoryTelegramOperationalEventSink()
-    )
+    sink = InMemoryTelegramOperationalEventSink()
 
-    sink.emit(
-        _event()
-    )
+    sink.emit(_event())
 
-    assert len(
-        sink.snapshot()
-    ) == 1
+    assert len(sink.snapshot()) == 1
 
 
 def test_in_memory_sink_filters_events():
-    sink = (
-        InMemoryTelegramOperationalEventSink()
-    )
+    sink = InMemoryTelegramOperationalEventSink()
 
-    sink.emit(
-        _event()
-    )
+    sink.emit(_event())
 
     sink.emit(
         TelegramOperationalEvent(
@@ -66,25 +54,27 @@ def test_in_memory_sink_filters_events():
         )
     )
 
-    assert sink.count(
-        component="bridge",
-        outcome="success",
-    ) == 1
+    assert (
+        sink.count(
+            component="bridge",
+            outcome="success",
+        )
+        == 1
+    )
 
-    assert sink.count(
-        name="telegram_worker_update_failed",
-        level="error",
-    ) == 1
+    assert (
+        sink.count(
+            name="telegram_worker_update_failed",
+            level="error",
+        )
+        == 1
+    )
 
 
 def test_in_memory_sink_clear():
-    sink = (
-        InMemoryTelegramOperationalEventSink()
-    )
+    sink = InMemoryTelegramOperationalEventSink()
 
-    sink.emit(
-        _event()
-    )
+    sink.emit(_event())
 
     sink.clear()
 

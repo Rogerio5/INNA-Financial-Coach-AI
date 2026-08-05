@@ -93,19 +93,12 @@ def initialize_phoenix(
         try:
             from phoenix.otel import register
 
-            sampler = ParentBased(
-                root=TraceIdRatioBased(settings.sample_rate)
-            )
+            sampler = ParentBased(root=TraceIdRatioBased(settings.sample_rate))
 
             traces_endpoint = (
                 settings.collector_endpoint
-                if settings.collector_endpoint.endswith(
-                    "/v1/traces"
-                )
-                else (
-                    settings.collector_endpoint
-                    + "/v1/traces"
-                )
+                if settings.collector_endpoint.endswith("/v1/traces")
+                else (settings.collector_endpoint + "/v1/traces")
             )
 
             _TRACER_PROVIDER = register(
@@ -148,23 +141,11 @@ def get_phoenix_runtime_status() -> PhoenixRuntimeStatus:
         initialized=_INITIALIZED,
         enabled=bool(settings and settings.enabled),
         ready=bool(_TRACER_PROVIDER),
-        project_name=(
-            settings.project_name if settings else ""
-        ),
-        environment=(
-            settings.environment if settings else ""
-        ),
-        sample_rate=(
-            settings.sample_rate if settings else 0.0
-        ),
-        capture_content=(
-            settings.capture_content if settings else False
-        ),
-        processor=(
-            "BatchSpanProcessor"
-            if _TRACER_PROVIDER is not None
-            else "none"
-        ),
+        project_name=(settings.project_name if settings else ""),
+        environment=(settings.environment if settings else ""),
+        sample_rate=(settings.sample_rate if settings else 0.0),
+        capture_content=(settings.capture_content if settings else False),
+        processor=("BatchSpanProcessor" if _TRACER_PROVIDER is not None else "none"),
         error=_RUNTIME_ERROR,
     )
 
@@ -201,15 +182,9 @@ def traced_operation(
     safe_attributes.update(
         {
             "service.name": (
-                settings.service_name
-                if settings
-                else "inna-financial-coach-ai"
+                settings.service_name if settings else "inna-financial-coach-ai"
             ),
-            "deployment.environment": (
-                settings.environment
-                if settings
-                else "unknown"
-            ),
+            "deployment.environment": (settings.environment if settings else "unknown"),
             "telemetry.provider": "phoenix",
         }
     )
@@ -259,11 +234,7 @@ def force_flush_phoenix(
         return True
 
     try:
-        return bool(
-            provider.force_flush(
-                timeout_millis=timeout_millis
-            )
-        )
+        return bool(provider.force_flush(timeout_millis=timeout_millis))
     except Exception:
         logger.exception("Falha ao executar flush do Phoenix.")
         return False

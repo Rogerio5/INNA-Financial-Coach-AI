@@ -10,13 +10,9 @@ from src.database.connection import (
 )
 
 
-SHA256_PATTERN = re.compile(
-    r"^[0-9a-f]{64}$"
-)
+SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
-ERROR_CODE_PATTERN = re.compile(
-    r"^[a-z0-9][a-z0-9._:-]{0,63}$"
-)
+ERROR_CODE_PATTERN = re.compile(r"^[a-z0-9][a-z0-9._:-]{0,63}$")
 
 
 SQL_INSERT_RECEIPT = """
@@ -153,25 +149,19 @@ RETURNING
 """
 
 
-class TelegramUpdateReceiptRepositoryError(
-    RuntimeError
-):
+class TelegramUpdateReceiptRepositoryError(RuntimeError):
     """
     Erro sanitizado no acesso aos receipts Telegram.
     """
 
 
-class TelegramUpdateFingerprintConflictError(
-    TelegramUpdateReceiptRepositoryError
-):
+class TelegramUpdateFingerprintConflictError(TelegramUpdateReceiptRepositoryError):
     """
     O update_id já existe associado a outro conteúdo.
     """
 
 
-class TelegramUpdateClaimOwnershipError(
-    TelegramUpdateReceiptRepositoryError
-):
+class TelegramUpdateClaimOwnershipError(TelegramUpdateReceiptRepositoryError):
     """
     O worker não possui mais o claim atual.
     """
@@ -214,12 +204,8 @@ class TelegramUpdateClaimResult:
         """
         return {
             "status": self.status,
-            "attempt_count": (
-                self.attempt_count
-            ),
-            "should_process": (
-                self.should_process
-            ),
+            "attempt_count": (self.attempt_count),
+            "should_process": (self.should_process),
         }
 
 
@@ -242,23 +228,15 @@ class TelegramUpdateLifecycleResult:
     ) -> dict[str, object]:
         return {
             "status": self.status,
-            "attempt_count": (
-                self.attempt_count
-            ),
+            "attempt_count": (self.attempt_count),
         }
 
 
 def _validar_update_id(
     update_id: Any,
 ) -> int:
-    if (
-        isinstance(update_id, bool)
-        or not isinstance(update_id, int)
-        or update_id < 0
-    ):
-        raise ValueError(
-            "update_id inválido."
-        )
+    if isinstance(update_id, bool) or not isinstance(update_id, int) or update_id < 0:
+        raise ValueError("update_id inválido.")
 
     return update_id
 
@@ -268,15 +246,8 @@ def _validar_sha256(
     *,
     field_name: str,
 ) -> str:
-    if (
-        not isinstance(value, str)
-        or not SHA256_PATTERN.fullmatch(
-            value
-        )
-    ):
-        raise ValueError(
-            f"{field_name} inválido."
-        )
+    if not isinstance(value, str) or not SHA256_PATTERN.fullmatch(value):
+        raise ValueError(f"{field_name} inválido.")
 
     return value
 
@@ -284,14 +255,8 @@ def _validar_sha256(
 def _validar_lease_seconds(
     value: Any,
 ) -> int:
-    if (
-        isinstance(value, bool)
-        or not isinstance(value, int)
-        or not 5 <= value <= 900
-    ):
-        raise ValueError(
-            "lease_seconds inválido."
-        )
+    if isinstance(value, bool) or not isinstance(value, int) or not 5 <= value <= 900:
+        raise ValueError("lease_seconds inválido.")
 
     return value
 
@@ -299,15 +264,8 @@ def _validar_lease_seconds(
 def _validar_error_code(
     value: Any,
 ) -> str:
-    if (
-        not isinstance(value, str)
-        or not ERROR_CODE_PATTERN.fullmatch(
-            value
-        )
-    ):
-        raise ValueError(
-            "error_code inválido."
-        )
+    if not isinstance(value, str) or not ERROR_CODE_PATTERN.fullmatch(value):
+        raise ValueError("error_code inválido.")
 
     return value
 
@@ -315,11 +273,7 @@ def _validar_error_code(
 def _validar_attempt_count(
     value: Any,
 ) -> int:
-    if (
-        isinstance(value, bool)
-        or not isinstance(value, int)
-        or value < 1
-    ):
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
         raise TelegramUpdateReceiptRepositoryError(
             "O banco retornou attempt_count inválido."
         )
@@ -331,9 +285,7 @@ def _extrair_update_id(
     row: Mapping[str, Any],
 ) -> int:
     try:
-        return _validar_update_id(
-            row["update_id"]
-        )
+        return _validar_update_id(row["update_id"])
 
     except (
         KeyError,
@@ -364,9 +316,7 @@ def _extrair_status_banco(
         "completed",
         "failed",
     }:
-        raise TelegramUpdateReceiptRepositoryError(
-            "O banco retornou status inválido."
-        )
+        raise TelegramUpdateReceiptRepositoryError("O banco retornou status inválido.")
 
     return status
 
@@ -383,11 +333,7 @@ def _resultado_claim(
     claim_token: str | None,
 ) -> TelegramUpdateClaimResult:
     try:
-        attempt_count = (
-            _validar_attempt_count(
-                row["attempt_count"]
-            )
-        )
+        attempt_count = _validar_attempt_count(row["attempt_count"])
 
     except (
         KeyError,
@@ -398,9 +344,7 @@ def _resultado_claim(
         ) from None
 
     return TelegramUpdateClaimResult(
-        update_id=_extrair_update_id(
-            row
-        ),
+        update_id=_extrair_update_id(row),
         status=status,
         attempt_count=attempt_count,
         claim_token=claim_token,
@@ -415,11 +359,7 @@ def _resultado_lifecycle(
         "failed",
     ],
 ) -> TelegramUpdateLifecycleResult:
-    database_status = (
-        _extrair_status_banco(
-            row
-        )
-    )
+    database_status = _extrair_status_banco(row)
 
     if database_status != expected_status:
         raise TelegramUpdateReceiptRepositoryError(
@@ -427,11 +367,7 @@ def _resultado_lifecycle(
         )
 
     try:
-        attempt_count = (
-            _validar_attempt_count(
-                row["attempt_count"]
-            )
-        )
+        attempt_count = _validar_attempt_count(row["attempt_count"])
 
     except (
         KeyError,
@@ -442,9 +378,7 @@ def _resultado_lifecycle(
         ) from None
 
     return TelegramUpdateLifecycleResult(
-        update_id=_extrair_update_id(
-            row
-        ),
+        update_id=_extrair_update_id(row),
         status=expected_status,
         attempt_count=attempt_count,
     )
@@ -463,47 +397,25 @@ def claim_telegram_update(
     O SELECT FOR UPDATE serializa concorrência
     entre diferentes instâncias da aplicação.
     """
-    normalized_update_id = (
-        _validar_update_id(
-            update_id
-        )
+    normalized_update_id = _validar_update_id(update_id)
+
+    normalized_fingerprint = _validar_sha256(
+        update_fingerprint,
+        field_name=("update_fingerprint"),
     )
 
-    normalized_fingerprint = (
-        _validar_sha256(
-            update_fingerprint,
-            field_name=(
-                "update_fingerprint"
-            ),
-        )
+    normalized_claim_token = _validar_sha256(
+        claim_token,
+        field_name="claim_token",
     )
 
-    normalized_claim_token = (
-        _validar_sha256(
-            claim_token,
-            field_name="claim_token",
-        )
-    )
-
-    normalized_lease = (
-        _validar_lease_seconds(
-            lease_seconds
-        )
-    )
+    normalized_lease = _validar_lease_seconds(lease_seconds)
 
     parameters = {
-        "update_id": (
-            normalized_update_id
-        ),
-        "update_fingerprint": (
-            normalized_fingerprint
-        ),
-        "claim_token": (
-            normalized_claim_token
-        ),
-        "lease_seconds": (
-            normalized_lease
-        ),
+        "update_id": (normalized_update_id),
+        "update_fingerprint": (normalized_fingerprint),
+        "claim_token": (normalized_claim_token),
+        "lease_seconds": (normalized_lease),
     }
 
     try:
@@ -511,15 +423,9 @@ def claim_telegram_update(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            cursor.execute(
-                "SET LOCAL lock_timeout "
-                "= '3000ms';"
-            )
+            cursor.execute("SET LOCAL lock_timeout = '3000ms';")
 
-            cursor.execute(
-                "SET LOCAL statement_timeout "
-                "= '5000ms';"
-            )
+            cursor.execute("SET LOCAL statement_timeout = '5000ms';")
 
             cursor.execute(
                 SQL_INSERT_RECEIPT,
@@ -532,17 +438,13 @@ def claim_telegram_update(
                 return _resultado_claim(
                     inserted,
                     status="claimed",
-                    claim_token=(
-                        normalized_claim_token
-                    ),
+                    claim_token=(normalized_claim_token),
                 )
 
             cursor.execute(
                 SQL_LOCK_EXISTING_RECEIPT,
                 {
-                    "update_id": (
-                        normalized_update_id
-                    ),
+                    "update_id": (normalized_update_id),
                 },
             )
 
@@ -551,17 +453,12 @@ def claim_telegram_update(
             if existing is None:
                 raise (
                     TelegramUpdateReceiptRepositoryError(
-                        "Receipt não localizado após "
-                        "conflito de update_id."
+                        "Receipt não localizado após conflito de update_id."
                     )
                 )
 
             try:
-                existing_fingerprint = (
-                    existing[
-                        "update_fingerprint"
-                    ]
-                )
+                existing_fingerprint = existing["update_fingerprint"]
 
             except (
                 KeyError,
@@ -569,35 +466,24 @@ def claim_telegram_update(
             ):
                 raise (
                     TelegramUpdateReceiptRepositoryError(
-                        "O banco retornou fingerprint "
-                        "inválido."
+                        "O banco retornou fingerprint inválido."
                     )
                 ) from None
 
-            if (
-                existing_fingerprint
-                != normalized_fingerprint
-            ):
+            if existing_fingerprint != normalized_fingerprint:
                 raise (
                     TelegramUpdateFingerprintConflictError(
-                        "O update_id já está associado "
-                        "a outro conteúdo."
+                        "O update_id já está associado a outro conteúdo."
                     )
                 )
 
-            database_status = (
-                _extrair_status_banco(
-                    existing
-                )
-            )
+            database_status = _extrair_status_banco(existing)
 
             if database_status == "completed":
                 cursor.execute(
                     SQL_TOUCH_RECEIPT,
                     {
-                        "update_id": (
-                            normalized_update_id
-                        ),
+                        "update_id": (normalized_update_id),
                     },
                 )
 
@@ -614,16 +500,11 @@ def claim_telegram_update(
                 )
             )
 
-            if (
-                database_status == "processing"
-                and lease_active
-            ):
+            if database_status == "processing" and lease_active:
                 cursor.execute(
                     SQL_TOUCH_RECEIPT,
                     {
-                        "update_id": (
-                            normalized_update_id
-                        ),
+                        "update_id": (normalized_update_id),
                     },
                 )
 
@@ -643,17 +524,14 @@ def claim_telegram_update(
             if reclaimed is None:
                 raise (
                     TelegramUpdateReceiptRepositoryError(
-                        "Não foi possível recuperar "
-                        "o receipt Telegram."
+                        "Não foi possível recuperar o receipt Telegram."
                     )
                 )
 
             return _resultado_claim(
                 reclaimed,
                 status="reclaimed",
-                claim_token=(
-                    normalized_claim_token
-                ),
+                claim_token=(normalized_claim_token),
             )
 
     except (
@@ -664,8 +542,7 @@ def claim_telegram_update(
 
     except Exception:
         raise TelegramUpdateReceiptRepositoryError(
-            "Não foi possível registrar o "
-            "update Telegram."
+            "Não foi possível registrar o update Telegram."
         ) from None
 
 
@@ -674,17 +551,11 @@ def complete_telegram_update(
     update_id: int,
     claim_token: str,
 ) -> TelegramUpdateLifecycleResult:
-    normalized_update_id = (
-        _validar_update_id(
-            update_id
-        )
-    )
+    normalized_update_id = _validar_update_id(update_id)
 
-    normalized_claim_token = (
-        _validar_sha256(
-            claim_token,
-            field_name="claim_token",
-        )
+    normalized_claim_token = _validar_sha256(
+        claim_token,
+        field_name="claim_token",
     )
 
     try:
@@ -692,25 +563,15 @@ def complete_telegram_update(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            cursor.execute(
-                "SET LOCAL lock_timeout "
-                "= '3000ms';"
-            )
+            cursor.execute("SET LOCAL lock_timeout = '3000ms';")
 
-            cursor.execute(
-                "SET LOCAL statement_timeout "
-                "= '5000ms';"
-            )
+            cursor.execute("SET LOCAL statement_timeout = '5000ms';")
 
             cursor.execute(
                 SQL_COMPLETE_RECEIPT,
                 {
-                    "update_id": (
-                        normalized_update_id
-                    ),
-                    "claim_token": (
-                        normalized_claim_token
-                    ),
+                    "update_id": (normalized_update_id),
+                    "claim_token": (normalized_claim_token),
                 },
             )
 
@@ -718,9 +579,7 @@ def complete_telegram_update(
 
             if row is None:
                 raise (
-                    TelegramUpdateClaimOwnershipError(
-                        "O claim não está mais ativo."
-                    )
+                    TelegramUpdateClaimOwnershipError("O claim não está mais ativo.")
                 )
 
             return _resultado_lifecycle(
@@ -736,8 +595,7 @@ def complete_telegram_update(
 
     except Exception:
         raise TelegramUpdateReceiptRepositoryError(
-            "Não foi possível concluir o "
-            "update Telegram."
+            "Não foi possível concluir o update Telegram."
         ) from None
 
 
@@ -747,52 +605,30 @@ def fail_telegram_update(
     claim_token: str,
     error_code: str,
 ) -> TelegramUpdateLifecycleResult:
-    normalized_update_id = (
-        _validar_update_id(
-            update_id
-        )
+    normalized_update_id = _validar_update_id(update_id)
+
+    normalized_claim_token = _validar_sha256(
+        claim_token,
+        field_name="claim_token",
     )
 
-    normalized_claim_token = (
-        _validar_sha256(
-            claim_token,
-            field_name="claim_token",
-        )
-    )
-
-    normalized_error_code = (
-        _validar_error_code(
-            error_code
-        )
-    )
+    normalized_error_code = _validar_error_code(error_code)
 
     try:
         with cursor_postgres(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            cursor.execute(
-                "SET LOCAL lock_timeout "
-                "= '3000ms';"
-            )
+            cursor.execute("SET LOCAL lock_timeout = '3000ms';")
 
-            cursor.execute(
-                "SET LOCAL statement_timeout "
-                "= '5000ms';"
-            )
+            cursor.execute("SET LOCAL statement_timeout = '5000ms';")
 
             cursor.execute(
                 SQL_FAIL_RECEIPT,
                 {
-                    "update_id": (
-                        normalized_update_id
-                    ),
-                    "claim_token": (
-                        normalized_claim_token
-                    ),
-                    "error_code": (
-                        normalized_error_code
-                    ),
+                    "update_id": (normalized_update_id),
+                    "claim_token": (normalized_claim_token),
+                    "error_code": (normalized_error_code),
                 },
             )
 
@@ -800,9 +636,7 @@ def fail_telegram_update(
 
             if row is None:
                 raise (
-                    TelegramUpdateClaimOwnershipError(
-                        "O claim não está mais ativo."
-                    )
+                    TelegramUpdateClaimOwnershipError("O claim não está mais ativo.")
                 )
 
             return _resultado_lifecycle(
@@ -818,8 +652,7 @@ def fail_telegram_update(
 
     except Exception:
         raise TelegramUpdateReceiptRepositoryError(
-            "Não foi possível marcar a falha do "
-            "update Telegram."
+            "Não foi possível marcar a falha do update Telegram."
         ) from None
 
 

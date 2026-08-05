@@ -13,15 +13,11 @@ from typing import Any
 TRIAD_METRIC_CLASS_NAMES = {
     "answer-relevancy": "AnswerRelevancyMetric",
     "faithfulness": "FaithfulnessMetric",
-    "contextual-relevancy": (
-        "ContextualRelevancyMetric"
-    ),
+    "contextual-relevancy": ("ContextualRelevancyMetric"),
 }
 
 
-class DeepEvalLiveExecutorError(
-    RuntimeError
-):
+class DeepEvalLiveExecutorError(RuntimeError):
     """
     Erro controlado dos executores DeepEval live.
     """
@@ -45,8 +41,7 @@ def _first_environment_value(
     return None
 
 
-def resolve_gemini_judge_configuration(
-) -> dict[str, str]:
+def resolve_gemini_judge_configuration() -> dict[str, str]:
     api_key = _first_environment_value(
         "GOOGLE_API_KEY",
         "GEMINI_API_KEY",
@@ -54,9 +49,7 @@ def resolve_gemini_judge_configuration(
     )
 
     if not api_key:
-        raise DeepEvalLiveExecutorError(
-            "Nenhuma credencial Gemini foi encontrada."
-        )
+        raise DeepEvalLiveExecutorError("Nenhuma credencial Gemini foi encontrada.")
 
     model_name = (
         _first_environment_value(
@@ -76,9 +69,7 @@ INNA_GEMINI_RATE_LIMITER_VERSION = 1
 
 _SHARED_GEMINI_LIMITER = None
 
-_SHARED_GEMINI_LIMITER_LOCK = (
-    threading.Lock()
-)
+_SHARED_GEMINI_LIMITER_LOCK = threading.Lock()
 
 
 def _environment_float(
@@ -97,9 +88,7 @@ def _environment_float(
     ).strip()
 
     try:
-        value = float(
-            raw_value
-        )
+        value = float(raw_value)
     except (
         TypeError,
         ValueError,
@@ -131,9 +120,7 @@ def _environment_integer(
     ).strip()
 
     try:
-        value = int(
-            raw_value
-        )
+        value = int(raw_value)
     except (
         TypeError,
         ValueError,
@@ -152,9 +139,7 @@ def _environment_integer(
 def _quota_error(
     exc: BaseException,
 ) -> bool:
-    rendered = str(
-        exc
-    ).lower()
+    rendered = str(exc).lower()
 
     markers = (
         "429",
@@ -166,10 +151,7 @@ def _quota_error(
         "too many requests",
     )
 
-    return any(
-        marker in rendered
-        for marker in markers
-    )
+    return any(marker in rendered for marker in markers)
 
 
 def _quota_retry_seconds(
@@ -177,9 +159,7 @@ def _quota_retry_seconds(
     *,
     fallback: float,
 ) -> float:
-    rendered = str(
-        exc
-    )
+    rendered = str(exc)
 
     patterns = (
         r"retry\s+in\s+([0-9]+(?:\.[0-9]+)?)\s*s",
@@ -199,9 +179,7 @@ def _quota_retry_seconds(
             continue
 
         try:
-            server_delay = float(
-                match.group(1)
-            )
+            server_delay = float(match.group(1))
 
             return max(
                 fallback,
@@ -235,41 +213,27 @@ class GeminiRequestRateLimiter:
     ) -> None:
         self.minimum_interval_seconds = max(
             12.5,
-            float(
-                minimum_interval_seconds
-            ),
+            float(minimum_interval_seconds),
         )
 
         self.maximum_retries = max(
             0,
-            int(
-                maximum_retries
-            ),
+            int(maximum_retries),
         )
 
         self.fallback_retry_seconds = max(
             self.minimum_interval_seconds,
-            float(
-                fallback_retry_seconds
-            ),
+            float(fallback_retry_seconds),
         )
 
         self.maximum_retry_seconds = max(
             self.fallback_retry_seconds,
-            float(
-                maximum_retry_seconds
-            ),
+            float(maximum_retry_seconds),
         )
 
-        self._clock = (
-            clock
-            or time.monotonic
-        )
+        self._clock = clock or time.monotonic
 
-        self._sleeper = (
-            sleeper
-            or time.sleep
-        )
+        self._sleeper = sleeper or time.sleep
 
         self._lock = threading.Lock()
 
@@ -284,33 +248,23 @@ class GeminiRequestRateLimiter:
     ) -> None:
         while True:
             with self._lock:
-                now = float(
-                    self._clock()
-                )
+                now = float(self._clock())
 
                 wait_seconds = max(
                     0.0,
-                    self._next_allowed_at
-                    - now,
+                    self._next_allowed_at - now,
                 )
 
                 if wait_seconds <= 0:
-                    self._next_allowed_at = (
-                        now
-                        + self.minimum_interval_seconds
-                    )
+                    self._next_allowed_at = now + self.minimum_interval_seconds
 
                     self.request_count += 1
 
                     return
 
-            self._sleeper(
-                wait_seconds
-            )
+            self._sleeper(wait_seconds)
 
-            self.total_wait_seconds += (
-                wait_seconds
-            )
+            self.total_wait_seconds += wait_seconds
 
     def _defer_requests(
         self,
@@ -320,16 +274,12 @@ class GeminiRequestRateLimiter:
             self.maximum_retry_seconds,
             max(
                 self.minimum_interval_seconds,
-                float(
-                    seconds
-                ),
+                float(seconds),
             ),
         )
 
         with self._lock:
-            now = float(
-                self._clock()
-            )
+            now = float(self._clock())
 
             self._next_allowed_at = max(
                 self._next_allowed_at,
@@ -349,38 +299,23 @@ class GeminiRequestRateLimiter:
                 return operation()
 
             except Exception as exc:
-                if not _quota_error(
-                    exc
-                ):
+                if not _quota_error(exc):
                     raise
 
-                if attempts >= (
-                    self.maximum_retries
-                ):
+                if attempts >= (self.maximum_retries):
                     raise
 
                 attempts += 1
                 self.retry_count += 1
 
-                retry_seconds = (
-                    _quota_retry_seconds(
-                        exc,
-                        fallback=(
-                            self.fallback_retry_seconds
-                        ),
-                    )
+                retry_seconds = _quota_retry_seconds(
+                    exc,
+                    fallback=(self.fallback_retry_seconds),
                 )
 
-                self._defer_requests(
-                    retry_seconds
-                )
+                self._defer_requests(retry_seconds)
 
-                print(
-                    "DEEPEVAL_GEMINI_QUOTA_RETRY="
-                    + str(
-                        attempts
-                    )
-                )
+                print("DEEPEVAL_GEMINI_QUOTA_RETRY=" + str(attempts))
 
                 print(
                     "DEEPEVAL_GEMINI_RETRY_AFTER_SECONDS="
@@ -399,53 +334,34 @@ class GeminiRequestRateLimiter:
         attempts = 0
 
         while True:
-            await asyncio.to_thread(
-                self._wait_for_slot
-            )
+            await asyncio.to_thread(self._wait_for_slot)
 
             try:
                 result = operation()
 
-                if inspect.isawaitable(
-                    result
-                ):
+                if inspect.isawaitable(result):
                     return await result
 
                 return result
 
             except Exception as exc:
-                if not _quota_error(
-                    exc
-                ):
+                if not _quota_error(exc):
                     raise
 
-                if attempts >= (
-                    self.maximum_retries
-                ):
+                if attempts >= (self.maximum_retries):
                     raise
 
                 attempts += 1
                 self.retry_count += 1
 
-                retry_seconds = (
-                    _quota_retry_seconds(
-                        exc,
-                        fallback=(
-                            self.fallback_retry_seconds
-                        ),
-                    )
+                retry_seconds = _quota_retry_seconds(
+                    exc,
+                    fallback=(self.fallback_retry_seconds),
                 )
 
-                self._defer_requests(
-                    retry_seconds
-                )
+                self._defer_requests(retry_seconds)
 
-                print(
-                    "DEEPEVAL_GEMINI_ASYNC_QUOTA_RETRY="
-                    + str(
-                        attempts
-                    )
-                )
+                print("DEEPEVAL_GEMINI_ASYNC_QUOTA_RETRY=" + str(attempts))
 
                 print(
                     "DEEPEVAL_GEMINI_ASYNC_RETRY_AFTER_SECONDS="
@@ -458,69 +374,59 @@ class GeminiRequestRateLimiter:
                 )
 
 
-def get_shared_gemini_rate_limiter(
-) -> GeminiRequestRateLimiter:
+def get_shared_gemini_rate_limiter() -> GeminiRequestRateLimiter:
     global _SHARED_GEMINI_LIMITER
 
     with _SHARED_GEMINI_LIMITER_LOCK:
         if _SHARED_GEMINI_LIMITER is None:
-            _SHARED_GEMINI_LIMITER = (
-                GeminiRequestRateLimiter(
-                    minimum_interval_seconds=(
-                        _environment_float(
-                            "INNA_DEEPEVAL_MIN_REQUEST_INTERVAL_SECONDS",
-                            default=15.0,
-                            minimum=12.5,
-                            maximum=120.0,
-                        )
-                    ),
-                    maximum_retries=(
-                        _environment_integer(
-                            "INNA_DEEPEVAL_MAX_QUOTA_RETRIES",
-                            default=8,
-                            minimum=0,
-                            maximum=20,
-                        )
-                    ),
-                    fallback_retry_seconds=(
-                        _environment_float(
-                            "INNA_DEEPEVAL_QUOTA_RETRY_SECONDS",
-                            default=45.0,
-                            minimum=15.0,
-                            maximum=300.0,
-                        )
-                    ),
-                    maximum_retry_seconds=(
-                        _environment_float(
-                            "INNA_DEEPEVAL_MAX_RETRY_SECONDS",
-                            default=180.0,
-                            minimum=30.0,
-                            maximum=900.0,
-                        )
-                    ),
-                )
+            _SHARED_GEMINI_LIMITER = GeminiRequestRateLimiter(
+                minimum_interval_seconds=(
+                    _environment_float(
+                        "INNA_DEEPEVAL_MIN_REQUEST_INTERVAL_SECONDS",
+                        default=15.0,
+                        minimum=12.5,
+                        maximum=120.0,
+                    )
+                ),
+                maximum_retries=(
+                    _environment_integer(
+                        "INNA_DEEPEVAL_MAX_QUOTA_RETRIES",
+                        default=8,
+                        minimum=0,
+                        maximum=20,
+                    )
+                ),
+                fallback_retry_seconds=(
+                    _environment_float(
+                        "INNA_DEEPEVAL_QUOTA_RETRY_SECONDS",
+                        default=45.0,
+                        minimum=15.0,
+                        maximum=300.0,
+                    )
+                ),
+                maximum_retry_seconds=(
+                    _environment_float(
+                        "INNA_DEEPEVAL_MAX_RETRY_SECONDS",
+                        default=180.0,
+                        minimum=30.0,
+                        maximum=900.0,
+                    )
+                ),
             )
 
         return _SHARED_GEMINI_LIMITER
 
 
-def build_gemini_judge_model(
-) -> Any:
+def build_gemini_judge_model() -> Any:
     from deepeval.models import (
         GeminiModel,
     )
 
-    configuration = (
-        resolve_gemini_judge_configuration()
-    )
+    configuration = resolve_gemini_judge_configuration()
 
-    limiter = (
-        get_shared_gemini_rate_limiter()
-    )
+    limiter = get_shared_gemini_rate_limiter()
 
-    class RateLimitedGeminiModel(
-        GeminiModel
-    ):
+    class RateLimitedGeminiModel(GeminiModel):
         def generate(
             self,
             *args,
@@ -550,52 +456,30 @@ def build_gemini_judge_model(
                     **kwargs,
                 )
 
-                if inspect.isawaitable(
-                    result
-                ):
+                if inspect.isawaitable(result):
                     return await result
 
                 return result
 
-            return await limiter.run_async(
-                operation
-            )
+            return await limiter.run_async(operation)
 
     model = RateLimitedGeminiModel(
-        model=configuration[
-            "model_name"
-        ],
-        api_key=configuration[
-            "api_key"
-        ],
+        model=configuration["model_name"],
+        api_key=configuration["api_key"],
         temperature=0,
     )
 
-    model._inna_request_limiter = (
-        limiter
-    )
+    model._inna_request_limiter = limiter
+
+    print("DEEPEVAL_GEMINI_RATE_LIMITER=True")
+
+    print("DEEPEVAL_GEMINI_SHARED_LIMITER=True")
 
     print(
-        "DEEPEVAL_GEMINI_RATE_LIMITER=True"
+        "DEEPEVAL_MIN_REQUEST_INTERVAL_SECONDS=" + str(limiter.minimum_interval_seconds)
     )
 
-    print(
-        "DEEPEVAL_GEMINI_SHARED_LIMITER=True"
-    )
-
-    print(
-        "DEEPEVAL_MIN_REQUEST_INTERVAL_SECONDS="
-        + str(
-            limiter.minimum_interval_seconds
-        )
-    )
-
-    print(
-        "DEEPEVAL_MAX_QUOTA_RETRIES="
-        + str(
-            limiter.maximum_retries
-        )
-    )
+    print("DEEPEVAL_MAX_QUOTA_RETRIES=" + str(limiter.maximum_retries))
 
     return model
 
@@ -615,16 +499,12 @@ def _load_metric_class(
         metric_class,
         type,
     ):
-        raise DeepEvalLiveExecutorError(
-            "Classe DeepEval indisponível: "
-            + class_name
-        )
+        raise DeepEvalLiveExecutorError("Classe DeepEval indisponível: " + class_name)
 
     return metric_class
 
 
-def _metric_execution_output_type(
-) -> type[Any]:
+def _metric_execution_output_type() -> type[Any]:
     try:
         from src.evaluation.deterministic_executors import (
             MetricExecutionOutput,
@@ -688,13 +568,9 @@ def _metric_passed(
         None,
     )
 
-    if callable(
-        success_method
-    ):
+    if callable(success_method):
         try:
-            return bool(
-                success_method()
-            )
+            return bool(success_method())
         except Exception:
             pass
 
@@ -751,13 +627,9 @@ def build_metric_execution_output(
     estimated_cost: float,
     metadata: Mapping[str, Any],
 ) -> Any:
-    output_type = (
-        _metric_execution_output_type()
-    )
+    output_type = _metric_execution_output_type()
 
-    safe_metadata = MappingProxyType(
-        dict(metadata)
-    )
+    safe_metadata = MappingProxyType(dict(metadata))
 
     available_values: dict[str, Any] = {
         "score": score,
@@ -772,61 +644,40 @@ def build_metric_execution_output(
     }
 
     try:
-        signature = inspect.signature(
-            output_type
-        )
+        signature = inspect.signature(output_type)
     except (
         TypeError,
         ValueError,
     ) as exc:
         raise DeepEvalLiveExecutorError(
-            "MetricExecutionOutput não pôde "
-            "ser inspecionado."
+            "MetricExecutionOutput não pôde ser inspecionado."
         ) from exc
 
     keyword_arguments: dict[str, Any] = {}
     unsupported_required: list[str] = []
 
-    for name, parameter in (
-        signature.parameters.items()
-    ):
+    for name, parameter in signature.parameters.items():
         if name == "self":
             continue
 
         if name in available_values:
-            keyword_arguments[
-                name
-            ] = available_values[
-                name
-            ]
+            keyword_arguments[name] = available_values[name]
 
             continue
 
-        if (
-            parameter.default
-            is inspect.Signature.empty
-            and parameter.kind
-            not in {
-                inspect.Parameter.VAR_POSITIONAL,
-                inspect.Parameter.VAR_KEYWORD,
-            }
-        ):
-            unsupported_required.append(
-                name
-            )
+        if parameter.default is inspect.Signature.empty and parameter.kind not in {
+            inspect.Parameter.VAR_POSITIONAL,
+            inspect.Parameter.VAR_KEYWORD,
+        }:
+            unsupported_required.append(name)
 
     if unsupported_required:
         raise DeepEvalLiveExecutorError(
             "Campos obrigatórios desconhecidos em "
-            "MetricExecutionOutput: "
-            + ", ".join(
-                unsupported_required
-            )
+            "MetricExecutionOutput: " + ", ".join(unsupported_required)
         )
 
-    return output_type(
-        **keyword_arguments
-    )
+    return output_type(**keyword_arguments)
 
 
 def build_deepeval_metric_executor(
@@ -848,31 +699,19 @@ def build_deepeval_metric_executor(
         | None
     ) = None,
 ) -> Callable[..., Any]:
-    class_name = (
-        TRIAD_METRIC_CLASS_NAMES.get(
-            metric_id
-        )
-    )
+    class_name = TRIAD_METRIC_CLASS_NAMES.get(metric_id)
 
     if not class_name:
-        raise DeepEvalLiveExecutorError(
-            "Métrica live não suportada: "
-            + metric_id
-        )
+        raise DeepEvalLiveExecutorError("Métrica live não suportada: " + metric_id)
 
-    class_loader = (
-        metric_class_loader
-        or _load_metric_class
-    )
+    class_loader = metric_class_loader or _load_metric_class
 
     if test_case_factory is None:
         from src.evaluation.deepeval_integration import (
             create_llm_test_case,
         )
 
-        test_case_factory = (
-            create_llm_test_case
-        )
+        test_case_factory = create_llm_test_case
 
     def execute(
         metric: Any,
@@ -891,11 +730,7 @@ def build_deepeval_metric_executor(
 
         if received_metric_id != metric_id:
             raise DeepEvalLiveExecutorError(
-                "Executor "
-                + metric_id
-                + " recebeu "
-                + received_metric_id
-                + "."
+                "Executor " + metric_id + " recebeu " + received_metric_id + "."
             )
 
         threshold = _safe_float(
@@ -915,9 +750,7 @@ def build_deepeval_metric_executor(
             )
         )
 
-        metric_class = class_loader(
-            class_name
-        )
+        metric_class = class_loader(class_name)
 
         metric_instance = metric_class(
             threshold=threshold,
@@ -928,16 +761,12 @@ def build_deepeval_metric_executor(
             verbose_mode=False,
         )
 
-        test_case = test_case_factory(
-            payload
-        )
+        test_case = test_case_factory(payload)
 
-        measured_score = (
-            metric_instance.measure(
-                test_case,
-                _show_indicator=False,
-                _log_metric_to_confident=False,
-            )
+        measured_score = metric_instance.measure(
+            test_case,
+            _show_indicator=False,
+            _log_metric_to_confident=False,
         )
 
         score = _safe_float(
@@ -964,13 +793,7 @@ def build_deepeval_metric_executor(
             None,
         )
 
-        reason = (
-            str(
-                reason_value
-            ).strip()
-            if reason_value is not None
-            else None
-        )
+        reason = str(reason_value).strip() if reason_value is not None else None
 
         model_name = str(
             getattr(
@@ -989,11 +812,7 @@ def build_deepeval_metric_executor(
             threshold=threshold,
             passed=passed,
             reason=reason,
-            estimated_cost=(
-                _metric_cost(
-                    metric_instance
-                )
-            ),
+            estimated_cost=(_metric_cost(metric_instance)),
             metadata={
                 "provider": "gemini",
                 "judge_model": model_name,
@@ -1006,12 +825,9 @@ def build_deepeval_metric_executor(
             },
         )
 
-    execute.__name__ = (
-        "execute_"
-        + metric_id.replace(
-            "-",
-            "_",
-        )
+    execute.__name__ = "execute_" + metric_id.replace(
+        "-",
+        "_",
     )
 
     return execute
@@ -1035,29 +851,18 @@ def build_default_deepeval_live_executors(
         | None
     ) = None,
 ) -> Mapping[str, Callable[..., Any]]:
-    judge_model = (
-        model
-        if model is not None
-        else build_gemini_judge_model()
-    )
+    judge_model = model if model is not None else build_gemini_judge_model()
 
     executors = {
         metric_id: (
             build_deepeval_metric_executor(
                 metric_id=metric_id,
                 model=judge_model,
-                metric_class_loader=(
-                    metric_class_loader
-                ),
-                test_case_factory=(
-                    test_case_factory
-                ),
+                metric_class_loader=(metric_class_loader),
+                test_case_factory=(test_case_factory),
             )
         )
-        for metric_id
-        in TRIAD_METRIC_CLASS_NAMES
+        for metric_id in TRIAD_METRIC_CLASS_NAMES
     }
 
-    return MappingProxyType(
-        executors
-    )
+    return MappingProxyType(executors)

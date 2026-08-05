@@ -23,9 +23,7 @@ def _parse_bool(value: str | None, *, default: bool) -> bool:
     if normalized in {"0", "false", "no", "nao", "não", "off"}:
         return False
 
-    raise PhoenixConfigurationError(
-        f"Valor booleano inválido: {value!r}"
-    )
+    raise PhoenixConfigurationError(f"Valor booleano inválido: {value!r}")
 
 
 def _parse_sample_rate(value: str | None) -> float:
@@ -52,9 +50,7 @@ def _validate_endpoint(endpoint: str) -> str:
     parsed = urlparse(normalized)
 
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
-        raise PhoenixConfigurationError(
-            "PHOENIX_COLLECTOR_ENDPOINT inválido."
-        )
+        raise PhoenixConfigurationError("PHOENIX_COLLECTOR_ENDPOINT inválido.")
 
     return normalized
 
@@ -104,11 +100,7 @@ def load_phoenix_settings() -> PhoenixSettings:
         os.getenv("PHOENIX_PROJECT", "inna-production"),
     ).strip()
 
-    endpoint = (
-        _validate_endpoint(endpoint_raw)
-        if endpoint_raw
-        else ""
-    )
+    endpoint = _validate_endpoint(endpoint_raw) if endpoint_raw else ""
 
     settings = PhoenixSettings(
         enabled=enabled,
@@ -116,9 +108,7 @@ def load_phoenix_settings() -> PhoenixSettings:
         collector_endpoint=endpoint,
         project_name=project_name or "inna-production",
         capture_content=capture_content,
-        sample_rate=_parse_sample_rate(
-            os.getenv("PHOENIX_TRACE_SAMPLE_RATE")
-        ),
+        sample_rate=_parse_sample_rate(os.getenv("PHOENIX_TRACE_SAMPLE_RATE")),
         environment=os.getenv(
             "APP_ENV",
             os.getenv("RENDER_SERVICE_NAME", "development"),
@@ -142,8 +132,7 @@ def load_phoenix_settings() -> PhoenixSettings:
             missing.append("PHOENIX_PROJECT_NAME")
 
         raise PhoenixConfigurationError(
-            "Configuração Phoenix incompleta: "
-            + ", ".join(missing)
+            "Configuração Phoenix incompleta: " + ", ".join(missing)
         )
 
     return settings

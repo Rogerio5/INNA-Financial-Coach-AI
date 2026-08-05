@@ -111,15 +111,13 @@ _MONEY_VALUE_PATTERN = (
 _INCOME_PATTERNS = (
     re.compile(
         r"(?:minha\s+)?renda(?:\s+mensal)?"
-        r"\s*(?:e|é|era|:|de)?\s*"
-        + _MONEY_VALUE_PATTERN,
+        r"\s*(?:e|é|era|:|de)?\s*" + _MONEY_VALUE_PATTERN,
         flags=re.IGNORECASE,
     ),
     re.compile(
         r"(?:eu\s+)?(?:ganho|recebo)"
         r"\s*(?:por\s+m[eê]s|mensalmente)?"
-        r"\s*(?:é|era|:|de)?\s*"
-        + _MONEY_VALUE_PATTERN,
+        r"\s*(?:é|era|:|de)?\s*" + _MONEY_VALUE_PATTERN,
         flags=re.IGNORECASE,
     ),
 )
@@ -129,16 +127,14 @@ _TOTAL_EXPENSE_PATTERNS = (
         r"(?:meus\s+)?gastos"
         r"(?!\s+(?:fixos|vari[aá]veis))"
         r"(?:\s+mensais)?"
-        r"\s*(?:s[aã]o|eram|e|é|era|:|de)?\s*"
-        + _MONEY_VALUE_PATTERN,
+        r"\s*(?:s[aã]o|eram|e|é|era|:|de)?\s*" + _MONEY_VALUE_PATTERN,
         flags=re.IGNORECASE,
     ),
     re.compile(
         r"(?:minhas\s+)?despesas"
         r"(?!\s+(?:fixas|vari[aá]veis))"
         r"(?:\s+mensais)?"
-        r"\s*(?:s[aã]o|eram|e|é|era|:|de)?\s*"
-        + _MONEY_VALUE_PATTERN,
+        r"\s*(?:s[aã]o|eram|e|é|era|:|de)?\s*" + _MONEY_VALUE_PATTERN,
         flags=re.IGNORECASE,
     ),
 )
@@ -146,8 +142,7 @@ _TOTAL_EXPENSE_PATTERNS = (
 _FIXED_EXPENSE_PATTERNS = (
     re.compile(
         r"(?:gastos|despesas)\s+fix(?:os|as)"
-        r"\s*(?:s[aã]o|eram|e|é|era|:|de)?\s*"
-        + _MONEY_VALUE_PATTERN,
+        r"\s*(?:s[aã]o|eram|e|é|era|:|de)?\s*" + _MONEY_VALUE_PATTERN,
         flags=re.IGNORECASE,
     ),
 )
@@ -155,8 +150,7 @@ _FIXED_EXPENSE_PATTERNS = (
 _VARIABLE_EXPENSE_PATTERNS = (
     re.compile(
         r"(?:gastos|despesas)\s+vari[aá]veis"
-        r"\s*(?:s[aã]o|eram|e|é|era|:|de)?\s*"
-        + _MONEY_VALUE_PATTERN,
+        r"\s*(?:s[aã]o|eram|e|é|era|:|de)?\s*" + _MONEY_VALUE_PATTERN,
         flags=re.IGNORECASE,
     ),
 )
@@ -165,8 +159,7 @@ _DEBT_PATTERNS = (
     re.compile(
         r"(?:d[ií]vidas|parcelas)"
         r"(?:\s+mensais)?"
-        r"\s*(?:s[aã]o|eram|e|é|era|:|de)?\s*"
-        + _MONEY_VALUE_PATTERN,
+        r"\s*(?:s[aã]o|eram|e|é|era|:|de)?\s*" + _MONEY_VALUE_PATTERN,
         flags=re.IGNORECASE,
     ),
 )
@@ -191,10 +184,7 @@ def _contains_any(
 ) -> bool:
     normalized = _normalize_text(text)
 
-    return any(
-        _normalize_text(term) in normalized
-        for term in terms
-    )
+    return any(_normalize_text(term) in normalized for term in terms)
 
 
 def _message_to_mapping(
@@ -221,35 +211,27 @@ def _message_to_mapping(
 def _normalize_history(
     raw_history: Any,
 ) -> list[dict[str, str]]:
-    if (
-        not isinstance(raw_history, Sequence)
-        or isinstance(
-            raw_history,
-            (str, bytes, bytearray),
-        )
+    if not isinstance(raw_history, Sequence) or isinstance(
+        raw_history,
+        (str, bytes, bytearray),
     ):
         return []
 
     normalized: list[dict[str, str]] = []
 
     for raw_message in raw_history:
-        message = _message_to_mapping(
-            raw_message
-        )
+        message = _message_to_mapping(raw_message)
 
         if message is None:
             continue
 
-        role = str(
-            message.get("role", "")
-        ).strip().lower()
+        role = str(message.get("role", "")).strip().lower()
 
-        content = str(
-            message.get("content", "")
-        ).strip()
+        content = str(message.get("content", "")).strip()
 
         if (
-            role not in {
+            role
+            not in {
                 "user",
                 "assistant",
                 "system",
@@ -259,10 +241,12 @@ def _normalize_history(
         ):
             continue
 
-        normalized.append({
-            "role": role,
-            "content": content,
-        })
+        normalized.append(
+            {
+                "role": role,
+                "content": content,
+            }
+        )
 
     return normalized
 
@@ -275,16 +259,12 @@ def _history_candidates(
     if not isinstance(context, Mapping):
         context = {}
 
-    normalized_selected = _normalize_history(
-        context.get("selected_history")
-    )
+    normalized_selected = _normalize_history(context.get("selected_history"))
 
     if normalized_selected:
         return normalized_selected
 
-    return _normalize_history(
-        state.get("conversation_history")
-    )
+    return _normalize_history(state.get("conversation_history"))
 
 
 def _current_message(
@@ -316,10 +296,7 @@ def _previous_user_messages(
 
         content = message["content"]
 
-        if (
-            current_message
-            and content == current_message
-        ):
+        if current_message and content == current_message:
             continue
 
         previous.append(content)
@@ -337,10 +314,7 @@ def _is_meaningful_value(
         return bool(value.strip())
 
     if isinstance(value, Mapping):
-        return any(
-            _is_meaningful_value(item)
-            for item in value.values()
-        )
+        return any(_is_meaningful_value(item) for item in value.values())
 
     if isinstance(value, (list, tuple, set)):
         return bool(value)
@@ -361,36 +335,20 @@ def _clean_extracted_memory(
     if isinstance(nested_data, Mapping):
         nested_aliases = {
             "renda_mensal": "renda_mensal",
-            "gastos_mensais": (
-                "gastos_mensais_total"
-            ),
-            "gastos_mensais_total": (
-                "gastos_mensais_total"
-            ),
+            "gastos_mensais": ("gastos_mensais_total"),
+            "gastos_mensais_total": ("gastos_mensais_total"),
             "gastos_fixos": "gastos_fixos",
-            "gastos_variaveis": (
-                "gastos_variaveis"
-            ),
-            "dividas_mensais": (
-                "dividas_mensais"
-            ),
+            "gastos_variaveis": ("gastos_variaveis"),
+            "dividas_mensais": ("dividas_mensais"),
             "valor_reserva": "reserva_atual",
             "reserva_atual": "reserva_atual",
         }
 
-        for source_key, target_key in (
-            nested_aliases.items()
-        ):
-            nested_value = nested_data.get(
-                source_key
-            )
+        for source_key, target_key in nested_aliases.items():
+            nested_value = nested_data.get(source_key)
 
-            if _is_meaningful_value(
-                nested_value
-            ):
-                cleaned[target_key] = deepcopy(
-                    nested_value
-                )
+            if _is_meaningful_value(nested_value):
+                cleaned[target_key] = deepcopy(nested_value)
 
     for key, value in extracted.items():
         if key in _EMPTY_DEFAULT_KEYS:
@@ -399,17 +357,11 @@ def _clean_extracted_memory(
         if not _is_meaningful_value(value):
             continue
 
-        if (
-            key == "memoria_json"
-            and isinstance(value, Mapping)
-        ):
+        if key == "memoria_json" and isinstance(value, Mapping):
             nested = {
                 nested_key: nested_value
-                for nested_key, nested_value
-                in value.items()
-                if _is_meaningful_value(
-                    nested_value
-                )
+                for nested_key, nested_value in value.items()
+                if _is_meaningful_value(nested_value)
             }
 
             if nested:
@@ -440,10 +392,7 @@ def _parse_money_text(
         return None
 
     if "," in text and "." in text:
-        text = (
-            text.replace(".", "")
-            .replace(",", ".")
-        )
+        text = text.replace(".", "").replace(",", ".")
 
     elif "," in text:
         text = text.replace(",", ".")
@@ -461,9 +410,7 @@ def _parse_money_text(
 
 def _match_first_money(
     message: str,
-    patterns: Sequence[
-        re.Pattern[str]
-    ],
+    patterns: Sequence[re.Pattern[str]],
 ) -> float | None:
     for pattern in patterns:
         match = pattern.search(message)
@@ -471,9 +418,7 @@ def _match_first_money(
         if match is None:
             continue
 
-        parsed = _parse_money_text(
-            match.group(1)
-        )
+        parsed = _parse_money_text(match.group(1))
 
         if parsed is not None:
             return parsed
@@ -515,24 +460,16 @@ def _deterministic_message_fallback(
         fallback["renda_mensal"] = income
 
     if total_expenses is not None:
-        fallback[
-            "gastos_mensais_total"
-        ] = total_expenses
+        fallback["gastos_mensais_total"] = total_expenses
 
     if fixed_expenses is not None:
-        fallback["gastos_fixos"] = (
-            fixed_expenses
-        )
+        fallback["gastos_fixos"] = fixed_expenses
 
     if variable_expenses is not None:
-        fallback["gastos_variaveis"] = (
-            variable_expenses
-        )
+        fallback["gastos_variaveis"] = variable_expenses
 
     if monthly_debts is not None:
-        fallback["dividas_mensais"] = (
-            monthly_debts
-        )
+        fallback["dividas_mensais"] = monthly_debts
 
     return fallback
 
@@ -543,26 +480,14 @@ def _extract_message_financial_values(
     extracted: dict[str, Any] = {}
 
     try:
-        raw_extracted = (
-            extrair_memoria_da_mensagem_inna(
-                message
-            )
-        )
+        raw_extracted = extrair_memoria_da_mensagem_inna(message)
 
-        extracted.update(
-            _clean_extracted_memory(
-                raw_extracted
-            )
-        )
+        extracted.update(_clean_extracted_memory(raw_extracted))
 
     except Exception:
         pass
 
-    fallback = (
-        _deterministic_message_fallback(
-            message
-        )
-    )
+    fallback = _deterministic_message_fallback(message)
 
     for key, value in fallback.items():
         extracted.setdefault(key, value)
@@ -581,29 +506,19 @@ def extract_financial_memory_from_history(
     Mensagens mais recentes possuem prioridade sobre
     mensagens mais antigas. A mensagem atual não é incluída.
     """
-    safe_state = (
-        dict(state)
-        if isinstance(state, Mapping)
-        else {}
-    )
+    safe_state = dict(state) if isinstance(state, Mapping) else {}
 
     max_user_messages = max(
         1,
         min(int(max_user_messages), 50),
     )
 
-    messages = _previous_user_messages(
-        safe_state
-    )[-max_user_messages:]
+    messages = _previous_user_messages(safe_state)[-max_user_messages:]
 
     merged: dict[str, Any] = {}
 
     for message in messages:
-        extracted = (
-            _extract_message_financial_values(
-                message
-            )
-        )
+        extracted = _extract_message_financial_values(message)
 
         for key, value in extracted.items():
             if _is_meaningful_value(value):
@@ -624,9 +539,7 @@ def _first_value(
         if value is not None:
             return value
 
-    memory_json = data.get(
-        "memoria_json"
-    )
+    memory_json = data.get("memoria_json")
 
     if isinstance(memory_json, Mapping):
         for key in keys:
@@ -653,9 +566,7 @@ def _to_decimal(
         except InvalidOperation:
             return None
 
-    parsed = _parse_money_text(
-        str(value)
-    )
+    parsed = _parse_money_text(str(value))
 
     if parsed is None:
         return None
@@ -720,22 +631,14 @@ def _format_money(
     value: Decimal,
     currency: str,
 ) -> str:
-    currency = str(
-        currency or "BRL"
-    ).strip().upper()
+    currency = str(currency or "BRL").strip().upper()
 
-    normalized = value.quantize(
-        Decimal("0.01")
-    )
+    normalized = value.quantize(Decimal("0.01"))
 
     raw = f"{normalized:,.2f}"
 
     if currency == "BRL":
-        localized = (
-            raw.replace(",", "_")
-            .replace(".", ",")
-            .replace("_", ".")
-        )
+        localized = raw.replace(",", "_").replace(".", ",").replace("_", ".")
 
         return f"R$ {localized}"
 
@@ -745,15 +648,12 @@ def _format_money(
 def is_simple_balance_follow_up(
     message: str,
 ) -> bool:
-    return (
-        _contains_any(
-            message,
-            _BALANCE_TERMS,
-        )
-        and _contains_any(
-            message,
-            _PREVIOUS_CONTEXT_TERMS,
-        )
+    return _contains_any(
+        message,
+        _BALANCE_TERMS,
+    ) and _contains_any(
+        message,
+        _PREVIOUS_CONTEXT_TERMS,
     )
 
 
@@ -766,24 +666,14 @@ def resolve_simple_balance_follow_up(
     Não executa diagnóstico, score, risco ou recomendação.
     Não inventa a divisão entre gastos fixos e variáveis.
     """
-    safe_state = (
-        dict(state)
-        if isinstance(state, Mapping)
-        else {}
-    )
+    safe_state = dict(state) if isinstance(state, Mapping) else {}
 
-    message = _current_message(
-        safe_state
-    )
+    message = _current_message(safe_state)
 
-    if not is_simple_balance_follow_up(
-        message
-    ):
+    if not is_simple_balance_follow_up(message):
         return None
 
-    memory = extract_financial_memory_from_history(
-        safe_state
-    )
+    memory = extract_financial_memory_from_history(safe_state)
 
     income = _to_decimal(
         _first_value(
@@ -792,21 +682,23 @@ def resolve_simple_balance_follow_up(
         )
     )
 
-    expenses = _total_expenses(
-        memory
-    )
+    expenses = _total_expenses(memory)
 
     if income is None or expenses is None:
         return None
 
     balance = income - expenses
 
-    currency = str(
-        safe_state.get("currency")
-        or safe_state.get("moeda")
-        or memory.get("moeda")
-        or "BRL"
-    ).strip().upper()
+    currency = (
+        str(
+            safe_state.get("currency")
+            or safe_state.get("moeda")
+            or memory.get("moeda")
+            or "BRL"
+        )
+        .strip()
+        .upper()
+    )
 
     response = (
         "Com base nos dados financeiros informados "
@@ -819,14 +711,9 @@ def resolve_simple_balance_follow_up(
         "não recalcula score nem nível de risco."
     )
 
-    trace = list(
-        safe_state.get("trace", [])
-    )
+    trace = list(safe_state.get("trace", []))
 
-    trace.append(
-        "financial_semantic_memory:"
-        "simple_balance_resolved"
-    )
+    trace.append("financial_semantic_memory:simple_balance_resolved")
 
     return {
         "current_agent": "financial_agent",
@@ -839,16 +726,10 @@ def resolve_simple_balance_follow_up(
         ],
         "trace": trace,
         "semantic_memory_used": True,
-        "semantic_memory_operation": (
-            "simple_balance"
-        ),
+        "semantic_memory_operation": ("simple_balance"),
         "semantic_memory_sources": {
-            "renda_mensal": (
-                "conversation_history"
-            ),
-            "gastos_mensais": (
-                "conversation_history"
-            ),
+            "renda_mensal": ("conversation_history"),
+            "gastos_mensais": ("conversation_history"),
         },
     }
 

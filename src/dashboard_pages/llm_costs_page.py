@@ -15,9 +15,7 @@ import streamlit as st
 
 LLM_COST_CHART_BG = "#020617"
 LLM_COST_CHART_TEXT = "#F8FAFC"
-LLM_COST_CHART_GRID = (
-    "rgba(148, 163, 184, 0.16)"
-)
+LLM_COST_CHART_GRID = "rgba(148, 163, 184, 0.16)"
 
 
 LLM_TABLE_TEXTS = {
@@ -29,17 +27,11 @@ LLM_TABLE_TEXTS = {
         "avg_duration": "Duração média (s)",
         "model_help": "Modelo de linguagem utilizado.",
         "calls_help": "Quantidade de chamadas realizadas.",
-        "tokens_help": (
-            "Total de tokens consumidos pelo modelo."
-        ),
+        "tokens_help": ("Total de tokens consumidos pelo modelo."),
         "cost_help": "Custo estimado em dólares.",
-        "duration_help": (
-            "Tempo médio das chamadas em segundos."
-        ),
+        "duration_help": ("Tempo médio das chamadas em segundos."),
         "operation": "Operação",
-        "operation_help": (
-            "Tipo de operação executada pelo modelo."
-        ),
+        "operation_help": ("Tipo de operação executada pelo modelo."),
     },
     "en_us": {
         "model": "Model",
@@ -49,17 +41,11 @@ LLM_TABLE_TEXTS = {
         "avg_duration": "Average duration (s)",
         "model_help": "Language model used.",
         "calls_help": "Number of calls performed.",
-        "tokens_help": (
-            "Total tokens consumed by the model."
-        ),
+        "tokens_help": ("Total tokens consumed by the model."),
         "cost_help": "Estimated cost in US dollars.",
-        "duration_help": (
-            "Average call duration in seconds."
-        ),
+        "duration_help": ("Average call duration in seconds."),
         "operation": "Operation",
-        "operation_help": (
-            "Type of operation executed by the model."
-        ),
+        "operation_help": ("Type of operation executed by the model."),
     },
     "es": {
         "model": "Modelo",
@@ -69,17 +55,11 @@ LLM_TABLE_TEXTS = {
         "avg_duration": "Duración media (s)",
         "model_help": "Modelo de lenguaje utilizado.",
         "calls_help": "Cantidad de llamadas realizadas.",
-        "tokens_help": (
-            "Total de tokens consumidos por el modelo."
-        ),
+        "tokens_help": ("Total de tokens consumidos por el modelo."),
         "cost_help": "Costo estimado en dólares.",
-        "duration_help": (
-            "Duración media de las llamadas en segundos."
-        ),
+        "duration_help": ("Duración media de las llamadas en segundos."),
         "operation": "Operación",
-        "operation_help": (
-            "Tipo de operación ejecutada por el modelo."
-        ),
+        "operation_help": ("Tipo de operación ejecutada por el modelo."),
     },
     "fr": {
         "model": "Modèle",
@@ -89,17 +69,11 @@ LLM_TABLE_TEXTS = {
         "avg_duration": "Durée moyenne (s)",
         "model_help": "Modèle de langage utilisé.",
         "calls_help": "Nombre d'appels effectués.",
-        "tokens_help": (
-            "Nombre total de jetons consommés."
-        ),
+        "tokens_help": ("Nombre total de jetons consommés."),
         "cost_help": "Coût estimé en dollars.",
-        "duration_help": (
-            "Durée moyenne des appels en secondes."
-        ),
+        "duration_help": ("Durée moyenne des appels en secondes."),
         "operation": "Opération",
-        "operation_help": (
-            "Type d’opération exécutée par le modèle."
-        ),
+        "operation_help": ("Type d’opération exécutée par le modèle."),
     },
     "de": {
         "model": "Modell",
@@ -109,17 +83,11 @@ LLM_TABLE_TEXTS = {
         "avg_duration": "Durchschnittsdauer (s)",
         "model_help": "Verwendetes Sprachmodell.",
         "calls_help": "Anzahl der ausgeführten Aufrufe.",
-        "tokens_help": (
-            "Gesamtzahl der verbrauchten Token."
-        ),
+        "tokens_help": ("Gesamtzahl der verbrauchten Token."),
         "cost_help": "Geschätzte Kosten in US-Dollar.",
-        "duration_help": (
-            "Durchschnittliche Dauer in Sekunden."
-        ),
+        "duration_help": ("Durchschnittliche Dauer in Sekunden."),
         "operation": "Operation",
-        "operation_help": (
-            "Vom Modell ausgeführter Vorgangstyp."
-        ),
+        "operation_help": ("Vom Modell ausgeführter Vorgangstyp."),
     },
     "it": {
         "model": "Modello",
@@ -129,17 +97,11 @@ LLM_TABLE_TEXTS = {
         "avg_duration": "Durata media (s)",
         "model_help": "Modello linguistico utilizzato.",
         "calls_help": "Numero di chiamate effettuate.",
-        "tokens_help": (
-            "Totale dei token consumati dal modello."
-        ),
+        "tokens_help": ("Totale dei token consumati dal modello."),
         "cost_help": "Costo stimato in dollari.",
-        "duration_help": (
-            "Durata media delle chiamate in secondi."
-        ),
+        "duration_help": ("Durata media delle chiamate in secondi."),
         "operation": "Operazione",
-        "operation_help": (
-            "Tipo di operazione eseguita dal modello."
-        ),
+        "operation_help": ("Tipo di operazione eseguita dal modello."),
     },
     "ro": {
         "model": "Model",
@@ -149,17 +111,11 @@ LLM_TABLE_TEXTS = {
         "avg_duration": "Durată medie (s)",
         "model_help": "Modelul lingvistic utilizat.",
         "calls_help": "Numărul de apeluri efectuate.",
-        "tokens_help": (
-            "Totalul tokenurilor consumate."
-        ),
+        "tokens_help": ("Totalul tokenurilor consumate."),
         "cost_help": "Cost estimat în dolari.",
-        "duration_help": (
-            "Durata medie a apelurilor în secunde."
-        ),
+        "duration_help": ("Durata medie a apelurilor în secunde."),
         "operation": "Operațiune",
-        "operation_help": (
-            "Tipul operațiunii executate de model."
-        ),
+        "operation_help": ("Tipul operațiunii executate de model."),
     },
     "ua": {
         "model": "Модель",
@@ -169,17 +125,11 @@ LLM_TABLE_TEXTS = {
         "avg_duration": "Середня тривалість (с)",
         "model_help": "Використана мовна модель.",
         "calls_help": "Кількість виконаних викликів.",
-        "tokens_help": (
-            "Загальна кількість використаних токенів."
-        ),
+        "tokens_help": ("Загальна кількість використаних токенів."),
         "cost_help": "Орієнтовна вартість у доларах.",
-        "duration_help": (
-            "Середня тривалість викликів у секундах."
-        ),
+        "duration_help": ("Середня тривалість викликів у секундах."),
         "operation": "Операція",
-        "operation_help": (
-            "Тип операції, виконаної моделлю."
-        ),
+        "operation_help": ("Тип операції, виконаної моделлю."),
     },
     "ru": {
         "model": "Модель",
@@ -189,17 +139,11 @@ LLM_TABLE_TEXTS = {
         "avg_duration": "Средняя длительность (с)",
         "model_help": "Используемая языковая модель.",
         "calls_help": "Количество выполненных вызовов.",
-        "tokens_help": (
-            "Общее количество использованных токенов."
-        ),
+        "tokens_help": ("Общее количество использованных токенов."),
         "cost_help": "Расчетная стоимость в долларах.",
-        "duration_help": (
-            "Средняя длительность вызовов в секундах."
-        ),
+        "duration_help": ("Средняя длительность вызовов в секундах."),
         "operation": "Операция",
-        "operation_help": (
-            "Тип операции, выполненной моделью."
-        ),
+        "operation_help": ("Тип операции, выполненной моделью."),
     },
     "sa": {
         "model": "النموذج",
@@ -209,17 +153,11 @@ LLM_TABLE_TEXTS = {
         "avg_duration": "متوسط المدة (ث)",
         "model_help": "نموذج اللغة المستخدم.",
         "calls_help": "عدد الاستدعاءات المنفذة.",
-        "tokens_help": (
-            "إجمالي الرموز التي استهلكها النموذج."
-        ),
+        "tokens_help": ("إجمالي الرموز التي استهلكها النموذج."),
         "cost_help": "التكلفة التقديرية بالدولار.",
-        "duration_help": (
-            "متوسط مدة الاستدعاءات بالثواني."
-        ),
+        "duration_help": ("متوسط مدة الاستدعاءات بالثواني."),
         "operation": "العملية",
-        "operation_help": (
-            "نوع العملية التي نفذها النموذج."
-        ),
+        "operation_help": ("نوع العملية التي نفذها النموذج."),
     },
 }
 
@@ -273,14 +211,8 @@ LLM_DETAIL_TEXTS = {
         "success": "✅ Sucesso",
         "failure": "❌ Falha",
         "no_data": "⚪ Sem dados",
-        "provider_help": (
-            "Provedor responsável pela execução "
-            "do modelo."
-        ),
-        "trace_help": (
-            "Identificador técnico da execução "
-            "observada."
-        ),
+        "provider_help": ("Provedor responsável pela execução do modelo."),
+        "trace_help": ("Identificador técnico da execução observada."),
     },
     "en_us": {
         "date": "Date",
@@ -298,14 +230,8 @@ LLM_DETAIL_TEXTS = {
         "success": "✅ Success",
         "failure": "❌ Failure",
         "no_data": "⚪ No data",
-        "provider_help": (
-            "Provider responsible for executing "
-            "the model."
-        ),
-        "trace_help": (
-            "Technical identifier of the observed "
-            "execution."
-        ),
+        "provider_help": ("Provider responsible for executing the model."),
+        "trace_help": ("Technical identifier of the observed execution."),
     },
     "es": {
         "date": "Fecha",
@@ -323,13 +249,8 @@ LLM_DETAIL_TEXTS = {
         "success": "✅ Éxito",
         "failure": "❌ Fallo",
         "no_data": "⚪ Sin datos",
-        "provider_help": (
-            "Proveedor responsable de ejecutar "
-            "el modelo."
-        ),
-        "trace_help": (
-            "Identificador técnico de la ejecución."
-        ),
+        "provider_help": ("Proveedor responsable de ejecutar el modelo."),
+        "trace_help": ("Identificador técnico de la ejecución."),
     },
     "fr": {
         "date": "Date",
@@ -347,13 +268,8 @@ LLM_DETAIL_TEXTS = {
         "success": "✅ Succès",
         "failure": "❌ Échec",
         "no_data": "⚪ Aucune donnée",
-        "provider_help": (
-            "Fournisseur responsable de "
-            "l'exécution du modèle."
-        ),
-        "trace_help": (
-            "Identifiant technique de l'exécution."
-        ),
+        "provider_help": ("Fournisseur responsable de l'exécution du modèle."),
+        "trace_help": ("Identifiant technique de l'exécution."),
     },
     "de": {
         "date": "Datum",
@@ -371,12 +287,8 @@ LLM_DETAIL_TEXTS = {
         "success": "✅ Erfolgreich",
         "failure": "❌ Fehlgeschlagen",
         "no_data": "⚪ Keine Daten",
-        "provider_help": (
-            "Anbieter, der das Modell ausführt."
-        ),
-        "trace_help": (
-            "Technische Kennung der Ausführung."
-        ),
+        "provider_help": ("Anbieter, der das Modell ausführt."),
+        "trace_help": ("Technische Kennung der Ausführung."),
     },
     "it": {
         "date": "Data",
@@ -394,14 +306,8 @@ LLM_DETAIL_TEXTS = {
         "success": "✅ Successo",
         "failure": "❌ Errore",
         "no_data": "⚪ Nessun dato",
-        "provider_help": (
-            "Provider responsabile "
-            "dell'esecuzione del modello."
-        ),
-        "trace_help": (
-            "Identificatore tecnico "
-            "dell'esecuzione."
-        ),
+        "provider_help": ("Provider responsabile dell'esecuzione del modello."),
+        "trace_help": ("Identificatore tecnico dell'esecuzione."),
     },
     "ro": {
         "date": "Data",
@@ -419,13 +325,8 @@ LLM_DETAIL_TEXTS = {
         "success": "✅ Succes",
         "failure": "❌ Eșec",
         "no_data": "⚪ Fără date",
-        "provider_help": (
-            "Furnizorul responsabil pentru "
-            "execuția modelului."
-        ),
-        "trace_help": (
-            "Identificatorul tehnic al execuției."
-        ),
+        "provider_help": ("Furnizorul responsabil pentru execuția modelului."),
+        "trace_help": ("Identificatorul tehnic al execuției."),
     },
     "ua": {
         "date": "Дата",
@@ -443,13 +344,8 @@ LLM_DETAIL_TEXTS = {
         "success": "✅ Успішно",
         "failure": "❌ Помилка",
         "no_data": "⚪ Немає даних",
-        "provider_help": (
-            "Провайдер, відповідальний "
-            "за виконання моделі."
-        ),
-        "trace_help": (
-            "Технічний ідентифікатор виконання."
-        ),
+        "provider_help": ("Провайдер, відповідальний за виконання моделі."),
+        "trace_help": ("Технічний ідентифікатор виконання."),
     },
     "ru": {
         "date": "Дата",
@@ -467,13 +363,8 @@ LLM_DETAIL_TEXTS = {
         "success": "✅ Успешно",
         "failure": "❌ Ошибка",
         "no_data": "⚪ Нет данных",
-        "provider_help": (
-            "Провайдер, отвечающий "
-            "за выполнение модели."
-        ),
-        "trace_help": (
-            "Технический идентификатор выполнения."
-        ),
+        "provider_help": ("Провайдер, отвечающий за выполнение модели."),
+        "trace_help": ("Технический идентификатор выполнения."),
     },
     "sa": {
         "date": "التاريخ",
@@ -491,12 +382,8 @@ LLM_DETAIL_TEXTS = {
         "success": "✅ ناجح",
         "failure": "❌ فشل",
         "no_data": "⚪ لا توجد بيانات",
-        "provider_help": (
-            "المزود المسؤول عن تنفيذ النموذج."
-        ),
-        "trace_help": (
-            "المعرف التقني لعملية التنفيذ."
-        ),
+        "provider_help": ("المزود المسؤول عن تنفيذ النموذج."),
+        "trace_help": ("المعرف التقني لعملية التنفيذ."),
     },
 }
 
@@ -527,58 +414,54 @@ def estilizar_tabela_llm_costs(
     Aplica fundo escuro e texto claro às tabelas
     do LLM Cost Center.
     """
-    return (
-        tabela.style
-        .set_properties(
-            **{
-                "background-color": "#020617",
-                "color": "#F8FAFC",
-                "border-color": "#1E293B",
-                "font-weight": "600",
-            }
-        )
-        .set_table_styles(
-            [
-                {
-                    "selector": "th",
-                    "props": [
-                        (
-                            "background-color",
-                            "#0F172A",
-                        ),
-                        (
-                            "color",
-                            "#F8FAFC",
-                        ),
-                        (
-                            "font-weight",
-                            "700",
-                        ),
-                        (
-                            "border",
-                            "1px solid #334155",
-                        ),
-                    ],
-                },
-                {
-                    "selector": "td",
-                    "props": [
-                        (
-                            "background-color",
-                            "#020617",
-                        ),
-                        (
-                            "color",
-                            "#F8FAFC",
-                        ),
-                        (
-                            "border",
-                            "1px solid #1E293B",
-                        ),
-                    ],
-                },
-            ]
-        )
+    return tabela.style.set_properties(
+        **{
+            "background-color": "#020617",
+            "color": "#F8FAFC",
+            "border-color": "#1E293B",
+            "font-weight": "600",
+        }
+    ).set_table_styles(
+        [
+            {
+                "selector": "th",
+                "props": [
+                    (
+                        "background-color",
+                        "#0F172A",
+                    ),
+                    (
+                        "color",
+                        "#F8FAFC",
+                    ),
+                    (
+                        "font-weight",
+                        "700",
+                    ),
+                    (
+                        "border",
+                        "1px solid #334155",
+                    ),
+                ],
+            },
+            {
+                "selector": "td",
+                "props": [
+                    (
+                        "background-color",
+                        "#020617",
+                    ),
+                    (
+                        "color",
+                        "#F8FAFC",
+                    ),
+                    (
+                        "border",
+                        "1px solid #1E293B",
+                    ),
+                ],
+            },
+        ]
     )
 
 
@@ -588,15 +471,9 @@ def estilo_status_llm_costs(
     """Colore sucesso, falha e erros."""
     texto = str(valor or "").strip().lower()
 
-    if (
-        "✅" in texto
-        or texto in {"sucesso", "success", "true"}
-    ):
+    if "✅" in texto or texto in {"sucesso", "success", "true"}:
         cor = "#22C55E"
-    elif (
-        "❌" in texto
-        or texto in {"falha", "failed", "false"}
-    ):
+    elif "❌" in texto or texto in {"falha", "failed", "false"}:
         cor = "#F87171"
     elif texto not in {"", "none", "nan", "—"}:
         cor = "#F59E0B"
@@ -618,9 +495,7 @@ def estilizar_tabela_detalhada_llm(
     Aplica tema escuro e cores semânticas
     ao consumo detalhado.
     """
-    styler = estilizar_tabela_llm_costs(
-        tabela
-    )
+    styler = estilizar_tabela_llm_costs(tabela)
 
     colunas = [
         coluna
@@ -635,10 +510,7 @@ def estilizar_tabela_detalhada_llm(
         return styler
 
     return styler.apply(
-        lambda coluna: [
-            estilo_status_llm_costs(valor)
-            for valor in coluna
-        ],
+        lambda coluna: [estilo_status_llm_costs(valor) for valor in coluna],
         subset=colunas,
     )
 
@@ -947,9 +819,7 @@ def estilizar_tabela_alertas_llm(
     tabela,
 ):
     """Aplica tema escuro e cores aos alertas."""
-    styler = estilizar_tabela_llm_costs(
-        tabela
-    )
+    styler = estilizar_tabela_llm_costs(tabela)
 
     colunas = [
         coluna
@@ -964,10 +834,7 @@ def estilizar_tabela_alertas_llm(
         return styler
 
     return styler.apply(
-        lambda coluna: [
-            estilo_alerta_llm_costs(valor)
-            for valor in coluna
-        ],
+        lambda coluna: [estilo_alerta_llm_costs(valor) for valor in coluna],
         subset=colunas,
     )
 
@@ -978,34 +845,15 @@ def estilo_notificacao_llm_costs(
     """Colore status de envio, entrega e erros."""
     texto = str(valor or "").strip().lower()
 
-    if (
-        "🟢" in texto
-        or "entregue" in texto
-        or texto == "sucesso"
-    ):
+    if "🟢" in texto or "entregue" in texto or texto == "sucesso":
         cor = "#22C55E"
-    elif (
-        "🔵" in texto
-        or "enviado" in texto
-        or "clicado" in texto
-        or "aberto" in texto
-    ):
+    elif "🔵" in texto or "enviado" in texto or "clicado" in texto or "aberto" in texto:
         cor = "#60A5FA"
-    elif (
-        "🟡" in texto
-        or "aguardando" in texto
-        or "atrasado" in texto
-    ):
+    elif "🟡" in texto or "aguardando" in texto or "atrasado" in texto:
         cor = "#FACC15"
-    elif (
-        "🟠" in texto
-        or "devolvido" in texto
-    ):
+    elif "🟠" in texto or "devolvido" in texto:
         cor = "#F59E0B"
-    elif (
-        "🟣" in texto
-        or "suprimido" in texto
-    ):
+    elif "🟣" in texto or "suprimido" in texto:
         cor = "#C084FC"
     elif (
         "🔴" in texto
@@ -1044,14 +892,8 @@ LLM_NOTIFICATION_TEXTS = {
         "delivery_reason": "Motivo da entrega/falha",
         "error_type": "Tipo do erro",
         "error_message": "Mensagem de erro",
-        "recipient_help": (
-            "Endereço mascarado para preservar "
-            "a privacidade."
-        ),
-        "attempts_help": (
-            "Quantidade de tentativas de envio. "
-            "Limite: 3."
-        ),
+        "recipient_help": ("Endereço mascarado para preservar a privacidade."),
+        "attempts_help": ("Quantidade de tentativas de envio. Limite: 3."),
         "sent": "🔵 Enviado",
         "waiting": "🟡 Aguardando",
         "failed": "🔴 Falhou",
@@ -1082,12 +924,8 @@ LLM_NOTIFICATION_TEXTS = {
         "delivery_reason": "Delivery/failure reason",
         "error_type": "Error type",
         "error_message": "Error message",
-        "recipient_help": (
-            "Masked address to preserve privacy."
-        ),
-        "attempts_help": (
-            "Number of delivery attempts. Limit: 3."
-        ),
+        "recipient_help": ("Masked address to preserve privacy."),
+        "attempts_help": ("Number of delivery attempts. Limit: 3."),
         "sent": "🔵 Sent",
         "waiting": "🟡 Waiting",
         "failed": "🔴 Failed",
@@ -1118,13 +956,8 @@ LLM_NOTIFICATION_TEXTS = {
         "delivery_reason": "Motivo de entrega/fallo",
         "error_type": "Tipo de error",
         "error_message": "Mensaje de error",
-        "recipient_help": (
-            "Dirección enmascarada para preservar "
-            "la privacidad."
-        ),
-        "attempts_help": (
-            "Cantidad de intentos de envío. Límite: 3."
-        ),
+        "recipient_help": ("Dirección enmascarada para preservar la privacidad."),
+        "attempts_help": ("Cantidad de intentos de envío. Límite: 3."),
         "sent": "🔵 Enviado",
         "waiting": "🟡 En espera",
         "failed": "🔴 Falló",
@@ -1155,13 +988,8 @@ LLM_NOTIFICATION_TEXTS = {
         "delivery_reason": "Motif de livraison/échec",
         "error_type": "Type d'erreur",
         "error_message": "Message d'erreur",
-        "recipient_help": (
-            "Adresse masquée pour préserver "
-            "la confidentialité."
-        ),
-        "attempts_help": (
-            "Nombre de tentatives d'envoi. Limite : 3."
-        ),
+        "recipient_help": ("Adresse masquée pour préserver la confidentialité."),
+        "attempts_help": ("Nombre de tentatives d'envoi. Limite : 3."),
         "sent": "🔵 Envoyé",
         "waiting": "🟡 En attente",
         "failed": "🔴 Échec",
@@ -1192,13 +1020,8 @@ LLM_NOTIFICATION_TEXTS = {
         "delivery_reason": "Zustell-/Fehlergrund",
         "error_type": "Fehlertyp",
         "error_message": "Fehlermeldung",
-        "recipient_help": (
-            "Maskierte Adresse zum Schutz "
-            "der Privatsphäre."
-        ),
-        "attempts_help": (
-            "Anzahl der Sendeversuche. Grenze: 3."
-        ),
+        "recipient_help": ("Maskierte Adresse zum Schutz der Privatsphäre."),
+        "attempts_help": ("Anzahl der Sendeversuche. Grenze: 3."),
         "sent": "🔵 Gesendet",
         "waiting": "🟡 Wartend",
         "failed": "🔴 Fehlgeschlagen",
@@ -1229,13 +1052,8 @@ LLM_NOTIFICATION_TEXTS = {
         "delivery_reason": "Motivo consegna/errore",
         "error_type": "Tipo di errore",
         "error_message": "Messaggio di errore",
-        "recipient_help": (
-            "Indirizzo mascherato per preservare "
-            "la privacy."
-        ),
-        "attempts_help": (
-            "Numero di tentativi di invio. Limite: 3."
-        ),
+        "recipient_help": ("Indirizzo mascherato per preservare la privacy."),
+        "attempts_help": ("Numero di tentativi di invio. Limite: 3."),
         "sent": "🔵 Inviato",
         "waiting": "🟡 In attesa",
         "failed": "🔴 Fallito",
@@ -1266,14 +1084,8 @@ LLM_NOTIFICATION_TEXTS = {
         "delivery_reason": "Motiv livrare/eșec",
         "error_type": "Tipul erorii",
         "error_message": "Mesaj de eroare",
-        "recipient_help": (
-            "Adresă mascată pentru protejarea "
-            "confidențialității."
-        ),
-        "attempts_help": (
-            "Numărul încercărilor de trimitere. "
-            "Limită: 3."
-        ),
+        "recipient_help": ("Adresă mascată pentru protejarea confidențialității."),
+        "attempts_help": ("Numărul încercărilor de trimitere. Limită: 3."),
         "sent": "🔵 Trimis",
         "waiting": "🟡 În așteptare",
         "failed": "🔴 Eșuat",
@@ -1304,13 +1116,8 @@ LLM_NOTIFICATION_TEXTS = {
         "delivery_reason": "Причина доставки/помилки",
         "error_type": "Тип помилки",
         "error_message": "Повідомлення про помилку",
-        "recipient_help": (
-            "Замаскована адреса для захисту "
-            "конфіденційності."
-        ),
-        "attempts_help": (
-            "Кількість спроб надсилання. Ліміт: 3."
-        ),
+        "recipient_help": ("Замаскована адреса для захисту конфіденційності."),
+        "attempts_help": ("Кількість спроб надсилання. Ліміт: 3."),
         "sent": "🔵 Надіслано",
         "waiting": "🟡 Очікування",
         "failed": "🔴 Помилка",
@@ -1341,13 +1148,8 @@ LLM_NOTIFICATION_TEXTS = {
         "delivery_reason": "Причина доставки/ошибки",
         "error_type": "Тип ошибки",
         "error_message": "Сообщение об ошибке",
-        "recipient_help": (
-            "Замаскированный адрес для защиты "
-            "конфиденциальности."
-        ),
-        "attempts_help": (
-            "Количество попыток отправки. Лимит: 3."
-        ),
+        "recipient_help": ("Замаскированный адрес для защиты конфиденциальности."),
+        "attempts_help": ("Количество попыток отправки. Лимит: 3."),
         "sent": "🔵 Отправлено",
         "waiting": "🟡 Ожидание",
         "failed": "🔴 Ошибка",
@@ -1378,12 +1180,8 @@ LLM_NOTIFICATION_TEXTS = {
         "delivery_reason": "سبب التسليم/الفشل",
         "error_type": "نوع الخطأ",
         "error_message": "رسالة الخطأ",
-        "recipient_help": (
-            "عنوان مخفي للحفاظ على الخصوصية."
-        ),
-        "attempts_help": (
-            "عدد محاولات الإرسال. الحد: 3."
-        ),
+        "recipient_help": ("عنوان مخفي للحفاظ على الخصوصية."),
+        "attempts_help": ("عدد محاولات الإرسال. الحد: 3."),
         "sent": "🔵 تم الإرسال",
         "waiting": "🟡 قيد الانتظار",
         "failed": "🔴 فشل",
@@ -1399,12 +1197,8 @@ LLM_NOTIFICATION_TEXTS = {
     },
 }
 
-LLM_NOTIFICATION_TEXTS["en_gb"] = (
-    LLM_NOTIFICATION_TEXTS["en_us"]
-)
-LLM_NOTIFICATION_TEXTS["ch"] = (
-    LLM_NOTIFICATION_TEXTS["de"]
-)
+LLM_NOTIFICATION_TEXTS["en_gb"] = LLM_NOTIFICATION_TEXTS["en_us"]
+LLM_NOTIFICATION_TEXTS["ch"] = LLM_NOTIFICATION_TEXTS["de"]
 
 
 def llm_notification_t(
@@ -1469,9 +1263,7 @@ def estilizar_tabela_notificacoes_llm(
     Aplica tema escuro e cores semânticas
     à auditoria das notificações.
     """
-    styler = estilizar_tabela_llm_costs(
-        tabela
-    )
+    styler = estilizar_tabela_llm_costs(tabela)
 
     colunas = [
         coluna
@@ -1488,10 +1280,7 @@ def estilizar_tabela_notificacoes_llm(
         return styler
 
     return styler.apply(
-        lambda coluna: [
-            estilo_notificacao_llm_costs(valor)
-            for valor in coluna
-        ],
+        lambda coluna: [estilo_notificacao_llm_costs(valor) for valor in coluna],
         subset=colunas,
     )
 
@@ -1502,31 +1291,21 @@ def estilo_evento_resend_llm(
     """Colore resultados, processamento e erros."""
     texto = str(valor or "").strip().lower()
 
-    if (
-        "🟢" in texto
-        or texto in {
-            "ok",
-            "sucesso",
-            "processado",
-            "entregue",
-        }
-    ):
+    if "🟢" in texto or texto in {
+        "ok",
+        "sucesso",
+        "processado",
+        "entregue",
+    }:
         cor = "#22C55E"
-    elif (
-        "🔴" in texto
-        or texto in {
-            "erro",
-            "falha",
-            "não",
-            "nao",
-        }
-    ):
+    elif "🔴" in texto or texto in {
+        "erro",
+        "falha",
+        "não",
+        "nao",
+    }:
         cor = "#F87171"
-    elif (
-        "🟡" in texto
-        or "pendente" in texto
-        or "aguardando" in texto
-    ):
+    elif "🟡" in texto or "pendente" in texto or "aguardando" in texto:
         cor = "#FACC15"
     elif texto not in {
         "",
@@ -1556,12 +1335,8 @@ LLM_RESEND_EVENT_TEXTS = {
         "result": "Resultado",
         "error": "Erro",
         "svix_id": "Svix ID",
-        "event_help": (
-            "Evento recebido pelo webhook do Resend."
-        ),
-        "svix_help": (
-            "Identificador de segurança do webhook."
-        ),
+        "event_help": ("Evento recebido pelo webhook do Resend."),
+        "svix_help": ("Identificador de segurança do webhook."),
         "yes": "🟢 Sim",
         "no": "🔴 Não",
         "success": "🟢 Sucesso",
@@ -1581,12 +1356,8 @@ LLM_RESEND_EVENT_TEXTS = {
         "result": "Result",
         "error": "Error",
         "svix_id": "Svix ID",
-        "event_help": (
-            "Event received by the Resend webhook."
-        ),
-        "svix_help": (
-            "Webhook security identifier."
-        ),
+        "event_help": ("Event received by the Resend webhook."),
+        "svix_help": ("Webhook security identifier."),
         "yes": "🟢 Yes",
         "no": "🔴 No",
         "success": "🟢 Success",
@@ -1606,12 +1377,8 @@ LLM_RESEND_EVENT_TEXTS = {
         "result": "Resultado",
         "error": "Error",
         "svix_id": "ID de Svix",
-        "event_help": (
-            "Evento recibido por el webhook de Resend."
-        ),
-        "svix_help": (
-            "Identificador de seguridad del webhook."
-        ),
+        "event_help": ("Evento recibido por el webhook de Resend."),
+        "svix_help": ("Identificador de seguridad del webhook."),
         "yes": "🟢 Sí",
         "no": "🔴 No",
         "success": "🟢 Éxito",
@@ -1631,12 +1398,8 @@ LLM_RESEND_EVENT_TEXTS = {
         "result": "Résultat",
         "error": "Erreur",
         "svix_id": "ID Svix",
-        "event_help": (
-            "Événement reçu par le webhook Resend."
-        ),
-        "svix_help": (
-            "Identifiant de sécurité du webhook."
-        ),
+        "event_help": ("Événement reçu par le webhook Resend."),
+        "svix_help": ("Identifiant de sécurité du webhook."),
         "yes": "🟢 Oui",
         "no": "🔴 Non",
         "success": "🟢 Succès",
@@ -1656,12 +1419,8 @@ LLM_RESEND_EVENT_TEXTS = {
         "result": "Ergebnis",
         "error": "Fehler",
         "svix_id": "Svix-ID",
-        "event_help": (
-            "Vom Resend-Webhook empfangenes Ereignis."
-        ),
-        "svix_help": (
-            "Sicherheitskennung des Webhooks."
-        ),
+        "event_help": ("Vom Resend-Webhook empfangenes Ereignis."),
+        "svix_help": ("Sicherheitskennung des Webhooks."),
         "yes": "🟢 Ja",
         "no": "🔴 Nein",
         "success": "🟢 Erfolgreich",
@@ -1681,12 +1440,8 @@ LLM_RESEND_EVENT_TEXTS = {
         "result": "Risultato",
         "error": "Errore",
         "svix_id": "ID Svix",
-        "event_help": (
-            "Evento ricevuto dal webhook Resend."
-        ),
-        "svix_help": (
-            "Identificatore di sicurezza del webhook."
-        ),
+        "event_help": ("Evento ricevuto dal webhook Resend."),
+        "svix_help": ("Identificatore di sicurezza del webhook."),
         "yes": "🟢 Sì",
         "no": "🔴 No",
         "success": "🟢 Successo",
@@ -1706,12 +1461,8 @@ LLM_RESEND_EVENT_TEXTS = {
         "result": "Rezultat",
         "error": "Eroare",
         "svix_id": "ID Svix",
-        "event_help": (
-            "Eveniment primit de webhook-ul Resend."
-        ),
-        "svix_help": (
-            "Identificatorul de securitate al webhook-ului."
-        ),
+        "event_help": ("Eveniment primit de webhook-ul Resend."),
+        "svix_help": ("Identificatorul de securitate al webhook-ului."),
         "yes": "🟢 Da",
         "no": "🔴 Nu",
         "success": "🟢 Succes",
@@ -1731,12 +1482,8 @@ LLM_RESEND_EVENT_TEXTS = {
         "result": "Результат",
         "error": "Помилка",
         "svix_id": "ID Svix",
-        "event_help": (
-            "Подія, отримана webhook Resend."
-        ),
-        "svix_help": (
-            "Ідентифікатор безпеки webhook."
-        ),
+        "event_help": ("Подія, отримана webhook Resend."),
+        "svix_help": ("Ідентифікатор безпеки webhook."),
         "yes": "🟢 Так",
         "no": "🔴 Ні",
         "success": "🟢 Успішно",
@@ -1756,12 +1503,8 @@ LLM_RESEND_EVENT_TEXTS = {
         "result": "Результат",
         "error": "Ошибка",
         "svix_id": "ID Svix",
-        "event_help": (
-            "Событие, полученное webhook Resend."
-        ),
-        "svix_help": (
-            "Идентификатор безопасности webhook."
-        ),
+        "event_help": ("Событие, полученное webhook Resend."),
+        "svix_help": ("Идентификатор безопасности webhook."),
         "yes": "🟢 Да",
         "no": "🔴 Нет",
         "success": "🟢 Успешно",
@@ -1781,12 +1524,8 @@ LLM_RESEND_EVENT_TEXTS = {
         "result": "النتيجة",
         "error": "الخطأ",
         "svix_id": "معرف Svix",
-        "event_help": (
-            "حدث تم استلامه من Webhook الخاص بـ Resend."
-        ),
-        "svix_help": (
-            "معرف أمان Webhook."
-        ),
+        "event_help": ("حدث تم استلامه من Webhook الخاص بـ Resend."),
+        "svix_help": ("معرف أمان Webhook."),
         "yes": "🟢 نعم",
         "no": "🔴 لا",
         "success": "🟢 نجاح",
@@ -1799,12 +1538,8 @@ LLM_RESEND_EVENT_TEXTS = {
     },
 }
 
-LLM_RESEND_EVENT_TEXTS["en_gb"] = (
-    LLM_RESEND_EVENT_TEXTS["en_us"]
-)
-LLM_RESEND_EVENT_TEXTS["ch"] = (
-    LLM_RESEND_EVENT_TEXTS["de"]
-)
+LLM_RESEND_EVENT_TEXTS["en_gb"] = LLM_RESEND_EVENT_TEXTS["en_us"]
+LLM_RESEND_EVENT_TEXTS["ch"] = LLM_RESEND_EVENT_TEXTS["de"]
 
 
 def llm_resend_event_t(
@@ -1830,9 +1565,7 @@ def estilizar_tabela_eventos_resend(
     Aplica tema escuro e cores semânticas
     aos eventos do webhook.
     """
-    styler = estilizar_tabela_llm_costs(
-        tabela
-    )
+    styler = estilizar_tabela_llm_costs(tabela)
 
     colunas = [
         coluna
@@ -1848,10 +1581,7 @@ def estilizar_tabela_eventos_resend(
         return styler
 
     return styler.apply(
-        lambda coluna: [
-            estilo_evento_resend_llm(valor)
-            for valor in coluna
-        ],
+        lambda coluna: [estilo_evento_resend_llm(valor) for valor in coluna],
         subset=colunas,
     )
 
@@ -1886,17 +1616,13 @@ def aplicar_tema_llm_cost_chart(
     fig.update_xaxes(
         color=LLM_COST_CHART_TEXT,
         gridcolor=LLM_COST_CHART_GRID,
-        zerolinecolor=(
-            "rgba(148, 163, 184, 0.25)"
-        ),
+        zerolinecolor=("rgba(148, 163, 184, 0.25)"),
     )
 
     fig.update_yaxes(
         color=LLM_COST_CHART_TEXT,
         gridcolor=LLM_COST_CHART_GRID,
-        zerolinecolor=(
-            "rgba(148, 163, 184, 0.25)"
-        ),
+        zerolinecolor=("rgba(148, 163, 184, 0.25)"),
     )
 
     return fig
@@ -1937,16 +1663,10 @@ def preparar_consumo_exibicao(
             ).fillna(0)
 
     if "sucesso" in base.columns:
-        base["sucesso"] = (
-            base["sucesso"]
-            .fillna(False)
-            .astype(bool)
-        )
+        base["sucesso"] = base["sucesso"].fillna(False).astype(bool)
 
     return (
-        base.dropna(
-            subset=["criado_em"]
-        )
+        base.dropna(subset=["criado_em"])
         .sort_values(
             "criado_em",
             ascending=True,
@@ -1977,272 +1697,125 @@ def resumir_consumo_llm(
 
     total = len(base)
 
-    sucessos = int(
-        base["sucesso"].sum()
-    )
+    sucessos = int(base["sucesso"].sum())
 
     return {
         "eventos": total,
-        "tokens_entrada": int(
-            base["tokens_entrada"].sum()
-        ),
-        "tokens_saida": int(
-            base["tokens_saida"].sum()
-        ),
-        "tokens_totais": int(
-            base["tokens_totais"].sum()
-        ),
+        "tokens_entrada": int(base["tokens_entrada"].sum()),
+        "tokens_saida": int(base["tokens_saida"].sum()),
+        "tokens_totais": int(base["tokens_totais"].sum()),
         "custo_total_usd": round(
-            float(
-                base["custo_total_usd"].sum()
-            ),
+            float(base["custo_total_usd"].sum()),
             8,
         ),
         "duracao_media_ms": round(
-            float(
-                base["duracao_ms"].mean()
-            ),
+            float(base["duracao_ms"].mean()),
             3,
         ),
         "duracao_p95_ms": round(
-            float(
-                base["duracao_ms"].quantile(
-                    0.95
-                )
-            ),
+            float(base["duracao_ms"].quantile(0.95)),
             3,
         ),
         "taxa_sucesso": round(
-            (
-                sucessos
-                / total
-            )
-            * 100,
+            (sucessos / total) * 100,
             2,
         ),
     }
 
 
-
 LLM_ALERT_SECTION_TEXTS = {
     "pt": {
-        "section_title": (
-            "## 🚨 Alertas de custo e desempenho"
-        ),
-        "evaluate_now": (
-            "🔎 Avaliar alertas agora"
-        ),
-        "evaluation_failed": (
-            "Não foi possível concluir a avaliação."
-        ),
-        "load_failed": (
-            "Não foi possível carregar os alertas."
-        ),
-        "no_alerts": (
-            "Nenhum alerta encontrado para o filtro atual."
-        ),
+        "section_title": ("## 🚨 Alertas de custo e desempenho"),
+        "evaluate_now": ("🔎 Avaliar alertas agora"),
+        "evaluation_failed": ("Não foi possível concluir a avaliação."),
+        "load_failed": ("Não foi possível carregar os alertas."),
+        "no_alerts": ("Nenhum alerta encontrado para o filtro atual."),
         "alerts_list": "### Lista de alertas",
         "email_disabled": (
-            "As notificações por e-mail estão "
-            "desabilitadas no ambiente."
+            "As notificações por e-mail estão desabilitadas no ambiente."
         ),
-        "recipient_missing": (
-            "O destinatário dos alertas não está configurado."
-        ),
-        "resend_missing": (
-            "A integração com o Resend não está configurada."
-        ),
+        "recipient_missing": ("O destinatário dos alertas não está configurado."),
+        "resend_missing": ("A integração com o Resend não está configurada."),
         "email_enabled": (
             "Notificações por e-mail habilitadas. "
             "Alertas altos e críticos podem ser enviados."
         ),
         "recommendation": "Recomendação",
-        "notification_sent": (
-            "📧 Notificação já enviada"
-        ),
-        "restricted_delivery": (
-            "📧 Envio reservado para alertas "
-            "altos e críticos."
-        ),
-        "send_email": (
-            "📧 Enviar alerta por e-mail"
-        ),
+        "notification_sent": ("📧 Notificação já enviada"),
+        "restricted_delivery": ("📧 Envio reservado para alertas altos e críticos."),
+        "send_email": ("📧 Enviar alerta por e-mail"),
         "sending_alert": "Enviando alerta...",
-        "alert_sent": (
-            "Alerta enviado por e-mail."
-        ),
-        "already_sent": (
-            "Este alerta já foi enviado por e-mail."
-        ),
-        "send_failed": (
-            "Falha ao enviar o alerta"
-        ),
-        "resolve": (
-            "✅ Marcar como resolvido"
-        ),
+        "alert_sent": ("Alerta enviado por e-mail."),
+        "already_sent": ("Este alerta já foi enviado por e-mail."),
+        "send_failed": ("Falha ao enviar o alerta"),
+        "resolve": ("✅ Marcar como resolvido"),
         "resolved": "Alerta resolvido.",
-        "already_resolved": (
-            "O alerta já foi resolvido."
-        ),
-        "integration_health": (
-            "### 🩺 Saúde das integrações"
-        ),
-        "integration_details": (
-            "Detalhes técnicos das integrações"
-        ),
-        "partial_health": (
-            "Saúde parcialmente indisponível."
-        ),
-        "health_failed": (
-            "Não foi possível carregar a saúde "
-            "das integrações"
-        ),
-        "webhook_events": (
-            "### 📨 Eventos do webhook do Resend"
-        ),
-        "events_unavailable": (
-            "Eventos indisponíveis."
-        ),
-        "no_webhook_events": (
-            "Nenhum evento do webhook encontrado "
-            "neste período."
-        ),
-        "export_webhook": (
-            "⬇️ Exportar eventos do webhook em CSV"
-        ),
-        "notification_audit": (
-            "### Auditoria das notificações"
-        ),
-        "notifications_load_failed": (
-            "Não foi possível carregar as notificações."
-        ),
-        "no_notifications": (
-            "Nenhuma notificação registrada."
-        ),
-        "export_notifications": (
-            "⬇️ Exportar notificações em CSV"
-        ),
-        "retry_section": (
-            "### 🔄 Reenvio de notificações"
-        ),
-        "no_retry": (
-            "Nenhuma notificação disponível para reenvio."
-        ),
-        "no_failed_retry": (
-            "Não existem notificações com falha "
-            "aguardando reenvio."
-        ),
-        "retry_limit": (
-            "O reenvio é limitado a três tentativas "
-            "por notificação."
-        ),
+        "already_resolved": ("O alerta já foi resolvido."),
+        "integration_health": ("### 🩺 Saúde das integrações"),
+        "integration_details": ("Detalhes técnicos das integrações"),
+        "partial_health": ("Saúde parcialmente indisponível."),
+        "health_failed": ("Não foi possível carregar a saúde das integrações"),
+        "webhook_events": ("### 📨 Eventos do webhook do Resend"),
+        "events_unavailable": ("Eventos indisponíveis."),
+        "no_webhook_events": ("Nenhum evento do webhook encontrado neste período."),
+        "export_webhook": ("⬇️ Exportar eventos do webhook em CSV"),
+        "notification_audit": ("### Auditoria das notificações"),
+        "notifications_load_failed": ("Não foi possível carregar as notificações."),
+        "no_notifications": ("Nenhuma notificação registrada."),
+        "export_notifications": ("⬇️ Exportar notificações em CSV"),
+        "retry_section": ("### 🔄 Reenvio de notificações"),
+        "no_retry": ("Nenhuma notificação disponível para reenvio."),
+        "no_failed_retry": ("Não existem notificações com falha aguardando reenvio."),
+        "retry_limit": ("O reenvio é limitado a três tentativas por notificação."),
         "retry": "🔄 Reenviar",
-        "retrying": (
-            "Reenviando notificação..."
-        ),
-        "retry_success": (
-            "Notificação reenviada."
-        ),
+        "retrying": ("Reenviando notificação..."),
+        "retry_success": ("Notificação reenviada."),
         "retry_failed": "Falha no reenvio.",
-        "alerts_audit": (
-            "### Auditoria dos alertas"
-        ),
-        "export_alerts": (
-            "⬇️ Exportar alertas em CSV"
-        ),
+        "alerts_audit": ("### Auditoria dos alertas"),
+        "export_alerts": ("⬇️ Exportar alertas em CSV"),
     },
     "en_us": {
         "section_title": "## 🚨 Cost and performance alerts",
         "evaluate_now": "🔎 Evaluate alerts now",
-        "evaluation_failed": (
-            "The evaluation could not be completed."
-        ),
+        "evaluation_failed": ("The evaluation could not be completed."),
         "load_failed": "Alerts could not be loaded.",
-        "no_alerts": (
-            "No alerts were found for the current filter."
-        ),
+        "no_alerts": ("No alerts were found for the current filter."),
         "alerts_list": "### Alert list",
-        "email_disabled": (
-            "Email notifications are disabled "
-            "in this environment."
-        ),
-        "recipient_missing": (
-            "The alert recipient is not configured."
-        ),
-        "resend_missing": (
-            "The Resend integration is not configured."
-        ),
+        "email_disabled": ("Email notifications are disabled in this environment."),
+        "recipient_missing": ("The alert recipient is not configured."),
+        "resend_missing": ("The Resend integration is not configured."),
         "email_enabled": (
-            "Email notifications are enabled. "
-            "High and critical alerts can be sent."
+            "Email notifications are enabled. High and critical alerts can be sent."
         ),
         "recommendation": "Recommendation",
         "notification_sent": "📧 Notification already sent",
         "restricted_delivery": (
-            "📧 Delivery is reserved for high "
-            "and critical alerts."
+            "📧 Delivery is reserved for high and critical alerts."
         ),
         "send_email": "📧 Send alert by email",
         "sending_alert": "Sending alert...",
         "alert_sent": "Alert sent by email.",
-        "already_sent": (
-            "This alert has already been sent by email."
-        ),
+        "already_sent": ("This alert has already been sent by email."),
         "send_failed": "Failed to send the alert",
         "resolve": "✅ Mark as resolved",
         "resolved": "Alert resolved.",
-        "already_resolved": (
-            "The alert has already been resolved."
-        ),
-        "integration_health": (
-            "### 🩺 Integration health"
-        ),
-        "integration_details": (
-            "Technical integration details"
-        ),
-        "partial_health": (
-            "Integration health is partially unavailable."
-        ),
-        "health_failed": (
-            "Could not load integration health"
-        ),
-        "webhook_events": (
-            "### 📨 Resend webhook events"
-        ),
+        "already_resolved": ("The alert has already been resolved."),
+        "integration_health": ("### 🩺 Integration health"),
+        "integration_details": ("Technical integration details"),
+        "partial_health": ("Integration health is partially unavailable."),
+        "health_failed": ("Could not load integration health"),
+        "webhook_events": ("### 📨 Resend webhook events"),
         "events_unavailable": "Events are unavailable.",
-        "no_webhook_events": (
-            "No webhook events were found "
-            "for this period."
-        ),
-        "export_webhook": (
-            "⬇️ Export webhook events as CSV"
-        ),
-        "notification_audit": (
-            "### Notification audit"
-        ),
-        "notifications_load_failed": (
-            "Notifications could not be loaded."
-        ),
-        "no_notifications": (
-            "No notifications have been recorded."
-        ),
-        "export_notifications": (
-            "⬇️ Export notifications as CSV"
-        ),
-        "retry_section": (
-            "### 🔄 Notification retry"
-        ),
-        "no_retry": (
-            "No notification is available for retry."
-        ),
-        "no_failed_retry": (
-            "There are no failed notifications "
-            "waiting for retry."
-        ),
-        "retry_limit": (
-            "Retry is limited to three attempts "
-            "per notification."
-        ),
+        "no_webhook_events": ("No webhook events were found for this period."),
+        "export_webhook": ("⬇️ Export webhook events as CSV"),
+        "notification_audit": ("### Notification audit"),
+        "notifications_load_failed": ("Notifications could not be loaded."),
+        "no_notifications": ("No notifications have been recorded."),
+        "export_notifications": ("⬇️ Export notifications as CSV"),
+        "retry_section": ("### 🔄 Notification retry"),
+        "no_retry": ("No notification is available for retry."),
+        "no_failed_retry": ("There are no failed notifications waiting for retry."),
+        "retry_limit": ("Retry is limited to three attempts per notification."),
         "retry": "🔄 Retry",
         "retrying": "Retrying notification...",
         "retry_success": "Notification resent.",
@@ -2251,105 +1824,50 @@ LLM_ALERT_SECTION_TEXTS = {
         "export_alerts": "⬇️ Export alerts as CSV",
     },
     "es": {
-        "section_title": (
-            "## 🚨 Alertas de costo y rendimiento"
-        ),
+        "section_title": ("## 🚨 Alertas de costo y rendimiento"),
         "evaluate_now": "🔎 Evaluar alertas ahora",
-        "evaluation_failed": (
-            "No se pudo completar la evaluación."
-        ),
-        "load_failed": (
-            "No se pudieron cargar las alertas."
-        ),
-        "no_alerts": (
-            "No se encontraron alertas para el filtro actual."
-        ),
+        "evaluation_failed": ("No se pudo completar la evaluación."),
+        "load_failed": ("No se pudieron cargar las alertas."),
+        "no_alerts": ("No se encontraron alertas para el filtro actual."),
         "alerts_list": "### Lista de alertas",
         "email_disabled": (
-            "Las notificaciones por correo están "
-            "deshabilitadas en el entorno."
+            "Las notificaciones por correo están deshabilitadas en el entorno."
         ),
-        "recipient_missing": (
-            "El destinatario de las alertas no está configurado."
-        ),
-        "resend_missing": (
-            "La integración con Resend no está configurada."
-        ),
+        "recipient_missing": ("El destinatario de las alertas no está configurado."),
+        "resend_missing": ("La integración con Resend no está configurada."),
         "email_enabled": (
             "Las notificaciones por correo están habilitadas. "
             "Se pueden enviar alertas altas y críticas."
         ),
         "recommendation": "Recomendación",
-        "notification_sent": (
-            "📧 Notificación ya enviada"
-        ),
+        "notification_sent": ("📧 Notificación ya enviada"),
         "restricted_delivery": (
-            "📧 El envío está reservado para alertas "
-            "altas y críticas."
+            "📧 El envío está reservado para alertas altas y críticas."
         ),
         "send_email": "📧 Enviar alerta por correo",
         "sending_alert": "Enviando alerta...",
         "alert_sent": "Alerta enviada por correo.",
-        "already_sent": (
-            "Esta alerta ya fue enviada por correo."
-        ),
+        "already_sent": ("Esta alerta ya fue enviada por correo."),
         "send_failed": "Error al enviar la alerta",
         "resolve": "✅ Marcar como resuelta",
         "resolved": "Alerta resuelta.",
-        "already_resolved": (
-            "La alerta ya fue resuelta."
-        ),
-        "integration_health": (
-            "### 🩺 Estado de las integraciones"
-        ),
-        "integration_details": (
-            "Detalles técnicos de las integraciones"
-        ),
-        "partial_health": (
-            "El estado está parcialmente indisponible."
-        ),
-        "health_failed": (
-            "No se pudo cargar el estado de las integraciones"
-        ),
-        "webhook_events": (
-            "### 📨 Eventos del webhook de Resend"
-        ),
-        "events_unavailable": (
-            "Los eventos no están disponibles."
-        ),
-        "no_webhook_events": (
-            "No se encontraron eventos del webhook "
-            "en este período."
-        ),
-        "export_webhook": (
-            "⬇️ Exportar eventos del webhook en CSV"
-        ),
-        "notification_audit": (
-            "### Auditoría de notificaciones"
-        ),
-        "notifications_load_failed": (
-            "No se pudieron cargar las notificaciones."
-        ),
-        "no_notifications": (
-            "No hay notificaciones registradas."
-        ),
-        "export_notifications": (
-            "⬇️ Exportar notificaciones en CSV"
-        ),
-        "retry_section": (
-            "### 🔄 Reenvío de notificaciones"
-        ),
-        "no_retry": (
-            "No hay notificaciones disponibles para reenviar."
-        ),
-        "no_failed_retry": (
-            "No hay notificaciones fallidas "
-            "pendientes de reenvío."
-        ),
-        "retry_limit": (
-            "El reenvío está limitado a tres intentos "
-            "por notificación."
-        ),
+        "already_resolved": ("La alerta ya fue resuelta."),
+        "integration_health": ("### 🩺 Estado de las integraciones"),
+        "integration_details": ("Detalles técnicos de las integraciones"),
+        "partial_health": ("El estado está parcialmente indisponible."),
+        "health_failed": ("No se pudo cargar el estado de las integraciones"),
+        "webhook_events": ("### 📨 Eventos del webhook de Resend"),
+        "events_unavailable": ("Los eventos no están disponibles."),
+        "no_webhook_events": ("No se encontraron eventos del webhook en este período."),
+        "export_webhook": ("⬇️ Exportar eventos del webhook en CSV"),
+        "notification_audit": ("### Auditoría de notificaciones"),
+        "notifications_load_failed": ("No se pudieron cargar las notificaciones."),
+        "no_notifications": ("No hay notificaciones registradas."),
+        "export_notifications": ("⬇️ Exportar notificaciones en CSV"),
+        "retry_section": ("### 🔄 Reenvío de notificaciones"),
+        "no_retry": ("No hay notificaciones disponibles para reenviar."),
+        "no_failed_retry": ("No hay notificaciones fallidas pendientes de reenvío."),
+        "retry_limit": ("El reenvío está limitado a tres intentos por notificación."),
         "retry": "🔄 Reenviar",
         "retrying": "Reenviando notificación...",
         "retry_success": "Notificación reenviada.",
@@ -2358,101 +1876,46 @@ LLM_ALERT_SECTION_TEXTS = {
         "export_alerts": "⬇️ Exportar alertas en CSV",
     },
     "fr": {
-        "section_title": (
-            "## 🚨 Alertes de coût et de performance"
-        ),
+        "section_title": ("## 🚨 Alertes de coût et de performance"),
         "evaluate_now": "🔎 Évaluer les alertes",
-        "evaluation_failed": (
-            "L’évaluation n’a pas pu être terminée."
-        ),
-        "load_failed": (
-            "Impossible de charger les alertes."
-        ),
-        "no_alerts": (
-            "Aucune alerte trouvée pour le filtre actuel."
-        ),
+        "evaluation_failed": ("L’évaluation n’a pas pu être terminée."),
+        "load_failed": ("Impossible de charger les alertes."),
+        "no_alerts": ("Aucune alerte trouvée pour le filtre actuel."),
         "alerts_list": "### Liste des alertes",
-        "email_disabled": (
-            "Les notifications par e-mail sont désactivées."
-        ),
-        "recipient_missing": (
-            "Le destinataire des alertes n’est pas configuré."
-        ),
-        "resend_missing": (
-            "L’intégration Resend n’est pas configurée."
-        ),
+        "email_disabled": ("Les notifications par e-mail sont désactivées."),
+        "recipient_missing": ("Le destinataire des alertes n’est pas configuré."),
+        "resend_missing": ("L’intégration Resend n’est pas configurée."),
         "email_enabled": (
             "Les notifications par e-mail sont activées. "
             "Les alertes élevées et critiques peuvent être envoyées."
         ),
         "recommendation": "Recommandation",
-        "notification_sent": (
-            "📧 Notification déjà envoyée"
-        ),
-        "restricted_delivery": (
-            "📧 Envoi réservé aux alertes élevées et critiques."
-        ),
+        "notification_sent": ("📧 Notification déjà envoyée"),
+        "restricted_delivery": ("📧 Envoi réservé aux alertes élevées et critiques."),
         "send_email": "📧 Envoyer l’alerte par e-mail",
         "sending_alert": "Envoi de l’alerte...",
         "alert_sent": "Alerte envoyée par e-mail.",
-        "already_sent": (
-            "Cette alerte a déjà été envoyée par e-mail."
-        ),
+        "already_sent": ("Cette alerte a déjà été envoyée par e-mail."),
         "send_failed": "Échec de l’envoi de l’alerte",
         "resolve": "✅ Marquer comme résolue",
         "resolved": "Alerte résolue.",
-        "already_resolved": (
-            "L’alerte est déjà résolue."
-        ),
-        "integration_health": (
-            "### 🩺 État des intégrations"
-        ),
-        "integration_details": (
-            "Détails techniques des intégrations"
-        ),
-        "partial_health": (
-            "L’état est partiellement indisponible."
-        ),
-        "health_failed": (
-            "Impossible de charger l’état des intégrations"
-        ),
-        "webhook_events": (
-            "### 📨 Événements webhook Resend"
-        ),
-        "events_unavailable": (
-            "Les événements sont indisponibles."
-        ),
-        "no_webhook_events": (
-            "Aucun événement webhook trouvé pour cette période."
-        ),
-        "export_webhook": (
-            "⬇️ Exporter les événements webhook en CSV"
-        ),
-        "notification_audit": (
-            "### Audit des notifications"
-        ),
-        "notifications_load_failed": (
-            "Impossible de charger les notifications."
-        ),
-        "no_notifications": (
-            "Aucune notification enregistrée."
-        ),
-        "export_notifications": (
-            "⬇️ Exporter les notifications en CSV"
-        ),
-        "retry_section": (
-            "### 🔄 Renvoi des notifications"
-        ),
-        "no_retry": (
-            "Aucune notification disponible pour un renvoi."
-        ),
-        "no_failed_retry": (
-            "Aucune notification en échec n’attend un renvoi."
-        ),
-        "retry_limit": (
-            "Le renvoi est limité à trois tentatives "
-            "par notification."
-        ),
+        "already_resolved": ("L’alerte est déjà résolue."),
+        "integration_health": ("### 🩺 État des intégrations"),
+        "integration_details": ("Détails techniques des intégrations"),
+        "partial_health": ("L’état est partiellement indisponible."),
+        "health_failed": ("Impossible de charger l’état des intégrations"),
+        "webhook_events": ("### 📨 Événements webhook Resend"),
+        "events_unavailable": ("Les événements sont indisponibles."),
+        "no_webhook_events": ("Aucun événement webhook trouvé pour cette période."),
+        "export_webhook": ("⬇️ Exporter les événements webhook en CSV"),
+        "notification_audit": ("### Audit des notifications"),
+        "notifications_load_failed": ("Impossible de charger les notifications."),
+        "no_notifications": ("Aucune notification enregistrée."),
+        "export_notifications": ("⬇️ Exporter les notifications en CSV"),
+        "retry_section": ("### 🔄 Renvoi des notifications"),
+        "no_retry": ("Aucune notification disponible pour un renvoi."),
+        "no_failed_retry": ("Aucune notification en échec n’attend un renvoi."),
+        "retry_limit": ("Le renvoi est limité à trois tentatives par notification."),
         "retry": "🔄 Renvoyer",
         "retrying": "Renvoi de la notification...",
         "retry_success": "Notification renvoyée.",
@@ -2461,103 +1924,54 @@ LLM_ALERT_SECTION_TEXTS = {
         "export_alerts": "⬇️ Exporter les alertes en CSV",
     },
     "de": {
-        "section_title": (
-            "## 🚨 Kosten- und Leistungswarnungen"
-        ),
+        "section_title": ("## 🚨 Kosten- und Leistungswarnungen"),
         "evaluate_now": "🔎 Warnungen jetzt prüfen",
-        "evaluation_failed": (
-            "Die Auswertung konnte nicht abgeschlossen werden."
-        ),
-        "load_failed": (
-            "Warnungen konnten nicht geladen werden."
-        ),
-        "no_alerts": (
-            "Für den aktuellen Filter wurden "
-            "keine Warnungen gefunden."
-        ),
+        "evaluation_failed": ("Die Auswertung konnte nicht abgeschlossen werden."),
+        "load_failed": ("Warnungen konnten nicht geladen werden."),
+        "no_alerts": ("Für den aktuellen Filter wurden keine Warnungen gefunden."),
         "alerts_list": "### Warnungsliste",
-        "email_disabled": (
-            "E-Mail-Benachrichtigungen sind deaktiviert."
-        ),
-        "recipient_missing": (
-            "Der Empfänger der Warnungen ist nicht konfiguriert."
-        ),
-        "resend_missing": (
-            "Die Resend-Integration ist nicht konfiguriert."
-        ),
+        "email_disabled": ("E-Mail-Benachrichtigungen sind deaktiviert."),
+        "recipient_missing": ("Der Empfänger der Warnungen ist nicht konfiguriert."),
+        "resend_missing": ("Die Resend-Integration ist nicht konfiguriert."),
         "email_enabled": (
             "E-Mail-Benachrichtigungen sind aktiviert. "
             "Hohe und kritische Warnungen können gesendet werden."
         ),
         "recommendation": "Empfehlung",
-        "notification_sent": (
-            "📧 Benachrichtigung bereits gesendet"
-        ),
-        "restricted_delivery": (
-            "📧 Versand nur für hohe und kritische Warnungen."
-        ),
+        "notification_sent": ("📧 Benachrichtigung bereits gesendet"),
+        "restricted_delivery": ("📧 Versand nur für hohe und kritische Warnungen."),
         "send_email": "📧 Warnung per E-Mail senden",
         "sending_alert": "Warnung wird gesendet...",
         "alert_sent": "Warnung per E-Mail gesendet.",
-        "already_sent": (
-            "Diese Warnung wurde bereits per E-Mail gesendet."
-        ),
+        "already_sent": ("Diese Warnung wurde bereits per E-Mail gesendet."),
         "send_failed": "Fehler beim Senden der Warnung",
         "resolve": "✅ Als gelöst markieren",
         "resolved": "Warnung gelöst.",
-        "already_resolved": (
-            "Die Warnung wurde bereits gelöst."
-        ),
-        "integration_health": (
-            "### 🩺 Integrationsstatus"
-        ),
-        "integration_details": (
-            "Technische Details der Integrationen"
-        ),
-        "partial_health": (
-            "Der Status ist teilweise nicht verfügbar."
-        ),
-        "health_failed": (
-            "Integrationsstatus konnte nicht geladen werden"
-        ),
-        "webhook_events": (
-            "### 📨 Resend-Webhook-Ereignisse"
-        ),
-        "events_unavailable": (
-            "Ereignisse sind nicht verfügbar."
-        ),
+        "already_resolved": ("Die Warnung wurde bereits gelöst."),
+        "integration_health": ("### 🩺 Integrationsstatus"),
+        "integration_details": ("Technische Details der Integrationen"),
+        "partial_health": ("Der Status ist teilweise nicht verfügbar."),
+        "health_failed": ("Integrationsstatus konnte nicht geladen werden"),
+        "webhook_events": ("### 📨 Resend-Webhook-Ereignisse"),
+        "events_unavailable": ("Ereignisse sind nicht verfügbar."),
         "no_webhook_events": (
-            "Für diesen Zeitraum wurden "
-            "keine Webhook-Ereignisse gefunden."
+            "Für diesen Zeitraum wurden keine Webhook-Ereignisse gefunden."
         ),
-        "export_webhook": (
-            "⬇️ Webhook-Ereignisse als CSV exportieren"
-        ),
-        "notification_audit": (
-            "### Benachrichtigungsprüfung"
-        ),
+        "export_webhook": ("⬇️ Webhook-Ereignisse als CSV exportieren"),
+        "notification_audit": ("### Benachrichtigungsprüfung"),
         "notifications_load_failed": (
             "Benachrichtigungen konnten nicht geladen werden."
         ),
-        "no_notifications": (
-            "Keine Benachrichtigungen vorhanden."
-        ),
-        "export_notifications": (
-            "⬇️ Benachrichtigungen als CSV exportieren"
-        ),
-        "retry_section": (
-            "### 🔄 Benachrichtigungen erneut senden"
-        ),
-        "no_retry": (
-            "Keine Benachrichtigung zum erneuten Senden verfügbar."
-        ),
+        "no_notifications": ("Keine Benachrichtigungen vorhanden."),
+        "export_notifications": ("⬇️ Benachrichtigungen als CSV exportieren"),
+        "retry_section": ("### 🔄 Benachrichtigungen erneut senden"),
+        "no_retry": ("Keine Benachrichtigung zum erneuten Senden verfügbar."),
         "no_failed_retry": (
             "Keine fehlgeschlagenen Benachrichtigungen "
             "warten auf einen erneuten Versand."
         ),
         "retry_limit": (
-            "Der erneute Versand ist auf drei Versuche "
-            "pro Benachrichtigung begrenzt."
+            "Der erneute Versand ist auf drei Versuche pro Benachrichtigung begrenzt."
         ),
         "retry": "🔄 Erneut senden",
         "retrying": "Benachrichtigung wird erneut gesendet...",
@@ -2567,119 +1981,56 @@ LLM_ALERT_SECTION_TEXTS = {
         "export_alerts": "⬇️ Warnungen als CSV exportieren",
     },
     "ru": {
-        "section_title": (
-            "## 🚨 Оповещения о стоимости и производительности"
-        ),
+        "section_title": ("## 🚨 Оповещения о стоимости и производительности"),
         "evaluate_now": "🔎 Проверить оповещения",
-        "evaluation_failed": (
-            "Не удалось завершить проверку."
-        ),
-        "load_failed": (
-            "Не удалось загрузить оповещения."
-        ),
-        "no_alerts": (
-            "Для текущего фильтра оповещения не найдены."
-        ),
+        "evaluation_failed": ("Не удалось завершить проверку."),
+        "load_failed": ("Не удалось загрузить оповещения."),
+        "no_alerts": ("Для текущего фильтра оповещения не найдены."),
         "alerts_list": "### Список оповещений",
-        "email_disabled": (
-            "Уведомления по электронной почте отключены."
-        ),
-        "recipient_missing": (
-            "Получатель оповещений не настроен."
-        ),
-        "resend_missing": (
-            "Интеграция Resend не настроена."
-        ),
+        "email_disabled": ("Уведомления по электронной почте отключены."),
+        "recipient_missing": ("Получатель оповещений не настроен."),
+        "resend_missing": ("Интеграция Resend не настроена."),
         "email_enabled": (
             "Уведомления по электронной почте включены. "
             "Можно отправлять важные и критические оповещения."
         ),
         "recommendation": "Рекомендация",
-        "notification_sent": (
-            "📧 Уведомление уже отправлено"
-        ),
+        "notification_sent": ("📧 Уведомление уже отправлено"),
         "restricted_delivery": (
-            "📧 Отправка доступна для важных "
-            "и критических оповещений."
+            "📧 Отправка доступна для важных и критических оповещений."
         ),
-        "send_email": (
-            "📧 Отправить оповещение по электронной почте"
-        ),
+        "send_email": ("📧 Отправить оповещение по электронной почте"),
         "sending_alert": "Отправка оповещения...",
-        "alert_sent": (
-            "Оповещение отправлено по электронной почте."
-        ),
-        "already_sent": (
-            "Это оповещение уже было отправлено."
-        ),
-        "send_failed": (
-            "Не удалось отправить оповещение"
-        ),
+        "alert_sent": ("Оповещение отправлено по электронной почте."),
+        "already_sent": ("Это оповещение уже было отправлено."),
+        "send_failed": ("Не удалось отправить оповещение"),
         "resolve": "✅ Отметить как решенное",
         "resolved": "Оповещение решено.",
-        "already_resolved": (
-            "Оповещение уже было решено."
-        ),
-        "integration_health": (
-            "### 🩺 Состояние интеграций"
-        ),
-        "integration_details": (
-            "Технические сведения об интеграциях"
-        ),
-        "partial_health": (
-            "Сведения о состоянии доступны частично."
-        ),
-        "health_failed": (
-            "Не удалось загрузить состояние интеграций"
-        ),
-        "webhook_events": (
-            "### 📨 События webhook Resend"
-        ),
-        "events_unavailable": (
-            "События недоступны."
-        ),
-        "no_webhook_events": (
-            "За этот период события webhook не найдены."
-        ),
-        "export_webhook": (
-            "⬇️ Экспортировать события webhook в CSV"
-        ),
-        "notification_audit": (
-            "### Аудит уведомлений"
-        ),
-        "notifications_load_failed": (
-            "Не удалось загрузить уведомления."
-        ),
-        "no_notifications": (
-            "Уведомления не зарегистрированы."
-        ),
-        "export_notifications": (
-            "⬇️ Экспортировать уведомления в CSV"
-        ),
-        "retry_section": (
-            "### 🔄 Повторная отправка уведомлений"
-        ),
-        "no_retry": (
-            "Нет уведомлений для повторной отправки."
-        ),
-        "no_failed_retry": (
-            "Нет неудачных уведомлений, ожидающих "
-            "повторной отправки."
-        ),
+        "already_resolved": ("Оповещение уже было решено."),
+        "integration_health": ("### 🩺 Состояние интеграций"),
+        "integration_details": ("Технические сведения об интеграциях"),
+        "partial_health": ("Сведения о состоянии доступны частично."),
+        "health_failed": ("Не удалось загрузить состояние интеграций"),
+        "webhook_events": ("### 📨 События webhook Resend"),
+        "events_unavailable": ("События недоступны."),
+        "no_webhook_events": ("За этот период события webhook не найдены."),
+        "export_webhook": ("⬇️ Экспортировать события webhook в CSV"),
+        "notification_audit": ("### Аудит уведомлений"),
+        "notifications_load_failed": ("Не удалось загрузить уведомления."),
+        "no_notifications": ("Уведомления не зарегистрированы."),
+        "export_notifications": ("⬇️ Экспортировать уведомления в CSV"),
+        "retry_section": ("### 🔄 Повторная отправка уведомлений"),
+        "no_retry": ("Нет уведомлений для повторной отправки."),
+        "no_failed_retry": ("Нет неудачных уведомлений, ожидающих повторной отправки."),
         "retry_limit": (
-            "Повторная отправка ограничена тремя попытками "
-            "для каждого уведомления."
+            "Повторная отправка ограничена тремя попытками для каждого уведомления."
         ),
         "retry": "🔄 Отправить повторно",
         "retrying": "Повторная отправка уведомления...",
         "retry_success": "Уведомление отправлено повторно.",
-        "retry_failed": (
-            "Не удалось повторно отправить уведомление."
-        ),
+        "retry_failed": ("Не удалось повторно отправить уведомление."),
         "alerts_audit": "### Аудит оповещений",
-        "export_alerts": (
-            "⬇️ Экспортировать оповещения в CSV"
-        ),
+        "export_alerts": ("⬇️ Экспортировать оповещения в CSV"),
     },
 }
 
@@ -2687,515 +2038,224 @@ LLM_ALERT_SECTION_TEXTS = {
 LLM_ALERT_SECTION_TEXTS.update(
     {
         "it": {
-            "section_title": (
-                "## 🚨 Avvisi su costi e prestazioni"
-            ),
+            "section_title": ("## 🚨 Avvisi su costi e prestazioni"),
             "evaluate_now": "🔎 Valuta gli avvisi ora",
-            "evaluation_failed": (
-                "Impossibile completare la valutazione."
-            ),
-            "load_failed": (
-                "Impossibile caricare gli avvisi."
-            ),
-            "no_alerts": (
-                "Nessun avviso trovato per il filtro attuale."
-            ),
+            "evaluation_failed": ("Impossibile completare la valutazione."),
+            "load_failed": ("Impossibile caricare gli avvisi."),
+            "no_alerts": ("Nessun avviso trovato per il filtro attuale."),
             "alerts_list": "### Elenco degli avvisi",
             "email_disabled": (
-                "Le notifiche e-mail sono disabilitate "
-                "in questo ambiente."
+                "Le notifiche e-mail sono disabilitate in questo ambiente."
             ),
-            "recipient_missing": (
-                "Il destinatario degli avvisi "
-                "non è configurato."
-            ),
-            "resend_missing": (
-                "L’integrazione Resend non è configurata."
-            ),
+            "recipient_missing": ("Il destinatario degli avvisi non è configurato."),
+            "resend_missing": ("L’integrazione Resend non è configurata."),
             "email_enabled": (
                 "Le notifiche e-mail sono abilitate. "
                 "Gli avvisi alti e critici possono "
                 "essere inviati."
             ),
             "recommendation": "Raccomandazione",
-            "notification_sent": (
-                "📧 Notifica già inviata"
-            ),
+            "notification_sent": ("📧 Notifica già inviata"),
             "restricted_delivery": (
-                "📧 L’invio è riservato agli avvisi "
-                "alti e critici."
+                "📧 L’invio è riservato agli avvisi alti e critici."
             ),
-            "send_email": (
-                "📧 Invia avviso tramite e-mail"
-            ),
+            "send_email": ("📧 Invia avviso tramite e-mail"),
             "sending_alert": "Invio dell’avviso...",
-            "alert_sent": (
-                "Avviso inviato tramite e-mail."
-            ),
-            "already_sent": (
-                "Questo avviso è già stato inviato "
-                "tramite e-mail."
-            ),
-            "send_failed": (
-                "Invio dell’avviso non riuscito"
-            ),
+            "alert_sent": ("Avviso inviato tramite e-mail."),
+            "already_sent": ("Questo avviso è già stato inviato tramite e-mail."),
+            "send_failed": ("Invio dell’avviso non riuscito"),
             "resolve": "✅ Segna come risolto",
             "resolved": "Avviso risolto.",
-            "already_resolved": (
-                "L’avviso è già stato risolto."
-            ),
-            "integration_health": (
-                "### 🩺 Stato delle integrazioni"
-            ),
-            "integration_details": (
-                "Dettagli tecnici delle integrazioni"
-            ),
+            "already_resolved": ("L’avviso è già stato risolto."),
+            "integration_health": ("### 🩺 Stato delle integrazioni"),
+            "integration_details": ("Dettagli tecnici delle integrazioni"),
             "partial_health": (
-                "Lo stato delle integrazioni è "
-                "parzialmente non disponibile."
+                "Lo stato delle integrazioni è parzialmente non disponibile."
             ),
-            "health_failed": (
-                "Impossibile caricare lo stato "
-                "delle integrazioni"
-            ),
-            "webhook_events": (
-                "### 📨 Eventi webhook di Resend"
-            ),
-            "events_unavailable": (
-                "Gli eventi non sono disponibili."
-            ),
-            "no_webhook_events": (
-                "Nessun evento webhook trovato "
-                "in questo periodo."
-            ),
-            "export_webhook": (
-                "⬇️ Esporta gli eventi webhook in CSV"
-            ),
-            "notification_audit": (
-                "### Audit delle notifiche"
-            ),
-            "notifications_load_failed": (
-                "Impossibile caricare le notifiche."
-            ),
-            "no_notifications": (
-                "Nessuna notifica registrata."
-            ),
-            "export_notifications": (
-                "⬇️ Esporta le notifiche in CSV"
-            ),
-            "retry_section": (
-                "### 🔄 Nuovo invio delle notifiche"
-            ),
-            "no_retry": (
-                "Nessuna notifica disponibile "
-                "per un nuovo invio."
-            ),
+            "health_failed": ("Impossibile caricare lo stato delle integrazioni"),
+            "webhook_events": ("### 📨 Eventi webhook di Resend"),
+            "events_unavailable": ("Gli eventi non sono disponibili."),
+            "no_webhook_events": ("Nessun evento webhook trovato in questo periodo."),
+            "export_webhook": ("⬇️ Esporta gli eventi webhook in CSV"),
+            "notification_audit": ("### Audit delle notifiche"),
+            "notifications_load_failed": ("Impossibile caricare le notifiche."),
+            "no_notifications": ("Nessuna notifica registrata."),
+            "export_notifications": ("⬇️ Esporta le notifiche in CSV"),
+            "retry_section": ("### 🔄 Nuovo invio delle notifiche"),
+            "no_retry": ("Nessuna notifica disponibile per un nuovo invio."),
             "no_failed_retry": (
-                "Non ci sono notifiche non riuscite "
-                "in attesa di un nuovo invio."
+                "Non ci sono notifiche non riuscite in attesa di un nuovo invio."
             ),
-            "retry_limit": (
-                "Il nuovo invio è limitato a tre "
-                "tentativi per notifica."
-            ),
+            "retry_limit": ("Il nuovo invio è limitato a tre tentativi per notifica."),
             "retry": "🔄 Invia nuovamente",
-            "retrying": (
-                "Nuovo invio della notifica..."
-            ),
-            "retry_success": (
-                "Notifica inviata nuovamente."
-            ),
-            "retry_failed": (
-                "Nuovo invio non riuscito."
-            ),
+            "retrying": ("Nuovo invio della notifica..."),
+            "retry_success": ("Notifica inviata nuovamente."),
+            "retry_failed": ("Nuovo invio non riuscito."),
             "alerts_audit": "### Audit degli avvisi",
-            "export_alerts": (
-                "⬇️ Esporta gli avvisi in CSV"
-            ),
+            "export_alerts": ("⬇️ Esporta gli avvisi in CSV"),
         },
         "ro": {
-            "section_title": (
-                "## 🚨 Alerte de cost și performanță"
-            ),
-            "evaluate_now": (
-                "🔎 Evaluează alertele acum"
-            ),
-            "evaluation_failed": (
-                "Evaluarea nu a putut fi finalizată."
-            ),
-            "load_failed": (
-                "Alertele nu au putut fi încărcate."
-            ),
-            "no_alerts": (
-                "Nu au fost găsite alerte pentru "
-                "filtrul actual."
-            ),
+            "section_title": ("## 🚨 Alerte de cost și performanță"),
+            "evaluate_now": ("🔎 Evaluează alertele acum"),
+            "evaluation_failed": ("Evaluarea nu a putut fi finalizată."),
+            "load_failed": ("Alertele nu au putut fi încărcate."),
+            "no_alerts": ("Nu au fost găsite alerte pentru filtrul actual."),
             "alerts_list": "### Lista alertelor",
             "email_disabled": (
-                "Notificările prin e-mail sunt "
-                "dezactivate în acest mediu."
+                "Notificările prin e-mail sunt dezactivate în acest mediu."
             ),
-            "recipient_missing": (
-                "Destinatarul alertelor nu este configurat."
-            ),
-            "resend_missing": (
-                "Integrarea Resend nu este configurată."
-            ),
+            "recipient_missing": ("Destinatarul alertelor nu este configurat."),
+            "resend_missing": ("Integrarea Resend nu este configurată."),
             "email_enabled": (
                 "Notificările prin e-mail sunt activate. "
                 "Alertele ridicate și critice pot fi trimise."
             ),
             "recommendation": "Recomandare",
-            "notification_sent": (
-                "📧 Notificare deja trimisă"
-            ),
+            "notification_sent": ("📧 Notificare deja trimisă"),
             "restricted_delivery": (
-                "📧 Trimiterea este rezervată alertelor "
-                "ridicate și critice."
+                "📧 Trimiterea este rezervată alertelor ridicate și critice."
             ),
-            "send_email": (
-                "📧 Trimite alerta prin e-mail"
-            ),
+            "send_email": ("📧 Trimite alerta prin e-mail"),
             "sending_alert": "Se trimite alerta...",
-            "alert_sent": (
-                "Alerta a fost trimisă prin e-mail."
-            ),
-            "already_sent": (
-                "Această alertă a fost deja trimisă "
-                "prin e-mail."
-            ),
-            "send_failed": (
-                "Trimiterea alertei a eșuat"
-            ),
+            "alert_sent": ("Alerta a fost trimisă prin e-mail."),
+            "already_sent": ("Această alertă a fost deja trimisă prin e-mail."),
+            "send_failed": ("Trimiterea alertei a eșuat"),
             "resolve": "✅ Marchează ca rezolvată",
             "resolved": "Alertă rezolvată.",
-            "already_resolved": (
-                "Alerta a fost deja rezolvată."
-            ),
-            "integration_health": (
-                "### 🩺 Starea integrărilor"
-            ),
-            "integration_details": (
-                "Detalii tehnice ale integrărilor"
-            ),
-            "partial_health": (
-                "Starea integrărilor este disponibilă "
-                "doar parțial."
-            ),
-            "health_failed": (
-                "Starea integrărilor nu a putut fi încărcată"
-            ),
-            "webhook_events": (
-                "### 📨 Evenimente webhook Resend"
-            ),
-            "events_unavailable": (
-                "Evenimentele nu sunt disponibile."
-            ),
+            "already_resolved": ("Alerta a fost deja rezolvată."),
+            "integration_health": ("### 🩺 Starea integrărilor"),
+            "integration_details": ("Detalii tehnice ale integrărilor"),
+            "partial_health": ("Starea integrărilor este disponibilă doar parțial."),
+            "health_failed": ("Starea integrărilor nu a putut fi încărcată"),
+            "webhook_events": ("### 📨 Evenimente webhook Resend"),
+            "events_unavailable": ("Evenimentele nu sunt disponibile."),
             "no_webhook_events": (
-                "Nu au fost găsite evenimente webhook "
-                "în această perioadă."
+                "Nu au fost găsite evenimente webhook în această perioadă."
             ),
-            "export_webhook": (
-                "⬇️ Exportă evenimentele webhook în CSV"
-            ),
-            "notification_audit": (
-                "### Auditul notificărilor"
-            ),
-            "notifications_load_failed": (
-                "Notificările nu au putut fi încărcate."
-            ),
-            "no_notifications": (
-                "Nu există notificări înregistrate."
-            ),
-            "export_notifications": (
-                "⬇️ Exportă notificările în CSV"
-            ),
-            "retry_section": (
-                "### 🔄 Retrimiterea notificărilor"
-            ),
-            "no_retry": (
-                "Nu există notificări disponibile "
-                "pentru retrimitere."
-            ),
+            "export_webhook": ("⬇️ Exportă evenimentele webhook în CSV"),
+            "notification_audit": ("### Auditul notificărilor"),
+            "notifications_load_failed": ("Notificările nu au putut fi încărcate."),
+            "no_notifications": ("Nu există notificări înregistrate."),
+            "export_notifications": ("⬇️ Exportă notificările în CSV"),
+            "retry_section": ("### 🔄 Retrimiterea notificărilor"),
+            "no_retry": ("Nu există notificări disponibile pentru retrimitere."),
             "no_failed_retry": (
-                "Nu există notificări eșuate "
-                "în așteptarea retrimiterii."
+                "Nu există notificări eșuate în așteptarea retrimiterii."
             ),
             "retry_limit": (
                 "Retrimiterea este limitată la trei "
                 "încercări pentru fiecare notificare."
             ),
             "retry": "🔄 Retrimite",
-            "retrying": (
-                "Se retrimite notificarea..."
-            ),
-            "retry_success": (
-                "Notificarea a fost retrimisă."
-            ),
+            "retrying": ("Se retrimite notificarea..."),
+            "retry_success": ("Notificarea a fost retrimisă."),
             "retry_failed": "Retrimiterea a eșuat.",
             "alerts_audit": "### Auditul alertelor",
-            "export_alerts": (
-                "⬇️ Exportă alertele în CSV"
-            ),
+            "export_alerts": ("⬇️ Exportă alertele în CSV"),
         },
         "ua": {
-            "section_title": (
-                "## 🚨 Сповіщення про вартість "
-                "і продуктивність"
-            ),
-            "evaluate_now": (
-                "🔎 Перевірити сповіщення"
-            ),
-            "evaluation_failed": (
-                "Не вдалося завершити перевірку."
-            ),
-            "load_failed": (
-                "Не вдалося завантажити сповіщення."
-            ),
-            "no_alerts": (
-                "Для поточного фільтра сповіщень "
-                "не знайдено."
-            ),
+            "section_title": ("## 🚨 Сповіщення про вартість і продуктивність"),
+            "evaluate_now": ("🔎 Перевірити сповіщення"),
+            "evaluation_failed": ("Не вдалося завершити перевірку."),
+            "load_failed": ("Не вдалося завантажити сповіщення."),
+            "no_alerts": ("Для поточного фільтра сповіщень не знайдено."),
             "alerts_list": "### Список сповіщень",
             "email_disabled": (
-                "Сповіщення електронною поштою "
-                "в цьому середовищі вимкнено."
+                "Сповіщення електронною поштою в цьому середовищі вимкнено."
             ),
-            "recipient_missing": (
-                "Одержувача сповіщень не налаштовано."
-            ),
-            "resend_missing": (
-                "Інтеграцію Resend не налаштовано."
-            ),
+            "recipient_missing": ("Одержувача сповіщень не налаштовано."),
+            "resend_missing": ("Інтеграцію Resend не налаштовано."),
             "email_enabled": (
                 "Сповіщення електронною поштою ввімкнено. "
                 "Важливі та критичні сповіщення "
                 "можна надсилати."
             ),
             "recommendation": "Рекомендація",
-            "notification_sent": (
-                "📧 Сповіщення вже надіслано"
-            ),
+            "notification_sent": ("📧 Сповіщення вже надіслано"),
             "restricted_delivery": (
-                "📧 Надсилання доступне для важливих "
-                "і критичних сповіщень."
+                "📧 Надсилання доступне для важливих і критичних сповіщень."
             ),
-            "send_email": (
-                "📧 Надіслати сповіщення електронною поштою"
-            ),
-            "sending_alert": (
-                "Надсилання сповіщення..."
-            ),
-            "alert_sent": (
-                "Сповіщення надіслано електронною поштою."
-            ),
-            "already_sent": (
-                "Це сповіщення вже було надіслано."
-            ),
-            "send_failed": (
-                "Не вдалося надіслати сповіщення"
-            ),
-            "resolve": (
-                "✅ Позначити як вирішене"
-            ),
+            "send_email": ("📧 Надіслати сповіщення електронною поштою"),
+            "sending_alert": ("Надсилання сповіщення..."),
+            "alert_sent": ("Сповіщення надіслано електронною поштою."),
+            "already_sent": ("Це сповіщення вже було надіслано."),
+            "send_failed": ("Не вдалося надіслати сповіщення"),
+            "resolve": ("✅ Позначити як вирішене"),
             "resolved": "Сповіщення вирішено.",
-            "already_resolved": (
-                "Сповіщення вже було вирішено."
-            ),
-            "integration_health": (
-                "### 🩺 Стан інтеграцій"
-            ),
-            "integration_details": (
-                "Технічні відомості про інтеграції"
-            ),
-            "partial_health": (
-                "Відомості про стан інтеграцій "
-                "доступні частково."
-            ),
-            "health_failed": (
-                "Не вдалося завантажити стан інтеграцій"
-            ),
-            "webhook_events": (
-                "### 📨 Події webhook Resend"
-            ),
-            "events_unavailable": (
-                "Події недоступні."
-            ),
-            "no_webhook_events": (
-                "За цей період подій webhook не знайдено."
-            ),
-            "export_webhook": (
-                "⬇️ Експортувати події webhook у CSV"
-            ),
-            "notification_audit": (
-                "### Аудит сповіщень"
-            ),
-            "notifications_load_failed": (
-                "Не вдалося завантажити сповіщення."
-            ),
-            "no_notifications": (
-                "Сповіщень не зареєстровано."
-            ),
-            "export_notifications": (
-                "⬇️ Експортувати сповіщення у CSV"
-            ),
-            "retry_section": (
-                "### 🔄 Повторне надсилання сповіщень"
-            ),
-            "no_retry": (
-                "Немає сповіщень для повторного надсилання."
-            ),
+            "already_resolved": ("Сповіщення вже було вирішено."),
+            "integration_health": ("### 🩺 Стан інтеграцій"),
+            "integration_details": ("Технічні відомості про інтеграції"),
+            "partial_health": ("Відомості про стан інтеграцій доступні частково."),
+            "health_failed": ("Не вдалося завантажити стан інтеграцій"),
+            "webhook_events": ("### 📨 Події webhook Resend"),
+            "events_unavailable": ("Події недоступні."),
+            "no_webhook_events": ("За цей період подій webhook не знайдено."),
+            "export_webhook": ("⬇️ Експортувати події webhook у CSV"),
+            "notification_audit": ("### Аудит сповіщень"),
+            "notifications_load_failed": ("Не вдалося завантажити сповіщення."),
+            "no_notifications": ("Сповіщень не зареєстровано."),
+            "export_notifications": ("⬇️ Експортувати сповіщення у CSV"),
+            "retry_section": ("### 🔄 Повторне надсилання сповіщень"),
+            "no_retry": ("Немає сповіщень для повторного надсилання."),
             "no_failed_retry": (
-                "Немає невдалих сповіщень, які очікують "
-                "повторного надсилання."
+                "Немає невдалих сповіщень, які очікують повторного надсилання."
             ),
             "retry_limit": (
-                "Повторне надсилання обмежено трьома "
-                "спробами для кожного сповіщення."
+                "Повторне надсилання обмежено трьома спробами для кожного сповіщення."
             ),
             "retry": "🔄 Надіслати повторно",
-            "retrying": (
-                "Повторне надсилання сповіщення..."
-            ),
-            "retry_success": (
-                "Сповіщення надіслано повторно."
-            ),
-            "retry_failed": (
-                "Не вдалося повторно надіслати сповіщення."
-            ),
-            "alerts_audit": (
-                "### Аудит системних сповіщень"
-            ),
-            "export_alerts": (
-                "⬇️ Експортувати сповіщення у CSV"
-            ),
+            "retrying": ("Повторне надсилання сповіщення..."),
+            "retry_success": ("Сповіщення надіслано повторно."),
+            "retry_failed": ("Не вдалося повторно надіслати сповіщення."),
+            "alerts_audit": ("### Аудит системних сповіщень"),
+            "export_alerts": ("⬇️ Експортувати сповіщення у CSV"),
         },
         "sa": {
-            "section_title": (
-                "## 🚨 تنبيهات التكلفة والأداء"
-            ),
-            "evaluate_now": (
-                "🔎 تقييم التنبيهات الآن"
-            ),
-            "evaluation_failed": (
-                "تعذر إكمال التقييم."
-            ),
-            "load_failed": (
-                "تعذر تحميل التنبيهات."
-            ),
-            "no_alerts": (
-                "لم يتم العثور على تنبيهات "
-                "للتصفية الحالية."
-            ),
+            "section_title": ("## 🚨 تنبيهات التكلفة والأداء"),
+            "evaluate_now": ("🔎 تقييم التنبيهات الآن"),
+            "evaluation_failed": ("تعذر إكمال التقييم."),
+            "load_failed": ("تعذر تحميل التنبيهات."),
+            "no_alerts": ("لم يتم العثور على تنبيهات للتصفية الحالية."),
             "alerts_list": "### قائمة التنبيهات",
-            "email_disabled": (
-                "إشعارات البريد الإلكتروني معطلة "
-                "في هذه البيئة."
-            ),
-            "recipient_missing": (
-                "مستلم التنبيهات غير مهيأ."
-            ),
-            "resend_missing": (
-                "تكامل Resend غير مهيأ."
-            ),
+            "email_disabled": ("إشعارات البريد الإلكتروني معطلة في هذه البيئة."),
+            "recipient_missing": ("مستلم التنبيهات غير مهيأ."),
+            "resend_missing": ("تكامل Resend غير مهيأ."),
             "email_enabled": (
-                "إشعارات البريد الإلكتروني مفعلة. "
-                "يمكن إرسال التنبيهات العالية والحرجة."
+                "إشعارات البريد الإلكتروني مفعلة. يمكن إرسال التنبيهات العالية والحرجة."
             ),
             "recommendation": "التوصية",
-            "notification_sent": (
-                "📧 تم إرسال الإشعار مسبقًا"
-            ),
-            "restricted_delivery": (
-                "📧 الإرسال مخصص للتنبيهات "
-                "العالية والحرجة."
-            ),
-            "send_email": (
-                "📧 إرسال التنبيه بالبريد الإلكتروني"
-            ),
+            "notification_sent": ("📧 تم إرسال الإشعار مسبقًا"),
+            "restricted_delivery": ("📧 الإرسال مخصص للتنبيهات العالية والحرجة."),
+            "send_email": ("📧 إرسال التنبيه بالبريد الإلكتروني"),
             "sending_alert": "جارٍ إرسال التنبيه...",
-            "alert_sent": (
-                "تم إرسال التنبيه بالبريد الإلكتروني."
-            ),
-            "already_sent": (
-                "تم إرسال هذا التنبيه مسبقًا "
-                "بالبريد الإلكتروني."
-            ),
-            "send_failed": (
-                "فشل إرسال التنبيه"
-            ),
-            "resolve": (
-                "✅ وضع علامة تم الحل"
-            ),
+            "alert_sent": ("تم إرسال التنبيه بالبريد الإلكتروني."),
+            "already_sent": ("تم إرسال هذا التنبيه مسبقًا بالبريد الإلكتروني."),
+            "send_failed": ("فشل إرسال التنبيه"),
+            "resolve": ("✅ وضع علامة تم الحل"),
             "resolved": "تم حل التنبيه.",
-            "already_resolved": (
-                "تم حل التنبيه مسبقًا."
-            ),
-            "integration_health": (
-                "### 🩺 حالة عمليات التكامل"
-            ),
-            "integration_details": (
-                "التفاصيل التقنية لعمليات التكامل"
-            ),
-            "partial_health": (
-                "معلومات الحالة متاحة جزئيًا."
-            ),
-            "health_failed": (
-                "تعذر تحميل حالة عمليات التكامل"
-            ),
-            "webhook_events": (
-                "### 📨 أحداث webhook الخاصة بـ Resend"
-            ),
-            "events_unavailable": (
-                "الأحداث غير متاحة."
-            ),
-            "no_webhook_events": (
-                "لم يتم العثور على أحداث webhook "
-                "في هذه الفترة."
-            ),
-            "export_webhook": (
-                "⬇️ تصدير أحداث webhook بصيغة CSV"
-            ),
-            "notification_audit": (
-                "### تدقيق الإشعارات"
-            ),
-            "notifications_load_failed": (
-                "تعذر تحميل الإشعارات."
-            ),
-            "no_notifications": (
-                "لا توجد إشعارات مسجلة."
-            ),
-            "export_notifications": (
-                "⬇️ تصدير الإشعارات بصيغة CSV"
-            ),
-            "retry_section": (
-                "### 🔄 إعادة إرسال الإشعارات"
-            ),
-            "no_retry": (
-                "لا توجد إشعارات متاحة لإعادة الإرسال."
-            ),
-            "no_failed_retry": (
-                "لا توجد إشعارات فاشلة "
-                "بانتظار إعادة الإرسال."
-            ),
-            "retry_limit": (
-                "إعادة الإرسال محدودة بثلاث محاولات "
-                "لكل إشعار."
-            ),
+            "already_resolved": ("تم حل التنبيه مسبقًا."),
+            "integration_health": ("### 🩺 حالة عمليات التكامل"),
+            "integration_details": ("التفاصيل التقنية لعمليات التكامل"),
+            "partial_health": ("معلومات الحالة متاحة جزئيًا."),
+            "health_failed": ("تعذر تحميل حالة عمليات التكامل"),
+            "webhook_events": ("### 📨 أحداث webhook الخاصة بـ Resend"),
+            "events_unavailable": ("الأحداث غير متاحة."),
+            "no_webhook_events": ("لم يتم العثور على أحداث webhook في هذه الفترة."),
+            "export_webhook": ("⬇️ تصدير أحداث webhook بصيغة CSV"),
+            "notification_audit": ("### تدقيق الإشعارات"),
+            "notifications_load_failed": ("تعذر تحميل الإشعارات."),
+            "no_notifications": ("لا توجد إشعارات مسجلة."),
+            "export_notifications": ("⬇️ تصدير الإشعارات بصيغة CSV"),
+            "retry_section": ("### 🔄 إعادة إرسال الإشعارات"),
+            "no_retry": ("لا توجد إشعارات متاحة لإعادة الإرسال."),
+            "no_failed_retry": ("لا توجد إشعارات فاشلة بانتظار إعادة الإرسال."),
+            "retry_limit": ("إعادة الإرسال محدودة بثلاث محاولات لكل إشعار."),
             "retry": "🔄 إعادة الإرسال",
-            "retrying": (
-                "جارٍ إعادة إرسال الإشعار..."
-            ),
-            "retry_success": (
-                "تمت إعادة إرسال الإشعار."
-            ),
-            "retry_failed": (
-                "فشلت إعادة إرسال الإشعار."
-            ),
+            "retrying": ("جارٍ إعادة إرسال الإشعار..."),
+            "retry_success": ("تمت إعادة إرسال الإشعار."),
+            "retry_failed": ("فشلت إعادة إرسال الإشعار."),
             "alerts_audit": "### تدقيق التنبيهات",
-            "export_alerts": (
-                "⬇️ تصدير التنبيهات بصيغة CSV"
-            ),
+            "export_alerts": ("⬇️ تصدير التنبيهات بصيغة CSV"),
         },
     }
 )
@@ -3203,25 +2263,19 @@ LLM_ALERT_SECTION_TEXTS.update(
 
 # Idiomas que ainda não possuem bloco especializado usam
 # inglês como fallback visual, sem afetar os dados internos.
-for language_key in (
-    "en_gb",
-):
+for language_key in ("en_gb",):
     LLM_ALERT_SECTION_TEXTS.setdefault(
         language_key,
         LLM_ALERT_SECTION_TEXTS["en_us"],
     )
 
-LLM_ALERT_SECTION_TEXTS["ch"] = (
-    LLM_ALERT_SECTION_TEXTS["de"]
-)
-
+LLM_ALERT_SECTION_TEXTS["ch"] = LLM_ALERT_SECTION_TEXTS["de"]
 
 
 LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
     "pt": {
         "section_caption": (
-            "Alertas persistentes de orçamento, projeção, "
-            "tokens, falhas e latência."
+            "Alertas persistentes de orçamento, projeção, tokens, falhas e latência."
         ),
         "evaluation_completed": "Avaliação concluída.",
         "detected": "Detectados",
@@ -3234,9 +2288,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "recommendation_label": "Recomendação",
         "code_label": "Código",
         "category_label": "Categoria",
-        "send_criteria_failed": (
-            "O alerta não atende aos critérios de envio."
-        ),
+        "send_criteria_failed": ("O alerta não atende aos critérios de envio."),
         "database": "Banco de dados",
         "resend": "Resend",
         "webhook": "Webhook",
@@ -3265,16 +2317,12 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "status_label": "Status",
         "attempts_label": "Tentativas",
         "recipient_label": "Destinatário",
-        "health_error": (
-            "Não foi possível carregar a saúde "
-            "das integrações: {error}"
-        ),
+        "health_error": ("Não foi possível carregar a saúde das integrações: {error}"),
         "send_error": "Falha ao enviar o alerta: {error}",
     },
     "en_us": {
         "section_caption": (
-            "Persistent alerts for budget, projection, "
-            "tokens, failures, and latency."
+            "Persistent alerts for budget, projection, tokens, failures, and latency."
         ),
         "evaluation_completed": "Evaluation completed.",
         "detected": "Detected",
@@ -3287,9 +2335,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "recommendation_label": "Recommendation",
         "code_label": "Code",
         "category_label": "Category",
-        "send_criteria_failed": (
-            "The alert does not meet the delivery criteria."
-        ),
+        "send_criteria_failed": ("The alert does not meet the delivery criteria."),
         "database": "Database",
         "resend": "Resend",
         "webhook": "Webhook",
@@ -3318,9 +2364,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "status_label": "Status",
         "attempts_label": "Attempts",
         "recipient_label": "Recipient",
-        "health_error": (
-            "Could not load integration health: {error}"
-        ),
+        "health_error": ("Could not load integration health: {error}"),
         "send_error": "Failed to send the alert: {error}",
     },
     "es": {
@@ -3339,9 +2383,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "recommendation_label": "Recomendación",
         "code_label": "Código",
         "category_label": "Categoría",
-        "send_criteria_failed": (
-            "La alerta no cumple los criterios de envío."
-        ),
+        "send_criteria_failed": ("La alerta no cumple los criterios de envío."),
         "database": "Base de datos",
         "resend": "Resend",
         "webhook": "Webhook",
@@ -3370,16 +2412,12 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "status_label": "Estado",
         "attempts_label": "Intentos",
         "recipient_label": "Destinatario",
-        "health_error": (
-            "No se pudo cargar el estado "
-            "de las integraciones: {error}"
-        ),
+        "health_error": ("No se pudo cargar el estado de las integraciones: {error}"),
         "send_error": "Error al enviar la alerta: {error}",
     },
     "fr": {
         "section_caption": (
-            "Alertes persistantes de budget, projection, "
-            "jetons, échecs et latence."
+            "Alertes persistantes de budget, projection, jetons, échecs et latence."
         ),
         "evaluation_completed": "Évaluation terminée.",
         "detected": "Détectées",
@@ -3392,9 +2430,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "recommendation_label": "Recommandation",
         "code_label": "Code",
         "category_label": "Catégorie",
-        "send_criteria_failed": (
-            "L’alerte ne répond pas aux critères d’envoi."
-        ),
+        "send_criteria_failed": ("L’alerte ne répond pas aux critères d’envoi."),
         "database": "Base de données",
         "resend": "Resend",
         "webhook": "Webhook",
@@ -3423,16 +2459,12 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "status_label": "État",
         "attempts_label": "Tentatives",
         "recipient_label": "Destinataire",
-        "health_error": (
-            "Impossible de charger l’état "
-            "des intégrations : {error}"
-        ),
+        "health_error": ("Impossible de charger l’état des intégrations : {error}"),
         "send_error": "Échec de l’envoi de l’alerte : {error}",
     },
     "de": {
         "section_caption": (
-            "Dauerhafte Warnungen für Budget, Prognose, "
-            "Token, Fehler und Latenz."
+            "Dauerhafte Warnungen für Budget, Prognose, Token, Fehler und Latenz."
         ),
         "evaluation_completed": "Auswertung abgeschlossen.",
         "detected": "Erkannt",
@@ -3445,9 +2477,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "recommendation_label": "Empfehlung",
         "code_label": "Code",
         "category_label": "Kategorie",
-        "send_criteria_failed": (
-            "Die Warnung erfüllt die Versandkriterien nicht."
-        ),
+        "send_criteria_failed": ("Die Warnung erfüllt die Versandkriterien nicht."),
         "database": "Datenbank",
         "resend": "Resend",
         "webhook": "Webhook",
@@ -3476,16 +2506,12 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "status_label": "Status",
         "attempts_label": "Versuche",
         "recipient_label": "Empfänger",
-        "health_error": (
-            "Integrationsstatus konnte nicht geladen "
-            "werden: {error}"
-        ),
+        "health_error": ("Integrationsstatus konnte nicht geladen werden: {error}"),
         "send_error": "Fehler beim Senden der Warnung: {error}",
     },
     "it": {
         "section_caption": (
-            "Avvisi persistenti per budget, proiezione, "
-            "token, errori e latenza."
+            "Avvisi persistenti per budget, proiezione, token, errori e latenza."
         ),
         "evaluation_completed": "Valutazione completata.",
         "detected": "Rilevati",
@@ -3498,9 +2524,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "recommendation_label": "Raccomandazione",
         "code_label": "Codice",
         "category_label": "Categoria",
-        "send_criteria_failed": (
-            "L’avviso non soddisfa i criteri di invio."
-        ),
+        "send_criteria_failed": ("L’avviso non soddisfa i criteri di invio."),
         "database": "Database",
         "resend": "Resend",
         "webhook": "Webhook",
@@ -3529,16 +2553,12 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "status_label": "Stato",
         "attempts_label": "Tentativi",
         "recipient_label": "Destinatario",
-        "health_error": (
-            "Impossibile caricare lo stato "
-            "delle integrazioni: {error}"
-        ),
+        "health_error": ("Impossibile caricare lo stato delle integrazioni: {error}"),
         "send_error": "Invio dell’avviso non riuscito: {error}",
     },
     "ro": {
         "section_caption": (
-            "Alerte persistente pentru buget, proiecție, "
-            "tokenuri, erori și latență."
+            "Alerte persistente pentru buget, proiecție, tokenuri, erori și latență."
         ),
         "evaluation_completed": "Evaluare finalizată.",
         "detected": "Detectate",
@@ -3551,9 +2571,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "recommendation_label": "Recomandare",
         "code_label": "Cod",
         "category_label": "Categorie",
-        "send_criteria_failed": (
-            "Alerta nu îndeplinește criteriile de trimitere."
-        ),
+        "send_criteria_failed": ("Alerta nu îndeplinește criteriile de trimitere."),
         "database": "Bază de date",
         "resend": "Resend",
         "webhook": "Webhook",
@@ -3582,16 +2600,12 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "status_label": "Stare",
         "attempts_label": "Încercări",
         "recipient_label": "Destinatar",
-        "health_error": (
-            "Starea integrărilor nu a putut fi "
-            "încărcată: {error}"
-        ),
+        "health_error": ("Starea integrărilor nu a putut fi încărcată: {error}"),
         "send_error": "Trimiterea alertei a eșuat: {error}",
     },
     "ua": {
         "section_caption": (
-            "Постійні сповіщення щодо бюджету, прогнозу, "
-            "токенів, помилок і затримки."
+            "Постійні сповіщення щодо бюджету, прогнозу, токенів, помилок і затримки."
         ),
         "evaluation_completed": "Перевірку завершено.",
         "detected": "Виявлено",
@@ -3604,9 +2618,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "recommendation_label": "Рекомендація",
         "code_label": "Код",
         "category_label": "Категорія",
-        "send_criteria_failed": (
-            "Сповіщення не відповідає критеріям надсилання."
-        ),
+        "send_criteria_failed": ("Сповіщення не відповідає критеріям надсилання."),
         "database": "База даних",
         "resend": "Resend",
         "webhook": "Webhook",
@@ -3635,18 +2647,12 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "status_label": "Статус",
         "attempts_label": "Спроби",
         "recipient_label": "Одержувач",
-        "health_error": (
-            "Не вдалося завантажити стан "
-            "інтеграцій: {error}"
-        ),
-        "send_error": (
-            "Не вдалося надіслати сповіщення: {error}"
-        ),
+        "health_error": ("Не вдалося завантажити стан інтеграцій: {error}"),
+        "send_error": ("Не вдалося надіслати сповіщення: {error}"),
     },
     "ru": {
         "section_caption": (
-            "Постоянные оповещения о бюджете, прогнозе, "
-            "токенах, ошибках и задержке."
+            "Постоянные оповещения о бюджете, прогнозе, токенах, ошибках и задержке."
         ),
         "evaluation_completed": "Проверка завершена.",
         "detected": "Обнаружено",
@@ -3659,9 +2665,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "recommendation_label": "Рекомендация",
         "code_label": "Код",
         "category_label": "Категория",
-        "send_criteria_failed": (
-            "Оповещение не соответствует критериям отправки."
-        ),
+        "send_criteria_failed": ("Оповещение не соответствует критериям отправки."),
         "database": "База данных",
         "resend": "Resend",
         "webhook": "Webhook",
@@ -3690,18 +2694,12 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "status_label": "Статус",
         "attempts_label": "Попытки",
         "recipient_label": "Получатель",
-        "health_error": (
-            "Не удалось загрузить состояние "
-            "интеграций: {error}"
-        ),
-        "send_error": (
-            "Не удалось отправить оповещение: {error}"
-        ),
+        "health_error": ("Не удалось загрузить состояние интеграций: {error}"),
+        "send_error": ("Не удалось отправить оповещение: {error}"),
     },
     "sa": {
         "section_caption": (
-            "تنبيهات دائمة للميزانية والتوقعات والرموز "
-            "والأخطاء وزمن الاستجابة."
+            "تنبيهات دائمة للميزانية والتوقعات والرموز والأخطاء وزمن الاستجابة."
         ),
         "evaluation_completed": "اكتمل التقييم.",
         "detected": "المكتشفة",
@@ -3714,9 +2712,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "recommendation_label": "التوصية",
         "code_label": "الرمز",
         "category_label": "الفئة",
-        "send_criteria_failed": (
-            "لا يطابق التنبيه معايير الإرسال."
-        ),
+        "send_criteria_failed": ("لا يطابق التنبيه معايير الإرسال."),
         "database": "قاعدة البيانات",
         "resend": "Resend",
         "webhook": "Webhook",
@@ -3745,9 +2741,7 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS = {
         "status_label": "الحالة",
         "attempts_label": "المحاولات",
         "recipient_label": "المستلم",
-        "health_error": (
-            "تعذر تحميل حالة عمليات التكامل: {error}"
-        ),
+        "health_error": ("تعذر تحميل حالة عمليات التكامل: {error}"),
         "send_error": "فشل إرسال التنبيه: {error}",
     },
 }
@@ -3766,45 +2760,31 @@ LLM_ALERT_UNKNOWN_ERROR_TEXTS = {
     "sa": "خطأ غير معروف",
 }
 
-for language_key, translated_text in (
-    LLM_ALERT_UNKNOWN_ERROR_TEXTS.items()
-):
+for language_key, translated_text in LLM_ALERT_UNKNOWN_ERROR_TEXTS.items():
     LLM_ALERT_SECTION_TEXTS.setdefault(
         language_key,
         {},
     )["unknown_error"] = translated_text
 
 
-LLM_ALERT_SECTION_DYNAMIC_TEXTS["en_gb"] = (
-    LLM_ALERT_SECTION_DYNAMIC_TEXTS["en_us"]
-)
+LLM_ALERT_SECTION_DYNAMIC_TEXTS["en_gb"] = LLM_ALERT_SECTION_DYNAMIC_TEXTS["en_us"]
 
-LLM_ALERT_SECTION_DYNAMIC_TEXTS["ch"] = (
-    LLM_ALERT_SECTION_DYNAMIC_TEXTS["de"]
-)
+LLM_ALERT_SECTION_DYNAMIC_TEXTS["ch"] = LLM_ALERT_SECTION_DYNAMIC_TEXTS["de"]
 
-for language_key, dynamic_texts in (
-    LLM_ALERT_SECTION_DYNAMIC_TEXTS.items()
-):
+for language_key, dynamic_texts in LLM_ALERT_SECTION_DYNAMIC_TEXTS.items():
     LLM_ALERT_SECTION_TEXTS.setdefault(
         language_key,
         {},
     ).update(dynamic_texts)
 
 
-
-
 # LLM_COST_ALERT_VISUAL_I18N
 
 # Complementos do catálogo de erro desconhecido.
-LLM_ALERT_UNKNOWN_ERROR_TEXTS["en_gb"] = (
-    LLM_ALERT_UNKNOWN_ERROR_TEXTS["en_us"]
-)
+LLM_ALERT_UNKNOWN_ERROR_TEXTS["en_gb"] = LLM_ALERT_UNKNOWN_ERROR_TEXTS["en_us"]
 
 # O código ch segue o alemão utilizado pelo projeto.
-LLM_ALERT_UNKNOWN_ERROR_TEXTS["ch"] = (
-    LLM_ALERT_UNKNOWN_ERROR_TEXTS["de"]
-)
+LLM_ALERT_UNKNOWN_ERROR_TEXTS["ch"] = LLM_ALERT_UNKNOWN_ERROR_TEXTS["de"]
 
 
 LLM_COST_ALERT_VISUAL_TEXTS = {
@@ -4041,9 +3021,7 @@ LLM_COST_ALERT_VISUAL_TEXTS = {
     },
 }
 
-LLM_COST_ALERT_VISUAL_TEXTS["ch"] = dict(
-    LLM_COST_ALERT_VISUAL_TEXTS["de"]
-)
+LLM_COST_ALERT_VISUAL_TEXTS["ch"] = dict(LLM_COST_ALERT_VISUAL_TEXTS["de"])
 
 
 def llm_cost_alert_visual_t(
@@ -4094,16 +3072,13 @@ def llm_alert_section_t(
     )
 
 
-
-
 # LLM_COST_ALERT_DYNAMIC_DISPLAY_I18N
+
 
 def traduzir_status_alerta_visual(
     status: str,
 ) -> str:
-    normalized = str(
-        status or ""
-    ).strip().lower()
+    normalized = str(status or "").strip().lower()
 
     mapping = {
         "aberto": "open",
@@ -4112,9 +3087,7 @@ def traduzir_status_alerta_visual(
         "cancelado": "cancelled",
     }
 
-    translation_key = mapping.get(
-        normalized
-    )
+    translation_key = mapping.get(normalized)
 
     if translation_key is None:
         return str(status)
@@ -4128,9 +3101,7 @@ def traduzir_status_alerta_visual(
 def traduzir_severidade_alerta_visual(
     severidade: str,
 ) -> str:
-    normalized = str(
-        severidade or ""
-    ).strip().lower()
+    normalized = str(severidade or "").strip().lower()
 
     mapping = {
         "informativa": "informational",
@@ -4142,9 +3113,7 @@ def traduzir_severidade_alerta_visual(
         "crítica": "critical",
     }
 
-    translation_key = mapping.get(
-        normalized
-    )
+    translation_key = mapping.get(normalized)
 
     if translation_key is None:
         return str(severidade)
@@ -4153,7 +3122,6 @@ def traduzir_severidade_alerta_visual(
         translation_key,
         str(severidade),
     )
-
 
 
 # LLM_COST_ALERT_CONTENT_DISPLAY_I18N
@@ -4166,12 +3134,10 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "orcamento_mensal": {
             "titulo": "Uso elevado do orçamento de LLM",
             "descricao": (
-                "O consumo acumulado atingiu {percentual}% "
-                "do orçamento mensal."
+                "O consumo acumulado atingiu {percentual}% do orçamento mensal."
             ),
             "recomendacao": (
-                "Revisar modelos, tamanho dos prompts, "
-                "quantidade de chunks e cache."
+                "Revisar modelos, tamanho dos prompts, quantidade de chunks e cache."
             ),
             "categoria": "FinOps",
         },
@@ -4190,8 +3156,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "chamadas_lentas": {
             "titulo": "Chamadas de LLM com alta latência",
             "descricao": (
-                "Foram detectadas {quantidade} chamada(s) "
-                "acima de 30 segundos."
+                "Foram detectadas {quantidade} chamada(s) acima de 30 segundos."
             ),
             "recomendacao": (
                 "Verificar cold start, tamanho do prompt, "
@@ -4213,13 +3178,9 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         },
         "tokens_elevados": {
             "titulo": "Média elevada de tokens por chamada",
-            "descricao": (
-                "A média de tokens por chamada atingiu "
-                "{quantidade} tokens."
-            ),
+            "descricao": ("A média de tokens por chamada atingiu {quantidade} tokens."),
             "recomendacao": (
-                "Reduzir histórico, prompt, chunks e "
-                "documentos enviados ao modelo."
+                "Reduzir histórico, prompt, chunks e documentos enviados ao modelo."
             ),
             "categoria": "Eficiência",
         },
@@ -4228,36 +3189,26 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "orcamento_mensal": {
             "titulo": "High LLM budget usage",
             "descricao": (
-                "Accumulated usage reached {percentual}% "
-                "of the monthly budget."
+                "Accumulated usage reached {percentual}% of the monthly budget."
             ),
-            "recomendacao": (
-                "Review models, prompt sizes, chunk count, "
-                "and caching."
-            ),
+            "recomendacao": ("Review models, prompt sizes, chunk count, and caching."),
             "categoria": "FinOps",
         },
         "projecao_mensal": {
             "titulo": "Monthly projection above expectations",
             "descricao": (
-                "The monthly usage projection is near or "
-                "above the configured limit."
+                "The monthly usage projection is near or above the configured limit."
             ),
             "recomendacao": (
-                "Consider Gemini Flash-Lite, reduce context, "
-                "and reuse results."
+                "Consider Gemini Flash-Lite, reduce context, and reuse results."
             ),
             "categoria": "FinOps",
         },
         "chamadas_lentas": {
             "titulo": "High-latency LLM calls",
-            "descricao": (
-                "{quantidade} call(s) exceeding 30 seconds "
-                "were detected."
-            ),
+            "descricao": ("{quantidade} call(s) exceeding 30 seconds were detected."),
             "recomendacao": (
-                "Check cold starts, prompt size, network, "
-                "and provider response time."
+                "Check cold starts, prompt size, network, and provider response time."
             ),
             "categoria": "Performance",
         },
@@ -4275,13 +3226,9 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         },
         "tokens_elevados": {
             "titulo": "High average tokens per call",
-            "descricao": (
-                "Average token usage per call reached "
-                "{quantidade} tokens."
-            ),
+            "descricao": ("Average token usage per call reached {quantidade} tokens."),
             "recomendacao": (
-                "Reduce history, prompts, chunks, and "
-                "documents sent to the model."
+                "Reduce history, prompts, chunks, and documents sent to the model."
             ),
             "categoria": "Efficiency",
         },
@@ -4290,36 +3237,26 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "orcamento_mensal": {
             "titulo": "High LLM budget usage",
             "descricao": (
-                "Accumulated usage reached {percentual}% "
-                "of the monthly budget."
+                "Accumulated usage reached {percentual}% of the monthly budget."
             ),
-            "recomendacao": (
-                "Review models, prompt sizes, chunk count, "
-                "and caching."
-            ),
+            "recomendacao": ("Review models, prompt sizes, chunk count, and caching."),
             "categoria": "FinOps",
         },
         "projecao_mensal": {
             "titulo": "Monthly projection above expectations",
             "descricao": (
-                "The monthly usage projection is near or "
-                "above the configured limit."
+                "The monthly usage projection is near or above the configured limit."
             ),
             "recomendacao": (
-                "Consider Gemini Flash-Lite, reduce context, "
-                "and reuse results."
+                "Consider Gemini Flash-Lite, reduce context, and reuse results."
             ),
             "categoria": "FinOps",
         },
         "chamadas_lentas": {
             "titulo": "High-latency LLM calls",
-            "descricao": (
-                "{quantidade} call(s) exceeding 30 seconds "
-                "were detected."
-            ),
+            "descricao": ("{quantidade} call(s) exceeding 30 seconds were detected."),
             "recomendacao": (
-                "Check cold starts, prompt size, network, "
-                "and provider response time."
+                "Check cold starts, prompt size, network, and provider response time."
             ),
             "categoria": "Performance",
         },
@@ -4337,13 +3274,9 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         },
         "tokens_elevados": {
             "titulo": "High average tokens per call",
-            "descricao": (
-                "Average token usage per call reached "
-                "{quantidade} tokens."
-            ),
+            "descricao": ("Average token usage per call reached {quantidade} tokens."),
             "recomendacao": (
-                "Reduce history, prompts, chunks, and "
-                "documents sent to the model."
+                "Reduce history, prompts, chunks, and documents sent to the model."
             ),
             "categoria": "Efficiency",
         },
@@ -4352,8 +3285,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "orcamento_mensal": {
             "titulo": "Uso elevado del presupuesto de LLM",
             "descricao": (
-                "El consumo acumulado alcanzó el {percentual}% "
-                "del presupuesto mensual."
+                "El consumo acumulado alcanzó el {percentual}% del presupuesto mensual."
             ),
             "recomendacao": (
                 "Revisar los modelos, el tamaño de los prompts, "
@@ -4376,8 +3308,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "chamadas_lentas": {
             "titulo": "Llamadas de LLM con alta latencia",
             "descricao": (
-                "Se detectaron {quantidade} llamada(s) de más "
-                "de 30 segundos."
+                "Se detectaron {quantidade} llamada(s) de más de 30 segundos."
             ),
             "recomendacao": (
                 "Comprobar el arranque en frío, el tamaño del "
@@ -4400,8 +3331,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "tokens_elevados": {
             "titulo": "Promedio elevado de tokens por llamada",
             "descricao": (
-                "El promedio de tokens por llamada alcanzó "
-                "{quantidade} tokens."
+                "El promedio de tokens por llamada alcanzó {quantidade} tokens."
             ),
             "recomendacao": (
                 "Reducir el historial, los prompts, los fragmentos "
@@ -4414,8 +3344,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "orcamento_mensal": {
             "titulo": "Utilisation élevée du budget LLM",
             "descricao": (
-                "La consommation cumulée a atteint {percentual}% "
-                "du budget mensuel."
+                "La consommation cumulée a atteint {percentual}% du budget mensuel."
             ),
             "recomendacao": (
                 "Vérifier les modèles, la taille des prompts, "
@@ -4438,8 +3367,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "chamadas_lentas": {
             "titulo": "Appels LLM à latence élevée",
             "descricao": (
-                "{quantidade} appel(s) dépassant 30 secondes "
-                "ont été détectés."
+                "{quantidade} appel(s) dépassant 30 secondes ont été détectés."
             ),
             "recomendacao": (
                 "Vérifier le démarrage à froid, la taille du prompt, "
@@ -4450,8 +3378,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "falhas_llm": {
             "titulo": "Échecs des appels LLM",
             "descricao": (
-                "{quantidade} échec(s) ont été détectés, soit "
-                "{percentual}% des appels."
+                "{quantidade} échec(s) ont été détectés, soit {percentual}% des appels."
             ),
             "recomendacao": (
                 "Analyser les erreurs, les limites de l’API, "
@@ -4462,8 +3389,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "tokens_elevados": {
             "titulo": "Moyenne élevée de tokens par appel",
             "descricao": (
-                "La moyenne de tokens par appel a atteint "
-                "{quantidade} tokens."
+                "La moyenne de tokens par appel a atteint {quantidade} tokens."
             ),
             "recomendacao": (
                 "Réduire l’historique, les prompts, les segments "
@@ -4476,12 +3402,10 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "orcamento_mensal": {
             "titulo": "Hohe Nutzung des LLM-Budgets",
             "descricao": (
-                "Die kumulierte Nutzung erreichte {percentual}% "
-                "des Monatsbudgets."
+                "Die kumulierte Nutzung erreichte {percentual}% des Monatsbudgets."
             ),
             "recomendacao": (
-                "Modelle, Promptgrößen, Chunk-Anzahl und Cache "
-                "überprüfen."
+                "Modelle, Promptgrößen, Chunk-Anzahl und Cache überprüfen."
             ),
             "categoria": "FinOps",
         },
@@ -4499,10 +3423,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         },
         "chamadas_lentas": {
             "titulo": "LLM-Aufrufe mit hoher Latenz",
-            "descricao": (
-                "{quantidade} Aufruf(e) über 30 Sekunden "
-                "wurden erkannt."
-            ),
+            "descricao": ("{quantidade} Aufruf(e) über 30 Sekunden wurden erkannt."),
             "recomendacao": (
                 "Kaltstarts, Promptgröße, Netzwerk und "
                 "Antwortzeit des Anbieters prüfen."
@@ -4516,16 +3437,14 @@ LLM_ALERT_CONTENT_TEXTS: dict[
                 "entspricht {percentual}% der Aufrufe."
             ),
             "recomendacao": (
-                "Fehlertypen, API-Limits, Zugangsdaten und "
-                "Fallback-Strategie prüfen."
+                "Fehlertypen, API-Limits, Zugangsdaten und Fallback-Strategie prüfen."
             ),
             "categoria": "Zuverlässigkeit",
         },
         "tokens_elevados": {
             "titulo": "Hoher Token-Durchschnitt pro Aufruf",
             "descricao": (
-                "Der Token-Durchschnitt pro Aufruf erreichte "
-                "{quantidade} Tokens."
+                "Der Token-Durchschnitt pro Aufruf erreichte {quantidade} Tokens."
             ),
             "recomendacao": (
                 "Verlauf, Prompts, Chunks und an das Modell "
@@ -4542,16 +3461,14 @@ LLM_ALERT_CONTENT_TEXTS: dict[
                 "{percentual}% del budget mensile."
             ),
             "recomendacao": (
-                "Rivedere modelli, dimensioni dei prompt, "
-                "numero di chunk e cache."
+                "Rivedere modelli, dimensioni dei prompt, numero di chunk e cache."
             ),
             "categoria": "FinOps",
         },
         "projecao_mensal": {
             "titulo": "Proiezione mensile superiore alle attese",
             "descricao": (
-                "La proiezione mensile è vicina o superiore "
-                "al limite configurato."
+                "La proiezione mensile è vicina o superiore al limite configurato."
             ),
             "recomendacao": (
                 "Valutare Gemini Flash-Lite, ridurre il contesto "
@@ -4562,8 +3479,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "chamadas_lentas": {
             "titulo": "Chiamate LLM ad alta latenza",
             "descricao": (
-                "Sono state rilevate {quantidade} chiamata/e "
-                "superiori a 30 secondi."
+                "Sono state rilevate {quantidade} chiamata/e superiori a 30 secondi."
             ),
             "recomendacao": (
                 "Verificare cold start, dimensione del prompt, "
@@ -4578,20 +3494,17 @@ LLM_ALERT_CONTENT_TEXTS: dict[
                 "al {percentual}% delle chiamate."
             ),
             "recomendacao": (
-                "Analizzare errori, limiti API, credenziali "
-                "e strategia di fallback."
+                "Analizzare errori, limiti API, credenziali e strategia di fallback."
             ),
             "categoria": "Affidabilità",
         },
         "tokens_elevados": {
             "titulo": "Media elevata di token per chiamata",
             "descricao": (
-                "La media di token per chiamata ha raggiunto "
-                "{quantidade} token."
+                "La media di token per chiamata ha raggiunto {quantidade} token."
             ),
             "recomendacao": (
-                "Ridurre cronologia, prompt, chunk e documenti "
-                "inviati al modello."
+                "Ridurre cronologia, prompt, chunk e documenti inviati al modello."
             ),
             "categoria": "Efficienza",
         },
@@ -4599,10 +3512,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
     "ro": {
         "orcamento_mensal": {
             "titulo": "Utilizare ridicată a bugetului LLM",
-            "descricao": (
-                "Consumul acumulat a atins {percentual}% "
-                "din bugetul lunar."
-            ),
+            "descricao": ("Consumul acumulat a atins {percentual}% din bugetul lunar."),
             "recomendacao": (
                 "Revizuiți modelele, dimensiunea prompturilor, "
                 "numărul de fragmente și memoria cache."
@@ -4612,8 +3522,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "projecao_mensal": {
             "titulo": "Proiecție lunară peste așteptări",
             "descricao": (
-                "Proiecția lunară este aproape sau peste "
-                "limita configurată."
+                "Proiecția lunară este aproape sau peste limita configurată."
             ),
             "recomendacao": (
                 "Evaluați Gemini Flash-Lite, reduceți contextul "
@@ -4624,8 +3533,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "chamadas_lentas": {
             "titulo": "Apeluri LLM cu latență ridicată",
             "descricao": (
-                "Au fost detectate {quantidade} apel(uri) "
-                "de peste 30 de secunde."
+                "Au fost detectate {quantidade} apel(uri) de peste 30 de secunde."
             ),
             "recomendacao": (
                 "Verificați pornirea la rece, dimensiunea "
@@ -4640,16 +3548,14 @@ LLM_ALERT_CONTENT_TEXTS: dict[
                 "reprezentând {percentual}% din apeluri."
             ),
             "recomendacao": (
-                "Analizați erorile, limitele API, acreditările "
-                "și strategia de rezervă."
+                "Analizați erorile, limitele API, acreditările și strategia de rezervă."
             ),
             "categoria": "Fiabilitate",
         },
         "tokens_elevados": {
             "titulo": "Medie ridicată de tokenuri pe apel",
             "descricao": (
-                "Media de tokenuri pe apel a ajuns la "
-                "{quantidade} tokenuri."
+                "Media de tokenuri pe apel a ajuns la {quantidade} tokenuri."
             ),
             "recomendacao": (
                 "Reduceți istoricul, prompturile, fragmentele "
@@ -4662,12 +3568,10 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "orcamento_mensal": {
             "titulo": "Високе використання бюджету LLM",
             "descricao": (
-                "Накопичене використання досягло {percentual}% "
-                "місячного бюджету."
+                "Накопичене використання досягло {percentual}% місячного бюджету."
             ),
             "recomendacao": (
-                "Перевірте моделі, розмір запитів, кількість "
-                "фрагментів і кешування."
+                "Перевірте моделі, розмір запитів, кількість фрагментів і кешування."
             ),
             "categoria": "FinOps",
         },
@@ -4686,8 +3590,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "chamadas_lentas": {
             "titulo": "Виклики LLM із високою затримкою",
             "descricao": (
-                "Виявлено {quantidade} виклик(ів), що тривали "
-                "понад 30 секунд."
+                "Виявлено {quantidade} виклик(ів), що тривали понад 30 секунд."
             ),
             "recomendacao": (
                 "Перевірте холодний запуск, розмір запиту, "
@@ -4709,10 +3612,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         },
         "tokens_elevados": {
             "titulo": "Висока середня кількість токенів",
-            "descricao": (
-                "Середня кількість токенів на виклик досягла "
-                "{quantidade}."
-            ),
+            "descricao": ("Середня кількість токенів на виклик досягла {quantidade}."),
             "recomendacao": (
                 "Скоротіть історію, запити, фрагменти та "
                 "документи, що надсилаються моделі."
@@ -4724,8 +3624,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "orcamento_mensal": {
             "titulo": "Высокое использование бюджета LLM",
             "descricao": (
-                "Накопленное использование достигло {percentual}% "
-                "месячного бюджета."
+                "Накопленное использование достигло {percentual}% месячного бюджета."
             ),
             "recomendacao": (
                 "Проверьте модели, размер запросов, количество "
@@ -4748,8 +3647,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "chamadas_lentas": {
             "titulo": "Вызовы LLM с высокой задержкой",
             "descricao": (
-                "Обнаружено вызовов длительностью более "
-                "30 секунд: {quantidade}."
+                "Обнаружено вызовов длительностью более 30 секунд: {quantidade}."
             ),
             "recomendacao": (
                 "Проверьте холодный запуск, размер запроса, "
@@ -4760,8 +3658,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         "falhas_llm": {
             "titulo": "Ошибки вызовов LLM",
             "descricao": (
-                "Обнаружено ошибок: {quantidade}; это "
-                "{percentual}% всех вызовов."
+                "Обнаружено ошибок: {quantidade}; это {percentual}% всех вызовов."
             ),
             "recomendacao": (
                 "Проверьте типы ошибок, лимиты API, учётные "
@@ -4771,10 +3668,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         },
         "tokens_elevados": {
             "titulo": "Высокое среднее число токенов",
-            "descricao": (
-                "Среднее число токенов на вызов достигло "
-                "{quantidade}."
-            ),
+            "descricao": ("Среднее число токенов на вызов достигло {quantidade}."),
             "recomendacao": (
                 "Сократите историю, запросы, фрагменты и "
                 "документы, отправляемые модели."
@@ -4785,10 +3679,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
     "sa": {
         "orcamento_mensal": {
             "titulo": "استخدام مرتفع لميزانية نموذج اللغة",
-            "descricao": (
-                "بلغ الاستخدام التراكمي {percentual}% "
-                "من الميزانية الشهرية."
-            ),
+            "descricao": ("بلغ الاستخدام التراكمي {percentual}% من الميزانية الشهرية."),
             "recomendacao": (
                 "راجع النماذج وأحجام المطالبات وعدد المقاطع "
                 "واستخدام ذاكرة التخزين المؤقت."
@@ -4797,49 +3688,35 @@ LLM_ALERT_CONTENT_TEXTS: dict[
         },
         "projecao_mensal": {
             "titulo": "التوقع الشهري أعلى من المتوقع",
-            "descricao": (
-                "توقع الاستخدام الشهري قريب من الحد المضبوط "
-                "أو يتجاوزه."
-            ),
+            "descricao": ("توقع الاستخدام الشهري قريب من الحد المضبوط أو يتجاوزه."),
             "recomendacao": (
-                "قيّم استخدام Gemini Flash-Lite وقلل السياق "
-                "وأعد استخدام النتائج."
+                "قيّم استخدام Gemini Flash-Lite وقلل السياق وأعد استخدام النتائج."
             ),
             "categoria": "العمليات المالية",
         },
         "chamadas_lentas": {
             "titulo": "استدعاءات نموذج اللغة بزمن استجابة مرتفع",
-            "descricao": (
-                "تم اكتشاف {quantidade} استدعاء تجاوزت مدته "
-                "30 ثانية."
-            ),
+            "descricao": ("تم اكتشاف {quantidade} استدعاء تجاوزت مدته 30 ثانية."),
             "recomendacao": (
-                "تحقق من التشغيل البارد وحجم المطالبة والشبكة "
-                "وزمن استجابة المزود."
+                "تحقق من التشغيل البارد وحجم المطالبة والشبكة وزمن استجابة المزود."
             ),
             "categoria": "الأداء",
         },
         "falhas_llm": {
             "titulo": "فشل استدعاءات نموذج اللغة",
             "descricao": (
-                "تم اكتشاف {quantidade} حالة فشل تمثل "
-                "{percentual}% من الاستدعاءات."
+                "تم اكتشاف {quantidade} حالة فشل تمثل {percentual}% من الاستدعاءات."
             ),
             "recomendacao": (
-                "حلل أنواع الأخطاء وحدود API وبيانات الاعتماد "
-                "واستراتيجية الرجوع."
+                "حلل أنواع الأخطاء وحدود API وبيانات الاعتماد واستراتيجية الرجوع."
             ),
             "categoria": "الموثوقية",
         },
         "tokens_elevados": {
             "titulo": "متوسط مرتفع للرموز في كل استدعاء",
-            "descricao": (
-                "بلغ متوسط الرموز لكل استدعاء "
-                "{quantidade} رمزاً."
-            ),
+            "descricao": ("بلغ متوسط الرموز لكل استدعاء {quantidade} رمزاً."),
             "recomendacao": (
-                "قلل السجل والمطالبات والمقاطع والمستندات "
-                "المرسلة إلى النموذج."
+                "قلل السجل والمطالبات والمقاطع والمستندات المرسلة إلى النموذج."
             ),
             "categoria": "الكفاءة",
         },
@@ -4847,9 +3724,7 @@ LLM_ALERT_CONTENT_TEXTS: dict[
 }
 
 LLM_ALERT_CONTENT_TEXTS["ch"] = {
-    code: values.copy()
-    for code, values
-    in LLM_ALERT_CONTENT_TEXTS["de"].items()
+    code: values.copy() for code, values in LLM_ALERT_CONTENT_TEXTS["de"].items()
 }
 
 
@@ -4894,17 +3769,9 @@ def traduzir_conteudo_alerta_visual(
 
     idioma = llm_table_lang()
 
-    idioma_catalogo = (
-        idioma
-        if idioma in LLM_ALERT_CONTENT_TEXTS
-        else "en_us"
-    )
+    idioma_catalogo = idioma if idioma in LLM_ALERT_CONTENT_TEXTS else "en_us"
 
-    traducao = LLM_ALERT_CONTENT_TEXTS[
-        idioma_catalogo
-    ].get(
-        codigo
-    )
+    traducao = LLM_ALERT_CONTENT_TEXTS[idioma_catalogo].get(codigo)
 
     if traducao is None:
         return original
@@ -4927,8 +3794,7 @@ def traduzir_conteudo_alerta_visual(
 
     percentual = (
         numeros[1]
-        if codigo == "falhas_llm"
-        and len(numeros) > 1
+        if codigo == "falhas_llm" and len(numeros) > 1
         else numeros[0]
         if numeros
         else "0"
@@ -4941,18 +3807,11 @@ def traduzir_conteudo_alerta_visual(
 
     return {
         "titulo": traducao["titulo"],
-        "descricao": traducao[
-            "descricao"
-        ].format(
-            **valores
-        ),
-        "recomendacao": traducao[
-            "recomendacao"
-        ],
-        "categoria": traducao[
-            "categoria"
-        ],
+        "descricao": traducao["descricao"].format(**valores),
+        "recomendacao": traducao["recomendacao"],
+        "categoria": traducao["categoria"],
     }
+
 
 def render_alertas_llm_section(
     *,
@@ -4991,24 +3850,14 @@ def render_alertas_llm_section(
         )
 
     st.divider()
-    st.markdown(
-        llm_alert_section_t("section_title")
-    )
+    st.markdown(llm_alert_section_t("section_title"))
 
-    st.caption(
-        llm_alert_section_t("section_caption")
-    )
+    st.caption(llm_alert_section_t("section_caption"))
 
-    controle_1, controle_2, controle_3 = (
-        st.columns(
-            [1, 1, 2]
-        )
-    )
+    controle_1, controle_2, controle_3 = st.columns([1, 1, 2])
 
     status_filtro = controle_1.selectbox(
-        llm_cost_alert_visual_t(
-            "alert_status"
-        ),
+        llm_cost_alert_visual_t("alert_status"),
         options=[
             "aberto",
             "resolvido",
@@ -5020,9 +3869,7 @@ def render_alertas_llm_section(
     )
 
     limite_alertas = controle_2.selectbox(
-        llm_cost_alert_visual_t(
-            "alert_limit"
-        ),
+        llm_cost_alert_visual_t("alert_limit"),
         options=[
             50,
             100,
@@ -5043,11 +3890,9 @@ def render_alertas_llm_section(
         )
 
     if avaliar:
-        resultado_avaliacao = (
-            avaliar_persistir_e_notificar_alertas(
-                base_consumo,
-                finops,
-            )
+        resultado_avaliacao = avaliar_persistir_e_notificar_alertas(
+            base_consumo,
+            finops,
         )
 
         if resultado_avaliacao.get("ok"):
@@ -5065,22 +3910,12 @@ def render_alertas_llm_section(
                 f"{resultado_avaliacao.get('total_notificacoes_falhas', 0)}"
             )
         else:
-            st.error(
-                llm_alert_section_t(
-                    "evaluation_failed"
-                )
-            )
+            st.error(llm_alert_section_t("evaluation_failed"))
 
-    status_consulta = (
-        None
-        if status_filtro == "todos"
-        else status_filtro
-    )
+    status_consulta = None if status_filtro == "todos" else status_filtro
 
     resultado_alertas = carregar_alertas_llm(
-        limite=int(
-            limite_alertas
-        ),
+        limite=int(limite_alertas),
         status=status_consulta,
     )
 
@@ -5088,37 +3923,23 @@ def render_alertas_llm_section(
         st.error(
             resultado_alertas.get(
                 "message",
-                llm_alert_section_t(
-                    "load_failed"
-                ),
+                llm_alert_section_t("load_failed"),
             )
         )
         return
 
-    alertas = resultado_alertas.get(
-        "df"
-    )
+    alertas = resultado_alertas.get("df")
 
     if alertas is None or alertas.empty:
-        st.info(
-            llm_alert_section_t(
-                "no_alerts"
-            )
-        )
+        st.info(llm_alert_section_t("no_alerts"))
         return
 
-    contagem = (
-        alertas["severidade"]
-        .value_counts()
-        .to_dict()
-    )
+    contagem = alertas["severidade"].value_counts().to_dict()
 
     resumo_cols = st.columns(5)
 
     resumo_cols[0].metric(
-        llm_cost_alert_visual_t(
-            "total"
-        ),
+        llm_cost_alert_visual_t("total"),
         len(alertas),
     )
 
@@ -5153,9 +3974,7 @@ def render_alertas_llm_section(
     )
 
     resumo_cols[4].metric(
-        llm_cost_alert_visual_t(
-            "low_plural"
-        ),
+        llm_cost_alert_visual_t("low_plural"),
         int(
             contagem.get(
                 "baixa",
@@ -5174,13 +3993,9 @@ def render_alertas_llm_section(
 
     configuracao_email = carregar_configuracao()
 
-    resultado_notificacoes = carregar_notificacoes(
-        limite=1000
-    )
+    resultado_notificacoes = carregar_notificacoes(limite=1000)
 
-    notificacoes_df = resultado_notificacoes.get(
-        "df"
-    )
+    notificacoes_df = resultado_notificacoes.get("df")
 
     alertas_enviados: set[int] = set()
 
@@ -5190,46 +4005,22 @@ def render_alertas_llm_section(
         and "alerta_id" in notificacoes_df.columns
         and "status" in notificacoes_df.columns
     ):
-        enviados_df = notificacoes_df[
-            notificacoes_df["status"] == "enviado"
-        ]
+        enviados_df = notificacoes_df[notificacoes_df["status"] == "enviado"]
 
         alertas_enviados = {
-            int(alerta_id)
-            for alerta_id in enviados_df[
-                "alerta_id"
-            ].dropna().tolist()
+            int(alerta_id) for alerta_id in enviados_df["alerta_id"].dropna().tolist()
         }
 
-    st.markdown(
-        llm_alert_section_t("alerts_list")
-    )
+    st.markdown(llm_alert_section_t("alerts_list"))
 
-    if not configuracao_email.get(
-        "habilitado"
-    ):
-        st.warning(
-            "As notificações por e-mail estão "
-            "desabilitadas no ambiente."
-        )
-    elif not configuracao_email.get(
-        "destinatario"
-    ):
-        st.warning(
-            "O destinatário dos alertas não está configurado."
-        )
-    elif not configuracao_email.get(
-        "resend_configurado"
-    ):
-        st.warning(
-            "A integração com o Resend não está configurada."
-        )
+    if not configuracao_email.get("habilitado"):
+        st.warning("As notificações por e-mail estão desabilitadas no ambiente.")
+    elif not configuracao_email.get("destinatario"):
+        st.warning("O destinatário dos alertas não está configurado.")
+    elif not configuracao_email.get("resend_configurado"):
+        st.warning("A integração com o Resend não está configurada.")
     else:
-        st.success(
-            llm_alert_section_t(
-                "email_enabled"
-            )
-        )
+        st.success(llm_alert_section_t("email_enabled"))
 
     for _, alerta in alertas.iterrows():
         severidade = str(
@@ -5251,59 +4042,31 @@ def render_alertas_llm_section(
             "ℹ️",
         )
 
-        conteudo_visual = (
-            traduzir_conteudo_alerta_visual(
-                alerta
-            )
-        )
+        conteudo_visual = traduzir_conteudo_alerta_visual(alerta)
 
-        titulo = conteudo_visual[
-            "titulo"
-        ]
+        titulo = conteudo_visual["titulo"]
 
-        with st.container(
-            border=True
-        ):
-            cabecalho_1, cabecalho_2 = (
-                st.columns(
-                    [4, 1]
-                )
-            )
+        with st.container(border=True):
+            cabecalho_1, cabecalho_2 = st.columns([4, 1])
 
-            cabecalho_1.markdown(
-                f"### {simbolo} {titulo}"
-            )
+            cabecalho_1.markdown(f"### {simbolo} {titulo}")
 
             cabecalho_2.metric(
-                llm_cost_alert_visual_t(
-                    "status"
-                ),
-                traduzir_status_alerta_visual(
-                    status
-                ),
+                llm_cost_alert_visual_t("status"),
+                traduzir_status_alerta_visual(status),
             )
 
-            st.markdown(
-                conteudo_visual[
-                    "descricao"
-                ]
-            )
+            st.markdown(conteudo_visual["descricao"])
 
             metrica_cols = st.columns(4)
 
             metrica_cols[0].metric(
-                llm_cost_alert_visual_t(
-                    "severity"
-                ),
-                traduzir_severidade_alerta_visual(
-                    severidade
-                ),
+                llm_cost_alert_visual_t("severity"),
+                traduzir_severidade_alerta_visual(severidade),
             )
 
             metrica_cols[1].metric(
-                llm_cost_alert_visual_t(
-                    "current_value"
-                ),
+                llm_cost_alert_visual_t("current_value"),
                 alerta.get(
                     "valor_atual",
                     0,
@@ -5311,9 +4074,7 @@ def render_alertas_llm_section(
             )
 
             metrica_cols[2].metric(
-                llm_cost_alert_visual_t(
-                    "limit"
-                ),
+                llm_cost_alert_visual_t("limit"),
                 alerta.get(
                     "valor_limite",
                     0,
@@ -5321,9 +4082,7 @@ def render_alertas_llm_section(
             )
 
             metrica_cols[3].metric(
-                llm_cost_alert_visual_t(
-                    "unit"
-                ),
+                llm_cost_alert_visual_t("unit"),
                 alerta.get(
                     "unidade",
                     "—",
@@ -5345,117 +4104,60 @@ def render_alertas_llm_section(
             )
 
             if status == "aberto":
-                alerta_id = int(
-                    alerta["id"]
-                )
+                alerta_id = int(alerta["id"])
 
                 pode_enviar_email = (
-                    severidade
-                    in {"alta", "critica"}
-                    and configuracao_email.get(
-                        "habilitado"
-                    )
-                    and bool(
-                        configuracao_email.get(
-                            "destinatario"
-                        )
-                    )
-                    and configuracao_email.get(
-                        "resend_configurado"
-                    )
+                    severidade in {"alta", "critica"}
+                    and configuracao_email.get("habilitado")
+                    and bool(configuracao_email.get("destinatario"))
+                    and configuracao_email.get("resend_configurado")
                 )
 
-                ja_enviado = (
-                    alerta_id
-                    in alertas_enviados
-                )
+                ja_enviado = alerta_id in alertas_enviados
 
-                coluna_email, coluna_resolver = (
-                    st.columns(2)
-                )
+                coluna_email, coluna_resolver = st.columns(2)
 
                 with coluna_email:
                     if ja_enviado:
-                        st.success(
-                            llm_alert_section_t("notification_sent")
-                        )
+                        st.success(llm_alert_section_t("notification_sent"))
 
                     elif severidade not in {
                         "alta",
                         "critica",
                     }:
-                        st.info(
-                            llm_alert_section_t(
-                                "restricted_delivery"
-                            )
-                        )
+                        st.info(llm_alert_section_t("restricted_delivery"))
 
                     elif st.button(
-                        llm_alert_section_t(
-                            "send_email"
-                        ),
-                        key=(
-                            "send_llm_alert_email_"
-                            f"{alerta_id}"
-                        ),
+                        llm_alert_section_t("send_email"),
+                        key=(f"send_llm_alert_email_{alerta_id}"),
                         use_container_width=True,
-                        disabled=(
-                            not pode_enviar_email
-                        ),
+                        disabled=(not pode_enviar_email),
                     ):
-                        with st.spinner(
-                            llm_alert_section_t(
-                                "sending_alert"
-                            )
-                        ):
-                            resultado_envio = (
-                                notificar_alerta_email(
-                                    alerta.to_dict()
-                                )
-                            )
+                        with st.spinner(llm_alert_section_t("sending_alert")):
+                            resultado_envio = notificar_alerta_email(alerta.to_dict())
 
-                        if resultado_envio.get(
-                            "enviado"
-                        ):
-                            st.success(
-                                llm_alert_section_t(
-                                    "alert_sent"
-                                )
-                            )
+                        if resultado_envio.get("enviado"):
+                            st.success(llm_alert_section_t("alert_sent"))
                             st.rerun()
 
-                        elif resultado_envio.get(
-                            "duplicado"
-                        ):
-                            st.info(
-                                llm_alert_section_t(
-                                    "already_sent"
-                                )
-                            )
+                        elif resultado_envio.get("duplicado"):
+                            st.info(llm_alert_section_t("already_sent"))
                             st.rerun()
 
-                        elif resultado_envio.get(
-                            "ignorado"
-                        ):
+                        elif resultado_envio.get("ignorado"):
                             st.warning(
                                 resultado_envio.get(
                                     "message",
-                                    llm_alert_section_t(
-                                        "send_criteria_failed"
-                                    ),
+                                    llm_alert_section_t("send_criteria_failed"),
                                 )
                             )
 
                         else:
                             st.error(
-                                llm_alert_section_t(
-                                    "send_error"
-                                ).format(
+                                llm_alert_section_t("send_error").format(
                                     error=resultado_envio.get(
                                         "message",
-                                        llm_alert_section_t(
-                                            "unknown_error"
-                                        ),
+                                        llm_alert_section_t("unknown_error"),
                                     )
                                 )
                             )
@@ -5463,43 +4165,26 @@ def render_alertas_llm_section(
                 with coluna_resolver:
                     if st.button(
                         llm_alert_section_t("resolve"),
-                        key=(
-                            f"resolve_llm_alert_"
-                            f"{alerta_id}"
-                        ),
+                        key=(f"resolve_llm_alert_{alerta_id}"),
                         use_container_width=True,
                     ):
-                        resultado_resolucao = (
-                            resolver_alerta_llm(
-                                alerta_id,
-                                resolvido_por=(
-                                    "llm_cost_center"
-                                ),
-                            )
+                        resultado_resolucao = resolver_alerta_llm(
+                            alerta_id,
+                            resolvido_por=("llm_cost_center"),
                         )
 
-                        if resultado_resolucao.get(
-                            "resolvido"
-                        ):
-                            st.success(
-                                llm_alert_section_t(
-                                    "resolved"
-                                )
-                            )
+                        if resultado_resolucao.get("resolvido"):
+                            st.success(llm_alert_section_t("resolved"))
                             st.rerun()
                         else:
                             st.info(
                                 resultado_resolucao.get(
                                     "message",
-                                    llm_alert_section_t(
-                                        "already_resolved"
-                                    ),
+                                    llm_alert_section_t("already_resolved"),
                                 )
                             )
 
-    st.markdown(
-        llm_alert_section_t("integration_health")
-    )
+    st.markdown(llm_alert_section_t("integration_health"))
 
     try:
         try:
@@ -5515,14 +4200,10 @@ def render_alertas_llm_section(
 
         saude = carregar_saude_integracoes()
 
-        saude_col_1, saude_col_2, saude_col_3, saude_col_4 = (
-            st.columns(4)
-        )
+        saude_col_1, saude_col_2, saude_col_3, saude_col_4 = st.columns(4)
 
         saude_col_1.metric(
-            llm_cost_alert_visual_t(
-                "database"
-            ),
+            llm_cost_alert_visual_t("database"),
             (
                 llm_alert_section_t("connected")
                 if saude.get("banco_conectado")
@@ -5549,25 +4230,15 @@ def render_alertas_llm_section(
         )
 
         saude_col_4.metric(
-            llm_cost_alert_visual_t(
-                "email_alerts"
-            ),
+            llm_cost_alert_visual_t("email_alerts"),
             (
-                llm_cost_alert_visual_t(
-                    "enabled_plural"
-                )
-                if saude.get(
-                    "email_alertas_habilitado"
-                )
-                else llm_cost_alert_visual_t(
-                    "disabled_plural"
-                )
+                llm_cost_alert_visual_t("enabled_plural")
+                if saude.get("email_alertas_habilitado")
+                else llm_cost_alert_visual_t("disabled_plural")
             ),
         )
 
-        detalhe_1, detalhe_2, detalhe_3, detalhe_4 = (
-            st.columns(4)
-        )
+        detalhe_1, detalhe_2, detalhe_3, detalhe_4 = st.columns(4)
 
         detalhe_1.metric(
             llm_alert_section_t("events_24h"),
@@ -5614,40 +4285,20 @@ def render_alertas_llm_section(
         )
 
         with st.expander(
-            llm_alert_section_t(
-                "integration_details"
-            ),
+            llm_alert_section_t("integration_details"),
             expanded=False,
         ):
             st.write(
                 {
-                    llm_alert_section_t(
-                        "last_event"
-                    ): saude.get(
-                        "ultimo_evento_tipo"
+                    llm_alert_section_t("last_event"): saude.get("ultimo_evento_tipo"),
+                    "Evento recebido em": saude.get("ultimo_evento_recebido_em"),
+                    "Evento processado": saude.get("ultimo_evento_processado"),
+                    "Resultado": saude.get("ultimo_evento_resultado"),
+                    llm_alert_section_t("last_email_delivered"): (
+                        saude.get("ultimo_email_entregue_em")
                     ),
-                    "Evento recebido em": saude.get(
-                        "ultimo_evento_recebido_em"
-                    ),
-                    "Evento processado": saude.get(
-                        "ultimo_evento_processado"
-                    ),
-                    "Resultado": saude.get(
-                        "ultimo_evento_resultado"
-                    ),
-                    llm_alert_section_t(
-                        "last_email_delivered"
-                    ): (
-                        saude.get(
-                            "ultimo_email_entregue_em"
-                        )
-                    ),
-                    llm_alert_section_t(
-                        "configured_recipient"
-                    ): (
-                        saude.get(
-                            "destinatario_configurado"
-                        )
+                    llm_alert_section_t("configured_recipient"): (
+                        saude.get("destinatario_configurado")
                     ),
                 }
             )
@@ -5661,21 +4312,11 @@ def render_alertas_llm_section(
             )
 
     except Exception as exc:
-        st.warning(
-            llm_alert_section_t(
-                "health_error"
-            ).format(
-                error=exc
-            )
-        )
+        st.warning(llm_alert_section_t("health_error").format(error=exc))
 
-    st.markdown(
-        llm_alert_section_t("webhook_events")
-    )
+    st.markdown(llm_alert_section_t("webhook_events"))
 
-    controle_evento_1, controle_evento_2 = (
-        st.columns(2)
-    )
+    controle_evento_1, controle_evento_2 = st.columns(2)
 
     event_period_keys = [
         "events_24_hours",
@@ -5691,9 +4332,7 @@ def render_alertas_llm_section(
     )
 
     limite_eventos = controle_evento_2.selectbox(
-        llm_cost_page_t(
-            "event_limit"
-        ),
+        llm_cost_page_t("event_limit"),
         options=[
             50,
             100,
@@ -5732,53 +4371,33 @@ def render_alertas_llm_section(
         )
 
         if eventos_resend.empty:
-            st.info(
-                llm_alert_section_t(
-                    "no_webhook_events"
-                )
-            )
+            st.info(llm_alert_section_t("no_webhook_events"))
 
         else:
             total_eventos = len(eventos_resend)
 
             total_processados = int(
-                eventos_resend[
-                    "processado"
-                ]
-                .fillna(False)
-                .astype(bool)
-                .sum()
+                eventos_resend["processado"].fillna(False).astype(bool).sum()
             )
 
             total_falhas_eventos = int(
                 (
-                    eventos_resend[
-                        "resultado"
-                    ]
+                    eventos_resend["resultado"]
                     .fillna("")
                     .astype(str)
                     .str.lower()
                     .eq("erro")
-                    |
-                    eventos_resend[
-                        "processado"
-                    ]
-                    .fillna(False)
-                    .eq(False)
+                    | eventos_resend["processado"].fillna(False).eq(False)
                 ).sum()
             )
 
             ultimo_evento = (
-                eventos_resend.iloc[0][
-                    "evento_tipo"
-                ]
+                eventos_resend.iloc[0]["evento_tipo"]
                 if not eventos_resend.empty
                 else "Nenhum"
             )
 
-            evento_col_1, evento_col_2, evento_col_3, evento_col_4 = (
-                st.columns(4)
-            )
+            evento_col_1, evento_col_2, evento_col_3, evento_col_4 = st.columns(4)
 
             evento_col_1.metric(
                 "Total de eventos",
@@ -5800,84 +4419,47 @@ def render_alertas_llm_section(
                 str(ultimo_evento),
             )
 
-            filtro_evento_1, filtro_evento_2 = (
-                st.columns(2)
-            )
+            filtro_evento_1, filtro_evento_2 = st.columns(2)
 
             tipos_eventos = [
                 "todos",
                 *sorted(
-                    eventos_resend[
-                        "evento_tipo"
-                    ]
-                    .dropna()
-                    .astype(str)
-                    .unique()
-                    .tolist()
+                    eventos_resend["evento_tipo"].dropna().astype(str).unique().tolist()
                 ),
             ]
 
-            tipo_evento_filtro = (
-                filtro_evento_1.selectbox(
-                    "Tipo do evento",
-                    options=tipos_eventos,
-                    key="resend_event_type_filter",
-                )
+            tipo_evento_filtro = filtro_evento_1.selectbox(
+                "Tipo do evento",
+                options=tipos_eventos,
+                key="resend_event_type_filter",
             )
 
             resultados_eventos = [
                 "todos",
                 *sorted(
-                    eventos_resend[
-                        "resultado"
-                    ]
-                    .dropna()
-                    .astype(str)
-                    .unique()
-                    .tolist()
+                    eventos_resend["resultado"].dropna().astype(str).unique().tolist()
                 ),
             ]
 
-            resultado_evento_filtro = (
-                filtro_evento_2.selectbox(
-                    "Resultado",
-                    options=resultados_eventos,
-                    key=(
-                        "resend_event_result_filter"
-                    ),
-                )
+            resultado_evento_filtro = filtro_evento_2.selectbox(
+                "Resultado",
+                options=resultados_eventos,
+                key=("resend_event_result_filter"),
             )
 
-            eventos_filtrados = (
-                eventos_resend.copy()
-            )
+            eventos_filtrados = eventos_resend.copy()
 
             if tipo_evento_filtro != "todos":
-                eventos_filtrados = (
-                    eventos_filtrados[
-                        eventos_filtrados[
-                            "evento_tipo"
-                        ]
-                        == tipo_evento_filtro
-                    ]
-                )
+                eventos_filtrados = eventos_filtrados[
+                    eventos_filtrados["evento_tipo"] == tipo_evento_filtro
+                ]
 
-            if (
-                resultado_evento_filtro
-                != "todos"
-            ):
-                eventos_filtrados = (
-                    eventos_filtrados[
-                        eventos_filtrados[
-                            "resultado"
-                        ]
-                        == resultado_evento_filtro
-                    ]
-                )
+            if resultado_evento_filtro != "todos":
+                eventos_filtrados = eventos_filtrados[
+                    eventos_filtrados["resultado"] == resultado_evento_filtro
+                ]
 
-            eventos_filtrados[
-                "processado_exibicao"
-            ] = eventos_filtrados[
+            eventos_filtrados["processado_exibicao"] = eventos_filtrados[
                 "processado"
             ].apply(
                 lambda valor: (
@@ -5900,28 +4482,16 @@ def render_alertas_llm_section(
             ]
 
             tabela_eventos = (
-                eventos_filtrados[
-                    colunas_eventos
-                ]
+                eventos_filtrados[colunas_eventos]
                 .copy()
                 .rename(
                     columns={
                         "id": "ID",
-                        "evento_tipo": (
-                            "Tipo do evento"
-                        ),
-                        "provider_message_id": (
-                            "Message ID"
-                        ),
-                        "recebido_em": (
-                            "Recebido em"
-                        ),
-                        "processado_exibicao": (
-                            "Processado"
-                        ),
-                        "processado_em": (
-                            "Processado em"
-                        ),
+                        "evento_tipo": ("Tipo do evento"),
+                        "provider_message_id": ("Message ID"),
+                        "recebido_em": ("Recebido em"),
+                        "processado_exibicao": ("Processado"),
+                        "processado_em": ("Processado em"),
                         "resultado": "Resultado",
                         "erro_mensagem": "Erro",
                         "svix_id": "Svix ID",
@@ -5931,27 +4501,13 @@ def render_alertas_llm_section(
 
             if "Resultado" in tabela_eventos.columns:
                 mapa_resultados = {
-                    "ok": llm_resend_event_t(
-                        "success"
-                    ),
-                    "sucesso": llm_resend_event_t(
-                        "success"
-                    ),
-                    "processado": llm_resend_event_t(
-                        "processed_value"
-                    ),
-                    "erro": llm_resend_event_t(
-                        "error_value"
-                    ),
-                    "falha": llm_resend_event_t(
-                        "failure"
-                    ),
-                    "pendente": llm_resend_event_t(
-                        "pending"
-                    ),
-                    "ignorado": llm_resend_event_t(
-                        "ignored"
-                    ),
+                    "ok": llm_resend_event_t("success"),
+                    "sucesso": llm_resend_event_t("success"),
+                    "processado": llm_resend_event_t("processed_value"),
+                    "erro": llm_resend_event_t("error_value"),
+                    "falha": llm_resend_event_t("failure"),
+                    "pendente": llm_resend_event_t("pending"),
+                    "ignorado": llm_resend_event_t("ignored"),
                 }
 
                 valores_resultado = (
@@ -5962,16 +4518,10 @@ def render_alertas_llm_section(
                     .str.lower()
                 )
 
-                tabela_eventos["Resultado"] = (
-                    valores_resultado
-                    .map(mapa_resultados)
-                    .fillna(
-                        tabela_eventos[
-                            "Resultado"
-                        ].fillna(
-                            llm_resend_event_t("no_result")
-                        )
-                    )
+                tabela_eventos["Resultado"] = valores_resultado.map(
+                    mapa_resultados
+                ).fillna(
+                    tabela_eventos["Resultado"].fillna(llm_resend_event_t("no_result"))
                 )
 
             if "Erro" in tabela_eventos.columns:
@@ -5988,9 +4538,7 @@ def render_alertas_llm_section(
                 )
 
             st.dataframe(
-                estilizar_tabela_eventos_resend(
-                    tabela_eventos
-                ),
+                estilizar_tabela_eventos_resend(tabela_eventos),
                 use_container_width=True,
                 hide_index=True,
                 height=420,
@@ -6004,103 +4552,71 @@ def render_alertas_llm_section(
                     ),
                     "Tipo do evento": (
                         st.column_config.TextColumn(
-                            llm_resend_event_t(
-                                "event_type"
-                            ),
-                            help=llm_resend_event_t(
-                                "event_help"
-                            ),
+                            llm_resend_event_t("event_type"),
+                            help=llm_resend_event_t("event_help"),
                             width="large",
                         )
                     ),
                     "Message ID": (
                         st.column_config.TextColumn(
-                            llm_resend_event_t(
-                                "message_id"
-                            ),
+                            llm_resend_event_t("message_id"),
                             width="large",
                         )
                     ),
                     "Recebido em": (
                         st.column_config.DatetimeColumn(
-                            llm_resend_event_t(
-                                "received_at"
-                            ),
-                            format=(
-                                "DD/MM/YYYY HH:mm:ss"
-                            ),
+                            llm_resend_event_t("received_at"),
+                            format=("DD/MM/YYYY HH:mm:ss"),
                             width="medium",
                         )
                     ),
                     "Processado": (
                         st.column_config.TextColumn(
-                            llm_resend_event_t(
-                                "processed"
-                            ),
+                            llm_resend_event_t("processed"),
                             width="small",
                         )
                     ),
                     "Processado em": (
                         st.column_config.DatetimeColumn(
-                            llm_resend_event_t(
-                                "processed_at"
-                            ),
-                            format=(
-                                "DD/MM/YYYY HH:mm:ss"
-                            ),
+                            llm_resend_event_t("processed_at"),
+                            format=("DD/MM/YYYY HH:mm:ss"),
                             width="medium",
                         )
                     ),
                     "Resultado": (
                         st.column_config.TextColumn(
-                            llm_resend_event_t(
-                                "result"
-                            ),
+                            llm_resend_event_t("result"),
                             width="medium",
                         )
                     ),
                     "Erro": (
                         st.column_config.TextColumn(
-                            llm_resend_event_t(
-                                "error"
-                            ),
+                            llm_resend_event_t("error"),
                             width="large",
                         )
                     ),
                     "Svix ID": (
                         st.column_config.TextColumn(
-                            llm_resend_event_t(
-                                "svix_id"
-                            ),
-                            help=llm_resend_event_t(
-                                "svix_help"
-                            ),
+                            llm_resend_event_t("svix_id"),
+                            help=llm_resend_event_t("svix_help"),
                             width="large",
                         )
                     ),
                 },
             )
 
-            csv_eventos = (
-                tabela_eventos.to_csv(
-                    index=False
-                ).encode("utf-8-sig")
-            )
+            csv_eventos = tabela_eventos.to_csv(index=False).encode("utf-8-sig")
 
             st.download_button(
                 llm_alert_section_t("export_webhook"),
                 data=csv_eventos,
-                file_name=(
-                    "inna_resend_webhook_eventos.csv"
-                ),
+                file_name=("inna_resend_webhook_eventos.csv"),
                 mime="text/csv",
                 use_container_width=True,
                 key="resend_events_download",
             )
 
-    st.markdown(
-        llm_alert_section_t("notification_audit")
-    )
+    st.markdown(llm_alert_section_t("notification_audit"))
 
     if not resultado_notificacoes.get("ok"):
         st.error(
@@ -6110,41 +4626,23 @@ def render_alertas_llm_section(
             )
         )
 
-    elif (
-        notificacoes_df is None
-        or notificacoes_df.empty
-    ):
-        st.info(
-            llm_alert_section_t(
-                "no_notifications"
-            )
-        )
+    elif notificacoes_df is None or notificacoes_df.empty:
+        st.info(llm_alert_section_t("no_notifications"))
 
     else:
         auditoria_df = notificacoes_df.copy()
 
         auditoria_df["status_entrega"] = (
-            auditoria_df["status_entrega"]
-            .fillna("aguardando")
-            .astype(str)
-            .str.lower()
+            auditoria_df["status_entrega"].fillna("aguardando").astype(str).str.lower()
         )
 
         total_notificacoes = len(auditoria_df)
 
         total_enviadas = int(
-            auditoria_df["status"]
-            .astype(str)
-            .str.lower()
-            .eq("enviado")
-            .sum()
+            auditoria_df["status"].astype(str).str.lower().eq("enviado").sum()
         )
 
-        total_entregues = int(
-            auditoria_df["status_entrega"]
-            .eq("entregue")
-            .sum()
-        )
+        total_entregues = int(auditoria_df["status_entrega"].eq("entregue").sum())
 
         status_falha = {
             "falhou",
@@ -6153,30 +4651,16 @@ def render_alertas_llm_section(
             "reclamacao",
         }
 
-        total_falhas = int(
-            auditoria_df["status_entrega"]
-            .isin(status_falha)
-            .sum()
-        )
+        total_falhas = int(auditoria_df["status_entrega"].isin(status_falha).sum())
 
         total_aguardando = max(
-            total_enviadas
-            - total_entregues
-            - total_falhas,
+            total_enviadas - total_entregues - total_falhas,
             0,
         )
 
-        taxa_entrega = (
-            total_entregues
-            / total_enviadas
-            * 100
-            if total_enviadas
-            else 0
-        )
+        taxa_entrega = total_entregues / total_enviadas * 100 if total_enviadas else 0
 
-        metrica_1, metrica_2, metrica_3, metrica_4, metrica_5 = (
-            st.columns(5)
-        )
+        metrica_1, metrica_2, metrica_3, metrica_4, metrica_5 = st.columns(5)
 
         metrica_1.metric(
             llm_alert_section_t("notifications"),
@@ -6210,20 +4694,12 @@ def render_alertas_llm_section(
         opcoes_status = [
             all_status_key,
             *sorted(
-                auditoria_df[
-                    "status_entrega"
-                ]
-                .dropna()
-                .astype(str)
-                .unique()
-                .tolist()
+                auditoria_df["status_entrega"].dropna().astype(str).unique().tolist()
             ),
         ]
 
         filtro_status_entrega = filtro_1.selectbox(
-            llm_alert_section_t(
-                "delivery_status_filter"
-            ),
+            llm_alert_section_t("delivery_status_filter"),
             options=opcoes_status,
             format_func=lambda value: (
                 llm_alert_section_t("all")
@@ -6241,29 +4717,20 @@ def render_alertas_llm_section(
         filtrado_notificacoes = auditoria_df.copy()
 
         if filtro_status_entrega != all_status_key:
-            filtrado_notificacoes = (
-                filtrado_notificacoes[
-                    filtrado_notificacoes[
-                        "status_entrega"
-                    ]
-                    == filtro_status_entrega
-                ]
-            )
+            filtrado_notificacoes = filtrado_notificacoes[
+                filtrado_notificacoes["status_entrega"] == filtro_status_entrega
+            ]
 
         if filtro_destinatario.strip():
-            filtrado_notificacoes = (
-                filtrado_notificacoes[
-                    filtrado_notificacoes[
-                        "destinatario_mascarado"
-                    ]
-                    .astype(str)
-                    .str.contains(
-                        filtro_destinatario.strip(),
-                        case=False,
-                        na=False,
-                    )
-                ]
-            )
+            filtrado_notificacoes = filtrado_notificacoes[
+                filtrado_notificacoes["destinatario_mascarado"]
+                .astype(str)
+                .str.contains(
+                    filtro_destinatario.strip(),
+                    case=False,
+                    na=False,
+                )
+            ]
 
         icones_status = {
             "entregue": "🟢 Entregue",
@@ -6278,18 +4745,10 @@ def render_alertas_llm_section(
             "clicado": "🔗 Clicado",
         }
 
-        filtrado_notificacoes[
-            "status_entrega_exibicao"
-        ] = (
-            filtrado_notificacoes[
-                "status_entrega"
-            ]
+        filtrado_notificacoes["status_entrega_exibicao"] = (
+            filtrado_notificacoes["status_entrega"]
             .map(icones_status)
-            .fillna(
-                filtrado_notificacoes[
-                    "status_entrega"
-                ]
-            )
+            .fillna(filtrado_notificacoes["status_entrega"])
         )
 
         colunas_notificacoes = [
@@ -6315,115 +4774,63 @@ def render_alertas_llm_section(
         colunas_notificacoes = [
             coluna
             for coluna in colunas_notificacoes
-            if coluna
-            in filtrado_notificacoes.columns
+            if coluna in filtrado_notificacoes.columns
         ]
 
-        tabela_notificacoes = (
-            filtrado_notificacoes[
-                colunas_notificacoes
-            ].copy()
+        tabela_notificacoes = filtrado_notificacoes[colunas_notificacoes].copy()
+
+        tabela_notificacoes = tabela_notificacoes.rename(
+            columns={
+                "id": "ID",
+                "alerta_id": "Alerta",
+                "status": "Status do envio",
+                "status_entrega_exibicao": ("Status da entrega"),
+                "evento_provider": ("Evento do Resend"),
+                "destinatario_mascarado": ("Destinatário"),
+                "assunto": "Assunto",
+                "tentativas": "Tentativas",
+                "provider_message_id": ("Message ID"),
+                "criado_em": "Criado em",
+                "enviado_em": "Enviado em",
+                "entregue_em": "Entregue em",
+                "devolvido_em": "Devolvido em",
+                "webhook_recebido_em": ("Webhook recebido em"),
+                "motivo_entrega": ("Motivo da entrega/falha"),
+                "erro_tipo": "Tipo do erro",
+                "erro_mensagem": ("Mensagem de erro"),
+            }
         )
 
-        tabela_notificacoes = (
-            tabela_notificacoes.rename(
-                columns={
-                    "id": "ID",
-                    "alerta_id": "Alerta",
-                    "status": "Status do envio",
-                    "status_entrega_exibicao": (
-                        "Status da entrega"
-                    ),
-                    "evento_provider": (
-                        "Evento do Resend"
-                    ),
-                    "destinatario_mascarado": (
-                        "Destinatário"
-                    ),
-                    "assunto": "Assunto",
-                    "tentativas": "Tentativas",
-                    "provider_message_id": (
-                        "Message ID"
-                    ),
-                    "criado_em": "Criado em",
-                    "enviado_em": "Enviado em",
-                    "entregue_em": "Entregue em",
-                    "devolvido_em": "Devolvido em",
-                    "webhook_recebido_em": (
-                        "Webhook recebido em"
-                    ),
-                    "motivo_entrega": (
-                        "Motivo da entrega/falha"
-                    ),
-                    "erro_tipo": "Tipo do erro",
-                    "erro_mensagem": (
-                        "Mensagem de erro"
-                    ),
-                }
-            )
-        )
-
-        if (
-            "Status do envio"
-            in tabela_notificacoes.columns
-        ):
-            tabela_notificacoes[
-                "Status do envio"
-            ] = (
-                tabela_notificacoes[
-                    "Status do envio"
-                ]
+        if "Status do envio" in tabela_notificacoes.columns:
+            tabela_notificacoes["Status do envio"] = (
+                tabela_notificacoes["Status do envio"]
                 .fillna("aguardando")
                 .astype(str)
                 .str.lower()
                 .map(
                     {
-                        "enviado": llm_notification_t(
-                            "sent"
-                        ),
-                        "aguardando": llm_notification_t(
-                            "waiting"
-                        ),
-                        "falhou": llm_notification_t(
-                            "failed"
-                        ),
-                        "cancelado": llm_notification_t(
-                            "cancelled"
-                        ),
+                        "enviado": llm_notification_t("sent"),
+                        "aguardando": llm_notification_t("waiting"),
+                        "falhou": llm_notification_t("failed"),
+                        "cancelado": llm_notification_t("cancelled"),
                     }
                 )
-                .fillna(
-                    llm_notification_t("unknown")
-                )
+                .fillna(llm_notification_t("unknown"))
             )
 
-        if (
-            "Status da entrega"
-            in tabela_notificacoes.columns
-        ):
-            tabela_notificacoes[
+        if "Status da entrega" in tabela_notificacoes.columns:
+            tabela_notificacoes["Status da entrega"] = tabela_notificacoes[
                 "Status da entrega"
-            ] = tabela_notificacoes[
-                "Status da entrega"
-            ].map(
-                traduzir_status_notificacao
-            )
+            ].map(traduzir_status_notificacao)
 
         for coluna_erro in (
             "Tipo do erro",
             "Mensagem de erro",
             "Motivo da entrega/falha",
         ):
-            if (
-                coluna_erro
-                in tabela_notificacoes.columns
-            ):
-                tabela_notificacoes[
-                    coluna_erro
-                ] = (
-                    tabela_notificacoes[
-                        coluna_erro
-                    ]
+            if coluna_erro in tabela_notificacoes.columns:
+                tabela_notificacoes[coluna_erro] = (
+                    tabela_notificacoes[coluna_erro]
                     .fillna("—")
                     .replace(
                         {
@@ -6435,9 +4842,7 @@ def render_alertas_llm_section(
                 )
 
         st.dataframe(
-            estilizar_tabela_notificacoes_llm(
-                tabela_notificacoes
-            ),
+            estilizar_tabela_notificacoes_llm(tabela_notificacoes),
             use_container_width=True,
             hide_index=True,
             height=460,
@@ -6458,55 +4863,39 @@ def render_alertas_llm_section(
                 ),
                 "Status do envio": (
                     st.column_config.TextColumn(
-                        llm_notification_t(
-                            "send_status"
-                        ),
+                        llm_notification_t("send_status"),
                         width="medium",
                     )
                 ),
                 "Status da entrega": (
                     st.column_config.TextColumn(
-                        llm_notification_t(
-                            "delivery_status"
-                        ),
+                        llm_notification_t("delivery_status"),
                         width="medium",
                     )
                 ),
                 "Evento do Resend": (
                     st.column_config.TextColumn(
-                        llm_notification_t(
-                            "resend_event"
-                        ),
+                        llm_notification_t("resend_event"),
                         width="medium",
                     )
                 ),
                 "Destinatário": (
                     st.column_config.TextColumn(
-                        llm_notification_t(
-                            "recipient"
-                        ),
-                        help=llm_notification_t(
-                            "recipient_help"
-                        ),
+                        llm_notification_t("recipient"),
+                        help=llm_notification_t("recipient_help"),
                         width="large",
                     )
                 ),
                 "Assunto": (
                     st.column_config.TextColumn(
-                        llm_notification_t(
-                            "subject"
-                        ),
+                        llm_notification_t("subject"),
                         width="large",
                     )
                 ),
                 "Tentativas": (
                     st.column_config.ProgressColumn(
-                        llm_notification_t(
-                            "attempts"
-                        ),
-                        help=llm_notification_t(
-                            "attempts_help"
-                        ),
+                        llm_notification_t("attempts"),
+                        help=llm_notification_t("attempts_help"),
                         min_value=0,
                         max_value=3,
                         format="%d",
@@ -6515,104 +4904,78 @@ def render_alertas_llm_section(
                 ),
                 "Message ID": (
                     st.column_config.TextColumn(
-                        llm_notification_t(
-                            "message_id"
-                        ),
+                        llm_notification_t("message_id"),
                         width="large",
                     )
                 ),
                 "Criado em": (
                     st.column_config.DatetimeColumn(
-                        llm_notification_t(
-                            "created_at"
-                        ),
+                        llm_notification_t("created_at"),
                         format="DD/MM/YYYY HH:mm:ss",
                         width="medium",
                     )
                 ),
                 "Enviado em": (
                     st.column_config.DatetimeColumn(
-                        llm_notification_t(
-                            "sent_at"
-                        ),
+                        llm_notification_t("sent_at"),
                         format="DD/MM/YYYY HH:mm:ss",
                         width="medium",
                     )
                 ),
                 "Entregue em": (
                     st.column_config.DatetimeColumn(
-                        llm_notification_t(
-                            "delivered_at"
-                        ),
+                        llm_notification_t("delivered_at"),
                         format="DD/MM/YYYY HH:mm:ss",
                         width="medium",
                     )
                 ),
                 "Devolvido em": (
                     st.column_config.DatetimeColumn(
-                        llm_notification_t(
-                            "returned_at"
-                        ),
+                        llm_notification_t("returned_at"),
                         format="DD/MM/YYYY HH:mm:ss",
                         width="medium",
                     )
                 ),
                 "Webhook recebido em": (
                     st.column_config.DatetimeColumn(
-                        llm_notification_t(
-                            "webhook_at"
-                        ),
+                        llm_notification_t("webhook_at"),
                         format="DD/MM/YYYY HH:mm:ss",
                         width="medium",
                     )
                 ),
                 "Motivo da entrega/falha": (
                     st.column_config.TextColumn(
-                        llm_notification_t(
-                            "delivery_reason"
-                        ),
+                        llm_notification_t("delivery_reason"),
                         width="large",
                     )
                 ),
                 "Tipo do erro": (
                     st.column_config.TextColumn(
-                        llm_notification_t(
-                            "error_type"
-                        ),
+                        llm_notification_t("error_type"),
                         width="medium",
                     )
                 ),
                 "Mensagem de erro": (
                     st.column_config.TextColumn(
-                        llm_notification_t(
-                            "error_message"
-                        ),
+                        llm_notification_t("error_message"),
                         width="large",
                     )
                 ),
             },
         )
 
-        csv_notificacoes = (
-            tabela_notificacoes.to_csv(
-                index=False
-            ).encode("utf-8-sig")
-        )
+        csv_notificacoes = tabela_notificacoes.to_csv(index=False).encode("utf-8-sig")
 
         st.download_button(
             llm_alert_section_t("export_notifications"),
             data=csv_notificacoes,
-            file_name=(
-                "inna_llm_notificacoes.csv"
-            ),
+            file_name=("inna_llm_notificacoes.csv"),
             mime="text/csv",
             use_container_width=True,
             key="llm_notification_download",
         )
 
-    st.markdown(
-        llm_alert_section_t("retry_section")
-    )
+    st.markdown(llm_alert_section_t("retry_section"))
 
     status_reenvio = {
         "falhou",
@@ -6621,72 +4984,32 @@ def render_alertas_llm_section(
     }
 
     notificacoes_reenvio = (
-        notificacoes_df.copy()
-        if notificacoes_df is not None
-        else None
+        notificacoes_df.copy() if notificacoes_df is not None else None
     )
 
-    if (
-        notificacoes_reenvio is None
-        or notificacoes_reenvio.empty
-    ):
-        st.info(
-            llm_alert_section_t(
-                "no_retry"
-            )
-        )
+    if notificacoes_reenvio is None or notificacoes_reenvio.empty:
+        st.info(llm_alert_section_t("no_retry"))
 
     else:
-        notificacoes_reenvio[
-            "status_entrega_normalizado"
-        ] = (
-            notificacoes_reenvio[
-                "status_entrega"
-            ]
-            .fillna("")
-            .astype(str)
-            .str.lower()
+        notificacoes_reenvio["status_entrega_normalizado"] = (
+            notificacoes_reenvio["status_entrega"].fillna("").astype(str).str.lower()
         )
 
-        notificacoes_reenvio = (
-            notificacoes_reenvio[
-                (
-                    notificacoes_reenvio[
-                        "status_entrega_normalizado"
-                    ].isin(status_reenvio)
-                )
-                & (
-                    notificacoes_reenvio[
-                        "tentativas"
-                    ].fillna(0).astype(int) < 3
-                )
-            ]
-        )
+        notificacoes_reenvio = notificacoes_reenvio[
+            (notificacoes_reenvio["status_entrega_normalizado"].isin(status_reenvio))
+            & (notificacoes_reenvio["tentativas"].fillna(0).astype(int) < 3)
+        ]
 
         if notificacoes_reenvio.empty:
-            st.success(
-                llm_alert_section_t(
-                    "no_failed_retry"
-                )
-            )
+            st.success(llm_alert_section_t("no_failed_retry"))
 
         else:
-            st.warning(
-                llm_alert_section_t(
-                    "retry_limit"
-                )
-            )
+            st.warning(llm_alert_section_t("retry_limit"))
 
-            for _, notificacao in (
-                notificacoes_reenvio.iterrows()
-            ):
-                notificacao_id = int(
-                    notificacao["id"]
-                )
+            for _, notificacao in notificacoes_reenvio.iterrows():
+                notificacao_id = int(notificacao["id"])
 
-                col_info, col_acao = st.columns(
-                    [4, 1]
-                )
+                col_info, col_acao = st.columns([4, 1])
 
                 with col_info:
                     st.write(
@@ -6707,38 +5030,21 @@ def render_alertas_llm_section(
 
                 with col_acao:
                     if st.button(
-                        llm_alert_section_t(
-                            "retry"
-                        ),
-                        key=(
-                            "retry_notification_"
-                            f"{notificacao_id}"
-                        ),
+                        llm_alert_section_t("retry"),
+                        key=(f"retry_notification_{notificacao_id}"),
                         use_container_width=True,
                     ):
-                        with st.spinner(
-                            llm_alert_section_t(
-                                "retrying"
-                            )
-                        ):
-                            resultado_reenvio = (
-                                reenviar_notificacao_email(
-                                    notificacao_id=(
-                                        notificacao_id
-                                    ),
-                                    max_tentativas=3,
-                                )
+                        with st.spinner(llm_alert_section_t("retrying")):
+                            resultado_reenvio = reenviar_notificacao_email(
+                                notificacao_id=(notificacao_id),
+                                max_tentativas=3,
                             )
 
-                        if resultado_reenvio.get(
-                            "ok"
-                        ):
+                        if resultado_reenvio.get("ok"):
                             st.success(
                                 resultado_reenvio.get(
                                     "message",
-                                    llm_alert_section_t(
-                                        "retry_success"
-                                    ),
+                                    llm_alert_section_t("retry_success"),
                                 )
                             )
                             st.rerun()
@@ -6747,15 +5053,11 @@ def render_alertas_llm_section(
                             st.error(
                                 resultado_reenvio.get(
                                     "message",
-                                    llm_alert_section_t(
-                                        "retry_failed"
-                                    ),
+                                    llm_alert_section_t("retry_failed"),
                                 )
                             )
 
-    st.markdown(
-        llm_alert_section_t("alerts_audit")
-    )
+    st.markdown(llm_alert_section_t("alerts_audit"))
 
     colunas = [
         "id",
@@ -6775,15 +5077,9 @@ def render_alertas_llm_section(
         "resolvido_por",
     ]
 
-    colunas = [
-        coluna
-        for coluna in colunas
-        if coluna in alertas.columns
-    ]
+    colunas = [coluna for coluna in colunas if coluna in alertas.columns]
 
-    tabela = alertas[
-        colunas
-    ].copy()
+    tabela = alertas[colunas].copy()
 
     tabela = tabela.rename(
         columns={
@@ -6813,24 +5109,16 @@ def render_alertas_llm_section(
             .str.lower()
             .map(
                 {
-                    "informativa": llm_alert_t(
-                        "informational"
-                    ),
+                    "informativa": llm_alert_t("informational"),
                     "baixa": llm_alert_t("low"),
                     "media": llm_alert_t("medium"),
                     "média": llm_alert_t("medium"),
                     "alta": llm_alert_t("high"),
-                    "critica": llm_alert_t(
-                        "critical"
-                    ),
-                    "crítica": llm_alert_t(
-                        "critical"
-                    ),
+                    "critica": llm_alert_t("critical"),
+                    "crítica": llm_alert_t("critical"),
                 }
             )
-            .fillna(
-                llm_alert_t("unclassified")
-            )
+            .fillna(llm_alert_t("unclassified"))
         )
 
     if "Status" in tabela.columns:
@@ -6842,26 +5130,16 @@ def render_alertas_llm_section(
             .map(
                 {
                     "aberto": llm_alert_t("open"),
-                    "resolvido": llm_alert_t(
-                        "resolved"
-                    ),
-                    "fechado": llm_alert_t(
-                        "closed"
-                    ),
-                    "cancelado": llm_alert_t(
-                        "cancelled"
-                    ),
+                    "resolvido": llm_alert_t("resolved"),
+                    "fechado": llm_alert_t("closed"),
+                    "cancelado": llm_alert_t("cancelled"),
                 }
             )
-            .fillna(
-                llm_alert_t("unknown")
-            )
+            .fillna(llm_alert_t("unknown"))
         )
 
     st.dataframe(
-        estilizar_tabela_alertas_llm(
-            tabela
-        ),
+        estilizar_tabela_alertas_llm(tabela),
         use_container_width=True,
         hide_index=True,
         height=420,
@@ -6941,9 +5219,7 @@ def render_alertas_llm_section(
 
     csv = tabela.to_csv(
         index=False,
-    ).encode(
-        "utf-8-sig"
-    )
+    ).encode("utf-8-sig")
 
     st.download_button(
         llm_alert_section_t("export_alerts"),
@@ -6991,8 +5267,7 @@ LLM_COST_PAGE_TEXTS = {
     "fr": {
         "title": "💰 Centre des coûts IA",
         "caption": (
-            "Jetons, coûts estimés, durée, modèles "
-            "et opérations des appels IA d’INNA."
+            "Jetons, coûts estimés, durée, modèles et opérations des appels IA d’INNA."
         ),
     },
     "de": {
@@ -7033,9 +5308,7 @@ LLM_COST_PAGE_TEXTS = {
         ),
     },
     "sa": {
-        "title": (
-            "💰 مركز تكاليف الذكاء الاصطناعي"
-        ),
+        "title": ("💰 مركز تكاليف الذكاء الاصطناعي"),
         "caption": (
             "الرموز والتكاليف التقديرية والمدة "
             "والنماذج والعمليات الخاصة باستدعاءات "
@@ -7044,9 +5317,7 @@ LLM_COST_PAGE_TEXTS = {
     },
 }
 
-LLM_COST_PAGE_TEXTS["ch"] = (
-    LLM_COST_PAGE_TEXTS["de"]
-)
+LLM_COST_PAGE_TEXTS["ch"] = LLM_COST_PAGE_TEXTS["de"]
 
 
 LLM_COST_PAGE_EXTRA_TEXTS = {
@@ -7060,10 +5331,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "event_limit": "Limite de eventos",
         "refresh": "🔄 Atualizar consumo",
         "load_error": "Não foi possível carregar o consumo.",
-        "no_events": (
-            "Nenhum evento de consumo de LLM foi "
-            "encontrado no período."
-        ),
+        "no_events": ("Nenhum evento de consumo de LLM foi encontrado no período."),
         "models": "Modelos",
         "operations": "Operações",
         "overview": "## Visão geral",
@@ -7097,8 +5365,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         ),
         "finops_recommendations": "Recomendações FinOps",
         "conversion_caption": (
-            "A conversão utiliza a cotação configurada de "
-            "R$ {rate:.4f} por US$ 1."
+            "A conversão utiliza a cotação configurada de R$ {rate:.4f} por US$ 1."
         ),
     },
     "en_us": {
@@ -7111,10 +5378,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "event_limit": "Event limit",
         "refresh": "🔄 Refresh consumption",
         "load_error": "Could not load consumption data.",
-        "no_events": (
-            "No LLM consumption event was found "
-            "for the selected period."
-        ),
+        "no_events": ("No LLM consumption event was found for the selected period."),
         "models": "Models",
         "operations": "Operations",
         "overview": "## Overview",
@@ -7132,8 +5396,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
             "cost remains zero."
         ),
         "slow_calls_warning": (
-            "{count} call(s) lasting 30 seconds or more "
-            "were found."
+            "{count} call(s) lasting 30 seconds or more were found."
         ),
         "finops_budget": "## 📊 FinOps and budget",
         "accumulated_cost": "Accumulated cost in BRL",
@@ -7143,13 +5406,11 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "budget_usage": "Budget usage",
         "estimated_balance": "Estimated balance",
         "projection_warning": (
-            "The end-of-month projection may exceed or approach "
-            "the budget."
+            "The end-of-month projection may exceed or approach the budget."
         ),
         "finops_recommendations": "FinOps recommendations",
         "conversion_caption": (
-            "Conversion uses the configured exchange rate of "
-            "R$ {rate:.4f} per US$ 1."
+            "Conversion uses the configured exchange rate of R$ {rate:.4f} per US$ 1."
         ),
     },
     "es": {
@@ -7163,8 +5424,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "refresh": "🔄 Actualizar consumo",
         "load_error": "No se pudo cargar el consumo.",
         "no_events": (
-            "No se encontraron eventos de consumo de LLM "
-            "en el período seleccionado."
+            "No se encontraron eventos de consumo de LLM en el período seleccionado."
         ),
         "models": "Modelos",
         "operations": "Operaciones",
@@ -7194,13 +5454,11 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "budget_usage": "Uso del presupuesto",
         "estimated_balance": "Saldo estimado",
         "projection_warning": (
-            "La proyección de fin de mes puede superar o "
-            "aproximarse al presupuesto."
+            "La proyección de fin de mes puede superar o aproximarse al presupuesto."
         ),
         "finops_recommendations": "Recomendaciones FinOps",
         "conversion_caption": (
-            "La conversión utiliza el tipo configurado de "
-            "R$ {rate:.4f} por US$ 1."
+            "La conversión utiliza el tipo configurado de R$ {rate:.4f} por US$ 1."
         ),
     },
     "fr": {
@@ -7245,13 +5503,11 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "budget_usage": "Utilisation du budget",
         "estimated_balance": "Solde estimé",
         "projection_warning": (
-            "La projection de fin de mois peut dépasser ou "
-            "approcher le budget."
+            "La projection de fin de mois peut dépasser ou approcher le budget."
         ),
         "finops_recommendations": "Recommandations FinOps",
         "conversion_caption": (
-            "La conversion utilise le taux configuré de "
-            "R$ {rate:.4f} pour US$ 1."
+            "La conversion utilise le taux configuré de R$ {rate:.4f} pour US$ 1."
         ),
     },
     "de": {
@@ -7296,8 +5552,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "budget_usage": "Budgetnutzung",
         "estimated_balance": "Geschätzter Saldo",
         "projection_warning": (
-            "Die Monatsendprognose kann das Budget überschreiten "
-            "oder sich ihm nähern."
+            "Die Monatsendprognose kann das Budget überschreiten oder sich ihm nähern."
         ),
         "finops_recommendations": "FinOps-Empfehlungen",
         "conversion_caption": (
@@ -7315,10 +5570,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "event_limit": "Limite eventi",
         "refresh": "🔄 Aggiorna consumo",
         "load_error": "Impossibile caricare i consumi.",
-        "no_events": (
-            "Nessun evento di consumo LLM trovato "
-            "nel periodo selezionato."
-        ),
+        "no_events": ("Nessun evento di consumo LLM trovato nel periodo selezionato."),
         "models": "Modelli",
         "operations": "Operazioni",
         "overview": "## Panoramica",
@@ -7347,13 +5599,11 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "budget_usage": "Utilizzo del budget",
         "estimated_balance": "Saldo stimato",
         "projection_warning": (
-            "La proiezione di fine mese può superare o "
-            "avvicinarsi al budget."
+            "La proiezione di fine mese può superare o avvicinarsi al budget."
         ),
         "finops_recommendations": "Raccomandazioni FinOps",
         "conversion_caption": (
-            "La conversione utilizza il cambio configurato di "
-            "R$ {rate:.4f} per US$ 1."
+            "La conversione utilizza il cambio configurato di R$ {rate:.4f} per US$ 1."
         ),
     },
     "ro": {
@@ -7367,8 +5617,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "refresh": "🔄 Actualizează consumul",
         "load_error": "Consumul nu a putut fi încărcat.",
         "no_events": (
-            "Nu a fost găsit niciun eveniment de consum LLM "
-            "în perioada selectată."
+            "Nu a fost găsit niciun eveniment de consum LLM în perioada selectată."
         ),
         "models": "Modele",
         "operations": "Operațiuni",
@@ -7387,8 +5636,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
             "rămâne zero."
         ),
         "slow_calls_warning": (
-            "Au fost găsite {count} apeluri cu durata de cel "
-            "puțin 30 de secunde."
+            "Au fost găsite {count} apeluri cu durata de cel puțin 30 de secunde."
         ),
         "finops_budget": "## 📊 FinOps și buget",
         "accumulated_cost": "Cost acumulat în BRL",
@@ -7403,8 +5651,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         ),
         "finops_recommendations": "Recomandări FinOps",
         "conversion_caption": (
-            "Conversia utilizează cursul configurat de "
-            "R$ {rate:.4f} pentru US$ 1."
+            "Conversia utilizează cursul configurat de R$ {rate:.4f} pentru US$ 1."
         ),
     },
     "ua": {
@@ -7417,10 +5664,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "event_limit": "Ліміт подій",
         "refresh": "🔄 Оновити споживання",
         "load_error": "Не вдалося завантажити споживання.",
-        "no_events": (
-            "За вибраний період не знайдено подій "
-            "споживання LLM."
-        ),
+        "no_events": ("За вибраний період не знайдено подій споживання LLM."),
         "models": "Моделі",
         "operations": "Операції",
         "overview": "## Огляд",
@@ -7438,8 +5682,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
             "нульовою."
         ),
         "slow_calls_warning": (
-            "Знайдено викликів тривалістю не менше "
-            "30 секунд: {count}."
+            "Знайдено викликів тривалістю не менше 30 секунд: {count}."
         ),
         "finops_budget": "## 📊 FinOps і бюджет",
         "accumulated_cost": "Накопичена вартість у BRL",
@@ -7449,13 +5692,11 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "budget_usage": "Використання бюджету",
         "estimated_balance": "Орієнтовний залишок",
         "projection_warning": (
-            "Прогноз на кінець місяця може перевищити "
-            "бюджет або наблизитися до нього."
+            "Прогноз на кінець місяця може перевищити бюджет або наблизитися до нього."
         ),
         "finops_recommendations": "Рекомендації FinOps",
         "conversion_caption": (
-            "Конвертація використовує налаштований курс "
-            "R$ {rate:.4f} за US$ 1."
+            "Конвертація використовує налаштований курс R$ {rate:.4f} за US$ 1."
         ),
     },
     "ru": {
@@ -7468,10 +5709,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "event_limit": "Лимит событий",
         "refresh": "🔄 Обновить потребление",
         "load_error": "Не удалось загрузить данные потребления.",
-        "no_events": (
-            "За выбранный период события потребления "
-            "LLM не найдены."
-        ),
+        "no_events": ("За выбранный период события потребления LLM не найдены."),
         "models": "Модели",
         "operations": "Операции",
         "overview": "## Обзор",
@@ -7489,8 +5727,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
             "остается нулевой."
         ),
         "slow_calls_warning": (
-            "Найдено вызовов длительностью не менее "
-            "30 секунд: {count}."
+            "Найдено вызовов длительностью не менее 30 секунд: {count}."
         ),
         "finops_budget": "## 📊 FinOps и бюджет",
         "accumulated_cost": "Накопленная стоимость в BRL",
@@ -7500,13 +5737,11 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "budget_usage": "Использование бюджета",
         "estimated_balance": "Расчетный остаток",
         "projection_warning": (
-            "Прогноз на конец месяца может превысить "
-            "бюджет или приблизиться к нему."
+            "Прогноз на конец месяца может превысить бюджет или приблизиться к нему."
         ),
         "finops_recommendations": "Рекомендации FinOps",
         "conversion_caption": (
-            "Конвертация использует настроенный курс "
-            "R$ {rate:.4f} за US$ 1."
+            "Конвертация использует настроенный курс R$ {rate:.4f} за US$ 1."
         ),
     },
     "sa": {
@@ -7519,10 +5754,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "event_limit": "حد الأحداث",
         "refresh": "🔄 تحديث الاستهلاك",
         "load_error": "تعذر تحميل بيانات الاستهلاك.",
-        "no_events": (
-            "لم يتم العثور على أحداث استهلاك LLM "
-            "في الفترة المحددة."
-        ),
+        "no_events": ("لم يتم العثور على أحداث استهلاك LLM في الفترة المحددة."),
         "models": "النماذج",
         "operations": "العمليات",
         "overview": "## نظرة عامة",
@@ -7539,8 +5771,7 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
             "الرموز والمدة، لكن التكلفة ما زالت صفرًا."
         ),
         "slow_calls_warning": (
-            "تم العثور على {count} استدعاء بمدة تساوي "
-            "أو تتجاوز 30 ثانية."
+            "تم العثور على {count} استدعاء بمدة تساوي أو تتجاوز 30 ثانية."
         ),
         "finops_budget": "## 📊 العمليات المالية والميزانية",
         "accumulated_cost": "التكلفة المتراكمة بعملة BRL",
@@ -7549,33 +5780,22 @@ LLM_COST_PAGE_EXTRA_TEXTS = {
         "monthly_budget": "الميزانية الشهرية",
         "budget_usage": "استخدام الميزانية",
         "estimated_balance": "الرصيد التقديري",
-        "projection_warning": (
-            "قد يتجاوز توقع نهاية الشهر الميزانية "
-            "أو يقترب منها."
-        ),
+        "projection_warning": ("قد يتجاوز توقع نهاية الشهر الميزانية أو يقترب منها."),
         "finops_recommendations": "توصيات FinOps",
         "conversion_caption": (
-            "يستخدم التحويل السعر المضبوط وهو "
-            "R$ {rate:.4f} لكل US$ 1."
+            "يستخدم التحويل السعر المضبوط وهو R$ {rate:.4f} لكل US$ 1."
         ),
     },
 }
 
-LLM_COST_PAGE_EXTRA_TEXTS["en_gb"] = (
-    LLM_COST_PAGE_EXTRA_TEXTS["en_us"]
-)
-LLM_COST_PAGE_EXTRA_TEXTS["ch"] = (
-    LLM_COST_PAGE_EXTRA_TEXTS["de"]
-)
+LLM_COST_PAGE_EXTRA_TEXTS["en_gb"] = LLM_COST_PAGE_EXTRA_TEXTS["en_us"]
+LLM_COST_PAGE_EXTRA_TEXTS["ch"] = LLM_COST_PAGE_EXTRA_TEXTS["de"]
 
-for language_key, extra_texts in (
-    LLM_COST_PAGE_EXTRA_TEXTS.items()
-):
+for language_key, extra_texts in LLM_COST_PAGE_EXTRA_TEXTS.items():
     LLM_COST_PAGE_TEXTS.setdefault(
         language_key,
         {},
     ).update(extra_texts)
-
 
 
 LLM_COST_PAGE_LOWER_TEXTS = {
@@ -7584,20 +5804,14 @@ LLM_COST_PAGE_LOWER_TEXTS = {
         "consumption_by_operation": "## Consumo por operação",
         "temporal_evolution": "## Evolução temporal",
         "tokens_per_hour": "### Tokens por hora",
-        "average_duration_per_hour": (
-            "### Duração média por hora"
-        ),
+        "average_duration_per_hour": ("### Duração média por hora"),
         "calls_audit": "## Auditoria das chamadas",
         "consumed_tokens": "Tokens consumidos",
-        "average_duration_seconds": (
-            "Duração média (s)"
-        ),
+        "average_duration_seconds": ("Duração média (s)"),
         "average_duration_hover": "Duração média",
         "operation_column": "Operação",
         "download_csv": "⬇️ Exportar consumo em CSV",
-        "telemetry_privacy": (
-            "🔒 Privacidade da telemetria"
-        ),
+        "telemetry_privacy": ("🔒 Privacidade da telemetria"),
         "telemetry_text": """
 A telemetria registra apenas informações técnicas:
 
@@ -7615,19 +5829,13 @@ não são armazenados nesta tabela.
     },
     "en_us": {
         "consumption_by_model": "## Consumption by model",
-        "consumption_by_operation": (
-            "## Consumption by operation"
-        ),
+        "consumption_by_operation": ("## Consumption by operation"),
         "temporal_evolution": "## Temporal evolution",
         "tokens_per_hour": "### Tokens per hour",
-        "average_duration_per_hour": (
-            "### Average duration per hour"
-        ),
+        "average_duration_per_hour": ("### Average duration per hour"),
         "calls_audit": "## Call audit",
         "consumed_tokens": "Consumed tokens",
-        "average_duration_seconds": (
-            "Average duration (s)"
-        ),
+        "average_duration_seconds": ("Average duration (s)"),
         "average_duration_hover": "Average duration",
         "operation_column": "Operation",
         "download_csv": "⬇️ Export consumption as CSV",
@@ -7649,25 +5857,17 @@ are not stored in this table.
     },
     "es": {
         "consumption_by_model": "## Consumo por modelo",
-        "consumption_by_operation": (
-            "## Consumo por operación"
-        ),
+        "consumption_by_operation": ("## Consumo por operación"),
         "temporal_evolution": "## Evolución temporal",
         "tokens_per_hour": "### Tokens por hora",
-        "average_duration_per_hour": (
-            "### Duración media por hora"
-        ),
+        "average_duration_per_hour": ("### Duración media por hora"),
         "calls_audit": "## Auditoría de llamadas",
         "consumed_tokens": "Tokens consumidos",
-        "average_duration_seconds": (
-            "Duración media (s)"
-        ),
+        "average_duration_seconds": ("Duración media (s)"),
         "average_duration_hover": "Duración media",
         "operation_column": "Operación",
         "download_csv": "⬇️ Exportar consumo en CSV",
-        "telemetry_privacy": (
-            "🔒 Privacidad de la telemetría"
-        ),
+        "telemetry_privacy": ("🔒 Privacidad de la telemetría"),
         "telemetry_text": """
 La telemetría registra únicamente información técnica:
 
@@ -7684,30 +5884,18 @@ no se almacenan en esta tabla.
 """,
     },
     "fr": {
-        "consumption_by_model": (
-            "## Consommation par modèle"
-        ),
-        "consumption_by_operation": (
-            "## Consommation par opération"
-        ),
+        "consumption_by_model": ("## Consommation par modèle"),
+        "consumption_by_operation": ("## Consommation par opération"),
         "temporal_evolution": "## Évolution temporelle",
         "tokens_per_hour": "### Jetons par heure",
-        "average_duration_per_hour": (
-            "### Durée moyenne par heure"
-        ),
+        "average_duration_per_hour": ("### Durée moyenne par heure"),
         "calls_audit": "## Audit des appels",
         "consumed_tokens": "Jetons consommés",
-        "average_duration_seconds": (
-            "Durée moyenne (s)"
-        ),
+        "average_duration_seconds": ("Durée moyenne (s)"),
         "average_duration_hover": "Durée moyenne",
         "operation_column": "Opération",
-        "download_csv": (
-            "⬇️ Exporter la consommation en CSV"
-        ),
-        "telemetry_privacy": (
-            "🔒 Confidentialité de la télémétrie"
-        ),
+        "download_csv": ("⬇️ Exporter la consommation en CSV"),
+        "telemetry_privacy": ("🔒 Confidentialité de la télémétrie"),
         "telemetry_text": """
 La télémétrie enregistre uniquement des informations techniques :
 
@@ -7724,32 +5912,18 @@ ne sont pas stockés dans ce tableau.
 """,
     },
     "de": {
-        "consumption_by_model": (
-            "## Verbrauch nach Modell"
-        ),
-        "consumption_by_operation": (
-            "## Verbrauch nach Vorgang"
-        ),
+        "consumption_by_model": ("## Verbrauch nach Modell"),
+        "consumption_by_operation": ("## Verbrauch nach Vorgang"),
         "temporal_evolution": "## Zeitliche Entwicklung",
         "tokens_per_hour": "### Token pro Stunde",
-        "average_duration_per_hour": (
-            "### Durchschnittliche Dauer pro Stunde"
-        ),
+        "average_duration_per_hour": ("### Durchschnittliche Dauer pro Stunde"),
         "calls_audit": "## Aufrufprüfung",
         "consumed_tokens": "Verbrauchte Token",
-        "average_duration_seconds": (
-            "Durchschnittliche Dauer (s)"
-        ),
-        "average_duration_hover": (
-            "Durchschnittliche Dauer"
-        ),
+        "average_duration_seconds": ("Durchschnittliche Dauer (s)"),
+        "average_duration_hover": ("Durchschnittliche Dauer"),
         "operation_column": "Vorgang",
-        "download_csv": (
-            "⬇️ Verbrauch als CSV exportieren"
-        ),
-        "telemetry_privacy": (
-            "🔒 Datenschutz der Telemetrie"
-        ),
+        "download_csv": ("⬇️ Verbrauch als CSV exportieren"),
+        "telemetry_privacy": ("🔒 Datenschutz der Telemetrie"),
         "telemetry_text": """
 Die Telemetrie erfasst ausschließlich technische Informationen:
 
@@ -7766,30 +5940,18 @@ werden nicht in dieser Tabelle gespeichert.
 """,
     },
     "it": {
-        "consumption_by_model": (
-            "## Consumo per modello"
-        ),
-        "consumption_by_operation": (
-            "## Consumo per operazione"
-        ),
+        "consumption_by_model": ("## Consumo per modello"),
+        "consumption_by_operation": ("## Consumo per operazione"),
         "temporal_evolution": "## Evoluzione temporale",
         "tokens_per_hour": "### Token per ora",
-        "average_duration_per_hour": (
-            "### Durata media per ora"
-        ),
+        "average_duration_per_hour": ("### Durata media per ora"),
         "calls_audit": "## Audit delle chiamate",
         "consumed_tokens": "Token consumati",
-        "average_duration_seconds": (
-            "Durata media (s)"
-        ),
+        "average_duration_seconds": ("Durata media (s)"),
         "average_duration_hover": "Durata media",
         "operation_column": "Operazione",
-        "download_csv": (
-            "⬇️ Esporta il consumo in CSV"
-        ),
-        "telemetry_privacy": (
-            "🔒 Privacy della telemetria"
-        ),
+        "download_csv": ("⬇️ Esporta il consumo in CSV"),
+        "telemetry_privacy": ("🔒 Privacy della telemetria"),
         "telemetry_text": """
 La telemetria registra solo informazioni tecniche:
 
@@ -7806,28 +5968,18 @@ non vengono memorizzati in questa tabella.
 """,
     },
     "ro": {
-        "consumption_by_model": (
-            "## Consum pe model"
-        ),
-        "consumption_by_operation": (
-            "## Consum pe operațiune"
-        ),
+        "consumption_by_model": ("## Consum pe model"),
+        "consumption_by_operation": ("## Consum pe operațiune"),
         "temporal_evolution": "## Evoluție temporală",
         "tokens_per_hour": "### Tokenuri pe oră",
-        "average_duration_per_hour": (
-            "### Durată medie pe oră"
-        ),
+        "average_duration_per_hour": ("### Durată medie pe oră"),
         "calls_audit": "## Auditul apelurilor",
         "consumed_tokens": "Tokenuri consumate",
-        "average_duration_seconds": (
-            "Durată medie (s)"
-        ),
+        "average_duration_seconds": ("Durată medie (s)"),
         "average_duration_hover": "Durată medie",
         "operation_column": "Operațiune",
         "download_csv": "⬇️ Exportă consumul în CSV",
-        "telemetry_privacy": (
-            "🔒 Confidențialitatea telemetriei"
-        ),
+        "telemetry_privacy": ("🔒 Confidențialitatea telemetriei"),
         "telemetry_text": """
 Telemetria înregistrează numai informații tehnice:
 
@@ -7844,32 +5996,18 @@ nu sunt stocate în acest tabel.
 """,
     },
     "ua": {
-        "consumption_by_model": (
-            "## Споживання за моделлю"
-        ),
-        "consumption_by_operation": (
-            "## Споживання за операцією"
-        ),
+        "consumption_by_model": ("## Споживання за моделлю"),
+        "consumption_by_operation": ("## Споживання за операцією"),
         "temporal_evolution": "## Часова динаміка",
         "tokens_per_hour": "### Токени за годину",
-        "average_duration_per_hour": (
-            "### Середня тривалість за годину"
-        ),
+        "average_duration_per_hour": ("### Середня тривалість за годину"),
         "calls_audit": "## Аудит викликів",
         "consumed_tokens": "Використані токени",
-        "average_duration_seconds": (
-            "Середня тривалість (с)"
-        ),
-        "average_duration_hover": (
-            "Середня тривалість"
-        ),
+        "average_duration_seconds": ("Середня тривалість (с)"),
+        "average_duration_hover": ("Середня тривалість"),
         "operation_column": "Операція",
-        "download_csv": (
-            "⬇️ Експортувати споживання у CSV"
-        ),
-        "telemetry_privacy": (
-            "🔒 Конфіденційність телеметрії"
-        ),
+        "download_csv": ("⬇️ Експортувати споживання у CSV"),
+        "telemetry_privacy": ("🔒 Конфіденційність телеметрії"),
         "telemetry_text": """
 Телеметрія записує лише технічну інформацію:
 
@@ -7886,32 +6024,18 @@ nu sunt stocate în acest tabel.
 """,
     },
     "ru": {
-        "consumption_by_model": (
-            "## Потребление по моделям"
-        ),
-        "consumption_by_operation": (
-            "## Потребление по операциям"
-        ),
+        "consumption_by_model": ("## Потребление по моделям"),
+        "consumption_by_operation": ("## Потребление по операциям"),
         "temporal_evolution": "## Динамика во времени",
         "tokens_per_hour": "### Токены по часам",
-        "average_duration_per_hour": (
-            "### Средняя длительность по часам"
-        ),
+        "average_duration_per_hour": ("### Средняя длительность по часам"),
         "calls_audit": "## Аудит вызовов",
         "consumed_tokens": "Использованные токены",
-        "average_duration_seconds": (
-            "Средняя длительность (с)"
-        ),
-        "average_duration_hover": (
-            "Средняя длительность"
-        ),
+        "average_duration_seconds": ("Средняя длительность (с)"),
+        "average_duration_hover": ("Средняя длительность"),
         "operation_column": "Операция",
-        "download_csv": (
-            "⬇️ Экспортировать потребление в CSV"
-        ),
-        "telemetry_privacy": (
-            "🔒 Конфиденциальность телеметрии"
-        ),
+        "download_csv": ("⬇️ Экспортировать потребление в CSV"),
+        "telemetry_privacy": ("🔒 Конфиденциальность телеметрии"),
         "telemetry_text": """
 Телеметрия записывает только техническую информацию:
 
@@ -7928,30 +6052,18 @@ nu sunt stocate în acest tabel.
 """,
     },
     "sa": {
-        "consumption_by_model": (
-            "## الاستهلاك حسب النموذج"
-        ),
-        "consumption_by_operation": (
-            "## الاستهلاك حسب العملية"
-        ),
+        "consumption_by_model": ("## الاستهلاك حسب النموذج"),
+        "consumption_by_operation": ("## الاستهلاك حسب العملية"),
         "temporal_evolution": "## التطور الزمني",
         "tokens_per_hour": "### الرموز لكل ساعة",
-        "average_duration_per_hour": (
-            "### متوسط المدة لكل ساعة"
-        ),
+        "average_duration_per_hour": ("### متوسط المدة لكل ساعة"),
         "calls_audit": "## تدقيق الاستدعاءات",
         "consumed_tokens": "الرموز المستهلكة",
-        "average_duration_seconds": (
-            "متوسط المدة (ث)"
-        ),
+        "average_duration_seconds": ("متوسط المدة (ث)"),
         "average_duration_hover": "متوسط المدة",
         "operation_column": "العملية",
-        "download_csv": (
-            "⬇️ تصدير الاستهلاك بصيغة CSV"
-        ),
-        "telemetry_privacy": (
-            "🔒 خصوصية القياس عن بعد"
-        ),
+        "download_csv": ("⬇️ تصدير الاستهلاك بصيغة CSV"),
+        "telemetry_privacy": ("🔒 خصوصية القياس عن بعد"),
         "telemetry_text": """
 يسجل القياس عن بعد المعلومات التقنية فقط:
 
@@ -7969,17 +6081,11 @@ nu sunt stocate în acest tabel.
     },
 }
 
-LLM_COST_PAGE_LOWER_TEXTS["en_gb"] = (
-    LLM_COST_PAGE_LOWER_TEXTS["en_us"]
-)
+LLM_COST_PAGE_LOWER_TEXTS["en_gb"] = LLM_COST_PAGE_LOWER_TEXTS["en_us"]
 
-LLM_COST_PAGE_LOWER_TEXTS["ch"] = (
-    LLM_COST_PAGE_LOWER_TEXTS["de"]
-)
+LLM_COST_PAGE_LOWER_TEXTS["ch"] = LLM_COST_PAGE_LOWER_TEXTS["de"]
 
-for language_key, lower_texts in (
-    LLM_COST_PAGE_LOWER_TEXTS.items()
-):
+for language_key, lower_texts in LLM_COST_PAGE_LOWER_TEXTS.items():
     LLM_COST_PAGE_TEXTS.setdefault(
         language_key,
         {},
@@ -8000,13 +6106,9 @@ LLM_ALERT_SECTION_DYNAMIC_TEXTS["it"].update(
 )
 
 # O código ch continua seguindo o alemão do projeto.
-LLM_ALERT_SECTION_TEXTS["ch"] = dict(
-    LLM_ALERT_SECTION_TEXTS["de"]
-)
+LLM_ALERT_SECTION_TEXTS["ch"] = dict(LLM_ALERT_SECTION_TEXTS["de"])
 
-LLM_ALERT_SECTION_DYNAMIC_TEXTS["ch"] = dict(
-    LLM_ALERT_SECTION_DYNAMIC_TEXTS["de"]
-)
+LLM_ALERT_SECTION_DYNAMIC_TEXTS["ch"] = dict(LLM_ALERT_SECTION_DYNAMIC_TEXTS["de"])
 
 
 def llm_cost_page_t(
@@ -8038,19 +6140,11 @@ def render_llm_costs_page() -> None:
             carregar_consumo_llm,
         )
 
-    st.title(
-        llm_cost_page_t("title")
-    )
+    st.title(llm_cost_page_t("title"))
 
-    st.caption(
-        llm_cost_page_t("caption")
-    )
+    st.caption(llm_cost_page_t("caption"))
 
-    controle_1, controle_2, controle_3 = (
-        st.columns(
-            [1, 1, 2]
-        )
-    )
+    controle_1, controle_2, controle_3 = st.columns([1, 1, 2])
 
     period_keys = [
         "period_1_day",
@@ -8113,31 +6207,15 @@ def render_llm_costs_page() -> None:
         )
         return
 
-    base = preparar_consumo_exibicao(
-        resultado.get("df")
-    )
+    base = preparar_consumo_exibicao(resultado.get("df"))
 
     if base.empty:
-        st.info(
-            llm_cost_page_t("no_events")
-        )
+        st.info(llm_cost_page_t("no_events"))
         return
 
-    modelos = sorted(
-        base["modelo"]
-        .dropna()
-        .astype(str)
-        .unique()
-        .tolist()
-    )
+    modelos = sorted(base["modelo"].dropna().astype(str).unique().tolist())
 
-    operacoes = sorted(
-        base["operacao"]
-        .dropna()
-        .astype(str)
-        .unique()
-        .tolist()
-    )
+    operacoes = sorted(base["operacao"].dropna().astype(str).unique().tolist())
 
     filtro_1, filtro_2 = st.columns(2)
 
@@ -8156,21 +6234,13 @@ def render_llm_costs_page() -> None:
     )
 
     filtrado = base[
-        base["modelo"].isin(
-            modelos_escolhidos
-        )
-        & base["operacao"].isin(
-            operacoes_escolhidas
-        )
+        base["modelo"].isin(modelos_escolhidos)
+        & base["operacao"].isin(operacoes_escolhidas)
     ].copy()
 
-    resumo = resumir_consumo_llm(
-        filtrado
-    )
+    resumo = resumir_consumo_llm(filtrado)
 
-    st.markdown(
-        llm_cost_page_t("overview")
-    )
+    st.markdown(llm_cost_page_t("overview"))
 
     linha_1 = st.columns(5)
 
@@ -8205,10 +6275,7 @@ def render_llm_costs_page() -> None:
 
     linha_1[4].metric(
         llm_cost_page_t("estimated_cost"),
-        (
-            f"US$ "
-            f"{resumo['custo_total_usd']:.6f}"
-        ),
+        (f"US$ {resumo['custo_total_usd']:.6f}"),
     )
 
     linha_2 = st.columns(4)
@@ -8220,24 +6287,15 @@ def render_llm_costs_page() -> None:
 
     linha_2[1].metric(
         llm_cost_page_t("average_duration"),
-        (
-            f"{resumo['duracao_media_ms'] / 1000:.2f} s"
-        ),
+        (f"{resumo['duracao_media_ms'] / 1000:.2f} s"),
     )
 
     linha_2[2].metric(
         "P95",
-        (
-            f"{resumo['duracao_p95_ms'] / 1000:.2f} s"
-        ),
+        (f"{resumo['duracao_p95_ms'] / 1000:.2f} s"),
     )
 
-    chamadas_lentas = int(
-        (
-            filtrado["duracao_ms"]
-            >= 30000
-        ).sum()
-    )
+    chamadas_lentas = int((filtrado["duracao_ms"] >= 30000).sum())
 
     linha_2[3].metric(
         llm_cost_page_t("slow_calls"),
@@ -8245,25 +6303,13 @@ def render_llm_costs_page() -> None:
     )
 
     if resumo["custo_total_usd"] == 0:
-        st.warning(
-            llm_cost_page_t(
-                "prices_not_configured"
-            )
-        )
+        st.warning(llm_cost_page_t("prices_not_configured"))
 
     if chamadas_lentas > 0:
-        st.warning(
-            llm_cost_page_t(
-                "slow_calls_warning"
-            ).format(
-                count=chamadas_lentas
-            )
-        )
+        st.warning(llm_cost_page_t("slow_calls_warning").format(count=chamadas_lentas))
 
     st.divider()
-    st.markdown(
-        llm_cost_page_t("finops_budget")
-    )
+    st.markdown(llm_cost_page_t("finops_budget"))
 
     try:
         from observability.llm_finops import (
@@ -8274,76 +6320,50 @@ def render_llm_costs_page() -> None:
             analisar_finops_llm,
         )
 
-    finops = analisar_finops_llm(
-        filtrado
-    )
+    finops = analisar_finops_llm(filtrado)
 
-    config_finops = finops[
-        "configuracao"
-    ]
+    config_finops = finops["configuracao"]
 
-    situacao = finops[
-        "situacao_orcamento"
-    ]
+    situacao = finops["situacao_orcamento"]
 
-    situacao_projecao = finops[
-        "situacao_projecao"
-    ]
+    situacao_projecao = finops["situacao_projecao"]
 
     finops_cols = st.columns(5)
 
     finops_cols[0].metric(
         llm_cost_page_t("accumulated_cost"),
-        (
-            f"R$ "
-            f"{finops['custo_acumulado_brl']:.4f}"
-        ),
+        (f"R$ {finops['custo_acumulado_brl']:.4f}"),
     )
 
     finops_cols[1].metric(
         llm_cost_page_t("average_cost_call"),
-        (
-            f"R$ "
-            f"{finops['custo_medio_chamada_brl']:.4f}"
-        ),
+        (f"R$ {finops['custo_medio_chamada_brl']:.4f}"),
     )
 
     finops_cols[2].metric(
         llm_cost_page_t("monthly_projection"),
-        (
-            f"R$ "
-            f"{finops['projecao_mensal_brl']:.2f}"
-        ),
+        (f"R$ {finops['projecao_mensal_brl']:.2f}"),
     )
 
     finops_cols[3].metric(
         llm_cost_page_t("monthly_budget"),
-        (
-            f"R$ "
-            f"{config_finops['orcamento_mensal_brl']:.2f}"
-        ),
+        (f"R$ {config_finops['orcamento_mensal_brl']:.2f}"),
     )
 
     finops_cols[4].metric(
         llm_cost_page_t("budget_usage"),
-        (
-            f"{situacao['percentual_utilizado']:.2f}%"
-        ),
+        (f"{situacao['percentual_utilizado']:.2f}%"),
     )
 
     percentual_barra = max(
         0.0,
         min(
-            situacao[
-                "percentual_utilizado"
-            ] / 100,
+            situacao["percentual_utilizado"] / 100,
             1.0,
         ),
     )
 
-    st.progress(
-        percentual_barra
-    )
+    st.progress(percentual_barra)
 
     mensagem_orcamento = (
         f"{situacao['icone']} "
@@ -8356,50 +6376,30 @@ def render_llm_costs_page() -> None:
         "critico",
         "excedido",
     }:
-        st.error(
-            mensagem_orcamento
-        )
+        st.error(mensagem_orcamento)
 
     elif situacao["status"] == "alerta":
-        st.warning(
-            mensagem_orcamento
-        )
+        st.warning(mensagem_orcamento)
 
     else:
-        st.success(
-            mensagem_orcamento
-        )
+        st.success(mensagem_orcamento)
 
     if situacao_projecao["status"] in {
         "critico",
         "excedido",
     }:
-        st.warning(
-            llm_cost_page_t(
-                "projection_warning"
-            )
-        )
+        st.warning(llm_cost_page_t("projection_warning"))
 
     with st.expander(
-        llm_cost_page_t(
-            "finops_recommendations"
-        ),
+        llm_cost_page_t("finops_recommendations"),
         expanded=False,
     ):
-        for recomendacao in finops[
-            "recomendacoes"
-        ]:
-            st.markdown(
-                f"- {recomendacao}"
-            )
+        for recomendacao in finops["recomendacoes"]:
+            st.markdown(f"- {recomendacao}")
 
         st.caption(
-            llm_cost_page_t(
-                "conversion_caption"
-            ).format(
-                rate=config_finops[
-                    "cotacao_usd_brl"
-                ]
+            llm_cost_page_t("conversion_caption").format(
+                rate=config_finops["cotacao_usd_brl"]
             )
         )
 
@@ -8409,47 +6409,31 @@ def render_llm_costs_page() -> None:
     )
 
     st.divider()
-    st.markdown(
-        llm_cost_page_t(
-            "consumption_by_model"
-        )
+    st.markdown(llm_cost_page_t("consumption_by_model"))
+
+    por_modelo = filtrado.groupby(
+        "modelo",
+        as_index=False,
+    ).agg(
+        Chamadas=("id", "count"),
+        Tokens=("tokens_totais", "sum"),
+        Custo_USD=(
+            "custo_total_usd",
+            "sum",
+        ),
+        Duracao_media_ms=(
+            "duracao_ms",
+            "mean",
+        ),
     )
 
-    por_modelo = (
-        filtrado.groupby(
-            "modelo",
-            as_index=False,
-        )
-        .agg(
-            Chamadas=("id", "count"),
-            Tokens=("tokens_totais", "sum"),
-            Custo_USD=(
-                "custo_total_usd",
-                "sum",
-            ),
-            Duracao_media_ms=(
-                "duracao_ms",
-                "mean",
-            ),
-        )
-    )
-
-    por_modelo[
-        "Duração média (s)"
-    ] = (
-        por_modelo[
-            "Duracao_media_ms"
-        ]
-        / 1000
-    ).round(2)
+    por_modelo["Duração média (s)"] = (por_modelo["Duracao_media_ms"] / 1000).round(2)
 
     coluna_modelo = llm_table_t("model")
     coluna_chamadas = llm_table_t("calls")
     coluna_tokens = llm_table_t("tokens")
     coluna_custo = llm_table_t("cost_usd")
-    coluna_duracao = llm_table_t(
-        "avg_duration"
-    )
+    coluna_duracao = llm_table_t("avg_duration")
 
     tabela_modelos = (
         por_modelo[
@@ -8471,18 +6455,14 @@ def render_llm_costs_page() -> None:
                 "Chamadas": coluna_chamadas,
                 "Tokens": coluna_tokens,
                 "Custo_USD": coluna_custo,
-                "Duração média (s)": (
-                    coluna_duracao
-                ),
+                "Duração média (s)": (coluna_duracao),
             }
         )
         .reset_index(drop=True)
     )
 
     st.dataframe(
-        estilizar_tabela_llm_costs(
-            tabela_modelos
-        ),
+        estilizar_tabela_llm_costs(tabela_modelos),
         use_container_width=True,
         hide_index=True,
         height=300,
@@ -8490,18 +6470,14 @@ def render_llm_costs_page() -> None:
             coluna_modelo: (
                 st.column_config.TextColumn(
                     coluna_modelo,
-                    help=llm_table_t(
-                        "model_help"
-                    ),
+                    help=llm_table_t("model_help"),
                     width="large",
                 )
             ),
             coluna_chamadas: (
                 st.column_config.NumberColumn(
                     coluna_chamadas,
-                    help=llm_table_t(
-                        "calls_help"
-                    ),
+                    help=llm_table_t("calls_help"),
                     format="%d",
                     width="small",
                 )
@@ -8509,16 +6485,10 @@ def render_llm_costs_page() -> None:
             coluna_tokens: (
                 st.column_config.ProgressColumn(
                     coluna_tokens,
-                    help=llm_table_t(
-                        "tokens_help"
-                    ),
+                    help=llm_table_t("tokens_help"),
                     min_value=0,
                     max_value=max(
-                        int(
-                            tabela_modelos[
-                                coluna_tokens
-                            ].max()
-                        ),
+                        int(tabela_modelos[coluna_tokens].max()),
                         1,
                     ),
                     format="%d",
@@ -8528,9 +6498,7 @@ def render_llm_costs_page() -> None:
             coluna_custo: (
                 st.column_config.NumberColumn(
                     coluna_custo,
-                    help=llm_table_t(
-                        "cost_help"
-                    ),
+                    help=llm_table_t("cost_help"),
                     format="US$ %.6f",
                     width="medium",
                 )
@@ -8538,9 +6506,7 @@ def render_llm_costs_page() -> None:
             coluna_duracao: (
                 st.column_config.NumberColumn(
                     coluna_duracao,
-                    help=llm_table_t(
-                        "duration_help"
-                    ),
+                    help=llm_table_t("duration_help"),
                     format="%.2f s",
                     width="medium",
                 )
@@ -8572,17 +6538,11 @@ def render_llm_costs_page() -> None:
         textposition="outside",
         cliponaxis=False,
         marker_line_width=0,
-        hovertemplate=(
-            "<b>%{y}</b><br>"
-            "Tokens: %{x:,.0f}"
-            "<extra></extra>"
-        ),
+        hovertemplate=("<b>%{y}</b><br>Tokens: %{x:,.0f}<extra></extra>"),
     )
 
     fig_modelos.update_layout(
-        xaxis_title=llm_cost_page_t(
-            "consumed_tokens"
-        ),
+        xaxis_title=llm_cost_page_t("consumed_tokens"),
         yaxis_title=None,
         coloraxis_showscale=False,
         showlegend=False,
@@ -8603,47 +6563,33 @@ def render_llm_costs_page() -> None:
         },
     )
 
-    st.markdown(
-        llm_cost_page_t(
-            "consumption_by_operation"
-        )
+    st.markdown(llm_cost_page_t("consumption_by_operation"))
+
+    por_operacao = filtrado.groupby(
+        "operacao",
+        as_index=False,
+    ).agg(
+        Chamadas=("id", "count"),
+        Tokens=("tokens_totais", "sum"),
+        Custo_USD=(
+            "custo_total_usd",
+            "sum",
+        ),
+        Duracao_media_ms=(
+            "duracao_ms",
+            "mean",
+        ),
     )
 
-    por_operacao = (
-        filtrado.groupby(
-            "operacao",
-            as_index=False,
-        )
-        .agg(
-            Chamadas=("id", "count"),
-            Tokens=("tokens_totais", "sum"),
-            Custo_USD=(
-                "custo_total_usd",
-                "sum",
-            ),
-            Duracao_media_ms=(
-                "duracao_ms",
-                "mean",
-            ),
-        )
+    por_operacao["Duração média (s)"] = (por_operacao["Duracao_media_ms"] / 1000).round(
+        2
     )
-
-    por_operacao[
-        "Duração média (s)"
-    ] = (
-        por_operacao[
-            "Duracao_media_ms"
-        ]
-        / 1000
-    ).round(2)
 
     coluna_operacao = llm_table_t("operation")
     coluna_chamadas = llm_table_t("calls")
     coluna_tokens = llm_table_t("tokens")
     coluna_custo = llm_table_t("cost_usd")
-    coluna_duracao = llm_table_t(
-        "avg_duration"
-    )
+    coluna_duracao = llm_table_t("avg_duration")
 
     tabela_operacoes = (
         por_operacao[
@@ -8665,18 +6611,14 @@ def render_llm_costs_page() -> None:
                 "Chamadas": coluna_chamadas,
                 "Tokens": coluna_tokens,
                 "Custo_USD": coluna_custo,
-                "Duração média (s)": (
-                    coluna_duracao
-                ),
+                "Duração média (s)": (coluna_duracao),
             }
         )
         .reset_index(drop=True)
     )
 
     st.dataframe(
-        estilizar_tabela_llm_costs(
-            tabela_operacoes
-        ),
+        estilizar_tabela_llm_costs(tabela_operacoes),
         use_container_width=True,
         hide_index=True,
         height=330,
@@ -8684,18 +6626,14 @@ def render_llm_costs_page() -> None:
             coluna_operacao: (
                 st.column_config.TextColumn(
                     coluna_operacao,
-                    help=llm_table_t(
-                        "operation_help"
-                    ),
+                    help=llm_table_t("operation_help"),
                     width="large",
                 )
             ),
             coluna_chamadas: (
                 st.column_config.NumberColumn(
                     coluna_chamadas,
-                    help=llm_table_t(
-                        "calls_help"
-                    ),
+                    help=llm_table_t("calls_help"),
                     format="%d",
                     width="small",
                 )
@@ -8703,16 +6641,10 @@ def render_llm_costs_page() -> None:
             coluna_tokens: (
                 st.column_config.ProgressColumn(
                     coluna_tokens,
-                    help=llm_table_t(
-                        "tokens_help"
-                    ),
+                    help=llm_table_t("tokens_help"),
                     min_value=0,
                     max_value=max(
-                        int(
-                            tabela_operacoes[
-                                coluna_tokens
-                            ].max()
-                        ),
+                        int(tabela_operacoes[coluna_tokens].max()),
                         1,
                     ),
                     format="%d",
@@ -8722,9 +6654,7 @@ def render_llm_costs_page() -> None:
             coluna_custo: (
                 st.column_config.NumberColumn(
                     coluna_custo,
-                    help=llm_table_t(
-                        "cost_help"
-                    ),
+                    help=llm_table_t("cost_help"),
                     format="US$ %.6f",
                     width="medium",
                 )
@@ -8732,9 +6662,7 @@ def render_llm_costs_page() -> None:
             coluna_duracao: (
                 st.column_config.NumberColumn(
                     coluna_duracao,
-                    help=llm_table_t(
-                        "duration_help"
-                    ),
+                    help=llm_table_t("duration_help"),
                     format="%.2f s",
                     width="medium",
                 )
@@ -8743,18 +6671,11 @@ def render_llm_costs_page() -> None:
     )
 
     st.divider()
-    st.markdown(
-        llm_cost_page_t(
-            "temporal_evolution"
-        )
-    )
+    st.markdown(llm_cost_page_t("temporal_evolution"))
 
     temporal = filtrado.copy()
 
-    temporal["data"] = (
-        temporal["criado_em"]
-        .dt.floor("h")
-    )
+    temporal["data"] = temporal["criado_em"].dt.floor("h")
 
     serie_tokens = (
         temporal.groupby(
@@ -8771,11 +6692,7 @@ def render_llm_costs_page() -> None:
         .set_index("Data")
     )
 
-    st.markdown(
-        llm_cost_page_t(
-            "tokens_per_hour"
-        )
-    )
+    st.markdown(llm_cost_page_t("tokens_per_hour"))
 
     fig_tokens = px.line(
         serie_tokens.reset_index(),
@@ -8802,9 +6719,7 @@ def render_llm_costs_page() -> None:
         fill="tozeroy",
         fillcolor="rgba(56, 189, 248, 0.16)",
         hovertemplate=(
-            "<b>%{x|%d/%m/%Y %H:%M}</b><br>"
-            "Tokens: %{y:,.0f}"
-            "<extra></extra>"
+            "<b>%{x|%d/%m/%Y %H:%M}</b><br>Tokens: %{y:,.0f}<extra></extra>"
         ),
     )
 
@@ -8830,22 +6745,12 @@ def render_llm_costs_page() -> None:
         },
     )
 
-    serie_duracao = (
-        temporal.groupby(
-            "data",
-            as_index=False,
-        )["duracao_ms"]
-        .mean()
-    )
+    serie_duracao = temporal.groupby(
+        "data",
+        as_index=False,
+    )["duracao_ms"].mean()
 
-    serie_duracao[
-        "Duração média (s)"
-    ] = (
-        serie_duracao[
-            "duracao_ms"
-        ]
-        / 1000
-    )
+    serie_duracao["Duração média (s)"] = serie_duracao["duracao_ms"] / 1000
 
     serie_duracao = (
         serie_duracao[
@@ -8862,11 +6767,7 @@ def render_llm_costs_page() -> None:
         .set_index("Data")
     )
 
-    st.markdown(
-        llm_cost_page_t(
-            "average_duration_per_hour"
-        )
-    )
+    st.markdown(llm_cost_page_t("average_duration_per_hour"))
 
     fig_duracao = px.line(
         serie_duracao.reset_index(),
@@ -8900,9 +6801,7 @@ def render_llm_costs_page() -> None:
 
     fig_duracao.update_layout(
         xaxis_title=None,
-        yaxis_title=llm_cost_page_t(
-            "average_duration_seconds"
-        ),
+        yaxis_title=llm_cost_page_t("average_duration_seconds"),
         showlegend=False,
         hovermode="x unified",
     )
@@ -8927,11 +6826,7 @@ def render_llm_costs_page() -> None:
     )
 
     st.divider()
-    st.markdown(
-        llm_cost_page_t(
-            "calls_audit"
-        )
-    )
+    st.markdown(llm_cost_page_t("calls_audit"))
 
     tabela = filtrado[
         [
@@ -8953,16 +6848,9 @@ def render_llm_costs_page() -> None:
         ]
     ].copy()
 
-    tabela[
-        "duracao_segundos"
-    ] = (
-        tabela["duracao_ms"]
-        / 1000
-    ).round(3)
+    tabela["duracao_segundos"] = (tabela["duracao_ms"] / 1000).round(3)
 
-    tabela = tabela.drop(
-        columns=["duracao_ms"]
-    ).sort_values(
+    tabela = tabela.drop(columns=["duracao_ms"]).sort_values(
         "criado_em",
         ascending=False,
     )
@@ -8987,31 +6875,31 @@ def render_llm_costs_page() -> None:
         }
     )
 
-    tabela["Sucesso"] = tabela[
-        "Sucesso"
-    ].map(
-        {
-            True: llm_detail_t("success"),
-            False: llm_detail_t("failure"),
-        }
-    ).fillna(
-        llm_detail_t("no_data")
+    tabela["Sucesso"] = (
+        tabela["Sucesso"]
+        .map(
+            {
+                True: llm_detail_t("success"),
+                False: llm_detail_t("failure"),
+            }
+        )
+        .fillna(llm_detail_t("no_data"))
     )
 
-    tabela["Tipo do erro"] = tabela[
-        "Tipo do erro"
-    ].fillna("—").replace(
-        {
-            "": "—",
-            "None": "—",
-            "nan": "—",
-        }
+    tabela["Tipo do erro"] = (
+        tabela["Tipo do erro"]
+        .fillna("—")
+        .replace(
+            {
+                "": "—",
+                "None": "—",
+                "nan": "—",
+            }
+        )
     )
 
     st.dataframe(
-        estilizar_tabela_detalhada_llm(
-            tabela
-        ),
+        estilizar_tabela_detalhada_llm(tabela),
         use_container_width=True,
         hide_index=True,
         height=460,
@@ -9033,9 +6921,7 @@ def render_llm_costs_page() -> None:
             "Provider": (
                 st.column_config.TextColumn(
                     llm_detail_t("provider"),
-                    help=llm_detail_t(
-                        "provider_help"
-                    ),
+                    help=llm_detail_t("provider_help"),
                     width="medium",
                 )
             ),
@@ -9047,9 +6933,7 @@ def render_llm_costs_page() -> None:
             ),
             "Operação": (
                 st.column_config.TextColumn(
-                    llm_cost_page_t(
-                        "operation_column"
-                    ),
+                    llm_cost_page_t("operation_column"),
                     width="large",
                 )
             ),
@@ -9068,9 +6952,7 @@ def render_llm_costs_page() -> None:
             "Trace": (
                 st.column_config.TextColumn(
                     llm_detail_t("trace"),
-                    help=llm_detail_t(
-                        "trace_help"
-                    ),
+                    help=llm_detail_t("trace_help"),
                     width="large",
                 )
             ),
@@ -9124,15 +7006,12 @@ def render_llm_costs_page() -> None:
         },
     )
 
-
     csv = tabela.to_csv(
         index=False,
     ).encode("utf-8-sig")
 
     st.download_button(
-        llm_cost_page_t(
-            "download_csv"
-        ),
+        llm_cost_page_t("download_csv"),
         data=csv,
         file_name="inna_llm_consumo.csv",
         mime="text/csv",
@@ -9141,16 +7020,10 @@ def render_llm_costs_page() -> None:
     )
 
     with st.expander(
-        llm_cost_page_t(
-            "telemetry_privacy"
-        ),
+        llm_cost_page_t("telemetry_privacy"),
         expanded=False,
     ):
-        st.markdown(
-            llm_cost_page_t(
-                "telemetry_text"
-            )
-        )
+        st.markdown(llm_cost_page_t("telemetry_text"))
 
 
 __all__ = [

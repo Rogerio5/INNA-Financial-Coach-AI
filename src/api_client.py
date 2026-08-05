@@ -30,9 +30,7 @@ API_BASE_URL = os.getenv(
 ).rstrip("/")
 
 
-class InternalApiClientError(
-    RuntimeError
-):
+class InternalApiClientError(RuntimeError):
     """
     Erro sanitizado do cliente interno da API.
     """
@@ -56,15 +54,11 @@ def _serializar_json_canonico(
         payload,
         Mapping,
     ):
-        raise InternalApiClientError(
-            "O conteúdo da requisição é inválido."
-        )
+        raise InternalApiClientError("O conteúdo da requisição é inválido.")
 
     try:
         serialized = json.dumps(
-            dict(
-                payload
-            ),
+            dict(payload),
             ensure_ascii=False,
             sort_keys=True,
             separators=(
@@ -78,42 +72,33 @@ def _serializar_json_canonico(
         TypeError,
         ValueError,
     ):
-        raise InternalApiClientError(
-            "O conteúdo da requisição é inválido."
-        ) from None
+        raise InternalApiClientError("O conteúdo da requisição é inválido.") from None
 
-    return serialized.encode(
-        "utf-8"
-    )
+    return serialized.encode("utf-8")
 
 
 def gerar_request_id_interno(
     *,
     origem: str = "web",
 ) -> str:
-    normalized_origin = str(
-        origem or ""
-    ).strip().lower()
+    normalized_origin = str(origem or "").strip().lower()
 
     if (
         not normalized_origin
         or not normalized_origin.replace(
             "-",
             "",
-        ).replace(
+        )
+        .replace(
             "_",
             "",
-        ).isalnum()
+        )
+        .isalnum()
         or len(normalized_origin) > 20
     ):
-        raise InternalApiClientError(
-            "A origem da requisição é inválida."
-        )
+        raise InternalApiClientError("A origem da requisição é inválida.")
 
-    return (
-        f"{normalized_origin}-"
-        f"{uuid.uuid4().hex}"
-    )
+    return f"{normalized_origin}-{uuid.uuid4().hex}"
 
 
 def preparar_requisicao_interna_json(
@@ -133,42 +118,24 @@ def preparar_requisicao_interna_json(
     Serializa e assina exatamente os bytes que serão
     enviados para a FastAPI.
     """
-    body = _serializar_json_canonico(
-        payload
-    )
+    body = _serializar_json_canonico(payload)
 
     effective_request_id = (
-        str(
-            request_id
-        ).strip()
+        str(request_id).strip()
         if request_id is not None
-        else gerar_request_id_interno(
-            origem="web"
-        )
+        else gerar_request_id_interno(origem="web")
     )
 
-    effective_timestamp = int(
-        time.time()
-        if timestamp is None
-        else timestamp
-    )
+    effective_timestamp = int(time.time() if timestamp is None else timestamp)
 
     try:
-        signature = (
-            assinar_requisicao_interna(
-                method=method,
-                path=path,
-                user_id=(
-                    usuario_id_confiavel
-                ),
-                request_id=(
-                    effective_request_id
-                ),
-                timestamp=(
-                    effective_timestamp
-                ),
-                body=body,
-            )
+        signature = assinar_requisicao_interna(
+            method=method,
+            path=path,
+            user_id=(usuario_id_confiavel),
+            request_id=(effective_request_id),
+            timestamp=(effective_timestamp),
+            body=body,
         )
 
     except (
@@ -176,23 +143,14 @@ def preparar_requisicao_interna_json(
         InternalRequestSecurityError,
     ):
         raise InternalApiClientError(
-            "Não foi possível autenticar a "
-            "comunicação interna com a API."
+            "Não foi possível autenticar a comunicação interna com a API."
         ) from None
 
     headers = {
-        "Content-Type": (
-            "application/json; charset=utf-8"
-        ),
-        HEADER_USER_ID: str(
-            usuario_id_confiavel
-        ).strip(),
-        HEADER_REQUEST_ID: (
-            effective_request_id
-        ),
-        HEADER_TIMESTAMP: str(
-            effective_timestamp
-        ),
+        "Content-Type": ("application/json; charset=utf-8"),
+        HEADER_USER_ID: str(usuario_id_confiavel).strip(),
+        HEADER_REQUEST_ID: (effective_request_id),
+        HEADER_TIMESTAMP: str(effective_timestamp),
         HEADER_SIGNATURE: signature,
     }
 
@@ -224,16 +182,12 @@ def gerar_diagnostico_api(
 ) -> dict[str, Any]:
     path = "/diagnostico"
 
-    body, headers, _effective_request_id = (
-        preparar_requisicao_interna_json(
-            method="POST",
-            path=path,
-            payload=payload,
-            usuario_id_confiavel=(
-                usuario_id_confiavel
-            ),
-            request_id=request_id,
-        )
+    body, headers, _effective_request_id = preparar_requisicao_interna_json(
+        method="POST",
+        path=path,
+        payload=payload,
+        usuario_id_confiavel=(usuario_id_confiavel),
+        request_id=request_id,
     )
 
     try:
@@ -252,18 +206,12 @@ def gerar_diagnostico_api(
             result,
             dict,
         ):
-            raise InternalApiClientError(
-                "A API retornou uma resposta inválida."
-            )
+            raise InternalApiClientError("A API retornou uma resposta inválida.")
 
         return result
 
     except requests.ConnectionError as error:
-        raise RuntimeError(
-            _request_error_message(
-                error
-            )
-        ) from error
+        raise RuntimeError(_request_error_message(error)) from error
 
     except requests.Timeout as error:
         raise RuntimeError(
@@ -292,11 +240,7 @@ def gerar_diagnostico_api(
         requests.RequestException,
         ValueError,
     ) as error:
-        raise RuntimeError(
-            _request_error_message(
-                error
-            )
-        ) from error
+        raise RuntimeError(_request_error_message(error)) from error
 
 
 def gerar_diagnostico_telegram_api(
@@ -309,20 +253,14 @@ def gerar_diagnostico_telegram_api(
     Envia um diagnóstico do bot polling para a rota
     interna exclusiva do Telegram.
     """
-    path = (
-        "/internal/telegram/diagnostico"
-    )
+    path = "/internal/telegram/diagnostico"
 
-    body, headers, _effective_request_id = (
-        preparar_requisicao_interna_json(
-            method="POST",
-            path=path,
-            payload=payload,
-            usuario_id_confiavel=(
-                usuario_id_confiavel
-            ),
-            request_id=request_id,
-        )
+    body, headers, _effective_request_id = preparar_requisicao_interna_json(
+        method="POST",
+        path=path,
+        payload=payload,
+        usuario_id_confiavel=(usuario_id_confiavel),
+        request_id=request_id,
     )
 
     try:
@@ -341,22 +279,16 @@ def gerar_diagnostico_telegram_api(
             result,
             dict,
         ):
-            raise InternalApiClientError(
-                "A API retornou uma resposta inválida."
-            )
+            raise InternalApiClientError("A API retornou uma resposta inválida.")
 
         return result
 
     except requests.Timeout as error:
-        raise RuntimeError(
-            "A API da INNA demorou muito para "
-            "responder."
-        ) from error
+        raise RuntimeError("A API da INNA demorou muito para responder.") from error
 
     except requests.RequestException as error:
         raise RuntimeError(
-            "Não foi possível processar o "
-            "diagnóstico Telegram."
+            "Não foi possível processar o diagnóstico Telegram."
         ) from error
 
     except (
@@ -364,8 +296,7 @@ def gerar_diagnostico_telegram_api(
         ValueError,
     ):
         raise InternalApiClientError(
-            "A resposta do diagnóstico "
-            "Telegram é inválida."
+            "A resposta do diagnóstico Telegram é inválida."
         ) from None
 
 
@@ -385,8 +316,7 @@ def enviar_feedback_api(
 
     except requests.RequestException as error:
         raise RuntimeError(
-            "Não foi possível enviar o feedback "
-            "para a API da INNA."
+            "Não foi possível enviar o feedback para a API da INNA."
         ) from error
 
 
@@ -395,10 +325,7 @@ def baixar_relatorio_pdf_api(
 ) -> bytes:
     try:
         response = requests.get(
-            (
-                f"{API_BASE_URL}/diagnosticos/"
-                f"{diagnostico_id}/relatorio"
-            ),
+            (f"{API_BASE_URL}/diagnosticos/{diagnostico_id}/relatorio"),
             timeout=60,
         )
 
@@ -408,8 +335,7 @@ def baixar_relatorio_pdf_api(
 
     except requests.RequestException as error:
         raise RuntimeError(
-            "Não foi possível baixar o relatório "
-            "PDF pela API da INNA."
+            "Não foi possível baixar o relatório PDF pela API da INNA."
         ) from error
 
 
@@ -423,10 +349,7 @@ def buscar_historico_usuario_api(
     """
     try:
         response = requests.get(
-            (
-                f"{API_BASE_URL}/diagnosticos/"
-                f"usuario/{nome}"
-            ),
+            (f"{API_BASE_URL}/diagnosticos/usuario/{nome}"),
             params={
                 "limit": limit,
             },
@@ -438,10 +361,7 @@ def buscar_historico_usuario_api(
         return response.json()
 
     except requests.RequestException as error:
-        raise RuntimeError(
-            "Não foi possível buscar o histórico "
-            "pela API."
-        ) from error
+        raise RuntimeError("Não foi possível buscar o histórico pela API.") from error
 
 
 def enviar_relatorio_email(
@@ -455,10 +375,7 @@ def enviar_relatorio_email(
     Fluxo legado. Será autenticado e protegido por
     usuário na etapa específica de e-mail.
     """
-    url = (
-        f"{API_BASE_URL}/diagnosticos/"
-        f"{diagnostico_id}/enviar-email"
-    )
+    url = f"{API_BASE_URL}/diagnosticos/{diagnostico_id}/enviar-email"
 
     response = requests.post(
         url,
@@ -466,18 +383,13 @@ def enviar_relatorio_email(
             "email": email,
             "idioma": idioma,
             "moeda": moeda,
-            "simbolo_moeda": (
-                simbolo_moeda
-            ),
+            "simbolo_moeda": (simbolo_moeda),
         },
         timeout=60,
     )
 
     if response.status_code >= 400:
-        raise RuntimeError(
-            "Não foi possível enviar o relatório "
-            "por e-mail."
-        )
+        raise RuntimeError("Não foi possível enviar o relatório por e-mail.")
 
     return response.json()
 

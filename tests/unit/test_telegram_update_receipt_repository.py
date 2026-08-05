@@ -20,9 +20,7 @@ class FakeCursor:
         self,
         rows,
     ):
-        self.rows = list(
-            rows
-        )
+        self.rows = list(rows)
 
         self.executions = []
 
@@ -44,18 +42,14 @@ class FakeCursor:
         if not self.rows:
             return None
 
-        return self.rows.pop(
-            0
-        )
+        return self.rows.pop(0)
 
 
 def install_cursor(
     monkeypatch,
     rows,
 ):
-    cursor = FakeCursor(
-        rows
-    )
+    cursor = FakeCursor(rows)
 
     @contextmanager
     def fake_cursor_postgres(
@@ -65,10 +59,7 @@ def install_cursor(
     ):
         assert dict_cursor is True
 
-        assert (
-            commit_automatico
-            is True
-        )
+        assert commit_automatico is True
 
         yield cursor
 
@@ -95,15 +86,11 @@ def test_new_update_is_claimed(
         ],
     )
 
-    result = (
-        repository.claim_telegram_update(
-            update_id=1001,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
-            claim_token=CLAIM_TOKEN,
-            lease_seconds=120,
-        )
+    result = repository.claim_telegram_update(
+        update_id=1001,
+        update_fingerprint=(FINGERPRINT),
+        claim_token=CLAIM_TOKEN,
+        lease_seconds=120,
     )
 
     assert result.status == "claimed"
@@ -111,10 +98,7 @@ def test_new_update_is_claimed(
     assert result.claim_token == CLAIM_TOKEN
     assert result.attempt_count == 1
 
-    assert any(
-        "ON CONFLICT" in sql
-        for sql, _ in cursor.executions
-    )
+    assert any("ON CONFLICT" in sql for sql, _ in cursor.executions)
 
 
 def test_completed_update_is_duplicate(
@@ -126,12 +110,8 @@ def test_completed_update_is_duplicate(
             None,
             {
                 "update_id": 1001,
-                "update_fingerprint": (
-                    FINGERPRINT
-                ),
-                "claim_token": (
-                    OTHER_CLAIM_TOKEN
-                ),
+                "update_fingerprint": (FINGERPRINT),
+                "claim_token": (OTHER_CLAIM_TOKEN),
                 "status": "completed",
                 "attempt_count": 1,
                 "lease_active": False,
@@ -139,25 +119,17 @@ def test_completed_update_is_duplicate(
         ],
     )
 
-    result = (
-        repository.claim_telegram_update(
-            update_id=1001,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
-            claim_token=CLAIM_TOKEN,
-        )
+    result = repository.claim_telegram_update(
+        update_id=1001,
+        update_fingerprint=(FINGERPRINT),
+        claim_token=CLAIM_TOKEN,
     )
 
     assert result.status == "duplicate"
     assert result.should_process is False
     assert result.claim_token is None
 
-    assert any(
-        "last_received_at = NOW()"
-        in sql
-        for sql, _ in cursor.executions
-    )
+    assert any("last_received_at = NOW()" in sql for sql, _ in cursor.executions)
 
 
 def test_active_processing_update_is_in_progress(
@@ -169,12 +141,8 @@ def test_active_processing_update_is_in_progress(
             None,
             {
                 "update_id": 1001,
-                "update_fingerprint": (
-                    FINGERPRINT
-                ),
-                "claim_token": (
-                    OTHER_CLAIM_TOKEN
-                ),
+                "update_fingerprint": (FINGERPRINT),
+                "claim_token": (OTHER_CLAIM_TOKEN),
                 "status": "processing",
                 "attempt_count": 1,
                 "lease_active": True,
@@ -182,14 +150,10 @@ def test_active_processing_update_is_in_progress(
         ],
     )
 
-    result = (
-        repository.claim_telegram_update(
-            update_id=1001,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
-            claim_token=CLAIM_TOKEN,
-        )
+    result = repository.claim_telegram_update(
+        update_id=1001,
+        update_fingerprint=(FINGERPRINT),
+        claim_token=CLAIM_TOKEN,
     )
 
     assert result.status == "in_progress"
@@ -206,12 +170,8 @@ def test_expired_processing_update_is_reclaimed(
             None,
             {
                 "update_id": 1001,
-                "update_fingerprint": (
-                    FINGERPRINT
-                ),
-                "claim_token": (
-                    OTHER_CLAIM_TOKEN
-                ),
+                "update_fingerprint": (FINGERPRINT),
+                "claim_token": (OTHER_CLAIM_TOKEN),
                 "status": "processing",
                 "attempt_count": 1,
                 "lease_active": False,
@@ -224,14 +184,10 @@ def test_expired_processing_update_is_reclaimed(
         ],
     )
 
-    result = (
-        repository.claim_telegram_update(
-            update_id=1001,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
-            claim_token=CLAIM_TOKEN,
-        )
+    result = repository.claim_telegram_update(
+        update_id=1001,
+        update_fingerprint=(FINGERPRINT),
+        claim_token=CLAIM_TOKEN,
     )
 
     assert result.status == "reclaimed"
@@ -249,12 +205,8 @@ def test_failed_update_is_reclaimed(
             None,
             {
                 "update_id": 1001,
-                "update_fingerprint": (
-                    FINGERPRINT
-                ),
-                "claim_token": (
-                    OTHER_CLAIM_TOKEN
-                ),
+                "update_fingerprint": (FINGERPRINT),
+                "claim_token": (OTHER_CLAIM_TOKEN),
                 "status": "failed",
                 "attempt_count": 2,
                 "lease_active": False,
@@ -267,14 +219,10 @@ def test_failed_update_is_reclaimed(
         ],
     )
 
-    result = (
-        repository.claim_telegram_update(
-            update_id=1001,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
-            claim_token=CLAIM_TOKEN,
-        )
+    result = repository.claim_telegram_update(
+        update_id=1001,
+        update_fingerprint=(FINGERPRINT),
+        claim_token=CLAIM_TOKEN,
     )
 
     assert result.status == "reclaimed"
@@ -290,12 +238,8 @@ def test_fingerprint_conflict_is_rejected(
             None,
             {
                 "update_id": 1001,
-                "update_fingerprint": (
-                    OTHER_FINGERPRINT
-                ),
-                "claim_token": (
-                    OTHER_CLAIM_TOKEN
-                ),
+                "update_fingerprint": (OTHER_FINGERPRINT),
+                "claim_token": (OTHER_CLAIM_TOKEN),
                 "status": "completed",
                 "attempt_count": 1,
                 "lease_active": False,
@@ -303,15 +247,10 @@ def test_fingerprint_conflict_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        repository
-        .TelegramUpdateFingerprintConflictError
-    ):
+    with pytest.raises(repository.TelegramUpdateFingerprintConflictError):
         repository.claim_telegram_update(
             update_id=1001,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
+            update_fingerprint=(FINGERPRINT),
             claim_token=CLAIM_TOKEN,
         )
 
@@ -326,10 +265,7 @@ def test_complete_requires_current_claim(
         ],
     )
 
-    with pytest.raises(
-        repository
-        .TelegramUpdateClaimOwnershipError
-    ):
+    with pytest.raises(repository.TelegramUpdateClaimOwnershipError):
         repository.complete_telegram_update(
             update_id=1001,
             claim_token=CLAIM_TOKEN,
@@ -350,23 +286,17 @@ def test_complete_marks_receipt_completed(
         ],
     )
 
-    result = (
-        repository.complete_telegram_update(
-            update_id=1001,
-            claim_token=CLAIM_TOKEN,
-        )
+    result = repository.complete_telegram_update(
+        update_id=1001,
+        claim_token=CLAIM_TOKEN,
     )
 
     assert result.status == "completed"
     assert result.attempt_count == 2
 
-    update_parameters = (
-        cursor.executions[-1][1]
-    )
+    update_parameters = cursor.executions[-1][1]
 
-    assert update_parameters[
-        "claim_token"
-    ] == CLAIM_TOKEN
+    assert update_parameters["claim_token"] == CLAIM_TOKEN
 
 
 def test_fail_marks_receipt_failed(
@@ -383,25 +313,17 @@ def test_fail_marks_receipt_failed(
         ],
     )
 
-    result = (
-        repository.fail_telegram_update(
-            update_id=1001,
-            claim_token=CLAIM_TOKEN,
-            error_code=(
-                "telegram.processing_failed"
-            ),
-        )
+    result = repository.fail_telegram_update(
+        update_id=1001,
+        claim_token=CLAIM_TOKEN,
+        error_code=("telegram.processing_failed"),
     )
 
     assert result.status == "failed"
 
-    update_parameters = (
-        cursor.executions[-1][1]
-    )
+    update_parameters = cursor.executions[-1][1]
 
-    assert update_parameters[
-        "error_code"
-    ] == "telegram.processing_failed"
+    assert update_parameters["error_code"] == "telegram.processing_failed"
 
 
 @pytest.mark.parametrize(
@@ -416,14 +338,10 @@ def test_fail_marks_receipt_failed(
 def test_invalid_update_id_is_rejected(
     value,
 ):
-    with pytest.raises(
-        ValueError
-    ):
+    with pytest.raises(ValueError):
         repository.claim_telegram_update(
             update_id=value,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
+            update_fingerprint=(FINGERPRINT),
             claim_token=CLAIM_TOKEN,
         )
 
@@ -440,9 +358,7 @@ def test_invalid_update_id_is_rejected(
 def test_invalid_fingerprint_is_rejected(
     value,
 ):
-    with pytest.raises(
-        ValueError
-    ):
+    with pytest.raises(ValueError):
         repository.claim_telegram_update(
             update_id=1001,
             update_fingerprint=value,
@@ -462,9 +378,7 @@ def test_invalid_fingerprint_is_rejected(
 def test_invalid_claim_token_is_rejected(
     value,
 ):
-    with pytest.raises(
-        ValueError
-    ):
+    with pytest.raises(ValueError):
         repository.complete_telegram_update(
             update_id=1001,
             claim_token=value,
@@ -484,14 +398,10 @@ def test_invalid_claim_token_is_rejected(
 def test_invalid_lease_is_rejected(
     value,
 ):
-    with pytest.raises(
-        ValueError
-    ):
+    with pytest.raises(ValueError):
         repository.claim_telegram_update(
             update_id=1001,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
+            update_fingerprint=(FINGERPRINT),
             claim_token=CLAIM_TOKEN,
             lease_seconds=value,
         )
@@ -510,9 +420,7 @@ def test_invalid_lease_is_rejected(
 def test_error_code_must_be_sanitized(
     value,
 ):
-    with pytest.raises(
-        ValueError
-    ):
+    with pytest.raises(ValueError):
         repository.fail_telegram_update(
             update_id=1001,
             claim_token=CLAIM_TOKEN,
@@ -534,22 +442,16 @@ def test_safe_result_never_contains_claim_token(
         ],
     )
 
-    result = (
-        repository.claim_telegram_update(
-            update_id=1001,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
-            claim_token=CLAIM_TOKEN,
-        )
+    result = repository.claim_telegram_update(
+        update_id=1001,
+        update_fingerprint=(FINGERPRINT),
+        claim_token=CLAIM_TOKEN,
     )
 
     safe = result.to_safe_dict()
 
     assert "claim_token" not in safe
-    assert CLAIM_TOKEN not in str(
-        safe
-    )
+    assert CLAIM_TOKEN not in str(safe)
 
 
 def test_database_error_is_sanitized(
@@ -559,10 +461,7 @@ def test_database_error_is_sanitized(
     def failing_cursor(
         **_kwargs,
     ):
-        raise RuntimeError(
-            "postgresql://user:"
-            "super-secret@database/inna"
-        )
+        raise RuntimeError("postgresql://user:super-secret@database/inna")
 
         yield
 
@@ -572,41 +471,22 @@ def test_database_error_is_sanitized(
         failing_cursor,
     )
 
-    with pytest.raises(
-        repository
-        .TelegramUpdateReceiptRepositoryError
-    ) as captured:
+    with pytest.raises(repository.TelegramUpdateReceiptRepositoryError) as captured:
         repository.claim_telegram_update(
             update_id=1001,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
+            update_fingerprint=(FINGERPRINT),
             claim_token=CLAIM_TOKEN,
         )
 
-    message = str(
-        captured.value
-    )
+    message = str(captured.value)
 
     assert "super-secret" not in message
     assert "postgresql://" not in message
 
 
 def test_sql_uses_row_lock_and_claim_token():
-    assert (
-        "FOR UPDATE"
-        in repository
-        .SQL_LOCK_EXISTING_RECEIPT
-    )
+    assert "FOR UPDATE" in repository.SQL_LOCK_EXISTING_RECEIPT
 
-    assert (
-        "claim_token = %(claim_token)s"
-        in repository
-        .SQL_COMPLETE_RECEIPT
-    )
+    assert "claim_token = %(claim_token)s" in repository.SQL_COMPLETE_RECEIPT
 
-    assert (
-        "claim_token = %(claim_token)s"
-        in repository
-        .SQL_FAIL_RECEIPT
-    )
+    assert "claim_token = %(claim_token)s" in repository.SQL_FAIL_RECEIPT

@@ -18,8 +18,7 @@ def test_public_processor_requires_bridge_argument():
 
 def test_public_processor_rejects_explicit_none_bridge():
     with pytest.raises(
-        telegram_webhook
-        .TelegramUpdateIngressConfigurationError,
+        telegram_webhook.TelegramUpdateIngressConfigurationError,
         match="conversation_bridge é obrigatória",
     ):
         telegram_webhook.process_telegram_update(
@@ -60,11 +59,9 @@ def test_public_processor_delegates_to_core_with_bridge(
         "update_id": 102,
     }
 
-    result = (
-        telegram_webhook.process_telegram_update(
-            update,
-            conversation_bridge=bridge,
-        )
+    result = telegram_webhook.process_telegram_update(
+        update,
+        conversation_bridge=bridge,
     )
 
     assert result == "processed"
@@ -75,5 +72,3 @@ def test_public_processor_delegates_to_core_with_bridge(
             "bridge": bridge,
         }
     ]
-
-

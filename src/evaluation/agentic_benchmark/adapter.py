@@ -63,17 +63,13 @@ def _normalize_text(
     ):
         return value.strip()
 
-    return str(
-        value
-    ).strip()
+    return str(value).strip()
 
 
 def _normalize_optional_text(
     value: Any,
 ) -> str | None:
-    normalized = _normalize_text(
-        value
-    )
+    normalized = _normalize_text(value)
 
     return normalized or None
 
@@ -117,9 +113,7 @@ def _normalize_bool(
         }:
             return False
 
-    return bool(
-        value
-    )
+    return bool(value)
 
 
 def _normalize_float(
@@ -131,9 +125,7 @@ def _normalize_float(
         return default
 
     try:
-        return float(
-            value
-        )
+        return float(value)
     except (
         TypeError,
         ValueError,
@@ -148,9 +140,7 @@ def _normalize_score(
         return None
 
     try:
-        score = float(
-            value
-        )
+        score = float(value)
     except (
         TypeError,
         ValueError,
@@ -176,9 +166,7 @@ def _normalize_string_sequence(
         value,
         str,
     ):
-        items: Sequence[Any] = (
-            value,
-        )
+        items: Sequence[Any] = (value,)
     elif isinstance(
         value,
         Sequence,
@@ -191,28 +179,17 @@ def _normalize_string_sequence(
     ):
         items = value
     else:
-        items = (
-            value,
-        )
+        items = (value,)
 
     normalized: list[str] = []
 
     for item in items:
-        text = _normalize_text(
-            item
-        )
+        text = _normalize_text(item)
 
-        if (
-            text
-            and text not in normalized
-        ):
-            normalized.append(
-                text
-            )
+        if text and text not in normalized:
+            normalized.append(text)
 
-    return tuple(
-        normalized
-    )
+    return tuple(normalized)
 
 
 def _normalize_mode(
@@ -238,9 +215,7 @@ def _normalize_mode(
     )
 
     try:
-        return AgenticExecutionMode(
-            normalized
-        )
+        return AgenticExecutionMode(normalized)
     except ValueError:
         return AgenticExecutionMode.OFF
 
@@ -269,9 +244,7 @@ def _normalize_decision(
     )
 
     try:
-        return ActualGatewayDecision(
-            normalized
-        )
+        return ActualGatewayDecision(normalized)
     except ValueError:
         return ActualGatewayDecision.UNKNOWN
 
@@ -284,9 +257,7 @@ def _normalize_status(
     error_code: str | None,
     error_message: str | None,
 ) -> ExecutionStatus:
-    normalized = _normalize_text(
-        value
-    ).lower()
+    normalized = _normalize_text(value).lower()
 
     aliases = {
         "ok": "success",
@@ -305,9 +276,7 @@ def _normalize_status(
 
     if normalized:
         try:
-            return ExecutionStatus(
-                normalized
-            )
+            return ExecutionStatus(normalized)
         except ValueError:
             pass
 
@@ -317,10 +286,7 @@ def _normalize_status(
     if decision is ActualGatewayDecision.REJECT:
         return ExecutionStatus.REJECTED
 
-    if (
-        fallback_used
-        or decision is ActualGatewayDecision.FALLBACK
-    ):
+    if fallback_used or decision is ActualGatewayDecision.FALLBACK:
         return ExecutionStatus.FALLBACK
 
     return ExecutionStatus.SUCCESS
@@ -352,9 +318,7 @@ def _normalize_security_outcome(
     )
 
     try:
-        outcome = ActualSecurityOutcome(
-            normalized
-        )
+        outcome = ActualSecurityOutcome(normalized)
     except ValueError:
         outcome = ActualSecurityOutcome.UNKNOWN
 
@@ -380,9 +344,7 @@ def _normalize_evidences(
         value,
         Mapping,
     ):
-        items: Sequence[Any] = (
-            value,
-        )
+        items: Sequence[Any] = (value,)
     elif isinstance(
         value,
         Sequence,
@@ -396,9 +358,7 @@ def _normalize_evidences(
     ):
         items = value
     else:
-        items = (
-            value,
-        )
+        items = (value,)
 
     evidences: list[EvidenceRecord] = []
 
@@ -483,17 +443,13 @@ def _normalize_evidences(
                     source=source,
                     citation=citation,
                     score=score,
-                    metadata=dict(
-                        metadata
-                    ),
+                    metadata=dict(metadata),
                 )
             )
 
             continue
 
-        content = _normalize_text(
-            item
-        )
+        content = _normalize_text(item)
 
         if content:
             evidences.append(
@@ -503,9 +459,7 @@ def _normalize_evidences(
                 )
             )
 
-    return tuple(
-        evidences
-    )
+    return tuple(evidences)
 
 
 def _normalize_citations(
@@ -518,9 +472,7 @@ def _normalize_citations(
         value,
         Mapping,
     ):
-        items: Sequence[Any] = (
-            value,
-        )
+        items: Sequence[Any] = (value,)
     elif isinstance(
         value,
         Sequence,
@@ -534,9 +486,7 @@ def _normalize_citations(
     ):
         items = value
     else:
-        items = (
-            value,
-        )
+        items = (value,)
 
     citations: list[CitationRecord] = []
 
@@ -597,9 +547,7 @@ def _normalize_citations(
 
             continue
 
-        citation_id = _normalize_text(
-            item
-        )
+        citation_id = _normalize_text(item)
 
         if citation_id:
             citations.append(
@@ -608,9 +556,7 @@ def _normalize_citations(
                 )
             )
 
-    return tuple(
-        citations
-    )
+    return tuple(citations)
 
 
 def adapt_gateway_output(
@@ -618,9 +564,7 @@ def adapt_gateway_output(
     case_id: str,
     question: str,
     output: Mapping[str, Any],
-    default_mode: AgenticExecutionMode = (
-        AgenticExecutionMode.OFF
-    ),
+    default_mode: AgenticExecutionMode = (AgenticExecutionMode.OFF),
 ) -> AgenticEvaluationResult:
     """Converte uma saída heterogênea no contrato canônico."""
 
@@ -628,9 +572,7 @@ def adapt_gateway_output(
         output,
         Mapping,
     ):
-        raise TypeError(
-            "output deve ser um Mapping."
-        )
+        raise TypeError("output deve ser um Mapping.")
 
     mode_value = _read_path(
         output,
@@ -681,9 +623,7 @@ def adapt_gateway_output(
         )
     )
 
-    decision = _normalize_decision(
-        decision_value
-    )
+    decision = _normalize_decision(decision_value)
 
     status = _normalize_status(
         _read_path(
@@ -775,9 +715,7 @@ def adapt_gateway_output(
             default="",
         )
 
-        if _normalize_text(
-            nested_answer
-        ):
+        if _normalize_text(nested_answer):
             answer_value = nested_answer
 
         else:
@@ -872,12 +810,8 @@ def adapt_gateway_output(
     return AgenticEvaluationResult(
         case_id=case_id.strip(),
         question=question.strip(),
-        answer=_normalize_text(
-            answer_value
-        ),
-        mode=_normalize_mode(
-            mode_value
-        ),
+        answer=_normalize_text(answer_value),
+        mode=_normalize_mode(mode_value),
         decision=decision,
         status=status,
         security_outcome=security_outcome,
@@ -893,7 +827,5 @@ def adapt_gateway_output(
         trace_id=trace_id,
         error_code=error_code,
         error_message=error_message,
-        raw_metadata=dict(
-            raw_metadata
-        ),
+        raw_metadata=dict(raw_metadata),
     )

@@ -398,18 +398,12 @@ def test_extract_retrieval_documents_from_list() -> None:
 
 
 def test_extract_retrieval_documents_from_string() -> None:
-    state = {
-        "rag_context": (
-            "Uma reserva de emergência reduz riscos."
-        )
-    }
+    state = {"rag_context": ("Uma reserva de emergência reduz riscos.")}
 
     documents = extract_retrieval_documents(state)
 
     assert len(documents) == 1
-    assert documents[0].content == (
-        "Uma reserva de emergência reduz riscos."
-    )
+    assert documents[0].content == ("Uma reserva de emergência reduz riscos.")
     assert documents[0].rank == 1
     assert documents[0].content_hash is not None
 
@@ -418,9 +412,7 @@ def test_extract_retrieval_documents_supports_page_content() -> None:
     state = {
         "documents": [
             {
-                "page_content": (
-                    "Conteúdo no formato LangChain."
-                ),
+                "page_content": ("Conteúdo no formato LangChain."),
                 "metadata": {
                     "source": "langchain",
                 },
@@ -431,9 +423,7 @@ def test_extract_retrieval_documents_supports_page_content() -> None:
     documents = extract_retrieval_documents(state)
 
     assert len(documents) == 1
-    assert documents[0].content == (
-        "Conteúdo no formato LangChain."
-    )
+    assert documents[0].content == ("Conteúdo no formato LangChain.")
 
 
 def test_extract_retrieval_documents_ignores_empty_content() -> None:
@@ -489,9 +479,7 @@ def test_extract_retrieval_documents_clamps_scores(
 
     documents = extract_retrieval_documents(state)
 
-    assert documents[0].score == pytest.approx(
-        expected
-    )
+    assert documents[0].score == pytest.approx(expected)
 
 
 def test_extract_retrieval_documents_generates_content_hash() -> None:
@@ -508,10 +496,7 @@ def test_extract_retrieval_documents_generates_content_hash() -> None:
 
     documents = extract_retrieval_documents(state)
 
-    assert (
-        documents[0].content_hash
-        == documents[1].content_hash
-    )
+    assert documents[0].content_hash == documents[1].content_hash
 
 
 def test_extract_retrieval_documents_handles_empty_state() -> None:
@@ -544,27 +529,12 @@ def test_extract_model_executions() -> None:
 
     assert len(executions) == 1
     assert executions[0].provider == "google"
-    assert executions[0].model_name == (
-        "gemini-2.5-flash"
-    )
-    assert executions[0].latency_ms == pytest.approx(
-        300
-    )
-    assert executions[0].estimated_cost == pytest.approx(
-        0.001
-    )
-    assert (
-        executions[0].token_usage.input_tokens
-        == 100
-    )
-    assert (
-        executions[0].token_usage.output_tokens
-        == 50
-    )
-    assert (
-        executions[0].token_usage.total_tokens
-        == 150
-    )
+    assert executions[0].model_name == ("gemini-2.5-flash")
+    assert executions[0].latency_ms == pytest.approx(300)
+    assert executions[0].estimated_cost == pytest.approx(0.001)
+    assert executions[0].token_usage.input_tokens == 100
+    assert executions[0].token_usage.output_tokens == 50
+    assert executions[0].token_usage.total_tokens == 150
 
 
 def test_extract_model_executions_supports_alternative_token_names() -> None:
@@ -586,18 +556,9 @@ def test_extract_model_executions_supports_alternative_token_names() -> None:
     assert len(executions) == 1
     assert executions[0].provider == "google"
     assert executions[0].model_name == "gemini"
-    assert (
-        executions[0].token_usage.input_tokens
-        == 80
-    )
-    assert (
-        executions[0].token_usage.output_tokens
-        == 20
-    )
-    assert (
-        executions[0].token_usage.calculated_total_tokens
-        == 100
-    )
+    assert executions[0].token_usage.input_tokens == 80
+    assert executions[0].token_usage.output_tokens == 20
+    assert executions[0].token_usage.calculated_total_tokens == 100
 
 
 def test_extract_model_executions_repairs_invalid_total() -> None:
@@ -617,10 +578,7 @@ def test_extract_model_executions_repairs_invalid_total() -> None:
 
     executions = extract_model_executions(state)
 
-    assert (
-        executions[0].token_usage.total_tokens
-        == 150
-    )
+    assert executions[0].token_usage.total_tokens == 150
 
 
 def test_extract_model_executions_ignores_invalid_entries() -> None:
@@ -660,9 +618,7 @@ def test_from_state_builds_complete_result(
     )
 
     assert result.case_id == "adapter-case-001"
-    assert result.actual_output == (
-        "Diagnóstico financeiro concluído."
-    )
+    assert result.actual_output == ("Diagnóstico financeiro concluído.")
     assert result.dataset_name == "inna-core"
     assert result.dataset_version == "1.0.0"
     assert result.case_version == "1.0.0"
@@ -671,22 +627,16 @@ def test_from_state_builds_complete_result(
     assert result.current_team == "financial_team"
     assert result.intent == "diagnostico_financeiro"
     assert result.task_status == "completed"
-    assert result.task_completion_score == pytest.approx(
-        0.95
-    )
+    assert result.task_completion_score == pytest.approx(0.95)
     assert result.latency_ms == pytest.approx(150.0)
-    assert result.estimated_cost == pytest.approx(
-        0.001
-    )
+    assert result.estimated_cost == pytest.approx(0.001)
     assert result.cost_currency == "USD"
     assert len(result.tools_called) == 2
     assert len(result.retrieval_documents) == 1
     assert len(result.model_executions) == 1
     assert result.user_reference_hash is not None
     assert result.raw_state
-    assert result.metadata["adapter"] == (
-        "InnaEvaluationAdapter"
-    )
+    assert result.metadata["adapter"] == ("InnaEvaluationAdapter")
     assert result.metadata["environment"] == "test"
 
 
@@ -727,9 +677,7 @@ def test_from_state_clamps_completion_score(
         state=state,
     )
 
-    assert result.task_completion_score == pytest.approx(
-        expected
-    )
+    assert result.task_completion_score == pytest.approx(expected)
 
 
 def test_from_state_uses_alternative_response_field(
@@ -743,9 +691,7 @@ def test_from_state_uses_alternative_response_field(
         },
     )
 
-    assert result.actual_output == (
-        "Resposta alternativa."
-    )
+    assert result.actual_output == ("Resposta alternativa.")
 
 
 def test_from_state_extracts_response_from_mapping(
@@ -761,9 +707,7 @@ def test_from_state_extracts_response_from_mapping(
         },
     )
 
-    assert result.actual_output == (
-        "Resposta estruturada."
-    )
+    assert result.actual_output == ("Resposta estruturada.")
 
 
 @pytest.mark.parametrize(
@@ -844,9 +788,7 @@ def test_from_state_errors_override_success_status(
     )
 
     assert result.status == EvaluationStatus.ERROR
-    assert result.errors == (
-        "runtime_error",
-    )
+    assert result.errors == ("runtime_error",)
 
 
 def test_from_state_empty_response_becomes_error(
@@ -1034,13 +976,9 @@ def test_execute_calls_executor(
         },
     )
 
-    assert received["input_text"] == (
-        evaluation_case.input_text
-    )
+    assert received["input_text"] == (evaluation_case.input_text)
     assert received["language"] == "pt-BR"
-    assert result.actual_output == (
-        "Execução concluída."
-    )
+    assert result.actual_output == ("Execução concluída.")
     assert result.status == EvaluationStatus.PASSED
     assert result.latency_ms is not None
     assert result.latency_ms >= 0
@@ -1055,8 +993,7 @@ def test_execute_handles_executor_exception(
         del input_text
 
         raise RuntimeError(
-            "Falha com usuario@exemplo.com em "
-            "postgresql://user:pass@host/db"
+            "Falha com usuario@exemplo.com em postgresql://user:pass@host/db"
         )
 
     result = build_adapter().execute(
@@ -1067,15 +1004,9 @@ def test_execute_handles_executor_exception(
     assert result.status == EvaluationStatus.ERROR
     assert result.actual_output == ""
     assert result.errors
-    assert "usuario@exemplo.com" not in str(
-        result.errors
-    )
-    assert "postgresql://" not in str(
-        result.errors
-    )
-    assert result.metadata["error_type"] == (
-        "RuntimeError"
-    )
+    assert "usuario@exemplo.com" not in str(result.errors)
+    assert "postgresql://" not in str(result.errors)
+    assert result.metadata["error_type"] == ("RuntimeError")
     assert result.latency_ms is not None
 
 
@@ -1096,9 +1027,7 @@ def test_execute_handles_non_mapping_result(
 
     assert result.status == EvaluationStatus.ERROR
     assert result.actual_output == ""
-    assert result.metadata["error_type"] == (
-        "TypeError"
-    )
+    assert result.metadata["error_type"] == ("TypeError")
 
 
 def test_execute_hashes_user_reference(
@@ -1121,9 +1050,7 @@ def test_execute_hashes_user_reference(
     )
 
     assert result.user_reference_hash is not None
-    assert "usuario-123" not in (
-        result.user_reference_hash
-    )
+    assert "usuario-123" not in (result.user_reference_hash)
 
 
 # ============================================================
@@ -1141,9 +1068,7 @@ def test_prepare_external_result_redacts_sensitive_values(
     result = adapter.from_state(
         case=evaluation_case,
         state={
-            "response": (
-                "Envie para usuario@exemplo.com."
-            ),
+            "response": ("Envie para usuario@exemplo.com."),
             "task_status": "completed",
             "structured_response": {
                 "income": 3000,
@@ -1151,15 +1076,11 @@ def test_prepare_external_result_redacts_sensitive_values(
                 "cpf": "123.456.789-09",
                 "api_key": "segredo",
             },
-            "trace_id": (
-                "550e8400-e29b-41d4-a716-446655440000"
-            ),
+            "trace_id": ("550e8400-e29b-41d4-a716-446655440000"),
         },
     )
 
-    payload = adapter.prepare_external_result(
-        result
-    )
+    payload = adapter.prepare_external_result(result)
 
     rendered = str(payload)
 
@@ -1168,10 +1089,7 @@ def test_prepare_external_result_redacts_sensitive_values(
     assert "segredo" not in rendered
     assert "3000" not in rendered
     assert "500" not in rendered
-    assert (
-        "550e8400-e29b-41d4-a716-446655440000"
-        not in rendered
-    )
+    assert "550e8400-e29b-41d4-a716-446655440000" not in rendered
 
 
 def test_prepare_external_result_preserves_safe_fields(
@@ -1189,20 +1107,12 @@ def test_prepare_external_result_preserves_safe_fields(
         },
     )
 
-    payload = adapter.prepare_external_result(
-        result
-    )
+    payload = adapter.prepare_external_result(result)
 
-    assert payload["case_id"] == (
-        evaluation_case.case_id
-    )
+    assert payload["case_id"] == (evaluation_case.case_id)
     assert payload["status"] == "passed"
-    assert payload["current_agent"] == (
-        "financial_agent"
-    )
-    assert payload["intent"] == (
-        "diagnostico_financeiro"
-    )
+    assert payload["current_agent"] == ("financial_agent")
+    assert payload["intent"] == ("diagnostico_financeiro")
 
 
 def test_prepare_external_result_excludes_tool_arguments(
@@ -1231,9 +1141,7 @@ def test_prepare_external_result_excludes_tool_arguments(
         },
     )
 
-    payload = adapter.prepare_external_result(
-        result
-    )
+    payload = adapter.prepare_external_result(result)
 
     rendered = str(payload)
 
@@ -1264,9 +1172,7 @@ def test_prepare_external_result_blocks_restricted_result() -> None:
         ValueError,
         match="RESTRICTED",
     ):
-        adapter.prepare_external_result(
-            result
-        )
+        adapter.prepare_external_result(result)
 
 
 def test_prepare_external_result_returns_mapping(
@@ -1282,9 +1188,7 @@ def test_prepare_external_result_returns_mapping(
         },
     )
 
-    payload = adapter.prepare_external_result(
-        result
-    )
+    payload = adapter.prepare_external_result(result)
 
     assert isinstance(payload, Mapping)
 
@@ -1299,11 +1203,7 @@ def test_adapter_does_not_mutate_original_state(
     complete_state: dict[str, Any],
 ) -> None:
     original_response = complete_state["response"]
-    original_tool_arguments = dict(
-        complete_state["tool_results"][0][
-            "arguments"
-        ]
-    )
+    original_tool_arguments = dict(complete_state["tool_results"][0]["arguments"])
 
     build_adapter(
         preserve_raw_state=True,
@@ -1312,15 +1212,8 @@ def test_adapter_does_not_mutate_original_state(
         state=complete_state,
     )
 
-    assert complete_state["response"] == (
-        original_response
-    )
-    assert (
-        complete_state["tool_results"][0][
-            "arguments"
-        ]
-        == original_tool_arguments
-    )
+    assert complete_state["response"] == (original_response)
+    assert complete_state["tool_results"][0]["arguments"] == original_tool_arguments
 
 
 def test_adapter_handles_none_optional_fields(
@@ -1359,17 +1252,13 @@ def test_adapter_handles_exception_inside_errors(
             "response": "Resposta parcial",
             "task_status": "completed",
             "errors": [
-                RuntimeError(
-                    "Falha em postgresql://user:pass@host/db"
-                ),
+                RuntimeError("Falha em postgresql://user:pass@host/db"),
             ],
         },
     )
 
     assert result.status == EvaluationStatus.ERROR
-    assert "postgresql://" not in str(
-        result.errors
-    )
+    assert "postgresql://" not in str(result.errors)
 
 
 def test_adapter_supports_mapping_errors(

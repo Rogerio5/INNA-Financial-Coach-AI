@@ -16,6 +16,7 @@ def _get_connection():
 
     try:
         import psycopg2
+
         return psycopg2.connect(database_url)
     except Exception:
         return None

@@ -30,9 +30,7 @@ HumanReviewStatus = Literal[
 ]
 
 
-class HumanReviewPendingRecord(
-    BaseModel
-):
+class HumanReviewPendingRecord(BaseModel):
     """
     Revisão humana pendente produzida pelo
     interrupt do LangGraph.
@@ -84,9 +82,7 @@ class HumanReviewPendingRecord(
         default_factory=dict,
     )
 
-    allowed_actions: list[
-        HumanReviewAction
-    ] = Field(
+    allowed_actions: list[HumanReviewAction] = Field(
         default_factory=lambda: [
             "approve",
             "correct",
@@ -109,9 +105,7 @@ class HumanReviewPendingRecord(
         return value.strip().lower()
 
 
-class HumanReviewDecision(
-    BaseModel
-):
+class HumanReviewDecision(BaseModel):
     """
     Decisão enviada por um revisor autenticado.
 
@@ -152,22 +146,11 @@ class HumanReviewDecision(
     def validar_campos_da_acao(
         self,
     ) -> "HumanReviewDecision":
-        if (
-            self.action == "correct"
-            and not self.corrections
-        ):
-            raise ValueError(
-                "A ação correct exige pelo menos "
-                "uma correção."
-            )
+        if self.action == "correct" and not self.corrections:
+            raise ValueError("A ação correct exige pelo menos uma correção.")
 
-        if (
-            self.action == "reject"
-            and not self.reason
-        ):
-            raise ValueError(
-                "A ação reject exige reason."
-            )
+        if self.action == "reject" and not self.reason:
+            raise ValueError("A ação reject exige reason.")
 
         return self
 
@@ -183,15 +166,11 @@ class HumanReviewDecision(
             "reviewer_id": self.reviewer_id,
             "comment": self.comment,
             "reason": self.reason,
-            "corrections": dict(
-                self.corrections
-            ),
+            "corrections": dict(self.corrections),
         }
 
 
-class TrustedHumanReviewContext(
-    BaseModel
-):
+class TrustedHumanReviewContext(BaseModel):
     """
     Identidade autenticada da requisição interna.
 
@@ -216,9 +195,7 @@ class TrustedHumanReviewContext(
     )
 
 
-class HumanReviewResolutionCommand(
-    BaseModel
-):
+class HumanReviewResolutionCommand(BaseModel):
     """
     Comando validado entregue ao service layer.
     """
@@ -247,29 +224,18 @@ class HumanReviewResolutionCommand(
     def alinhar_identidade_confiavel(
         self,
     ) -> "HumanReviewResolutionCommand":
-        if (
-            self.decision.reviewer_id
-            != self.context.reviewer_id
-        ):
-            raise ValueError(
-                "reviewer_id não corresponde à "
-                "identidade autenticada."
-            )
+        if self.decision.reviewer_id != self.context.reviewer_id:
+            raise ValueError("reviewer_id não corresponde à identidade autenticada.")
 
         return self
 
     def to_resume_payload(
         self,
     ) -> dict[str, Any]:
-        return (
-            self.decision
-            .to_resume_payload()
-        )
+        return self.decision.to_resume_payload()
 
 
-class HumanReviewRecord(
-    BaseModel
-):
+class HumanReviewRecord(BaseModel):
     """
     Representação de uma revisão persistida.
     """

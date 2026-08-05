@@ -93,9 +93,7 @@ _ALLOWED_TRANSITIONS: dict[
 }
 
 
-_TERMINAL_STATUSES: set[
-    HumanReviewStatus
-] = {
+_TERMINAL_STATUSES: set[HumanReviewStatus] = {
     "approved",
     "corrected",
     "rejected",
@@ -106,9 +104,7 @@ _TERMINAL_STATUSES: set[
 
 
 def _utc_now() -> str:
-    return datetime.now(
-        timezone.utc
-    ).isoformat()
+    return datetime.now(timezone.utc).isoformat()
 
 
 def _required_text(
@@ -116,14 +112,10 @@ def _required_text(
     *,
     field_name: str,
 ) -> str:
-    normalized = str(
-        value or ""
-    ).strip()
+    normalized = str(value or "").strip()
 
     if not normalized:
-        raise HumanReviewError(
-            f"{field_name} não pode ser vazio."
-        )
+        raise HumanReviewError(f"{field_name} não pode ser vazio.")
 
     return normalized
 
@@ -131,9 +123,7 @@ def _required_text(
 def _optional_text(
     value: Any,
 ) -> str:
-    return str(
-        value or ""
-    ).strip()
+    return str(value or "").strip()
 
 
 def _validate_status(
@@ -144,13 +134,8 @@ def _validate_status(
         field_name="status",
     )
 
-    if normalized not in (
-        _ALLOWED_TRANSITIONS
-    ):
-        raise HumanReviewError(
-            "Status de revisão humana inválido: "
-            f"{normalized!r}."
-        )
+    if normalized not in (_ALLOWED_TRANSITIONS):
+        raise HumanReviewError(f"Status de revisão humana inválido: {normalized!r}.")
 
     return normalized  # type: ignore[return-value]
 
@@ -171,10 +156,7 @@ def _validate_risk_level(
     }
 
     if normalized not in allowed:
-        raise HumanReviewError(
-            "Nível de risco inválido: "
-            f"{normalized!r}."
-        )
+        raise HumanReviewError(f"Nível de risco inválido: {normalized!r}.")
 
     return normalized  # type: ignore[return-value]
 
@@ -182,10 +164,7 @@ def _validate_risk_level(
 def is_terminal_human_review_status(
     status: Any,
 ) -> bool:
-    return (
-        _validate_status(status)
-        in _TERMINAL_STATUSES
-    )
+    return _validate_status(status) in _TERMINAL_STATUSES
 
 
 def create_human_review_request(
@@ -236,21 +215,15 @@ def create_human_review_request(
             trigger,
             field_name="trigger",
         ),
-        "risk_level": _validate_risk_level(
-            risk_level
-        ),
-        "payload": deepcopy(
-            payload or {}
-        ),
+        "risk_level": _validate_risk_level(risk_level),
+        "payload": deepcopy(payload or {}),
         "status": "requested",
         "created_at": created_at,
         "updated_at": created_at,
         "resolved_at": None,
         "decision": None,
         "error": "",
-        "metadata": deepcopy(
-            metadata or {}
-        ),
+        "metadata": deepcopy(metadata or {}),
     }
 
 
@@ -262,17 +235,11 @@ def transition_human_review(
     error: str = "",
     timestamp: str | None = None,
 ) -> HumanReviewRequest:
-    current_status = _validate_status(
-        review.get("status")
-    )
+    current_status = _validate_status(review.get("status"))
 
-    target_status = _validate_status(
-        status
-    )
+    target_status = _validate_status(status)
 
-    allowed = _ALLOWED_TRANSITIONS[
-        current_status
-    ]
+    allowed = _ALLOWED_TRANSITIONS[current_status]
 
     if target_status not in allowed:
         raise HumanReviewError(
@@ -297,9 +264,7 @@ def transition_human_review(
     }
 
     if decision is not None:
-        updated["decision"] = deepcopy(
-            decision
-        )
+        updated["decision"] = deepcopy(decision)
 
     if target_status in _TERMINAL_STATUSES:
         updated["resolved_at"] = updated_at
@@ -342,12 +307,8 @@ def _create_decision(
             reviewer_id,
             field_name="reviewer_id",
         ),
-        "comment": _optional_text(
-            comment
-        ),
-        "corrections": deepcopy(
-            corrections or {}
-        ),
+        "comment": _optional_text(comment),
+        "corrections": deepcopy(corrections or {}),
         "decided_at": decided_at,
     }
 
@@ -382,14 +343,14 @@ def correct_human_review(
     comment: str = "",
     timestamp: str | None = None,
 ) -> HumanReviewRequest:
-    if not isinstance(
-        corrections,
-        dict,
-    ) or not corrections:
-        raise HumanReviewError(
-            "corrections deve conter pelo menos "
-            "uma correção."
+    if (
+        not isinstance(
+            corrections,
+            dict,
         )
+        or not corrections
+    ):
+        raise HumanReviewError("corrections deve conter pelo menos uma correção.")
 
     decision = _create_decision(
         action="correct",

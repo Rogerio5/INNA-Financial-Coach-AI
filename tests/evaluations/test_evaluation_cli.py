@@ -22,9 +22,7 @@ from src.evaluation.live_payload_provider import (
 def parse_args(
     *arguments: str,
 ):
-    return build_parser().parse_args(
-        list(arguments)
-    )
+    return build_parser().parse_args(list(arguments))
 
 
 def test_parser_accepts_run_official() -> None:
@@ -62,12 +60,8 @@ def test_cli_summary() -> None:
     summary = build_cli_summary(result)
 
     assert summary["total_cases"] == 11
-    assert summary[
-        "quality_gate_passed"
-    ] is True
-    assert summary[
-        "production_evaluation"
-    ] is False
+    assert summary["quality_gate_passed"] is True
+    assert summary["production_evaluation"] is False
 
 
 def test_text_summary() -> None:
@@ -96,12 +90,8 @@ def test_main_returns_success(
 
     captured = capsys.readouterr()
 
-    assert exit_code == (
-        EvaluationCliExitCode.SUCCESS
-    )
-    assert "Quality Gate: APROVADO" in (
-        captured.out
-    )
+    assert exit_code == (EvaluationCliExitCode.SUCCESS)
+    assert "Quality Gate: APROVADO" in (captured.out)
 
 
 def test_main_json_output(
@@ -120,9 +110,7 @@ def test_main_json_output(
 
     assert exit_code == 0
     assert payload["total_cases"] == 11
-    assert payload[
-        "quality_gate_passed"
-    ] is True
+    assert payload["quality_gate_passed"] is True
 
 
 def test_production_requirement_fails_gate(
@@ -138,14 +126,9 @@ def test_production_requirement_fails_gate(
 
     captured = capsys.readouterr()
 
-    assert exit_code == (
-        EvaluationCliExitCode
-        .QUALITY_GATE_FAILED
-    )
+    assert exit_code == (EvaluationCliExitCode.QUALITY_GATE_FAILED)
 
-    assert "Quality Gate: REPROVADO" in (
-        captured.out
-    )
+    assert "Quality Gate: REPROVADO" in (captured.out)
 
 
 def test_cli_writes_external_report(
@@ -160,20 +143,14 @@ def test_cli_writes_external_report(
     )
 
     assert exit_code == 0
-    assert tuple(
-        tmp_path.glob("*.json")
-    )
+    assert tuple(tmp_path.glob("*.json"))
 
 
 def test_cli_writes_internal_report(
     tmp_path: Path,
 ) -> None:
-    external_directory = (
-        tmp_path / "external"
-    )
-    internal_directory = (
-        tmp_path / "internal"
-    )
+    external_directory = tmp_path / "external"
+    internal_directory = tmp_path / "internal"
 
     exit_code = main(
         (
@@ -187,12 +164,8 @@ def test_cli_writes_internal_report(
     )
 
     assert exit_code == 0
-    assert tuple(
-        external_directory.glob("*.json")
-    )
-    assert tuple(
-        internal_directory.glob("*.json")
-    )
+    assert tuple(external_directory.glob("*.json"))
+    assert tuple(internal_directory.glob("*.json"))
 
 
 @pytest.mark.parametrize(
@@ -228,15 +201,9 @@ def test_summary_only_report(
 
     assert exit_code == 0
 
-    report = next(
-        tmp_path.glob("*.json")
-    )
+    report = next(tmp_path.glob("*.json"))
 
-    payload = json.loads(
-        report.read_text(
-            encoding="utf-8"
-        )
-    )
+    payload = json.loads(report.read_text(encoding="utf-8"))
 
     assert payload["cases"] == []
 
@@ -256,9 +223,7 @@ def _live_success_state():
         "task_completion_score": 1.0,
         "tool_results": [
             {
-                "tool": (
-                    "buscar_conhecimento_rag"
-                ),
+                "tool": ("buscar_conhecimento_rag"),
                 "status": "success",
             }
         ],
@@ -267,11 +232,7 @@ def _live_success_state():
                 "retrieved_documents": 1,
                 "duration_ms": 10.0,
                 "retrieval_context": [
-                    (
-                        "Gastos fixos, gastos "
-                        "variáveis e reserva "
-                        "financeira."
-                    )
+                    ("Gastos fixos, gastos variáveis e reserva financeira.")
                 ],
             }
         },
@@ -280,11 +241,7 @@ def _live_success_state():
 
 def _live_test_provider():
     return LiveInnaPayloadProvider(
-        graph_executor=(
-            lambda **kwargs: (
-                _live_success_state()
-            )
-        )
+        graph_executor=(lambda **kwargs: _live_success_state())
     )
 
 
@@ -297,10 +254,7 @@ def test_parser_accepts_run_live() -> None:
     )
 
     assert args.command == "run-live"
-    assert (
-        args.case_id
-        == "rag-financial-education-001"
-    )
+    assert args.case_id == "rag-financial-education-001"
     assert args.gate_profile == "single-case"
     assert args.no_report is True
 
@@ -347,10 +301,7 @@ def test_run_live_single_case_passes() -> None:
     assert result.passed is True
     assert result.production_evaluation is True
     assert result.command == "run-live"
-    assert (
-        result.case_id
-        == "rag-financial-education-001"
-    )
+    assert result.case_id == "rag-financial-education-001"
     assert result.batch.total_cases == 1
     assert result.batch.passed_cases == 1
     assert result.quality_gate.violations == ()
@@ -374,11 +325,7 @@ def test_run_live_release_profile_fails_for_single_case() -> None:
     assert result.batch.status.value == "passed"
     assert result.quality_gate.passed is False
 
-    rules = {
-        violation.rule.value
-        for violation
-        in result.quality_gate.violations
-    }
+    rules = {violation.rule.value for violation in result.quality_gate.violations}
 
     assert "required-dataset" in rules
 
@@ -396,30 +343,13 @@ def test_run_live_text_summary() -> None:
         provider=_live_test_provider(),
     )
 
-    content = render_text_summary(
-        result
-    )
+    content = render_text_summary(result)
 
-    assert (
-        "INNA LLMOps — Avaliação Real"
-        in content
-    )
-    assert (
-        "Execução de produção: sim"
-        in content
-    )
-    assert (
-        "Caso: rag-financial-education-001"
-        in content
-    )
-    assert (
-        "Taxa de aprovação: 100,00%"
-        in content
-    )
-    assert (
-        "Quality Gate: APROVADO"
-        in content
-    )
+    assert "INNA LLMOps — Avaliação Real" in content
+    assert "Execução de produção: sim" in content
+    assert "Caso: rag-financial-education-001" in content
+    assert "Taxa de aprovação: 100,00%" in content
+    assert "Quality Gate: APROVADO" in content
 
 
 def test_run_live_json_summary() -> None:
@@ -435,29 +365,15 @@ def test_run_live_json_summary() -> None:
         provider=_live_test_provider(),
     )
 
-    summary = build_cli_summary(
-        result
-    )
+    summary = build_cli_summary(result)
 
     assert summary["command"] == "run-live"
-    assert (
-        summary["execution_type"]
-        == "live-application-evaluation"
-    )
-    assert (
-        summary["production_evaluation"]
-        is True
-    )
-    assert (
-        summary["case_id"]
-        == "rag-financial-education-001"
-    )
+    assert summary["execution_type"] == "live-application-evaluation"
+    assert summary["production_evaluation"] is True
+    assert summary["case_id"] == "rag-financial-education-001"
     assert summary["total_cases"] == 1
     assert summary["passed_cases"] == 1
-    assert (
-        summary["quality_gate_passed"]
-        is True
-    )
+    assert summary["quality_gate_passed"] is True
 
 
 def test_run_live_rejects_unknown_case() -> None:

@@ -17,11 +17,7 @@ from src.services.telegram_observability import (
 ROOT = Path(__file__).resolve().parents[2]
 
 BRIDGE_FILE = (
-    ROOT
-    / "src"
-    / "services"
-    / "telegram_conversation_state"
-    / "webhook_bridge.py"
+    ROOT / "src" / "services" / "telegram_conversation_state" / "webhook_bridge.py"
 )
 
 
@@ -33,9 +29,7 @@ class SequenceClock:
         self._values = iter(values)
 
     def __call__(self) -> float:
-        return next(
-            self._values
-        )
+        return next(self._values)
 
 
 class DummyBridge:
@@ -46,27 +40,18 @@ class DummyBridge:
         should_fail: bool = False,
         error: Exception | None = None,
     ) -> None:
-        self.metrics = (
-            InMemoryTelegramConversationMetrics()
-        )
+        self.metrics = InMemoryTelegramConversationMetrics()
 
-        self.event_sink = (
-            InMemoryTelegramOperationalEventSink()
-        )
+        self.event_sink = InMemoryTelegramOperationalEventSink()
 
         self.clock = clock
         self.should_fail = should_fail
         self.error = error
 
-    @_observe_bridge_operation(
-        "save_session"
-    )
+    @_observe_bridge_operation("save_session")
     def save(self):
         if self.should_fail:
-            raise (
-                self.error
-                or RuntimeError("failure")
-            )
+            raise (self.error or RuntimeError("failure"))
 
         return "saved"
 
@@ -77,9 +62,7 @@ class BrokenMetrics:
         record,
     ) -> None:
         del record
-        raise RuntimeError(
-            "metrics unavailable"
-        )
+        raise RuntimeError("metrics unavailable")
 
 
 class BrokenEventSink:
@@ -88,9 +71,7 @@ class BrokenEventSink:
         event,
     ) -> None:
         del event
-        raise RuntimeError(
-            "event sink unavailable"
-        )
+        raise RuntimeError("event sink unavailable")
 
 
 class TelemetryFailureBridge:
@@ -102,16 +83,12 @@ class TelemetryFailureBridge:
             10.01,
         )
 
-    @_observe_bridge_operation(
-        "reload_session"
-    )
+    @_observe_bridge_operation("reload_session")
     def reload(self):
         return "reloaded"
 
 
-class TelegramConversationStateConflictError(
-    RuntimeError
-):
+class TelegramConversationStateConflictError(RuntimeError):
     pass
 
 
@@ -132,22 +109,15 @@ def test_bridge_observer_records_success():
     assert records[0].operation == "save_session"
     assert records[0].component == "bridge"
     assert records[0].outcome == "success"
-    assert records[0].duration_ms == pytest.approx(
-        25.0
-    )
+    assert records[0].duration_ms == pytest.approx(25.0)
 
     assert len(events) == 1
-    assert (
-        events[0].name
-        == "telegram_session_save_completed"
-    )
+    assert events[0].name == "telegram_session_save_completed"
     assert events[0].outcome == "success"
 
 
 def test_bridge_observer_records_error_and_reraises():
-    expected = RuntimeError(
-        "database internal details"
-    )
+    expected = RuntimeError("database internal details")
 
     bridge = DummyBridge(
         clock=SequenceClock(
@@ -172,10 +142,7 @@ def test_bridge_observer_records_error_and_reraises():
     assert record.error_category == "unknown"
     assert event.outcome == "error"
 
-    assert (
-        "database internal details"
-        not in repr(event.fields)
-    )
+    assert "database internal details" not in repr(event.fields)
 
 
 def test_bridge_observer_records_conflict():
@@ -185,11 +152,7 @@ def test_bridge_observer_records_conflict():
             1.005,
         ),
         should_fail=True,
-        error=(
-            TelegramConversationStateConflictError(
-                "conflict"
-            )
-        ),
+        error=(TelegramConversationStateConflictError("conflict")),
     )
 
     with pytest.raises(
@@ -201,16 +164,10 @@ def test_bridge_observer_records_conflict():
     event = bridge.event_sink.snapshot()[0]
 
     assert record.outcome == "conflict"
-    assert (
-        record.error_category
-        == "optimistic_conflict"
-    )
+    assert record.error_category == "optimistic_conflict"
     assert record.conflict_recovered is False
 
-    assert (
-        event.name
-        == "telegram_session_save_conflict"
-    )
+    assert event.name == "telegram_session_save_conflict"
     assert event.level == "warning"
 
 
@@ -237,8 +194,7 @@ def test_five_bridge_operations_are_decorated():
             node,
             ast.ClassDef,
         )
-        and node.name
-        == "TelegramWebhookConversationBridge"
+        and node.name == "TelegramWebhookConversationBridge"
     )
 
     expected = {
@@ -259,16 +215,10 @@ def test_five_bridge_operations_are_decorated():
             continue
 
         for decorator in node.decorator_list:
-            text = ast.unparse(
-                decorator
-            )
+            text = ast.unparse(decorator)
 
-            if text.startswith(
-                "_observe_bridge_operation"
-            ):
-                decorated.add(
-                    node.name
-                )
+            if text.startswith("_observe_bridge_operation"):
+                decorated.add(node.name)
 
     assert decorated == expected
 
@@ -290,8 +240,7 @@ def test_bridge_has_injected_observability_fields():
             node,
             ast.ClassDef,
         )
-        and node.name
-        == "TelegramWebhookConversationBridge"
+        and node.name == "TelegramWebhookConversationBridge"
     )
 
     fields = {

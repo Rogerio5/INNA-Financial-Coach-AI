@@ -30,14 +30,10 @@ from .models import (
 )
 
 
-ADMIN_PREFIX = (
-    "/internal/human-reviews/admin"
-)
+ADMIN_PREFIX = "/internal/human-reviews/admin"
 
 
-class HumanReviewDashboardApiError(
-    RuntimeError
-):
+class HumanReviewDashboardApiError(RuntimeError):
     """Erro seguro do cliente administrativo HITL."""
 
 
@@ -71,29 +67,20 @@ def _signed_headers(
     request_id: str | None = None,
     timestamp: int | None = None,
 ) -> dict[str, str]:
-    normalized_admin_id = str(
-        admin_user_id or ""
-    ).strip()
+    normalized_admin_id = str(admin_user_id or "").strip()
 
     if not normalized_admin_id:
         raise HumanReviewDashboardApiError(
-            "A identidade administrativa "
-            "não está disponível."
+            "A identidade administrativa não está disponível."
         )
 
     effective_request_id = (
         str(request_id).strip()
         if request_id is not None
-        else gerar_request_id_interno(
-            origem="hitl-admin"
-        )
+        else gerar_request_id_interno(origem="hitl-admin")
     )
 
-    effective_timestamp = int(
-        time.time()
-        if timestamp is None
-        else timestamp
-    )
+    effective_timestamp = int(time.time() if timestamp is None else timestamp)
 
     try:
         signature = assinar_requisicao_interna(
@@ -110,18 +97,13 @@ def _signed_headers(
         InternalRequestSecurityError,
     ):
         raise HumanReviewDashboardApiError(
-            "Não foi possível autenticar a "
-            "comunicação administrativa."
+            "Não foi possível autenticar a comunicação administrativa."
         ) from None
 
     return {
         HEADER_USER_ID: normalized_admin_id,
-        HEADER_REQUEST_ID: (
-            effective_request_id
-        ),
-        HEADER_TIMESTAMP: str(
-            effective_timestamp
-        ),
+        HEADER_REQUEST_ID: (effective_request_id),
+        HEADER_TIMESTAMP: str(effective_timestamp),
         HEADER_SIGNATURE: signature,
     }
 
@@ -135,37 +117,18 @@ def _raise_safe_response_error(
     status_code = response.status_code
 
     messages = {
-        401: (
-            "A autenticação interna do painel "
-            "foi recusada."
-        ),
-        403: (
-            "O usuário atual não possui permissão "
-            "administrativa HITL."
-        ),
-        404: (
-            "A revisão humana solicitada "
-            "não foi encontrada."
-        ),
-        409: (
-            "A revisão foi alterada ou assumida "
-            "por outro administrador."
-        ),
-        422: (
-            "Os filtros ou dados enviados "
-            "são inválidos."
-        ),
-        503: (
-            "O serviço HITL está temporariamente "
-            "indisponível."
-        ),
+        401: ("A autenticação interna do painel foi recusada."),
+        403: ("O usuário atual não possui permissão administrativa HITL."),
+        404: ("A revisão humana solicitada não foi encontrada."),
+        409: ("A revisão foi alterada ou assumida por outro administrador."),
+        422: ("Os filtros ou dados enviados são inválidos."),
+        503: ("O serviço HITL está temporariamente indisponível."),
     }
 
     raise HumanReviewDashboardApiError(
         messages.get(
             status_code,
-            "Não foi possível concluir a "
-            "operação administrativa HITL.",
+            "Não foi possível concluir a operação administrativa HITL.",
         )
     )
 
@@ -174,9 +137,7 @@ def _get_json(
     *,
     path: str,
     admin_user_id: str,
-    params: Sequence[
-        tuple[str, str | int]
-    ] | Mapping[str, Any] | None = None,
+    params: Sequence[tuple[str, str | int]] | Mapping[str, Any] | None = None,
     timeout: int = 30,
 ) -> dict[str, Any]:
     headers = _signed_headers(
@@ -206,15 +167,11 @@ def _get_json(
         ValueError,
     ):
         raise HumanReviewDashboardApiError(
-            "Não foi possível conectar ao serviço "
-            "administrativo HITL."
+            "Não foi possível conectar ao serviço administrativo HITL."
         ) from None
 
     if not isinstance(result, dict):
-        raise HumanReviewDashboardApiError(
-            "A API HITL retornou uma resposta "
-            "inválida."
-        )
+        raise HumanReviewDashboardApiError("A API HITL retornou uma resposta inválida.")
 
     return result
 
@@ -235,9 +192,7 @@ def _post_json(
         body=body,
     )
 
-    headers["Content-Type"] = (
-        "application/json; charset=utf-8"
-    )
+    headers["Content-Type"] = "application/json; charset=utf-8"
 
     try:
         response = requests.post(
@@ -259,15 +214,11 @@ def _post_json(
         ValueError,
     ):
         raise HumanReviewDashboardApiError(
-            "Não foi possível conectar ao serviço "
-            "administrativo HITL."
+            "Não foi possível conectar ao serviço administrativo HITL."
         ) from None
 
     if not isinstance(result, dict):
-        raise HumanReviewDashboardApiError(
-            "A API HITL retornou uma resposta "
-            "inválida."
-        )
+        raise HumanReviewDashboardApiError("A API HITL retornou uma resposta inválida.")
 
     return result
 
@@ -286,19 +237,11 @@ def listar_revisoes_hitl_api(
     limit: int = 50,
     offset: int = 0,
 ) -> HumanReviewDashboardPage:
-    params: list[
-        tuple[str, str | int]
-    ] = []
+    params: list[tuple[str, str | int]] = []
 
-    params.extend(
-        ("statuses", status)
-        for status in statuses
-    )
+    params.extend(("statuses", status) for status in statuses)
 
-    params.extend(
-        ("risk_levels", risk)
-        for risk in risk_levels
-    )
+    params.extend(("risk_levels", risk) for risk in risk_levels)
 
     optional_parameters = {
         "requested_by": requested_by,
@@ -310,16 +253,15 @@ def listar_revisoes_hitl_api(
     }
 
     params.extend(
-        (key, value)
-        for key, value
-        in optional_parameters.items()
-        if str(value).strip()
+        (key, value) for key, value in optional_parameters.items() if str(value).strip()
     )
 
-    params.extend([
-        ("limit", int(limit)),
-        ("offset", int(offset)),
-    ])
+    params.extend(
+        [
+            ("limit", int(limit)),
+            ("offset", int(offset)),
+        ]
+    )
 
     result = _get_json(
         path=f"{ADMIN_PREFIX}/reviews",
@@ -327,9 +269,7 @@ def listar_revisoes_hitl_api(
         params=params,
     )
 
-    return HumanReviewDashboardPage.from_dict(
-        result
-    )
+    return HumanReviewDashboardPage.from_dict(result)
 
 
 def obter_revisao_hitl_api(
@@ -337,15 +277,10 @@ def obter_revisao_hitl_api(
     admin_user_id: str,
     review_id: str,
 ) -> HumanReviewDashboardRecord:
-    normalized_review_id = str(
-        review_id or ""
-    ).strip()
+    normalized_review_id = str(review_id or "").strip()
 
     if not normalized_review_id:
-        raise HumanReviewDashboardApiError(
-            "O identificador da revisão "
-            "é obrigatório."
-        )
+        raise HumanReviewDashboardApiError("O identificador da revisão é obrigatório.")
 
     safe_review_id = quote(
         normalized_review_id,
@@ -353,16 +288,11 @@ def obter_revisao_hitl_api(
     )
 
     result = _get_json(
-        path=(
-            f"{ADMIN_PREFIX}/reviews/"
-            f"{safe_review_id}"
-        ),
+        path=(f"{ADMIN_PREFIX}/reviews/{safe_review_id}"),
         admin_user_id=admin_user_id,
     )
 
-    return HumanReviewDashboardRecord.from_dict(
-        result
-    )
+    return HumanReviewDashboardRecord.from_dict(result)
 
 
 def obter_metricas_hitl_api(
@@ -386,9 +316,7 @@ def obter_metricas_hitl_api(
         params=params,
     )
 
-    return HumanReviewDashboardMetrics.from_dict(
-        result
-    )
+    return HumanReviewDashboardMetrics.from_dict(result)
 
 
 def recuperar_claims_hitl_api(
@@ -400,20 +328,12 @@ def recuperar_claims_hitl_api(
         path=f"{ADMIN_PREFIX}/recover-stale",
         admin_user_id=admin_user_id,
         payload={
-            "timeout_seconds": int(
-                timeout_seconds
-            ),
+            "timeout_seconds": int(timeout_seconds),
         },
     )
 
     return tuple(
-        str(review_id)
-        for review_id in (
-            result.get(
-                "recovered_review_ids"
-            )
-            or []
-        )
+        str(review_id) for review_id in (result.get("recovered_review_ids") or [])
     )
 
 
@@ -428,19 +348,14 @@ def resolver_revisao_hitl_api(
     corrections: Mapping[
         str,
         Any,
-    ] | None = None,
+    ]
+    | None = None,
 ) -> HumanReviewDashboardResolution:
-    normalized_review_id = str(
-        review_id or ""
-    ).strip()
+    normalized_review_id = str(review_id or "").strip()
 
-    normalized_thread_id = str(
-        thread_id or ""
-    ).strip()
+    normalized_thread_id = str(thread_id or "").strip()
 
-    normalized_action = str(
-        action or ""
-    ).strip().lower()
+    normalized_action = str(action or "").strip().lower()
 
     allowed_actions = {
         "approve",
@@ -450,45 +365,25 @@ def resolver_revisao_hitl_api(
     }
 
     if not normalized_review_id:
-        raise HumanReviewDashboardApiError(
-            "O identificador da revisão "
-            "é obrigatório."
-        )
+        raise HumanReviewDashboardApiError("O identificador da revisão é obrigatório.")
 
     if not normalized_thread_id:
         raise HumanReviewDashboardApiError(
-            "A conversa vinculada à revisão "
-            "não está disponível."
+            "A conversa vinculada à revisão não está disponível."
         )
 
     if normalized_action not in allowed_actions:
-        raise HumanReviewDashboardApiError(
-            "A decisão HITL é inválida."
-        )
+        raise HumanReviewDashboardApiError("A decisão HITL é inválida.")
 
-    normalized_corrections = dict(
-        corrections or {}
-    )
+    normalized_corrections = dict(corrections or {})
 
-    if (
-        normalized_action == "correct"
-        and not normalized_corrections
-    ):
-        raise HumanReviewDashboardApiError(
-            "Informe pelo menos uma correção."
-        )
+    if normalized_action == "correct" and not normalized_corrections:
+        raise HumanReviewDashboardApiError("Informe pelo menos uma correção.")
 
-    normalized_reason = str(
-        reason or ""
-    ).strip()
+    normalized_reason = str(reason or "").strip()
 
-    if (
-        normalized_action == "reject"
-        and not normalized_reason
-    ):
-        raise HumanReviewDashboardApiError(
-            "Informe o motivo da rejeição."
-        )
+    if normalized_action == "reject" and not normalized_reason:
+        raise HumanReviewDashboardApiError("Informe o motivo da rejeição.")
 
     safe_review_id = quote(
         normalized_review_id,
@@ -496,29 +391,19 @@ def resolver_revisao_hitl_api(
     )
 
     result = _post_json(
-        path=(
-            "/internal/human-reviews/"
-            f"{safe_review_id}/resolve"
-        ),
+        path=(f"/internal/human-reviews/{safe_review_id}/resolve"),
         admin_user_id=admin_user_id,
         payload={
             "thread_id": normalized_thread_id,
             "action": normalized_action,
-            "comment": str(
-                comment or ""
-            ).strip(),
+            "comment": str(comment or "").strip(),
             "reason": normalized_reason,
-            "corrections": (
-                normalized_corrections
-            ),
+            "corrections": (normalized_corrections),
         },
         timeout=90,
     )
 
-    return (
-        HumanReviewDashboardResolution
-        .from_dict(result)
-    )
+    return HumanReviewDashboardResolution.from_dict(result)
 
 
 __all__ = [

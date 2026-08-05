@@ -11,8 +11,7 @@ from src.services.human_review.admin_contracts import (
 )
 
 
-def test_admin_filters_accept_valid_values(
-) -> None:
+def test_admin_filters_accept_valid_values() -> None:
     filters = HumanReviewAdminFilters(
         statuses=(
             "pending",
@@ -47,8 +46,7 @@ def test_admin_filters_reject_invalid_status(
         )
 
 
-def test_admin_filters_reject_invalid_period(
-) -> None:
+def test_admin_filters_reject_invalid_period() -> None:
     with pytest.raises(ValueError):
         HumanReviewAdminFilters(
             created_from=datetime(

@@ -57,17 +57,13 @@ def aplicar_tema_health_chart(
     fig.update_xaxes(
         color=HEALTH_CHART_TEXT,
         gridcolor=HEALTH_CHART_GRID,
-        zerolinecolor=(
-            "rgba(148, 163, 184, 0.25)"
-        ),
+        zerolinecolor=("rgba(148, 163, 184, 0.25)"),
     )
 
     fig.update_yaxes(
         color=HEALTH_CHART_TEXT,
         gridcolor=HEALTH_CHART_GRID,
-        zerolinecolor=(
-            "rgba(148, 163, 184, 0.25)"
-        ),
+        zerolinecolor=("rgba(148, 163, 184, 0.25)"),
     )
 
     return fig
@@ -103,12 +99,8 @@ HEALTH_TABLE_TEXTS = {
         "weight": "Peso (%)",
         "contribution": "Contribuição",
         "status": "Status",
-        "component_comparison": (
-            "### Comparativo dos componentes"
-        ),
-        "export_history": (
-            "⬇️ Exportar histórico em CSV"
-        ),
+        "component_comparison": ("### Comparativo dos componentes"),
+        "export_history": ("⬇️ Exportar histórico em CSV"),
     },
     "en_us": {
         "id": "ID",
@@ -129,12 +121,8 @@ HEALTH_TABLE_TEXTS = {
         "weight": "Weight (%)",
         "contribution": "Contribution",
         "status": "Status",
-        "component_comparison": (
-            "### Component comparison"
-        ),
-        "export_history": (
-            "⬇️ Export history as CSV"
-        ),
+        "component_comparison": ("### Component comparison"),
+        "export_history": ("⬇️ Export history as CSV"),
     },
     "es": {
         "id": "ID",
@@ -155,12 +143,8 @@ HEALTH_TABLE_TEXTS = {
         "weight": "Peso (%)",
         "contribution": "Contribución",
         "status": "Estado",
-        "component_comparison": (
-            "### Comparación de componentes"
-        ),
-        "export_history": (
-            "⬇️ Exportar historial en CSV"
-        ),
+        "component_comparison": ("### Comparación de componentes"),
+        "export_history": ("⬇️ Exportar historial en CSV"),
     },
     "fr": {
         "id": "ID",
@@ -181,12 +165,8 @@ HEALTH_TABLE_TEXTS = {
         "weight": "Poids (%)",
         "contribution": "Contribution",
         "status": "Statut",
-        "component_comparison": (
-            "### Comparaison des composants"
-        ),
-        "export_history": (
-            "⬇️ Exporter l’historique en CSV"
-        ),
+        "component_comparison": ("### Comparaison des composants"),
+        "export_history": ("⬇️ Exporter l’historique en CSV"),
     },
     "de": {
         "id": "ID",
@@ -207,12 +187,8 @@ HEALTH_TABLE_TEXTS = {
         "weight": "Gewicht (%)",
         "contribution": "Beitrag",
         "status": "Status",
-        "component_comparison": (
-            "### Komponentenvergleich"
-        ),
-        "export_history": (
-            "⬇️ Verlauf als CSV exportieren"
-        ),
+        "component_comparison": ("### Komponentenvergleich"),
+        "export_history": ("⬇️ Verlauf als CSV exportieren"),
     },
     "it": {
         "id": "ID",
@@ -233,12 +209,8 @@ HEALTH_TABLE_TEXTS = {
         "weight": "Peso (%)",
         "contribution": "Contributo",
         "status": "Stato",
-        "component_comparison": (
-            "### Confronto dei componenti"
-        ),
-        "export_history": (
-            "⬇️ Esporta cronologia in CSV"
-        ),
+        "component_comparison": ("### Confronto dei componenti"),
+        "export_history": ("⬇️ Esporta cronologia in CSV"),
     },
     "ro": {
         "id": "ID",
@@ -259,12 +231,8 @@ HEALTH_TABLE_TEXTS = {
         "weight": "Pondere (%)",
         "contribution": "Contribuție",
         "status": "Stare",
-        "component_comparison": (
-            "### Comparația componentelor"
-        ),
-        "export_history": (
-            "⬇️ Exportă istoricul CSV"
-        ),
+        "component_comparison": ("### Comparația componentelor"),
+        "export_history": ("⬇️ Exportă istoricul CSV"),
     },
     "ua": {
         "id": "ID",
@@ -285,12 +253,8 @@ HEALTH_TABLE_TEXTS = {
         "weight": "Вага (%)",
         "contribution": "Внесок",
         "status": "Статус",
-        "component_comparison": (
-            "### Порівняння компонентів"
-        ),
-        "export_history": (
-            "⬇️ Експортувати історію CSV"
-        ),
+        "component_comparison": ("### Порівняння компонентів"),
+        "export_history": ("⬇️ Експортувати історію CSV"),
     },
     "ru": {
         "id": "ID",
@@ -311,12 +275,8 @@ HEALTH_TABLE_TEXTS = {
         "weight": "Вес (%)",
         "contribution": "Вклад",
         "status": "Статус",
-        "component_comparison": (
-            "### Сравнение компонентов"
-        ),
-        "export_history": (
-            "⬇️ Экспортировать историю CSV"
-        ),
+        "component_comparison": ("### Сравнение компонентов"),
+        "export_history": ("⬇️ Экспортировать историю CSV"),
     },
     "sa": {
         "id": "المعرّف",
@@ -337,22 +297,14 @@ HEALTH_TABLE_TEXTS = {
         "weight": "الوزن (%)",
         "contribution": "المساهمة",
         "status": "الحالة",
-        "component_comparison": (
-            "### مقارنة المكوّنات"
-        ),
-        "export_history": (
-            "⬇️ تصدير السجل بصيغة CSV"
-        ),
+        "component_comparison": ("### مقارنة المكوّنات"),
+        "export_history": ("⬇️ تصدير السجل بصيغة CSV"),
     },
 }
 
-HEALTH_TABLE_TEXTS["en_gb"] = (
-    HEALTH_TABLE_TEXTS["en_us"]
-)
+HEALTH_TABLE_TEXTS["en_gb"] = HEALTH_TABLE_TEXTS["en_us"]
 
-HEALTH_TABLE_TEXTS["ch"] = (
-    HEALTH_TABLE_TEXTS["de"]
-)
+HEALTH_TABLE_TEXTS["ch"] = HEALTH_TABLE_TEXTS["de"]
 
 
 def health_table_lang() -> str:
@@ -398,16 +350,10 @@ def nome_componente_health(
         "performance": "performance",
     }
 
-    chave = chaves.get(
-        str(nome or "").strip().lower()
-    )
+    chave = chaves.get(str(nome or "").strip().lower())
 
     if chave is None:
-        return (
-            padrao
-            if padrao is not None
-            else str(nome or "").title()
-        )
+        return padrao if padrao is not None else str(nome or "").title()
 
     return health_table_t(
         chave,
@@ -536,13 +482,9 @@ HEALTH_VALUE_TEXTS = {
     },
 }
 
-HEALTH_VALUE_TEXTS["en_gb"] = (
-    HEALTH_VALUE_TEXTS["en_us"]
-)
+HEALTH_VALUE_TEXTS["en_gb"] = HEALTH_VALUE_TEXTS["en_us"]
 
-HEALTH_VALUE_TEXTS["ch"] = (
-    HEALTH_VALUE_TEXTS["de"]
-)
+HEALTH_VALUE_TEXTS["ch"] = HEALTH_VALUE_TEXTS["de"]
 
 
 HEALTH_SEMANTIC_ICONS = {
@@ -580,9 +522,7 @@ def classificacao_semantica_health(
     valor: Any,
 ) -> str:
     """Identifica a categoria da classificação."""
-    texto = normalizar_valor_health(
-        valor
-    )
+    texto = normalizar_valor_health(valor)
 
     if any(
         termo in texto
@@ -635,9 +575,7 @@ def status_semantico_health(
     valor: Any,
 ) -> str:
     """Identifica a categoria do status."""
-    texto = normalizar_valor_health(
-        valor
-    )
+    texto = normalizar_valor_health(valor)
 
     if any(
         termo in texto
@@ -702,28 +640,18 @@ def traduzir_classificacao_health(
     valor: Any,
 ) -> str:
     """Traduz classificação e acrescenta indicador."""
-    categoria = classificacao_semantica_health(
-        valor
-    )
+    categoria = classificacao_semantica_health(valor)
 
-    return (
-        f"{HEALTH_SEMANTIC_ICONS[categoria]} "
-        f"{health_value_t(categoria)}"
-    )
+    return f"{HEALTH_SEMANTIC_ICONS[categoria]} {health_value_t(categoria)}"
 
 
 def traduzir_status_health(
     valor: Any,
 ) -> str:
     """Traduz status e acrescenta indicador."""
-    categoria = status_semantico_health(
-        valor
-    )
+    categoria = status_semantico_health(valor)
 
-    return (
-        f"{HEALTH_SEMANTIC_ICONS[categoria]} "
-        f"{health_value_t(categoria)}"
-    )
+    return f"{HEALTH_SEMANTIC_ICONS[categoria]} {health_value_t(categoria)}"
 
 
 def normalizar_valor_health(
@@ -738,9 +666,7 @@ def normalizar_valor_health(
             "NFKD",
             texto,
         )
-        if not unicodedata.combining(
-            caractere
-        )
+        if not unicodedata.combining(caractere)
     )
 
     return texto
@@ -780,58 +706,54 @@ def estilizar_tabela_health(
     """
     Aplica fundo escuro e texto claro à tabela.
     """
-    return (
-        tabela.style
-        .set_properties(
-            **{
-                "background-color": "#020617",
-                "color": "#F8FAFC",
-                "border-color": "#1E293B",
-                "font-weight": "600",
-            }
-        )
-        .set_table_styles(
-            [
-                {
-                    "selector": "th",
-                    "props": [
-                        (
-                            "background-color",
-                            "#0F172A",
-                        ),
-                        (
-                            "color",
-                            "#F8FAFC",
-                        ),
-                        (
-                            "font-weight",
-                            "700",
-                        ),
-                        (
-                            "border",
-                            "1px solid #334155",
-                        ),
-                    ],
-                },
-                {
-                    "selector": "td",
-                    "props": [
-                        (
-                            "background-color",
-                            "#020617",
-                        ),
-                        (
-                            "color",
-                            "#F8FAFC",
-                        ),
-                        (
-                            "border",
-                            "1px solid #1E293B",
-                        ),
-                    ],
-                },
-            ]
-        )
+    return tabela.style.set_properties(
+        **{
+            "background-color": "#020617",
+            "color": "#F8FAFC",
+            "border-color": "#1E293B",
+            "font-weight": "600",
+        }
+    ).set_table_styles(
+        [
+            {
+                "selector": "th",
+                "props": [
+                    (
+                        "background-color",
+                        "#0F172A",
+                    ),
+                    (
+                        "color",
+                        "#F8FAFC",
+                    ),
+                    (
+                        "font-weight",
+                        "700",
+                    ),
+                    (
+                        "border",
+                        "1px solid #334155",
+                    ),
+                ],
+            },
+            {
+                "selector": "td",
+                "props": [
+                    (
+                        "background-color",
+                        "#020617",
+                    ),
+                    (
+                        "color",
+                        "#F8FAFC",
+                    ),
+                    (
+                        "border",
+                        "1px solid #1E293B",
+                    ),
+                ],
+            },
+        ]
     )
 
 
@@ -842,35 +764,22 @@ def estilizar_tabela_componentes_health(
     Aplica tema escuro e cores semânticas nas
     colunas de classificação e status.
     """
-    styler = estilizar_tabela_health(
-        tabela
-    )
+    styler = estilizar_tabela_health(tabela)
 
     colunas_semanticas = [
-        health_table_t(
-            "classification"
-        ),
-        health_table_t(
-            "status"
-        ),
+        health_table_t("classification"),
+        health_table_t("status"),
     ]
 
     colunas_existentes = [
-        coluna
-        for coluna in colunas_semanticas
-        if coluna in tabela.columns
+        coluna for coluna in colunas_semanticas if coluna in tabela.columns
     ]
 
     if not colunas_existentes:
         return styler
 
     return styler.apply(
-        lambda coluna: [
-            estilo_semantico_health(
-                valor
-            )
-            for valor in coluna
-        ],
+        lambda coluna: [estilo_semantico_health(valor) for valor in coluna],
         subset=colunas_existentes,
     )
 
@@ -884,50 +793,52 @@ def preparar_componentes_exibicao(
     linhas = []
 
     for nome, item in componentes.items():
-        linhas.append({
-            "Componente": nome_componente_health(
-                nome,
-                nome.title(),
-            ),
-            "Score": float(
-                item.get(
-                    "score",
-                    0,
-                )
-            ),
-            "Peso (%)": round(
-                float(
+        linhas.append(
+            {
+                "Componente": nome_componente_health(
+                    nome,
+                    nome.title(),
+                ),
+                "Score": float(
                     item.get(
-                        "peso",
+                        "score",
                         0,
                     )
-                )
-                * 100,
-                1,
-            ),
-            "Contribuição": float(
-                item.get(
-                    "contribuicao",
-                    0,
-                )
-            ),
-            "Classificação": (
-                traduzir_classificacao_health(
-                    item.get(
-                        "classificacao",
-                        "",
+                ),
+                "Peso (%)": round(
+                    float(
+                        item.get(
+                            "peso",
+                            0,
+                        )
                     )
-                )
-            ),
-            "Status": (
-                traduzir_status_health(
+                    * 100,
+                    1,
+                ),
+                "Contribuição": float(
                     item.get(
-                        "status",
-                        "",
+                        "contribuicao",
+                        0,
                     )
-                )
-            ),
-        })
+                ),
+                "Classificação": (
+                    traduzir_classificacao_health(
+                        item.get(
+                            "classificacao",
+                            "",
+                        )
+                    )
+                ),
+                "Status": (
+                    traduzir_status_health(
+                        item.get(
+                            "status",
+                            "",
+                        )
+                    )
+                ),
+            }
+        )
 
     return pd.DataFrame(linhas)
 
@@ -967,9 +878,7 @@ def preparar_historico_exibicao(
             )
 
     base = (
-        base.dropna(
-            subset=["criado_em"]
-        )
+        base.dropna(subset=["criado_em"])
         .sort_values(
             "criado_em",
             ascending=True,
@@ -1001,19 +910,11 @@ def render_health_history_section(
         )
 
     st.divider()
-    st.markdown(
-        health_history_t("title")
-    )
+    st.markdown(health_history_t("title"))
 
-    st.caption(
-        health_history_t("caption")
-    )
+    st.caption(health_history_t("caption"))
 
-    controle_1, controle_2, controle_3 = (
-        st.columns(
-            [1.2, 1.2, 2]
-        )
-    )
+    controle_1, controle_2, controle_3 = st.columns([1.2, 1.2, 2])
 
     periodo_label = controle_1.selectbox(
         health_history_t("period"),
@@ -1026,9 +927,7 @@ def render_health_history_section(
         format_func=lambda value: (
             health_history_t("period_all")
             if value is None
-            else health_history_t(
-                f"period_{value}"
-            )
+            else health_history_t(f"period_{value}")
         ),
         index=1,
         key="health_history_period",
@@ -1058,88 +957,47 @@ def render_health_history_section(
         )
 
     if salvar:
-        resultado_salvar = (
-            salvar_health_snapshot(
-                resultado_atual,
-                origem="health_center",
-                evitar_duplicado_minutos=5,
-            )
+        resultado_salvar = salvar_health_snapshot(
+            resultado_atual,
+            origem="health_center",
+            evitar_duplicado_minutos=5,
         )
 
         if not resultado_salvar.get("ok"):
-            st.error(
-                health_history_dynamic_t(
-                    "save_error"
-                )
-            )
+            st.error(health_history_dynamic_t("save_error"))
 
         elif resultado_salvar.get("duplicado"):
-            st.info(
-                health_history_dynamic_t(
-                    "duplicate_snapshot"
-                )
-            )
+            st.info(health_history_dynamic_t("duplicate_snapshot"))
 
         elif resultado_salvar.get("salvo"):
-            st.success(
-                health_history_dynamic_t(
-                    "snapshot_saved"
-                )
-            )
+            st.success(health_history_dynamic_t("snapshot_saved"))
 
-    historico_resultado = (
-        carregar_health_history(
-            limite=int(limite),
-            dias=dias_selecionados,
-        )
+    historico_resultado = carregar_health_history(
+        limite=int(limite),
+        dias=dias_selecionados,
     )
 
     if not historico_resultado.get("ok"):
-        st.error(
-            health_history_dynamic_t(
-                "load_error"
-            )
-        )
+        st.error(health_history_dynamic_t("load_error"))
         return
 
-    historico = preparar_historico_exibicao(
-        historico_resultado.get("df")
-    )
+    historico = preparar_historico_exibicao(historico_resultado.get("df"))
 
     if historico.empty:
-        st.info(
-            health_history_dynamic_t(
-                "empty_history"
-            )
-        )
+        st.info(health_history_dynamic_t("empty_history"))
         return
 
-    tendencia = calcular_tendencia_health(
-        historico
-    )
+    tendencia = calcular_tendencia_health(historico)
 
     snapshot_atual = historico.iloc[-1]
 
-    snapshot_anterior = (
-        historico.iloc[-2]
-        if len(historico) >= 2
-        else None
-    )
+    snapshot_anterior = historico.iloc[-2] if len(historico) >= 2 else None
 
     delta_global = None
 
     if snapshot_anterior is not None:
-        delta_global = (
-            float(
-                snapshot_atual[
-                    "score_global"
-                ]
-            )
-            - float(
-                snapshot_anterior[
-                    "score_global"
-                ]
-            )
+        delta_global = float(snapshot_atual["score_global"]) - float(
+            snapshot_anterior["score_global"]
         )
 
     metricas = st.columns(4)
@@ -1151,34 +1009,22 @@ def render_health_history_section(
 
     metricas[1].metric(
         health_history_t("latest_score"),
-        (
-            f"{float(snapshot_atual['score_global']):.1f}/100"
-        ),
-        delta=(
-            f"{delta_global:+.1f}"
-            if delta_global is not None
-            else None
-        ),
+        (f"{float(snapshot_atual['score_global']):.1f}/100"),
+        delta=(f"{delta_global:+.1f}" if delta_global is not None else None),
     )
 
     metricas[2].metric(
         health_history_t("best_score"),
-        (
-            f"{float(historico['score_global'].max()):.1f}/100"
-        ),
+        (f"{float(historico['score_global'].max()):.1f}/100"),
     )
 
     metricas[3].metric(
         health_history_t("period_average"),
-        (
-            f"{float(historico['score_global'].mean()):.1f}/100"
-        ),
+        (f"{float(historico['score_global'].mean()):.1f}/100"),
     )
 
     if tendencia.get("tem_comparacao"):
-        direcao = tendencia.get(
-            "direcao"
-        )
+        direcao = tendencia.get("direcao")
 
         mensagem = (
             f"{tendencia.get('icone', '')} "
@@ -1195,22 +1041,12 @@ def render_health_history_section(
             st.info(mensagem)
 
     else:
-        st.info(
-            health_history_dynamic_t(
-                "minimum_snapshots"
-            )
-        )
+        st.info(health_history_dynamic_t("minimum_snapshots"))
 
-    st.markdown(
-        health_history_t("global_evolution")
-    )
+    st.markdown(health_history_t("global_evolution"))
 
-    history_date_label = health_history_t(
-        "date"
-    )
-    history_score_label = health_history_t(
-        "health_score"
-    )
+    history_date_label = health_history_t("date")
+    history_score_label = health_history_t("health_score")
 
     grafico_global = (
         historico[
@@ -1253,9 +1089,7 @@ def render_health_history_section(
         fill="tozeroy",
         fillcolor="rgba(56, 189, 248, 0.14)",
         hovertemplate=(
-            "<b>%{x}</b><br>"
-            f"{history_score_label}: %{{y:.1f}}"
-            "<extra></extra>"
+            f"<b>%{{x}}</b><br>{history_score_label}: %{{y:.1f}}<extra></extra>"
         ),
     )
 
@@ -1284,27 +1118,19 @@ def render_health_history_section(
         },
     )
 
-    st.markdown(
-        health_history_t("component_evolution")
-    )
+    st.markdown(health_history_t("component_evolution"))
 
     colunas_componentes = {
         "score_tools": health_table_t("tools"),
         "score_rag": health_table_t("rag"),
         "score_memoria": health_table_t("memory"),
-        "score_infraestrutura": health_table_t(
-            "infrastructure"
-        ),
+        "score_infraestrutura": health_table_t("infrastructure"),
         "score_timeline": health_table_t("timeline"),
-        "score_performance": health_table_t(
-            "performance"
-        ),
+        "score_performance": health_table_t("performance"),
     }
 
     colunas_disponiveis = [
-        coluna
-        for coluna in colunas_componentes
-        if coluna in historico.columns
+        coluna for coluna in colunas_componentes if coluna in historico.columns
     ]
 
     if colunas_disponiveis:
@@ -1324,18 +1150,14 @@ def render_health_history_section(
             .set_index(history_date_label)
         )
 
-        componentes_series = list(
-            grafico_componentes.columns
-        )
+        componentes_series = list(grafico_componentes.columns)
 
         fig_componentes = px.line(
             grafico_componentes.reset_index(),
             x=history_date_label,
             y=componentes_series,
             markers=True,
-            color_discrete_sequence=(
-                HEALTH_SERIES_COLORS
-            ),
+            color_discrete_sequence=(HEALTH_SERIES_COLORS),
         )
 
         fig_componentes.update_traces(
@@ -1354,12 +1176,8 @@ def render_health_history_section(
 
         fig_componentes.update_layout(
             xaxis_title=None,
-            yaxis_title=health_history_dynamic_t(
-                "component_score"
-            ),
-            legend_title_text=health_history_dynamic_t(
-                "component"
-            ),
+            yaxis_title=health_history_dynamic_t("component_score"),
+            legend_title_text=health_history_dynamic_t("component"),
             legend={
                 "orientation": "h",
                 "yanchor": "bottom",
@@ -1388,9 +1206,7 @@ def render_health_history_section(
             },
         )
 
-    st.markdown(
-        health_history_t("snapshot_audit")
-    )
+    st.markdown(health_history_t("snapshot_audit"))
 
     tabela_colunas = [
         "id",
@@ -1409,15 +1225,11 @@ def render_health_history_section(
     ]
 
     tabela_colunas = [
-        coluna
-        for coluna in tabela_colunas
-        if coluna in historico.columns
+        coluna for coluna in tabela_colunas if coluna in historico.columns
     ]
 
     tabela = (
-        historico[
-            tabela_colunas
-        ]
+        historico[tabela_colunas]
         .sort_values(
             "criado_em",
             ascending=False,
@@ -1430,26 +1242,12 @@ def render_health_history_section(
                 "score_tools": health_table_t("tools"),
                 "score_rag": health_table_t("rag"),
                 "score_memoria": health_table_t("memory"),
-                "score_infraestrutura": (
-                    health_table_t("infrastructure")
-                ),
-                "score_timeline": (
-                    health_table_t("timeline")
-                ),
-                "score_performance": (
-                    health_table_t("performance")
-                ),
-                "classificacao": (
-                    health_table_t("classification")
-                ),
-                "componente_mais_fraco": (
-                    health_table_t(
-                        "priority_component"
-                    )
-                ),
-                "total_anomalias": (
-                    health_table_t("anomalies")
-                ),
+                "score_infraestrutura": (health_table_t("infrastructure")),
+                "score_timeline": (health_table_t("timeline")),
+                "score_performance": (health_table_t("performance")),
+                "classificacao": (health_table_t("classification")),
+                "componente_mais_fraco": (health_table_t("priority_component")),
+                "total_anomalias": (health_table_t("anomalies")),
                 "origem": health_table_t("origin"),
             }
         )
@@ -1495,9 +1293,7 @@ def render_health_history_section(
         ),
         health_table_t("priority_component"): (
             st.column_config.TextColumn(
-                health_table_t(
-                    "priority_component"
-                ),
+                health_table_t("priority_component"),
                 width="medium",
             )
         ),
@@ -1511,9 +1307,7 @@ def render_health_history_section(
 
     for score_column in score_columns:
         if score_column in tabela.columns:
-            history_column_config[
-                score_column
-            ] = st.column_config.ProgressColumn(
+            history_column_config[score_column] = st.column_config.ProgressColumn(
                 score_column,
                 min_value=0.0,
                 max_value=100.0,
@@ -1522,9 +1316,7 @@ def render_health_history_section(
             )
 
     st.dataframe(
-        estilizar_tabela_health(
-            tabela
-        ),
+        estilizar_tabela_health(tabela),
         use_container_width=True,
         hide_index=True,
         height=430,
@@ -1538,9 +1330,7 @@ def render_health_history_section(
     st.download_button(
         health_table_t("export_history"),
         data=csv,
-        file_name=(
-            "inna_health_score_history.csv"
-        ),
+        file_name=("inna_health_score_history.csv"),
         mime="text/csv",
         use_container_width=True,
         key="health_history_download",
@@ -1631,17 +1421,12 @@ HEALTH_PAGE_TEXTS = {
     "sa": {
         "title": "❤️ مركز صحة نظام INNA",
         "caption": (
-            "الحالة المجمعة للأدوات وRAG والذاكرة "
-            "والبنية التحتية والخط الزمني والأداء."
+            "الحالة المجمعة للأدوات وRAG والذاكرة والبنية التحتية والخط الزمني والأداء."
         ),
     },
 }
 
-HEALTH_PAGE_TEXTS["ch"] = (
-    HEALTH_PAGE_TEXTS["de"]
-)
-
-
+HEALTH_PAGE_TEXTS["ch"] = HEALTH_PAGE_TEXTS["de"]
 
 
 # HEALTH_SCORE_MAIN_PANEL_I18N
@@ -1657,29 +1442,20 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Classificação",
         "strongest_component": "Componente mais forte",
         "priority_component": "Componente prioritário",
-        "excellent_message": (
-            "A INNA está operando em excelente estado."
-        ),
+        "excellent_message": ("A INNA está operando em excelente estado."),
         "healthy_message": (
-            "A INNA está saudável, com alguns pontos "
-            "que merecem acompanhamento."
+            "A INNA está saudável, com alguns pontos que merecem acompanhamento."
         ),
-        "attention_message": (
-            "A INNA apresenta componentes que precisam "
-            "de atenção."
-        ),
+        "attention_message": ("A INNA apresenta componentes que precisam de atenção."),
         "critical_message": (
-            "A saúde global está crítica. Priorize os "
-            "componentes com menor score."
+            "A saúde global está crítica. Priorize os componentes com menor score."
         ),
         "component_scores": "## Scores por componente",
         "score": "Score",
         "global_weight": "Peso no score global",
         "view_penalties": "Ver penalidades",
         "no_penalty": "Nenhuma penalidade aplicada.",
-        "priority_recommendations": (
-            "## Recomendações prioritárias"
-        ),
+        "priority_recommendations": ("## Recomendações prioritárias"),
         "component_score": "Score do componente",
         "component": "Componente",
     },
@@ -1693,16 +1469,11 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Classification",
         "strongest_component": "Strongest component",
         "priority_component": "Priority component",
-        "excellent_message": (
-            "INNA is operating in excellent condition."
-        ),
+        "excellent_message": ("INNA is operating in excellent condition."),
         "healthy_message": (
-            "INNA is healthy, with a few points that "
-            "should continue to be monitored."
+            "INNA is healthy, with a few points that should continue to be monitored."
         ),
-        "attention_message": (
-            "INNA has components that require attention."
-        ),
+        "attention_message": ("INNA has components that require attention."),
         "critical_message": (
             "Global health is critical. Prioritise the "
             "components with the lowest scores."
@@ -1712,9 +1483,7 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "global_weight": "Weight in global score",
         "view_penalties": "View penalties",
         "no_penalty": "No penalty was applied.",
-        "priority_recommendations": (
-            "## Priority recommendations"
-        ),
+        "priority_recommendations": ("## Priority recommendations"),
         "component_score": "Component score",
         "component": "Component",
     },
@@ -1728,16 +1497,11 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Classification",
         "strongest_component": "Strongest component",
         "priority_component": "Priority component",
-        "excellent_message": (
-            "INNA is operating in excellent condition."
-        ),
+        "excellent_message": ("INNA is operating in excellent condition."),
         "healthy_message": (
-            "INNA is healthy, with a few points that "
-            "should continue to be monitored."
+            "INNA is healthy, with a few points that should continue to be monitored."
         ),
-        "attention_message": (
-            "INNA has components that require attention."
-        ),
+        "attention_message": ("INNA has components that require attention."),
         "critical_message": (
             "Global health is critical. Prioritise the "
             "components with the lowest scores."
@@ -1747,9 +1511,7 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "global_weight": "Weight in global score",
         "view_penalties": "View penalties",
         "no_penalty": "No penalty was applied.",
-        "priority_recommendations": (
-            "## Priority recommendations"
-        ),
+        "priority_recommendations": ("## Priority recommendations"),
         "component_score": "Component score",
         "component": "Component",
     },
@@ -1763,28 +1525,21 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Clasificación",
         "strongest_component": "Componente más fuerte",
         "priority_component": "Componente prioritario",
-        "excellent_message": (
-            "INNA está funcionando en un estado excelente."
-        ),
+        "excellent_message": ("INNA está funcionando en un estado excelente."),
         "healthy_message": (
             "INNA está saludable, con algunos puntos "
             "que deben seguir siendo supervisados."
         ),
-        "attention_message": (
-            "INNA tiene componentes que requieren atención."
-        ),
+        "attention_message": ("INNA tiene componentes que requieren atención."),
         "critical_message": (
-            "La salud global es crítica. Priorice los "
-            "componentes con menor puntuación."
+            "La salud global es crítica. Priorice los componentes con menor puntuación."
         ),
         "component_scores": "## Puntuaciones por componente",
         "score": "Puntuación",
         "global_weight": "Peso en la puntuación global",
         "view_penalties": "Ver penalizaciones",
         "no_penalty": "No se aplicó ninguna penalización.",
-        "priority_recommendations": (
-            "## Recomendaciones prioritarias"
-        ),
+        "priority_recommendations": ("## Recomendaciones prioritarias"),
         "component_score": "Puntuación del componente",
         "component": "Componente",
     },
@@ -1798,16 +1553,13 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Classement",
         "strongest_component": "Composant le plus fort",
         "priority_component": "Composant prioritaire",
-        "excellent_message": (
-            "INNA fonctionne dans un excellent état."
-        ),
+        "excellent_message": ("INNA fonctionne dans un excellent état."),
         "healthy_message": (
             "INNA est en bonne santé, avec quelques points "
             "qui doivent rester sous surveillance."
         ),
         "attention_message": (
-            "Certains composants d’INNA nécessitent "
-            "une attention particulière."
+            "Certains composants d’INNA nécessitent une attention particulière."
         ),
         "critical_message": (
             "La santé globale est critique. Donnez la "
@@ -1818,9 +1570,7 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "global_weight": "Poids dans le score global",
         "view_penalties": "Voir les pénalités",
         "no_penalty": "Aucune pénalité appliquée.",
-        "priority_recommendations": (
-            "## Recommandations prioritaires"
-        ),
+        "priority_recommendations": ("## Recommandations prioritaires"),
         "component_score": "Score du composant",
         "component": "Composant",
     },
@@ -1834,16 +1584,11 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Klassifizierung",
         "strongest_component": "Stärkste Komponente",
         "priority_component": "Prioritätskomponente",
-        "excellent_message": (
-            "INNA befindet sich in einem ausgezeichneten Zustand."
-        ),
+        "excellent_message": ("INNA befindet sich in einem ausgezeichneten Zustand."),
         "healthy_message": (
-            "INNA ist gesund. Einige Punkte sollten "
-            "weiterhin überwacht werden."
+            "INNA ist gesund. Einige Punkte sollten weiterhin überwacht werden."
         ),
-        "attention_message": (
-            "Einige INNA-Komponenten benötigen Aufmerksamkeit."
-        ),
+        "attention_message": ("Einige INNA-Komponenten benötigen Aufmerksamkeit."),
         "critical_message": (
             "Der Gesamtzustand ist kritisch. Priorisieren "
             "Sie die Komponenten mit den niedrigsten Scores."
@@ -1853,9 +1598,7 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "global_weight": "Gewicht im Gesamtscore",
         "view_penalties": "Abzüge anzeigen",
         "no_penalty": "Keine Abzüge angewendet.",
-        "priority_recommendations": (
-            "## Priorisierte Empfehlungen"
-        ),
+        "priority_recommendations": ("## Priorisierte Empfehlungen"),
         "component_score": "Komponentenscore",
         "component": "Komponente",
     },
@@ -1869,16 +1612,11 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Classificazione",
         "strongest_component": "Componente più forte",
         "priority_component": "Componente prioritario",
-        "excellent_message": (
-            "INNA sta operando in condizioni eccellenti."
-        ),
+        "excellent_message": ("INNA sta operando in condizioni eccellenti."),
         "healthy_message": (
-            "INNA è in buona salute, con alcuni punti "
-            "da continuare a monitorare."
+            "INNA è in buona salute, con alcuni punti da continuare a monitorare."
         ),
-        "attention_message": (
-            "INNA presenta componenti che richiedono attenzione."
-        ),
+        "attention_message": ("INNA presenta componenti che richiedono attenzione."),
         "critical_message": (
             "Lo stato globale è critico. Dare priorità ai "
             "componenti con il punteggio più basso."
@@ -1888,9 +1626,7 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "global_weight": "Peso nel punteggio globale",
         "view_penalties": "Visualizza penalità",
         "no_penalty": "Nessuna penalità applicata.",
-        "priority_recommendations": (
-            "## Raccomandazioni prioritarie"
-        ),
+        "priority_recommendations": ("## Raccomandazioni prioritarie"),
         "component_score": "Punteggio del componente",
         "component": "Componente",
     },
@@ -1904,16 +1640,12 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Clasificare",
         "strongest_component": "Cea mai puternică componentă",
         "priority_component": "Componentă prioritară",
-        "excellent_message": (
-            "INNA funcționează într-o stare excelentă."
-        ),
+        "excellent_message": ("INNA funcționează într-o stare excelentă."),
         "healthy_message": (
             "INNA este sănătoasă, cu unele puncte care "
             "trebuie monitorizate în continuare."
         ),
-        "attention_message": (
-            "INNA are componente care necesită atenție."
-        ),
+        "attention_message": ("INNA are componente care necesită atenție."),
         "critical_message": (
             "Starea globală este critică. Prioritizați "
             "componentele cu cele mai mici scoruri."
@@ -1923,9 +1655,7 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "global_weight": "Pondere în scorul global",
         "view_penalties": "Vezi penalizările",
         "no_penalty": "Nu a fost aplicată nicio penalizare.",
-        "priority_recommendations": (
-            "## Recomandări prioritare"
-        ),
+        "priority_recommendations": ("## Recomandări prioritare"),
         "component_score": "Scorul componentei",
         "component": "Componentă",
     },
@@ -1939,16 +1669,12 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Класифікація",
         "strongest_component": "Найсильніший компонент",
         "priority_component": "Пріоритетний компонент",
-        "excellent_message": (
-            "INNA працює у відмінному стані."
-        ),
+        "excellent_message": ("INNA працює у відмінному стані."),
         "healthy_message": (
             "INNA перебуває у доброму стані, але деякі "
             "показники слід продовжувати контролювати."
         ),
-        "attention_message": (
-            "Деякі компоненти INNA потребують уваги."
-        ),
+        "attention_message": ("Деякі компоненти INNA потребують уваги."),
         "critical_message": (
             "Загальний стан критичний. Надайте пріоритет "
             "компонентам із найнижчими оцінками."
@@ -1958,9 +1684,7 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "global_weight": "Вага в загальній оцінці",
         "view_penalties": "Переглянути штрафи",
         "no_penalty": "Штрафи не застосовувалися.",
-        "priority_recommendations": (
-            "## Пріоритетні рекомендації"
-        ),
+        "priority_recommendations": ("## Пріоритетні рекомендації"),
         "component_score": "Оцінка компонента",
         "component": "Компонент",
     },
@@ -1974,16 +1698,12 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Классификация",
         "strongest_component": "Самый сильный компонент",
         "priority_component": "Приоритетный компонент",
-        "excellent_message": (
-            "INNA работает в отличном состоянии."
-        ),
+        "excellent_message": ("INNA работает в отличном состоянии."),
         "healthy_message": (
             "INNA находится в хорошем состоянии, однако "
             "некоторые показатели следует контролировать."
         ),
-        "attention_message": (
-            "Некоторые компоненты INNA требуют внимания."
-        ),
+        "attention_message": ("Некоторые компоненты INNA требуют внимания."),
         "critical_message": (
             "Общее состояние критическое. Приоритет следует "
             "отдать компонентам с самыми низкими оценками."
@@ -1993,9 +1713,7 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "global_weight": "Вес в общей оценке",
         "view_penalties": "Показать штрафы",
         "no_penalty": "Штрафы не применялись.",
-        "priority_recommendations": (
-            "## Приоритетные рекомендации"
-        ),
+        "priority_recommendations": ("## Приоритетные рекомендации"),
         "component_score": "Оценка компонента",
         "component": "Компонент",
     },
@@ -2009,28 +1727,21 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "التصنيف",
         "strongest_component": "أقوى مكوّن",
         "priority_component": "المكوّن ذو الأولوية",
-        "excellent_message": (
-            "تعمل INNA في حالة ممتازة."
-        ),
+        "excellent_message": ("تعمل INNA في حالة ممتازة."),
         "healthy_message": (
             "تعمل INNA بحالة جيدة، مع وجود بعض المؤشرات "
             "التي ينبغي الاستمرار في مراقبتها."
         ),
-        "attention_message": (
-            "توجد مكوّنات في INNA تتطلب الانتباه."
-        ),
+        "attention_message": ("توجد مكوّنات في INNA تتطلب الانتباه."),
         "critical_message": (
-            "الحالة العامة حرجة. أعطِ الأولوية للمكوّنات "
-            "ذات الدرجات الأقل."
+            "الحالة العامة حرجة. أعطِ الأولوية للمكوّنات ذات الدرجات الأقل."
         ),
         "component_scores": "## الدرجات حسب المكوّن",
         "score": "الدرجة",
         "global_weight": "الوزن في الدرجة الإجمالية",
         "view_penalties": "عرض العقوبات",
         "no_penalty": "لم يتم تطبيق أي عقوبة.",
-        "priority_recommendations": (
-            "## التوصيات ذات الأولوية"
-        ),
+        "priority_recommendations": ("## التوصيات ذات الأولوية"),
         "component_score": "درجة المكوّن",
         "component": "المكوّن",
     },
@@ -2044,16 +1755,11 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "classification": "Klassifizierung",
         "strongest_component": "Stärkste Komponente",
         "priority_component": "Prioritätskomponente",
-        "excellent_message": (
-            "INNA befindet sich in einem ausgezeichneten Zustand."
-        ),
+        "excellent_message": ("INNA befindet sich in einem ausgezeichneten Zustand."),
         "healthy_message": (
-            "INNA ist gesund. Einige Punkte sollten "
-            "weiterhin überwacht werden."
+            "INNA ist gesund. Einige Punkte sollten weiterhin überwacht werden."
         ),
-        "attention_message": (
-            "Einige INNA-Komponenten benötigen Aufmerksamkeit."
-        ),
+        "attention_message": ("Einige INNA-Komponenten benötigen Aufmerksamkeit."),
         "critical_message": (
             "Der Gesamtzustand ist kritisch. Priorisieren "
             "Sie die Komponenten mit den niedrigsten Scores."
@@ -2063,9 +1769,7 @@ HEALTH_PAGE_MAIN_TEXTS = {
         "global_weight": "Gewicht im Gesamtscore",
         "view_penalties": "Abzüge anzeigen",
         "no_penalty": "Keine Abzüge angewendet.",
-        "priority_recommendations": (
-            "## Priorisierte Empfehlungen"
-        ),
+        "priority_recommendations": ("## Priorisierte Empfehlungen"),
         "component_score": "Komponentenscore",
         "component": "Komponente",
     },
@@ -2075,11 +1779,7 @@ for language, texts in HEALTH_PAGE_MAIN_TEXTS.items():
     HEALTH_PAGE_TEXTS.setdefault(
         language,
         {},
-    ).update(
-        texts
-    )
-
-
+    ).update(texts)
 
 
 # HEALTH_SCORE_HISTORY_I18N
@@ -2088,8 +1788,7 @@ HEALTH_HISTORY_TEXTS = {
     "pt": {
         "title": "## 📈 Histórico do Health Score",
         "caption": (
-            "Acompanhe a evolução da saúde operacional "
-            "da INNA ao longo do tempo."
+            "Acompanhe a evolução da saúde operacional da INNA ao longo do tempo."
         ),
         "period": "Período histórico",
         "period_7": "7 dias",
@@ -2110,10 +1809,7 @@ HEALTH_HISTORY_TEXTS = {
     },
     "en_us": {
         "title": "## 📈 Health Score history",
-        "caption": (
-            "Track the evolution of INNA's operational "
-            "health over time."
-        ),
+        "caption": ("Track the evolution of INNA's operational health over time."),
         "period": "History period",
         "period_7": "7 days",
         "period_30": "30 days",
@@ -2133,10 +1829,7 @@ HEALTH_HISTORY_TEXTS = {
     },
     "en_gb": {
         "title": "## 📈 Health Score history",
-        "caption": (
-            "Track the evolution of INNA's operational "
-            "health over time."
-        ),
+        "caption": ("Track the evolution of INNA's operational health over time."),
         "period": "History period",
         "period_7": "7 days",
         "period_30": "30 days",
@@ -2157,8 +1850,7 @@ HEALTH_HISTORY_TEXTS = {
     "es": {
         "title": "## 📈 Historial del Health Score",
         "caption": (
-            "Siga la evolución de la salud operativa "
-            "de INNA a lo largo del tiempo."
+            "Siga la evolución de la salud operativa de INNA a lo largo del tiempo."
         ),
         "period": "Período histórico",
         "period_7": "7 días",
@@ -2180,8 +1872,7 @@ HEALTH_HISTORY_TEXTS = {
     "fr": {
         "title": "## 📈 Historique du Health Score",
         "caption": (
-            "Suivez l’évolution de la santé opérationnelle "
-            "d’INNA au fil du temps."
+            "Suivez l’évolution de la santé opérationnelle d’INNA au fil du temps."
         ),
         "period": "Période historique",
         "period_7": "7 jours",
@@ -2225,10 +1916,7 @@ HEALTH_HISTORY_TEXTS = {
     },
     "it": {
         "title": "## 📈 Cronologia del Health Score",
-        "caption": (
-            "Segui l’evoluzione dello stato operativo "
-            "di INNA nel tempo."
-        ),
+        "caption": ("Segui l’evoluzione dello stato operativo di INNA nel tempo."),
         "period": "Periodo storico",
         "period_7": "7 giorni",
         "period_30": "30 giorni",
@@ -2248,10 +1936,7 @@ HEALTH_HISTORY_TEXTS = {
     },
     "ro": {
         "title": "## 📈 Istoricul Health Score",
-        "caption": (
-            "Urmăriți evoluția stării operaționale "
-            "a INNA în timp."
-        ),
+        "caption": ("Urmăriți evoluția stării operaționale a INNA în timp."),
         "period": "Perioadă istorică",
         "period_7": "7 zile",
         "period_30": "30 de zile",
@@ -2271,10 +1956,7 @@ HEALTH_HISTORY_TEXTS = {
     },
     "ua": {
         "title": "## 📈 Історія Health Score",
-        "caption": (
-            "Відстежуйте зміну робочого стану "
-            "INNA з часом."
-        ),
+        "caption": ("Відстежуйте зміну робочого стану INNA з часом."),
         "period": "Період історії",
         "period_7": "7 днів",
         "period_30": "30 днів",
@@ -2295,8 +1977,7 @@ HEALTH_HISTORY_TEXTS = {
     "ru": {
         "title": "## 📈 История Health Score",
         "caption": (
-            "Отслеживайте изменение рабочего состояния "
-            "INNA с течением времени."
+            "Отслеживайте изменение рабочего состояния INNA с течением времени."
         ),
         "period": "Период истории",
         "period_7": "7 дней",
@@ -2317,10 +1998,7 @@ HEALTH_HISTORY_TEXTS = {
     },
     "sa": {
         "title": "## 📈 سجل Health Score",
-        "caption": (
-            "تابع تطور الحالة التشغيلية لنظام INNA "
-            "بمرور الوقت."
-        ),
+        "caption": ("تابع تطور الحالة التشغيلية لنظام INNA بمرور الوقت."),
         "period": "الفترة التاريخية",
         "period_7": "7 أيام",
         "period_30": "30 يومًا",
@@ -2340,9 +2018,7 @@ HEALTH_HISTORY_TEXTS = {
     },
 }
 
-HEALTH_HISTORY_TEXTS["ch"] = dict(
-    HEALTH_HISTORY_TEXTS["de"]
-)
+HEALTH_HISTORY_TEXTS["ch"] = dict(HEALTH_HISTORY_TEXTS["de"])
 
 
 def health_history_t(
@@ -2361,40 +2037,23 @@ def health_history_t(
     )
 
 
-
-
 # HEALTH_SCORE_HISTORY_DYNAMIC_I18N
 
 HEALTH_HISTORY_DYNAMIC_TEXTS = {
     "pt": {
         "save_error": "Não foi possível salvar o snapshot.",
         "duplicate_snapshot": (
-            "Um snapshot com o mesmo score já foi salvo "
-            "nos últimos cinco minutos."
+            "Um snapshot com o mesmo score já foi salvo nos últimos cinco minutos."
         ),
-        "snapshot_saved": (
-            "Snapshot salvo no PostgreSQL/Neon."
-        ),
-        "load_error": (
-            "Não foi possível carregar o histórico."
-        ),
-        "empty_history": (
-            "Nenhum snapshot foi encontrado para o "
-            "período selecionado."
-        ),
+        "snapshot_saved": ("Snapshot salvo no PostgreSQL/Neon."),
+        "load_error": ("Não foi possível carregar o histórico."),
+        "empty_history": ("Nenhum snapshot foi encontrado para o período selecionado."),
         "minimum_snapshots": (
-            "É necessário salvar pelo menos dois snapshots "
-            "para calcular a tendência."
+            "É necessário salvar pelo menos dois snapshots para calcular a tendência."
         ),
-        "trend_improving": (
-            "O Health Score apresentou melhora no período."
-        ),
-        "trend_worsening": (
-            "O Health Score apresentou queda no período."
-        ),
-        "trend_stable": (
-            "O Health Score permaneceu estável no período."
-        ),
+        "trend_improving": ("O Health Score apresentou melhora no período."),
+        "trend_worsening": ("O Health Score apresentou queda no período."),
+        "trend_stable": ("O Health Score permaneceu estável no período."),
         "score_hover": "Score",
         "component_score": "Score do componente",
         "component": "Componente",
@@ -2402,31 +2061,17 @@ HEALTH_HISTORY_DYNAMIC_TEXTS = {
     "en_us": {
         "save_error": "The snapshot could not be saved.",
         "duplicate_snapshot": (
-            "A snapshot with the same score was already "
-            "saved in the last five minutes."
+            "A snapshot with the same score was already saved in the last five minutes."
         ),
-        "snapshot_saved": (
-            "Snapshot saved to PostgreSQL/Neon."
-        ),
-        "load_error": (
-            "The history could not be loaded."
-        ),
-        "empty_history": (
-            "No snapshot was found for the selected period."
-        ),
+        "snapshot_saved": ("Snapshot saved to PostgreSQL/Neon."),
+        "load_error": ("The history could not be loaded."),
+        "empty_history": ("No snapshot was found for the selected period."),
         "minimum_snapshots": (
-            "At least two snapshots must be saved "
-            "to calculate the trend."
+            "At least two snapshots must be saved to calculate the trend."
         ),
-        "trend_improving": (
-            "The Health Score improved during the period."
-        ),
-        "trend_worsening": (
-            "The Health Score declined during the period."
-        ),
-        "trend_stable": (
-            "The Health Score remained stable during the period."
-        ),
+        "trend_improving": ("The Health Score improved during the period."),
+        "trend_worsening": ("The Health Score declined during the period."),
+        "trend_stable": ("The Health Score remained stable during the period."),
         "score_hover": "Score",
         "component_score": "Component score",
         "component": "Component",
@@ -2434,31 +2079,17 @@ HEALTH_HISTORY_DYNAMIC_TEXTS = {
     "en_gb": {
         "save_error": "The snapshot could not be saved.",
         "duplicate_snapshot": (
-            "A snapshot with the same score was already "
-            "saved in the last five minutes."
+            "A snapshot with the same score was already saved in the last five minutes."
         ),
-        "snapshot_saved": (
-            "Snapshot saved to PostgreSQL/Neon."
-        ),
-        "load_error": (
-            "The history could not be loaded."
-        ),
-        "empty_history": (
-            "No snapshot was found for the selected period."
-        ),
+        "snapshot_saved": ("Snapshot saved to PostgreSQL/Neon."),
+        "load_error": ("The history could not be loaded."),
+        "empty_history": ("No snapshot was found for the selected period."),
         "minimum_snapshots": (
-            "At least two snapshots must be saved "
-            "to calculate the trend."
+            "At least two snapshots must be saved to calculate the trend."
         ),
-        "trend_improving": (
-            "The Health Score improved during the period."
-        ),
-        "trend_worsening": (
-            "The Health Score declined during the period."
-        ),
-        "trend_stable": (
-            "The Health Score remained stable during the period."
-        ),
+        "trend_improving": ("The Health Score improved during the period."),
+        "trend_worsening": ("The Health Score declined during the period."),
+        "trend_stable": ("The Health Score remained stable during the period."),
         "score_hover": "Score",
         "component_score": "Component score",
         "component": "Component",
@@ -2469,29 +2100,17 @@ HEALTH_HISTORY_DYNAMIC_TEXTS = {
             "Ya se guardó un snapshot con la misma puntuación "
             "en los últimos cinco minutos."
         ),
-        "snapshot_saved": (
-            "Snapshot guardado en PostgreSQL/Neon."
-        ),
-        "load_error": (
-            "No fue posible cargar el historial."
-        ),
+        "snapshot_saved": ("Snapshot guardado en PostgreSQL/Neon."),
+        "load_error": ("No fue posible cargar el historial."),
         "empty_history": (
-            "No se encontró ningún snapshot para "
-            "el período seleccionado."
+            "No se encontró ningún snapshot para el período seleccionado."
         ),
         "minimum_snapshots": (
-            "Es necesario guardar al menos dos snapshots "
-            "para calcular la tendencia."
+            "Es necesario guardar al menos dos snapshots para calcular la tendencia."
         ),
-        "trend_improving": (
-            "El Health Score mejoró durante el período."
-        ),
-        "trend_worsening": (
-            "El Health Score disminuyó durante el período."
-        ),
-        "trend_stable": (
-            "El Health Score permaneció estable durante el período."
-        ),
+        "trend_improving": ("El Health Score mejoró durante el período."),
+        "trend_worsening": ("El Health Score disminuyó durante el período."),
+        "trend_stable": ("El Health Score permaneció estable durante el período."),
         "score_hover": "Puntuación",
         "component_score": "Puntuación del componente",
         "component": "Componente",
@@ -2502,28 +2121,16 @@ HEALTH_HISTORY_DYNAMIC_TEXTS = {
             "Un snapshot avec le même score a déjà été "
             "enregistré au cours des cinq dernières minutes."
         ),
-        "snapshot_saved": (
-            "Snapshot enregistré dans PostgreSQL/Neon."
-        ),
-        "load_error": (
-            "Impossible de charger l’historique."
-        ),
-        "empty_history": (
-            "Aucun snapshot trouvé pour la période sélectionnée."
-        ),
+        "snapshot_saved": ("Snapshot enregistré dans PostgreSQL/Neon."),
+        "load_error": ("Impossible de charger l’historique."),
+        "empty_history": ("Aucun snapshot trouvé pour la période sélectionnée."),
         "minimum_snapshots": (
             "Au moins deux snapshots doivent être enregistrés "
             "pour calculer la tendance."
         ),
-        "trend_improving": (
-            "Le Health Score s’est amélioré sur la période."
-        ),
-        "trend_worsening": (
-            "Le Health Score a diminué sur la période."
-        ),
-        "trend_stable": (
-            "Le Health Score est resté stable sur la période."
-        ),
+        "trend_improving": ("Le Health Score s’est amélioré sur la période."),
+        "trend_worsening": ("Le Health Score a diminué sur la période."),
+        "trend_stable": ("Le Health Score est resté stable sur la période."),
         "score_hover": "Score",
         "component_score": "Score du composant",
         "component": "Composant",
@@ -2534,29 +2141,18 @@ HEALTH_HISTORY_DYNAMIC_TEXTS = {
             "Ein Snapshot mit demselben Score wurde bereits "
             "in den letzten fünf Minuten gespeichert."
         ),
-        "snapshot_saved": (
-            "Snapshot in PostgreSQL/Neon gespeichert."
-        ),
-        "load_error": (
-            "Der Verlauf konnte nicht geladen werden."
-        ),
+        "snapshot_saved": ("Snapshot in PostgreSQL/Neon gespeichert."),
+        "load_error": ("Der Verlauf konnte nicht geladen werden."),
         "empty_history": (
-            "Für den ausgewählten Zeitraum wurde "
-            "kein Snapshot gefunden."
+            "Für den ausgewählten Zeitraum wurde kein Snapshot gefunden."
         ),
         "minimum_snapshots": (
             "Zur Berechnung des Trends müssen mindestens "
             "zwei Snapshots gespeichert werden."
         ),
-        "trend_improving": (
-            "Der Health Score hat sich im Zeitraum verbessert."
-        ),
-        "trend_worsening": (
-            "Der Health Score ist im Zeitraum gesunken."
-        ),
-        "trend_stable": (
-            "Der Health Score blieb im Zeitraum stabil."
-        ),
+        "trend_improving": ("Der Health Score hat sich im Zeitraum verbessert."),
+        "trend_worsening": ("Der Health Score ist im Zeitraum gesunken."),
+        "trend_stable": ("Der Health Score blieb im Zeitraum stabil."),
         "score_hover": "Score",
         "component_score": "Komponentenscore",
         "component": "Komponente",
@@ -2567,28 +2163,15 @@ HEALTH_HISTORY_DYNAMIC_TEXTS = {
             "Uno snapshot con lo stesso punteggio è già stato "
             "salvato negli ultimi cinque minuti."
         ),
-        "snapshot_saved": (
-            "Snapshot salvato in PostgreSQL/Neon."
-        ),
-        "load_error": (
-            "Impossibile caricare la cronologia."
-        ),
-        "empty_history": (
-            "Nessuno snapshot trovato per il periodo selezionato."
-        ),
+        "snapshot_saved": ("Snapshot salvato in PostgreSQL/Neon."),
+        "load_error": ("Impossibile caricare la cronologia."),
+        "empty_history": ("Nessuno snapshot trovato per il periodo selezionato."),
         "minimum_snapshots": (
-            "È necessario salvare almeno due snapshot "
-            "per calcolare la tendenza."
+            "È necessario salvare almeno due snapshot per calcolare la tendenza."
         ),
-        "trend_improving": (
-            "Il Health Score è migliorato nel periodo."
-        ),
-        "trend_worsening": (
-            "Il Health Score è diminuito nel periodo."
-        ),
-        "trend_stable": (
-            "Il Health Score è rimasto stabile nel periodo."
-        ),
+        "trend_improving": ("Il Health Score è migliorato nel periodo."),
+        "trend_worsening": ("Il Health Score è diminuito nel periodo."),
+        "trend_stable": ("Il Health Score è rimasto stabile nel periodo."),
         "score_hover": "Punteggio",
         "component_score": "Punteggio del componente",
         "component": "Componente",
@@ -2596,32 +2179,17 @@ HEALTH_HISTORY_DYNAMIC_TEXTS = {
     "ro": {
         "save_error": "Snapshot-ul nu a putut fi salvat.",
         "duplicate_snapshot": (
-            "Un snapshot cu același scor a fost deja salvat "
-            "în ultimele cinci minute."
+            "Un snapshot cu același scor a fost deja salvat în ultimele cinci minute."
         ),
-        "snapshot_saved": (
-            "Snapshot salvat în PostgreSQL/Neon."
-        ),
-        "load_error": (
-            "Istoricul nu a putut fi încărcat."
-        ),
-        "empty_history": (
-            "Nu a fost găsit niciun snapshot "
-            "pentru perioada selectată."
-        ),
+        "snapshot_saved": ("Snapshot salvat în PostgreSQL/Neon."),
+        "load_error": ("Istoricul nu a putut fi încărcat."),
+        "empty_history": ("Nu a fost găsit niciun snapshot pentru perioada selectată."),
         "minimum_snapshots": (
-            "Trebuie salvate cel puțin două snapshot-uri "
-            "pentru calcularea tendinței."
+            "Trebuie salvate cel puțin două snapshot-uri pentru calcularea tendinței."
         ),
-        "trend_improving": (
-            "Health Score s-a îmbunătățit în această perioadă."
-        ),
-        "trend_worsening": (
-            "Health Score a scăzut în această perioadă."
-        ),
-        "trend_stable": (
-            "Health Score a rămas stabil în această perioadă."
-        ),
+        "trend_improving": ("Health Score s-a îmbunătățit în această perioadă."),
+        "trend_worsening": ("Health Score a scăzut în această perioadă."),
+        "trend_stable": ("Health Score a rămas stabil în această perioadă."),
         "score_hover": "Scor",
         "component_score": "Scorul componentei",
         "component": "Componentă",
@@ -2632,28 +2200,15 @@ HEALTH_HISTORY_DYNAMIC_TEXTS = {
             "Знімок із такою самою оцінкою вже було "
             "збережено протягом останніх п’яти хвилин."
         ),
-        "snapshot_saved": (
-            "Знімок збережено в PostgreSQL/Neon."
-        ),
-        "load_error": (
-            "Не вдалося завантажити історію."
-        ),
-        "empty_history": (
-            "Для вибраного періоду знімків не знайдено."
-        ),
+        "snapshot_saved": ("Знімок збережено в PostgreSQL/Neon."),
+        "load_error": ("Не вдалося завантажити історію."),
+        "empty_history": ("Для вибраного періоду знімків не знайдено."),
         "minimum_snapshots": (
-            "Для розрахунку тенденції потрібно зберегти "
-            "щонайменше два знімки."
+            "Для розрахунку тенденції потрібно зберегти щонайменше два знімки."
         ),
-        "trend_improving": (
-            "Health Score покращився за вибраний період."
-        ),
-        "trend_worsening": (
-            "Health Score знизився за вибраний період."
-        ),
-        "trend_stable": (
-            "Health Score залишався стабільним за вибраний період."
-        ),
+        "trend_improving": ("Health Score покращився за вибраний період."),
+        "trend_worsening": ("Health Score знизився за вибраний період."),
+        "trend_stable": ("Health Score залишався стабільним за вибраний період."),
         "score_hover": "Оцінка",
         "component_score": "Оцінка компонента",
         "component": "Компонент",
@@ -2661,32 +2216,17 @@ HEALTH_HISTORY_DYNAMIC_TEXTS = {
     "ru": {
         "save_error": "Не удалось сохранить снимок.",
         "duplicate_snapshot": (
-            "Снимок с такой же оценкой уже был сохранён "
-            "в течение последних пяти минут."
+            "Снимок с такой же оценкой уже был сохранён в течение последних пяти минут."
         ),
-        "snapshot_saved": (
-            "Снимок сохранён в PostgreSQL/Neon."
-        ),
-        "load_error": (
-            "Не удалось загрузить историю."
-        ),
-        "empty_history": (
-            "Для выбранного периода снимки не найдены."
-        ),
+        "snapshot_saved": ("Снимок сохранён в PostgreSQL/Neon."),
+        "load_error": ("Не удалось загрузить историю."),
+        "empty_history": ("Для выбранного периода снимки не найдены."),
         "minimum_snapshots": (
-            "Для расчёта тенденции необходимо сохранить "
-            "как минимум два снимка."
+            "Для расчёта тенденции необходимо сохранить как минимум два снимка."
         ),
-        "trend_improving": (
-            "Health Score улучшился за выбранный период."
-        ),
-        "trend_worsening": (
-            "Health Score снизился за выбранный период."
-        ),
-        "trend_stable": (
-            "Health Score оставался стабильным "
-            "за выбранный период."
-        ),
+        "trend_improving": ("Health Score улучшился за выбранный период."),
+        "trend_worsening": ("Health Score снизился за выбранный период."),
+        "trend_stable": ("Health Score оставался стабильным за выбранный период."),
         "score_hover": "Оценка",
         "component_score": "Оценка компонента",
         "component": "Компонент",
@@ -2694,39 +2234,22 @@ HEALTH_HISTORY_DYNAMIC_TEXTS = {
     "sa": {
         "save_error": "تعذر حفظ اللقطة.",
         "duplicate_snapshot": (
-            "تم حفظ لقطة بالدرجة نفسها بالفعل "
-            "خلال الدقائق الخمس الماضية."
+            "تم حفظ لقطة بالدرجة نفسها بالفعل خلال الدقائق الخمس الماضية."
         ),
-        "snapshot_saved": (
-            "تم حفظ اللقطة في PostgreSQL/Neon."
-        ),
-        "load_error": (
-            "تعذر تحميل السجل."
-        ),
-        "empty_history": (
-            "لم يتم العثور على لقطات للفترة المحددة."
-        ),
-        "minimum_snapshots": (
-            "يجب حفظ لقطتين على الأقل لحساب الاتجاه."
-        ),
-        "trend_improving": (
-            "تحسنت درجة Health Score خلال الفترة."
-        ),
-        "trend_worsening": (
-            "انخفضت درجة Health Score خلال الفترة."
-        ),
-        "trend_stable": (
-            "ظلت درجة Health Score مستقرة خلال الفترة."
-        ),
+        "snapshot_saved": ("تم حفظ اللقطة في PostgreSQL/Neon."),
+        "load_error": ("تعذر تحميل السجل."),
+        "empty_history": ("لم يتم العثور على لقطات للفترة المحددة."),
+        "minimum_snapshots": ("يجب حفظ لقطتين على الأقل لحساب الاتجاه."),
+        "trend_improving": ("تحسنت درجة Health Score خلال الفترة."),
+        "trend_worsening": ("انخفضت درجة Health Score خلال الفترة."),
+        "trend_stable": ("ظلت درجة Health Score مستقرة خلال الفترة."),
         "score_hover": "الدرجة",
         "component_score": "درجة المكوّن",
         "component": "المكوّن",
     },
 }
 
-HEALTH_HISTORY_DYNAMIC_TEXTS["ch"] = dict(
-    HEALTH_HISTORY_DYNAMIC_TEXTS["de"]
-)
+HEALTH_HISTORY_DYNAMIC_TEXTS["ch"] = dict(HEALTH_HISTORY_DYNAMIC_TEXTS["de"])
 
 
 def health_history_dynamic_t(
@@ -2749,28 +2272,24 @@ def traduzir_tendencia_historico_health(
     tendencia: dict[str, Any],
 ) -> str:
     """Localiza a tendência sem modificar o resultado interno."""
-    direcao = str(
-        tendencia.get(
-            "direcao",
-            "",
+    direcao = (
+        str(
+            tendencia.get(
+                "direcao",
+                "",
+            )
         )
-    ).strip().lower()
-
-    if direcao == "melhora":
-        return health_history_dynamic_t(
-            "trend_improving"
-        )
-
-    if direcao == "piora":
-        return health_history_dynamic_t(
-            "trend_worsening"
-        )
-
-    return health_history_dynamic_t(
-        "trend_stable"
+        .strip()
+        .lower()
     )
 
+    if direcao == "melhora":
+        return health_history_dynamic_t("trend_improving")
 
+    if direcao == "piora":
+        return health_history_dynamic_t("trend_worsening")
+
+    return health_history_dynamic_t("trend_stable")
 
 
 # HEALTH_SCORE_RUNTIME_MESSAGES_I18N
@@ -2782,14 +2301,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "Eventos sem Tool",
         "anomalies": "Anomalias",
         "no_active_document": "Nenhum documento ativo",
-        "documents_without_embeddings": (
-            "Documentos sem embeddings"
-        ),
+        "documents_without_embeddings": ("Documentos sem embeddings"),
         "no_embedding": "Nenhum embedding disponível",
         "inactive_embeddings": "Embeddings inativos",
-        "memory_table_unavailable": (
-            "Tabela de memória indisponível"
-        ),
+        "memory_table_unavailable": ("Tabela de memória indisponível"),
         "no_memory": "Nenhuma memória registrada",
         "memory_errors": "Erros de memória",
         "no_trace": "Nenhum trace analisado",
@@ -2813,14 +2328,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "Events without a tool",
         "anomalies": "Anomalies",
         "no_active_document": "No active document",
-        "documents_without_embeddings": (
-            "Documents without embeddings"
-        ),
+        "documents_without_embeddings": ("Documents without embeddings"),
         "no_embedding": "No embedding available",
         "inactive_embeddings": "Inactive embeddings",
-        "memory_table_unavailable": (
-            "Memory table unavailable"
-        ),
+        "memory_table_unavailable": ("Memory table unavailable"),
         "no_memory": "No memory registered",
         "memory_errors": "Memory errors",
         "no_trace": "No trace analysed",
@@ -2843,14 +2354,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "Events without a tool",
         "anomalies": "Anomalies",
         "no_active_document": "No active document",
-        "documents_without_embeddings": (
-            "Documents without embeddings"
-        ),
+        "documents_without_embeddings": ("Documents without embeddings"),
         "no_embedding": "No embedding available",
         "inactive_embeddings": "Inactive embeddings",
-        "memory_table_unavailable": (
-            "Memory table unavailable"
-        ),
+        "memory_table_unavailable": ("Memory table unavailable"),
         "no_memory": "No memory registered",
         "memory_errors": "Memory errors",
         "no_trace": "No trace analysed",
@@ -2873,14 +2380,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "Eventos sin herramienta",
         "anomalies": "Anomalías",
         "no_active_document": "Ningún documento activo",
-        "documents_without_embeddings": (
-            "Documentos sin embeddings"
-        ),
+        "documents_without_embeddings": ("Documentos sin embeddings"),
         "no_embedding": "Ningún embedding disponible",
         "inactive_embeddings": "Embeddings inactivos",
-        "memory_table_unavailable": (
-            "Tabla de memoria no disponible"
-        ),
+        "memory_table_unavailable": ("Tabla de memoria no disponible"),
         "no_memory": "Ninguna memoria registrada",
         "memory_errors": "Errores de memoria",
         "no_trace": "Ninguna traza analizada",
@@ -2903,14 +2406,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "Événements sans outil",
         "anomalies": "Anomalies",
         "no_active_document": "Aucun document actif",
-        "documents_without_embeddings": (
-            "Documents sans embeddings"
-        ),
+        "documents_without_embeddings": ("Documents sans embeddings"),
         "no_embedding": "Aucun embedding disponible",
         "inactive_embeddings": "Embeddings inactifs",
-        "memory_table_unavailable": (
-            "Table de mémoire indisponible"
-        ),
+        "memory_table_unavailable": ("Table de mémoire indisponible"),
         "no_memory": "Aucune mémoire enregistrée",
         "memory_errors": "Erreurs de mémoire",
         "no_trace": "Aucune trace analysée",
@@ -2934,14 +2433,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "Ereignisse ohne Tool",
         "anomalies": "Anomalien",
         "no_active_document": "Kein aktives Dokument",
-        "documents_without_embeddings": (
-            "Dokumente ohne Embeddings"
-        ),
+        "documents_without_embeddings": ("Dokumente ohne Embeddings"),
         "no_embedding": "Kein Embedding verfügbar",
         "inactive_embeddings": "Inaktive Embeddings",
-        "memory_table_unavailable": (
-            "Speichertabelle nicht verfügbar"
-        ),
+        "memory_table_unavailable": ("Speichertabelle nicht verfügbar"),
         "no_memory": "Kein Speicher registriert",
         "memory_errors": "Speicherfehler",
         "no_trace": "Kein Trace analysiert",
@@ -2965,14 +2460,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "Eventi senza strumento",
         "anomalies": "Anomalie",
         "no_active_document": "Nessun documento attivo",
-        "documents_without_embeddings": (
-            "Documenti senza embeddings"
-        ),
+        "documents_without_embeddings": ("Documenti senza embeddings"),
         "no_embedding": "Nessun embedding disponibile",
         "inactive_embeddings": "Embeddings inattivi",
-        "memory_table_unavailable": (
-            "Tabella di memoria non disponibile"
-        ),
+        "memory_table_unavailable": ("Tabella di memoria non disponibile"),
         "no_memory": "Nessuna memoria registrata",
         "memory_errors": "Errori di memoria",
         "no_trace": "Nessuna traccia analizzata",
@@ -2995,14 +2486,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "Evenimente fără instrument",
         "anomalies": "Anomalii",
         "no_active_document": "Niciun document activ",
-        "documents_without_embeddings": (
-            "Documente fără embeddings"
-        ),
+        "documents_without_embeddings": ("Documente fără embeddings"),
         "no_embedding": "Niciun embedding disponibil",
         "inactive_embeddings": "Embeddings inactive",
-        "memory_table_unavailable": (
-            "Tabelul de memorie este indisponibil"
-        ),
+        "memory_table_unavailable": ("Tabelul de memorie este indisponibil"),
         "no_memory": "Nicio memorie înregistrată",
         "memory_errors": "Erori de memorie",
         "no_trace": "Niciun trace analizat",
@@ -3026,14 +2513,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "Події без інструмента",
         "anomalies": "Аномалії",
         "no_active_document": "Немає активних документів",
-        "documents_without_embeddings": (
-            "Документи без embeddings"
-        ),
+        "documents_without_embeddings": ("Документи без embeddings"),
         "no_embedding": "Немає доступних embeddings",
         "inactive_embeddings": "Неактивні embeddings",
-        "memory_table_unavailable": (
-            "Таблиця пам’яті недоступна"
-        ),
+        "memory_table_unavailable": ("Таблиця пам’яті недоступна"),
         "no_memory": "Пам’ять не зареєстрована",
         "memory_errors": "Помилки пам’яті",
         "no_trace": "Не проаналізовано жодного trace",
@@ -3057,14 +2540,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "События без инструмента",
         "anomalies": "Аномалии",
         "no_active_document": "Нет активных документов",
-        "documents_without_embeddings": (
-            "Документы без embeddings"
-        ),
+        "documents_without_embeddings": ("Документы без embeddings"),
         "no_embedding": "Нет доступных embeddings",
         "inactive_embeddings": "Неактивные embeddings",
-        "memory_table_unavailable": (
-            "Таблица памяти недоступна"
-        ),
+        "memory_table_unavailable": ("Таблица памяти недоступна"),
         "no_memory": "Память не зарегистрирована",
         "memory_errors": "Ошибки памяти",
         "no_trace": "Не проанализировано ни одного trace",
@@ -3073,8 +2552,7 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "high_tools_p95": "Высокий P95 инструментов",
         "high_trace_p95": "Высокий P95 trace",
         "prioritise_component": (
-            "Приоритетно улучшите компонент {component}, "
-            "текущая оценка — {score}/100."
+            "Приоритетно улучшите компонент {component}, текущая оценка — {score}/100."
         ),
         "all_healthy": (
             "Все компоненты находятся в нормальном состоянии. "
@@ -3088,14 +2566,10 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "events_without_tool": "أحداث دون أداة",
         "anomalies": "الحالات الشاذة",
         "no_active_document": "لا توجد مستندات نشطة",
-        "documents_without_embeddings": (
-            "مستندات دون embeddings"
-        ),
+        "documents_without_embeddings": ("مستندات دون embeddings"),
         "no_embedding": "لا تتوفر embeddings",
         "inactive_embeddings": "Embeddings غير نشطة",
-        "memory_table_unavailable": (
-            "جدول الذاكرة غير متاح"
-        ),
+        "memory_table_unavailable": ("جدول الذاكرة غير متاح"),
         "no_memory": "لا توجد ذاكرة مسجلة",
         "memory_errors": "أخطاء الذاكرة",
         "no_trace": "لم يتم تحليل أي trace",
@@ -3104,8 +2578,7 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
         "high_tools_p95": "ارتفاع P95 للأدوات",
         "high_trace_p95": "ارتفاع P95 للتتبعات",
         "prioritise_component": (
-            "أعطِ الأولوية لتحسين المكوّن {component}، "
-            "ودرجة حالته الحالية {score}/100."
+            "أعطِ الأولوية لتحسين المكوّن {component}، ودرجة حالته الحالية {score}/100."
         ),
         "all_healthy": (
             "جميع المكوّنات في حالة سليمة. استمر في مراقبة "
@@ -3114,9 +2587,7 @@ HEALTH_RUNTIME_MESSAGE_TEXTS = {
     },
 }
 
-HEALTH_RUNTIME_MESSAGE_TEXTS["ch"] = dict(
-    HEALTH_RUNTIME_MESSAGE_TEXTS["de"]
-)
+HEALTH_RUNTIME_MESSAGE_TEXTS["ch"] = dict(HEALTH_RUNTIME_MESSAGE_TEXTS["de"])
 
 
 def health_runtime_message_t(
@@ -3141,14 +2612,10 @@ HEALTH_PENALTY_PREFIXES = {
     "Eventos sem Tool": "events_without_tool",
     "Anomalias": "anomalies",
     "Nenhum documento ativo": "no_active_document",
-    "Documentos sem embeddings": (
-        "documents_without_embeddings"
-    ),
+    "Documentos sem embeddings": ("documents_without_embeddings"),
     "Nenhum embedding disponível": "no_embedding",
     "Embeddings inativos": "inactive_embeddings",
-    "Tabela de memória indisponível": (
-        "memory_table_unavailable"
-    ),
+    "Tabela de memória indisponível": ("memory_table_unavailable"),
     "Nenhuma memória registrada": "no_memory",
     "Erros de memória": "memory_errors",
     "Nenhum trace analisado": "no_trace",
@@ -3163,9 +2630,7 @@ def traduzir_penalidade_health(
     penalidade: Any,
 ) -> str:
     """Traduz o rótulo e preserva o valor da penalidade."""
-    texto = str(
-        penalidade or ""
-    ).strip()
+    texto = str(penalidade or "").strip()
 
     for prefixo, chave in HEALTH_PENALTY_PREFIXES.items():
         if texto == prefixo:
@@ -3177,14 +2642,9 @@ def traduzir_penalidade_health(
         marcador = f"{prefixo}:"
 
         if texto.startswith(marcador):
-            restante = texto[
-                len(prefixo):
-            ]
+            restante = texto[len(prefixo) :]
 
-            return (
-                f"{health_runtime_message_t(chave, prefixo)}"
-                f"{restante}"
-            )
+            return f"{health_runtime_message_t(chave, prefixo)}{restante}"
 
     return texto
 
@@ -3193,23 +2653,13 @@ def traduzir_recomendacao_health(
     recomendacao: Any,
 ) -> str:
     """Traduz recomendações conhecidas do Health Score."""
-    texto = str(
-        recomendacao or ""
-    ).strip()
+    texto = str(recomendacao or "").strip()
 
-    if texto.startswith(
-        "Priorizar melhorias no componente "
-    ):
-        prefixo = (
-            "Priorizar melhorias no componente "
-        )
-        marcador_score = (
-            ", atualmente com score "
-        )
+    if texto.startswith("Priorizar melhorias no componente "):
+        prefixo = "Priorizar melhorias no componente "
+        marcador_score = ", atualmente com score "
 
-        restante = texto[
-            len(prefixo):
-        ]
+        restante = texto[len(prefixo) :]
 
         if marcador_score in restante:
             componente, score = restante.split(
@@ -3217,13 +2667,9 @@ def traduzir_recomendacao_health(
                 1,
             )
 
-            score = score.removesuffix(
-                "/100."
-            )
+            score = score.removesuffix("/100.")
 
-            return health_runtime_message_t(
-                "prioritise_component"
-            ).format(
+            return health_runtime_message_t("prioritise_component").format(
                 component=nome_componente_health(
                     componente,
                     componente,
@@ -3231,12 +2677,8 @@ def traduzir_recomendacao_health(
                 score=score,
             )
 
-    if texto.startswith(
-        "Todos os componentes estão em nível saudável."
-    ):
-        return health_runtime_message_t(
-            "all_healthy"
-        )
+    if texto.startswith("Todos os componentes estão em nível saudável."):
+        return health_runtime_message_t("all_healthy")
 
     return texto
 
@@ -3273,13 +2715,9 @@ HEALTH_RUNTIME_MESSAGE_TEXTS["pt"].update(
 )
 
 # O código ch segue os catálogos alemães do projeto.
-HEALTH_HISTORY_TEXTS["ch"] = dict(
-    HEALTH_HISTORY_TEXTS["de"]
-)
+HEALTH_HISTORY_TEXTS["ch"] = dict(HEALTH_HISTORY_TEXTS["de"])
 
-HEALTH_RUNTIME_MESSAGE_TEXTS["ch"] = dict(
-    HEALTH_RUNTIME_MESSAGE_TEXTS["de"]
-)
+HEALTH_RUNTIME_MESSAGE_TEXTS["ch"] = dict(HEALTH_RUNTIME_MESSAGE_TEXTS["de"])
 
 
 def health_page_t(
@@ -3311,19 +2749,11 @@ def render_health_score_page() -> None:
             coletar_health_score_real,
         )
 
-    st.title(
-        health_page_t("title")
-    )
+    st.title(health_page_t("title"))
 
-    st.caption(
-        health_page_t("caption")
-    )
+    st.caption(health_page_t("caption"))
 
-    controle_1, controle_2, controle_3 = (
-        st.columns(
-            [1, 1, 2]
-        )
-    )
+    controle_1, controle_2, controle_3 = st.columns([1, 1, 2])
 
     limite_eventos = controle_1.selectbox(
         health_page_t("tools_events"),
@@ -3360,18 +2790,11 @@ def render_health_score_page() -> None:
             st.rerun()
 
     resultado = coletar_health_score_real(
-        limite_eventos_tools=int(
-            limite_eventos
-        ),
-        limite_traces=int(
-            limite_traces
-        ),
+        limite_eventos_tools=int(limite_eventos),
+        limite_traces=int(limite_traces),
     )
 
-    health = resultado.get(
-        "health",
-        {}
-    )
+    health = resultado.get("health", {})
 
     score_global = float(
         health.get(
@@ -3385,13 +2808,9 @@ def render_health_score_page() -> None:
         health_page_t("no_data"),
     )
 
-    st.markdown(
-        health_page_t("global_health")
-    )
+    st.markdown(health_page_t("global_health"))
 
-    col_1, col_2, col_3, col_4 = (
-        st.columns(4)
-    )
+    col_1, col_2, col_3, col_4 = st.columns(4)
 
     col_1.metric(
         health_page_t("health_score"),
@@ -3400,9 +2819,7 @@ def render_health_score_page() -> None:
 
     col_2.metric(
         health_page_t("classification"),
-        traduzir_classificacao_health(
-            classificacao
-        ),
+        traduzir_classificacao_health(classificacao),
     )
 
     col_3.metric(
@@ -3444,29 +2861,16 @@ def render_health_score_page() -> None:
     )
 
     if score_global >= 95:
-        st.success(
-            "A INNA está operando em excelente estado."
-        )
+        st.success("A INNA está operando em excelente estado.")
 
     elif score_global >= 85:
-        st.info(
-            "A INNA está saudável, com alguns pontos "
-            "que merecem acompanhamento."
-        )
+        st.info("A INNA está saudável, com alguns pontos que merecem acompanhamento.")
 
     elif score_global >= 70:
-        st.warning(
-            health_page_t(
-                "attention_message"
-            )
-        )
+        st.warning(health_page_t("attention_message"))
 
     else:
-        st.error(
-            health_page_t(
-                "critical_message"
-            )
-        )
+        st.error(health_page_t("critical_message"))
 
     componentes = health.get(
         "componentes",
@@ -3474,29 +2878,20 @@ def render_health_score_page() -> None:
     )
 
     st.divider()
-    st.markdown(
-        health_page_t("component_scores")
-    )
+    st.markdown(health_page_t("component_scores"))
 
     colunas = st.columns(3)
 
     for indice, (
         nome,
         item,
-    ) in enumerate(
-        componentes.items()
-    ):
-        coluna = colunas[
-            indice % 3
-        ]
+    ) in enumerate(componentes.items()):
+        coluna = colunas[indice % 3]
 
         with coluna:
-            with st.container(
-                border=True
-            ):
+            with st.container(border=True):
                 st.markdown(
-                    f"### {item.get('icone', '')} "
-                    f"{nome_componente_health(nome, nome)}"
+                    f"### {item.get('icone', '')} {nome_componente_health(nome, nome)}"
                 )
 
                 st.metric(
@@ -3536,52 +2931,27 @@ def render_health_score_page() -> None:
                         expanded=False,
                     ):
                         for penalidade in penalidades:
-                            st.markdown(
-                                "- "
-                                + traduzir_penalidade_health(
-                                    penalidade
-                                )
-                            )
+                            st.markdown("- " + traduzir_penalidade_health(penalidade))
                 else:
-                    st.success(
-                        health_page_t("no_penalty")
-                    )
+                    st.success(health_page_t("no_penalty"))
 
-    tabela = preparar_componentes_exibicao(
-        componentes
-    )
+    tabela = preparar_componentes_exibicao(componentes)
 
-    st.markdown(
-        health_table_t(
-            "component_comparison"
-        )
-    )
+    st.markdown(health_table_t("component_comparison"))
 
     tabela_exibicao = tabela.rename(
         columns={
-            "Componente": health_table_t(
-                "component"
-            ),
+            "Componente": health_table_t("component"),
             "Score": health_table_t("score"),
-            "Peso (%)": health_table_t(
-                "weight"
-            ),
-            "Contribuição": health_table_t(
-                "contribution"
-            ),
-            "Classificação": health_table_t(
-                "classification"
-            ),
-            "Status": health_table_t(
-                "status"
-            ),
+            "Peso (%)": health_table_t("weight"),
+            "Contribuição": health_table_t("contribution"),
+            "Classificação": health_table_t("classification"),
+            "Status": health_table_t("status"),
         }
     )
 
     st.dataframe(
-        estilizar_tabela_componentes_health(
-            tabela_exibicao
-        ),
+        estilizar_tabela_componentes_health(tabela_exibicao),
         use_container_width=True,
         hide_index=True,
         height=300,
@@ -3610,18 +2980,14 @@ def render_health_score_page() -> None:
             ),
             health_table_t("contribution"): (
                 st.column_config.NumberColumn(
-                    health_table_t(
-                        "contribution"
-                    ),
+                    health_table_t("contribution"),
                     format="%.2f",
                     width="small",
                 )
             ),
             health_table_t("classification"): (
                 st.column_config.TextColumn(
-                    health_table_t(
-                        "classification"
-                    ),
+                    health_table_t("classification"),
                     width="medium",
                 )
             ),
@@ -3649,12 +3015,8 @@ def render_health_score_page() -> None:
             color="Score",
             range_x=[0, 100],
             labels={
-                "Score": health_page_t(
-                    "score"
-                ),
-                "Componente": health_page_t(
-                    "component"
-                ),
+                "Score": health_page_t("score"),
+                "Componente": health_page_t("component"),
             },
             color_continuous_scale=[
                 "#F87171",
@@ -3677,9 +3039,7 @@ def render_health_score_page() -> None:
         )
 
         fig_comparativo.update_layout(
-            xaxis_title=health_page_t(
-                "score"
-            ),
+            xaxis_title=health_page_t("score"),
             yaxis_title=None,
             coloraxis_showscale=False,
             showlegend=False,
@@ -3705,26 +3065,15 @@ def render_health_score_page() -> None:
         )
 
     st.divider()
-    st.markdown(
-        "## "
-        + health_page_t(
-            "priority_recommendations"
-        )
-    )
+    st.markdown("## " + health_page_t("priority_recommendations"))
 
     for recomendacao in health.get(
         "recomendacoes",
         [],
     ):
-        st.info(
-            traduzir_recomendacao_health(
-                recomendacao
-            )
-        )
+        st.info(traduzir_recomendacao_health(recomendacao))
 
-    render_health_history_section(
-        resultado_atual=resultado
-    )
+    render_health_history_section(resultado_atual=resultado)
 
     metricas = resultado.get(
         "metricas",
@@ -3735,9 +3084,7 @@ def render_health_score_page() -> None:
         "📋 Métricas técnicas utilizadas",
         expanded=False,
     ):
-        st.json(
-            metricas
-        )
+        st.json(metricas)
 
     erros = resultado.get(
         "erros_coleta",
@@ -3750,9 +3097,7 @@ def render_health_score_page() -> None:
             expanded=False,
         ):
             for erro in erros:
-                st.warning(
-                    erro
-                )
+                st.warning(erro)
 
 
 __all__ = [

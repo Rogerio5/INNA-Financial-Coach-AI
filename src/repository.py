@@ -16,7 +16,9 @@ def save_diagnostico_db(payload: dict, response: dict) -> None:
             objetivo=payload.get("objetivo", ""),
             idioma=payload.get("idioma", response.get("idioma", "pt")),
             moeda=payload.get("moeda", response.get("moeda", "BRL")),
-            simbolo_moeda=payload.get("simbolo_moeda", response.get("simbolo_moeda", "R$")),
+            simbolo_moeda=payload.get(
+                "simbolo_moeda", response.get("simbolo_moeda", "R$")
+            ),
             saldo_estimado=float(response.get("saldo_estimado", 0)),
             comprometimento_renda_percentual=float(
                 response.get("comprometimento_renda_percentual", 0)

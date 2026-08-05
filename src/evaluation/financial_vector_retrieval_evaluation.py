@@ -16,7 +16,7 @@ EXPECTED_DIMENSION = 3072
 class RetrievalCase:
     case_id: str
     question: str
-    expected_document_key: str
+    expected_document_id: str
 
     def as_dict(self) -> dict[str, str]:
         return asdict(self)
@@ -39,7 +39,7 @@ class RetrievalHit:
 class RetrievalCaseResult:
     case_id: str
     question: str
-    expected_document_key: str
+    expected_document_id: str
     top1_document_key: str
     top1_passed: bool
     expected_document_found_in_top_k: bool
@@ -56,27 +56,27 @@ def official_cases() -> tuple[RetrievalCase, ...]:
         RetrievalCase(
             case_id="reserva_financeira",
             question=("Como montar uma reserva financeira para emergencias?"),
-            expected_document_key="inna-edu-reserva-002",
+            expected_document_id="inna-edu-reserva-002",
         ),
         RetrievalCase(
             case_id="orcamento_mensal",
             question=("Recebo 3000 reais e gasto 2500. Como organizar meu orcamento?"),
-            expected_document_key="inna-edu-orcamento-002",
+            expected_document_id="inna-edu-orcamento-002",
         ),
         RetrievalCase(
             case_id="cartao_credito",
             question=("Como usar o cartao de credito sem perder o controle?"),
-            expected_document_key="inna-edu-cartao-002",
+            expected_document_id="inna-edu-cartao-002",
         ),
         RetrievalCase(
             case_id="gastos_fixos_variaveis",
             question=("Qual a diferenca entre gastos fixos e gastos variaveis?"),
-            expected_document_key="inna-edu-gastos-002",
+            expected_document_id="inna-edu-gastos-002",
         ),
         RetrievalCase(
             case_id="dividas",
             question=("Como posso organizar e pagar minhas dividas?"),
-            expected_document_key="inna-edu-dividas-002",
+            expected_document_id="inna-edu-dividas-002",
         ),
     )
 
@@ -92,7 +92,7 @@ def validate_cases(
     if len(set(case_ids)) != EXPECTED_CASE_COUNT:
         raise ValueError("Existem IDs de casos duplicados.")
 
-    expected_keys = [case.expected_document_key for case in cases]
+    expected_keys = [case.expected_document_id for case in cases]
 
     if len(set(expected_keys)) != EXPECTED_CASE_COUNT:
         raise ValueError("Os casos devem possuir documentos esperados distintos.")
@@ -101,7 +101,7 @@ def validate_cases(
         if not case.question.strip():
             raise ValueError("Existe caso sem pergunta.")
 
-        if not case.expected_document_key.startswith("inna-edu-"):
+        if not case.expected_document_id.startswith("inna-edu-"):
             raise ValueError("Documento esperado fora da base educacional.")
 
 
@@ -162,14 +162,14 @@ def build_case_result(
 
     top1_document_key = hits[0].document_key
 
-    expected_found = any(hit.document_key == case.expected_document_key for hit in hits)
+    expected_found = any(hit.document_key == case.expected_document_id for hit in hits)
 
     return RetrievalCaseResult(
         case_id=case.case_id,
         question=case.question,
-        expected_document_key=case.expected_document_key,
+        expected_document_id=case.expected_document_id,
         top1_document_key=top1_document_key,
-        top1_passed=(top1_document_key == case.expected_document_key),
+        top1_passed=(top1_document_key == case.expected_document_id),
         expected_document_found_in_top_k=expected_found,
         hits=tuple(hits),
     )

@@ -62,9 +62,7 @@ class CliRunResult:
 
     command: str = "run-official"
 
-    execution_type: str = (
-        "synthetic-infrastructure-validation"
-    )
+    execution_type: str = "synthetic-infrastructure-validation"
 
     production_evaluation: bool = False
 
@@ -84,19 +82,13 @@ def _add_report_arguments(
     parser.add_argument(
         "--output-directory",
         default=output_directory,
-        help=(
-            "Diretório do relatório externo "
-            "sanitizado."
-        ),
+        help=("Diretório do relatório externo sanitizado."),
     )
 
     parser.add_argument(
         "--internal-output-directory",
         default=internal_output_directory,
-        help=(
-            "Diretório do relatório interno "
-            "completo."
-        ),
+        help=("Diretório do relatório interno completo."),
     )
 
     parser.add_argument(
@@ -112,19 +104,13 @@ def _add_report_arguments(
     parser.add_argument(
         "--summary-only",
         action="store_true",
-        help=(
-            "Remove os detalhes dos casos "
-            "do relatório."
-        ),
+        help=("Remove os detalhes dos casos do relatório."),
     )
 
     parser.add_argument(
         "--no-report",
         action="store_true",
-        help=(
-            "Executa o lote e o quality gate "
-            "sem gravar relatório."
-        ),
+        help=("Executa o lote e o quality gate sem gravar relatório."),
     )
 
 
@@ -135,10 +121,7 @@ def _add_quality_gate_arguments(
         "--minimum-pass-rate",
         type=_rate_argument,
         default=1.0,
-        help=(
-            "Taxa mínima de aprovação entre "
-            "0 e 1. Padrão: 1.0."
-        ),
+        help=("Taxa mínima de aprovação entre 0 e 1. Padrão: 1.0."),
     )
 
     parser.add_argument(
@@ -177,20 +160,14 @@ def _add_output_arguments(
     parser.add_argument(
         "--json-output",
         action="store_true",
-        help=(
-            "Imprime o resumo da execução "
-            "em JSON."
-        ),
+        help=("Imprime o resumo da execução em JSON."),
     )
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="inna-evaluation",
-        description=(
-            "CLI oficial para execução local das "
-            "avaliações LLMOps da INNA."
-        ),
+        description=("CLI oficial para execução local das avaliações LLMOps da INNA."),
     )
 
     subparsers = parser.add_subparsers(
@@ -208,17 +185,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     _add_report_arguments(
         official_parser,
-        output_directory=(
-            "artifacts/evaluations"
-        ),
-        internal_output_directory=(
-            "artifacts/evaluations/internal"
-        ),
+        output_directory=("artifacts/evaluations"),
+        internal_output_directory=("artifacts/evaluations/internal"),
     )
 
-    _add_quality_gate_arguments(
-        official_parser
-    )
+    _add_quality_gate_arguments(official_parser)
 
     official_parser.add_argument(
         "--require-production-execution",
@@ -231,25 +202,17 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
 
-    _add_output_arguments(
-        official_parser
-    )
+    _add_output_arguments(official_parser)
 
     live_parser = subparsers.add_parser(
         "run-live",
-        help=(
-            "Executa um caso oficial usando "
-            "o grafo real da aplicação INNA."
-        ),
+        help=("Executa um caso oficial usando o grafo real da aplicação INNA."),
     )
 
     live_parser.add_argument(
         "--case-id",
         required=True,
-        help=(
-            "Identificador do caso oficial que "
-            "será executado pela aplicação real."
-        ),
+        help=("Identificador do caso oficial que será executado pela aplicação real."),
     )
 
     live_parser.add_argument(
@@ -270,21 +233,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     _add_report_arguments(
         live_parser,
-        output_directory=(
-            "artifacts/evaluations/live"
-        ),
-        internal_output_directory=(
-            "artifacts/evaluations/live/internal"
-        ),
+        output_directory=("artifacts/evaluations/live"),
+        internal_output_directory=("artifacts/evaluations/live/internal"),
     )
 
-    _add_quality_gate_arguments(
-        live_parser
-    )
+    _add_quality_gate_arguments(live_parser)
 
-    _add_output_arguments(
-        live_parser
-    )
+    _add_output_arguments(live_parser)
 
     return parser
 
@@ -296,21 +251,11 @@ def _build_quality_gate_settings(
 ) -> QualityGateSettings:
     return QualityGateSettings(
         minimum_pass_rate=args.minimum_pass_rate,
-        maximum_failed_cases=(
-            args.maximum_failed_cases
-        ),
-        maximum_blocked_cases=(
-            args.maximum_blocked_cases
-        ),
-        maximum_error_cases=(
-            args.maximum_error_cases
-        ),
-        maximum_total_cost=(
-            args.maximum_total_cost
-        ),
-        require_production_execution=(
-            require_production_execution
-        ),
+        maximum_failed_cases=(args.maximum_failed_cases),
+        maximum_blocked_cases=(args.maximum_blocked_cases),
+        maximum_error_cases=(args.maximum_error_cases),
+        maximum_total_cost=(args.maximum_total_cost),
+        require_production_execution=(require_production_execution),
         fail_on_warning=args.fail_on_warning,
     )
 
@@ -336,27 +281,19 @@ def _write_reports(
 
     external_report = write_batch_report(
         batch,
-        output_directory=(
-            args.output_directory
-        ),
+        output_directory=(args.output_directory),
         quality_gate=gate,
         sanitize=True,
-        include_case_details=(
-            not args.summary_only
-        ),
+        include_case_details=(not args.summary_only),
     )
 
     if args.write_internal_report:
         internal_report = write_batch_report(
             batch,
-            output_directory=(
-                args.internal_output_directory
-            ),
+            output_directory=(args.internal_output_directory),
             quality_gate=gate,
             sanitize=False,
-            include_case_details=(
-                not args.summary_only
-            ),
+            include_case_details=(not args.summary_only),
             filename=internal_filename,
         )
 
@@ -382,17 +319,11 @@ def run_official_command(
             mode=EvaluationRunMode.LOCAL,
         ),
         metadata={
-            "execution_type": (
-                "synthetic-infrastructure-validation"
-            ),
-            "provider": (
-                "SyntheticPassingPayloadProvider"
-            ),
+            "execution_type": ("synthetic-infrastructure-validation"),
+            "provider": ("SyntheticPassingPayloadProvider"),
             "production_evaluation": False,
             "production_execution": False,
-            "official_case_count": (
-                official_case_count()
-            ),
+            "official_case_count": (official_case_count()),
             "cli_command": "run-official",
         },
     )
@@ -401,9 +332,7 @@ def run_official_command(
         batch,
         _build_quality_gate_settings(
             args,
-            require_production_execution=(
-                args.require_production_execution
-            ),
+            require_production_execution=(args.require_production_execution),
         ),
     )
 
@@ -414,9 +343,7 @@ def run_official_command(
         args=args,
         batch=batch,
         gate=gate,
-        internal_filename=(
-            "inna-evaluation-internal-complete"
-        ),
+        internal_filename=("inna-evaluation-internal-complete"),
     )
 
     return CliRunResult(
@@ -425,9 +352,7 @@ def run_official_command(
         external_report=external_report,
         internal_report=internal_report,
         command="run-official",
-        execution_type=(
-            "synthetic-infrastructure-validation"
-        ),
+        execution_type=("synthetic-infrastructure-validation"),
         production_evaluation=False,
         case_id=None,
     )
@@ -439,28 +364,19 @@ def _select_live_dataset(
     normalized_case_id = case_id.strip()
 
     if not normalized_case_id:
-        raise ValueError(
-            "case_id não pode ser vazio."
-        )
+        raise ValueError("case_id não pode ser vazio.")
 
     for dataset in official_datasets():
-        if normalized_case_id not in (
-            dataset.case_ids
-        ):
+        if normalized_case_id not in (dataset.case_ids):
             continue
 
-        case = dataset.get_case(
-            normalized_case_id
-        )
+        case = dataset.get_case(normalized_case_id)
 
         return build_dataset(
             name=dataset.name,
             version=dataset.version,
             cases=(case,),
-            description=(
-                "Seleção oficial para avaliação "
-                "real da INNA."
-            ),
+            description=("Seleção oficial para avaliação real da INNA."),
             owner=dataset.owner,
             tags=(
                 *dataset.tags,
@@ -469,41 +385,24 @@ def _select_live_dataset(
             metadata={
                 **dict(dataset.metadata),
                 "live_selection": True,
-                "selected_case_id": (
-                    normalized_case_id
-                ),
+                "selected_case_id": (normalized_case_id),
                 "production_execution": True,
             },
         )
 
-    raise ValueError(
-        "Caso oficial não encontrado: "
-        f"{normalized_case_id}"
-    )
+    raise ValueError(f"Caso oficial não encontrado: {normalized_case_id}")
 
 
 def run_live_command(
     args: argparse.Namespace,
     *,
-    provider: (
-        EvaluationPayloadProvider | None
-    ) = None,
+    provider: (EvaluationPayloadProvider | None) = None,
 ) -> CliRunResult:
-    normalized_case_id = (
-        args.case_id.strip()
-    )
+    normalized_case_id = args.case_id.strip()
 
-    selected_dataset = (
-        _select_live_dataset(
-            normalized_case_id
-        )
-    )
+    selected_dataset = _select_live_dataset(normalized_case_id)
 
-    resolved_provider = (
-        provider
-        if provider is not None
-        else LiveInnaPayloadProvider()
-    )
+    resolved_provider = provider if provider is not None else LiveInnaPayloadProvider()
 
     batch_runner = EvaluationBatchRunner(
         runner=build_deterministic_runner(),
@@ -517,75 +416,41 @@ def run_live_command(
         ),
         continue_on_case_error=False,
         metadata={
-            "execution_type": (
-                "live-application-evaluation"
-            ),
-            "provider": (
-                type(
-                    resolved_provider
-                ).__name__
-            ),
+            "execution_type": ("live-application-evaluation"),
+            "provider": (type(resolved_provider).__name__),
             "production_evaluation": True,
             "production_execution": True,
-            "selected_case_id": (
-                normalized_case_id
-            ),
-            "gate_profile": (
-                args.gate_profile
-            ),
+            "selected_case_id": (normalized_case_id),
+            "gate_profile": (args.gate_profile),
             "cli_command": "run-live",
         },
     )
 
     if args.gate_profile == "single-case":
         critical_metric_ids = tuple(
-            summary.metric_id
-            for summary in batch.metric_summaries
+            summary.metric_id for summary in batch.metric_summaries
         )
 
         required_dataset_ids = tuple(
-            summary.dataset_id
-            for summary in batch.dataset_summaries
+            summary.dataset_id for summary in batch.dataset_summaries
         )
     else:
-        default_gate_settings = (
-            QualityGateSettings()
-        )
+        default_gate_settings = QualityGateSettings()
 
-        critical_metric_ids = (
-            default_gate_settings
-            .critical_metric_ids
-        )
+        critical_metric_ids = default_gate_settings.critical_metric_ids
 
-        required_dataset_ids = (
-            default_gate_settings
-            .required_dataset_ids
-        )
+        required_dataset_ids = default_gate_settings.required_dataset_ids
 
     gate = evaluate_quality_gate(
         batch,
         QualityGateSettings(
-            minimum_pass_rate=(
-                args.minimum_pass_rate
-            ),
-            maximum_failed_cases=(
-                args.maximum_failed_cases
-            ),
-            maximum_blocked_cases=(
-                args.maximum_blocked_cases
-            ),
-            maximum_error_cases=(
-                args.maximum_error_cases
-            ),
-            maximum_total_cost=(
-                args.maximum_total_cost
-            ),
-            critical_metric_ids=(
-                critical_metric_ids
-            ),
-            required_dataset_ids=(
-                required_dataset_ids
-            ),
+            minimum_pass_rate=(args.minimum_pass_rate),
+            maximum_failed_cases=(args.maximum_failed_cases),
+            maximum_blocked_cases=(args.maximum_blocked_cases),
+            maximum_error_cases=(args.maximum_error_cases),
+            maximum_total_cost=(args.maximum_total_cost),
+            critical_metric_ids=(critical_metric_ids),
+            required_dataset_ids=(required_dataset_ids),
             require_production_execution=True,
             fail_on_warning=args.fail_on_warning,
         ),
@@ -598,10 +463,7 @@ def run_live_command(
         args=args,
         batch=batch,
         gate=gate,
-        internal_filename=(
-            "inna-live-evaluation-"
-            "internal-complete"
-        ),
+        internal_filename=("inna-live-evaluation-internal-complete"),
     )
 
     return CliRunResult(
@@ -610,9 +472,7 @@ def run_live_command(
         external_report=external_report,
         internal_report=internal_report,
         command="run-live",
-        execution_type=(
-            "live-application-evaluation"
-        ),
+        execution_type=("live-application-evaluation"),
         production_evaluation=True,
         case_id=normalized_case_id,
     )
@@ -626,12 +486,8 @@ def build_cli_summary(
 
     return {
         "command": result.command,
-        "execution_type": (
-            result.execution_type
-        ),
-        "production_evaluation": (
-            result.production_evaluation
-        ),
+        "execution_type": (result.execution_type),
+        "production_evaluation": (result.production_evaluation),
         "case_id": result.case_id,
         "batch_id": batch.batch_id,
         "batch_status": batch.status.value,
@@ -641,16 +497,12 @@ def build_cli_summary(
         "blocked_cases": batch.blocked_cases,
         "error_cases": batch.error_cases,
         "pass_rate": batch.pass_rate,
-        "total_estimated_cost": (
-            batch.total_estimated_cost
-        ),
+        "total_estimated_cost": (batch.total_estimated_cost),
         "quality_gate_passed": gate.passed,
         "quality_gate_violations": [
             {
                 "rule": violation.rule.value,
-                "severity": (
-                    violation.severity.value
-                ),
+                "severity": (violation.severity.value),
                 "message": violation.message,
                 "actual": violation.actual,
                 "expected": violation.expected,
@@ -658,14 +510,10 @@ def build_cli_summary(
             for violation in gate.violations
         ],
         "external_report": (
-            str(result.external_report)
-            if result.external_report
-            else None
+            str(result.external_report) if result.external_report else None
         ),
         "internal_report": (
-            str(result.internal_report)
-            if result.internal_report
-            else None
+            str(result.internal_report) if result.internal_report else None
         ),
     }
 
@@ -673,10 +521,7 @@ def build_cli_summary(
 def _format_percentage_pt_br(
     value: float,
 ) -> str:
-    return (
-        f"{value:.2%}"
-        .replace(".", ",")
-    )
+    return f"{value:.2%}".replace(".", ",")
 
 
 def render_text_summary(
@@ -686,92 +531,44 @@ def render_text_summary(
     gate = result.quality_gate
 
     if result.production_evaluation:
-        title = (
-            "INNA LLMOps — Avaliação Real"
-        )
+        title = "INNA LLMOps — Avaliação Real"
         execution_label = "aplicação real"
         production_label = "sim"
     else:
-        title = (
-            "INNA LLMOps — Avaliação Oficial"
-        )
-        execution_label = (
-            "validação sintética da "
-            "infraestrutura"
-        )
+        title = "INNA LLMOps — Avaliação Oficial"
+        execution_label = "validação sintética da infraestrutura"
         production_label = "não"
 
     lines = [
         title,
         "=" * 42,
-        (
-            "Tipo de execução: "
-            f"{execution_label}"
-        ),
-        (
-            "Execução de produção: "
-            f"{production_label}"
-        ),
+        (f"Tipo de execução: {execution_label}"),
+        (f"Execução de produção: {production_label}"),
     ]
 
     if result.case_id:
-        lines.append(
-            f"Caso: {result.case_id}"
-        )
+        lines.append(f"Caso: {result.case_id}")
 
     lines.extend(
         (
             f"Batch ID: {batch.batch_id}",
-            (
-                "Status do lote: "
-                f"{batch.status.value}"
-            ),
-            (
-                "Casos totais: "
-                f"{batch.total_cases}"
-            ),
-            (
-                "Casos aprovados: "
-                f"{batch.passed_cases}"
-            ),
-            (
-                "Casos reprovados: "
-                f"{batch.failed_cases}"
-            ),
-            (
-                "Casos bloqueados: "
-                f"{batch.blocked_cases}"
-            ),
-            (
-                "Casos com erro: "
-                f"{batch.error_cases}"
-            ),
-            (
-                "Taxa de aprovação: "
-                f"{_format_percentage_pt_br(batch.pass_rate)}"
-            ),
-            (
-                "Custo estimado: "
-                f"US$ {batch.total_estimated_cost:.6f}"
-            ),
-            (
-                "Quality Gate: "
-                f"{'APROVADO' if gate.passed else 'REPROVADO'}"
-            ),
+            (f"Status do lote: {batch.status.value}"),
+            (f"Casos totais: {batch.total_cases}"),
+            (f"Casos aprovados: {batch.passed_cases}"),
+            (f"Casos reprovados: {batch.failed_cases}"),
+            (f"Casos bloqueados: {batch.blocked_cases}"),
+            (f"Casos com erro: {batch.error_cases}"),
+            (f"Taxa de aprovação: {_format_percentage_pt_br(batch.pass_rate)}"),
+            (f"Custo estimado: US$ {batch.total_estimated_cost:.6f}"),
+            (f"Quality Gate: {'APROVADO' if gate.passed else 'REPROVADO'}"),
         )
     )
 
     if result.external_report is not None:
-        lines.append(
-            "Relatório externo: "
-            f"{result.external_report}"
-        )
+        lines.append(f"Relatório externo: {result.external_report}")
 
     if result.internal_report is not None:
-        lines.append(
-            "Relatório interno: "
-            f"{result.internal_report}"
-        )
+        lines.append(f"Relatório interno: {result.internal_report}")
 
     if gate.violations:
         lines.extend(
@@ -804,18 +601,11 @@ def main(
 
     try:
         if args.command == "run-official":
-            result = run_official_command(
-                args
-            )
+            result = run_official_command(args)
         elif args.command == "run-live":
-            result = run_live_command(
-                args
-            )
+            result = run_live_command(args)
         else:
-            parser.error(
-                "Comando não suportado: "
-                f"{args.command}"
-            )
+            parser.error(f"Comando não suportado: {args.command}")
 
         if args.json_output:
             print(
@@ -828,21 +618,12 @@ def main(
                 )
             )
         else:
-            print(
-                render_text_summary(
-                    result
-                )
-            )
+            print(render_text_summary(result))
 
         if result.quality_gate.passed:
-            return int(
-                EvaluationCliExitCode.SUCCESS
-            )
+            return int(EvaluationCliExitCode.SUCCESS)
 
-        return int(
-            EvaluationCliExitCode
-            .QUALITY_GATE_FAILED
-        )
+        return int(EvaluationCliExitCode.QUALITY_GATE_FAILED)
 
     except (
         ValueError,
@@ -854,34 +635,23 @@ def main(
             file=sys.stderr,
         )
 
-        return int(
-            EvaluationCliExitCode
-            .CONFIGURATION_ERROR
-        )
+        return int(EvaluationCliExitCode.CONFIGURATION_ERROR)
 
     except OSError as error:
         print(
-            "Erro ao gravar relatório: "
-            f"{error}",
+            f"Erro ao gravar relatório: {error}",
             file=sys.stderr,
         )
 
-        return int(
-            EvaluationCliExitCode
-            .REPORT_ERROR
-        )
+        return int(EvaluationCliExitCode.REPORT_ERROR)
 
     except Exception as error:
         print(
-            "Erro inesperado durante a avaliação: "
-            f"{type(error).__name__}: {error}",
+            f"Erro inesperado durante a avaliação: {type(error).__name__}: {error}",
             file=sys.stderr,
         )
 
-        return int(
-            EvaluationCliExitCode
-            .EXECUTION_ERROR
-        )
+        return int(EvaluationCliExitCode.EXECUTION_ERROR)
 
 
 def _rate_argument(
@@ -890,15 +660,10 @@ def _rate_argument(
     try:
         parsed = float(value)
     except ValueError as exception:
-        raise argparse.ArgumentTypeError(
-            "A taxa precisa ser numérica."
-        ) from exception
+        raise argparse.ArgumentTypeError("A taxa precisa ser numérica.") from exception
 
     if not 0.0 <= parsed <= 1.0:
-        raise argparse.ArgumentTypeError(
-            "A taxa precisa estar entre "
-            "0 e 1."
-        )
+        raise argparse.ArgumentTypeError("A taxa precisa estar entre 0 e 1.")
 
     return parsed
 
@@ -909,14 +674,10 @@ def _non_negative_int_argument(
     try:
         parsed = int(value)
     except ValueError as exception:
-        raise argparse.ArgumentTypeError(
-            "O valor precisa ser inteiro."
-        ) from exception
+        raise argparse.ArgumentTypeError("O valor precisa ser inteiro.") from exception
 
     if parsed < 0:
-        raise argparse.ArgumentTypeError(
-            "O valor não pode ser negativo."
-        )
+        raise argparse.ArgumentTypeError("O valor não pode ser negativo.")
 
     return parsed
 
@@ -927,14 +688,10 @@ def _non_negative_float_argument(
     try:
         parsed = float(value)
     except ValueError as exception:
-        raise argparse.ArgumentTypeError(
-            "O valor precisa ser numérico."
-        ) from exception
+        raise argparse.ArgumentTypeError("O valor precisa ser numérico.") from exception
 
     if parsed < 0:
-        raise argparse.ArgumentTypeError(
-            "O valor não pode ser negativo."
-        )
+        raise argparse.ArgumentTypeError("O valor não pode ser negativo.")
 
     return parsed
 

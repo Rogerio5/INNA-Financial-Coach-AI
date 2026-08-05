@@ -24,29 +24,21 @@ NOME_TABELA = "llm_usage_events_inna"
 
 
 def _carregar_database_url() -> str:
-    database_url = os.getenv(
-        "DATABASE_URL"
-    )
+    database_url = os.getenv("DATABASE_URL")
 
     if not database_url:
         try:
             from dotenv import load_dotenv
 
-            load_dotenv(
-                dotenv_path=Path(".env")
-            )
+            load_dotenv(dotenv_path=Path(".env"))
 
-            database_url = os.getenv(
-                "DATABASE_URL"
-            )
+            database_url = os.getenv("DATABASE_URL")
 
         except Exception:
             database_url = None
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não encontrada."
-        )
+        raise RuntimeError("DATABASE_URL não encontrada.")
 
     return database_url
 
@@ -66,16 +58,9 @@ def normalizar_modelo(
     """
     Normaliza o nome do modelo para uso em variáveis de ambiente.
     """
-    valor = str(
-        modelo or "desconhecido"
-    ).strip().lower()
+    valor = str(modelo or "desconhecido").strip().lower()
 
-    return (
-        valor.replace("-", "_")
-        .replace(".", "_")
-        .replace("/", "_")
-        .replace(":", "_")
-    )
+    return valor.replace("-", "_").replace(".", "_").replace("/", "_").replace(":", "_")
 
 
 def carregar_precos_modelo(
@@ -94,17 +79,11 @@ def carregar_precos_modelo(
     LLM_PRICE_DEFAULT_INPUT_USD_PER_1M
     LLM_PRICE_DEFAULT_OUTPUT_USD_PER_1M
     """
-    chave = normalizar_modelo(
-        modelo
-    ).upper()
+    chave = normalizar_modelo(modelo).upper()
 
-    input_especifico = os.getenv(
-        f"LLM_PRICE_{chave}_INPUT_USD_PER_1M"
-    )
+    input_especifico = os.getenv(f"LLM_PRICE_{chave}_INPUT_USD_PER_1M")
 
-    output_especifico = os.getenv(
-        f"LLM_PRICE_{chave}_OUTPUT_USD_PER_1M"
-    )
+    output_especifico = os.getenv(f"LLM_PRICE_{chave}_OUTPUT_USD_PER_1M")
 
     input_padrao = os.getenv(
         "LLM_PRICE_DEFAULT_INPUT_USD_PER_1M",
@@ -118,26 +97,20 @@ def carregar_precos_modelo(
 
     try:
         preco_input = float(
-            input_especifico
-            if input_especifico is not None
-            else input_padrao
+            input_especifico if input_especifico is not None else input_padrao
         )
     except (TypeError, ValueError):
         preco_input = 0.0
 
     try:
         preco_output = float(
-            output_especifico
-            if output_especifico is not None
-            else output_padrao
+            output_especifico if output_especifico is not None else output_padrao
         )
     except (TypeError, ValueError):
         preco_output = 0.0
 
     return {
-        "modelo": str(
-            modelo or "desconhecido"
-        ),
+        "modelo": str(modelo or "desconhecido"),
         "input_usd_por_1m": max(
             preco_input,
             0.0,
@@ -146,10 +119,7 @@ def carregar_precos_modelo(
             preco_output,
             0.0,
         ),
-        "configurado": (
-            preco_input > 0
-            or preco_output > 0
-        ),
+        "configurado": (preco_input > 0 or preco_output > 0),
     }
 
 
@@ -173,32 +143,17 @@ def calcular_custo_estimado(
         0,
     )
 
-    custo_entrada = (
-        entrada
-        / 1_000_000
-    ) * max(
-        float(
-            preco_entrada_usd_por_1m
-            or 0
-        ),
+    custo_entrada = (entrada / 1_000_000) * max(
+        float(preco_entrada_usd_por_1m or 0),
         0.0,
     )
 
-    custo_saida = (
-        saida
-        / 1_000_000
-    ) * max(
-        float(
-            preco_saida_usd_por_1m
-            or 0
-        ),
+    custo_saida = (saida / 1_000_000) * max(
+        float(preco_saida_usd_por_1m or 0),
         0.0,
     )
 
-    custo_total = (
-        custo_entrada
-        + custo_saida
-    )
+    custo_total = custo_entrada + custo_saida
 
     return {
         "custo_entrada_usd": round(
@@ -234,9 +189,7 @@ def extrair_tokens_resposta(
         resposta,
         dict,
     ):
-        usage = resposta.get(
-            "usage_metadata"
-        )
+        usage = resposta.get("usage_metadata")
 
     if usage is None:
         return {
@@ -290,10 +243,7 @@ def extrair_tokens_resposta(
     )
 
     if tokens_totais <= 0:
-        tokens_totais = (
-            tokens_entrada
-            + tokens_saida
-        )
+        tokens_totais = tokens_entrada + tokens_saida
 
     return {
         "tokens_entrada": tokens_entrada,
@@ -409,19 +359,14 @@ def inicializar_tabela_llm_usage() -> dict[str, Any]:
         return {
             "ok": True,
             "tabela": NOME_TABELA,
-            "message": (
-                "Tabela de consumo de LLM inicializada."
-            ),
+            "message": ("Tabela de consumo de LLM inicializada."),
         }
 
     except Exception as exc:
         return {
             "ok": False,
             "tabela": NOME_TABELA,
-            "message": (
-                "Erro ao inicializar consumo de LLM: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao inicializar consumo de LLM: {exc}"),
         }
 
 
@@ -446,9 +391,7 @@ def registrar_consumo_llm(
     """
     Persiste um evento de consumo e custo.
     """
-    inicializacao = (
-        inicializar_tabela_llm_usage()
-    )
+    inicializacao = inicializar_tabela_llm_usage()
 
     if not inicializacao.get("ok"):
         return inicializacao
@@ -472,23 +415,13 @@ def registrar_consumo_llm(
         else entrada + saida
     )
 
-    precos = carregar_precos_modelo(
-        modelo
-    )
+    precos = carregar_precos_modelo(modelo)
 
     custos = calcular_custo_estimado(
         tokens_entrada=entrada,
         tokens_saida=saida,
-        preco_entrada_usd_por_1m=(
-            precos[
-                "input_usd_por_1m"
-            ]
-        ),
-        preco_saida_usd_por_1m=(
-            precos[
-                "output_usd_por_1m"
-            ]
-        ),
+        preco_entrada_usd_por_1m=(precos["input_usd_por_1m"]),
+        preco_saida_usd_por_1m=(precos["output_usd_por_1m"]),
     )
 
     try:
@@ -545,78 +478,28 @@ def registrar_consumo_llm(
         """)
 
         parametros = {
-            "provider": str(
-                provider or "google"
-            )[:50],
-            "modelo": str(
-                modelo or "desconhecido"
-            )[:150],
-            "operacao": str(
-                operacao or "desconhecida"
-            )[:120],
-            "origem": (
-                str(origem)[:120]
-                if origem
-                else None
-            ),
-            "usuario_id": (
-                str(usuario_id)[:255]
-                if usuario_id
-                else None
-            ),
-            "trace_id": (
-                str(trace_id)[:255]
-                if trace_id
-                else None
-            ),
-            "request_id": (
-                str(request_id)[:255]
-                if request_id
-                else None
-            ),
+            "provider": str(provider or "google")[:50],
+            "modelo": str(modelo or "desconhecido")[:150],
+            "operacao": str(operacao or "desconhecida")[:120],
+            "origem": (str(origem)[:120] if origem else None),
+            "usuario_id": (str(usuario_id)[:255] if usuario_id else None),
+            "trace_id": (str(trace_id)[:255] if trace_id else None),
+            "request_id": (str(request_id)[:255] if request_id else None),
             "tokens_entrada": entrada,
             "tokens_saida": saida,
             "tokens_totais": total,
-            "preco_entrada": (
-                precos[
-                    "input_usd_por_1m"
-                ]
-            ),
-            "preco_saida": (
-                precos[
-                    "output_usd_por_1m"
-                ]
-            ),
-            "custo_entrada": (
-                custos[
-                    "custo_entrada_usd"
-                ]
-            ),
-            "custo_saida": (
-                custos[
-                    "custo_saida_usd"
-                ]
-            ),
-            "custo_total": (
-                custos[
-                    "custo_total_usd"
-                ]
-            ),
+            "preco_entrada": (precos["input_usd_por_1m"]),
+            "preco_saida": (precos["output_usd_por_1m"]),
+            "custo_entrada": (custos["custo_entrada_usd"]),
+            "custo_saida": (custos["custo_saida_usd"]),
+            "custo_total": (custos["custo_total_usd"]),
             "duracao_ms": max(
                 float(duracao_ms or 0),
                 0.0,
             ),
             "sucesso": bool(sucesso),
-            "erro_tipo": (
-                str(erro_tipo)[:150]
-                if erro_tipo
-                else None
-            ),
-            "erro_mensagem": (
-                str(erro_mensagem)[:4000]
-                if erro_mensagem
-                else None
-            ),
+            "erro_tipo": (str(erro_tipo)[:150] if erro_tipo else None),
+            "erro_mensagem": (str(erro_mensagem)[:4000] if erro_mensagem else None),
             "metadados_json": json.dumps(
                 metadados or {},
                 ensure_ascii=False,
@@ -625,21 +508,21 @@ def registrar_consumo_llm(
         }
 
         with engine.begin() as connection:
-            registro = connection.execute(
-                inserir,
-                parametros,
-            ).mappings().first()
+            registro = (
+                connection.execute(
+                    inserir,
+                    parametros,
+                )
+                .mappings()
+                .first()
+            )
 
         engine.dispose()
 
         return {
             "ok": True,
-            "id": int(
-                registro["id"]
-            ),
-            "criado_em": registro[
-                "criado_em"
-            ],
+            "id": int(registro["id"]),
+            "criado_em": registro["criado_em"],
             "tokens": {
                 "entrada": entrada,
                 "saida": saida,
@@ -647,18 +530,13 @@ def registrar_consumo_llm(
             },
             "precos": precos,
             "custos": custos,
-            "message": (
-                "Consumo de LLM registrado."
-            ),
+            "message": ("Consumo de LLM registrado."),
         }
 
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro ao registrar consumo de LLM: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao registrar consumo de LLM: {exc}"),
         }
 
 
@@ -670,9 +548,7 @@ def carregar_consumo_llm(
     """
     Consulta eventos históricos de consumo.
     """
-    inicializacao = (
-        inicializar_tabela_llm_usage()
-    )
+    inicializacao = inicializar_tabela_llm_usage()
 
     if not inicializacao.get("ok"):
         return {
@@ -775,9 +651,7 @@ def carregar_consumo_llm(
             "ok": True,
             "df": df,
             "total": len(df),
-            "message": (
-                "Consumo de LLM carregado."
-            ),
+            "message": ("Consumo de LLM carregado."),
         }
 
     except Exception as exc:
@@ -785,10 +659,7 @@ def carregar_consumo_llm(
             "ok": False,
             "df": pd.DataFrame(),
             "total": 0,
-            "message": (
-                "Erro ao carregar consumo de LLM: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao carregar consumo de LLM: {exc}"),
         }
 
 

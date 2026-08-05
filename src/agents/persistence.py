@@ -36,14 +36,10 @@ _pool_lock = Lock()
 
 
 def obter_database_url() -> str:
-    database_url = str(
-        os.getenv("DATABASE_URL", "")
-    ).strip()
+    database_url = str(os.getenv("DATABASE_URL", "")).strip()
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não configurada."
-        )
+        raise RuntimeError("DATABASE_URL não configurada.")
 
     return database_url
 
@@ -62,20 +58,14 @@ def obter_conninfo_pool() -> str:
     if os.name != "nt":
         return database_url
 
-    parameters = conninfo_to_dict(
-        database_url
-    )
+    parameters = conninfo_to_dict(database_url)
 
-    host = str(
-        parameters.get("host") or ""
-    ).strip()
+    host = str(parameters.get("host") or "").strip()
 
     if not host or "," in host:
         return database_url
 
-    port_value = str(
-        parameters.get("port") or "5432"
-    ).split(",", maxsplit=1)[0]
+    port_value = str(parameters.get("port") or "5432").split(",", maxsplit=1)[0]
 
     try:
         port = int(port_value)
@@ -94,24 +84,14 @@ def obter_conninfo_pool() -> str:
         return database_url
 
     ipv4_addresses = [
-        address[4][0]
-        for address in addresses
-        if address[0] == socket.AF_INET
+        address[4][0] for address in addresses if address[0] == socket.AF_INET
     ]
 
     other_addresses = [
-        address[4][0]
-        for address in addresses
-        if address[4][0]
-        not in ipv4_addresses
+        address[4][0] for address in addresses if address[4][0] not in ipv4_addresses
     ]
 
-    available_addresses = list(
-        dict.fromkeys(
-            ipv4_addresses
-            + other_addresses
-        )
-    )
+    available_addresses = list(dict.fromkeys(ipv4_addresses + other_addresses))
 
     if not available_addresses:
         return database_url
@@ -197,9 +177,7 @@ def verificar_conexao_memoria() -> dict[str, object]:
         pool = obter_pool_postgres()
 
         with pool.connection(timeout=15) as connection:
-            resultado = connection.execute(
-                "SELECT 1 AS ok"
-            ).fetchone()
+            resultado = connection.execute("SELECT 1 AS ok").fetchone()
 
         return {
             "ok": bool(resultado and resultado["ok"] == 1),
@@ -209,10 +187,7 @@ def verificar_conexao_memoria() -> dict[str, object]:
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Falha na conexão da memória: "
-                f"{type(exc).__name__}"
-            ),
+            "message": (f"Falha na conexão da memória: {type(exc).__name__}"),
             "error_type": type(exc).__name__,
         }
 
@@ -227,19 +202,13 @@ def inicializar_memoria_agentes() -> dict[str, object]:
 
         return {
             "ok": True,
-            "message": (
-                "Memória persistente dos agentes "
-                "inicializada no PostgreSQL."
-            ),
+            "message": ("Memória persistente dos agentes inicializada no PostgreSQL."),
         }
 
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro ao inicializar a memória "
-                f"dos agentes: {exc}"
-            ),
+            "message": (f"Erro ao inicializar a memória dos agentes: {exc}"),
             "error_type": type(exc).__name__,
         }
 

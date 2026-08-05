@@ -31,9 +31,7 @@ from src.services.memory.extractor import (
 )
 
 
-MAX_MONETARY_VALUE = Decimal(
-    "1000000000000"
-)
+MAX_MONETARY_VALUE = Decimal("1000000000000")
 
 REQUIRED_FINANCIAL_FIELDS = (
     "renda_mensal",
@@ -46,12 +44,8 @@ REQUIRED_FINANCIAL_FIELDS = (
 FIELD_LABELS = {
     "renda_mensal": "renda mensal",
     "gastos_fixos": "gastos fixos mensais",
-    "gastos_variaveis": (
-        "gastos variáveis mensais"
-    ),
-    "dividas_mensais": (
-        "dívidas ou parcelas mensais"
-    ),
+    "gastos_variaveis": ("gastos variáveis mensais"),
+    "dividas_mensais": ("dívidas ou parcelas mensais"),
     "reserva_atual": "reserva atual",
 }
 
@@ -181,15 +175,8 @@ def _normalize_text_number(
     )
 
     if "," in normalized and "." in normalized:
-        if (
-            normalized.rfind(",")
-            > normalized.rfind(".")
-        ):
-            normalized = (
-                normalized
-                .replace(".", "")
-                .replace(",", ".")
-            )
+        if normalized.rfind(",") > normalized.rfind("."):
+            normalized = normalized.replace(".", "").replace(",", ".")
         else:
             normalized = normalized.replace(
                 ",",
@@ -219,22 +206,14 @@ def _to_non_negative_float(
             value,
             (int, float, Decimal),
         ):
-            decimal_value = Decimal(
-                str(value)
-            )
+            decimal_value = Decimal(str(value))
         else:
-            normalized = (
-                _normalize_text_number(
-                    str(value)
-                )
-            )
+            normalized = _normalize_text_number(str(value))
 
             if not normalized:
                 return None
 
-            decimal_value = Decimal(
-                normalized
-            )
+            decimal_value = Decimal(normalized)
     except (
         InvalidOperation,
         TypeError,
@@ -247,11 +226,7 @@ def _to_non_negative_float(
     if not isfinite(float_value):
         return None
 
-    if (
-        decimal_value < 0
-        or decimal_value
-        > MAX_MONETARY_VALUE
-    ):
+    if decimal_value < 0 or decimal_value > MAX_MONETARY_VALUE:
         return None
 
     return round(float_value, 2)
@@ -266,9 +241,7 @@ def _to_optional_bool(
     if value is None:
         return None
 
-    normalized = str(
-        value
-    ).strip().lower()
+    normalized = str(value).strip().lower()
 
     if normalized in {
         "true",
@@ -294,9 +267,7 @@ def _get_alias_value(
     mapping: dict[str, Any],
     canonical_name: str,
 ) -> tuple[bool, Any]:
-    for alias in ALIASES[
-        canonical_name
-    ]:
+    for alias in ALIASES[canonical_name]:
         if alias in mapping:
             return True, mapping[alias]
 
@@ -308,10 +279,7 @@ def _iter_relevant_mappings(
     *,
     max_depth: int = 3,
 ):
-    if (
-        max_depth < 0
-        or not isinstance(value, dict)
-    ):
+    if max_depth < 0 or not isinstance(value, dict):
         return
 
     yield value
@@ -338,9 +306,7 @@ def _merge_candidate(
     if not isinstance(candidate, dict):
         return
 
-    for mapping in _iter_relevant_mappings(
-        candidate
-    ):
+    for mapping in _iter_relevant_mappings(candidate):
         for field_name in (
             "renda_mensal",
             "gastos_fixos",
@@ -349,118 +315,72 @@ def _merge_candidate(
             "reserva_atual",
             "gastos_mensais_total",
         ):
-            found, raw_value = (
-                _get_alias_value(
-                    mapping,
-                    field_name,
-                )
+            found, raw_value = _get_alias_value(
+                mapping,
+                field_name,
             )
 
             if not found:
                 continue
 
-            normalized = (
-                _to_non_negative_float(
-                    raw_value
-                )
-            )
+            normalized = _to_non_negative_float(raw_value)
 
             if normalized is None:
-                warning = (
-                    f"invalid_value:"
-                    f"{field_name}:"
-                    f"{source_name}"
-                )
+                warning = f"invalid_value:{field_name}:{source_name}"
 
                 if warning not in warnings:
                     warnings.append(warning)
 
                 continue
 
-            if (
-                overwrite
-                or field_name
-                not in collected
-            ):
-                collected[field_name] = (
-                    normalized
-                )
-                sources[field_name] = (
-                    source_name
-                )
+            if overwrite or field_name not in collected:
+                collected[field_name] = normalized
+                sources[field_name] = source_name
 
         for field_name in (
             "possui_dividas",
             "gastos_incluem_dividas",
         ):
-            found, raw_value = (
-                _get_alias_value(
-                    mapping,
-                    field_name,
-                )
+            found, raw_value = _get_alias_value(
+                mapping,
+                field_name,
             )
 
             if not found:
                 continue
 
-            normalized_bool = (
-                _to_optional_bool(
-                    raw_value
-                )
-            )
+            normalized_bool = _to_optional_bool(raw_value)
 
             if normalized_bool is None:
                 continue
 
-            if (
-                overwrite
-                or field_name
-                not in collected
-            ):
-                collected[field_name] = (
-                    normalized_bool
-                )
-                sources[field_name] = (
-                    source_name
-                )
+            if overwrite or field_name not in collected:
+                collected[field_name] = normalized_bool
+                sources[field_name] = source_name
 
         for field_name in (
             "moeda",
             "idioma",
         ):
-            found, raw_value = (
-                _get_alias_value(
-                    mapping,
-                    field_name,
-                )
+            found, raw_value = _get_alias_value(
+                mapping,
+                field_name,
             )
 
             if not found:
                 continue
 
-            normalized_text = str(
-                raw_value or ""
-            ).strip()
+            normalized_text = str(raw_value or "").strip()
 
             if not normalized_text:
                 continue
 
             if field_name == "moeda":
-                normalized_text = (
-                    normalized_text.upper()
-                )
+                normalized_text = normalized_text.upper()
 
-            if (
-                overwrite
-                or field_name
-                not in collected
-            ):
-                collected[field_name] = (
-                    normalized_text[:10]
-                )
-                sources[field_name] = (
-                    source_name
-                )
+            if overwrite or field_name not in collected:
+                collected[field_name] = normalized_text[:10]
+                sources[field_name] = source_name
 
 
 _FINANCIAL_TEXT_PATTERNS = {
@@ -518,27 +438,21 @@ def _extract_financial_fields_from_text(
     Funciona como fallback determinístico quando o parser
     principal falha ou retorna somente parte dos campos.
     """
-    text = str(
-        message or ""
-    ).strip()
+    text = str(message or "").strip()
 
     if not text:
         return {}
 
     extracted: dict[str, float] = {}
 
-    for field_name, patterns in (
-        _FINANCIAL_TEXT_PATTERNS.items()
-    ):
+    for field_name, patterns in _FINANCIAL_TEXT_PATTERNS.items():
         pattern_options = (
             patterns
             if isinstance(
                 patterns,
                 tuple,
             )
-            else (
-                patterns,
-            )
+            else (patterns,)
         )
 
         for pattern in pattern_options:
@@ -550,18 +464,12 @@ def _extract_financial_fields_from_text(
             if not match:
                 continue
 
-            normalized = (
-                _to_non_negative_float(
-                    match.group("value")
-                )
-            )
+            normalized = _to_non_negative_float(match.group("value"))
 
             if normalized is None:
                 continue
 
-            extracted[field_name] = (
-                normalized
-            )
+            extracted[field_name] = normalized
 
             break
 
@@ -576,19 +484,11 @@ def _safe_parse_current_message(
         return {}
 
     try:
-        result = parse_financial_message(
-            message
-        )
+        result = parse_financial_message(message)
 
-        return (
-            result
-            if isinstance(result, dict)
-            else {}
-        )
+        return result if isinstance(result, dict) else {}
     except Exception:
-        warnings.append(
-            "message_parser_failed"
-        )
+        warnings.append("message_parser_failed")
 
         return {}
 
@@ -601,21 +501,11 @@ def _safe_extract_memory(
         return {}
 
     try:
-        result = (
-            extrair_memoria_da_mensagem_inna(
-                message
-            )
-        )
+        result = extrair_memoria_da_mensagem_inna(message)
 
-        return (
-            result
-            if isinstance(result, dict)
-            else {}
-        )
+        return result if isinstance(result, dict) else {}
     except Exception:
-        warnings.append(
-            "memory_extractor_failed"
-        )
+        warnings.append("memory_extractor_failed")
 
         return {}
 
@@ -623,19 +513,12 @@ def _safe_extract_memory(
 def _clarification_message(
     missing_fields: list[str],
 ) -> str:
-    labels = [
-        FIELD_LABELS[field]
-        for field in missing_fields
-    ]
+    labels = [FIELD_LABELS[field] for field in missing_fields]
 
     if len(labels) == 1:
         fields_text = labels[0]
     else:
-        fields_text = (
-            ", ".join(labels[:-1])
-            + " e "
-            + labels[-1]
-        )
+        fields_text = ", ".join(labels[:-1]) + " e " + labels[-1]
 
     return (
         "Para calcular seu diagnóstico com "
@@ -668,9 +551,7 @@ def resolver_entrada_financeira(
     if not isinstance(context, dict):
         context = {}
 
-    structured_response = state.get(
-        "structured_response"
-    )
+    structured_response = state.get("structured_response")
 
     if not isinstance(
         structured_response,
@@ -687,11 +568,7 @@ def resolver_entrada_financeira(
         extract_financial_memory_from_history,
     )
 
-    history_memory = (
-        extract_financial_memory_from_history(
-            state
-        )
-    )
+    history_memory = extract_financial_memory_from_history(state)
 
     # Memória é a fonte de menor prioridade.
     memory_candidates = [
@@ -746,11 +623,9 @@ def resolver_entrada_financeira(
         overwrite=True,
     )
 
-    parsed_message = (
-        _safe_parse_current_message(
-            message,
-            warnings,
-        )
+    parsed_message = _safe_parse_current_message(
+        message,
+        warnings,
     )
 
     _merge_candidate(
@@ -762,24 +637,17 @@ def resolver_entrada_financeira(
         overwrite=True,
     )
 
-    deterministic_fallback = (
-        _extract_financial_fields_from_text(
-            message
-        )
-    )
+    deterministic_fallback = _extract_financial_fields_from_text(message)
 
     fallback_missing_fields = {
         field: value
-        for field, value
-        in deterministic_fallback.items()
+        for field, value in deterministic_fallback.items()
         if field not in collected
     }
 
     _merge_candidate(
         candidate=fallback_missing_fields,
-        source_name=(
-            "current_message_deterministic_fallback"
-        ),
+        source_name=("current_message_deterministic_fallback"),
         collected=collected,
         sources=sources,
         warnings=warnings,
@@ -791,12 +659,10 @@ def resolver_entrada_financeira(
     # quando "R$ 2.000,00" é interpretado como 0.0.
     fallback_repairs = {
         field: fallback_value
-        for field, fallback_value
-        in deterministic_fallback.items()
+        for field, fallback_value in deterministic_fallback.items()
         if (
             field in collected
-            and sources.get(field)
-            == "current_message_parser"
+            and sources.get(field) == "current_message_parser"
             and collected.get(field) == 0.0
             and fallback_value > 0.0
         )
@@ -804,9 +670,7 @@ def resolver_entrada_financeira(
 
     _merge_candidate(
         candidate=fallback_repairs,
-        source_name=(
-            "current_message_deterministic_fallback"
-        ),
+        source_name=("current_message_deterministic_fallback"),
         collected=collected,
         sources=sources,
         warnings=warnings,
@@ -814,18 +678,10 @@ def resolver_entrada_financeira(
     )
 
     if fallback_repairs:
-        warnings.append(
-            "message_parser_values_repaired_by_fallback"
-        )
+        warnings.append("message_parser_values_repaired_by_fallback")
 
-    if (
-        deterministic_fallback
-        and "message_parser_failed"
-        in warnings
-    ):
-        warnings.append(
-            "message_parser_recovered_by_fallback"
-        )
+    if deterministic_fallback and "message_parser_failed" in warnings:
+        warnings.append("message_parser_recovered_by_fallback")
 
     # Entradas estruturadas atuais possuem
     # a maior prioridade.
@@ -842,20 +698,14 @@ def resolver_entrada_financeira(
     for aliases in ALIASES.values():
         for alias in aliases:
             if alias in state:
-                direct_explicit_state[
-                    alias
-                ] = state[alias]
+                direct_explicit_state[alias] = state[alias]
 
     explicit_candidates = [
         direct_explicit_state,
         state.get("financial_inputs"),
         context.get("financial_inputs"),
-        structured_response.get(
-            "financial_inputs"
-        ),
-        structured_response.get(
-            "diagnostico_financeiro"
-        ),
+        structured_response.get("financial_inputs"),
+        structured_response.get("diagnostico_financeiro"),
     ]
 
     for candidate in explicit_candidates:
@@ -868,34 +718,17 @@ def resolver_entrada_financeira(
             overwrite=True,
         )
 
-    if (
-        "dividas_mensais"
-        not in collected
-        and collected.get(
-            "possui_dividas"
-        ) is False
-    ):
+    if "dividas_mensais" not in collected and collected.get("possui_dividas") is False:
         collected["dividas_mensais"] = 0.0
-        sources["dividas_mensais"] = (
-            sources.get(
-                "possui_dividas",
-                "explicit_no_debt",
-            )
+        sources["dividas_mensais"] = sources.get(
+            "possui_dividas",
+            "explicit_no_debt",
         )
 
-    if (
-        "gastos_mensais_total"
-        in collected
-        and (
-            "gastos_fixos"
-            not in collected
-            or "gastos_variaveis"
-            not in collected
-        )
+    if "gastos_mensais_total" in collected and (
+        "gastos_fixos" not in collected or "gastos_variaveis" not in collected
     ):
-        warnings.append(
-            "aggregate_expenses_not_split"
-        )
+        warnings.append("aggregate_expenses_not_split")
 
     collected.setdefault(
         "gastos_incluem_dividas",
@@ -904,26 +737,16 @@ def resolver_entrada_financeira(
 
     collected.setdefault(
         "moeda",
-        str(
-            state.get("currency")
-            or state.get("moeda")
-            or "BRL"
-        ).strip().upper(),
+        str(state.get("currency") or state.get("moeda") or "BRL").strip().upper(),
     )
 
     collected.setdefault(
         "idioma",
-        str(
-            state.get("language")
-            or state.get("idioma")
-            or "pt"
-        ).strip(),
+        str(state.get("language") or state.get("idioma") or "pt").strip(),
     )
 
     missing_fields = [
-        field
-        for field in REQUIRED_FINANCIAL_FIELDS
-        if field not in collected
+        field for field in REQUIRED_FINANCIAL_FIELDS if field not in collected
     ]
 
     if missing_fields:
@@ -934,32 +757,23 @@ def resolver_entrada_financeira(
             collected_data=collected,
             field_sources=sources,
             warnings=warnings,
-            clarification_message=(
-                _clarification_message(
-                    missing_fields
-                )
-            ),
+            clarification_message=(_clarification_message(missing_fields)),
         )
 
-    arguments = {
-        field: collected[field]
-        for field in REQUIRED_FINANCIAL_FIELDS
-    }
+    arguments = {field: collected[field] for field in REQUIRED_FINANCIAL_FIELDS}
 
-    arguments.update({
-        "gastos_incluem_dividas": bool(
-            collected.get(
-                "gastos_incluem_dividas",
-                False,
-            )
-        ),
-        "moeda": str(
-            collected["moeda"]
-        ).upper(),
-        "idioma": str(
-            collected["idioma"]
-        ),
-    })
+    arguments.update(
+        {
+            "gastos_incluem_dividas": bool(
+                collected.get(
+                    "gastos_incluem_dividas",
+                    False,
+                )
+            ),
+            "moeda": str(collected["moeda"]).upper(),
+            "idioma": str(collected["idioma"]),
+        }
+    )
 
     return FinancialInputResolution(
         ready=True,

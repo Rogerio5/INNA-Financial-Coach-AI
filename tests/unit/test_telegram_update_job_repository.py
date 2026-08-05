@@ -107,17 +107,15 @@ def lease_row():
 
 
 def test_safe_lease_hides_payload_and_token():
-    lease = (
-        repository.TelegramUpdateJobLease(
-            update_id=1001,
-            attempt_count=1,
-            max_attempts=5,
-            payload_version=1,
-            payload_ciphertext=CIPHERTEXT,
-            payload_nonce=NONCE,
-            payload_key_id=KEY_ID,
-            lock_token=LOCK_TOKEN,
-        )
+    lease = repository.TelegramUpdateJobLease(
+        update_id=1001,
+        attempt_count=1,
+        max_attempts=5,
+        payload_version=1,
+        payload_ciphertext=CIPHERTEXT,
+        payload_nonce=NONCE,
+        payload_key_id=KEY_ID,
+        lock_token=LOCK_TOKEN,
     )
 
     safe = lease.to_safe_dict()
@@ -143,22 +141,17 @@ def test_enqueue_new_job(
         ],
     )
 
-    result = (
-        repository.enqueue_telegram_update_job(
-            update_id=1001,
-            payload_ciphertext=CIPHERTEXT,
-            payload_nonce=NONCE,
-            payload_key_id=KEY_ID,
-        )
+    result = repository.enqueue_telegram_update_job(
+        update_id=1001,
+        payload_ciphertext=CIPHERTEXT,
+        payload_nonce=NONCE,
+        payload_key_id=KEY_ID,
     )
 
     assert result.status == "queued"
     assert result.attempt_count == 0
 
-    assert any(
-        "ON CONFLICT" in sql
-        for sql, _ in cursor.executions
-    )
+    assert any("ON CONFLICT" in sql for sql, _ in cursor.executions)
 
 
 def test_enqueue_existing_job_is_idempotent(
@@ -175,21 +168,16 @@ def test_enqueue_existing_job_is_idempotent(
         ],
     )
 
-    result = (
-        repository.enqueue_telegram_update_job(
-            update_id=1001,
-            payload_ciphertext=CIPHERTEXT,
-            payload_nonce=NONCE,
-            payload_key_id=KEY_ID,
-        )
+    result = repository.enqueue_telegram_update_job(
+        update_id=1001,
+        payload_ciphertext=CIPHERTEXT,
+        payload_nonce=NONCE,
+        payload_key_id=KEY_ID,
     )
 
     assert result.status == "processing"
 
-    assert any(
-        "FOR UPDATE" in sql
-        for sql, _ in cursor.executions
-    )
+    assert any("FOR UPDATE" in sql for sql, _ in cursor.executions)
 
 
 def test_claim_returns_none_when_queue_empty(
@@ -202,10 +190,8 @@ def test_claim_returns_none_when_queue_empty(
         ],
     )
 
-    result = (
-        repository.claim_next_telegram_update_job(
-            lock_token=LOCK_TOKEN,
-        )
+    result = repository.claim_next_telegram_update_job(
+        lock_token=LOCK_TOKEN,
     )
 
     assert result is None
@@ -221,10 +207,8 @@ def test_claim_returns_secure_lease(
         ],
     )
 
-    result = (
-        repository.claim_next_telegram_update_job(
-            lock_token=LOCK_TOKEN,
-        )
+    result = repository.claim_next_telegram_update_job(
+        lock_token=LOCK_TOKEN,
     )
 
     assert result is not None
@@ -247,11 +231,9 @@ def test_renew_active_lease(
         ],
     )
 
-    result = (
-        repository.renew_telegram_update_job_lease(
-            update_id=1001,
-            lock_token=LOCK_TOKEN,
-        )
+    result = repository.renew_telegram_update_job_lease(
+        update_id=1001,
+        lock_token=LOCK_TOKEN,
     )
 
     assert result.status == "processing"
@@ -267,9 +249,7 @@ def test_renew_rejects_lost_lease(
         ],
     )
 
-    with pytest.raises(
-        repository.TelegramUpdateJobOwnershipError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobOwnershipError):
         repository.renew_telegram_update_job_lease(
             update_id=1001,
             lock_token=LOCK_TOKEN,
@@ -289,11 +269,9 @@ def test_complete_job(
         ],
     )
 
-    result = (
-        repository.complete_telegram_update_job(
-            update_id=1001,
-            lock_token=LOCK_TOKEN,
-        )
+    result = repository.complete_telegram_update_job(
+        update_id=1001,
+        lock_token=LOCK_TOKEN,
     )
 
     assert result.status == "completed"
@@ -309,9 +287,7 @@ def test_complete_rejects_old_worker(
         ],
     )
 
-    with pytest.raises(
-        repository.TelegramUpdateJobOwnershipError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobOwnershipError):
         repository.complete_telegram_update_job(
             update_id=1001,
             lock_token=LOCK_TOKEN,
@@ -331,15 +307,11 @@ def test_retry_queues_job(
         ],
     )
 
-    result = (
-        repository.retry_or_dead_letter_telegram_update_job(
-            update_id=1001,
-            lock_token=LOCK_TOKEN,
-            error_code=(
-                "telegram.processing_failed"
-            ),
-            retry_delay_seconds=30,
-        )
+    result = repository.retry_or_dead_letter_telegram_update_job(
+        update_id=1001,
+        lock_token=LOCK_TOKEN,
+        error_code=("telegram.processing_failed"),
+        retry_delay_seconds=30,
     )
 
     assert result.status == "queued"
@@ -358,15 +330,11 @@ def test_retry_dead_letters_exhausted_job(
         ],
     )
 
-    result = (
-        repository.retry_or_dead_letter_telegram_update_job(
-            update_id=1001,
-            lock_token=LOCK_TOKEN,
-            error_code=(
-                "telegram.processing_failed"
-            ),
-            retry_delay_seconds=30,
-        )
+    result = repository.retry_or_dead_letter_telegram_update_job(
+        update_id=1001,
+        lock_token=LOCK_TOKEN,
+        error_code=("telegram.processing_failed"),
+        retry_delay_seconds=30,
     )
 
     assert result.status == "dead_letter"
@@ -382,15 +350,11 @@ def test_retry_rejects_old_worker(
         ],
     )
 
-    with pytest.raises(
-        repository.TelegramUpdateJobOwnershipError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobOwnershipError):
         repository.retry_or_dead_letter_telegram_update_job(
             update_id=1001,
             lock_token=LOCK_TOKEN,
-            error_code=(
-                "telegram.processing_failed"
-            ),
+            error_code=("telegram.processing_failed"),
             retry_delay_seconds=30,
         )
 
@@ -415,18 +379,11 @@ def test_recover_expired_jobs(
         ],
     )
 
-    results = (
-        repository.recover_expired_telegram_update_jobs(
-            limit=25
-        )
-    )
+    results = repository.recover_expired_telegram_update_jobs(limit=25)
 
     assert len(results) == 2
     assert results[0].status == "queued"
-    assert (
-        results[1].status
-        == "dead_letter"
-    )
+    assert results[1].status == "dead_letter"
 
 
 def test_database_error_is_sanitized(
@@ -436,10 +393,7 @@ def test_database_error_is_sanitized(
     def failing_cursor(
         **_kwargs,
     ):
-        raise RuntimeError(
-            "postgresql://user:"
-            "super-secret@database/inna"
-        )
+        raise RuntimeError("postgresql://user:super-secret@database/inna")
 
         yield
 
@@ -449,25 +403,19 @@ def test_database_error_is_sanitized(
         failing_cursor,
     )
 
-    with pytest.raises(
-        repository.TelegramUpdateJobRepositoryError
-    ) as captured:
+    with pytest.raises(repository.TelegramUpdateJobRepositoryError) as captured:
         repository.claim_next_telegram_update_job(
             lock_token=LOCK_TOKEN,
         )
 
-    message = str(
-        captured.value
-    )
+    message = str(captured.value)
 
     assert "super-secret" not in message
     assert "postgresql://" not in message
 
 
 def test_claim_sql_uses_skip_locked():
-    sql = (
-        repository.SQL_CLAIM_NEXT_JOB
-    )
+    sql = repository.SQL_CLAIM_NEXT_JOB
 
     assert "FOR UPDATE SKIP LOCKED" in sql
     assert "available_at <= NOW()" in sql
@@ -480,15 +428,9 @@ def test_ownership_sql_requires_active_lease():
         repository.SQL_COMPLETE_JOB,
         repository.SQL_RETRY_OR_DEAD_LETTER_JOB,
     ):
-        assert (
-            "lock_token = %(lock_token)s"
-            in sql
-        )
+        assert "lock_token = %(lock_token)s" in sql
 
-        assert (
-            "lock_expires_at > NOW()"
-            in sql
-        )
+        assert "lock_expires_at > NOW()" in sql
 
 
 def test_complete_clears_sensitive_payload():
@@ -501,9 +443,7 @@ def test_complete_clears_sensitive_payload():
 
 
 def test_retry_uses_available_at():
-    sql = (
-        repository.SQL_RETRY_OR_DEAD_LETTER_JOB
-    )
+    sql = repository.SQL_RETRY_OR_DEAD_LETTER_JOB
 
     assert "retry_delay_seconds" in sql
     assert "available_at = CASE" in sql
@@ -511,17 +451,12 @@ def test_retry_uses_available_at():
 
 
 def test_recovery_handles_retry_and_dead_letter():
-    sql = (
-        repository.SQL_RECOVER_EXPIRED_JOBS
-    )
+    sql = repository.SQL_RECOVER_EXPIRED_JOBS
 
     assert "FOR UPDATE SKIP LOCKED" in sql
     assert "lock_expires_at <= NOW()" in sql
 
-    assert (
-        "'telegram.worker_lease_expired'"
-        in sql
-    )
+    assert "'telegram.worker_lease_expired'" in sql
 
     assert "'dead_letter'" in sql
     assert "'queued'" in sql
@@ -539,9 +474,7 @@ def test_recovery_handles_retry_and_dead_letter():
 def test_invalid_update_id_is_rejected(
     value,
 ):
-    with pytest.raises(
-        repository.TelegramUpdateJobValidationError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobValidationError):
         repository.enqueue_telegram_update_job(
             update_id=value,
             payload_ciphertext=CIPHERTEXT,
@@ -568,9 +501,7 @@ def test_invalid_update_id_is_rejected(
 def test_invalid_ciphertext_is_rejected(
     value,
 ):
-    with pytest.raises(
-        repository.TelegramUpdateJobValidationError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobValidationError):
         repository.enqueue_telegram_update_job(
             update_id=1001,
             payload_ciphertext=value,
@@ -591,9 +522,7 @@ def test_invalid_ciphertext_is_rejected(
 def test_invalid_nonce_is_rejected(
     value,
 ):
-    with pytest.raises(
-        repository.TelegramUpdateJobValidationError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobValidationError):
         repository.enqueue_telegram_update_job(
             update_id=1001,
             payload_ciphertext=CIPHERTEXT,
@@ -614,9 +543,7 @@ def test_invalid_nonce_is_rejected(
 def test_invalid_key_id_is_rejected(
     value,
 ):
-    with pytest.raises(
-        repository.TelegramUpdateJobValidationError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobValidationError):
         repository.enqueue_telegram_update_job(
             update_id=1001,
             payload_ciphertext=CIPHERTEXT,
@@ -637,9 +564,7 @@ def test_invalid_key_id_is_rejected(
 def test_invalid_lock_token_is_rejected(
     value,
 ):
-    with pytest.raises(
-        repository.TelegramUpdateJobValidationError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobValidationError):
         repository.claim_next_telegram_update_job(
             lock_token=value,
         )
@@ -657,9 +582,7 @@ def test_invalid_lock_token_is_rejected(
 def test_invalid_lease_seconds_is_rejected(
     value,
 ):
-    with pytest.raises(
-        repository.TelegramUpdateJobValidationError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobValidationError):
         repository.claim_next_telegram_update_job(
             lock_token=LOCK_TOKEN,
             lease_seconds=value,
@@ -678,9 +601,7 @@ def test_invalid_lease_seconds_is_rejected(
 def test_invalid_max_attempts_is_rejected(
     value,
 ):
-    with pytest.raises(
-        repository.TelegramUpdateJobValidationError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobValidationError):
         repository.enqueue_telegram_update_job(
             update_id=1001,
             payload_ciphertext=CIPHERTEXT,
@@ -702,9 +623,7 @@ def test_invalid_max_attempts_is_rejected(
 def test_invalid_error_code_is_rejected(
     value,
 ):
-    with pytest.raises(
-        repository.TelegramUpdateJobValidationError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobValidationError):
         repository.retry_or_dead_letter_telegram_update_job(
             update_id=1001,
             lock_token=LOCK_TOKEN,
@@ -724,15 +643,11 @@ def test_invalid_error_code_is_rejected(
 def test_invalid_retry_delay_is_rejected(
     value,
 ):
-    with pytest.raises(
-        repository.TelegramUpdateJobValidationError
-    ):
+    with pytest.raises(repository.TelegramUpdateJobValidationError):
         repository.retry_or_dead_letter_telegram_update_job(
             update_id=1001,
             lock_token=LOCK_TOKEN,
-            error_code=(
-                "telegram.processing_failed"
-            ),
+            error_code=("telegram.processing_failed"),
             retry_delay_seconds=value,
         )
 
@@ -748,9 +663,5 @@ def test_invalid_retry_delay_is_rejected(
 def test_invalid_recovery_limit_is_rejected(
     value,
 ):
-    with pytest.raises(
-        repository.TelegramUpdateJobValidationError
-    ):
-        repository.recover_expired_telegram_update_jobs(
-            limit=value
-        )
+    with pytest.raises(repository.TelegramUpdateJobValidationError):
+        repository.recover_expired_telegram_update_jobs(limit=value)

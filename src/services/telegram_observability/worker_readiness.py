@@ -34,10 +34,7 @@ class TelegramWorkerReadinessDependencies:
     receipt_repository_factory: ObjectFactory
     keyring_factory: ObjectFactory
     processor_factory: ObjectFactory
-    metrics_runtime_factory: (
-        ObjectFactory
-        | None
-    ) = None
+    metrics_runtime_factory: ObjectFactory | None = None
 
 
 def create_configuration_environment_check(
@@ -48,33 +45,20 @@ def create_configuration_environment_check(
     ],
 ) -> ReadinessCheck:
     normalized_names = tuple(
-        sorted(
-            str(name).strip()
-            for name in required_values
-            if str(name).strip()
-        )
+        sorted(str(name).strip() for name in required_values if str(name).strip())
     )
 
     def check() -> Mapping[str, object]:
         missing = tuple(
             name
             for name in normalized_names
-            if not str(
-                required_values.get(
-                    name
-                )
-                or ""
-            ).strip()
+            if not str(required_values.get(name) or "").strip()
         )
 
         return {
             "passed": not missing,
-            "required_count": len(
-                normalized_names
-            ),
-            "missing_count": len(
-                missing
-            ),
+            "required_count": len(normalized_names),
+            "missing_count": len(missing),
         }
 
     return check
@@ -92,9 +76,7 @@ def create_job_repository_contract_check(
 
     return create_callable_attribute_check(
         factory,
-        attribute=(
-            "claim_next_telegram_update_job"
-        ),
+        attribute=("claim_next_telegram_update_job"),
     )
 
 
@@ -109,9 +91,7 @@ def create_receipt_repository_contract_check(
 
     return create_callable_attribute_check(
         factory,
-        attribute=(
-            "claim_telegram_update"
-        ),
+        attribute=("claim_telegram_update"),
     )
 
 
@@ -132,16 +112,10 @@ def create_processor_contract_check(
         processor = factory()
 
         return {
-            "passed": callable(
-                processor
-            ),
-            "callable": callable(
-                processor
-            ),
+            "passed": callable(processor),
+            "callable": callable(processor),
             "implementation": (
-                type(processor).__name__
-                if processor is not None
-                else "unavailable"
+                type(processor).__name__ if processor is not None else "unavailable"
             ),
         }
 
@@ -158,65 +132,34 @@ def create_metrics_runtime_contract_check(
 
 
 def create_productive_worker_readiness_service(
-    dependencies: (
-        TelegramWorkerReadinessDependencies
-    ),
+    dependencies: (TelegramWorkerReadinessDependencies),
 ) -> TelegramOperationalStatusService:
     metrics_check = None
 
-    if (
-        dependencies
-        .metrics_runtime_factory
-        is not None
-    ):
-        metrics_check = (
-            create_metrics_runtime_contract_check(
-                dependencies
-                .metrics_runtime_factory
-            )
+    if dependencies.metrics_runtime_factory is not None:
+        metrics_check = create_metrics_runtime_contract_check(
+            dependencies.metrics_runtime_factory
         )
 
     checks = TelegramWorkerReadinessChecks(
-        configuration=(
-            dependencies
-            .configuration_check
-        ),
+        configuration=(dependencies.configuration_check),
         database=(
-            create_database_select_check(
-                dependencies
-                .database_connection_factory
-            )
+            create_database_select_check(dependencies.database_connection_factory)
         ),
         job_repository=(
-            create_job_repository_contract_check(
-                dependencies
-                .job_repository_factory
-            )
+            create_job_repository_contract_check(dependencies.job_repository_factory)
         ),
         receipt_repository=(
             create_receipt_repository_contract_check(
-                dependencies
-                .receipt_repository_factory
+                dependencies.receipt_repository_factory
             )
         ),
-        keyring=(
-            create_keyring_contract_check(
-                dependencies
-                .keyring_factory
-            )
-        ),
-        processor=(
-            create_processor_contract_check(
-                dependencies
-                .processor_factory
-            )
-        ),
+        keyring=(create_keyring_contract_check(dependencies.keyring_factory)),
+        processor=(create_processor_contract_check(dependencies.processor_factory)),
         metrics_runtime=metrics_check,
     )
 
-    return create_worker_readiness_service(
-        checks
-    )
+    return create_worker_readiness_service(checks)
 
 
 __all__ = [

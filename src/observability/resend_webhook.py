@@ -47,9 +47,7 @@ def _database_url() -> str:
     database_url = os.getenv("DATABASE_URL")
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não configurada."
-        )
+        raise RuntimeError("DATABASE_URL não configurada.")
 
     return database_url
 
@@ -160,10 +158,7 @@ def inicializar_tabelas_resend_webhook() -> dict[str, Any]:
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro ao inicializar webhook: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao inicializar webhook: {exc}"),
         }
 
 
@@ -219,20 +214,14 @@ def processar_evento_resend(
     """
     Persiste e processa um evento já autenticado.
     """
-    inicializacao = (
-        inicializar_tabelas_resend_webhook()
-    )
+    inicializacao = inicializar_tabelas_resend_webhook()
 
     if not inicializacao.get("ok"):
         return inicializacao
 
-    evento_tipo = str(
-        evento.get("type", "desconhecido")
-    )
+    evento_tipo = str(evento.get("type", "desconhecido"))
 
-    provider_message_id = extrair_message_id(
-        evento
-    )
+    provider_message_id = extrair_message_id(evento)
 
     status_entrega = STATUS_POR_EVENTO.get(
         evento_tipo,
@@ -267,15 +256,11 @@ def processar_evento_resend(
                 {
                     "svix_id": svix_id,
                     "evento_tipo": evento_tipo,
-                    "provider_message_id": (
-                        provider_message_id
-                    ),
+                    "provider_message_id": (provider_message_id),
                     "metadados_json": json.dumps(
                         {
                             "type": evento_tipo,
-                            "message_id": (
-                                provider_message_id
-                            ),
+                            "message_id": (provider_message_id),
                         },
                         ensure_ascii=False,
                     ),
@@ -305,8 +290,7 @@ def processar_evento_resend(
         processamento_concluido = bool(
             evento_existente
             and evento_existente.get("processado")
-            and evento_existente.get("resultado")
-            == "notificacao_atualizada"
+            and evento_existente.get("resultado") == "notificacao_atualizada"
         )
 
         if processamento_concluido:
@@ -316,9 +300,7 @@ def processar_evento_resend(
                 "ok": True,
                 "duplicado": True,
                 "atualizado": False,
-                "message": (
-                    "Evento já processado anteriormente."
-                ),
+                "message": ("Evento já processado anteriormente."),
             }
 
         # O evento existe, mas falhou, ficou incompleto
@@ -401,14 +383,10 @@ def processar_evento_resend(
                 registro = connection.execute(
                     atualizar_notificacao,
                     {
-                        "status_entrega": (
-                            status_entrega
-                        ),
+                        "status_entrega": (status_entrega),
                         "evento_tipo": evento_tipo,
                         "motivo": motivo,
-                        "provider_message_id": (
-                            provider_message_id
-                        ),
+                        "provider_message_id": (provider_message_id),
                     },
                 ).first()
 
@@ -444,12 +422,8 @@ def processar_evento_resend(
             "atualizado": atualizado,
             "evento_tipo": evento_tipo,
             "status_entrega": status_entrega,
-            "provider_message_id": (
-                provider_message_id
-            ),
-            "message": (
-                "Evento processado com sucesso."
-            ),
+            "provider_message_id": (provider_message_id),
+            "message": ("Evento processado com sucesso."),
         }
 
     except Exception as exc:
@@ -477,12 +451,8 @@ def processar_evento_resend(
             "ok": False,
             "duplicado": False,
             "atualizado": False,
-            "message": (
-                "Erro ao processar evento: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao processar evento: {exc}"),
         }
-
 
 
 def carregar_eventos_resend(
@@ -493,9 +463,7 @@ def carregar_eventos_resend(
     """
     Carrega eventos recebidos pelo webhook do Resend.
     """
-    inicializacao = (
-        inicializar_tabelas_resend_webhook()
-    )
+    inicializacao = inicializar_tabelas_resend_webhook()
 
     if not inicializacao.get("ok"):
         return {
@@ -555,18 +523,13 @@ def carregar_eventos_resend(
 
         engine.dispose()
 
-        eventos = [
-            dict(row)
-            for row in rows
-        ]
+        eventos = [dict(row) for row in rows]
 
         return {
             "ok": True,
             "eventos": eventos,
             "total": len(eventos),
-            "message": (
-                "Eventos do Resend carregados."
-            ),
+            "message": ("Eventos do Resend carregados."),
         }
 
     except Exception as exc:
@@ -574,10 +537,7 @@ def carregar_eventos_resend(
             "ok": False,
             "eventos": [],
             "total": 0,
-            "message": (
-                "Erro ao carregar eventos do Resend: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao carregar eventos do Resend: {exc}"),
         }
 
 
@@ -590,24 +550,20 @@ def carregar_saude_integracoes() -> dict[str, Any]:
     resultado = {
         "ok": True,
         "banco_conectado": False,
-        "resend_configurado": bool(
-            os.getenv("RESEND_API_KEY")
-        ),
-        "webhook_configurado": bool(
-            os.getenv("RESEND_WEBHOOK_SECRET")
-        ),
+        "resend_configurado": bool(os.getenv("RESEND_API_KEY")),
+        "webhook_configurado": bool(os.getenv("RESEND_WEBHOOK_SECRET")),
         "email_alertas_habilitado": (
             str(
                 os.getenv(
                     "LLM_ALERT_EMAIL_ENABLED",
                     "false",
                 )
-            ).strip().lower()
+            )
+            .strip()
+            .lower()
             in {"1", "true", "sim", "yes", "on"}
         ),
-        "destinatario_configurado": bool(
-            os.getenv("LLM_ALERT_EMAIL_TO")
-        ),
+        "destinatario_configurado": bool(os.getenv("LLM_ALERT_EMAIL_TO")),
         "ultimo_evento_tipo": None,
         "ultimo_evento_recebido_em": None,
         "ultimo_evento_processado": None,
@@ -621,9 +577,7 @@ def carregar_saude_integracoes() -> dict[str, Any]:
     }
 
     try:
-        inicializacao = (
-            inicializar_tabelas_resend_webhook()
-        )
+        inicializacao = inicializar_tabelas_resend_webhook()
 
         if not inicializacao.get("ok"):
             return {
@@ -709,11 +663,7 @@ def carregar_saude_integracoes() -> dict[str, Any]:
         """)
 
         with engine.connect() as connection:
-            row = (
-                connection.execute(consulta)
-                .mappings()
-                .first()
-            )
+            row = connection.execute(consulta).mappings().first()
 
         engine.dispose()
 
@@ -729,12 +679,8 @@ def carregar_saude_integracoes() -> dict[str, Any]:
             **resultado,
             "ok": False,
             "banco_conectado": False,
-            "message": (
-                "Erro ao consultar a saúde das "
-                f"integrações: {exc}"
-            ),
+            "message": (f"Erro ao consultar a saúde das integrações: {exc}"),
         }
-
 
 
 __all__ = [

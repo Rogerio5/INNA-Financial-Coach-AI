@@ -56,23 +56,15 @@ def _execute(
     arguments: dict | None = None,
     agent: str = "financial_agent",
 ):
-    registry = (
-        criar_registro_ferramentas_inna()
-    )
+    registry = criar_registro_ferramentas_inna()
 
     call = ToolCall(
-        tool_name=(
-            FINANCIAL_DIAGNOSIS_TOOL_NAME
-        ),
-        arguments=(
-            arguments or _arguments()
-        ),
+        tool_name=(FINANCIAL_DIAGNOSIS_TOOL_NAME),
+        arguments=(arguments or _arguments()),
         context=_context(agent),
     )
 
-    with ToolExecutor(
-        registry=registry
-    ) as executor:
+    with ToolExecutor(registry=registry) as executor:
         return executor.execute(call)
 
 
@@ -86,11 +78,9 @@ def test_input_rejects_negative_values():
 
 
 def test_input_normalizes_currency():
-    payload = (
-        CalcularDiagnosticoFinanceiroInput(
-            **_arguments(
-                moeda="brl",
-            )
+    payload = CalcularDiagnosticoFinanceiroInput(
+        **_arguments(
+            moeda="brl",
         )
     )
 
@@ -98,18 +88,16 @@ def test_input_normalizes_currency():
 
 
 def test_catalog_registers_financial_tool():
-    registry = (
-        criar_registro_ferramentas_inna()
-    )
+    registry = criar_registro_ferramentas_inna()
 
-    definition = registry.get(
-        FINANCIAL_DIAGNOSIS_TOOL_NAME
-    )
+    definition = registry.get(FINANCIAL_DIAGNOSIS_TOOL_NAME)
 
     assert definition.allowed_agents == (
-        frozenset({
-            "financial_agent",
-        })
+        frozenset(
+            {
+                "financial_agent",
+            }
+        )
     )
 
     assert definition.idempotent is True
@@ -117,20 +105,13 @@ def test_catalog_registers_financial_tool():
 
 
 def test_schema_catalog_exposes_financial_input():
-    catalog = (
-        obter_catalogo_schemas_ferramentas()
-    )
+    catalog = obter_catalogo_schemas_ferramentas()
 
     definition = next(
-        item
-        for item in catalog
-        if item["name"]
-        == FINANCIAL_DIAGNOSIS_TOOL_NAME
+        item for item in catalog if item["name"] == FINANCIAL_DIAGNOSIS_TOOL_NAME
     )
 
-    properties = definition[
-        "input_schema"
-    ]["properties"]
+    properties = definition["input_schema"]["properties"]
 
     assert "renda_mensal" in properties
     assert "gastos_fixos" in properties
@@ -150,22 +131,12 @@ def test_executes_financial_diagnosis():
     assert output["despesas_totais"] == 2800.0
     assert output["saldo_estimado"] == 1200.0
 
-    assert (
-        output[
-            "comprometimento_renda_percentual"
-        ]
-        == 70.0
-    )
+    assert output["comprometimento_renda_percentual"] == 70.0
 
-    assert (
-        output["score_financeiro"]
-        == 70
-    )
+    assert output["score_financeiro"] == 70
 
     assert output["nivel_risco"] == "Medio"
-    assert output["situacao"] == (
-        "saldo_positivo"
-    )
+    assert output["situacao"] == ("saldo_positivo")
 
 
 def test_does_not_duplicate_included_debts():
@@ -183,36 +154,22 @@ def test_does_not_duplicate_included_debts():
     assert output["despesas_totais"] == 2800.0
     assert output["saldo_estimado"] == 1200.0
 
-    assert (
-        output[
-            "parcelas_adicionais_consideradas"
-        ]
-        == 0.0
-    )
+    assert output["parcelas_adicionais_consideradas"] == 0.0
 
 
 def test_denies_non_financial_agent():
-    result = _execute(
-        agent="rag_agent"
-    )
+    result = _execute(agent="rag_agent")
 
     assert result.status == ToolStatus.DENIED
 
-    assert (
-        result.error.code
-        == "tool_permission_denied"
-    )
+    assert result.error.code == "tool_permission_denied"
 
 
 def test_rejects_invalid_arguments_before_handler():
-    registry = (
-        criar_registro_ferramentas_inna()
-    )
+    registry = criar_registro_ferramentas_inna()
 
     call = ToolCall(
-        tool_name=(
-            FINANCIAL_DIAGNOSIS_TOOL_NAME
-        ),
+        tool_name=(FINANCIAL_DIAGNOSIS_TOOL_NAME),
         arguments=_arguments(
             gastos_fixos=-100,
         ),
@@ -220,24 +177,15 @@ def test_rejects_invalid_arguments_before_handler():
     )
 
     with (
+        patch("src.agent_tools.financial_tools.analisar_orcamento") as mock_budget,
         patch(
-            "src.agent_tools.financial_tools."
-            "analisar_orcamento"
-        ) as mock_budget,
-        patch(
-            "src.agent_tools.financial_tools."
-            "build_financial_diagnosis"
+            "src.agent_tools.financial_tools.build_financial_diagnosis"
         ) as mock_diagnosis,
-        ToolExecutor(
-            registry=registry
-        ) as executor,
+        ToolExecutor(registry=registry) as executor,
     ):
         result = executor.execute(call)
 
-    assert (
-        result.status
-        == ToolStatus.VALIDATION_ERROR
-    )
+    assert result.status == ToolStatus.VALIDATION_ERROR
 
     mock_budget.assert_not_called()
     mock_diagnosis.assert_not_called()
@@ -253,40 +201,25 @@ def test_invariant_failure_becomes_safe_error():
         "diagnostico": "internal",
     }
 
-    registry = (
-        criar_registro_ferramentas_inna()
-    )
+    registry = criar_registro_ferramentas_inna()
 
     call = ToolCall(
-        tool_name=(
-            FINANCIAL_DIAGNOSIS_TOOL_NAME
-        ),
+        tool_name=(FINANCIAL_DIAGNOSIS_TOOL_NAME),
         arguments=_arguments(),
         context=_context(),
     )
 
     with (
         patch(
-            "src.agent_tools.financial_tools."
-            "build_financial_diagnosis",
-            return_value=(
-                inconsistent_diagnosis
-            ),
+            "src.agent_tools.financial_tools.build_financial_diagnosis",
+            return_value=(inconsistent_diagnosis),
         ),
-        ToolExecutor(
-            registry=registry
-        ) as executor,
+        ToolExecutor(registry=registry) as executor,
     ):
         result = executor.execute(call)
 
     assert result.status == ToolStatus.ERROR
 
-    assert (
-        result.error.code
-        == "tool_execution_error"
-    )
+    assert result.error.code == "tool_execution_error"
 
-    assert (
-        "999999"
-        not in result.error.message
-    )
+    assert "999999" not in result.error.message

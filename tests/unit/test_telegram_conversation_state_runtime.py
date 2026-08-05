@@ -44,9 +44,7 @@ def _record(
     state_version=1,
 ):
     return TelegramConversationState(
-        telegram_user_id=(
-            telegram_user_id
-        ),
+        telegram_user_id=(telegram_user_id),
         chat_id=chat_id,
         state=(
             state
@@ -58,18 +56,8 @@ def _record(
         language=language,
         state_version=state_version,
         created_at=NOW,
-        updated_at=(
-            NOW
-            + timedelta(
-                seconds=1
-            )
-        ),
-        expires_at=(
-            NOW
-            + timedelta(
-                hours=1
-            )
-        ),
+        updated_at=(NOW + timedelta(seconds=1)),
+        expires_at=(NOW + timedelta(hours=1)),
     )
 
 
@@ -122,9 +110,7 @@ class FakeStore:
     ):
         self.open_calls.append(
             {
-                "telegram_user_id": (
-                    telegram_user_id
-                ),
+                "telegram_user_id": (telegram_user_id),
                 "chat_id": chat_id,
                 "initial_state": initial_state,
                 "language": language,
@@ -179,9 +165,7 @@ class FakeStore:
         self,
         limit=100,
     ):
-        self.cleanup_calls.append(
-            limit
-        )
+        self.cleanup_calls.append(limit)
 
         if self.cleanup_error is not None:
             raise self.cleanup_error
@@ -195,13 +179,9 @@ def _runtime(
 ):
     store = FakeStore()
 
-    runtime = (
-        TelegramConversationStateRuntime(
-            store=store,
-            default_ttl_seconds=(
-                default_ttl_seconds
-            ),
-        )
+    runtime = TelegramConversationStateRuntime(
+        store=store,
+        default_ttl_seconds=(default_ttl_seconds),
     )
 
     return runtime, store
@@ -213,25 +193,14 @@ def _session(
     created=False,
     recovered=False,
 ):
-    resolved_record = (
-        record
-        if record is not None
-        else _record()
-    )
+    resolved_record = record if record is not None else _record()
 
     return TelegramConversationSession(
         current=resolved_record,
-        state=(
-            resolved_record
-            .to_processing_state()
-        ),
-        language=(
-            resolved_record.language
-        ),
+        state=(resolved_record.to_processing_state()),
+        language=(resolved_record.language),
         created=created,
-        recovered_from_conflict=(
-            recovered
-        ),
+        recovered_from_conflict=(recovered),
     )
 
 
@@ -263,9 +232,7 @@ def test_runtime_accepts_injected_store():
 def test_runtime_rejects_invalid_store(
     invalid_store,
 ):
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         TelegramConversationStateRuntime(
             store=invalid_store,
             default_ttl_seconds=3600,
@@ -286,9 +253,7 @@ def test_runtime_rejects_invalid_default_ttl(
 ):
     store = FakeStore()
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         TelegramConversationStateRuntime(
             store=store,
             default_ttl_seconds=invalid_ttl,
@@ -340,36 +305,24 @@ def test_load_session_returns_mutable_copy():
         TelegramConversationSession,
     )
 
-    session.state[
-        "answers"
-    ].append(
-        3
-    )
+    session.state["answers"].append(3)
 
-    assert (
-        record.to_processing_state()
-        ["answers"]
-        == [
-            1,
-            2,
-        ]
-    )
+    assert record.to_processing_state()["answers"] == [
+        1,
+        2,
+    ]
 
     assert session.is_dirty() is True
 
 
 def test_open_session_uses_default_ttl():
-    runtime, store = _runtime(
-        default_ttl_seconds=7200
-    )
+    runtime, store = _runtime(default_ttl_seconds=7200)
 
     record = _record()
 
-    store.open_result = (
-        TelegramConversationStateOpenResult(
-            record=record,
-            created=True,
-        )
+    store.open_result = TelegramConversationStateOpenResult(
+        record=record,
+        created=True,
     )
 
     session = runtime.open_session(
@@ -383,10 +336,7 @@ def test_open_session_uses_default_ttl():
 
     assert session.created is True
 
-    assert (
-        session.recovered_from_conflict
-        is False
-    )
+    assert session.recovered_from_conflict is False
 
     assert store.open_calls == [
         {
@@ -404,16 +354,12 @@ def test_open_session_uses_default_ttl():
 def test_open_session_preserves_conflict_flag():
     runtime, store = _runtime()
 
-    record = _record(
-        state_version=4
-    )
+    record = _record(state_version=4)
 
-    store.open_result = (
-        TelegramConversationStateOpenResult(
-            record=record,
-            created=False,
-            recovered_from_conflict=True,
-        )
+    store.open_result = TelegramConversationStateOpenResult(
+        record=record,
+        created=False,
+        recovered_from_conflict=True,
     )
 
     session = runtime.open_session(
@@ -428,10 +374,7 @@ def test_open_session_preserves_conflict_flag():
 
     assert session.created is False
 
-    assert (
-        session.recovered_from_conflict
-        is True
-    )
+    assert session.recovered_from_conflict is True
 
     assert session.state_version == 4
 
@@ -443,9 +386,7 @@ def test_open_rejects_invalid_store_result():
         "record": _record(),
     }
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         runtime.open_session(
             1001,
             -2001,
@@ -456,9 +397,7 @@ def test_open_rejects_invalid_store_result():
 
 
 def test_session_repr_does_not_expose_state():
-    secret = (
-        "private-financial-message"
-    )
+    secret = "private-financial-message"
 
     record = _record(
         state={
@@ -466,17 +405,11 @@ def test_session_repr_does_not_expose_state():
         }
     )
 
-    session = _session(
-        record=record
-    )
+    session = _session(record=record)
 
-    assert secret not in repr(
-        session
-    )
+    assert secret not in repr(session)
 
-    assert secret not in str(
-        session.to_safe_dict()
-    )
+    assert secret not in str(session.to_safe_dict())
 
 
 def test_session_replace_state_is_defensive():
@@ -490,13 +423,9 @@ def test_session_replace_state_is_defensive():
         ],
     }
 
-    session.replace_state(
-        source
-    )
+    session.replace_state(source)
 
-    source["items"].append(
-        3
-    )
+    source["items"].append(3)
 
     assert session.state == {
         "step": "financial_data",
@@ -516,9 +445,7 @@ def test_session_language_and_reset():
         }
     )
 
-    session.set_language(
-        " en-US "
-    )
+    session.set_language(" en-US ")
 
     assert session.is_dirty() is True
     assert session.language == "en-US"
@@ -538,9 +465,7 @@ def test_save_skips_clean_session_by_default():
 
     session = _session()
 
-    result = runtime.save_session(
-        session
-    )
+    result = runtime.save_session(session)
 
     assert result is session
     assert store.save_calls == []
@@ -549,17 +474,11 @@ def test_save_skips_clean_session_by_default():
 def test_save_can_force_clean_persistence():
     runtime, store = _runtime()
 
-    current = _record(
-        state_version=1
-    )
+    current = _record(state_version=1)
 
-    saved = _record(
-        state_version=2
-    )
+    saved = _record(state_version=2)
 
-    session = _session(
-        record=current
-    )
+    session = _session(record=current)
 
     store.save_result = saved
 
@@ -571,17 +490,13 @@ def test_save_can_force_clean_persistence():
 
     assert result.state_version == 2
 
-    assert len(
-        store.save_calls
-    ) == 1
+    assert len(store.save_calls) == 1
 
 
 def test_save_dirty_session():
     runtime, store = _runtime()
 
-    current = _record(
-        state_version=3
-    )
+    current = _record(state_version=3)
 
     saved = _record(
         state={
@@ -602,9 +517,7 @@ def test_save_dirty_session():
         }
     )
 
-    session.set_language(
-        "en-US"
-    )
+    session.set_language("en-US")
 
     store.save_result = saved
 
@@ -665,13 +578,9 @@ def test_save_rejects_invalid_returned_record(
 ):
     runtime, store = _runtime()
 
-    current = _record(
-        state_version=1
-    )
+    current = _record(state_version=1)
 
-    session = _session(
-        record=current
-    )
+    session = _session(record=current)
 
     session.replace_state(
         {
@@ -680,9 +589,7 @@ def test_save_rejects_invalid_returned_record(
     )
 
     store.save_result = _record(
-        telegram_user_id=(
-            saved_user_id
-        ),
+        telegram_user_id=(saved_user_id),
         chat_id=saved_chat_id,
         state={
             "step": "changed",
@@ -690,9 +597,7 @@ def test_save_rejects_invalid_returned_record(
         state_version=saved_version,
     )
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         runtime.save_session(
             session,
             ttl_seconds=600,
@@ -710,15 +615,9 @@ def test_save_conflict_propagates_without_mutating_session():
         }
     )
 
-    store.save_error = (
-        TelegramConversationStateConflictError(
-            "Versão divergente."
-        )
-    )
+    store.save_error = TelegramConversationStateConflictError("Versão divergente.")
 
-    with pytest.raises(
-        TelegramConversationStateConflictError
-    ):
+    with pytest.raises(TelegramConversationStateConflictError):
         runtime.save_session(
             session,
             ttl_seconds=600,
@@ -732,11 +631,7 @@ def test_save_conflict_propagates_without_mutating_session():
 def test_reload_uses_session_identity():
     runtime, store = _runtime()
 
-    old_session = _session(
-        record=_record(
-            state_version=2
-        )
-    )
+    old_session = _session(record=_record(state_version=2))
 
     store.load_result = _record(
         state={
@@ -745,9 +640,7 @@ def test_reload_uses_session_identity():
         state_version=3,
     )
 
-    reloaded = runtime.reload_session(
-        old_session
-    )
+    reloaded = runtime.reload_session(old_session)
 
     assert reloaded.state_version == 3
 
@@ -766,9 +659,7 @@ def test_delete_session_marks_session_deleted():
 
     session = _session()
 
-    result = runtime.delete_session(
-        session
-    )
+    result = runtime.delete_session(session)
 
     assert result is True
     assert session.deleted is True
@@ -780,17 +671,11 @@ def test_delete_session_marks_session_deleted():
         )
     ]
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         session.is_dirty()
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        runtime.save_session(
-            session
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        runtime.save_session(session)
 
 
 def test_delete_identity_without_loaded_session():
@@ -798,10 +683,13 @@ def test_delete_identity_without_loaded_session():
 
     store.delete_result = False
 
-    assert runtime.delete_identity(
-        1001,
-        -2001,
-    ) is False
+    assert (
+        runtime.delete_identity(
+            1001,
+            -2001,
+        )
+        is False
+    )
 
     assert store.delete_calls == [
         (
@@ -825,13 +713,9 @@ def test_delete_rejects_invalid_store_result(
 ):
     runtime, store = _runtime()
 
-    store.delete_result = (
-        invalid_delete_result
-    )
+    store.delete_result = invalid_delete_result
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         runtime.delete_identity(
             1001,
             -2001,
@@ -843,13 +727,9 @@ def test_cleanup_expired():
 
     store.cleanup_result = 3
 
-    assert runtime.cleanup_expired(
-        100
-    ) == 3
+    assert runtime.cleanup_expired(100) == 3
 
-    assert store.cleanup_calls == [
-        100
-    ]
+    assert store.cleanup_calls == [100]
 
 
 @pytest.mark.parametrize(
@@ -867,41 +747,26 @@ def test_cleanup_rejects_invalid_result(
 ):
     runtime, store = _runtime()
 
-    store.cleanup_result = (
-        invalid_cleanup_result
-    )
+    store.cleanup_result = invalid_cleanup_result
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
-        runtime.cleanup_expired(
-            100
-        )
+    with pytest.raises(TelegramConversationStateConsistencyError):
+        runtime.cleanup_expired(100)
 
 
 def test_database_errors_propagate_sanitized():
     runtime, store = _runtime()
 
-    store.load_error = (
-        TelegramConversationStateUnavailableError(
-            "Persistência temporariamente indisponível."
-        )
+    store.load_error = TelegramConversationStateUnavailableError(
+        "Persistência temporariamente indisponível."
     )
 
-    with pytest.raises(
-        TelegramConversationStateUnavailableError
-    ) as captured:
+    with pytest.raises(TelegramConversationStateUnavailableError) as captured:
         runtime.load_session(
             1001,
             -2001,
         )
 
-    assert (
-        "database-password"
-        not in str(
-            captured.value
-        )
-    )
+    assert "database-password" not in str(captured.value)
 
 
 def test_postgres_factory_is_lazy_and_injects_store(
@@ -909,17 +774,13 @@ def test_postgres_factory_is_lazy_and_injects_store(
 ):
     calls = []
 
-    class FakePostgresStore(
-        FakeStore
-    ):
+    class FakePostgresStore(FakeStore):
         def __init__(
             self,
         ):
             super().__init__()
 
-            calls.append(
-                "created"
-            )
+            calls.append("created")
 
     monkeypatch.setattr(
         runtime_module,
@@ -929,15 +790,11 @@ def test_postgres_factory_is_lazy_and_injects_store(
 
     assert calls == []
 
-    runtime = (
-        create_postgres_telegram_conversation_state_runtime(
-            default_ttl_seconds=600
-        )
+    runtime = create_postgres_telegram_conversation_state_runtime(
+        default_ttl_seconds=600
     )
 
-    assert calls == [
-        "created"
-    ]
+    assert calls == ["created"]
 
     assert isinstance(
         runtime.store,
@@ -948,20 +805,15 @@ def test_postgres_factory_is_lazy_and_injects_store(
 
 
 def test_runtime_module_has_no_direct_sql_or_connection():
-    source = (
-        runtime_module
-        .__file__
-    )
+    source = runtime_module.__file__
 
     assert source is not None
 
-    module_text = (
-        open(
-            source,
-            "r",
-            encoding="utf-8",
-        ).read()
-    )
+    module_text = open(
+        source,
+        "r",
+        encoding="utf-8",
+    ).read()
 
     forbidden = (
         "cursor_postgres",
@@ -1009,9 +861,7 @@ def test_runtime_module_has_no_direct_sql_or_connection():
         ),
         (
             "cleanup",
-            (
-                0,
-            ),
+            (0,),
         ),
     ],
 )
@@ -1028,14 +878,8 @@ def test_validation_occurs_before_store(
         "cleanup": runtime.cleanup_expired,
     }
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        methods[
-            operation
-        ](
-            *arguments
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        methods[operation](*arguments)
 
     assert store.load_calls == []
     assert store.open_calls == []

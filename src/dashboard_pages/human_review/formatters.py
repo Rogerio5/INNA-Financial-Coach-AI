@@ -33,9 +33,7 @@ ACTION_LABELS = {
 def formatar_status_hitl(
     status: str,
 ) -> str:
-    normalized = str(
-        status or ""
-    ).strip().lower()
+    normalized = str(status or "").strip().lower()
 
     return STATUS_LABELS.get(
         normalized,
@@ -50,9 +48,7 @@ def formatar_status_hitl(
 def formatar_risco_hitl(
     risk_level: str,
 ) -> str:
-    normalized = str(
-        risk_level or ""
-    ).strip().lower()
+    normalized = str(risk_level or "").strip().lower()
 
     return RISK_LABELS.get(
         normalized,
@@ -67,9 +63,7 @@ def formatar_risco_hitl(
 def formatar_acao_hitl(
     action: str,
 ) -> str:
-    normalized = str(
-        action or ""
-    ).strip().lower()
+    normalized = str(action or "").strip().lower()
 
     return ACTION_LABELS.get(
         normalized,
@@ -111,13 +105,9 @@ def formatar_data_hora_hitl(
             return fallback
 
     if parsed.tzinfo is None:
-        parsed = parsed.replace(
-            tzinfo=UTC
-        )
+        parsed = parsed.replace(tzinfo=UTC)
 
-    return parsed.astimezone().strftime(
-        "%d/%m/%Y %H:%M:%S"
-    )
+    return parsed.astimezone().strftime("%d/%m/%Y %H:%M:%S")
 
 
 def formatar_duracao_hitl(
@@ -157,27 +147,16 @@ def formatar_duracao_hitl(
     parts: list[str] = []
 
     if days:
-        parts.append(
-            f"{days}d"
-        )
+        parts.append(f"{days}d")
 
     if hours:
-        parts.append(
-            f"{hours}h"
-        )
+        parts.append(f"{hours}h")
 
     if minutes:
-        parts.append(
-            f"{minutes}min"
-        )
+        parts.append(f"{minutes}min")
 
-    if (
-        seconds_part
-        or not parts
-    ):
-        parts.append(
-            f"{seconds_part}s"
-        )
+    if seconds_part or not parts:
+        parts.append(f"{seconds_part}s")
 
     return " ".join(parts)
 
@@ -191,21 +170,16 @@ def formatar_percentual_hitl(
         return "—"
 
     try:
-        percentage = float(
-            value
-        ) * 100
+        percentage = float(value) * 100
     except (
         TypeError,
         ValueError,
     ):
         return "—"
 
-    return (
-        f"{percentage:.{casas_decimais}f}%"
-        .replace(
-            ".",
-            ",",
-        )
+    return f"{percentage:.{casas_decimais}f}%".replace(
+        ".",
+        ",",
     )
 
 
@@ -214,9 +188,7 @@ def resumir_texto_hitl(
     *,
     limite: int = 100,
 ) -> str:
-    text = " ".join(
-        str(value or "").split()
-    )
+    text = " ".join(str(value or "").split())
 
     if not text:
         return "—"
@@ -224,18 +196,13 @@ def resumir_texto_hitl(
     if len(text) <= limite:
         return text
 
-    return (
-        text[: max(1, limite - 1)].rstrip()
-        + "…"
-    )
+    return text[: max(1, limite - 1)].rstrip() + "…"
 
 
 def formatar_identidade_hitl(
     value: str,
 ) -> str:
-    normalized = str(
-        value or ""
-    ).strip()
+    normalized = str(value or "").strip()
 
     return normalized or "Não atribuído"
 

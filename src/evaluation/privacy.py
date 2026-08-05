@@ -372,19 +372,13 @@ def _validate_limits(
     """Valida os limites usados pelo sanitizador."""
 
     if max_depth < 1:
-        raise ValueError(
-            "max_depth deve ser maior que zero."
-        )
+        raise ValueError("max_depth deve ser maior que zero.")
 
     if max_items < 1:
-        raise ValueError(
-            "max_items deve ser maior que zero."
-        )
+        raise ValueError("max_items deve ser maior que zero.")
 
     if max_string_length < 1:
-        raise ValueError(
-            "max_string_length deve ser maior que zero."
-        )
+        raise ValueError("max_string_length deve ser maior que zero.")
 
 
 def _luhn_is_valid(
@@ -528,19 +522,14 @@ def truncate_text(
     """Limita o tamanho de textos exportados ou persistidos."""
 
     if max_length < 1:
-        raise ValueError(
-            "max_length deve ser maior que zero."
-        )
+        raise ValueError("max_length deve ser maior que zero.")
 
     if len(value) <= max_length:
         return value
 
     remaining = len(value) - max_length
 
-    return (
-        value[:max_length]
-        + f"\n{TRUNCATED}:{remaining}"
-    )
+    return value[:max_length] + f"\n{TRUNCATED}:{remaining}"
 
 
 def sanitize_text(
@@ -656,19 +645,13 @@ def hash_identifier(
     normalized_salt = str(salt).strip()
 
     if not normalized_salt:
-        raise ValueError(
-            "O salt de hash_identifier não pode ser vazio."
-        )
+        raise ValueError("O salt de hash_identifier não pode ser vazio.")
 
     if digest_size < 8:
-        raise ValueError(
-            "digest_size deve ser pelo menos 8."
-        )
+        raise ValueError("digest_size deve ser pelo menos 8.")
 
     if digest_size > 64:
-        raise ValueError(
-            "digest_size não pode ser maior que 64."
-        )
+        raise ValueError("digest_size não pode ser maior que 64.")
 
     normalized_prefix = str(prefix).strip() or "id"
 
@@ -694,9 +677,7 @@ def content_hash(
     """
 
     if digest_size < 8 or digest_size > 64:
-        raise ValueError(
-            "digest_size deve estar entre 8 e 64."
-        )
+        raise ValueError("digest_size deve estar entre 8 e 64.")
 
     if isinstance(value, str):
         raw_value = value.encode("utf-8")
@@ -729,10 +710,7 @@ def _is_sensitive_key(
         "signing_key",
     )
 
-    return any(
-        fragment in normalized_key
-        for fragment in sensitive_fragments
-    )
+    return any(fragment in normalized_key for fragment in sensitive_fragments)
 
 
 def _is_personal_key(
@@ -757,7 +735,8 @@ def _is_pix_key(
     """Verifica se o campo representa uma chave Pix."""
 
     return (
-        normalized_key in {
+        normalized_key
+        in {
             "pix",
             "pix_key",
             "pix_keys",
@@ -799,9 +778,7 @@ def sanitize_mapping(
 
     sanitized: dict[str, Any] = {}
 
-    for index, (key, item) in enumerate(
-        value.items()
-    ):
+    for index, (key, item) in enumerate(value.items()):
         if index >= max_items:
             remaining = max(
                 0,
@@ -818,17 +795,11 @@ def sanitize_mapping(
             sanitized[output_key] = REDACTED_SECRET
             continue
 
-        if (
-            redact_personal_fields
-            and _is_personal_key(normalized_key)
-        ):
+        if redact_personal_fields and _is_personal_key(normalized_key):
             sanitized[output_key] = REDACTED_PERSONAL_DATA
             continue
 
-        if (
-            redact_financial_fields
-            and _is_financial_key(normalized_key)
-        ):
+        if redact_financial_fields and _is_financial_key(normalized_key):
             sanitized[output_key] = REDACTED_FINANCIAL_DATA
             continue
 
@@ -883,9 +854,7 @@ def sanitize_sequence(
                 len(value) - max_items,
             )
 
-            sanitized.append(
-                f"{TRUNCATED}:{remaining}"
-            )
+            sanitized.append(f"{TRUNCATED}:{remaining}")
             break
 
         sanitized.append(
@@ -1056,10 +1025,7 @@ def sanitize_value(
             bytearray,
         ),
     ):
-        return (
-            f"{REDACTED_BINARY}:"
-            f"{len(value)} bytes"
-        )
+        return f"{REDACTED_BINARY}:{len(value)} bytes"
 
     return sanitize_text(
         repr(value),
@@ -1090,10 +1056,7 @@ def sanitize_headers(
             sanitized[output_key] = REDACTED_AUTH
             continue
 
-        if (
-            allow_only_safe_headers
-            and normalized_key not in SAFE_HEADER_KEYS
-        ):
+        if allow_only_safe_headers and normalized_key not in SAFE_HEADER_KEYS:
             continue
 
         sanitized[output_key] = sanitize_text(
@@ -1233,10 +1196,7 @@ def contains_possible_secret(
         SECRET_ASSIGNMENT_PATTERN,
     )
 
-    return any(
-        pattern.search(serialized) is not None
-        for pattern in patterns
-    )
+    return any(pattern.search(serialized) is not None for pattern in patterns)
 
 
 def contains_possible_personal_data(
@@ -1262,10 +1222,7 @@ def contains_possible_personal_data(
         CNPJ_PATTERN,
     )
 
-    return any(
-        pattern.search(serialized) is not None
-        for pattern in patterns
-    )
+    return any(pattern.search(serialized) is not None for pattern in patterns)
 
 
 def assert_safe_for_external_export(
@@ -1284,10 +1241,7 @@ def assert_safe_for_external_export(
             "exportado para uma plataforma externa."
         )
 
-    if (
-        block_personal_data
-        and contains_possible_personal_data(value)
-    ):
+    if block_personal_data and contains_possible_personal_data(value):
         raise ValueError(
             "O payload contém possível dado pessoal e não pode ser "
             "exportado para uma plataforma externa."
@@ -1360,9 +1314,7 @@ def prepare_internal_payload(
     )
 
     if contains_possible_secret(sanitized):
-        raise ValueError(
-            "O payload interno ainda contém possível segredo."
-        )
+        raise ValueError("O payload interno ainda contém possível segredo.")
 
     return sanitized
 

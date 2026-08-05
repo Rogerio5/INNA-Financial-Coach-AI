@@ -7,53 +7,33 @@ from types import MappingProxyType
 from typing import Mapping
 
 
-INTERNAL_ROUTE_ENABLED_ENV = (
-    "INNA_INTERNAL_READY_ENABLED"
-)
+INTERNAL_ROUTE_ENABLED_ENV = "INNA_INTERNAL_READY_ENABLED"
 
-INTERNAL_OPERATIONS_TOKEN_ENV = (
-    "INNA_INTERNAL_OPERATIONS_TOKEN"
-)
+INTERNAL_OPERATIONS_TOKEN_ENV = "INNA_INTERNAL_OPERATIONS_TOKEN"
 
-READINESS_CACHE_TTL_ENV = (
-    "INNA_READINESS_CACHE_TTL_SECONDS"
-)
+READINESS_CACHE_TTL_ENV = "INNA_READINESS_CACHE_TTL_SECONDS"
 
-READINESS_CONCURRENT_WAIT_ENV = (
-    "INNA_READINESS_CONCURRENT_WAIT_SECONDS"
-)
+READINESS_CONCURRENT_WAIT_ENV = "INNA_READINESS_CONCURRENT_WAIT_SECONDS"
 
-READINESS_EVALUATION_BUDGET_ENV = (
-    "INNA_READINESS_EVALUATION_BUDGET_SECONDS"
-)
+READINESS_EVALUATION_BUDGET_ENV = "INNA_READINESS_EVALUATION_BUDGET_SECONDS"
 
 
 DEFAULT_READINESS_CACHE_TTL_SECONDS = 1.0
 
-DEFAULT_READINESS_CONCURRENT_WAIT_SECONDS = (
-    0.25
-)
+DEFAULT_READINESS_CONCURRENT_WAIT_SECONDS = 0.25
 
-DEFAULT_READINESS_EVALUATION_BUDGET_SECONDS = (
-    2.0
-)
+DEFAULT_READINESS_EVALUATION_BUDGET_SECONDS = 2.0
 
 MINIMUM_INTERNAL_TOKEN_LENGTH = 32
 
 MAXIMUM_READINESS_CACHE_TTL_SECONDS = 60.0
 
-MAXIMUM_READINESS_CONCURRENT_WAIT_SECONDS = (
-    10.0
-)
+MAXIMUM_READINESS_CONCURRENT_WAIT_SECONDS = 10.0
 
-MAXIMUM_READINESS_EVALUATION_BUDGET_SECONDS = (
-    30.0
-)
+MAXIMUM_READINESS_EVALUATION_BUDGET_SECONDS = 30.0
 
 
-class TelegramOperationalConfigurationError(
-    ValueError
-):
+class TelegramOperationalConfigurationError(ValueError):
     pass
 
 
@@ -72,9 +52,7 @@ def _parse_boolean(
     ):
         return value
 
-    normalized = str(
-        value
-    ).strip().lower()
+    normalized = str(value).strip().lower()
 
     truthy = {
         "1",
@@ -112,42 +90,29 @@ def _parse_bounded_float(
     maximum: float,
 ) -> float:
     if value is None:
-        normalized = float(
-            default
-        )
+        normalized = float(default)
     else:
         try:
-            normalized = float(
-                value
-            )
+            normalized = float(value)
         except (
             TypeError,
             ValueError,
         ) as exc:
             raise (
-                TelegramOperationalConfigurationError(
-                    f"{name} deve ser numérico."
-                )
+                TelegramOperationalConfigurationError(f"{name} deve ser numérico.")
             ) from exc
 
-    if (
-        math.isnan(normalized)
-        or math.isinf(normalized)
-    ):
-        raise TelegramOperationalConfigurationError(
-            f"{name} deve ser finito."
-        )
+    if math.isnan(normalized) or math.isinf(normalized):
+        raise TelegramOperationalConfigurationError(f"{name} deve ser finito.")
 
     if normalized < minimum:
         raise TelegramOperationalConfigurationError(
-            f"{name} deve ser maior ou igual a "
-            f"{minimum}."
+            f"{name} deve ser maior ou igual a {minimum}."
         )
 
     if normalized > maximum:
         raise TelegramOperationalConfigurationError(
-            f"{name} deve ser menor ou igual a "
-            f"{maximum}."
+            f"{name} deve ser menor ou igual a {maximum}."
         )
 
     return normalized
@@ -159,9 +124,7 @@ def _normalize_token(
     if value is None:
         return None
 
-    normalized = str(
-        value
-    ).strip()
+    normalized = str(value).strip()
 
     if not normalized:
         return None
@@ -184,10 +147,7 @@ def _validate_internal_token(
             "configurado."
         )
 
-    if (
-        len(token)
-        < MINIMUM_INTERNAL_TOKEN_LENGTH
-    ):
+    if len(token) < MINIMUM_INTERNAL_TOKEN_LENGTH:
         raise TelegramOperationalConfigurationError(
             "INNA_INTERNAL_OPERATIONS_TOKEN deve "
             f"possuir ao menos "
@@ -212,12 +172,9 @@ def _validate_internal_token(
             "INNA_INTERNAL_OPERATIONS_TOKEN é fraco."
         )
 
-    if len(
-        set(token)
-    ) < 8:
+    if len(set(token)) < 8:
         raise TelegramOperationalConfigurationError(
-            "INNA_INTERNAL_OPERATIONS_TOKEN possui "
-            "baixa diversidade."
+            "INNA_INTERNAL_OPERATIONS_TOKEN possui baixa diversidade."
         )
 
 
@@ -228,18 +185,11 @@ def _validate_internal_token(
 class TelegramOperationalConfiguration:
     internal_route_enabled: bool = False
 
-    internal_operations_token: (
-        str
-        | None
-    ) = None
+    internal_operations_token: str | None = None
 
-    readiness_cache_ttl_seconds: float = (
-        DEFAULT_READINESS_CACHE_TTL_SECONDS
-    )
+    readiness_cache_ttl_seconds: float = DEFAULT_READINESS_CACHE_TTL_SECONDS
 
-    readiness_concurrent_wait_seconds: float = (
-        DEFAULT_READINESS_CONCURRENT_WAIT_SECONDS
-    )
+    readiness_concurrent_wait_seconds: float = DEFAULT_READINESS_CONCURRENT_WAIT_SECONDS
 
     readiness_evaluation_budget_seconds: float = (
         DEFAULT_READINESS_EVALUATION_BUDGET_SECONDS
@@ -249,71 +199,35 @@ class TelegramOperationalConfiguration:
         self,
     ) -> None:
         enabled = _parse_boolean(
-            name=(
-                "internal_route_enabled"
-            ),
-            value=(
-                self.internal_route_enabled
-            ),
+            name=("internal_route_enabled"),
+            value=(self.internal_route_enabled),
             default=False,
         )
 
-        token = _normalize_token(
-            self.internal_operations_token
-        )
+        token = _normalize_token(self.internal_operations_token)
 
         cache_ttl = _parse_bounded_float(
-            name=(
-                "readiness_cache_ttl_seconds"
-            ),
-            value=(
-                self.readiness_cache_ttl_seconds
-            ),
-            default=(
-                DEFAULT_READINESS_CACHE_TTL_SECONDS
-            ),
+            name=("readiness_cache_ttl_seconds"),
+            value=(self.readiness_cache_ttl_seconds),
+            default=(DEFAULT_READINESS_CACHE_TTL_SECONDS),
             minimum=0.0,
-            maximum=(
-                MAXIMUM_READINESS_CACHE_TTL_SECONDS
-            ),
+            maximum=(MAXIMUM_READINESS_CACHE_TTL_SECONDS),
         )
 
-        concurrent_wait = (
-            _parse_bounded_float(
-                name=(
-                    "readiness_concurrent_wait_seconds"
-                ),
-                value=(
-                    self
-                    .readiness_concurrent_wait_seconds
-                ),
-                default=(
-                    DEFAULT_READINESS_CONCURRENT_WAIT_SECONDS
-                ),
-                minimum=0.0,
-                maximum=(
-                    MAXIMUM_READINESS_CONCURRENT_WAIT_SECONDS
-                ),
-            )
+        concurrent_wait = _parse_bounded_float(
+            name=("readiness_concurrent_wait_seconds"),
+            value=(self.readiness_concurrent_wait_seconds),
+            default=(DEFAULT_READINESS_CONCURRENT_WAIT_SECONDS),
+            minimum=0.0,
+            maximum=(MAXIMUM_READINESS_CONCURRENT_WAIT_SECONDS),
         )
 
-        evaluation_budget = (
-            _parse_bounded_float(
-                name=(
-                    "readiness_evaluation_budget_seconds"
-                ),
-                value=(
-                    self
-                    .readiness_evaluation_budget_seconds
-                ),
-                default=(
-                    DEFAULT_READINESS_EVALUATION_BUDGET_SECONDS
-                ),
-                minimum=0.001,
-                maximum=(
-                    MAXIMUM_READINESS_EVALUATION_BUDGET_SECONDS
-                ),
-            )
+        evaluation_budget = _parse_bounded_float(
+            name=("readiness_evaluation_budget_seconds"),
+            value=(self.readiness_evaluation_budget_seconds),
+            default=(DEFAULT_READINESS_EVALUATION_BUDGET_SECONDS),
+            minimum=0.001,
+            maximum=(MAXIMUM_READINESS_EVALUATION_BUDGET_SECONDS),
         )
 
         _validate_internal_token(
@@ -356,83 +270,42 @@ class TelegramOperationalConfiguration:
     ) -> Mapping[str, object]:
         return MappingProxyType(
             {
-                "internal_route_enabled": (
-                    self.internal_route_enabled
-                ),
+                "internal_route_enabled": (self.internal_route_enabled),
                 "internal_token_configured": (
-                    self.internal_operations_token
-                    is not None
+                    self.internal_operations_token is not None
                 ),
                 "internal_token_length": (
-                    len(
-                        self.internal_operations_token
-                    )
-                    if (
-                        self
-                        .internal_operations_token
-                        is not None
-                    )
+                    len(self.internal_operations_token)
+                    if (self.internal_operations_token is not None)
                     else 0
                 ),
-                "readiness_cache_ttl_seconds": (
-                    self
-                    .readiness_cache_ttl_seconds
+                "readiness_cache_ttl_seconds": (self.readiness_cache_ttl_seconds),
+                ("readiness_concurrent_wait_seconds"): (
+                    self.readiness_concurrent_wait_seconds
                 ),
-                (
-                    "readiness_"
-                    "concurrent_wait_seconds"
-                ): (
-                    self
-                    .readiness_concurrent_wait_seconds
-                ),
-                (
-                    "readiness_"
-                    "evaluation_budget_seconds"
-                ): (
-                    self
-                    .readiness_evaluation_budget_seconds
+                ("readiness_evaluation_budget_seconds"): (
+                    self.readiness_evaluation_budget_seconds
                 ),
             }
         )
 
 
 def load_telegram_operational_configuration(
-    environment: (
-        Mapping[str, str]
-        | None
-    ) = None,
+    environment: (Mapping[str, str] | None) = None,
 ) -> TelegramOperationalConfiguration:
-    resolved_environment = (
-        os.environ
-        if environment is None
-        else environment
-    )
+    resolved_environment = os.environ if environment is None else environment
 
     return TelegramOperationalConfiguration(
-        internal_route_enabled=(
-            resolved_environment.get(
-                INTERNAL_ROUTE_ENABLED_ENV
-            )
-        ),
+        internal_route_enabled=(resolved_environment.get(INTERNAL_ROUTE_ENABLED_ENV)),
         internal_operations_token=(
-            resolved_environment.get(
-                INTERNAL_OPERATIONS_TOKEN_ENV
-            )
+            resolved_environment.get(INTERNAL_OPERATIONS_TOKEN_ENV)
         ),
-        readiness_cache_ttl_seconds=(
-            resolved_environment.get(
-                READINESS_CACHE_TTL_ENV
-            )
-        ),
+        readiness_cache_ttl_seconds=(resolved_environment.get(READINESS_CACHE_TTL_ENV)),
         readiness_concurrent_wait_seconds=(
-            resolved_environment.get(
-                READINESS_CONCURRENT_WAIT_ENV
-            )
+            resolved_environment.get(READINESS_CONCURRENT_WAIT_ENV)
         ),
         readiness_evaluation_budget_seconds=(
-            resolved_environment.get(
-                READINESS_EVALUATION_BUDGET_ENV
-            )
+            resolved_environment.get(READINESS_EVALUATION_BUDGET_ENV)
         ),
     )
 

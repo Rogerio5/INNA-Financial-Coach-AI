@@ -38,8 +38,6 @@ load_dotenv(
 )
 
 
-
-
 _INTENT_ROUTE_MAP = {
     "diagnostico_financeiro": "financial_agent",
     "historico_financeiro": "financial_agent",
@@ -55,10 +53,7 @@ def obter_gemini_api_key() -> str:
 
 
 def obter_modelo_supervisor() -> str:
-    return (
-        get_supervisor_runtime_config()
-        .model
-    )
+    return get_supervisor_runtime_config().model
 
 
 def _normalizar_contexto(
@@ -67,23 +62,14 @@ def _normalizar_contexto(
     if not isinstance(context, dict):
         return ""
 
-    rendered_prompt = str(
-        context.get("rendered_prompt", "")
-    ).strip()
+    rendered_prompt = str(context.get("rendered_prompt", "")).strip()
 
-    context_limit = (
-        get_supervisor_runtime_config()
-        .max_context_characters
-    )
+    context_limit = get_supervisor_runtime_config().max_context_characters
 
     if len(rendered_prompt) > context_limit:
-        rendered_prompt = (
-            rendered_prompt[:context_limit]
-            + "\n[CONTEXTO LIMITADO]"
-        )
+        rendered_prompt = rendered_prompt[:context_limit] + "\n[CONTEXTO LIMITADO]"
 
     return rendered_prompt
-
 
 
 def _obter_mensagem_protegida(
@@ -96,9 +82,7 @@ def _obter_mensagem_protegida(
     Caso o contexto não esteja disponível, aplica o filtro
     de privacidade localmente antes da chamada ao Gemini.
     """
-    mensagem_original = str(
-        mensagem or ""
-    ).strip()
+    mensagem_original = str(mensagem or "").strip()
 
     if isinstance(context, dict):
         mensagem_contexto = str(
@@ -111,20 +95,15 @@ def _obter_mensagem_protegida(
         if mensagem_contexto:
             return mensagem_contexto
 
-    mensagem_protegida, _ = (
-        sanitize_sensitive_text(
-            mensagem_original
-        )
-    )
+    mensagem_protegida, _ = sanitize_sensitive_text(mensagem_original)
 
     return mensagem_protegida
+
 
 def _validar_compatibilidade(
     decision: SupervisorLLMDecision,
 ) -> SupervisorLLMDecision:
-    expected_node = _INTENT_ROUTE_MAP[
-        decision.intent
-    ]
+    expected_node = _INTENT_ROUTE_MAP[decision.intent]
 
     if decision.next_node != expected_node:
         decision.next_node = expected_node
@@ -220,25 +199,17 @@ def classificar_com_gemini(
     mensagem: str,
     context: dict[str, Any] | None = None,
 ) -> SupervisorDecision:
-    mensagem_original = str(
-        mensagem or ""
-    ).strip()
+    mensagem_original = str(mensagem or "").strip()
 
     if len(mensagem_original) < 2:
-        raise ValueError(
-            "Mensagem insuficiente para classificação."
-        )
+        raise ValueError("Mensagem insuficiente para classificação.")
 
-    mensagem_protegida = (
-        _obter_mensagem_protegida(
-            mensagem_original,
-            context,
-        )
+    mensagem_protegida = _obter_mensagem_protegida(
+        mensagem_original,
+        context,
     )
 
-    contexto = _normalizar_contexto(
-        context
-    )
+    contexto = _normalizar_contexto(context)
 
     prompt = _criar_prompt_classificacao(
         mensagem=mensagem_protegida,
@@ -247,9 +218,7 @@ def classificar_com_gemini(
 
     inicio = time.perf_counter()
 
-    runtime_config = (
-        get_supervisor_runtime_config()
-    )
+    runtime_config = get_supervisor_runtime_config()
 
     client = get_supervisor_client()
 
@@ -258,18 +227,13 @@ def classificar_com_gemini(
         contents=prompt,
         config=types.GenerateContentConfig(
             temperature=0.0,
-            max_output_tokens=(
-                runtime_config.max_output_tokens
-            ),
+            max_output_tokens=(runtime_config.max_output_tokens),
             response_mime_type="application/json",
             response_schema=SupervisorLLMDecision,
         ),
     )
 
-    duration_ms = int(
-        (time.perf_counter() - inicio)
-        * 1000
-    )
+    duration_ms = int((time.perf_counter() - inicio) * 1000)
 
     parsed = getattr(
         response,
@@ -284,33 +248,17 @@ def classificar_com_gemini(
         llm_decision = parsed
 
     elif parsed is not None:
-        llm_decision = (
-            SupervisorLLMDecision.model_validate(
-                parsed
-            )
-        )
+        llm_decision = SupervisorLLMDecision.model_validate(parsed)
 
     else:
-        response_text = str(
-            getattr(response, "text", "")
-            or ""
-        ).strip()
+        response_text = str(getattr(response, "text", "") or "").strip()
 
         if not response_text:
-            raise RuntimeError(
-                "Gemini não retornou uma "
-                "classificação estruturada."
-            )
+            raise RuntimeError("Gemini não retornou uma classificação estruturada.")
 
-        llm_decision = (
-            SupervisorLLMDecision.model_validate_json(
-                response_text
-            )
-        )
+        llm_decision = SupervisorLLMDecision.model_validate_json(response_text)
 
-    llm_decision = _validar_compatibilidade(
-        llm_decision
-    )
+    llm_decision = _validar_compatibilidade(llm_decision)
 
     return SupervisorDecision(
         **llm_decision.model_dump(),

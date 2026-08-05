@@ -64,9 +64,7 @@ class TeamSupervisorDecision:
 def _normalize_text(
     value: Any,
 ) -> str:
-    return str(
-        value or ""
-    ).strip()
+    return str(value or "").strip()
 
 
 def _requested_agent(
@@ -79,30 +77,18 @@ def _requested_agent(
     1. team_requested_agent;
     2. next_node.
     """
-    explicit = _normalize_text(
-        state.get(
-            "team_requested_agent"
-        )
-    )
+    explicit = _normalize_text(state.get("team_requested_agent"))
 
     if explicit:
         return explicit
 
-    return _normalize_text(
-        state.get(
-            "next_node"
-        )
-    )
+    return _normalize_text(state.get("next_node"))
 
 
 def _infer_financial_agent(
     state: dict[str, Any],
 ) -> AgentName:
-    intent = _normalize_text(
-        state.get(
-            "intent"
-        )
-    )
+    intent = _normalize_text(state.get("intent"))
 
     if intent == "relatorio":
         return "report_agent"
@@ -113,11 +99,7 @@ def _infer_financial_agent(
 def _infer_knowledge_agent(
     state: dict[str, Any],
 ) -> AgentName:
-    intent = _normalize_text(
-        state.get(
-            "intent"
-        )
-    )
+    intent = _normalize_text(state.get("intent"))
 
     if intent == "consulta_rag":
         return "rag_agent"
@@ -154,45 +136,33 @@ def resolve_team_supervisor_decision(
     - solicitação vazia: agente inferido pela intenção;
     - o supervisor não altera o estado recebido.
     """
-    team = DEFAULT_TEAM_REGISTRY.get_team(
-        team_name
-    )
+    team = DEFAULT_TEAM_REGISTRY.get_team(team_name)
 
-    requested_agent = _requested_agent(
-        state
-    )
+    requested_agent = _requested_agent(state)
 
     if requested_agent:
         try:
-            requested_team = (
-                DEFAULT_TEAM_REGISTRY
-                .team_for_agent(
-                    requested_agent  # type: ignore[arg-type]
-                )
+            requested_team = DEFAULT_TEAM_REGISTRY.team_for_agent(
+                requested_agent  # type: ignore[arg-type]
             )
         except TeamHierarchyError:
             return TeamSupervisorDecision(
                 team_name=team.name,
-                supervisor_node=(
-                    team.supervisor_node
-                ),
+                supervisor_node=(team.supervisor_node),
                 next_node="supervisor",
                 selected_agent=None,
                 status="escalated",
                 route_source="root_escalation",
                 requires_root_supervisor=True,
                 reason=(
-                    "O agente solicitado não está "
-                    "registrado na hierarquia da INNA."
+                    "O agente solicitado não está registrado na hierarquia da INNA."
                 ),
             )
 
         if requested_team.name != team.name:
             return TeamSupervisorDecision(
                 team_name=team.name,
-                supervisor_node=(
-                    team.supervisor_node
-                ),
+                supervisor_node=(team.supervisor_node),
                 next_node="supervisor",
                 selected_agent=None,
                 status="escalated",
@@ -205,15 +175,11 @@ def resolve_team_supervisor_decision(
                 ),
             )
 
-        selected_agent = (
-            requested_agent
-        )
+        selected_agent = requested_agent
 
         return TeamSupervisorDecision(
             team_name=team.name,
-            supervisor_node=(
-                team.supervisor_node
-            ),
+            supervisor_node=(team.supervisor_node),
             next_node=selected_agent,  # type: ignore[arg-type]
             selected_agent=selected_agent,  # type: ignore[arg-type]
             status="selected",
@@ -225,31 +191,18 @@ def resolve_team_supervisor_decision(
             ),
         )
 
-    resolver = _TEAM_DEFAULT_RESOLVERS[
-        team.name
-    ]
+    resolver = _TEAM_DEFAULT_RESOLVERS[team.name]
 
-    selected_agent = resolver(
-        state
-    )
+    selected_agent = resolver(state)
 
     if selected_agent not in team.members:
         raise TeamHierarchyError(
-            "A regra interna da equipe selecionou "
-            "um agente fora de seus membros."
+            "A regra interna da equipe selecionou um agente fora de seus membros."
         )
 
-    intent = _normalize_text(
-        state.get(
-            "intent"
-        )
-    )
+    intent = _normalize_text(state.get("intent"))
 
-    route_source: TeamRouteSource = (
-        "intent_rule"
-        if intent
-        else "team_default"
-    )
+    route_source: TeamRouteSource = "intent_rule" if intent else "team_default"
 
     return TeamSupervisorDecision(
         team_name=team.name,
@@ -259,10 +212,7 @@ def resolve_team_supervisor_decision(
         status="selected",
         route_source=route_source,
         requires_root_supervisor=False,
-        reason=(
-            "O supervisor de equipe selecionou "
-            "o agente por regra interna."
-        ),
+        reason=("O supervisor de equipe selecionou o agente por regra interna."),
     )
 
 
@@ -282,9 +232,7 @@ def _append_team_route_history(
         )
     ]
 
-    history.append(
-        decision.model_dump()
-    )
+    history.append(decision.model_dump())
 
     return history
 
@@ -302,12 +250,7 @@ def _append_trace(
     ]
 
     trace.append(
-        (
-            "team_supervisor:"
-            f"{decision.team_name}:"
-            f"{decision.status}:"
-            f"{decision.next_node}"
-        )
+        (f"team_supervisor:{decision.team_name}:{decision.status}:{decision.next_node}")
     )
 
     return trace
@@ -321,11 +264,9 @@ def team_supervisor_node(
     """
     Nó genérico dos supervisores de equipe.
     """
-    decision = (
-        resolve_team_supervisor_decision(
-            team_name=team_name,
-            state=dict(state),
-        )
+    decision = resolve_team_supervisor_decision(
+        team_name=team_name,
+        state=dict(state),
     )
 
     structured_response = dict(
@@ -342,13 +283,9 @@ def team_supervisor_node(
         )
     )
 
-    team_decisions[
-        decision.team_name
-    ] = decision.model_dump()
+    team_decisions[decision.team_name] = decision.model_dump()
 
-    structured_response[
-        "team_supervisor_decisions"
-    ] = team_decisions
+    structured_response["team_supervisor_decisions"] = team_decisions
 
     current_root_visits = int(
         state.get(
@@ -366,32 +303,20 @@ def team_supervisor_node(
 
     return {
         "current_team": decision.team_name,
-        "team_supervisor": (
-            decision.supervisor_node
-        ),
+        "team_supervisor": (decision.supervisor_node),
         "team_route": decision.next_node,
         "next_node": decision.next_node,
-        "team_route_source": (
-            decision.route_source
-        ),
-        "team_routing_reason": (
-            decision.reason
-        ),
-        "team_requires_root_supervisor": (
-            decision.requires_root_supervisor
-        ),
-        "root_supervisor_visits": (
-            root_supervisor_visits
-        ),
+        "team_route_source": (decision.route_source),
+        "team_routing_reason": (decision.reason),
+        "team_requires_root_supervisor": (decision.requires_root_supervisor),
+        "root_supervisor_visits": (root_supervisor_visits),
         "team_route_history": (
             _append_team_route_history(
                 state,
                 decision,
             )
         ),
-        "structured_response": (
-            structured_response
-        ),
+        "structured_response": (structured_response),
         "trace": _append_trace(
             state,
             decision,
@@ -427,15 +352,9 @@ def support_team_supervisor_node(
 
 
 TEAM_SUPERVISOR_NODES = {
-    "financial_team_supervisor": (
-        financial_team_supervisor_node
-    ),
-    "knowledge_team_supervisor": (
-        knowledge_team_supervisor_node
-    ),
-    "support_team_supervisor": (
-        support_team_supervisor_node
-    ),
+    "financial_team_supervisor": (financial_team_supervisor_node),
+    "knowledge_team_supervisor": (knowledge_team_supervisor_node),
+    "support_team_supervisor": (support_team_supervisor_node),
 }
 
 

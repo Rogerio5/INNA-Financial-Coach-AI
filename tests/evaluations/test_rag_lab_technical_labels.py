@@ -10,37 +10,19 @@ def test_rag_lab_uses_russian_technical_labels(
         lambda: "ru",
     )
 
-    assert rag_lab_page.rag_lab_t(
-        "quality_gate"
-    ) == (
-        "Контроль качества "
-        "(Quality Gate)"
+    assert rag_lab_page.rag_lab_t("quality_gate") == (
+        "Контроль качества (Quality Gate)"
     )
 
-    assert rag_lab_page.rag_lab_t(
-        "reranker"
-    ) == (
-        "Переранжировщик "
-        "(Reranker)"
+    assert rag_lab_page.rag_lab_t("reranker") == ("Переранжировщик (Reranker)")
+
+    assert rag_lab_page.rag_lab_t("embedding") == (
+        "Векторное представление (Embedding)"
     )
 
-    assert rag_lab_page.rag_lab_t(
-        "embedding"
-    ) == (
-        "Векторное представление "
-        "(Embedding)"
-    )
+    assert rag_lab_page.rag_lab_t("latency") == "Задержка"
 
-    assert rag_lab_page.rag_lab_t(
-        "latency"
-    ) == "Задержка"
-
-    assert rag_lab_page.rag_lab_t(
-        "tokens"
-    ) == (
-        "Единицы обработки "
-        "(Tokens)"
-    )
+    assert rag_lab_page.rag_lab_t("tokens") == ("Единицы обработки (Tokens)")
 
 
 def test_rag_lab_uses_portuguese_technical_labels(
@@ -52,19 +34,11 @@ def test_rag_lab_uses_portuguese_technical_labels(
         lambda: "pt",
     )
 
-    assert rag_lab_page.rag_lab_t(
-        "quality_gate"
-    ) == (
-        "Portão de qualidade "
-        "(Quality Gate)"
+    assert rag_lab_page.rag_lab_t("quality_gate") == (
+        "Portão de qualidade (Quality Gate)"
     )
 
-    assert rag_lab_page.rag_lab_t(
-        "hybrid"
-    ) == (
-        "Busca híbrida "
-        "(Hybrid)"
-    )
+    assert rag_lab_page.rag_lab_t("hybrid") == ("Busca híbrida (Hybrid)")
 
 
 def test_rag_lab_keeps_normal_translations(
@@ -76,10 +50,6 @@ def test_rag_lab_keeps_normal_translations(
         lambda: "pt",
     )
 
-    assert rag_lab_page.rag_lab_t(
-        "title"
-    ) == (
-        rag_lab_page.RAG_LAB_TEXTS[
-            "pt"
-        ]["title"]
+    assert (
+        rag_lab_page.rag_lab_t("title") == (rag_lab_page.RAG_LAB_TEXTS["pt"]["title"])
     )

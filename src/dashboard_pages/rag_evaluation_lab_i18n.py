@@ -24,16 +24,12 @@ RAG_LAB_ADVANCED_TEXTS: dict[
         ),
         "minimum_answer_relevancy": "Answer Relevancy mínimo",
         "minimum_faithfulness": "Faithfulness mínimo",
-        "minimum_contextual_relevancy": (
-            "Contextual Relevancy mínimo"
-        ),
+        "minimum_contextual_relevancy": ("Contextual Relevancy mínimo"),
         "minimum_aggregate": "Score agregado mínimo",
         "maximum_regression": "Regressão máxima permitida",
         "gate_passed": "Quality Gate aprovado",
         "gate_failed": "Quality Gate reprovado",
-        "gate_incomplete": (
-            "Quality Gate inconclusivo por ausência de dados."
-        ),
+        "gate_incomplete": ("Quality Gate inconclusivo por ausência de dados."),
         "ranking": "Ranking das execuções",
         "ranking_caption": (
             "Classificação baseada somente em informações reais disponíveis."
@@ -43,9 +39,7 @@ RAG_LAB_ADVANCED_TEXTS: dict[
         "performance_cost": "Performance, tokens e custos",
         "cost_per_approved_run": "Custo por execução aprovada",
         "phoenix": "Integração com Phoenix",
-        "phoenix_waiting": (
-            "Aguardando um identificador real de trace do Phoenix."
-        ),
+        "phoenix_waiting": ("Aguardando um identificador real de trace do Phoenix."),
         "case_details": "Detalhamento por caso de teste",
         "case_details_waiting": (
             "Aguardando perguntas, respostas, contextos e scores "
@@ -57,58 +51,28 @@ RAG_LAB_ADVANCED_TEXTS: dict[
         "available": "Disponível",
         "partially_available": "Parcialmente disponível",
         "waiting_real_data": "Aguardando dados reais",
-        "no_branch_options": (
-            "Nenhuma branch foi encontrada no histórico."
-        ),
-        "no_environment_options": (
-            "Nenhum ambiente foi encontrado no histórico."
-        ),
+        "no_branch_options": ("Nenhuma branch foi encontrada no histórico."),
+        "no_environment_options": ("Nenhum ambiente foi encontrado no histórico."),
         "not_registered": "Não registrado nesta execução",
         "enabled": "Habilitado",
         "disabled": "Desabilitado",
-        "capability_reranker": (
-            "Reranker ligado × desligado"
-        ),
-        "capability_retrieval_strategy": (
-            "Híbrida × vetorial × lexical"
-        ),
-        "capability_model_prompt": (
-            "Modelo × versão do prompt"
-        ),
-        "capability_rag_configuration": (
-            "Top K, embedding e chunking"
-        ),
-        "capability_performance_cost": (
-            "Latência, tokens e custos"
-        ),
-        "capability_phoenix": (
-            "Integração das traces do Phoenix"
-        ),
-        "capability_active_message": (
-            "Dados reais disponíveis em todas as execuções."
-        ),
+        "capability_reranker": ("Reranker ligado × desligado"),
+        "capability_retrieval_strategy": ("Híbrida × vetorial × lexical"),
+        "capability_model_prompt": ("Modelo × versão do prompt"),
+        "capability_rag_configuration": ("Top K, embedding e chunking"),
+        "capability_performance_cost": ("Latência, tokens e custos"),
+        "capability_phoenix": ("Integração das traces do Phoenix"),
+        "capability_active_message": ("Dados reais disponíveis em todas as execuções."),
         "capability_partial_message": (
             "Somente parte do histórico possui os metadados necessários."
         ),
-        "capability_waiting_message": (
-            "Aguardando metadados reais nas execuções."
-        ),
+        "capability_waiting_message": ("Aguardando metadados reais nas execuções."),
         "gate_reason_passed": "Limite atendido.",
-        "gate_reason_failed": (
-            "Score abaixo do limite configurado."
-        ),
-        "gate_reason_score_missing": (
-            "Score não registrado nesta execução."
-        ),
-        "gate_reason_regression_passed": (
-            "Regressão dentro do limite permitido."
-        ),
-        "gate_reason_regression_failed": (
-            "Regressão acima do limite permitido."
-        ),
-        "gate_reason_regression_unavailable": (
-            "Comparação de regressão indisponível."
-        ),
+        "gate_reason_failed": ("Score abaixo do limite configurado."),
+        "gate_reason_score_missing": ("Score não registrado nesta execução."),
+        "gate_reason_regression_passed": ("Regressão dentro do limite permitido."),
+        "gate_reason_regression_failed": ("Regressão acima do limite permitido."),
+        "gate_reason_regression_unavailable": ("Comparação de regressão indisponível."),
         "coverage": "Cobertura",
         "registered_runs": "Execuções registradas",
         "distinct_values": "Valores encontrados",
@@ -147,9 +111,7 @@ RAG_LAB_ADVANCED_TEXTS: dict[
     },
     "en_us": {
         "advanced_experiment": "Run configuration",
-        "advanced_experiment_caption": (
-            "Real metadata recorded for the selected run."
-        ),
+        "advanced_experiment_caption": ("Real metadata recorded for the selected run."),
         "select_run": "Select run",
         "metadata_coverage": "Metadata coverage",
         "metadata_coverage_caption": (
@@ -165,28 +127,20 @@ RAG_LAB_ADVANCED_TEXTS: dict[
         ),
         "minimum_answer_relevancy": "Minimum Answer Relevancy",
         "minimum_faithfulness": "Minimum Faithfulness",
-        "minimum_contextual_relevancy": (
-            "Minimum Contextual Relevancy"
-        ),
+        "minimum_contextual_relevancy": ("Minimum Contextual Relevancy"),
         "minimum_aggregate": "Minimum aggregate score",
         "maximum_regression": "Maximum allowed regression",
         "gate_passed": "Quality Gate approved",
         "gate_failed": "Quality Gate failed",
-        "gate_incomplete": (
-            "Quality Gate is inconclusive due to missing data."
-        ),
+        "gate_incomplete": ("Quality Gate is inconclusive due to missing data."),
         "ranking": "Run ranking",
-        "ranking_caption": (
-            "Ranking based only on real available information."
-        ),
+        "ranking_caption": ("Ranking based only on real available information."),
         "ranking_quality_only": "Quality only",
         "ranking_quality_performance": "Quality and performance",
         "performance_cost": "Performance, tokens and costs",
         "cost_per_approved_run": "Cost per approved run",
         "phoenix": "Phoenix integration",
-        "phoenix_waiting": (
-            "Waiting for a real Phoenix trace identifier."
-        ),
+        "phoenix_waiting": ("Waiting for a real Phoenix trace identifier."),
         "case_details": "Test case details",
         "case_details_waiting": (
             "Waiting for questions, answers, contexts and individual "
@@ -198,58 +152,30 @@ RAG_LAB_ADVANCED_TEXTS: dict[
         "available": "Available",
         "partially_available": "Partially available",
         "waiting_real_data": "Waiting for real data",
-        "no_branch_options": (
-            "No branch was found in the evaluation history."
-        ),
+        "no_branch_options": ("No branch was found in the evaluation history."),
         "no_environment_options": (
             "No environment was found in the evaluation history."
         ),
         "not_registered": "Not recorded for this run",
         "enabled": "Enabled",
         "disabled": "Disabled",
-        "capability_reranker": (
-            "Reranker enabled × disabled"
-        ),
-        "capability_retrieval_strategy": (
-            "Hybrid × vector × lexical"
-        ),
-        "capability_model_prompt": (
-            "Model × prompt version"
-        ),
-        "capability_rag_configuration": (
-            "Top K, embedding and chunking"
-        ),
-        "capability_performance_cost": (
-            "Latency, tokens and costs"
-        ),
-        "capability_phoenix": (
-            "Phoenix trace integration"
-        ),
-        "capability_active_message": (
-            "Real data is available for every run."
-        ),
+        "capability_reranker": ("Reranker enabled × disabled"),
+        "capability_retrieval_strategy": ("Hybrid × vector × lexical"),
+        "capability_model_prompt": ("Model × prompt version"),
+        "capability_rag_configuration": ("Top K, embedding and chunking"),
+        "capability_performance_cost": ("Latency, tokens and costs"),
+        "capability_phoenix": ("Phoenix trace integration"),
+        "capability_active_message": ("Real data is available for every run."),
         "capability_partial_message": (
             "Only part of the history contains the required metadata."
         ),
-        "capability_waiting_message": (
-            "Waiting for real metadata in the runs."
-        ),
+        "capability_waiting_message": ("Waiting for real metadata in the runs."),
         "gate_reason_passed": "Threshold met.",
-        "gate_reason_failed": (
-            "Score is below the configured threshold."
-        ),
-        "gate_reason_score_missing": (
-            "Score was not recorded for this run."
-        ),
-        "gate_reason_regression_passed": (
-            "Regression is within the allowed limit."
-        ),
-        "gate_reason_regression_failed": (
-            "Regression exceeds the allowed limit."
-        ),
-        "gate_reason_regression_unavailable": (
-            "Regression comparison is unavailable."
-        ),
+        "gate_reason_failed": ("Score is below the configured threshold."),
+        "gate_reason_score_missing": ("Score was not recorded for this run."),
+        "gate_reason_regression_passed": ("Regression is within the allowed limit."),
+        "gate_reason_regression_failed": ("Regression exceeds the allowed limit."),
+        "gate_reason_regression_unavailable": ("Regression comparison is unavailable."),
         "coverage": "Coverage",
         "registered_runs": "Recorded runs",
         "distinct_values": "Found values",
@@ -503,12 +429,8 @@ _LANGUAGE_OVERRIDES: dict[
         "available": "Доступно",
         "partially_available": "Частично доступно",
         "waiting_real_data": "Ожидание реальных данных",
-        "no_branch_options": (
-            "В истории оценок не найдено ни одной ветки."
-        ),
-        "no_environment_options": (
-            "В истории оценок не найдено ни одной среды."
-        ),
+        "no_branch_options": ("В истории оценок не найдено ни одной ветки."),
+        "no_environment_options": ("В истории оценок не найдено ни одной среды."),
         "not_registered": "Не зарегистрировано для этого запуска",
         "field_retrieval_strategy": "Стратегия поиска",
         "field_model_name": "Модель",
@@ -574,6 +496,4 @@ _LANGUAGE_OVERRIDES: dict[
 }
 
 
-RAG_LAB_ADVANCED_TEXTS.update(
-    _LANGUAGE_OVERRIDES
-)
+RAG_LAB_ADVANCED_TEXTS.update(_LANGUAGE_OVERRIDES)

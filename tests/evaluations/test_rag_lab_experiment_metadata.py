@@ -19,10 +19,7 @@ def _history(*entries):
 
 
 def test_defines_expected_professional_fields():
-    field_keys = {
-        field.key
-        for field in EXPERIMENT_METADATA_FIELDS
-    }
+    field_keys = {field.key for field in EXPERIMENT_METADATA_FIELDS}
 
     assert {
         "retrieval_strategy",
@@ -51,13 +48,9 @@ def test_extracts_direct_attributes_first():
         },
     )
 
-    metadata = extract_experiment_metadata(
-        entry
-    )
+    metadata = extract_experiment_metadata(entry)
 
-    assert metadata["model_name"] == (
-        "gemini-example"
-    )
+    assert metadata["model_name"] == ("gemini-example")
     assert metadata["top_k"] == 5
 
 
@@ -70,9 +63,7 @@ def test_extracts_top_level_metadata():
         }
     )
 
-    metadata = extract_experiment_metadata(
-        entry
-    )
+    metadata = extract_experiment_metadata(entry)
 
     assert metadata == {
         "retrieval_strategy": "hybrid",
@@ -85,26 +76,18 @@ def test_extracts_nested_rag_metadata():
     entry = SimpleNamespace(
         metadata={
             "rag": {
-                "embedding_model": (
-                    "embedding-example"
-                ),
+                "embedding_model": ("embedding-example"),
                 "knowledge_base_version": "kb-v2",
                 "chunk_size": 650,
             }
         }
     )
 
-    metadata = extract_experiment_metadata(
-        entry
-    )
+    metadata = extract_experiment_metadata(entry)
 
-    assert metadata[
-        "embedding_model"
-    ] == "embedding-example"
+    assert metadata["embedding_model"] == "embedding-example"
 
-    assert metadata[
-        "knowledge_base_version"
-    ] == "kb-v2"
+    assert metadata["knowledge_base_version"] == "kb-v2"
 
     assert metadata["chunk_size"] == 650
 
@@ -112,25 +95,14 @@ def test_extracts_nested_rag_metadata():
 def test_empty_snapshot_uses_honest_empty_state():
     entry = SimpleNamespace()
 
-    snapshot = (
-        build_experiment_metadata_snapshot(
-            entry
-        )
-    )
+    snapshot = build_experiment_metadata_snapshot(entry)
 
-    assert len(snapshot) == len(
-        EXPERIMENT_METADATA_FIELDS
-    )
+    assert len(snapshot) == len(EXPERIMENT_METADATA_FIELDS)
+
+    assert all(item.available is False for item in snapshot)
 
     assert all(
-        item.available is False
-        for item in snapshot
-    )
-
-    assert all(
-        item.display_value
-        == "Não registrado nesta execução"
-        for item in snapshot
+        item.display_value == "Não registrado nesta execução" for item in snapshot
     )
 
 
@@ -143,29 +115,13 @@ def test_snapshot_formats_boolean_latency_and_cost():
         }
     )
 
-    snapshot = {
-        item.key: item
-        for item in (
-            build_experiment_metadata_snapshot(
-                entry
-            )
-        )
-    }
+    snapshot = {item.key: item for item in (build_experiment_metadata_snapshot(entry))}
 
-    assert snapshot[
-        "reranker_enabled"
-    ].display_value == "Habilitado"
+    assert snapshot["reranker_enabled"].display_value == "Habilitado"
 
-    assert (
-        "1,250.25 ms"
-        in snapshot[
-            "latency_ms"
-        ].display_value
-    )
+    assert "1,250.25 ms" in snapshot["latency_ms"].display_value
 
-    assert snapshot[
-        "estimated_cost_usd"
-    ].display_value == "US$ 0.001234"
+    assert snapshot["estimated_cost_usd"].display_value == "US$ 0.001234"
 
 
 def test_readiness_is_unavailable_without_metadata():
@@ -183,10 +139,7 @@ def test_readiness_is_unavailable_without_metadata():
 
     model = readiness["model_name"]
 
-    assert (
-        model.availability
-        == MetadataAvailability.UNAVAILABLE
-    )
+    assert model.availability == MetadataAvailability.UNAVAILABLE
     assert model.available_runs == 0
     assert model.total_runs == 2
     assert model.coverage_rate == 0.0
@@ -198,13 +151,7 @@ def test_readiness_is_partial_when_some_runs_have_value():
         for item in (
             build_experiment_metadata_readiness(
                 _history(
-                    SimpleNamespace(
-                        metadata={
-                            "model_name": (
-                                "gemini-example"
-                            )
-                        }
-                    ),
+                    SimpleNamespace(metadata={"model_name": ("gemini-example")}),
                     SimpleNamespace(),
                 )
             )
@@ -213,15 +160,10 @@ def test_readiness_is_partial_when_some_runs_have_value():
 
     model = readiness["model_name"]
 
-    assert (
-        model.availability
-        == MetadataAvailability.PARTIAL
-    )
+    assert model.availability == MetadataAvailability.PARTIAL
     assert model.available_runs == 1
     assert model.total_runs == 2
-    assert model.coverage_rate == pytest.approx(
-        0.5
-    )
+    assert model.coverage_rate == pytest.approx(0.5)
 
 
 def test_readiness_is_available_for_all_runs():
@@ -230,33 +172,16 @@ def test_readiness_is_available_for_all_runs():
         for item in (
             build_experiment_metadata_readiness(
                 _history(
-                    SimpleNamespace(
-                        metadata={
-                            "retrieval_strategy": (
-                                "hybrid"
-                            )
-                        }
-                    ),
-                    SimpleNamespace(
-                        metadata={
-                            "retrieval_strategy": (
-                                "vector"
-                            )
-                        }
-                    ),
+                    SimpleNamespace(metadata={"retrieval_strategy": ("hybrid")}),
+                    SimpleNamespace(metadata={"retrieval_strategy": ("vector")}),
                 )
             )
         )
     }
 
-    strategy = readiness[
-        "retrieval_strategy"
-    ]
+    strategy = readiness["retrieval_strategy"]
 
-    assert (
-        strategy.availability
-        == MetadataAvailability.AVAILABLE
-    )
+    assert strategy.availability == MetadataAvailability.AVAILABLE
     assert strategy.available_runs == 2
     assert strategy.coverage_rate == 1.0
     assert strategy.distinct_values == (
@@ -267,29 +192,15 @@ def test_readiness_is_available_for_all_runs():
 
 def test_available_filter_values_are_real_only():
     history = _history(
-        SimpleNamespace(
-            metadata={
-                "retrieval_strategy": "hybrid"
-            }
-        ),
-        SimpleNamespace(
-            metadata={
-                "retrieval_strategy": "vector"
-            }
-        ),
+        SimpleNamespace(metadata={"retrieval_strategy": "hybrid"}),
+        SimpleNamespace(metadata={"retrieval_strategy": "vector"}),
         SimpleNamespace(),
-        SimpleNamespace(
-            metadata={
-                "retrieval_strategy": "hybrid"
-            }
-        ),
+        SimpleNamespace(metadata={"retrieval_strategy": "hybrid"}),
     )
 
-    values = (
-        get_available_metadata_filter_values(
-            history,
-            "retrieval_strategy",
-        )
+    values = get_available_metadata_filter_values(
+        history,
+        "retrieval_strategy",
     )
 
     assert values == (
@@ -310,19 +221,10 @@ def test_unknown_filter_field_is_rejected():
 
 
 def test_empty_history_is_supported():
-    readiness = (
-        build_experiment_metadata_readiness(
-            _history()
-        )
-    )
+    readiness = build_experiment_metadata_readiness(_history())
+
+    assert all(item.total_runs == 0 for item in readiness)
 
     assert all(
-        item.total_runs == 0
-        for item in readiness
-    )
-
-    assert all(
-        item.availability
-        == MetadataAvailability.UNAVAILABLE
-        for item in readiness
+        item.availability == MetadataAvailability.UNAVAILABLE for item in readiness
     )

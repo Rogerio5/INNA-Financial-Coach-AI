@@ -18,8 +18,7 @@ def test_private_core_requires_bridge_argument():
 
 def test_private_core_rejects_explicit_none_bridge():
     with pytest.raises(
-        telegram_webhook
-        .TelegramUpdateIngressConfigurationError,
+        telegram_webhook.TelegramUpdateIngressConfigurationError,
         match="conversation_bridge é obrigatória",
     ):
         telegram_webhook._process_telegram_update_core(

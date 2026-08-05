@@ -215,7 +215,7 @@ def execute_evaluation() -> dict[str, Any]:
                 print(
                     "CASE_RESULT="
                     f"{case.case_id}"
-                    f"|EXPECTED={case.expected_document_key}"
+                    f"|EXPECTED={case.expected_document_id}"
                     f"|TOP1={result.top1_document_key}"
                     f"|TOP1_PASSED={result.top1_passed}"
                     f"|TOP4_FOUND="

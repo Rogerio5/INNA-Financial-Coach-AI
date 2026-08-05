@@ -16,10 +16,7 @@ def test_history_tool_default_timeout_exceeds_database_timeout():
         > DATABASE_STATEMENT_TIMEOUT_SECONDS
     )
 
-    assert (
-        DEFAULT_FINANCIAL_HISTORY_TOOL_TIMEOUT_SECONDS
-        == 15.0
-    )
+    assert DEFAULT_FINANCIAL_HISTORY_TOOL_TIMEOUT_SECONDS == 15.0
 
 
 def test_history_tool_uses_configured_timeout(
@@ -30,12 +27,8 @@ def test_history_tool_uses_configured_timeout(
         "15",
     )
 
-    registry = (
-        criar_registro_ferramentas_inna()
-    )
+    registry = criar_registro_ferramentas_inna()
 
-    definition = registry.get(
-        FINANCIAL_HISTORY_TOOL_NAME
-    )
+    definition = registry.get(FINANCIAL_HISTORY_TOOL_NAME)
 
     assert definition.timeout_seconds == 15.0

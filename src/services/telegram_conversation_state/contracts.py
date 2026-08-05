@@ -23,17 +23,11 @@ from typing import Any
 
 MIN_STATE_TTL_SECONDS = 60
 
-MAX_STATE_TTL_SECONDS = (
-    30 * 24 * 60 * 60
-)
+MAX_STATE_TTL_SECONDS = 30 * 24 * 60 * 60
 
-DEFAULT_STATE_TTL_SECONDS = (
-    24 * 60 * 60
-)
+DEFAULT_STATE_TTL_SECONDS = 24 * 60 * 60
 
-MAX_STATE_JSON_BYTES = (
-    32 * 1024
-)
+MAX_STATE_JSON_BYTES = 32 * 1024
 
 MAX_LANGUAGE_LENGTH = 16
 
@@ -52,41 +46,31 @@ _LANGUAGE_PATTERN = re.compile(
 )
 
 
-class TelegramConversationStateError(
-    RuntimeError
-):
+class TelegramConversationStateError(RuntimeError):
     """
     Erro-base sanitizado do estado Telegram.
     """
 
 
-class TelegramConversationStateValidationError(
-    TelegramConversationStateError
-):
+class TelegramConversationStateValidationError(TelegramConversationStateError):
     """
     Entrada inválida ou fora do contrato.
     """
 
 
-class TelegramConversationStateConflictError(
-    TelegramConversationStateError
-):
+class TelegramConversationStateConflictError(TelegramConversationStateError):
     """
     Conflito de versão ou criação concorrente.
     """
 
 
-class TelegramConversationStateConsistencyError(
-    TelegramConversationStateError
-):
+class TelegramConversationStateConsistencyError(TelegramConversationStateError):
     """
     Estrutura persistida incompatível.
     """
 
 
-class TelegramConversationStateUnavailableError(
-    TelegramConversationStateError
-):
+class TelegramConversationStateUnavailableError(TelegramConversationStateError):
     """
     Persistência temporariamente indisponível.
     """
@@ -95,9 +79,7 @@ class TelegramConversationStateUnavailableError(
 def _validation_error(
     message: str,
 ) -> TelegramConversationStateValidationError:
-    return TelegramConversationStateValidationError(
-        message
-    )
+    return TelegramConversationStateValidationError(message)
 
 
 def _validate_integer(
@@ -108,37 +90,17 @@ def _validate_integer(
     maximum: int | None = None,
     allow_zero: bool = True,
 ) -> int:
-    if (
-        isinstance(value, bool)
-        or not isinstance(value, int)
-    ):
-        raise _validation_error(
-            f"{field_name} inválido."
-        )
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise _validation_error(f"{field_name} inválido.")
 
-    if (
-        not allow_zero
-        and value == 0
-    ):
-        raise _validation_error(
-            f"{field_name} inválido."
-        )
+    if not allow_zero and value == 0:
+        raise _validation_error(f"{field_name} inválido.")
 
-    if (
-        minimum is not None
-        and value < minimum
-    ):
-        raise _validation_error(
-            f"{field_name} inválido."
-        )
+    if minimum is not None and value < minimum:
+        raise _validation_error(f"{field_name} inválido.")
 
-    if (
-        maximum is not None
-        and value > maximum
-    ):
-        raise _validation_error(
-            f"{field_name} inválido."
-        )
+    if maximum is not None and value > maximum:
+        raise _validation_error(f"{field_name} inválido.")
 
     return value
 
@@ -175,27 +137,15 @@ def normalize_telegram_language(
         language,
         str,
     ):
-        raise _validation_error(
-            "language inválido."
-        )
+        raise _validation_error("language inválido.")
 
     normalized = language.strip()
 
-    if (
-        len(normalized) < 2
-        or len(normalized)
-        > MAX_LANGUAGE_LENGTH
-    ):
-        raise _validation_error(
-            "language inválido."
-        )
+    if len(normalized) < 2 or len(normalized) > MAX_LANGUAGE_LENGTH:
+        raise _validation_error("language inválido.")
 
-    if _LANGUAGE_PATTERN.fullmatch(
-        normalized
-    ) is None:
-        raise _validation_error(
-            "language inválido."
-        )
+    if _LANGUAGE_PATTERN.fullmatch(normalized) is None:
+        raise _validation_error("language inválido.")
 
     return normalized
 
@@ -222,12 +172,8 @@ def _to_json_mutable(
         value,
         float,
     ):
-        if not math.isfinite(
-            value
-        ):
-            raise _validation_error(
-                "state contém número inválido."
-            )
+        if not math.isfinite(value):
+            raise _validation_error("state contém número inválido.")
 
         return value
 
@@ -246,49 +192,31 @@ def _to_json_mutable(
             Any,
         ] = {}
 
-        for key, nested_value in (
-            value.items()
-        ):
+        for key, nested_value in value.items():
             if not isinstance(
                 key,
                 str,
             ):
-                raise _validation_error(
-                    "state contém chave inválida."
-                )
+                raise _validation_error("state contém chave inválida.")
 
-            normalized[key] = (
-                _to_json_mutable(
-                    nested_value
-                )
-            )
+            normalized[key] = _to_json_mutable(nested_value)
 
         return normalized
 
-    if (
-        isinstance(
-            value,
-            Sequence,
-        )
-        and not isinstance(
-            value,
-            (
-                str,
-                bytes,
-                bytearray,
-            ),
-        )
+    if isinstance(
+        value,
+        Sequence,
+    ) and not isinstance(
+        value,
+        (
+            str,
+            bytes,
+            bytearray,
+        ),
     ):
-        return [
-            _to_json_mutable(
-                item
-            )
-            for item in value
-        ]
+        return [_to_json_mutable(item) for item in value]
 
-    raise _validation_error(
-        "state contém valor inválido."
-    )
+    raise _validation_error("state contém valor inválido.")
 
 
 def normalize_telegram_state(
@@ -298,21 +226,15 @@ def normalize_telegram_state(
         state,
         Mapping,
     ):
-        raise _validation_error(
-            "state deve ser um objeto JSON."
-        )
+        raise _validation_error("state deve ser um objeto JSON.")
 
-    normalized = _to_json_mutable(
-        state
-    )
+    normalized = _to_json_mutable(state)
 
     if not isinstance(
         normalized,
         dict,
     ):
-        raise _validation_error(
-            "state deve ser um objeto JSON."
-        )
+        raise _validation_error("state deve ser um objeto JSON.")
 
     try:
         serialized = json.dumps(
@@ -332,44 +254,27 @@ def normalize_telegram_state(
         OverflowError,
         RecursionError,
     ):
-        raise _validation_error(
-            "state inválido."
-        ) from None
+        raise _validation_error("state inválido.") from None
 
-    encoded_size = len(
-        serialized.encode(
-            "utf-8"
-        )
-    )
+    encoded_size = len(serialized.encode("utf-8"))
 
-    if (
-        encoded_size
-        > MAX_STATE_JSON_BYTES
-    ):
-        raise _validation_error(
-            "state excede o tamanho permitido."
-        )
+    if encoded_size > MAX_STATE_JSON_BYTES:
+        raise _validation_error("state excede o tamanho permitido.")
 
     try:
-        round_trip = json.loads(
-            serialized
-        )
+        round_trip = json.loads(serialized)
 
     except (
         TypeError,
         ValueError,
     ):
-        raise _validation_error(
-            "state inválido."
-        ) from None
+        raise _validation_error("state inválido.") from None
 
     if not isinstance(
         round_trip,
         dict,
     ):
-        raise _validation_error(
-            "state deve ser um objeto JSON."
-        )
+        raise _validation_error("state deve ser um objeto JSON.")
 
     return round_trip
 
@@ -380,12 +285,8 @@ def validate_state_ttl_seconds(
     return _validate_integer(
         ttl_seconds,
         field_name="ttl_seconds",
-        minimum=(
-            MIN_STATE_TTL_SECONDS
-        ),
-        maximum=(
-            MAX_STATE_TTL_SECONDS
-        ),
+        minimum=(MIN_STATE_TTL_SECONDS),
+        maximum=(MAX_STATE_TTL_SECONDS),
     )
 
 
@@ -419,17 +320,10 @@ def _validate_datetime(
         value,
         datetime,
     ):
-        raise _validation_error(
-            f"{field_name} inválido."
-        )
+        raise _validation_error(f"{field_name} inválido.")
 
-    if (
-        value.tzinfo is None
-        or value.utcoffset() is None
-    ):
-        raise _validation_error(
-            f"{field_name} deve possuir timezone."
-        )
+    if value.tzinfo is None or value.utcoffset() is None:
+        raise _validation_error(f"{field_name} deve possuir timezone.")
 
     return value
 
@@ -442,25 +336,14 @@ def _freeze_json(
         dict,
     ):
         return MappingProxyType(
-            {
-                key: _freeze_json(
-                    nested_value
-                )
-                for key, nested_value
-                in value.items()
-            }
+            {key: _freeze_json(nested_value) for key, nested_value in value.items()}
         )
 
     if isinstance(
         value,
         list,
     ):
-        return tuple(
-            _freeze_json(
-                item
-            )
-            for item in value
-        )
+        return tuple(_freeze_json(item) for item in value)
 
     return value
 
@@ -472,28 +355,15 @@ def _thaw_json(
         value,
         Mapping,
     ):
-        return {
-            key: _thaw_json(
-                nested_value
-            )
-            for key, nested_value
-            in value.items()
-        }
+        return {key: _thaw_json(nested_value) for key, nested_value in value.items()}
 
     if isinstance(
         value,
         tuple,
     ):
-        return [
-            _thaw_json(
-                item
-            )
-            for item in value
-        ]
+        return [_thaw_json(item) for item in value]
 
-    return deepcopy(
-        value
-    )
+    return deepcopy(value)
 
 
 @dataclass(
@@ -507,9 +377,7 @@ class TelegramConversationState:
     state: Mapping[
         str,
         Any,
-    ] = field(
-        repr=False
-    )
+    ] = field(repr=False)
 
     language: str | None
 
@@ -530,23 +398,11 @@ class TelegramConversationState:
             self.chat_id,
         )
 
-        normalized_state = (
-            normalize_telegram_state(
-                self.state
-            )
-        )
+        normalized_state = normalize_telegram_state(self.state)
 
-        normalized_language = (
-            normalize_telegram_language(
-                self.language
-            )
-        )
+        normalized_language = normalize_telegram_language(self.language)
 
-        normalized_version = (
-            validate_expected_version(
-                self.state_version
-            )
-        )
+        normalized_version = validate_expected_version(self.state_version)
 
         created_at = _validate_datetime(
             self.created_at,
@@ -564,16 +420,10 @@ class TelegramConversationState:
         )
 
         if updated_at < created_at:
-            raise _validation_error(
-                "updated_at não pode ser "
-                "anterior a created_at."
-            )
+            raise _validation_error("updated_at não pode ser anterior a created_at.")
 
         if expires_at <= updated_at:
-            raise _validation_error(
-                "expires_at deve ser posterior "
-                "a updated_at."
-            )
+            raise _validation_error("expires_at deve ser posterior a updated_at.")
 
         object.__setattr__(
             self,
@@ -590,9 +440,7 @@ class TelegramConversationState:
         object.__setattr__(
             self,
             "state",
-            _freeze_json(
-                normalized_state
-            ),
+            _freeze_json(normalized_state),
         )
 
         object.__setattr__(
@@ -628,9 +476,7 @@ class TelegramConversationState:
     def to_processing_state(
         self,
     ) -> dict[str, Any]:
-        mutable = _thaw_json(
-            self.state
-        )
+        mutable = _thaw_json(self.state)
 
         if not isinstance(
             mutable,
@@ -646,45 +492,24 @@ class TelegramConversationState:
         self,
     ) -> dict[str, object]:
         return {
-            "telegram_user_id": (
-                self.telegram_user_id
-            ),
+            "telegram_user_id": (self.telegram_user_id),
             "chat_id": self.chat_id,
             "language": self.language,
-            "state_version": (
-                self.state_version
-            ),
-            "expires_at": (
-                self.expires_at.isoformat()
-            ),
-            "created_at": (
-                self.created_at.isoformat()
-            ),
-            "updated_at": (
-                self.updated_at.isoformat()
-            ),
+            "state_version": (self.state_version),
+            "expires_at": (self.expires_at.isoformat()),
+            "created_at": (self.created_at.isoformat()),
+            "updated_at": (self.updated_at.isoformat()),
         }
 
     def is_expired(
         self,
         at: datetime | None = None,
     ) -> bool:
-        reference = (
-            at
-            if at is not None
-            else datetime.now(
-                timezone.utc
-            )
+        reference = at if at is not None else datetime.now(timezone.utc)
+
+        validated_reference = _validate_datetime(
+            reference,
+            field_name="at",
         )
 
-        validated_reference = (
-            _validate_datetime(
-                reference,
-                field_name="at",
-            )
-        )
-
-        return (
-            self.expires_at
-            <= validated_reference
-        )
+        return self.expires_at <= validated_reference

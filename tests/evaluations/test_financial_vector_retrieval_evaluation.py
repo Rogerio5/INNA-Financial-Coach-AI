@@ -13,13 +13,13 @@ from src.evaluation.financial_vector_retrieval_evaluation import (
 
 
 def sample_rows(
-    expected_document_key: str,
+    expected_document_id: str,
 ) -> list[dict[str, object]]:
     return [
         {
             "chunk_id": f"chunk-{index}",
             "document_key": (
-                expected_document_key if index == 1 else f"other-document-{index}"
+                expected_document_id if index == 1 else f"other-document-{index}"
             ),
             "chunk_index": index,
             "texto": "Conteudo financeiro recuperado",
@@ -56,7 +56,7 @@ def test_case_result_passes_top1() -> None:
 
     result = build_case_result(
         case=case,
-        rows=sample_rows(case.expected_document_key),
+        rows=sample_rows(case.expected_document_id),
     )
 
     assert result.top1_passed is True
@@ -67,7 +67,7 @@ def test_evaluation_report_passes() -> None:
     results = tuple(
         build_case_result(
             case=case,
-            rows=sample_rows(case.expected_document_key),
+            rows=sample_rows(case.expected_document_id),
         )
         for case in official_cases()
     )

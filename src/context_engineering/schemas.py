@@ -53,13 +53,9 @@ class ContextMetrics(BaseModel):
     characters_before: int = 0
     characters_after: int = 0
 
-    privacy: PrivacyReport = Field(
-        default_factory=PrivacyReport
-    )
+    privacy: PrivacyReport = Field(default_factory=PrivacyReport)
 
-    budget: ContextBudget = Field(
-        default_factory=ContextBudget
-    )
+    budget: ContextBudget = Field(default_factory=ContextBudget)
 
 
 class BuiltAgentContext(BaseModel):
@@ -69,29 +65,17 @@ class BuiltAgentContext(BaseModel):
 
     conversation_summary: str = ""
 
-    selected_history: list[ContextMessage] = Field(
-        default_factory=list
-    )
+    selected_history: list[ContextMessage] = Field(default_factory=list)
 
-    financial_profile: dict[str, Any] = Field(
-        default_factory=dict
-    )
+    financial_profile: dict[str, Any] = Field(default_factory=dict)
 
-    selected_tool_results: list[dict[str, Any]] = Field(
-        default_factory=list
-    )
+    selected_tool_results: list[dict[str, Any]] = Field(default_factory=list)
 
-    sources: list[str] = Field(
-        default_factory=list
-    )
+    sources: list[str] = Field(default_factory=list)
 
-    instructions: list[str] = Field(
-        default_factory=list
-    )
+    instructions: list[str] = Field(default_factory=list)
 
-    metrics: ContextMetrics = Field(
-        default_factory=ContextMetrics
-    )
+    metrics: ContextMetrics = Field(default_factory=ContextMetrics)
 
 
 __all__ = [

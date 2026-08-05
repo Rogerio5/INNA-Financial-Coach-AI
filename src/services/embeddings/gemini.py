@@ -66,10 +66,7 @@ def obter_api_key_gemini() -> str:
     """
     carregar_variaveis_ambiente()
 
-    api_key = (
-        os.getenv("GEMINI_API_KEY")
-        or os.getenv("GOOGLE_API_KEY")
-    )
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
     if not api_key:
         raise GeminiEmbeddingConfigurationError(
@@ -87,13 +84,10 @@ def criar_cliente_gemini():
         from google import genai
     except ImportError as exc:
         raise GeminiEmbeddingConfigurationError(
-            "Pacote google-genai não instalado. "
-            "Execute: pip install -U google-genai"
+            "Pacote google-genai não instalado. Execute: pip install -U google-genai"
         ) from exc
 
-    return genai.Client(
-        api_key=obter_api_key_gemini()
-    )
+    return genai.Client(api_key=obter_api_key_gemini())
 
 
 def _normalizar_texto(texto: Any) -> str:
@@ -103,9 +97,7 @@ def _normalizar_texto(texto: Any) -> str:
     texto_normalizado = str(texto or "").strip()
 
     if not texto_normalizado:
-        raise ValueError(
-            "Não é possível gerar embedding de um texto vazio."
-        )
+        raise ValueError("Não é possível gerar embedding de um texto vazio.")
 
     return texto_normalizado
 
@@ -123,8 +115,7 @@ def _validar_task_type(task_type: str) -> str:
 
     if task_type not in permitidos:
         raise ValueError(
-            f"task_type inválido: {task_type}. "
-            f"Permitidos: {sorted(permitidos)}"
+            f"task_type inválido: {task_type}. Permitidos: {sorted(permitidos)}"
         )
 
     return task_type
@@ -193,10 +184,7 @@ def gerar_embedding_gemini(
                 "O embedding retornado não possui valores."
             )
 
-        vetor = [
-            float(valor)
-            for valor in valores
-        ]
+        vetor = [float(valor) for valor in valores]
 
         if len(vetor) != dimensoes:
             raise GeminiEmbeddingGenerationError(
@@ -215,8 +203,7 @@ def gerar_embedding_gemini(
 
     except Exception as exc:
         raise GeminiEmbeddingGenerationError(
-            "Não foi possível gerar o embedding Gemini: "
-            f"{type(exc).__name__}: {exc}"
+            f"Não foi possível gerar o embedding Gemini: {type(exc).__name__}: {exc}"
         ) from exc
 
 

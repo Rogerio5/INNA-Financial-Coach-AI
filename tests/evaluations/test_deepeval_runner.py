@@ -46,33 +46,22 @@ from src.evaluation.deepeval_runner import (
 
 @pytest.fixture
 def financial_case() -> InnaEvaluationCase:
-    return build_core_dataset().get_case(
-        "financial-diagnosis-balanced-001"
-    )
+    return build_core_dataset().get_case("financial-diagnosis-balanced-001")
 
 
 @pytest.fixture
 def routing_case() -> InnaEvaluationCase:
-    return build_core_dataset().get_case(
-        "routing-support-001"
-    )
+    return build_core_dataset().get_case("routing-support-001")
 
 
 @pytest.fixture
 def rag_case() -> InnaEvaluationCase:
-    return build_core_dataset().get_case(
-        "rag-financial-education-001"
-    )
+    return build_core_dataset().get_case("rag-financial-education-001")
 
 
 @pytest.fixture
 def internal_case() -> InnaEvaluationCase:
-    return (
-        build_conversation_dataset()
-        .get_case(
-            "human-review-sensitive-guidance-001"
-        )
-    )
+    return build_conversation_dataset().get_case("human-review-sensitive-guidance-001")
 
 
 @pytest.fixture
@@ -99,9 +88,7 @@ def routing_payload(
 ) -> DeepEvalCasePayload:
     return build_deepeval_payload(
         routing_case,
-        actual_output=(
-            "Vamos verificar o acesso ao painel."
-        ),
+        actual_output=("Vamos verificar o acesso ao painel."),
         metadata={
             "latency_ms": 100,
         },
@@ -145,9 +132,7 @@ def error_executor(
     case,
     payload,
 ) -> MetricExecutionOutput:
-    raise RuntimeError(
-        "Falha sintética no executor."
-    )
+    raise RuntimeError("Falha sintética no executor.")
 
 
 def costly_executor(
@@ -163,8 +148,7 @@ def costly_executor(
     )
 
 
-def build_runner_with_routing_executors(
-) -> EvaluationRunner:
+def build_runner_with_routing_executors() -> EvaluationRunner:
     runner = EvaluationRunner()
 
     for metric_id in (
@@ -213,9 +197,7 @@ def test_run_status_values() -> None:
 def test_runner_settings_secure_defaults() -> None:
     settings = EvaluationRunnerSettings()
 
-    assert settings.mode == (
-        EvaluationRunMode.DRY_RUN
-    )
+    assert settings.mode == (EvaluationRunMode.DRY_RUN)
     assert settings.continue_on_metric_error is True
     assert settings.include_live_metrics is False
     assert settings.external_run is False
@@ -280,9 +262,7 @@ def test_metric_execution_output() -> None:
     assert output.passed is True
     assert output.score == pytest.approx(0.9)
     assert output.reason == "Aprovado"
-    assert output.estimated_cost == pytest.approx(
-        0.01
-    )
+    assert output.estimated_cost == pytest.approx(0.01)
     assert isinstance(
         output.metadata,
         MappingProxyType,
@@ -347,25 +327,17 @@ def test_output_metadata_is_immutable() -> None:
 def build_metric_result(
     *,
     metric_id: str = "metric",
-    status: MetricRunStatus = (
-        MetricRunStatus.PASSED
-    ),
+    status: MetricRunStatus = (MetricRunStatus.PASSED),
 ) -> MetricRunResult:
     return MetricRunResult(
         metric_id=metric_id,
         status=status,
         execution_mode=(
-            build_default_metric_registry()
-            .get("expected-terms")
-            .execution_mode
+            build_default_metric_registry().get("expected-terms").execution_mode
         ),
         score=1.0,
         threshold=1.0,
-        passed=(
-            True
-            if status == MetricRunStatus.PASSED
-            else None
-        ),
+        passed=(True if status == MetricRunStatus.PASSED else None),
         reason="Resultado sintético.",
         duration_ms=1.0,
         estimated_cost=0.0,
@@ -377,9 +349,7 @@ def test_metric_run_result_metadata_is_immutable() -> None:
         metric_id="metric",
         status=MetricRunStatus.PASSED,
         execution_mode=(
-            build_default_metric_registry()
-            .get("expected-terms")
-            .execution_mode
+            build_default_metric_registry().get("expected-terms").execution_mode
         ),
         score=1.0,
         threshold=1.0,
@@ -410,9 +380,7 @@ def test_metric_result_rejects_negative_duration() -> None:
             metric_id="metric",
             status=MetricRunStatus.ERROR,
             execution_mode=(
-                build_default_metric_registry()
-                .get("expected-terms")
-                .execution_mode
+                build_default_metric_registry().get("expected-terms").execution_mode
             ),
             score=None,
             threshold=None,
@@ -432,9 +400,7 @@ def test_metric_result_rejects_negative_cost() -> None:
             metric_id="metric",
             status=MetricRunStatus.ERROR,
             execution_mode=(
-                build_default_metric_registry()
-                .get("expected-terms")
-                .execution_mode
+                build_default_metric_registry().get("expected-terms").execution_mode
             ),
             score=None,
             threshold=None,
@@ -582,9 +548,7 @@ def test_result_rejects_invalid_time_order() -> None:
 def test_runner_uses_default_registry() -> None:
     runner = EvaluationRunner()
 
-    assert runner.registry.get(
-        "answer-relevancy"
-    )
+    assert runner.registry.get("answer-relevancy")
 
 
 def test_register_executor() -> None:
@@ -666,18 +630,12 @@ def test_dry_run_plans_local_metrics(
         financial_payload,
     )
 
-    assert result.status == (
-        EvaluationRunStatus.PLANNED
-    )
+    assert result.status == (EvaluationRunStatus.PLANNED)
     assert result.metric_results
     assert all(
-        metric.status == MetricRunStatus.PLANNED
-        for metric in result.metric_results
+        metric.status == MetricRunStatus.PLANNED for metric in result.metric_results
     )
-    assert all(
-        metric.estimated_cost == 0.0
-        for metric in result.metric_results
-    )
+    assert all(metric.estimated_cost == 0.0 for metric in result.metric_results)
 
 
 def test_dry_run_can_include_live_metrics(
@@ -695,17 +653,12 @@ def test_dry_run_can_include_live_metrics(
         ),
     )
 
-    metric_ids = tuple(
-        item.metric_id
-        for item in result.metric_results
-    )
+    metric_ids = tuple(item.metric_id for item in result.metric_results)
 
     assert "answer-relevancy" in metric_ids
     assert "financial-quality" in metric_ids
     assert "financial-safety" in metric_ids
-    assert result.status == (
-        EvaluationRunStatus.PLANNED
-    )
+    assert result.status == (EvaluationRunStatus.PLANNED)
 
 
 def test_dry_run_does_not_call_executor(
@@ -722,15 +675,11 @@ def test_dry_run_does_not_call_executor(
         nonlocal called
         called = True
 
-        raise AssertionError(
-            "Executor não deveria ser chamado."
-        )
+        raise AssertionError("Executor não deveria ser chamado.")
 
     runner = EvaluationRunner(
         executors={
-            "contract-validation": (
-                forbidden_executor
-            ),
+            "contract-validation": (forbidden_executor),
         }
     )
 
@@ -739,9 +688,7 @@ def test_dry_run_does_not_call_executor(
         routing_payload,
     )
 
-    assert result.status == (
-        EvaluationRunStatus.PLANNED
-    )
+    assert result.status == (EvaluationRunStatus.PLANNED)
     assert called is False
 
 
@@ -754,9 +701,7 @@ def test_local_run_passes(
     routing_case: InnaEvaluationCase,
     routing_payload: DeepEvalCasePayload,
 ) -> None:
-    runner = (
-        build_runner_with_routing_executors()
-    )
+    runner = build_runner_with_routing_executors()
 
     result = runner.run(
         routing_case,
@@ -766,9 +711,7 @@ def test_local_run_passes(
         ),
     )
 
-    assert result.status == (
-        EvaluationRunStatus.PASSED
-    )
+    assert result.status == (EvaluationRunStatus.PASSED)
     assert result.metric_count == 4
     assert result.passed_count == 4
     assert result.failed_count == 0
@@ -779,9 +722,7 @@ def test_local_failure_marks_run_failed(
     routing_case: InnaEvaluationCase,
     routing_payload: DeepEvalCasePayload,
 ) -> None:
-    runner = (
-        build_runner_with_routing_executors()
-    )
+    runner = build_runner_with_routing_executors()
 
     runner.register_executor(
         "expected-terms",
@@ -797,9 +738,7 @@ def test_local_failure_marks_run_failed(
         ),
     )
 
-    assert result.status == (
-        EvaluationRunStatus.FAILED
-    )
+    assert result.status == (EvaluationRunStatus.FAILED)
     assert result.failed_count == 1
 
 
@@ -818,18 +757,12 @@ def test_missing_executor_is_skipped(
     )
 
     assert result.metric_results
+    assert all(item.status == MetricRunStatus.SKIPPED for item in result.metric_results)
     assert all(
-        item.status == MetricRunStatus.SKIPPED
+        item.error_type == MetricExecutorNotFoundError.__name__
         for item in result.metric_results
     )
-    assert all(
-        item.error_type
-        == MetricExecutorNotFoundError.__name__
-        for item in result.metric_results
-    )
-    assert result.status == (
-        EvaluationRunStatus.PARTIAL
-    )
+    assert result.status == (EvaluationRunStatus.PARTIAL)
 
 
 def test_local_mode_skips_selected_live_metrics(
@@ -850,15 +783,11 @@ def test_local_mode_skips_selected_live_metrics(
     live_results = tuple(
         result
         for result in result.metric_results
-        if result.execution_mode.value
-        == "live-opt-in"
+        if result.execution_mode.value == "live-opt-in"
     )
 
     assert live_results
-    assert all(
-        result.status == MetricRunStatus.SKIPPED
-        for result in live_results
-    )
+    assert all(result.status == MetricRunStatus.SKIPPED for result in live_results)
 
 
 # ============================================================
@@ -871,16 +800,12 @@ def test_missing_required_field_is_blocked(
 ) -> None:
     payload = build_deepeval_payload(
         rag_case,
-        actual_output=(
-            "Resposta sem documentos recuperados."
-        ),
+        actual_output=("Resposta sem documentos recuperados."),
     )
 
     runner = EvaluationRunner(
         executors={
-            "retrieval-contract": (
-                passing_executor
-            ),
+            "retrieval-contract": (passing_executor),
         }
     )
 
@@ -893,21 +818,12 @@ def test_missing_required_field_is_blocked(
     )
 
     retrieval_result = next(
-        item
-        for item in result.metric_results
-        if item.metric_id
-        == "retrieval-contract"
+        item for item in result.metric_results if item.metric_id == "retrieval-contract"
     )
 
-    assert retrieval_result.status == (
-        MetricRunStatus.BLOCKED
-    )
-    assert retrieval_result.error_type == (
-        MetricInputValidationError.__name__
-    )
-    assert "retrieval_context" in (
-        retrieval_result.reason or ""
-    )
+    assert retrieval_result.status == (MetricRunStatus.BLOCKED)
+    assert retrieval_result.error_type == (MetricInputValidationError.__name__)
+    assert "retrieval_context" in (retrieval_result.reason or "")
 
 
 # ============================================================
@@ -919,9 +835,7 @@ def test_executor_exception_is_isolated(
     routing_case: InnaEvaluationCase,
     routing_payload: DeepEvalCasePayload,
 ) -> None:
-    runner = (
-        build_runner_with_routing_executors()
-    )
+    runner = build_runner_with_routing_executors()
 
     runner.register_executor(
         "expected-terms",
@@ -940,31 +854,21 @@ def test_executor_exception_is_isolated(
 
     assert result.error_count == 1
     assert result.metric_count == 4
-    assert result.status == (
-        EvaluationRunStatus.PARTIAL
-    )
+    assert result.status == (EvaluationRunStatus.PARTIAL)
 
     error_result = next(
-        item
-        for item in result.metric_results
-        if item.status == MetricRunStatus.ERROR
+        item for item in result.metric_results if item.status == MetricRunStatus.ERROR
     )
 
-    assert error_result.error_type == (
-        "RuntimeError"
-    )
-    assert "Falha sintética" in (
-        error_result.reason or ""
-    )
+    assert error_result.error_type == ("RuntimeError")
+    assert "Falha sintética" in (error_result.reason or "")
 
 
 def test_runner_stops_after_error_when_configured(
     routing_case: InnaEvaluationCase,
     routing_payload: DeepEvalCasePayload,
 ) -> None:
-    runner = (
-        build_runner_with_routing_executors()
-    )
+    runner = build_runner_with_routing_executors()
 
     runner.register_executor(
         "expected-terms",
@@ -1015,9 +919,7 @@ def test_cost_is_accumulated(
         ),
     )
 
-    assert result.total_estimated_cost == (
-        pytest.approx(0.12)
-    )
+    assert result.total_estimated_cost == (pytest.approx(0.12))
 
 
 def test_cost_budget_blocks_result_above_limit(
@@ -1049,16 +951,10 @@ def test_cost_budget_blocks_result_above_limit(
     assert result.blocked_count >= 1
 
     blocked = tuple(
-        item
-        for item in result.metric_results
-        if item.status == MetricRunStatus.BLOCKED
+        item for item in result.metric_results if item.status == MetricRunStatus.BLOCKED
     )
 
-    assert all(
-        item.error_type
-        == EvaluationBudgetError.__name__
-        for item in blocked
-    )
+    assert all(item.error_type == EvaluationBudgetError.__name__ for item in blocked)
 
     assert result.total_estimated_cost <= 0.05
 
@@ -1091,9 +987,7 @@ def test_external_internal_case_is_blocked(
 ) -> None:
     payload = build_deepeval_payload(
         internal_case,
-        actual_output=(
-            "Resposta interna sintética."
-        ),
+        actual_output=("Resposta interna sintética."),
     )
 
     runner = EvaluationRunner()
@@ -1173,79 +1067,76 @@ def test_live_run_blocks_when_only_base_flag_enabled(
 
 
 def test_aggregate_empty_results() -> None:
-    assert _aggregate_run_status(
-        [],
-        mode=EvaluationRunMode.LOCAL,
-    ) == EvaluationRunStatus.ERROR
+    assert (
+        _aggregate_run_status(
+            [],
+            mode=EvaluationRunMode.LOCAL,
+        )
+        == EvaluationRunStatus.ERROR
+    )
 
 
 def test_aggregate_dry_run() -> None:
-    assert _aggregate_run_status(
-        [
-            build_metric_result(
-                status=MetricRunStatus.PLANNED
-            )
-        ],
-        mode=EvaluationRunMode.DRY_RUN,
-    ) == EvaluationRunStatus.PLANNED
+    assert (
+        _aggregate_run_status(
+            [build_metric_result(status=MetricRunStatus.PLANNED)],
+            mode=EvaluationRunMode.DRY_RUN,
+        )
+        == EvaluationRunStatus.PLANNED
+    )
 
 
 def test_aggregate_all_passed() -> None:
-    assert _aggregate_run_status(
-        [
-            build_metric_result(
-                status=MetricRunStatus.PASSED
-            )
-        ],
-        mode=EvaluationRunMode.LOCAL,
-    ) == EvaluationRunStatus.PASSED
+    assert (
+        _aggregate_run_status(
+            [build_metric_result(status=MetricRunStatus.PASSED)],
+            mode=EvaluationRunMode.LOCAL,
+        )
+        == EvaluationRunStatus.PASSED
+    )
 
 
 def test_aggregate_failed() -> None:
-    assert _aggregate_run_status(
-        [
-            build_metric_result(
-                status=MetricRunStatus.PASSED
-            ),
-            build_metric_result(
-                status=MetricRunStatus.FAILED
-            ),
-        ],
-        mode=EvaluationRunMode.LOCAL,
-    ) == EvaluationRunStatus.FAILED
+    assert (
+        _aggregate_run_status(
+            [
+                build_metric_result(status=MetricRunStatus.PASSED),
+                build_metric_result(status=MetricRunStatus.FAILED),
+            ],
+            mode=EvaluationRunMode.LOCAL,
+        )
+        == EvaluationRunStatus.FAILED
+    )
 
 
 def test_aggregate_error_is_partial() -> None:
-    assert _aggregate_run_status(
-        [
-            build_metric_result(
-                status=MetricRunStatus.PASSED
-            ),
-            build_metric_result(
-                status=MetricRunStatus.ERROR
-            ),
-        ],
-        mode=EvaluationRunMode.LOCAL,
-    ) == EvaluationRunStatus.PARTIAL
+    assert (
+        _aggregate_run_status(
+            [
+                build_metric_result(status=MetricRunStatus.PASSED),
+                build_metric_result(status=MetricRunStatus.ERROR),
+            ],
+            mode=EvaluationRunMode.LOCAL,
+        )
+        == EvaluationRunStatus.PARTIAL
+    )
 
 
 def test_aggregate_blocked() -> None:
-    assert _aggregate_run_status(
-        [
-            build_metric_result(
-                status=MetricRunStatus.BLOCKED
-            )
-        ],
-        mode=EvaluationRunMode.LOCAL,
-    ) == EvaluationRunStatus.BLOCKED
+    assert (
+        _aggregate_run_status(
+            [build_metric_result(status=MetricRunStatus.BLOCKED)],
+            mode=EvaluationRunMode.LOCAL,
+        )
+        == EvaluationRunStatus.BLOCKED
+    )
 
 
 def test_aggregate_only_skipped_is_partial() -> None:
-    assert _aggregate_run_status(
-        [
-            build_metric_result(
-                status=MetricRunStatus.SKIPPED
-            )
-        ],
-        mode=EvaluationRunMode.LOCAL,
-    ) == EvaluationRunStatus.PARTIAL
+    assert (
+        _aggregate_run_status(
+            [build_metric_result(status=MetricRunStatus.SKIPPED)],
+            mode=EvaluationRunMode.LOCAL,
+        )
+        == EvaluationRunStatus.PARTIAL
+    )

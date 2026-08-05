@@ -22,72 +22,49 @@ AES_GCM_TAG_BYTES = 16
 PAYLOAD_VERSION = 1
 
 MAX_CANONICAL_UPDATE_BYTES = 1_000_000
-MAX_CIPHERTEXT_BYTES = (
-    MAX_CANONICAL_UPDATE_BYTES
-    + AES_GCM_TAG_BYTES
-)
+MAX_CIPHERTEXT_BYTES = MAX_CANONICAL_UPDATE_BYTES + AES_GCM_TAG_BYTES
 
-MAX_TELEGRAM_UPDATE_ID = (
-    9_223_372_036_854_775_807
-)
+MAX_TELEGRAM_UPDATE_ID = 9_223_372_036_854_775_807
 
 DEFAULT_RETRY_BASE_SECONDS = 5
 DEFAULT_RETRY_MAX_SECONDS = 3_600
 MAX_RETRY_DELAY_SECONDS = 86_400
 
-KEYS_ENV_NAME = (
-    "INNA_TELEGRAM_UPDATE_ENCRYPTION_KEYS_JSON"
-)
+KEYS_ENV_NAME = "INNA_TELEGRAM_UPDATE_ENCRYPTION_KEYS_JSON"
 
-ACTIVE_KEY_ENV_NAME = (
-    "INNA_TELEGRAM_UPDATE_ENCRYPTION_ACTIVE_KEY_ID"
-)
+ACTIVE_KEY_ENV_NAME = "INNA_TELEGRAM_UPDATE_ENCRYPTION_ACTIVE_KEY_ID"
 
 
-KEY_ID_PATTERN = re.compile(
-    r"^[A-Za-z0-9._:-]{1,64}$"
-)
+KEY_ID_PATTERN = re.compile(r"^[A-Za-z0-9._:-]{1,64}$")
 
-LOCK_TOKEN_PATTERN = re.compile(
-    r"^[0-9a-f]{64}$"
-)
+LOCK_TOKEN_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
-class TelegramUpdateJobServiceError(
-    RuntimeError
-):
+class TelegramUpdateJobServiceError(RuntimeError):
     """
     Erro sanitizado da camada de serviço.
     """
 
 
-class TelegramUpdateJobValidationError(
-    TelegramUpdateJobServiceError
-):
+class TelegramUpdateJobValidationError(TelegramUpdateJobServiceError):
     """
     Entrada inválida ou payload incompatível.
     """
 
 
-class TelegramUpdateJobConfigurationError(
-    TelegramUpdateJobServiceError
-):
+class TelegramUpdateJobConfigurationError(TelegramUpdateJobServiceError):
     """
     Configuração criptográfica inválida.
     """
 
 
-class TelegramUpdateJobEncryptionError(
-    TelegramUpdateJobServiceError
-):
+class TelegramUpdateJobEncryptionError(TelegramUpdateJobServiceError):
     """
     Falha sanitizada durante a criptografia.
     """
 
 
-class TelegramUpdateJobDecryptionError(
-    TelegramUpdateJobServiceError
-):
+class TelegramUpdateJobDecryptionError(TelegramUpdateJobServiceError):
     """
     Falha sanitizada durante a descriptografia.
     """
@@ -96,14 +73,8 @@ class TelegramUpdateJobDecryptionError(
 def _validate_key_id(
     value: Any,
 ) -> str:
-    if (
-        not isinstance(value, str)
-        or KEY_ID_PATTERN.fullmatch(value)
-        is None
-    ):
-        raise TelegramUpdateJobValidationError(
-            "Identificador de chave inválido."
-        )
+    if not isinstance(value, str) or KEY_ID_PATTERN.fullmatch(value) is None:
+        raise TelegramUpdateJobValidationError("Identificador de chave inválido.")
 
     return value
 
@@ -117,9 +88,7 @@ def _validate_update_id(
         or value < 0
         or value > MAX_TELEGRAM_UPDATE_ID
     ):
-        raise TelegramUpdateJobValidationError(
-            "update_id inválido."
-        )
+        raise TelegramUpdateJobValidationError("update_id inválido.")
 
     return value
 
@@ -137,9 +106,7 @@ def _validate_integer(
         or value < minimum
         or value > maximum
     ):
-        raise TelegramUpdateJobValidationError(
-            f"{field_name} inválido."
-        )
+        raise TelegramUpdateJobValidationError(f"{field_name} inválido.")
 
     return value
 
@@ -159,20 +126,12 @@ def _validate_bytes(
             memoryview,
         ),
     ):
-        raise TelegramUpdateJobValidationError(
-            f"{field_name} inválido."
-        )
+        raise TelegramUpdateJobValidationError(f"{field_name} inválido.")
 
     normalized = bytes(value)
 
-    if not (
-        minimum
-        <= len(normalized)
-        <= maximum
-    ):
-        raise TelegramUpdateJobValidationError(
-            f"{field_name} inválido."
-        )
+    if not (minimum <= len(normalized) <= maximum):
+        raise TelegramUpdateJobValidationError(f"{field_name} inválido.")
 
     return normalized
 
@@ -191,23 +150,12 @@ def _validate_aes_key(
 def _decode_base64url_key(
     value: Any,
 ) -> bytes:
-    if (
-        not isinstance(value, str)
-        or not value.strip()
-    ):
-        raise TelegramUpdateJobConfigurationError(
-            "Chave criptográfica inválida."
-        )
+    if not isinstance(value, str) or not value.strip():
+        raise TelegramUpdateJobConfigurationError("Chave criptográfica inválida.")
 
     encoded = value.strip()
 
-    padding = (
-        "="
-        * (
-            (-len(encoded))
-            % 4
-        )
-    )
+    padding = "=" * ((-len(encoded)) % 4)
 
     try:
         decoded = base64.b64decode(
@@ -222,9 +170,7 @@ def _decode_base64url_key(
         ) from None
 
     try:
-        return _validate_aes_key(
-            decoded
-        )
+        return _validate_aes_key(decoded)
 
     except TelegramUpdateJobValidationError:
         raise TelegramUpdateJobConfigurationError(
@@ -242,27 +188,18 @@ class TelegramUpdateEncryptionKeyring:
     keys: Mapping[
         str,
         bytes,
-    ] = field(
-        repr=False
-    )
+    ] = field(repr=False)
 
     def __post_init__(
         self,
     ) -> None:
         try:
-            active_key_id = _validate_key_id(
-                self.active_key_id
-            )
+            active_key_id = _validate_key_id(self.active_key_id)
 
         except TelegramUpdateJobValidationError:
-            raise TelegramUpdateJobConfigurationError(
-                "Chave ativa inválida."
-            ) from None
+            raise TelegramUpdateJobConfigurationError("Chave ativa inválida.") from None
 
-        if (
-            not isinstance(self.keys, Mapping)
-            or not self.keys
-        ):
+        if not isinstance(self.keys, Mapping) or not self.keys:
             raise TelegramUpdateJobConfigurationError(
                 "Nenhuma chave criptográfica configurada."
             )
@@ -274,22 +211,16 @@ class TelegramUpdateEncryptionKeyring:
 
         for raw_key_id, raw_key in self.keys.items():
             try:
-                key_id = _validate_key_id(
-                    raw_key_id
-                )
+                key_id = _validate_key_id(raw_key_id)
 
-                key = _validate_aes_key(
-                    raw_key
-                )
+                key = _validate_aes_key(raw_key)
 
             except TelegramUpdateJobValidationError:
                 raise TelegramUpdateJobConfigurationError(
                     "Keyring criptográfico inválido."
                 ) from None
 
-            normalized_keys[
-                key_id
-            ] = key
+            normalized_keys[key_id] = key
 
         if active_key_id not in normalized_keys:
             raise TelegramUpdateJobConfigurationError(
@@ -305,22 +236,16 @@ class TelegramUpdateEncryptionKeyring:
         object.__setattr__(
             self,
             "keys",
-            MappingProxyType(
-                normalized_keys
-            ),
+            MappingProxyType(normalized_keys),
         )
 
     def get_key(
         self,
         key_id: str,
     ) -> bytes:
-        normalized_key_id = _validate_key_id(
-            key_id
-        )
+        normalized_key_id = _validate_key_id(key_id)
 
-        key = self.keys.get(
-            normalized_key_id
-        )
+        key = self.keys.get(normalized_key_id)
 
         if key is None:
             raise TelegramUpdateJobConfigurationError(
@@ -339,31 +264,22 @@ class EncryptedTelegramUpdatePayload:
     payload_key_id: str
     payload_version: int
 
-    payload_ciphertext: bytes = field(
-        repr=False
-    )
+    payload_ciphertext: bytes = field(repr=False)
 
-    payload_nonce: bytes = field(
-        repr=False
-    )
+    payload_nonce: bytes = field(repr=False)
 
     def to_safe_dict(
         self,
     ) -> dict[str, int | str]:
         return {
             "update_id": self.update_id,
-            "payload_key_id": (
-                self.payload_key_id
-            ),
-            "payload_version": (
-                self.payload_version
-            ),
+            "payload_key_id": (self.payload_key_id),
+            "payload_version": (self.payload_version),
             "encrypted": True,
         }
 
 
-def load_telegram_update_keyring_from_env(
-) -> TelegramUpdateEncryptionKeyring:
+def load_telegram_update_keyring_from_env() -> TelegramUpdateEncryptionKeyring:
     keys_json = os.getenv(
         KEYS_ENV_NAME,
         "",
@@ -375,9 +291,7 @@ def load_telegram_update_keyring_from_env(
     ).strip()
 
     if not keys_json:
-        raise TelegramUpdateJobConfigurationError(
-            f"{KEYS_ENV_NAME} não configurada."
-        )
+        raise TelegramUpdateJobConfigurationError(f"{KEYS_ENV_NAME} não configurada.")
 
     if not active_key_id:
         raise TelegramUpdateJobConfigurationError(
@@ -385,25 +299,16 @@ def load_telegram_update_keyring_from_env(
         )
 
     try:
-        raw_keys = json.loads(
-            keys_json
-        )
+        raw_keys = json.loads(keys_json)
 
     except (
         TypeError,
         ValueError,
     ):
-        raise TelegramUpdateJobConfigurationError(
-            "JSON do keyring inválido."
-        ) from None
+        raise TelegramUpdateJobConfigurationError("JSON do keyring inválido.") from None
 
-    if (
-        not isinstance(raw_keys, dict)
-        or not raw_keys
-    ):
-        raise TelegramUpdateJobConfigurationError(
-            "O keyring deve ser um objeto JSON."
-        )
+    if not isinstance(raw_keys, dict) or not raw_keys:
+        raise TelegramUpdateJobConfigurationError("O keyring deve ser um objeto JSON.")
 
     decoded_keys: dict[
         str,
@@ -412,20 +317,14 @@ def load_telegram_update_keyring_from_env(
 
     for raw_key_id, raw_encoded_key in raw_keys.items():
         try:
-            key_id = _validate_key_id(
-                raw_key_id
-            )
+            key_id = _validate_key_id(raw_key_id)
 
         except TelegramUpdateJobValidationError:
             raise TelegramUpdateJobConfigurationError(
                 "Identificador de chave inválido."
             ) from None
 
-        decoded_keys[
-            key_id
-        ] = _decode_base64url_key(
-            raw_encoded_key
-        )
+        decoded_keys[key_id] = _decode_base64url_key(raw_encoded_key)
 
     return TelegramUpdateEncryptionKeyring(
         active_key_id=active_key_id,
@@ -443,15 +342,9 @@ def canonicalize_telegram_update(
         update,
         dict,
     ):
-        raise TelegramUpdateJobValidationError(
-            "Update Telegram inválido."
-        )
+        raise TelegramUpdateJobValidationError("Update Telegram inválido.")
 
-    update_id = _validate_update_id(
-        update.get(
-            "update_id"
-        )
-    )
+    update_id = _validate_update_id(update.get("update_id"))
 
     try:
         canonical_payload = json.dumps(
@@ -463,9 +356,7 @@ def canonicalize_telegram_update(
                 ":",
             ),
             allow_nan=False,
-        ).encode(
-            "utf-8"
-        )
+        ).encode("utf-8")
 
     except (
         TypeError,
@@ -476,11 +367,7 @@ def canonicalize_telegram_update(
             "Update Telegram não serializável."
         ) from None
 
-    if (
-        not canonical_payload
-        or len(canonical_payload)
-        > MAX_CANONICAL_UPDATE_BYTES
-    ):
+    if not canonical_payload or len(canonical_payload) > MAX_CANONICAL_UPDATE_BYTES:
         raise TelegramUpdateJobValidationError(
             "Update Telegram excede o tamanho permitido."
         )
@@ -497,13 +384,9 @@ def _build_authenticated_data(
     payload_key_id: str,
     payload_version: int,
 ) -> bytes:
-    normalized_update_id = _validate_update_id(
-        update_id
-    )
+    normalized_update_id = _validate_update_id(update_id)
 
-    normalized_key_id = _validate_key_id(
-        payload_key_id
-    )
+    normalized_key_id = _validate_key_id(payload_key_id)
 
     normalized_version = _validate_integer(
         payload_version,
@@ -517,53 +400,34 @@ def _build_authenticated_data(
         f"|version={normalized_version}"
         f"|update_id={normalized_update_id}"
         f"|key_id={normalized_key_id}"
-    ).encode(
-        "utf-8"
-    )
+    ).encode("utf-8")
 
 
 def encrypt_authenticated_telegram_update(
     update: Any,
     *,
-    keyring: TelegramUpdateEncryptionKeyring
-    | None = None,
+    keyring: TelegramUpdateEncryptionKeyring | None = None,
 ) -> EncryptedTelegramUpdatePayload:
     resolved_keyring = (
-        keyring
-        if keyring is not None
-        else load_telegram_update_keyring_from_env()
+        keyring if keyring is not None else load_telegram_update_keyring_from_env()
     )
 
-    update_id, plaintext = (
-        canonicalize_telegram_update(
-            update
-        )
-    )
+    update_id, plaintext = canonicalize_telegram_update(update)
 
-    key_id = (
-        resolved_keyring.active_key_id
-    )
+    key_id = resolved_keyring.active_key_id
 
-    key = resolved_keyring.get_key(
-        key_id
-    )
+    key = resolved_keyring.get_key(key_id)
 
-    nonce = secrets.token_bytes(
-        AES_GCM_NONCE_BYTES
-    )
+    nonce = secrets.token_bytes(AES_GCM_NONCE_BYTES)
 
-    authenticated_data = (
-        _build_authenticated_data(
-            update_id=update_id,
-            payload_key_id=key_id,
-            payload_version=PAYLOAD_VERSION,
-        )
+    authenticated_data = _build_authenticated_data(
+        update_id=update_id,
+        payload_key_id=key_id,
+        payload_version=PAYLOAD_VERSION,
     )
 
     try:
-        ciphertext = AESGCM(
-            key
-        ).encrypt(
+        ciphertext = AESGCM(key).encrypt(
             nonce,
             plaintext,
             authenticated_data,
@@ -571,14 +435,12 @@ def encrypt_authenticated_telegram_update(
 
     except Exception:
         raise TelegramUpdateJobEncryptionError(
-            "Não foi possível criptografar "
-            "o update Telegram."
+            "Não foi possível criptografar o update Telegram."
         ) from None
 
     if len(ciphertext) > MAX_CIPHERTEXT_BYTES:
         raise TelegramUpdateJobEncryptionError(
-            "Payload criptografado excede "
-            "o tamanho permitido."
+            "Payload criptografado excede o tamanho permitido."
         )
 
     return EncryptedTelegramUpdatePayload(
@@ -597,12 +459,9 @@ def decrypt_authenticated_telegram_update(
     payload_nonce: bytes,
     payload_key_id: str,
     payload_version: int,
-    keyring: TelegramUpdateEncryptionKeyring
-    | None = None,
+    keyring: TelegramUpdateEncryptionKeyring | None = None,
 ) -> dict[str, Any]:
-    normalized_update_id = _validate_update_id(
-        update_id
-    )
+    normalized_update_id = _validate_update_id(update_id)
 
     normalized_ciphertext = _validate_bytes(
         payload_ciphertext,
@@ -618,9 +477,7 @@ def decrypt_authenticated_telegram_update(
         maximum=AES_GCM_NONCE_BYTES,
     )
 
-    normalized_key_id = _validate_key_id(
-        payload_key_id
-    )
+    normalized_key_id = _validate_key_id(payload_key_id)
 
     normalized_version = _validate_integer(
         payload_version,
@@ -630,38 +487,28 @@ def decrypt_authenticated_telegram_update(
     )
 
     if normalized_version != PAYLOAD_VERSION:
-        raise TelegramUpdateJobDecryptionError(
-            "Versão criptográfica não suportada."
-        )
+        raise TelegramUpdateJobDecryptionError("Versão criptográfica não suportada.")
 
     resolved_keyring = (
-        keyring
-        if keyring is not None
-        else load_telegram_update_keyring_from_env()
+        keyring if keyring is not None else load_telegram_update_keyring_from_env()
     )
 
     try:
-        key = resolved_keyring.get_key(
-            normalized_key_id
-        )
+        key = resolved_keyring.get_key(normalized_key_id)
 
     except TelegramUpdateJobConfigurationError:
         raise TelegramUpdateJobDecryptionError(
             "Chave criptográfica não disponível."
         ) from None
 
-    authenticated_data = (
-        _build_authenticated_data(
-            update_id=normalized_update_id,
-            payload_key_id=normalized_key_id,
-            payload_version=normalized_version,
-        )
+    authenticated_data = _build_authenticated_data(
+        update_id=normalized_update_id,
+        payload_key_id=normalized_key_id,
+        payload_version=normalized_version,
     )
 
     try:
-        plaintext = AESGCM(
-            key
-        ).decrypt(
+        plaintext = AESGCM(key).decrypt(
             normalized_nonce,
             normalized_ciphertext,
             authenticated_data,
@@ -674,16 +521,11 @@ def decrypt_authenticated_telegram_update(
 
     except Exception:
         raise TelegramUpdateJobDecryptionError(
-            "Não foi possível descriptografar "
-            "o update Telegram."
+            "Não foi possível descriptografar o update Telegram."
         ) from None
 
     try:
-        update = json.loads(
-            plaintext.decode(
-                "utf-8"
-            )
-        )
+        update = json.loads(plaintext.decode("utf-8"))
 
     except (
         TypeError,
@@ -698,34 +540,21 @@ def decrypt_authenticated_telegram_update(
         update,
         dict,
     ):
-        raise TelegramUpdateJobDecryptionError(
-            "Payload descriptografado inválido."
-        )
+        raise TelegramUpdateJobDecryptionError("Payload descriptografado inválido.")
 
-    decrypted_update_id = update.get(
-        "update_id"
-    )
+    decrypted_update_id = update.get("update_id")
 
     if decrypted_update_id != normalized_update_id:
-        raise TelegramUpdateJobDecryptionError(
-            "Identidade do update não confere."
-        )
+        raise TelegramUpdateJobDecryptionError("Identidade do update não confere.")
 
     return update
 
 
-def generate_telegram_update_job_lock_token(
-) -> str:
-    token = secrets.token_hex(
-        32
-    )
+def generate_telegram_update_job_lock_token() -> str:
+    token = secrets.token_hex(32)
 
-    if LOCK_TOKEN_PATTERN.fullmatch(
-        token
-    ) is None:
-        raise TelegramUpdateJobServiceError(
-            "Não foi possível gerar o lock_token."
-        )
+    if LOCK_TOKEN_PATTERN.fullmatch(token) is None:
+        raise TelegramUpdateJobServiceError("Não foi possível gerar o lock_token.")
 
     return token
 
@@ -733,12 +562,8 @@ def generate_telegram_update_job_lock_token(
 def calculate_telegram_update_retry_delay(
     *,
     attempt_count: int,
-    base_seconds: int = (
-        DEFAULT_RETRY_BASE_SECONDS
-    ),
-    max_seconds: int = (
-        DEFAULT_RETRY_MAX_SECONDS
-    ),
+    base_seconds: int = (DEFAULT_RETRY_BASE_SECONDS),
+    max_seconds: int = (DEFAULT_RETRY_MAX_SECONDS),
 ) -> int:
     normalized_attempt = _validate_integer(
         attempt_count,
@@ -763,15 +588,12 @@ def calculate_telegram_update_retry_delay(
 
     if normalized_base > normalized_max:
         raise TelegramUpdateJobValidationError(
-            "base_seconds não pode ser maior "
-            "que max_seconds."
+            "base_seconds não pode ser maior que max_seconds."
         )
 
     exponent = normalized_attempt - 1
 
-    delay = normalized_base * (
-        2 ** exponent
-    )
+    delay = normalized_base * (2**exponent)
 
     return min(
         delay,

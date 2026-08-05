@@ -16,10 +16,7 @@ def memoria_teste():
 
 def test_orquestrador_retorna_duracao():
     resultado = processar_pergunta_com_tools(
-        pergunta=(
-            "Com minha renda e gastos, "
-            "quanto sobra?"
-        ),
+        pergunta=("Com minha renda e gastos, quanto sobra?"),
         memoria=memoria_teste(),
     )
 
@@ -33,20 +30,12 @@ def test_observabilidade_desativada_por_padrao():
         memoria=memoria_teste(),
     )
 
-    assert (
-        resultado["observabilidade"]["ok"]
-        is False
-    )
+    assert resultado["observabilidade"]["ok"] is False
 
-    assert (
-        resultado["observabilidade"]["message"]
-        == "Registro não solicitado."
-    )
+    assert resultado["observabilidade"]["message"] == "Registro não solicitado."
 
 
-@patch(
-    "src.tools.observability.registrar_evento_tool"
-)
+@patch("src.tools.observability.registrar_evento_tool")
 def test_registro_de_observabilidade(
     mock_registrar,
 ):
@@ -65,23 +54,16 @@ def test_registro_de_observabilidade(
     )
 
     assert resultado["observabilidade"]["ok"] is True
-    assert (
-        resultado["observabilidade"]["evento_id"]
-        == 123
-    )
+    assert resultado["observabilidade"]["evento_id"] == 123
 
     mock_registrar.assert_called_once()
 
 
-@patch(
-    "src.tools.observability.registrar_evento_tool"
-)
+@patch("src.tools.observability.registrar_evento_tool")
 def test_falha_de_observabilidade_nao_quebra_tool(
     mock_registrar,
 ):
-    mock_registrar.side_effect = RuntimeError(
-        "Banco indisponível"
-    )
+    mock_registrar.side_effect = RuntimeError("Banco indisponível")
 
     resultado = processar_pergunta_com_tools(
         pergunta="Quanto posso guardar por semana?",
@@ -90,11 +72,6 @@ def test_falha_de_observabilidade_nao_quebra_tool(
     )
 
     assert resultado["ok"] is True
-    assert resultado["resultado"][
-        "valor_semanal_estimado"
-    ] == 300.0
+    assert resultado["resultado"]["valor_semanal_estimado"] == 300.0
 
-    assert (
-        resultado["observabilidade"]["ok"]
-        is False
-    )
+    assert resultado["observabilidade"]["ok"] is False

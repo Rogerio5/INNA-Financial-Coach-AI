@@ -29,27 +29,20 @@ def _resolution_response() -> Mock:
         "decision_action": "approve",
         "reviewer_id": "admin@inna.ai",
         "resume_route": "summary",
-        "resolved_at": (
-            "2026-07-24T19:00:00+00:00"
-        ),
+        "resolved_at": ("2026-07-24T19:00:00+00:00"),
     }
     return response
 
 
-def test_resolve_review_calls_signed_endpoint(
-) -> None:
+def test_resolve_review_calls_signed_endpoint() -> None:
     with (
         patch(
-            "src.dashboard_pages.human_review."
-            "api_client.assinar_requisicao_interna",
+            "src.dashboard_pages.human_review.api_client.assinar_requisicao_interna",
             return_value="f" * 64,
         ),
         patch(
-            "src.dashboard_pages.human_review."
-            "api_client.requests.post",
-            return_value=(
-                _resolution_response()
-            ),
+            "src.dashboard_pages.human_review.api_client.requests.post",
+            return_value=(_resolution_response()),
         ) as request,
     ):
         result = resolver_revisao_hitl_api(
@@ -63,16 +56,12 @@ def test_resolve_review_calls_signed_endpoint(
     assert result.status == "approved"
 
     assert request.call_args.args[0].endswith(
-        "/internal/human-reviews/"
-        "review-1/resolve"
+        "/internal/human-reviews/review-1/resolve"
     )
 
 
-def test_correction_requires_payload(
-) -> None:
-    with pytest.raises(
-        HumanReviewDashboardApiError
-    ):
+def test_correction_requires_payload() -> None:
+    with pytest.raises(HumanReviewDashboardApiError):
         resolver_revisao_hitl_api(
             admin_user_id="admin@inna.ai",
             review_id="review-1",
@@ -82,11 +71,8 @@ def test_correction_requires_payload(
         )
 
 
-def test_rejection_requires_reason(
-) -> None:
-    with pytest.raises(
-        HumanReviewDashboardApiError
-    ):
+def test_rejection_requires_reason() -> None:
+    with pytest.raises(HumanReviewDashboardApiError):
         resolver_revisao_hitl_api(
             admin_user_id="admin@inna.ai",
             review_id="review-1",
@@ -96,23 +82,16 @@ def test_rejection_requires_reason(
 
 
 def test_parse_corrections_json() -> None:
-    result = parse_corrections_json_hitl(
-        '{"valor": 1000}'
-    )
+    result = parse_corrections_json_hitl('{"valor": 1000}')
 
     assert result == {
         "valor": 1000,
     }
 
 
-def test_parse_corrections_rejects_array(
-) -> None:
-    with pytest.raises(
-        ValueError
-    ):
-        parse_corrections_json_hitl(
-            '["valor"]'
-        )
+def test_parse_corrections_rejects_array() -> None:
+    with pytest.raises(ValueError):
+        parse_corrections_json_hitl('["valor"]')
 
 
 def test_prepare_review_table() -> None:
@@ -123,9 +102,7 @@ def test_prepare_review_table() -> None:
                 thread_id="thread-1",
                 status="pending",
                 risk_level="high",
-                requested_by=(
-                    "financial_agent"
-                ),
+                requested_by=("financial_agent"),
             ),
         ),
         total=1,
@@ -135,9 +112,7 @@ def test_prepare_review_table() -> None:
         has_previous=False,
     )
 
-    rows = preparar_tabela_revisoes_hitl(
-        page
-    )
+    rows = preparar_tabela_revisoes_hitl(page)
 
     assert rows[0]["Status"] == "Pendente"
     assert rows[0]["Risco"] == "Alto"

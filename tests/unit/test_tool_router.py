@@ -9,31 +9,20 @@ from src.tools.router import (
 
 
 def test_normalizar_texto():
-    resultado = normalizar_texto(
-        "  Quanto POSSO guardar por SEMANA? "
-    )
+    resultado = normalizar_texto("  Quanto POSSO guardar por SEMANA? ")
 
-    assert resultado == (
-        "quanto posso guardar por semana?"
-    )
+    assert resultado == ("quanto posso guardar por semana?")
 
 
 def test_identificar_capacidade_semanal():
-    resultado = identificar_intencao_tool(
-        "Quanto posso guardar por semana?"
-    )
+    resultado = identificar_intencao_tool("Quanto posso guardar por semana?")
 
     assert resultado["ok"] is True
-    assert (
-        resultado["tool"]
-        == "calcular_capacidade_semanal"
-    )
+    assert resultado["tool"] == "calcular_capacidade_semanal"
 
 
 def test_identificar_orcamento():
-    resultado = identificar_intencao_tool(
-        "Com minha renda e gastos, quanto sobra?"
-    )
+    resultado = identificar_intencao_tool("Com minha renda e gastos, quanto sobra?")
 
     assert resultado["ok"] is True
     assert resultado["tool"] == "analisar_orcamento"
@@ -45,22 +34,14 @@ def test_identificar_divida():
     )
 
     assert resultado["ok"] is True
-    assert (
-        resultado["tool"]
-        == "analisar_divida_educativamente"
-    )
+    assert resultado["tool"] == "analisar_divida_educativamente"
 
 
 def test_identificar_parcelamento():
-    resultado = identificar_intencao_tool(
-        "Quanto fica o valor da parcela sem juros?"
-    )
+    resultado = identificar_intencao_tool("Quanto fica o valor da parcela sem juros?")
 
     assert resultado["ok"] is True
-    assert (
-        resultado["tool"]
-        == "simular_parcelamento_sem_juros"
-    )
+    assert resultado["tool"] == "simular_parcelamento_sem_juros"
 
 
 def test_montar_argumentos_com_aliases():
@@ -90,10 +71,7 @@ def test_router_informa_dado_ausente():
 
     assert resultado["ok"] is False
     assert resultado["executada"] is False
-    assert (
-        "valor_mensal"
-        in resultado["preparacao"]["dados_ausentes"]
-    )
+    assert "valor_mensal" in resultado["preparacao"]["dados_ausentes"]
 
 
 def test_router_executa_capacidade_semanal():
@@ -106,12 +84,7 @@ def test_router_executa_capacidade_semanal():
 
     assert resultado["ok"] is True
     assert resultado["executada"] is True
-    assert (
-        resultado["execucao"]["resultado"][
-            "valor_semanal_estimado"
-        ]
-        == 300.0
-    )
+    assert resultado["execucao"]["resultado"]["valor_semanal_estimado"] == 300.0
 
 
 def test_router_executa_orcamento():
@@ -125,12 +98,7 @@ def test_router_executa_orcamento():
     )
 
     assert resultado["ok"] is True
-    assert (
-        resultado["execucao"]["resultado"][
-            "saldo_mensal"
-        ]
-        == 3000.0
-    )
+    assert resultado["execucao"]["resultado"]["saldo_mensal"] == 3000.0
 
 
 def test_router_pode_apenas_preparar():
@@ -156,26 +124,21 @@ def test_mensagem_sem_tool():
     assert resultado["ok"] is False
     assert resultado["classificacao"]["tool"] is None
 
+
 def test_extrair_divida_atrasada_da_mensagem():
-    contexto = extrair_contexto_basico_mensagem(
-        "Tenho uma dívida atrasada."
-    )
+    contexto = extrair_contexto_basico_mensagem("Tenho uma dívida atrasada.")
 
     assert contexto["esta_atrasada"] is True
 
 
 def test_extrair_divida_em_dia():
-    contexto = extrair_contexto_basico_mensagem(
-        "Minha dívida está em dia."
-    )
+    contexto = extrair_contexto_basico_mensagem("Minha dívida está em dia.")
 
     assert contexto["esta_atrasada"] is False
 
 
 def test_extrair_tipo_divida_cartao():
-    contexto = extrair_contexto_basico_mensagem(
-        "Minha fatura do cartão está atrasada."
-    )
+    contexto = extrair_contexto_basico_mensagem("Minha fatura do cartão está atrasada.")
 
     assert contexto["tipo_divida"] == "cartao"
     assert contexto["esta_atrasada"] is True
@@ -205,10 +168,8 @@ def test_router_divida_atrasada_gera_sinal():
     ferramenta = resultado["execucao"]["resultado"]
 
     assert ferramenta["esta_atrasada"] is True
-    assert (
-        "divida_atrasada"
-        in ferramenta["sinais_de_atencao"]
-    )
+    assert "divida_atrasada" in ferramenta["sinais_de_atencao"]
+
 
 def test_router_divida_cartao_atrasada_com_termos_intermediarios():
     resultado = rotear_tool(
@@ -220,8 +181,4 @@ def test_router_divida_cartao_atrasada_com_termos_intermediarios():
 
     assert ferramenta["tipo_divida"] == "cartao"
     assert ferramenta["esta_atrasada"] is True
-    assert (
-        "divida_atrasada"
-        in ferramenta["sinais_de_atencao"]
-    )
-
+    assert "divida_atrasada" in ferramenta["sinais_de_atencao"]

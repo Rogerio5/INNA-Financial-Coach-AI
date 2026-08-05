@@ -17,67 +17,67 @@ PERGUNTAS_TESTE = [
     {
         "categoria": "Reserva financeira",
         "pergunta": "como posso começar uma reserva financeira?",
-        "esperado": "reserva"
+        "esperado": "reserva",
     },
     {
         "categoria": "Cálculo controlado",
         "pergunta": "ganho 3000 gasto 2500 e guardo 100",
-        "esperado": "calculo"
+        "esperado": "calculo",
     },
     {
         "categoria": "Cartão de crédito",
         "pergunta": "cartão de crédito está me apertando",
-        "esperado": "cartao"
+        "esperado": "cartao",
     },
     {
         "categoria": "Organização de gastos",
         "pergunta": "como organizar gastos fixos e variáveis?",
-        "esperado": "orcamento"
+        "esperado": "orcamento",
     },
     {
         "categoria": "Dívidas",
         "pergunta": "como sair das dívidas?",
-        "esperado": "divida"
+        "esperado": "divida",
     },
     {
         "categoria": "Reserva emergencial",
         "pergunta": "o que é reserva de emergência?",
-        "esperado": "reserva"
+        "esperado": "reserva",
     },
     {
         "categoria": "Gastos pequenos",
         "pergunta": "gasto muito com pequenas compras, como posso organizar?",
-        "esperado": "orcamento"
+        "esperado": "orcamento",
     },
     {
         "categoria": "Parcelas",
         "pergunta": "tenho muitas parcelas no cartão, por onde começo?",
-        "esperado": "cartao"
+        "esperado": "cartao",
     },
     {
         "categoria": "Segurança Financeira",
         "pergunta": "apareceu uma compra no meu cartão que eu não reconheço",
-        "esperado": "seguranca"
+        "esperado": "seguranca",
     },
     {
         "categoria": "Segurança Financeira",
         "pergunta": "recebi um link dizendo que minha conta do banco será bloqueada",
-        "esperado": "seguranca"
+        "esperado": "seguranca",
     },
     {
         "categoria": "Segurança Financeira",
         "pergunta": "fiz um pix errado, o que devo fazer?",
-        "esperado": "seguranca"
+        "esperado": "seguranca",
     },
     {
         "categoria": "Segurança Financeira",
         "pergunta": "alguém pediu meu código do banco pelo whatsapp",
-        "esperado": "seguranca"
+        "esperado": "seguranca",
     },
     {
         "categoria": "Segurança Financeira",
         "pergunta": "como me proteger de golpes financeiros?",
-        "esperado": "seguranca"
+        "esperado": "seguranca",
     },
 ]
 
@@ -124,7 +124,19 @@ def avaliar_resposta(pergunta: str, esperado: str, resultado: dict) -> dict:
         "orcamento": ["gastos", "fixos", "variáveis", "variaveis", "organizar"],
         "divida": ["dívida", "divida", "dívidas", "dividas", "juros", "parcelas"],
         "calculo": ["r$", "meta", "semana", "guardar"],
-        "seguranca": ["senha", "token", "código", "codigo", "cvv", "banco", "oficiais", "golpe", "pix", "cartão", "cartao"],
+        "seguranca": [
+            "senha",
+            "token",
+            "código",
+            "codigo",
+            "cvv",
+            "banco",
+            "oficiais",
+            "golpe",
+            "pix",
+            "cartão",
+            "cartao",
+        ],
     }
 
     termos = palavras_por_tema.get(esperado, [])
@@ -133,7 +145,11 @@ def avaliar_resposta(pergunta: str, esperado: str, resultado: dict) -> dict:
         pontos += 2
         criterios.append("tema_correto")
 
-    if "não substitui" in resposta or "orientação profissional" in resposta or "educativa" in resposta:
+    if (
+        "não substitui" in resposta
+        or "orientação profissional" in resposta
+        or "educativa" in resposta
+    ):
         pontos += 1
         criterios.append("seguranca_educativa")
 
@@ -141,19 +157,42 @@ def avaliar_resposta(pergunta: str, esperado: str, resultado: dict) -> dict:
         pontos += 1
         criterios.append("resposta_completa")
 
-    if esperado in ["cartao", "orcamento", "divida", "reserva"] and "quer que eu monte uma meta" in resposta:
+    if (
+        esperado in ["cartao", "orcamento", "divida", "reserva"]
+        and "quer que eu monte uma meta" in resposta
+    ):
         pontos += 1
         criterios.append("pergunta_de_acao")
 
     if esperado == "cartao":
-        termos_cartao_forte = ["parcelas", "fatura", "juros", "cartão", "cartao", "crédito", "credito"]
-        encontrados_cartao = sum(1 for termo in termos_cartao_forte if termo in resposta)
+        termos_cartao_forte = [
+            "parcelas",
+            "fatura",
+            "juros",
+            "cartão",
+            "cartao",
+            "crédito",
+            "credito",
+        ]
+        encontrados_cartao = sum(
+            1 for termo in termos_cartao_forte if termo in resposta
+        )
         if encontrados_cartao >= 2:
             pontos += 1
             criterios.append("cartao_contexto_forte")
 
-        termos_parcelas_pratico = ["parcelas", "fatura", "evitar", "organizar", "reduzir", "renda", "comprometido"]
-        encontrados_parcelas = sum(1 for termo in termos_parcelas_pratico if termo in resposta)
+        termos_parcelas_pratico = [
+            "parcelas",
+            "fatura",
+            "evitar",
+            "organizar",
+            "reduzir",
+            "renda",
+            "comprometido",
+        ]
+        encontrados_parcelas = sum(
+            1 for termo in termos_parcelas_pratico if termo in resposta
+        )
         if "parcelas" in pergunta.lower() and encontrados_parcelas >= 3:
             pontos += 1
             criterios.append("parcelas_plano_pratico")
@@ -225,16 +264,18 @@ def main():
         print("NOTA:", avaliacao["nota"])
         print("STATUS:", avaliacao["status"])
 
-        resultados_csv.append({
-            "categoria": categoria,
-            "pergunta": pergunta,
-            "esperado": esperado,
-            "modo": modo,
-            "nota": avaliacao["nota"],
-            "status": avaliacao["status"],
-            "criterios": "; ".join(avaliacao["criterios"]),
-            "fontes_total": len(fontes),
-        })
+        resultados_csv.append(
+            {
+                "categoria": categoria,
+                "pergunta": pergunta,
+                "esperado": esperado,
+                "modo": modo,
+                "nota": avaliacao["nota"],
+                "status": avaliacao["status"],
+                "criterios": "; ".join(avaliacao["criterios"]),
+                "fontes_total": len(fontes),
+            }
+        )
 
         linhas_md.append(f"### {total}. {categoria}")
         linhas_md.append("")
@@ -246,7 +287,9 @@ def main():
         linhas_md.append("")
         linhas_md.append(f"**Status:** {avaliacao['status']}")
         linhas_md.append("")
-        linhas_md.append(f"**Critérios atendidos:** {', '.join(avaliacao['criterios'])}")
+        linhas_md.append(
+            f"**Critérios atendidos:** {', '.join(avaliacao['criterios'])}"
+        )
         linhas_md.append("")
         linhas_md.append("**Fontes recuperadas:**")
         linhas_md.append("")

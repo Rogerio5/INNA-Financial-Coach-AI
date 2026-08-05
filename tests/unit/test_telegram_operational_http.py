@@ -25,312 +25,191 @@ def runtime_result(
     passed=True,
     severity="required",
 ):
-    service = (
-        TelegramOperationalStatusService(
-            probes=(
-                CallableTelegramProbe(
-                    name="database",
-                    severity=severity,
-                    check=lambda: passed,
-                    error_category="database",
-                ),
-            )
+    service = TelegramOperationalStatusService(
+        probes=(
+            CallableTelegramProbe(
+                name="database",
+                severity=severity,
+                check=lambda: passed,
+                error_category="database",
+            ),
         )
     )
 
-    return (
-        TelegramReadinessRuntime(
-            service
-        )
-        .evaluate()
-    )
+    return TelegramReadinessRuntime(service).evaluate()
 
 
 def decode(
     response,
 ):
-    return json.loads(
-        response.body
-    )
+    return json.loads(response.body)
 
 
 def test_healthy_response_is_200():
-    response = (
-        create_runtime_http_response(
-            runtime_result()
-        )
-    )
+    response = create_runtime_http_response(runtime_result())
 
-    payload = decode(
-        response
-    )
+    payload = decode(response)
 
     assert response.status_code == 200
 
-    assert (
-        response.content_type
-        == TELEGRAM_OPERATIONAL_JSON_CONTENT_TYPE
-    )
+    assert response.content_type == TELEGRAM_OPERATIONAL_JSON_CONTENT_TYPE
 
-    assert (
-        payload["schema_version"]
-        == TELEGRAM_OPERATIONAL_SCHEMA_VERSION
-    )
+    assert payload["schema_version"] == TELEGRAM_OPERATIONAL_SCHEMA_VERSION
 
-    assert payload[
-        "status"
-    ] == "healthy"
+    assert payload["status"] == "healthy"
 
-    assert payload[
-        "ready"
-    ] is True
+    assert payload["ready"] is True
 
 
 def test_degraded_response_is_200():
-    response = (
-        create_runtime_http_response(
-            runtime_result(
-                passed=False,
-                severity="optional",
-            )
+    response = create_runtime_http_response(
+        runtime_result(
+            passed=False,
+            severity="optional",
         )
     )
 
-    payload = decode(
-        response
-    )
+    payload = decode(response)
 
     assert response.status_code == 200
 
-    assert payload[
-        "status"
-    ] == "degraded"
+    assert payload["status"] == "degraded"
 
-    assert payload[
-        "ready"
-    ] is True
+    assert payload["ready"] is True
 
 
 def test_unready_response_is_503():
-    response = (
-        create_runtime_http_response(
-            runtime_result(
-                passed=False,
-            )
+    response = create_runtime_http_response(
+        runtime_result(
+            passed=False,
         )
     )
 
-    payload = decode(
-        response
-    )
+    payload = decode(response)
 
     assert response.status_code == 503
 
-    assert payload[
-        "status"
-    ] == "unready"
+    assert payload["status"] == "unready"
 
-    assert payload[
-        "ready"
-    ] is False
+    assert payload["ready"] is False
 
 
 def test_public_response_has_no_checks():
-    response = (
-        create_runtime_http_response(
-            runtime_result()
-        )
-    )
+    response = create_runtime_http_response(runtime_result())
 
-    payload = decode(
-        response
-    )
+    payload = decode(response)
 
     assert "operational" not in payload
     assert "checks" not in payload
 
 
 def test_internal_response_contains_checks():
-    response = (
-        create_runtime_http_response(
-            runtime_result(),
-            visibility="internal",
-        )
+    response = create_runtime_http_response(
+        runtime_result(),
+        visibility="internal",
     )
 
-    payload = decode(
-        response
-    )
+    payload = decode(response)
 
-    assert (
-        payload["operational"][
-            "checks"
-        ]
-    )
+    assert payload["operational"]["checks"]
 
-    assert (
-        payload["runtime"][
-            "sequence"
-        ]
-        == 1
-    )
+    assert payload["runtime"]["sequence"] == 1
 
 
 def test_health_probe_kind():
-    response = (
-        create_runtime_http_response(
-            runtime_result(),
-            probe="health",
-        )
+    response = create_runtime_http_response(
+        runtime_result(),
+        probe="health",
     )
 
-    assert decode(
-        response
-    )["probe"] == "health"
+    assert decode(response)["probe"] == "health"
 
 
 def test_snapshot_response():
     result = runtime_result()
 
-    response = (
-        create_snapshot_http_response(
-            result.snapshot,
-            probe="health",
-            visibility="internal",
-        )
+    response = create_snapshot_http_response(
+        result.snapshot,
+        probe="health",
+        visibility="internal",
     )
 
-    payload = decode(
-        response
-    )
+    payload = decode(response)
 
     assert response.status_code == 200
-    assert payload[
-        "probe"
-    ] == "health"
+    assert payload["probe"] == "health"
 
     assert "operational" in payload
 
 
 def test_security_headers():
-    response = (
-        create_runtime_http_response(
-            runtime_result()
-        )
-    )
+    response = create_runtime_http_response(runtime_result())
+
+    assert response.headers["Cache-Control"] == "no-store"
+
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
 
     assert (
-        response.headers[
-            "Cache-Control"
-        ]
-        == "no-store"
+        response.headers["X-INNA-Schema-Version"] == TELEGRAM_OPERATIONAL_SCHEMA_VERSION
     )
 
-    assert (
-        response.headers[
-            "X-Content-Type-Options"
-        ]
-        == "nosniff"
-    )
-
-    assert (
-        response.headers[
-            "X-INNA-Schema-Version"
-        ]
-        == TELEGRAM_OPERATIONAL_SCHEMA_VERSION
-    )
-
-    assert (
-        response.headers[
-            "X-INNA-Operational-Status"
-        ]
-        == "healthy"
-    )
+    assert response.headers["X-INNA-Operational-Status"] == "healthy"
 
 
 def test_headers_are_immutable():
-    response = (
-        create_runtime_http_response(
-            runtime_result()
-        )
-    )
+    response = create_runtime_http_response(runtime_result())
 
     assert isinstance(
         response.headers,
         MappingProxyType,
     )
 
-    with pytest.raises(
-        TypeError
-    ):
-        response.headers[
-            "Cache-Control"
-        ] = "public"
+    with pytest.raises(TypeError):
+        response.headers["Cache-Control"] = "public"
 
 
 def test_json_is_deterministic():
     result = runtime_result()
 
-    first = (
-        create_runtime_http_response(
-            result,
-            visibility="internal",
-        )
+    first = create_runtime_http_response(
+        result,
+        visibility="internal",
     )
 
-    second = (
-        create_runtime_http_response(
-            result,
-            visibility="internal",
-        )
+    second = create_runtime_http_response(
+        result,
+        visibility="internal",
     )
 
     assert first.body == second.body
 
 
 def test_json_ends_with_newline():
-    response = (
-        create_runtime_http_response(
-            runtime_result()
-        )
-    )
+    response = create_runtime_http_response(runtime_result())
 
-    assert response.body.endswith(
-        "\n"
-    )
+    assert response.body.endswith("\n")
 
 
 def test_exception_text_is_not_exposed():
     def broken():
-        raise RuntimeError(
-            "postgresql://user:password@private"
-        )
+        raise RuntimeError("postgresql://user:password@private")
 
-    service = (
-        TelegramOperationalStatusService(
-            probes=(
-                CallableTelegramProbe(
-                    name="database",
-                    severity="required",
-                    check=broken,
-                    error_category="database",
-                ),
-            )
+    service = TelegramOperationalStatusService(
+        probes=(
+            CallableTelegramProbe(
+                name="database",
+                severity="required",
+                check=broken,
+                error_category="database",
+            ),
         )
     )
 
-    result = (
-        TelegramReadinessRuntime(
-            service
-        )
-        .evaluate()
-    )
+    result = TelegramReadinessRuntime(service).evaluate()
 
-    response = (
-        create_runtime_http_response(
-            result,
-            visibility="internal",
-        )
+    response = create_runtime_http_response(
+        result,
+        visibility="internal",
     )
 
     assert "password" not in response.body
@@ -339,30 +218,17 @@ def test_exception_text_is_not_exposed():
 
 
 def test_safe_adapter_fails_closed():
-    response = (
-        create_safe_runtime_http_response(
-            object()
-        )
-    )
+    response = create_safe_runtime_http_response(object())
 
-    payload = decode(
-        response
-    )
+    payload = decode(response)
 
     assert response.status_code == 503
 
-    assert payload[
-        "status"
-    ] == "unready"
+    assert payload["status"] == "unready"
 
-    assert payload[
-        "ready"
-    ] is False
+    assert payload["ready"] is False
 
-    assert (
-        payload["reason"]
-        == "response_serialization_failure"
-    )
+    assert payload["reason"] == "response_serialization_failure"
 
 
 def test_safe_adapter_does_not_expose_repr():
@@ -370,26 +236,13 @@ def test_safe_adapter_does_not_expose_repr():
         def __repr__(
             self,
         ):
-            return (
-                "TELEGRAM_BOT_TOKEN="
-                "private-secret"
-            )
+            return "TELEGRAM_BOT_TOKEN=private-secret"
 
-    response = (
-        create_safe_runtime_http_response(
-            PrivateObject()
-        )
-    )
+    response = create_safe_runtime_http_response(PrivateObject())
 
-    assert (
-        "private-secret"
-        not in response.body
-    )
+    assert "private-secret" not in response.body
 
-    assert (
-        "TELEGRAM_BOT_TOKEN"
-        not in response.body
-    )
+    assert "TELEGRAM_BOT_TOKEN" not in response.body
 
 
 @pytest.mark.parametrize(
@@ -404,15 +257,11 @@ def test_safe_adapter_does_not_expose_repr():
 def test_invalid_http_status(
     status_code,
 ):
-    with pytest.raises(
-        ValueError
-    ):
+    with pytest.raises(ValueError):
         TelegramOperationalHttpResponse(
             status_code=status_code,
             body="{}\n",
-            content_type=(
-                TELEGRAM_OPERATIONAL_JSON_CONTENT_TYPE
-            ),
+            content_type=(TELEGRAM_OPERATIONAL_JSON_CONTENT_TYPE),
             headers={},
         )
 
@@ -428,9 +277,7 @@ def test_invalid_http_status(
 def test_unknown_probe(
     probe,
 ):
-    with pytest.raises(
-        ValueError
-    ):
+    with pytest.raises(ValueError):
         create_runtime_http_response(
             runtime_result(),
             probe=probe,
@@ -448,9 +295,7 @@ def test_unknown_probe(
 def test_unknown_visibility(
     visibility,
 ):
-    with pytest.raises(
-        ValueError
-    ):
+    with pytest.raises(ValueError):
         create_runtime_http_response(
             runtime_result(),
             visibility=visibility,
@@ -458,26 +303,10 @@ def test_unknown_visibility(
 
 
 def test_enum_contracts():
-    assert (
-        TelegramOperationalProbeKind
-        .HEALTH.value
-        == "health"
-    )
+    assert TelegramOperationalProbeKind.HEALTH.value == "health"
 
-    assert (
-        TelegramOperationalProbeKind
-        .READINESS.value
-        == "readiness"
-    )
+    assert TelegramOperationalProbeKind.READINESS.value == "readiness"
 
-    assert (
-        TelegramOperationalVisibility
-        .PUBLIC.value
-        == "public"
-    )
+    assert TelegramOperationalVisibility.PUBLIC.value == "public"
 
-    assert (
-        TelegramOperationalVisibility
-        .INTERNAL.value
-        == "internal"
-    )
+    assert TelegramOperationalVisibility.INTERNAL.value == "internal"

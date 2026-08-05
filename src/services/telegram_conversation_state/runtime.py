@@ -30,13 +30,9 @@ from .store import (
     slots=True,
 )
 class TelegramConversationSession:
-    current: TelegramConversationState = field(
-        repr=False
-    )
+    current: TelegramConversationState = field(repr=False)
 
-    state: dict[str, Any] = field(
-        repr=False
-    )
+    state: dict[str, Any] = field(repr=False)
 
     language: str | None = None
 
@@ -53,21 +49,11 @@ class TelegramConversationSession:
             self.current,
             TelegramConversationState,
         ):
-            raise TelegramConversationStateValidationError(
-                "current inválido."
-            )
+            raise TelegramConversationStateValidationError("current inválido.")
 
-        normalized_state = (
-            normalize_telegram_state(
-                self.state
-            )
-        )
+        normalized_state = normalize_telegram_state(self.state)
 
-        normalized_language = (
-            normalize_telegram_language(
-                self.language
-            )
-        )
+        normalized_language = normalize_telegram_language(self.language)
 
         for field_name, value in (
             (
@@ -91,31 +77,21 @@ class TelegramConversationSession:
                     f"{field_name} inválido."
                 )
 
-        if (
-            self.created
-            and self.recovered_from_conflict
-        ):
+        if self.created and self.recovered_from_conflict:
             raise TelegramConversationStateValidationError(
                 "Estado de abertura inconsistente."
             )
 
-        persisted_state = (
-            self.current.to_processing_state()
-        )
+        persisted_state = self.current.to_processing_state()
 
         if normalized_state != persisted_state:
             raise TelegramConversationStateConsistencyError(
-                "Estado inicial da sessão "
-                "difere do registro persistido."
+                "Estado inicial da sessão difere do registro persistido."
             )
 
-        if (
-            normalized_language
-            != self.current.language
-        ):
+        if normalized_language != self.current.language:
             raise TelegramConversationStateConsistencyError(
-                "Idioma inicial da sessão "
-                "difere do registro persistido."
+                "Idioma inicial da sessão difere do registro persistido."
             )
 
         self.state = normalized_state
@@ -145,9 +121,7 @@ class TelegramConversationSession:
     ) -> None:
         self._require_active()
 
-        self.state = normalize_telegram_state(
-            state
-        )
+        self.state = normalize_telegram_state(state)
 
     def set_language(
         self,
@@ -155,47 +129,29 @@ class TelegramConversationSession:
     ) -> None:
         self._require_active()
 
-        self.language = (
-            normalize_telegram_language(
-                language
-            )
-        )
+        self.language = normalize_telegram_language(language)
 
     def reset_to_persisted(
         self,
     ) -> None:
         self._require_active()
 
-        self.state = (
-            self.current.to_processing_state()
-        )
+        self.state = self.current.to_processing_state()
 
-        self.language = (
-            self.current.language
-        )
+        self.language = self.current.language
 
     def is_dirty(
         self,
     ) -> bool:
         self._require_active()
 
-        normalized_state = (
-            normalize_telegram_state(
-                self.state
-            )
-        )
+        normalized_state = normalize_telegram_state(self.state)
 
-        normalized_language = (
-            normalize_telegram_language(
-                self.language
-            )
-        )
+        normalized_language = normalize_telegram_language(self.language)
 
         return (
-            normalized_state
-            != self.current.to_processing_state()
-            or normalized_language
-            != self.current.language
+            normalized_state != self.current.to_processing_state()
+            or normalized_language != self.current.language
         )
 
     def to_processing_state(
@@ -203,32 +159,20 @@ class TelegramConversationSession:
     ) -> dict[str, Any]:
         self._require_active()
 
-        return normalize_telegram_state(
-            self.state
-        )
+        return normalize_telegram_state(self.state)
 
     def to_safe_dict(
         self,
     ) -> dict[str, object]:
         return {
-            "telegram_user_id": (
-                self.telegram_user_id
-            ),
+            "telegram_user_id": (self.telegram_user_id),
             "chat_id": self.chat_id,
             "language": self.language,
-            "state_version": (
-                self.state_version
-            ),
+            "state_version": (self.state_version),
             "created": self.created,
-            "recovered_from_conflict": (
-                self.recovered_from_conflict
-            ),
+            "recovered_from_conflict": (self.recovered_from_conflict),
             "deleted": self.deleted,
-            "dirty": (
-                False
-                if self.deleted
-                else self.is_dirty()
-            ),
+            "dirty": (False if self.deleted else self.is_dirty()),
         }
 
     def _require_active(
@@ -259,9 +203,7 @@ def _session_from_record(
         state=record.to_processing_state(),
         language=record.language,
         created=created,
-        recovered_from_conflict=(
-            recovered_from_conflict
-        ),
+        recovered_from_conflict=(recovered_from_conflict),
         deleted=False,
     )
 
@@ -271,13 +213,9 @@ def _session_from_record(
     slots=True,
 )
 class TelegramConversationStateRuntime:
-    store: TelegramConversationStateStore = field(
-        repr=False
-    )
+    store: TelegramConversationStateStore = field(repr=False)
 
-    default_ttl_seconds: int = (
-        DEFAULT_STATE_TTL_SECONDS
-    )
+    default_ttl_seconds: int = DEFAULT_STATE_TTL_SECONDS
 
     def __post_init__(
         self,
@@ -286,15 +224,9 @@ class TelegramConversationStateRuntime:
             self.store,
             TelegramConversationStateStore,
         ):
-            raise TelegramConversationStateValidationError(
-                "store inválido."
-            )
+            raise TelegramConversationStateValidationError("store inválido.")
 
-        validated_ttl = (
-            validate_state_ttl_seconds(
-                self.default_ttl_seconds
-            )
-        )
+        validated_ttl = validate_state_ttl_seconds(self.default_ttl_seconds)
 
         object.__setattr__(
             self,
@@ -309,9 +241,7 @@ class TelegramConversationStateRuntime:
         if ttl_seconds is None:
             return self.default_ttl_seconds
 
-        return validate_state_ttl_seconds(
-            ttl_seconds
-        )
+        return validate_state_ttl_seconds(ttl_seconds)
 
     def load_session(
         self,
@@ -334,9 +264,7 @@ class TelegramConversationStateRuntime:
         if record is None:
             return None
 
-        return _session_from_record(
-            record
-        )
+        return _session_from_record(record)
 
     def open_session(
         self,
@@ -354,26 +282,14 @@ class TelegramConversationStateRuntime:
             chat_id,
         )
 
-        normalized_state = (
-            normalize_telegram_state(
-                initial_state
-            )
-        )
+        normalized_state = normalize_telegram_state(initial_state)
 
-        normalized_language = (
-            normalize_telegram_language(
-                language
-            )
-        )
+        normalized_language = normalize_telegram_language(language)
 
-        resolved_ttl = self._resolve_ttl(
-            ttl_seconds
-        )
+        resolved_ttl = self._resolve_ttl(ttl_seconds)
 
         result = self.store.open(
-            telegram_user_id=(
-                normalized_user_id
-            ),
+            telegram_user_id=(normalized_user_id),
             chat_id=normalized_chat_id,
             initial_state=normalized_state,
             language=normalized_language,
@@ -391,9 +307,7 @@ class TelegramConversationStateRuntime:
         return _session_from_record(
             result.record,
             created=result.created,
-            recovered_from_conflict=(
-                result.recovered_from_conflict
-            ),
+            recovered_from_conflict=(result.recovered_from_conflict),
         )
 
     def save_session(
@@ -403,40 +317,22 @@ class TelegramConversationStateRuntime:
         ttl_seconds: int | None = None,
         only_if_changed: bool = True,
     ) -> TelegramConversationSession:
-        validated_session = (
-            self._require_session(
-                session
-            )
-        )
+        validated_session = self._require_session(session)
 
         if not isinstance(
             only_if_changed,
             bool,
         ):
-            raise TelegramConversationStateValidationError(
-                "only_if_changed inválido."
-            )
+            raise TelegramConversationStateValidationError("only_if_changed inválido.")
 
-        resolved_ttl = self._resolve_ttl(
-            ttl_seconds
-        )
+        resolved_ttl = self._resolve_ttl(ttl_seconds)
 
-        if (
-            only_if_changed
-            and not validated_session.is_dirty()
-        ):
+        if only_if_changed and not validated_session.is_dirty():
             return validated_session
 
-        normalized_state = (
-            validated_session
-            .to_processing_state()
-        )
+        normalized_state = validated_session.to_processing_state()
 
-        normalized_language = (
-            normalize_telegram_language(
-                validated_session.language
-            )
-        )
+        normalized_language = normalize_telegram_language(validated_session.language)
 
         saved = self.store.save(
             current=validated_session.current,
@@ -448,29 +344,20 @@ class TelegramConversationStateRuntime:
         result = _session_from_record(
             saved,
             created=validated_session.created,
-            recovered_from_conflict=(
-                validated_session
-                .recovered_from_conflict
-            ),
+            recovered_from_conflict=(validated_session.recovered_from_conflict),
         )
 
         if (
-            result.telegram_user_id
-            != validated_session.telegram_user_id
-            or result.chat_id
-            != validated_session.chat_id
+            result.telegram_user_id != validated_session.telegram_user_id
+            or result.chat_id != validated_session.chat_id
         ):
             raise TelegramConversationStateConsistencyError(
                 "Identidade alterada durante o save."
             )
 
-        if (
-            result.state_version
-            != validated_session.state_version + 1
-        ):
+        if result.state_version != validated_session.state_version + 1:
             raise TelegramConversationStateConsistencyError(
-                "Versão alterada incorretamente "
-                "durante o save."
+                "Versão alterada incorretamente durante o save."
             )
 
         return result
@@ -479,11 +366,7 @@ class TelegramConversationStateRuntime:
         self,
         session: TelegramConversationSession,
     ) -> TelegramConversationSession | None:
-        validated_session = (
-            self._require_session(
-                session
-            )
-        )
+        validated_session = self._require_session(session)
 
         return self.load_session(
             validated_session.telegram_user_id,
@@ -494,11 +377,7 @@ class TelegramConversationStateRuntime:
         self,
         session: TelegramConversationSession,
     ) -> bool:
-        validated_session = (
-            self._require_session(
-                session
-            )
-        )
+        validated_session = self._require_session(session)
 
         deleted = self.store.delete(
             validated_session.telegram_user_id,
@@ -549,17 +428,9 @@ class TelegramConversationStateRuntime:
         self,
         limit: int = 100,
     ) -> int:
-        normalized_limit = (
-            validate_cleanup_limit(
-                limit
-            )
-        )
+        normalized_limit = validate_cleanup_limit(limit)
 
-        deleted_count = (
-            self.store.cleanup_expired(
-                normalized_limit
-            )
-        )
+        deleted_count = self.store.cleanup_expired(normalized_limit)
 
         if (
             isinstance(
@@ -571,8 +442,7 @@ class TelegramConversationStateRuntime:
                 int,
             )
             or deleted_count < 0
-            or deleted_count
-            > normalized_limit
+            or deleted_count > normalized_limit
         ):
             raise TelegramConversationStateConsistencyError(
                 "Resultado de cleanup inválido."
@@ -588,9 +458,7 @@ class TelegramConversationStateRuntime:
             session,
             TelegramConversationSession,
         ):
-            raise TelegramConversationStateValidationError(
-                "session inválida."
-            )
+            raise TelegramConversationStateValidationError("session inválida.")
 
         session._require_active()
 
@@ -599,19 +467,11 @@ class TelegramConversationStateRuntime:
 
 def create_postgres_telegram_conversation_state_runtime(
     *,
-    default_ttl_seconds: int = (
-        DEFAULT_STATE_TTL_SECONDS
-    ),
+    default_ttl_seconds: int = (DEFAULT_STATE_TTL_SECONDS),
 ) -> TelegramConversationStateRuntime:
-    validated_ttl = (
-        validate_state_ttl_seconds(
-            default_ttl_seconds
-        )
-    )
+    validated_ttl = validate_state_ttl_seconds(default_ttl_seconds)
 
-    store = (
-        PostgresTelegramConversationStateStore()
-    )
+    store = PostgresTelegramConversationStateStore()
 
     return TelegramConversationStateRuntime(
         store=store,

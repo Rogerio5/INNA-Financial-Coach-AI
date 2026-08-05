@@ -161,8 +161,7 @@ def to_json_compatible(
         ]
 
     raise EvaluationReportSerializationError(
-        "Tipo não suportado na serialização: "
-        f"{type(value).__name__}."
+        f"Tipo não suportado na serialização: {type(value).__name__}."
     )
 
 
@@ -179,9 +178,7 @@ def build_external_run_reference(
     normalized = batch_id.strip()
 
     if not normalized:
-        raise ValueError(
-            "batch_id não pode ser vazio."
-        )
+        raise ValueError("batch_id não pode ser vazio.")
 
     digest = blake2s(
         normalized.encode("utf-8"),
@@ -202,9 +199,7 @@ def build_external_generated_date(
     """
 
     if value.tzinfo is None:
-        raise ValueError(
-            "A data de execução precisa possuir timezone."
-        )
+        raise ValueError("A data de execução precisa possuir timezone.")
 
     return value.date().isoformat()
 
@@ -221,27 +216,17 @@ def _safe_external_batch_metadata(
 
     safe: dict[str, Any] = {}
 
-    production_evaluation = metadata.get(
-        "production_evaluation"
-    )
+    production_evaluation = metadata.get("production_evaluation")
 
     if isinstance(production_evaluation, bool):
-        safe["production_evaluation"] = (
-            production_evaluation
-        )
+        safe["production_evaluation"] = production_evaluation
 
-    production_execution = metadata.get(
-        "production_execution"
-    )
+    production_execution = metadata.get("production_execution")
 
     if isinstance(production_execution, bool):
-        safe["production_execution"] = (
-            production_execution
-        )
+        safe["production_execution"] = production_execution
 
-    official_case_count = metadata.get(
-        "official_case_count"
-    )
+    official_case_count = metadata.get("official_case_count")
 
     if (
         isinstance(official_case_count, int)
@@ -251,9 +236,7 @@ def _safe_external_batch_metadata(
         )
         and official_case_count >= 0
     ):
-        safe["official_case_count"] = (
-            official_case_count
-        )
+        safe["official_case_count"] = official_case_count
 
     return safe
 
@@ -340,16 +323,12 @@ def _validate_external_report_projection(
         "cases",
     }
 
-    missing_keys = (
-        required_top_level_keys
-        - set(payload)
-    )
+    missing_keys = required_top_level_keys - set(payload)
 
     if missing_keys:
         raise EvaluationReportSerializationError(
             "A projeção externa não contém todos os "
-            "campos obrigatórios: "
-            + ", ".join(sorted(missing_keys))
+            "campos obrigatórios: " + ", ".join(sorted(missing_keys))
         )
 
     batch_payload = payload.get("batch")
@@ -408,23 +387,14 @@ def _validate_external_report_projection(
             for key, item in value.items():
                 normalized_key = str(key)
 
-                normalized_key_folded = (
-                    normalized_key.strip().casefold()
-                )
+                normalized_key_folded = normalized_key.strip().casefold()
 
-                if (
-                    normalized_key_folded
-                    in forbidden_serialized_keys
-                ):
+                if normalized_key_folded in forbidden_serialized_keys:
                     raise EvaluationReportSerializationError(
-                        "Campo proibido na projeção externa: "
-                        f"{path}.{normalized_key}"
+                        f"Campo proibido na projeção externa: {path}.{normalized_key}"
                     )
 
-                if (
-                    normalized_key_folded
-                    in forbidden_secret_keys
-                ):
+                if normalized_key_folded in forbidden_secret_keys:
                     raise EvaluationReportSerializationError(
                         "Possível campo de segredo na "
                         "projeção externa: "
@@ -485,12 +455,8 @@ def _safe_external_rag_triad(
         "aggregate_score": triad.aggregate_score,
         "passed": triad.passed,
         "is_complete": triad.is_complete,
-        "missing_metric_ids": list(
-            triad.missing_metric_ids
-        ),
-        "failing_metric_ids": list(
-            triad.failing_metric_ids
-        ),
+        "missing_metric_ids": list(triad.missing_metric_ids),
+        "failing_metric_ids": list(triad.failing_metric_ids),
         "axes": [
             {
                 "metric_id": axis.metric_id,
@@ -520,15 +486,11 @@ def _safe_external_case_report(
         "case_id": case_result.case_id,
         "category": case_result.category,
         "status": case_result.status.value,
-        "has_evaluation": (
-            case_result.evaluation is not None
-        ),
+        "has_evaluation": (case_result.evaluation is not None),
         "error_type": case_result.error_type,
     }
 
-    triad_payload = _safe_external_rag_triad(
-        case_result.evaluation
-    )
+    triad_payload = _safe_external_rag_triad(case_result.evaluation)
 
     if triad_payload is not None:
         payload["rag_triad"] = triad_payload
@@ -547,14 +509,11 @@ def _internal_case_report(
     existir, sem alterar casos não RAG.
     """
 
-    payload = to_json_compatible(
-        case_result
-    )
+    payload = to_json_compatible(case_result)
 
     if not isinstance(payload, dict):
         raise EvaluationReportSerializationError(
-            "O resultado do caso não pôde ser "
-            "serializado como objeto."
+            "O resultado do caso não pôde ser serializado como objeto."
         )
 
     evaluation = case_result.evaluation
@@ -562,31 +521,22 @@ def _internal_case_report(
     if evaluation is None:
         return payload
 
-    triad_payload = (
-        evaluation.rag_triad_payload
-    )
+    triad_payload = evaluation.rag_triad_payload
 
     if triad_payload is None:
         return payload
 
-    evaluation_payload = payload.get(
-        "evaluation"
-    )
+    evaluation_payload = payload.get("evaluation")
 
     if not isinstance(
         evaluation_payload,
         dict,
     ):
         raise EvaluationReportSerializationError(
-            "A avaliação interna do caso possui "
-            "estrutura inválida."
+            "A avaliação interna do caso possui estrutura inválida."
         )
 
-    evaluation_payload["rag_triad"] = (
-        to_json_compatible(
-            triad_payload
-        )
-    )
+    evaluation_payload["rag_triad"] = to_json_compatible(triad_payload)
 
     return payload
 
@@ -612,60 +562,31 @@ def build_batch_report(
     if include_case_details:
         if sanitize:
             cases = [
-                _safe_external_case_report(
-                    case_result
-                )
-                for case_result
-                in batch.case_results
+                _safe_external_case_report(case_result)
+                for case_result in batch.case_results
             ]
         else:
             cases = [
-                _internal_case_report(
-                    case_result
-                )
-                for case_result
-                in batch.case_results
+                _internal_case_report(case_result) for case_result in batch.case_results
             ]
 
     payload: dict[str, Any] = {
         "schema_version": REPORT_SCHEMA_VERSION,
         "report_type": "inna-evaluation-batch",
         "generated_at": (
-            None
-            if sanitize
-            else datetime.now(
-                batch.started_at.tzinfo
-            ).isoformat()
+            None if sanitize else datetime.now(batch.started_at.tzinfo).isoformat()
         ),
         "batch": {
-            "batch_id": (
-                None
-                if sanitize
-                else batch.batch_id
-            ),
+            "batch_id": (None if sanitize else batch.batch_id),
             "status": batch.status.value,
-            "started_at": (
-                None
-                if sanitize
-                else batch.started_at.isoformat()
-            ),
-            "finished_at": (
-                None
-                if sanitize
-                else batch.finished_at.isoformat()
-            ),
+            "started_at": (None if sanitize else batch.started_at.isoformat()),
+            "finished_at": (None if sanitize else batch.finished_at.isoformat()),
             "duration_ms": batch.duration_ms,
-            "total_estimated_cost": (
-                batch.total_estimated_cost
-            ),
+            "total_estimated_cost": (batch.total_estimated_cost),
             "metadata": (
-                _safe_external_batch_metadata(
-                    batch.metadata
-                )
+                _safe_external_batch_metadata(batch.metadata)
                 if sanitize
-                else to_json_compatible(
-                    batch.metadata
-                )
+                else to_json_compatible(batch.metadata)
             ),
         },
         "summary": {
@@ -676,78 +597,44 @@ def build_batch_report(
             "error_cases": batch.error_cases,
             "pass_rate": batch.pass_rate,
         },
-        "datasets": to_json_compatible(
-            batch.dataset_summaries
-        ),
-        "categories": to_json_compatible(
-            batch.category_summaries
-        ),
-        "metrics": to_json_compatible(
-            batch.metric_summaries
-        ),
+        "datasets": to_json_compatible(batch.dataset_summaries),
+        "categories": to_json_compatible(batch.category_summaries),
+        "metrics": to_json_compatible(batch.metric_summaries),
         "cases": cases,
     }
 
     if quality_gate is not None:
         payload["quality_gate"] = (
-            _safe_external_quality_gate(
-                quality_gate
-            )
+            _safe_external_quality_gate(quality_gate)
             if sanitize
-            else to_json_compatible(
-                quality_gate
-            )
+            else to_json_compatible(quality_gate)
         )
 
     if sanitize:
-        sanitized = (
-            _validate_external_report_projection(
-                payload
-            )
-        )
+        sanitized = _validate_external_report_projection(payload)
 
-        run_reference = (
-            build_external_run_reference(
-                batch.batch_id
-            )
-        )
+        run_reference = build_external_run_reference(batch.batch_id)
 
-        generated_date = (
-            build_external_generated_date(
-                batch.started_at
-            )
-        )
+        generated_date = build_external_generated_date(batch.started_at)
 
-        sanitized["run_reference"] = (
-            run_reference
-        )
-        sanitized["generated_date"] = (
-            generated_date
-        )
+        sanitized["run_reference"] = run_reference
+        sanitized["generated_date"] = generated_date
 
-        sanitized_batch = sanitized.get(
-            "batch"
-        )
+        sanitized_batch = sanitized.get("batch")
 
         if isinstance(
             sanitized_batch,
             dict,
         ):
-            sanitized_batch[
-                "run_reference"
-            ] = run_reference
+            sanitized_batch["run_reference"] = run_reference
 
-        sanitized_gate = sanitized.get(
-            "quality_gate"
-        )
+        sanitized_gate = sanitized.get("quality_gate")
 
         if isinstance(
             sanitized_gate,
             dict,
         ):
-            sanitized_gate[
-                "run_reference"
-            ] = run_reference
+            sanitized_gate["run_reference"] = run_reference
 
         return sanitized
 
@@ -796,24 +683,17 @@ def build_report_filename(
         default="inna-evaluation",
     )
 
-    timestamp = batch.started_at.strftime(
-        "%Y%m%dT%H%M%SZ"
-    )
+    timestamp = batch.started_at.strftime("%Y%m%dT%H%M%SZ")
 
     batch_fragment = batch.batch_id[:12]
 
-    return (
-        f"{safe_prefix}-{timestamp}-"
-        f"{batch_fragment}.json"
-    )
+    return f"{safe_prefix}-{timestamp}-{batch_fragment}.json"
 
 
 def write_batch_report(
     batch: BatchRunResult,
     *,
-    output_directory: str | Path = (
-        "artifacts/evaluations"
-    ),
+    output_directory: str | Path = ("artifacts/evaluations"),
     quality_gate: Any | None = None,
     sanitize: bool = True,
     include_case_details: bool = True,
@@ -829,8 +709,7 @@ def write_batch_report(
         )
     except OSError as exception:
         raise EvaluationReportWriteError(
-            "Não foi possível criar o diretório "
-            "dos relatórios."
+            "Não foi possível criar o diretório dos relatórios."
         ) from exception
 
     resolved_filename = (
@@ -844,13 +723,9 @@ def write_batch_report(
     )
 
     if not resolved_filename.endswith(".json"):
-        resolved_filename = (
-            f"{resolved_filename}.json"
-        )
+        resolved_filename = f"{resolved_filename}.json"
 
-    destination = (
-        directory / resolved_filename
-    )
+    destination = directory / resolved_filename
 
     content = batch_report_to_json(
         batch,
@@ -860,9 +735,7 @@ def write_batch_report(
         indent=indent,
     )
 
-    temporary = destination.with_suffix(
-        destination.suffix + ".tmp"
-    )
+    temporary = destination.with_suffix(destination.suffix + ".tmp")
 
     try:
         temporary.write_text(
@@ -873,15 +746,12 @@ def write_batch_report(
         temporary.replace(destination)
     except OSError as exception:
         try:
-            temporary.unlink(
-                missing_ok=True
-            )
+            temporary.unlink(missing_ok=True)
         except OSError:
             pass
 
         raise EvaluationReportWriteError(
-            "Não foi possível gravar o relatório "
-            "de avaliação."
+            "Não foi possível gravar o relatório de avaliação."
         ) from exception
 
     return destination

@@ -12,14 +12,10 @@ from pydantic import (
 )
 
 
-IDEMPOTENCY_KEY_PATTERN = (
-    r"^[A-Za-z0-9._:-]{16,160}$"
-)
+IDEMPOTENCY_KEY_PATTERN = r"^[A-Za-z0-9._:-]{16,160}$"
 
 
-class FinancialDiagnosisRecord(
-    BaseModel
-):
+class FinancialDiagnosisRecord(BaseModel):
     """
     Conteúdo financeiro validado que poderá ser
     persistido.
@@ -82,10 +78,8 @@ class FinancialDiagnosisRecord(
 
     saldo_estimado: float
 
-    comprometimento_renda_percentual: float = (
-        Field(
-            ge=0,
-        )
+    comprometimento_renda_percentual: float = Field(
+        ge=0,
     )
 
     meses_reserva_estimados: float = Field(
@@ -122,8 +116,7 @@ class FinancialDiagnosisRecord(
         value: str,
     ) -> str:
         return (
-            value
-            .strip()
+            value.strip()
             .lower()
             .replace(
                 "-",
@@ -140,11 +133,7 @@ class FinancialDiagnosisRecord(
         cls,
         value: str,
     ) -> str:
-        return (
-            value
-            .strip()
-            .upper()
-        )
+        return value.strip().upper()
 
     def canonical_payload(
         self,
@@ -176,16 +165,10 @@ class FinancialDiagnosisRecord(
             allow_nan=False,
         )
 
-        return hashlib.sha256(
-            canonical_json.encode(
-                "utf-8"
-            )
-        ).hexdigest()
+        return hashlib.sha256(canonical_json.encode("utf-8")).hexdigest()
 
 
-class TrustedDiagnosisPersistenceContext(
-    BaseModel
-):
+class TrustedDiagnosisPersistenceContext(BaseModel):
     """
     Contexto interno proveniente de identidade
     confiável.
@@ -212,9 +195,7 @@ class TrustedDiagnosisPersistenceContext(
     )
 
 
-class FinancialDiagnosisPersistenceCommand(
-    BaseModel
-):
+class FinancialDiagnosisPersistenceCommand(BaseModel):
     """
     Comando interno completo entregue futuramente
     ao serviço de persistência.
@@ -232,24 +213,15 @@ class FinancialDiagnosisPersistenceCommand(
     def request_fingerprint(
         self,
     ) -> str:
-        return (
-            self.diagnosis
-            .request_fingerprint()
-        )
+        return self.diagnosis.request_fingerprint()
 
     def to_repository_payload(
         self,
     ) -> dict[str, Any]:
         return {
-            "usuario_id": (
-                self.context.usuario_id
-            ),
-            "idempotency_key": (
-                self.context.idempotency_key
-            ),
-            "request_fingerprint": (
-                self.request_fingerprint
-            ),
+            "usuario_id": (self.context.usuario_id),
+            "idempotency_key": (self.context.idempotency_key),
+            "request_fingerprint": (self.request_fingerprint),
             **self.diagnosis.model_dump(
                 mode="python",
                 exclude_none=False,

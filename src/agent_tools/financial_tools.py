@@ -29,24 +29,18 @@ from src.tools.budget_tool import (
 )
 
 
-FINANCIAL_DIAGNOSIS_TOOL_NAME = (
-    "calcular_diagnostico_financeiro"
-)
+FINANCIAL_DIAGNOSIS_TOOL_NAME = "calcular_diagnostico_financeiro"
 
 MAX_MONETARY_VALUE = 1_000_000_000_000.0
 
 
-class FinancialToolInvariantError(
-    RuntimeError
-):
+class FinancialToolInvariantError(RuntimeError):
     """
     Indica divergência entre os motores determinísticos.
     """
 
 
-class CalcularDiagnosticoFinanceiroInput(
-    BaseModel
-):
+class CalcularDiagnosticoFinanceiroInput(BaseModel):
     """
     Dados financeiros validados antes do cálculo.
     """
@@ -113,14 +107,10 @@ class CalcularDiagnosticoFinanceiroInput(
         cls,
         value,
     ) -> str:
-        return str(
-            value or "BRL"
-        ).strip().upper()
+        return str(value or "BRL").strip().upper()
 
 
-class CalcularDiagnosticoFinanceiroOutput(
-    BaseModel
-):
+class CalcularDiagnosticoFinanceiroOutput(BaseModel):
     """
     Resultado técnico e determinístico.
 
@@ -174,9 +164,7 @@ class CalcularDiagnosticoFinanceiroOutput(
     parcelas_adicionais_consideradas: float
     base_calculo: str
 
-    versao_regra: str = (
-        "financial_engine_v1+budget_tool_v1"
-    )
+    versao_regra: str = "financial_engine_v1+budget_tool_v1"
 
 
 def executar_calculo_diagnostico_financeiro(
@@ -196,85 +184,52 @@ def executar_calculo_diagnostico_financeiro(
     """
     del context
 
-    gastos_mensais = (
-        payload.gastos_fixos
-        + payload.gastos_variaveis
-    )
+    gastos_mensais = payload.gastos_fixos + payload.gastos_variaveis
 
     orcamento = analisar_orcamento(
         renda_mensal=payload.renda_mensal,
         gastos_mensais=gastos_mensais,
-        dividas_mensais=(
-            payload.dividas_mensais
-        ),
-        gastos_incluem_dividas=(
-            payload.gastos_incluem_dividas
-        ),
+        dividas_mensais=(payload.dividas_mensais),
+        gastos_incluem_dividas=(payload.gastos_incluem_dividas),
     )
 
     # Quando os gastos já incluem dívidas, o motor de
     # diagnóstico recebe dívida zero para não duplicá-la.
     dividas_para_diagnostico = (
-        0.0
-        if payload.gastos_incluem_dividas
-        else payload.dividas_mensais
+        0.0 if payload.gastos_incluem_dividas else payload.dividas_mensais
     )
 
-    diagnostico = build_financial_diagnosis({
-        "renda_mensal": (
-            payload.renda_mensal
-        ),
-        "gastos_fixos": (
-            payload.gastos_fixos
-        ),
-        "gastos_variaveis": (
-            payload.gastos_variaveis
-        ),
-        "dividas_mensais": (
-            dividas_para_diagnostico
-        ),
-        "reserva_atual": (
-            payload.reserva_atual
-        ),
-    })
-
-    saldo_orcamento = float(
-        orcamento["saldo_mensal"]
+    diagnostico = build_financial_diagnosis(
+        {
+            "renda_mensal": (payload.renda_mensal),
+            "gastos_fixos": (payload.gastos_fixos),
+            "gastos_variaveis": (payload.gastos_variaveis),
+            "dividas_mensais": (dividas_para_diagnostico),
+            "reserva_atual": (payload.reserva_atual),
+        }
     )
 
-    saldo_diagnostico = float(
-        diagnostico["saldo_estimado"]
-    )
+    saldo_orcamento = float(orcamento["saldo_mensal"])
+
+    saldo_diagnostico = float(diagnostico["saldo_estimado"])
 
     if not isclose(
         saldo_orcamento,
         saldo_diagnostico,
         abs_tol=0.01,
     ):
-        raise FinancialToolInvariantError(
-            "financial_balance_mismatch"
-        )
+        raise FinancialToolInvariantError("financial_balance_mismatch")
 
-    compromisso_orcamento = float(
-        orcamento[
-            "renda_comprometida_percentual"
-        ]
-    )
+    compromisso_orcamento = float(orcamento["renda_comprometida_percentual"])
 
-    compromisso_diagnostico = float(
-        diagnostico[
-            "comprometimento_renda_percentual"
-        ]
-    )
+    compromisso_diagnostico = float(diagnostico["comprometimento_renda_percentual"])
 
     if not isclose(
         compromisso_orcamento,
         compromisso_diagnostico,
         abs_tol=0.01,
     ):
-        raise FinancialToolInvariantError(
-            "financial_commitment_mismatch"
-        )
+        raise FinancialToolInvariantError("financial_commitment_mismatch")
 
     return CalcularDiagnosticoFinanceiroOutput(
         renda_mensal=round(
@@ -299,45 +254,19 @@ def executar_calculo_diagnostico_financeiro(
         ),
         moeda=payload.moeda,
         idioma=payload.idioma,
-        gastos_incluem_dividas=(
-            payload.gastos_incluem_dividas
-        ),
-        despesas_totais=float(
-            orcamento["despesas_totais"]
-        ),
+        gastos_incluem_dividas=(payload.gastos_incluem_dividas),
+        despesas_totais=float(orcamento["despesas_totais"]),
         saldo_estimado=saldo_diagnostico,
-        comprometimento_renda_percentual=(
-            compromisso_diagnostico
-        ),
-        meses_reserva_estimados=float(
-            diagnostico[
-                "meses_reserva_estimados"
-            ]
-        ),
-        score_financeiro=int(
-            diagnostico[
-                "score_financeiro"
-            ]
-        ),
-        nivel_risco=str(
-            diagnostico["nivel_risco"]
-        ),
-        situacao=str(
-            orcamento["situacao"]
-        ),
-        tem_saldo_positivo=bool(
-            orcamento[
-                "tem_saldo_positivo"
-            ]
-        ),
+        comprometimento_renda_percentual=(compromisso_diagnostico),
+        meses_reserva_estimados=float(diagnostico["meses_reserva_estimados"]),
+        score_financeiro=int(diagnostico["score_financeiro"]),
+        nivel_risco=str(diagnostico["nivel_risco"]),
+        situacao=str(orcamento["situacao"]),
+        tem_saldo_positivo=bool(orcamento["tem_saldo_positivo"]),
         parcelas_adicionais_consideradas=float(
-            orcamento[
-                "parcelas_adicionais_consideradas"
-            ]
+            orcamento["parcelas_adicionais_consideradas"]
         ),
-        base_calculo=str(
-            orcamento["base_calculo"]
-        ),
+        base_calculo=str(orcamento["base_calculo"]),
     )
 
 
@@ -349,36 +278,32 @@ def criar_definicao_calcular_diagnostico_financeiro(
     Cria a definição registrada da ferramenta.
     """
     return ToolDefinition(
-        name=(
-            FINANCIAL_DIAGNOSIS_TOOL_NAME
-        ),
+        name=(FINANCIAL_DIAGNOSIS_TOOL_NAME),
         description=(
             "Calcula de forma determinística "
             "despesas totais, saldo mensal, "
             "comprometimento da renda, reserva, "
             "score e risco financeiro."
         ),
-        input_model=(
-            CalcularDiagnosticoFinanceiroInput
+        input_model=(CalcularDiagnosticoFinanceiroInput),
+        output_model=(CalcularDiagnosticoFinanceiroOutput),
+        handler=(executar_calculo_diagnostico_financeiro),
+        allowed_agents=frozenset(
+            {
+                "financial_agent",
+            }
         ),
-        output_model=(
-            CalcularDiagnosticoFinanceiroOutput
-        ),
-        handler=(
-            executar_calculo_diagnostico_financeiro
-        ),
-        allowed_agents=frozenset({
-            "financial_agent",
-        }),
         timeout_seconds=timeout_seconds,
         idempotent=True,
         sensitive_output=True,
-        tags=frozenset({
-            "financial",
-            "deterministic",
-            "calculation",
-            "read_only",
-        }),
+        tags=frozenset(
+            {
+                "financial",
+                "deterministic",
+                "calculation",
+                "read_only",
+            }
+        ),
     )
 
 

@@ -22,11 +22,7 @@ def test_legacy_global_state_attributes_do_not_exist():
 
 
 def test_webhook_source_has_no_legacy_global_references():
-    target = (
-        ROOT
-        / "api"
-        / "telegram_webhook.py"
-    )
+    target = ROOT / "api" / "telegram_webhook.py"
 
     source = target.read_text(
         encoding="utf-8",
@@ -40,17 +36,13 @@ def test_webhook_source_has_no_legacy_global_references():
     violations = []
 
     for node in ast.walk(tree):
-        if (
-            isinstance(
-                node,
-                ast.Name,
-            )
-            and node.id
-            in {
-                "USER_SESSIONS",
-                "USER_LAST_LANG",
-            }
-        ):
+        if isinstance(
+            node,
+            ast.Name,
+        ) and node.id in {
+            "USER_SESSIONS",
+            "USER_LAST_LANG",
+        }:
             violations.append(
                 (
                     node.id,
@@ -62,11 +54,7 @@ def test_webhook_source_has_no_legacy_global_references():
 
 
 def test_private_core_has_no_optional_bridge_branch():
-    target = (
-        ROOT
-        / "api"
-        / "telegram_webhook.py"
-    )
+    target = ROOT / "api" / "telegram_webhook.py"
 
     source = target.read_text(
         encoding="utf-8",
@@ -87,8 +75,7 @@ def test_private_core_has_no_optional_bridge_branch():
                 ast.AsyncFunctionDef,
             ),
         )
-        and node.name
-        == "_process_telegram_update_core"
+        and node.name == "_process_telegram_update_core"
     )
 
     conditions = []
@@ -101,17 +88,13 @@ def test_private_core_has_no_optional_bridge_branch():
             continue
 
         try:
-            condition = ast.unparse(
-                node.test
-            )
+            condition = ast.unparse(node.test)
         except Exception:
             condition = ""
 
         if (
-            "conversation_bridge is not None"
-            in condition
-            or "conversation_bridge is None"
-            in condition
+            "conversation_bridge is not None" in condition
+            or "conversation_bridge is None" in condition
         ):
             conditions.append(
                 (
@@ -121,12 +104,7 @@ def test_private_core_has_no_optional_bridge_branch():
             )
 
     # A validação inicial explícita contra None ainda é permitida.
-    allowed = [
-        item
-        for item in conditions
-        if item[1]
-        == "conversation_bridge is None"
-    ]
+    allowed = [item for item in conditions if item[1] == "conversation_bridge is None"]
 
     assert len(allowed) == 1
     assert len(conditions) == 1

@@ -109,9 +109,7 @@ class OfflineBenchmarkResult:
             if summary.profile is profile:
                 return summary
 
-        raise KeyError(
-            f"Perfil não encontrado: {profile}"
-        )
+        raise KeyError(f"Perfil não encontrado: {profile}")
 
 
 ExecutionFactory = Callable[
@@ -123,27 +121,19 @@ ExecutionFactory = Callable[
 def _join_non_empty(
     values: Sequence[str],
 ) -> str:
-    return " ".join(
-        value.strip()
-        for value in values
-        if value.strip()
-    ).strip()
+    return " ".join(value.strip() for value in values if value.strip()).strip()
 
 
 def _expected_decision(
     case: AgenticBenchmarkCase,
 ) -> ActualGatewayDecision:
-    return ActualGatewayDecision(
-        case.expectations.gateway_decision.value
-    )
+    return ActualGatewayDecision(case.expectations.gateway_decision.value)
 
 
 def _expected_security(
     case: AgenticBenchmarkCase,
 ) -> ActualSecurityOutcome:
-    return ActualSecurityOutcome(
-        case.expectations.security_outcome.value
-    )
+    return ActualSecurityOutcome(case.expectations.security_outcome.value)
 
 
 def _status_for_candidate(
@@ -163,13 +153,9 @@ def _status_for_candidate(
 def _candidate_answer(
     case: AgenticBenchmarkCase,
 ) -> str:
-    required_terms = _join_non_empty(
-        case.expectations.required_terms
-    )
+    required_terms = _join_non_empty(case.expectations.required_terms)
 
-    context = _join_non_empty(
-        case.synthetic_contexts
-    )
+    context = _join_non_empty(case.synthetic_contexts)
 
     components = [
         case.question,
@@ -177,9 +163,7 @@ def _candidate_answer(
         context,
     ]
 
-    answer = _join_non_empty(
-        components
-    )
+    answer = _join_non_empty(components)
 
     for forbidden_term in case.expectations.forbidden_terms:
         answer = answer.replace(
@@ -187,9 +171,7 @@ def _candidate_answer(
             "[conteúdo protegido]",
         )
 
-    return answer or (
-        "Execução concluída conforme os controles definidos."
-    )
+    return answer or ("Execução concluída conforme os controles definidos.")
 
 
 def simulate_agentic_execution(
@@ -197,14 +179,8 @@ def simulate_agentic_execution(
 ) -> AgenticEvaluationResult:
     """Simula o candidato Agentic seguindo os contratos."""
 
-    evidence_contexts = (
-        case.synthetic_contexts
-        or (
-            (
-                f"Contexto sintético validado para: "
-                f"{case.question}"
-            ),
-        )
+    evidence_contexts = case.synthetic_contexts or (
+        (f"Contexto sintético validado para: {case.question}"),
     )
 
     evidences = tuple(
@@ -252,27 +228,17 @@ def simulate_agentic_execution(
     return AgenticEvaluationResult(
         case_id=case.case_id,
         question=case.question,
-        answer=_candidate_answer(
-            case
-        ),
+        answer=_candidate_answer(case),
         mode=AgenticExecutionMode.ACTIVE,
-        decision=_expected_decision(
-            case
-        ),
-        status=_status_for_candidate(
-            case
-        ),
-        security_outcome=_expected_security(
-            case
-        ),
+        decision=_expected_decision(case),
+        status=_status_for_candidate(case),
+        security_outcome=_expected_security(case),
         routes=case.expectations.routes,
         evidences=evidences,
         citations=citations,
         metrics=AgenticMetricSnapshot(),
         latency_ms=120.0,
-        fallback_used=(
-            case.expectations.expected_fallback
-        ),
+        fallback_used=(case.expectations.expected_fallback),
         trace_id=f"offline-agentic-{case.case_id}",
         raw_metadata={
             "offline": True,
@@ -290,10 +256,7 @@ def simulate_legacy_execution(
     first_context = (
         case.synthetic_contexts[0]
         if case.synthetic_contexts
-        else (
-            f"Contexto legado limitado para: "
-            f"{case.question}"
-        )
+        else (f"Contexto legado limitado para: {case.question}")
     )
 
     evidence = EvidenceRecord(
@@ -308,17 +271,14 @@ def simulate_legacy_execution(
     )
 
     expected_is_legacy = (
-        case.expectations.gateway_decision
-        is ExpectedGatewayDecision.LEGACY
+        case.expectations.gateway_decision is ExpectedGatewayDecision.LEGACY
     )
 
     decision = ActualGatewayDecision.LEGACY
 
     status = ExecutionStatus.SUCCESS
 
-    security_outcome = (
-        ActualSecurityOutcome.ALLOW
-    )
+    security_outcome = ActualSecurityOutcome.ALLOW
 
     answer = _join_non_empty(
         (
@@ -343,11 +303,7 @@ def simulate_legacy_execution(
         decision=decision,
         status=status,
         security_outcome=security_outcome,
-        routes=(
-            case.expectations.routes[:1]
-            if expected_is_legacy
-            else ()
-        ),
+        routes=(case.expectations.routes[:1] if expected_is_legacy else ()),
         evidences=(evidence,),
         citations=(),
         metrics=AgenticMetricSnapshot(),
@@ -371,9 +327,7 @@ def _execute_profile(
     executions: list[BenchmarkCaseExecution] = []
 
     for case in dataset.cases:
-        result = factory(
-            case
-        )
+        result = factory(case)
 
         report = evaluate_offline(
             case=case,
@@ -390,9 +344,7 @@ def _execute_profile(
             )
         )
 
-    return tuple(
-        executions
-    )
+    return tuple(executions)
 
 
 def _safe_average(
@@ -412,46 +364,32 @@ def _summarize_profile(
     profile: BenchmarkProfile,
     executions: Sequence[BenchmarkCaseExecution],
 ) -> BenchmarkProfileSummary:
-    passed_cases = sum(
-        execution.report.passed
-        for execution in executions
-    )
+    passed_cases = sum(execution.report.passed for execution in executions)
 
-    total_cases = len(
-        executions
-    )
+    total_cases = len(executions)
 
     category_totals: Counter[str] = Counter()
     category_passes: Counter[str] = Counter()
 
     for execution in executions:
-        category_totals[
-            execution.category
-        ] += 1
+        category_totals[execution.category] += 1
 
         if execution.report.passed:
-            category_passes[
-                execution.category
-            ] += 1
+            category_passes[execution.category] += 1
 
     category_pass_rates = {
         category: round(
-            category_passes[category]
-            / total,
+            category_passes[category] / total,
             6,
         )
-        for category, total in sorted(
-            category_totals.items()
-        )
+        for category, total in sorted(category_totals.items())
     }
 
     return BenchmarkProfileSummary(
         profile=profile,
         total_cases=total_cases,
         passed_cases=passed_cases,
-        failed_cases=(
-            total_cases - passed_cases
-        ),
+        failed_cases=(total_cases - passed_cases),
         pass_rate=round(
             passed_cases / total_cases,
             6,
@@ -459,34 +397,21 @@ def _summarize_profile(
         if total_cases
         else 0.0,
         average_score=_safe_average(
-            [
-                execution.report.overall_score
-                for execution in executions
-            ]
+            [execution.report.overall_score for execution in executions]
         ),
         average_latency_ms=_safe_average(
-            [
-                execution.result.latency_ms
-                for execution in executions
-            ]
+            [execution.result.latency_ms for execution in executions]
         ),
-        fallback_count=sum(
-            execution.result.fallback_used
-            for execution in executions
-        ),
+        fallback_count=sum(execution.result.fallback_used for execution in executions),
         rejected_count=sum(
-            execution.result.status
-            is ExecutionStatus.REJECTED
+            execution.result.status is ExecutionStatus.REJECTED
             for execution in executions
         ),
         error_count=sum(
-            execution.result.status
-            is ExecutionStatus.ERROR
-            for execution in executions
+            execution.result.status is ExecutionStatus.ERROR for execution in executions
         ),
         invalid_citation_count=sum(
-            execution.report.invalid_citation_count
-            for execution in executions
+            execution.report.invalid_citation_count for execution in executions
         ),
         category_pass_rates=category_pass_rates,
     )
@@ -499,116 +424,61 @@ def _build_comparison(
     legacy_summary: BenchmarkProfileSummary,
     agentic_summary: BenchmarkProfileSummary,
 ) -> BenchmarkComparison:
-    legacy_by_case = {
-        execution.case_id: execution
-        for execution in legacy_executions
-    }
+    legacy_by_case = {execution.case_id: execution for execution in legacy_executions}
 
-    agentic_by_case = {
-        execution.case_id: execution
-        for execution in agentic_executions
-    }
+    agentic_by_case = {execution.case_id: execution for execution in agentic_executions}
 
     improvements: list[str] = []
     regressions: list[str] = []
     unchanged_passes: list[str] = []
     unchanged_failures: list[str] = []
 
-    for case_id in sorted(
-        set(legacy_by_case)
-        | set(agentic_by_case)
-    ):
-        legacy_passed = legacy_by_case[
-            case_id
-        ].report.passed
+    for case_id in sorted(set(legacy_by_case) | set(agentic_by_case)):
+        legacy_passed = legacy_by_case[case_id].report.passed
 
-        agentic_passed = agentic_by_case[
-            case_id
-        ].report.passed
+        agentic_passed = agentic_by_case[case_id].report.passed
 
-        if (
-            not legacy_passed
-            and agentic_passed
-        ):
-            improvements.append(
-                case_id
-            )
-        elif (
-            legacy_passed
-            and not agentic_passed
-        ):
-            regressions.append(
-                case_id
-            )
-        elif (
-            legacy_passed
-            and agentic_passed
-        ):
-            unchanged_passes.append(
-                case_id
-            )
+        if not legacy_passed and agentic_passed:
+            improvements.append(case_id)
+        elif legacy_passed and not agentic_passed:
+            regressions.append(case_id)
+        elif legacy_passed and agentic_passed:
+            unchanged_passes.append(case_id)
         else:
-            unchanged_failures.append(
-                case_id
-            )
+            unchanged_failures.append(case_id)
 
     return BenchmarkComparison(
-        total_cases=len(
-            agentic_executions
-        ),
+        total_cases=len(agentic_executions),
         legacy_pass_rate=legacy_summary.pass_rate,
         agentic_pass_rate=agentic_summary.pass_rate,
         pass_rate_delta=round(
-            agentic_summary.pass_rate
-            - legacy_summary.pass_rate,
+            agentic_summary.pass_rate - legacy_summary.pass_rate,
             6,
         ),
-        legacy_average_score=(
-            legacy_summary.average_score
-        ),
-        agentic_average_score=(
-            agentic_summary.average_score
-        ),
+        legacy_average_score=(legacy_summary.average_score),
+        agentic_average_score=(agentic_summary.average_score),
         average_score_delta=round(
-            agentic_summary.average_score
-            - legacy_summary.average_score,
+            agentic_summary.average_score - legacy_summary.average_score,
             6,
         ),
-        legacy_average_latency_ms=(
-            legacy_summary.average_latency_ms
-        ),
-        agentic_average_latency_ms=(
-            agentic_summary.average_latency_ms
-        ),
+        legacy_average_latency_ms=(legacy_summary.average_latency_ms),
+        agentic_average_latency_ms=(agentic_summary.average_latency_ms),
         latency_delta_ms=round(
-            agentic_summary.average_latency_ms
-            - legacy_summary.average_latency_ms,
+            agentic_summary.average_latency_ms - legacy_summary.average_latency_ms,
             6,
         ),
-        improvements=tuple(
-            improvements
-        ),
-        regressions=tuple(
-            regressions
-        ),
-        unchanged_passes=tuple(
-            unchanged_passes
-        ),
-        unchanged_failures=tuple(
-            unchanged_failures
-        ),
+        improvements=tuple(improvements),
+        regressions=tuple(regressions),
+        unchanged_passes=tuple(unchanged_passes),
+        unchanged_failures=tuple(unchanged_failures),
     )
 
 
 def run_offline_benchmark(
     dataset: BenchmarkDataset,
     *,
-    legacy_factory: ExecutionFactory = (
-        simulate_legacy_execution
-    ),
-    agentic_factory: ExecutionFactory = (
-        simulate_agentic_execution
-    ),
+    legacy_factory: ExecutionFactory = (simulate_legacy_execution),
+    agentic_factory: ExecutionFactory = (simulate_agentic_execution),
 ) -> OfflineBenchmarkResult:
     """Executa Legacy e Agentic sobre o mesmo dataset."""
 
@@ -643,9 +513,7 @@ def run_offline_benchmark(
 
     return OfflineBenchmarkResult(
         dataset_version=dataset.version,
-        generated_at=datetime.now(
-            UTC
-        ).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         executions=(
             *legacy_executions,
             *agentic_executions,
@@ -661,10 +529,7 @@ def run_offline_benchmark(
 def _metric_mapping(
     report: OfflineEvaluationReport,
 ) -> dict[str, float]:
-    return {
-        metric.name: metric.score
-        for metric in report.metrics
-    }
+    return {metric.name: metric.score for metric in report.metrics}
 
 
 def benchmark_to_dict(
@@ -681,42 +546,18 @@ def benchmark_to_dict(
                 "case_id": execution.case_id,
                 "category": execution.category,
                 "passed": execution.report.passed,
-                "overall_score": (
-                    execution.report.overall_score
-                ),
-                "decision": (
-                    execution.result.decision.value
-                ),
-                "status": (
-                    execution.result.status.value
-                ),
-                "security_outcome": (
-                    execution.result.security_outcome.value
-                ),
-                "routes": list(
-                    execution.result.routes
-                ),
-                "evidence_count": (
-                    execution.result.evidence_count
-                ),
-                "citation_count": (
-                    execution.result.citation_count
-                ),
-                "invalid_citation_count": (
-                    execution.report.invalid_citation_count
-                ),
-                "latency_ms": (
-                    execution.result.latency_ms
-                ),
-                "fallback_used": (
-                    execution.result.fallback_used
-                ),
-                "trace_id": (
-                    execution.result.trace_id
-                ),
-                "metrics": _metric_mapping(
-                    execution.report
-                ),
+                "overall_score": (execution.report.overall_score),
+                "decision": (execution.result.decision.value),
+                "status": (execution.result.status.value),
+                "security_outcome": (execution.result.security_outcome.value),
+                "routes": list(execution.result.routes),
+                "evidence_count": (execution.result.evidence_count),
+                "citation_count": (execution.result.citation_count),
+                "invalid_citation_count": (execution.report.invalid_citation_count),
+                "latency_ms": (execution.result.latency_ms),
+                "fallback_used": (execution.result.fallback_used),
+                "trace_id": (execution.result.trace_id),
+                "metrics": _metric_mapping(execution.report),
                 "failed_findings": [
                     finding.code
                     for finding in execution.report.findings
@@ -732,37 +573,21 @@ def benchmark_to_dict(
             "failed_cases": summary.failed_cases,
             "pass_rate": summary.pass_rate,
             "average_score": summary.average_score,
-            "average_latency_ms": (
-                summary.average_latency_ms
-            ),
-            "fallback_count": (
-                summary.fallback_count
-            ),
-            "rejected_count": (
-                summary.rejected_count
-            ),
+            "average_latency_ms": (summary.average_latency_ms),
+            "fallback_count": (summary.fallback_count),
+            "rejected_count": (summary.rejected_count),
             "error_count": summary.error_count,
-            "invalid_citation_count": (
-                summary.invalid_citation_count
-            ),
-            "category_pass_rates": dict(
-                summary.category_pass_rates
-            ),
+            "invalid_citation_count": (summary.invalid_citation_count),
+            "category_pass_rates": dict(summary.category_pass_rates),
         }
         for summary in benchmark.summaries
     }
 
-    comparison = asdict(
-        benchmark.comparison
-    )
+    comparison = asdict(benchmark.comparison)
 
     return {
-        "dataset_version": (
-            benchmark.dataset_version
-        ),
-        "generated_at": (
-            benchmark.generated_at
-        ),
+        "dataset_version": (benchmark.dataset_version),
+        "generated_at": (benchmark.generated_at),
         "offline": True,
         "live_services_used": False,
         "summaries": summaries,
@@ -777,9 +602,7 @@ def write_benchmark_json(
 ) -> Path:
     """Grava relatório completo em JSON."""
 
-    output_path = Path(
-        path
-    )
+    output_path = Path(path)
 
     output_path.parent.mkdir(
         parents=True,
@@ -788,9 +611,7 @@ def write_benchmark_json(
 
     output_path.write_text(
         json.dumps(
-            benchmark_to_dict(
-                benchmark
-            ),
+            benchmark_to_dict(benchmark),
             ensure_ascii=False,
             indent=2,
             sort_keys=True,
@@ -809,9 +630,7 @@ def write_benchmark_csv(
 ) -> Path:
     """Grava execuções individuais em CSV."""
 
-    output_path = Path(
-        path
-    )
+    output_path = Path(path)
 
     output_path.parent.mkdir(
         parents=True,
@@ -854,59 +673,24 @@ def write_benchmark_csv(
         writer.writeheader()
 
         for execution in benchmark.executions:
-            metrics = _metric_mapping(
-                execution.report
-            )
+            metrics = _metric_mapping(execution.report)
 
             writer.writerow(
                 {
-                    "profile": (
-                        execution.profile.value
-                    ),
-                    "case_id": (
-                        execution.case_id
-                    ),
-                    "category": (
-                        execution.category
-                    ),
-                    "passed": (
-                        execution.report.passed
-                    ),
-                    "overall_score": (
-                        execution.report.overall_score
-                    ),
-                    "decision": (
-                        execution.result.decision.value
-                    ),
-                    "status": (
-                        execution.result.status.value
-                    ),
-                    "security_outcome": (
-                        execution.result
-                        .security_outcome.value
-                    ),
-                    "route_count": len(
-                        execution.result.routes
-                    ),
-                    "evidence_count": (
-                        execution.result
-                        .evidence_count
-                    ),
-                    "citation_count": (
-                        execution.result
-                        .citation_count
-                    ),
-                    "invalid_citation_count": (
-                        execution.report
-                        .invalid_citation_count
-                    ),
-                    "latency_ms": (
-                        execution.result.latency_ms
-                    ),
-                    "fallback_used": (
-                        execution.result
-                        .fallback_used
-                    ),
+                    "profile": (execution.profile.value),
+                    "case_id": (execution.case_id),
+                    "category": (execution.category),
+                    "passed": (execution.report.passed),
+                    "overall_score": (execution.report.overall_score),
+                    "decision": (execution.result.decision.value),
+                    "status": (execution.result.status.value),
+                    "security_outcome": (execution.result.security_outcome.value),
+                    "route_count": len(execution.result.routes),
+                    "evidence_count": (execution.result.evidence_count),
+                    "citation_count": (execution.result.citation_count),
+                    "invalid_citation_count": (execution.report.invalid_citation_count),
+                    "latency_ms": (execution.result.latency_ms),
+                    "fallback_used": (execution.result.fallback_used),
                     "citation_coverage": (
                         metrics.get(
                             "citation_coverage",
@@ -937,9 +721,7 @@ def write_benchmark_csv(
                             0.0,
                         )
                     ),
-                    "trace_id": (
-                        execution.result.trace_id
-                    ),
+                    "trace_id": (execution.result.trace_id),
                 }
             )
 
@@ -953,9 +735,7 @@ def group_failures_by_code(
 ) -> Mapping[str, tuple[str, ...]]:
     """Agrupa falhas estruturais pelo código."""
 
-    grouped: defaultdict[str, list[str]] = defaultdict(
-        list
-    )
+    grouped: defaultdict[str, list[str]] = defaultdict(list)
 
     for execution in benchmark.executions:
         if execution.profile is not profile:
@@ -963,25 +743,10 @@ def group_failures_by_code(
 
         for finding in execution.report.findings:
             if not finding.passed:
-                grouped[
-                    finding.code
-                ].append(
-                    execution.case_id
-                )
+                grouped[finding.code].append(execution.case_id)
 
         for metric in execution.report.metrics:
             if not metric.passed:
-                grouped[
-                    f"metric:{metric.name}"
-                ].append(
-                    execution.case_id
-                )
+                grouped[f"metric:{metric.name}"].append(execution.case_id)
 
-    return {
-        code: tuple(
-            case_ids
-        )
-        for code, case_ids in sorted(
-            grouped.items()
-        )
-    }
+    return {code: tuple(case_ids) for code, case_ids in sorted(grouped.items())}

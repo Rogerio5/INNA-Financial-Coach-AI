@@ -34,9 +34,7 @@ def _unique_document_ids(
         normalized_id = str(document_id).strip()
 
         if not normalized_id:
-            raise ValueError(
-                "Os identificadores de documentos nao podem ser vazios."
-            )
+            raise ValueError("Os identificadores de documentos nao podem ser vazios.")
 
         if normalized_id in seen:
             continue
@@ -88,9 +86,7 @@ def recall_at_k(
     if not relevant:
         return 0.0
 
-    retrieved_top_k = set(
-        _unique_document_ids(retrieved_document_ids)[:k]
-    )
+    retrieved_top_k = set(_unique_document_ids(retrieved_document_ids)[:k])
 
     relevant_retrieved = retrieved_top_k.intersection(relevant)
 
@@ -119,10 +115,7 @@ def precision_at_k(
 
     relevant = _relevant_set(relevant_document_ids)
 
-    relevant_retrieved = sum(
-        document_id in relevant
-        for document_id in retrieved_top_k
-    )
+    relevant_retrieved = sum(document_id in relevant for document_id in retrieved_top_k)
 
     return relevant_retrieved / len(retrieved_top_k)
 
@@ -210,16 +203,12 @@ def ndcg_at_k(
         normalized_id = str(document_id).strip()
 
         if not normalized_id:
-            raise ValueError(
-                "Os identificadores de documentos nao podem ser vazios."
-            )
+            raise ValueError("Os identificadores de documentos nao podem ser vazios.")
 
         numeric_score = float(score)
 
         if numeric_score < 0:
-            raise ValueError(
-                "Os graus de relevancia nao podem ser negativos."
-            )
+            raise ValueError("Os graus de relevancia nao podem ser negativos.")
 
         normalized_relevance[normalized_id] = numeric_score
 
@@ -229,8 +218,7 @@ def ndcg_at_k(
     retrieved_top_k = _unique_document_ids(retrieved_document_ids)[:k]
 
     actual_scores = [
-        normalized_relevance.get(document_id, 0.0)
-        for document_id in retrieved_top_k
+        normalized_relevance.get(document_id, 0.0) for document_id in retrieved_top_k
     ]
 
     ideal_scores = sorted(
@@ -284,10 +272,7 @@ def evaluate_retrieval_case(
     relevance = (
         dict(graded_relevance)
         if graded_relevance is not None
-        else {
-            document_id: 1.0
-            for document_id in relevant_document_ids
-        }
+        else {document_id: 1.0 for document_id in relevant_document_ids}
     )
 
     return RetrievalMetricsResult(

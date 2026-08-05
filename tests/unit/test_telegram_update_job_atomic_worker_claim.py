@@ -25,9 +25,7 @@ def candidate_row(
     return {
         "update_id": UPDATE_ID,
         "receipt_status": status,
-        "receipt_attempt_count": (
-            attempt_count
-        ),
+        "receipt_attempt_count": (attempt_count),
     }
 
 
@@ -71,9 +69,7 @@ class FakeCursor:
         self,
         rows,
     ):
-        self.rows = list(
-            rows
-        )
+        self.rows = list(rows)
 
         self.executions = []
 
@@ -95,9 +91,7 @@ class FakeCursor:
         if not self.rows:
             return None
 
-        return self.rows.pop(
-            0
-        )
+        return self.rows.pop(0)
 
 
 class TransactionTracker:
@@ -113,9 +107,7 @@ def install_transaction(
     monkeypatch,
     rows,
 ):
-    cursor = FakeCursor(
-        rows
-    )
+    cursor = FakeCursor(rows)
 
     tracker = TransactionTracker()
 
@@ -148,10 +140,7 @@ def install_transaction(
 
     monkeypatch.setattr(
         worker.crypto_service,
-        (
-            "generate_telegram_update_"
-            "job_lock_token"
-        ),
+        ("generate_telegram_update_job_lock_token"),
         lambda: LOCK_TOKEN,
     )
 
@@ -164,18 +153,13 @@ def claim(
     *,
     lease_seconds=120,
 ):
-    cursor, tracker = (
-        install_transaction(
-            monkeypatch,
-            rows,
-        )
+    cursor, tracker = install_transaction(
+        monkeypatch,
+        rows,
     )
 
-    lease = (
-        worker
-        .claim_next_authenticated_telegram_update_job_atomic(
-            lease_seconds=lease_seconds,
-        )
+    lease = worker.claim_next_authenticated_telegram_update_job_atomic(
+        lease_seconds=lease_seconds,
     )
 
     return lease, cursor, tracker
@@ -189,11 +173,8 @@ def business_executions(
             str(sql),
             parameters,
         )
-        for sql, parameters
-        in cursor.executions
-        if not str(sql).startswith(
-            "SET LOCAL"
-        )
+        for sql, parameters in cursor.executions
+        if not str(sql).startswith("SET LOCAL")
     ]
 
 
@@ -213,10 +194,7 @@ def test_claim_returns_worker_lease(
     assert lease.update_id == UPDATE_ID
 
     assert lease.job_status == "processing"
-    assert (
-        lease.receipt_status
-        == "processing"
-    )
+    assert lease.receipt_status == "processing"
 
     assert lease.job_attempt_count == 1
     assert lease.job_max_attempts == 5
@@ -238,26 +216,15 @@ def test_receipt_is_locked_before_job(
         ],
     )
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
     assert len(executions) == 3
 
-    assert (
-        "FOR UPDATE OF receipt SKIP LOCKED"
-        in executions[0][0]
-    )
+    assert "FOR UPDATE OF receipt SKIP LOCKED" in executions[0][0]
 
-    assert (
-        "UPDATE public.telegram_update_jobs"
-        in executions[1][0]
-    )
+    assert "UPDATE public.telegram_update_jobs" in executions[1][0]
 
-    assert (
-        "UPDATE public.telegram_update_receipts"
-        in executions[2][0]
-    )
+    assert "UPDATE public.telegram_update_receipts" in executions[2][0]
 
 
 def test_same_token_is_used_for_job_and_receipt(
@@ -272,22 +239,14 @@ def test_same_token_is_used_for_job_and_receipt(
         ],
     )
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
     job_parameters = executions[1][1]
     receipt_parameters = executions[2][1]
 
-    assert (
-        job_parameters["lock_token"]
-        == LOCK_TOKEN
-    )
+    assert job_parameters["lock_token"] == LOCK_TOKEN
 
-    assert (
-        receipt_parameters["lock_token"]
-        == LOCK_TOKEN
-    )
+    assert receipt_parameters["lock_token"] == LOCK_TOKEN
 
     assert lease.lock_token == LOCK_TOKEN
 
@@ -305,19 +264,11 @@ def test_same_lease_is_used_for_both_records(
         lease_seconds=240,
     )
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
-    assert (
-        executions[1][1]["lease_seconds"]
-        == 240
-    )
+    assert executions[1][1]["lease_seconds"] == 240
 
-    assert (
-        executions[2][1]["lease_seconds"]
-        == 240
-    )
+    assert executions[2][1]["lease_seconds"] == 240
 
 
 def test_failed_receipt_can_be_transferred(
@@ -341,10 +292,7 @@ def test_failed_receipt_can_be_transferred(
 
     assert lease is not None
     assert lease.job_attempt_count == 2
-    assert (
-        lease.receipt_attempt_count
-        == 2
-    )
+    assert lease.receipt_attempt_count == 2
 
 
 def test_no_available_job_returns_none(
@@ -389,14 +337,8 @@ def test_job_disappearing_rolls_back(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .claim_next_authenticated_telegram_update_job_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.claim_next_authenticated_telegram_update_job_atomic())
 
     assert tracker.committed == 0
     assert tracker.rolled_back == 1
@@ -414,14 +356,8 @@ def test_receipt_transfer_failure_rolls_back(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .claim_next_authenticated_telegram_update_job_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.claim_next_authenticated_telegram_update_job_atomic())
 
     assert tracker.committed == 0
     assert tracker.rolled_back == 1
@@ -441,14 +377,8 @@ def test_mismatched_update_ids_are_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .claim_next_authenticated_telegram_update_job_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.claim_next_authenticated_telegram_update_job_atomic())
 
     assert tracker.rolled_back == 1
 
@@ -467,14 +397,8 @@ def test_mismatched_ownership_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .claim_next_authenticated_telegram_update_job_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.claim_next_authenticated_telegram_update_job_atomic())
 
     assert tracker.rolled_back == 1
 
@@ -495,14 +419,8 @@ def test_receipt_attempts_cannot_trail_job(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .claim_next_authenticated_telegram_update_job_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.claim_next_authenticated_telegram_update_job_atomic())
 
     assert tracker.rolled_back == 1
 
@@ -512,9 +430,7 @@ def test_invalid_ciphertext_is_rejected(
 ):
     invalid_job = claimed_job_row()
 
-    invalid_job[
-        "payload_ciphertext"
-    ] = b"x"
+    invalid_job["payload_ciphertext"] = b"x"
 
     _, tracker = install_transaction(
         monkeypatch,
@@ -525,14 +441,8 @@ def test_invalid_ciphertext_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .claim_next_authenticated_telegram_update_job_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.claim_next_authenticated_telegram_update_job_atomic())
 
     assert tracker.rolled_back == 1
 
@@ -542,9 +452,7 @@ def test_invalid_nonce_is_rejected(
 ):
     invalid_job = claimed_job_row()
 
-    invalid_job[
-        "payload_nonce"
-    ] = b"short"
+    invalid_job["payload_nonce"] = b"short"
 
     _, tracker = install_transaction(
         monkeypatch,
@@ -555,14 +463,8 @@ def test_invalid_nonce_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .claim_next_authenticated_telegram_update_job_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.claim_next_authenticated_telegram_update_job_atomic())
 
     assert tracker.rolled_back == 1
 
@@ -587,9 +489,7 @@ def test_safe_output_hides_sensitive_values(
     assert "payload_nonce" not in safe
     assert "lock_token" not in safe
 
-    representation = repr(
-        lease
-    )
+    representation = repr(lease)
 
     assert repr(CIPHERTEXT) not in representation
     assert repr(NONCE) not in representation
@@ -603,10 +503,7 @@ def test_database_error_is_sanitized(
     def failing_cursor(
         **_kwargs,
     ):
-        raise RuntimeError(
-            "postgresql://user:"
-            "secret-password@host/database"
-        )
+        raise RuntimeError("postgresql://user:secret-password@host/database")
 
         yield
 
@@ -618,25 +515,14 @@ def test_database_error_is_sanitized(
 
     monkeypatch.setattr(
         worker.crypto_service,
-        (
-            "generate_telegram_update_"
-            "job_lock_token"
-        ),
+        ("generate_telegram_update_job_lock_token"),
         lambda: LOCK_TOKEN,
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerUnavailableError
-    ) as captured:
-        (
-            worker
-            .claim_next_authenticated_telegram_update_job_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerUnavailableError) as captured:
+        (worker.claim_next_authenticated_telegram_update_job_atomic())
 
-    message = str(
-        captured.value
-    )
+    message = str(captured.value)
 
     assert "secret-password" not in message
     assert "postgresql://" not in message
@@ -646,31 +532,18 @@ def test_token_generation_failure_is_sanitized(
     monkeypatch,
 ):
     def fail_token():
-        raise RuntimeError(
-            "sensitive entropy error"
-        )
+        raise RuntimeError("sensitive entropy error")
 
     monkeypatch.setattr(
         worker.crypto_service,
-        (
-            "generate_telegram_update_"
-            "job_lock_token"
-        ),
+        ("generate_telegram_update_job_lock_token"),
         fail_token,
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerUnavailableError
-    ) as captured:
-        (
-            worker
-            .claim_next_authenticated_telegram_update_job_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerUnavailableError) as captured:
+        (worker.claim_next_authenticated_telegram_update_job_atomic())
 
-    assert "sensitive" not in str(
-        captured.value
-    )
+    assert "sensitive" not in str(captured.value)
 
 
 @pytest.mark.parametrize(
@@ -691,62 +564,33 @@ def test_token_generation_failure_is_sanitized(
 def test_invalid_lease_is_rejected(
     value,
 ):
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerValidationError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerValidationError):
         (
-            worker
-            .claim_next_authenticated_telegram_update_job_atomic(
+            worker.claim_next_authenticated_telegram_update_job_atomic(
                 lease_seconds=value,
             )
         )
 
 
 def test_sql_contract_uses_skip_locked():
-    assert (
-        "FOR UPDATE OF receipt SKIP LOCKED"
-        in worker
-        .SQL_SELECT_CLAIMABLE_RECEIPT
-    )
+    assert "FOR UPDATE OF receipt SKIP LOCKED" in worker.SQL_SELECT_CLAIMABLE_RECEIPT
 
 
 def test_sql_contract_limits_to_one_job():
-    assert (
-        "LIMIT 1"
-        in worker
-        .SQL_SELECT_CLAIMABLE_RECEIPT
-    )
+    assert "LIMIT 1" in worker.SQL_SELECT_CLAIMABLE_RECEIPT
 
 
 def test_job_claim_is_conditional():
-    sql = (
-        worker
-        .SQL_CLAIM_JOB_BY_UPDATE_ID
-    )
+    sql = worker.SQL_CLAIM_JOB_BY_UPDATE_ID
 
-    assert (
-        "job.status = 'queued'"
-        in sql
-    )
+    assert "job.status = 'queued'" in sql
 
-    assert (
-        "job.attempt_count < job.max_attempts"
-        in sql
-    )
+    assert "job.attempt_count < job.max_attempts" in sql
 
 
 def test_receipt_transfer_accepts_failed_state():
-    assert (
-        "'failed'"
-        in worker
-        .SQL_TRANSFER_RECEIPT_TO_WORKER
-    )
+    assert "'failed'" in worker.SQL_TRANSFER_RECEIPT_TO_WORKER
 
 
 def test_receipt_attempt_count_tracks_job():
-    assert (
-        "GREATEST"
-        in worker
-        .SQL_TRANSFER_RECEIPT_TO_WORKER
-    )
+    assert "GREATEST" in worker.SQL_TRANSFER_RECEIPT_TO_WORKER

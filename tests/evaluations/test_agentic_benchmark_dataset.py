@@ -13,46 +13,28 @@ from src.evaluation.agentic_benchmark import (
     load_benchmark_dataset,
 )
 
-DATASET_PATH = (
-    Path(__file__).parent
-    / "datasets"
-    / "agentic_rag_v1.jsonl"
-)
+DATASET_PATH = Path(__file__).parent / "datasets" / "agentic_rag_v1.jsonl"
 
 
 def test_official_dataset_loads() -> None:
-    dataset = load_benchmark_dataset(
-        DATASET_PATH
-    )
+    dataset = load_benchmark_dataset(DATASET_PATH)
 
     assert dataset.version == "1.0.0"
     assert len(dataset.cases) == 24
 
 
 def test_official_dataset_has_unique_ids() -> None:
-    dataset = load_benchmark_dataset(
-        DATASET_PATH
-    )
+    dataset = load_benchmark_dataset(DATASET_PATH)
 
-    case_ids = [
-        case.case_id
-        for case in dataset.cases
-    ]
+    case_ids = [case.case_id for case in dataset.cases]
 
-    assert len(case_ids) == len(
-        set(case_ids)
-    )
+    assert len(case_ids) == len(set(case_ids))
 
 
 def test_official_dataset_covers_required_categories() -> None:
-    dataset = load_benchmark_dataset(
-        DATASET_PATH
-    )
+    dataset = load_benchmark_dataset(DATASET_PATH)
 
-    present = {
-        case.category
-        for case in dataset.cases
-    }
+    present = {case.category for case in dataset.cases}
 
     required = {
         BenchmarkCaseCategory.SIMPLE_RETRIEVAL,
@@ -73,9 +55,7 @@ def test_official_dataset_covers_required_categories() -> None:
 
 
 def test_security_cases_never_expect_unrestricted_access() -> None:
-    dataset = load_benchmark_dataset(
-        DATASET_PATH
-    )
+    dataset = load_benchmark_dataset(DATASET_PATH)
 
     protected_categories = {
         BenchmarkCaseCategory.PERMISSION,
@@ -85,9 +65,7 @@ def test_security_cases_never_expect_unrestricted_access() -> None:
     }
 
     protected_cases = [
-        case
-        for case in dataset.cases
-        if case.category in protected_categories
+        case for case in dataset.cases if case.category in protected_categories
     ]
 
     assert protected_cases
@@ -103,75 +81,47 @@ def test_security_cases_never_expect_unrestricted_access() -> None:
 
 
 def test_reject_cases_require_no_evidence() -> None:
-    dataset = load_benchmark_dataset(
-        DATASET_PATH
-    )
+    dataset = load_benchmark_dataset(DATASET_PATH)
 
     rejected = [
         case
         for case in dataset.cases
-        if (
-            case.expectations.gateway_decision
-            is ExpectedGatewayDecision.REJECT
-        )
+        if (case.expectations.gateway_decision is ExpectedGatewayDecision.REJECT)
     ]
 
     assert rejected
 
-    assert all(
-        case.thresholds.minimum_evidence_count == 0
-        for case in rejected
-    )
+    assert all(case.thresholds.minimum_evidence_count == 0 for case in rejected)
 
 
 def test_agentic_cases_require_routes() -> None:
-    dataset = load_benchmark_dataset(
-        DATASET_PATH
-    )
+    dataset = load_benchmark_dataset(DATASET_PATH)
 
     agentic_cases = [
         case
         for case in dataset.cases
-        if (
-            case.expectations.gateway_decision
-            is ExpectedGatewayDecision.AGENTIC
-        )
+        if (case.expectations.gateway_decision is ExpectedGatewayDecision.AGENTIC)
     ]
 
     assert agentic_cases
 
-    assert all(
-        case.expectations.routes
-        for case in agentic_cases
-    )
+    assert all(case.expectations.routes for case in agentic_cases)
 
 
 def test_all_cases_are_explicitly_synthetic() -> None:
-    dataset = load_benchmark_dataset(
-        DATASET_PATH
-    )
+    dataset = load_benchmark_dataset(DATASET_PATH)
+
+    assert all(case.metadata.get("synthetic") is True for case in dataset.cases)
 
     assert all(
-        case.metadata.get("synthetic") is True
-        for case in dataset.cases
-    )
-
-    assert all(
-        case.metadata.get(
-            "live_services_required"
-        )
-        is False
-        for case in dataset.cases
+        case.metadata.get("live_services_required") is False for case in dataset.cases
     )
 
 
 def test_loader_rejects_invalid_json(
     tmp_path: Path,
 ) -> None:
-    invalid_path = (
-        tmp_path
-        / "invalid.jsonl"
-    )
+    invalid_path = tmp_path / "invalid.jsonl"
 
     invalid_path.write_text(
         "{invalid-json}\n",
@@ -182,26 +132,17 @@ def test_loader_rejects_invalid_json(
         DatasetValidationError,
         match="JSON inválido",
     ):
-        load_benchmark_dataset(
-            invalid_path
-        )
+        load_benchmark_dataset(invalid_path)
 
 
 def test_loader_rejects_duplicate_ids(
     tmp_path: Path,
 ) -> None:
-    source_lines = DATASET_PATH.read_text(
-        encoding="utf-8"
-    ).splitlines()
+    source_lines = DATASET_PATH.read_text(encoding="utf-8").splitlines()
 
-    first = json.loads(
-        source_lines[0]
-    )
+    first = json.loads(source_lines[0])
 
-    duplicate_path = (
-        tmp_path
-        / "duplicate.jsonl"
-    )
+    duplicate_path = tmp_path / "duplicate.jsonl"
 
     duplicate_path.write_text(
         json.dumps(
@@ -221,6 +162,4 @@ def test_loader_rejects_duplicate_ids(
         ValueError,
         match="case_id duplicado",
     ):
-        load_benchmark_dataset(
-            duplicate_path
-        )
+        load_benchmark_dataset(duplicate_path)

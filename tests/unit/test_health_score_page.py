@@ -23,9 +23,7 @@ def test_preparar_componentes_exibicao():
         },
     }
 
-    tabela = preparar_componentes_exibicao(
-        componentes
-    )
+    tabela = preparar_componentes_exibicao(componentes)
 
     assert len(tabela) == 2
     assert "Componente" in tabela.columns
@@ -36,8 +34,6 @@ def test_preparar_componentes_exibicao():
 
 
 def test_componentes_vazios():
-    tabela = preparar_componentes_exibicao(
-        {}
-    )
+    tabela = preparar_componentes_exibicao({})
 
     assert tabela.empty

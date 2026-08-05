@@ -17,9 +17,7 @@ from src.services.telegram_observability import (
 
 
 def populated_registry():
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
     registry.increment(
         "inna_telegram_operations_total",
@@ -32,10 +30,7 @@ def populated_registry():
     )
 
     registry.observe(
-        (
-            "inna_telegram_"
-            "operation_duration_seconds"
-        ),
+        ("inna_telegram_operation_duration_seconds"),
         0.25,
         labels={
             "component": "bridge",
@@ -48,127 +43,67 @@ def populated_registry():
 
 
 def test_exports_counter_family():
-    exported = (
-        TelegramPrometheusMetricsExporter()
-        .export(
-            populated_registry().snapshot()
-        )
+    exported = TelegramPrometheusMetricsExporter().export(
+        populated_registry().snapshot()
     )
 
-    assert (
-        exported.content_type
-        == PROMETHEUS_CONTENT_TYPE
-    )
+    assert exported.content_type == PROMETHEUS_CONTENT_TYPE
 
-    assert (
-        exported.format
-        is TelegramMetricsExportFormat.PROMETHEUS
-    )
+    assert exported.format is TelegramMetricsExportFormat.PROMETHEUS
 
-    assert (
-        "# TYPE "
-        "inna_telegram_operations_total "
-        "counter"
-        in exported.body
-    )
+    assert "# TYPE inna_telegram_operations_total counter" in exported.body
 
-    assert (
-        "inna_telegram_operations_total{"
-        in exported.body
-    )
+    assert "inna_telegram_operations_total{" in exported.body
 
-    assert (
-        'component="bridge"'
-        in exported.body
-    )
+    assert 'component="bridge"' in exported.body
 
-    assert (
-        'error_category="none"'
-        in exported.body
-    )
+    assert 'error_category="none"' in exported.body
 
 
 def test_exports_histogram_family():
     body = (
-        TelegramPrometheusMetricsExporter()
-        .export(
-            populated_registry().snapshot()
-        )
-        .body
+        TelegramPrometheusMetricsExporter().export(populated_registry().snapshot()).body
     )
 
-    metric_name = (
-        "inna_telegram_"
-        "operation_duration_seconds"
-    )
+    metric_name = "inna_telegram_operation_duration_seconds"
 
-    assert (
-        f"# TYPE {metric_name} histogram"
-        in body
-    )
+    assert f"# TYPE {metric_name} histogram" in body
 
-    assert (
-        f"{metric_name}_bucket"
-        in body
-    )
+    assert f"{metric_name}_bucket" in body
 
-    assert (
-        f"{metric_name}_sum"
-        in body
-    )
+    assert f"{metric_name}_sum" in body
 
-    assert (
-        f"{metric_name}_count"
-        in body
-    )
+    assert f"{metric_name}_count" in body
 
     assert 'le="+Inf"' in body
 
 
 def test_openmetrics_ends_with_eof():
-    exported = (
-        TelegramPrometheusMetricsExporter()
-        .export(
-            populated_registry().snapshot(),
-            format="openmetrics",
-        )
+    exported = TelegramPrometheusMetricsExporter().export(
+        populated_registry().snapshot(),
+        format="openmetrics",
     )
 
-    assert (
-        exported.content_type
-        == OPENMETRICS_CONTENT_TYPE
-    )
+    assert exported.content_type == OPENMETRICS_CONTENT_TYPE
 
-    assert (
-        exported.format
-        is TelegramMetricsExportFormat.OPENMETRICS
-    )
+    assert exported.format is TelegramMetricsExportFormat.OPENMETRICS
 
-    assert exported.body.endswith(
-        "# EOF\n"
-    )
+    assert exported.body.endswith("# EOF\n")
 
 
 def test_prometheus_does_not_end_with_eof():
-    exported = (
-        TelegramPrometheusMetricsExporter()
-        .export(
-            populated_registry().snapshot(),
-            format="prometheus",
-        )
+    exported = TelegramPrometheusMetricsExporter().export(
+        populated_registry().snapshot(),
+        format="prometheus",
     )
 
-    assert not exported.body.endswith(
-        "# EOF\n"
-    )
+    assert not exported.body.endswith("# EOF\n")
 
 
 def test_output_is_deterministic():
     registry = populated_registry()
 
-    exporter = (
-        TelegramPrometheusMetricsExporter()
-    )
+    exporter = TelegramPrometheusMetricsExporter()
 
     first = exporter.export(
         registry.snapshot(),
@@ -188,28 +123,15 @@ def test_export_does_not_mutate_snapshot():
 
     snapshot = registry.snapshot()
 
-    counters_before = repr(
-        snapshot.counters
-    )
+    counters_before = repr(snapshot.counters)
 
-    histograms_before = repr(
-        snapshot.histograms
-    )
+    histograms_before = repr(snapshot.histograms)
 
-    (
-        TelegramPrometheusMetricsExporter()
-        .export(snapshot)
-    )
+    (TelegramPrometheusMetricsExporter().export(snapshot))
 
-    assert (
-        repr(snapshot.counters)
-        == counters_before
-    )
+    assert repr(snapshot.counters) == counters_before
 
-    assert (
-        repr(snapshot.histograms)
-        == histograms_before
-    )
+    assert repr(snapshot.histograms) == histograms_before
 
 
 def test_label_order_is_stable():
@@ -225,49 +147,25 @@ def test_label_order_is_stable():
         histograms={},
     )
 
-    body = (
-        TelegramPrometheusMetricsExporter()
-        .export(snapshot)
-        .body
-    )
+    body = TelegramPrometheusMetricsExporter().export(snapshot).body
 
-    assert (
-        'example_total{'
-        'a_label="a",'
-        'z_label="z"} 1'
-        in body
-    )
+    assert 'example_total{a_label="a",z_label="z"} 1' in body
 
 
 def test_series_order_is_stable():
     snapshot = SimpleNamespace(
         counters={
             "example_total": {
-                (
-                    ("outcome", "z"),
-                ): 2.0,
-                (
-                    ("outcome", "a"),
-                ): 1.0,
+                (("outcome", "z"),): 2.0,
+                (("outcome", "a"),): 1.0,
             },
         },
         histograms={},
     )
 
-    lines = (
-        TelegramPrometheusMetricsExporter()
-        .export(snapshot)
-        .body
-        .splitlines()
-    )
+    lines = TelegramPrometheusMetricsExporter().export(snapshot).body.splitlines()
 
-    sample_lines = [
-        line
-        for line in lines
-        if line.startswith(
-            "example_total{"
-        )
-    ]
+    sample_lines = [line for line in lines if line.startswith("example_total{")]
 
     assert sample_lines == [
         'example_total{outcome="a"} 1',
@@ -288,20 +186,9 @@ def test_metric_families_are_sorted():
         histograms={},
     )
 
-    body = (
-        TelegramPrometheusMetricsExporter()
-        .export(snapshot)
-        .body
-    )
+    body = TelegramPrometheusMetricsExporter().export(snapshot).body
 
-    assert (
-        body.index(
-            "# TYPE a_metric_total"
-        )
-        < body.index(
-            "# TYPE z_metric_total"
-        )
-    )
+    assert body.index("# TYPE a_metric_total") < body.index("# TYPE z_metric_total")
 
 
 def test_escapes_label_values():
@@ -319,18 +206,9 @@ def test_escapes_label_values():
         histograms={},
     )
 
-    body = (
-        TelegramPrometheusMetricsExporter()
-        .export(snapshot)
-        .body
-    )
+    body = TelegramPrometheusMetricsExporter().export(snapshot).body
 
-    assert (
-        'value="line1\\n'
-        '\\"quoted\\"'
-        '\\\\end"'
-        in body
-    )
+    assert 'value="line1\\n\\"quoted\\"\\\\end"' in body
 
 
 @pytest.mark.parametrize(
@@ -378,16 +256,9 @@ def test_formats_special_numbers(
         histograms={},
     )
 
-    body = (
-        TelegramPrometheusMetricsExporter()
-        .export(snapshot)
-        .body
-    )
+    body = TelegramPrometheusMetricsExporter().export(snapshot).body
 
-    assert (
-        f"example_total {expected}"
-        in body
-    )
+    assert f"example_total {expected}" in body
 
 
 @pytest.mark.parametrize(
@@ -411,13 +282,8 @@ def test_rejects_invalid_metric_names(
         histograms={},
     )
 
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
-        (
-            TelegramPrometheusMetricsExporter()
-            .export(snapshot)
-        )
+    with pytest.raises(TelegramPrometheusExportError):
+        (TelegramPrometheusMetricsExporter().export(snapshot))
 
 
 @pytest.mark.parametrize(
@@ -446,13 +312,8 @@ def test_rejects_invalid_label_names(
         histograms={},
     )
 
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
-        (
-            TelegramPrometheusMetricsExporter()
-            .export(snapshot)
-        )
+    with pytest.raises(TelegramPrometheusExportError):
+        (TelegramPrometheusMetricsExporter().export(snapshot))
 
 
 def test_rejects_duplicate_label_names():
@@ -468,25 +329,13 @@ def test_rejects_duplicate_label_names():
         histograms={},
     )
 
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
-        (
-            TelegramPrometheusMetricsExporter()
-            .export(snapshot)
-        )
+    with pytest.raises(TelegramPrometheusExportError):
+        (TelegramPrometheusMetricsExporter().export(snapshot))
 
 
 def test_rejects_invalid_snapshot():
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
-        (
-            TelegramPrometheusMetricsExporter()
-            .export(
-                SimpleNamespace()
-            )
-        )
+    with pytest.raises(TelegramPrometheusExportError):
+        (TelegramPrometheusMetricsExporter().export(SimpleNamespace()))
 
 
 def test_rejects_invalid_counter_series():
@@ -497,13 +346,8 @@ def test_rejects_invalid_counter_series():
         histograms={},
     )
 
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
-        (
-            TelegramPrometheusMetricsExporter()
-            .export(snapshot)
-        )
+    with pytest.raises(TelegramPrometheusExportError):
+        (TelegramPrometheusMetricsExporter().export(snapshot))
 
 
 def test_rejects_invalid_histogram_series():
@@ -514,13 +358,8 @@ def test_rejects_invalid_histogram_series():
         },
     )
 
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
-        (
-            TelegramPrometheusMetricsExporter()
-            .export(snapshot)
-        )
+    with pytest.raises(TelegramPrometheusExportError):
+        (TelegramPrometheusMetricsExporter().export(snapshot))
 
 
 def test_rejects_histogram_without_buckets():
@@ -536,13 +375,8 @@ def test_rejects_histogram_without_buckets():
         },
     )
 
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
-        (
-            TelegramPrometheusMetricsExporter()
-            .export(snapshot)
-        )
+    with pytest.raises(TelegramPrometheusExportError):
+        (TelegramPrometheusMetricsExporter().export(snapshot))
 
 
 def test_rejects_negative_histogram_count():
@@ -561,13 +395,8 @@ def test_rejects_negative_histogram_count():
         },
     )
 
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
-        (
-            TelegramPrometheusMetricsExporter()
-            .export(snapshot)
-        )
+    with pytest.raises(TelegramPrometheusExportError):
+        (TelegramPrometheusMetricsExporter().export(snapshot))
 
 
 def test_rejects_negative_bucket_count():
@@ -586,13 +415,8 @@ def test_rejects_negative_bucket_count():
         },
     )
 
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
-        (
-            TelegramPrometheusMetricsExporter()
-            .export(snapshot)
-        )
+    with pytest.raises(TelegramPrometheusExportError):
+        (TelegramPrometheusMetricsExporter().export(snapshot))
 
 
 def test_rejects_non_cumulative_buckets():
@@ -612,13 +436,8 @@ def test_rejects_non_cumulative_buckets():
         },
     )
 
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
-        (
-            TelegramPrometheusMetricsExporter()
-            .export(snapshot)
-        )
+    with pytest.raises(TelegramPrometheusExportError):
+        (TelegramPrometheusMetricsExporter().export(snapshot))
 
 
 def test_adds_positive_infinity_bucket():
@@ -638,16 +457,9 @@ def test_adds_positive_infinity_bucket():
         },
     )
 
-    body = (
-        TelegramPrometheusMetricsExporter()
-        .export(snapshot)
-        .body
-    )
+    body = TelegramPrometheusMetricsExporter().export(snapshot).body
 
-    assert (
-        'example_seconds_bucket{le="+Inf"} 2'
-        in body
-    )
+    assert 'example_seconds_bucket{le="+Inf"} 2' in body
 
 
 def test_does_not_duplicate_existing_infinity_bucket():
@@ -667,18 +479,9 @@ def test_does_not_duplicate_existing_infinity_bucket():
         },
     )
 
-    body = (
-        TelegramPrometheusMetricsExporter()
-        .export(snapshot)
-        .body
-    )
+    body = TelegramPrometheusMetricsExporter().export(snapshot).body
 
-    assert (
-        body.count(
-            'example_seconds_bucket{le="+Inf"}'
-        )
-        == 1
-    )
+    assert body.count('example_seconds_bucket{le="+Inf"}') == 1
 
 
 def test_empty_prometheus_snapshot_is_valid():
@@ -687,10 +490,7 @@ def test_empty_prometheus_snapshot_is_valid():
         histograms=MappingProxyType({}),
     )
 
-    exported = (
-        TelegramPrometheusMetricsExporter()
-        .export(snapshot)
-    )
+    exported = TelegramPrometheusMetricsExporter().export(snapshot)
 
     assert exported.body == ""
 
@@ -701,24 +501,18 @@ def test_empty_openmetrics_snapshot_has_eof():
         histograms=MappingProxyType({}),
     )
 
-    exported = (
-        TelegramPrometheusMetricsExporter()
-        .export(
-            snapshot,
-            format="openmetrics",
-        )
+    exported = TelegramPrometheusMetricsExporter().export(
+        snapshot,
+        format="openmetrics",
     )
 
     assert exported.body == "# EOF\n"
 
 
 def test_rejects_unknown_format():
-    with pytest.raises(
-        TelegramPrometheusExportError
-    ):
+    with pytest.raises(TelegramPrometheusExportError):
         (
-            TelegramPrometheusMetricsExporter()
-            .export(
+            TelegramPrometheusMetricsExporter().export(
                 populated_registry().snapshot(),
                 format="private-format",
             )
@@ -726,29 +520,20 @@ def test_rejects_unknown_format():
 
 
 def test_safe_exporter_returns_empty_prometheus():
-    exporter = (
-        SafeTelegramPrometheusMetricsExporter(
-            TelegramPrometheusMetricsExporter()
-        )
+    exporter = SafeTelegramPrometheusMetricsExporter(
+        TelegramPrometheusMetricsExporter()
     )
 
-    exported = exporter.export(
-        SimpleNamespace()
-    )
+    exported = exporter.export(SimpleNamespace())
 
     assert exported.body == ""
 
-    assert (
-        exported.content_type
-        == PROMETHEUS_CONTENT_TYPE
-    )
+    assert exported.content_type == PROMETHEUS_CONTENT_TYPE
 
 
 def test_safe_exporter_returns_valid_openmetrics():
-    exporter = (
-        SafeTelegramPrometheusMetricsExporter(
-            TelegramPrometheusMetricsExporter()
-        )
+    exporter = SafeTelegramPrometheusMetricsExporter(
+        TelegramPrometheusMetricsExporter()
     )
 
     exported = exporter.export(
@@ -758,54 +543,33 @@ def test_safe_exporter_returns_valid_openmetrics():
 
     assert exported.body == "# EOF\n"
 
-    assert (
-        exported.content_type
-        == OPENMETRICS_CONTENT_TYPE
-    )
+    assert exported.content_type == OPENMETRICS_CONTENT_TYPE
 
 
 def test_private_values_are_not_created_by_exporter():
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
     for index in range(100):
         registry.increment(
             "inna_telegram_worker_updates_total",
             labels={
-                "outcome": (
-                    f"private-outcome-{index}"
-                ),
-                "error_category": (
-                    f"private-error-{index}"
-                ),
+                "outcome": (f"private-outcome-{index}"),
+                "error_category": (f"private-error-{index}"),
             },
         )
 
-    body = (
-        TelegramPrometheusMetricsExporter()
-        .export(
-            registry.snapshot()
-        )
-        .body
-    )
+    body = TelegramPrometheusMetricsExporter().export(registry.snapshot()).body
 
     assert "private-outcome" not in body
     assert "private-error" not in body
 
     assert 'outcome="unknown"' in body
 
-    assert (
-        'error_category="unknown"'
-        in body
-    )
+    assert 'error_category="unknown"' in body
 
 
 def test_real_snapshot_mappingproxy_is_supported():
-    snapshot = (
-        populated_registry()
-        .snapshot()
-    )
+    snapshot = populated_registry().snapshot()
 
     assert isinstance(
         snapshot.counters,
@@ -817,9 +581,6 @@ def test_real_snapshot_mappingproxy_is_supported():
         MappingProxyType,
     )
 
-    exported = (
-        TelegramPrometheusMetricsExporter()
-        .export(snapshot)
-    )
+    exported = TelegramPrometheusMetricsExporter().export(snapshot)
 
     assert exported.body

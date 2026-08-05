@@ -41,16 +41,11 @@ class FakeRecursiveGraph:
         state,
         config=None,
     ):
-        raise GraphRecursionError(
-            "recursion limit reached"
-        )
+        raise GraphRecursionError("recursion limit reached")
 
 
 def test_default_recursion_limit_is_positive():
-    assert (
-        DEFAULT_LANGGRAPH_RECURSION_LIMIT
-        == 25
-    )
+    assert DEFAULT_LANGGRAPH_RECURSION_LIMIT == 25
 
 
 def test_execution_config_without_thread():
@@ -81,11 +76,7 @@ def test_execution_config_normalizes_thread_id():
         thread_id="  conversation-123  ",
     )
 
-    assert config[
-        "configurable"
-    ]["thread_id"] == (
-        "conversation-123"
-    )
+    assert config["configurable"]["thread_id"] == ("conversation-123")
 
 
 def test_safe_invocation_passes_config():
@@ -130,10 +121,7 @@ def test_recursion_error_becomes_domain_error():
 
     with pytest.raises(
         LangGraphExecutionLimitError,
-        match=(
-            "excedeu o limite máximo "
-            "de passos"
-        ),
+        match=("excedeu o limite máximo de passos"),
     ) as captured:
         _invocar_grafo_seguro(
             graph,
@@ -150,9 +138,7 @@ def test_recursion_error_becomes_domain_error():
 def test_recursion_failure_does_not_return_partial_state():
     graph = FakeRecursiveGraph()
 
-    with pytest.raises(
-        LangGraphExecutionLimitError
-    ):
+    with pytest.raises(LangGraphExecutionLimitError):
         _invocar_grafo_seguro(
             graph,
             {

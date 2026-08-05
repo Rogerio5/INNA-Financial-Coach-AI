@@ -26,11 +26,7 @@ from api.security.internal_request import (
 )
 
 
-SECRET = (
-    "0123456789abcdef"
-    "0123456789abcdef"
-    "secure-test-secret"
-)
+SECRET = "0123456789abcdef0123456789abcdefsecure-test-secret"
 
 
 def _body(
@@ -44,9 +40,7 @@ def _body(
             ",",
             ":",
         ),
-    ).encode(
-        "utf-8"
-    )
+    ).encode("utf-8")
 
 
 def _signature(
@@ -54,9 +48,7 @@ def _signature(
     body: bytes,
     timestamp: int,
     user_id: str = "user-123",
-    request_id: str = (
-        "request-12345678"
-    ),
+    request_id: str = ("request-12345678"),
 ) -> str:
     return assinar_requisicao_interna(
         method="POST",
@@ -118,30 +110,24 @@ def test_valid_request_returns_trusted_context():
     now = 1_700_000_000
     body = _body()
 
-    context = (
-        verificar_requisicao_interna(
-            method="POST",
-            path="/secure",
-            user_id="user-123",
-            request_id=(
-                "request-12345678"
-            ),
-            timestamp=now,
-            signature=_signature(
-                body=body,
-                timestamp=now,
-            ),
+    context = verificar_requisicao_interna(
+        method="POST",
+        path="/secure",
+        user_id="user-123",
+        request_id=("request-12345678"),
+        timestamp=now,
+        signature=_signature(
             body=body,
-            secret=SECRET,
-            now=now,
-        )
+            timestamp=now,
+        ),
+        body=body,
+        secret=SECRET,
+        now=now,
     )
 
     assert context.user_id == "user-123"
 
-    assert context.request_id == (
-        "request-12345678"
-    )
+    assert context.request_id == ("request-12345678")
 
 
 def test_expired_request_is_rejected():
@@ -149,16 +135,12 @@ def test_expired_request_is_rejected():
     timestamp = now - 301
     body = _body()
 
-    with pytest.raises(
-        InternalRequestSecurityError
-    ):
+    with pytest.raises(InternalRequestSecurityError):
         verificar_requisicao_interna(
             method="POST",
             path="/secure",
             user_id="user-123",
-            request_id=(
-                "request-12345678"
-            ),
+            request_id=("request-12345678"),
             timestamp=timestamp,
             signature=_signature(
                 body=body,
@@ -176,16 +158,12 @@ def test_future_request_is_rejected():
     timestamp = now + 301
     body = _body()
 
-    with pytest.raises(
-        InternalRequestSecurityError
-    ):
+    with pytest.raises(InternalRequestSecurityError):
         verificar_requisicao_interna(
             method="POST",
             path="/secure",
             user_id="user-123",
-            request_id=(
-                "request-12345678"
-            ),
+            request_id=("request-12345678"),
             timestamp=timestamp,
             signature=_signature(
                 body=body,
@@ -202,16 +180,12 @@ def test_tampered_signature_is_rejected():
     now = 1_700_000_000
     body = _body()
 
-    with pytest.raises(
-        InternalRequestSecurityError
-    ):
+    with pytest.raises(InternalRequestSecurityError):
         verificar_requisicao_interna(
             method="POST",
             path="/secure",
             user_id="user-123",
-            request_id=(
-                "request-12345678"
-            ),
+            request_id=("request-12345678"),
             timestamp=now,
             signature="0" * 64,
             body=body,
@@ -234,16 +208,12 @@ def test_invalid_user_id_is_rejected(
 ):
     body = _body()
 
-    with pytest.raises(
-        InternalRequestSecurityError
-    ):
+    with pytest.raises(InternalRequestSecurityError):
         assinar_requisicao_interna(
             method="POST",
             path="/secure",
             user_id=user_id,
-            request_id=(
-                "request-12345678"
-            ),
+            request_id=("request-12345678"),
             timestamp=1_700_000_000,
             body=body,
             secret=SECRET,
@@ -251,25 +221,19 @@ def test_invalid_user_id_is_rejected(
 
 
 def test_short_secret_is_rejected():
-    with pytest.raises(
-        InternalRequestConfigurationError
-    ):
+    with pytest.raises(InternalRequestConfigurationError):
         assinar_requisicao_interna(
             method="POST",
             path="/secure",
             user_id="user-123",
-            request_id=(
-                "request-12345678"
-            ),
+            request_id=("request-12345678"),
             timestamp=1_700_000_000,
             body=_body(),
             secret="short-secret",
         )
 
 
-class Payload(
-    BaseModel
-):
+class Payload(BaseModel):
     value: int
 
 
@@ -281,25 +245,17 @@ async def secure_route(
     payload: Payload,
     context: Annotated[
         TrustedRequestContext,
-        Depends(
-            require_trusted_request_context
-        ),
+        Depends(require_trusted_request_context),
     ],
 ):
     return {
         "value": payload.value,
-        "trusted_user_id": (
-            context.user_id
-        ),
-        "request_id": (
-            context.request_id
-        ),
+        "trusted_user_id": (context.user_id),
+        "request_id": (context.request_id),
     }
 
 
-client = TestClient(
-    app
-)
+client = TestClient(app)
 
 
 def _headers(
@@ -311,12 +267,8 @@ def _headers(
     return {
         "Content-Type": "application/json",
         HEADER_USER_ID: "user-123",
-        HEADER_REQUEST_ID: (
-            "request-12345678"
-        ),
-        HEADER_TIMESTAMP: str(
-            timestamp
-        ),
+        HEADER_REQUEST_ID: ("request-12345678"),
+        HEADER_TIMESTAMP: str(timestamp),
         HEADER_SIGNATURE: (
             signature
             or _signature(
@@ -336,9 +288,7 @@ def test_fastapi_dependency_accepts_signed_request(
     )
 
     body = _body()
-    timestamp = int(
-        time.time()
-    )
+    timestamp = int(time.time())
 
     response = client.post(
         "/secure",
@@ -354,9 +304,7 @@ def test_fastapi_dependency_accepts_signed_request(
     assert response.json() == {
         "value": 7,
         "trusted_user_id": "user-123",
-        "request_id": (
-            "request-12345678"
-        ),
+        "request_id": ("request-12345678"),
     }
 
 
@@ -389,9 +337,7 @@ def test_fastapi_dependency_rejects_tampered_body(
     original_body = _body(7)
     tampered_body = _body(8)
 
-    timestamp = int(
-        time.time()
-    )
+    timestamp = int(time.time())
 
     response = client.post(
         "/secure",
@@ -414,9 +360,7 @@ def test_error_does_not_expose_signature(
     )
 
     body = _body()
-    timestamp = int(
-        time.time()
-    )
+    timestamp = int(time.time())
 
     invalid_signature = "0" * 64
 
@@ -432,8 +376,6 @@ def test_error_does_not_expose_signature(
 
     assert response.status_code == 401
 
-    assert invalid_signature not in (
-        response.text
-    )
+    assert invalid_signature not in (response.text)
 
     assert SECRET not in response.text

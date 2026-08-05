@@ -37,14 +37,8 @@ def test_extracts_complete_natural_language_message():
     assert result.arguments is not None
     assert result.arguments["renda_mensal"] == 5000.0
     assert result.arguments["gastos_fixos"] == 2000.0
-    assert (
-        result.arguments["gastos_variaveis"]
-        == 800.0
-    )
-    assert (
-        result.arguments["dividas_mensais"]
-        == 300.0
-    )
+    assert result.arguments["gastos_variaveis"] == 800.0
+    assert result.arguments["dividas_mensais"] == 300.0
     assert result.arguments["reserva_atual"] == 1000.0
 
 
@@ -90,21 +84,13 @@ def test_extracts_brazilian_currency_format():
 
     assert result.arguments["renda_mensal"] == 5000.0
     assert result.arguments["gastos_fixos"] == 2000.0
-    assert (
-        result.arguments["gastos_variaveis"]
-        == 800.0
-    )
-    assert (
-        result.arguments["dividas_mensais"]
-        == 300.0
-    )
+    assert result.arguments["gastos_variaveis"] == 800.0
+    assert result.arguments["dividas_mensais"] == 300.0
     assert result.arguments["reserva_atual"] == 1000.0
 
 
 def test_incomplete_message_remains_incomplete():
-    result = _resolve(
-        "Minha renda mensal é 5000 reais."
-    )
+    result = _resolve("Minha renda mensal é 5000 reais.")
 
     assert result.ready is False
 
@@ -139,10 +125,7 @@ def test_field_sources_identify_deterministic_fallback():
         assert result.field_sources[field] in {
             "current_message_parser",
             "current_message_extractor",
-            (
-                "current_message_"
-                "deterministic_fallback"
-            ),
+            ("current_message_deterministic_fallback"),
         }
 
 
@@ -171,29 +154,17 @@ def test_individual_field_variations(
 
     collected = result.collected_data
 
-    if (
-        "dívida" in message.lower()
-        or "parcela" in message.lower()
-    ):
-        assert (
-            collected["dividas_mensais"]
-            == expected
-        )
+    if "dívida" in message.lower() or "parcela" in message.lower():
+        assert collected["dividas_mensais"] == expected
     else:
-        assert (
-            collected["reserva_atual"]
-            == expected
-        )
+        assert collected["reserva_atual"] == expected
 
 
 def test_fallback_repairs_invalid_zero_from_parser(
     monkeypatch,
 ):
     monkeypatch.setattr(
-        (
-            "src.agents.financial_input_resolver."
-            "parse_financial_message"
-        ),
+        ("src.agents.financial_input_resolver.parse_financial_message"),
         lambda message: {
             "renda_mensal": 5000.0,
             "gastos_fixos": 0.0,
@@ -216,24 +187,13 @@ def test_fallback_repairs_invalid_zero_from_parser(
     assert result.ready is True
     assert result.arguments is not None
 
-    assert (
-        result.arguments["gastos_fixos"]
-        == 2000.0
+    assert result.arguments["gastos_fixos"] == 2000.0
+
+    assert result.field_sources["gastos_fixos"] == (
+        "current_message_deterministic_fallback"
     )
 
-    assert (
-        result.field_sources["gastos_fixos"]
-        == (
-            "current_message_"
-            "deterministic_fallback"
-        )
-    )
-
-    assert (
-        "message_parser_values_"
-        "repaired_by_fallback"
-        in result.warnings
-    )
+    assert "message_parser_values_repaired_by_fallback" in result.warnings
 
 
 def test_explicit_zero_is_not_replaced():
@@ -250,4 +210,3 @@ def test_explicit_zero_is_not_replaced():
     assert result.ready is True
     assert result.arguments is not None
     assert result.arguments["gastos_fixos"] == 0.0
-

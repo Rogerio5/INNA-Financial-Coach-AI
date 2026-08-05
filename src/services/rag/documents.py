@@ -55,9 +55,7 @@ def validar_extensao_documento(
     suffix = Path(str(nome_arquivo or "")).suffix.lower()
 
     if suffix not in EXTENSOES_PERMITIDAS:
-        permitidas = ", ".join(
-            sorted(EXTENSOES_PERMITIDAS)
-        )
+        permitidas = ", ".join(sorted(EXTENSOES_PERMITIDAS))
 
         raise ValueError(
             f"Extensão não permitida: {suffix or 'sem extensão'}. "
@@ -76,20 +74,22 @@ def normalizar_nome_arquivo(
     nome = Path(str(nome_arquivo or "")).name
 
     if not nome:
-        raise ValueError(
-            "Nome do arquivo não informado."
-        )
+        raise ValueError("Nome do arquivo não informado.")
 
     suffix = validar_extensao_documento(nome)
     stem = Path(nome).stem
 
-    stem = unicodedata.normalize(
-        "NFKD",
-        stem,
-    ).encode(
-        "ascii",
-        "ignore",
-    ).decode("ascii")
+    stem = (
+        unicodedata.normalize(
+            "NFKD",
+            stem,
+        )
+        .encode(
+            "ascii",
+            "ignore",
+        )
+        .decode("ascii")
+    )
 
     stem = re.sub(
         r"[^A-Za-z0-9_-]+",
@@ -117,16 +117,12 @@ def gerar_nome_arquivo_salvo(
     """
     Gera um nome seguro para o arquivo salvo localmente.
     """
-    nome_normalizado = normalizar_nome_arquivo(
-        nome_original
-    )
+    nome_normalizado = normalizar_nome_arquivo(nome_original)
 
     if not usar_timestamp:
         return nome_normalizado
 
-    timestamp = datetime.now().strftime(
-        "%Y%m%d_%H%M%S"
-    )
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     return f"{timestamp}_{nome_normalizado}"
 
@@ -158,9 +154,7 @@ def salvar_documento_upload(
     elif isinstance(conteudo, bytes):
         conteudo_bytes = conteudo
     else:
-        raise TypeError(
-            "O conteúdo deve ser bytes, bytearray ou str."
-        )
+        raise TypeError("O conteúdo deve ser bytes, bytearray ou str.")
 
     caminho.write_bytes(conteudo_bytes)
 
@@ -183,9 +177,7 @@ def ler_documento_texto(
     caminho = Path(caminho)
 
     if not caminho.exists():
-        raise FileNotFoundError(
-            f"Documento não encontrado: {caminho}"
-        )
+        raise FileNotFoundError(f"Documento não encontrado: {caminho}")
 
     return caminho.read_text(
         encoding="utf-8",
@@ -210,8 +202,7 @@ def listar_arquivos_rag(
     arquivos = [
         arquivo
         for arquivo in pasta.glob(padrao)
-        if arquivo.is_file()
-        and arquivo.name != ".gitkeep"
+        if arquivo.is_file() and arquivo.name != ".gitkeep"
     ]
 
     arquivos.sort(

@@ -37,9 +37,7 @@ TeamSupervisorNode = Literal[
 ]
 
 
-class TeamHierarchyError(
-    ValueError
-):
+class TeamHierarchyError(ValueError):
     """
     Erro de configuração ou uso da hierarquia.
     """
@@ -63,31 +61,20 @@ class TeamDefinition:
     def __post_init__(
         self,
     ) -> None:
-        normalized_description = str(
-            self.description or ""
-        ).strip()
+        normalized_description = str(self.description or "").strip()
 
         if not normalized_description:
-            raise TeamHierarchyError(
-                "A equipe precisa possuir uma descrição."
-            )
+            raise TeamHierarchyError("A equipe precisa possuir uma descrição.")
 
         if not self.members:
-            raise TeamHierarchyError(
-                "A equipe precisa possuir ao menos um membro."
-            )
+            raise TeamHierarchyError("A equipe precisa possuir ao menos um membro.")
 
-        if len(
-            set(self.members)
-        ) != len(self.members):
-            raise TeamHierarchyError(
-                "A equipe não pode possuir membros duplicados."
-            )
+        if len(set(self.members)) != len(self.members):
+            raise TeamHierarchyError("A equipe não pode possuir membros duplicados.")
 
         if self.max_internal_handoffs < 1:
             raise TeamHierarchyError(
-                "O limite interno de handoffs deve ser "
-                "maior ou igual a 1."
+                "O limite interno de handoffs deve ser maior ou igual a 1."
             )
 
 
@@ -118,33 +105,17 @@ class TeamRegistry:
         teams: tuple[TeamDefinition, ...],
     ) -> None:
         if not teams:
-            raise TeamHierarchyError(
-                "O registro precisa possuir equipes."
-            )
+            raise TeamHierarchyError("O registro precisa possuir equipes.")
 
-        team_names = [
-            team.name
-            for team in teams
-        ]
+        team_names = [team.name for team in teams]
 
-        if len(
-            set(team_names)
-        ) != len(team_names):
-            raise TeamHierarchyError(
-                "Existem nomes de equipes duplicados."
-            )
+        if len(set(team_names)) != len(team_names):
+            raise TeamHierarchyError("Existem nomes de equipes duplicados.")
 
-        supervisor_nodes = [
-            team.supervisor_node
-            for team in teams
-        ]
+        supervisor_nodes = [team.supervisor_node for team in teams]
 
-        if len(
-            set(supervisor_nodes)
-        ) != len(supervisor_nodes):
-            raise TeamHierarchyError(
-                "Existem supervisores de equipe duplicados."
-            )
+        if len(set(supervisor_nodes)) != len(supervisor_nodes):
+            raise TeamHierarchyError("Existem supervisores de equipe duplicados.")
 
         agent_to_team: dict[
             AgentName,
@@ -154,11 +125,7 @@ class TeamRegistry:
         for team in teams:
             for member in team.members:
                 if member in agent_to_team:
-                    existing_team = (
-                        agent_to_team[
-                            member
-                        ]
-                    )
+                    existing_team = agent_to_team[member]
 
                     raise TeamHierarchyError(
                         "O agente "
@@ -167,18 +134,11 @@ class TeamRegistry:
                         f"{existing_team!r} e {team.name!r}."
                     )
 
-                agent_to_team[
-                    member
-                ] = team.name
+                agent_to_team[member] = team.name
 
         self._teams = teams
-        self._teams_by_name = {
-            team.name: team
-            for team in teams
-        }
-        self._agent_to_team = (
-            agent_to_team
-        )
+        self._teams_by_name = {team.name: team for team in teams}
+        self._agent_to_team = agent_to_team
 
     @property
     def teams(
@@ -190,31 +150,23 @@ class TeamRegistry:
     def team_names(
         self,
     ) -> tuple[TeamName, ...]:
-        return tuple(
-            team.name
-            for team in self._teams
-        )
+        return tuple(team.name for team in self._teams)
 
     @property
     def agents(
         self,
     ) -> tuple[AgentName, ...]:
-        return tuple(
-            self._agent_to_team
-        )
+        return tuple(self._agent_to_team)
 
     def get_team(
         self,
         team_name: TeamName,
     ) -> TeamDefinition:
         try:
-            return self._teams_by_name[
-                team_name
-            ]
+            return self._teams_by_name[team_name]
         except KeyError as error:
             raise TeamHierarchyError(
-                "Equipe não registrada: "
-                f"{team_name!r}."
+                f"Equipe não registrada: {team_name!r}."
             ) from error
 
     def team_for_agent(
@@ -222,34 +174,25 @@ class TeamRegistry:
         agent: AgentName,
     ) -> TeamDefinition:
         try:
-            team_name = self._agent_to_team[
-                agent
-            ]
+            team_name = self._agent_to_team[agent]
         except KeyError as error:
             raise TeamHierarchyError(
-                "Agente não associado a uma equipe: "
-                f"{agent!r}."
+                f"Agente não associado a uma equipe: {agent!r}."
             ) from error
 
-        return self.get_team(
-            team_name
-        )
+        return self.get_team(team_name)
 
     def supervisor_for_agent(
         self,
         agent: AgentName,
     ) -> TeamSupervisorNode:
-        return self.team_for_agent(
-            agent
-        ).supervisor_node
+        return self.team_for_agent(agent).supervisor_node
 
     def members_of(
         self,
         team_name: TeamName,
     ) -> tuple[AgentName, ...]:
-        return self.get_team(
-            team_name
-        ).members
+        return self.get_team(team_name).members
 
     def is_member(
         self,
@@ -257,12 +200,7 @@ class TeamRegistry:
         agent: AgentName,
         team_name: TeamName,
     ) -> bool:
-        return (
-            agent
-            in self.members_of(
-                team_name
-            )
-        )
+        return agent in self.members_of(team_name)
 
     def evaluate_transfer(
         self,
@@ -270,18 +208,11 @@ class TeamRegistry:
         from_agent: AgentName,
         to_agent: AgentName,
     ) -> TeamTransferDecision:
-        source_team = self.team_for_agent(
-            from_agent
-        )
+        source_team = self.team_for_agent(from_agent)
 
-        target_team = self.team_for_agent(
-            to_agent
-        )
+        target_team = self.team_for_agent(to_agent)
 
-        same_team = (
-            source_team.name
-            == target_team.name
-        )
+        same_team = source_team.name == target_team.name
 
         if same_team:
             return TeamTransferDecision(
@@ -290,10 +221,7 @@ class TeamRegistry:
                 requires_root_supervisor=False,
                 source_team=source_team.name,
                 target_team=target_team.name,
-                reason=(
-                    "Transferência interna permitida "
-                    "pela equipe especializada."
-                ),
+                reason=("Transferência interna permitida pela equipe especializada."),
             )
 
         return TeamTransferDecision(
@@ -311,9 +239,7 @@ class TeamRegistry:
 
 FINANCIAL_TEAM = TeamDefinition(
     name="financial_team",
-    supervisor_node=(
-        "financial_team_supervisor"
-    ),
+    supervisor_node=("financial_team_supervisor"),
     members=(
         "financial_agent",
         "report_agent",
@@ -328,16 +254,13 @@ FINANCIAL_TEAM = TeamDefinition(
 
 KNOWLEDGE_TEAM = TeamDefinition(
     name="knowledge_team",
-    supervisor_node=(
-        "knowledge_team_supervisor"
-    ),
+    supervisor_node=("knowledge_team_supervisor"),
     members=(
         "education_agent",
         "rag_agent",
     ),
     description=(
-        "Equipe responsável por educação financeira "
-        "e recuperação de conhecimento."
+        "Equipe responsável por educação financeira e recuperação de conhecimento."
     ),
     max_internal_handoffs=2,
 )
@@ -345,12 +268,8 @@ KNOWLEDGE_TEAM = TeamDefinition(
 
 SUPPORT_TEAM = TeamDefinition(
     name="support_team",
-    supervisor_node=(
-        "support_team_supervisor"
-    ),
-    members=(
-        "fallback_agent",
-    ),
+    supervisor_node=("support_team_supervisor"),
+    members=("fallback_agent",),
     description=(
         "Equipe responsável por solicitações "
         "desconhecidas ou fora das rotas principais."

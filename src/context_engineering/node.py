@@ -28,11 +28,9 @@ def context_builder_node(
     ):
         existing_context = {}
 
-    financial_profile = (
-        existing_context.get(
-            "financial_profile",
-            {},
-        )
+    financial_profile = existing_context.get(
+        "financial_profile",
+        {},
     )
 
     built_context = build_agent_context(
@@ -66,29 +64,15 @@ def context_builder_node(
         max_history_messages=12,
     )
 
-    context_payload = (
-        built_context.model_dump()
-    )
+    context_payload = built_context.model_dump()
 
-    context_payload["rendered_prompt"] = (
-        render_context_for_llm(
-            built_context
-        )
-    )
+    context_payload["rendered_prompt"] = render_context_for_llm(built_context)
 
-    context_payload[
-        "financial_profile"
-    ] = financial_profile
+    context_payload["financial_profile"] = financial_profile
 
     return {
         "context": context_payload,
-        "trace": [
-            (
-                "context_builder:"
-                f"{len(built_context.selected_history)}"
-                "_messages"
-            )
-        ],
+        "trace": [(f"context_builder:{len(built_context.selected_history)}_messages")],
     }
 
 

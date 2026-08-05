@@ -6,21 +6,16 @@ from src.services.memory.extractor import (
 
 
 def test_normalizar_valor_brasileiro():
-    assert normalizar_valor_financeiro(
-        "R$ 6.300,00"
-    ) == 6300.0
+    assert normalizar_valor_financeiro("R$ 6.300,00") == 6300.0
 
 
 def test_normalizar_valor_inteiro():
-    assert normalizar_valor_financeiro(
-        "1200"
-    ) == 1200.0
+    assert normalizar_valor_financeiro("1200") == 1200.0
 
 
 def test_extrair_renda_gastos_reserva():
     resultado = extrair_memoria_da_mensagem_inna(
-        "Agora ganho R$ 6.500, gasto R$ 3.200 "
-        "e consigo guardar R$ 1.300 por mês."
+        "Agora ganho R$ 6.500, gasto R$ 3.200 e consigo guardar R$ 1.300 por mês."
     )
 
     assert resultado["tem_memoria"] is True
@@ -30,9 +25,7 @@ def test_extrair_renda_gastos_reserva():
 
 
 def test_mensagem_sem_memoria():
-    resultado = extrair_memoria_da_mensagem_inna(
-        "Bom dia, tudo bem?"
-    )
+    resultado = extrair_memoria_da_mensagem_inna("Bom dia, tudo bem?")
 
     assert resultado["tem_memoria"] is False
     assert resultado["dados"] == {}

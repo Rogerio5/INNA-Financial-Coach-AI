@@ -70,17 +70,13 @@ _BEARER_PATTERN = re.compile(
     flags=re.IGNORECASE,
 )
 
-_LONG_CREDENTIAL_PATTERN = re.compile(
-    r"[A-Za-z0-9_\-]{32,}"
-)
+_LONG_CREDENTIAL_PATTERN = re.compile(r"[A-Za-z0-9_\-]{32,}")
 
 
 def sanitize_error_category(
     value: object,
 ) -> str:
-    normalized = str(
-        value or "unknown"
-    ).strip().lower()
+    normalized = str(value or "unknown").strip().lower()
 
     allowed = {
         "configuration",
@@ -106,43 +102,28 @@ def _redact_string(
 ) -> str:
     sanitized = value
 
-    sanitized = (
-        _DATABASE_URL_PATTERN.sub(
-            "[REDACTED_URL]",
-            sanitized,
-        )
+    sanitized = _DATABASE_URL_PATTERN.sub(
+        "[REDACTED_URL]",
+        sanitized,
     )
 
-    sanitized = (
-        _SECRET_ASSIGNMENT_PATTERN.sub(
-            lambda match: (
-                f"{match.group(1)}=[REDACTED]"
-            ),
-            sanitized,
-        )
+    sanitized = _SECRET_ASSIGNMENT_PATTERN.sub(
+        lambda match: f"{match.group(1)}=[REDACTED]",
+        sanitized,
     )
 
-    sanitized = (
-        _BEARER_PATTERN.sub(
-            "Bearer [REDACTED]",
-            sanitized,
-        )
+    sanitized = _BEARER_PATTERN.sub(
+        "Bearer [REDACTED]",
+        sanitized,
     )
 
-    sanitized = (
-        _LONG_CREDENTIAL_PATTERN.sub(
-            "[REDACTED_VALUE]",
-            sanitized,
-        )
+    sanitized = _LONG_CREDENTIAL_PATTERN.sub(
+        "[REDACTED_VALUE]",
+        sanitized,
     )
 
     if len(sanitized) > _MAX_STRING_LENGTH:
-        sanitized = (
-            sanitized[
-                :_MAX_STRING_LENGTH
-            ]
-            + "..."
-        )
+        sanitized = sanitized[:_MAX_STRING_LENGTH] + "..."
 
     return sanitized
 
@@ -154,9 +135,7 @@ def sanitize_event_value(
         value,
         Path,
     ):
-        return _redact_string(
-            value.as_posix()
-        )
+        return _redact_string(value.as_posix())
 
     if isinstance(
         value,
@@ -192,9 +171,7 @@ def sanitize_event_value(
         value,
         Mapping,
     ):
-        return sanitize_event_fields(
-            value
-        )
+        return sanitize_event_fields(value)
 
     if isinstance(
         value,
@@ -205,14 +182,9 @@ def sanitize_event_value(
             frozenset,
         ),
     ):
-        return tuple(
-            sanitize_event_value(item)
-            for item in value
-        )
+        return tuple(sanitize_event_value(item) for item in value)
 
-    return _redact_string(
-        type(value).__name__
-    )
+    return _redact_string(type(value).__name__)
 
 
 def sanitize_event_fields(
@@ -224,9 +196,7 @@ def sanitize_event_fields(
     ] = {}
 
     for raw_key, raw_value in fields.items():
-        key = str(
-            raw_key
-        ).strip().lower()
+        key = str(raw_key).strip().lower()
 
         if not key:
             continue
@@ -247,10 +217,6 @@ def sanitize_event_fields(
         ):
             continue
 
-        sanitized[
-            key
-        ] = sanitize_event_value(
-            raw_value
-        )
+        sanitized[key] = sanitize_event_value(raw_value)
 
     return sanitized

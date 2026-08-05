@@ -48,14 +48,10 @@ def _finalizar(
         summary=summary,
         recommendations=recommendations,
         next_steps=next_steps,
-        confidence=float(
-            state.get("confidence", 1.0)
-        ),
+        confidence=float(state.get("confidence", 1.0)),
     )
 
-    trace = list(
-        state.get("trace", [])
-    )
+    trace = list(state.get("trace", []))
 
     trace.append(f"agent:{agent}")
 
@@ -73,9 +69,7 @@ def _finalizar(
                 "structured_response",
                 {},
             ),
-            "agent_response": (
-                resposta.model_dump()
-            ),
+            "agent_response": (resposta.model_dump()),
         },
         "trace": trace,
     }
@@ -99,39 +93,21 @@ def financial_agent_node(
         resolve_simple_balance_follow_up,
     )
 
-    semantic_follow_up = (
-        resolve_simple_balance_follow_up(
-            dict(state or {})
-        )
-    )
+    semantic_follow_up = resolve_simple_balance_follow_up(dict(state or {}))
 
     if semantic_follow_up is not None:
         return semantic_follow_up
 
-    if str(
-        state.get("intent", "")
-    ) == "historico_financeiro":
-        return (
-            executar_fluxo_historico_financeiro(
-                state
-            )
-        )
+    if str(state.get("intent", "")) == "historico_financeiro":
+        return executar_fluxo_historico_financeiro(state)
 
-    resolution = resolver_entrada_financeira(
-        dict(state)
-    )
+    resolution = resolver_entrada_financeira(dict(state))
 
-    trace = list(
-        state.get("trace", [])
-    )
+    trace = list(state.get("trace", []))
 
-    errors = list(
-        state.get("errors", [])
-    )
+    errors = list(state.get("errors", []))
 
-    tool_results = list(
-        state.get("tool_results", [])
-    )
+    tool_results = list(state.get("tool_results", []))
 
     structured_response = dict(
         state.get(
@@ -140,22 +116,12 @@ def financial_agent_node(
         )
     )
 
-    structured_response[
-        "financial_input_resolution"
-    ] = {
+    structured_response["financial_input_resolution"] = {
         "ready": resolution.ready,
-        "missing_fields": list(
-            resolution.missing_fields
-        ),
-        "resolved_fields": sorted(
-            resolution.collected_data
-        ),
-        "field_sources": dict(
-            resolution.field_sources
-        ),
-        "warnings": list(
-            resolution.warnings
-        ),
+        "missing_fields": list(resolution.missing_fields),
+        "resolved_fields": sorted(resolution.collected_data),
+        "field_sources": dict(resolution.field_sources),
+        "warnings": list(resolution.warnings),
     }
 
     # ======================================================
@@ -163,12 +129,8 @@ def financial_agent_node(
     # ======================================================
 
     if not resolution.ready:
-        summary = (
-            resolution.clarification_message
-            or (
-                "Ainda faltam informações para "
-                "calcular o diagnóstico financeiro."
-            )
+        summary = resolution.clarification_message or (
+            "Ainda faltam informações para calcular o diagnóstico financeiro."
         )
 
         resposta = AgentResponse(
@@ -179,23 +141,14 @@ def financial_agent_node(
             ),
             summary=summary,
             recommendations=[
-                (
-                    "Informe somente os valores "
-                    "financeiros que estão faltando."
-                )
+                ("Informe somente os valores financeiros que estão faltando.")
             ],
-            next_steps=[
-                str(field)
-                for field
-                in resolution.missing_fields
-            ],
+            next_steps=[str(field) for field in resolution.missing_fields],
             sources=[],
             confidence=0.95,
         )
 
-        structured_response[
-            "agent_response"
-        ] = resposta.model_dump()
+        structured_response["agent_response"] = resposta.model_dump()
 
         return {
             **state,
@@ -206,15 +159,14 @@ def financial_agent_node(
                     "content": summary,
                 }
             ],
-            "structured_response": (
-                structured_response
-            ),
+            "structured_response": (structured_response),
             "tool_results": tool_results,
             "errors": errors,
             "handoff_required": False,
             "handoff_target": "",
             "handoff_reason": "",
-            "trace": trace + [
+            "trace": trace
+            + [
                 "financial_input:incomplete",
                 "agent:financial_agent",
             ],
@@ -227,32 +179,18 @@ def financial_agent_node(
     def optional_text(
         value,
     ) -> str | None:
-        normalized = str(
-            value or ""
-        ).strip()
+        normalized = str(value or "").strip()
 
         return normalized or None
 
     tool_call = ToolCall(
-        tool_name=(
-            FINANCIAL_DIAGNOSIS_TOOL_NAME
-        ),
-        arguments=dict(
-            resolution.arguments or {}
-        ),
+        tool_name=(FINANCIAL_DIAGNOSIS_TOOL_NAME),
+        arguments=dict(resolution.arguments or {}),
         context=ToolExecutionContext(
             requested_by="financial_agent",
-            user_id=optional_text(
-                state.get("user_id")
-                or state.get("usuario_id")
-            ),
-            session_id=optional_text(
-                state.get("thread_id")
-                or state.get("session_id")
-            ),
-            trace_id=optional_text(
-                state.get("trace_id")
-            ),
+            user_id=optional_text(state.get("user_id") or state.get("usuario_id")),
+            session_id=optional_text(state.get("thread_id") or state.get("session_id")),
+            trace_id=optional_text(state.get("trace_id")),
             metadata={
                 "intent": str(
                     state.get(
@@ -270,73 +208,44 @@ def financial_agent_node(
         ),
     )
 
-    trace.append(
-        f"tool:"
-        f"{FINANCIAL_DIAGNOSIS_TOOL_NAME}:"
-        f"start"
-    )
+    trace.append(f"tool:{FINANCIAL_DIAGNOSIS_TOOL_NAME}:start")
 
-    tool_result = executar_ferramenta_inna(
-        tool_call
-    )
+    tool_result = executar_ferramenta_inna(tool_call)
 
     compact_tool_result = {
         "call_id": tool_result.call_id,
         "tool": tool_result.tool_name,
         "status": tool_result.status.value,
         "ok": tool_result.ok,
-        "duration_ms": (
-            tool_result.duration_ms
-        ),
+        "duration_ms": (tool_result.duration_ms),
     }
 
     if tool_result.error is not None:
-        compact_tool_result.update({
-            "error_code": (
-                tool_result.error.code
-            ),
-            "retryable": (
-                tool_result.error.retryable
-            ),
-        })
+        compact_tool_result.update(
+            {
+                "error_code": (tool_result.error.code),
+                "retryable": (tool_result.error.retryable),
+            }
+        )
 
-    tool_results.append(
-        compact_tool_result
-    )
+    tool_results.append(compact_tool_result)
 
-    structured_response[
-        "financial_execution"
-    ] = dict(
-        compact_tool_result
-    )
+    structured_response["financial_execution"] = dict(compact_tool_result)
 
     # ======================================================
     # Falha segura da ferramenta
     # ======================================================
 
-    if (
-        tool_result.status
-        != ToolStatus.SUCCESS
-        or not tool_result.output
-    ):
+    if tool_result.status != ToolStatus.SUCCESS or not tool_result.output:
         safe_error = (
             tool_result.error.message
             if tool_result.error
-            else (
-                "A ferramenta financeira não "
-                "retornou um resultado utilizável."
-            )
+            else ("A ferramenta financeira não retornou um resultado utilizável.")
         )
 
-        errors.append(
-            safe_error
-        )
+        errors.append(safe_error)
 
-        trace.append(
-            f"tool:"
-            f"{FINANCIAL_DIAGNOSIS_TOOL_NAME}:"
-            f"{tool_result.status.value}"
-        )
+        trace.append(f"tool:{FINANCIAL_DIAGNOSIS_TOOL_NAME}:{tool_result.status.value}")
 
         resposta = AgentResponse(
             agent="financial_agent",
@@ -345,23 +254,15 @@ def financial_agent_node(
                 "diagnostico_financeiro",
             ),
             summary=(
-                "Não foi possível calcular o "
-                "diagnóstico financeiro neste momento."
+                "Não foi possível calcular o diagnóstico financeiro neste momento."
             ),
-            recommendations=[
-                (
-                    "Revise os valores informados "
-                    "e tente novamente."
-                )
-            ],
+            recommendations=[("Revise os valores informados e tente novamente.")],
             next_steps=[],
             sources=[],
             confidence=0.30,
         )
 
-        structured_response[
-            "agent_response"
-        ] = resposta.model_dump()
+        structured_response["agent_response"] = resposta.model_dump()
 
         return {
             **state,
@@ -372,30 +273,22 @@ def financial_agent_node(
                     "content": resposta.summary,
                 }
             ],
-            "structured_response": (
-                structured_response
-            ),
+            "structured_response": (structured_response),
             "tool_results": tool_results,
             "errors": errors,
             "handoff_required": False,
             "handoff_target": "",
             "handoff_reason": "",
-            "trace": trace + [
-                "agent:financial_agent:error"
-            ],
+            "trace": trace + ["agent:financial_agent:error"],
         }
 
     # ======================================================
     # Resultado financeiro aprovado
     # ======================================================
 
-    output = dict(
-        tool_result.output
-    )
+    output = dict(tool_result.output)
 
-    moeda = str(
-        output.get("moeda", "BRL")
-    )
+    moeda = str(output.get("moeda", "BRL"))
 
     saldo = float(
         output.get(
@@ -480,19 +373,12 @@ def financial_agent_node(
 
     else:
         recommendations = [
-            (
-                "Revise os dados de renda e despesas "
-                "antes de tomar decisões financeiras."
-            )
+            ("Revise os dados de renda e despesas antes de tomar decisões financeiras.")
         ]
 
-    structured_response[
-        "diagnostico_financeiro"
-    ] = output
+    structured_response["diagnostico_financeiro"] = output
 
-    structured_response[
-        "agent_response"
-    ] = AgentResponse(
+    structured_response["agent_response"] = AgentResponse(
         agent="financial_agent",
         intent=state.get(
             "intent",
@@ -502,25 +388,16 @@ def financial_agent_node(
         recommendations=recommendations,
         next_steps=[],
         sources=[],
-        confidence=float(
-            state.get("confidence")
-            or 0.90
-        ),
+        confidence=float(state.get("confidence") or 0.90),
     ).model_dump()
 
-    trace.append(
-        f"tool:"
-        f"{FINANCIAL_DIAGNOSIS_TOOL_NAME}:"
-        f"success"
-    )
+    trace.append(f"tool:{FINANCIAL_DIAGNOSIS_TOOL_NAME}:success")
 
     # ======================================================
     # Solicitação explícita de handoff para relatório
     # ======================================================
 
-    existing_handoff = state.get(
-        "handoff_current"
-    )
+    existing_handoff = state.get("handoff_current")
 
     existing_handoff_status = ""
 
@@ -540,10 +417,7 @@ def financial_agent_node(
         "accepted",
     }
 
-    handoff_already_active = (
-        existing_handoff_status
-        in active_handoff_statuses
-    )
+    handoff_already_active = existing_handoff_status in active_handoff_statuses
 
     report_requested = bool(
         state.get(
@@ -585,23 +459,16 @@ def financial_agent_node(
             "geração de um relatório."
         )
 
-        structured_response[
-            "handoff_request"
-        ] = {
+        structured_response["handoff_request"] = {
             "from_agent": "financial_agent",
             "to_agent": "report_agent",
             "reason": handoff_reason,
-            "trigger": (
-                "diagnosis_completed_with_report_request"
-            ),
+            "trigger": ("diagnosis_completed_with_report_request"),
             "diagnosis_available": True,
             "report_requested": True,
         }
 
-        trace.append(
-            "handoff:intent:"
-            "financial_agent->report_agent"
-        )
+        trace.append("handoff:intent:financial_agent->report_agent")
 
     return {
         **state,
@@ -612,24 +479,15 @@ def financial_agent_node(
                 "content": summary,
             }
         ],
-        "structured_response": (
-            structured_response
-        ),
+        "structured_response": (structured_response),
         "tool_results": tool_results,
         "errors": errors,
-        "handoff_required": (
-            should_request_report_handoff
-        ),
-        "handoff_target": (
-            "report_agent"
-            if should_request_report_handoff
-            else ""
-        ),
+        "handoff_required": (should_request_report_handoff),
+        "handoff_target": ("report_agent" if should_request_report_handoff else ""),
         "handoff_reason": handoff_reason,
-        "trace": trace + [
-            "agent:financial_agent"
-        ],
+        "trace": trace + ["agent:financial_agent"],
     }
+
 
 def _execute_rag_for_agent(
     state: InnaAgentState,
@@ -643,37 +501,23 @@ def _execute_rag_for_agent(
     do catálogo, política de permissões, validação
     Pydantic e ToolExecutor.
     """
-    pergunta = str(
-        state.get("user_message", "")
-    ).strip()
+    pergunta = str(state.get("user_message", "")).strip()
 
-    idioma = str(
-        state.get("language", "pt")
-        or "pt"
-    ).strip()
+    idioma = str(state.get("language", "pt") or "pt").strip()
 
     try:
-        top_k = int(
-            state.get("rag_top_k", 4)
-            or 4
-        )
+        top_k = int(state.get("rag_top_k", 4) or 4)
     except (TypeError, ValueError):
         top_k = 4
 
-    trace = list(
-        state.get("trace", [])
-    )
+    trace = list(state.get("trace", []))
 
-    trace.append(
-        f"tool:{RAG_TOOL_NAME}:start"
-    )
+    trace.append(f"tool:{RAG_TOOL_NAME}:start")
 
     def optional_text(
         value,
     ) -> str | None:
-        normalized = str(
-            value or ""
-        ).strip()
+        normalized = str(value or "").strip()
 
         return normalized or None
 
@@ -686,17 +530,9 @@ def _execute_rag_for_agent(
         },
         context=ToolExecutionContext(
             requested_by=agent,
-            user_id=optional_text(
-                state.get("user_id")
-                or state.get("usuario_id")
-            ),
-            session_id=optional_text(
-                state.get("thread_id")
-                or state.get("session_id")
-            ),
-            trace_id=optional_text(
-                state.get("trace_id")
-            ),
+            user_id=optional_text(state.get("user_id") or state.get("usuario_id")),
+            session_id=optional_text(state.get("thread_id") or state.get("session_id")),
+            trace_id=optional_text(state.get("trace_id")),
             metadata={
                 "intent": str(
                     state.get(
@@ -714,37 +550,27 @@ def _execute_rag_for_agent(
         ),
     )
 
-    tool_result = executar_ferramenta_inna(
-        tool_call
-    )
+    tool_result = executar_ferramenta_inna(tool_call)
 
-    tool_results = list(
-        state.get("tool_results", [])
-    )
+    tool_results = list(state.get("tool_results", []))
 
     compact_tool_result = {
         "call_id": tool_result.call_id,
         "tool": tool_result.tool_name,
         "status": tool_result.status.value,
         "ok": tool_result.ok,
-        "duration_ms": (
-            tool_result.duration_ms
-        ),
+        "duration_ms": (tool_result.duration_ms),
     }
 
     if tool_result.error is not None:
-        compact_tool_result.update({
-            "error_code": (
-                tool_result.error.code
-            ),
-            "retryable": (
-                tool_result.error.retryable
-            ),
-        })
+        compact_tool_result.update(
+            {
+                "error_code": (tool_result.error.code),
+                "retryable": (tool_result.error.retryable),
+            }
+        )
 
-    tool_results.append(
-        compact_tool_result
-    )
+    tool_results.append(compact_tool_result)
 
     structured_response = dict(
         state.get(
@@ -753,38 +579,20 @@ def _execute_rag_for_agent(
         )
     )
 
-    structured_response[
-        "rag_execution"
-    ] = dict(
-        compact_tool_result
-    )
+    structured_response["rag_execution"] = dict(compact_tool_result)
 
-    if (
-        tool_result.status
-        != ToolStatus.SUCCESS
-        or not tool_result.output
-    ):
+    if tool_result.status != ToolStatus.SUCCESS or not tool_result.output:
         safe_error = (
             tool_result.error.message
             if tool_result.error
-            else (
-                "A ferramenta RAG não retornou "
-                "um resultado utilizável."
-            )
+            else ("A ferramenta RAG não retornou um resultado utilizável.")
         )
 
-        errors = list(
-            state.get("errors", [])
-        )
+        errors = list(state.get("errors", []))
 
-        errors.append(
-            safe_error
-        )
+        errors.append(safe_error)
 
-        trace.append(
-            f"tool:{RAG_TOOL_NAME}:"
-            f"{tool_result.status.value}"
-        )
+        trace.append(f"tool:{RAG_TOOL_NAME}:{tool_result.status.value}")
 
         resposta = AgentResponse(
             agent=agent,
@@ -793,23 +601,15 @@ def _execute_rag_for_agent(
                 "consulta_rag",
             ),
             summary=(
-                "Não foi possível consultar "
-                "a base de conhecimento neste momento."
+                "Não foi possível consultar a base de conhecimento neste momento."
             ),
-            recommendations=[
-                (
-                    "Tente novamente ou reformule "
-                    "a pergunta financeira."
-                )
-            ],
+            recommendations=[("Tente novamente ou reformule a pergunta financeira.")],
             next_steps=[],
             sources=[],
             confidence=0.30,
         )
 
-        structured_response[
-            "agent_response"
-        ] = resposta.model_dump()
+        structured_response["agent_response"] = resposta.model_dump()
 
         return {
             **state,
@@ -820,21 +620,15 @@ def _execute_rag_for_agent(
                     "content": resposta.summary,
                 }
             ],
-            "structured_response": (
-                structured_response
-            ),
+            "structured_response": (structured_response),
             "tool_results": tool_results,
             "errors": errors,
-            "trace": trace + [
-                f"agent:{agent}:error"
-            ],
+            "trace": trace + [f"agent:{agent}:error"],
         }
 
     output = tool_result.output
 
-    resposta_texto = str(
-        output.get("resposta", "")
-    ).strip()
+    resposta_texto = str(output.get("resposta", "")).strip()
 
     fontes = [
         str(source).strip()
@@ -845,9 +639,7 @@ def _execute_rag_for_agent(
         if str(source).strip()
     ]
 
-    modo = str(
-        output.get("modo", "rag")
-    )
+    modo = str(output.get("modo", "rag"))
 
     documentos_recuperados = int(
         output.get(
@@ -865,7 +657,6 @@ def _execute_rag_for_agent(
         or 0
     )
 
-
     contexto_recuperado = [
         str(item).strip()
         for item in output.get(
@@ -875,25 +666,17 @@ def _execute_rag_for_agent(
         if str(item).strip()
     ]
 
-    structured_response[
-        "rag_execution"
-    ].update({
-        "mode": modo,
-        "retrieved_documents": (
-            documentos_recuperados
-        ),
-        "rag_duration_ms": (
-            duracao_rag_ms
-        ),
-        "sources": fontes,
-        "retrieval_context": (
-            contexto_recuperado
-        ),
-    })
-
-    trace.append(
-        f"tool:{RAG_TOOL_NAME}:success"
+    structured_response["rag_execution"].update(
+        {
+            "mode": modo,
+            "retrieved_documents": (documentos_recuperados),
+            "rag_duration_ms": (duracao_rag_ms),
+            "sources": fontes,
+            "retrieval_context": (contexto_recuperado),
+        }
     )
+
+    trace.append(f"tool:{RAG_TOOL_NAME}:success")
 
     resposta = AgentResponse(
         agent=agent,
@@ -905,15 +688,10 @@ def _execute_rag_for_agent(
         recommendations=[],
         next_steps=[],
         sources=fontes,
-        confidence=float(
-            state.get("confidence")
-            or 0.80
-        ),
+        confidence=float(state.get("confidence") or 0.80),
     )
 
-    structured_response[
-        "agent_response"
-    ] = resposta.model_dump()
+    structured_response["agent_response"] = resposta.model_dump()
 
     return {
         **state,
@@ -924,17 +702,12 @@ def _execute_rag_for_agent(
                 "content": resposta_texto,
             }
         ],
-        "structured_response": (
-            structured_response
-        ),
+        "structured_response": (structured_response),
         "tool_results": tool_results,
-        "errors": list(
-            state.get("errors", [])
-        ),
-        "trace": trace + [
-            f"agent:{agent}"
-        ],
+        "errors": list(state.get("errors", [])),
+        "trace": trace + [f"agent:{agent}"],
     }
+
 
 def education_agent_node(
     state: InnaAgentState,
@@ -972,9 +745,7 @@ def report_agent_node(
     e prepara uma estrutura revisável. Não recalcula
     indicadores e não gera o PDF diretamente.
     """
-    return executar_fluxo_relatorio(
-        state
-    )
+    return executar_fluxo_relatorio(state)
 
 
 def fallback_agent_node(
@@ -983,10 +754,7 @@ def fallback_agent_node(
     return _finalizar(
         state,
         agent="fallback_agent",
-        summary=(
-            "Não identifiquei uma solicitação "
-            "financeira específica."
-        ),
+        summary=("Não identifiquei uma solicitação financeira específica."),
         recommendations=[
             (
                 "Explique se deseja diagnóstico, "

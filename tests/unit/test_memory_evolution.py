@@ -5,11 +5,7 @@ from src.services.memory.evolution import (
 
 
 def test_copiar_memoria_sem_referencia_compartilhada():
-    memoria = {
-        "memoria_json": {
-            "meta": 100
-        }
-    }
+    memoria = {"memoria_json": {"meta": 100}}
 
     copia = copiar_memoria(memoria)
     copia["memoria_json"]["meta"] = 200
@@ -38,10 +34,7 @@ def test_calcular_evolucao_financeira():
     assert resultado["tem_evolucao"] is True
     assert len(resultado["evolucoes"]) == 3
 
-    mapa = {
-        item["campo"]: item
-        for item in resultado["evolucoes"]
-    }
+    mapa = {item["campo"]: item for item in resultado["evolucoes"]}
 
     assert mapa["renda_mensal"]["diferenca"] == 200.0
     assert mapa["gastos_mensais"]["diferenca"] == -100.0

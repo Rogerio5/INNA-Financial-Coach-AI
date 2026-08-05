@@ -20,14 +20,10 @@ def _valor_opcional_nao_negativo(
     try:
         numero = float(valor)
     except (TypeError, ValueError) as exc:
-        raise ValueError(
-            f"{nome} deve ser numérico."
-        ) from exc
+        raise ValueError(f"{nome} deve ser numérico.") from exc
 
     if numero < 0:
-        raise ValueError(
-            f"{nome} não pode ser negativo."
-        )
+        raise ValueError(f"{nome} não pode ser negativo.")
 
     return numero
 
@@ -60,14 +56,10 @@ def analisar_divida_educativamente(
     )
 
     if quantidade_parcelas is not None:
-        quantidade_parcelas = int(
-            quantidade_parcelas
-        )
+        quantidade_parcelas = int(quantidade_parcelas)
 
         if quantidade_parcelas < 0:
-            raise ValueError(
-                "quantidade_parcelas não pode ser negativa."
-            )
+            raise ValueError("quantidade_parcelas não pode ser negativa.")
 
     dados_ausentes = []
 
@@ -98,35 +90,23 @@ def analisar_divida_educativamente(
     sinais_atencao = []
 
     if esta_atrasada is True:
-        sinais_atencao.append(
-            "divida_atrasada"
-        )
+        sinais_atencao.append("divida_atrasada")
 
     if juros is not None and juros > 0:
-        sinais_atencao.append(
-            "possui_juros_informados"
-        )
+        sinais_atencao.append("possui_juros_informados")
 
     if parcela is not None and parcela > 0:
-        sinais_atencao.append(
-            "parcela_compromete_orcamento"
-        )
+        sinais_atencao.append("parcela_compromete_orcamento")
 
     return {
-        "tipo_divida": (
-            str(tipo_divida).strip()
-            if tipo_divida
-            else None
-        ),
+        "tipo_divida": (str(tipo_divida).strip() if tipo_divida else None),
         "valor_total": total,
         "parcela_mensal": parcela,
         "taxa_juros_mensal": juros,
         "esta_atrasada": esta_atrasada,
         "quantidade_parcelas": quantidade_parcelas,
         "dados_ausentes": dados_ausentes,
-        "tem_dados_suficientes": (
-            len(dados_ausentes) == 0
-        ),
+        "tem_dados_suficientes": (len(dados_ausentes) == 0),
         "criterios_para_avaliar": criterios,
         "sinais_de_atencao": sinais_atencao,
         "mensagem_educativa": (

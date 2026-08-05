@@ -175,9 +175,7 @@ _METRIC_LABELS = MappingProxyType(
             "outcome",
             "error_category",
         ),
-        "inna_telegram_worker_cycles_total": (
-            "worker_result",
-        ),
+        "inna_telegram_worker_cycles_total": ("worker_result",),
         "inna_telegram_worker_updates_total": (
             "outcome",
             "error_category",
@@ -199,24 +197,16 @@ _METRIC_LABELS = MappingProxyType(
 def _normalize_label_name(
     name: object,
 ) -> str:
-    normalized = str(
-        name
-    ).strip().lower()
+    normalized = str(name).strip().lower()
 
     if not normalized:
-        raise ValueError(
-            "Nome de label vazio."
-        )
+        raise ValueError("Nome de label vazio.")
 
     if normalized in _FORBIDDEN_LABEL_NAMES:
-        raise ValueError(
-            "Label proibida."
-        )
+        raise ValueError("Label proibida.")
 
     if normalized not in _ALLOWED_LABEL_VALUES:
-        raise ValueError(
-            "Label não registrada."
-        )
+        raise ValueError("Label não registrada.")
 
     return normalized
 
@@ -226,20 +216,12 @@ def _normalize_label_value(
     label: str,
     value: object,
 ) -> str:
-    allowed = _ALLOWED_LABEL_VALUES[
-        label
-    ]
+    allowed = _ALLOWED_LABEL_VALUES[label]
 
     if value is None:
-        candidate = (
-            "none"
-            if label == "error_category"
-            else "unknown"
-        )
+        candidate = "none" if label == "error_category" else "unknown"
     else:
-        candidate = str(
-            value
-        ).strip().lower()
+        candidate = str(value).strip().lower()
 
     if candidate in allowed:
         return candidate
@@ -247,9 +229,7 @@ def _normalize_label_value(
     if "unknown" in allowed:
         return "unknown"
 
-    raise ValueError(
-        f"Valor inválido para label {label!r}."
-    )
+    raise ValueError(f"Valor inválido para label {label!r}.")
 
 
 def normalize_metric_labels(
@@ -257,34 +237,19 @@ def normalize_metric_labels(
     metric_name: str,
     labels: Mapping[str, object],
 ) -> tuple[tuple[str, str], ...]:
-    expected = _METRIC_LABELS.get(
-        metric_name
-    )
+    expected = _METRIC_LABELS.get(metric_name)
 
     if expected is None:
-        raise ValueError(
-            "Família de métrica não registrada."
-        )
+        raise ValueError("Família de métrica não registrada.")
 
-    provided_names = {
-        _normalize_label_name(name)
-        for name in labels
-    }
+    provided_names = {_normalize_label_name(name) for name in labels}
 
-    expected_names = set(
-        expected
-    )
+    expected_names = set(expected)
 
     if provided_names != expected_names:
-        missing = sorted(
-            expected_names
-            - provided_names
-        )
+        missing = sorted(expected_names - provided_names)
 
-        unexpected = sorted(
-            provided_names
-            - expected_names
-        )
+        unexpected = sorted(provided_names - expected_names)
 
         raise ValueError(
             "Conjunto de labels inválido. "
@@ -305,9 +270,7 @@ def normalize_metric_labels(
             )
         )
 
-    return tuple(
-        normalized
-    )
+    return tuple(normalized)
 
 
 @dataclass(frozen=True, slots=True)
@@ -335,17 +298,14 @@ class TelegramProductiveMetricsSnapshot:
     ]
 
 
-class TelegramProductiveMetricsSink(
-    Protocol
-):
+class TelegramProductiveMetricsSink(Protocol):
     def increment(
         self,
         metric_name: str,
         *,
         labels: Mapping[str, object],
         value: float = 1.0,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def observe(
         self,
@@ -353,8 +313,7 @@ class TelegramProductiveMetricsSink(
         value: float,
         *,
         labels: Mapping[str, object],
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 class NoOpTelegramProductiveMetrics:
@@ -386,59 +345,31 @@ class InMemoryTelegramProductiveMetrics:
         self,
         *,
         histogram_buckets: tuple[
-            float,
-            ...
+            float, ...
         ] = TELEGRAM_OPERATION_DURATION_BUCKETS_SECONDS,
     ) -> None:
         normalized_buckets = tuple(
-            sorted(
-                float(bucket)
-                for bucket in histogram_buckets
-            )
+            sorted(float(bucket) for bucket in histogram_buckets)
         )
 
         if not normalized_buckets:
-            raise ValueError(
-                "Histogram precisa de buckets."
-            )
+            raise ValueError("Histogram precisa de buckets.")
 
-        if any(
-            not isfinite(bucket)
-            or bucket <= 0
-            for bucket in normalized_buckets
-        ):
-            raise ValueError(
-                "Buckets precisam ser finitos e positivos."
-            )
+        if any(not isfinite(bucket) or bucket <= 0 for bucket in normalized_buckets):
+            raise ValueError("Buckets precisam ser finitos e positivos.")
 
-        if len(
-            normalized_buckets
-        ) != len(
-            set(normalized_buckets)
-        ):
-            raise ValueError(
-                "Buckets duplicados."
-            )
+        if len(normalized_buckets) != len(set(normalized_buckets)):
+            raise ValueError("Buckets duplicados.")
 
-        self._histogram_buckets = (
-            normalized_buckets
-        )
+        self._histogram_buckets = normalized_buckets
 
-        self._counter_values = defaultdict(
-            float
-        )
+        self._counter_values = defaultdict(float)
 
-        self._histogram_counts = defaultdict(
-            int
-        )
+        self._histogram_counts = defaultdict(int)
 
-        self._histogram_sums = defaultdict(
-            float
-        )
+        self._histogram_sums = defaultdict(float)
 
-        self._histogram_bucket_counts = (
-            defaultdict(int)
-        )
+        self._histogram_bucket_counts = defaultdict(int)
 
         self._lock = RLock()
 
@@ -449,30 +380,17 @@ class InMemoryTelegramProductiveMetrics:
         labels: Mapping[str, object],
         value: float = 1.0,
     ) -> None:
-        numeric_value = float(
-            value
-        )
+        numeric_value = float(value)
 
-        if (
-            not isfinite(numeric_value)
-            or numeric_value < 0
-        ):
-            raise ValueError(
-                "Incremento precisa ser finito e não negativo."
-            )
+        if not isfinite(numeric_value) or numeric_value < 0:
+            raise ValueError("Incremento precisa ser finito e não negativo.")
 
-        if metric_name == (
-            "inna_telegram_operation_duration_seconds"
-        ):
-            raise ValueError(
-                "Histogram deve usar observe()."
-            )
+        if metric_name == ("inna_telegram_operation_duration_seconds"):
+            raise ValueError("Histogram deve usar observe().")
 
-        normalized_labels = (
-            normalize_metric_labels(
-                metric_name=metric_name,
-                labels=labels,
-            )
+        normalized_labels = normalize_metric_labels(
+            metric_name=metric_name,
+            labels=labels,
         )
 
         key = (
@@ -481,9 +399,7 @@ class InMemoryTelegramProductiveMetrics:
         )
 
         with self._lock:
-            self._counter_values[
-                key
-            ] += numeric_value
+            self._counter_values[key] += numeric_value
 
     def observe(
         self,
@@ -492,30 +408,17 @@ class InMemoryTelegramProductiveMetrics:
         *,
         labels: Mapping[str, object],
     ) -> None:
-        if metric_name != (
-            "inna_telegram_operation_duration_seconds"
-        ):
-            raise ValueError(
-                "observe() aceita apenas histogramas."
-            )
+        if metric_name != ("inna_telegram_operation_duration_seconds"):
+            raise ValueError("observe() aceita apenas histogramas.")
 
-        numeric_value = float(
-            value
-        )
+        numeric_value = float(value)
 
-        if (
-            not isfinite(numeric_value)
-            or numeric_value < 0
-        ):
-            raise ValueError(
-                "Observação precisa ser finita e não negativa."
-            )
+        if not isfinite(numeric_value) or numeric_value < 0:
+            raise ValueError("Observação precisa ser finita e não negativa.")
 
-        normalized_labels = (
-            normalize_metric_labels(
-                metric_name=metric_name,
-                labels=labels,
-            )
+        normalized_labels = normalize_metric_labels(
+            metric_name=metric_name,
+            labels=labels,
         )
 
         key = (
@@ -524,17 +427,11 @@ class InMemoryTelegramProductiveMetrics:
         )
 
         with self._lock:
-            self._histogram_counts[
-                key
-            ] += 1
+            self._histogram_counts[key] += 1
 
-            self._histogram_sums[
-                key
-            ] += numeric_value
+            self._histogram_sums[key] += numeric_value
 
-            for bucket in (
-                self._histogram_buckets
-            ):
+            for bucket in self._histogram_buckets:
                 if numeric_value <= bucket:
                     self._histogram_bucket_counts[
                         (
@@ -548,10 +445,7 @@ class InMemoryTelegramProductiveMetrics:
         self,
         metric: TelegramConversationMetricRecord,
     ) -> None:
-        error_category = (
-            metric.error_category
-            or "none"
-        )
+        error_category = metric.error_category or "none"
 
         self.increment(
             "inna_telegram_operations_total",
@@ -565,17 +459,11 @@ class InMemoryTelegramProductiveMetrics:
 
         duration_seconds = max(
             0.0,
-            float(
-                metric.duration_ms
-            )
-            / 1000.0,
+            float(metric.duration_ms) / 1000.0,
         )
 
         self.observe(
-            (
-                "inna_telegram_"
-                "operation_duration_seconds"
-            ),
+            ("inna_telegram_operation_duration_seconds"),
             duration_seconds,
             labels={
                 "component": metric.component,
@@ -593,9 +481,7 @@ class InMemoryTelegramProductiveMetrics:
                 labels={
                     "component": metric.component,
                     "operation": metric.operation,
-                    "error_category": (
-                        error_category
-                    ),
+                    "error_category": (error_category),
                 },
             )
 
@@ -605,14 +491,10 @@ class InMemoryTelegramProductiveMetrics:
                 "conflict",
                 "recovered",
             }
-            or metric.conflict_recovered
-            is True
+            or metric.conflict_recovered is True
         ):
             conflict_outcome = (
-                "recovered"
-                if metric.conflict_recovered
-                is True
-                else metric.outcome
+                "recovered" if metric.conflict_recovered is True else metric.outcome
             )
 
             self.increment(
@@ -632,9 +514,7 @@ class InMemoryTelegramProductiveMetrics:
             for (
                 metric_name,
                 labels,
-            ), value in (
-                self._counter_values.items()
-            ):
+            ), value in self._counter_values.items():
                 counters_by_metric.setdefault(
                     metric_name,
                     {},
@@ -645,9 +525,7 @@ class InMemoryTelegramProductiveMetrics:
             for (
                 metric_name,
                 labels,
-            ), count in (
-                self._histogram_counts.items()
-            ):
+            ), count in self._histogram_counts.items():
                 buckets = {
                     bucket: (
                         self._histogram_bucket_counts[
@@ -658,26 +536,20 @@ class InMemoryTelegramProductiveMetrics:
                             )
                         ]
                     )
-                    for bucket in (
-                        self._histogram_buckets
-                    )
+                    for bucket in (self._histogram_buckets)
                 }
 
-                histogram = (
-                    TelegramHistogramSnapshot(
-                        count=count,
-                        sum=(
-                            self._histogram_sums[
-                                (
-                                    metric_name,
-                                    labels,
-                                )
-                            ]
-                        ),
-                        buckets=MappingProxyType(
-                            buckets
-                        ),
-                    )
+                histogram = TelegramHistogramSnapshot(
+                    count=count,
+                    sum=(
+                        self._histogram_sums[
+                            (
+                                metric_name,
+                                labels,
+                            )
+                        ]
+                    ),
+                    buckets=MappingProxyType(buckets),
                 )
 
                 histograms_by_metric.setdefault(
@@ -687,33 +559,21 @@ class InMemoryTelegramProductiveMetrics:
 
             immutable_counters = MappingProxyType(
                 {
-                    name: MappingProxyType(
-                        values.copy()
-                    )
-                    for name, values in (
-                        counters_by_metric.items()
-                    )
+                    name: MappingProxyType(values.copy())
+                    for name, values in (counters_by_metric.items())
                 }
             )
 
             immutable_histograms = MappingProxyType(
                 {
-                    name: MappingProxyType(
-                        values.copy()
-                    )
-                    for name, values in (
-                        histograms_by_metric.items()
-                    )
+                    name: MappingProxyType(values.copy())
+                    for name, values in (histograms_by_metric.items())
                 }
             )
 
-            return (
-                TelegramProductiveMetricsSnapshot(
-                    counters=immutable_counters,
-                    histograms=(
-                        immutable_histograms
-                    ),
-                )
+            return TelegramProductiveMetricsSnapshot(
+                counters=immutable_counters,
+                histograms=(immutable_histograms),
             )
 
     def reset(

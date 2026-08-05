@@ -107,9 +107,7 @@ def test_required_fields_are_validated(
         HumanReviewError,
         match=field_name,
     ):
-        create_human_review_request(
-            **arguments
-        )
+        create_human_review_request(**arguments)
 
 
 def test_invalid_risk_level_is_rejected():
@@ -147,16 +145,11 @@ def test_approve_requested_review():
     assert approved["status"] == "approved"
     assert approved["resolved_at"] is not None
     assert approved["decision"]["action"] == "approve"
-    assert (
-        approved["decision"]["reviewer_id"]
-        == "user-001"
-    )
+    assert approved["decision"]["reviewer_id"] == "user-001"
 
 
 def test_approve_waiting_review():
-    waiting = mark_human_review_waiting(
-        _review()
-    )
+    waiting = mark_human_review_waiting(_review())
 
     approved = approve_human_review(
         waiting,
@@ -177,10 +170,7 @@ def test_correct_review():
     )
 
     assert corrected["status"] == "corrected"
-    assert (
-        corrected["decision"]["corrections"]
-        == {"expenses": 3200}
-    )
+    assert corrected["decision"]["corrections"] == {"expenses": 3200}
 
 
 def test_empty_corrections_are_rejected():
@@ -203,9 +193,7 @@ def test_reject_review():
     )
 
     assert rejected["status"] == "rejected"
-    assert rejected["error"] == (
-        "Dados inconsistentes."
-    )
+    assert rejected["error"] == ("Dados inconsistentes.")
 
 
 def test_cancel_review():
@@ -216,16 +204,11 @@ def test_cancel_review():
     )
 
     assert cancelled["status"] == "cancelled"
-    assert (
-        cancelled["decision"]["action"]
-        == "cancel"
-    )
+    assert cancelled["decision"]["action"] == "cancel"
 
 
 def test_expire_review():
-    expired = expire_human_review(
-        _review()
-    )
+    expired = expire_human_review(_review())
 
     assert expired["status"] == "expired"
     assert expired["resolved_at"] is not None
@@ -238,9 +221,7 @@ def test_fail_review():
     )
 
     assert failed["status"] == "failed"
-    assert failed["error"] == (
-        "Falha ao persistir revisão."
-    )
+    assert failed["error"] == ("Falha ao persistir revisão.")
 
 
 @pytest.mark.parametrize(
@@ -257,9 +238,7 @@ def test_fail_review():
 def test_terminal_statuses(
     status,
 ):
-    assert is_terminal_human_review_status(
-        status
-    )
+    assert is_terminal_human_review_status(status)
 
 
 @pytest.mark.parametrize(
@@ -272,9 +251,7 @@ def test_terminal_statuses(
 def test_non_terminal_statuses(
     status,
 ):
-    assert not is_terminal_human_review_status(
-        status
-    )
+    assert not is_terminal_human_review_status(status)
 
 
 def test_terminal_review_cannot_transition_again():
@@ -294,17 +271,13 @@ def test_terminal_review_cannot_transition_again():
 
 
 def test_invalid_transition_is_rejected():
-    waiting = mark_human_review_waiting(
-        _review()
-    )
+    waiting = mark_human_review_waiting(_review())
 
     with pytest.raises(
         HumanReviewError,
         match="Transição de revisão humana inválida",
     ):
-        mark_human_review_waiting(
-            waiting
-        )
+        mark_human_review_waiting(waiting)
 
 
 def test_original_review_is_not_mutated():

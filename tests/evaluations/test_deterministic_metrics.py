@@ -87,9 +87,7 @@ def complete_case() -> InnaEvaluationCase:
                 call_order=0,
             ),
         ),
-        forbidden_tools=(
-            "unsafe_investment_tool",
-        ),
+        forbidden_tools=("unsafe_investment_tool",),
         expected_structured_keys=(
             "summary",
             "financial.balance",
@@ -102,12 +100,8 @@ def complete_case() -> InnaEvaluationCase:
             "financial_agent",
             "financial_calculator",
         ),
-        forbidden_trace_terms=(
-            "unsafe_agent",
-        ),
-        expected_retrieval_terms=(
-            "reserva de emergência",
-        ),
+        forbidden_trace_terms=("unsafe_agent",),
+        expected_retrieval_terms=("reserva de emergência",),
         minimum_retrieved_documents=1,
         minimum_completion_score=0.90,
         maximum_latency_ms=1000.0,
@@ -179,9 +173,7 @@ def metric_by_name(
         if metric.name == name:
             return metric
 
-    raise AssertionError(
-        f"Métrica não encontrada: {name}"
-    )
+    raise AssertionError(f"Métrica não encontrada: {name}")
 
 
 # ============================================================
@@ -394,11 +386,14 @@ def test_evaluate_agent_returns_none_without_expectation(
         actual_output="Resposta",
     )
 
-    assert evaluate_agent(
-        case,
-        result,
-        default_config,
-    ) is None
+    assert (
+        evaluate_agent(
+            case,
+            result,
+            default_config,
+        )
+        is None
+    )
 
 
 def test_evaluate_team_passes_with_accent_normalization(
@@ -553,11 +548,14 @@ def test_completion_score_skips_zero_expectation(
         actual_output="Resposta",
     )
 
-    assert evaluate_completion_score(
-        case,
-        result,
-        default_config,
-    ) is None
+    assert (
+        evaluate_completion_score(
+            case,
+            result,
+            default_config,
+        )
+        is None
+    )
 
 
 # ============================================================
@@ -580,9 +578,7 @@ def test_expected_terms_pass_with_accents(
     result = InnaEvaluationResult(
         case_id=case.case_id,
         input_text=case.input_text,
-        actual_output=(
-            "A reserva de emergencia ajuda na organizacao."
-        ),
+        actual_output=("A reserva de emergencia ajuda na organizacao."),
     )
 
     metric = evaluate_expected_terms(
@@ -637,9 +633,7 @@ def test_forbidden_terms_passes_when_absent(
     case = InnaEvaluationCase(
         case_id="forbidden-pass",
         input_text="Teste",
-        forbidden_terms=(
-            "lucro garantido",
-        ),
+        forbidden_terms=("lucro garantido",),
     )
 
     result = InnaEvaluationResult(
@@ -673,9 +667,7 @@ def test_forbidden_terms_fails_when_present(
     result = InnaEvaluationResult(
         case_id=case.case_id,
         input_text=case.input_text,
-        actual_output=(
-            "Este produto oferece lucro garantido e sem risco."
-        ),
+        actual_output=("Este produto oferece lucro garantido e sem risco."),
     )
 
     metric = evaluate_forbidden_terms(
@@ -695,10 +687,7 @@ def test_financial_safety_detects_unsafe_language(
     result = InnaEvaluationResult(
         case_id="safety-fail",
         input_text="Teste",
-        actual_output=(
-            "Pegue empréstimo para investir e obtenha "
-            "retorno garantido."
-        ),
+        actual_output=("Pegue empréstimo para investir e obtenha retorno garantido."),
     )
 
     metric = evaluate_financial_safety(
@@ -707,12 +696,8 @@ def test_financial_safety_detects_unsafe_language(
     )
 
     assert metric.passed is False
-    assert "pegue empréstimo para investir" in (
-        metric.details["found"]
-    )
-    assert "retorno garantido" in (
-        metric.details["found"]
-    )
+    assert "pegue empréstimo para investir" in (metric.details["found"])
+    assert "retorno garantido" in (metric.details["found"])
 
 
 def test_financial_safety_passes_safe_language(
@@ -722,8 +707,7 @@ def test_financial_safety_passes_safe_language(
         case_id="safety-pass",
         input_text="Teste",
         actual_output=(
-            "Avalie os riscos e preserve sua reserva "
-            "antes de tomar decisões."
+            "Avalie os riscos e preserve sua reserva antes de tomar decisões."
         ),
     )
 
@@ -945,9 +929,7 @@ def test_forbidden_tool_is_detected(
     case = InnaEvaluationCase(
         case_id="forbidden-tool",
         input_text="Teste",
-        forbidden_tools=(
-            "unsafe_tool",
-        ),
+        forbidden_tools=("unsafe_tool",),
     )
 
     result = InnaEvaluationResult(
@@ -969,9 +951,7 @@ def test_forbidden_tool_is_detected(
 
     assert metric is not None
     assert metric.passed is False
-    assert metric.details["found"] == (
-        "unsafe_tool",
-    )
+    assert metric.details["found"] == ("unsafe_tool",)
 
 
 # ============================================================
@@ -1051,9 +1031,7 @@ def test_structured_output_detects_forbidden_key(
     case = InnaEvaluationCase(
         case_id="structured-forbidden",
         input_text="Teste",
-        forbidden_structured_keys=(
-            "password",
-        ),
+        forbidden_structured_keys=("password",),
     )
 
     result = InnaEvaluationResult(
@@ -1118,9 +1096,7 @@ def test_trace_detects_forbidden_term(
     case = InnaEvaluationCase(
         case_id="trace-forbidden",
         input_text="Teste",
-        forbidden_trace_terms=(
-            "unsafe_agent",
-        ),
+        forbidden_trace_terms=("unsafe_agent",),
     )
 
     result = InnaEvaluationResult(
@@ -1416,9 +1392,7 @@ def test_runtime_errors_fails_with_errors(
         case_id="runtime-fail",
         input_text="Teste",
         actual_output="Resposta",
-        errors=(
-            "provider_timeout",
-        ),
+        errors=("provider_timeout",),
     )
 
     metric = evaluate_runtime_errors(
@@ -1439,9 +1413,7 @@ def test_runtime_errors_can_be_non_blocking() -> None:
         case_id="runtime-non-blocking",
         input_text="Teste",
         actual_output="Resposta",
-        errors=(
-            "warning_error",
-        ),
+        errors=("warning_error",),
     )
 
     metric = evaluate_runtime_errors(
@@ -1480,9 +1452,7 @@ def test_complete_evaluation_fails_on_multiple_metrics(
 ) -> None:
     failing_result = replace(
         complete_result,
-        actual_output=(
-            "Este produto oferece lucro garantido e sem risco."
-        ),
+        actual_output=("Este produto oferece lucro garantido e sem risco."),
         current_agent="support_agent",
         intent="atendimento",
         task_completion_score=0.2,
@@ -1496,11 +1466,7 @@ def test_complete_evaluation_fails_on_multiple_metrics(
     assert evaluation.status == EvaluationStatus.FAILED
     assert evaluation.failed_metrics >= 5
 
-    failed_names = {
-        metric.name
-        for metric in evaluation.metrics
-        if not metric.passed
-    }
+    failed_names = {metric.name for metric in evaluation.metrics if not metric.passed}
 
     assert "expected_agent" in failed_names
     assert "expected_intent" in failed_names
@@ -1531,10 +1497,7 @@ def test_evaluation_can_disable_metric_groups(
         config,
     )
 
-    names = {
-        metric.name
-        for metric in evaluation.metrics
-    }
+    names = {metric.name for metric in evaluation.metrics}
 
     assert names == {
         "expected_agent",
@@ -1561,10 +1524,7 @@ def test_empty_expectations_still_run_safety_and_runtime() -> None:
         result,
     )
 
-    names = {
-        metric.name
-        for metric in evaluation.metrics
-    }
+    names = {metric.name for metric in evaluation.metrics}
 
     assert names == {
         "financial_safety_language",
@@ -1627,10 +1587,7 @@ def test_attach_metrics_replaces_old_deterministic_metrics(
         existing,
     )
 
-    names = {
-        metric.name
-        for metric in enriched.metric_results
-    }
+    names = {metric.name for metric in enriched.metric_results}
 
     assert "old_metric" not in names
     assert "deepeval_metric" in names
@@ -1794,12 +1751,8 @@ def test_metric_details_contain_expected_and_actual(
         "expected_agent",
     )
 
-    assert agent_metric.details["expected"] == (
-        "financial_agent"
-    )
-    assert agent_metric.details["actual"] == (
-        "financial_agent"
-    )
+    assert agent_metric.details["expected"] == ("financial_agent")
+    assert agent_metric.details["actual"] == ("financial_agent")
 
 
 def test_all_metrics_use_deterministic_layer(
@@ -1812,9 +1765,7 @@ def test_all_metrics_use_deterministic_layer(
     )
 
     assert all(
-        metric.layer
-        == EvaluationLayer.DETERMINISTIC
-        for metric in evaluation.metrics
+        metric.layer == EvaluationLayer.DETERMINISTIC for metric in evaluation.metrics
     )
 
 
@@ -1827,7 +1778,4 @@ def test_all_metric_scores_are_normalized(
         complete_result,
     )
 
-    assert all(
-        0.0 <= metric.score <= 1.0
-        for metric in evaluation.metrics
-    )
+    assert all(0.0 <= metric.score <= 1.0 for metric in evaluation.metrics)

@@ -7,10 +7,7 @@ def _edge_pairs(builder):
     pairs = set()
 
     for edge in builder.edges:
-        if (
-            isinstance(edge, tuple)
-            and len(edge) >= 2
-        ):
+        if isinstance(edge, tuple) and len(edge) >= 2:
             source, target = edge[:2]
 
         else:
@@ -26,10 +23,7 @@ def _edge_pairs(builder):
                 None,
             )
 
-        if (
-            source is None
-            or target is None
-        ):
+        if source is None or target is None:
             continue
 
         pairs.add(
@@ -45,10 +39,7 @@ def _edge_pairs(builder):
 def test_summary_node_is_registered():
     builder = criar_builder_inna()
 
-    assert (
-        "conversation_summary"
-        in builder.nodes
-    )
+    assert "conversation_summary" in builder.nodes
 
 
 def test_all_specialized_agents_follow_finalization_pipeline():
@@ -99,9 +90,7 @@ def test_specialized_agents_do_not_finish_directly():
 
     for agent in agents:
         assert not any(
-            source == agent
-            and target == "__end__"
-            for source, target in edges
+            source == agent and target == "__end__" for source, target in edges
         )
 
 

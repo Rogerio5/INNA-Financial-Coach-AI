@@ -52,9 +52,7 @@ def _database_row(
         "rejection_reason": "",
         "corrections": {},
         "resume_route": "",
-        "processing_request_id": (
-            processing_request_id
-        ),
+        "processing_request_id": (processing_request_id),
         "processing_started_at": None,
         "failure_reason": "",
         "created_at": now,
@@ -94,9 +92,7 @@ def _resolution_command(
         }
 
     if action == "reject":
-        decision_data["reason"] = (
-            "Resposta não aprovada."
-        )
+        decision_data["reason"] = "Resposta não aprovada."
 
     return HumanReviewResolutionCommand(
         review_id="review-001",
@@ -105,9 +101,7 @@ def _resolution_command(
             reviewer_id="admin-001",
             request_id=request_id,
         ),
-        decision=HumanReviewDecision(
-            **decision_data
-        ),
+        decision=HumanReviewDecision(**decision_data),
     )
 
 
@@ -118,17 +112,11 @@ class FakeCursor:
         fetchone_values: list[Any] | None = None,
         fetchall_value: list[Any] | None = None,
     ) -> None:
-        self.fetchone_values = list(
-            fetchone_values or []
-        )
+        self.fetchone_values = list(fetchone_values or [])
 
-        self.fetchall_value = list(
-            fetchall_value or []
-        )
+        self.fetchall_value = list(fetchall_value or [])
 
-        self.executions: list[
-            tuple[str, Any]
-        ] = []
+        self.executions: list[tuple[str, Any]] = []
 
     def execute(
         self,
@@ -153,9 +141,7 @@ class FakeCursor:
     def fetchall(
         self,
     ) -> list[Any]:
-        return list(
-            self.fetchall_value
-        )
+        return list(self.fetchall_value)
 
 
 def _install_fake_cursor(
@@ -191,12 +177,7 @@ def test_criar_revisao_pendente_created(
         cursor,
     )
 
-    result = (
-        repository
-        .criar_revisao_pendente(
-            _pending_record()
-        )
-    )
+    result = repository.criar_revisao_pendente(_pending_record())
 
     assert result.created is True
     assert result.status == "created"
@@ -221,12 +202,7 @@ def test_criar_revisao_pendente_existing(
         cursor,
     )
 
-    result = (
-        repository
-        .criar_revisao_pendente(
-            _pending_record()
-        )
-    )
+    result = repository.criar_revisao_pendente(_pending_record())
 
     assert result.created is False
     assert result.status == "existing"
@@ -251,12 +227,8 @@ def test_criar_revisao_conflita_com_outro_thread(
         cursor,
     )
 
-    with pytest.raises(
-        HumanReviewConflictError
-    ):
-        repository.criar_revisao_pendente(
-            _pending_record()
-        )
+    with pytest.raises(HumanReviewConflictError):
+        repository.criar_revisao_pendente(_pending_record())
 
 
 def test_obter_revisao(
@@ -273,9 +245,7 @@ def test_obter_revisao(
         cursor,
     )
 
-    result = repository.obter_revisao(
-        "review-001"
-    )
+    result = repository.obter_revisao("review-001")
 
     assert result is not None
     assert result.review_id == "review-001"
@@ -287,9 +257,7 @@ def test_listar_revisoes_pendentes(
 ) -> None:
     cursor = FakeCursor(
         fetchall_value=[
-            _database_row(
-                review_id="review-001"
-            ),
+            _database_row(review_id="review-001"),
             _database_row(
                 review_id="review-002",
                 thread_id="thread-002",
@@ -303,12 +271,9 @@ def test_listar_revisoes_pendentes(
         cursor,
     )
 
-    results = (
-        repository
-        .listar_revisoes_pendentes(
-            limit=20,
-            offset=0,
-        )
+    results = repository.listar_revisoes_pendentes(
+        limit=20,
+        offset=0,
     )
 
     assert len(results) == 2
@@ -323,9 +288,7 @@ def test_reivindicar_revisao(
 
     row = _database_row(
         status="processing",
-        processing_request_id=(
-            command.context.request_id
-        ),
+        processing_request_id=(command.context.request_id),
     )
 
     cursor = FakeCursor(
@@ -339,15 +302,10 @@ def test_reivindicar_revisao(
         cursor,
     )
 
-    result = repository.reivindicar_revisao(
-        command
-    )
+    result = repository.reivindicar_revisao(command)
 
     assert result.status == "processing"
-    assert (
-        result.processing_request_id
-        == command.context.request_id
-    )
+    assert result.processing_request_id == command.context.request_id
 
 
 def test_reivindicar_revisao_inexistente(
@@ -365,12 +323,8 @@ def test_reivindicar_revisao_inexistente(
         cursor,
     )
 
-    with pytest.raises(
-        HumanReviewNotFoundError
-    ):
-        repository.reivindicar_revisao(
-            _resolution_command()
-        )
+    with pytest.raises(HumanReviewNotFoundError):
+        repository.reivindicar_revisao(_resolution_command())
 
 
 def test_finalizar_revisao(
@@ -384,13 +338,13 @@ def test_finalizar_revisao(
         status="approved",
     )
 
-    row.update({
-        "decision_action": "approve",
-        "reviewer_id": "admin-001",
-        "resolved_at": datetime.now(
-            timezone.utc
-        ),
-    })
+    row.update(
+        {
+            "decision_action": "approve",
+            "reviewer_id": "admin-001",
+            "resolved_at": datetime.now(timezone.utc),
+        }
+    )
 
     cursor = FakeCursor(
         fetchone_values=[
@@ -423,9 +377,7 @@ def test_registrar_falha_retomada(
         status="resume_failed",
     )
 
-    row["failure_reason"] = (
-        "Falha controlada no LangGraph."
-    )
+    row["failure_reason"] = "Falha controlada no LangGraph."
 
     cursor = FakeCursor(
         fetchone_values=[
@@ -438,14 +390,9 @@ def test_registrar_falha_retomada(
         cursor,
     )
 
-    result = (
-        repository
-        .registrar_falha_retomada(
-            command,
-            failure_reason=(
-                "Falha controlada no LangGraph."
-            ),
-        )
+    result = repository.registrar_falha_retomada(
+        command,
+        failure_reason=("Falha controlada no LangGraph."),
     )
 
     assert result.status == "resume_failed"
@@ -471,12 +418,7 @@ def test_liberar_claims_expirados(
         cursor,
     )
 
-    result = (
-        repository
-        .liberar_claims_expirados(
-            timeout_seconds=300
-        )
-    )
+    result = repository.liberar_claims_expirados(timeout_seconds=300)
 
     assert result == [
         "review-001",

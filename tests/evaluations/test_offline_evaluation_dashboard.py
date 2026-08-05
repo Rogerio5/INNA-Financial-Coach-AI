@@ -42,25 +42,13 @@ def write_json(
 def dashboard_paths(
     tmp_path: Path,
 ) -> OfflineDashboardPaths:
-    benchmark = (
-        tmp_path
-        / "offline_benchmark_latest.json"
-    )
+    benchmark = tmp_path / "offline_benchmark_latest.json"
 
-    quality_gate = (
-        tmp_path
-        / "offline_quality_gate_latest.json"
-    )
+    quality_gate = tmp_path / "offline_quality_gate_latest.json"
 
-    quality_summary = (
-        tmp_path
-        / "offline_quality_summary_latest.json"
-    )
+    quality_summary = tmp_path / "offline_quality_summary_latest.json"
 
-    mcp_e2e = (
-        tmp_path
-        / "mcp_simulated_e2e_latest.json"
-    )
+    mcp_e2e = tmp_path / "mcp_simulated_e2e_latest.json"
 
     write_json(
         benchmark,
@@ -167,15 +155,11 @@ def dashboard_paths(
                 },
                 "invalid_arguments": {
                     "status": "validation_error",
-                    "error_code": (
-                        "tool_input_validation_error"
-                    ),
+                    "error_code": ("tool_input_validation_error"),
                 },
                 "permission_denied": {
                     "status": "denied",
-                    "error_code": (
-                        "tool_permission_denied"
-                    ),
+                    "error_code": ("tool_permission_denied"),
                 },
                 "unknown_tool": {
                     "status": "not_found",
@@ -183,9 +167,7 @@ def dashboard_paths(
                 },
                 "controlled_error": {
                     "status": "error",
-                    "error_code": (
-                        "tool_execution_error"
-                    ),
+                    "error_code": ("tool_execution_error"),
                 },
                 "timeout": {
                     "status": "timeout",
@@ -244,9 +226,7 @@ def test_builds_normalized_overview(
     assert overview["category_count"] == 12
     assert overview["legacy_pass_rate"] == 0
     assert overview["agentic_pass_rate"] == 1
-    assert overview["score_delta"] == pytest.approx(
-        0.610556
-    )
+    assert overview["score_delta"] == pytest.approx(0.610556)
     assert overview["latency_delta_ms"] == 65
     assert overview["quality_gate_passed"] is True
     assert overview["mcp_scenario_count"] == 8
@@ -281,10 +261,7 @@ def test_builds_quality_gate_rows(
     )
 
     assert len(rows) == 2
-    assert all(
-        row["Aprovado"]
-        for row in rows
-    )
+    assert all(row["Aprovado"] for row in rows)
 
 
 def test_builds_eight_mcp_scenario_rows(
@@ -300,10 +277,7 @@ def test_builds_eight_mcp_scenario_rows(
 
     assert len(rows) == 8
 
-    statuses = {
-        row["Cenário"]: row["Status"]
-        for row in rows
-    }
+    statuses = {row["Cenário"]: row["Status"] for row in rows}
 
     assert statuses["health"] == "success"
     assert statuses["timeout"] == "timeout"
@@ -320,11 +294,7 @@ def test_preserves_context_identifiers(
         )
     )
 
-    rag = next(
-        row
-        for row in rows
-        if row["Cenário"] == "rag"
-    )
+    rag = next(row for row in rows if row["Cenário"] == "rag")
 
     assert rag["user_id"] == "user-test"
     assert rag["session_id"] == "session-test"
@@ -343,10 +313,7 @@ def test_all_offline_security_controls_pass(
     )
 
     assert len(rows) == 7
-    assert all(
-        row["Aprovado"]
-        for row in rows
-    )
+    assert all(row["Aprovado"] for row in rows)
 
 
 def test_report_status_contains_four_sources(
@@ -361,14 +328,8 @@ def test_report_status_contains_four_sources(
     )
 
     assert len(rows) == 4
-    assert all(
-        row["Existe"]
-        for row in rows
-    )
-    assert all(
-        row["Carregado"]
-        for row in rows
-    )
+    assert all(row["Existe"] for row in rows)
+    assert all(row["Carregado"] for row in rows)
 
 
 def test_missing_report_raises_in_strict_mode(
@@ -394,12 +355,10 @@ def test_missing_report_is_recorded_in_safe_mode(
 ) -> None:
     dashboard_paths.mcp_e2e.unlink()
 
-    snapshot = (
-        load_offline_dashboard_snapshot(
-            tmp_path,
-            paths=dashboard_paths,
-            strict=False,
-        )
+    snapshot = load_offline_dashboard_snapshot(
+        tmp_path,
+        paths=dashboard_paths,
+        strict=False,
     )
 
     assert snapshot.mcp_e2e == {}
@@ -429,11 +388,7 @@ def test_category_count_falls_back_to_quality_gate_check(
     tmp_path: Path,
     dashboard_paths: OfflineDashboardPaths,
 ) -> None:
-    benchmark = json.loads(
-        dashboard_paths.benchmark.read_text(
-            encoding="utf-8"
-        )
-    )
+    benchmark = json.loads(dashboard_paths.benchmark.read_text(encoding="utf-8"))
 
     benchmark.pop(
         "category_count",
@@ -445,11 +400,7 @@ def test_category_count_falls_back_to_quality_gate_check(
         benchmark,
     )
 
-    gate = json.loads(
-        dashboard_paths.quality_gate.read_text(
-            encoding="utf-8"
-        )
-    )
+    gate = json.loads(dashboard_paths.quality_gate.read_text(encoding="utf-8"))
 
     gate["checks"].append(
         {
@@ -480,11 +431,7 @@ def test_category_count_supports_nested_real_gate_schema(
     tmp_path: Path,
     dashboard_paths: OfflineDashboardPaths,
 ) -> None:
-    benchmark = json.loads(
-        dashboard_paths.benchmark.read_text(
-            encoding="utf-8"
-        )
-    )
+    benchmark = json.loads(dashboard_paths.benchmark.read_text(encoding="utf-8"))
 
     benchmark.pop(
         "category_count",
@@ -497,9 +444,7 @@ def test_category_count_supports_nested_real_gate_schema(
     )
 
     quality_summary = json.loads(
-        dashboard_paths.quality_summary.read_text(
-            encoding="utf-8"
-        )
+        dashboard_paths.quality_summary.read_text(encoding="utf-8")
     )
 
     quality_summary.pop(
@@ -518,9 +463,7 @@ def test_category_count_supports_nested_real_gate_schema(
             "result": {
                 "quality_checks": [
                     {
-                        "check_name": (
-                            "dataset_category_count"
-                        ),
+                        "check_name": ("dataset_category_count"),
                         "actual": {
                             "value": 12,
                         },

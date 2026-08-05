@@ -57,7 +57,6 @@ class AdapterConfig:
     )
 
 
-
 _EXTERNAL_BRL_AMOUNT_PATTERN = re.compile(
     r"(?i)"
     r"(?<![A-Za-z0-9])"
@@ -89,6 +88,7 @@ def _sanitize_external_financial_text(
         "[REDACTED_FINANCIAL_DATA]",
         normalized,
     )
+
 
 def _safe_string(
     value: Any,
@@ -337,9 +337,7 @@ def _extract_string_sequence(
     for item in items:
         if isinstance(item, BaseException):
             safe_error = sanitize_exception(item)
-            text = _safe_string(
-                safe_error.get("message")
-            )
+            text = _safe_string(safe_error.get("message"))
         else:
             text = _safe_string(item)
 
@@ -460,13 +458,9 @@ def extract_tool_calls(
     )
 
     if isinstance(raw_tools, Mapping):
-        normalized_tools: Sequence[Any] = tuple(
-            raw_tools.values()
-        )
+        normalized_tools: Sequence[Any] = tuple(raw_tools.values())
     else:
-        normalized_tools = _sequence_or_empty(
-            raw_tools
-        )
+        normalized_tools = _sequence_or_empty(raw_tools)
 
     observed_tools: list[ObservedToolCall] = []
 
@@ -505,15 +499,9 @@ def extract_tool_calls(
         observed_tools.append(
             ObservedToolCall(
                 name=_extract_tool_name(raw_tool),
-                arguments=_extract_tool_arguments(
-                    raw_tool
-                ),
-                output=_extract_tool_output(
-                    raw_tool
-                ),
-                status=_extract_tool_status(
-                    raw_tool
-                ),
+                arguments=_extract_tool_arguments(raw_tool),
+                output=_extract_tool_output(raw_tool),
+                status=_extract_tool_status(raw_tool),
                 duration_ms=duration_ms,
                 call_index=_safe_non_negative_int(
                     raw_tool.get(
@@ -529,15 +517,9 @@ def extract_tool_calls(
                         default=None,
                     )
                 ),
-                trace_id=_safe_optional_string(
-                    raw_tool.get("trace_id")
-                ),
-                span_id=_safe_optional_string(
-                    raw_tool.get("span_id")
-                ),
-                metadata=_mapping_or_empty(
-                    raw_tool.get("metadata")
-                ),
+                trace_id=_safe_optional_string(raw_tool.get("trace_id")),
+                span_id=_safe_optional_string(raw_tool.get("span_id")),
+                metadata=_mapping_or_empty(raw_tool.get("metadata")),
             )
         )
 
@@ -592,17 +574,11 @@ def extract_retrieval_documents(
         )
     elif isinstance(raw_documents, Mapping):
         if _document_content(raw_documents):
-            raw_documents = (
-                raw_documents,
-            )
+            raw_documents = (raw_documents,)
         else:
-            raw_documents = tuple(
-                raw_documents.values()
-            )
+            raw_documents = tuple(raw_documents.values())
     else:
-        raw_documents = _sequence_or_empty(
-            raw_documents
-        )
+        raw_documents = _sequence_or_empty(raw_documents)
 
     documents: list[RetrievalDocument] = []
 
@@ -623,9 +599,7 @@ def extract_retrieval_documents(
             continue
 
         if not isinstance(raw_document, Mapping):
-            content = _safe_string(
-                raw_document
-            )
+            content = _safe_string(raw_document)
 
             if not content:
                 continue
@@ -639,9 +613,7 @@ def extract_retrieval_documents(
             )
             continue
 
-        content = _document_content(
-            raw_document
-        )
+        content = _document_content(raw_document)
 
         if not content:
             continue
@@ -692,15 +664,9 @@ def extract_retrieval_documents(
                         default=None,
                     )
                 ),
-                content_hash=_safe_optional_string(
-                    raw_document.get(
-                        "content_hash"
-                    )
-                )
+                content_hash=_safe_optional_string(raw_document.get("content_hash"))
                 or content_hash(content),
-                metadata=_mapping_or_empty(
-                    raw_document.get("metadata")
-                ),
+                metadata=_mapping_or_empty(raw_document.get("metadata")),
             )
         )
 
@@ -744,23 +710,15 @@ def _extract_token_usage(
         usage.get("total_tokens"),
     )
 
-    if (
-        total_tokens
-        and total_tokens
-        < input_tokens + output_tokens
-    ):
+    if total_tokens and total_tokens < input_tokens + output_tokens:
         total_tokens = input_tokens + output_tokens
 
     return TokenUsage(
         input_tokens=input_tokens,
         output_tokens=output_tokens,
         total_tokens=total_tokens,
-        cached_tokens=_safe_non_negative_int(
-            usage.get("cached_tokens")
-        ),
-        reasoning_tokens=_safe_non_negative_int(
-            usage.get("reasoning_tokens")
-        ),
+        cached_tokens=_safe_non_negative_int(usage.get("cached_tokens")),
+        reasoning_tokens=_safe_non_negative_int(usage.get("reasoning_tokens")),
     )
 
 
@@ -778,13 +736,9 @@ def extract_model_executions(
     )
 
     if isinstance(raw_executions, Mapping):
-        raw_executions = tuple(
-            raw_executions.values()
-        )
+        raw_executions = tuple(raw_executions.values())
     else:
-        raw_executions = _sequence_or_empty(
-            raw_executions
-        )
+        raw_executions = _sequence_or_empty(raw_executions)
 
     executions: list[ModelExecution] = []
 
@@ -820,15 +774,11 @@ def extract_model_executions(
                 provider=provider,
                 model_name=model_name,
                 operation=_safe_string(
-                    raw_execution.get(
-                        "operation"
-                    ),
+                    raw_execution.get("operation"),
                     default="generation",
                 ),
                 prompt_version=_safe_optional_string(
-                    raw_execution.get(
-                        "prompt_version"
-                    )
+                    raw_execution.get("prompt_version")
                 ),
                 latency_ms=_safe_non_negative_float(
                     _first_present(
@@ -849,36 +799,18 @@ def extract_model_executions(
                     )
                 ),
                 cost_currency=_safe_string(
-                    raw_execution.get(
-                        "cost_currency"
-                    ),
+                    raw_execution.get("cost_currency"),
                     default="USD",
                 ),
-                token_usage=_extract_token_usage(
-                    raw_execution
-                ),
+                token_usage=_extract_token_usage(raw_execution),
                 status=_safe_string(
                     raw_execution.get("status"),
                     default="success",
                 ),
-                error_code=_safe_optional_string(
-                    raw_execution.get(
-                        "error_code"
-                    )
-                ),
-                trace_id=_safe_optional_string(
-                    raw_execution.get(
-                        "trace_id"
-                    )
-                ),
-                span_id=_safe_optional_string(
-                    raw_execution.get(
-                        "span_id"
-                    )
-                ),
-                metadata=_mapping_or_empty(
-                    raw_execution.get("metadata")
-                ),
+                error_code=_safe_optional_string(raw_execution.get("error_code")),
+                trace_id=_safe_optional_string(raw_execution.get("trace_id")),
+                span_id=_safe_optional_string(raw_execution.get("span_id")),
+                metadata=_mapping_or_empty(raw_execution.get("metadata")),
             )
         )
 
@@ -947,61 +879,39 @@ class InnaEvaluationAdapter:
     ) -> InnaEvaluationResult:
         """Transforma um estado existente em resultado normalizado."""
 
-        errors = _extract_string_sequence(
-            state.get("errors")
-        )
+        errors = _extract_string_sequence(state.get("errors"))
 
-        warnings = _extract_string_sequence(
-            state.get("warnings")
-        )
+        warnings = _extract_string_sequence(state.get("warnings"))
 
-        trace = _extract_string_sequence(
-            state.get("trace")
-        )
+        trace = _extract_string_sequence(state.get("trace"))
 
-        actual_output = _extract_response(
-            state
-        )
+        actual_output = _extract_response(state)
 
         status = _extract_status(
             state,
             has_errors=bool(errors),
         )
 
-        if (
-            not actual_output
-            and status
-            not in {
-                EvaluationStatus.ERROR,
-                EvaluationStatus.SKIPPED,
-            }
-        ):
+        if not actual_output and status not in {
+            EvaluationStatus.ERROR,
+            EvaluationStatus.SKIPPED,
+        }:
             status = EvaluationStatus.ERROR
             errors = (
                 *errors,
                 "empty_response",
             )
 
-        structured_response = (
-            _extract_structured_response(state)
-        )
+        structured_response = _extract_structured_response(state)
 
         if self.config.sanitize_internal_state:
-            safe_structured_response = (
-                prepare_internal_payload(
-                    structured_response
-                )
-            )
+            safe_structured_response = prepare_internal_payload(structured_response)
         else:
-            safe_structured_response = dict(
-                structured_response
-            )
+            safe_structured_response = dict(structured_response)
 
         if self.config.preserve_raw_state:
             if self.config.sanitize_internal_state:
-                raw_state = prepare_internal_payload(
-                    state
-                )
+                raw_state = prepare_internal_payload(state)
             else:
                 raw_state = dict(state)
         else:
@@ -1075,9 +985,7 @@ class InnaEvaluationAdapter:
 
         metadata = {
             **dict(self.config.metadata),
-            "adapter": (
-                "InnaEvaluationAdapter"
-            ),
+            "adapter": ("InnaEvaluationAdapter"),
         }
 
         return InnaEvaluationResult(
@@ -1094,43 +1002,20 @@ class InnaEvaluationAdapter:
             task_status=task_status,
             task_completion_score=completion_score,
             tools_called=extract_tool_calls(state),
-            retrieval_documents=(
-                extract_retrieval_documents(state)
-            ),
-            model_executions=(
-                extract_model_executions(state)
-            ),
+            retrieval_documents=(extract_retrieval_documents(state)),
+            model_executions=(extract_model_executions(state)),
             errors=errors,
             warnings=warnings,
             trace=trace,
-            application_version=(
-                self.config.application_version
-            ),
+            application_version=(self.config.application_version),
             graph_version=self.config.graph_version,
-            prompt_version=(
-                self.config.prompt_version
-            ),
+            prompt_version=(self.config.prompt_version),
             latency_ms=latency_ms,
             estimated_cost=total_cost,
             cost_currency=cost_currency,
-            trace_id=(
-                trace_id
-                or _safe_optional_string(
-                    state.get("trace_id")
-                )
-            ),
-            thread_id=(
-                thread_id
-                or _safe_optional_string(
-                    state.get("thread_id")
-                )
-            ),
-            session_id=(
-                session_id
-                or _safe_optional_string(
-                    state.get("session_id")
-                )
-            ),
+            trace_id=(trace_id or _safe_optional_string(state.get("trace_id"))),
+            thread_id=(thread_id or _safe_optional_string(state.get("thread_id"))),
+            session_id=(session_id or _safe_optional_string(state.get("session_id"))),
             user_reference_hash=_build_user_hash(
                 user_reference,
                 self.config,
@@ -1166,14 +1051,8 @@ class InnaEvaluationAdapter:
             ),
             privacy_level=case.privacy_level,
             external_payload_sanitized=False,
-            structured_response=(
-                _mapping_or_empty(
-                    safe_structured_response
-                )
-            ),
-            raw_state=_mapping_or_empty(
-                raw_state
-            ),
+            structured_response=(_mapping_or_empty(safe_structured_response)),
+            raw_state=_mapping_or_empty(raw_state),
             metadata=metadata,
         )
 
@@ -1194,9 +1073,7 @@ class InnaEvaluationAdapter:
         O executor deve retornar um Mapping contendo o estado final.
         """
 
-        kwargs = dict(
-            execution_kwargs or {}
-        )
+        kwargs = dict(execution_kwargs or {})
 
         started_at = perf_counter()
 
@@ -1207,19 +1084,12 @@ class InnaEvaluationAdapter:
             )
 
             if not isinstance(state, Mapping):
-                raise TypeError(
-                    "O executor da INNA deve retornar "
-                    "um objeto Mapping."
-                )
+                raise TypeError("O executor da INNA deve retornar um objeto Mapping.")
 
         except Exception as exception:
-            latency_ms = (
-                perf_counter() - started_at
-            ) * 1000
+            latency_ms = (perf_counter() - started_at) * 1000
 
-            safe_error = sanitize_exception(
-                exception
-            )
+            safe_error = sanitize_exception(exception)
 
             return InnaEvaluationResult(
                 case_id=case.case_id,
@@ -1231,21 +1101,13 @@ class InnaEvaluationAdapter:
                 status=EvaluationStatus.ERROR,
                 errors=(
                     _safe_string(
-                        safe_error.get(
-                            "message"
-                        ),
+                        safe_error.get("message"),
                         default="execution_error",
                     ),
                 ),
-                application_version=(
-                    self.config.application_version
-                ),
-                graph_version=(
-                    self.config.graph_version
-                ),
-                prompt_version=(
-                    self.config.prompt_version
-                ),
+                application_version=(self.config.application_version),
+                graph_version=(self.config.graph_version),
+                prompt_version=(self.config.prompt_version),
                 latency_ms=latency_ms,
                 trace_id=trace_id,
                 thread_id=thread_id,
@@ -1259,18 +1121,12 @@ class InnaEvaluationAdapter:
                 privacy_level=case.privacy_level,
                 metadata={
                     **dict(self.config.metadata),
-                    "adapter": (
-                        "InnaEvaluationAdapter"
-                    ),
-                    "error_type": type(
-                        exception
-                    ).__name__,
+                    "adapter": ("InnaEvaluationAdapter"),
+                    "error_type": type(exception).__name__,
                 },
             )
 
-        latency_ms = (
-            perf_counter() - started_at
-        ) * 1000
+        latency_ms = (perf_counter() - started_at) * 1000
 
         return self.from_state(
             case=case,
@@ -1292,13 +1148,9 @@ class InnaEvaluationAdapter:
         Resultados RESTRICTED são bloqueados.
         """
 
-        if (
-            result.privacy_level
-            == PrivacyLevel.RESTRICTED
-        ):
+        if result.privacy_level == PrivacyLevel.RESTRICTED:
             raise ValueError(
-                "Resultados RESTRICTED não podem "
-                "ser exportados externamente."
+                "Resultados RESTRICTED não podem ser exportados externamente."
             )
 
         payload = {
@@ -1306,71 +1158,43 @@ class InnaEvaluationAdapter:
             "schema_version": result.schema_version,
             "case_id": result.case_id,
             "dataset_name": result.dataset_name,
-            "dataset_version": (
-                result.dataset_version
-            ),
+            "dataset_version": (result.dataset_version),
             "case_version": result.case_version,
             "status": result.status.value,
-            "input": _sanitize_external_financial_text(
-                result.input_text
-            ),
-            "actual_output": _sanitize_external_financial_text(
-                result.actual_output
-            ),
+            "input": _sanitize_external_financial_text(result.input_text),
+            "actual_output": _sanitize_external_financial_text(result.actual_output),
             "current_agent": result.current_agent,
             "current_team": result.current_team,
             "intent": result.intent,
             "task_status": result.task_status,
-            "task_completion_score": (
-                result.task_completion_score
-            ),
+            "task_completion_score": (result.task_completion_score),
             "tools_called": [
                 {
                     "tool_name": tool.name,
                     "status": tool.status,
-                    "duration_ms": (
-                        tool.duration_ms
-                    ),
-                    "call_index": (
-                        tool.call_index
-                    ),
+                    "duration_ms": (tool.duration_ms),
+                    "call_index": (tool.call_index),
                 }
                 for tool in result.tools_called
             ],
-            "retrieval_context": list(
-                result.retrieval_context
-            ),
+            "retrieval_context": list(result.retrieval_context),
             "errors": list(result.errors),
             "warnings": list(result.warnings),
             "trace": list(result.trace),
             "latency_ms": result.latency_ms,
-            "estimated_cost": (
-                result.estimated_cost
-            ),
-            "cost_currency": (
-                result.cost_currency
-            ),
+            "estimated_cost": (result.estimated_cost),
+            "cost_currency": (result.cost_currency),
             "trace_id": result.trace_id,
             "thread_id": result.thread_id,
             "session_id": result.session_id,
-            "user_reference_hash": (
-                result.user_reference_hash
-            ),
-            "human_review_requested": (
-                result.human_review_requested
-            ),
-            "human_review_status": (
-                result.human_review_status
-            ),
-            "structured_response": dict(
-                result.structured_response
-            ),
+            "user_reference_hash": (result.user_reference_hash),
+            "human_review_requested": (result.human_review_requested),
+            "human_review_status": (result.human_review_status),
+            "structured_response": dict(result.structured_response),
             "metadata": dict(result.metadata),
         }
 
-        sanitized = prepare_external_payload(
-            payload
-        )
+        sanitized = prepare_external_payload(payload)
 
         return _mapping_or_empty(sanitized)
 

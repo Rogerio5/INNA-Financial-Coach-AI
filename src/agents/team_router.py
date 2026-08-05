@@ -51,9 +51,7 @@ class TeamRouterDecision:
 def _normalize_text(
     value: Any,
 ) -> str:
-    return str(
-        value or ""
-    ).strip()
+    return str(value or "").strip()
 
 
 def _requested_agent_from_state(
@@ -67,46 +65,25 @@ def _requested_agent_from_state(
     2. agente explicitamente solicitado à equipe;
     3. next_node definido pelo supervisor principal.
     """
-    handoff = state.get(
-        "handoff_current"
-    )
+    handoff = state.get("handoff_current")
 
     if isinstance(
         handoff,
         dict,
     ):
-        handoff_status = _normalize_text(
-            handoff.get(
-                "status"
-            )
-        )
+        handoff_status = _normalize_text(handoff.get("status"))
 
-        handoff_target = _normalize_text(
-            handoff.get(
-                "to_agent"
-            )
-        )
+        handoff_target = _normalize_text(handoff.get("to_agent"))
 
-        if (
-            handoff_status == "requested"
-            and handoff_target
-        ):
+        if handoff_status == "requested" and handoff_target:
             return handoff_target
 
-    explicit = _normalize_text(
-        state.get(
-            "team_requested_agent"
-        )
-    )
+    explicit = _normalize_text(state.get("team_requested_agent"))
 
     if explicit:
         return explicit
 
-    return _normalize_text(
-        state.get(
-            "next_node"
-        )
-    )
+    return _normalize_text(state.get("next_node"))
 
 
 def resolve_team_router_decision(
@@ -118,66 +95,39 @@ def resolve_team_router_decision(
     Um agente desconhecido é recuperado com segurança para:
     support_team -> fallback_agent.
     """
-    requested_agent = (
-        _requested_agent_from_state(
-            state
-        )
-    )
+    requested_agent = _requested_agent_from_state(state)
 
     route_source: TeamRouterSource = (
         "explicit_team_request"
-        if _normalize_text(
-            state.get(
-                "team_requested_agent"
-            )
-        )
+        if _normalize_text(state.get("team_requested_agent"))
         else "supervisor_agent_route"
     )
 
     recovered_to_fallback = False
 
     try:
-        team = (
-            DEFAULT_TEAM_REGISTRY
-            .team_for_agent(
-                requested_agent  # type: ignore[arg-type]
-            )
+        team = DEFAULT_TEAM_REGISTRY.team_for_agent(
+            requested_agent  # type: ignore[arg-type]
         )
 
-        normalized_agent = (
-            requested_agent
-        )
+        normalized_agent = requested_agent
     except TeamHierarchyError:
-        team = (
-            DEFAULT_TEAM_REGISTRY
-            .team_for_agent(
-                "fallback_agent"
-            )
-        )
+        team = DEFAULT_TEAM_REGISTRY.team_for_agent("fallback_agent")
 
-        normalized_agent = (
-            "fallback_agent"
-        )
+        normalized_agent = "fallback_agent"
 
-        route_source = (
-            "fallback_recovery"
-        )
+        route_source = "fallback_recovery"
 
         recovered_to_fallback = True
 
     return TeamRouterDecision(
         requested_agent=normalized_agent,  # type: ignore[arg-type]
         selected_team=team.name,
-        team_supervisor_node=(
-            team.supervisor_node
-        ),
+        team_supervisor_node=(team.supervisor_node),
         route_source=route_source,
-        recovered_to_fallback=(
-            recovered_to_fallback
-        ),
+        recovered_to_fallback=(recovered_to_fallback),
         reason=(
-            "A rota do agente foi associada ao "
-            "supervisor de sua equipe."
+            "A rota do agente foi associada ao supervisor de sua equipe."
             if not recovered_to_fallback
             else (
                 "A rota solicitada não pertence à "
@@ -218,11 +168,7 @@ def team_router_node(
     """
     Prepara o estado para execução do supervisor de equipe.
     """
-    decision = (
-        resolve_team_router_decision(
-            dict(state)
-        )
-    )
+    decision = resolve_team_router_decision(dict(state))
 
     structured_response = dict(
         state.get(
@@ -231,33 +177,17 @@ def team_router_node(
         )
     )
 
-    structured_response[
-        "team_router_decision"
-    ] = decision.model_dump()
+    structured_response["team_router_decision"] = decision.model_dump()
 
     return {
-        "current_team": (
-            decision.selected_team
-        ),
-        "team_supervisor": (
-            decision.team_supervisor_node
-        ),
-        "team_requested_agent": (
-            decision.requested_agent
-        ),
-        "team_route": (
-            decision.team_supervisor_node
-        ),
-        "team_route_source": (
-            decision.route_source
-        ),
-        "team_routing_reason": (
-            decision.reason
-        ),
+        "current_team": (decision.selected_team),
+        "team_supervisor": (decision.team_supervisor_node),
+        "team_requested_agent": (decision.requested_agent),
+        "team_route": (decision.team_supervisor_node),
+        "team_route_source": (decision.route_source),
+        "team_routing_reason": (decision.reason),
         "team_requires_root_supervisor": False,
-        "structured_response": (
-            structured_response
-        ),
+        "structured_response": (structured_response),
         "trace": _append_trace(
             state,
             decision,
@@ -271,14 +201,7 @@ def select_team_supervisor_route(
     """
     Função de branch condicional do LangGraph.
     """
-    route = _normalize_text(
-        state.get(
-            "team_supervisor"
-        )
-        or state.get(
-            "team_route"
-        )
-    )
+    route = _normalize_text(state.get("team_supervisor") or state.get("team_route"))
 
     allowed_routes = {
         "financial_team_supervisor",

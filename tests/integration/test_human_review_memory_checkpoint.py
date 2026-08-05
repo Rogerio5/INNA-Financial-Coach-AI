@@ -38,9 +38,7 @@ def _create_test_graph():
     O objetivo é validar somente:
     política → interrupt → checkpoint → resume.
     """
-    builder = StateGraph(
-        InnaAgentState
-    )
+    builder = StateGraph(InnaAgentState)
 
     # Representa a saída do Task Completion no
     # grafo reduzido usado pelo teste.
@@ -70,9 +68,7 @@ def _create_test_graph():
         "human_review_policy",
         select_route_after_human_review_policy,
         {
-            "human_review_interrupt": (
-                "human_review_interrupt"
-            ),
+            "human_review_interrupt": ("human_review_interrupt"),
             "handoff_coordinator": END,
         },
     )
@@ -96,10 +92,7 @@ def _create_test_graph():
 
     checkpointer = InMemorySaver()
 
-    return builder.compile(
-        checkpointer=checkpointer
-    )
-
+    return builder.compile(checkpointer=checkpointer)
 
 
 def _create_high_risk_state(
@@ -107,23 +100,22 @@ def _create_high_risk_state(
     thread_id: str,
 ) -> InnaAgentState:
     state = _criar_estado_inicial(
-        (
-            "Minha renda é 3000 e meus gastos "
-            "mensais são 4500."
-        ),
+        ("Minha renda é 3000 e meus gastos mensais são 4500."),
         thread_id=thread_id,
         usuario_id="user-memory-checkpoint",
         idioma="pt-BR",
         moeda="BRL",
     )
 
-    state.update({
-        "current_agent": "financial_agent",
-        "task_status": "completed",
-        "task_completion_score": 0.95,
-        "confidence": 0.95,
-        "human_review_enabled": True,
-    })
+    state.update(
+        {
+            "current_agent": "financial_agent",
+            "task_status": "completed",
+            "task_completion_score": 0.95,
+            "confidence": 0.95,
+            "human_review_enabled": True,
+        }
+    )
 
     # structured_response pertence ao schema do estado
     # e é analisado pela política Human-in-the-Loop.
@@ -135,19 +127,14 @@ def _create_high_risk_state(
         or {}
     )
 
-    structured[
-        "risk_level"
-    ] = "high"
+    structured["risk_level"] = "high"
 
-    state[
-        "structured_response"
-    ] = structured
+    state["structured_response"] = structured
 
-    state[
-        "human_review_enabled"
-    ] = True
+    state["human_review_enabled"] = True
 
     return state
+
 
 def _config(
     thread_id: str,
@@ -186,8 +173,6 @@ def _invoke_until_interrupt(
     )
 
 
-
-
 def _interrupt_payload(
     result: dict,
 ) -> dict:
@@ -196,9 +181,7 @@ def _interrupt_payload(
         (),
     )
 
-    assert interrupts, (
-        "O LangGraph não retornou uma interrupção."
-    )
+    assert interrupts, "O LangGraph não retornou uma interrupção."
 
     first = interrupts[0]
 
@@ -212,9 +195,7 @@ def _interrupt_payload(
         first,
         dict,
     ):
-        value = first.get(
-            "value"
-        )
+        value = first.get("value")
 
     assert isinstance(
         value,
@@ -227,171 +208,103 @@ def _interrupt_payload(
 def test_real_interrupt_is_saved_in_checkpoint():
     graph = _create_test_graph()
 
-    thread_id = (
-        "thread-memory-"
-        + uuid4().hex
-    )
+    thread_id = "thread-memory-" + uuid4().hex
 
-    config = _config(
-        thread_id
-    )
+    config = _config(thread_id)
 
     result = _invoke_until_interrupt(
         graph,
-        state=_create_high_risk_state(
-            thread_id=thread_id
-        ),
+        state=_create_high_risk_state(thread_id=thread_id),
         config=config,
     )
 
-    payload = _interrupt_payload(
-        result
-    )
+    payload = _interrupt_payload(result)
 
-    assert payload[
-        "type"
-    ] == "human_review"
+    assert payload["type"] == "human_review"
 
-    assert payload[
-        "thread_id"
-    ] == thread_id
+    assert payload["thread_id"] == thread_id
 
-    assert payload[
-        "trigger"
-    ] == "high_financial_risk"
+    assert payload["trigger"] == "high_financial_risk"
 
-    assert payload[
-        "risk_level"
-    ] == "high"
+    assert payload["risk_level"] == "high"
 
-    snapshot = graph.get_state(
-        config
-    )
+    snapshot = graph.get_state(config)
 
-    assert snapshot.next == (
-        "human_review_interrupt",
-    )
+    assert snapshot.next == ("human_review_interrupt",)
 
-    assert snapshot.values[
-        "human_review_required"
-    ] is True
+    assert snapshot.values["human_review_required"] is True
 
-    assert snapshot.values[
-        "human_review_status"
-    ] == "requested"
+    assert snapshot.values["human_review_status"] == "requested"
 
-    assert snapshot.values[
-        "human_review_current"
-    ]["thread_id"] == thread_id
+    assert snapshot.values["human_review_current"]["thread_id"] == thread_id
 
 
 def test_real_approve_resume_uses_same_checkpoint():
     graph = _create_test_graph()
 
-    thread_id = (
-        "thread-approve-"
-        + uuid4().hex
-    )
+    thread_id = "thread-approve-" + uuid4().hex
 
-    config = _config(
-        thread_id
-    )
+    config = _config(thread_id)
 
     interrupted = _invoke_until_interrupt(
         graph,
-        state=_create_high_risk_state(
-            thread_id=thread_id
-        ),
+        state=_create_high_risk_state(thread_id=thread_id),
         config=config,
     )
 
-    _interrupt_payload(
-        interrupted
-    )
+    _interrupt_payload(interrupted)
 
     resumed = graph.invoke(
         Command(
             resume={
                 "action": "approve",
-                "reviewer_id": (
-                    "user-memory-checkpoint"
-                ),
-                "comment": (
-                    "Dados financeiros confirmados."
-                ),
+                "reviewer_id": ("user-memory-checkpoint"),
+                "comment": ("Dados financeiros confirmados."),
             }
         ),
         config=config,
     )
 
-    assert resumed[
-        "human_review_required"
-    ] is False
+    assert resumed["human_review_required"] is False
 
-    assert resumed[
-        "human_review_status"
-    ] == "approved"
+    assert resumed["human_review_status"] == "approved"
 
-    assert resumed[
-        "human_review_decision_action"
-    ] == "approve"
+    assert resumed["human_review_decision_action"] == "approve"
 
-    assert resumed[
-        "human_review_resume_route"
-    ] == "handoff_coordinator"
+    assert resumed["human_review_resume_route"] == "handoff_coordinator"
 
-    assert resumed[
-        "human_review_current"
-    ]["decision"]["reviewer_id"] == (
+    assert resumed["human_review_current"]["decision"]["reviewer_id"] == (
         "user-memory-checkpoint"
     )
 
-    snapshot = graph.get_state(
-        config
-    )
+    snapshot = graph.get_state(config)
 
     assert snapshot.next == ()
 
-    assert snapshot.values[
-        "human_review_status"
-    ] == "approved"
+    assert snapshot.values["human_review_status"] == "approved"
 
 
 def test_real_correction_resume_preserves_corrections():
     graph = _create_test_graph()
 
-    thread_id = (
-        "thread-correction-"
-        + uuid4().hex
-    )
+    thread_id = "thread-correction-" + uuid4().hex
 
-    config = _config(
-        thread_id
-    )
+    config = _config(thread_id)
 
     interrupted = _invoke_until_interrupt(
         graph,
-        state=_create_high_risk_state(
-            thread_id=thread_id
-        ),
+        state=_create_high_risk_state(thread_id=thread_id),
         config=config,
     )
 
-    _interrupt_payload(
-        interrupted
-    )
+    _interrupt_payload(interrupted)
 
     resumed = graph.invoke(
         Command(
             resume={
                 "action": "correct",
-                "reviewer_id": (
-                    "user-memory-checkpoint"
-                ),
-                "comment": (
-                    "O valor correto dos gastos "
-                    "mensais é 3500."
-                ),
+                "reviewer_id": ("user-memory-checkpoint"),
+                "comment": ("O valor correto dos gastos mensais é 3500."),
                 "corrections": {
                     "expenses": 3500,
                 },
@@ -400,23 +313,15 @@ def test_real_correction_resume_preserves_corrections():
         config=config,
     )
 
-    assert resumed[
-        "human_review_status"
-    ] == "corrected"
+    assert resumed["human_review_status"] == "corrected"
 
-    assert resumed[
-        "human_review_corrections"
-    ] == {
+    assert resumed["human_review_corrections"] == {
         "expenses": 3500,
     }
 
-    assert resumed[
-        "human_review_resume_route"
-    ] == "team_router"
+    assert resumed["human_review_resume_route"] == "team_router"
 
-    assert resumed[
-        "human_review_current"
-    ]["decision"]["corrections"] == {
+    assert resumed["human_review_current"]["decision"]["corrections"] == {
         "expenses": 3500,
     }
 
@@ -428,9 +333,7 @@ def test_real_correction_resume_preserves_corrections():
             {
                 "action": "reject",
                 "reviewer_id": "reviewer-001",
-                "reason": (
-                    "Os dados não foram confirmados."
-                ),
+                "reason": ("Os dados não foram confirmados."),
             },
             "rejected",
         ),
@@ -438,9 +341,7 @@ def test_real_correction_resume_preserves_corrections():
             {
                 "action": "cancel",
                 "reviewer_id": "user-001",
-                "reason": (
-                    "O usuário cancelou a revisão."
-                ),
+                "reason": ("O usuário cancelou a revisão."),
             },
             "cancelled",
         ),
@@ -452,74 +353,46 @@ def test_real_terminal_resume_routes_to_summary(
 ):
     graph = _create_test_graph()
 
-    thread_id = (
-        f"thread-{expected_status}-"
-        + uuid4().hex
-    )
+    thread_id = f"thread-{expected_status}-" + uuid4().hex
 
-    config = _config(
-        thread_id
-    )
+    config = _config(thread_id)
 
     interrupted = _invoke_until_interrupt(
         graph,
-        state=_create_high_risk_state(
-            thread_id=thread_id
-        ),
+        state=_create_high_risk_state(thread_id=thread_id),
         config=config,
     )
 
-    _interrupt_payload(
-        interrupted
-    )
+    _interrupt_payload(interrupted)
 
     resumed = graph.invoke(
-        Command(
-            resume=decision
-        ),
+        Command(resume=decision),
         config=config,
     )
 
-    assert resumed[
-        "human_review_status"
-    ] == expected_status
+    assert resumed["human_review_status"] == expected_status
 
-    assert resumed[
-        "human_review_required"
-    ] is False
+    assert resumed["human_review_required"] is False
 
-    assert resumed[
-        "human_review_resume_route"
-    ] == "conversation_summary"
+    assert resumed["human_review_resume_route"] == "conversation_summary"
 
 
 def test_resume_with_different_thread_does_not_find_checkpoint():
     graph = _create_test_graph()
 
-    original_thread = (
-        "thread-original-"
-        + uuid4().hex
-    )
+    original_thread = "thread-original-" + uuid4().hex
 
-    original_config = _config(
-        original_thread
-    )
+    original_config = _config(original_thread)
 
     interrupted = _invoke_until_interrupt(
         graph,
-        state=_create_high_risk_state(
-            thread_id=original_thread
-        ),
+        state=_create_high_risk_state(thread_id=original_thread),
         config=original_config,
     )
 
-    _interrupt_payload(
-        interrupted
-    )
+    _interrupt_payload(interrupted)
 
-    wrong_config = _config(
-        "thread-wrong-" + uuid4().hex
-    )
+    wrong_config = _config("thread-wrong-" + uuid4().hex)
 
     result = graph.invoke(
         Command(
@@ -533,14 +406,8 @@ def test_resume_with_different_thread_does_not_find_checkpoint():
 
     assert result is not None
 
-    original_snapshot = graph.get_state(
-        original_config
-    )
+    original_snapshot = graph.get_state(original_config)
 
-    assert original_snapshot.next == (
-        "human_review_interrupt",
-    )
+    assert original_snapshot.next == ("human_review_interrupt",)
 
-    assert original_snapshot.values[
-        "human_review_status"
-    ] == "requested"
+    assert original_snapshot.values["human_review_status"] == "requested"

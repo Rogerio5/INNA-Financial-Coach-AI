@@ -10,10 +10,7 @@ def test_financial_task_is_completed():
         {
             "intent": "diagnostico_financeiro",
             "current_agent": "financial_agent",
-            "response": (
-                "Seu diagnóstico financeiro "
-                "foi calculado."
-            ),
+            "response": ("Seu diagnóstico financeiro foi calculado."),
             "structured_response": {
                 "agent_response": "ok",
                 "financial_input_resolution": {
@@ -23,9 +20,7 @@ def test_financial_task_is_completed():
             },
             "tool_results": [
                 {
-                    "tool": (
-                        "calcular_diagnostico_financeiro"
-                    ),
+                    "tool": ("calcular_diagnostico_financeiro"),
                     "status": "success",
                     "ok": True,
                 }
@@ -38,9 +33,7 @@ def test_financial_task_is_completed():
     assert result["task_status"] == "completed"
     assert result["task_completion_score"] == 1.0
 
-    assert result[
-        "completed_requirements"
-    ] == [
+    assert result["completed_requirements"] == [
         "agent_execution",
         "financial_inputs_resolved",
         "financial_calculation_executed",
@@ -53,10 +46,7 @@ def test_task_requires_user_input():
         {
             "intent": "diagnostico_financeiro",
             "current_agent": "financial_agent",
-            "response": (
-                "Para continuar, preciso que você "
-                "informe os gastos fixos."
-            ),
+            "response": ("Para continuar, preciso que você informe os gastos fixos."),
             "structured_response": {},
             "tool_results": [],
             "errors": [],
@@ -64,10 +54,7 @@ def test_task_requires_user_input():
         }
     )
 
-    assert (
-        result["task_status"]
-        == "needs_user_input"
-    )
+    assert result["task_status"] == "needs_user_input"
 
     assert result["task_block_reason"]
 
@@ -80,21 +67,14 @@ def test_task_fails_when_state_has_errors():
             "response": "",
             "structured_response": {},
             "tool_results": [],
-            "errors": [
-                "Falha ao recuperar documentos."
-            ],
+            "errors": ["Falha ao recuperar documentos."],
             "trace": [],
         }
     )
 
     assert result["task_status"] == "failed"
 
-    assert (
-        "falha"
-        in result[
-            "task_block_reason"
-        ].lower()
-    )
+    assert "falha" in result["task_block_reason"].lower()
 
 
 def test_report_task_requires_report_generation():
@@ -116,12 +96,7 @@ def test_report_task_requires_report_generation():
 
     assert result["task_status"] == "completed"
 
-    assert (
-        "report_generation"
-        in result[
-            "completed_requirements"
-        ]
-    )
+    assert "report_generation" in result["completed_requirements"]
 
 
 def test_task_completion_adds_trace():
@@ -144,9 +119,7 @@ def test_task_completion_adds_trace():
             },
             "tool_results": [
                 {
-                    "tool": (
-                        "buscar_conhecimento_rag"
-                    ),
+                    "tool": ("buscar_conhecimento_rag"),
                     "status": "success",
                     "ok": True,
                 }
@@ -158,14 +131,9 @@ def test_task_completion_adds_trace():
         }
     )
 
-    assert result["trace"][0] == (
-        "agent:education_agent"
-    )
+    assert result["trace"][0] == ("agent:education_agent")
 
-    assert result["trace"][-1].startswith(
-        "task_completion:completed:"
-    )
-
+    assert result["trace"][-1].startswith("task_completion:completed:")
 
 
 def test_current_agent_is_inferred_from_next_node():
@@ -181,33 +149,20 @@ def test_current_agent_is_inferred_from_next_node():
         }
     )
 
-    assert result["current_agent"] == (
-        "financial_agent"
-    )
+    assert result["current_agent"] == ("financial_agent")
 
-    assert result[
-        "task_completion_evidence"
-    ]["agent"] == "financial_agent"
+    assert result["task_completion_evidence"]["agent"] == "financial_agent"
 
-    assert (
-        result["task_status"]
-        == "partially_completed"
-    )
+    assert result["task_status"] == "partially_completed"
 
-    assert result[
-        "task_completion_score"
-    ] == 0.5
+    assert result["task_completion_score"] == 0.5
 
-    assert result[
-        "completed_requirements"
-    ] == [
+    assert result["completed_requirements"] == [
         "agent_execution",
         "response_generation",
     ]
 
-    assert result[
-        "missing_requirements"
-    ] == [
+    assert result["missing_requirements"] == [
         "financial_inputs_resolved",
         "financial_calculation_executed",
     ]
@@ -228,13 +183,9 @@ def test_current_agent_is_inferred_from_trace():
         }
     )
 
-    assert result["current_agent"] == (
-        "education_agent"
-    )
+    assert result["current_agent"] == ("education_agent")
 
-    assert result[
-        "task_completion_evidence"
-    ]["agent"] == "education_agent"
+    assert result["task_completion_evidence"]["agent"] == "education_agent"
 
 
 def test_explicit_current_agent_has_priority():
@@ -253,9 +204,7 @@ def test_explicit_current_agent_has_priority():
         }
     )
 
-    assert result["current_agent"] == (
-        "rag_agent"
-    )
+    assert result["current_agent"] == ("rag_agent")
 
 
 def test_incomplete_financial_task_has_partial_score():
@@ -263,10 +212,7 @@ def test_incomplete_financial_task_has_partial_score():
         {
             "intent": "diagnostico_financeiro",
             "current_agent": "financial_agent",
-            "response": (
-                "Preciso que você informe "
-                "os gastos fixos."
-            ),
+            "response": ("Preciso que você informe os gastos fixos."),
             "structured_response": {
                 "financial_input_resolution": {
                     "ready": False,
@@ -281,25 +227,16 @@ def test_incomplete_financial_task_has_partial_score():
         }
     )
 
-    assert (
-        result["task_status"]
-        == "needs_user_input"
-    )
+    assert result["task_status"] == "needs_user_input"
 
-    assert result[
-        "task_completion_score"
-    ] == 0.5
+    assert result["task_completion_score"] == 0.5
 
-    assert result[
-        "completed_requirements"
-    ] == [
+    assert result["completed_requirements"] == [
         "agent_execution",
         "response_generation",
     ]
 
-    assert result[
-        "missing_requirements"
-    ] == [
+    assert result["missing_requirements"] == [
         "financial_inputs_resolved",
         "financial_calculation_executed",
     ]
@@ -310,10 +247,7 @@ def test_financial_inputs_without_calculation_are_partial():
         {
             "intent": "diagnostico_financeiro",
             "current_agent": "financial_agent",
-            "response": (
-                "Os dados foram recebidos, "
-                "mas o cálculo não foi executado."
-            ),
+            "response": ("Os dados foram recebidos, mas o cálculo não foi executado."),
             "structured_response": {
                 "financial_input_resolution": {
                     "ready": True,
@@ -326,20 +260,11 @@ def test_financial_inputs_without_calculation_are_partial():
         }
     )
 
-    assert (
-        result["task_status"]
-        == "partially_completed"
-    )
+    assert result["task_status"] == "partially_completed"
 
-    assert result[
-        "task_completion_score"
-    ] == 0.75
+    assert result["task_completion_score"] == 0.75
 
-    assert result[
-        "missing_requirements"
-    ] == [
-        "financial_calculation_executed"
-    ]
+    assert result["missing_requirements"] == ["financial_calculation_executed"]
 
 
 def test_failed_financial_tool_is_not_completion_evidence():
@@ -356,9 +281,7 @@ def test_failed_financial_tool_is_not_completion_evidence():
             },
             "tool_results": [
                 {
-                    "tool": (
-                        "calcular_diagnostico_financeiro"
-                    ),
+                    "tool": ("calcular_diagnostico_financeiro"),
                     "status": "failed",
                     "ok": False,
                 }
@@ -368,14 +291,6 @@ def test_failed_financial_tool_is_not_completion_evidence():
         }
     )
 
-    assert (
-        "financial_calculation_executed"
-        not in result[
-            "completed_requirements"
-        ]
-    )
+    assert "financial_calculation_executed" not in result["completed_requirements"]
 
-    assert result[
-        "task_completion_score"
-    ] == 0.75
-
+    assert result["task_completion_score"] == 0.75

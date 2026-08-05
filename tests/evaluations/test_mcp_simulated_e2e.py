@@ -49,10 +49,7 @@ def test_registry_contains_simulated_tools(
     }
 
     registered_tools = {
-        definition.name
-        for definition in (
-            harness.registry.list_definitions()
-        )
+        definition.name for definition in (harness.registry.list_definitions())
     }
 
     assert expected_tools <= registered_tools
@@ -61,9 +58,7 @@ def test_registry_contains_simulated_tools(
 def test_health_client_server_executor_flow(
     harness,
 ) -> None:
-    result = make_client(
-        harness
-    ).call(
+    result = make_client(harness).call(
         "mcp_health",
         {},
         trace_id="trace-health-001",
@@ -71,9 +66,7 @@ def test_health_client_server_executor_flow(
 
     assert status_value(result) == "success"
 
-    output = output_mapping(
-        result
-    )
+    output = output_mapping(result)
 
     assert output["status"] == "ok"
     assert output["service"] == "inna-mcp-simulated"
@@ -89,9 +82,7 @@ def test_rag_simulated_e2e_propagates_context(
     ).call(
         "mcp_rag_search",
         {
-            "question": (
-                "Como montar uma reserva financeira?"
-            ),
+            "question": ("Como montar uma reserva financeira?"),
             "top_k": 3,
         },
         trace_id="trace-rag-001",
@@ -99,9 +90,7 @@ def test_rag_simulated_e2e_propagates_context(
 
     assert status_value(result) == "success"
 
-    output = output_mapping(
-        result
-    )
+    output = output_mapping(result)
 
     assert output["evidence_count"] == 2
     assert len(output["sources"]) == 2
@@ -129,9 +118,7 @@ def test_financial_simulated_e2e(
 
     assert status_value(result) == "success"
 
-    output = output_mapping(
-        result
-    )
+    output = output_mapping(result)
 
     assert output["estimated_balance"] == 600
     assert output["risk_level"] == "low"
@@ -181,9 +168,7 @@ def test_permission_denied_for_wrong_agent(
 def test_unknown_tool_returns_safe_error(
     harness,
 ) -> None:
-    result = make_client(
-        harness
-    ).call(
+    result = make_client(harness).call(
         "mcp_unknown_tool",
         {},
     )
@@ -195,9 +180,7 @@ def test_unknown_tool_returns_safe_error(
 def test_controlled_error_is_safe(
     harness,
 ) -> None:
-    result = make_client(
-        harness
-    ).call(
+    result = make_client(harness).call(
         "mcp_controlled_error",
         {
             "message": "fail safely",
@@ -222,9 +205,7 @@ def test_controlled_error_is_safe(
 def test_timeout_is_enforced(
     harness,
 ) -> None:
-    result = make_client(
-        harness
-    ).call(
+    result = make_client(harness).call(
         "mcp_timeout",
         {
             "delay_seconds": 0.2,
@@ -258,9 +239,7 @@ def test_e2e_report_can_be_generated(
     harness,
     tmp_path: Path,
 ) -> None:
-    client = make_client(
-        harness
-    )
+    client = make_client(harness)
 
     health = client.call(
         "mcp_health",
@@ -310,11 +289,7 @@ def test_e2e_report_can_be_generated(
         encoding="utf-8",
     )
 
-    loaded = json.loads(
-        path.read_text(
-            encoding="utf-8"
-        )
-    )
+    loaded = json.loads(path.read_text(encoding="utf-8"))
 
     assert loaded["offline"] is True
     assert loaded["network_server_started"] is False

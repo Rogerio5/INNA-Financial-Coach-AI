@@ -14,9 +14,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-OFFLINE_DATABASE_URL = (
-    "sqlite+pysqlite:///:memory:"
-)
+OFFLINE_DATABASE_URL = "sqlite+pysqlite:///:memory:"
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,90 +86,37 @@ def load_policy(
 ) -> FinalRegressionPolicy:
     """Carrega a política JSON."""
 
-    payload = json.loads(
-        path.read_text(
-            encoding="utf-8-sig"
-        )
-    )
+    payload = json.loads(path.read_text(encoding="utf-8-sig"))
 
     if not isinstance(
         payload,
         Mapping,
     ):
-        raise TypeError(
-            "A política precisa ser um objeto JSON."
-        )
+        raise TypeError("A política precisa ser um objeto JSON.")
 
     return FinalRegressionPolicy(
-        policy_version=str(
-            payload["policy_version"]
-        ),
-        phase=str(
-            payload["phase"]
-        ),
-        offline=bool(
-            payload["offline"]
-        ),
-        expected_dataset_version=str(
-            payload["expected_dataset_version"]
-        ),
-        expected_dataset_case_count=int(
-            payload[
-                "expected_dataset_case_count"
-            ]
-        ),
-        expected_dataset_category_count=int(
-            payload[
-                "expected_dataset_category_count"
-            ]
-        ),
-        minimum_mcp_scenario_count=int(
-            payload[
-                "minimum_mcp_scenario_count"
-            ]
-        ),
-        require_quality_gate_passed=bool(
-            payload[
-                "require_quality_gate_passed"
-            ]
-        ),
-        require_all_offline_controls=bool(
-            payload[
-                "require_all_offline_controls"
-            ]
-        ),
+        policy_version=str(payload["policy_version"]),
+        phase=str(payload["phase"]),
+        offline=bool(payload["offline"]),
+        expected_dataset_version=str(payload["expected_dataset_version"]),
+        expected_dataset_case_count=int(payload["expected_dataset_case_count"]),
+        expected_dataset_category_count=int(payload["expected_dataset_category_count"]),
+        minimum_mcp_scenario_count=int(payload["minimum_mcp_scenario_count"]),
+        require_quality_gate_passed=bool(payload["require_quality_gate_passed"]),
+        require_all_offline_controls=bool(payload["require_all_offline_controls"]),
         require_main_environment_pip_check=bool(
-            payload[
-                "require_main_environment_pip_check"
-            ]
+            payload["require_main_environment_pip_check"]
         ),
         require_evaluation_environment_pip_check=bool(
-            payload[
-                "require_evaluation_environment_pip_check"
-            ]
+            payload["require_evaluation_environment_pip_check"]
         ),
-        require_git_diff_check=bool(
-            payload[
-                "require_git_diff_check"
-            ]
-        ),
+        require_git_diff_check=bool(payload["require_git_diff_check"]),
         required_suite_codes=tuple(
-            str(item)
-            for item in payload[
-                "required_suite_codes"
-            ]
+            str(item) for item in payload["required_suite_codes"]
         ),
-        required_reports=tuple(
-            str(item)
-            for item in payload[
-                "required_reports"
-            ]
-        ),
+        required_reports=tuple(str(item) for item in payload["required_reports"]),
         forbidden_environment_usage=tuple(
-            str(item)
-            for item in payload[
-                "forbidden_environment_usage"
-            ]
+            str(item) for item in payload["forbidden_environment_usage"]
         ),
     )
 
@@ -181,19 +126,9 @@ def discover_agentic_rag_tests(
 ) -> tuple[Path, ...]:
     """Localiza os testes unitários Agentic RAG."""
 
-    unit_root = (
-        project_root
-        / "tests"
-        / "unit"
-    )
+    unit_root = project_root / "tests" / "unit"
 
-    return tuple(
-        sorted(
-            unit_root.glob(
-                "test_agentic_rag_*.py"
-            )
-        )
-    )
+    return tuple(sorted(unit_root.glob("test_agentic_rag_*.py")))
 
 
 def discover_mcp_existing_tests(
@@ -211,22 +146,12 @@ def discover_mcp_existing_tests(
         "tests/unit/test_formal_report_preparation_tool.py",
     )
 
-    paths = tuple(
-        project_root / relative_path
-        for relative_path in relative_paths
-    )
+    paths = tuple(project_root / relative_path for relative_path in relative_paths)
 
-    missing = [
-        str(path)
-        for path in paths
-        if not path.exists()
-    ]
+    missing = [str(path) for path in paths if not path.exists()]
 
     if missing:
-        raise FileNotFoundError(
-            "Testes MCP ausentes: "
-            + ", ".join(missing)
-        )
+        raise FileNotFoundError("Testes MCP ausentes: " + ", ".join(missing))
 
     return paths
 
@@ -237,48 +162,18 @@ def discover_week4_ruff_paths(
     """Localiza arquivos Python da Semana 4."""
 
     paths: list[Path] = [
-        project_root
-        / "src"
-        / "evaluation"
-        / "agentic_benchmark",
-        project_root
-        / "src"
-        / "evaluation"
-        / "mcp_simulated",
-        project_root
-        / "src"
-        / "evaluation"
-        / "offline_dashboard",
-        project_root
-        / "src"
-        / "evaluation"
-        / "final_regression",
-        project_root
-        / "scripts"
-        / "evaluation"
-        / "run_agentic_rag_offline_gate.py",
-        project_root
-        / "scripts"
-        / "evaluation"
-        / "validate_offline_dashboard.py",
-        project_root
-        / "scripts"
-        / "evaluation"
-        / "run_week4_final_regression.py",
-        project_root
-        / "tests"
-        / "evaluations",
-        project_root
-        / "tests"
-        / "unit"
-        / "test_mcp_server.py",
+        project_root / "src" / "evaluation" / "agentic_benchmark",
+        project_root / "src" / "evaluation" / "mcp_simulated",
+        project_root / "src" / "evaluation" / "offline_dashboard",
+        project_root / "src" / "evaluation" / "final_regression",
+        project_root / "scripts" / "evaluation" / "run_agentic_rag_offline_gate.py",
+        project_root / "scripts" / "evaluation" / "validate_offline_dashboard.py",
+        project_root / "scripts" / "evaluation" / "run_week4_final_regression.py",
+        project_root / "tests" / "evaluations",
+        project_root / "tests" / "unit" / "test_mcp_server.py",
     ]
 
-    return tuple(
-        path
-        for path in paths
-        if path.exists()
-    )
+    return tuple(path for path in paths if path.exists())
 
 
 def build_suite_specs(
@@ -288,153 +183,86 @@ def build_suite_specs(
 ) -> tuple[RegressionSuiteSpec, ...]:
     """Cria os comandos da regressão."""
 
-    python = Path(
-        sys.executable
-    )
+    python = Path(sys.executable)
 
-    agentic_tests = (
-        discover_agentic_rag_tests(
-            project_root
-        )
-    )
+    agentic_tests = discover_agentic_rag_tests(project_root)
 
     if not agentic_tests:
-        raise FileNotFoundError(
-            "Nenhum teste Agentic RAG encontrado."
-        )
+        raise FileNotFoundError("Nenhum teste Agentic RAG encontrado.")
 
-    mcp_tests = (
-        discover_mcp_existing_tests(
-            project_root
-        )
-    )
+    mcp_tests = discover_mcp_existing_tests(project_root)
 
-    ruff_paths = (
-        discover_week4_ruff_paths(
-            project_root
-        )
-    )
+    ruff_paths = discover_week4_ruff_paths(project_root)
 
     compile_targets = (
-        project_root
-        / "src"
-        / "evaluation"
-        / "agentic_benchmark",
-        project_root
-        / "src"
-        / "evaluation"
-        / "mcp_simulated",
-        project_root
-        / "src"
-        / "evaluation"
-        / "offline_dashboard",
-        project_root
-        / "src"
-        / "evaluation"
-        / "final_regression",
-        project_root
-        / "scripts"
-        / "evaluation"
-        / "run_agentic_rag_offline_gate.py",
-        project_root
-        / "scripts"
-        / "evaluation"
-        / "validate_offline_dashboard.py",
-        project_root
-        / "scripts"
-        / "evaluation"
-        / "run_week4_final_regression.py",
+        project_root / "src" / "evaluation" / "agentic_benchmark",
+        project_root / "src" / "evaluation" / "mcp_simulated",
+        project_root / "src" / "evaluation" / "offline_dashboard",
+        project_root / "src" / "evaluation" / "final_regression",
+        project_root / "scripts" / "evaluation" / "run_agentic_rag_offline_gate.py",
+        project_root / "scripts" / "evaluation" / "validate_offline_dashboard.py",
+        project_root / "scripts" / "evaluation" / "run_week4_final_regression.py",
     )
 
     return (
         RegressionSuiteSpec(
             code="python_compile",
-            description=(
-                "Compilação dos módulos Python "
-                "da Semana 4"
-            ),
+            description=("Compilação dos módulos Python da Semana 4"),
             command=(
                 str(python),
                 "-m",
                 "compileall",
                 "-q",
-                *(
-                    str(path)
-                    for path in compile_targets
-                ),
+                *(str(path) for path in compile_targets),
             ),
         ),
         RegressionSuiteSpec(
             code="ruff_week4",
-            description=(
-                "Ruff nos módulos e testes "
-                "da Semana 4"
-            ),
+            description=("Ruff nos módulos e testes da Semana 4"),
             command=(
                 str(python),
                 "-m",
                 "ruff",
                 "check",
-                *(
-                    str(path)
-                    for path in ruff_paths
-                ),
+                *(str(path) for path in ruff_paths),
             ),
         ),
         RegressionSuiteSpec(
             code="evaluation_tests",
-            description=(
-                "Suíte de testes de avaliação"
-            ),
+            description=("Suíte de testes de avaliação"),
             command=(
                 str(python),
                 "-m",
                 "pytest",
                 "-q",
-                str(
-                    project_root
-                    / "tests"
-                    / "evaluations"
-                ),
+                str(project_root / "tests" / "evaluations"),
             ),
         ),
         RegressionSuiteSpec(
             code="agentic_rag_regression",
-            description=(
-                "Regressão unitária do Agentic RAG"
-            ),
+            description=("Regressão unitária do Agentic RAG"),
             command=(
                 str(python),
                 "-m",
                 "pytest",
                 "-q",
-                *(
-                    str(path)
-                    for path in agentic_tests
-                ),
+                *(str(path) for path in agentic_tests),
             ),
         ),
         RegressionSuiteSpec(
             code="mcp_existing_regression",
-            description=(
-                "Regressão MCP existente"
-            ),
+            description=("Regressão MCP existente"),
             command=(
                 str(python),
                 "-m",
                 "pytest",
                 "-q",
-                *(
-                    str(path)
-                    for path in mcp_tests
-                ),
+                *(str(path) for path in mcp_tests),
             ),
         ),
         RegressionSuiteSpec(
             code="quality_gate",
-            description=(
-                "Quality Gate Agentic RAG offline"
-            ),
+            description=("Quality Gate Agentic RAG offline"),
             command=(
                 str(python),
                 str(
@@ -459,12 +287,7 @@ def build_suite_specs(
                     / "agentic_rag_quality_gate.json"
                 ),
                 "--output-dir",
-                str(
-                    project_root
-                    / "artifacts"
-                    / "evaluations"
-                    / "agentic_benchmark"
-                ),
+                str(project_root / "artifacts" / "evaluations" / "agentic_benchmark"),
                 "--expected-case-count",
                 "24",
                 "--expected-category-count",
@@ -473,10 +296,7 @@ def build_suite_specs(
         ),
         RegressionSuiteSpec(
             code="dashboard_validator",
-            description=(
-                "Validação dos relatórios "
-                "do dashboard offline"
-            ),
+            description=("Validação dos relatórios do dashboard offline"),
             command=(
                 str(python),
                 str(
@@ -489,9 +309,7 @@ def build_suite_specs(
         ),
         RegressionSuiteSpec(
             code="main_pip_check",
-            description=(
-                "Integridade do ambiente principal"
-            ),
+            description=("Integridade do ambiente principal"),
             command=(
                 str(python),
                 "-m",
@@ -501,10 +319,7 @@ def build_suite_specs(
         ),
         RegressionSuiteSpec(
             code="evaluation_pip_check",
-            description=(
-                "Integridade do ambiente "
-                "de avaliação isolado"
-            ),
+            description=("Integridade do ambiente de avaliação isolado"),
             command=(
                 str(evaluation_python),
                 "-m",
@@ -514,9 +329,7 @@ def build_suite_specs(
         ),
         RegressionSuiteSpec(
             code="git_diff_check",
-            description=(
-                "Validação de whitespace do Git"
-            ),
+            description=("Validação de whitespace do Git"),
             command=(
                 "git",
                 "diff",
@@ -529,9 +342,7 @@ def build_suite_specs(
 def build_offline_environment() -> dict[str, str]:
     """Cria ambiente sem credenciais de serviços externos."""
 
-    environment = dict(
-        os.environ
-    )
+    environment = dict(os.environ)
 
     environment.update(
         {
@@ -555,9 +366,7 @@ def _tail(
 ) -> str:
     lines = value.splitlines()
 
-    return "\n".join(
-        lines[-maximum_lines:]
-    )
+    return "\n".join(lines[-maximum_lines:])
 
 
 def _pytest_passed_count(
@@ -571,9 +380,7 @@ def _pytest_passed_count(
     if not matches:
         return None
 
-    return int(
-        matches[-1]
-    )
+    return int(matches[-1])
 
 
 def execute_suite(
@@ -584,26 +391,14 @@ def execute_suite(
 ) -> RegressionSuiteResult:
     """Executa uma suíte e registra seu resultado."""
 
-    command_text = subprocess.list2cmdline(
-        list(spec.command)
-    )
+    command_text = subprocess.list2cmdline(list(spec.command))
 
     print("")
-    print(
-        "=" * 72
-    )
-    print(
-        f"SUITE={spec.code}"
-    )
-    print(
-        f"DESCRIPTION={spec.description}"
-    )
-    print(
-        f"COMMAND={command_text}"
-    )
-    print(
-        "=" * 72
-    )
+    print("=" * 72)
+    print(f"SUITE={spec.code}")
+    print(f"DESCRIPTION={spec.description}")
+    print(f"COMMAND={command_text}")
+    print("=" * 72)
 
     started = time.perf_counter()
 
@@ -645,15 +440,9 @@ def execute_suite(
             else ""
         )
 
-        stderr = (
-            stderr
-            + "\nSUITE_TIMEOUT=True"
-        )
+        stderr = stderr + "\nSUITE_TIMEOUT=True"
 
-    duration = (
-        time.perf_counter()
-        - started
-    )
+    duration = time.perf_counter() - started
 
     if stdout:
         print(stdout.rstrip())
@@ -661,11 +450,7 @@ def execute_suite(
     if stderr:
         print(stderr.rstrip())
 
-    combined_output = (
-        stdout
-        + "\n"
-        + stderr
-    )
+    combined_output = stdout + "\n" + stderr
 
     result = RegressionSuiteResult(
         code=spec.code,
@@ -677,17 +462,9 @@ def execute_suite(
             duration,
             3,
         ),
-        pytest_passed_count=(
-            _pytest_passed_count(
-                combined_output
-            )
-        ),
-        stdout_tail=_tail(
-            stdout
-        ),
-        stderr_tail=_tail(
-            stderr
-        ),
+        pytest_passed_count=(_pytest_passed_count(combined_output)),
+        stdout_tail=_tail(stdout),
+        stderr_tail=_tail(stderr),
     )
 
     print(
@@ -705,19 +482,13 @@ def execute_suite(
 def _load_json(
     path: Path,
 ) -> dict[str, Any]:
-    payload = json.loads(
-        path.read_text(
-            encoding="utf-8-sig"
-        )
-    )
+    payload = json.loads(path.read_text(encoding="utf-8-sig"))
 
     if not isinstance(
         payload,
         dict,
     ):
-        raise TypeError(
-            f"Relatório inválido: {path}"
-        )
+        raise TypeError(f"Relatório inválido: {path}")
 
     return payload
 
@@ -750,16 +521,10 @@ def _quality_check_actual(
         ):
             continue
 
-        check_code = (
-            check.get("code")
-            or check.get("name")
-            or check.get("check")
-        )
+        check_code = check.get("code") or check.get("name") or check.get("check")
 
         if str(check_code) == code:
-            return check.get(
-                "actual"
-            )
+            return check.get("actual")
 
     return None
 
@@ -804,26 +569,15 @@ def validate_reports(
         ),
     }
 
-    reports_exist = all(
-        path.exists()
-        for path in report_paths.values()
-    )
+    reports_exist = all(path.exists() for path in report_paths.values())
 
-    benchmark = _load_json(
-        report_paths["benchmark"]
-    )
+    benchmark = _load_json(report_paths["benchmark"])
 
-    quality_gate = _load_json(
-        report_paths["quality_gate"]
-    )
+    quality_gate = _load_json(report_paths["quality_gate"])
 
-    quality_summary = _load_json(
-        report_paths["quality_summary"]
-    )
+    quality_summary = _load_json(report_paths["quality_summary"])
 
-    mcp_e2e = _load_json(
-        report_paths["mcp_e2e"]
-    )
+    mcp_e2e = _load_json(report_paths["mcp_e2e"])
 
     dataset_version = str(
         quality_gate.get(
@@ -835,18 +589,14 @@ def validate_reports(
         )
     )
 
-    dataset_case_count = (
-        _quality_check_actual(
-            quality_gate,
-            "dataset_case_count",
-        )
+    dataset_case_count = _quality_check_actual(
+        quality_gate,
+        "dataset_case_count",
     )
 
-    dataset_category_count = (
-        _quality_check_actual(
-            quality_gate,
-            "dataset_category_count",
-        )
+    dataset_category_count = _quality_check_actual(
+        quality_gate,
+        "dataset_category_count",
     )
 
     quality_gate_passed = bool(
@@ -929,9 +679,7 @@ def validate_reports(
         ),
     }
 
-    all_offline_controls = all(
-        offline_control_values.values()
-    )
+    all_offline_controls = all(offline_control_values.values())
 
     from src.evaluation.offline_dashboard import (
         build_overview,
@@ -939,87 +687,50 @@ def validate_reports(
         security_rows,
     )
 
-    snapshot = (
-        load_offline_dashboard_snapshot(
-            project_root,
-            strict=True,
-        )
+    snapshot = load_offline_dashboard_snapshot(
+        project_root,
+        strict=True,
     )
 
-    overview = build_overview(
-        snapshot
-    )
+    overview = build_overview(snapshot)
 
-    dashboard_security = security_rows(
-        snapshot
-    )
+    dashboard_security = security_rows(snapshot)
 
-    dashboard_security_passed = all(
-        row["Aprovado"]
-        for row in dashboard_security
-    )
+    dashboard_security_passed = all(row["Aprovado"] for row in dashboard_security)
 
     validations = {
         "required_reports_exist": reports_exist,
-        "dataset_version_matches": (
-            dataset_version
-            == policy.expected_dataset_version
-        ),
+        "dataset_version_matches": (dataset_version == policy.expected_dataset_version),
         "dataset_case_count_matches": (
-            int(dataset_case_count)
-            == policy.expected_dataset_case_count
+            int(dataset_case_count) == policy.expected_dataset_case_count
         ),
         "dataset_category_count_matches": (
-            int(dataset_category_count)
-            == policy.expected_dataset_category_count
+            int(dataset_category_count) == policy.expected_dataset_category_count
         ),
         "quality_gate_passed": (
-            quality_gate_passed
-            if policy.require_quality_gate_passed
-            else True
+            quality_gate_passed if policy.require_quality_gate_passed else True
         ),
         "mcp_scenario_count_valid": (
-            mcp_scenario_count
-            >= policy.minimum_mcp_scenario_count
+            mcp_scenario_count >= policy.minimum_mcp_scenario_count
         ),
         "offline_controls_passed": (
-            all_offline_controls
-            if policy.require_all_offline_controls
-            else True
+            all_offline_controls if policy.require_all_offline_controls else True
         ),
         "dashboard_case_count_matches": (
-            int(
-                overview["case_count"]
-            )
-            == policy.expected_dataset_case_count
+            int(overview["case_count"]) == policy.expected_dataset_case_count
         ),
         "dashboard_category_count_matches": (
-            int(
-                overview["category_count"]
-            )
-            == policy.expected_dataset_category_count
+            int(overview["category_count"]) == policy.expected_dataset_category_count
         ),
-        "dashboard_quality_gate_passed": bool(
-            overview[
-                "quality_gate_passed"
-            ]
-        ),
-        "dashboard_security_passed": (
-            dashboard_security_passed
-        ),
+        "dashboard_quality_gate_passed": bool(overview["quality_gate_passed"]),
+        "dashboard_security_passed": (dashboard_security_passed),
     }
 
     facts = {
         "dataset_version": dataset_version,
-        "dataset_case_count": int(
-            dataset_case_count
-        ),
-        "dataset_category_count": int(
-            dataset_category_count
-        ),
-        "quality_gate_passed": (
-            quality_gate_passed
-        ),
+        "dataset_case_count": int(dataset_case_count),
+        "dataset_category_count": int(dataset_category_count),
+        "quality_gate_passed": (quality_gate_passed),
         "quality_gate_check_count": int(
             quality_gate.get(
                 "total_checks",
@@ -1031,9 +742,7 @@ def validate_reports(
                 ),
             )
         ),
-        "mcp_scenario_count": (
-            mcp_scenario_count
-        ),
+        "mcp_scenario_count": (mcp_scenario_count),
         "mcp_statuses": {
             str(name): (
                 payload.get(
@@ -1048,15 +757,9 @@ def validate_reports(
             )
             for name, payload in scenarios.items()
         },
-        "offline_controls": (
-            offline_control_values
-        ),
-        "dashboard_case_count": int(
-            overview["case_count"]
-        ),
-        "dashboard_category_count": int(
-            overview["category_count"]
-        ),
+        "offline_controls": (offline_control_values),
+        "dashboard_case_count": int(overview["case_count"]),
+        "dashboard_category_count": int(overview["category_count"]),
     }
 
     return validations, facts
@@ -1074,35 +777,17 @@ def write_report(
         exist_ok=True,
     )
 
-    stamp = datetime.now(
-        UTC
-    ).strftime(
-        "%Y%m%d_%H%M%S"
-    )
+    stamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
 
-    json_timestamped = (
-        output_dir
-        / f"week4_final_regression_{stamp}.json"
-    )
+    json_timestamped = output_dir / f"week4_final_regression_{stamp}.json"
 
-    json_latest = (
-        output_dir
-        / "week4_final_regression_latest.json"
-    )
+    json_latest = output_dir / "week4_final_regression_latest.json"
 
-    text_timestamped = (
-        output_dir
-        / f"week4_final_regression_{stamp}.txt"
-    )
+    text_timestamped = output_dir / f"week4_final_regression_{stamp}.txt"
 
-    text_latest = (
-        output_dir
-        / "week4_final_regression_latest.txt"
-    )
+    text_latest = output_dir / "week4_final_regression_latest.txt"
 
-    payload = asdict(
-        report
-    )
+    payload = asdict(report)
 
     serialized_json = (
         json.dumps(
@@ -1118,33 +803,13 @@ def write_report(
         "WEEK 4 FINAL REGRESSION",
         "=" * 72,
         f"PHASE={report.phase}",
-        (
-            "POLICY_VERSION="
-            f"{report.policy_version}"
-        ),
-        (
-            "GENERATED_AT="
-            f"{report.generated_at}"
-        ),
+        (f"POLICY_VERSION={report.policy_version}"),
+        (f"GENERATED_AT={report.generated_at}"),
         f"OFFLINE={report.offline}",
-        (
-            "OVERALL_PASSED="
-            f"{report.overall_passed}"
-        ),
-        (
-            "SUITE_COUNT="
-            f"{report.suite_count}"
-        ),
-        (
-            "PASSED_SUITE_COUNT="
-            f"{report.passed_suite_count}"
-        ),
-        (
-            "FAILED_SUITE_CODES="
-            + ",".join(
-                report.failed_suite_codes
-            )
-        ),
+        (f"OVERALL_PASSED={report.overall_passed}"),
+        (f"SUITE_COUNT={report.suite_count}"),
+        (f"PASSED_SUITE_COUNT={report.passed_suite_count}"),
+        ("FAILED_SUITE_CODES=" + ",".join(report.failed_suite_codes)),
         "",
         "SUITES",
         "-" * 72,
@@ -1169,12 +834,8 @@ def write_report(
         ]
     )
 
-    for name, passed in sorted(
-        report.validations.items()
-    ):
-        text_lines.append(
-            f"{name}={passed}"
-        )
+    for name, passed in sorted(report.validations.items()):
+        text_lines.append(f"{name}={passed}")
 
     text_lines.extend(
         [
@@ -1183,23 +844,11 @@ def write_report(
             "-" * 72,
             *report.notes,
             "",
-            (
-                "WEEK4_FINAL_REGRESSION="
-                + (
-                    "OK"
-                    if report.overall_passed
-                    else "FAILED"
-                )
-            ),
+            ("WEEK4_FINAL_REGRESSION=" + ("OK" if report.overall_passed else "FAILED")),
         ]
     )
 
-    serialized_text = (
-        "\n".join(
-            text_lines
-        )
-        + "\n"
-    )
+    serialized_text = "\n".join(text_lines) + "\n"
 
     for path in (
         json_timestamped,
@@ -1238,45 +887,26 @@ def run_final_regression(
 ) -> FinalRegressionReport:
     """Executa toda a regressão final."""
 
-    policy = load_policy(
-        policy_path
-    )
+    policy = load_policy(policy_path)
 
     if not policy.offline:
-        raise RuntimeError(
-            "A política precisa ser offline."
-        )
+        raise RuntimeError("A política precisa ser offline.")
 
     specs = build_suite_specs(
         project_root,
         evaluation_python=evaluation_python,
     )
 
-    suite_codes = {
-        spec.code
-        for spec in specs
-    }
+    suite_codes = {spec.code for spec in specs}
 
-    missing_suite_codes = (
-        set(
-            policy.required_suite_codes
-        )
-        - suite_codes
-    )
+    missing_suite_codes = set(policy.required_suite_codes) - suite_codes
 
     if missing_suite_codes:
         raise RuntimeError(
-            "Suítes obrigatórias ausentes: "
-            + ", ".join(
-                sorted(
-                    missing_suite_codes
-                )
-            )
+            "Suítes obrigatórias ausentes: " + ", ".join(sorted(missing_suite_codes))
         )
 
-    environment = (
-        build_offline_environment()
-    )
+    environment = build_offline_environment()
 
     results = tuple(
         execute_suite(
@@ -1292,89 +922,54 @@ def run_final_regression(
         policy,
     )
 
-    suite_map = {
-        result.code: result
-        for result in results
-    }
+    suite_map = {result.code: result for result in results}
 
     policy_specific_validations = {
         "main_pip_check_required": (
-            suite_map[
-                "main_pip_check"
-            ].passed
+            suite_map["main_pip_check"].passed
             if policy.require_main_environment_pip_check
             else True
         ),
         "evaluation_pip_check_required": (
-            suite_map[
-                "evaluation_pip_check"
-            ].passed
+            suite_map["evaluation_pip_check"].passed
             if policy.require_evaluation_environment_pip_check
             else True
         ),
         "git_diff_check_required": (
-            suite_map[
-                "git_diff_check"
-            ].passed
+            suite_map["git_diff_check"].passed
             if policy.require_git_diff_check
             else True
         ),
     }
 
-    validations.update(
-        policy_specific_validations
-    )
+    validations.update(policy_specific_validations)
 
-    failed_suite_codes = tuple(
-        result.code
-        for result in results
-        if not result.passed
-    )
+    failed_suite_codes = tuple(result.code for result in results if not result.passed)
 
-    all_validations_passed = all(
-        validations.values()
-    )
+    all_validations_passed = all(validations.values())
 
-    overall_passed = (
-        not failed_suite_codes
-        and all_validations_passed
-    )
+    overall_passed = not failed_suite_codes and all_validations_passed
 
     report = FinalRegressionReport(
         phase=policy.phase,
-        policy_version=(
-            policy.policy_version
-        ),
-        generated_at=datetime.now(
-            UTC
-        ).isoformat(),
+        policy_version=(policy.policy_version),
+        generated_at=datetime.now(UTC).isoformat(),
         offline=True,
         overall_passed=overall_passed,
         suite_count=len(results),
-        passed_suite_count=sum(
-            result.passed
-            for result in results
-        ),
-        failed_suite_codes=(
-            failed_suite_codes
-        ),
+        passed_suite_count=sum(result.passed for result in results),
+        failed_suite_codes=(failed_suite_codes),
         suites=results,
         validations=validations,
         facts=facts,
         notes=(
-            (
-                "As contagens de pytest pertencem "
-                "a suítes independentes."
-            ),
+            ("As contagens de pytest pertencem a suítes independentes."),
             (
                 "As contagens não são somadas porque "
                 "alguns testes podem aparecer em mais "
                 "de uma regressão."
             ),
-            (
-                "Nenhuma credencial externa foi "
-                "disponibilizada aos subprocessos."
-            ),
+            ("Nenhuma credencial externa foi disponibilizada aos subprocessos."),
         ),
     )
 
@@ -1384,78 +979,36 @@ def run_final_regression(
     )
 
     print("")
-    print(
-        "=" * 72
-    )
+    print("=" * 72)
     print("FINAL REGRESSION REPORT")
-    print(
-        "=" * 72
-    )
+    print("=" * 72)
 
-    print(
-        f"FINAL_SUITE_COUNT={report.suite_count}"
-    )
+    print(f"FINAL_SUITE_COUNT={report.suite_count}")
 
-    print(
-        "FINAL_PASSED_SUITE_COUNT="
-        f"{report.passed_suite_count}"
-    )
+    print(f"FINAL_PASSED_SUITE_COUNT={report.passed_suite_count}")
 
-    print(
-        "FINAL_FAILED_SUITE_CODES="
-        + ",".join(
-            report.failed_suite_codes
-        )
-    )
+    print("FINAL_FAILED_SUITE_CODES=" + ",".join(report.failed_suite_codes))
 
-    for name, passed in sorted(
-        report.validations.items()
-    ):
-        print(
-            f"FINAL_VALIDATION={name} "
-            f"PASSED={passed}"
-        )
+    for name, passed in sorted(report.validations.items()):
+        print(f"FINAL_VALIDATION={name} PASSED={passed}")
 
-    print(
-        "FINAL_DATASET_CASE_COUNT="
-        f"{report.facts['dataset_case_count']}"
-    )
+    print(f"FINAL_DATASET_CASE_COUNT={report.facts['dataset_case_count']}")
 
-    print(
-        "FINAL_DATASET_CATEGORY_COUNT="
-        f"{report.facts['dataset_category_count']}"
-    )
+    print(f"FINAL_DATASET_CATEGORY_COUNT={report.facts['dataset_category_count']}")
 
-    print(
-        "FINAL_MCP_SCENARIO_COUNT="
-        f"{report.facts['mcp_scenario_count']}"
-    )
+    print(f"FINAL_MCP_SCENARIO_COUNT={report.facts['mcp_scenario_count']}")
 
-    print(
-        "FINAL_QUALITY_GATE_PASSED="
-        f"{report.facts['quality_gate_passed']}"
-    )
+    print(f"FINAL_QUALITY_GATE_PASSED={report.facts['quality_gate_passed']}")
 
-    print(
-        "FINAL_OVERALL_PASSED="
-        f"{report.overall_passed}"
-    )
+    print(f"FINAL_OVERALL_PASSED={report.overall_passed}")
 
-    print(
-        f"FINAL_JSON_REPORT={paths[0]}"
-    )
+    print(f"FINAL_JSON_REPORT={paths[0]}")
 
-    print(
-        f"FINAL_LATEST_JSON_REPORT={paths[1]}"
-    )
+    print(f"FINAL_LATEST_JSON_REPORT={paths[1]}")
 
-    print(
-        f"FINAL_TEXT_REPORT={paths[2]}"
-    )
+    print(f"FINAL_TEXT_REPORT={paths[2]}")
 
-    print(
-        f"FINAL_LATEST_TEXT_REPORT={paths[3]}"
-    )
+    print(f"FINAL_LATEST_TEXT_REPORT={paths[3]}")
 
     print("LIVE_SERVICES_USED=False")
     print("SECRETS_USED=False")

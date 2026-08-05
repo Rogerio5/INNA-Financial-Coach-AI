@@ -59,15 +59,9 @@ def test_prompt_diferencia_meta_de_evolucao():
         chunks=None,
     )
 
-    assert (
-        "A última meta representa um objetivo registrado"
-        in prompt
-    )
+    assert "A última meta representa um objetivo registrado" in prompt
 
-    assert (
-        'Só use a seção "Evolução:"'
-        in prompt
-    )
+    assert 'Só use a seção "Evolução:"' in prompt
 
 
 def test_prompt_inclui_chunk_rag():
@@ -77,8 +71,7 @@ def test_prompt_inclui_chunk_rag():
             "categoria": "reserva_financeira",
             "score_rag": 0.91,
             "texto": (
-                "A reserva pode começar com um valor "
-                "compatível com o orçamento."
+                "A reserva pode começar com um valor compatível com o orçamento."
             ),
         }
     ]
@@ -93,6 +86,7 @@ def test_prompt_inclui_chunk_rag():
     assert "guia.md" in prompt
     assert "reserva_financeira" in prompt
     assert "0.91" in prompt
+
 
 def test_prompt_inclui_contexto_tools():
     contexto_tools = """
@@ -128,11 +122,8 @@ def test_prompt_funciona_sem_contexto_tools():
     )
 
     assert "TOOLS FINANCEIRAS" in prompt
-    assert (
-        "Nenhuma ferramenta financeira "
-        "determinística foi acionada"
-        in prompt
-    )
+    assert "Nenhuma ferramenta financeira determinística foi acionada" in prompt
+
 
 def test_prompt_inclui_regras_de_apresentacao_profissional():
     prompt = montar_prompt_inna(
@@ -146,4 +137,3 @@ def test_prompt_inclui_regras_de_apresentacao_profissional():
     assert "Não repita o mesmo saldo" in prompt
     assert "Próximo passo sugerido" in prompt
     assert "Saldo mensal estimado" in prompt
-

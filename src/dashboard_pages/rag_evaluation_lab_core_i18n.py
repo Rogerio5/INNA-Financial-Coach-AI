@@ -70,6 +70,7 @@ CORE_KEYS: tuple[str, ...] = (
     "status_unavailable",
 )
 
+
 def _build_language(
     values: tuple[str, ...],
 ) -> dict[str, str]:
@@ -88,6 +89,7 @@ def _build_language(
         )
     )
 
+
 RAG_LAB_CORE_TEXTS: dict[
     str,
     dict[str, str],
@@ -95,10 +97,7 @@ RAG_LAB_CORE_TEXTS: dict[
     "en_gb": _build_language(
         (
             "🧪 RAG Quality Laboratory",
-            (
-                "Professional RAG Triad evaluation, "
-                "experimentation and comparison."
-            ),
+            ("Professional RAG Triad evaluation, experimentation and comparison."),
             (
                 "Compare real runs using Answer Relevancy, "
                 "Faithfulness and Contextual Relevancy."
@@ -120,36 +119,18 @@ RAG_LAB_CORE_TEXTS: dict[
             "Latest score",
             "Best score",
             "Incomplete runs",
-            (
-                "No RAG Triad run was found for the "
-                "selected filters."
-            ),
+            ("No RAG Triad run was found for the selected filters."),
             "RAG quality evolution",
-            (
-                "History of the three axes and "
-                "aggregate score."
-            ),
+            ("History of the three axes and aggregate score."),
             "Experiment comparison",
-            (
-                "Select a reference run and a "
-                "candidate run."
-            ),
+            ("Select a reference run and a candidate run."),
             "Baseline",
             "Candidate",
             "Stability tolerance",
-            (
-                "Differences within the tolerance "
-                "are classified as stable."
-            ),
-            (
-                "At least two complete runs are "
-                "required for comparison."
-            ),
+            ("Differences within the tolerance are classified as stable."),
+            ("At least two complete runs are required for comparison."),
             "Baseline and candidate must be different.",
-            (
-                "The comparison could not be built "
-                "with the selected runs."
-            ),
+            ("The comparison could not be built with the selected runs."),
             "Aggregate result",
             "Baseline score",
             "Candidate score",
@@ -161,10 +142,7 @@ RAG_LAB_CORE_TEXTS: dict[
             "Unavailable",
             "Candidate approved",
             "Candidate failed",
-            (
-                "The candidate does not have a "
-                "conclusive result."
-            ),
+            ("The candidate does not have a conclusive result."),
             "Axis comparison",
             "Baseline × candidate",
             "Run history",
@@ -193,10 +171,7 @@ RAG_LAB_CORE_TEXTS: dict[
     "es": _build_language(
         (
             "🧪 Laboratorio de Calidad RAG",
-            (
-                "Evaluación, experimentación y comparación "
-                "profesional de la Tríada RAG."
-            ),
+            ("Evaluación, experimentación y comparación profesional de la Tríada RAG."),
             (
                 "Compare ejecuciones reales mediante Answer "
                 "Relevancy, Faithfulness y Contextual Relevancy."
@@ -223,30 +198,18 @@ RAG_LAB_CORE_TEXTS: dict[
                 "Tríada RAG para los filtros seleccionados."
             ),
             "Evolución de la calidad RAG",
-            (
-                "Historial de los tres ejes y de la "
-                "puntuación agregada."
-            ),
+            ("Historial de los tres ejes y de la puntuación agregada."),
             "Comparación de experimentos",
-            (
-                "Seleccione una ejecución de referencia "
-                "y una ejecución candidata."
-            ),
+            ("Seleccione una ejecución de referencia y una ejecución candidata."),
             "Línea base",
             "Candidata",
             "Tolerancia de estabilidad",
-            (
-                "Las diferencias dentro de la tolerancia "
-                "se clasifican como estables."
-            ),
+            ("Las diferencias dentro de la tolerancia se clasifican como estables."),
             (
                 "Se necesitan al menos dos ejecuciones "
                 "completas para realizar una comparación."
             ),
-            (
-                "La línea base y la candidata deben "
-                "ser diferentes."
-            ),
+            ("La línea base y la candidata deben ser diferentes."),
             (
                 "No fue posible construir la comparación "
                 "con las ejecuciones seleccionadas."
@@ -262,10 +225,7 @@ RAG_LAB_CORE_TEXTS: dict[
             "No disponible",
             "Candidata aprobada",
             "Candidata reprobada",
-            (
-                "La candidata todavía no tiene un "
-                "resultado concluyente."
-            ),
+            ("La candidata todavía no tiene un resultado concluyente."),
             "Comparación por eje",
             "Línea base × candidata",
             "Historial de ejecuciones",
@@ -304,10 +264,7 @@ RAG_LAB_CORE_TEXTS: dict[
             ),
             "Source des données",
             "Fichier d’historique",
-            (
-                "Impossible de charger l’historique "
-                "des évaluations"
-            ),
+            ("Impossible de charger l’historique des évaluations"),
             "Filtres du laboratoire",
             "Branches",
             "Environnements",
@@ -327,15 +284,9 @@ RAG_LAB_CORE_TEXTS: dict[
                 "ne correspond aux filtres sélectionnés."
             ),
             "Évolution de la qualité RAG",
-            (
-                "Historique des trois axes et du "
-                "score agrégé."
-            ),
+            ("Historique des trois axes et du score agrégé."),
             "Comparaison des expériences",
-            (
-                "Sélectionnez une exécution de référence "
-                "et une exécution candidate."
-            ),
+            ("Sélectionnez une exécution de référence et une exécution candidate."),
             "Référence",
             "Candidate",
             "Tolérance de stabilité",
@@ -347,10 +298,7 @@ RAG_LAB_CORE_TEXTS: dict[
                 "Au moins deux exécutions complètes sont "
                 "nécessaires pour effectuer une comparaison."
             ),
-            (
-                "La référence et la candidate doivent "
-                "être différentes."
-            ),
+            ("La référence et la candidate doivent être différentes."),
             (
                 "La comparaison n’a pas pu être construite "
                 "avec les exécutions sélectionnées."
@@ -366,10 +314,7 @@ RAG_LAB_CORE_TEXTS: dict[
             "Indisponible",
             "Candidate approuvée",
             "Candidate échouée",
-            (
-                "La candidate ne possède pas encore "
-                "de résultat concluant."
-            ),
+            ("La candidate ne possède pas encore de résultat concluant."),
             "Comparaison par axe",
             "Référence × candidate",
             "Historique des exécutions",
@@ -398,10 +343,7 @@ RAG_LAB_CORE_TEXTS: dict[
     "de": _build_language(
         (
             "🧪 RAG-Qualitätslabor",
-            (
-                "Professionelle Bewertung, Experimente "
-                "und Vergleiche der RAG-Triade."
-            ),
+            ("Professionelle Bewertung, Experimente und Vergleiche der RAG-Triade."),
             (
                 "Vergleichen Sie reale Ausführungen anhand "
                 "von Answer Relevancy, Faithfulness und "
@@ -409,10 +351,7 @@ RAG_LAB_CORE_TEXTS: dict[
             ),
             "Datenquelle",
             "Verlaufsdatei",
-            (
-                "Der Bewertungsverlauf konnte nicht "
-                "geladen werden"
-            ),
+            ("Der Bewertungsverlauf konnte nicht geladen werden"),
             "Laborfilter",
             "Branches",
             "Umgebungen",
@@ -427,35 +366,20 @@ RAG_LAB_CORE_TEXTS: dict[
             "Neuester Score",
             "Bester Score",
             "Unvollständige Ausführungen",
-            (
-                "Für die ausgewählten Filter wurde keine "
-                "RAG-Triade-Ausführung gefunden."
-            ),
+            ("Für die ausgewählten Filter wurde keine RAG-Triade-Ausführung gefunden."),
             "Entwicklung der RAG-Qualität",
-            (
-                "Verlauf der drei Achsen und des "
-                "aggregierten Scores."
-            ),
+            ("Verlauf der drei Achsen und des aggregierten Scores."),
             "Experimentvergleich",
-            (
-                "Wählen Sie eine Referenzausführung und "
-                "eine Kandidatenausführung aus."
-            ),
+            ("Wählen Sie eine Referenzausführung und eine Kandidatenausführung aus."),
             "Baseline",
             "Kandidat",
             "Stabilitätstoleranz",
-            (
-                "Abweichungen innerhalb der Toleranz "
-                "werden als stabil eingestuft."
-            ),
+            ("Abweichungen innerhalb der Toleranz werden als stabil eingestuft."),
             (
                 "Für einen Vergleich sind mindestens zwei "
                 "vollständige Ausführungen erforderlich."
             ),
-            (
-                "Baseline und Kandidat müssen "
-                "unterschiedlich sein."
-            ),
+            ("Baseline und Kandidat müssen unterschiedlich sein."),
             (
                 "Der Vergleich konnte mit den ausgewählten "
                 "Ausführungen nicht erstellt werden."
@@ -471,10 +395,7 @@ RAG_LAB_CORE_TEXTS: dict[
             "Nicht verfügbar",
             "Kandidat bestanden",
             "Kandidat fehlgeschlagen",
-            (
-                "Für den Kandidaten liegt noch kein "
-                "eindeutiges Ergebnis vor."
-            ),
+            ("Für den Kandidaten liegt noch kein eindeutiges Ergebnis vor."),
             "Vergleich nach Achse",
             "Baseline × Kandidat",
             "Ausführungsverlauf",
@@ -513,10 +434,7 @@ RAG_LAB_CORE_TEXTS: dict[
             ),
             "Origine dati",
             "File della cronologia",
-            (
-                "Impossibile caricare la cronologia "
-                "delle valutazioni"
-            ),
+            ("Impossibile caricare la cronologia delle valutazioni"),
             "Filtri del laboratorio",
             "Branch",
             "Ambienti",
@@ -536,30 +454,18 @@ RAG_LAB_CORE_TEXTS: dict[
                 "stata trovata per i filtri selezionati."
             ),
             "Evoluzione della qualità RAG",
-            (
-                "Cronologia dei tre assi e del "
-                "punteggio aggregato."
-            ),
+            ("Cronologia dei tre assi e del punteggio aggregato."),
             "Confronto degli esperimenti",
-            (
-                "Seleziona un’esecuzione di riferimento "
-                "e un’esecuzione candidata."
-            ),
+            ("Seleziona un’esecuzione di riferimento e un’esecuzione candidata."),
             "Baseline",
             "Candidata",
             "Tolleranza di stabilità",
-            (
-                "Le differenze comprese nella tolleranza "
-                "sono classificate come stabili."
-            ),
+            ("Le differenze comprese nella tolleranza sono classificate come stabili."),
             (
                 "Sono necessarie almeno due esecuzioni "
                 "complete per effettuare un confronto."
             ),
-            (
-                "La baseline e la candidata devono "
-                "essere differenti."
-            ),
+            ("La baseline e la candidata devono essere differenti."),
             (
                 "Non è stato possibile costruire il confronto "
                 "con le esecuzioni selezionate."
@@ -575,10 +481,7 @@ RAG_LAB_CORE_TEXTS: dict[
             "Non disponibile",
             "Candidata approvata",
             "Candidata non approvata",
-            (
-                "La candidata non dispone ancora "
-                "di un risultato conclusivo."
-            ),
+            ("La candidata non dispone ancora di un risultato conclusivo."),
             "Confronto per asse",
             "Baseline × candidata",
             "Cronologia delle esecuzioni",
@@ -607,20 +510,14 @@ RAG_LAB_CORE_TEXTS: dict[
     "ro": _build_language(
         (
             "🧪 Laborator de Calitate RAG",
-            (
-                "Evaluare, experimentare și comparare "
-                "profesională a Triadei RAG."
-            ),
+            ("Evaluare, experimentare și comparare profesională a Triadei RAG."),
             (
                 "Comparați execuții reale utilizând Answer "
                 "Relevancy, Faithfulness și Contextual Relevancy."
             ),
             "Sursa datelor",
             "Fișierul istoricului",
-            (
-                "Istoricul evaluărilor nu a putut "
-                "fi încărcat"
-            ),
+            ("Istoricul evaluărilor nu a putut fi încărcat"),
             "Filtrele laboratorului",
             "Ramuri",
             "Medii",
@@ -640,34 +537,16 @@ RAG_LAB_CORE_TEXTS: dict[
                 "RAG pentru filtrele selectate."
             ),
             "Evoluția calității RAG",
-            (
-                "Istoricul celor trei axe și al "
-                "scorului agregat."
-            ),
+            ("Istoricul celor trei axe și al scorului agregat."),
             "Compararea experimentelor",
-            (
-                "Selectați o execuție de referință "
-                "și o execuție candidată."
-            ),
+            ("Selectați o execuție de referință și o execuție candidată."),
             "Referință",
             "Candidată",
             "Toleranța de stabilitate",
-            (
-                "Diferențele aflate în limita toleranței "
-                "sunt clasificate drept stabile."
-            ),
-            (
-                "Sunt necesare cel puțin două execuții "
-                "complete pentru comparație."
-            ),
-            (
-                "Referința și candidata trebuie "
-                "să fie diferite."
-            ),
-            (
-                "Comparația nu a putut fi construită "
-                "cu execuțiile selectate."
-            ),
+            ("Diferențele aflate în limita toleranței sunt clasificate drept stabile."),
+            ("Sunt necesare cel puțin două execuții complete pentru comparație."),
+            ("Referința și candidata trebuie să fie diferite."),
+            ("Comparația nu a putut fi construită cu execuțiile selectate."),
             "Rezultat agregat",
             "Scorul referinței",
             "Scorul candidatei",
@@ -679,10 +558,7 @@ RAG_LAB_CORE_TEXTS: dict[
             "Indisponibil",
             "Candidată aprobată",
             "Candidată respinsă",
-            (
-                "Candidata nu are încă un "
-                "rezultat concludent."
-            ),
+            ("Candidata nu are încă un rezultat concludent."),
             "Comparație pe axe",
             "Referință × candidată",
             "Istoricul execuțiilor",
@@ -711,10 +587,7 @@ RAG_LAB_CORE_TEXTS: dict[
     "ua": _build_language(
         (
             "🧪 Лабораторія якості RAG",
-            (
-                "Професійне оцінювання, експериментування "
-                "та порівняння тріади RAG."
-            ),
+            ("Професійне оцінювання, експериментування та порівняння тріади RAG."),
             (
                 "Порівнюйте реальні запуски за метриками "
                 "Answer Relevancy, Faithfulness і "
@@ -737,36 +610,18 @@ RAG_LAB_CORE_TEXTS: dict[
             "Останній результат",
             "Найкращий результат",
             "Неповні запуски",
-            (
-                "Для вибраних фільтрів не знайдено "
-                "жодного запуску тріади RAG."
-            ),
+            ("Для вибраних фільтрів не знайдено жодного запуску тріади RAG."),
             "Динаміка якості RAG",
-            (
-                "Історія трьох осей та "
-                "агрегованого результату."
-            ),
+            ("Історія трьох осей та агрегованого результату."),
             "Порівняння експериментів",
-            (
-                "Виберіть еталонний запуск "
-                "і запуск-кандидат."
-            ),
+            ("Виберіть еталонний запуск і запуск-кандидат."),
             "Еталон",
             "Кандидат",
             "Допуск стабільності",
-            (
-                "Відмінності в межах допуску "
-                "класифікуються як стабільні."
-            ),
-            (
-                "Для порівняння потрібні щонайменше "
-                "два повні запуски."
-            ),
+            ("Відмінності в межах допуску класифікуються як стабільні."),
+            ("Для порівняння потрібні щонайменше два повні запуски."),
             "Еталон і кандидат мають відрізнятися.",
-            (
-                "Не вдалося побудувати порівняння "
-                "для вибраних запусків."
-            ),
+            ("Не вдалося побудувати порівняння для вибраних запусків."),
             "Агрегований результат",
             "Результат еталона",
             "Результат кандидата",
@@ -778,10 +633,7 @@ RAG_LAB_CORE_TEXTS: dict[
             "Недоступно",
             "Кандидата схвалено",
             "Кандидата відхилено",
-            (
-                "Кандидат ще не має "
-                "остаточного результату."
-            ),
+            ("Кандидат ще не має остаточного результату."),
             "Порівняння за осями",
             "Еталон × кандидат",
             "Історія запусків",
@@ -810,10 +662,7 @@ RAG_LAB_CORE_TEXTS: dict[
     "ru": _build_language(
         (
             "🧪 Лаборатория качества RAG",
-            (
-                "Профессиональная оценка, эксперименты "
-                "и сравнение триады RAG."
-            ),
+            ("Профессиональная оценка, эксперименты и сравнение триады RAG."),
             (
                 "Сравнивайте реальные запуски по метрикам "
                 "Answer Relevancy, Faithfulness и "
@@ -836,36 +685,18 @@ RAG_LAB_CORE_TEXTS: dict[
             "Последний результат",
             "Лучший результат",
             "Неполные запуски",
-            (
-                "Для выбранных фильтров не найдено "
-                "ни одного запуска триады RAG."
-            ),
+            ("Для выбранных фильтров не найдено ни одного запуска триады RAG."),
             "Динамика качества RAG",
-            (
-                "История трёх осей и "
-                "агрегированного результата."
-            ),
+            ("История трёх осей и агрегированного результата."),
             "Сравнение экспериментов",
-            (
-                "Выберите эталонный запуск "
-                "и запуск-кандидат."
-            ),
+            ("Выберите эталонный запуск и запуск-кандидат."),
             "Эталон",
             "Кандидат",
             "Допуск стабильности",
-            (
-                "Различия в пределах допуска "
-                "классифицируются как стабильные."
-            ),
-            (
-                "Для сравнения необходимы как минимум "
-                "два полных запуска."
-            ),
+            ("Различия в пределах допуска классифицируются как стабильные."),
+            ("Для сравнения необходимы как минимум два полных запуска."),
             "Эталон и кандидат должны различаться.",
-            (
-                "Не удалось построить сравнение "
-                "для выбранных запусков."
-            ),
+            ("Не удалось построить сравнение для выбранных запусков."),
             "Агрегированный результат",
             "Результат эталона",
             "Результат кандидата",
@@ -877,10 +708,7 @@ RAG_LAB_CORE_TEXTS: dict[
             "Недоступно",
             "Кандидат одобрен",
             "Кандидат отклонён",
-            (
-                "У кандидата пока нет "
-                "окончательного результата."
-            ),
+            ("У кандидата пока нет окончательного результата."),
             "Сравнение по осям",
             "Эталон × кандидат",
             "История запусков",
@@ -909,10 +737,7 @@ RAG_LAB_CORE_TEXTS: dict[
     "sa": _build_language(
         (
             "🧪 مختبر جودة RAG",
-            (
-                "تقييم وتجريب ومقارنة احترافية "
-                "لثلاثية RAG."
-            ),
+            ("تقييم وتجريب ومقارنة احترافية لثلاثية RAG."),
             (
                 "قارن عمليات التشغيل الحقيقية باستخدام "
                 "Answer Relevancy وFaithfulness و"
@@ -935,39 +760,18 @@ RAG_LAB_CORE_TEXTS: dict[
             "أحدث نتيجة",
             "أفضل نتيجة",
             "عمليات التشغيل غير المكتملة",
-            (
-                "لم يتم العثور على أي تشغيل لثلاثية "
-                "RAG وفق المرشحات المحددة."
-            ),
+            ("لم يتم العثور على أي تشغيل لثلاثية RAG وفق المرشحات المحددة."),
             "تطور جودة RAG",
-            (
-                "سجل المحاور الثلاثة "
-                "والنتيجة المجمعة."
-            ),
+            ("سجل المحاور الثلاثة والنتيجة المجمعة."),
             "مقارنة التجارب",
-            (
-                "حدد تشغيلًا مرجعيًا "
-                "وتشغيلًا مرشحًا."
-            ),
+            ("حدد تشغيلًا مرجعيًا وتشغيلًا مرشحًا."),
             "الخط المرجعي",
             "المرشح",
             "هامش الاستقرار",
-            (
-                "تُصنف الاختلافات الواقعة ضمن "
-                "الهامش على أنها مستقرة."
-            ),
-            (
-                "يلزم وجود تشغيلين مكتملين على الأقل "
-                "لإجراء المقارنة."
-            ),
-            (
-                "يجب أن يختلف التشغيل المرجعي "
-                "عن التشغيل المرشح."
-            ),
-            (
-                "تعذر إنشاء المقارنة باستخدام "
-                "عمليات التشغيل المحددة."
-            ),
+            ("تُصنف الاختلافات الواقعة ضمن الهامش على أنها مستقرة."),
+            ("يلزم وجود تشغيلين مكتملين على الأقل لإجراء المقارنة."),
+            ("يجب أن يختلف التشغيل المرجعي عن التشغيل المرشح."),
+            ("تعذر إنشاء المقارنة باستخدام عمليات التشغيل المحددة."),
             "النتيجة المجمعة",
             "نتيجة الخط المرجعي",
             "نتيجة المرشح",
@@ -979,10 +783,7 @@ RAG_LAB_CORE_TEXTS: dict[
             "غير متاح",
             "تم اعتماد المرشح",
             "تم رفض المرشح",
-            (
-                "لا تتوفر للمرشح نتيجة "
-                "نهائية حتى الآن."
-            ),
+            ("لا تتوفر للمرشح نتيجة نهائية حتى الآن."),
             "المقارنة حسب المحور",
             "الخط المرجعي × المرشح",
             "سجل عمليات التشغيل",
@@ -1011,10 +812,7 @@ RAG_LAB_CORE_TEXTS: dict[
     "ch": _build_language(
         (
             "🧪 RAG 质量实验室",
-            (
-                "面向 RAG 三元评估的专业评价、"
-                "实验与对比。"
-            ),
+            ("面向 RAG 三元评估的专业评价、实验与对比。"),
             (
                 "使用 Answer Relevancy、Faithfulness "
                 "和 Contextual Relevancy 比较真实运行。"
@@ -1036,10 +834,7 @@ RAG_LAB_CORE_TEXTS: dict[
             "最新得分",
             "最佳得分",
             "不完整运行",
-            (
-                "未找到符合所选筛选条件的 "
-                "RAG 三元评估运行。"
-            ),
+            ("未找到符合所选筛选条件的 RAG 三元评估运行。"),
             "RAG 质量变化趋势",
             "三个评估维度及综合得分的历史记录。",
             "实验对比",

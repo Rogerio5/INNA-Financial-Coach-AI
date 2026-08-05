@@ -45,25 +45,17 @@ class HumanReviewPolicyDecision:
         self,
     ) -> dict[str, Any]:
         return {
-            "requires_review": (
-                self.requires_review
-            ),
+            "requires_review": (self.requires_review),
             "trigger": self.trigger,
             "reason": self.reason,
             "risk_level": self.risk_level,
             "requested_by": self.requested_by,
-            "payload": deepcopy(
-                self.payload
-            ),
-            "metadata": deepcopy(
-                self.metadata
-            ),
+            "payload": deepcopy(self.payload),
+            "metadata": deepcopy(self.metadata),
         }
 
 
-class HumanReviewPolicyError(
-    ValueError
-):
+class HumanReviewPolicyError(ValueError):
     """
     Erro de configuração ou avaliação da política.
     """
@@ -72,35 +64,33 @@ class HumanReviewPolicyError(
 def _normalize_text(
     value: Any,
 ) -> str:
-    return str(
-        value or ""
-    ).strip()
+    return str(value or "").strip()
 
 
 def _normalize_token(
     value: Any,
 ) -> str:
-    text = _normalize_text(
-        value
-    ).lower()
+    text = _normalize_text(value).lower()
 
     normalized = unicodedata.normalize(
         "NFKD",
         text,
     )
 
-    return "".join(
-        character
-        for character in normalized
-        if not unicodedata.combining(
+    return (
+        "".join(
             character
+            for character in normalized
+            if not unicodedata.combining(character)
         )
-    ).replace(
-        "-",
-        "_",
-    ).replace(
-        " ",
-        "_",
+        .replace(
+            "-",
+            "_",
+        )
+        .replace(
+            " ",
+            "_",
+        )
     )
 
 
@@ -119,9 +109,7 @@ def _normalize_bool(
     ):
         return value != 0
 
-    normalized = _normalize_token(
-        value
-    )
+    normalized = _normalize_token(value)
 
     return normalized in {
         "1",
@@ -170,19 +158,13 @@ def _first_non_empty(
 def _structured_response(
     state: Mapping[str, Any],
 ) -> Mapping[str, Any]:
-    return _safe_mapping(
-        state.get(
-            "structured_response"
-        )
-    )
+    return _safe_mapping(state.get("structured_response"))
 
 
 def _financial_data(
     state: Mapping[str, Any],
 ) -> Mapping[str, Any]:
-    structured = _structured_response(
-        state
-    )
+    structured = _structured_response(state)
 
     for key in (
         "financial_data",
@@ -191,16 +173,12 @@ def _financial_data(
         "diagnostico",
         "result",
     ):
-        candidate = _safe_mapping(
-            state.get(key)
-        )
+        candidate = _safe_mapping(state.get(key))
 
         if candidate:
             return candidate
 
-        candidate = _safe_mapping(
-            structured.get(key)
-        )
+        candidate = _safe_mapping(structured.get(key))
 
         if candidate:
             return candidate
@@ -213,15 +191,9 @@ def _resolve_current_agent(
 ) -> str:
     return _normalize_text(
         _first_non_empty(
-            state.get(
-                "current_agent"
-            ),
-            state.get(
-                "last_agent"
-            ),
-            state.get(
-                "next_node"
-            ),
+            state.get("current_agent"),
+            state.get("last_agent"),
+            state.get("next_node"),
             "supervisor",
         )
     )
@@ -230,20 +202,12 @@ def _resolve_current_agent(
 def _resolve_existing_review_status(
     state: Mapping[str, Any],
 ) -> str:
-    current = _safe_mapping(
-        state.get(
-            "human_review_current"
-        )
-    )
+    current = _safe_mapping(state.get("human_review_current"))
 
     return _normalize_token(
         _first_non_empty(
-            current.get(
-                "status"
-            ),
-            state.get(
-                "human_review_status"
-            ),
+            current.get("status"),
+            state.get("human_review_status"),
         )
     )
 
@@ -251,50 +215,24 @@ def _resolve_existing_review_status(
 def _resolve_risk_level(
     state: Mapping[str, Any],
 ) -> HumanReviewRiskLevel:
-    structured = _structured_response(
-        state
-    )
+    structured = _structured_response(state)
 
-    financial = _financial_data(
-        state
-    )
+    financial = _financial_data(state)
 
     raw_risk = _first_non_empty(
-        state.get(
-            "human_review_risk_level"
-        ),
-        state.get(
-            "risk_level"
-        ),
-        state.get(
-            "nivel_risco"
-        ),
-        state.get(
-            "risk"
-        ),
-        structured.get(
-            "risk_level"
-        ),
-        structured.get(
-            "nivel_risco"
-        ),
-        structured.get(
-            "risk"
-        ),
-        financial.get(
-            "risk_level"
-        ),
-        financial.get(
-            "nivel_risco"
-        ),
-        financial.get(
-            "risk"
-        ),
+        state.get("human_review_risk_level"),
+        state.get("risk_level"),
+        state.get("nivel_risco"),
+        state.get("risk"),
+        structured.get("risk_level"),
+        structured.get("nivel_risco"),
+        structured.get("risk"),
+        financial.get("risk_level"),
+        financial.get("nivel_risco"),
+        financial.get("risk"),
     )
 
-    normalized = _normalize_token(
-        raw_risk
-    )
+    normalized = _normalize_token(raw_risk)
 
     aliases: dict[
         str,
@@ -328,54 +266,32 @@ def _resolve_risk_level(
 def _resolve_confidence(
     state: Mapping[str, Any],
 ) -> float | None:
-    structured = _structured_response(
-        state
-    )
+    structured = _structured_response(state)
 
-    financial = _financial_data(
-        state
-    )
+    financial = _financial_data(state)
 
     raw = _first_non_empty(
-        state.get(
-            "confidence"
-        ),
-        state.get(
-            "routing_confidence"
-        ),
-        state.get(
-            "task_completion_score"
-        ),
-        structured.get(
-            "confidence"
-        ),
-        structured.get(
-            "confianca"
-        ),
-        financial.get(
-            "confidence"
-        ),
-        financial.get(
-            "confianca"
-        ),
+        state.get("confidence"),
+        state.get("routing_confidence"),
+        state.get("task_completion_score"),
+        structured.get("confidence"),
+        structured.get("confianca"),
+        financial.get("confidence"),
+        financial.get("confianca"),
     )
 
     if raw is None:
         return None
 
     try:
-        confidence = float(
-            raw
-        )
+        confidence = float(raw)
     except (
         TypeError,
         ValueError,
     ):
         return None
 
-    if not math.isfinite(
-        confidence
-    ):
+    if not math.isfinite(confidence):
         return None
 
     if confidence > 1.0:
@@ -402,11 +318,7 @@ def _normalize_string_list(
     ):
         normalized = value.strip()
 
-        return (
-            [normalized]
-            if normalized
-            else []
-        )
+        return [normalized] if normalized else []
 
     if not isinstance(
         value,
@@ -421,17 +333,10 @@ def _normalize_string_list(
     result: list[str] = []
 
     for item in value:
-        normalized = _normalize_text(
-            item
-        )
+        normalized = _normalize_text(item)
 
-        if (
-            normalized
-            and normalized not in result
-        ):
-            result.append(
-                normalized
-            )
+        if normalized and normalized not in result:
+            result.append(normalized)
 
     return result
 
@@ -439,36 +344,20 @@ def _normalize_string_list(
 def _resolve_missing_requirements(
     state: Mapping[str, Any],
 ) -> list[str]:
-    structured = _structured_response(
-        state
-    )
+    structured = _structured_response(state)
 
     values: list[str] = []
 
     for candidate in (
-        state.get(
-            "missing_requirements"
-        ),
-        state.get(
-            "missing_fields"
-        ),
-        state.get(
-            "required_missing_fields"
-        ),
-        structured.get(
-            "missing_requirements"
-        ),
-        structured.get(
-            "missing_fields"
-        ),
+        state.get("missing_requirements"),
+        state.get("missing_fields"),
+        state.get("required_missing_fields"),
+        structured.get("missing_requirements"),
+        structured.get("missing_fields"),
     ):
-        for item in _normalize_string_list(
-            candidate
-        ):
+        for item in _normalize_string_list(candidate):
             if item not in values:
-                values.append(
-                    item
-                )
+                values.append(item)
 
     return values
 
@@ -476,62 +365,32 @@ def _resolve_missing_requirements(
 def _resolve_inconsistencies(
     state: Mapping[str, Any],
 ) -> list[str]:
-    structured = _structured_response(
-        state
-    )
+    structured = _structured_response(state)
 
     values: list[str] = []
 
     explicit_flag = any(
-        _normalize_bool(
-            candidate
-        )
+        _normalize_bool(candidate)
         for candidate in (
-            state.get(
-                "financial_data_inconsistent"
-            ),
-            state.get(
-                "data_inconsistent"
-            ),
-            structured.get(
-                "financial_data_inconsistent"
-            ),
-            structured.get(
-                "data_inconsistent"
-            ),
+            state.get("financial_data_inconsistent"),
+            state.get("data_inconsistent"),
+            structured.get("financial_data_inconsistent"),
+            structured.get("data_inconsistent"),
         )
     )
 
     for candidate in (
-        state.get(
-            "data_inconsistencies"
-        ),
-        state.get(
-            "financial_inconsistencies"
-        ),
-        structured.get(
-            "data_inconsistencies"
-        ),
-        structured.get(
-            "financial_inconsistencies"
-        ),
+        state.get("data_inconsistencies"),
+        state.get("financial_inconsistencies"),
+        structured.get("data_inconsistencies"),
+        structured.get("financial_inconsistencies"),
     ):
-        for item in _normalize_string_list(
-            candidate
-        ):
+        for item in _normalize_string_list(candidate):
             if item not in values:
-                values.append(
-                    item
-                )
+                values.append(item)
 
-    if (
-        explicit_flag
-        and not values
-    ):
-        values.append(
-            "Foi detectada inconsistência "
-            "nos dados financeiros."
-        )
+    if explicit_flag and not values:
+        values.append("Foi detectada inconsistência nos dados financeiros.")
 
     return values
 
@@ -539,33 +398,17 @@ def _resolve_inconsistencies(
 def _external_confirmation_required(
     state: Mapping[str, Any],
 ) -> bool:
-    structured = _structured_response(
-        state
-    )
+    structured = _structured_response(state)
 
     return any(
-        _normalize_bool(
-            candidate
-        )
+        _normalize_bool(candidate)
         for candidate in (
-            state.get(
-                "external_action_requires_confirmation"
-            ),
-            state.get(
-                "tool_requires_confirmation"
-            ),
-            state.get(
-                "approval_required"
-            ),
-            structured.get(
-                "external_action_requires_confirmation"
-            ),
-            structured.get(
-                "tool_requires_confirmation"
-            ),
-            structured.get(
-                "approval_required"
-            ),
+            state.get("external_action_requires_confirmation"),
+            state.get("tool_requires_confirmation"),
+            state.get("approval_required"),
+            structured.get("external_action_requires_confirmation"),
+            structured.get("tool_requires_confirmation"),
+            structured.get("approval_required"),
         )
     )
 
@@ -574,9 +417,7 @@ def _force_review_required(
     state: Mapping[str, Any],
 ) -> bool:
     return any(
-        _normalize_bool(
-            state.get(key)
-        )
+        _normalize_bool(state.get(key))
         for key in (
             "human_review_force_required",
             "force_human_review",
@@ -588,16 +429,12 @@ def _force_review_required(
 def _review_disabled(
     state: Mapping[str, Any],
 ) -> bool:
-    explicit = state.get(
-        "human_review_enabled"
-    )
+    explicit = state.get("human_review_enabled")
 
     if explicit is None:
         return False
 
-    return not _normalize_bool(
-        explicit
-    )
+    return not _normalize_bool(explicit)
 
 
 def _minimum_confidence(
@@ -609,30 +446,21 @@ def _minimum_confidence(
     )
 
     try:
-        value = float(
-            raw
-        )
+        value = float(raw)
     except (
         TypeError,
         ValueError,
     ) as exc:
         raise HumanReviewPolicyError(
-            "human_review_minimum_confidence "
-            "deve ser numérico."
+            "human_review_minimum_confidence deve ser numérico."
         ) from exc
 
-    if not math.isfinite(
-        value
-    ):
-        raise HumanReviewPolicyError(
-            "human_review_minimum_confidence "
-            "deve ser finito."
-        )
+    if not math.isfinite(value):
+        raise HumanReviewPolicyError("human_review_minimum_confidence deve ser finito.")
 
     if not 0.0 <= value <= 1.0:
         raise HumanReviewPolicyError(
-            "human_review_minimum_confidence "
-            "deve estar entre 0 e 1."
+            "human_review_minimum_confidence deve estar entre 0 e 1."
         )
 
     return value
@@ -642,56 +470,16 @@ def _base_payload(
     state: Mapping[str, Any],
 ) -> dict[str, Any]:
     return {
-        "thread_id": _normalize_text(
-            state.get(
-                "thread_id"
-            )
-        ),
-        "user_id": _normalize_text(
-            state.get(
-                "user_id"
-            )
-        ),
-        "intent": _normalize_text(
-            state.get(
-                "intent"
-            )
-        ),
-        "current_agent": (
-            _resolve_current_agent(
-                state
-            )
-        ),
-        "task_status": _normalize_text(
-            state.get(
-                "task_status"
-            )
-        ),
-        "task_completion_score": (
-            state.get(
-                "task_completion_score"
-            )
-        ),
-        "risk_level": (
-            _resolve_risk_level(
-                state
-            )
-        ),
-        "confidence": (
-            _resolve_confidence(
-                state
-            )
-        ),
-        "missing_requirements": (
-            _resolve_missing_requirements(
-                state
-            )
-        ),
-        "data_inconsistencies": (
-            _resolve_inconsistencies(
-                state
-            )
-        ),
+        "thread_id": _normalize_text(state.get("thread_id")),
+        "user_id": _normalize_text(state.get("user_id")),
+        "intent": _normalize_text(state.get("intent")),
+        "current_agent": (_resolve_current_agent(state)),
+        "task_status": _normalize_text(state.get("task_status")),
+        "task_completion_score": (state.get("task_completion_score")),
+        "risk_level": (_resolve_risk_level(state)),
+        "confidence": (_resolve_confidence(state)),
+        "missing_requirements": (_resolve_missing_requirements(state)),
+        "data_inconsistencies": (_resolve_inconsistencies(state)),
     }
 
 
@@ -709,22 +497,12 @@ def _decision(
         trigger=trigger,
         reason=reason,
         risk_level=risk_level,
-        requested_by=(
-            _resolve_current_agent(
-                state
-            )
-        ),
-        payload=_base_payload(
-            state
-        ),
+        requested_by=(_resolve_current_agent(state)),
+        payload=_base_payload(state),
         metadata={
-            "policy": (
-                "default_financial_human_review"
-            ),
+            "policy": ("default_financial_human_review"),
             "policy_version": "1.0",
-            **dict(
-                metadata or {}
-            ),
+            **dict(metadata or {}),
         },
     )
 
@@ -743,97 +521,51 @@ def evaluate_human_review_policy(
         state,
         Mapping,
     ):
-        raise HumanReviewPolicyError(
-            "state deve implementar Mapping."
-        )
+        raise HumanReviewPolicyError("state deve implementar Mapping.")
 
-    existing_status = (
-        _resolve_existing_review_status(
-            state
-        )
-    )
+    existing_status = _resolve_existing_review_status(state)
 
-    if (
-        existing_status
-        in _REVIEW_PENDING_STATUSES
-    ):
+    if existing_status in _REVIEW_PENDING_STATUSES:
         return _decision(
             state=state,
             requires_review=False,
             trigger="review_already_pending",
-            reason=(
-                "Já existe uma revisão humana "
-                "pendente para esta execução."
-            ),
-            risk_level=(
-                _resolve_risk_level(
-                    state
-                )
-            ),
+            reason=("Já existe uma revisão humana pendente para esta execução."),
+            risk_level=(_resolve_risk_level(state)),
             metadata={
-                "existing_review_status": (
-                    existing_status
-                ),
+                "existing_review_status": (existing_status),
             },
         )
 
-    if (
-        existing_status
-        in _TERMINAL_REVIEW_STATUSES
-    ):
+    if existing_status in _TERMINAL_REVIEW_STATUSES:
         return _decision(
             state=state,
             requires_review=False,
             trigger="review_already_resolved",
-            reason=(
-                "A revisão humana atual já foi "
-                "resolvida."
-            ),
-            risk_level=(
-                _resolve_risk_level(
-                    state
-                )
-            ),
+            reason=("A revisão humana atual já foi resolvida."),
+            risk_level=(_resolve_risk_level(state)),
             metadata={
-                "existing_review_status": (
-                    existing_status
-                ),
+                "existing_review_status": (existing_status),
             },
         )
 
-    if _review_disabled(
-        state
-    ):
+    if _review_disabled(state):
         return _decision(
             state=state,
             requires_review=False,
             trigger="policy_disabled",
-            reason=(
-                "A política de revisão humana está "
-                "desativada para esta execução."
-            ),
-            risk_level=(
-                _resolve_risk_level(
-                    state
-                )
-            ),
+            reason=("A política de revisão humana está desativada para esta execução."),
+            risk_level=(_resolve_risk_level(state)),
         )
 
-    risk_level = _resolve_risk_level(
-        state
-    )
+    risk_level = _resolve_risk_level(state)
 
-    if _force_review_required(
-        state
-    ):
+    if _force_review_required(state):
         return _decision(
             state=state,
             requires_review=True,
             trigger="forced_review",
-            reason=(
-                "A revisão humana foi exigida "
-                "explicitamente."
-            ),
+            reason=("A revisão humana foi exigida explicitamente."),
             risk_level=max(
                 risk_level,
                 "medium",
@@ -846,19 +578,12 @@ def evaluate_human_review_policy(
             ),
         )
 
-    if _external_confirmation_required(
-        state
-    ):
+    if _external_confirmation_required(state):
         return _decision(
             state=state,
             requires_review=True,
-            trigger=(
-                "external_action_confirmation"
-            ),
-            reason=(
-                "Uma ferramenta ou ação externa "
-                "exige confirmação humana."
-            ),
+            trigger=("external_action_confirmation"),
+            reason=("Uma ferramenta ou ação externa exige confirmação humana."),
             risk_level=max(
                 risk_level,
                 "high",
@@ -876,10 +601,7 @@ def evaluate_human_review_policy(
             state=state,
             requires_review=True,
             trigger="critical_financial_risk",
-            reason=(
-                "Foi identificado risco financeiro "
-                "crítico."
-            ),
+            reason=("Foi identificado risco financeiro crítico."),
             risk_level="critical",
         )
 
@@ -888,26 +610,17 @@ def evaluate_human_review_policy(
             state=state,
             requires_review=True,
             trigger="high_financial_risk",
-            reason=(
-                "Foi identificado risco financeiro "
-                "elevado."
-            ),
+            reason=("Foi identificado risco financeiro elevado."),
             risk_level="high",
         )
 
-    inconsistencies = (
-        _resolve_inconsistencies(
-            state
-        )
-    )
+    inconsistencies = _resolve_inconsistencies(state)
 
     if inconsistencies:
         return _decision(
             state=state,
             requires_review=True,
-            trigger=(
-                "financial_data_inconsistency"
-            ),
+            trigger=("financial_data_inconsistency"),
             reason=(
                 "Os dados financeiros apresentam "
                 "inconsistências que precisam ser "
@@ -924,29 +637,18 @@ def evaluate_human_review_policy(
                 ).index,
             ),
             metadata={
-                "inconsistency_count": len(
-                    inconsistencies
-                ),
+                "inconsistency_count": len(inconsistencies),
             },
         )
 
-    missing_requirements = (
-        _resolve_missing_requirements(
-            state
-        )
-    )
+    missing_requirements = _resolve_missing_requirements(state)
 
     if missing_requirements:
         return _decision(
             state=state,
             requires_review=True,
-            trigger=(
-                "missing_required_financial_data"
-            ),
-            reason=(
-                "Existem dados obrigatórios "
-                "ausentes para concluir a análise."
-            ),
+            trigger=("missing_required_financial_data"),
+            reason=("Existem dados obrigatórios ausentes para concluir a análise."),
             risk_level=max(
                 risk_level,
                 "medium",
@@ -958,35 +660,20 @@ def evaluate_human_review_policy(
                 ).index,
             ),
             metadata={
-                "missing_requirement_count": len(
-                    missing_requirements
-                ),
+                "missing_requirement_count": len(missing_requirements),
             },
         )
 
-    confidence = _resolve_confidence(
-        state
-    )
+    confidence = _resolve_confidence(state)
 
-    minimum_confidence = (
-        _minimum_confidence(
-            state
-        )
-    )
+    minimum_confidence = _minimum_confidence(state)
 
-    if (
-        confidence is not None
-        and confidence
-        < minimum_confidence
-    ):
+    if confidence is not None and confidence < minimum_confidence:
         return _decision(
             state=state,
             requires_review=True,
             trigger="low_confidence",
-            reason=(
-                "A confiança da análise está abaixo "
-                "do limite permitido."
-            ),
+            reason=("A confiança da análise está abaixo do limite permitido."),
             risk_level=max(
                 risk_level,
                 "medium",
@@ -999,9 +686,7 @@ def evaluate_human_review_policy(
             ),
             metadata={
                 "confidence": confidence,
-                "minimum_confidence": (
-                    minimum_confidence
-                ),
+                "minimum_confidence": (minimum_confidence),
             },
         )
 
@@ -1009,16 +694,11 @@ def evaluate_human_review_policy(
         state=state,
         requires_review=False,
         trigger="not_required",
-        reason=(
-            "Nenhuma condição da política exige "
-            "revisão humana."
-        ),
+        reason=("Nenhuma condição da política exige revisão humana."),
         risk_level=risk_level,
         metadata={
             "confidence": confidence,
-            "minimum_confidence": (
-                minimum_confidence
-            ),
+            "minimum_confidence": (minimum_confidence),
         },
     )
 
@@ -1026,11 +706,7 @@ def evaluate_human_review_policy(
 def human_review_required(
     state: Mapping[str, Any],
 ) -> bool:
-    return (
-        evaluate_human_review_policy(
-            state
-        ).requires_review
-    )
+    return evaluate_human_review_policy(state).requires_review
 
 
 __all__ = [

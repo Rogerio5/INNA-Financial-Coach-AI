@@ -45,9 +45,7 @@ def _carregar_database_url() -> str:
             database_url = None
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não encontrada."
-        )
+        raise RuntimeError("DATABASE_URL não encontrada.")
 
     return database_url
 
@@ -59,13 +57,9 @@ def _conectar_postgres():
     try:
         import psycopg2
     except ImportError as exc:
-        raise RuntimeError(
-            "Pacote psycopg2 não instalado."
-        ) from exc
+        raise RuntimeError("Pacote psycopg2 não instalado.") from exc
 
-    return psycopg2.connect(
-        _carregar_database_url()
-    )
+    return psycopg2.connect(_carregar_database_url())
 
 
 def _criar_engine_sqlalchemy():
@@ -75,9 +69,7 @@ def _criar_engine_sqlalchemy():
     try:
         from sqlalchemy import create_engine
     except ImportError as exc:
-        raise RuntimeError(
-            "Pacote SQLAlchemy não instalado."
-        ) from exc
+        raise RuntimeError("Pacote SQLAlchemy não instalado.") from exc
 
     return create_engine(
         _carregar_database_url(),
@@ -92,14 +84,9 @@ def _converter_vetor_pgvector(
     Converte uma lista numérica para o formato aceito pelo pgvector.
     """
     if not embedding:
-        raise ValueError(
-            "Embedding vazio ou inválido."
-        )
+        raise ValueError("Embedding vazio ou inválido.")
 
-    vetor = [
-        float(valor)
-        for valor in embedding
-    ]
+    vetor = [float(valor) for valor in embedding]
 
     if len(vetor) != DIMENSOES_EMBEDDING:
         raise ValueError(
@@ -108,10 +95,7 @@ def _converter_vetor_pgvector(
             f"recebido={len(vetor)}."
         )
 
-    return "[" + ",".join(
-        str(valor)
-        for valor in vetor
-    ) + "]"
+    return "[" + ",".join(str(valor) for valor in vetor) + "]"
 
 
 def preparar_tabela_embeddings(
@@ -130,9 +114,7 @@ def preparar_tabela_embeddings(
 
         cur = conn.cursor()
 
-        cur.execute(
-            "CREATE EXTENSION IF NOT EXISTS vector;"
-        )
+        cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
 
         cur.execute(f"""
             CREATE TABLE IF NOT EXISTS {TABELA_EMBEDDINGS} (
@@ -161,9 +143,7 @@ def preparar_tabela_embeddings(
 
         return {
             "ok": True,
-            "message": (
-                "Tabela de embeddings criada/validada."
-            ),
+            "message": ("Tabela de embeddings criada/validada."),
         }
 
     except Exception as exc:
@@ -176,10 +156,7 @@ def preparar_tabela_embeddings(
 
         return {
             "ok": False,
-            "message": (
-                "Erro ao preparar tabela de embeddings: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao preparar tabela de embeddings: {exc}"),
         }
 
 
@@ -222,10 +199,7 @@ def excluir_embeddings_documento(
         return {
             "ok": True,
             "total": total_excluidos,
-            "message": (
-                f"{total_excluidos} embedding(s) "
-                "excluído(s)."
-            ),
+            "message": (f"{total_excluidos} embedding(s) excluído(s)."),
         }
 
     except Exception as exc:
@@ -239,10 +213,7 @@ def excluir_embeddings_documento(
         return {
             "ok": False,
             "total": 0,
-            "message": (
-                "Erro ao excluir embeddings: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao excluir embeddings: {exc}"),
         }
 
 
@@ -252,9 +223,7 @@ def salvar_chunks_embeddings(
     *,
     gerar_embedding: EmbeddingGenerator,
     substituir_existentes: bool = True,
-    modelo_embedding: str = (
-        MODELO_EMBEDDING_BANCO
-    ),
+    modelo_embedding: str = (MODELO_EMBEDDING_BANCO),
 ) -> dict:
     """
     Lê um JSONL, gera embeddings e salva no pgvector.
@@ -263,22 +232,16 @@ def salvar_chunks_embeddings(
         return {
             "ok": False,
             "total": 0,
-            "message": (
-                "Função de geração de embedding inválida."
-            ),
+            "message": ("Função de geração de embedding inválida."),
         }
 
-    caminho = Path(
-        str(caminho_embedding_ready)
-    )
+    caminho = Path(str(caminho_embedding_ready))
 
     if not caminho.exists():
         return {
             "ok": False,
             "total": 0,
-            "message": (
-                f"Arquivo JSONL não encontrado: {caminho}"
-            ),
+            "message": (f"Arquivo JSONL não encontrado: {caminho}"),
         }
 
     try:
@@ -286,9 +249,7 @@ def salvar_chunks_embeddings(
 
         conn = _conectar_postgres()
 
-        preparacao = preparar_tabela_embeddings(
-            conn
-        )
+        preparacao = preparar_tabela_embeddings(conn)
 
         if not preparacao.get("ok"):
             conn.close()
@@ -331,9 +292,7 @@ def salvar_chunks_embeddings(
                     total_ignorados += 1
                     continue
 
-                texto = str(
-                    item.get("texto") or ""
-                ).strip()
+                texto = str(item.get("texto") or "").strip()
 
                 if not texto:
                     total_ignorados += 1
@@ -342,18 +301,11 @@ def salvar_chunks_embeddings(
                 chunk_id = item.get("chunk_id")
 
                 if not chunk_id:
-                    chunk_id = (
-                        f"documento_{documento_id}"
-                        f"_linha_{numero_linha}"
-                    )
+                    chunk_id = f"documento_{documento_id}_linha_{numero_linha}"
 
                 embedding = gerar_embedding(texto)
 
-                vetor_pgvector = (
-                    _converter_vetor_pgvector(
-                        embedding
-                    )
-                )
+                vetor_pgvector = _converter_vetor_pgvector(embedding)
 
                 cur.execute(
                     f"""
@@ -399,9 +351,7 @@ def salvar_chunks_embeddings(
                     (
                         documento_id,
                         str(chunk_id),
-                        item.get(
-                            "documento_origem"
-                        ),
+                        item.get("documento_origem"),
                         int(
                             item.get(
                                 "chunk_index",
@@ -432,10 +382,7 @@ def salvar_chunks_embeddings(
             "ok": True,
             "total": total_salvos,
             "total_ignorados": total_ignorados,
-            "message": (
-                f"{total_salvos} embeddings salvos "
-                "no pgvector."
-            ),
+            "message": (f"{total_salvos} embeddings salvos no pgvector."),
         }
 
     except Exception as exc:
@@ -448,10 +395,7 @@ def salvar_chunks_embeddings(
         return {
             "ok": False,
             "total": 0,
-            "message": (
-                "Erro ao gerar/salvar embeddings "
-                f"no pgvector: {exc}"
-            ),
+            "message": (f"Erro ao gerar/salvar embeddings no pgvector: {exc}"),
         }
 
 
@@ -474,9 +418,7 @@ def documento_tem_embeddings(
             (int(documento_id),),
         )
 
-        total = int(
-            cur.fetchone()[0]
-        )
+        total = int(cur.fetchone()[0])
 
         cur.close()
         conn.close()
@@ -495,9 +437,7 @@ def criar_indices_pgvector() -> dict:
         conn = _conectar_postgres()
         cur = conn.cursor()
 
-        cur.execute(
-            "CREATE EXTENSION IF NOT EXISTS vector;"
-        )
+        cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
 
         cur.execute(f"""
             CREATE INDEX IF NOT EXISTS
@@ -527,9 +467,7 @@ def criar_indices_pgvector() -> dict:
                 (chunk_id);
         """)
 
-        cur.execute(
-            f"ANALYZE {TABELA_EMBEDDINGS};"
-        )
+        cur.execute(f"ANALYZE {TABELA_EMBEDDINGS};")
 
         conn.commit()
         cur.close()
@@ -537,19 +475,13 @@ def criar_indices_pgvector() -> dict:
 
         return {
             "ok": True,
-            "message": (
-                "Índices pgvector criados/validados "
-                "com sucesso."
-            ),
+            "message": ("Índices pgvector criados/validados com sucesso."),
         }
 
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro ao criar índices pgvector: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao criar índices pgvector: {exc}"),
         }
 
 
@@ -611,72 +543,42 @@ def carregar_resumo_embeddings() -> dict:
         engine.dispose()
 
         if df.empty:
-            estrutura_vazia.update({
-                "ok": True,
-                "message": (
-                    "Nenhum embedding encontrado."
-                ),
-                "df": df,
-            })
+            estrutura_vazia.update(
+                {
+                    "ok": True,
+                    "message": ("Nenhum embedding encontrado."),
+                    "df": df,
+                }
+            )
 
             return estrutura_vazia
 
-        total_embeddings = int(
-            df["total_embeddings"].sum()
-        )
+        total_embeddings = int(df["total_embeddings"].sum())
 
-        df_ativos = df[
-            df["ativo"] == True
-        ]
+        df_ativos = df[df["ativo"] == True]
 
-        df_inativos = df[
-            df["ativo"] == False
-        ]
+        df_inativos = df[df["ativo"] == False]
 
         embeddings_ativos = (
-            int(
-                df_ativos[
-                    "total_embeddings"
-                ].sum()
-            )
-            if not df_ativos.empty
-            else 0
+            int(df_ativos["total_embeddings"].sum()) if not df_ativos.empty else 0
         )
 
         embeddings_inativos = (
-            int(
-                df_inativos[
-                    "total_embeddings"
-                ].sum()
-            )
-            if not df_inativos.empty
-            else 0
+            int(df_inativos["total_embeddings"].sum()) if not df_inativos.empty else 0
         )
 
         return {
             "ok": True,
-            "message": (
-                "Resumo de embeddings carregado."
-            ),
+            "message": ("Resumo de embeddings carregado."),
             "total_embeddings": total_embeddings,
             "embeddings_ativos": embeddings_ativos,
-            "embeddings_inativos": (
-                embeddings_inativos
-            ),
-            "documentos_com_embeddings": int(
-                df["documento_id"].nunique()
-            ),
-            "documentos_ativos_com_embeddings": int(
-                df_ativos[
-                    "documento_id"
-                ].nunique()
-            )
+            "embeddings_inativos": (embeddings_inativos),
+            "documentos_com_embeddings": int(df["documento_id"].nunique()),
+            "documentos_ativos_com_embeddings": int(df_ativos["documento_id"].nunique())
             if not df_ativos.empty
             else 0,
             "documentos_inativos_com_embeddings": int(
-                df_inativos[
-                    "documento_id"
-                ].nunique()
+                df_inativos["documento_id"].nunique()
             )
             if not df_inativos.empty
             else 0,
@@ -684,10 +586,7 @@ def carregar_resumo_embeddings() -> dict:
         }
 
     except Exception as exc:
-        estrutura_vazia["message"] = (
-            "Erro ao carregar resumo de embeddings: "
-            f"{exc}"
-        )
+        estrutura_vazia["message"] = f"Erro ao carregar resumo de embeddings: {exc}"
 
         return estrutura_vazia
 

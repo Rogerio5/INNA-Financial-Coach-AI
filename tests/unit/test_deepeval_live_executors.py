@@ -21,14 +21,10 @@ class FakeDeepEvalMetric:
     ) -> None:
         self.threshold = threshold
         self.model = model
-        self.include_reason = (
-            include_reason
-        )
+        self.include_reason = include_reason
         self.async_mode = async_mode
         self.strict_mode = strict_mode
-        self.verbose_mode = (
-            verbose_mode
-        )
+        self.verbose_mode = verbose_mode
 
         self.score = None
         self.reason = None
@@ -48,9 +44,7 @@ class FakeDeepEvalMetric:
         del _log_metric_to_confident
 
         self.score = 0.91
-        self.reason = (
-            "Métrica fake aprovada."
-        )
+        self.reason = "Métrica fake aprovada."
         self.success = True
 
         return self.score
@@ -69,34 +63,20 @@ def fake_metric_class_loader(
 
 
 def test_builds_three_triad_executors() -> None:
-    executors = (
-        build_default_deepeval_live_executors(
-            model=object(),
-            metric_class_loader=(
-                fake_metric_class_loader
-            ),
-            test_case_factory=(
-                lambda payload: payload
-            ),
-        )
+    executors = build_default_deepeval_live_executors(
+        model=object(),
+        metric_class_loader=(fake_metric_class_loader),
+        test_case_factory=(lambda payload: payload),
     )
 
-    assert set(executors) == set(
-        TRIAD_METRIC_CLASS_NAMES
-    )
+    assert set(executors) == set(TRIAD_METRIC_CLASS_NAMES)
 
 
 def test_executor_returns_numeric_score() -> None:
-    executors = (
-        build_default_deepeval_live_executors(
-            model=object(),
-            metric_class_loader=(
-                fake_metric_class_loader
-            ),
-            test_case_factory=(
-                lambda payload: payload
-            ),
-        )
+    executors = build_default_deepeval_live_executors(
+        model=object(),
+        metric_class_loader=(fake_metric_class_loader),
+        test_case_factory=(lambda payload: payload),
     )
 
     metric = SimpleNamespace(
@@ -105,17 +85,13 @@ def test_executor_returns_numeric_score() -> None:
         strict_mode=False,
     )
 
-    result = executors[
-        "faithfulness"
-    ](
+    result = executors["faithfulness"](
         metric,
         object(),
         object(),
     )
 
-    assert float(
-        result.score
-    ) == 0.91
+    assert float(result.score) == 0.91
 
     passed = getattr(
         result,
@@ -129,12 +105,7 @@ def test_executor_returns_numeric_score() -> None:
 
     assert passed is True
 
-    assert (
-        "fake"
-        in str(
-            result.reason
-        ).lower()
-    )
+    assert "fake" in str(result.reason).lower()
 
 
 def test_quota_error_detection_is_case_insensitive() -> None:
@@ -142,23 +113,11 @@ def test_quota_error_detection_is_case_insensitive() -> None:
         _quota_error,
     )
 
-    assert _quota_error(
-        RuntimeError(
-            "429 RESOURCE_EXHAUSTED"
-        )
-    )
+    assert _quota_error(RuntimeError("429 RESOURCE_EXHAUSTED"))
 
-    assert _quota_error(
-        RuntimeError(
-            "quota exceeded"
-        )
-    )
+    assert _quota_error(RuntimeError("quota exceeded"))
 
-    assert not _quota_error(
-        RuntimeError(
-            "invalid payload"
-        )
-    )
+    assert not _quota_error(RuntimeError("invalid payload"))
 
 
 def test_retry_delay_reads_server_response() -> None:
@@ -167,9 +126,7 @@ def test_retry_delay_reads_server_response() -> None:
     )
 
     delay = _quota_retry_seconds(
-        RuntimeError(
-            "Please retry in 35.447504023s."
-        ),
+        RuntimeError("Please retry in 35.447504023s."),
         fallback=20.0,
     )
 
@@ -188,22 +145,14 @@ def test_shared_rate_limiter_retries_resource_exhausted() -> None:
     }
 
     def clock() -> float:
-        return float(
-            state["now"]
-        )
+        return float(state["now"])
 
     def sleeper(
         seconds: float,
     ) -> None:
-        state[
-            "sleeps"
-        ].append(
-            seconds
-        )
+        state["sleeps"].append(seconds)
 
-        state[
-            "now"
-        ] += seconds
+        state["now"] += seconds
 
     limiter = GeminiRequestRateLimiter(
         minimum_interval_seconds=12.5,
@@ -215,30 +164,19 @@ def test_shared_rate_limiter_retries_resource_exhausted() -> None:
     )
 
     def operation():
-        state[
-            "calls"
-        ] += 1
+        state["calls"] += 1
 
-        if state[
-            "calls"
-        ] == 1:
-            raise RuntimeError(
-                "429 RESOURCE_EXHAUSTED. "
-                "Please retry in 35s."
-            )
+        if state["calls"] == 1:
+            raise RuntimeError("429 RESOURCE_EXHAUSTED. Please retry in 35s.")
 
         return "success"
 
-    result = limiter.run_sync(
-        operation
-    )
+    result = limiter.run_sync(operation)
 
     assert result == "success"
     assert state["calls"] == 2
     assert limiter.retry_count == 1
-    assert sum(
-        state["sleeps"]
-    ) >= 38.0
+    assert sum(state["sleeps"]) >= 38.0
 
 
 def test_non_quota_error_is_not_retried() -> None:
@@ -262,21 +200,15 @@ def test_non_quota_error_is_not_retried() -> None:
     }
 
     def operation():
-        calls[
-            "count"
-        ] += 1
+        calls["count"] += 1
 
-        raise ValueError(
-            "invalid payload"
-        )
+        raise ValueError("invalid payload")
 
     with pytest.raises(
         ValueError,
         match="invalid payload",
     ):
-        limiter.run_sync(
-            operation
-        )
+        limiter.run_sync(operation)
 
     assert calls["count"] == 1
     assert limiter.retry_count == 0

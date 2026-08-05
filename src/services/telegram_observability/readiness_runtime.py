@@ -21,25 +21,15 @@ def _validate_non_negative_finite(
     value: object,
 ) -> float:
     try:
-        normalized = float(
-            value
-        )
+        normalized = float(value)
     except (
         TypeError,
         ValueError,
     ) as exc:
-        raise ValueError(
-            f"{name} deve ser numérico."
-        ) from exc
+        raise ValueError(f"{name} deve ser numérico.") from exc
 
-    if (
-        math.isnan(normalized)
-        or math.isinf(normalized)
-        or normalized < 0
-    ):
-        raise ValueError(
-            f"{name} deve ser finito e não negativo."
-        )
+    if math.isnan(normalized) or math.isinf(normalized) or normalized < 0:
+        raise ValueError(f"{name} deve ser finito e não negativo.")
 
     return normalized
 
@@ -108,16 +98,10 @@ class TelegramReadinessRuntimeResult:
         return {
             "sequence": self.sequence,
             "cache_hit": self.cache_hit,
-            "cache_age_seconds": (
-                self.cache_age_seconds
-            ),
-            "generated_at_epoch_seconds": (
-                self.generated_at_epoch_seconds
-            ),
+            "cache_age_seconds": (self.cache_age_seconds),
+            "generated_at_epoch_seconds": (self.generated_at_epoch_seconds),
             "reason": self.reason,
-            "operational": (
-                self.snapshot.to_safe_dict()
-            ),
+            "operational": (self.snapshot.to_safe_dict()),
         }
 
 
@@ -135,37 +119,19 @@ class TelegramReadinessRuntime:
         self,
         service: TelegramOperationalStatusService,
         *,
-        policy: (
-            TelegramReadinessRuntimePolicy
-            | None
-        ) = None,
-        monotonic_clock: Callable[
-            [],
-            float
-        ] = time.monotonic,
-        wall_clock: Callable[
-            [],
-            float
-        ] = time.time,
+        policy: (TelegramReadinessRuntimePolicy | None) = None,
+        monotonic_clock: Callable[[], float] = time.monotonic,
+        wall_clock: Callable[[], float] = time.time,
     ) -> None:
         self._service = service
 
-        self._policy = (
-            policy
-            or TelegramReadinessRuntimePolicy()
-        )
+        self._policy = policy or TelegramReadinessRuntimePolicy()
 
-        self._monotonic_clock = (
-            monotonic_clock
-        )
+        self._monotonic_clock = monotonic_clock
 
         self._wall_clock = wall_clock
 
-        self._condition = (
-            threading.Condition(
-                threading.RLock()
-            )
-        )
+        self._condition = threading.Condition(threading.RLock())
 
         self._refreshing = False
         self._cache: _CachedReadiness | None = None
@@ -201,10 +167,7 @@ class TelegramReadinessRuntime:
 
             if self._refreshing:
                 notified = self._condition.wait(
-                    timeout=(
-                        self._policy
-                        .concurrent_wait_seconds
-                    )
+                    timeout=(self._policy.concurrent_wait_seconds)
                 )
 
                 now = self._monotonic_clock()
@@ -217,69 +180,46 @@ class TelegramReadinessRuntime:
                 if cached is not None:
                     return replace(
                         cached,
-                        reason=(
-                            "single_flight_cache"
-                        ),
+                        reason=("single_flight_cache"),
                     )
 
                 if not notified:
-                    return (
-                        self._build_runtime_failure(
-                            reason=(
-                                "concurrent_wait_timeout"
-                            ),
-                            error_category="timeout",
-                            details={
-                                "refresh_in_progress": True,
-                            },
-                        )
+                    return self._build_runtime_failure(
+                        reason=("concurrent_wait_timeout"),
+                        error_category="timeout",
+                        details={
+                            "refresh_in_progress": True,
+                        },
                     )
 
                 if self._refreshing:
-                    return (
-                        self._build_runtime_failure(
-                            reason=(
-                                "refresh_still_in_progress"
-                            ),
-                            error_category="timeout",
-                            details={
-                                "refresh_in_progress": True,
-                            },
-                        )
+                    return self._build_runtime_failure(
+                        reason=("refresh_still_in_progress"),
+                        error_category="timeout",
+                        details={
+                            "refresh_in_progress": True,
+                        },
                     )
 
             self._refreshing = True
 
-        started_at = (
-            self._monotonic_clock()
-        )
+        started_at = self._monotonic_clock()
 
         try:
-            snapshot = (
-                self._service.evaluate()
-            )
+            snapshot = self._service.evaluate()
 
             elapsed = max(
                 0.0,
-                self._monotonic_clock()
-                - started_at,
+                self._monotonic_clock() - started_at,
             )
 
-            if (
-                elapsed
-                > self._policy
-                .evaluation_budget_seconds
-            ):
-                snapshot = (
-                    self._apply_budget_failure(
-                        snapshot=snapshot,
-                        elapsed=elapsed,
-                    )
+            if elapsed > self._policy.evaluation_budget_seconds:
+                snapshot = self._apply_budget_failure(
+                    snapshot=snapshot,
+                    elapsed=elapsed,
                 )
 
-                reason = (
-                    "evaluation_budget_exceeded"
-                )
+                reason = "evaluation_budget_exceeded"
 
             else:
                 reason = "evaluated"
@@ -290,22 +230,18 @@ class TelegramReadinessRuntime:
             )
 
         except Exception:
-            result = (
-                self._build_runtime_failure(
-                    reason="evaluation_exception",
-                    error_category="internal",
-                    details={
-                        "exception": True,
-                    },
-                )
+            result = self._build_runtime_failure(
+                reason="evaluation_exception",
+                error_category="internal",
+                details={
+                    "exception": True,
+                },
             )
 
         with self._condition:
             self._cache = _CachedReadiness(
                 result=result,
-                created_monotonic=(
-                    self._monotonic_clock()
-                ),
+                created_monotonic=(self._monotonic_clock()),
             )
 
             self._refreshing = False
@@ -319,23 +255,15 @@ class TelegramReadinessRuntime:
         now: float,
         force_refresh: bool,
     ) -> TelegramReadinessRuntimeResult | None:
-        if (
-            force_refresh
-            or self._cache is None
-        ):
+        if force_refresh or self._cache is None:
             return None
 
         age = max(
             0.0,
-            now
-            - self._cache.created_monotonic,
+            now - self._cache.created_monotonic,
         )
 
-        if (
-            age
-            > self._policy
-            .cache_ttl_seconds
-        ):
+        if age > self._policy.cache_ttl_seconds:
             return None
 
         return replace(
@@ -358,9 +286,7 @@ class TelegramReadinessRuntime:
             sequence=self._sequence,
             cache_hit=False,
             cache_age_seconds=0.0,
-            generated_at_epoch_seconds=(
-                self._wall_clock()
-            ),
+            generated_at_epoch_seconds=(self._wall_clock()),
             reason=reason,
         )
 
@@ -374,22 +300,16 @@ class TelegramReadinessRuntime:
         probe = TelegramProbeResult(
             name="readiness_runtime",
             status=TelegramProbeStatus.FAIL,
-            severity=(
-                TelegramProbeSeverity.REQUIRED
-            ),
+            severity=(TelegramProbeSeverity.REQUIRED),
             latency_seconds=0.0,
             error_category=error_category,
             details=details,
         )
 
         snapshot = TelegramOperationalSnapshot(
-            status=(
-                TelegramOperationalStatus.UNREADY
-            ),
+            status=(TelegramOperationalStatus.UNREADY),
             checks=(probe,),
-            checked_at_epoch_seconds=(
-                self._wall_clock()
-            ),
+            checked_at_epoch_seconds=(self._wall_clock()),
             total_latency_seconds=0.0,
         )
 
@@ -407,9 +327,7 @@ class TelegramReadinessRuntime:
         budget_check = TelegramProbeResult(
             name="readiness_runtime_budget",
             status=TelegramProbeStatus.FAIL,
-            severity=(
-                TelegramProbeSeverity.REQUIRED
-            ),
+            severity=(TelegramProbeSeverity.REQUIRED),
             latency_seconds=elapsed,
             error_category="timeout",
             details={
@@ -418,19 +336,9 @@ class TelegramReadinessRuntime:
         )
 
         return TelegramOperationalSnapshot(
-            status=(
-                TelegramOperationalStatus.UNREADY
-            ),
-            checks=(
-                snapshot.checks
-                + (
-                    budget_check,
-                )
-            ),
-            checked_at_epoch_seconds=(
-                snapshot
-                .checked_at_epoch_seconds
-            ),
+            status=(TelegramOperationalStatus.UNREADY),
+            checks=(snapshot.checks + (budget_check,)),
+            checked_at_epoch_seconds=(snapshot.checked_at_epoch_seconds),
             total_latency_seconds=max(
                 snapshot.total_latency_seconds,
                 elapsed,

@@ -31,9 +31,7 @@ class FakeBridge:
 
 
 def test_postgres_bridge_factory_defaults_to_noop():
-    bridge = (
-        create_postgres_telegram_webhook_conversation_bridge()
-    )
+    bridge = create_postgres_telegram_webhook_conversation_bridge()
 
     assert isinstance(
         bridge.metrics,
@@ -45,30 +43,22 @@ def test_postgres_bridge_factory_defaults_to_noop():
         NoOpTelegramOperationalEventSink,
     )
 
-    assert callable(
-        bridge.clock
-    )
+    assert callable(bridge.clock)
 
     assert bridge.runtime_initialized is False
 
 
 def test_postgres_bridge_factory_preserves_instances():
-    metrics = (
-        InMemoryTelegramConversationMetrics()
-    )
+    metrics = InMemoryTelegramConversationMetrics()
 
-    event_sink = (
-        InMemoryTelegramOperationalEventSink()
-    )
+    event_sink = InMemoryTelegramOperationalEventSink()
 
     clock = FakeClock()
 
-    bridge = (
-        create_postgres_telegram_webhook_conversation_bridge(
-            metrics=metrics,
-            event_sink=event_sink,
-            clock=clock,
-        )
+    bridge = create_postgres_telegram_webhook_conversation_bridge(
+        metrics=metrics,
+        event_sink=event_sink,
+        clock=clock,
     )
 
     assert bridge.metrics is metrics
@@ -81,13 +71,9 @@ def test_postgres_bridge_factory_preserves_instances():
 def test_worker_composes_dependencies_once(
     monkeypatch,
 ):
-    metrics = (
-        InMemoryTelegramConversationMetrics()
-    )
+    metrics = InMemoryTelegramConversationMetrics()
 
-    event_sink = (
-        InMemoryTelegramOperationalEventSink()
-    )
+    event_sink = InMemoryTelegramOperationalEventSink()
 
     clock = FakeClock()
 
@@ -137,12 +123,10 @@ def test_worker_composes_dependencies_once(
         processor,
     )
 
-    loaded = (
-        telegram_update_worker.load_telegram_processor(
-            metrics_factory=metrics_factory,
-            event_sink_factory=event_sink_factory,
-            clock=clock,
-        )
+    loaded = telegram_update_worker.load_telegram_processor(
+        metrics_factory=metrics_factory,
+        event_sink_factory=event_sink_factory,
+        clock=clock,
     )
 
     first = loaded(
@@ -199,9 +183,7 @@ def test_worker_defaults_remain_noop(
         processor,
     )
 
-    loaded = (
-        telegram_update_worker.load_telegram_processor()
-    )
+    loaded = telegram_update_worker.load_telegram_processor()
 
     bridge = loaded(
         {
@@ -262,54 +244,32 @@ def test_worker_rejects_invalid_factories(
 
 
 def test_factory_signature_is_backward_compatible():
-    signature = inspect.signature(
-        create_postgres_telegram_webhook_conversation_bridge
-    )
+    signature = inspect.signature(create_postgres_telegram_webhook_conversation_bridge)
 
     parameters = signature.parameters
 
-    assert parameters[
-        "default_ttl_seconds"
-    ].default is not inspect.Parameter.empty
+    assert parameters["default_ttl_seconds"].default is not inspect.Parameter.empty
 
-    assert parameters[
-        "default_language"
-    ].default == "pt-BR"
+    assert parameters["default_language"].default == "pt-BR"
 
-    assert parameters[
-        "metrics"
-    ].default is None
+    assert parameters["metrics"].default is None
 
-    assert parameters[
-        "event_sink"
-    ].default is None
+    assert parameters["event_sink"].default is None
 
-    assert callable(
-        parameters["clock"].default
-    )
+    assert callable(parameters["clock"].default)
 
 
 def test_worker_signature_has_safe_defaults():
-    signature = inspect.signature(
-        telegram_update_worker.load_telegram_processor
-    )
+    signature = inspect.signature(telegram_update_worker.load_telegram_processor)
 
     assert (
-        signature.parameters[
-            "metrics_factory"
-        ].default
+        signature.parameters["metrics_factory"].default
         is NoOpTelegramConversationMetrics
     )
 
     assert (
-        signature.parameters[
-            "event_sink_factory"
-        ].default
+        signature.parameters["event_sink_factory"].default
         is NoOpTelegramOperationalEventSink
     )
 
-    assert callable(
-        signature.parameters[
-            "clock"
-        ].default
-    )
+    assert callable(signature.parameters["clock"].default)

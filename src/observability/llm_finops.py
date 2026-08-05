@@ -105,8 +105,7 @@ def converter_usd_para_brl(
     Converte custo em dólar para reais.
     """
     return round(
-        max(float(valor_usd or 0), 0.0)
-        * max(float(cotacao_usd_brl or 0), 0.0),
+        max(float(valor_usd or 0), 0.0) * max(float(cotacao_usd_brl or 0), 0.0),
         8,
     )
 
@@ -182,9 +181,7 @@ def calcular_projecao_mensal(
 
     Usa a média diária observada no mês atual.
     """
-    referencia = agora or datetime.now(
-        timezone.utc
-    )
+    referencia = agora or datetime.now(timezone.utc)
 
     dias_mes = monthrange(
         referencia.year,
@@ -227,9 +224,7 @@ def analisar_finops_llm(
     """
     Consolida consumo, orçamento e projeção mensal.
     """
-    configuracao = (
-        carregar_configuracao_finops()
-    )
+    configuracao = carregar_configuracao_finops()
 
     if df is None or df.empty:
         custo_usd = 0.0
@@ -264,26 +259,16 @@ def analisar_finops_llm(
             .sum()
         )
 
-    cotacao = configuracao[
-        "cotacao_usd_brl"
-    ]
+    cotacao = configuracao["cotacao_usd_brl"]
 
     custo_brl = converter_usd_para_brl(
         custo_usd,
         cotacao,
     )
 
-    custo_medio_usd = (
-        custo_usd / total_chamadas
-        if total_chamadas > 0
-        else 0.0
-    )
+    custo_medio_usd = custo_usd / total_chamadas if total_chamadas > 0 else 0.0
 
-    custo_medio_brl = (
-        custo_brl / total_chamadas
-        if total_chamadas > 0
-        else 0.0
-    )
+    custo_medio_brl = custo_brl / total_chamadas if total_chamadas > 0 else 0.0
 
     projecao_usd = calcular_projecao_mensal(
         custo_acumulado=custo_usd,
@@ -291,47 +276,27 @@ def analisar_finops_llm(
     )
 
     projecao_brl = converter_usd_para_brl(
-        projecao_usd[
-            "projecao_mensal"
-        ],
+        projecao_usd["projecao_mensal"],
         cotacao,
     )
 
     situacao_usd = classificar_orcamento(
         custo_atual=custo_usd,
-        orcamento=configuracao[
-            "orcamento_mensal_usd"
-        ],
-        alerta_percentual=configuracao[
-            "alerta_percentual"
-        ],
-        critico_percentual=configuracao[
-            "critico_percentual"
-        ],
+        orcamento=configuracao["orcamento_mensal_usd"],
+        alerta_percentual=configuracao["alerta_percentual"],
+        critico_percentual=configuracao["critico_percentual"],
     )
 
-    projecao_orcamento = (
-        classificar_orcamento(
-            custo_atual=projecao_usd[
-                "projecao_mensal"
-            ],
-            orcamento=configuracao[
-                "orcamento_mensal_usd"
-            ],
-            alerta_percentual=configuracao[
-                "alerta_percentual"
-            ],
-            critico_percentual=configuracao[
-                "critico_percentual"
-            ],
-        )
+    projecao_orcamento = classificar_orcamento(
+        custo_atual=projecao_usd["projecao_mensal"],
+        orcamento=configuracao["orcamento_mensal_usd"],
+        alerta_percentual=configuracao["alerta_percentual"],
+        critico_percentual=configuracao["critico_percentual"],
     )
 
     recomendacoes = []
 
-    if projecao_orcamento[
-        "status"
-    ] in {
+    if projecao_orcamento["status"] in {
         "critico",
         "excedido",
     }:
@@ -341,9 +306,7 @@ def analisar_finops_llm(
             "redução de contexto e cache de respostas."
         )
 
-    if total_chamadas > 0 and (
-        tokens_totais / total_chamadas
-    ) > 10000:
+    if total_chamadas > 0 and (tokens_totais / total_chamadas) > 10000:
         recomendacoes.append(
             "A média de tokens por chamada está elevada. "
             "Revise tamanho do prompt, chunks e histórico."
@@ -375,13 +338,9 @@ def analisar_finops_llm(
             custo_medio_brl,
             8,
         ),
-        "projecao_mensal_usd": projecao_usd[
-            "projecao_mensal"
-        ],
+        "projecao_mensal_usd": projecao_usd["projecao_mensal"],
         "projecao_mensal_brl": projecao_brl,
-        "media_diaria_usd": projecao_usd[
-            "media_diaria"
-        ],
+        "media_diaria_usd": projecao_usd["media_diaria"],
         "situacao_orcamento": situacao_usd,
         "situacao_projecao": projecao_orcamento,
         "recomendacoes": recomendacoes,

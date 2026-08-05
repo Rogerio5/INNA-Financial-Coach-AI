@@ -67,14 +67,8 @@ def test_criar_payload_com_categoria():
     )
 
     assert payload["total_chunks"] == 2
-    assert (
-        payload["chunks"][0]["metadata"]["categoria"]
-        == "pix"
-    )
-    assert (
-        payload["chunks"][1]["metadata"]["categoria"]
-        == "reserva_financeira"
-    )
+    assert payload["chunks"][0]["metadata"]["categoria"] == "pix"
+    assert payload["chunks"][1]["metadata"]["categoria"] == "reserva_financeira"
 
 
 def test_salvar_json_e_jsonl(tmp_path):
@@ -105,15 +99,11 @@ Crie uma pequena reserva.
     assert jsonl_path.exists()
     assert len(chunks) == 2
 
-    payload = json.loads(
-        json_path.read_text(encoding="utf-8")
-    )
+    payload = json.loads(json_path.read_text(encoding="utf-8"))
 
     assert payload["total_chunks"] == 2
 
-    linhas = jsonl_path.read_text(
-        encoding="utf-8"
-    ).strip().splitlines()
+    linhas = jsonl_path.read_text(encoding="utf-8").strip().splitlines()
 
     assert len(linhas) == 2
 

@@ -33,9 +33,7 @@ def main() -> int:
     try:
         raw_payload = sys.stdin.read()
 
-        payload = json.loads(
-            raw_payload
-        )
+        payload = json.loads(raw_payload)
 
         message = str(
             payload.get(
@@ -60,9 +58,7 @@ def main() -> int:
         _write_result(
             {
                 "ok": True,
-                "decision": decision.model_dump(
-                    mode="json"
-                ),
+                "decision": decision.model_dump(mode="json"),
             }
         )
 
@@ -72,9 +68,7 @@ def main() -> int:
         _write_result(
             {
                 "ok": False,
-                "error_type": (
-                    type(exc).__name__
-                ),
+                "error_type": (type(exc).__name__),
                 "error": str(exc)[:300],
             }
         )

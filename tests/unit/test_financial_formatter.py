@@ -9,26 +9,35 @@ from src.services.formatters.financial import (
 
 
 def test_formatar_moeda_brl():
-    assert formatar_moeda(
-        6300,
-        "BRL",
-        idioma="pt",
-    ) == "R$ 6.300,00"
+    assert (
+        formatar_moeda(
+            6300,
+            "BRL",
+            idioma="pt",
+        )
+        == "R$ 6.300,00"
+    )
 
 
 def test_formatar_moeda_usd():
-    assert formatar_moeda(
-        6300,
-        "USD",
-        idioma="en",
-    ) == "US$ 6,300.00"
+    assert (
+        formatar_moeda(
+            6300,
+            "USD",
+            idioma="en",
+        )
+        == "US$ 6,300.00"
+    )
 
 
 def test_formatar_percentual_pt():
-    assert formatar_percentual(
-        52.3809,
-        idioma="pt",
-    ) == "52,4%"
+    assert (
+        formatar_percentual(
+            52.3809,
+            idioma="pt",
+        )
+        == "52,4%"
+    )
 
 
 def test_calcular_valor_semanal():
@@ -45,11 +54,14 @@ def test_calcular_percentual_variacao():
 
 
 def test_formatar_variacao_monetaria():
-    assert formatar_variacao_monetaria(
-        200,
-        "BRL",
-        idioma="pt",
-    ) == "▲ +R$ 200,00"
+    assert (
+        formatar_variacao_monetaria(
+            200,
+            "BRL",
+            idioma="pt",
+        )
+        == "▲ +R$ 200,00"
+    )
 
 
 def test_formatar_comparacao_monetaria():

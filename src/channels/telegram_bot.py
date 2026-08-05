@@ -25,7 +25,9 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_ENABLED = os.getenv("TELEGRAM_ENABLED", "false").lower() == "true"
 API_BASE_URL = os.getenv("API_BASE_URL", "https://inna-api.onrender.com")
 
-IDIOMA, NOME, RENDA, GASTOS_FIXOS, GASTOS_VARIAVEIS, DIVIDAS, RESERVA, OBJETIVO = range(8)
+IDIOMA, NOME, RENDA, GASTOS_FIXOS, GASTOS_VARIAVEIS, DIVIDAS, RESERVA, OBJETIVO = range(
+    8
+)
 
 LANGUAGE_OPTIONS = {
     "🇧🇷 Português": "pt",
@@ -61,7 +63,12 @@ TEXTS = {
         "ask_savings": "Você tem algum dinheiro guardado hoje?\n\nSe não tiver, responda 0.\nExemplo: 500",
         "invalid_savings": "Me envie só o número da reserva atual.\nSe não tiver, responda 0.",
         "ask_goal": "Qual é seu principal objetivo agora?",
-        "goal_options": [["Organizar as contas"], ["Sair das dívidas"], ["Guardar dinheiro"], ["Fazer sobrar no fim do mês"]],
+        "goal_options": [
+            ["Organizar as contas"],
+            ["Sair das dívidas"],
+            ["Guardar dinheiro"],
+            ["Fazer sobrar no fim do mês"],
+        ],
         "adjust_debt": "Entendi. Você informou que não tem dívidas mensais agora. ✅\n\nEntão vou ajustar o foco: em vez de sair das dívidas, vamos trabalhar para organizar suas contas, evitar novas dívidas e fortalecer sua reserva.",
         "analyzing": "Pronto. Estou analisando seus dados financeiros... ⏳",
         "api_error": "A API da INNA não respondeu agora. Tente novamente em alguns instantes.",
@@ -96,7 +103,12 @@ TEXTS = {
         "ask_savings": "Do you have any money saved today?\n\nIf not, reply 0.\nExample: 500",
         "invalid_savings": "Please send only the number for your current savings.\nIf you don't have any, reply 0.",
         "ask_goal": "What is your main goal right now?",
-        "goal_options": [["Organize my bills"], ["Get out of debt"], ["Save money"], ["Have money left at the end of the month"]],
+        "goal_options": [
+            ["Organize my bills"],
+            ["Get out of debt"],
+            ["Save money"],
+            ["Have money left at the end of the month"],
+        ],
         "adjust_debt": "Got it. You said you don't have monthly debts right now. ✅\n\nSo I'll adjust the focus: instead of getting out of debt, we'll work on organizing your bills, avoiding new debt and strengthening your savings.",
         "analyzing": "Done. I'm analyzing your financial data... ⏳",
         "api_error": "INNA's API did not respond right now. Please try again soon.",
@@ -131,7 +143,12 @@ TEXTS = {
         "ask_savings": "¿Tienes dinero guardado hoy?\n\nSi no tienes, responde 0.\nEjemplo: 500",
         "invalid_savings": "Envíame solo el número de tu reserva actual.\nSi no tienes, responde 0.",
         "ask_goal": "¿Cuál es tu principal objetivo ahora?",
-        "goal_options": [["Organizar las cuentas"], ["Salir de deudas"], ["Ahorrar dinero"], ["Que sobre dinero al fin del mes"]],
+        "goal_options": [
+            ["Organizar las cuentas"],
+            ["Salir de deudas"],
+            ["Ahorrar dinero"],
+            ["Que sobre dinero al fin del mes"],
+        ],
         "adjust_debt": "Entiendo. Informaste que no tienes deudas mensuales ahora. ✅\n\nEntonces ajustaré el foco: en vez de salir de deudas, vamos a organizar tus cuentas, evitar nuevas deudas y fortalecer tu reserva.",
         "analyzing": "Listo. Estoy analizando tus datos financieros... ⏳",
         "api_error": "La API de INNA no respondió ahora. Inténtalo nuevamente en unos instantes.",
@@ -191,9 +208,7 @@ def gerar_diagnostico(
 ) -> dict:
     return gerar_diagnostico_telegram_api(
         payload,
-        usuario_id_confiavel=(
-            usuario_id_confiavel
-        ),
+        usuario_id_confiavel=(usuario_id_confiavel),
         request_id=request_id,
     )
 
@@ -357,26 +372,16 @@ async def receber_objetivo(
     update: Update,
     context: ContextTypes.DEFAULT_TYPE,
 ):
-    effective_message = (
-        update.effective_message
-    )
+    effective_message = update.effective_message
 
-    effective_chat = (
-        update.effective_chat
-    )
+    effective_chat = update.effective_chat
 
-    if (
-        effective_message is None
-        or effective_chat is None
-    ):
+    if effective_message is None or effective_chat is None:
         context.user_data.clear()
 
         return ConversationHandler.END
 
-    objetivo_original = (
-        effective_message.text
-        or ""
-    ).strip()
+    objetivo_original = (effective_message.text or "").strip()
 
     objetivo = objetivo_original
 
@@ -406,10 +411,7 @@ async def receber_objetivo(
         ]
     )
 
-    if (
-        dividas_mensais <= 0
-        and objetivo_fala_sobre_divida
-    ):
+    if dividas_mensais <= 0 and objetivo_fala_sobre_divida:
         objetivo = (
             "Organizar as contas, evitar novas "
             "dívidas e fortalecer a reserva "
@@ -424,37 +426,16 @@ async def receber_objetivo(
         )
 
     objetivo = (
-        f"{objetivo}. Responda em "
-        f"{LANGUAGE_NAMES.get(lang, 'português brasileiro')}."
+        f"{objetivo}. Responda em {LANGUAGE_NAMES.get(lang, 'português brasileiro')}."
     )
 
     payload = {
         "nome": context.user_data["nome"],
-        "renda_mensal": (
-            context.user_data[
-                "renda_mensal"
-            ]
-        ),
-        "gastos_fixos": (
-            context.user_data[
-                "gastos_fixos"
-            ]
-        ),
-        "gastos_variaveis": (
-            context.user_data[
-                "gastos_variaveis"
-            ]
-        ),
-        "dividas_mensais": (
-            context.user_data[
-                "dividas_mensais"
-            ]
-        ),
-        "reserva_atual": (
-            context.user_data[
-                "reserva_atual"
-            ]
-        ),
+        "renda_mensal": (context.user_data["renda_mensal"]),
+        "gastos_fixos": (context.user_data["gastos_fixos"]),
+        "gastos_variaveis": (context.user_data["gastos_variaveis"]),
+        "dividas_mensais": (context.user_data["dividas_mensais"]),
+        "reserva_atual": (context.user_data["reserva_atual"]),
         "objetivo": objetivo,
         "idioma": lang,
     }
@@ -468,25 +449,17 @@ async def receber_objetivo(
     )
 
     try:
-        trusted_update = (
-            construir_contexto_confiavel_telegram(
-                update_id=update.update_id,
-                chat_id=effective_chat.id,
-                message_id=(
-                    effective_message.message_id
-                ),
-            )
+        trusted_update = construir_contexto_confiavel_telegram(
+            update_id=update.update_id,
+            chat_id=effective_chat.id,
+            message_id=(effective_message.message_id),
         )
 
         resultado = await asyncio.to_thread(
             gerar_diagnostico,
             payload,
-            usuario_id_confiavel=(
-                trusted_update.usuario_id
-            ),
-            request_id=(
-                trusted_update.request_id
-            ),
+            usuario_id_confiavel=(trusted_update.usuario_id),
+            request_id=(trusted_update.request_id),
         )
 
         resposta = formatar_resposta(
@@ -494,9 +467,7 @@ async def receber_objetivo(
             context,
         )
 
-        await effective_message.reply_text(
-            resposta
-        )
+        await effective_message.reply_text(resposta)
 
     except TelegramUpdateContextError:
         await effective_message.reply_text(
@@ -522,7 +493,9 @@ async def receber_objetivo(
 
 async def cancelar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
-    await update.message.reply_text(t(context, "cancel"), reply_markup=ReplyKeyboardRemove())
+    await update.message.reply_text(
+        t(context, "cancel"), reply_markup=ReplyKeyboardRemove()
+    )
     return ConversationHandler.END
 
 
@@ -536,7 +509,9 @@ def main():
         return
 
     if not TELEGRAM_BOT_TOKEN:
-        raise RuntimeError("TELEGRAM_BOT_TOKEN não encontrado. Configure o token no .env.")
+        raise RuntimeError(
+            "TELEGRAM_BOT_TOKEN não encontrado. Configure o token no .env."
+        )
 
     app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
@@ -546,11 +521,19 @@ def main():
             IDIOMA: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_idioma)],
             NOME: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_nome)],
             RENDA: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_renda)],
-            GASTOS_FIXOS: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_gastos_fixos)],
-            GASTOS_VARIAVEIS: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_gastos_variaveis)],
+            GASTOS_FIXOS: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, receber_gastos_fixos)
+            ],
+            GASTOS_VARIAVEIS: [
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND, receber_gastos_variaveis
+                )
+            ],
             DIVIDAS: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_dividas)],
             RESERVA: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_reserva)],
-            OBJETIVO: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_objetivo)],
+            OBJETIVO: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, receber_objetivo)
+            ],
         },
         fallbacks=[
             CommandHandler("cancelar", cancelar),

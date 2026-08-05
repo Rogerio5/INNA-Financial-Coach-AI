@@ -87,22 +87,11 @@ class RiskReviewDecision:
             "approved": self.approved,
             "report_version": self.report_version,
             "review_version": self.review_version,
-            "financial_values_recalculated": (
-                self.financial_values_recalculated
-            ),
-            "official_data_present": (
-                self.official_data_present
-            ),
-            "findings": [
-                item.to_dict()
-                for item in self.findings
-            ],
-            "blocking_findings": (
-                self.blocking_findings
-            ),
-            "warning_findings": (
-                self.warning_findings
-            ),
+            "financial_values_recalculated": (self.financial_values_recalculated),
+            "official_data_present": (self.official_data_present),
+            "findings": [item.to_dict() for item in self.findings],
+            "blocking_findings": (self.blocking_findings),
+            "warning_findings": (self.warning_findings),
             "reason": self.reason,
         }
 
@@ -110,9 +99,7 @@ class RiskReviewDecision:
 def _normalized_text(
     value: Any,
 ) -> str:
-    return " ".join(
-        str(value or "").strip().lower().split()
-    )
+    return " ".join(str(value or "").strip().lower().split())
 
 
 def _collect_report_text(
@@ -142,15 +129,9 @@ def _collect_report_text(
             values,
             (str, bytes),
         ):
-            parts.extend(
-                str(item)
-                for item in values
-                if str(item).strip()
-            )
+            parts.extend(str(item) for item in values if str(item).strip())
 
-    return _normalized_text(
-        " ".join(parts)
-    )
+    return _normalized_text(" ".join(parts))
 
 
 def _add_finding(
@@ -182,9 +163,7 @@ def _validate_official_indicators(
         )
     )
 
-    indicators = report.get(
-        "indicadores_oficiais"
-    )
+    indicators = report.get("indicadores_oficiais")
 
     if not possui_diagnostico:
         return False
@@ -195,17 +174,14 @@ def _validate_official_indicators(
             code="official_indicators_missing",
             severity="critical",
             message=(
-                "O relatório possui diagnóstico, mas "
-                "não contém indicadores oficiais."
+                "O relatório possui diagnóstico, mas não contém indicadores oficiais."
             ),
             blocking=True,
         )
 
         return False
 
-    score = indicators.get(
-        "score_financeiro"
-    )
+    score = indicators.get("score_financeiro")
 
     if score is not None:
         try:
@@ -215,10 +191,7 @@ def _validate_official_indicators(
                 findings,
                 code="invalid_financial_score",
                 severity="critical",
-                message=(
-                    "O score financeiro oficial "
-                    "possui formato inválido."
-                ),
+                message=("O score financeiro oficial possui formato inválido."),
                 blocking=True,
             )
         else:
@@ -228,30 +201,22 @@ def _validate_official_indicators(
                     code="financial_score_out_of_range",
                     severity="critical",
                     message=(
-                        "O score financeiro oficial "
-                        "está fora do intervalo permitido."
+                        "O score financeiro oficial está fora do intervalo permitido."
                     ),
                     blocking=True,
                 )
 
-    percentage = indicators.get(
-        "comprometimento_renda_percentual"
-    )
+    percentage = indicators.get("comprometimento_renda_percentual")
 
     if percentage is not None:
         try:
-            normalized_percentage = float(
-                percentage
-            )
+            normalized_percentage = float(percentage)
         except (TypeError, ValueError):
             _add_finding(
                 findings,
                 code="invalid_income_commitment",
                 severity="critical",
-                message=(
-                    "O comprometimento de renda "
-                    "possui formato inválido."
-                ),
+                message=("O comprometimento de renda possui formato inválido."),
                 blocking=True,
             )
         else:
@@ -260,10 +225,7 @@ def _validate_official_indicators(
                     findings,
                     code="negative_income_commitment",
                     severity="critical",
-                    message=(
-                        "O comprometimento de renda "
-                        "não pode ser negativo."
-                    ),
+                    message=("O comprometimento de renda não pode ser negativo."),
                     blocking=True,
                 )
 
@@ -272,31 +234,21 @@ def _validate_official_indicators(
                     findings,
                     code="income_commitment_above_100",
                     severity="warning",
-                    message=(
-                        "O comprometimento de renda "
-                        "está acima de 100%."
-                    ),
+                    message=("O comprometimento de renda está acima de 100%."),
                     blocking=False,
                 )
 
-    reserve_months = indicators.get(
-        "meses_reserva_estimados"
-    )
+    reserve_months = indicators.get("meses_reserva_estimados")
 
     if reserve_months is not None:
         try:
-            normalized_reserve = float(
-                reserve_months
-            )
+            normalized_reserve = float(reserve_months)
         except (TypeError, ValueError):
             _add_finding(
                 findings,
                 code="invalid_reserve_months",
                 severity="critical",
-                message=(
-                    "A estimativa de meses de reserva "
-                    "possui formato inválido."
-                ),
+                message=("A estimativa de meses de reserva possui formato inválido."),
                 blocking=True,
             )
         else:
@@ -305,10 +257,7 @@ def _validate_official_indicators(
                     findings,
                     code="negative_reserve_months",
                     severity="critical",
-                    message=(
-                        "A estimativa de reserva "
-                        "não pode ser negativa."
-                    ),
+                    message=("A estimativa de reserva não pode ser negativa."),
                     blocking=True,
                 )
 
@@ -319,9 +268,7 @@ def _validate_language(
     report: Mapping[str, Any],
     findings: list[RiskReviewFinding],
 ) -> None:
-    report_text = _collect_report_text(
-        report
-    )
+    report_text = _collect_report_text(report)
 
     for pattern in BLOCKING_PROMISE_PATTERNS:
         if re.search(
@@ -333,27 +280,20 @@ def _validate_language(
                 findings,
                 code="prohibited_financial_promise",
                 severity="critical",
-                message=(
-                    "O relatório contém promessa "
-                    "financeira inadequada."
-                ),
+                message=("O relatório contém promessa financeira inadequada."),
                 blocking=True,
             )
 
             break
 
     for first, second in CONTRADICTORY_PAIRS:
-        if (
-            first in report_text
-            and second in report_text
-        ):
+        if first in report_text and second in report_text:
             _add_finding(
                 findings,
                 code="contradictory_recommendations",
                 severity="critical",
                 message=(
-                    "O relatório contém recomendações "
-                    "financeiras contraditórias."
+                    "O relatório contém recomendações financeiras contraditórias."
                 ),
                 blocking=True,
             )
@@ -371,9 +311,7 @@ def review_financial_report(
         finding = RiskReviewFinding(
             code="invalid_report_payload",
             severity="critical",
-            message=(
-                "A estrutura do relatório é inválida."
-            ),
+            message=("A estrutura do relatório é inválida."),
             blocking=True,
         )
 
@@ -410,18 +348,13 @@ def review_financial_report(
             findings,
             code="financial_values_recalculated",
             severity="critical",
-            message=(
-                "O relatório indica recálculo de "
-                "valores financeiros."
-            ),
+            message=("O relatório indica recálculo de valores financeiros."),
             blocking=True,
         )
 
-    official_data_present = (
-        _validate_official_indicators(
-            report,
-            findings,
-        )
+    official_data_present = _validate_official_indicators(
+        report,
+        findings,
     )
 
     possui_diagnostico = bool(
@@ -436,10 +369,7 @@ def review_financial_report(
             findings,
             code="no_financial_diagnosis",
             severity="warning",
-            message=(
-                "Não existem diagnósticos financeiros "
-                "para compor o relatório."
-            ),
+            message=("Não existem diagnósticos financeiros para compor o relatório."),
             blocking=True,
         )
 
@@ -453,10 +383,7 @@ def review_financial_report(
             findings,
             code="report_not_ready_for_review",
             severity="critical",
-            message=(
-                "O relatório não foi marcado como "
-                "pronto para revisão."
-            ),
+            message=("O relatório não foi marcado como pronto para revisão."),
             blocking=True,
         )
 
@@ -465,40 +392,20 @@ def review_financial_report(
         findings,
     )
 
-    blocking_findings = sum(
-        1
-        for item in findings
-        if item.blocking
-    )
+    blocking_findings = sum(1 for item in findings if item.blocking)
 
-    warning_findings = sum(
-        1
-        for item in findings
-        if not item.blocking
-    )
+    warning_findings = sum(1 for item in findings if not item.blocking)
 
-    approved = (
-        blocking_findings == 0
-        and not recalculated
-        and official_data_present
-    )
+    approved = blocking_findings == 0 and not recalculated and official_data_present
 
-    reason = (
-        "risk_review_approved"
-        if approved
-        else "risk_review_blocked"
-    )
+    reason = "risk_review_approved" if approved else "risk_review_blocked"
 
     return RiskReviewDecision(
         approved=approved,
         report_version=report_version,
         review_version=RISK_REVIEW_VERSION,
-        financial_values_recalculated=(
-            recalculated
-        ),
-        official_data_present=(
-            official_data_present
-        ),
+        financial_values_recalculated=(recalculated),
+        official_data_present=(official_data_present),
         findings=tuple(findings),
         blocking_findings=blocking_findings,
         warning_findings=warning_findings,
@@ -512,23 +419,15 @@ def apply_risk_review_to_report(
     """
     Aplica a decisão ao relatório sem alterar valores.
     """
-    decision = review_financial_report(
-        report
-    )
+    decision = review_financial_report(report)
 
     updated_report = dict(report)
 
-    updated_report[
-        "risk_review"
-    ] = decision.to_dict()
+    updated_report["risk_review"] = decision.to_dict()
 
-    updated_report[
-        "risk_review_approved"
-    ] = decision.approved
+    updated_report["risk_review_approved"] = decision.approved
 
-    updated_report[
-        "ready_for_pdf_rendering"
-    ] = decision.approved
+    updated_report["ready_for_pdf_rendering"] = decision.approved
 
     return updated_report
 

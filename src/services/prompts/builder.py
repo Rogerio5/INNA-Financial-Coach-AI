@@ -99,20 +99,11 @@ def _memoria(memoria: dict | None) -> str:
 
     moeda = memoria.get("moeda") or "BRL"
 
-    renda = formatar_moeda(
-        memoria.get("renda_mensal"),
-        moeda
-    )
+    renda = formatar_moeda(memoria.get("renda_mensal"), moeda)
 
-    gastos = formatar_moeda(
-        memoria.get("gastos_mensais"),
-        moeda
-    )
+    gastos = formatar_moeda(memoria.get("gastos_mensais"), moeda)
 
-    reserva = formatar_moeda(
-        memoria.get("valor_reserva"),
-        moeda
-    )
+    reserva = formatar_moeda(memoria.get("valor_reserva"), moeda)
 
     saldo = "Não informado"
     reserva_semanal = "Não informado"
@@ -122,25 +113,17 @@ def _memoria(memoria: dict | None) -> str:
         renda_valor = float(memoria.get("renda_mensal"))
         gastos_valor = float(memoria.get("gastos_mensais"))
 
-        saldo = formatar_moeda(
-            renda_valor - gastos_valor,
-            moeda
-        )
+        saldo = formatar_moeda(renda_valor - gastos_valor, moeda)
 
         if renda_valor > 0:
-            comprometimento = (
-                f"{(gastos_valor / renda_valor) * 100:.1f}%"
-            )
+            comprometimento = f"{(gastos_valor / renda_valor) * 100:.1f}%"
     except (TypeError, ValueError):
         pass
 
     try:
         reserva_valor = float(memoria.get("valor_reserva"))
 
-        reserva_semanal = formatar_moeda(
-            reserva_valor / 4,
-            moeda
-        )
+        reserva_semanal = formatar_moeda(reserva_valor / 4, moeda)
     except (TypeError, ValueError):
         pass
 
@@ -237,10 +220,7 @@ Resposta:
 
 def _obter_texto_chunk(chunk: dict) -> str:
     return str(
-        chunk.get("texto")
-        or chunk.get("conteudo")
-        or chunk.get("chunk_text")
-        or ""
+        chunk.get("texto") or chunk.get("conteudo") or chunk.get("chunk_text") or ""
     ).strip()
 
 
@@ -559,10 +539,7 @@ def montar_prompt_inna(
         _secao(
             "Tools Financeiras",
             contexto_tools
-            or (
-                "Nenhuma ferramenta financeira "
-                "determinística foi acionada."
-            ),
+            or ("Nenhuma ferramenta financeira determinística foi acionada."),
         ),
         _secao("Documentos da Base RAG", _rag(chunks)),
         _secao(
@@ -570,10 +547,7 @@ def montar_prompt_inna(
             _regras_apresentacao_profissional(),
         ),
         _secao("Regras de Resposta", _regras()),
-        _secao(
-            "Data e Hora do Sistema",
-            datetime.now().isoformat(timespec="seconds")
-        ),
+        _secao("Data e Hora do Sistema", datetime.now().isoformat(timespec="seconds")),
         _secao("Pergunta do Usuário", pergunta),
     ]
 

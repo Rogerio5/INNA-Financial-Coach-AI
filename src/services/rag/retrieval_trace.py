@@ -38,14 +38,10 @@ class RagRetrievalTrace:
     search_mode: str
     top_k: int
     started_at: str
-    started_monotonic: float = field(
-        repr=False
-    )
+    started_monotonic: float = field(repr=False)
     finished_at: str | None = None
     total_time_ms: int | None = None
-    results: list[
-        RagRetrievalResultTrace
-    ] = field(default_factory=list)
+    results: list[RagRetrievalResultTrace] = field(default_factory=list)
 
     def finish(
         self,
@@ -54,26 +50,13 @@ class RagRetrievalTrace:
         search_mode: str | None = None,
     ) -> "RagRetrievalTrace":
         if search_mode:
-            self.search_mode = str(
-                search_mode
-            )
+            self.search_mode = str(search_mode)
 
-        self.results = (
-            build_result_traces(
-                results or []
-            )
-        )
+        self.results = build_result_traces(results or [])
 
-        self.finished_at = (
-            datetime.now(
-                timezone.utc
-            ).isoformat()
-        )
+        self.finished_at = datetime.now(timezone.utc).isoformat()
 
-        elapsed = (
-            time.monotonic()
-            - self.started_monotonic
-        )
+        elapsed = time.monotonic() - self.started_monotonic
 
         self.total_time_ms = max(
             0,
@@ -92,13 +75,8 @@ class RagRetrievalTrace:
             "started_at": self.started_at,
             "finished_at": self.finished_at,
             "total_time_ms": self.total_time_ms,
-            "results_total": len(
-                self.results
-            ),
-            "results": [
-                result.to_dict()
-                for result in self.results
-            ],
+            "results_total": len(self.results),
+            "results": [result.to_dict() for result in self.results],
         }
 
 
@@ -117,18 +95,12 @@ def _optional_float(
 def _search_origins(
     item: dict,
 ) -> tuple[str, ...]:
-    origins = item.get(
-        "origem_busca"
-    ) or ()
+    origins = item.get("origem_busca") or ()
 
     if isinstance(origins, str):
         origins = (origins,)
 
-    return tuple(
-        str(origin)
-        for origin in origins
-        if origin
-    )
+    return tuple(str(origin) for origin in origins if origin)
 
 
 def build_result_traces(
@@ -143,34 +115,14 @@ def build_result_traces(
         traces.append(
             RagRetrievalResultTrace(
                 position=position,
-                chunk_id=(
-                    item.get("chunk_id")
-                    or item.get("id")
-                ),
-                document_id=(
-                    item.get("documento_id")
-                    or item.get("document_id")
-                ),
-                title=(
-                    item.get("titulo")
-                    or item.get("title")
-                ),
-                source=(
-                    item.get("fonte")
-                    or item.get("source")
-                ),
-                search_origins=(
-                    _search_origins(item)
-                ),
-                score=_optional_float(
-                    item.get("score")
-                ),
-                hybrid_score=_optional_float(
-                    item.get("score_hibrido")
-                ),
-                rerank_score=_optional_float(
-                    item.get("score_rerank")
-                ),
+                chunk_id=(item.get("chunk_id") or item.get("id")),
+                document_id=(item.get("documento_id") or item.get("document_id")),
+                title=(item.get("titulo") or item.get("title")),
+                source=(item.get("fonte") or item.get("source")),
+                search_origins=(_search_origins(item)),
+                score=_optional_float(item.get("score")),
+                hybrid_score=_optional_float(item.get("score_hibrido")),
+                rerank_score=_optional_float(item.get("score_rerank")),
             )
         )
 
@@ -184,39 +136,24 @@ def start_retrieval_trace(
     search_mode: str = "pending",
     top_k: int = 4,
 ) -> RagRetrievalTrace:
-    normalized_query = str(
-        query or ""
-    ).strip()
+    normalized_query = str(query or "").strip()
 
     if not normalized_query:
-        raise ValueError(
-            "A consulta da recuperação "
-            "não pode estar vazia."
-        )
+        raise ValueError("A consulta da recuperação não pode estar vazia.")
 
     normalized_top_k = int(top_k)
 
     if normalized_top_k < 1:
-        raise ValueError(
-            "top_k deve ser maior que zero."
-        )
+        raise ValueError("top_k deve ser maior que zero.")
 
     return RagRetrievalTrace(
         trace_id=str(uuid4()),
         query=normalized_query,
-        language=str(
-            language or "pt"
-        ),
-        search_mode=str(
-            search_mode or "pending"
-        ),
+        language=str(language or "pt"),
+        search_mode=str(search_mode or "pending"),
         top_k=normalized_top_k,
-        started_at=datetime.now(
-            timezone.utc
-        ).isoformat(),
-        started_monotonic=(
-            time.monotonic()
-        ),
+        started_at=datetime.now(timezone.utc).isoformat(),
+        started_monotonic=(time.monotonic()),
     )
 
 

@@ -27,17 +27,13 @@ def _base_state(
         "structured_response": {},
     }
 
-    state.update(
-        overrides
-    )
+    state.update(overrides)
 
     return state
 
 
 def test_safe_state_does_not_require_review():
-    decision = evaluate_human_review_policy(
-        _base_state()
-    )
+    decision = evaluate_human_review_policy(_base_state())
 
     assert decision.requires_review is False
     assert decision.trigger == "not_required"
@@ -45,30 +41,20 @@ def test_safe_state_does_not_require_review():
 
 
 def test_helper_returns_boolean():
-    assert human_review_required(
-        _base_state(
-            nivel_risco="Alto"
-        )
-    ) is True
+    assert human_review_required(_base_state(nivel_risco="Alto")) is True
 
-    assert human_review_required(
-        _base_state()
-    ) is False
+    assert human_review_required(_base_state()) is False
 
 
 def test_decision_as_dict_copies_payload():
-    decision = evaluate_human_review_policy(
-        _base_state()
-    )
+    decision = evaluate_human_review_policy(_base_state())
 
     first = decision.as_dict()
     second = decision.as_dict()
 
     first["payload"]["intent"] = "changed"
 
-    assert second["payload"]["intent"] == (
-        "diagnostico_financeiro"
-    )
+    assert second["payload"]["intent"] == ("diagnostico_financeiro")
 
 
 @pytest.mark.parametrize(
@@ -92,49 +78,29 @@ def test_risk_aliases_are_normalized(
     risk_value,
     expected,
 ):
-    decision = evaluate_human_review_policy(
-        _base_state(
-            nivel_risco=risk_value
-        )
-    )
+    decision = evaluate_human_review_policy(_base_state(nivel_risco=risk_value))
 
     assert decision.risk_level == expected
 
 
 def test_high_risk_requires_review():
-    decision = evaluate_human_review_policy(
-        _base_state(
-            nivel_risco="Alto"
-        )
-    )
+    decision = evaluate_human_review_policy(_base_state(nivel_risco="Alto"))
 
     assert decision.requires_review is True
-    assert decision.trigger == (
-        "high_financial_risk"
-    )
+    assert decision.trigger == ("high_financial_risk")
     assert decision.risk_level == "high"
 
 
 def test_critical_risk_requires_review():
-    decision = evaluate_human_review_policy(
-        _base_state(
-            nivel_risco="Crítico"
-        )
-    )
+    decision = evaluate_human_review_policy(_base_state(nivel_risco="Crítico"))
 
     assert decision.requires_review is True
-    assert decision.trigger == (
-        "critical_financial_risk"
-    )
+    assert decision.trigger == ("critical_financial_risk")
     assert decision.risk_level == "critical"
 
 
 def test_medium_risk_alone_does_not_require_review():
-    decision = evaluate_human_review_policy(
-        _base_state(
-            nivel_risco="Médio"
-        )
-    )
+    decision = evaluate_human_review_policy(_base_state(nivel_risco="Médio"))
 
     assert decision.requires_review is False
     assert decision.risk_level == "medium"
@@ -168,9 +134,7 @@ def test_force_review_boolean_aliases(
     value,
 ):
     decision = evaluate_human_review_policy(
-        _base_state(
-            human_review_force_required=value
-        )
+        _base_state(human_review_force_required=value)
     )
 
     assert decision.trigger == "forced_review"
@@ -178,15 +142,11 @@ def test_force_review_boolean_aliases(
 
 def test_external_action_requires_confirmation():
     decision = evaluate_human_review_policy(
-        _base_state(
-            external_action_requires_confirmation=True
-        )
+        _base_state(external_action_requires_confirmation=True)
     )
 
     assert decision.requires_review is True
-    assert decision.trigger == (
-        "external_action_confirmation"
-    )
+    assert decision.trigger == ("external_action_confirmation")
     assert decision.risk_level == "high"
 
 
@@ -199,28 +159,17 @@ def test_tool_confirmation_nested_in_structured_response():
         )
     )
 
-    assert decision.trigger == (
-        "external_action_confirmation"
-    )
+    assert decision.trigger == ("external_action_confirmation")
 
 
 def test_explicit_data_inconsistency_requires_review():
     decision = evaluate_human_review_policy(
-        _base_state(
-            financial_data_inconsistent=True
-        )
+        _base_state(financial_data_inconsistent=True)
     )
 
     assert decision.requires_review is True
-    assert decision.trigger == (
-        "financial_data_inconsistency"
-    )
-    assert (
-        decision.metadata[
-            "inconsistency_count"
-        ]
-        == 1
-    )
+    assert decision.trigger == ("financial_data_inconsistency")
+    assert decision.metadata["inconsistency_count"] == 1
 
 
 def test_inconsistency_list_is_preserved_in_payload():
@@ -233,9 +182,7 @@ def test_inconsistency_list_is_preserved_in_payload():
         )
     )
 
-    assert decision.payload[
-        "data_inconsistencies"
-    ] == [
+    assert decision.payload["data_inconsistencies"] == [
         "Renda menor que zero.",
         "Gastos duplicados.",
     ]
@@ -252,16 +199,9 @@ def test_missing_requirements_require_review():
     )
 
     assert decision.requires_review is True
-    assert decision.trigger == (
-        "missing_required_financial_data"
-    )
+    assert decision.trigger == ("missing_required_financial_data")
     assert decision.risk_level == "medium"
-    assert (
-        decision.metadata[
-            "missing_requirement_count"
-        ]
-        == 2
-    )
+    assert decision.metadata["missing_requirement_count"] == 2
 
 
 def test_missing_fields_inside_structured_response():
@@ -275,9 +215,7 @@ def test_missing_fields_inside_structured_response():
         )
     )
 
-    assert decision.trigger == (
-        "missing_required_financial_data"
-    )
+    assert decision.trigger == ("missing_required_financial_data")
 
 
 @pytest.mark.parametrize(
@@ -293,11 +231,7 @@ def test_missing_fields_inside_structured_response():
 def test_low_confidence_requires_review(
     confidence,
 ):
-    decision = evaluate_human_review_policy(
-        _base_state(
-            confidence=confidence
-        )
-    )
+    decision = evaluate_human_review_policy(_base_state(confidence=confidence))
 
     assert decision.requires_review is True
     assert decision.trigger == "low_confidence"
@@ -317,11 +251,7 @@ def test_low_confidence_requires_review(
 def test_acceptable_confidence_does_not_require_review(
     confidence,
 ):
-    decision = evaluate_human_review_policy(
-        _base_state(
-            confidence=confidence
-        )
-    )
+    decision = evaluate_human_review_policy(_base_state(confidence=confidence))
 
     assert decision.requires_review is False
 
@@ -335,12 +265,7 @@ def test_custom_minimum_confidence():
     )
 
     assert decision.trigger == "low_confidence"
-    assert (
-        decision.metadata[
-            "minimum_confidence"
-        ]
-        == 0.80
-    )
+    assert decision.metadata["minimum_confidence"] == 0.80
 
 
 @pytest.mark.parametrize(
@@ -360,19 +285,11 @@ def test_invalid_minimum_confidence(
         HumanReviewPolicyError,
         match="human_review_minimum_confidence",
     ):
-        evaluate_human_review_policy(
-            _base_state(
-                human_review_minimum_confidence=value
-            )
-        )
+        evaluate_human_review_policy(_base_state(human_review_minimum_confidence=value))
 
 
 def test_invalid_confidence_is_ignored():
-    decision = evaluate_human_review_policy(
-        _base_state(
-            confidence="unknown"
-        )
-    )
+    decision = evaluate_human_review_policy(_base_state(confidence="unknown"))
 
     assert decision.requires_review is False
     assert decision.trigger == "not_required"
@@ -401,9 +318,7 @@ def test_pending_review_is_not_duplicated():
     )
 
     assert decision.requires_review is False
-    assert decision.trigger == (
-        "review_already_pending"
-    )
+    assert decision.trigger == ("review_already_pending")
 
 
 @pytest.mark.parametrize(
@@ -430,9 +345,7 @@ def test_resolved_review_is_not_duplicated(
     )
 
     assert decision.requires_review is False
-    assert decision.trigger == (
-        "review_already_resolved"
-    )
+    assert decision.trigger == ("review_already_resolved")
 
 
 def test_requested_by_uses_current_agent():
@@ -443,9 +356,7 @@ def test_requested_by_uses_current_agent():
         )
     )
 
-    assert decision.requested_by == (
-        "report_agent"
-    )
+    assert decision.requested_by == ("report_agent")
 
 
 def test_requested_by_falls_back_to_last_agent():
@@ -454,13 +365,9 @@ def test_requested_by_falls_back_to_last_agent():
         last_agent="rag_agent",
     )
 
-    state.pop(
-        "current_agent"
-    )
+    state.pop("current_agent")
 
-    decision = evaluate_human_review_policy(
-        state
-    )
+    decision = evaluate_human_review_policy(state)
 
     assert decision.requested_by == "rag_agent"
 
@@ -475,9 +382,7 @@ def test_risk_can_be_read_from_structured_response():
         )
     )
 
-    assert decision.trigger == (
-        "high_financial_risk"
-    )
+    assert decision.trigger == ("high_financial_risk")
 
 
 def test_risk_can_be_read_from_financial_diagnosis():
@@ -490,9 +395,7 @@ def test_risk_can_be_read_from_financial_diagnosis():
         )
     )
 
-    assert decision.trigger == (
-        "critical_financial_risk"
-    )
+    assert decision.trigger == ("critical_financial_risk")
 
 
 def test_confidence_can_be_read_from_task_score():
@@ -501,35 +404,21 @@ def test_confidence_can_be_read_from_task_score():
         task_completion_score=0.40,
     )
 
-    decision = evaluate_human_review_policy(
-        state
-    )
+    decision = evaluate_human_review_policy(state)
 
     assert decision.trigger == "low_confidence"
 
 
 def test_payload_contains_auditable_context():
-    decision = evaluate_human_review_policy(
-        _base_state(
-            nivel_risco="Alto"
-        )
-    )
+    decision = evaluate_human_review_policy(_base_state(nivel_risco="Alto"))
 
-    assert decision.payload[
-        "thread_id"
-    ] == "thread-policy-001"
+    assert decision.payload["thread_id"] == "thread-policy-001"
 
-    assert decision.payload[
-        "user_id"
-    ] == "user-policy-001"
+    assert decision.payload["user_id"] == "user-policy-001"
 
-    assert decision.payload[
-        "current_agent"
-    ] == "financial_agent"
+    assert decision.payload["current_agent"] == "financial_agent"
 
-    assert decision.metadata[
-        "policy_version"
-    ] == "1.0"
+    assert decision.metadata["policy_version"] == "1.0"
 
 
 def test_state_must_be_mapping():
@@ -537,6 +426,4 @@ def test_state_must_be_mapping():
         HumanReviewPolicyError,
         match="Mapping",
     ):
-        evaluate_human_review_policy(
-            None
-        )
+        evaluate_human_review_policy(None)

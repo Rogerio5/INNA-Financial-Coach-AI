@@ -16,90 +16,39 @@ from src.services.telegram_observability import (
 )
 
 
-STRONG_TOKEN = (
-    "Inna-Operations-2026-"
-    "A8f9K2m4Q7x1Z6p3"
-)
+STRONG_TOKEN = "Inna-Operations-2026-A8f9K2m4Q7x1Z6p3"
 
 
 def test_defaults_are_secure():
-    configuration = (
-        load_telegram_operational_configuration(
-            {}
-        )
-    )
+    configuration = load_telegram_operational_configuration({})
 
-    assert (
-        configuration
-        .internal_route_enabled
-        is False
-    )
+    assert configuration.internal_route_enabled is False
 
-    assert (
-        configuration
-        .internal_operations_token
-        is None
-    )
+    assert configuration.internal_operations_token is None
 
-    assert (
-        configuration
-        .readiness_cache_ttl_seconds
-        == 1.0
-    )
+    assert configuration.readiness_cache_ttl_seconds == 1.0
 
 
 def test_loads_valid_environment():
-    configuration = (
-        load_telegram_operational_configuration(
-            {
-                INTERNAL_ROUTE_ENABLED_ENV: (
-                    "true"
-                ),
-                INTERNAL_OPERATIONS_TOKEN_ENV: (
-                    STRONG_TOKEN
-                ),
-                READINESS_CACHE_TTL_ENV: (
-                    "3"
-                ),
-                READINESS_CONCURRENT_WAIT_ENV: (
-                    "0.5"
-                ),
-                READINESS_EVALUATION_BUDGET_ENV: (
-                    "5"
-                ),
-            }
-        )
+    configuration = load_telegram_operational_configuration(
+        {
+            INTERNAL_ROUTE_ENABLED_ENV: ("true"),
+            INTERNAL_OPERATIONS_TOKEN_ENV: (STRONG_TOKEN),
+            READINESS_CACHE_TTL_ENV: ("3"),
+            READINESS_CONCURRENT_WAIT_ENV: ("0.5"),
+            READINESS_EVALUATION_BUDGET_ENV: ("5"),
+        }
     )
 
-    assert (
-        configuration
-        .internal_route_enabled
-        is True
-    )
+    assert configuration.internal_route_enabled is True
 
-    assert (
-        configuration
-        .internal_operations_token
-        == STRONG_TOKEN
-    )
+    assert configuration.internal_operations_token == STRONG_TOKEN
 
-    assert (
-        configuration
-        .readiness_cache_ttl_seconds
-        == 3.0
-    )
+    assert configuration.readiness_cache_ttl_seconds == 3.0
 
-    assert (
-        configuration
-        .readiness_concurrent_wait_seconds
-        == 0.5
-    )
+    assert configuration.readiness_concurrent_wait_seconds == 0.5
 
-    assert (
-        configuration
-        .readiness_evaluation_budget_seconds
-        == 5.0
-    )
+    assert configuration.readiness_evaluation_budget_seconds == 5.0
 
 
 @pytest.mark.parametrize(
@@ -116,22 +65,14 @@ def test_loads_valid_environment():
 def test_accepts_enabled_values(
     value,
 ):
-    configuration = (
-        load_telegram_operational_configuration(
-            {
-                INTERNAL_ROUTE_ENABLED_ENV: value,
-                INTERNAL_OPERATIONS_TOKEN_ENV: (
-                    STRONG_TOKEN
-                ),
-            }
-        )
+    configuration = load_telegram_operational_configuration(
+        {
+            INTERNAL_ROUTE_ENABLED_ENV: value,
+            INTERNAL_OPERATIONS_TOKEN_ENV: (STRONG_TOKEN),
+        }
     )
 
-    assert (
-        configuration
-        .internal_route_enabled
-        is True
-    )
+    assert configuration.internal_route_enabled is True
 
 
 @pytest.mark.parametrize(
@@ -148,25 +89,17 @@ def test_accepts_enabled_values(
 def test_accepts_disabled_values(
     value,
 ):
-    configuration = (
-        load_telegram_operational_configuration(
-            {
-                INTERNAL_ROUTE_ENABLED_ENV: value,
-            }
-        )
+    configuration = load_telegram_operational_configuration(
+        {
+            INTERNAL_ROUTE_ENABLED_ENV: value,
+        }
     )
 
-    assert (
-        configuration
-        .internal_route_enabled
-        is False
-    )
+    assert configuration.internal_route_enabled is False
 
 
 def test_enabled_route_requires_token():
-    with pytest.raises(
-        TelegramOperationalConfigurationError
-    ):
+    with pytest.raises(TelegramOperationalConfigurationError):
         TelegramOperationalConfiguration(
             internal_route_enabled=True,
             internal_operations_token=None,
@@ -185,9 +118,7 @@ def test_enabled_route_requires_token():
 def test_rejects_weak_token(
     token,
 ):
-    with pytest.raises(
-        TelegramOperationalConfigurationError
-    ):
+    with pytest.raises(TelegramOperationalConfigurationError):
         TelegramOperationalConfiguration(
             internal_route_enabled=True,
             internal_operations_token=token,
@@ -209,31 +140,19 @@ def test_rejects_weak_token(
             61,
         ),
         (
-            (
-                "readiness_"
-                "concurrent_wait_seconds"
-            ),
+            ("readiness_concurrent_wait_seconds"),
             -0.1,
         ),
         (
-            (
-                "readiness_"
-                "concurrent_wait_seconds"
-            ),
+            ("readiness_concurrent_wait_seconds"),
             11,
         ),
         (
-            (
-                "readiness_"
-                "evaluation_budget_seconds"
-            ),
+            ("readiness_evaluation_budget_seconds"),
             0,
         ),
         (
-            (
-                "readiness_"
-                "evaluation_budget_seconds"
-            ),
+            ("readiness_evaluation_budget_seconds"),
             31,
         ),
     ],
@@ -244,24 +163,14 @@ def test_rejects_out_of_bounds_values(
 ):
     values = {
         "readiness_cache_ttl_seconds": 1,
-        (
-            "readiness_"
-            "concurrent_wait_seconds"
-        ): 0.25,
-        (
-            "readiness_"
-            "evaluation_budget_seconds"
-        ): 2,
+        ("readiness_concurrent_wait_seconds"): 0.25,
+        ("readiness_evaluation_budget_seconds"): 2,
     }
 
     values[field] = value
 
-    with pytest.raises(
-        TelegramOperationalConfigurationError
-    ):
-        TelegramOperationalConfiguration(
-            **values
-        )
+    with pytest.raises(TelegramOperationalConfigurationError):
+        TelegramOperationalConfiguration(**values)
 
 
 @pytest.mark.parametrize(
@@ -276,31 +185,21 @@ def test_rejects_out_of_bounds_values(
 def test_rejects_invalid_numbers(
     value,
 ):
-    with pytest.raises(
-        TelegramOperationalConfigurationError
-    ):
+    with pytest.raises(TelegramOperationalConfigurationError):
         TelegramOperationalConfiguration(
-            readiness_cache_ttl_seconds=(
-                value
-            ),
+            readiness_cache_ttl_seconds=(value),
         )
 
 
 def test_safe_dict_does_not_expose_token():
-    configuration = (
-        TelegramOperationalConfiguration(
-            internal_route_enabled=True,
-            internal_operations_token=(
-                STRONG_TOKEN
-            ),
-        )
+    configuration = TelegramOperationalConfiguration(
+        internal_route_enabled=True,
+        internal_operations_token=(STRONG_TOKEN),
     )
 
     payload = configuration.to_safe_dict()
 
-    rendered = repr(
-        payload
-    )
+    rendered = repr(payload)
 
     assert isinstance(
         payload,
@@ -309,31 +208,15 @@ def test_safe_dict_does_not_expose_token():
 
     assert STRONG_TOKEN not in rendered
 
-    assert (
-        payload[
-            "internal_token_configured"
-        ]
-        is True
-    )
+    assert payload["internal_token_configured"] is True
 
-    assert (
-        payload[
-            "internal_token_length"
-        ]
-        == len(STRONG_TOKEN)
-    )
+    assert payload["internal_token_length"] == len(STRONG_TOKEN)
 
 
 def test_disabled_route_may_have_no_token():
-    configuration = (
-        TelegramOperationalConfiguration(
-            internal_route_enabled=False,
-            internal_operations_token=None,
-        )
+    configuration = TelegramOperationalConfiguration(
+        internal_route_enabled=False,
+        internal_operations_token=None,
     )
 
-    assert (
-        configuration
-        .internal_route_enabled
-        is False
-    )
+    assert configuration.internal_route_enabled is False

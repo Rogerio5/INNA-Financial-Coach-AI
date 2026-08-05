@@ -5,9 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 
-class TelegramUpdateContextError(
-    ValueError
-):
+class TelegramUpdateContextError(ValueError):
     """
     O update Telegram não possui identificadores
     confiáveis no formato esperado.
@@ -17,14 +15,8 @@ class TelegramUpdateContextError(
 def normalizar_update_id_telegram(
     value: Any,
 ) -> int:
-    if (
-        isinstance(value, bool)
-        or not isinstance(value, int)
-        or value < 0
-    ):
-        raise TelegramUpdateContextError(
-            "update_id Telegram inválido."
-        )
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise TelegramUpdateContextError("update_id Telegram inválido.")
 
     return value
 
@@ -32,14 +24,8 @@ def normalizar_update_id_telegram(
 def _normalizar_chat_id(
     value: Any,
 ) -> int:
-    if (
-        isinstance(value, bool)
-        or not isinstance(value, int)
-        or value == 0
-    ):
-        raise TelegramUpdateContextError(
-            "chat_id Telegram inválido."
-        )
+    if isinstance(value, bool) or not isinstance(value, int) or value == 0:
+        raise TelegramUpdateContextError("chat_id Telegram inválido.")
 
     return value
 
@@ -50,14 +36,8 @@ def _normalizar_message_id(
     if value is None:
         return None
 
-    if (
-        isinstance(value, bool)
-        or not isinstance(value, int)
-        or value < 1
-    ):
-        raise TelegramUpdateContextError(
-            "message_id Telegram inválido."
-        )
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise TelegramUpdateContextError("message_id Telegram inválido.")
 
     return value
 
@@ -75,18 +55,13 @@ class TrustedTelegramUpdateContext:
     def usuario_id(
         self,
     ) -> str:
-        return (
-            f"telegram:{self.chat_id}"
-        )
+        return f"telegram:{self.chat_id}"
 
     @property
     def request_id(
         self,
     ) -> str:
-        return (
-            f"telegram-update:"
-            f"{self.update_id}"
-        )
+        return f"telegram-update:{self.update_id}"
 
     def to_safe_dict(
         self,
@@ -95,9 +70,7 @@ class TrustedTelegramUpdateContext:
             "channel": "telegram",
             "identity_available": True,
             "request_available": True,
-            "message_id_available": (
-                self.message_id is not None
-            ),
+            "message_id_available": (self.message_id is not None),
         }
 
 
@@ -112,17 +85,9 @@ def construir_contexto_confiavel_telegram(
     fornecidos pelo SDK ou pelo webhook autenticado.
     """
     return TrustedTelegramUpdateContext(
-        update_id=(
-            normalizar_update_id_telegram(
-                update_id
-            )
-        ),
-        chat_id=_normalizar_chat_id(
-            chat_id
-        ),
-        message_id=_normalizar_message_id(
-            message_id
-        ),
+        update_id=(normalizar_update_id_telegram(update_id)),
+        chat_id=_normalizar_chat_id(chat_id),
+        message_id=_normalizar_message_id(message_id),
     )
 
 
@@ -133,51 +98,29 @@ def extrair_contexto_confiavel_telegram(
         update,
         Mapping,
     ):
-        raise TelegramUpdateContextError(
-            "Update Telegram inválido."
-        )
+        raise TelegramUpdateContextError("Update Telegram inválido.")
 
-    update_id = normalizar_update_id_telegram(
-        update.get(
-            "update_id"
-        )
-    )
+    update_id = normalizar_update_id_telegram(update.get("update_id"))
 
-    message = update.get(
-        "message"
-    )
+    message = update.get("message")
 
     if not isinstance(
         message,
         Mapping,
     ):
-        raise TelegramUpdateContextError(
-            "Mensagem Telegram inválida."
-        )
+        raise TelegramUpdateContextError("Mensagem Telegram inválida.")
 
-    chat = message.get(
-        "chat"
-    )
+    chat = message.get("chat")
 
     if not isinstance(
         chat,
         Mapping,
     ):
-        raise TelegramUpdateContextError(
-            "Chat Telegram inválido."
-        )
+        raise TelegramUpdateContextError("Chat Telegram inválido.")
 
-    chat_id = _normalizar_chat_id(
-        chat.get(
-            "id"
-        )
-    )
+    chat_id = _normalizar_chat_id(chat.get("id"))
 
-    message_id = _normalizar_message_id(
-        message.get(
-            "message_id"
-        )
-    )
+    message_id = _normalizar_message_id(message.get("message_id"))
 
     return construir_contexto_confiavel_telegram(
         update_id=update_id,

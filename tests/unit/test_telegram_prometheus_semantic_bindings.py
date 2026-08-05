@@ -14,25 +14,15 @@ from src.services.telegram_observability.productive_operations import (
 )
 
 
-BINDINGS_PATH = Path(
-    "docs/audits/"
-    "telegram_prometheus_semantic_bindings.json"
-)
+BINDINGS_PATH = Path("docs/audits/telegram_prometheus_semantic_bindings.json")
 
-LABELS_PATH = Path(
-    "docs/audits/"
-    "telegram_prometheus_label_bindings.json"
-)
+LABELS_PATH = Path("docs/audits/telegram_prometheus_label_bindings.json")
 
 
 def load_json(
     path: Path,
 ) -> dict:
-    return json.loads(
-        path.read_text(
-            encoding="utf-8"
-        )
-    )
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def export_worker_update(
@@ -40,22 +30,12 @@ def export_worker_update(
     outcome: str,
     error_category: str | None,
 ) -> str:
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     operations.record_worker_cycle(
-        result=(
-            "failed"
-            if outcome == "error"
-            else "processed"
-        )
+        result=("failed" if outcome == "error" else "processed")
     )
 
     operations.record_worker_update(
@@ -63,53 +43,27 @@ def export_worker_update(
         error_category=error_category,
     )
 
-    return (
-        TelegramPrometheusMetricsExporter()
-        .export(
-            registry.snapshot()
-        )
-        .body
-    )
+    return TelegramPrometheusMetricsExporter().export(registry.snapshot()).body
 
 
 def export_queue_conflict() -> str:
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     operations.record_queue_operation(
         operation="claim",
         outcome="conflict",
-        error_category=(
-            "optimistic_conflict"
-        ),
+        error_category=("optimistic_conflict"),
     )
 
-    return (
-        TelegramPrometheusMetricsExporter()
-        .export(
-            registry.snapshot()
-        )
-        .body
-    )
+    return TelegramPrometheusMetricsExporter().export(registry.snapshot()).body
 
 
 def export_receipt_failure() -> str:
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     operations.record_receipt(
         status="failed",
@@ -117,13 +71,7 @@ def export_receipt_failure() -> str:
         error_category="persistence",
     )
 
-    return (
-        TelegramPrometheusMetricsExporter()
-        .export(
-            registry.snapshot()
-        )
-        .body
-    )
+    return TelegramPrometheusMetricsExporter().export(registry.snapshot()).body
 
 
 def test_audit_files_exist():
@@ -132,20 +80,12 @@ def test_audit_files_exist():
 
 
 def test_required_semantic_bindings_are_resolved():
-    bindings = load_json(
-        BINDINGS_PATH
-    )["bindings"]
+    bindings = load_json(BINDINGS_PATH)["bindings"]
 
     unresolved = {
         name: binding["status"]
-        for name, binding in (
-            bindings.items()
-        )
-        if (
-            binding["required"]
-            and binding["status"]
-            != "resolved"
-        )
+        for name, binding in (bindings.items())
+        if (binding["required"] and binding["status"] != "resolved")
     }
 
     assert not unresolved
@@ -163,10 +103,7 @@ def test_required_semantic_bindings_are_resolved():
         ),
         (
             "duration_histogram",
-            (
-                "inna_telegram_"
-                "operation_duration_seconds"
-            ),
+            ("inna_telegram_operation_duration_seconds"),
         ),
         (
             "error_total",
@@ -178,16 +115,9 @@ def test_core_metric_binding(
     semantic_name,
     metric_name,
 ):
-    bindings = load_json(
-        BINDINGS_PATH
-    )["bindings"]
+    bindings = load_json(BINDINGS_PATH)["bindings"]
 
-    assert (
-        bindings[
-            semantic_name
-        ]["selected_metric"]
-        == metric_name
-    )
+    assert bindings[semantic_name]["selected_metric"] == metric_name
 
 
 @pytest.mark.parametrize(
@@ -202,25 +132,14 @@ def test_core_metric_binding(
 def test_absent_optional_metrics_are_not_invented(
     semantic_name,
 ):
-    binding = load_json(
-        BINDINGS_PATH
-    )["bindings"][
-        semantic_name
-    ]
+    binding = load_json(BINDINGS_PATH)["bindings"][semantic_name]
 
     if binding["status"] == "missing":
-        assert (
-            binding["selected_metric"]
-            is None
-        )
+        assert binding["selected_metric"] is None
 
 
 def test_low_cardinality_labels_are_mapped():
-    labels = set(
-        load_json(
-            LABELS_PATH
-        )["labels"]
-    )
+    labels = set(load_json(LABELS_PATH)["labels"])
 
     assert {
         "component",
@@ -228,18 +147,11 @@ def test_low_cardinality_labels_are_mapped():
         "outcome",
         "error_category",
         "le",
-    }.issubset(
-        labels
-    )
+    }.issubset(labels)
 
 
 def test_private_labels_are_not_mapped():
-    labels = {
-        value.lower()
-        for value in load_json(
-            LABELS_PATH
-        )["labels"]
-    }
+    labels = {value.lower() for value in load_json(LABELS_PATH)["labels"]}
 
     forbidden = {
         "chat_id",
@@ -253,9 +165,7 @@ def test_private_labels_are_not_mapped():
         "message",
     }
 
-    assert labels.isdisjoint(
-        forbidden
-    )
+    assert labels.isdisjoint(forbidden)
 
 
 def test_worker_failure_series_semantics():
@@ -264,93 +174,54 @@ def test_worker_failure_series_semantics():
         error_category="persistence",
     )
 
-    assert (
-        "inna_telegram_worker_cycles_total"
-        in body
-    )
+    assert "inna_telegram_worker_cycles_total" in body
 
-    assert (
-        "inna_telegram_worker_updates_total"
-        in body
-    )
+    assert "inna_telegram_worker_updates_total" in body
 
-    assert (
-        "inna_telegram_failures_total"
-        in body
-    )
+    assert "inna_telegram_failures_total" in body
 
     assert 'worker_result="failed"' in body
     assert 'outcome="error"' in body
 
-    assert (
-        'error_category="persistence"'
-        in body
-    )
+    assert 'error_category="persistence"' in body
 
     assert 'component="worker"' in body
 
-    assert (
-        'operation="process_update"'
-        in body
-    )
+    assert 'operation="process_update"' in body
 
 
 def test_queue_conflict_series_semantics():
     body = export_queue_conflict()
 
-    assert (
-        "inna_telegram_queue_operations_total"
-        in body
-    )
+    assert "inna_telegram_queue_operations_total" in body
 
-    assert (
-        "inna_telegram_failures_total"
-        in body
-    )
+    assert "inna_telegram_failures_total" in body
 
     assert 'queue_operation="claim"' in body
     assert 'outcome="conflict"' in body
 
-    assert (
-        'error_category="optimistic_conflict"'
-        in body
-    )
+    assert 'error_category="optimistic_conflict"' in body
 
     assert 'component="queue"' in body
 
-    assert (
-        'operation="dequeue_update"'
-        in body
-    )
+    assert 'operation="dequeue_update"' in body
 
 
 def test_receipt_failure_series_semantics():
     body = export_receipt_failure()
 
-    assert (
-        "inna_telegram_receipts_total"
-        in body
-    )
+    assert "inna_telegram_receipts_total" in body
 
-    assert (
-        "inna_telegram_failures_total"
-        in body
-    )
+    assert "inna_telegram_failures_total" in body
 
     assert 'receipt_status="failed"' in body
     assert 'outcome="error"' in body
 
-    assert (
-        'error_category="persistence"'
-        in body
-    )
+    assert 'error_category="persistence"' in body
 
     assert 'component="receipt"' in body
 
-    assert (
-        'operation="fail_receipt"'
-        in body
-    )
+    assert 'operation="fail_receipt"' in body
 
 
 def test_exports_do_not_contain_private_identifiers():

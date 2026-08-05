@@ -22,9 +22,7 @@ from src.services.human_review.exceptions import (
 )
 
 
-ADMIN_PREFIX = (
-    "/internal/human-reviews/admin"
-)
+ADMIN_PREFIX = "/internal/human-reviews/admin"
 
 
 def _admin_context():
@@ -71,15 +69,11 @@ def _record() -> HumanReviewRecord:
 
 
 def _record_dict() -> dict:
-    return _record().model_dump(
-        mode="json"
-    )
+    return _record().model_dump(mode="json")
 
 
 def _client() -> TestClient:
-    app.dependency_overrides[
-        require_human_review_admin_context
-    ] = _admin_context
+    app.dependency_overrides[require_human_review_admin_context] = _admin_context
 
     return TestClient(app)
 
@@ -88,8 +82,7 @@ def teardown_function() -> None:
     app.dependency_overrides.clear()
 
 
-def test_admin_list_reviews_returns_page(
-) -> None:
+def test_admin_list_reviews_returns_page() -> None:
     page = HumanReviewAdminPage(
         items=[_record_dict()],
         total=3,
@@ -98,8 +91,7 @@ def test_admin_list_reviews_returns_page(
     )
 
     with patch(
-        "api.human_review_admin_routes."
-        "listar_revisoes_admin",
+        "api.human_review_admin_routes.listar_revisoes_admin",
         return_value=page,
     ) as mocked:
         response = _client().get(
@@ -132,22 +124,15 @@ def test_admin_list_reviews_returns_page(
     assert body["limit"] == 1
     assert body["has_next"] is True
     assert len(body["items"]) == 1
-    assert body["items"][0][
-        "review_id"
-    ] == "review-1"
+    assert body["items"][0]["review_id"] == "review-1"
 
     filters = mocked.call_args.args[0]
 
-    assert filters.statuses == (
-        "pending",
-    )
-    assert filters.risk_levels == (
-        "high",
-    )
+    assert filters.statuses == ("pending",)
+    assert filters.risk_levels == ("high",)
 
 
-def test_admin_list_reviews_rejects_invalid_status(
-) -> None:
+def test_admin_list_reviews_rejects_invalid_status() -> None:
     response = _client().get(
         f"{ADMIN_PREFIX}/reviews",
         params={
@@ -158,8 +143,7 @@ def test_admin_list_reviews_rejects_invalid_status(
     assert response.status_code == 422
 
 
-def test_admin_list_reviews_validates_limit(
-) -> None:
+def test_admin_list_reviews_validates_limit() -> None:
     response = _client().get(
         f"{ADMIN_PREFIX}/reviews",
         params={
@@ -170,16 +154,12 @@ def test_admin_list_reviews_validates_limit(
     assert response.status_code == 422
 
 
-def test_admin_get_review_returns_record(
-) -> None:
+def test_admin_get_review_returns_record() -> None:
     with patch(
-        "api.human_review_admin_routes."
-        "service.consultar_revisao",
+        "api.human_review_admin_routes.service.consultar_revisao",
         return_value=_record(),
     ):
-        response = _client().get(
-            f"{ADMIN_PREFIX}/reviews/review-1"
-        )
+        response = _client().get(f"{ADMIN_PREFIX}/reviews/review-1")
 
     assert response.status_code == 200
 
@@ -189,8 +169,7 @@ def test_admin_get_review_returns_record(
     assert body["status"] == "pending"
 
 
-def test_admin_metrics_returns_aggregates(
-) -> None:
+def test_admin_metrics_returns_aggregates() -> None:
     metrics = HumanReviewAdminMetrics(
         total=10,
         pending=2,
@@ -218,13 +197,10 @@ def test_admin_metrics_returns_aggregates(
     )
 
     with patch(
-        "api.human_review_admin_routes."
-        "obter_metricas_admin",
+        "api.human_review_admin_routes.obter_metricas_admin",
         return_value=metrics,
     ):
-        response = _client().get(
-            f"{ADMIN_PREFIX}/metrics"
-        )
+        response = _client().get(f"{ADMIN_PREFIX}/metrics")
 
     assert response.status_code == 200
 
@@ -235,11 +211,9 @@ def test_admin_metrics_returns_aggregates(
     assert body["by_risk"]["high"] == 6
 
 
-def test_admin_recover_stale_claims(
-) -> None:
+def test_admin_recover_stale_claims() -> None:
     with patch(
-        "api.human_review_admin_routes."
-        "service.recuperar_claims_expirados",
+        "api.human_review_admin_routes.service.recuperar_claims_expirados",
         return_value=[
             "review-1",
             "review-2",
@@ -258,16 +232,13 @@ def test_admin_recover_stale_claims(
 
     assert body["recovered_count"] == 2
 
-    assert body[
-        "recovered_review_ids"
-    ] == [
+    assert body["recovered_review_ids"] == [
         "review-1",
         "review-2",
     ]
 
 
-def test_admin_recover_rejects_short_timeout(
-) -> None:
+def test_admin_recover_rejects_short_timeout() -> None:
     response = _client().post(
         f"{ADMIN_PREFIX}/recover-stale",
         json={
@@ -278,31 +249,17 @@ def test_admin_recover_rejects_short_timeout(
     assert response.status_code == 422
 
 
-def test_admin_repository_failure_is_sanitized(
-) -> None:
+def test_admin_repository_failure_is_sanitized() -> None:
     with patch(
-        "api.human_review_admin_routes."
-        "listar_revisoes_admin",
-        side_effect=(
-            HumanReviewRepositoryError(
-                "database-password-secret"
-            )
-        ),
+        "api.human_review_admin_routes.listar_revisoes_admin",
+        side_effect=(HumanReviewRepositoryError("database-password-secret")),
     ):
-        response = _client().get(
-            f"{ADMIN_PREFIX}/reviews"
-        )
+        response = _client().get(f"{ADMIN_PREFIX}/reviews")
 
     assert response.status_code == 503
 
     body = response.json()
 
-    assert (
-        "database-password-secret"
-        not in body["detail"]
-    )
+    assert "database-password-secret" not in body["detail"]
 
-    assert (
-        "temporariamente indisponível"
-        in body["detail"]
-    )
+    assert "temporariamente indisponível" in body["detail"]

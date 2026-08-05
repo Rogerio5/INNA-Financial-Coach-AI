@@ -30,24 +30,14 @@ UPDATE = {
     },
 }
 
-KEYRING = (
-    crypto_service
-    .TelegramUpdateEncryptionKeyring(
-        active_key_id="inna.telegram.v1",
-        keys={
-            "inna.telegram.v1": (
-                b"k" * 32
-            ),
-        },
-    )
+KEYRING = crypto_service.TelegramUpdateEncryptionKeyring(
+    active_key_id="inna.telegram.v1",
+    keys={
+        "inna.telegram.v1": (b"k" * 32),
+    },
 )
 
-FINGERPRINT = (
-    receipt_service
-    .fingerprint_telegram_update(
-        UPDATE
-    )
-)
+FINGERPRINT = receipt_service.fingerprint_telegram_update(UPDATE)
 
 OTHER_FINGERPRINT = "f" * 64
 
@@ -61,9 +51,7 @@ def receipt_row(
 ):
     return {
         "update_id": UPDATE_ID,
-        "update_fingerprint": (
-            fingerprint
-        ),
+        "update_fingerprint": (fingerprint),
         "status": status,
         "attempt_count": attempt_count,
         "lease_active": lease_active,
@@ -91,9 +79,7 @@ class FakeCursor:
         self,
         rows,
     ):
-        self.rows = list(
-            rows
-        )
+        self.rows = list(rows)
 
         self.executions = []
 
@@ -115,9 +101,7 @@ class FakeCursor:
         if not self.rows:
             return None
 
-        return self.rows.pop(
-            0
-        )
+        return self.rows.pop(0)
 
 
 class TransactionTracker:
@@ -133,9 +117,7 @@ def install_transaction(
     monkeypatch,
     rows,
 ):
-    cursor = FakeCursor(
-        rows
-    )
+    cursor = FakeCursor(rows)
 
     tracker = TransactionTracker()
 
@@ -173,19 +155,14 @@ def enqueue(
     monkeypatch,
     rows,
 ):
-    cursor, tracker = (
-        install_transaction(
-            monkeypatch,
-            rows,
-        )
+    cursor, tracker = install_transaction(
+        monkeypatch,
+        rows,
     )
 
-    outcome = (
-        ingress
-        .enqueue_authenticated_telegram_update_atomic(
-            UPDATE,
-            keyring=KEYRING,
-        )
+    outcome = ingress.enqueue_authenticated_telegram_update_atomic(
+        UPDATE,
+        keyring=KEYRING,
     )
 
     return (
@@ -216,20 +193,11 @@ def test_new_update_creates_receipt_and_job(
     assert tracker.committed == 1
     assert tracker.rolled_back == 0
 
-    sql_text = "\n".join(
-        str(sql)
-        for sql, _ in cursor.executions
-    )
+    sql_text = "\n".join(str(sql) for sql, _ in cursor.executions)
 
-    assert (
-        "telegram_update_receipts"
-        in sql_text
-    )
+    assert "telegram_update_receipts" in sql_text
 
-    assert (
-        "telegram_update_jobs"
-        in sql_text
-    )
+    assert "telegram_update_jobs" in sql_text
 
 
 def test_single_transaction_is_used(
@@ -263,48 +231,25 @@ def test_payload_is_encrypted_before_job_insert(
             sql,
             parameters,
         )
-        for sql, parameters
-        in cursor.executions
-        if (
-            "telegram_update_jobs"
-            in str(sql)
-            and "INSERT INTO" in str(sql)
-        )
+        for sql, parameters in cursor.executions
+        if ("telegram_update_jobs" in str(sql) and "INSERT INTO" in str(sql))
     )
 
     parameters = job_execution[1]
 
     assert isinstance(
-        parameters[
-            "payload_ciphertext"
-        ],
+        parameters["payload_ciphertext"],
         bytes,
     )
 
     assert isinstance(
-        parameters[
-            "payload_nonce"
-        ],
+        parameters["payload_nonce"],
         bytes,
     )
 
-    assert (
-        parameters[
-            "payload_ciphertext"
-        ]
-        != str(UPDATE).encode(
-            "utf-8"
-        )
-    )
+    assert parameters["payload_ciphertext"] != str(UPDATE).encode("utf-8")
 
-    assert (
-        len(
-            parameters[
-                "payload_nonce"
-            ]
-        )
-        == 12
-    )
+    assert len(parameters["payload_nonce"]) == 12
 
 
 def test_completed_receipt_without_job_is_duplicate(
@@ -365,13 +310,9 @@ def test_completed_receipt_with_active_job_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        ingress
-        .TelegramUpdateIngressConsistencyError
-    ):
+    with pytest.raises(ingress.TelegramUpdateIngressConsistencyError):
         (
-            ingress
-            .enqueue_authenticated_telegram_update_atomic(
+            ingress.enqueue_authenticated_telegram_update_atomic(
                 UPDATE,
                 keyring=KEYRING,
             )
@@ -421,10 +362,7 @@ def test_existing_queued_job_is_not_duplicated(
         ],
     )
 
-    assert (
-        outcome.decision
-        == "already_enqueued"
-    )
+    assert outcome.decision == "already_enqueued"
 
     assert outcome.job_created is False
     assert outcome.job_state == "queued"
@@ -510,20 +448,14 @@ def test_fingerprint_conflict_rolls_back(
         [
             None,
             receipt_row(
-                fingerprint=(
-                    OTHER_FINGERPRINT
-                ),
+                fingerprint=(OTHER_FINGERPRINT),
             ),
         ],
     )
 
-    with pytest.raises(
-        ingress
-        .TelegramUpdateIngressConflictError
-    ):
+    with pytest.raises(ingress.TelegramUpdateIngressConflictError):
         (
-            ingress
-            .enqueue_authenticated_telegram_update_atomic(
+            ingress.enqueue_authenticated_telegram_update_atomic(
                 UPDATE,
                 keyring=KEYRING,
             )
@@ -556,13 +488,9 @@ def test_dead_letter_job_is_not_automatically_requeued(
         ],
     )
 
-    with pytest.raises(
-        ingress
-        .TelegramUpdateIngressConsistencyError
-    ):
+    with pytest.raises(ingress.TelegramUpdateIngressConsistencyError):
         (
-            ingress
-            .enqueue_authenticated_telegram_update_atomic(
+            ingress.enqueue_authenticated_telegram_update_atomic(
                 UPDATE,
                 keyring=KEYRING,
             )
@@ -590,13 +518,9 @@ def test_completed_job_with_pending_receipt_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        ingress
-        .TelegramUpdateIngressConsistencyError
-    ):
+    with pytest.raises(ingress.TelegramUpdateIngressConsistencyError):
         (
-            ingress
-            .enqueue_authenticated_telegram_update_atomic(
+            ingress.enqueue_authenticated_telegram_update_atomic(
                 UPDATE,
                 keyring=KEYRING,
             )
@@ -619,37 +543,23 @@ def test_encryption_failure_rolls_back_receipt(
         *_args,
         **_kwargs,
     ):
-        raise (
-            crypto_service
-            .TelegramUpdateJobEncryptionError(
-                "segredo interno"
-            )
-        )
+        raise (crypto_service.TelegramUpdateJobEncryptionError("segredo interno"))
 
     monkeypatch.setattr(
         ingress.crypto_service,
-        (
-            "encrypt_authenticated_"
-            "telegram_update"
-        ),
+        ("encrypt_authenticated_telegram_update"),
         fail_encryption,
     )
 
-    with pytest.raises(
-        ingress
-        .TelegramUpdateIngressUnavailableError
-    ) as captured:
+    with pytest.raises(ingress.TelegramUpdateIngressUnavailableError) as captured:
         (
-            ingress
-            .enqueue_authenticated_telegram_update_atomic(
+            ingress.enqueue_authenticated_telegram_update_atomic(
                 UPDATE,
                 keyring=KEYRING,
             )
         )
 
-    assert "segredo interno" not in str(
-        captured.value
-    )
+    assert "segredo interno" not in str(captured.value)
 
     assert tracker.committed == 0
     assert tracker.rolled_back == 1
@@ -662,10 +572,7 @@ def test_database_failure_is_sanitized(
     def failing_cursor(
         **_kwargs,
     ):
-        raise RuntimeError(
-            "postgresql://user:"
-            "super-secret@host/database"
-        )
+        raise RuntimeError("postgresql://user:super-secret@host/database")
 
         yield
 
@@ -675,21 +582,15 @@ def test_database_failure_is_sanitized(
         failing_cursor,
     )
 
-    with pytest.raises(
-        ingress
-        .TelegramUpdateIngressUnavailableError
-    ) as captured:
+    with pytest.raises(ingress.TelegramUpdateIngressUnavailableError) as captured:
         (
-            ingress
-            .enqueue_authenticated_telegram_update_atomic(
+            ingress.enqueue_authenticated_telegram_update_atomic(
                 UPDATE,
                 keyring=KEYRING,
             )
         )
 
-    message = str(
-        captured.value
-    )
+    message = str(captured.value)
 
     assert "super-secret" not in message
     assert "postgresql://" not in message
@@ -707,9 +608,7 @@ def test_outcome_never_exposes_sensitive_values(
     )
 
     safe = outcome.to_safe_dict()
-    representation = repr(
-        outcome
-    )
+    representation = repr(outcome)
 
     assert "payload_ciphertext" not in safe
     assert "payload_nonce" not in safe
@@ -736,13 +635,9 @@ def test_outcome_never_exposes_sensitive_values(
 def test_invalid_update_container_is_rejected(
     value,
 ):
-    with pytest.raises(
-        ingress
-        .TelegramUpdateIngressValidationError
-    ):
+    with pytest.raises(ingress.TelegramUpdateIngressValidationError):
         (
-            ingress
-            .enqueue_authenticated_telegram_update_atomic(
+            ingress.enqueue_authenticated_telegram_update_atomic(
                 value,
                 keyring=KEYRING,
             )
@@ -767,13 +662,9 @@ def test_invalid_update_container_is_rejected(
 def test_invalid_receipt_lease_is_rejected(
     value,
 ):
-    with pytest.raises(
-        ingress
-        .TelegramUpdateIngressValidationError
-    ):
+    with pytest.raises(ingress.TelegramUpdateIngressValidationError):
         (
-            ingress
-            .enqueue_authenticated_telegram_update_atomic(
+            ingress.enqueue_authenticated_telegram_update_atomic(
                 UPDATE,
                 receipt_lease_seconds=value,
                 keyring=KEYRING,
@@ -799,13 +690,9 @@ def test_invalid_receipt_lease_is_rejected(
 def test_invalid_max_attempts_is_rejected(
     value,
 ):
-    with pytest.raises(
-        ingress
-        .TelegramUpdateIngressValidationError
-    ):
+    with pytest.raises(ingress.TelegramUpdateIngressValidationError):
         (
-            ingress
-            .enqueue_authenticated_telegram_update_atomic(
+            ingress.enqueue_authenticated_telegram_update_atomic(
                 UPDATE,
                 max_attempts=value,
                 keyring=KEYRING,
@@ -832,13 +719,9 @@ def test_invalid_update_id_does_not_open_transaction(
         fake_cursor,
     )
 
-    with pytest.raises(
-        ingress
-        .TelegramUpdateIngressValidationError
-    ):
+    with pytest.raises(ingress.TelegramUpdateIngressValidationError):
         (
-            ingress
-            .enqueue_authenticated_telegram_update_atomic(
+            ingress.enqueue_authenticated_telegram_update_atomic(
                 {
                     "update_id": "invalid",
                 },
@@ -850,23 +733,8 @@ def test_invalid_update_id_does_not_open_transaction(
 
 
 def test_sql_uses_row_lock_and_idempotent_insert():
-    assert (
-        "FOR UPDATE"
-        in ingress
-        .receipt_repository
-        .SQL_LOCK_EXISTING_RECEIPT
-    )
+    assert "FOR UPDATE" in ingress.receipt_repository.SQL_LOCK_EXISTING_RECEIPT
 
-    assert (
-        "ON CONFLICT"
-        in ingress
-        .receipt_repository
-        .SQL_INSERT_RECEIPT
-    )
+    assert "ON CONFLICT" in ingress.receipt_repository.SQL_INSERT_RECEIPT
 
-    assert (
-        "ON CONFLICT"
-        in ingress
-        .job_repository
-        .SQL_INSERT_JOB
-    )
+    assert "ON CONFLICT" in ingress.job_repository.SQL_INSERT_JOB

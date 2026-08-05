@@ -7,17 +7,11 @@ from typing import Any
 from src.database.connection import cursor_postgres
 
 
-SHA256_PATTERN = re.compile(
-    r"^[0-9a-f]{64}$"
-)
+SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
-KEY_ID_PATTERN = re.compile(
-    r"^[A-Za-z0-9._:-]{1,64}$"
-)
+KEY_ID_PATTERN = re.compile(r"^[A-Za-z0-9._:-]{1,64}$")
 
-ERROR_CODE_PATTERN = re.compile(
-    r"^[a-z0-9._:-]{1,64}$"
-)
+ERROR_CODE_PATTERN = re.compile(r"^[a-z0-9._:-]{1,64}$")
 
 
 MIN_CIPHERTEXT_BYTES = 16
@@ -277,25 +271,19 @@ RETURNING
 """
 
 
-class TelegramUpdateJobRepositoryError(
-    RuntimeError
-):
+class TelegramUpdateJobRepositoryError(RuntimeError):
     """
     Erro sanitizado da camada PostgreSQL.
     """
 
 
-class TelegramUpdateJobOwnershipError(
-    TelegramUpdateJobRepositoryError
-):
+class TelegramUpdateJobOwnershipError(TelegramUpdateJobRepositoryError):
     """
     O worker não possui um lease válido.
     """
 
 
-class TelegramUpdateJobValidationError(
-    ValueError
-):
+class TelegramUpdateJobValidationError(ValueError):
     """
     Entrada rejeitada antes do banco.
     """
@@ -334,21 +322,13 @@ class TelegramUpdateJobLease:
     max_attempts: int
     payload_version: int
 
-    payload_ciphertext: bytes = field(
-        repr=False
-    )
+    payload_ciphertext: bytes = field(repr=False)
 
-    payload_nonce: bytes = field(
-        repr=False
-    )
+    payload_nonce: bytes = field(repr=False)
 
-    payload_key_id: str = field(
-        repr=False
-    )
+    payload_key_id: str = field(repr=False)
 
-    lock_token: str = field(
-        repr=False
-    )
+    lock_token: str = field(repr=False)
 
     def to_safe_dict(
         self,
@@ -375,9 +355,7 @@ def _validate_integer(
         or value < minimum
         or value > maximum
     ):
-        raise TelegramUpdateJobValidationError(
-            f"{field_name} inválido."
-        )
+        raise TelegramUpdateJobValidationError(f"{field_name} inválido.")
 
     return value
 
@@ -398,14 +376,8 @@ def _validate_sha256(
     *,
     field_name: str,
 ) -> str:
-    if (
-        not isinstance(value, str)
-        or SHA256_PATTERN.fullmatch(value)
-        is None
-    ):
-        raise TelegramUpdateJobValidationError(
-            f"{field_name} inválido."
-        )
+    if not isinstance(value, str) or SHA256_PATTERN.fullmatch(value) is None:
+        raise TelegramUpdateJobValidationError(f"{field_name} inválido.")
 
     return value
 
@@ -413,14 +385,8 @@ def _validate_sha256(
 def _validate_key_id(
     value: Any,
 ) -> str:
-    if (
-        not isinstance(value, str)
-        or KEY_ID_PATTERN.fullmatch(value)
-        is None
-    ):
-        raise TelegramUpdateJobValidationError(
-            "payload_key_id inválido."
-        )
+    if not isinstance(value, str) or KEY_ID_PATTERN.fullmatch(value) is None:
+        raise TelegramUpdateJobValidationError("payload_key_id inválido.")
 
     return value
 
@@ -428,14 +394,8 @@ def _validate_key_id(
 def _validate_error_code(
     value: Any,
 ) -> str:
-    if (
-        not isinstance(value, str)
-        or ERROR_CODE_PATTERN.fullmatch(value)
-        is None
-    ):
-        raise TelegramUpdateJobValidationError(
-            "error_code inválido."
-        )
+    if not isinstance(value, str) or ERROR_CODE_PATTERN.fullmatch(value) is None:
+        raise TelegramUpdateJobValidationError("error_code inválido.")
 
     return value
 
@@ -455,20 +415,12 @@ def _validate_bytes(
             memoryview,
         ),
     ):
-        raise TelegramUpdateJobValidationError(
-            f"{field_name} inválido."
-        )
+        raise TelegramUpdateJobValidationError(f"{field_name} inválido.")
 
     normalized = bytes(value)
 
-    if not (
-        minimum
-        <= len(normalized)
-        <= maximum
-    ):
-        raise TelegramUpdateJobValidationError(
-            f"{field_name} inválido."
-        )
+    if not (minimum <= len(normalized) <= maximum):
+        raise TelegramUpdateJobValidationError(f"{field_name} inválido.")
 
     return normalized
 
@@ -477,9 +429,7 @@ def _record_from_row(
     row: Any,
 ) -> TelegramUpdateJobRecord:
     try:
-        status = str(
-            row["status"]
-        )
+        status = str(row["status"])
 
         if status not in {
             "queued",
@@ -489,17 +439,11 @@ def _record_from_row(
         }:
             raise ValueError
 
-        attempt_count = int(
-            row["attempt_count"]
-        )
+        attempt_count = int(row["attempt_count"])
 
-        max_attempts = int(
-            row["max_attempts"]
-        )
+        max_attempts = int(row["max_attempts"])
 
-        payload_version = int(
-            row["payload_version"]
-        )
+        payload_version = int(row["payload_version"])
 
         if (
             attempt_count < 0
@@ -510,9 +454,7 @@ def _record_from_row(
             raise ValueError
 
         return TelegramUpdateJobRecord(
-            update_id=int(
-                row["update_id"]
-            ),
+            update_id=int(row["update_id"]),
             status=status,
             attempt_count=attempt_count,
             max_attempts=max_attempts,
@@ -525,8 +467,7 @@ def _record_from_row(
         ValueError,
     ):
         raise TelegramUpdateJobRepositoryError(
-            "O banco retornou um job "
-            "Telegram inválido."
+            "O banco retornou um job Telegram inválido."
         ) from None
 
 
@@ -535,30 +476,14 @@ def _lease_from_row(
 ) -> TelegramUpdateJobLease:
     try:
         lease = TelegramUpdateJobLease(
-            update_id=int(
-                row["update_id"]
-            ),
-            attempt_count=int(
-                row["attempt_count"]
-            ),
-            max_attempts=int(
-                row["max_attempts"]
-            ),
-            payload_version=int(
-                row["payload_version"]
-            ),
-            payload_ciphertext=bytes(
-                row["payload_ciphertext"]
-            ),
-            payload_nonce=bytes(
-                row["payload_nonce"]
-            ),
-            payload_key_id=str(
-                row["payload_key_id"]
-            ),
-            lock_token=str(
-                row["lock_token"]
-            ),
+            update_id=int(row["update_id"]),
+            attempt_count=int(row["attempt_count"]),
+            max_attempts=int(row["max_attempts"]),
+            payload_version=int(row["payload_version"]),
+            payload_ciphertext=bytes(row["payload_ciphertext"]),
+            payload_nonce=bytes(row["payload_nonce"]),
+            payload_key_id=str(row["payload_key_id"]),
+            lock_token=str(row["lock_token"]),
         )
 
         _validate_bytes(
@@ -575,9 +500,7 @@ def _lease_from_row(
             maximum=NONCE_BYTES,
         )
 
-        _validate_key_id(
-            lease.payload_key_id
-        )
+        _validate_key_id(lease.payload_key_id)
 
         _validate_sha256(
             lease.lock_token,
@@ -587,8 +510,7 @@ def _lease_from_row(
         if (
             lease.attempt_count < 1
             or lease.max_attempts < 1
-            or lease.attempt_count
-            > lease.max_attempts
+            or lease.attempt_count > lease.max_attempts
             or lease.payload_version < 1
         ):
             raise ValueError
@@ -602,21 +524,16 @@ def _lease_from_row(
         TelegramUpdateJobValidationError,
     ):
         raise TelegramUpdateJobRepositoryError(
-            "O banco retornou um lease "
-            "Telegram inválido."
+            "O banco retornou um lease Telegram inválido."
         ) from None
 
 
 def _set_timeouts(
     cursor: Any,
 ) -> None:
-    cursor.execute(
-        "SET LOCAL lock_timeout = '3000ms';"
-    )
+    cursor.execute("SET LOCAL lock_timeout = '3000ms';")
 
-    cursor.execute(
-        "SET LOCAL statement_timeout = '5000ms';"
-    )
+    cursor.execute("SET LOCAL statement_timeout = '5000ms';")
 
 
 def enqueue_telegram_update_job(
@@ -628,9 +545,7 @@ def enqueue_telegram_update_job(
     payload_version: int = 1,
     max_attempts: int = 5,
 ) -> TelegramUpdateJobRecord:
-    normalized_update_id = _validate_update_id(
-        update_id
-    )
+    normalized_update_id = _validate_update_id(update_id)
 
     normalized_ciphertext = _validate_bytes(
         payload_ciphertext,
@@ -646,9 +561,7 @@ def enqueue_telegram_update_job(
         maximum=NONCE_BYTES,
     )
 
-    normalized_key_id = _validate_key_id(
-        payload_key_id
-    )
+    normalized_key_id = _validate_key_id(payload_key_id)
 
     normalized_version = _validate_integer(
         payload_version,
@@ -657,13 +570,11 @@ def enqueue_telegram_update_job(
         maximum=32_767,
     )
 
-    normalized_max_attempts = (
-        _validate_integer(
-            max_attempts,
-            field_name="max_attempts",
-            minimum=1,
-            maximum=20,
-        )
+    normalized_max_attempts = _validate_integer(
+        max_attempts,
+        field_name="max_attempts",
+        minimum=1,
+        maximum=20,
     )
 
     try:
@@ -671,31 +582,17 @@ def enqueue_telegram_update_job(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            _set_timeouts(
-                cursor
-            )
+            _set_timeouts(cursor)
 
             cursor.execute(
                 SQL_INSERT_JOB,
                 {
-                    "update_id": (
-                        normalized_update_id
-                    ),
-                    "payload_ciphertext": (
-                        normalized_ciphertext
-                    ),
-                    "payload_nonce": (
-                        normalized_nonce
-                    ),
-                    "payload_key_id": (
-                        normalized_key_id
-                    ),
-                    "payload_version": (
-                        normalized_version
-                    ),
-                    "max_attempts": (
-                        normalized_max_attempts
-                    ),
+                    "update_id": (normalized_update_id),
+                    "payload_ciphertext": (normalized_ciphertext),
+                    "payload_nonce": (normalized_nonce),
+                    "payload_key_id": (normalized_key_id),
+                    "payload_version": (normalized_version),
+                    "max_attempts": (normalized_max_attempts),
                 },
             )
 
@@ -705,9 +602,7 @@ def enqueue_telegram_update_job(
                 cursor.execute(
                     SQL_SELECT_JOB,
                     {
-                        "update_id": (
-                            normalized_update_id
-                        ),
+                        "update_id": (normalized_update_id),
                     },
                 )
 
@@ -715,13 +610,10 @@ def enqueue_telegram_update_job(
 
             if row is None:
                 raise TelegramUpdateJobRepositoryError(
-                    "O job Telegram não "
-                    "foi localizado."
+                    "O job Telegram não foi localizado."
                 )
 
-            return _record_from_row(
-                row
-            )
+            return _record_from_row(row)
 
     except (
         TelegramUpdateJobRepositoryError,
@@ -731,8 +623,7 @@ def enqueue_telegram_update_job(
 
     except Exception:
         raise TelegramUpdateJobRepositoryError(
-            "Não foi possível enfileirar "
-            "o update Telegram."
+            "Não foi possível enfileirar o update Telegram."
         ) from None
 
 
@@ -758,19 +649,13 @@ def claim_next_telegram_update_job(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            _set_timeouts(
-                cursor
-            )
+            _set_timeouts(cursor)
 
             cursor.execute(
                 SQL_CLAIM_NEXT_JOB,
                 {
-                    "lock_token": (
-                        normalized_token
-                    ),
-                    "lease_seconds": (
-                        normalized_lease
-                    ),
+                    "lock_token": (normalized_token),
+                    "lease_seconds": (normalized_lease),
                 },
             )
 
@@ -779,9 +664,7 @@ def claim_next_telegram_update_job(
             if row is None:
                 return None
 
-            return _lease_from_row(
-                row
-            )
+            return _lease_from_row(row)
 
     except (
         TelegramUpdateJobRepositoryError,
@@ -791,8 +674,7 @@ def claim_next_telegram_update_job(
 
     except Exception:
         raise TelegramUpdateJobRepositoryError(
-            "Não foi possível obter "
-            "um job Telegram."
+            "Não foi possível obter um job Telegram."
         ) from None
 
 
@@ -802,9 +684,7 @@ def renew_telegram_update_job_lease(
     lock_token: str,
     lease_seconds: int = 120,
 ) -> TelegramUpdateJobRecord:
-    normalized_update_id = _validate_update_id(
-        update_id
-    )
+    normalized_update_id = _validate_update_id(update_id)
 
     normalized_token = _validate_sha256(
         lock_token,
@@ -823,22 +703,14 @@ def renew_telegram_update_job_lease(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            _set_timeouts(
-                cursor
-            )
+            _set_timeouts(cursor)
 
             cursor.execute(
                 SQL_RENEW_JOB_LEASE,
                 {
-                    "update_id": (
-                        normalized_update_id
-                    ),
-                    "lock_token": (
-                        normalized_token
-                    ),
-                    "lease_seconds": (
-                        normalized_lease
-                    ),
+                    "update_id": (normalized_update_id),
+                    "lock_token": (normalized_token),
+                    "lease_seconds": (normalized_lease),
                 },
             )
 
@@ -846,13 +718,10 @@ def renew_telegram_update_job_lease(
 
             if row is None:
                 raise TelegramUpdateJobOwnershipError(
-                    "O lease do job não "
-                    "está mais ativo."
+                    "O lease do job não está mais ativo."
                 )
 
-            return _record_from_row(
-                row
-            )
+            return _record_from_row(row)
 
     except (
         TelegramUpdateJobOwnershipError,
@@ -863,8 +732,7 @@ def renew_telegram_update_job_lease(
 
     except Exception:
         raise TelegramUpdateJobRepositoryError(
-            "Não foi possível renovar "
-            "o job Telegram."
+            "Não foi possível renovar o job Telegram."
         ) from None
 
 
@@ -873,9 +741,7 @@ def complete_telegram_update_job(
     update_id: int,
     lock_token: str,
 ) -> TelegramUpdateJobRecord:
-    normalized_update_id = _validate_update_id(
-        update_id
-    )
+    normalized_update_id = _validate_update_id(update_id)
 
     normalized_token = _validate_sha256(
         lock_token,
@@ -887,19 +753,13 @@ def complete_telegram_update_job(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            _set_timeouts(
-                cursor
-            )
+            _set_timeouts(cursor)
 
             cursor.execute(
                 SQL_COMPLETE_JOB,
                 {
-                    "update_id": (
-                        normalized_update_id
-                    ),
-                    "lock_token": (
-                        normalized_token
-                    ),
+                    "update_id": (normalized_update_id),
+                    "lock_token": (normalized_token),
                 },
             )
 
@@ -907,13 +767,10 @@ def complete_telegram_update_job(
 
             if row is None:
                 raise TelegramUpdateJobOwnershipError(
-                    "O lease do job não "
-                    "está mais ativo."
+                    "O lease do job não está mais ativo."
                 )
 
-            return _record_from_row(
-                row
-            )
+            return _record_from_row(row)
 
     except (
         TelegramUpdateJobOwnershipError,
@@ -924,8 +781,7 @@ def complete_telegram_update_job(
 
     except Exception:
         raise TelegramUpdateJobRepositoryError(
-            "Não foi possível concluir "
-            "o job Telegram."
+            "Não foi possível concluir o job Telegram."
         ) from None
 
 
@@ -936,18 +792,14 @@ def retry_or_dead_letter_telegram_update_job(
     error_code: str,
     retry_delay_seconds: int,
 ) -> TelegramUpdateJobRecord:
-    normalized_update_id = _validate_update_id(
-        update_id
-    )
+    normalized_update_id = _validate_update_id(update_id)
 
     normalized_token = _validate_sha256(
         lock_token,
         field_name="lock_token",
     )
 
-    normalized_error = _validate_error_code(
-        error_code
-    )
+    normalized_error = _validate_error_code(error_code)
 
     normalized_delay = _validate_integer(
         retry_delay_seconds,
@@ -961,25 +813,15 @@ def retry_or_dead_letter_telegram_update_job(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            _set_timeouts(
-                cursor
-            )
+            _set_timeouts(cursor)
 
             cursor.execute(
                 SQL_RETRY_OR_DEAD_LETTER_JOB,
                 {
-                    "update_id": (
-                        normalized_update_id
-                    ),
-                    "lock_token": (
-                        normalized_token
-                    ),
-                    "error_code": (
-                        normalized_error
-                    ),
-                    "retry_delay_seconds": (
-                        normalized_delay
-                    ),
+                    "update_id": (normalized_update_id),
+                    "lock_token": (normalized_token),
+                    "error_code": (normalized_error),
+                    "retry_delay_seconds": (normalized_delay),
                 },
             )
 
@@ -987,13 +829,10 @@ def retry_or_dead_letter_telegram_update_job(
 
             if row is None:
                 raise TelegramUpdateJobOwnershipError(
-                    "O lease do job não "
-                    "está mais ativo."
+                    "O lease do job não está mais ativo."
                 )
 
-            return _record_from_row(
-                row
-            )
+            return _record_from_row(row)
 
     except (
         TelegramUpdateJobOwnershipError,
@@ -1004,8 +843,7 @@ def retry_or_dead_letter_telegram_update_job(
 
     except Exception:
         raise TelegramUpdateJobRepositoryError(
-            "Não foi possível reagendar "
-            "o job Telegram."
+            "Não foi possível reagendar o job Telegram."
         ) from None
 
 
@@ -1028,25 +866,18 @@ def recover_expired_telegram_update_jobs(
             dict_cursor=True,
             commit_automatico=True,
         ) as cursor:
-            _set_timeouts(
-                cursor
-            )
+            _set_timeouts(cursor)
 
             cursor.execute(
                 SQL_RECOVER_EXPIRED_JOBS,
                 {
-                    "limit": (
-                        normalized_limit
-                    ),
+                    "limit": (normalized_limit),
                 },
             )
 
             rows = cursor.fetchall()
 
-            return tuple(
-                _record_from_row(row)
-                for row in rows
-            )
+            return tuple(_record_from_row(row) for row in rows)
 
     except (
         TelegramUpdateJobRepositoryError,
@@ -1056,8 +887,7 @@ def recover_expired_telegram_update_jobs(
 
     except Exception:
         raise TelegramUpdateJobRepositoryError(
-            "Não foi possível recuperar "
-            "jobs Telegram."
+            "Não foi possível recuperar jobs Telegram."
         ) from None
 
 

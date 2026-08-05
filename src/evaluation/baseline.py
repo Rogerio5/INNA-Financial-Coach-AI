@@ -30,9 +30,7 @@ def _required_mapping(
     field_name: str,
 ) -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
-        raise BaselineSchemaError(
-            f"{field_name} deve ser um objeto."
-        )
+        raise BaselineSchemaError(f"{field_name} deve ser um objeto.")
 
     return value
 
@@ -43,9 +41,7 @@ def _required_list(
     field_name: str,
 ) -> list[Any]:
     if not isinstance(value, list):
-        raise BaselineSchemaError(
-            f"{field_name} deve ser uma lista."
-        )
+        raise BaselineSchemaError(f"{field_name} deve ser uma lista.")
 
     return value
 
@@ -56,9 +52,7 @@ def _required_text(
     field_name: str,
 ) -> str:
     if not isinstance(value, str) or not value.strip():
-        raise BaselineSchemaError(
-            f"{field_name} deve ser texto não vazio."
-        )
+        raise BaselineSchemaError(f"{field_name} deve ser texto não vazio.")
 
     return value.strip()
 
@@ -69,9 +63,7 @@ def _required_bool(
     field_name: str,
 ) -> bool:
     if not isinstance(value, bool):
-        raise BaselineSchemaError(
-            f"{field_name} deve ser booleano."
-        )
+        raise BaselineSchemaError(f"{field_name} deve ser booleano.")
 
     return value
 
@@ -85,20 +77,13 @@ def _required_number(
         value,
         (int, float),
     ):
-        raise BaselineSchemaError(
-            f"{field_name} deve ser numérico."
-        )
+        raise BaselineSchemaError(f"{field_name} deve ser numérico.")
 
     return float(value)
 
 
 def _utc_now() -> str:
-    return (
-        datetime.now(UTC)
-        .replace(microsecond=0)
-        .isoformat()
-        .replace("+00:00", "Z")
-    )
+    return datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 @dataclass(frozen=True, slots=True)
@@ -124,9 +109,7 @@ class BaselineMetric:
 
         average_score = _required_number(
             payload.get("average_score"),
-            field_name=(
-                f"metrics[{metric_id}].average_score"
-            ),
+            field_name=(f"metrics[{metric_id}].average_score"),
         )
 
         integer_fields: dict[str, int] = {}
@@ -146,22 +129,19 @@ class BaselineMetric:
                 int,
             ):
                 raise BaselineSchemaError(
-                    f"metrics[{metric_id}]."
-                    f"{field_name} deve ser inteiro."
+                    f"metrics[{metric_id}].{field_name} deve ser inteiro."
                 )
 
             if value < 0:
                 raise BaselineSchemaError(
-                    f"metrics[{metric_id}]."
-                    f"{field_name} não pode ser negativo."
+                    f"metrics[{metric_id}].{field_name} não pode ser negativo."
                 )
 
             integer_fields[field_name] = value
 
         if not 0.0 <= average_score <= 1.0:
             raise BaselineSchemaError(
-                f"metrics[{metric_id}].average_score "
-                "deve estar entre 0 e 1."
+                f"metrics[{metric_id}].average_score deve estar entre 0 e 1."
             )
 
         return cls(
@@ -197,12 +177,8 @@ class EvaluationBaseline:
     metrics: tuple[BaselineMetric, ...]
     pass_rate: float
     quality_gate_passed: bool
-    baseline_schema_version: str = (
-        BASELINE_SCHEMA_VERSION
-    )
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    baseline_schema_version: str = BASELINE_SCHEMA_VERSION
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_report(
@@ -219,10 +195,7 @@ class EvaluationBaseline:
         )
 
         if report_type != SUPPORTED_REPORT_TYPE:
-            raise BaselineSchemaError(
-                "report_type não suportado: "
-                f"{report_type!r}."
-            )
+            raise BaselineSchemaError(f"report_type não suportado: {report_type!r}.")
 
         schema_version = _required_text(
             report.get("schema_version"),
@@ -255,10 +228,7 @@ class EvaluationBaseline:
         )
 
         if not 0.0 <= pass_rate <= 1.0:
-            raise BaselineSchemaError(
-                "summary.pass_rate deve estar "
-                "entre 0 e 1."
-            )
+            raise BaselineSchemaError("summary.pass_rate deve estar entre 0 e 1.")
 
         batch_status = _required_text(
             batch.get("status"),
@@ -267,14 +237,12 @@ class EvaluationBaseline:
 
         if batch_status != "passed":
             raise BaselinePromotionError(
-                "Somente lotes aprovados podem ser "
-                "promovidos para baseline."
+                "Somente lotes aprovados podem ser promovidos para baseline."
             )
 
         if not quality_gate_passed:
             raise BaselinePromotionError(
-                "O quality gate deve estar aprovado "
-                "para promover a baseline."
+                "O quality gate deve estar aprovado para promover a baseline."
             )
 
         cases_payload = _required_list(
@@ -303,34 +271,26 @@ class EvaluationBaseline:
             case_ids.append(
                 _required_text(
                     case.get("case_id"),
-                    field_name=(
-                        f"cases[{index}].case_id"
-                    ),
+                    field_name=(f"cases[{index}].case_id"),
                 )
             )
 
         dataset_ids: list[str] = []
 
-        for index, item in enumerate(
-            datasets_payload
-        ):
+        for index, item in enumerate(datasets_payload):
             dataset = _required_mapping(
                 item,
                 field_name=f"datasets[{index}]",
             )
 
             dataset_id = (
-                dataset.get("dataset_id")
-                or dataset.get("id")
-                or dataset.get("name")
+                dataset.get("dataset_id") or dataset.get("id") or dataset.get("name")
             )
 
             dataset_ids.append(
                 _required_text(
                     dataset_id,
-                    field_name=(
-                        f"datasets[{index}].dataset_id"
-                    ),
+                    field_name=(f"datasets[{index}].dataset_id"),
                 )
             )
 
@@ -341,31 +301,19 @@ class EvaluationBaseline:
                     field_name=f"metrics[{index}]",
                 )
             )
-            for index, item in enumerate(
-                metrics_payload
-            )
+            for index, item in enumerate(metrics_payload)
         )
 
-        metric_ids = [
-            metric.metric_id
-            for metric in metrics
-        ]
+        metric_ids = [metric.metric_id for metric in metrics]
 
         if len(metric_ids) != len(set(metric_ids)):
-            raise BaselineSchemaError(
-                "O relatório possui metric_id duplicado."
-            )
+            raise BaselineSchemaError("O relatório possui metric_id duplicado.")
 
         if len(case_ids) != len(set(case_ids)):
-            raise BaselineSchemaError(
-                "O relatório possui case_id duplicado."
-            )
+            raise BaselineSchemaError("O relatório possui case_id duplicado.")
 
         return cls(
-            baseline_id=(
-                baseline_id
-                or f"baseline-{uuid4().hex[:12]}"
-            ),
+            baseline_id=(baseline_id or f"baseline-{uuid4().hex[:12]}"),
             promoted_at=promoted_at or _utc_now(),
             source_report_type=report_type,
             source_schema_version=schema_version,
@@ -376,11 +324,7 @@ class EvaluationBaseline:
                     or batch.get("run_reference")
                     or report.get("run_reference")
                 ),
-                field_name=(
-                    "batch.batch_id, "
-                    "quality_gate.batch_id ou "
-                    "run_reference"
-                ),
+                field_name=("batch.batch_id, quality_gate.batch_id ou run_reference"),
             ),
             source_run_reference=_required_text(
                 report.get("run_reference"),
@@ -395,15 +339,11 @@ class EvaluationBaseline:
             metrics=tuple(
                 sorted(
                     metrics,
-                    key=lambda metric: (
-                        metric.metric_id
-                    ),
+                    key=lambda metric: metric.metric_id,
                 )
             ),
             pass_rate=pass_rate,
-            quality_gate_passed=(
-                quality_gate_passed
-            ),
+            quality_gate_passed=(quality_gate_passed),
             metadata=dict(metadata or {}),
         )
 
@@ -419,8 +359,7 @@ class EvaluationBaseline:
 
         if schema_version != BASELINE_SCHEMA_VERSION:
             raise BaselineSchemaError(
-                "Versão de baseline não suportada: "
-                f"{schema_version!r}."
+                f"Versão de baseline não suportada: {schema_version!r}."
             )
 
         metrics_payload = _required_list(
@@ -435,9 +374,7 @@ class EvaluationBaseline:
                     field_name=f"metrics[{index}]",
                 )
             )
-            for index, item in enumerate(
-                metrics_payload
-            )
+            for index, item in enumerate(metrics_payload)
         )
 
         case_ids = tuple(
@@ -481,9 +418,7 @@ class EvaluationBaseline:
                 field_name="source_report_type",
             ),
             source_schema_version=_required_text(
-                payload.get(
-                    "source_schema_version"
-                ),
+                payload.get("source_schema_version"),
                 field_name="source_schema_version",
             ),
             source_batch_id=_required_text(
@@ -491,15 +426,11 @@ class EvaluationBaseline:
                 field_name="source_batch_id",
             ),
             source_run_reference=_required_text(
-                payload.get(
-                    "source_run_reference"
-                ),
+                payload.get("source_run_reference"),
                 field_name="source_run_reference",
             ),
             source_generated_date=_required_text(
-                payload.get(
-                    "source_generated_date"
-                ),
+                payload.get("source_generated_date"),
                 field_name="source_generated_date",
             ),
             case_ids=case_ids,
@@ -510,51 +441,28 @@ class EvaluationBaseline:
                 field_name="pass_rate",
             ),
             quality_gate_passed=_required_bool(
-                payload.get(
-                    "quality_gate_passed"
-                ),
+                payload.get("quality_gate_passed"),
                 field_name="quality_gate_passed",
             ),
-            baseline_schema_version=(
-                schema_version
-            ),
+            baseline_schema_version=(schema_version),
             metadata=dict(metadata),
         )
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "baseline_schema_version": (
-                self.baseline_schema_version
-            ),
+            "baseline_schema_version": (self.baseline_schema_version),
             "baseline_id": self.baseline_id,
             "promoted_at": self.promoted_at,
-            "source_report_type": (
-                self.source_report_type
-            ),
-            "source_schema_version": (
-                self.source_schema_version
-            ),
-            "source_batch_id": (
-                self.source_batch_id
-            ),
-            "source_run_reference": (
-                self.source_run_reference
-            ),
-            "source_generated_date": (
-                self.source_generated_date
-            ),
+            "source_report_type": (self.source_report_type),
+            "source_schema_version": (self.source_schema_version),
+            "source_batch_id": (self.source_batch_id),
+            "source_run_reference": (self.source_run_reference),
+            "source_generated_date": (self.source_generated_date),
             "case_ids": list(self.case_ids),
-            "dataset_ids": list(
-                self.dataset_ids
-            ),
-            "metrics": [
-                metric.to_dict()
-                for metric in self.metrics
-            ],
+            "dataset_ids": list(self.dataset_ids),
+            "metrics": [metric.to_dict() for metric in self.metrics],
             "pass_rate": self.pass_rate,
-            "quality_gate_passed": (
-                self.quality_gate_passed
-            ),
+            "quality_gate_passed": (self.quality_gate_passed),
             "metadata": dict(self.metadata),
         }
 
@@ -565,17 +473,11 @@ def load_json_object(
     source = Path(path)
 
     try:
-        payload = json.loads(
-            source.read_text(encoding="utf-8")
-        )
+        payload = json.loads(source.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:
-        raise BaselineError(
-            f"Arquivo não encontrado: {source}"
-        ) from exc
+        raise BaselineError(f"Arquivo não encontrado: {source}") from exc
     except json.JSONDecodeError as exc:
-        raise BaselineSchemaError(
-            f"JSON inválido em {source}: {exc}"
-        ) from exc
+        raise BaselineSchemaError(f"JSON inválido em {source}: {exc}") from exc
 
     return _required_mapping(
         payload,
@@ -586,9 +488,7 @@ def load_json_object(
 def load_baseline(
     path: str | Path,
 ) -> EvaluationBaseline:
-    return EvaluationBaseline.from_dict(
-        load_json_object(path)
-    )
+    return EvaluationBaseline.from_dict(load_json_object(path))
 
 
 def write_baseline(
@@ -601,8 +501,7 @@ def write_baseline(
 
     if destination.exists() and not overwrite:
         raise BaselineError(
-            "A baseline já existe. Use overwrite=True "
-            "para substituí-la."
+            "A baseline já existe. Use overwrite=True para substituí-la."
         )
 
     destination.parent.mkdir(
@@ -610,9 +509,7 @@ def write_baseline(
         exist_ok=True,
     )
 
-    temporary = destination.with_suffix(
-        destination.suffix + ".tmp"
-    )
+    temporary = destination.with_suffix(destination.suffix + ".tmp")
 
     temporary.write_text(
         json.dumps(

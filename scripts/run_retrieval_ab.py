@@ -14,9 +14,7 @@ def _load_questions(
     path: Path,
 ) -> list[str]:
     if not path.is_file():
-        raise FileNotFoundError(
-            f"Arquivo não encontrado: {path}"
-        )
+        raise FileNotFoundError(f"Arquivo não encontrado: {path}")
 
     suffix = path.suffix.lower()
 
@@ -31,10 +29,7 @@ def _load_questions(
             payload,
             list,
         ):
-            return [
-                str(item)
-                for item in payload
-            ]
+            return [str(item) for item in payload]
 
         if isinstance(
             payload,
@@ -52,14 +47,9 @@ def _load_questions(
                 questions,
                 list,
             ):
-                return [
-                    str(item)
-                    for item in questions
-                ]
+                return [str(item) for item in questions]
 
-        raise ValueError(
-            "JSON deve ser uma lista ou conter questions/perguntas."
-        )
+        raise ValueError("JSON deve ser uma lista ou conter questions/perguntas.")
 
     if suffix == ".jsonl":
         questions: list[str] = []
@@ -72,35 +62,22 @@ def _load_questions(
             if not rendered:
                 continue
 
-            item = json.loads(
-                rendered
-            )
+            item = json.loads(rendered)
 
             if isinstance(
                 item,
                 str,
             ):
-                questions.append(
-                    item
-                )
+                questions.append(item)
 
             elif isinstance(
                 item,
                 dict,
             ):
-                question = (
-                    item.get(
-                        "question"
-                    )
-                    or item.get(
-                        "pergunta"
-                    )
-                )
+                question = item.get("question") or item.get("pergunta")
 
                 if question:
-                    questions.append(
-                        str(question)
-                    )
+                    questions.append(str(question))
 
         return questions
 
@@ -116,8 +93,7 @@ def _load_questions(
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Compara o RAG híbrido atual da INNA "
-            "com o Sentence-Window Retrieval."
+            "Compara o RAG híbrido atual da INNA com o Sentence-Window Retrieval."
         )
     )
 
@@ -125,19 +101,13 @@ def main() -> int:
         "--question",
         action="append",
         default=[],
-        help=(
-            "Pergunta de avaliação. "
-            "Pode ser usada mais de uma vez."
-        ),
+        help=("Pergunta de avaliação. Pode ser usada mais de uma vez."),
     )
 
     parser.add_argument(
         "--questions-file",
         type=Path,
-        help=(
-            "Arquivo JSON, JSONL ou TXT "
-            "com perguntas."
-        ),
+        help=("Arquivo JSON, JSONL ou TXT com perguntas."),
     )
 
     parser.add_argument(
@@ -154,9 +124,7 @@ def main() -> int:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path(
-            "artifacts/evaluation/retrieval_ab"
-        ),
+        default=Path("artifacts/evaluation/retrieval_ab"),
     )
 
     parser.add_argument(
@@ -171,103 +139,45 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    questions = list(
-        args.question
-    )
+    questions = list(args.question)
 
     if args.questions_file:
-        questions.extend(
-            _load_questions(
-                args.questions_file
-            )
-        )
+        questions.extend(_load_questions(args.questions_file))
 
     if not questions:
-        parser.error(
-            "Informe --question ou --questions-file."
-        )
+        parser.error("Informe --question ou --questions-file.")
 
     result = run_retrieval_ab_suite(
         queries=questions,
         language=args.language,
         top_k=args.top_k,
-        output_directory=(
-            args.output_dir
-        ),
+        output_directory=(args.output_dir),
         run_label=args.label,
-        include_text_preview=(
-            args.include_text_preview
-        ),
+        include_text_preview=(args.include_text_preview),
     )
 
-    payload = result[
-        "payload"
-    ]
+    payload = result["payload"]
 
-    print(
-        "RUN_ID="
-        + result["run_id"]
-    )
+    print("RUN_ID=" + result["run_id"])
 
-    print(
-        "QUESTIONS="
-        + str(
-            payload[
-                "question_count"
-            ]
-        )
-    )
+    print("QUESTIONS=" + str(payload["question_count"]))
 
-    print(
-        "COMPLETED="
-        + str(
-            payload[
-                "completed_count"
-            ]
-        )
-    )
+    print("COMPLETED=" + str(payload["completed_count"]))
 
-    print(
-        "FAILED="
-        + str(
-            payload[
-                "failed_count"
-            ]
-        )
-    )
+    print("FAILED=" + str(payload["failed_count"]))
 
-    print(
-        "JSON_REPORT="
-        + result["json_path"]
-    )
+    print("JSON_REPORT=" + result["json_path"])
 
-    print(
-        "MARKDOWN_REPORT="
-        + result[
-            "markdown_path"
-        ]
-    )
+    print("MARKDOWN_REPORT=" + result["markdown_path"])
 
-    print(
-        "HISTORY="
-        + result[
-            "history_path"
-        ]
-    )
+    print("HISTORY=" + result["history_path"])
 
-    print(
-        "QUALITY_DECISION="
-        "pending_rag_triad"
-    )
+    print("QUALITY_DECISION=pending_rag_triad")
 
-    print(
-        "WEEK3_RETRIEVAL_AB_RUN=OK"
-    )
+    print("WEEK3_RETRIEVAL_AB_RUN=OK")
 
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(
-        main()
-    )
+    raise SystemExit(main())

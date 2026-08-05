@@ -10,67 +10,70 @@ from src.dashboard_pages.tools_observability_page import (
 
 
 def dataframe_teste():
-    return pd.DataFrame([
-        {
-            "id": 1,
-            "criado_em": "2026-07-13T03:00:00Z",
-            "usuario_id": "demo_user",
-            "pergunta": "Quanto sobra?",
-            "tool_nome": "analisar_orcamento",
-            "tool_label": "Análise do orçamento mensal",
-            "intencao": "analise_orcamento",
-            "confianca": 0.95,
-            "executada": True,
-            "sucesso": True,
-            "duracao_ms": 0.20,
-            "origem": "dashboard_rag",
-            "mensagem": "Executada.",
-            "erro": None,
-        },
-        {
-            "id": 2,
-            "criado_em": "2026-07-13T04:00:00Z",
-            "usuario_id": "demo_user",
-            "pergunta": "Quanto sobra?",
-            "tool_nome": "analisar_orcamento",
-            "tool_label": "Análise do orçamento mensal",
-            "intencao": "analise_orcamento",
-            "confianca": 0.90,
-            "executada": True,
-            "sucesso": False,
-            "duracao_ms": 0.40,
-            "origem": "dashboard_rag",
-            "mensagem": "Falha.",
-            "erro": "Erro simulado",
-        },
-    ])
+    return pd.DataFrame(
+        [
+            {
+                "id": 1,
+                "criado_em": "2026-07-13T03:00:00Z",
+                "usuario_id": "demo_user",
+                "pergunta": "Quanto sobra?",
+                "tool_nome": "analisar_orcamento",
+                "tool_label": "Análise do orçamento mensal",
+                "intencao": "analise_orcamento",
+                "confianca": 0.95,
+                "executada": True,
+                "sucesso": True,
+                "duracao_ms": 0.20,
+                "origem": "dashboard_rag",
+                "mensagem": "Executada.",
+                "erro": None,
+            },
+            {
+                "id": 2,
+                "criado_em": "2026-07-13T04:00:00Z",
+                "usuario_id": "demo_user",
+                "pergunta": "Quanto sobra?",
+                "tool_nome": "analisar_orcamento",
+                "tool_label": "Análise do orçamento mensal",
+                "intencao": "analise_orcamento",
+                "confianca": 0.90,
+                "executada": True,
+                "sucesso": False,
+                "duracao_ms": 0.40,
+                "origem": "dashboard_rag",
+                "mensagem": "Falha.",
+                "erro": "Erro simulado",
+            },
+        ]
+    )
 
 
 def test_calcular_taxa_sucesso():
-    assert calcular_taxa_sucesso(
-        8,
-        10,
-    ) == 80.0
+    assert (
+        calcular_taxa_sucesso(
+            8,
+            10,
+        )
+        == 80.0
+    )
 
 
 def test_taxa_sem_execucoes():
-    assert calcular_taxa_sucesso(
-        0,
-        0,
-    ) == 0.0
+    assert (
+        calcular_taxa_sucesso(
+            0,
+            0,
+        )
+        == 0.0
+    )
 
 
 def test_ranking_com_performance():
-    ranking = preparar_ranking_tools(
-        dataframe_teste()
-    )
+    ranking = preparar_ranking_tools(dataframe_teste())
 
     item = ranking.iloc[0]
 
-    assert (
-        item["Ferramenta"]
-        == "Análise do orçamento mensal"
-    )
+    assert item["Ferramenta"] == "Análise do orçamento mensal"
     assert item["Execuções"] == 2
     assert item["Sucessos"] == 1
     assert item["Falhas"] == 1
@@ -103,9 +106,7 @@ def test_serie_temporal_por_dia():
 
 
 def test_eventos_exibicao_tem_pergunta():
-    tabela = preparar_eventos_exibicao(
-        dataframe_teste()
-    )
+    tabela = preparar_eventos_exibicao(dataframe_teste())
 
     assert "Pergunta" in tabela.columns
     assert "Ferramenta" in tabela.columns
@@ -119,9 +120,7 @@ def test_eventos_exibicao_tem_pergunta():
 
 
 def test_ranking_vazio():
-    ranking = preparar_ranking_tools(
-        pd.DataFrame()
-    )
+    ranking = preparar_ranking_tools(pd.DataFrame())
 
     assert ranking.empty
 
@@ -136,14 +135,10 @@ def test_serie_temporal_vazia():
 
 
 def test_eventos_exibicao_vazio():
-    tabela = preparar_eventos_exibicao(
-        pd.DataFrame()
-    )
+    tabela = preparar_eventos_exibicao(pd.DataFrame())
 
     assert tabela.empty
 
-def test_componente_metricas_executivas_disponivel():
-    assert callable(
-        render_metricas_executivas
-    )
 
+def test_componente_metricas_executivas_disponivel():
+    assert callable(render_metricas_executivas)

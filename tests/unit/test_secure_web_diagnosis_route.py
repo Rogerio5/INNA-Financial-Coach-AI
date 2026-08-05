@@ -25,22 +25,14 @@ from src.services.financial_diagnosis import (
 )
 
 
-SECRET = (
-    "0123456789abcdef"
-    "0123456789abcdef"
-    "secure-web-route-test"
-)
+SECRET = "0123456789abcdef0123456789abcdefsecure-web-route-test"
 
 USER_ID = "usuario@example.com"
 
-REQUEST_ID = (
-    "web-request-12345678"
-)
+REQUEST_ID = "web-request-12345678"
 
 
-client = TestClient(
-    main.app
-)
+client = TestClient(main.app)
 
 
 def _payload() -> dict:
@@ -51,9 +43,7 @@ def _payload() -> dict:
         "gastos_variaveis": 700,
         "dividas_mensais": 300,
         "reserva_atual": 2000,
-        "objetivo": (
-            "Organizar as finanças"
-        ),
+        "objetivo": ("Organizar as finanças"),
         "idioma": "pt",
         "moeda": "BRL",
         "simbolo_moeda": "R$",
@@ -72,9 +62,7 @@ def _body(
             ":",
         ),
         allow_nan=False,
-    ).encode(
-        "utf-8"
-    )
+    ).encode("utf-8")
 
 
 def _headers(
@@ -83,31 +71,22 @@ def _headers(
     timestamp: int,
     signature: str | None = None,
 ) -> dict[str, str]:
-    calculated_signature = (
-        signature
-        or assinar_requisicao_interna(
-            method="POST",
-            path="/diagnostico",
-            user_id=USER_ID,
-            request_id=REQUEST_ID,
-            timestamp=timestamp,
-            body=body,
-            secret=SECRET,
-        )
+    calculated_signature = signature or assinar_requisicao_interna(
+        method="POST",
+        path="/diagnostico",
+        user_id=USER_ID,
+        request_id=REQUEST_ID,
+        timestamp=timestamp,
+        body=body,
+        secret=SECRET,
     )
 
     return {
-        "Content-Type": (
-            "application/json; charset=utf-8"
-        ),
+        "Content-Type": ("application/json; charset=utf-8"),
         HEADER_USER_ID: USER_ID,
         HEADER_REQUEST_ID: REQUEST_ID,
-        HEADER_TIMESTAMP: str(
-            timestamp
-        ),
-        HEADER_SIGNATURE: (
-            calculated_signature
-        ),
+        HEADER_TIMESTAMP: str(timestamp),
+        HEADER_SIGNATURE: (calculated_signature),
     }
 
 
@@ -120,19 +99,11 @@ def _install_financial_pipeline(
         MagicMock(
             return_value={
                 "saldo_estimado": 1200,
-                (
-                    "comprometimento_"
-                    "renda_percentual"
-                ): 70,
-                (
-                    "meses_reserva_"
-                    "estimados"
-                ): 0.714286,
+                ("comprometimento_renda_percentual"): 70,
+                ("meses_reserva_estimados"): 0.714286,
                 "score_financeiro": 70,
                 "nivel_risco": "Medio",
-                "situacao": (
-                    "saldo_positivo"
-                ),
+                "situacao": ("saldo_positivo"),
             }
         ),
     )
@@ -140,23 +111,13 @@ def _install_financial_pipeline(
     monkeypatch.setattr(
         main,
         "build_localized_diagnosis_text",
-        MagicMock(
-            return_value=(
-                "Diagnóstico financeiro "
-                "validado."
-            )
-        ),
+        MagicMock(return_value=("Diagnóstico financeiro validado.")),
     )
 
     monkeypatch.setattr(
         main,
         "generate_ai_plan",
-        MagicMock(
-            return_value=(
-                "Plano financeiro de "
-                "trinta dias."
-            )
-        ),
+        MagicMock(return_value=("Plano financeiro de trinta dias.")),
     )
 
 
@@ -175,9 +136,7 @@ def configure_secret(
 def test_unsigned_request_is_rejected(
     monkeypatch,
 ):
-    _install_financial_pipeline(
-        monkeypatch
-    )
+    _install_financial_pipeline(monkeypatch)
 
     persistence = MagicMock()
 
@@ -200,9 +159,7 @@ def test_unsigned_request_is_rejected(
 def test_tampered_body_is_rejected(
     monkeypatch,
 ):
-    _install_financial_pipeline(
-        monkeypatch
-    )
+    _install_financial_pipeline(monkeypatch)
 
     persistence = MagicMock()
 
@@ -215,17 +172,11 @@ def test_tampered_body_is_rejected(
     original_body = _body()
 
     tampered_payload = _payload()
-    tampered_payload[
-        "renda_mensal"
-    ] = 9999
+    tampered_payload["renda_mensal"] = 9999
 
-    tampered_body = _body(
-        tampered_payload
-    )
+    tampered_body = _body(tampered_payload)
 
-    timestamp = int(
-        time.time()
-    )
+    timestamp = int(time.time())
 
     response = client.post(
         "/diagnostico",
@@ -244,9 +195,7 @@ def test_tampered_body_is_rejected(
 def test_signed_request_persists_with_trusted_user(
     monkeypatch,
 ):
-    _install_financial_pipeline(
-        monkeypatch
-    )
+    _install_financial_pipeline(monkeypatch)
 
     captured = {}
 
@@ -256,30 +205,22 @@ def test_signed_request_persists_with_trusted_user(
         idempotency_key,
         diagnostico,
     ):
-        captured[
-            "usuario_id_confiavel"
-        ] = usuario_id_confiavel
+        captured["usuario_id_confiavel"] = usuario_id_confiavel
 
-        captured[
-            "idempotency_key"
-        ] = idempotency_key
+        captured["idempotency_key"] = idempotency_key
 
-        captured[
-            "diagnostico"
-        ] = diagnostico
+        captured["diagnostico"] = diagnostico
 
-        return (
-            FinancialDiagnosisPersistenceOutcome(
-                id=321,
-                status="created",
-                data_hora=datetime(
-                    2026,
-                    7,
-                    18,
-                    4,
-                    45,
-                ),
-            )
+        return FinancialDiagnosisPersistenceOutcome(
+            id=321,
+            status="created",
+            data_hora=datetime(
+                2026,
+                7,
+                18,
+                4,
+                45,
+            ),
         )
 
     monkeypatch.setattr(
@@ -293,15 +234,11 @@ def test_signed_request_persists_with_trusted_user(
     monkeypatch.setattr(
         main,
         "safe_record_event",
-        lambda **kwargs: events.append(
-            kwargs
-        ),
+        lambda **kwargs: events.append(kwargs),
     )
 
     body = _body()
-    timestamp = int(
-        time.time()
-    )
+    timestamp = int(time.time())
 
     response = client.post(
         "/diagnostico",
@@ -318,37 +255,27 @@ def test_signed_request_persists_with_trusted_user(
 
     assert result["id"] == 321
 
-    assert captured[
-        "usuario_id_confiavel"
-    ] == USER_ID
+    assert captured["usuario_id_confiavel"] == USER_ID
 
-    assert captured[
-        "idempotency_key"
-    ] == gerar_chave_idempotencia(
+    assert captured["idempotency_key"] == gerar_chave_idempotencia(
         origem="web-app",
         request_id=REQUEST_ID,
     )
 
-    diagnosis = captured[
-        "diagnostico"
-    ]
+    diagnosis = captured["diagnostico"]
 
     assert "usuario_id" not in diagnosis
     assert "user_id" not in diagnosis
     assert "idempotency_key" not in diagnosis
     assert "request_fingerprint" not in diagnosis
 
-    assert events[-1][
-        "diagnostico_id"
-    ] == 321
+    assert events[-1]["diagnostico_id"] == 321
 
 
 def test_success_event_is_compact(
     monkeypatch,
 ):
-    _install_financial_pipeline(
-        monkeypatch
-    )
+    _install_financial_pipeline(monkeypatch)
 
     monkeypatch.setattr(
         main,
@@ -375,15 +302,11 @@ def test_success_event_is_compact(
     monkeypatch.setattr(
         main,
         "safe_record_event",
-        lambda **kwargs: events.append(
-            kwargs
-        ),
+        lambda **kwargs: events.append(kwargs),
     )
 
     body = _body()
-    timestamp = int(
-        time.time()
-    )
+    timestamp = int(time.time())
 
     response = client.post(
         "/diagnostico",
@@ -401,48 +324,30 @@ def test_success_event_is_compact(
     assert "pergunta" not in event
     assert "resposta" not in event
 
-    metadata = event[
-        "metadata"
-    ]
+    metadata = event["metadata"]
 
-    assert metadata[
-        "persistence_status"
-    ] == "existing"
+    assert metadata["persistence_status"] == "existing"
 
-    assert metadata[
-        "created"
-    ] is False
+    assert metadata["created"] is False
 
-    serialized = str(
-        event
-    )
+    serialized = str(event)
 
-    assert (
-        "Diagnóstico financeiro validado."
-        not in serialized
-    )
+    assert "Diagnóstico financeiro validado." not in serialized
 
-    assert (
-        "Plano financeiro de trinta dias."
-        not in serialized
-    )
+    assert "Plano financeiro de trinta dias." not in serialized
 
 
 def test_idempotency_conflict_returns_409(
     monkeypatch,
 ):
-    _install_financial_pipeline(
-        monkeypatch
-    )
+    _install_financial_pipeline(monkeypatch)
 
     monkeypatch.setattr(
         main,
         "persistir_diagnostico_financeiro",
         MagicMock(
             side_effect=(
-                FinancialDiagnosisIdempotencyConflictError(
-                    "internal conflict details"
-                )
+                FinancialDiagnosisIdempotencyConflictError("internal conflict details")
             )
         ),
     )
@@ -454,9 +359,7 @@ def test_idempotency_conflict_returns_409(
     )
 
     body = _body()
-    timestamp = int(
-        time.time()
-    )
+    timestamp = int(time.time())
 
     response = client.post(
         "/diagnostico",
@@ -469,34 +372,20 @@ def test_idempotency_conflict_returns_409(
 
     assert response.status_code == 409
 
-    assert (
-        "internal conflict details"
-        not in response.text
-    )
+    assert "internal conflict details" not in response.text
 
 
 def test_repository_failure_is_sanitized(
     monkeypatch,
 ):
-    _install_financial_pipeline(
-        monkeypatch
-    )
+    _install_financial_pipeline(monkeypatch)
 
-    secret_error = (
-        "postgresql://user:"
-        "super-secret@db.example/inna"
-    )
+    secret_error = "postgresql://user:super-secret@db.example/inna"
 
     monkeypatch.setattr(
         main,
         "persistir_diagnostico_financeiro",
-        MagicMock(
-            side_effect=(
-                FinancialDiagnosisServiceError(
-                    secret_error
-                )
-            )
-        ),
+        MagicMock(side_effect=(FinancialDiagnosisServiceError(secret_error))),
     )
 
     monkeypatch.setattr(
@@ -506,9 +395,7 @@ def test_repository_failure_is_sanitized(
     )
 
     body = _body()
-    timestamp = int(
-        time.time()
-    )
+    timestamp = int(time.time())
 
     response = client.post(
         "/diagnostico",
@@ -527,23 +414,12 @@ def test_repository_failure_is_sanitized(
 
 
 def test_web_route_no_longer_uses_legacy_save():
-    source = Path(
-        "api/main.py"
-    ).read_text(
+    source = Path("api/main.py").read_text(
         encoding="utf-8",
     )
 
-    assert (
-        "save_diagnostico_db"
-        not in source
-    )
+    assert "save_diagnostico_db" not in source
 
-    assert (
-        "persistir_diagnostico_financeiro"
-        in source
-    )
+    assert "persistir_diagnostico_financeiro" in source
 
-    assert (
-        "require_trusted_request_context"
-        in source
-    )
+    assert "require_trusted_request_context" in source

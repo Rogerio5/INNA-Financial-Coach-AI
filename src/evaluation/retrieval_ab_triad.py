@@ -41,9 +41,7 @@ class TriadVariantInput:
     context: tuple[str, ...] = ()
     retrieval_context: tuple[str, ...] = ()
 
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -92,9 +90,7 @@ class RetrievalABTriadEvaluation:
 def _normalize_text(
     value: object,
 ) -> str:
-    return str(
-        value or ""
-    ).strip()
+    return str(value or "").strip()
 
 
 def _normalize_context(
@@ -106,46 +102,27 @@ def _normalize_context(
     normalized: list[str] = []
 
     for value in values:
-        rendered = _normalize_text(
-            value
-        )
+        rendered = _normalize_text(value)
 
-        if (
-            rendered
-            and rendered not in normalized
-        ):
-            normalized.append(
-                rendered
-            )
+        if rendered and rendered not in normalized:
+            normalized.append(rendered)
 
-    return tuple(
-        normalized
-    )
+    return tuple(normalized)
 
 
 def _normalize_variant(
     value: TriadVariantInput,
 ) -> TriadVariantInput:
-    output = _normalize_text(
-        value.actual_output
-    )
+    output = _normalize_text(value.actual_output)
 
     if len(output) < 2:
-        raise ValueError(
-            "actual_output precisa conter uma resposta válida."
-        )
+        raise ValueError("actual_output precisa conter uma resposta válida.")
 
     return TriadVariantInput(
         actual_output=output,
-        context=_normalize_context(
-            value.context
-        ),
-        retrieval_context=_normalize_context(
-            value.retrieval_context
-        ),
-        metadata=dict(
-            value.metadata
-        ),
+        context=_normalize_context(value.context),
+        retrieval_context=_normalize_context(value.retrieval_context),
+        metadata=dict(value.metadata),
     )
 
 
@@ -195,12 +172,7 @@ def _safe_external(
         value,
         Mapping,
     ):
-        return {
-            str(key): _safe_external(
-                item
-            )
-            for key, item in value.items()
-        }
+        return {str(key): _safe_external(item) for key, item in value.items()}
 
     if isinstance(
         value,
@@ -211,12 +183,7 @@ def _safe_external(
             frozenset,
         ),
     ):
-        return [
-            _safe_external(
-                item
-            )
-            for item in value
-        ]
+        return [_safe_external(item) for item in value]
 
     model_dump = getattr(
         value,
@@ -225,11 +192,7 @@ def _safe_external(
     )
 
     if callable(model_dump):
-        return _safe_external(
-            model_dump(
-                mode="json"
-            )
-        )
+        return _safe_external(model_dump(mode="json"))
 
     to_dict = getattr(
         value,
@@ -238,18 +201,11 @@ def _safe_external(
     )
 
     if callable(to_dict):
-        return _safe_external(
-            to_dict()
-        )
+        return _safe_external(to_dict())
 
-    if (
-        dataclasses.is_dataclass(
-            value
-        )
-        and not isinstance(
-            value,
-            type,
-        )
+    if dataclasses.is_dataclass(value) and not isinstance(
+        value,
+        type,
     ):
         return {
             field_definition.name: (
@@ -260,10 +216,7 @@ def _safe_external(
                     )
                 )
             )
-            for field_definition
-            in dataclasses.fields(
-                value
-            )
+            for field_definition in dataclasses.fields(value)
         }
 
     value_dict = getattr(
@@ -277,11 +230,7 @@ def _safe_external(
         dict,
     ):
         return _safe_external(
-            {
-                key: item
-                for key, item in value_dict.items()
-                if not key.startswith("_")
-            }
+            {key: item for key, item in value_dict.items() if not key.startswith("_")}
         )
 
     return repr(value)
@@ -304,9 +253,7 @@ def _rag_triad_payload(
     if payload is None:
         return None
 
-    external = _safe_external(
-        payload
-    )
+    external = _safe_external(payload)
 
     if isinstance(
         external,
@@ -333,14 +280,7 @@ def _normalize_axis_name(
         "",
     )
 
-    return (
-        _AXIS_ALIASES.get(
-            rendered
-        )
-        or _AXIS_ALIASES.get(
-            compact
-        )
-    )
+    return _AXIS_ALIASES.get(rendered) or _AXIS_ALIASES.get(compact)
 
 
 def _safe_score(
@@ -393,11 +333,7 @@ def extract_rag_triad_axis_scores(
                 or inherited_name
             )
 
-            normalized_name = (
-                _normalize_axis_name(
-                    possible_name
-                )
-            )
+            normalized_name = _normalize_axis_name(possible_name)
 
             if normalized_name:
                 for score_key in (
@@ -409,36 +345,20 @@ def extract_rag_triad_axis_scores(
                     if score_key not in value:
                         continue
 
-                    score = _safe_score(
-                        value.get(
-                            score_key
-                        )
-                    )
+                    score = _safe_score(value.get(score_key))
 
                     if score is not None:
-                        scores[
-                            normalized_name
-                        ] = score
+                        scores[normalized_name] = score
                         break
 
             for key, item in value.items():
-                normalized_key = (
-                    _normalize_axis_name(
-                        key
-                    )
-                )
+                normalized_key = _normalize_axis_name(key)
 
                 if normalized_key:
-                    direct_score = (
-                        _safe_score(
-                            item
-                        )
-                    )
+                    direct_score = _safe_score(item)
 
                     if direct_score is not None:
-                        scores[
-                            normalized_key
-                        ] = direct_score
+                        scores[normalized_key] = direct_score
 
                     visit(
                         item,
@@ -463,9 +383,7 @@ def extract_rag_triad_axis_scores(
                     inherited_name,
                 )
 
-    visit(
-        payload
-    )
+    visit(payload)
 
     return scores
 
@@ -476,9 +394,7 @@ def _triad_passed(
     if not payload:
         return None
 
-    direct_passed = payload.get(
-        "passed"
-    )
+    direct_passed = payload.get("passed")
 
     if isinstance(
         direct_passed,
@@ -486,13 +402,17 @@ def _triad_passed(
     ):
         return direct_passed
 
-    status = str(
-        payload.get(
-            "status",
-            "",
+    status = (
+        str(
+            payload.get(
+                "status",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
     if status in {
         "passed",
@@ -543,62 +463,36 @@ def _build_recommendation(
         "faithfulness",
         "contextual_relevancy",
     ):
-        baseline_score = baseline_scores.get(
-            axis_name
-        )
+        baseline_score = baseline_scores.get(axis_name)
 
-        candidate_score = candidate_scores.get(
-            axis_name
-        )
+        candidate_score = candidate_scores.get(axis_name)
 
-        if (
-            baseline_score is None
-            or candidate_score is None
-        ):
-            deltas[
-                axis_name
-            ] = None
+        if baseline_score is None or candidate_score is None:
+            deltas[axis_name] = None
 
-            missing_axes.append(
-                axis_name
-            )
+            missing_axes.append(axis_name)
 
             continue
 
-        delta = (
-            candidate_score
-            - baseline_score
-        )
+        delta = candidate_score - baseline_score
 
-        deltas[
-            axis_name
-        ] = round(
+        deltas[axis_name] = round(
             delta,
             6,
         )
 
         if delta < -tolerance:
-            regressed_axes.append(
-                axis_name
-            )
+            regressed_axes.append(axis_name)
 
         elif delta > tolerance:
-            improved_axes.append(
-                axis_name
-            )
+            improved_axes.append(axis_name)
 
-    candidate_passed = _triad_passed(
-        candidate_payload
-    )
+    candidate_passed = _triad_passed(candidate_payload)
 
-    baseline_passed = _triad_passed(
-        baseline_payload
-    )
+    baseline_passed = _triad_passed(baseline_payload)
 
     if candidate_passed is False:
-        reasons.append(
-            "A RAG Triad da Variante B não foi aprovada."
-        )
+        reasons.append("A RAG Triad da Variante B não foi aprovada.")
 
         return (
             "reject_sentence_window",
@@ -609,9 +503,7 @@ def _build_recommendation(
     if regressed_axes:
         reasons.append(
             "Regressão superior à tolerância nos eixos: "
-            + ", ".join(
-                regressed_axes
-            )
+            + ", ".join(regressed_axes)
             + "."
         )
 
@@ -623,11 +515,7 @@ def _build_recommendation(
 
     if missing_axes:
         reasons.append(
-            "A avaliação não retornou todos os eixos: "
-            + ", ".join(
-                missing_axes
-            )
-            + "."
+            "A avaliação não retornou todos os eixos: " + ", ".join(missing_axes) + "."
         )
 
         return (
@@ -636,22 +524,16 @@ def _build_recommendation(
             deltas,
         )
 
-    if (
-        candidate_passed is True
-        and baseline_passed is not False
-    ):
+    if candidate_passed is True and baseline_passed is not False:
         if improved_axes:
             reasons.append(
                 "A Variante B foi aprovada e melhorou: "
-                + ", ".join(
-                    improved_axes
-                )
+                + ", ".join(improved_axes)
                 + "."
             )
         else:
             reasons.append(
-                "A Variante B foi aprovada sem regressão "
-                "relevante nos três eixos."
+                "A Variante B foi aprovada sem regressão relevante nos três eixos."
             )
 
         return (
@@ -696,9 +578,7 @@ def evaluate_retrieval_ab_with_rag_triad(
     """
 
     if case is None:
-        raise ValueError(
-            "Um InnaEvaluationCase válido é obrigatório."
-        )
+        raise ValueError("Um InnaEvaluationCase válido é obrigatório.")
 
     safe_tolerance = max(
         0.0,
@@ -708,22 +588,16 @@ def evaluate_retrieval_ab_with_rag_triad(
         ),
     )
 
-    baseline_input = _normalize_variant(
-        baseline
-    )
+    baseline_input = _normalize_variant(baseline)
 
-    candidate_input = _normalize_variant(
-        candidate
-    )
+    candidate_input = _normalize_variant(candidate)
 
     if payload_builder is None:
         from src.evaluation.deepeval_integration import (
             build_deepeval_payload,
         )
 
-        payload_builder = (
-            build_deepeval_payload
-        )
+        payload_builder = build_deepeval_payload
 
     if runner is None:
         if runner_factory is None:
@@ -731,21 +605,15 @@ def evaluate_retrieval_ab_with_rag_triad(
                 EvaluationRunner,
             )
 
-            runner_factory = (
-                EvaluationRunner
-            )
+            runner_factory = EvaluationRunner
 
         runner = runner_factory()
 
-    shared_metadata = dict(
-        metadata or {}
-    )
+    shared_metadata = dict(metadata or {})
 
     shared_metadata.update(
         {
-            "experiment": (
-                "retrieval_ab_sentence_window"
-            ),
+            "experiment": ("retrieval_ab_sentence_window"),
             "schema_version": 1,
         }
     )
@@ -755,29 +623,17 @@ def evaluate_retrieval_ab_with_rag_triad(
         name: str,
         variant: TriadVariantInput,
     ) -> TriadVariantEvaluation:
-        variant_metadata = dict(
-            shared_metadata
-        )
+        variant_metadata = dict(shared_metadata)
 
-        variant_metadata.update(
-            dict(
-                variant.metadata
-            )
-        )
+        variant_metadata.update(dict(variant.metadata))
 
-        variant_metadata[
-            "retrieval_variant"
-        ] = name
+        variant_metadata["retrieval_variant"] = name
 
         payload = payload_builder(
             case,
-            actual_output=(
-                variant.actual_output
-            ),
+            actual_output=(variant.actual_output),
             context=variant.context,
-            retrieval_context=(
-                variant.retrieval_context
-            ),
+            retrieval_context=(variant.retrieval_context),
             metadata=variant_metadata,
             external_run=external_run,
         )
@@ -791,12 +647,8 @@ def evaluate_retrieval_ab_with_rag_triad(
 
         return TriadVariantEvaluation(
             name=name,
-            evaluation_run=(
-                evaluation_run
-            ),
-            rag_triad=_rag_triad_payload(
-                evaluation_run
-            ),
+            evaluation_run=(evaluation_run),
+            rag_triad=_rag_triad_payload(evaluation_run),
         )
 
     baseline_evaluation = execute_variant(
@@ -814,9 +666,7 @@ def evaluate_retrieval_ab_with_rag_triad(
             compare_rag_triad_entries,
         )
 
-        comparison_function = (
-            compare_rag_triad_entries
-        )
+        comparison_function = compare_rag_triad_entries
 
     try:
         comparison = comparison_function(
@@ -827,12 +677,8 @@ def evaluate_retrieval_ab_with_rag_triad(
     except Exception as exc:
         comparison = {
             "status": "comparison_failed",
-            "error_type": (
-                type(exc).__name__
-            ),
-            "error_message": str(
-                exc
-            )[:500],
+            "error_type": (type(exc).__name__),
+            "error_message": str(exc)[:500],
         }
 
     quality_gate = None
@@ -843,55 +689,32 @@ def evaluate_retrieval_ab_with_rag_triad(
                 evaluate_quality_gate,
             )
 
-            quality_gate_function = (
-                evaluate_quality_gate
-            )
+            quality_gate_function = evaluate_quality_gate
 
         try:
             quality_gate = quality_gate_function(
                 candidate_evaluation.evaluation_run,
-                thresholds=(
-                    quality_gate_thresholds
-                ),
-                baseline_entry=(
-                    baseline_evaluation
-                    .evaluation_run
-                ),
+                thresholds=(quality_gate_thresholds),
+                baseline_entry=(baseline_evaluation.evaluation_run),
             )
         except Exception as exc:
             quality_gate = {
                 "status": "quality_gate_failed",
-                "error_type": (
-                    type(exc).__name__
-                ),
-                "error_message": str(
-                    exc
-                )[:500],
+                "error_type": (type(exc).__name__),
+                "error_message": str(exc)[:500],
             }
 
-    baseline_scores = (
-        extract_rag_triad_axis_scores(
-            baseline_evaluation.rag_triad
-        )
-    )
+    baseline_scores = extract_rag_triad_axis_scores(baseline_evaluation.rag_triad)
 
-    candidate_scores = (
-        extract_rag_triad_axis_scores(
-            candidate_evaluation.rag_triad
-        )
-    )
+    candidate_scores = extract_rag_triad_axis_scores(candidate_evaluation.rag_triad)
 
     (
         recommendation,
         recommendation_reasons,
         axis_deltas,
     ) = _build_recommendation(
-        baseline_payload=(
-            baseline_evaluation.rag_triad
-        ),
-        candidate_payload=(
-            candidate_evaluation.rag_triad
-        ),
+        baseline_payload=(baseline_evaluation.rag_triad),
+        candidate_payload=(candidate_evaluation.rag_triad),
         baseline_scores=baseline_scores,
         candidate_scores=candidate_scores,
         tolerance=safe_tolerance,
@@ -899,26 +722,18 @@ def evaluate_retrieval_ab_with_rag_triad(
 
     return RetrievalABTriadEvaluation(
         schema_version=1,
-        generated_at=datetime.now(
-            UTC
-        ).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         baseline=baseline_evaluation,
         candidate=candidate_evaluation,
         axis_scores={
-            "hybrid_baseline": (
-                baseline_scores
-            ),
-            "hybrid_sentence_window": (
-                candidate_scores
-            ),
+            "hybrid_baseline": (baseline_scores),
+            "hybrid_sentence_window": (candidate_scores),
         },
         axis_deltas=axis_deltas,
         comparison=comparison,
         quality_gate=quality_gate,
         recommendation=recommendation,
-        recommendation_reasons=(
-            recommendation_reasons
-        ),
+        recommendation_reasons=(recommendation_reasons),
         tolerance=safe_tolerance,
     )
 
@@ -930,79 +745,31 @@ def build_retrieval_ab_triad_report_payload(
     Gera relatório sem armazenar respostas ou contextos brutos.
     """
 
-    baseline_run = _safe_external(
-        result.baseline.evaluation_run
-    )
+    baseline_run = _safe_external(result.baseline.evaluation_run)
 
-    candidate_run = _safe_external(
-        result.candidate.evaluation_run
-    )
+    candidate_run = _safe_external(result.candidate.evaluation_run)
 
     return {
-        "schema_version": (
-            result.schema_version
-        ),
-        "generated_at": (
-            result.generated_at
-        ),
-        "experiment": (
-            "retrieval_ab_sentence_window"
-        ),
+        "schema_version": (result.schema_version),
+        "generated_at": (result.generated_at),
+        "experiment": ("retrieval_ab_sentence_window"),
         "baseline": {
-            "name": (
-                result.baseline.name
-            ),
-            "rag_triad": (
-                _safe_external(
-                    result.baseline.rag_triad
-                )
-            ),
-            "evaluation_run": (
-                baseline_run
-            ),
+            "name": (result.baseline.name),
+            "rag_triad": (_safe_external(result.baseline.rag_triad)),
+            "evaluation_run": (baseline_run),
         },
         "candidate": {
-            "name": (
-                result.candidate.name
-            ),
-            "rag_triad": (
-                _safe_external(
-                    result.candidate.rag_triad
-                )
-            ),
-            "evaluation_run": (
-                candidate_run
-            ),
+            "name": (result.candidate.name),
+            "rag_triad": (_safe_external(result.candidate.rag_triad)),
+            "evaluation_run": (candidate_run),
         },
-        "axis_scores": (
-            _safe_external(
-                result.axis_scores
-            )
-        ),
-        "axis_deltas": (
-            _safe_external(
-                result.axis_deltas
-            )
-        ),
-        "comparison": (
-            _safe_external(
-                result.comparison
-            )
-        ),
-        "quality_gate": (
-            _safe_external(
-                result.quality_gate
-            )
-        ),
-        "recommendation": (
-            result.recommendation
-        ),
-        "recommendation_reasons": list(
-            result.recommendation_reasons
-        ),
-        "tolerance": (
-            result.tolerance
-        ),
+        "axis_scores": (_safe_external(result.axis_scores)),
+        "axis_deltas": (_safe_external(result.axis_deltas)),
+        "comparison": (_safe_external(result.comparison)),
+        "quality_gate": (_safe_external(result.quality_gate)),
+        "recommendation": (result.recommendation),
+        "recommendation_reasons": list(result.recommendation_reasons),
+        "tolerance": (result.tolerance),
         "privacy": {
             "actual_outputs_stored": False,
             "retrieval_contexts_stored": False,
@@ -1025,27 +792,15 @@ def _safe_label(
 def _markdown_report(
     payload: Mapping[str, Any],
 ) -> str:
-    axis_scores = payload[
-        "axis_scores"
-    ]
+    axis_scores = payload["axis_scores"]
 
-    axis_deltas = payload[
-        "axis_deltas"
-    ]
+    axis_deltas = payload["axis_deltas"]
 
     lines = [
         "# Comparação A/B com RAG Triad",
         "",
         f"- Gerado em: `{payload['generated_at']}`",
-        (
-            "- Recomendação: `"
-            + str(
-                payload[
-                    "recommendation"
-                ]
-            )
-            + "`"
-        ),
+        ("- Recomendação: `" + str(payload["recommendation"]) + "`"),
         f"- Tolerância: `{payload['tolerance']}`",
         "",
         "## Métricas",
@@ -1054,52 +809,30 @@ def _markdown_report(
         "|---|---:|---:|---:|",
     ]
 
-    baseline = axis_scores[
-        "hybrid_baseline"
-    ]
+    baseline = axis_scores["hybrid_baseline"]
 
-    candidate = axis_scores[
-        "hybrid_sentence_window"
-    ]
+    candidate = axis_scores["hybrid_sentence_window"]
 
     for axis_name in (
         "answer_relevancy",
         "faithfulness",
         "contextual_relevancy",
     ):
-        baseline_score = baseline.get(
-            axis_name
-        )
+        baseline_score = baseline.get(axis_name)
 
-        candidate_score = candidate.get(
-            axis_name
-        )
+        candidate_score = candidate.get(axis_name)
 
-        delta = axis_deltas.get(
-            axis_name
-        )
+        delta = axis_deltas.get(axis_name)
 
         lines.append(
             "| `"
             + axis_name
             + "` | "
-            + (
-                f"{baseline_score:.4f}"
-                if baseline_score is not None
-                else "-"
-            )
+            + (f"{baseline_score:.4f}" if baseline_score is not None else "-")
             + " | "
-            + (
-                f"{candidate_score:.4f}"
-                if candidate_score is not None
-                else "-"
-            )
+            + (f"{candidate_score:.4f}" if candidate_score is not None else "-")
             + " | "
-            + (
-                f"{delta:+.4f}"
-                if delta is not None
-                else "-"
-            )
+            + (f"{delta:+.4f}" if delta is not None else "-")
             + " |"
         )
 
@@ -1111,12 +844,8 @@ def _markdown_report(
         )
     )
 
-    for reason in payload[
-        "recommendation_reasons"
-    ]:
-        lines.append(
-            "- " + str(reason)
-        )
+    for reason in payload["recommendation_reasons"]:
+        lines.append("- " + str(reason))
 
     lines.extend(
         (
@@ -1130,9 +859,7 @@ def _markdown_report(
         )
     )
 
-    return "\n".join(
-        lines
-    )
+    return "\n".join(lines)
 
 
 def write_retrieval_ab_triad_report(
@@ -1141,83 +868,38 @@ def write_retrieval_ab_triad_report(
     output_directory: str | Path,
     run_label: str = "week3-retrieval-ab-triad",
 ) -> dict[str, str]:
-    output_path = Path(
-        output_directory
-    )
+    output_path = Path(output_directory)
 
     output_path.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    payload = (
-        build_retrieval_ab_triad_report_payload(
-            result
-        )
-    )
+    payload = build_retrieval_ab_triad_report_payload(result)
 
-    timestamp = datetime.now(
-        UTC
-    ).strftime(
-        "%Y%m%dT%H%M%SZ"
-    )
+    timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
 
     digest_source = json.dumps(
         {
-            "generated_at": (
-                payload[
-                    "generated_at"
-                ]
-            ),
-            "recommendation": (
-                payload[
-                    "recommendation"
-                ]
-            ),
-            "axis_scores": (
-                payload[
-                    "axis_scores"
-                ]
-            ),
+            "generated_at": (payload["generated_at"]),
+            "recommendation": (payload["recommendation"]),
+            "axis_scores": (payload["axis_scores"]),
         },
         ensure_ascii=False,
         sort_keys=True,
     )
 
-    digest = hashlib.sha256(
-        digest_source.encode(
-            "utf-8"
-        )
-    ).hexdigest()[:12]
+    digest = hashlib.sha256(digest_source.encode("utf-8")).hexdigest()[:12]
 
-    run_id = (
-        _safe_label(
-            run_label
-        )
-        + "-"
-        + timestamp
-        + "-"
-        + digest
-    )
+    run_id = _safe_label(run_label) + "-" + timestamp + "-" + digest
 
-    payload[
-        "run_id"
-    ] = run_id
+    payload["run_id"] = run_id
 
-    json_path = (
-        output_path
-        / f"{run_id}.json"
-    )
+    json_path = output_path / f"{run_id}.json"
 
-    markdown_path = (
-        output_path
-        / f"{run_id}.md"
-    )
+    markdown_path = output_path / f"{run_id}.md"
 
-    history_path = (
-        output_path
-        / "history.jsonl"
-    )
+    history_path = output_path / "history.jsonl"
 
     json_path.write_text(
         json.dumps(
@@ -1229,35 +911,17 @@ def write_retrieval_ab_triad_report(
     )
 
     markdown_path.write_text(
-        _markdown_report(
-            payload
-        ),
+        _markdown_report(payload),
         encoding="utf-8",
     )
 
     history_record = {
         "run_id": run_id,
-        "generated_at": (
-            payload[
-                "generated_at"
-            ]
-        ),
-        "recommendation": (
-            payload[
-                "recommendation"
-            ]
-        ),
-        "axis_deltas": (
-            payload[
-                "axis_deltas"
-            ]
-        ),
-        "json_report": str(
-            json_path
-        ),
-        "markdown_report": str(
-            markdown_path
-        ),
+        "generated_at": (payload["generated_at"]),
+        "recommendation": (payload["recommendation"]),
+        "axis_deltas": (payload["axis_deltas"]),
+        "json_report": str(json_path),
+        "markdown_report": str(markdown_path),
     }
 
     with history_path.open(
@@ -1274,13 +938,7 @@ def write_retrieval_ab_triad_report(
 
     return {
         "run_id": run_id,
-        "json_path": str(
-            json_path
-        ),
-        "markdown_path": str(
-            markdown_path
-        ),
-        "history_path": str(
-            history_path
-        ),
+        "json_path": str(json_path),
+        "markdown_path": str(markdown_path),
+        "history_path": str(history_path),
     }

@@ -29,24 +29,15 @@ def _diagnosis(
         "moeda": "BRL",
         "simbolo_moeda": "R$",
         "saldo_estimado": 1200,
-        (
-            "comprometimento_"
-            "renda_percentual"
-        ): 70,
+        ("comprometimento_renda_percentual"): 70,
         "meses_reserva_estimados": 0.714286,
         "score_financeiro": 70,
         "nivel_risco": "Medio",
-        "diagnostico": (
-            "Diagnóstico financeiro validado."
-        ),
-        "plano_30_dias": (
-            "Plano financeiro de trinta dias."
-        ),
+        "diagnostico": ("Diagnóstico financeiro validado."),
+        "plano_30_dias": ("Plano financeiro de trinta dias."),
     }
 
-    values.update(
-        overrides
-    )
+    values.update(overrides)
 
     return values
 
@@ -56,47 +47,35 @@ def _repository_result(
     status="created",
     identifier=101,
 ):
-    return (
-        repository
-        .FinancialDiagnosisWriteResult(
-            id=identifier,
-            status=status,
-            data_hora=datetime(
-                2026,
-                7,
-                18,
-                4,
-                0,
-            ),
-        )
+    return repository.FinancialDiagnosisWriteResult(
+        id=identifier,
+        status=status,
+        data_hora=datetime(
+            2026,
+            7,
+            18,
+            4,
+            0,
+        ),
     )
 
 
 def test_generated_key_is_deterministic_and_private():
     first = service.gerar_chave_idempotencia(
         origem="web-app",
-        request_id=(
-            "sensitive-request-123"
-        ),
+        request_id=("sensitive-request-123"),
     )
 
     second = service.gerar_chave_idempotencia(
         origem="web-app",
-        request_id=(
-            "sensitive-request-123"
-        ),
+        request_id=("sensitive-request-123"),
     )
 
     assert first == second
 
-    assert first.startswith(
-        "diagnosis:web-app:"
-    )
+    assert first.startswith("diagnosis:web-app:")
 
-    assert (
-        "sensitive-request-123"
-        not in first
-    )
+    assert "sensitive-request-123" not in first
 
     assert 16 <= len(first) <= 160
 
@@ -132,9 +111,7 @@ def test_generated_key_rejects_invalid_input(
     origem,
     request_id,
 ):
-    with pytest.raises(
-        service.TrustedDiagnosisIdentityError
-    ):
+    with pytest.raises(service.TrustedDiagnosisIdentityError):
         service.gerar_chave_idempotencia(
             origem=origem,
             request_id=request_id,
@@ -159,30 +136,17 @@ def test_service_separates_identity_from_diagnosis(
         fake_save,
     )
 
-    outcome = (
-        service
-        .persistir_diagnostico_financeiro(
-            usuario_id_confiavel=(
-                "trusted-user-123"
-            ),
-            idempotency_key=(
-                "diagnosis:web-app:1234567890abcdef"
-            ),
-            diagnostico=_diagnosis(),
-        )
+    outcome = service.persistir_diagnostico_financeiro(
+        usuario_id_confiavel=("trusted-user-123"),
+        idempotency_key=("diagnosis:web-app:1234567890abcdef"),
+        diagnostico=_diagnosis(),
     )
 
     command = captured["command"]
 
-    assert (
-        command.context.usuario_id
-        == "trusted-user-123"
-    )
+    assert command.context.usuario_id == "trusted-user-123"
 
-    assert (
-        command.context.idempotency_key
-        == "diagnosis:web-app:1234567890abcdef"
-    )
+    assert command.context.idempotency_key == "diagnosis:web-app:1234567890abcdef"
 
     assert not hasattr(
         command.diagnosis,
@@ -196,9 +160,7 @@ def test_service_separates_identity_from_diagnosis(
 def test_service_accepts_validated_record(
     monkeypatch,
 ):
-    save = MagicMock(
-        return_value=_repository_result()
-    )
+    save = MagicMock(return_value=_repository_result())
 
     monkeypatch.setattr(
         repository,
@@ -206,15 +168,11 @@ def test_service_accepts_validated_record(
         save,
     )
 
-    record = FinancialDiagnosisRecord(
-        **_diagnosis()
-    )
+    record = FinancialDiagnosisRecord(**_diagnosis())
 
     service.persistir_diagnostico_financeiro(
         usuario_id_confiavel="user-123",
-        idempotency_key=(
-            "diagnosis:graph:1234567890abcdef"
-        ),
+        idempotency_key=("diagnosis:graph:1234567890abcdef"),
         diagnostico=record,
     )
 
@@ -249,14 +207,10 @@ def test_service_rejects_controlled_fields(
     payload = _diagnosis()
     payload[forbidden_field] = "attacker"
 
-    with pytest.raises(
-        service.FinancialDiagnosisValidationError
-    ):
+    with pytest.raises(service.FinancialDiagnosisValidationError):
         service.persistir_diagnostico_financeiro(
             usuario_id_confiavel="user-123",
-            idempotency_key=(
-                "diagnosis:web-app:1234567890abcdef"
-            ),
+            idempotency_key=("diagnosis:web-app:1234567890abcdef"),
             diagnostico=payload,
         )
 
@@ -275,18 +229,12 @@ def test_service_does_not_default_missing_values_to_zero(
     )
 
     payload = _diagnosis()
-    payload.pop(
-        "renda_mensal"
-    )
+    payload.pop("renda_mensal")
 
-    with pytest.raises(
-        service.FinancialDiagnosisValidationError
-    ):
+    with pytest.raises(service.FinancialDiagnosisValidationError):
         service.persistir_diagnostico_financeiro(
             usuario_id_confiavel="user-123",
-            idempotency_key=(
-                "diagnosis:web-app:1234567890abcdef"
-            ),
+            idempotency_key=("diagnosis:web-app:1234567890abcdef"),
             diagnostico=payload,
         )
 
@@ -304,14 +252,10 @@ def test_service_rejects_blank_trusted_identity(
         save,
     )
 
-    with pytest.raises(
-        service.TrustedDiagnosisIdentityError
-    ):
+    with pytest.raises(service.TrustedDiagnosisIdentityError):
         service.persistir_diagnostico_financeiro(
             usuario_id_confiavel=" ",
-            idempotency_key=(
-                "diagnosis:web-app:1234567890abcdef"
-            ),
+            idempotency_key=("diagnosis:web-app:1234567890abcdef"),
             diagnostico=_diagnosis(),
         )
 
@@ -329,9 +273,7 @@ def test_service_rejects_invalid_idempotency_key(
         save,
     )
 
-    with pytest.raises(
-        service.TrustedDiagnosisIdentityError
-    ):
+    with pytest.raises(service.TrustedDiagnosisIdentityError):
         service.persistir_diagnostico_financeiro(
             usuario_id_confiavel="user-123",
             idempotency_key="short",
@@ -369,15 +311,10 @@ def test_service_maps_repository_result(
         ),
     )
 
-    outcome = (
-        service
-        .persistir_diagnostico_financeiro(
-            usuario_id_confiavel="user-123",
-            idempotency_key=(
-                "diagnosis:telegram:1234567890abcdef"
-            ),
-            diagnostico=_diagnosis(),
-        )
+    outcome = service.persistir_diagnostico_financeiro(
+        usuario_id_confiavel="user-123",
+        idempotency_key=("diagnosis:telegram:1234567890abcdef"),
+        diagnostico=_diagnosis(),
     )
 
     assert outcome.id == 77
@@ -392,70 +329,39 @@ def test_service_maps_idempotency_conflict(
         repository,
         "salvar_diagnostico_financeiro",
         MagicMock(
-            side_effect=(
-                repository
-                .IdempotencyConflictError(
-                    "internal details"
-                )
-            )
+            side_effect=(repository.IdempotencyConflictError("internal details"))
         ),
     )
 
-    with pytest.raises(
-        service
-        .FinancialDiagnosisIdempotencyConflictError
-    ) as exc_info:
+    with pytest.raises(service.FinancialDiagnosisIdempotencyConflictError) as exc_info:
         service.persistir_diagnostico_financeiro(
             usuario_id_confiavel="user-123",
-            idempotency_key=(
-                "diagnosis:web-app:1234567890abcdef"
-            ),
+            idempotency_key=("diagnosis:web-app:1234567890abcdef"),
             diagnostico=_diagnosis(),
         )
 
-    assert (
-        "internal details"
-        not in str(
-            exc_info.value
-        )
-    )
+    assert "internal details" not in str(exc_info.value)
 
 
 def test_service_sanitizes_repository_failure(
     monkeypatch,
 ):
-    secret = (
-        "postgresql://user:"
-        "super-secret@db.example/inna"
-    )
+    secret = "postgresql://user:super-secret@db.example/inna"
 
     monkeypatch.setattr(
         repository,
         "salvar_diagnostico_financeiro",
-        MagicMock(
-            side_effect=(
-                repository
-                .FinancialDiagnosisRepositoryError(
-                    secret
-                )
-            )
-        ),
+        MagicMock(side_effect=(repository.FinancialDiagnosisRepositoryError(secret))),
     )
 
-    with pytest.raises(
-        service.FinancialDiagnosisServiceError
-    ) as exc_info:
+    with pytest.raises(service.FinancialDiagnosisServiceError) as exc_info:
         service.persistir_diagnostico_financeiro(
             usuario_id_confiavel="user-123",
-            idempotency_key=(
-                "diagnosis:web-app:1234567890abcdef"
-            ),
+            idempotency_key=("diagnosis:web-app:1234567890abcdef"),
             diagnostico=_diagnosis(),
         )
 
-    message = str(
-        exc_info.value
-    )
+    message = str(exc_info.value)
 
     assert "super-secret" not in message
     assert "postgresql://" not in message
@@ -463,19 +369,16 @@ def test_service_sanitizes_repository_failure(
 
 
 def test_service_outcome_is_compact():
-    outcome = (
-        service
-        .FinancialDiagnosisPersistenceOutcome(
-            id=10,
-            status="existing",
-            data_hora=datetime(
-                2026,
-                7,
-                18,
-                4,
-                0,
-            ),
-        )
+    outcome = service.FinancialDiagnosisPersistenceOutcome(
+        id=10,
+        status="existing",
+        data_hora=datetime(
+            2026,
+            7,
+            18,
+            4,
+            0,
+        ),
     )
 
     result = outcome.to_dict()
@@ -484,9 +387,7 @@ def test_service_outcome_is_compact():
         "id": 10,
         "status": "existing",
         "created": False,
-        "data_hora": (
-            "2026-07-18T04:00:00"
-        ),
+        "data_hora": ("2026-07-18T04:00:00"),
     }
 
     assert "usuario_id" not in result

@@ -25,16 +25,10 @@ from src.agents.supervisor_llm import (
 )
 
 
-PROJECT_ROOT = (
-    Path(__file__)
-    .resolve()
-    .parents[2]
-)
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
-class SupervisorDeadlineExceeded(
-    TimeoutError
-):
+class SupervisorDeadlineExceeded(TimeoutError):
     """
     O Gemini ultrapassou o prazo total do Supervisor.
     """
@@ -61,31 +55,18 @@ def _minimal_context(
 def _parse_worker_output(
     stdout: str,
 ) -> dict[str, Any]:
-    lines = [
-        line.strip()
-        for line in str(stdout or "").splitlines()
-        if line.strip()
-    ]
+    lines = [line.strip() for line in str(stdout or "").splitlines() if line.strip()]
 
     if not lines:
-        raise RuntimeError(
-            "O processo Gemini terminou sem resposta."
-        )
+        raise RuntimeError("O processo Gemini terminou sem resposta.")
 
     try:
-        result = json.loads(
-            lines[-1]
-        )
+        result = json.loads(lines[-1])
     except json.JSONDecodeError as exc:
-        raise RuntimeError(
-            "O processo Gemini retornou uma "
-            "resposta inválida."
-        ) from exc
+        raise RuntimeError("O processo Gemini retornou uma resposta inválida.") from exc
 
     if not isinstance(result, dict):
-        raise RuntimeError(
-            "Formato de resposta do processo inválido."
-        )
+        raise RuntimeError("Formato de resposta do processo inválido.")
 
     return result
 
@@ -97,11 +78,9 @@ def classificar_com_gemini_com_deadline(
 ) -> SupervisorDecision:
     runtime = get_supervisor_runtime_config()
 
-    protected_message = (
-        _obter_mensagem_protegida(
-            mensagem,
-            context,
-        )
+    protected_message = _obter_mensagem_protegida(
+        mensagem,
+        context,
     )
 
     payload = json.dumps(
@@ -115,11 +94,7 @@ def classificar_com_gemini_com_deadline(
         ensure_ascii=False,
     )
 
-    creation_flags = (
-        subprocess.CREATE_NO_WINDOW
-        if os.name == "nt"
-        else 0
-    )
+    creation_flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
 
     try:
         completed = subprocess.run(
@@ -135,23 +110,17 @@ def classificar_com_gemini_com_deadline(
             capture_output=True,
             cwd=str(PROJECT_ROOT),
             env=os.environ.copy(),
-            timeout=(
-                runtime.total_deadline_ms
-                / 1000
-            ),
+            timeout=(runtime.total_deadline_ms / 1000),
             check=False,
             creationflags=creation_flags,
         )
 
     except subprocess.TimeoutExpired as exc:
         raise SupervisorDeadlineExceeded(
-            "Gemini ultrapassou o prazo total de "
-            f"{runtime.total_deadline_ms} ms."
+            f"Gemini ultrapassou o prazo total de {runtime.total_deadline_ms} ms."
         ) from exc
 
-    result = _parse_worker_output(
-        completed.stdout
-    )
+    result = _parse_worker_output(completed.stdout)
 
     if not result.get("ok"):
         error_type = str(
@@ -168,13 +137,9 @@ def classificar_com_gemini_com_deadline(
             )
         )[:300]
 
-        raise RuntimeError(
-            f"{error_type}: {error_message}"
-        )
+        raise RuntimeError(f"{error_type}: {error_message}")
 
-    return SupervisorDecision.model_validate(
-        result["decision"]
-    )
+    return SupervisorDecision.model_validate(result["decision"])
 
 
 __all__ = [

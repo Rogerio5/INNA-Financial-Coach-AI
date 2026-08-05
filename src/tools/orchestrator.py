@@ -72,12 +72,10 @@ MOTIVOS_TOOLS = {
         "da capacidade mensal informada."
     ),
     "simular_formacao_reserva": (
-        "A pergunta envolve uma meta de reserva e o tempo estimado "
-        "para alcançá-la."
+        "A pergunta envolve uma meta de reserva e o tempo estimado para alcançá-la."
     ),
     "analisar_divida_educativamente": (
-        "A mensagem contém informações sobre dívida, atraso, "
-        "parcelas ou juros."
+        "A mensagem contém informações sobre dívida, atraso, parcelas ou juros."
     ),
     "simular_parcelamento_sem_juros": (
         "A pergunta envolve divisão de um valor em parcelas sem juros."
@@ -116,22 +114,16 @@ def preparar_contexto_memoria_tools(
     contexto = {
         chave: valor
         for chave, valor in memoria.items()
-        if chave in CAMPOS_MEMORIA_PERMITIDOS
-        and valor not in (None, "")
+        if chave in CAMPOS_MEMORIA_PERMITIDOS and valor not in (None, "")
     }
 
     memoria_json = memoria.get("memoria_json")
 
     if isinstance(memoria_json, dict):
-        for chave_origem, chave_destino in (
-            ALIASES_MEMORIA_JSON.items()
-        ):
+        for chave_origem, chave_destino in ALIASES_MEMORIA_JSON.items():
             valor = memoria_json.get(chave_origem)
 
-            if (
-                valor not in (None, "")
-                and chave_destino not in contexto
-            ):
+            if valor not in (None, "") and chave_destino not in contexto:
                 contexto[chave_destino] = valor
 
     return contexto
@@ -146,9 +138,7 @@ def executar_tools_para_pergunta(
     """
     Executa o roteamento com apoio da memória persistente.
     """
-    contexto = preparar_contexto_memoria_tools(
-        memoria
-    )
+    contexto = preparar_contexto_memoria_tools(memoria)
 
     resultado_router = rotear_tool(
         mensagem=pergunta,
@@ -156,20 +146,11 @@ def executar_tools_para_pergunta(
         executar=executar,
     )
 
-    classificacao = (
-        resultado_router.get("classificacao")
-        or {}
-    )
+    classificacao = resultado_router.get("classificacao") or {}
 
-    preparacao = (
-        resultado_router.get("preparacao")
-        or {}
-    )
+    preparacao = resultado_router.get("preparacao") or {}
 
-    execucao = (
-        resultado_router.get("execucao")
-        or {}
-    )
+    execucao = resultado_router.get("execucao") or {}
 
     return {
         "ok": resultado_router.get("ok", False),
@@ -177,10 +158,10 @@ def executar_tools_para_pergunta(
         "tool_label": TOOL_LABELS.get(
             classificacao.get("tool"),
             classificacao.get("tool"),
-        ) if classificacao.get("tool") else None,
-        "motivo_tool": obter_motivo_tool(
-            classificacao.get("tool")
-        ),
+        )
+        if classificacao.get("tool")
+        else None,
+        "motivo_tool": obter_motivo_tool(classificacao.get("tool")),
         "intencao": classificacao.get("intencao"),
         "confianca": classificacao.get(
             "confianca",
@@ -221,15 +202,10 @@ def montar_bloco_tools_prompt(
     """
     resultado_tools = resultado_tools or {}
 
-    tool = resultado_tools.get(
-        "tool_identificada"
-    )
+    tool = resultado_tools.get("tool_identificada")
 
     if not tool:
-        return (
-            "[TOOLS FINANCEIRAS]\n"
-            "Nenhuma ferramenta determinística foi acionada."
-        )
+        return "[TOOLS FINANCEIRAS]\nNenhuma ferramenta determinística foi acionada."
 
     dados_ausentes = resultado_tools.get(
         "dados_ausentes",
@@ -333,9 +309,7 @@ def processar_pergunta_com_tools(
         3,
     )
 
-    bloco_prompt = montar_bloco_tools_prompt(
-        resultado
-    )
+    bloco_prompt = montar_bloco_tools_prompt(resultado)
 
     resultado_final = {
         **resultado,
@@ -352,29 +326,19 @@ def processar_pergunta_com_tools(
             from .observability import registrar_evento_tool
 
             evento = registrar_evento_tool(
-                usuario_id=(
-                    usuario_id
-                    or (
-                        memoria or {}
-                    ).get("usuario_id")
-                ),
+                usuario_id=(usuario_id or (memoria or {}).get("usuario_id")),
                 pergunta=pergunta,
                 resultado_tools=resultado_final,
                 duracao_ms=duracao_ms,
                 origem=origem,
             )
 
-            resultado_final[
-                "observabilidade"
-            ] = evento
+            resultado_final["observabilidade"] = evento
 
         except Exception as exc:
             resultado_final["observabilidade"] = {
                 "ok": False,
-                "message": (
-                    "Falha não bloqueante na "
-                    f"observabilidade: {exc}"
-                ),
+                "message": (f"Falha não bloqueante na observabilidade: {exc}"),
             }
 
     return resultado_final

@@ -31,9 +31,7 @@ def _client() -> TestClient:
         telegram_webhook.router,
     )
 
-    return TestClient(
-        app
-    )
+    return TestClient(app)
 
 
 def _headers() -> dict[str, str]:
@@ -78,51 +76,27 @@ def _outcome(
 
 
 def test_route_no_longer_declares_background_tasks():
-    function = (
-        telegram_webhook
-        .telegram_webhook
-    )
+    function = telegram_webhook.telegram_webhook
 
-    assert inspect.iscoroutinefunction(
-        function
-    )
+    assert inspect.iscoroutinefunction(function)
 
-    parameters = inspect.signature(
-        function
-    ).parameters
+    parameters = inspect.signature(function).parameters
 
     assert "request" in parameters
     assert "_trusted_webhook" in parameters
 
-    assert (
-        "background_tasks"
-        not in parameters
-    )
+    assert "background_tasks" not in parameters
 
-    source = inspect.getsource(
-        function
-    )
+    source = inspect.getsource(function)
 
     assert "BackgroundTasks" not in source
     assert ".add_task(" not in source
 
-    assert (
-        "claim_authenticated_"
-        "telegram_update"
-        not in source
-    )
+    assert "claim_authenticated_telegram_update" not in source
 
-    assert (
-        "process_claimed_"
-        "telegram_update"
-        not in source
-    )
+    assert "process_claimed_telegram_update" not in source
 
-    assert (
-        "enqueue_authenticated_"
-        "telegram_update_atomic"
-        in source
-    )
+    assert "enqueue_authenticated_telegram_update_atomic" in source
 
 
 @pytest.mark.parametrize(
@@ -180,10 +154,7 @@ def test_authenticated_webhook_returns_safe_ingress_outcome(
 
     monkeypatch.setattr(
         telegram_webhook,
-        (
-            "enqueue_authenticated_"
-            "telegram_update_atomic"
-        ),
+        ("enqueue_authenticated_telegram_update_atomic"),
         enqueue,
     )
 
@@ -195,10 +166,7 @@ def test_authenticated_webhook_returns_safe_ingress_outcome(
 
     monkeypatch.setattr(
         telegram_webhook,
-        (
-            "process_claimed_"
-            "telegram_update"
-        ),
+        ("process_claimed_telegram_update"),
         process_claimed,
     )
 
@@ -217,9 +185,7 @@ def test_authenticated_webhook_returns_safe_ingress_outcome(
         "status": decision,
     }
 
-    enqueue.assert_called_once_with(
-        update
-    )
+    enqueue.assert_called_once_with(update)
 
     process_update.assert_not_called()
     process_claimed.assert_not_called()
@@ -237,10 +203,7 @@ def test_invalid_json_is_rejected_before_ingress(
 
     monkeypatch.setattr(
         telegram_webhook,
-        (
-            "enqueue_authenticated_"
-            "telegram_update_atomic"
-        ),
+        ("enqueue_authenticated_telegram_update_atomic"),
         enqueue,
     )
 
@@ -249,18 +212,14 @@ def test_invalid_json_is_rejected_before_ingress(
         content=b"{",
         headers={
             **_headers(),
-            "content-type": (
-                "application/json"
-            ),
+            "content-type": ("application/json"),
         },
     )
 
     assert response.status_code == 400
 
     assert response.json() == {
-        "detail": (
-            "Atualização Telegram inválida."
-        ),
+        "detail": ("Atualização Telegram inválida."),
     }
 
     enqueue.assert_not_called()
@@ -289,10 +248,7 @@ def test_non_mapping_update_is_rejected(
 
     monkeypatch.setattr(
         telegram_webhook,
-        (
-            "enqueue_authenticated_"
-            "telegram_update_atomic"
-        ),
+        ("enqueue_authenticated_telegram_update_atomic"),
         enqueue,
     )
 
@@ -305,9 +261,7 @@ def test_non_mapping_update_is_rejected(
     assert response.status_code == 400
 
     assert response.json() == {
-        "detail": (
-            "Atualização Telegram inválida."
-        ),
+        "detail": ("Atualização Telegram inválida."),
     }
 
     enqueue.assert_not_called()
@@ -321,63 +275,42 @@ def test_non_mapping_update_is_rejected(
     ),
     [
         (
-            telegram_webhook
-            .TelegramUpdateIngressValidationError(
+            telegram_webhook.TelegramUpdateIngressValidationError(
                 "sensitive validation"
             ),
             400,
             "Atualização Telegram inválida.",
         ),
         (
-            telegram_webhook
-            .TelegramUpdateIngressConflictError(
-                "sensitive conflict"
-            ),
+            telegram_webhook.TelegramUpdateIngressConflictError("sensitive conflict"),
             409,
             "Conflito no update Telegram.",
         ),
         (
-            telegram_webhook
-            .TelegramUpdateIngressConfigurationError(
+            telegram_webhook.TelegramUpdateIngressConfigurationError(
                 "encryption-key-secret"
             ),
             503,
-            (
-                "Processamento Telegram "
-                "temporariamente indisponível."
-            ),
+            ("Processamento Telegram temporariamente indisponível."),
         ),
         (
-            telegram_webhook
-            .TelegramUpdateIngressConsistencyError(
+            telegram_webhook.TelegramUpdateIngressConsistencyError(
                 "database-consistency-secret"
             ),
             503,
-            (
-                "Processamento Telegram "
-                "temporariamente indisponível."
-            ),
+            ("Processamento Telegram temporariamente indisponível."),
         ),
         (
-            telegram_webhook
-            .TelegramUpdateIngressUnavailableError(
+            telegram_webhook.TelegramUpdateIngressUnavailableError(
                 "postgresql://secret"
             ),
             503,
-            (
-                "Processamento Telegram "
-                "temporariamente indisponível."
-            ),
+            ("Processamento Telegram temporariamente indisponível."),
         ),
         (
-            RuntimeError(
-                "unexpected-sensitive-error"
-            ),
+            RuntimeError("unexpected-sensitive-error"),
             503,
-            (
-                "Processamento Telegram "
-                "temporariamente indisponível."
-            ),
+            ("Processamento Telegram temporariamente indisponível."),
         ),
     ],
 )
@@ -398,10 +331,7 @@ def test_ingress_errors_are_mapped_and_sanitized(
 
     monkeypatch.setattr(
         telegram_webhook,
-        (
-            "enqueue_authenticated_"
-            "telegram_update_atomic"
-        ),
+        ("enqueue_authenticated_telegram_update_atomic"),
         enqueue,
     )
 
@@ -411,10 +341,7 @@ def test_ingress_errors_are_mapped_and_sanitized(
         headers=_headers(),
     )
 
-    assert (
-        response.status_code
-        == expected_status
-    )
+    assert response.status_code == expected_status
 
     assert response.json() == {
         "detail": expected_detail,
@@ -430,10 +357,7 @@ def test_ingress_errors_are_mapped_and_sanitized(
         "postgresql://secret",
         "unexpected-sensitive-error",
     ):
-        assert (
-            sensitive_value
-            not in response_text
-        )
+        assert sensitive_value not in response_text
 
 
 def test_webhook_response_does_not_expose_update_payload(
@@ -444,15 +368,11 @@ def test_webhook_response_does_not_expose_update_payload(
         SECRET,
     )
 
-    sensitive_text = (
-        "private-financial-message"
-    )
+    sensitive_text = "private-financial-message"
 
     update = _update()
 
-    update["message"]["text"] = (
-        sensitive_text
-    )
+    update["message"]["text"] = sensitive_text
 
     enqueue = MagicMock(
         return_value=_outcome(
@@ -464,10 +384,7 @@ def test_webhook_response_does_not_expose_update_payload(
 
     monkeypatch.setattr(
         telegram_webhook,
-        (
-            "enqueue_authenticated_"
-            "telegram_update_atomic"
-        ),
+        ("enqueue_authenticated_telegram_update_atomic"),
         enqueue,
     )
 
@@ -481,9 +398,7 @@ def test_webhook_response_does_not_expose_update_payload(
 
     assert sensitive_text not in response.text
 
-    assert set(
-        response.json()
-    ) == {
+    assert set(response.json()) == {
         "ok",
         "accepted",
         "duplicate",
@@ -506,9 +421,7 @@ def test_enqueue_finishes_before_http_response(
     ):
         assert update == _update()
 
-        events.append(
-            "database_commit"
-        )
+        events.append("database_commit")
 
         return _outcome(
             decision="enqueued",
@@ -518,10 +431,7 @@ def test_enqueue_finishes_before_http_response(
 
     monkeypatch.setattr(
         telegram_webhook,
-        (
-            "enqueue_authenticated_"
-            "telegram_update_atomic"
-        ),
+        ("enqueue_authenticated_telegram_update_atomic"),
         enqueue,
     )
 
@@ -531,9 +441,7 @@ def test_enqueue_finishes_before_http_response(
         headers=_headers(),
     )
 
-    events.append(
-        "http_response"
-    )
+    events.append("http_response")
 
     assert response.status_code == 200
 

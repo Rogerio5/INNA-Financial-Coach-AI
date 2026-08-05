@@ -19,9 +19,7 @@ def _load_questions(
     path: Path,
 ) -> list[str]:
     if not path.is_file():
-        raise FileNotFoundError(
-            f"Arquivo não encontrado: {path}"
-        )
+        raise FileNotFoundError(f"Arquivo não encontrado: {path}")
 
     payload: Any = json.loads(
         path.read_text(
@@ -33,37 +31,21 @@ def _load_questions(
         payload,
         list,
     ):
-        return [
-            str(item)
-            for item in payload
-        ]
+        return [str(item) for item in payload]
 
     if isinstance(
         payload,
         dict,
     ):
-        questions = (
-            payload.get(
-                "questions"
-            )
-            or payload.get(
-                "perguntas"
-            )
-        )
+        questions = payload.get("questions") or payload.get("perguntas")
 
         if isinstance(
             questions,
             list,
         ):
-            return [
-                str(item)
-                for item in questions
-            ]
+            return [str(item) for item in questions]
 
-    raise ValueError(
-        "O arquivo deve conter uma lista "
-        "ou o campo questions/perguntas."
-    )
+    raise ValueError("O arquivo deve conter uma lista ou o campo questions/perguntas.")
 
 
 def _configured(
@@ -150,69 +132,34 @@ def main() -> int:
         "NEON_DATABASE_URL",
     )
 
-    print(
-        "GEMINI_CREDENTIALS_READY="
-        + str(
-            gemini_ready
-        )
-    )
+    print("GEMINI_CREDENTIALS_READY=" + str(gemini_ready))
 
-    print(
-        "DATABASE_READY="
-        + str(
-            database_ready
-        )
-    )
+    print("DATABASE_READY=" + str(database_ready))
 
-    availability = (
-        deepeval_availability()
-    )
+    availability = deepeval_availability()
 
-    print(
-        "DEEPEVAL_AVAILABILITY="
-        + str(
-            availability
-        )
-    )
+    print("DEEPEVAL_AVAILABILITY=" + str(availability))
 
     if not gemini_ready:
-        raise RuntimeError(
-            "Nenhuma credencial Gemini foi encontrada."
-        )
+        raise RuntimeError("Nenhuma credencial Gemini foi encontrada.")
 
     if not database_ready:
-        raise RuntimeError(
-            "Nenhuma conexão PostgreSQL/Neon foi encontrada."
-        )
+        raise RuntimeError("Nenhuma conexão PostgreSQL/Neon foi encontrada.")
 
-    questions = _load_questions(
-        args.questions_file
-    )
+    questions = _load_questions(args.questions_file)
 
     maximum_experiment_guardrail = (
         len(questions)
         * 2
         * max(
             0.01,
-            args
-            .max_total_cost_per_variant,
+            args.max_total_cost_per_variant,
         )
     )
 
-    print(
-        "QUESTION_COUNT="
-        + str(
-            len(questions)
-        )
-    )
+    print("QUESTION_COUNT=" + str(len(questions)))
 
-    print(
-        "MAX_COST_PER_VARIANT="
-        + str(
-            args
-            .max_total_cost_per_variant
-        )
-    )
+    print("MAX_COST_PER_VARIANT=" + str(args.max_total_cost_per_variant))
 
     print(
         "MAX_EXPERIMENT_GUARDRAIL="
@@ -226,127 +173,53 @@ def main() -> int:
 
     result = run_live_retrieval_ab_suite(
         questions=questions,
-        output_directory=(
-            args.output_dir
-        ),
+        output_directory=(args.output_dir),
         configuration=(
             LiveSuiteConfiguration(
                 top_k=args.top_k,
                 language=args.language,
-                tolerance=(
-                    args.tolerance
-                ),
-                maximum_total_cost_per_variant=(
-                    args
-                    .max_total_cost_per_variant
-                ),
+                tolerance=(args.tolerance),
+                maximum_total_cost_per_variant=(args.max_total_cost_per_variant),
                 maximum_median_latency_regression_ms=(
-                    args
-                    .max_median_latency_regression_ms
+                    args.max_median_latency_regression_ms
                 ),
-                fail_fast=(
-                    args.fail_fast
-                ),
+                fail_fast=(args.fail_fast),
             )
         ),
     )
 
-    payload = result[
-        "payload"
-    ]
+    payload = result["payload"]
 
     print("")
-    print(
-        "=========================================="
-    )
+    print("==========================================")
 
-    print(
-        "RESULTADO CONSOLIDADO"
-    )
+    print("RESULTADO CONSOLIDADO")
 
-    print(
-        "=========================================="
-    )
+    print("==========================================")
 
-    print(
-        "RUN_ID="
-        + result["run_id"]
-    )
+    print("RUN_ID=" + result["run_id"])
 
-    print(
-        "QUESTIONS="
-        + str(
-            payload[
-                "question_count"
-            ]
-        )
-    )
+    print("QUESTIONS=" + str(payload["question_count"]))
 
-    print(
-        "COMPLETED="
-        + str(
-            payload[
-                "completed_count"
-            ]
-        )
-    )
+    print("COMPLETED=" + str(payload["completed_count"]))
 
-    print(
-        "FAILED="
-        + str(
-            payload[
-                "failed_count"
-            ]
-        )
-    )
+    print("FAILED=" + str(payload["failed_count"]))
 
-    print(
-        "RECOMMENDATION="
-        + str(
-            payload[
-                "recommendation"
-            ]
-        )
-    )
+    print("RECOMMENDATION=" + str(payload["recommendation"]))
 
-    for reason in payload[
-        "recommendation_reasons"
-    ]:
-        print(
-            "RECOMMENDATION_REASON="
-            + str(reason)
-        )
+    for reason in payload["recommendation_reasons"]:
+        print("RECOMMENDATION_REASON=" + str(reason))
 
-    print(
-        "MEDIAN_LATENCY_DELTA_MS="
-        + str(
-            payload[
-                "median_latency_delta_ms"
-            ]
-        )
-    )
+    print("MEDIAN_LATENCY_DELTA_MS=" + str(payload["median_latency_delta_ms"]))
 
     print(
         "AVERAGE_CONTEXT_CHARACTER_DELTA="
-        + str(
-            payload[
-                "average_context_character_delta"
-            ]
-        )
+        + str(payload["average_context_character_delta"])
     )
 
-    print(
-        "TOTAL_ESTIMATED_COST="
-        + str(
-            payload[
-                "total_estimated_cost"
-            ]
-        )
-    )
+    print("TOTAL_ESTIMATED_COST=" + str(payload["total_estimated_cost"]))
 
-    for case in payload[
-        "cases"
-    ]:
+    for case in payload["cases"]:
         print("")
         print(
             "CASE_ID="
@@ -368,9 +241,7 @@ def main() -> int:
             )
         )
 
-        if case.get(
-            "status"
-        ) == "completed":
+        if case.get("status") == "completed":
             print(
                 "CASE_RECOMMENDATION="
                 + str(
@@ -381,14 +252,7 @@ def main() -> int:
                 )
             )
 
-            print(
-                "CASE_QUALITY_GATE_PASSED="
-                + str(
-                    case.get(
-                        "quality_gate_passed"
-                    )
-                )
-            )
+            print("CASE_QUALITY_GATE_PASSED=" + str(case.get("quality_gate_passed")))
 
             deltas = case.get(
                 "axis_deltas",
@@ -404,11 +268,7 @@ def main() -> int:
                     "CASE_AXIS_DELTA_"
                     + axis_name.upper()
                     + "="
-                    + str(
-                        deltas.get(
-                            axis_name
-                        )
-                    )
+                    + str(deltas.get(axis_name))
                 )
 
         else:
@@ -433,41 +293,20 @@ def main() -> int:
             )
 
     print("")
-    print(
-        "JSON_REPORT="
-        + result["json_path"]
-    )
+    print("JSON_REPORT=" + result["json_path"])
 
-    print(
-        "MARKDOWN_REPORT="
-        + result[
-            "markdown_path"
-        ]
-    )
+    print("MARKDOWN_REPORT=" + result["markdown_path"])
 
-    print(
-        "HISTORY="
-        + result[
-            "history_path"
-        ]
-    )
+    print("HISTORY=" + result["history_path"])
 
-    print(
-        "RAW_OUTPUTS_STORED=False"
-    )
+    print("RAW_OUTPUTS_STORED=False")
 
-    print(
-        "RAW_CONTEXTS_STORED=False"
-    )
+    print("RAW_CONTEXTS_STORED=False")
 
-    print(
-        "WEEK3_LIVE_RETRIEVAL_AB_SUITE=OK"
-    )
+    print("WEEK3_LIVE_RETRIEVAL_AB_SUITE=OK")
 
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(
-        main()
-    )
+    raise SystemExit(main())

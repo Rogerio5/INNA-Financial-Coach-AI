@@ -63,9 +63,7 @@ _ALLOWED_TRANSITIONS: dict[
 
 
 def _utc_now() -> str:
-    return datetime.now(
-        timezone.utc
-    ).isoformat()
+    return datetime.now(timezone.utc).isoformat()
 
 
 def _normalize_required_text(
@@ -73,14 +71,10 @@ def _normalize_required_text(
     *,
     field_name: str,
 ) -> str:
-    normalized = str(
-        value or ""
-    ).strip()
+    normalized = str(value or "").strip()
 
     if not normalized:
-        raise ValueError(
-            f"{field_name} não pode ser vazio."
-        )
+        raise ValueError(f"{field_name} não pode ser vazio.")
 
     return normalized
 
@@ -88,9 +82,7 @@ def _normalize_required_text(
 def _normalize_optional_text(
     value: Any,
 ) -> str:
-    return str(
-        value or ""
-    ).strip()
+    return str(value or "").strip()
 
 
 def create_handoff(
@@ -106,32 +98,23 @@ def create_handoff(
     """
     Cria uma solicitação explícita de handoff.
     """
-    normalized_from = (
-        _normalize_required_text(
-            from_agent,
-            field_name="from_agent",
-        )
+    normalized_from = _normalize_required_text(
+        from_agent,
+        field_name="from_agent",
     )
 
-    normalized_to = (
-        _normalize_required_text(
-            to_agent,
-            field_name="to_agent",
-        )
+    normalized_to = _normalize_required_text(
+        to_agent,
+        field_name="to_agent",
     )
 
-    normalized_reason = (
-        _normalize_required_text(
-            reason,
-            field_name="reason",
-        )
+    normalized_reason = _normalize_required_text(
+        reason,
+        field_name="reason",
     )
 
     if normalized_from == normalized_to:
-        raise ValueError(
-            "Um agente não pode transferir "
-            "a tarefa para ele mesmo."
-        )
+        raise ValueError("Um agente não pode transferir a tarefa para ele mesmo.")
 
     normalized_id = (
         _normalize_required_text(
@@ -156,9 +139,7 @@ def create_handoff(
         "from_agent": normalized_from,
         "to_agent": normalized_to,
         "reason": normalized_reason,
-        "payload": dict(
-            payload or {}
-        ),
+        "payload": dict(payload or {}),
         "status": "requested",
         "created_at": created_at,
         "updated_at": created_at,
@@ -166,9 +147,7 @@ def create_handoff(
         "completed_at": None,
         "result": {},
         "error": "",
-        "metadata": dict(
-            metadata or {}
-        ),
+        "metadata": dict(metadata or {}),
     }
 
 
@@ -183,26 +162,16 @@ def transition_handoff(
     """
     Executa uma transição válida da máquina de estados.
     """
-    current_status = handoff.get(
-        "status"
-    )
+    current_status = handoff.get("status")
 
-    if current_status not in (
-        _ALLOWED_TRANSITIONS
-    ):
-        raise ValueError(
-            "Status atual do handoff é inválido: "
-            f"{current_status!r}."
-        )
+    if current_status not in (_ALLOWED_TRANSITIONS):
+        raise ValueError(f"Status atual do handoff é inválido: {current_status!r}.")
 
-    allowed = _ALLOWED_TRANSITIONS[
-        current_status
-    ]
+    allowed = _ALLOWED_TRANSITIONS[current_status]
 
     if status not in allowed:
         raise ValueError(
-            "Transição de handoff inválida: "
-            f"{current_status} -> {status}."
+            f"Transição de handoff inválida: {current_status} -> {status}."
         )
 
     updated_at = (
@@ -226,20 +195,14 @@ def transition_handoff(
                 {},
             )
         ),
-        "error": _normalize_optional_text(
-            error
-        ),
+        "error": _normalize_optional_text(error),
     }
 
     if status == "accepted":
-        updated["accepted_at"] = (
-            updated_at
-        )
+        updated["accepted_at"] = updated_at
 
     if status == "completed":
-        updated["completed_at"] = (
-            updated_at
-        )
+        updated["completed_at"] = updated_at
 
     return updated
 
@@ -313,9 +276,7 @@ def cancel_handoff(
     return transition_handoff(
         handoff,
         status="cancelled",
-        error=_normalize_optional_text(
-            reason
-        ),
+        error=_normalize_optional_text(reason),
         timestamp=timestamp,
     )
 

@@ -31,17 +31,11 @@ def make_case() -> AgenticBenchmarkCase:
     return AgenticBenchmarkCase(
         case_id="offline-case",
         dataset_version="1.0.0",
-        category=(
-            BenchmarkCaseCategory.COMPLEX_RESEARCH
-        ),
-        question=(
-            "Como priorizar dívidas e criar uma reserva?"
-        ),
+        category=(BenchmarkCaseCategory.COMPLEX_RESEARCH),
+        question=("Como priorizar dívidas e criar uma reserva?"),
         expectations=BenchmarkExpectations(
             complexity=ExpectedComplexity.COMPLEX,
-            gateway_decision=(
-                ExpectedGatewayDecision.AGENTIC
-            ),
+            gateway_decision=(ExpectedGatewayDecision.AGENTIC),
             routes=(
                 "financial_calculator",
                 "financial_knowledge",
@@ -50,13 +44,9 @@ def make_case() -> AgenticBenchmarkCase:
                 "dívida",
                 "reserva",
             ),
-            forbidden_terms=(
-                "senha real",
-            ),
+            forbidden_terms=("senha real",),
             expected_fallback=False,
-            security_outcome=(
-                ExpectedSecurityOutcome.ALLOW
-            ),
+            security_outcome=(ExpectedSecurityOutcome.ALLOW),
         ),
         thresholds=BenchmarkThresholds(
             minimum_evidence_count=2,
@@ -76,19 +66,12 @@ def make_case() -> AgenticBenchmarkCase:
 def make_result() -> AgenticEvaluationResult:
     return AgenticEvaluationResult(
         case_id="offline-case",
-        question=(
-            "Como priorizar dívidas e criar uma reserva?"
-        ),
-        answer=(
-            "Priorize a dívida mais cara e mantenha "
-            "uma reserva para imprevistos."
-        ),
+        question=("Como priorizar dívidas e criar uma reserva?"),
+        answer=("Priorize a dívida mais cara e mantenha uma reserva para imprevistos."),
         mode=AgenticExecutionMode.ACTIVE,
         decision=ActualGatewayDecision.AGENTIC,
         status=ExecutionStatus.SUCCESS,
-        security_outcome=(
-            ActualSecurityOutcome.ALLOW
-        ),
+        security_outcome=(ActualSecurityOutcome.ALLOW),
         routes=(
             "financial_calculator",
             "financial_knowledge",
@@ -96,17 +79,12 @@ def make_result() -> AgenticEvaluationResult:
         evidences=(
             EvidenceRecord(
                 evidence_id="ev-1",
-                content=(
-                    "A dívida mais cara deve ser priorizada."
-                ),
+                content=("A dívida mais cara deve ser priorizada."),
                 source="synthetic-a",
             ),
             EvidenceRecord(
                 evidence_id="ev-2",
-                content=(
-                    "Uma reserva reduz o impacto "
-                    "de imprevistos."
-                ),
+                content=("Uma reserva reduz o impacto de imprevistos."),
                 source="synthetic-b",
             ),
         ),
@@ -128,15 +106,11 @@ def make_result() -> AgenticEvaluationResult:
 
 
 def test_normalize_text_removes_accents() -> None:
-    assert normalize_text(
-        " DÍVIDA   e Reserva "
-    ) == "divida e reserva"
+    assert normalize_text(" DÍVIDA   e Reserva ") == "divida e reserva"
 
 
 def test_tokenize_removes_stopwords() -> None:
-    tokens = tokenize(
-        "Como criar uma reserva para imprevistos?"
-    )
+    tokens = tokenize("Como criar uma reserva para imprevistos?")
 
     assert "reserva" in tokens
     assert "imprevisto" in tokens
@@ -144,9 +118,7 @@ def test_tokenize_removes_stopwords() -> None:
 
 
 def test_citation_coverage_is_complete() -> None:
-    assert calculate_citation_coverage(
-        make_result()
-    ) == 1.0
+    assert calculate_citation_coverage(make_result()) == 1.0
 
 
 def test_citation_coverage_detects_missing_reference() -> None:
@@ -173,27 +145,19 @@ def test_citation_coverage_detects_missing_reference() -> None:
         fallback_used=result.fallback_used,
     )
 
-    assert calculate_citation_coverage(
-        incomplete
-    ) == 0.5
+    assert calculate_citation_coverage(incomplete) == 0.5
 
 
 def test_groundedness_uses_evidence_tokens() -> None:
-    score = calculate_groundedness(
-        make_result()
-    )
+    score = calculate_groundedness(make_result())
 
     assert 0.5 <= score <= 1.0
 
 
 def test_answer_relevance_detects_overlap() -> None:
     score = calculate_answer_relevance(
-        question=(
-            "Como criar uma reserva financeira?"
-        ),
-        answer=(
-            "Crie uma reserva com aportes mensais."
-        ),
+        question=("Como criar uma reserva financeira?"),
+        answer=("Crie uma reserva com aportes mensais."),
     )
 
     assert score > 0.0
@@ -209,10 +173,13 @@ def test_context_relevance_uses_retrieved_evidence() -> None:
 
 
 def test_sufficiency_is_complete() -> None:
-    assert calculate_sufficiency(
-        case=make_case(),
-        result=make_result(),
-    ) == 1.0
+    assert (
+        calculate_sufficiency(
+            case=make_case(),
+            result=make_result(),
+        )
+        == 1.0
+    )
 
 
 def test_complete_result_passes() -> None:
@@ -224,10 +191,7 @@ def test_complete_result_passes() -> None:
     assert report.passed is True
     assert report.overall_score == 1.0
     assert report.invalid_citation_count == 0
-    assert all(
-        metric.passed
-        for metric in report.metrics
-    )
+    assert all(metric.passed for metric in report.metrics)
 
 
 def test_forbidden_term_fails_report() -> None:
@@ -236,10 +200,7 @@ def test_forbidden_term_fails_report() -> None:
     unsafe = AgenticEvaluationResult(
         case_id=result.case_id,
         question=result.question,
-        answer=(
-            result.answer
-            + " senha real"
-        ),
+        answer=(result.answer + " senha real"),
         mode=result.mode,
         decision=result.decision,
         status=result.status,
@@ -361,37 +322,23 @@ def test_metric_lookup() -> None:
         result=make_result(),
     )
 
-    assert (
-        report.metric(
-            "citation_coverage"
-        ).score
-        == 1.0
-    )
+    assert report.metric("citation_coverage").score == 1.0
+
 
 def test_tokenize_normalizes_plural_variation() -> None:
-    singular = tokenize(
-        "dívida"
-    )
+    singular = tokenize("dívida")
 
-    plural = tokenize(
-        "dívidas"
-    )
+    plural = tokenize("dívidas")
 
     assert singular == plural
 
 
 def test_tokenize_normalizes_verb_variation() -> None:
-    infinitive = tokenize(
-        "priorizar"
-    )
+    infinitive = tokenize("priorizar")
 
-    imperative = tokenize(
-        "priorize"
-    )
+    imperative = tokenize("priorize")
 
-    participle = tokenize(
-        "priorizada"
-    )
+    participle = tokenize("priorizada")
 
     assert infinitive == imperative
     assert imperative == participle
@@ -399,13 +346,8 @@ def test_tokenize_normalizes_verb_variation() -> None:
 
 def test_portuguese_inflections_improve_relevance() -> None:
     score = calculate_answer_relevance(
-        question=(
-            "Como priorizar dívidas e criar uma reserva?"
-        ),
-        answer=(
-            "Priorize a dívida mais cara e "
-            "mantenha uma reserva."
-        ),
+        question=("Como priorizar dívidas e criar uma reserva?"),
+        answer=("Priorize a dívida mais cara e mantenha uma reserva."),
     )
 
     assert score >= 0.5
