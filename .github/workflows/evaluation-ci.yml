@@ -365,3 +365,5 @@ jobs:
           fi
 
           echo "Quality Gate e gate de regressão aprovados."
+
+# CI rerun after Week 4 fixture correction
