@@ -2221,41 +2221,67 @@ DECISAO_DE_PRODUCAO=PENDENTE
 
 ---
 
-### 🔄 Próximos passos
-
 
 ---
-#### 🔄 Próximos passos
+## 🔄 Próximos passos
+
+### Implementação e avaliação
 
 - [x] Implementar Sentence-Window Retrieval;
 - [x] Criar comparação A/B;
 - [x] Integrar DeepEval;
 - [x] Implementar RAG Triad;
 - [x] Corrigir o mapeamento do Quality Gate;
-- [x] Executar smoke test real;
-- [x] Executar a Pergunta 2 com `gemini-2.5-flash`;
-- [ ] Reexecutar a Pergunta 1 com o modelo atual;
-- [ ] Reexecutar a Pergunta 2 com o modelo atual;
+- [x] Executar smoke test real com `gemini-2.5-flash`;
+- [x] Executar a Pergunta 2 histórica com `gemini-2.5-flash`;
+- [x] Reexecutar a Pergunta 1 com `gemini-3.5-flash-lite`;
+- [x] Comparar `window_size=2`, `window_size=4` e `window_size=5`;
+- [x] Selecionar `window_size=5`;
+- [x] Validar a Pergunta 1 oficial;
+- [ ] Reexecutar a Pergunta 2 com `gemini-3.5-flash-lite`;
 - [ ] Executar a Pergunta 3;
 - [ ] Executar a Pergunta 4;
-- [ ] Executar a Pergunta 5;
+- [ ] Executar a Pergunta 5.
+
+### Consolidação
+
 - [ ] Consolidar os cinco resultados oficiais;
 - [ ] Calcular as médias da RAG Triad;
 - [ ] Comparar regressões entre baseline e Sentence-Window;
 - [ ] Comparar latência;
-- [ ] Comparar custo estimado;
 - [ ] Comparar tamanho do contexto;
+- [ ] Registrar o custo real como cota gratuita;
+- [ ] Separar custo real de custo equivalente estimado;
+- [ ] Verificar estabilidade entre execuções;
 - [ ] Revisar tentativas intermediárias;
 - [ ] Revisar o uso de `axis_scores_fallback`;
-- [ ] Decidir sobre a ativação do Sentence-Window;
+- [ ] Decidir sobre a ativação permanente do Sentence-Window.
+
+### Próximas técnicas de retrieval
+
 - [ ] Implementar Auto-Merging Retrieval;
+- [ ] Criar testes unitários do Auto-Merging;
 - [ ] Comparar RAG atual, Sentence-Window e Auto-Merging;
+- [ ] Verificar qualidade, latência e tamanho de contexto;
+- [ ] Selecionar a estratégia final da Semana 3.
+
+### Documentação
+
 - [ ] Finalizar o Quality Gate consolidado da Semana 3;
-- [ ] Finalizar documentação e evidências;
 - [ ] Atualizar o README principal;
 - [ ] Atualizar o relatório técnico;
-- [ ] Analisar Knowledge Graph e GraphRAG;
-- [ ] Avaliar Neo4j e Cypher somente se houver benefício técnico comprovado.
+- [ ] Registrar os caminhos dos relatórios JSON e Markdown;
+- [ ] Preservar somente hashes e métricas nos relatórios públicos;
+- [ ] Confirmar que respostas e contextos brutos não foram armazenados;
+- [ ] Finalizar documentação e evidências.
+
+### Knowledge Graph e GraphRAG
+
+- [ ] Analisar casos de uso para Knowledge Graph;
+- [ ] Avaliar Neo4j e Cypher;
+- [ ] Avaliar GraphRAG somente se houver benefício técnico comprovado;
+- [ ] Criar prova de conceito opcional;
+- [ ] Comparar complexidade, custo e ganho de qualidade.
 
 ---
 
