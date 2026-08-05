@@ -1,0 +1,1021 @@
+[
+  {
+    "chunk_id": "inna-edu-cartao-002::tuned-001::b5df716e5b28d22c9d5a",
+    "chunk_index": 1,
+    "documento_id": "inna-edu-cartao-002",
+    "documento_origem": "educadora_financeira/04_cartao_credito_responsavel.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "f3a14be7410dfdc39f204ff777ede3e2f46c1202547cb5d2bafce97f30bb4681",
+      "content_hash": "5817c1d0d1649acf96f5c696adf039d3e20ef94147b816a8b4e7667bfd137e2c",
+      "document_path": "educadora_financeira/04_cartao_credito_responsavel.md",
+      "document_title": "Uso responsável do cartão de crédito",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Resposta direta | Limite não é renda | Controle mínimo | Antes de parcelar",
+      "source_ids": [
+        "bcb-credito-dividas-2026",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "cartao_de_credito",
+      "version": "2.0.0",
+      "word_count": 148
+    },
+    "modelo_embedding": null,
+    "texto": "Uso responsável do cartão de crédito. Secao: Resposta direta. Para usar o cartão sem se endividar, registre cada compra como gasto, acompanhe a fatura antes do fechamento, considere parcelas futuras e assuma apenas valores compatíveis com o pagamento integral no vencimento. Uso responsável do cartão de crédito. Secao: Limite não é renda. O limite concedido pela instituição é uma capacidade de crédito, não dinheiro próprio. A pessoa pode definir um limite pessoal inferior ao limite bancário. Uso responsável do cartão de crédito. Secao: Controle mínimo. Acompanhe compras, assinaturas, parcelas atuais, parcelas futuras, data de fechamento, vencimento, valor da fatura e limite disponível. Parcelas pequenas podem formar um comprometimento elevado quando acumuladas. Uso responsável do cartão de crédito. Secao: Antes de parcelar. Compare preço total, juros, prazo, desconto à vista, duração do bem e impacto sobre metas futuras. Uma compra que cabe no limite pode não caber no orçamento."
+  },
+  {
+    "chunk_id": "inna-edu-cartao-002::tuned-002::ae947c04fbf207263d52",
+    "chunk_index": 2,
+    "documento_id": "inna-edu-cartao-002",
+    "documento_origem": "educadora_financeira/04_cartao_credito_responsavel.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "0f6d49ee62b9129a0bd573a6e4c5a05c08cafbf013a89ad5ce3277bed5f75b54",
+      "content_hash": "812eed518fd5a101cf7e2037c89ae9c970974cc8802322dad358f78c809e60af",
+      "document_path": "educadora_financeira/04_cartao_credito_responsavel.md",
+      "document_title": "Uso responsável do cartão de crédito",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Quando a fatura não cabe | Sinais de atenção | O que a INNA deve perguntar | Limites | Fontes de referência",
+      "source_ids": [
+        "bcb-credito-dividas-2026",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "cartao_de_credito",
+      "version": "2.0.0",
+      "word_count": 163
+    },
+    "modelo_embedding": null,
+    "texto": "Uso responsável do cartão de crédito. Secao: Quando a fatura não cabe. Pagar apenas parte pode gerar encargos e prolongar a dívida. A orientação deve ser: interromper novas compras, levantar o valor total, conhecer taxas e alternativas, comparar custo total e criar parcela que caiba sem comprometer necessidades básicas. Uso responsável do cartão de crédito. Secao: Sinais de atenção. - desconhecer o total da fatura; - usar um cartão para cobrir outro; - pagar despesas básicas sem previsão de quitação; - manter várias parcelas simultâneas; - usar crédito para sustentar consumo recorrente. Uso responsável do cartão de crédito. Secao: O que a INNA deve perguntar. Renda líquida, despesas essenciais, valor da fatura, parcelas futuras, taxa informada, vencimento, atraso e capacidade de pagamento. Uso responsável do cartão de crédito. Secao: Limites. A INNA não deve afirmar que uma modalidade é sempre melhor sem comparar taxas, prazo, custo total e riscos. Uso responsável do cartão de crédito. Secao: Fontes de referência. - `bcb-credito-dividas-2026` - `bcb-caderno-financas-pessoais-2026`"
+  },
+  {
+    "chunk_id": "inna-edu-credito-002::tuned-001::d22bbf862cb5b1c9d8df",
+    "chunk_index": 1,
+    "documento_id": "inna-edu-credito-002",
+    "documento_origem": "educadora_financeira/06_credito_juros_negociacao.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "a59522712de5c206965ed21202fbfb9e717cc325c454a3c5a9680e33a7a20c71",
+      "content_hash": "c8582730f904ddd31f442e03a48fff32e95aab6baace814372842b2a35a393ae",
+      "document_path": "educadora_financeira/06_credito_juros_negociacao.md",
+      "document_title": "Crédito, juros, custo total e renegociação",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Conceito central | Como comparar propostas | Juros",
+      "source_ids": [
+        "bcb-credito-dividas-2026",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "credito_e_juros",
+      "version": "2.0.0",
+      "word_count": 104
+    },
+    "modelo_embedding": null,
+    "texto": "Crédito, juros, custo total e renegociação. Secao: Conceito central. Crédito antecipa recursos que não são próprios e cria uma obrigação futura. A decisão deve considerar necessidade, capacidade de pagamento e custo total. Crédito, juros, custo total e renegociação. Secao: Como comparar propostas. Não compare apenas pela parcela. Verifique valor líquido recebido, número de parcelas, taxa, custo efetivo total informado, tarifas, seguros, garantias, consequências do atraso e valor total pago. Crédito, juros, custo total e renegociação. Secao: Juros. Em operações com capitalização, os encargos podem incidir sobre valores acumulados. Quanto maior o prazo, maior pode ser o custo total, mesmo quando a parcela parece menor."
+  },
+  {
+    "chunk_id": "inna-edu-credito-002::tuned-002::74decda2aa9abcb2d0ca",
+    "chunk_index": 2,
+    "documento_id": "inna-edu-credito-002",
+    "documento_origem": "educadora_financeira/06_credito_juros_negociacao.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "75ed2dd1d113f93dcc178eb99dbc03b3274751ebe9ba153f1b633f4294f1a7f3",
+      "content_hash": "297d08586be8348ecbf5417a04c509ba6a09f7ce0949736abb4a3b9c508deaa5",
+      "document_path": "educadora_financeira/06_credito_juros_negociacao.md",
+      "document_title": "Crédito, juros, custo total e renegociação",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Renegociação | Perguntas da INNA | Segurança | Fontes de referência",
+      "source_ids": [
+        "bcb-credito-dividas-2026",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "credito_e_juros",
+      "version": "2.0.0",
+      "word_count": 140
+    },
+    "modelo_embedding": null,
+    "texto": "Crédito, juros, custo total e renegociação. Secao: Renegociação. Uma renegociação é útil quando cria uma obrigação sustentável e reduz risco. Alongar o prazo pode reduzir a parcela e aumentar o total pago. Antes de aceitar, simule o orçamento e compare a situação anterior com a nova. Crédito, juros, custo total e renegociação. Secao: Perguntas da INNA. - Qual é o objetivo do crédito? - Existe alternativa sem dívida? - Quanto será recebido? - Qual é o custo total? - A parcela cabe após as despesas essenciais? - Há garantia vinculada? - O prazo ultrapassa a vida útil do bem? Crédito, juros, custo total e renegociação. Secao: Segurança. A INNA deve alertar para confirmação do credor e nunca solicitar senha, código de autenticação, instalação de aplicativo ou acesso remoto. Crédito, juros, custo total e renegociação. Secao: Fontes de referência. - `bcb-credito-dividas-2026` - `bcb-caderno-financas-pessoais-2026`"
+  },
+  {
+    "chunk_id": "inna-edu-dividas-002::tuned-001::c84b75146a8e1a15b355",
+    "chunk_index": 1,
+    "documento_id": "inna-edu-dividas-002",
+    "documento_origem": "educadora_financeira/05_priorizacao_dividas.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "9b57c7f9321280bb5224f6b592b691268ba805ecdea37689e75228fb68dcf486",
+      "content_hash": "d1c09f7cce58d9ab14898e8a5f895075e1fa84711417a9b86004dae1b253768b",
+      "document_path": "educadora_financeira/05_priorizacao_dividas.md",
+      "document_title": "Mapeamento, priorização e negociação de dívidas",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Resposta direta | Mapeamento obrigatório | Estratégias",
+      "source_ids": [
+        "bcb-credito-dividas-2026",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "priorizacao_de_dividas",
+      "version": "2.0.0",
+      "word_count": 151
+    },
+    "modelo_embedding": null,
+    "texto": "Mapeamento, priorização e negociação de dívidas. Secao: Resposta direta. A dívida a priorizar não deve ser escolhida apenas pelo menor saldo. Primeiro, preserve necessidades básicas e identifique obrigações cujo atraso pode interromper serviço essencial, comprometer moradia ou causar perda de bem necessário. Depois, compare juros, encargos, garantias, acordos e capacidade de pagamento. Mapeamento, priorização e negociação de dívidas. Secao: Mapeamento obrigatório. Para cada dívida, registre credor, saldo atualizado, taxa, custo total, parcela, vencimento, atraso, multa, garantia, consequência do não pagamento e proposta de negociação. Mapeamento, priorização e negociação de dívidas. Secao: Estratégias. **Avalanche:** direciona recursos extras para a dívida de maior custo, mantendo os pagamentos mínimos ou acordados das demais. Tende a reduzir o custo financeiro total. **Bola de neve:** prioriza a menor dívida. Pode aumentar a motivação por gerar quitações iniciais, mas pode custar mais. **Estratégia híbrida:** trata primeiro uma urgência crítica e depois utiliza avalanche ou bola de neve."
+  },
+  {
+    "chunk_id": "inna-edu-dividas-002::tuned-002::ec5b0c447331430017cb",
+    "chunk_index": 2,
+    "documento_id": "inna-edu-dividas-002",
+    "documento_origem": "educadora_financeira/05_priorizacao_dividas.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "702f3677f503da7ba159958df709040fd17b58010484ecda2aba6001555ca014",
+      "content_hash": "3de2195ad5db447aea5c0037e55316caa569d2d4ab541cad5e979e72dbedcd01",
+      "document_path": "educadora_financeira/05_priorizacao_dividas.md",
+      "document_title": "Mapeamento, priorização e negociação de dívidas",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Negociação responsável | O que a INNA deve perguntar | Regra de segurança | Fontes de referência",
+      "source_ids": [
+        "bcb-credito-dividas-2026",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "priorizacao_de_dividas",
+      "version": "2.0.0",
+      "word_count": 122
+    },
+    "modelo_embedding": null,
+    "texto": "Mapeamento, priorização e negociação de dívidas. Secao: Negociação responsável. Confirme o credor e o canal, solicite proposta formal, compare valor total, parcelas, juros e vencimentos, preserve despesas essenciais e guarde comprovantes. Parcela menor não significa necessariamente acordo mais barato. Mapeamento, priorização e negociação de dívidas. Secao: O que a INNA deve perguntar. Renda líquida, despesas essenciais, lista completa de dívidas, taxas, saldos, garantias, atrasos, risco de corte de serviço e valor disponível para pagamento. Mapeamento, priorização e negociação de dívidas. Secao: Regra de segurança. Sem esses dados, a INNA deve explicar critérios e pedir informações, não ordenar de forma definitiva qual dívida pagar. Mapeamento, priorização e negociação de dívidas. Secao: Fontes de referência. - `bcb-credito-dividas-2026` - `bcb-caderno-financas-pessoais-2026`"
+  },
+  {
+    "chunk_id": "inna-edu-gastos-002::tuned-001::8820220ecd023572ecb5",
+    "chunk_index": 1,
+    "documento_id": "inna-edu-gastos-002",
+    "documento_origem": "educadora_financeira/02_gastos_fixos_variaveis_eventuais.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "72c17ee7f0a104c0dbf46bf0eee84bff04c575a00c69cf67c5683946ab5b45da",
+      "content_hash": "2bd70eb4f2fe20b355d189c91f06a4fcf16bcf5a3e48e80ea4bb5dbec7fd90bc",
+      "document_path": "educadora_financeira/02_gastos_fixos_variaveis_eventuais.md",
+      "document_title": "Gastos fixos, variáveis, eventuais e essenciais",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Resposta direta | Duas classificações diferentes | Por que essa separação melhora o orçamento",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026",
+        "bcb-orcamento-pessoal-2026"
+      ],
+      "topic": "classificacao_de_gastos",
+      "version": "2.0.0",
+      "word_count": 156
+    },
+    "modelo_embedding": null,
+    "texto": "Gastos fixos, variáveis, eventuais e essenciais. Secao: Resposta direta. Gastos fixos são recorrentes e tendem a variar pouco no curto prazo, como aluguel e mensalidades. Gastos variáveis mudam conforme consumo ou escolhas, como supermercado, combustível e lazer. Gastos eventuais não aparecem necessariamente todos os meses, como manutenção, impostos anuais e material escolar. Gastos fixos, variáveis, eventuais e essenciais. Secao: Duas classificações diferentes. A frequência do gasto não define sua importância. Um gasto pode ser: - recorrente ou eventual; - fixo ou variável; - essencial ou discricionário; - pouco ou muito flexível. Aluguel costuma ser recorrente, fixo e essencial. Uma assinatura pode ser recorrente e fixa, mas discricionária. Alimentação é essencial e normalmente variável. Gastos fixos, variáveis, eventuais e essenciais. Secao: Por que essa separação melhora o orçamento. A classificação ajuda a descobrir quais despesas precisam ser protegidas, quais podem ser renegociadas e quais podem ser reduzidas com menor impacto. Também evita o erro de considerar todo gasto variável como supérfluo."
+  },
+  {
+    "chunk_id": "inna-edu-gastos-002::tuned-002::ff87d998f09e400a26d7",
+    "chunk_index": 2,
+    "documento_id": "inna-edu-gastos-002",
+    "documento_origem": "educadora_financeira/02_gastos_fixos_variaveis_eventuais.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "7869ac3d2ee072c97d5b2b329fe2a72df6711a7eafbb609c068b2fac0f279fc2",
+      "content_hash": "7733e91722be39277d8401930fc50e494029449a3f65b52734c817efbad72bf2",
+      "document_path": "educadora_financeira/02_gastos_fixos_variaveis_eventuais.md",
+      "document_title": "Gastos fixos, variáveis, eventuais e essenciais",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Exemplos práticos | Provisões | O que a INNA deve perguntar | Limites | Fontes de referência",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026",
+        "bcb-orcamento-pessoal-2026"
+      ],
+      "topic": "classificacao_de_gastos",
+      "version": "2.0.0",
+      "word_count": 161
+    },
+    "modelo_embedding": null,
+    "texto": "Gastos fixos, variáveis, eventuais e essenciais. Secao: Exemplos práticos. - Aluguel: recorrente, fixo, essencial e de baixa flexibilidade. - Supermercado: recorrente, variável, essencial e de flexibilidade moderada. - Streaming: recorrente, fixo, discricionário e de alta flexibilidade. - Manutenção urgente: eventual, variável e potencialmente essencial. - Imposto anual: eventual, previsível e adequado para provisão mensal. Gastos fixos, variáveis, eventuais e essenciais. Secao: Provisões. Despesas anuais previsíveis devem ser divididas ao longo dos meses. Essa provisão reduz a dependência de crédito quando o pagamento chega. Gastos fixos, variáveis, eventuais e essenciais. Secao: O que a INNA deve perguntar. Para classificar corretamente, a INNA deve perguntar frequência, variação de valor, necessidade, possibilidade de redução e consequência do não pagamento. Gastos fixos, variáveis, eventuais e essenciais. Secao: Limites. A INNA não deve recomendar corte automático de saúde, moradia, alimentação, transporte necessário ou proteção básica. A redução deve considerar impacto e alternativas. Gastos fixos, variáveis, eventuais e essenciais. Secao: Fontes de referência. - `bcb-caderno-financas-pessoais-2026` - `bcb-orcamento-pessoal-2026`"
+  },
+  {
+    "chunk_id": "inna-edu-investimentos-002::tuned-001::1af897277c1b11bf883c",
+    "chunk_index": 1,
+    "documento_id": "inna-edu-investimentos-002",
+    "documento_origem": "educadora_financeira/08_investimentos_basicos_limites.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "a2b6e08aaac6b582416b75d2e456925975b1d588c3c122fe4aa66bac9fefc2ed",
+      "content_hash": "ca17a38fe391f43b42356a9bd382d444269de58cf4f5f45a65eabc094a5bc94e",
+      "document_path": "educadora_financeira/08_investimentos_basicos_limites.md",
+      "document_title": "Princípios básicos de poupança e investimentos",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Princípios | Risco e retorno | Diversificação | Ordem financeira | Conduta da INNA",
+      "source_ids": [
+        "cvm-portal-investidor",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "investimentos_basicos",
+      "version": "2.0.0",
+      "word_count": 166
+    },
+    "modelo_embedding": null,
+    "texto": "Princípios básicos de poupança e investimentos. Secao: Princípios. Antes de avaliar qualquer produto, considere objetivo, prazo, liquidez, capacidade de assumir perdas, custos, tributação, regras e instituição utilizada. Princípios básicos de poupança e investimentos. Secao: Risco e retorno. Rentabilidade passada não garante resultado futuro. Produtos com maior possibilidade de retorno podem possuir maior incerteza, volatilidade, prazo ou risco de perda. Princípios básicos de poupança e investimentos. Secao: Diversificação. Diversificar reduz concentração em um único ativo, emissor ou tipo de risco, mas não elimina perdas. Princípios básicos de poupança e investimentos. Secao: Ordem financeira. Recursos necessários para despesas essenciais ou emergências não devem ser expostos a risco incompatível com seu uso. Dívidas caras e ausência de reserva devem ser avaliadas antes de decisões de longo prazo. Princípios básicos de poupança e investimentos. Secao: Conduta da INNA. A INNA pode explicar conceitos, organizar perfil de objetivos e apresentar critérios gerais. Não deve indicar compra ou venda de ativo específico, prometer retorno, prever preço ou se apresentar como consultora autorizada."
+  },
+  {
+    "chunk_id": "inna-edu-investimentos-002::tuned-002::599589ece893754bd32b",
+    "chunk_index": 2,
+    "documento_id": "inna-edu-investimentos-002",
+    "documento_origem": "educadora_financeira/08_investimentos_basicos_limites.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "bbe35a23bd73abc6dd66c09c3317f1d320fbd51bf28f097a3f5b464eb274c59b",
+      "content_hash": "0c02eb3202301e15bf55d68212048be214f69bbb6ae819d55d92a40f1211e217",
+      "document_path": "educadora_financeira/08_investimentos_basicos_limites.md",
+      "document_title": "Princípios básicos de poupança e investimentos",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Fontes de referência | Perguntas antes de investir | Fraudes e promessas | Limites adicionais",
+      "source_ids": [
+        "cvm-portal-investidor",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "investimentos_basicos",
+      "version": "2.0.0",
+      "word_count": 143
+    },
+    "modelo_embedding": null,
+    "texto": "Princípios básicos de poupança e investimentos. Secao: Fontes de referência. - `cvm-portal-investidor` - `bcb-caderno-financas-pessoais-2026` Princípios básicos de poupança e investimentos. Secao: Perguntas antes de investir. - Qual é o objetivo do dinheiro? - Quando ele poderá ser necessário? - Há reserva de emergência? - Existem dívidas de custo elevado? - A pessoa entende as regras, custos e riscos? - Uma perda comprometeria necessidades básicas? Princípios básicos de poupança e investimentos. Secao: Fraudes e promessas. Promessa de retorno garantido, pressão para decidir rapidamente, falta de documentação e pedido de transferência para conta de terceiro são sinais de atenção. A pessoa deve confirmar a instituição e consultar canais oficiais. Princípios básicos de poupança e investimentos. Secao: Limites adicionais. A INNA deve declarar quando a pergunta exige profissional autorizado. Ela não pode preencher questionário de perfil no lugar da pessoa, ocultar riscos ou apresentar simulação como resultado garantido."
+  },
+  {
+    "chunk_id": "inna-edu-metas-002::tuned-001::a10d98258c4417b569d8",
+    "chunk_index": 1,
+    "documento_id": "inna-edu-metas-002",
+    "documento_origem": "educadora_financeira/07_metas_consumo_planejado.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "7fd1be30bfaf6065ba26c68f8433cbe36b08689722cecc82fc1dbc36ada1ae85",
+      "content_hash": "da10bdc3d38e59b21f6cc8cef76fd7d5200eea7d5bc4c8de57edf2f1567f61d5",
+      "document_path": "educadora_financeira/07_metas_consumo_planejado.md",
+      "document_title": "Metas financeiras e consumo planejado",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Estrutura da meta | Planejamento | Priorização",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "metas_financeiras",
+      "version": "2.0.0",
+      "word_count": 92
+    },
+    "modelo_embedding": null,
+    "texto": "Metas financeiras e consumo planejado. Secao: Estrutura da meta. Uma meta deve possuir objetivo, valor estimado, prazo, prioridade, contribuição periódica, indicador de progresso e regra de revisão. Metas financeiras e consumo planejado. Secao: Planejamento. Uma estimativa inicial pode dividir o valor restante pelo número de meses disponíveis. Essa estimativa deve ser revista quando houver inflação, alteração de preço, mudança de renda ou atraso. Metas financeiras e consumo planejado. Secao: Priorização. Metas de proteção e regularização, como reserva inicial e redução de dívida cara, devem ser avaliadas antes de metas exclusivamente de consumo."
+  },
+  {
+    "chunk_id": "inna-edu-metas-002::tuned-002::882cf497c749b92f6e65",
+    "chunk_index": 2,
+    "documento_id": "inna-edu-metas-002",
+    "documento_origem": "educadora_financeira/07_metas_consumo_planejado.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "deaddaa0be76c5ec52d96f5e9985510558031ca7517a5e6d14a46bd45ddb6154",
+      "content_hash": "9a25ef5e976b533c8087cff69ce3a48ecefd5254a852cff67dc14846c901b4ac",
+      "document_path": "educadora_financeira/07_metas_consumo_planejado.md",
+      "document_title": "Metas financeiras e consumo planejado",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Compra planejada | Provisões | O que a INNA deve fazer | Fontes de referência",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "metas_financeiras",
+      "version": "2.0.0",
+      "word_count": 102
+    },
+    "modelo_embedding": null,
+    "texto": "Metas financeiras e consumo planejado. Secao: Compra planejada. Antes de comprar, diferencie necessidade e desejo, pesquise preço e manutenção, compare à vista e parcelado, verifique parcelas já assumidas e preserve a reserva de emergência. Metas financeiras e consumo planejado. Secao: Provisões. Despesas previsíveis, como impostos, matrícula e manutenção, devem possuir uma provisão separada da reserva de emergência. Metas financeiras e consumo planejado. Secao: O que a INNA deve fazer. Apresentar o cálculo, mostrar hipóteses, permitir ajuste de prazo e valor e evitar pressão para consumo ou produto financeiro. Metas financeiras e consumo planejado. Secao: Fontes de referência. - `bcb-caderno-financas-pessoais-2026`"
+  },
+  {
+    "chunk_id": "inna-edu-metas-002::tuned-003::18bb4b41d1180bbb91db",
+    "chunk_index": 3,
+    "documento_id": "inna-edu-metas-002",
+    "documento_origem": "educadora_financeira/07_metas_consumo_planejado.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "339d52856f6034c0458485d75a9a49b1ed17b049e838a52f1dd675155dbdede6",
+      "content_hash": "f68058649349a4d1d73ed2ae81653cb176a420c77f01a5f6cd1ef34625c11eb1",
+      "document_path": "educadora_financeira/07_metas_consumo_planejado.md",
+      "document_title": "Metas financeiras e consumo planejado",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Exemplo educativo | Revisão periódica | Limites",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "metas_financeiras",
+      "version": "2.0.0",
+      "word_count": 136
+    },
+    "modelo_embedding": null,
+    "texto": "Metas financeiras e consumo planejado. Secao: Exemplo educativo. Uma meta de R$ 1.200 em doze meses pode começar com uma contribuição média de R$ 100 por mês. O exemplo não considera rendimento, inflação nem mudança de preço. Quando o valor mensal não cabe no orçamento, a pessoa pode ampliar o prazo, reduzir o objetivo ou revisar outras prioridades. Metas financeiras e consumo planejado. Secao: Revisão periódica. A meta deve ser revista quando houver mudança de renda, despesa essencial, dívida, prazo ou preço. O progresso deve ser apresentado em valor acumulado, valor restante e percentual concluído. Metas financeiras e consumo planejado. Secao: Limites. A INNA não deve incentivar endividamento para cumprir uma meta de consumo. Quando a meta competir com alimentação, moradia, saúde, transporte necessário ou dívida urgente, ela deve apontar o conflito e sugerir revisão."
+  },
+  {
+    "chunk_id": "inna-edu-orcamento-002::tuned-001::8fc6b0bf0dd9417f8c94",
+    "chunk_index": 1,
+    "documento_id": "inna-edu-orcamento-002",
+    "documento_origem": "educadora_financeira/01_orcamento_fluxo_caixa.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "763a47b7c11e29b88c3d1f744abd34f0b26a13600a78b61b25160b24816bbe50",
+      "content_hash": "3c568561127c5a0881d0232802dbff5663127bd4dfe48b37d5c425d0b53c912a",
+      "document_path": "educadora_financeira/01_orcamento_fluxo_caixa.md",
+      "document_title": "Orçamento pessoal, fluxo de caixa e acompanhamento mensal",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Resposta direta | Estrutura profissional do orçamento",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026",
+        "bcb-orcamento-pessoal-2026"
+      ],
+      "topic": "orcamento_pessoal",
+      "version": "2.0.0",
+      "word_count": 129
+    },
+    "modelo_embedding": null,
+    "texto": "Orçamento pessoal, fluxo de caixa e acompanhamento mensal. Secao: Resposta direta. Para organizar renda e despesas mensais, registre o valor líquido que realmente entra, todas as saídas previstas e realizadas, as datas de vencimento e o destino de cada gasto. Depois, compare o planejado com o realizado e defina uma ação para cada desvio. Orçamento pessoal, fluxo de caixa e acompanhamento mensal. Secao: Estrutura profissional do orçamento. O orçamento deve separar: - receitas recorrentes e eventuais; - despesas essenciais e não essenciais; - gastos fixos, variáveis e eventuais; - parcelas e dívidas; - valores destinados à reserva; - metas de curto, médio e longo prazo; - saldo projetado e saldo realizado. Renda eventual não deve sustentar compromisso permanente sem uma margem de segurança. Parcelas futuras também devem aparecer no planejamento, mesmo que ainda não tenham vencido."
+  },
+  {
+    "chunk_id": "inna-edu-orcamento-002::tuned-002::0d938ccf01407def4da6",
+    "chunk_index": 2,
+    "documento_id": "inna-edu-orcamento-002",
+    "documento_origem": "educadora_financeira/01_orcamento_fluxo_caixa.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "e718c39e9e071c526997c3076d1133b8d7a8fdaae64fe4f80820975b75322cce",
+      "content_hash": "b1bcdc2af89cf6a2a440f42d4cff974a3190f11ce3920919a438613e2a6d9906",
+      "document_path": "educadora_financeira/01_orcamento_fluxo_caixa.md",
+      "document_title": "Orçamento pessoal, fluxo de caixa e acompanhamento mensal",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Fluxo de caixa | Rotina recomendada",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026",
+        "bcb-orcamento-pessoal-2026"
+      ],
+      "topic": "orcamento_pessoal",
+      "version": "2.0.0",
+      "word_count": 120
+    },
+    "modelo_embedding": null,
+    "texto": "Orçamento pessoal, fluxo de caixa e acompanhamento mensal. Secao: Fluxo de caixa. O fluxo de caixa acrescenta a dimensão do tempo. Uma pessoa pode ter renda suficiente no mês e ainda enfrentar atraso quando as contas vencem antes do recebimento. Para cada movimentação, registre data prevista, data realizada, valor, categoria, forma de pagamento, recorrência e situação. Orçamento pessoal, fluxo de caixa e acompanhamento mensal. Secao: Rotina recomendada. **No início do mês:** estime a renda, liste compromissos assumidos, proteja despesas essenciais, reserve valores para metas e estabeleça limites realistas. **Durante o mês:** registre movimentações, confira extratos, acompanhe faturas e investigue categorias que ultrapassaram o limite. **No fechamento:** calcule o saldo, identifique despesas evitáveis, revise parcelas futuras e atualize o próximo planejamento."
+  },
+  {
+    "chunk_id": "inna-edu-orcamento-002::tuned-003::caf59623950b376a10b5",
+    "chunk_index": 3,
+    "documento_id": "inna-edu-orcamento-002",
+    "documento_origem": "educadora_financeira/01_orcamento_fluxo_caixa.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "7d93136bf426075a847397fa2be367e7e0d56b2a7fc64d5162681e0bf9164618",
+      "content_hash": "cf4e3b964b124190d7c586cbba5fa73b5799cdc717cf93a49fef6e6ba83685ee",
+      "document_path": "educadora_financeira/01_orcamento_fluxo_caixa.md",
+      "document_title": "Orçamento pessoal, fluxo de caixa e acompanhamento mensal",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Indicadores educativos | O que a INNA deve perguntar | Limites | Fontes de referência",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026",
+        "bcb-orcamento-pessoal-2026"
+      ],
+      "topic": "orcamento_pessoal",
+      "version": "2.0.0",
+      "word_count": 157
+    },
+    "modelo_embedding": null,
+    "texto": "Orçamento pessoal, fluxo de caixa e acompanhamento mensal. Secao: Indicadores educativos. - Taxa de poupança: valor poupado dividido pela renda líquida. - Comprometimento com dívidas: pagamentos de dívidas divididos pela renda líquida. - Margem livre: renda líquida menos despesas totais. - Aderência ao orçamento: diferença entre o valor planejado e o realizado. Nenhum indicador deve ser tratado isoladamente como diagnóstico definitivo. Orçamento pessoal, fluxo de caixa e acompanhamento mensal. Secao: O que a INNA deve perguntar. A INNA deve solicitar apenas dados necessários: renda líquida, despesas essenciais, dívidas, parcelas, datas de vencimento, objetivos e existência de reserva. Ela deve explicar cálculos e hipóteses, sem esconder valores ausentes. Orçamento pessoal, fluxo de caixa e acompanhamento mensal. Secao: Limites. A orientação é educativa. A INNA não deve garantir resultado, aprovar crédito, substituir análise contratual ou determinar uma decisão quando faltarem dados relevantes. Orçamento pessoal, fluxo de caixa e acompanhamento mensal. Secao: Fontes de referência. - `bcb-caderno-financas-pessoais-2026` - `bcb-orcamento-pessoal-2026`"
+  },
+  {
+    "chunk_id": "inna-edu-reserva-002::tuned-001::34aadfa8695fe145e93c",
+    "chunk_index": 1,
+    "documento_id": "inna-edu-reserva-002",
+    "documento_origem": "educadora_financeira/03_reserva_emergencia.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "bbbfceab4b8048f3ef75036facc72fd4eb02261ecf9e4aeb480b36b4dccb714b",
+      "content_hash": "5d103b7daeafc2b23d18871bbd24de14d63c2884c2070d042f0488933ee65c0d",
+      "document_path": "educadora_financeira/03_reserva_emergencia.md",
+      "document_title": "Reserva de emergência e resiliência financeira",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Resposta direta | A meta não é igual para todos | Construção em etapas",
+      "source_ids": [
+        "bcb-letramento-reserva",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "reserva_de_emergencia",
+      "version": "2.0.0",
+      "word_count": 155
+    },
+    "modelo_embedding": null,
+    "texto": "Reserva de emergência e resiliência financeira. Secao: Resposta direta. Para montar uma reserva de emergência, identifique as despesas essenciais que precisam ser protegidas, defina uma primeira meta alcançável, separe um valor recorrente do orçamento e mantenha o recurso com liquidez adequada, baixo risco e regras compreendidas. Reserva de emergência e resiliência financeira. Secao: A meta não é igual para todos. A necessidade depende de estabilidade da renda, número de dependentes, despesas essenciais, acesso a benefícios, saúde, seguros e previsibilidade profissional. A INNA deve evitar impor um número único sem contexto. Reserva de emergência e resiliência financeira. Secao: Construção em etapas. 1. **Proteção inicial:** formar um valor pequeno para imprevistos comuns. 2. **Consistência:** automatizar contribuições depois do recebimento. 3. **Expansão:** aumentar a meta quando houver melhora de renda ou redução de dívidas. 4. **Revisão:** recalcular após mudança de trabalho, moradia, família ou despesas. 5. **Recomposição:** quando a reserva for usada, criar plano gradual para reconstruí-la."
+  },
+  {
+    "chunk_id": "inna-edu-reserva-002::tuned-002::316d2b8f9bca37eaf38d",
+    "chunk_index": 2,
+    "documento_id": "inna-edu-reserva-002",
+    "documento_origem": "educadora_financeira/03_reserva_emergencia.md",
+    "embedding": null,
+    "metadata": {
+      "area": "educacao_financeira",
+      "canonical_hash": "1defbf47c8089426d80896b2f5f5455cea4f8756fe924b4d7b5f36300af5a013",
+      "content_hash": "334af3e17a9534ff57b4d395fc2d6abe6947f7ede8c6dd1b54ed0ef7f377b50e",
+      "document_path": "educadora_financeira/03_reserva_emergencia.md",
+      "document_title": "Reserva de emergência e resiliência financeira",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Onde manter | Quando usar | Reserva e dívidas | Limites | Fontes de referência",
+      "source_ids": [
+        "bcb-letramento-reserva",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "topic": "reserva_de_emergencia",
+      "version": "2.0.0",
+      "word_count": 159
+    },
+    "modelo_embedding": null,
+    "texto": "Reserva de emergência e resiliência financeira. Secao: Onde manter. A prioridade é acesso, segurança, entendimento e custos conhecidos. A busca por retorno alto não deve comprometer a disponibilidade do dinheiro necessário em uma emergência. Reserva de emergência e resiliência financeira. Secao: Quando usar. A reserva é apropriada para perda de renda, reparo essencial, urgência de saúde e outras despesas necessárias e inesperadas. Despesas anuais previsíveis devem, sempre que possível, possuir provisão própria. Reserva de emergência e resiliência financeira. Secao: Reserva e dívidas. A decisão entre formar reserva e pagar dívidas depende de juros, urgência, consequências do atraso e risco de criar nova dívida por falta de proteção. A INNA deve comparar cenários e declarar os dados faltantes. Reserva de emergência e resiliência financeira. Secao: Limites. A INNA não deve indicar produto específico, prometer rentabilidade ou tratar a reserva como investimento especulativo. Reserva de emergência e resiliência financeira. Secao: Fontes de referência. - `bcb-letramento-reserva` - `bcb-caderno-financas-pessoais-2026`"
+  },
+  {
+    "chunk_id": "inna-sec-boleto-002::tuned-001::40b29095856a7fdf9883",
+    "chunk_index": 1,
+    "documento_id": "inna-sec-boleto-002",
+    "documento_origem": "seguranca_financeira/04_boleto_pagamento_falso.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "9dd902494fbba385da70e4ebc7c44a07a4dae0626507d054ba8c9ac9f64bec4d",
+      "content_hash": "bec70e224802e9e1bb2c9ae19e4d83ad4dc26a57292965b2352c743c8d7846ee",
+      "document_path": "seguranca_financeira/04_boleto_pagamento_falso.md",
+      "document_title": "Boleto falso e alteração de dados de pagamento",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Antes de pagar | Sinais de risco | Após pagamento suspeito | Conduta da INNA",
+      "source_ids": [
+        "cert-golpes-prevencao",
+        "cert-cartilha-seguranca"
+      ],
+      "topic": "fraude_em_pagamentos",
+      "version": "2.0.0",
+      "word_count": 136
+    },
+    "modelo_embedding": null,
+    "texto": "Boleto falso e alteração de dados de pagamento. Secao: Antes de pagar. Confira beneficiário, valor, vencimento e origem do documento. Obtenha segunda via pelo canal oficial e compare os dados exibidos na tela de pagamento. Boleto falso e alteração de dados de pagamento. Secao: Sinais de risco. Mudança inesperada de beneficiário, desconto incomum, arquivo enviado por contato desconhecido, pedido para ignorar o canal habitual e pressão para pagamento imediato. Boleto falso e alteração de dados de pagamento. Secao: Após pagamento suspeito. Contate imediatamente a instituição financeira e o beneficiário legítimo, preserve o boleto, comprovante, mensagens e protocolos. Não faça novo pagamento até confirmar a situação. Boleto falso e alteração de dados de pagamento. Secao: Conduta da INNA. A INNA deve recomendar verificação por canal oficial e nunca afirmar que um boleto é legítimo apenas pela aparência."
+  },
+  {
+    "chunk_id": "inna-sec-boleto-002::tuned-002::495888f83cda4f2d19d5",
+    "chunk_index": 2,
+    "documento_id": "inna-sec-boleto-002",
+    "documento_origem": "seguranca_financeira/04_boleto_pagamento_falso.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "8556eb1f261d8818ca98e8dbdf0b90846bc7cf94d74474144ba6a7f422b2478c",
+      "content_hash": "780e26bd0441bacf9c97548b1caf692ef03938d6638ba992824507ef258b5fbf",
+      "document_path": "seguranca_financeira/04_boleto_pagamento_falso.md",
+      "document_title": "Boleto falso e alteração de dados de pagamento",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Fontes de referência | Verificação adicional | E-mail corporativo comprometido | Evidências e encaminhamento",
+      "source_ids": [
+        "cert-golpes-prevencao",
+        "cert-cartilha-seguranca"
+      ],
+      "topic": "fraude_em_pagamentos",
+      "version": "2.0.0",
+      "word_count": 142
+    },
+    "modelo_embedding": null,
+    "texto": "Boleto falso e alteração de dados de pagamento. Secao: Fontes de referência. - `cert-golpes-prevencao` - `cert-cartilha-seguranca` Boleto falso e alteração de dados de pagamento. Secao: Verificação adicional. O nome do arquivo, o logotipo e o formato visual não comprovam autenticidade. A confirmação deve ocorrer no canal oficial do credor. Quando o pagamento mostrar beneficiário diferente do esperado, a operação deve ser interrompida. Boleto falso e alteração de dados de pagamento. Secao: E-mail corporativo comprometido. Mudança de dados bancários enviada por e-mail deve ser confirmada por um segundo canal já conhecido. Isso é especialmente importante em pagamentos de alto valor ou recorrentes. Boleto falso e alteração de dados de pagamento. Secao: Evidências e encaminhamento. Guarde documento, comprovante, mensagens, endereço do remetente e protocolos. A INNA deve orientar contato rápido com banco e credor legítimo, sem prometer recuperação do valor."
+  },
+  {
+    "chunk_id": "inna-sec-cartao-002::tuned-001::1331267537b1c0e48eb0",
+    "chunk_index": 1,
+    "documento_id": "inna-sec-cartao-002",
+    "documento_origem": "seguranca_financeira/03_cartao_compra_nao_reconhecida.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "540226aee92324ec74474f410c57b7336e8873106e8669ce7a2e206ffd685813",
+      "content_hash": "b8b92d392d1a905dae27985d5b3257e3084ae78be4e6dec96c0057740f8d2959",
+      "document_path": "seguranca_financeira/03_cartao_compra_nao_reconhecida.md",
+      "document_title": "Cartão perdido, clonagem e compra não reconhecida",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Ação imediata | Verificação inicial | Proteção preventiva | Dados que não devem ser compartilhados",
+      "source_ids": [
+        "cert-golpes-prevencao",
+        "cert-cartilha-seguranca"
+      ],
+      "topic": "fraude_com_cartao",
+      "version": "2.0.0",
+      "word_count": 141
+    },
+    "modelo_embedding": null,
+    "texto": "Cartão perdido, clonagem e compra não reconhecida. Secao: Ação imediata. Ao perceber perda, furto ou compra não reconhecida, bloqueie o cartão pelo aplicativo ou canal oficial, contate a instituição, informe as transações, solicite o procedimento de contestação e guarde protocolos. Cartão perdido, clonagem e compra não reconhecida. Secao: Verificação inicial. Confira nome comercial diferente no extrato, assinatura recorrente, parcela antiga, pré-autorização e compra de pessoa autorizada. Se a suspeita permanecer, mantenha o bloqueio e trate com a instituição. Cartão perdido, clonagem e compra não reconhecida. Secao: Proteção preventiva. Habilite notificações, revise limites, utilize cartão virtual quando apropriado, proteja o código de segurança e confira valor e estabelecimento antes de autorizar. Cartão perdido, clonagem e compra não reconhecida. Secao: Dados que não devem ser compartilhados. Senha, código temporário, foto completa do cartão, dados completos por mensagem e acesso remoto ao dispositivo."
+  },
+  {
+    "chunk_id": "inna-sec-cartao-002::tuned-002::b8e5348d94e69aa6192b",
+    "chunk_index": 2,
+    "documento_id": "inna-sec-cartao-002",
+    "documento_origem": "seguranca_financeira/03_cartao_compra_nao_reconhecida.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "3915bdcf761bc9b53fa22e1533fbb52a506b900cb8385c1afa14a72f5f1530cb",
+      "content_hash": "12e2e9061f7d247f964ec58b73f839b8a54e13c9ca51be1f9d0e96f6f5ce5e12",
+      "document_path": "seguranca_financeira/03_cartao_compra_nao_reconhecida.md",
+      "document_title": "Cartão perdido, clonagem e compra não reconhecida",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Conduta da INNA | Fontes de referência | Organização das evidências | Carteiras digitais e cartões virtuais | Limites",
+      "source_ids": [
+        "cert-golpes-prevencao",
+        "cert-cartilha-seguranca"
+      ],
+      "topic": "fraude_com_cartao",
+      "version": "2.0.0",
+      "word_count": 159
+    },
+    "modelo_embedding": null,
+    "texto": "Cartão perdido, clonagem e compra não reconhecida. Secao: Conduta da INNA. A INNA deve orientar bloqueio e canal oficial. Ela não deve prometer estorno, definir responsabilidade jurídica ou coletar dados completos do cartão. Cartão perdido, clonagem e compra não reconhecida. Secao: Fontes de referência. - `cert-golpes-prevencao` - `cert-cartilha-seguranca` Cartão perdido, clonagem e compra não reconhecida. Secao: Organização das evidências. Registre data, horário, valor, estabelecimento exibido, final do cartão, canal de contato e número de protocolo. Não publique imagem do cartão ou da fatura com dados sensíveis. Cartão perdido, clonagem e compra não reconhecida. Secao: Carteiras digitais e cartões virtuais. Revise dispositivos autorizados, cartões virtuais ativos e carteiras digitais vinculadas. A exclusão ou substituição deve ocorrer pelos procedimentos oficiais da instituição. Cartão perdido, clonagem e compra não reconhecida. Secao: Limites. A INNA não deve orientar o usuário a informar dados completos para “confirmar identidade”. Também não deve afirmar que toda compra desconhecida é clonagem antes da verificação inicial."
+  },
+  {
+    "chunk_id": "inna-sec-celular-002::tuned-001::afd889735e0f4699788f",
+    "chunk_index": 1,
+    "documento_id": "inna-sec-celular-002",
+    "documento_origem": "seguranca_financeira/06_celular_perdido_roubado.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "dc79bd09044e974b92f2f07ff5cb4edaa5cc1e330e865c8bbfdfac937508b719",
+      "content_hash": "bb766561b9d15afb61b95eb57323a97c792434aecfcca13150da27ded200090f",
+      "document_path": "seguranca_financeira/06_celular_perdido_roubado.md",
+      "document_title": "Celular perdido ou roubado com aplicativos financeiros",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Resposta inicial | Prioridade do e-mail | Monitoramento | Prevenção",
+      "source_ids": [
+        "cert-cartilha-seguranca",
+        "cert-autenticacao"
+      ],
+      "topic": "seguranca_do_dispositivo",
+      "version": "2.0.0",
+      "word_count": 129
+    },
+    "modelo_embedding": null,
+    "texto": "Celular perdido ou roubado com aplicativos financeiros. Secao: Resposta inicial. Quando for seguro, bloqueie a linha e o chip, utilize recursos oficiais de localização ou bloqueio remoto, altere a senha principal do e-mail, encerre sessões e avise instituições financeiras. Celular perdido ou roubado com aplicativos financeiros. Secao: Prioridade do e-mail. O e-mail pode ser usado para recuperar outras contas. Por isso, sua proteção e a revisão dos métodos de recuperação são prioritárias. Celular perdido ou roubado com aplicativos financeiros. Secao: Monitoramento. Revise movimentações, bloqueie cartões e acessos quando necessário, registre protocolos e avalie a ocorrência policial. Celular perdido ou roubado com aplicativos financeiros. Secao: Prevenção. Use bloqueio de tela forte, sistema atualizado, notificações sem conteúdo sensível, verificação em duas etapas, senhas diferentes e limites financeiros adequados."
+  },
+  {
+    "chunk_id": "inna-sec-celular-002::tuned-002::4b3c9d155761e6edc790",
+    "chunk_index": 2,
+    "documento_id": "inna-sec-celular-002",
+    "documento_origem": "seguranca_financeira/06_celular_perdido_roubado.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "d1bc5776e55906d02e7e5f1515629d2447de81a99d70f0fa8768af2d304bf013",
+      "content_hash": "5798f971376224aa7d0c5e4ed0347643cbac30a60de1786a25b6a3db4e667fe1",
+      "document_path": "seguranca_financeira/06_celular_perdido_roubado.md",
+      "document_title": "Celular perdido ou roubado com aplicativos financeiros",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Conduta da INNA | Fontes de referência | Ordem de prioridade | Cuidados físicos | Checklist posterior",
+      "source_ids": [
+        "cert-cartilha-seguranca",
+        "cert-autenticacao"
+      ],
+      "topic": "seguranca_do_dispositivo",
+      "version": "2.0.0",
+      "word_count": 154
+    },
+    "modelo_embedding": null,
+    "texto": "Celular perdido ou roubado com aplicativos financeiros. Secao: Conduta da INNA. A INNA deve fornecer uma lista de contenção ordenada e recomendar canais oficiais. Não deve orientar confronto ou recuperação física arriscada do dispositivo. Celular perdido ou roubado com aplicativos financeiros. Secao: Fontes de referência. - `cert-cartilha-seguranca` - `cert-autenticacao` Celular perdido ou roubado com aplicativos financeiros. Secao: Ordem de prioridade. A ordem pode variar conforme o risco, mas geralmente inclui proteger o e-mail principal, linha telefônica, contas financeiras e aplicativos de mensagem. A pessoa deve usar outro dispositivo confiável. Celular perdido ou roubado com aplicativos financeiros. Secao: Cuidados físicos. A localização remota do aparelho não deve ser usada para confronto ou recuperação sem apoio adequado. A prioridade é a segurança da pessoa. Celular perdido ou roubado com aplicativos financeiros. Secao: Checklist posterior. Revise alterações cadastrais, cartões adicionados, transferências, empréstimos, sessões abertas e mensagens enviadas. Mantenha uma lista dos protocolos de cada instituição."
+  },
+  {
+    "chunk_id": "inna-sec-conta-002::tuned-001::fb8e40471d07a7e643d6",
+    "chunk_index": 1,
+    "documento_id": "inna-sec-conta-002",
+    "documento_origem": "seguranca_financeira/05_conta_invadida_falsa_identidade.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "048e2eec3981c00c726dc64cc34dad6b1f2f3c3fdfe99bcad3b045cb2f8537d1",
+      "content_hash": "adc9a04446a3656c6381e1ee72f673fc6ed691b4ddb6546c993d27721b430f0b",
+      "document_path": "seguranca_financeira/05_conta_invadida_falsa_identidade.md",
+      "document_title": "Conta invadida, WhatsApp clonado e falsa identidade",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Prevenção | Pedido de dinheiro por contato conhecido | Conta comprometida | Risco financeiro | Conduta da INNA",
+      "source_ids": [
+        "cert-autenticacao",
+        "cert-golpes-resposta"
+      ],
+      "topic": "roubo_de_conta",
+      "version": "2.0.0",
+      "word_count": 147
+    },
+    "modelo_embedding": null,
+    "texto": "Conta invadida, WhatsApp clonado e falsa identidade. Secao: Prevenção. Nunca compartilhe códigos de verificação. Use senhas diferentes, verificação em duas etapas e canais de recuperação atualizados. Conta invadida, WhatsApp clonado e falsa identidade. Secao: Pedido de dinheiro por contato conhecido. Confirme por ligação ou outro canal, faça uma pergunta contextual, confira o titular da conta e não aja sob pressão. Conta invadida, WhatsApp clonado e falsa identidade. Secao: Conta comprometida. Utilize o procedimento oficial de recuperação, encerre sessões desconhecidas, troque senhas relacionadas, revise e-mail e telefone de recuperação e avise contatos. Conta invadida, WhatsApp clonado e falsa identidade. Secao: Risco financeiro. Quando a conta comprometida possui ligação com serviços financeiros, contate as instituições e monitore movimentações. Conta invadida, WhatsApp clonado e falsa identidade. Secao: Conduta da INNA. A INNA deve orientar recuperação oficial e contenção. Não deve pedir código de verificação nem assumir controle da conta."
+  },
+  {
+    "chunk_id": "inna-sec-conta-002::tuned-002::feee5b832b0dc26e6230",
+    "chunk_index": 2,
+    "documento_id": "inna-sec-conta-002",
+    "documento_origem": "seguranca_financeira/05_conta_invadida_falsa_identidade.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "c4661733cae5262e609cf525f42848312598df5142367738fb756ba91971ae5a",
+      "content_hash": "2a36208da26a384e49b2cf0064202e96fdae9953a07ae5a69c72bb17b646a737",
+      "document_path": "seguranca_financeira/05_conta_invadida_falsa_identidade.md",
+      "document_title": "Conta invadida, WhatsApp clonado e falsa identidade",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Fontes de referência | Revisão de sessões e recuperação | Comunicação com contatos | Encaminhamento",
+      "source_ids": [
+        "cert-autenticacao",
+        "cert-golpes-resposta"
+      ],
+      "topic": "roubo_de_conta",
+      "version": "2.0.0",
+      "word_count": 127
+    },
+    "modelo_embedding": null,
+    "texto": "Conta invadida, WhatsApp clonado e falsa identidade. Secao: Fontes de referência. - `cert-autenticacao` - `cert-golpes-resposta` Conta invadida, WhatsApp clonado e falsa identidade. Secao: Revisão de sessões e recuperação. Confira dispositivos conectados, sessões ativas, aplicativos autorizados e alterações recentes de e-mail ou telefone. Remova acessos desconhecidos somente pelos controles oficiais da plataforma. Conta invadida, WhatsApp clonado e falsa identidade. Secao: Comunicação com contatos. Avise os contatos de forma objetiva, informando que pedidos recentes podem ser falsos. Evite divulgar dados pessoais adicionais ao fazer o alerta. Conta invadida, WhatsApp clonado e falsa identidade. Secao: Encaminhamento. Quando houver pedido de dinheiro já atendido, a INNA deve orientar contato imediato com a instituição financeira, preservação de evidências e registro de protocolo. Ela não deve incentivar negociação com o golpista."
+  },
+  {
+    "chunk_id": "inna-sec-dados-002::tuned-001::3471a58eecb5d916b0e3",
+    "chunk_index": 1,
+    "documento_id": "inna-sec-dados-002",
+    "documento_origem": "seguranca_financeira/07_vazamento_dados_senhas.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "6924207cf945b679ec625fcb396b6fac4c1e87a1fd9cd1666b907538d0e34d1e",
+      "content_hash": "8cfbf60951b8ba9832ab2efc11b64b4119575084784d33e3b9f413512ded0321",
+      "document_path": "seguranca_financeira/07_vazamento_dados_senhas.md",
+      "document_title": "Vazamento de dados, senhas e autenticação",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Quando dados podem ter vazado | Senhas | Monitoramento | Minimização | Conduta da INNA",
+      "source_ids": [
+        "anpd-dados-vazaram",
+        "cert-vazamento-dados",
+        "cert-autenticacao"
+      ],
+      "topic": "vazamento_de_dados",
+      "version": "2.0.0",
+      "word_count": 143
+    },
+    "modelo_embedding": null,
+    "texto": "Vazamento de dados, senhas e autenticação. Secao: Quando dados podem ter vazado. Confirme a informação com a organização envolvida e procure saber quais dados foram afetados, quando ocorreu e quais medidas foram adotadas. Vazamento de dados, senhas e autenticação. Secao: Senhas. Troque imediatamente a senha exposta e todas as contas em que ela foi reutilizada. Use senhas únicas e verificação em duas etapas. Vazamento de dados, senhas e autenticação. Secao: Monitoramento. Revise sessões, acessos, e-mails de recuperação, movimentações financeiras e alertas de abertura de contas ou operações desconhecidas. Vazamento de dados, senhas e autenticação. Secao: Minimização. Compartilhe apenas os dados necessários e revise permissões e políticas de privacidade. Vazamento de dados, senhas e autenticação. Secao: Conduta da INNA. A INNA deve recomendar medidas proporcionais aos dados expostos. Ela não deve afirmar que todo vazamento produziu fraude nem solicitar documentos completos sem necessidade."
+  },
+  {
+    "chunk_id": "inna-sec-dados-002::tuned-002::4808586b2cd57f954f2e",
+    "chunk_index": 2,
+    "documento_id": "inna-sec-dados-002",
+    "documento_origem": "seguranca_financeira/07_vazamento_dados_senhas.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "f5560544bcda16caf31cd23200b5414938de72108267f7ec1c5eb80ef98764fe",
+      "content_hash": "c750270fe023966b5f8b54f7d6d2332c67c8dccd65b65c30fa624d929a745ff5",
+      "document_path": "seguranca_financeira/07_vazamento_dados_senhas.md",
+      "document_title": "Vazamento de dados, senhas e autenticação",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Fontes de referência | Risco conforme o dado exposto | Recuperação e prevenção | Limites",
+      "source_ids": [
+        "anpd-dados-vazaram",
+        "cert-vazamento-dados",
+        "cert-autenticacao"
+      ],
+      "topic": "vazamento_de_dados",
+      "version": "2.0.0",
+      "word_count": 124
+    },
+    "modelo_embedding": null,
+    "texto": "Vazamento de dados, senhas e autenticação. Secao: Fontes de referência. - `anpd-dados-vazaram` - `cert-vazamento-dados` - `cert-autenticacao` Vazamento de dados, senhas e autenticação. Secao: Risco conforme o dado exposto. E-mail e telefone podem aumentar tentativas de phishing. Senhas exigem troca imediata. Dados financeiros e documentos podem justificar monitoramento reforçado e contato com organizações relacionadas. Vazamento de dados, senhas e autenticação. Secao: Recuperação e prevenção. Use gerenciador de senhas confiável, senhas únicas e verificação em duas etapas. Códigos de recuperação devem ser guardados com segurança e nunca enviados por mensagem a terceiros. Vazamento de dados, senhas e autenticação. Secao: Limites. A INNA não deve concluir que houve crime apenas pela notícia de vazamento. Deve orientar confirmação com a organização, proteção proporcional e monitoramento."
+  },
+  {
+    "chunk_id": "inna-sec-incidente-002::tuned-001::c64db776e92078a83361",
+    "chunk_index": 1,
+    "documento_id": "inna-sec-incidente-002",
+    "documento_origem": "seguranca_financeira/08_resposta_incidente_evidencias.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "9303487c055c4e044185a1972e481de7460972e690941f902016230071e09ac3",
+      "content_hash": "9e2f17e119331deb5078fee4eb5860ab6d2b51413f742cab5b83a92e24d137bb",
+      "document_path": "seguranca_financeira/08_resposta_incidente_evidencias.md",
+      "document_title": "Resposta a incidentes financeiros e preservação de evidências",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Sequência recomendada | Evidências úteis | Escalonamento",
+      "source_ids": [
+        "cert-golpes-resposta",
+        "bcb-vitima-pix-golpe",
+        "anpd-dados-vazaram"
+      ],
+      "topic": "resposta_a_incidentes",
+      "version": "2.0.0",
+      "word_count": 117
+    },
+    "modelo_embedding": null,
+    "texto": "Resposta a incidentes financeiros e preservação de evidências. Secao: Sequência recomendada. 1. Interromper o contato com o possível golpista. 2. Conter acessos e transações. 3. Contatar instituições por canais oficiais. 4. Alterar credenciais comprometidas. 5. Preservar evidências e protocolos. 6. Monitorar contas e movimentações. 7. Acionar autoridades ou suporte especializado quando necessário. Resposta a incidentes financeiros e preservação de evidências. Secao: Evidências úteis. Data e horário, comprovantes, identificadores de transação, mensagens, números, endereços eletrônicos, nomes exibidos e relato cronológico. Não altere nem fabrique evidências. Resposta a incidentes financeiros e preservação de evidências. Secao: Escalonamento. Recomende atendimento humano quando houver transação em andamento, risco imediato, conta comprometida, necessidade de bloqueio, ameaça, dúvida jurídica ou pessoa vulnerável sem apoio."
+  },
+  {
+    "chunk_id": "inna-sec-incidente-002::tuned-002::962a8023931446ec9578",
+    "chunk_index": 2,
+    "documento_id": "inna-sec-incidente-002",
+    "documento_origem": "seguranca_financeira/08_resposta_incidente_evidencias.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "d4bff1504a402407d3ab16244b12247afebeb2a811e82c4919b1dea417525365",
+      "content_hash": "1ec0fa8aca23d61d5cb2b1b6f5169a36c3da838a40ba4c8834bf5abd9007cbcf",
+      "document_path": "seguranca_financeira/08_resposta_incidente_evidencias.md",
+      "document_title": "Resposta a incidentes financeiros e preservação de evidências",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Privacidade | Limites | Fontes de referência | Registro cronológico",
+      "source_ids": [
+        "cert-golpes-resposta",
+        "bcb-vitima-pix-golpe",
+        "anpd-dados-vazaram"
+      ],
+      "topic": "resposta_a_incidentes",
+      "version": "2.0.0",
+      "word_count": 123
+    },
+    "modelo_embedding": null,
+    "texto": "Resposta a incidentes financeiros e preservação de evidências. Secao: Privacidade. A INNA deve pedir apenas o mínimo necessário e nunca solicitar senha, token, código de autenticação ou dados completos de pagamento. Resposta a incidentes financeiros e preservação de evidências. Secao: Limites. A INNA não substitui banco, polícia, advogado ou autoridade competente. Ela organiza a resposta inicial e orienta o encaminhamento. Resposta a incidentes financeiros e preservação de evidências. Secao: Fontes de referência. - `cert-golpes-resposta` - `bcb-vitima-pix-golpe` - `anpd-dados-vazaram` Resposta a incidentes financeiros e preservação de evidências. Secao: Registro cronológico. Organize os fatos na ordem em que ocorreram: primeiro contato, ação solicitada, dados informados, pagamentos, alterações de conta e medidas já tomadas. Isso facilita atendimento do banco, plataforma ou autoridade."
+  },
+  {
+    "chunk_id": "inna-sec-incidente-002::tuned-003::a31ca073953eb91a4d8d",
+    "chunk_index": 3,
+    "documento_id": "inna-sec-incidente-002",
+    "documento_origem": "seguranca_financeira/08_resposta_incidente_evidencias.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "762c4f802aba38c39f861c8d228783ebc590997aa545283ddded94494f0d1d58",
+      "content_hash": "c9c4942f254595c2d5d770d3874bdbb03f951e45c1d4483505f030db4f6c31bc",
+      "document_path": "seguranca_financeira/08_resposta_incidente_evidencias.md",
+      "document_title": "Resposta a incidentes financeiros e preservação de evidências",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Preservação segura | Comunicação | Limites",
+      "source_ids": [
+        "cert-golpes-resposta",
+        "bcb-vitima-pix-golpe",
+        "anpd-dados-vazaram"
+      ],
+      "topic": "resposta_a_incidentes",
+      "version": "2.0.0",
+      "word_count": 100
+    },
+    "modelo_embedding": null,
+    "texto": "Resposta a incidentes financeiros e preservação de evidências. Secao: Preservação segura. Mantenha cópias em local seguro e evite editar arquivos originais. Ao compartilhar evidências, oculte dados que não sejam necessários para o atendimento. Resposta a incidentes financeiros e preservação de evidências. Secao: Comunicação. Use canais oficiais e anote nome do atendimento, data, horário e protocolo. Quando uma instituição solicitar documentos, confirme a legitimidade do canal antes do envio. Resposta a incidentes financeiros e preservação de evidências. Secao: Limites. A INNA não deve interpretar evidência como autoridade pericial nem definir culpa. Seu papel é ajudar na organização inicial e no encaminhamento."
+  },
+  {
+    "chunk_id": "inna-sec-phishing-002::tuned-001::503ff14f2c21b739d075",
+    "chunk_index": 1,
+    "documento_id": "inna-sec-phishing-002",
+    "documento_origem": "seguranca_financeira/02_phishing_engenharia_social.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "0760391b72d0506e7995198cddf8127e317ff9d62d802262dcc24fbce50c9cbf",
+      "content_hash": "c327c028994ea33696981a798517f71b93cc18f60a49f7aa80fe67309df00a69",
+      "document_path": "seguranca_financeira/02_phishing_engenharia_social.md",
+      "document_title": "Phishing e engenharia social",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Conceito | Sinais de alerta | Verificação segura | Se houve interação | Conduta da INNA",
+      "source_ids": [
+        "cert-cartilha-seguranca",
+        "cert-golpes-prevencao"
+      ],
+      "topic": "phishing_e_engenharia_social",
+      "version": "2.0.0",
+      "word_count": 178
+    },
+    "modelo_embedding": null,
+    "texto": "Phishing e engenharia social. Secao: Conceito. Phishing é uma fraude que tenta obter dados, induzir acesso a página falsa, instalar software ou provocar uma ação financeira. Pode ocorrer por e-mail, SMS, aplicativos de mensagens, redes sociais, chamadas, anúncios e QR Codes. Phishing e engenharia social. Secao: Sinais de alerta. Urgência, ameaça, prêmio inesperado, domínio estranho, link encurtado, erro de escrita, pedido de código, solicitação de compartilhamento de tela e instalação de aplicativo. Phishing e engenharia social. Secao: Verificação segura. Não use o link recebido. Abra o aplicativo oficial, digite o endereço conhecido, use telefone presente no cartão ou site oficial e confirme a identidade por outro canal. Phishing e engenharia social. Secao: Se houve interação. Interrompa o contato, não envie novos dados, altere senhas potencialmente comprometidas, encerre sessões desconhecidas, ative verificação em duas etapas, contate instituições relacionadas e preserve evidências. Phishing e engenharia social. Secao: Conduta da INNA. A INNA deve orientar verificação independente e explicar que conhecer dados reais da vítima não prova legitimidade. Ela não deve abrir links nem pedir que o usuário cole credenciais."
+  },
+  {
+    "chunk_id": "inna-sec-phishing-002::tuned-002::d57fdc62df19a9f2d0d5",
+    "chunk_index": 2,
+    "documento_id": "inna-sec-phishing-002",
+    "documento_origem": "seguranca_financeira/02_phishing_engenharia_social.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "907c3943ba2abccb3e784e7b8ff30ac26fdbac3c4151f8ad64f9c6fc2e36f7be",
+      "content_hash": "3dafec8b3ab47c4af558de2032bd811282c9d35304c9ce2f1b4e812158dd604a",
+      "document_path": "seguranca_financeira/02_phishing_engenharia_social.md",
+      "document_title": "Phishing e engenharia social",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Fontes de referência | Verificação de domínio e mensagem | Perguntas da INNA | Encaminhamento",
+      "source_ids": [
+        "cert-cartilha-seguranca",
+        "cert-golpes-prevencao"
+      ],
+      "topic": "phishing_e_engenharia_social",
+      "version": "2.0.0",
+      "word_count": 143
+    },
+    "modelo_embedding": null,
+    "texto": "Phishing e engenharia social. Secao: Fontes de referência. - `cert-cartilha-seguranca` - `cert-golpes-prevencao` Phishing e engenharia social. Secao: Verificação de domínio e mensagem. O nome exibido do remetente pode ser falsificado. A confirmação deve considerar o endereço completo, o domínio, o contexto e o canal oficial. Um QR Code deve ser tratado como um link: antes de prosseguir, confirme sua origem e o destino apresentado pelo dispositivo. Phishing e engenharia social. Secao: Perguntas da INNA. A INNA pode perguntar qual canal foi usado, se algum dado foi informado, se houve instalação de aplicativo e se ocorreu movimentação financeira. Não deve pedir o link suspeito quando isso aumentar o risco de abertura acidental. Phishing e engenharia social. Secao: Encaminhamento. Quando houver senha informada, conta invadida ou pagamento realizado, a orientação deve mudar de prevenção para contenção imediata e contato com as instituições envolvidas."
+  },
+  {
+    "chunk_id": "inna-sec-pix-002::tuned-001::ddec60f2af3194eb1583",
+    "chunk_index": 1,
+    "documento_id": "inna-sec-pix-002",
+    "documento_origem": "seguranca_financeira/01_pix_suspeito_med.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "1bfa43ea06a1bb97dd434e4312f353b7407194ce3d0645616f5af48df9505554",
+      "content_hash": "b5070531448cbdccd71ae71a43ff439054c22cb6a02bead350379a0a7ff24a31",
+      "document_path": "seguranca_financeira/01_pix_suspeito_med.md",
+      "document_title": "Pix suspeito, golpe e Mecanismo Especial de Devolução",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "Pix recebido de pessoa desconhecida | Pix enviado após golpe",
+      "source_ids": [
+        "bcb-pix-seguranca",
+        "bcb-med-faq",
+        "bcb-vitima-pix-golpe"
+      ],
+      "topic": "seguranca_pix",
+      "version": "2.0.0",
+      "word_count": 99
+    },
+    "modelo_embedding": null,
+    "texto": "Pix suspeito, golpe e Mecanismo Especial de Devolução. Secao: Pix recebido de pessoa desconhecida. Abra o aplicativo oficial, confira os dados e não faça uma nova transferência para uma chave enviada por mensagem. Quando aplicável, utilize a função de devolução vinculada à transação original. Em caso de dúvida, contate a instituição por canal confirmado. Pix suspeito, golpe e Mecanismo Especial de Devolução. Secao: Pix enviado após golpe. Aja rapidamente: contate o banco, relate a fraude, solicite os procedimentos disponíveis, preserve comprovantes e registre o protocolo. O Banco Central orienta que a vítima também avalie o registro de ocorrência policial."
+  },
+  {
+    "chunk_id": "inna-sec-pix-002::tuned-002::a3cb0662a1d285c8a66d",
+    "chunk_index": 2,
+    "documento_id": "inna-sec-pix-002",
+    "documento_origem": "seguranca_financeira/01_pix_suspeito_med.md",
+    "embedding": null,
+    "metadata": {
+      "area": "seguranca_financeira",
+      "canonical_hash": "2588eef2bd943374b97744a71584c4af1307c210683c5bb4f3593a77fc1512f7",
+      "content_hash": "ce05c2c5d10fdb0e482e47fc530c6f47a2e67f10f8e606300a8f2f930c9e4654",
+      "document_path": "seguranca_financeira/01_pix_suspeito_med.md",
+      "document_title": "Pix suspeito, golpe e Mecanismo Especial de Devolução",
+      "embedding_status": "pending",
+      "ingestion_mode": "dry_run",
+      "knowledge_base": "inna_financial_v2",
+      "language": "pt-BR",
+      "schema_version": 2,
+      "section_title": "MED | Sinais de golpe | Conduta da INNA | Fontes de referência",
+      "source_ids": [
+        "bcb-pix-seguranca",
+        "bcb-med-faq",
+        "bcb-vitima-pix-golpe"
+      ],
+      "topic": "seguranca_pix",
+      "version": "2.0.0",
+      "word_count": 174
+    },
+    "modelo_embedding": null,
+    "texto": "Pix suspeito, golpe e Mecanismo Especial de Devolução. Secao: MED. O MED é um mecanismo do Pix destinado a ampliar a possibilidade de recuperação em casos de fraude, golpe ou crime. A solicitação deve ser feita à instituição financeira dentro do prazo informado pelo Banco Central; na referência oficial consultada em 5 de agosto de 2026, o prazo indicado era de até 80 dias. O mecanismo não garante devolução, pois depende da análise e da existência de recursos. Pix suspeito, golpe e Mecanismo Especial de Devolução. Secao: Sinais de golpe. Urgência artificial, pedido de senha ou código, transferência para “conta segura”, falso funcionário, instalação de aplicativo, compartilhamento de tela e mudança inesperada de beneficiário. Pix suspeito, golpe e Mecanismo Especial de Devolução. Secao: Conduta da INNA. A INNA deve orientar contato imediato com o banco e preservação de evidências. Nunca deve pedir senha, token, código, número completo do cartão ou acesso remoto. Pix suspeito, golpe e Mecanismo Especial de Devolução. Secao: Fontes de referência. - `bcb-pix-seguranca` - `bcb-med-faq` - `bcb-vitima-pix-golpe`"
+  }
+]

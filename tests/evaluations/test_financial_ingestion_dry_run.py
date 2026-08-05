@@ -11,11 +11,7 @@ from src.evaluation.financial_ingestion_dry_run import (
     validate_document_payload,
 )
 
-CHUNKS_PATH = Path(
-    "artifacts/evaluation/retrieval_quality/"
-    "phase_5a_chunking_tuned/"
-    "financial_knowledge_tuned_chunks.json"
-)
+CHUNKS_PATH = Path("tests/evaluations/fixtures/financial_knowledge_tuned_chunks.json")
 
 
 def test_loads_thirty_five_chunks() -> None:

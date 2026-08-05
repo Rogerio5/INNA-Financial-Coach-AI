@@ -1,0 +1,39 @@
+{
+  "policy_version": "1.0.0",
+  "phase": "8B.2H",
+  "offline": true,
+  "expected_dataset_version": "1.0.0",
+  "expected_dataset_case_count": 24,
+  "expected_dataset_category_count": 12,
+  "minimum_mcp_scenario_count": 8,
+  "require_quality_gate_passed": true,
+  "require_all_offline_controls": true,
+  "require_main_environment_pip_check": true,
+  "require_evaluation_environment_pip_check": true,
+  "require_git_diff_check": true,
+  "required_suite_codes": [
+    "python_compile",
+    "ruff_week4",
+    "evaluation_tests",
+    "agentic_rag_regression",
+    "mcp_existing_regression",
+    "quality_gate",
+    "dashboard_validator",
+    "main_pip_check",
+    "evaluation_pip_check",
+    "git_diff_check"
+  ],
+  "required_reports": [
+    "artifacts/evaluations/agentic_benchmark/offline_benchmark_latest.json",
+    "artifacts/evaluations/agentic_benchmark/offline_quality_gate_latest.json",
+    "artifacts/evaluations/agentic_benchmark/offline_quality_summary_latest.json",
+    "artifacts/evaluations/mcp_simulated_e2e/mcp_simulated_e2e_latest.json"
+  ],
+  "forbidden_environment_usage": [
+    "GEMINI_API_KEY",
+    "GOOGLE_API_KEY",
+    "VERTEX_PROJECT_ID",
+    "DATABASE_URL",
+    "NEON_DATABASE_URL"
+  ]
+}

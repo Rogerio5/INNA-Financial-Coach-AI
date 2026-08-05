@@ -13,17 +13,9 @@ from src.evaluation.financial_neon_schema_adapter import (
     validate_document_payload,
 )
 
-DOCUMENTS_PATH = Path(
-    "artifacts/evaluation/retrieval_quality/"
-    "phase_5a_ingestion_dry_run/"
-    "financial_documents_dry_run.json"
-)
+DOCUMENTS_PATH = Path("tests/evaluations/fixtures/financial_documents_dry_run.json")
 
-CHUNKS_PATH = Path(
-    "artifacts/evaluation/retrieval_quality/"
-    "phase_5a_ingestion_dry_run/"
-    "financial_chunks_dry_run.json"
-)
+CHUNKS_PATH = Path("tests/evaluations/fixtures/financial_chunks_dry_run.json")
 
 
 def test_parse_integer_version() -> None:
