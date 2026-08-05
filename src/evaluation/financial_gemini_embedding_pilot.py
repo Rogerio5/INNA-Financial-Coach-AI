@@ -34,10 +34,13 @@ class EmbeddingPilotResult:
     minimum_value: float
     maximum_value: float
     l2_norm: float
+    vector: tuple[float, ...]
     passed: bool
 
     def as_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        payload = asdict(self)
+        payload["vector"] = list(self.vector)
+        return payload
 
 
 def choose_database_dimension(
@@ -145,6 +148,7 @@ def analyze_embedding(
         minimum_value=min(values),
         maximum_value=max(values),
         l2_norm=norm,
+        vector=values,
         passed=passed,
     )
 

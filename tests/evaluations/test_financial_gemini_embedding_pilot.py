@@ -71,6 +71,8 @@ def test_valid_embedding_passes() -> None:
     assert result.actual_dimension == 3
     assert result.finite_value_count == 3
     assert result.l2_norm > 0
+    assert result.vector == (0.1, 0.2, 0.3)
+    assert result.as_dict()["vector"] == [0.1, 0.2, 0.3]
     assert result.passed is True
 
 
