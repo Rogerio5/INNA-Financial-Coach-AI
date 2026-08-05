@@ -1954,9 +1954,17 @@ A Semana 3 foi dedicada ao aprofundamento da arquitetura RAG da INNA, com foco e
 
 # 🧪 Experimentos reais
 
-## Experimento real — Pergunta 1 de 5
+## Experimentos históricos com `gemini-2.5-flash`
 
-### Pergunta avaliada
+Os dois primeiros testes foram executados anteriormente com o modelo:
+
+```text
+gemini-2.5-flash
+```
+Esses resultados permanecem válidos como evidências históricas e técnicas, mas não serão usados na consolidação oficial das cinco perguntas, que utilizará gemini-3.5-flash-lite.
+
+### Experimento histórico — Pergunta 1
+#### Pergunta avaliada
 
 > Como montar uma reserva financeira?
 
@@ -1976,7 +1984,8 @@ QUALITY_GATE_PASSED=True
 RAG_TRIAD_AVERAGE=0.9375
 MAXIMUM_REGRESSION=APROVADA
 ```
-### Análise
+
+#### Análise
 
 O Sentence-Window:
 
@@ -1986,16 +1995,16 @@ O Sentence-Window:
 - passou no Quality Gate;
 - atingiu média geral de 0.9375 na RAG Triad.
 
-> O Sentence-Window melhorou a relevância do contexto sem reduzir a fidelidade ou a relevância da resposta neste primeiro caso.
+> O Sentence-Window melhorou a relevância do contexto sem reduzir a fidelidade ou a relevância da resposta neste primeiro teste histórico.
 
 
-## Experimento real — Pergunta 2 de 5
-
-### Pergunta avaliada
+### Experimento histórico — Pergunta 2
+#### Pergunta avaliada
 
 > Tenho renda mensal de R$ 3.000 e gastos de R$ 2.500. Como posso organizar meu orçamento?
 
-### Comparação da RAG Triad
+
+#### Comparação da RAG Triad
 
 | Métrica | RAG híbrido atual | Sentence-Window | Delta |
 |---|---:|---:|---:|
@@ -2003,80 +2012,49 @@ O Sentence-Window:
 | Faithfulness | 1.0000 | 1.0000 | 0.0000 |
 | Contextual Relevancy | 0.5000 | 0.8750 | +0.3750 |
 
-### Resultado do Quality Gate
+#### Resultado do Quality Gate
 
 ```text
 COMPLETED=1
 FAILED=0
 QUALITY_GATE_PASSED=True
 RECOMMENDATION=promote_sentence_window
-````
-### Desempenho, contexto e custo
-```
-MEDIAN_LATENCY_DELTA_MS=-2605
-AVERAGE_CONTEXT_CHARACTER_DELTA=-1394
-TOTAL_ESTIMATED_COST=0.0040689
-RAW_OUTPUTS_STORED=False
-RAW_CONTEXTS_STORED=False
 ```
 
-### Análise
-```
+#### Desempenho, contexto e custo estimado
+
+- MEDIAN_LATENCY_DELTA_MS=-2605
+- AVERAGE_CONTEXT_CHARACTER_DELTA=-1394
+- TOTAL_ESTIMATED_COST=0.0040689
+- RAW_OUTPUTS_STORED=False
+- RAW_CONTEXTS_STORED=False
+
+#### Análise
+
 Nesta segunda pergunta, o Sentence-Window:
 
-manteve o Answer Relevancy em 1.0000;
-manteve a Faithfulness em 1.0000;
-aumentou a Contextual Relevancy de 0.5000 para 0.8750;
-obteve melhoria de +0.3750 em Contextual Relevancy;
-reduziu o tamanho médio do contexto em 1.394 caracteres;
-apresentou menor latência nesta execução;
-passou no Quality Gate;
-recebeu a recomendação técnica promote_sentence_window;
-não armazenou respostas ou contextos brutos.
-````
-A execução terminou com:
-```
+- manteve o Answer Relevancy em 1.0000;
+- manteve a Faithfulness em 1.0000;
+- aumentou a Contextual Relevancy de 0.5000 para 0.8750;
+- obteve melhoria de +0.3750 em Contextual Relevancy;
+- reduziu o tamanho médio do contexto em 1.394 caracteres;
+- apresentou menor latência nesta execução;
+- passou no Quality Gate;
+- recebeu a recomendação técnica promote_sentence_window;
+- não armazenou respostas ou contextos brutos.
+
+#### Resultado final da execução
+```text
 COMPLETED=1
 FAILED=0
 EXIT_CODE=0
 ```
 
-## 📊 Resultado parcial do experimento
+> O Sentence-Window melhorou a relevância do contexto sem reduzir a fidelidade ou a relevância da resposta nesta segunda pergunta.
 
-| Execução | Modelo avaliador | Quality Gate | Resultado | Uso na consolidação final |
-|---|---|---|---|---|
-| Pergunta 1 — reserva financeira | `gemini-2.5-flash` | ✅ Aprovado | Melhorou Contextual Relevancy | Smoke test histórico |
-| Pergunta 2 — organização do orçamento | `gemini-2.5-flash` | ✅ Aprovado | Melhorou Contextual Relevancy | Smoke test histórico |
-| Pergunta 1 reexecutada | `gemini-3.5-flash-lite` | ⏳ Pendente | Ainda não executada | Entrará na consolidação oficial |
-| Pergunta 2 reexecutada | `gemini-3.5-flash-lite` | ⏳ Pendente | Ainda não executada | Entrará na consolidação oficial |
-| Pergunta 3 | `gemini-3.5-flash-lite` | ⏳ Pendente | Ainda não executada | Entrará na consolidação oficial |
-| Pergunta 4 | `gemini-3.5-flash-lite` | ⏳ Pendente | Ainda não executada | Entrará na consolidação oficial |
-| Pergunta 5 | `gemini-3.5-flash-lite` | ⏳ Pendente | Ainda não executada | Entrará na consolidação oficial |
 
-Os resultados das Perguntas 1 e 2 permanecem válidos como evidências históricas e técnicas do smoke test com `gemini-2.5-flash`.
 
-Como o experimento oficial continuará com `gemini-3.5-flash-lite`, as duas primeiras perguntas serão reexecutadas para garantir que todas as cinco perguntas utilizem a mesma configuração de modelo.
-
-A consolidação final considerará apenas os resultados produzidos com:
-
-```env
-GEMINI_MODEL=gemini-3.5-flash-lite
-INNA_DEEPEVAL_GEMINI_MODEL=gemini-3.5-flash-lite
-```
-
-Para garantir uma comparação controlada, todas as cinco perguntas oficiais deverão utilizar:
-
-- o mesmo modelo gerador;
-- o mesmo modelo avaliador;
-- o mesmo conjunto de documentos;
-- o mesmo top-k;
-- os mesmos parâmetros de retrieval;
-- os mesmos limites de custo e latência;
-- as mesmas métricas da RAG Triad;
-- as mesmas configurações de baseline e Sentence-Window.
-
-> A Pergunta 1 será reexecutada com gemini-3.5-flash-lite antes da consolidação final.
-
+---
 #### 🔄 Próximos passos
 
 - [x] Implementar Sentence-Window Retrieval;
