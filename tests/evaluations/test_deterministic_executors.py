@@ -52,42 +52,28 @@ from src.evaluation.deterministic_executors import (
 
 @pytest.fixture
 def financial_case() -> InnaEvaluationCase:
-    return build_core_dataset().get_case(
-        "financial-diagnosis-balanced-001"
-    )
+    return build_core_dataset().get_case("financial-diagnosis-balanced-001")
 
 
 @pytest.fixture
 def routing_case() -> InnaEvaluationCase:
-    return build_core_dataset().get_case(
-        "routing-support-001"
-    )
+    return build_core_dataset().get_case("routing-support-001")
 
 
 @pytest.fixture
 def rag_case() -> InnaEvaluationCase:
-    return build_core_dataset().get_case(
-        "rag-financial-education-001"
-    )
+    return build_core_dataset().get_case("rag-financial-education-001")
 
 
 @pytest.fixture
 def hitl_case() -> InnaEvaluationCase:
-    return (
-        build_conversation_dataset()
-        .get_case(
-            "human-review-sensitive-guidance-001"
-        )
-    )
+    return build_conversation_dataset().get_case("human-review-sensitive-guidance-001")
 
 
 def metric_definition(
     metric_id: str,
 ) -> MetricDefinition:
-    return (
-        build_default_metric_registry()
-        .get(metric_id)
-    )
+    return build_default_metric_registry().get(metric_id)
 
 
 def complete_financial_payload(
@@ -103,9 +89,7 @@ def complete_financial_payload(
     metadata: dict[str, Any] = {
         "actual_agent": "financial_agent",
         "actual_team": "financial_team",
-        "actual_intent": (
-            "diagnostico_financeiro"
-        ),
+        "actual_intent": ("diagnostico_financeiro"),
         "actual_task_status": "completed",
         "task_completion_score": 1.0,
         "latency_ms": 150,
@@ -128,9 +112,7 @@ def complete_financial_payload(
         ],
     }
 
-    metadata.update(
-        dict(metadata_overrides or {})
-    )
+    metadata.update(dict(metadata_overrides or {}))
 
     return build_deepeval_payload(
         case,
@@ -142,10 +124,7 @@ def complete_financial_payload(
                 "a reserva fortalecida gradualmente."
             )
         ),
-        retrieval_context=(
-            "Documento sintético sobre reserva "
-            "de emergência.",
-        ),
+        retrieval_context=("Documento sintético sobre reserva de emergência.",),
         metadata=metadata,
     )
 
@@ -156,9 +135,7 @@ def complete_financial_payload(
 
 
 def test_default_executor_ids() -> None:
-    executors = (
-        build_default_deterministic_executors()
-    )
+    executors = build_default_deterministic_executors()
 
     assert set(executors) == {
         "contract-validation",
@@ -172,23 +149,15 @@ def test_default_executor_ids() -> None:
 
 
 def test_default_executors_are_callable() -> None:
-    executors = (
-        build_default_deterministic_executors()
-    )
+    executors = build_default_deterministic_executors()
 
     assert executors
-    assert all(
-        callable(executor)
-        for executor in executors.values()
-    )
+    assert all(callable(executor) for executor in executors.values())
 
 
-def test_default_executor_mapping_contains_only_local_metrics(
-) -> None:
+def test_default_executor_mapping_contains_only_local_metrics() -> None:
     registry = build_default_metric_registry()
-    executors = (
-        build_default_deterministic_executors()
-    )
+    executors = build_default_deterministic_executors()
 
     for metric_id in executors:
         assert registry.get(metric_id).is_local
@@ -197,12 +166,8 @@ def test_default_executor_mapping_contains_only_local_metrics(
 def test_build_deterministic_runner() -> None:
     runner = build_deterministic_runner()
 
-    assert runner.registry.get(
-        "contract-validation"
-    )
-    assert runner.registry.get(
-        "expected-terms"
-    )
+    assert runner.registry.get("contract-validation")
+    assert runner.registry.get("expected-terms")
 
 
 # ============================================================
@@ -213,9 +178,7 @@ def test_build_deterministic_runner() -> None:
 def test_payload_to_result_basic_fields(
     financial_case: InnaEvaluationCase,
 ) -> None:
-    payload = complete_financial_payload(
-        financial_case
-    )
+    payload = complete_financial_payload(financial_case)
 
     result = payload_to_inna_result(
         financial_case,
@@ -227,19 +190,11 @@ def test_payload_to_result_basic_fields(
         InnaEvaluationResult,
     )
     assert result.case_id == financial_case.case_id
-    assert result.dataset_name == (
-        financial_case.dataset_name
-    )
-    assert result.dataset_version == (
-        financial_case.dataset_version
-    )
-    assert result.case_version == (
-        financial_case.case_version
-    )
+    assert result.dataset_name == (financial_case.dataset_name)
+    assert result.dataset_version == (financial_case.dataset_version)
+    assert result.case_version == (financial_case.case_version)
     assert result.input_text == payload.input_text
-    assert result.actual_output == (
-        payload.actual_output
-    )
+    assert result.actual_output == (payload.actual_output)
 
 
 def test_payload_to_result_routing_fields(
@@ -247,24 +202,14 @@ def test_payload_to_result_routing_fields(
 ) -> None:
     result = payload_to_inna_result(
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
-    assert result.current_agent == (
-        "financial_agent"
-    )
-    assert result.current_team == (
-        "financial_team"
-    )
-    assert result.intent == (
-        "diagnostico_financeiro"
-    )
+    assert result.current_agent == ("financial_agent")
+    assert result.current_team == ("financial_team")
+    assert result.intent == ("diagnostico_financeiro")
     assert result.task_status == "completed"
-    assert result.task_completion_score == (
-        pytest.approx(1.0)
-    )
+    assert result.task_completion_score == (pytest.approx(1.0))
 
 
 def test_payload_to_result_latency_and_cost(
@@ -272,17 +217,11 @@ def test_payload_to_result_latency_and_cost(
 ) -> None:
     result = payload_to_inna_result(
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
-    assert result.latency_ms == pytest.approx(
-        150
-    )
-    assert result.estimated_cost == pytest.approx(
-        0.001
-    )
+    assert result.latency_ms == pytest.approx(150)
+    assert result.estimated_cost == pytest.approx(0.001)
 
 
 def test_payload_to_result_structured_response(
@@ -290,9 +229,7 @@ def test_payload_to_result_structured_response(
 ) -> None:
     result = payload_to_inna_result(
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
     assert result.structured_response == {
@@ -305,14 +242,10 @@ def test_payload_to_result_metadata_marks_adapter(
 ) -> None:
     result = payload_to_inna_result(
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
-    assert result.metadata["adapted_from"] == (
-        "DeepEvalCasePayload"
-    )
+    assert result.metadata["adapted_from"] == ("DeepEvalCasePayload")
 
 
 def test_payload_to_result_preserves_privacy(
@@ -320,14 +253,10 @@ def test_payload_to_result_preserves_privacy(
 ) -> None:
     result = payload_to_inna_result(
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
-    assert result.privacy_level == (
-        financial_case.privacy_level
-    )
+    assert result.privacy_level == (financial_case.privacy_level)
 
 
 def test_payload_to_result_rejects_case_id_mismatch(
@@ -359,9 +288,7 @@ def test_called_tool_is_converted(
 ) -> None:
     result = payload_to_inna_result(
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
     assert len(result.tools_called) == 1
@@ -372,9 +299,7 @@ def test_called_tool_is_converted(
         tool,
         ObservedToolCall,
     )
-    assert tool.name == (
-        "financial_calculator"
-    )
+    assert tool.name == ("financial_calculator")
     assert tool.call_index == 0
     assert tool.status == "success"
     assert tool.arguments["income"] == 4000
@@ -481,9 +406,7 @@ def test_called_tool_rejects_invalid_arguments(
             "called_tools": [
                 {
                     "name": "tool",
-                    "arguments": [
-                        "invalid"
-                    ],
+                    "arguments": ["invalid"],
                 }
             ],
         },
@@ -518,9 +441,7 @@ def test_called_tool_rejects_invalid_call_index(
                 {
                     "name": "tool",
                     "arguments": {},
-                    "call_index": (
-                        invalid_call_index
-                    ),
+                    "call_index": (invalid_call_index),
                 }
             ],
         },
@@ -546,10 +467,7 @@ def test_retrieval_context_is_converted(
 ) -> None:
     payload = build_deepeval_payload(
         rag_case,
-        actual_output=(
-            "Gastos fixos, gastos variáveis "
-            "e reserva de emergência."
-        ),
+        actual_output=("Gastos fixos, gastos variáveis e reserva de emergência."),
         retrieval_context=(
             "Primeiro documento.",
             "Segundo documento.",
@@ -561,27 +479,18 @@ def test_retrieval_context_is_converted(
         payload,
     )
 
-    assert len(
-        result.retrieval_documents
-    ) == 2
+    assert len(result.retrieval_documents) == 2
 
     assert all(
         isinstance(
             document,
             RetrievalDocument,
         )
-        for document
-        in result.retrieval_documents
+        for document in result.retrieval_documents
     )
 
-    assert (
-        result.retrieval_documents[0].rank
-        == 1
-    )
-    assert (
-        result.retrieval_documents[1].rank
-        == 2
-    )
+    assert result.retrieval_documents[0].rank == 1
+    assert result.retrieval_documents[1].rank == 2
 
 
 def test_retrieval_document_ids_are_deterministic(
@@ -590,9 +499,7 @@ def test_retrieval_document_ids_are_deterministic(
     payload = build_deepeval_payload(
         rag_case,
         actual_output="Resposta sintética.",
-        retrieval_context=(
-            "Documento.",
-        ),
+        retrieval_context=("Documento.",),
     )
 
     result = payload_to_inna_result(
@@ -600,13 +507,8 @@ def test_retrieval_document_ids_are_deterministic(
         payload,
     )
 
-    assert (
-        result.retrieval_documents[0]
-        .document_id
-        == (
-            f"{rag_case.case_id}"
-            "-document-0"
-        )
+    assert result.retrieval_documents[0].document_id == (
+        f"{rag_case.case_id}-document-0"
     )
 
 
@@ -619,13 +521,9 @@ def test_expected_terms_passes(
     financial_case: InnaEvaluationCase,
 ) -> None:
     output = execute_expected_terms(
-        metric_definition(
-            "expected-terms"
-        ),
+        metric_definition("expected-terms"),
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
     assert isinstance(
@@ -641,16 +539,11 @@ def test_expected_terms_is_case_and_accent_insensitive(
 ) -> None:
     payload = complete_financial_payload(
         financial_case,
-        actual_output=(
-            "SALDO positivo, RESERVA financeira "
-            "e organização dos GASTOS."
-        ),
+        actual_output=("SALDO positivo, RESERVA financeira e organização dos GASTOS."),
     )
 
     output = execute_expected_terms(
-        metric_definition(
-            "expected-terms"
-        ),
+        metric_definition("expected-terms"),
         financial_case,
         payload,
     )
@@ -663,16 +556,11 @@ def test_expected_terms_fails_when_term_is_missing(
 ) -> None:
     payload = complete_financial_payload(
         financial_case,
-        actual_output=(
-            "O saldo está positivo e os gastos "
-            "estão controlados."
-        ),
+        actual_output=("O saldo está positivo e os gastos estão controlados."),
     )
 
     output = execute_expected_terms(
-        metric_definition(
-            "expected-terms"
-        ),
+        metric_definition("expected-terms"),
         financial_case,
         payload,
     )
@@ -690,13 +578,9 @@ def test_forbidden_terms_passes(
     financial_case: InnaEvaluationCase,
 ) -> None:
     output = execute_forbidden_terms(
-        metric_definition(
-            "forbidden-terms"
-        ),
+        metric_definition("forbidden-terms"),
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
     assert output.passed is True
@@ -721,9 +605,7 @@ def test_forbidden_terms_fails(
     )
 
     output = execute_forbidden_terms(
-        metric_definition(
-            "forbidden-terms"
-        ),
+        metric_definition("forbidden-terms"),
         financial_case,
         payload,
     )
@@ -741,20 +623,14 @@ def test_contract_validation_passes(
     financial_case: InnaEvaluationCase,
 ) -> None:
     output = execute_contract_validation(
-        metric_definition(
-            "contract-validation"
-        ),
+        metric_definition("contract-validation"),
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
     assert output.passed is True
     assert output.score == pytest.approx(1.0)
-    assert not output.metadata[
-        "failed_metrics"
-    ]
+    assert not output.metadata["failed_metrics"]
 
 
 @pytest.mark.parametrize(
@@ -791,9 +667,7 @@ def test_contract_validation_fails_routing_fields(
     )
 
     output = execute_contract_validation(
-        metric_definition(
-            "contract-validation"
-        ),
+        metric_definition("contract-validation"),
         financial_case,
         payload,
     )
@@ -814,9 +688,7 @@ def test_contract_validation_fails_missing_tool(
     )
 
     output = execute_contract_validation(
-        metric_definition(
-            "contract-validation"
-        ),
+        metric_definition("contract-validation"),
         financial_case,
         payload,
     )
@@ -832,9 +704,7 @@ def test_contract_validation_fails_tool_arguments(
         metadata_overrides={
             "called_tools": [
                 {
-                    "name": (
-                        "financial_calculator"
-                    ),
+                    "name": ("financial_calculator"),
                     "arguments": {
                         "income": 100,
                     },
@@ -845,9 +715,7 @@ def test_contract_validation_fails_tool_arguments(
     )
 
     output = execute_contract_validation(
-        metric_definition(
-            "contract-validation"
-        ),
+        metric_definition("contract-validation"),
         financial_case,
         payload,
     )
@@ -868,9 +736,7 @@ def test_contract_validation_fails_structured_output(
     )
 
     output = execute_contract_validation(
-        metric_definition(
-            "contract-validation"
-        ),
+        metric_definition("contract-validation"),
         financial_case,
         payload,
     )
@@ -888,9 +754,7 @@ def test_retrieval_contract_passes(
 ) -> None:
     payload = build_deepeval_payload(
         rag_case,
-        actual_output=(
-            "Explicação financeira sintética."
-        ),
+        actual_output=("Explicação financeira sintética."),
         retrieval_context=(
             "Material sobre gastos fixos, "
             "gastos variáveis e reserva "
@@ -899,9 +763,7 @@ def test_retrieval_contract_passes(
     )
 
     output = execute_retrieval_contract(
-        metric_definition(
-            "retrieval-contract"
-        ),
+        metric_definition("retrieval-contract"),
         rag_case,
         payload,
     )
@@ -916,15 +778,11 @@ def test_retrieval_contract_fails_missing_terms(
     payload = build_deepeval_payload(
         rag_case,
         actual_output="Resposta sintética.",
-        retrieval_context=(
-            "Documento sem os assuntos esperados.",
-        ),
+        retrieval_context=("Documento sem os assuntos esperados.",),
     )
 
     output = execute_retrieval_contract(
-        metric_definition(
-            "retrieval-contract"
-        ),
+        metric_definition("retrieval-contract"),
         rag_case,
         payload,
     )
@@ -942,13 +800,9 @@ def test_latency_budget_passes(
     financial_case: InnaEvaluationCase,
 ) -> None:
     output = execute_latency_budget(
-        metric_definition(
-            "latency-budget"
-        ),
+        metric_definition("latency-budget"),
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
     assert output.passed is True
@@ -965,9 +819,7 @@ def test_latency_budget_fails_above_limit(
     )
 
     output = execute_latency_budget(
-        metric_definition(
-            "latency-budget"
-        ),
+        metric_definition("latency-budget"),
         financial_case,
         payload,
     )
@@ -979,13 +831,9 @@ def test_cost_budget_passes(
     financial_case: InnaEvaluationCase,
 ) -> None:
     output = execute_cost_budget(
-        metric_definition(
-            "cost-budget"
-        ),
+        metric_definition("cost-budget"),
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
     assert output.passed is True
@@ -1002,9 +850,7 @@ def test_cost_budget_fails_above_limit(
     )
 
     output = execute_cost_budget(
-        metric_definition(
-            "cost-budget"
-        ),
+        metric_definition("cost-budget"),
         financial_case,
         payload,
     )
@@ -1073,26 +919,18 @@ def test_human_review_policy_passes(
 ) -> None:
     payload = build_deepeval_payload(
         hitl_case,
-        actual_output=(
-            "Caso encaminhado para revisão humana."
-        ),
+        actual_output=("Caso encaminhado para revisão humana."),
         metadata={
             "actual_agent": "financial_agent",
             "actual_team": "financial_team",
-            "actual_task_status": (
-                "pending_review"
-            ),
+            "actual_task_status": ("pending_review"),
             "human_review_requested": True,
-            "human_review_status": (
-                "pending_review"
-            ),
+            "human_review_status": ("pending_review"),
         },
     )
 
     output = execute_human_review_policy(
-        metric_definition(
-            "human-review-policy"
-        ),
+        metric_definition("human-review-policy"),
         hitl_case,
         payload,
     )
@@ -1115,9 +953,7 @@ def test_human_review_policy_fails_when_not_requested(
     )
 
     output = execute_human_review_policy(
-        metric_definition(
-            "human-review-policy"
-        ),
+        metric_definition("human-review-policy"),
         hitl_case,
         payload,
     )
@@ -1142,9 +978,7 @@ def test_human_review_rejects_invalid_boolean(
         hitl_case,
         actual_output="Resposta sintética.",
         metadata={
-            "human_review_requested": (
-                invalid_value
-            ),
+            "human_review_requested": (invalid_value),
         },
     )
 
@@ -1170,17 +1004,13 @@ def test_real_deterministic_runner_passes(
 
     result = runner.run(
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
         settings=EvaluationRunnerSettings(
             mode=EvaluationRunMode.LOCAL,
         ),
     )
 
-    assert result.status == (
-        EvaluationRunStatus.PASSED
-    )
+    assert result.status == (EvaluationRunStatus.PASSED)
     assert result.metric_count == 5
     assert result.passed_count == 5
     assert result.failed_count == 0
@@ -1209,19 +1039,12 @@ def test_real_deterministic_runner_detects_failure(
         ),
     )
 
-    assert result.status == (
-        EvaluationRunStatus.FAILED
-    )
+    assert result.status == (EvaluationRunStatus.FAILED)
     assert result.failed_count >= 1
 
-    statuses = {
-        item.metric_id: item.status
-        for item in result.metric_results
-    }
+    statuses = {item.metric_id: item.status for item in result.metric_results}
 
-    assert statuses["forbidden-terms"] == (
-        MetricRunStatus.FAILED
-    )
+    assert statuses["forbidden-terms"] == (MetricRunStatus.FAILED)
 
 
 def test_real_rag_runner_passes(
@@ -1244,9 +1067,7 @@ def test_real_rag_runner_passes(
         metadata={
             "actual_agent": "education_agent",
             "actual_team": "knowledge_team",
-            "actual_intent": (
-                "educacao_financeira"
-            ),
+            "actual_intent": ("educacao_financeira"),
             "actual_task_status": "completed",
             "called_tools": [
                 {
@@ -1266,9 +1087,7 @@ def test_real_rag_runner_passes(
         ),
     )
 
-    assert result.status == (
-        EvaluationRunStatus.PASSED
-    )
+    assert result.status == (EvaluationRunStatus.PASSED)
     assert result.failed_count == 0
 
 
@@ -1276,13 +1095,9 @@ def test_executor_output_metadata_is_immutable(
     financial_case: InnaEvaluationCase,
 ) -> None:
     output = execute_expected_terms(
-        metric_definition(
-            "expected-terms"
-        ),
+        metric_definition("expected-terms"),
         financial_case,
-        complete_financial_payload(
-            financial_case
-        ),
+        complete_financial_payload(financial_case),
     )
 
     assert isinstance(

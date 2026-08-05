@@ -18,8 +18,7 @@ from src.agents.schemas import (
 )
 from src.agents.state import InnaAgentState
 from src.agents.supervisor_deadline import (
-    classificar_com_gemini_com_deadline
-    as classificar_com_gemini,
+    classificar_com_gemini_com_deadline as classificar_com_gemini,
 )
 
 
@@ -113,20 +112,11 @@ def _is_history_request(
         "evolucao",
     }
 
-    mentions_financial_record = (
-        "diagnostico" in texto
-        or "score" in texto
-    )
+    mentions_financial_record = "diagnostico" in texto or "score" in texto
 
-    mentions_time = any(
-        term in texto
-        for term in temporal_terms
-    )
+    mentions_time = any(term in texto for term in temporal_terms)
 
-    return (
-        mentions_financial_record
-        and mentions_time
-    )
+    return mentions_financial_record and mentions_time
 
 
 _RAG_TERMS = {
@@ -155,9 +145,7 @@ _EDUCATION_TERMS = {
 
 
 def _normalizar(texto: str) -> str:
-    texto = str(
-        texto or ""
-    ).strip().lower()
+    texto = str(texto or "").strip().lower()
 
     normalized = unicodedata.normalize(
         "NFKD",
@@ -165,11 +153,7 @@ def _normalizar(texto: str) -> str:
     )
 
     return "".join(
-        character
-        for character in normalized
-        if not unicodedata.combining(
-            character
-        )
+        character for character in normalized if not unicodedata.combining(character)
     )
 
 
@@ -177,10 +161,7 @@ def _contains_any(
     texto: str,
     termos: set[str],
 ) -> bool:
-    return any(
-        termo in texto
-        for termo in termos
-    )
+    return any(termo in texto for termo in termos)
 
 
 def classificar_intencao_por_regras(
@@ -189,9 +170,7 @@ def classificar_intencao_por_regras(
     """
     Classifica mensagens claras sem chamar o Gemini.
     """
-    texto = _normalizar(
-        mensagem
-    )
+    texto = _normalizar(mensagem)
 
     if not texto:
         return SupervisorDecision(
@@ -207,12 +186,7 @@ def classificar_intencao_por_regras(
         _REPORT_TERMS,
     )
 
-    history_match = (
-        not report_match
-        and _is_history_request(
-            texto
-        )
-    )
+    history_match = not report_match and _is_history_request(texto)
 
     financial_match = (
         not report_match
@@ -225,12 +199,8 @@ def classificar_intencao_por_regras(
 
     matches = {
         "relatorio": report_match,
-        "historico_financeiro": (
-            history_match
-        ),
-        "diagnostico_financeiro": (
-            financial_match
-        ),
+        "historico_financeiro": (history_match),
+        "diagnostico_financeiro": (financial_match),
         "consulta_rag": _contains_any(
             texto,
             _RAG_TERMS,
@@ -260,42 +230,29 @@ def classificar_intencao_por_regras(
             next_node="education_agent",
             confidence=0.95,
             use_rag=False,
-            reason=(
-                "A mensagem solicita explicitamente "
-                "uma explicação educativa."
-            ),
+            reason=("A mensagem solicita explicitamente uma explicação educativa."),
             classification_source="rule",
         )
 
-    matched_intents = [
-        intent
-        for intent, matched in matches.items()
-        if matched
-    ]
+    matched_intents = [intent for intent, matched in matches.items() if matched]
 
     if len(matched_intents) > 1:
         return SupervisorDecision(
             intent="desconhecido",
             next_node="fallback_agent",
             confidence=0.45,
-            reason=(
-                "Mais de uma intenção foi identificada "
-                "pelas regras."
-            ),
+            reason=("Mais de uma intenção foi identificada pelas regras."),
             classification_source="rule",
         )
 
-    if matched_intents == [
-        "historico_financeiro"
-    ]:
+    if matched_intents == ["historico_financeiro"]:
         return SupervisorDecision(
             intent="historico_financeiro",
             next_node="financial_agent",
             confidence=0.96,
             use_database=True,
             reason=(
-                "A mensagem solicita diagnósticos "
-                "financeiros anteriores do usuário."
+                "A mensagem solicita diagnósticos financeiros anteriores do usuário."
             ),
             classification_source="rule",
         )
@@ -307,25 +264,17 @@ def classificar_intencao_por_regras(
             confidence=0.96,
             use_database=True,
             generate_report=True,
-            reason=(
-                "A mensagem solicita relatório, "
-                "PDF ou exportação."
-            ),
+            reason=("A mensagem solicita relatório, PDF ou exportação."),
             classification_source="rule",
         )
 
-    if matched_intents == [
-        "diagnostico_financeiro"
-    ]:
+    if matched_intents == ["diagnostico_financeiro"]:
         return SupervisorDecision(
             intent="diagnostico_financeiro",
             next_node="financial_agent",
             confidence=0.92,
             use_database=True,
-            reason=(
-                "A mensagem contém dados ou uma "
-                "situação financeira pessoal."
-            ),
+            reason=("A mensagem contém dados ou uma situação financeira pessoal."),
             classification_source="rule",
         )
 
@@ -335,25 +284,17 @@ def classificar_intencao_por_regras(
             next_node="rag_agent",
             confidence=0.89,
             use_rag=True,
-            reason=(
-                "A mensagem solicita explicação de "
-                "um conceito financeiro."
-            ),
+            reason=("A mensagem solicita explicação de um conceito financeiro."),
             classification_source="rule",
         )
 
-    if matched_intents == [
-        "educacao_financeira"
-    ]:
+    if matched_intents == ["educacao_financeira"]:
         return SupervisorDecision(
             intent="educacao_financeira",
             next_node="education_agent",
             confidence=0.86,
             use_rag=True,
-            reason=(
-                "A mensagem solicita orientação "
-                "educativa ou planejamento."
-            ),
+            reason=("A mensagem solicita orientação educativa ou planejamento."),
             classification_source="rule",
         )
 
@@ -361,10 +302,7 @@ def classificar_intencao_por_regras(
         intent="desconhecido",
         next_node="fallback_agent",
         confidence=0.40,
-        reason=(
-            "As regras não identificaram uma "
-            "intenção suficientemente clara."
-        ),
+        reason=("As regras não identificaram uma intenção suficientemente clara."),
         classification_source="rule",
     )
 
@@ -377,9 +315,7 @@ def classificar_intencao(
 
     Esta função usa somente regras determinísticas.
     """
-    return classificar_intencao_por_regras(
-        mensagem
-    )
+    return classificar_intencao_por_regras(mensagem)
 
 
 def classificar_intencao_hibrida(
@@ -392,28 +328,16 @@ def classificar_intencao_hibrida(
     """
     start = time.perf_counter()
 
-    rule_decision = (
-        classificar_intencao_por_regras(
-            mensagem
-        )
-    )
+    rule_decision = classificar_intencao_por_regras(mensagem)
 
     clear_rule = (
-        rule_decision.intent
-        != "desconhecido"
-        and rule_decision.confidence
-        >= MIN_RULE_CONFIDENCE
+        rule_decision.intent != "desconhecido"
+        and rule_decision.confidence >= MIN_RULE_CONFIDENCE
     )
 
     if clear_rule:
-        rule_decision.classification_duration_ms = (
-            int(
-                (
-                    time.perf_counter()
-                    - start
-                )
-                * 1000
-            )
+        rule_decision.classification_duration_ms = int(
+            (time.perf_counter() - start) * 1000
         )
 
         return rule_decision
@@ -424,57 +348,36 @@ def classificar_intencao_hibrida(
             context=context,
         )
 
-        if (
-            llm_decision.confidence
-            >= MIN_LLM_CONFIDENCE
-        ):
+        if llm_decision.confidence >= MIN_LLM_CONFIDENCE:
             return llm_decision
 
         return SupervisorDecision(
             intent="desconhecido",
             next_node="fallback_agent",
-            confidence=(
-                llm_decision.confidence
-            ),
+            confidence=(llm_decision.confidence),
             reason=(
-                "A classificação do Gemini ficou "
-                "abaixo do limite mínimo de confiança."
+                "A classificação do Gemini ficou abaixo do limite mínimo de confiança."
             ),
             classification_source="fallback",
-            classification_duration_ms=(
-                llm_decision
-                .classification_duration_ms
-            ),
+            classification_duration_ms=(llm_decision.classification_duration_ms),
             gemini_called=True,
             fallback_used=True,
             classification_error=None,
         )
 
     except Exception as exc:
-        duration_ms = int(
-            (
-                time.perf_counter()
-                - start
-            )
-            * 1000
-        )
+        duration_ms = int((time.perf_counter() - start) * 1000)
 
         return SupervisorDecision(
             intent="desconhecido",
             next_node="fallback_agent",
             confidence=0.20,
-            reason=(
-                "Não foi possível determinar uma "
-                "intenção segura."
-            ),
+            reason=("Não foi possível determinar uma intenção segura."),
             classification_source="fallback",
             classification_duration_ms=duration_ms,
             gemini_called=True,
             fallback_used=True,
-            classification_error=(
-                f"{type(exc).__name__}: "
-                f"{str(exc)[:300]}"
-            ),
+            classification_error=(f"{type(exc).__name__}: {str(exc)[:300]}"),
         )
 
 
@@ -488,9 +391,7 @@ def _detectar_pedido_diagnostico(
     Não classifica perguntas conceituais nem pedidos
     isolados de relatório.
     """
-    normalized = str(
-        mensagem or ""
-    ).strip().lower()
+    normalized = str(mensagem or "").strip().lower()
 
     if not normalized:
         return False
@@ -518,10 +419,7 @@ def _detectar_pedido_diagnostico(
         "como esta minha situacao financeira",
     )
 
-    return any(
-        marker in normalized
-        for marker in diagnostic_markers
-    )
+    return any(marker in normalized for marker in diagnostic_markers)
 
 
 def _detectar_diagnostico_com_relatorio(
@@ -534,9 +432,7 @@ def _detectar_diagnostico_com_relatorio(
     Um pedido simples de relatório continua seguindo
     diretamente para o report_agent.
     """
-    normalized = str(
-        mensagem or ""
-    ).strip().lower()
+    normalized = str(mensagem or "").strip().lower()
 
     if not normalized:
         return False
@@ -568,20 +464,13 @@ def _detectar_diagnostico_com_relatorio(
         "meu saldo",
     )
 
-    has_report_request = any(
-        marker in normalized
-        for marker in report_markers
-    )
+    has_report_request = any(marker in normalized for marker in report_markers)
 
     has_financial_analysis = any(
-        marker in normalized
-        for marker in financial_analysis_markers
+        marker in normalized for marker in financial_analysis_markers
     )
 
-    return (
-        has_report_request
-        and has_financial_analysis
-    )
+    return has_report_request and has_financial_analysis
 
 
 def supervisor_node(
@@ -610,17 +499,9 @@ def supervisor_node(
         context=context,
     )
 
-    composite_diagnosis_report = (
-        _detectar_diagnostico_com_relatorio(
-            mensagem
-        )
-    )
+    composite_diagnosis_report = _detectar_diagnostico_com_relatorio(mensagem)
 
-    explicit_diagnosis_request = (
-        _detectar_pedido_diagnostico(
-            mensagem
-        )
-    )
+    explicit_diagnosis_request = _detectar_pedido_diagnostico(mensagem)
 
     if composite_diagnosis_report:
         decision = SupervisorDecision(
@@ -639,22 +520,13 @@ def supervisor_node(
                 "a geração de um relatório."
             ),
             classification_source="rule",
-            classification_duration_ms=(
-                decision.classification_duration_ms
-            ),
-            gemini_called=(
-                decision.gemini_called
-            ),
+            classification_duration_ms=(decision.classification_duration_ms),
+            gemini_called=(decision.gemini_called),
             fallback_used=False,
-            classification_error=(
-                decision.classification_error
-            ),
+            classification_error=(decision.classification_error),
         )
 
-    elif (
-        explicit_diagnosis_request
-        and decision.intent == "desconhecido"
-    ):
+    elif explicit_diagnosis_request and decision.intent == "desconhecido":
         decision = SupervisorDecision(
             intent="diagnostico_financeiro",
             next_node="financial_agent",
@@ -668,16 +540,10 @@ def supervisor_node(
                 "financeira do usuário."
             ),
             classification_source="rule",
-            classification_duration_ms=(
-                decision.classification_duration_ms
-            ),
-            gemini_called=(
-                decision.gemini_called
-            ),
+            classification_duration_ms=(decision.classification_duration_ms),
+            gemini_called=(decision.gemini_called),
             fallback_used=False,
-            classification_error=(
-                decision.classification_error
-            ),
+            classification_error=(decision.classification_error),
         )
 
     structured_response = dict(
@@ -687,34 +553,16 @@ def supervisor_node(
         )
     )
 
-    structured_response[
-        "supervisor_decision"
-    ] = decision.model_dump()
+    structured_response["supervisor_decision"] = decision.model_dump()
 
-    structured_response[
-        "supervisor_metrics"
-    ] = {
-        "classification_source": (
-            decision.classification_source
-        ),
-        "classification_confidence": (
-            decision.confidence
-        ),
-        "classification_duration_ms": (
-            decision.classification_duration_ms
-        ),
-        "gemini_called": (
-            decision.gemini_called
-        ),
-        "fallback_used": (
-            decision.fallback_used
-        ),
-        "selected_agent": (
-            decision.next_node
-        ),
-        "classification_error": (
-            decision.classification_error
-        ),
+    structured_response["supervisor_metrics"] = {
+        "classification_source": (decision.classification_source),
+        "classification_confidence": (decision.confidence),
+        "classification_duration_ms": (decision.classification_duration_ms),
+        "gemini_called": (decision.gemini_called),
+        "fallback_used": (decision.fallback_used),
+        "selected_agent": (decision.next_node),
+        "classification_error": (decision.classification_error),
     }
 
     existing_errors = list(
@@ -728,9 +576,7 @@ def supervisor_node(
     errors = list(existing_errors)
 
     if decision.classification_error:
-        errors.append(
-            decision.classification_error
-        )
+        errors.append(decision.classification_error)
 
     existing_trace = list(
         state.get(
@@ -748,14 +594,10 @@ def supervisor_node(
         or []
     )
 
-    route_source = str(
-        decision.classification_source
-        or "fallback"
-    ).strip()
+    route_source = str(decision.classification_source or "fallback").strip()
 
     routing_reason = str(
-        decision.reason
-        or "Motivo de roteamento não informado."
+        decision.reason or "Motivo de roteamento não informado."
     ).strip()
 
     route_record = {
@@ -764,12 +606,8 @@ def supervisor_node(
         "source": route_source,
         "reason": routing_reason,
         "confidence": decision.confidence,
-        "fallback_used": (
-            decision.fallback_used
-        ),
-        "gemini_called": (
-            decision.gemini_called
-        ),
+        "fallback_used": (decision.fallback_used),
+        "gemini_called": (decision.gemini_called),
     }
 
     updated_route_history = [
@@ -777,11 +615,7 @@ def supervisor_node(
         route_record,
     ]
 
-    trace_item = (
-        "supervisor:"
-        f"{route_source}:"
-        f"{decision.intent}"
-    )
+    trace_item = f"supervisor:{route_source}:{decision.intent}"
 
     updated_trace = [
         *existing_trace,
@@ -794,19 +628,11 @@ def supervisor_node(
         "next_node": decision.next_node,
         "route_source": route_source,
         "routing_reason": routing_reason,
-        "route_history": (
-            updated_route_history
-        ),
+        "route_history": (updated_route_history),
         "use_rag": decision.use_rag,
-        "use_database": (
-            decision.use_database
-        ),
-        "generate_report": (
-            decision.generate_report
-        ),
-        "structured_response": (
-            structured_response
-        ),
+        "use_database": (decision.use_database),
+        "generate_report": (decision.generate_report),
+        "structured_response": (structured_response),
         "errors": errors,
         "trace": updated_trace,
     }

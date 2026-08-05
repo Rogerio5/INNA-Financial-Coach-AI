@@ -22,9 +22,7 @@ def _get_email_config() -> tuple[str, str]:
     )
 
     if not resend_api_key:
-        raise RuntimeError(
-            "RESEND_API_KEY precisa estar configurada no ambiente."
-        )
+        raise RuntimeError("RESEND_API_KEY precisa estar configurada no ambiente.")
 
     return resend_api_key, email_from
 
@@ -50,9 +48,7 @@ def _send_resend_payload(
     )
 
     if response.status_code >= 400:
-        raise RuntimeError(
-            f"Erro Resend: {response.status_code} - {response.text}"
-        )
+        raise RuntimeError(f"Erro Resend: {response.status_code} - {response.text}")
 
     try:
         data = response.json()
@@ -105,9 +101,7 @@ def send_diagnostico_email(
     """
     _, email_from = _get_email_config()
 
-    pdf_base64 = base64.b64encode(
-        pdf_bytes
-    ).decode("utf-8")
+    pdf_base64 = base64.b64encode(pdf_bytes).decode("utf-8")
 
     payload = {
         "from": email_from,

@@ -31,12 +31,14 @@ from .exceptions import (
 )
 
 
-TERMINAL_STATUSES = frozenset({
-    "approved",
-    "corrected",
-    "rejected",
-    "cancelled",
-})
+TERMINAL_STATUSES = frozenset(
+    {
+        "approved",
+        "corrected",
+        "rejected",
+        "cancelled",
+    }
+)
 
 ACTION_TO_STATUS = {
     "approve": "approved",
@@ -72,17 +74,11 @@ class HumanReviewResolutionOutcome:
             "review_id": self.review.review_id,
             "thread_id": self.review.thread_id,
             "status": self.review.status,
-            "decision_action": (
-                self.review.decision_action
-            ),
-            "reviewer_id": (
-                self.review.reviewer_id
-            ),
+            "decision_action": (self.review.decision_action),
+            "reviewer_id": (self.review.reviewer_id),
             "resume_route": self.resume_route,
             "resolved_at": (
-                self.review.resolved_at.isoformat()
-                if self.review.resolved_at
-                else None
+                self.review.resolved_at.isoformat() if self.review.resolved_at else None
             ),
         }
 
@@ -96,9 +92,7 @@ def _normalize_mapping(
         value,
         Mapping,
     ):
-        raise HumanReviewValidationError(
-            f"{field_name} deve ser um objeto."
-        )
+        raise HumanReviewValidationError(f"{field_name} deve ser um objeto.")
 
     return dict(value)
 
@@ -113,21 +107,16 @@ def _normalize_identifier(
         value,
         str,
     ):
-        raise HumanReviewValidationError(
-            f"{field_name} é inválido."
-        )
+        raise HumanReviewValidationError(f"{field_name} é inválido.")
 
     normalized = value.strip()
 
     if not normalized:
-        raise HumanReviewValidationError(
-            f"{field_name} é obrigatório."
-        )
+        raise HumanReviewValidationError(f"{field_name} é obrigatório.")
 
     if len(normalized) > max_length:
         raise HumanReviewValidationError(
-            f"{field_name} deve possuir no máximo "
-            f"{max_length} caracteres."
+            f"{field_name} deve possuir no máximo {max_length} caracteres."
         )
 
     return normalized
@@ -136,9 +125,7 @@ def _normalize_identifier(
 def _normalize_pending_status(
     value: object,
 ) -> str:
-    normalized = str(
-        value or "pending"
-    ).strip().lower()
+    normalized = str(value or "pending").strip().lower()
 
     aliases = {
         "pending": "pending",
@@ -150,8 +137,7 @@ def _normalize_pending_status(
         return aliases[normalized]
     except KeyError as exc:
         raise HumanReviewValidationError(
-            "Status inicial de revisão humana "
-            "inválido."
+            "Status inicial de revisão humana inválido."
         ) from exc
 
 
@@ -169,18 +155,19 @@ def registrar_revisao_pendente(
         field_name="interrupt_payload",
     )
 
-    payload_type = str(
-        payload.get(
-            "type",
-            "",
+    payload_type = (
+        str(
+            payload.get(
+                "type",
+                "",
+            )
         )
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
     if payload_type != "human_review":
-        raise HumanReviewValidationError(
-            "O payload não representa uma revisão "
-            "humana."
-        )
+        raise HumanReviewValidationError("O payload não representa uma revisão humana.")
 
     allowed_actions = payload.get(
         "allowed_actions",
@@ -236,14 +223,11 @@ def registrar_revisao_pendente(
 
     except ValidationError as exc:
         raise HumanReviewValidationError(
-            "O payload da revisão humana é "
-            "inválido."
+            "O payload da revisão humana é inválido."
         ) from exc
 
     try:
-        return repository.criar_revisao_pendente(
-            record
-        )
+        return repository.criar_revisao_pendente(record)
 
     except (
         HumanReviewConflictError,
@@ -253,30 +237,23 @@ def registrar_revisao_pendente(
 
     except Exception as exc:
         raise HumanReviewServiceError(
-            "Não foi possível registrar a revisão "
-            "humana."
+            "Não foi possível registrar a revisão humana."
         ) from exc
 
 
 def consultar_revisao(
     review_id: str,
 ) -> HumanReviewRecord:
-    normalized_review_id = (
-        _normalize_identifier(
-            review_id,
-            field_name="review_id",
-            max_length=255,
-        )
+    normalized_review_id = _normalize_identifier(
+        review_id,
+        field_name="review_id",
+        max_length=255,
     )
 
-    record = repository.obter_revisao(
-        normalized_review_id
-    )
+    record = repository.obter_revisao(normalized_review_id)
 
     if record is None:
-        raise HumanReviewNotFoundError(
-            "A revisão humana não foi encontrada."
-        )
+        raise HumanReviewNotFoundError("A revisão humana não foi encontrada.")
 
     return record
 
@@ -286,12 +263,9 @@ def listar_revisoes_pendentes(
     limit: int = 50,
     offset: int = 0,
 ) -> list[HumanReviewRecord]:
-    return (
-        repository
-        .listar_revisoes_pendentes(
-            limit=limit,
-            offset=offset,
-        )
+    return repository.listar_revisoes_pendentes(
+        limit=limit,
+        offset=offset,
     )
 
 
@@ -315,22 +289,15 @@ def _build_resolution_command(
         )
     ).strip()
 
-    normalized_reviewer_id = (
-        _normalize_identifier(
-            trusted_reviewer_id,
-            field_name="trusted_reviewer_id",
-            max_length=160,
-        )
+    normalized_reviewer_id = _normalize_identifier(
+        trusted_reviewer_id,
+        field_name="trusted_reviewer_id",
+        max_length=160,
     )
 
-    if (
-        body_reviewer_id
-        and body_reviewer_id
-        != normalized_reviewer_id
-    ):
+    if body_reviewer_id and body_reviewer_id != normalized_reviewer_id:
         raise HumanReviewValidationError(
-            "reviewer_id não corresponde à "
-            "identidade autenticada."
+            "reviewer_id não corresponde à identidade autenticada."
         )
 
     try:
@@ -338,9 +305,7 @@ def _build_resolution_command(
             action=normalized_decision.get(
                 "action",
             ),
-            reviewer_id=(
-                normalized_reviewer_id
-            ),
+            reviewer_id=(normalized_reviewer_id),
             comment=normalized_decision.get(
                 "comment",
                 "",
@@ -356,9 +321,7 @@ def _build_resolution_command(
         )
 
         context = TrustedHumanReviewContext(
-            reviewer_id=(
-                normalized_reviewer_id
-            ),
+            reviewer_id=(normalized_reviewer_id),
             request_id=request_id,
         )
 
@@ -371,8 +334,7 @@ def _build_resolution_command(
 
     except ValidationError as exc:
         raise HumanReviewValidationError(
-            "A decisão de revisão humana é "
-            "inválida."
+            "A decisão de revisão humana é inválida."
         ) from exc
 
 
@@ -410,49 +372,35 @@ def _extract_resolution(
         )
     ).strip()
 
-    if (
-        returned_review_id
-        and returned_review_id
-        != expected_review_id
-    ):
-        raise HumanReviewResumeError(
-            "O LangGraph retornou outra revisão."
-        )
+    if returned_review_id and returned_review_id != expected_review_id:
+        raise HumanReviewResumeError("O LangGraph retornou outra revisão.")
 
-    if (
-        returned_thread_id
-        and returned_thread_id
-        != expected_thread_id
-    ):
-        raise HumanReviewResumeError(
-            "O LangGraph retornou outro thread."
-        )
+    if returned_thread_id and returned_thread_id != expected_thread_id:
+        raise HumanReviewResumeError("O LangGraph retornou outro thread.")
 
-    status = str(
-        current_review.get(
-            "status",
+    status = (
+        str(
+            current_review.get(
+                "status",
+            )
+            or state.get(
+                "human_review_status",
+                "",
+            )
         )
-        or state.get(
-            "human_review_status",
-            "",
-        )
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
-    expected_status = ACTION_TO_STATUS[
-        expected_action
-    ]
+    expected_status = ACTION_TO_STATUS[expected_action]
 
     if status != expected_status:
         raise HumanReviewResumeError(
-            "O status retornado pelo LangGraph "
-            "não corresponde à decisão enviada."
+            "O status retornado pelo LangGraph não corresponde à decisão enviada."
         )
 
     if status not in TERMINAL_STATUSES:
-        raise HumanReviewResumeError(
-            "A revisão não chegou a um estado "
-            "terminal."
-        )
+        raise HumanReviewResumeError("A revisão não chegou a um estado terminal.")
 
     resume_route = str(
         state.get(
@@ -474,9 +422,7 @@ def resolver_revisao_humana(
     trusted_reviewer_id: str,
     request_id: str,
     decision_payload: Mapping[str, Any],
-    resume_function: ResumeFunction = (
-        retomar_revisao_humana_persistente
-    ),
+    resume_function: ResumeFunction = (retomar_revisao_humana_persistente),
 ) -> HumanReviewResolutionOutcome:
     """
     Resolve uma revisão com claim concorrente.
@@ -484,79 +430,54 @@ def resolver_revisao_humana(
     A identidade do revisor vem do contexto
     autenticado, e não do corpo da requisição.
     """
-    normalized_review_id = (
-        _normalize_identifier(
-            review_id,
-            field_name="review_id",
-            max_length=255,
-        )
+    normalized_review_id = _normalize_identifier(
+        review_id,
+        field_name="review_id",
+        max_length=255,
     )
 
-    normalized_thread_id = (
-        _normalize_identifier(
-            thread_id,
-            field_name="thread_id",
-            max_length=255,
-        )
+    normalized_thread_id = _normalize_identifier(
+        thread_id,
+        field_name="thread_id",
+        max_length=255,
     )
 
-    normalized_request_id = (
-        _normalize_identifier(
-            request_id,
-            field_name="request_id",
-            max_length=200,
-        )
+    normalized_request_id = _normalize_identifier(
+        request_id,
+        field_name="request_id",
+        max_length=200,
     )
 
     command = _build_resolution_command(
         review_id=normalized_review_id,
         thread_id=normalized_thread_id,
-        trusted_reviewer_id=(
-            trusted_reviewer_id
-        ),
+        trusted_reviewer_id=(trusted_reviewer_id),
         request_id=normalized_request_id,
         decision_payload=decision_payload,
     )
 
-    repository.reivindicar_revisao(
-        command
-    )
+    repository.reivindicar_revisao(command)
 
     try:
         graph_result = resume_function(
             thread_id=command.thread_id,
-            decisao=(
-                command.to_resume_payload()
-            ),
+            decisao=(command.to_resume_payload()),
         )
 
-        final_status, resume_route = (
-            _extract_resolution(
-                graph_result,
-                expected_review_id=(
-                    command.review_id
-                ),
-                expected_thread_id=(
-                    command.thread_id
-                ),
-                expected_action=(
-                    command.decision.action
-                ),
-            )
+        final_status, resume_route = _extract_resolution(
+            graph_result,
+            expected_review_id=(command.review_id),
+            expected_thread_id=(command.thread_id),
+            expected_action=(command.decision.action),
         )
 
     except Exception as exc:
-        sanitized_failure = (
-            f"{type(exc).__name__}: "
-            "falha durante a retomada do grafo."
-        )
+        sanitized_failure = f"{type(exc).__name__}: falha durante a retomada do grafo."
 
         try:
             repository.registrar_falha_retomada(
                 command,
-                failure_reason=(
-                    sanitized_failure
-                ),
+                failure_reason=(sanitized_failure),
             )
         except Exception:
             pass
@@ -568,8 +489,7 @@ def resolver_revisao_humana(
             raise
 
         raise HumanReviewResumeError(
-            "Não foi possível retomar a revisão "
-            "humana no LangGraph."
+            "Não foi possível retomar a revisão humana no LangGraph."
         ) from exc
 
     finalized = repository.finalizar_revisao(
@@ -589,9 +509,7 @@ def recuperar_claims_expirados(
     *,
     timeout_seconds: int = 300,
 ) -> list[str]:
-    return repository.liberar_claims_expirados(
-        timeout_seconds=timeout_seconds
-    )
+    return repository.liberar_claims_expirados(timeout_seconds=timeout_seconds)
 
 
 __all__ = [

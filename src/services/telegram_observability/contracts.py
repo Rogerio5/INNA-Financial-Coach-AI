@@ -76,9 +76,7 @@ def _validate_choice(
     normalized = str(value).strip().lower()
 
     if normalized not in allowed:
-        raise ValueError(
-            f"{field_name} inválido: {value!r}."
-        )
+        raise ValueError(f"{field_name} inválido: {value!r}.")
 
     return normalized
 
@@ -89,22 +87,16 @@ def _validate_duration(
     duration = float(value)
 
     if duration < 0:
-        raise ValueError(
-            "duration_ms não pode ser negativa."
-        )
+        raise ValueError("duration_ms não pode ser negativa.")
 
     if duration != duration:
-        raise ValueError(
-            "duration_ms não pode ser NaN."
-        )
+        raise ValueError("duration_ms não pode ser NaN.")
 
     if duration in {
         float("inf"),
         float("-inf"),
     }:
-        raise ValueError(
-            "duration_ms deve ser finita."
-        )
+        raise ValueError("duration_ms deve ser finita.")
 
     return duration
 
@@ -155,9 +147,7 @@ class TelegramConversationMetricRecord:
         object.__setattr__(
             self,
             "duration_ms",
-            _validate_duration(
-                self.duration_ms
-            ),
+            _validate_duration(self.duration_ms),
         )
 
         if self.error_category is not None:
@@ -180,21 +170,15 @@ class TelegramConversationMetricRecord:
             and self.error_category is None
         ):
             raise ValueError(
-                "error_category é obrigatória "
-                "para outcomes error ou conflict."
+                "error_category é obrigatória para outcomes error ou conflict."
             )
 
-        if (
-            self.conflict_recovered is not None
-            and self.outcome
-            not in {
-                "conflict",
-                "recovered",
-            }
-        ):
+        if self.conflict_recovered is not None and self.outcome not in {
+            "conflict",
+            "recovered",
+        }:
             raise ValueError(
-                "conflict_recovered somente pode ser "
-                "usado em conflito ou recuperação."
+                "conflict_recovered somente pode ser usado em conflito ou recuperação."
             )
 
 
@@ -207,26 +191,16 @@ class TelegramOperationalEvent:
     level: str
     component: str
     outcome: str
-    fields: Mapping[str, object] = field(
-        default_factory=dict
-    )
+    fields: Mapping[str, object] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        name = str(
-            self.name
-        ).strip()
+        name = str(self.name).strip()
 
         if not name:
-            raise ValueError(
-                "name não pode ser vazio."
-            )
+            raise ValueError("name não pode ser vazio.")
 
-        if not name.startswith(
-            "telegram_"
-        ):
-            raise ValueError(
-                "Eventos Telegram devem começar com telegram_."
-            )
+        if not name.startswith("telegram_"):
+            raise ValueError("Eventos Telegram devem começar com telegram_.")
 
         object.__setattr__(
             self,
@@ -267,16 +241,12 @@ class TelegramOperationalEvent:
         object.__setattr__(
             self,
             "fields",
-            MappingProxyType(
-                dict(self.fields)
-            ),
+            MappingProxyType(dict(self.fields)),
         )
 
 
 @runtime_checkable
-class TelegramConversationMetrics(
-    Protocol
-):
+class TelegramConversationMetrics(Protocol):
     def record_operation(
         self,
         record: TelegramConversationMetricRecord,
@@ -285,9 +255,7 @@ class TelegramConversationMetrics(
 
 
 @runtime_checkable
-class TelegramOperationalEventSink(
-    Protocol
-):
+class TelegramOperationalEventSink(Protocol):
     def emit(
         self,
         event: TelegramOperationalEvent,

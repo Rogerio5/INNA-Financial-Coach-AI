@@ -19,11 +19,7 @@ def _neon(
         available=available,
         latency_ms=100.0,
         server_version="16",
-        pool_status=(
-            "healthy"
-            if available
-            else "degraded"
-        ),
+        pool_status=("healthy" if available else "degraded"),
         pool_size=1,
         pool_available=1,
         pool_waiting=0,
@@ -82,10 +78,7 @@ def test_infrastructure_health_operational(
         _render,
     )
 
-    health = (
-        infrastructure_health
-        .collect_infrastructure_health()
-    )
+    health = infrastructure_health.collect_infrastructure_health()
 
     assert health.status == "operational"
     assert health.unavailable_components == ()
@@ -111,15 +104,10 @@ def test_infrastructure_health_degraded_without_phoenix(
         _render,
     )
 
-    health = (
-        infrastructure_health
-        .collect_infrastructure_health()
-    )
+    health = infrastructure_health.collect_infrastructure_health()
 
     assert health.status == "degraded"
-    assert health.degraded_components == (
-        "phoenix",
-    )
+    assert health.degraded_components == ("phoenix",)
 
 
 def test_infrastructure_health_unavailable_without_neon(
@@ -141,12 +129,7 @@ def test_infrastructure_health_unavailable_without_neon(
         _render,
     )
 
-    health = (
-        infrastructure_health
-        .collect_infrastructure_health()
-    )
+    health = infrastructure_health.collect_infrastructure_health()
 
     assert health.status == "unavailable"
-    assert health.unavailable_components == (
-        "neon",
-    )
+    assert health.unavailable_components == ("neon",)

@@ -21,9 +21,7 @@ DEFAULT_MAX_HUMAN_REVIEWS = 3
 def _normalize_text(
     value: Any,
 ) -> str:
-    return str(
-        value or ""
-    ).strip()
+    return str(value or "").strip()
 
 
 def _append_trace(
@@ -37,9 +35,7 @@ def _append_trace(
         )
     )
 
-    trace.append(
-        event
-    )
+    trace.append(event)
 
     return trace
 
@@ -82,9 +78,7 @@ def _current_review(
     ):
         return {}
 
-    return deepcopy(
-        current
-    )
+    return deepcopy(current)
 
 
 def _review_count(
@@ -123,9 +117,7 @@ def _max_reviews(
         TypeError,
         ValueError,
     ):
-        value = (
-            DEFAULT_MAX_HUMAN_REVIEWS
-        )
+        value = DEFAULT_MAX_HUMAN_REVIEWS
 
     return max(
         1,
@@ -150,20 +142,12 @@ def _structured_response(
     ):
         structured = {}
 
-    updated = deepcopy(
-        structured
-    )
+    updated = deepcopy(structured)
 
-    updated[
-        "human_review_policy_decision"
-    ] = decision.as_dict()
+    updated["human_review_policy_decision"] = decision.as_dict()
 
     if review:
-        updated[
-            "human_review_request"
-        ] = deepcopy(
-            review
-        )
+        updated["human_review_request"] = deepcopy(review)
 
     return updated
 
@@ -179,25 +163,13 @@ def human_review_policy_node(
     LangGraph. A interrupção será responsabilidade
     de um nó posterior.
     """
-    decision = (
-        evaluate_human_review_policy(
-            state
-        )
-    )
+    decision = evaluate_human_review_policy(state)
 
-    decision_dict = (
-        decision.as_dict()
-    )
+    decision_dict = decision.as_dict()
 
-    current_review = _current_review(
-        state
-    )
+    current_review = _current_review(state)
 
-    current_status = _normalize_text(
-        current_review.get(
-            "status"
-        )
-    )
+    current_status = _normalize_text(current_review.get("status"))
 
     if current_status in {
         "requested",
@@ -205,15 +177,9 @@ def human_review_policy_node(
     }:
         return {
             "human_review_required": True,
-            "human_review_current": (
-                current_review
-            ),
-            "human_review_status": (
-                current_status
-            ),
-            "human_review_policy_decision": (
-                decision_dict
-            ),
+            "human_review_current": (current_review),
+            "human_review_status": (current_status),
+            "human_review_policy_decision": (decision_dict),
             "structured_response": (
                 _structured_response(
                     state,
@@ -223,23 +189,15 @@ def human_review_policy_node(
             ),
             "trace": _append_trace(
                 state,
-                (
-                    "human_review_policy:"
-                    "already_pending:"
-                    f"{current_status}"
-                ),
+                (f"human_review_policy:already_pending:{current_status}"),
             ),
         }
 
     if not decision.requires_review:
         return {
             "human_review_required": False,
-            "human_review_policy_decision": (
-                decision_dict
-            ),
-            "human_review_status": (
-                current_status
-            ),
+            "human_review_policy_decision": (decision_dict),
+            "human_review_status": (current_status),
             "structured_response": (
                 _structured_response(
                     state,
@@ -248,29 +206,19 @@ def human_review_policy_node(
             ),
             "trace": _append_trace(
                 state,
-                (
-                    "human_review_policy:"
-                    f"{decision.trigger}:"
-                    "not_required"
-                ),
+                (f"human_review_policy:{decision.trigger}:not_required"),
             ),
         }
 
-    count = _review_count(
-        state
-    )
+    count = _review_count(state)
 
-    maximum = _max_reviews(
-        state
-    )
+    maximum = _max_reviews(state)
 
     if count >= maximum:
         return {
             "human_review_required": False,
             "human_review_limit_exceeded": True,
-            "human_review_policy_decision": (
-                decision_dict
-            ),
+            "human_review_policy_decision": (decision_dict),
             "human_review_status": "failed",
             "structured_response": (
                 _structured_response(
@@ -280,36 +228,21 @@ def human_review_policy_node(
             ),
             "trace": _append_trace(
                 state,
-                (
-                    "human_review_policy:"
-                    "limit_exceeded:"
-                    f"{count}/{maximum}"
-                ),
+                (f"human_review_policy:limit_exceeded:{count}/{maximum}"),
             ),
         }
 
-    thread_id = _normalize_text(
-        state.get(
-            "thread_id"
-        )
-    )
+    thread_id = _normalize_text(state.get("thread_id"))
 
     if not thread_id:
-        raise ValueError(
-            "thread_id é obrigatório para criar "
-            "uma revisão humana."
-        )
+        raise ValueError("thread_id é obrigatório para criar uma revisão humana.")
 
     review = create_human_review_request(
         thread_id=thread_id,
-        requested_by=(
-            decision.requested_by
-        ),
+        requested_by=(decision.requested_by),
         reason=decision.reason,
         trigger=decision.trigger,
-        risk_level=(
-            decision.risk_level
-        ),
+        risk_level=(decision.risk_level),
         payload=decision.payload,
         metadata={
             **decision.metadata,
@@ -318,23 +251,15 @@ def human_review_policy_node(
         },
     )
 
-    history = _review_history(
-        state
-    )
+    history = _review_history(state)
 
-    history.append(
-        deepcopy(
-            review
-        )
-    )
+    history.append(deepcopy(review))
 
     return {
         "human_review_required": True,
         "human_review_current": review,
         "human_review_history": history,
-        "human_review_policy_decision": (
-            decision_dict
-        ),
+        "human_review_policy_decision": (decision_dict),
         "human_review_status": "requested",
         "human_review_count": count + 1,
         "human_review_limit_exceeded": False,
@@ -347,11 +272,7 @@ def human_review_policy_node(
         ),
         "trace": _append_trace(
             state,
-            (
-                "human_review_policy:"
-                f"requested:{review['review_id']}:"
-                f"{decision.trigger}"
-            ),
+            (f"human_review_policy:requested:{review['review_id']}:{decision.trigger}"),
         ),
     }
 

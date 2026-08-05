@@ -40,18 +40,13 @@ def test_extracts_financial_values_from_previous_user_message():
             {
                 "role": "user",
                 "content": (
-                    "Minha renda mensal é 5000 reais "
-                    "e meus gastos são 3200 reais."
+                    "Minha renda mensal é 5000 reais e meus gastos são 3200 reais."
                 ),
             }
         ],
     )
 
-    memory = (
-        extract_financial_memory_from_history(
-            state
-        )
-    )
+    memory = extract_financial_memory_from_history(state)
 
     serialized = str(memory)
 
@@ -65,19 +60,12 @@ def test_ignores_current_message_in_history():
         [
             {
                 "role": "user",
-                "content": (
-                    "Minha renda mensal era "
-                    "5000 reais."
-                ),
+                "content": ("Minha renda mensal era 5000 reais."),
             }
         ],
     )
 
-    memory = (
-        extract_financial_memory_from_history(
-            state
-        )
-    )
+    memory = extract_financial_memory_from_history(state)
 
     assert "7000" not in str(memory)
 
@@ -88,64 +76,47 @@ def test_assistant_messages_are_not_financial_memory_sources():
         [
             {
                 "role": "assistant",
-                "content": (
-                    "Sua renda é 999999 reais "
-                    "e seus gastos são 1 real."
-                ),
+                "content": ("Sua renda é 999999 reais e seus gastos são 1 real."),
             }
         ],
     )
 
-    memory = (
-        extract_financial_memory_from_history(
-            state
-        )
-    )
+    memory = extract_financial_memory_from_history(state)
 
     assert memory == {}
 
 
 def test_detects_contextual_balance_follow_up():
     assert is_simple_balance_follow_up(
-        "Com base no que informei antes, "
-        "qual era meu saldo mensal?"
+        "Com base no que informei antes, qual era meu saldo mensal?"
     )
 
 
 def test_does_not_intercept_new_complete_diagnosis():
     assert not is_simple_balance_follow_up(
-        "Minha renda é 5000 e meus gastos "
-        "fixos são 2000."
+        "Minha renda é 5000 e meus gastos fixos são 2000."
     )
 
 
 def test_resolves_simple_balance_without_full_diagnosis():
     state = _state(
-        (
-            "Com base no que informei antes, "
-            "qual era meu saldo mensal?"
-        ),
+        ("Com base no que informei antes, qual era meu saldo mensal?"),
         [
             {
                 "role": "user",
                 "content": (
-                    "Minha renda mensal é 5000 reais "
-                    "e meus gastos são 3200 reais."
+                    "Minha renda mensal é 5000 reais e meus gastos são 3200 reais."
                 ),
             }
         ],
     )
 
-    result = resolve_simple_balance_follow_up(
-        state
-    )
+    result = resolve_simple_balance_follow_up(state)
 
     assert result is not None
     assert result["current_agent"] == "financial_agent"
     assert result["semantic_memory_used"] is True
-    assert result["semantic_memory_operation"] == (
-        "simple_balance"
-    )
+    assert result["semantic_memory_operation"] == ("simple_balance")
 
     response = result["response"]
 
@@ -157,35 +128,21 @@ def test_resolves_simple_balance_without_full_diagnosis():
 
 def test_returns_none_when_history_has_no_income():
     state = _state(
-        (
-            "Com base no que informei antes, "
-            "qual era meu saldo mensal?"
-        ),
+        ("Com base no que informei antes, qual era meu saldo mensal?"),
         [
             {
                 "role": "user",
-                "content": (
-                    "Meus gastos eram 3200 reais."
-                ),
+                "content": ("Meus gastos eram 3200 reais."),
             }
         ],
     )
 
-    assert (
-        resolve_simple_balance_follow_up(
-            state
-        )
-        is None
-    )
+    assert resolve_simple_balance_follow_up(state) is None
 
 
 def test_current_explicit_values_keep_priority_over_history():
     state = _state(
-        (
-            "Renda mensal: 7000; "
-            "gastos fixos: 2000; "
-            "gastos variáveis: 1000."
-        ),
+        ("Renda mensal: 7000; gastos fixos: 2000; gastos variáveis: 1000."),
         [
             {
                 "role": "user",
@@ -198,27 +155,16 @@ def test_current_explicit_values_keep_priority_over_history():
         ],
     )
 
-    resolution = resolver_entrada_financeira(
-        state
-    )
+    resolution = resolver_entrada_financeira(state)
 
     assert resolution.ready is True
     assert resolution.arguments is not None
 
-    assert (
-        resolution.arguments["renda_mensal"]
-        == 7000
-    )
+    assert resolution.arguments["renda_mensal"] == 7000
 
-    assert (
-        resolution.arguments["gastos_fixos"]
-        == 2000
-    )
+    assert resolution.arguments["gastos_fixos"] == 2000
 
-    assert (
-        resolution.arguments["gastos_variaveis"]
-        == 1000
-    )
+    assert resolution.arguments["gastos_variaveis"] == 1000
 
 
 def test_aggregate_history_does_not_invent_expense_split():
@@ -228,30 +174,18 @@ def test_aggregate_history_does_not_invent_expense_split():
             {
                 "role": "user",
                 "content": (
-                    "Minha renda mensal é 5000 reais "
-                    "e meus gastos são 3200 reais."
+                    "Minha renda mensal é 5000 reais e meus gastos são 3200 reais."
                 ),
             }
         ],
     )
 
-    resolution = resolver_entrada_financeira(
-        state
-    )
+    resolution = resolver_entrada_financeira(state)
 
     assert resolution.ready is False
 
-    assert (
-        "gastos_fixos"
-        in resolution.missing_fields
-    )
+    assert "gastos_fixos" in resolution.missing_fields
 
-    assert (
-        "gastos_variaveis"
-        in resolution.missing_fields
-    )
+    assert "gastos_variaveis" in resolution.missing_fields
 
-    assert (
-        "aggregate_expenses_not_split"
-        in resolution.warnings
-    )
+    assert "aggregate_expenses_not_split" in resolution.warnings

@@ -25,18 +25,14 @@ class FakeDurableSession:
         state,
     ):
         self.state = dict(state)
-        self.replace_calls.append(
-            dict(state)
-        )
+        self.replace_calls.append(dict(state))
 
     def set_language(
         self,
         language,
     ):
         self.language = language
-        self.language_calls.append(
-            language
-        )
+        self.language_calls.append(language)
 
 
 class FakeBridge:
@@ -88,9 +84,7 @@ class FakeBridge:
         self,
         session,
     ):
-        self.delete_calls.append(
-            session
-        )
+        self.delete_calls.append(session)
         return True
 
 
@@ -129,9 +123,7 @@ def _install_common_fakes(
 def test_start_loads_resets_and_saves_durable_session(
     monkeypatch,
 ):
-    sent = _install_common_fakes(
-        monkeypatch
-    )
+    sent = _install_common_fakes(monkeypatch)
 
     session = FakeDurableSession(
         {
@@ -141,20 +133,15 @@ def test_start_loads_resets_and_saves_durable_session(
         }
     )
 
-    bridge = FakeBridge(
-        session
-    )
+    bridge = FakeBridge(session)
 
-
-    result = (
-        telegram_webhook.process_telegram_update(
-            {
-                "message": {
-                    "text": "/start",
-                }
-            },
-            conversation_bridge=bridge,
-        )
+    result = telegram_webhook.process_telegram_update(
+        {
+            "message": {
+                "text": "/start",
+            }
+        },
+        conversation_bridge=bridge,
     )
 
     assert result is None
@@ -172,9 +159,7 @@ def test_start_loads_resets_and_saves_durable_session(
 def test_name_transition_is_saved_durably(
     monkeypatch,
 ):
-    _install_common_fakes(
-        monkeypatch
-    )
+    _install_common_fakes(monkeypatch)
 
     session = FakeDurableSession(
         {
@@ -183,19 +168,15 @@ def test_name_transition_is_saved_durably(
         }
     )
 
-    bridge = FakeBridge(
-        session
-    )
+    bridge = FakeBridge(session)
 
-    result = (
-        telegram_webhook.process_telegram_update(
-            {
-                "message": {
-                    "text": "Rogerio",
-                }
-            },
-            conversation_bridge=bridge,
-        )
+    result = telegram_webhook.process_telegram_update(
+        {
+            "message": {
+                "text": "Rogerio",
+            }
+        },
+        conversation_bridge=bridge,
     )
 
     assert result is None
@@ -210,9 +191,7 @@ def test_name_transition_is_saved_durably(
 def test_language_transition_is_saved_durably(
     monkeypatch,
 ):
-    _install_common_fakes(
-        monkeypatch
-    )
+    _install_common_fakes(monkeypatch)
 
     session = FakeDurableSession(
         {
@@ -221,15 +200,10 @@ def test_language_transition_is_saved_durably(
         }
     )
 
-    bridge = FakeBridge(
-        session
-    )
+    bridge = FakeBridge(session)
 
     label = next(
-        key
-        for key, value
-        in telegram_webhook.LANGUAGE_OPTIONS.items()
-        if value == "es"
+        key for key, value in telegram_webhook.LANGUAGE_OPTIONS.items() if value == "es"
     )
 
     telegram_webhook.process_telegram_update(
@@ -252,9 +226,7 @@ def test_language_transition_is_saved_durably(
 def test_cancel_deletes_durable_session_without_legacy_fallback(
     monkeypatch,
 ):
-    _install_common_fakes(
-        monkeypatch
-    )
+    _install_common_fakes(monkeypatch)
 
     session = FakeDurableSession(
         {
@@ -263,10 +235,7 @@ def test_cancel_deletes_durable_session_without_legacy_fallback(
         }
     )
 
-    bridge = FakeBridge(
-        session
-    )
-
+    bridge = FakeBridge(session)
 
     telegram_webhook.process_telegram_update(
         {
@@ -277,18 +246,13 @@ def test_cancel_deletes_durable_session_without_legacy_fallback(
         conversation_bridge=bridge,
     )
 
-    assert bridge.delete_calls == [
-        session
-    ]
-
+    assert bridge.delete_calls == [session]
 
 
 def test_save_failure_returns_false_inside_transition(
     monkeypatch,
 ):
-    _install_common_fakes(
-        monkeypatch
-    )
+    _install_common_fakes(monkeypatch)
 
     session = FakeDurableSession(
         {
@@ -303,23 +267,17 @@ def test_save_failure_returns_false_inside_transition(
             *args,
             **kwargs,
         ):
-            raise RuntimeError(
-                "state unavailable"
-            )
+            raise RuntimeError("state unavailable")
 
-    bridge = FailingBridge(
-        session
-    )
+    bridge = FailingBridge(session)
 
-    result = (
-        telegram_webhook.process_telegram_update(
-            {
-                "message": {
-                    "text": "Rogerio",
-                }
-            },
-            conversation_bridge=bridge,
-        )
+    result = telegram_webhook.process_telegram_update(
+        {
+            "message": {
+                "text": "Rogerio",
+            }
+        },
+        conversation_bridge=bridge,
     )
 
     assert result is False
@@ -328,9 +286,7 @@ def test_save_failure_returns_false_inside_transition(
 def test_load_failure_is_not_replaced_by_memory(
     monkeypatch,
 ):
-    _install_common_fakes(
-        monkeypatch
-    )
+    _install_common_fakes(monkeypatch)
 
     class FailingBridge:
         def load_or_open_session(
@@ -338,10 +294,7 @@ def test_load_failure_is_not_replaced_by_memory(
             *args,
             **kwargs,
         ):
-            raise RuntimeError(
-                "state unavailable"
-            )
-
+            raise RuntimeError("state unavailable")
 
     try:
         telegram_webhook.process_telegram_update(
@@ -357,6 +310,4 @@ def test_load_failure_is_not_replaced_by_memory(
         assert str(error) == "state unavailable"
 
     else:
-        raise AssertionError(
-            "A falha durável deveria ser propagada."
-        )
+        raise AssertionError("A falha durável deveria ser propagada.")

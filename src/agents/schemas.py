@@ -55,9 +55,7 @@ class SupervisorDecision(BaseModel):
         max_length=500,
     )
 
-    classification_source: ClassificationSource = (
-        "rule"
-    )
+    classification_source: ClassificationSource = "rule"
 
     classification_duration_ms: int = Field(
         default=0,
@@ -102,17 +100,11 @@ class AgentResponse(BaseModel):
 
     summary: str
 
-    recommendations: list[str] = Field(
-        default_factory=list
-    )
+    recommendations: list[str] = Field(default_factory=list)
 
-    next_steps: list[str] = Field(
-        default_factory=list
-    )
+    next_steps: list[str] = Field(default_factory=list)
 
-    sources: list[str] = Field(
-        default_factory=list
-    )
+    sources: list[str] = Field(default_factory=list)
 
     confidence: float = Field(
         default=1.0,
@@ -126,13 +118,9 @@ class AgentExecutionResult(BaseModel):
 
     response: AgentResponse | None = None
 
-    errors: list[str] = Field(
-        default_factory=list
-    )
+    errors: list[str] = Field(default_factory=list)
 
-    trace: list[str] = Field(
-        default_factory=list
-    )
+    trace: list[str] = Field(default_factory=list)
 
 
 __all__ = [

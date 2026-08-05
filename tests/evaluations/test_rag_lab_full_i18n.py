@@ -17,20 +17,16 @@ EXPECTED_LANGUAGES = {
     "ch",
 }
 
+
 def test_rag_lab_has_all_supported_languages():
     assert set(RAG_LAB_TEXTS) == EXPECTED_LANGUAGES
 
-def test_every_language_has_complete_translation_contract():
-    reference_keys = set(
-        RAG_LAB_TEXTS["pt"]
-    )
 
-    for language in sorted(
-        EXPECTED_LANGUAGES
-    ):
-        language_keys = set(
-            RAG_LAB_TEXTS[language]
-        )
+def test_every_language_has_complete_translation_contract():
+    reference_keys = set(RAG_LAB_TEXTS["pt"])
+
+    for language in sorted(EXPECTED_LANGUAGES):
+        language_keys = set(RAG_LAB_TEXTS[language])
 
         assert language_keys == reference_keys, (
             f"{language}: "
@@ -38,12 +34,9 @@ def test_every_language_has_complete_translation_contract():
             f"extra={sorted(language_keys - reference_keys)}"
         )
 
+
 def test_every_translation_is_non_empty():
-    for language, texts in (
-        RAG_LAB_TEXTS.items()
-    ):
+    for language, texts in RAG_LAB_TEXTS.items():
         for key, value in texts.items():
             assert isinstance(value, str)
-            assert value.strip(), (
-                f"{language}.{key} está vazio"
-            )
+            assert value.strip(), f"{language}.{key} está vazio"

@@ -7,40 +7,29 @@ mesmo quando todos utilizam inicialmente o mesmo modelo.
 
 from __future__ import annotations
 
-from enum import Enum
-from functools import lru_cache
 import os
+from enum import StrEnum
+from functools import cache
+
+DEFAULT_TEXT_MODEL = "gemini-3.5-flash-lite"
 
 
-DEFAULT_TEXT_MODEL = (
-    "gemini-2.5-flash-lite"
-)
-
-
-class LLMRole(str, Enum):
+class LLMRole(StrEnum):
     DEFAULT = "default"
     SUPERVISOR = "supervisor"
     EDUCATION = "education"
     RAG = "rag"
     REPORT = "report"
-    FINANCIAL_EXPLANATION = (
-        "financial_explanation"
-    )
+    FINANCIAL_EXPLANATION = "financial_explanation"
 
 
 MODEL_ENV_BY_ROLE: dict[LLMRole, str] = {
     LLMRole.DEFAULT: "GEMINI_MODEL",
-    LLMRole.SUPERVISOR: (
-        "INNA_SUPERVISOR_MODEL"
-    ),
-    LLMRole.EDUCATION: (
-        "INNA_EDUCATION_MODEL"
-    ),
+    LLMRole.SUPERVISOR: ("INNA_SUPERVISOR_MODEL"),
+    LLMRole.EDUCATION: ("INNA_EDUCATION_MODEL"),
     LLMRole.RAG: "INNA_RAG_MODEL",
     LLMRole.REPORT: "INNA_REPORT_MODEL",
-    LLMRole.FINANCIAL_EXPLANATION: (
-        "INNA_FINANCIAL_EXPLANATION_MODEL"
-    ),
+    LLMRole.FINANCIAL_EXPLANATION: ("INNA_FINANCIAL_EXPLANATION_MODEL"),
 }
 
 
@@ -50,7 +39,7 @@ def _normalize_model_name(
     return str(value or "").strip()
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_model_for_role(
     role: LLMRole | str,
 ) -> str:
@@ -61,30 +50,16 @@ def get_model_for_role(
     2. variável global GEMINI_MODEL;
     3. modelo padrão da aplicação.
     """
-    normalized_role = (
-        role
-        if isinstance(role, LLMRole)
-        else LLMRole(str(role))
-    )
+    normalized_role = role if isinstance(role, LLMRole) else LLMRole(str(role))
 
-    specific_environment = (
-        MODEL_ENV_BY_ROLE[
-            normalized_role
-        ]
-    )
+    specific_environment = MODEL_ENV_BY_ROLE[normalized_role]
 
-    specific_model = _normalize_model_name(
-        os.getenv(
-            specific_environment
-        )
-    )
+    specific_model = _normalize_model_name(os.getenv(specific_environment))
 
     if specific_model:
         return specific_model
 
-    global_model = _normalize_model_name(
-        os.getenv("GEMINI_MODEL")
-    )
+    global_model = _normalize_model_name(os.getenv("GEMINI_MODEL"))
 
     if global_model:
         return global_model
@@ -92,15 +67,11 @@ def get_model_for_role(
     return DEFAULT_TEXT_MODEL
 
 
-def get_model_registry(
-) -> dict[str, str]:
+def get_model_registry() -> dict[str, str]:
     """
     Retorna a configuração resolvida de todos os agentes.
     """
-    return {
-        role.value: get_model_for_role(role)
-        for role in LLMRole
-    }
+    return {role.value: get_model_for_role(role) for role in LLMRole}
 
 
 def reset_model_registry_cache() -> None:

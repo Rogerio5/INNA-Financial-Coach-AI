@@ -218,7 +218,7 @@ Elas são configuradas diretamente no Render e no arquivo `.env` local.
 APP_ENV=production
 INNA_MOCK_MODE=false
 GEMINI_API_KEY=sua_chave_gemini
-GEMINI_MODEL=gemini-2.5-flash-lite
+GEMINI_MODEL=gemini-3.5-flash-lite
 DATABASE_URL=sua_url_neon
 API_BASE_URL=https://inna-api.onrender.com
 PYTHON_VERSION=3.12.1

@@ -86,9 +86,7 @@ def _optional_float(
         return None
 
     if isinstance(value, bool):
-        raise DeterministicPayloadError(
-            f"{field_name} não pode ser booleano."
-        )
+        raise DeterministicPayloadError(f"{field_name} não pode ser booleano.")
 
     try:
         parsed = float(value)
@@ -98,9 +96,7 @@ def _optional_float(
         ) from exception
 
     if parsed < 0:
-        raise DeterministicPayloadError(
-            f"{field_name} não pode ser negativo."
-        )
+        raise DeterministicPayloadError(f"{field_name} não pode ser negativo.")
 
     return parsed
 
@@ -144,9 +140,7 @@ def _optional_bool(
         }:
             return False
 
-    raise DeterministicPayloadError(
-        f"{field_name} precisa ser booleano."
-    )
+    raise DeterministicPayloadError(f"{field_name} precisa ser booleano.")
 
 
 def _require_mapping(
@@ -155,9 +149,7 @@ def _require_mapping(
     field_name: str,
 ) -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
-        raise DeterministicPayloadError(
-            f"{field_name} precisa ser um mapping."
-        )
+        raise DeterministicPayloadError(f"{field_name} precisa ser um mapping.")
 
     return value
 
@@ -182,23 +174,17 @@ def _parse_called_tools(
             Mapping,
         ),
     ):
-        raise DeterministicPayloadError(
-            "called_tools precisa ser uma sequência."
-        )
+        raise DeterministicPayloadError("called_tools precisa ser uma sequência.")
 
     if not isinstance(raw_tools, Sequence):
-        raise DeterministicPayloadError(
-            "called_tools precisa ser uma sequência."
-        )
+        raise DeterministicPayloadError("called_tools precisa ser uma sequência.")
 
     parsed: list[ObservedToolCall] = []
 
     for index, raw_tool in enumerate(raw_tools):
         tool = _require_mapping(
             raw_tool,
-            field_name=(
-                f"called_tools[{index}]"
-            ),
+            field_name=(f"called_tools[{index}]"),
         )
 
         name = str(
@@ -210,8 +196,7 @@ def _parse_called_tools(
 
         if not name:
             raise DeterministicPayloadError(
-                f"called_tools[{index}].name "
-                "não pode ser vazio."
+                f"called_tools[{index}].name não pode ser vazio."
             )
 
         raw_arguments = tool.get(
@@ -221,9 +206,7 @@ def _parse_called_tools(
 
         arguments = _require_mapping(
             raw_arguments,
-            field_name=(
-                f"called_tools[{index}].arguments"
-            ),
+            field_name=(f"called_tools[{index}].arguments"),
         )
 
         call_index = tool.get(
@@ -233,8 +216,7 @@ def _parse_called_tools(
 
         if isinstance(call_index, bool):
             raise DeterministicPayloadError(
-                f"called_tools[{index}].call_index "
-                "não pode ser booleano."
+                f"called_tools[{index}].call_index não pode ser booleano."
             )
 
         if call_index is not None:
@@ -245,14 +227,12 @@ def _parse_called_tools(
                 ValueError,
             ) as exception:
                 raise DeterministicPayloadError(
-                    f"called_tools[{index}].call_index "
-                    "precisa ser inteiro."
+                    f"called_tools[{index}].call_index precisa ser inteiro."
                 ) from exception
 
             if call_index < 0:
                 raise DeterministicPayloadError(
-                    f"called_tools[{index}].call_index "
-                    "não pode ser negativo."
+                    f"called_tools[{index}].call_index não pode ser negativo."
                 )
 
         parsed.append(
@@ -268,21 +248,12 @@ def _parse_called_tools(
                 ),
                 duration_ms=_optional_float(
                     tool.get("duration_ms"),
-                    field_name=(
-                        "called_tools"
-                        f"[{index}].duration_ms"
-                    ),
+                    field_name=(f"called_tools[{index}].duration_ms"),
                 ),
                 call_index=call_index,
-                error_code=_optional_text(
-                    tool.get("error_code")
-                ),
-                trace_id=_optional_text(
-                    tool.get("trace_id")
-                ),
-                span_id=_optional_text(
-                    tool.get("span_id")
-                ),
+                error_code=_optional_text(tool.get("error_code")),
+                trace_id=_optional_text(tool.get("trace_id")),
+                span_id=_optional_text(tool.get("span_id")),
                 metadata=dict(
                     tool.get(
                         "metadata",
@@ -300,14 +271,10 @@ def _parse_retrieval_documents(
 ) -> tuple[RetrievalDocument, ...]:
     documents: list[RetrievalDocument] = []
 
-    for index, content in enumerate(
-        payload.retrieval_context
-    ):
+    for index, content in enumerate(payload.retrieval_context):
         documents.append(
             RetrievalDocument(
-                document_id=(
-                    f"{payload.case_id}-document-{index}"
-                ),
+                document_id=(f"{payload.case_id}-document-{index}"),
                 content=content,
                 rank=index + 1,
                 metadata={
@@ -349,16 +316,13 @@ def payload_to_inna_result(
 
     if payload.case_id != case.case_id:
         raise DeterministicPayloadError(
-            "O case_id do payload não corresponde "
-            "ao caso de avaliação."
+            "O case_id do payload não corresponde ao caso de avaliação."
         )
 
     metadata = payload.metadata
 
     human_review_requested = _optional_bool(
-        metadata.get(
-            "human_review_requested"
-        ),
+        metadata.get("human_review_requested"),
         field_name="human_review_requested",
     )
 
@@ -405,14 +369,8 @@ def payload_to_inna_result(
                 default=0.0,
             )
         ),
-        tools_called=_parse_called_tools(
-            metadata
-        ),
-        retrieval_documents=(
-            _parse_retrieval_documents(
-                payload
-            )
-        ),
+        tools_called=_parse_called_tools(metadata),
+        retrieval_documents=(_parse_retrieval_documents(payload)),
         errors=tuple(
             str(item)
             for item in metadata.get(
@@ -442,19 +400,9 @@ def payload_to_inna_result(
             metadata.get("estimated_cost"),
             field_name="estimated_cost",
         ),
-        human_review_requested=bool(
-            human_review_requested
-        ),
-        human_review_status=_optional_text(
-            metadata.get(
-                "human_review_status"
-            )
-        ),
-        human_review_id=_optional_text(
-            metadata.get(
-                "human_review_id"
-            )
-        ),
+        human_review_requested=bool(human_review_requested),
+        human_review_status=_optional_text(metadata.get("human_review_status")),
+        human_review_id=_optional_text(metadata.get("human_review_id")),
         privacy_level=case.privacy_level,
         external_payload_sanitized=bool(
             metadata.get(
@@ -462,9 +410,7 @@ def payload_to_inna_result(
                 False,
             )
         ),
-        structured_response=dict(
-            _structured_response(metadata)
-        ),
+        structured_response=dict(_structured_response(metadata)),
         raw_state=dict(
             metadata.get(
                 "raw_state",
@@ -472,9 +418,7 @@ def payload_to_inna_result(
             )
         ),
         metadata={
-            "adapted_from": (
-                "DeepEvalCasePayload"
-            ),
+            "adapted_from": ("DeepEvalCasePayload"),
         },
     )
 
@@ -531,9 +475,7 @@ def execute_expected_terms(
     return _metric_output(
         metric,
         evaluated,
-        empty_reason=(
-            "O caso não possui termos obrigatórios."
-        ),
+        empty_reason=("O caso não possui termos obrigatórios."),
     )
 
 
@@ -556,9 +498,7 @@ def execute_forbidden_terms(
     return _metric_output(
         metric,
         evaluated,
-        empty_reason=(
-            "O caso não possui termos proibidos."
-        ),
+        empty_reason=("O caso não possui termos proibidos."),
     )
 
 
@@ -592,9 +532,7 @@ def execute_retrieval_contract(
     return _combine_metric_results(
         metric,
         metric_results,
-        empty_reason=(
-            "O caso não possui contrato de recuperação."
-        ),
+        empty_reason=("O caso não possui contrato de recuperação."),
     )
 
 
@@ -617,9 +555,7 @@ def execute_latency_budget(
     return _metric_output(
         metric,
         evaluated,
-        empty_reason=(
-            "O caso não possui limite de latência."
-        ),
+        empty_reason=("O caso não possui limite de latência."),
     )
 
 
@@ -642,9 +578,7 @@ def execute_cost_budget(
     return _metric_output(
         metric,
         evaluated,
-        empty_reason=(
-            "O caso não possui limite de custo."
-        ),
+        empty_reason=("O caso não possui limite de custo."),
     )
 
 
@@ -703,10 +637,7 @@ def execute_contract_validation(
     return _combine_metric_results(
         metric,
         metric_results,
-        empty_reason=(
-            "O caso não possui expectativas "
-            "contratuais adicionais."
-        ),
+        empty_reason=("O caso não possui expectativas contratuais adicionais."),
     )
 
 
@@ -721,9 +652,7 @@ def execute_human_review_policy(
         return MetricExecutionOutput(
             passed=True,
             score=1.0,
-            reason=(
-                "O caso não define expectativa HITL."
-            ),
+            reason=("O caso não define expectativa HITL."),
             metadata={
                 "expectation_skipped": True,
             },
@@ -732,9 +661,7 @@ def execute_human_review_policy(
     metadata = payload.metadata
 
     actual_requested = _optional_bool(
-        metadata.get(
-            "human_review_requested"
-        ),
+        metadata.get("human_review_requested"),
         field_name="human_review_requested",
     )
 
@@ -748,45 +675,26 @@ def execute_human_review_policy(
         )
     )
 
-    expected_status = normalize_text(
-        case.expected_task_status
-    )
+    expected_status = normalize_text(case.expected_task_status)
 
-    request_matches = (
-        actual_requested is expected
-    )
+    request_matches = actual_requested is expected
 
-    status_matches = (
-        not expected_status
-        or actual_status == expected_status
-    )
+    status_matches = not expected_status or actual_status == expected_status
 
-    passed = (
-        request_matches
-        and status_matches
-    )
+    passed = request_matches and status_matches
 
-    score = (
-        float(request_matches)
-        + float(status_matches)
-    ) / 2
+    score = (float(request_matches) + float(status_matches)) / 2
 
     if passed:
-        reason = (
-            "A política de revisão humana foi atendida."
-        )
+        reason = "A política de revisão humana foi atendida."
     else:
         failures: list[str] = []
 
         if not request_matches:
-            failures.append(
-                "human_review_requested incompatível"
-            )
+            failures.append("human_review_requested incompatível")
 
         if not status_matches:
-            failures.append(
-                "status de revisão incompatível"
-            )
+            failures.append("status de revisão incompatível")
 
         reason = "; ".join(failures)
 
@@ -797,9 +705,7 @@ def execute_human_review_policy(
         metadata={
             "expected_review": expected,
             "actual_review": actual_requested,
-            "expected_status": (
-                case.expected_task_status
-            ),
+            "expected_status": (case.expected_task_status),
             "actual_status": (
                 metadata.get(
                     "human_review_status",
@@ -832,32 +738,16 @@ def _combine_metric_results(
             },
         )
 
-    score = sum(
-        item.score
-        for item in metric_results
-    ) / len(metric_results)
+    score = sum(item.score for item in metric_results) / len(metric_results)
 
-    passed = all(
-        item.passed
-        for item in metric_results
-    )
+    passed = all(item.passed for item in metric_results)
 
-    failed_names = tuple(
-        item.name
-        for item in metric_results
-        if not item.passed
-    )
+    failed_names = tuple(item.name for item in metric_results if not item.passed)
 
     if passed:
-        reason = (
-            "Todas as validações determinísticas "
-            "foram aprovadas."
-        )
+        reason = "Todas as validações determinísticas foram aprovadas."
     else:
-        reason = (
-            "Validações reprovadas: "
-            + ", ".join(failed_names)
-        )
+        reason = "Validações reprovadas: " + ", ".join(failed_names)
 
     return MetricExecutionOutput(
         passed=passed,
@@ -866,21 +756,14 @@ def _combine_metric_results(
         estimated_cost=0.0,
         metadata={
             "metric_id": metric.metric_id,
-            "evaluated_metrics": tuple(
-                item.name
-                for item in metric_results
-            ),
+            "evaluated_metrics": tuple(item.name for item in metric_results),
             "failed_metrics": failed_names,
-            "details": {
-                item.name: dict(item.details)
-                for item in metric_results
-            },
+            "details": {item.name: dict(item.details) for item in metric_results},
         },
     )
 
 
-def build_default_deterministic_executors(
-) -> Mapping[str, MetricExecutor]:
+def build_default_deterministic_executors() -> Mapping[str, MetricExecutor]:
     """
     Retorna os executores locais oficiais da INNA.
 
@@ -888,24 +771,17 @@ def build_default_deterministic_executors(
     """
 
     return {
-        "contract-validation": (
-            execute_contract_validation
-        ),
+        "contract-validation": (execute_contract_validation),
         "expected-terms": execute_expected_terms,
         "forbidden-terms": execute_forbidden_terms,
-        "retrieval-contract": (
-            execute_retrieval_contract
-        ),
+        "retrieval-contract": (execute_retrieval_contract),
         "latency-budget": execute_latency_budget,
         "cost-budget": execute_cost_budget,
-        "human-review-policy": (
-            execute_human_review_policy
-        ),
+        "human-review-policy": (execute_human_review_policy),
     }
 
 
-def build_deterministic_runner(
-):
+def build_deterministic_runner():
     """
     Constrói um EvaluationRunner com todos os executores locais.
 
@@ -917,11 +793,7 @@ def build_deterministic_runner(
         EvaluationRunner,
     )
 
-    return EvaluationRunner(
-        executors=(
-            build_default_deterministic_executors()
-        )
-    )
+    return EvaluationRunner(executors=(build_default_deterministic_executors()))
 
 
 __all__ = [

@@ -28,9 +28,7 @@ ORDEM_SEVERIDADE = {
 
 
 def _carregar_database_url() -> str:
-    database_url = os.getenv(
-        "DATABASE_URL"
-    )
+    database_url = os.getenv("DATABASE_URL")
 
     if not database_url:
         try:
@@ -41,16 +39,12 @@ def _carregar_database_url() -> str:
                 override=False,
             )
 
-            database_url = os.getenv(
-                "DATABASE_URL"
-            )
+            database_url = os.getenv("DATABASE_URL")
         except Exception:
             database_url = None
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não encontrada."
-        )
+        raise RuntimeError("DATABASE_URL não encontrada.")
 
     return database_url
 
@@ -149,19 +143,14 @@ def inicializar_tabela_llm_alerts() -> dict[str, Any]:
         return {
             "ok": True,
             "tabela": NOME_TABELA,
-            "message": (
-                "Tabela de alertas LLM inicializada."
-            ),
+            "message": ("Tabela de alertas LLM inicializada."),
         }
 
     except Exception as exc:
         return {
             "ok": False,
             "tabela": NOME_TABELA,
-            "message": (
-                "Erro ao inicializar alertas: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao inicializar alertas: {exc}"),
         }
 
 
@@ -196,9 +185,7 @@ def _criar_alerta(
         "descricao": descricao,
         "categoria": categoria,
         "severidade": severidade,
-        "ordem_severidade": (
-            ORDEM_SEVERIDADE[severidade]
-        ),
+        "ordem_severidade": (ORDEM_SEVERIDADE[severidade]),
         "valor_atual": round(
             float(valor_atual),
             8,
@@ -211,9 +198,7 @@ def _criar_alerta(
         "modelo": modelo,
         "operacao": operacao,
         "trace_id": trace_id,
-        "dedupe_key": ":".join(
-            dedupe_partes
-        )[:255],
+        "dedupe_key": ":".join(dedupe_partes)[:255],
         "recomendacao": recomendacao,
         "metadados": metadados or {},
     }
@@ -250,11 +235,9 @@ def detectar_alertas_llm(
     }:
         severidade = (
             "critica"
-            if situacao.get("status")
-            == "excedido"
+            if situacao.get("status") == "excedido"
             else "alta"
-            if situacao.get("status")
-            == "critico"
+            if situacao.get("status") == "critico"
             else "media"
         )
 
@@ -300,10 +283,7 @@ def detectar_alertas_llm(
                 ),
                 categoria="finops",
                 severidade=(
-                    "critica"
-                    if projecao.get("status")
-                    == "excedido"
-                    else "alta"
+                    "critica" if projecao.get("status") == "excedido" else "alta"
                 ),
                 valor_atual=finops.get(
                     "projecao_mensal_usd",
@@ -345,22 +325,16 @@ def detectar_alertas_llm(
     sucessos = (
         base.get(
             "sucesso",
-            pd.Series(
-                [True] * len(base)
-            ),
+            pd.Series([True] * len(base)),
         )
         .fillna(False)
         .astype(bool)
     )
 
-    chamadas_lentas = int(
-        (duracoes >= 30000).sum()
-    )
+    chamadas_lentas = int((duracoes >= 30000).sum())
 
     if chamadas_lentas > 0:
-        maior_duracao = float(
-            duracoes.max()
-        )
+        maior_duracao = float(duracoes.max())
 
         alertas.append(
             _criar_alerta(
@@ -371,11 +345,7 @@ def detectar_alertas_llm(
                     "chamada(s) acima de 30 segundos."
                 ),
                 categoria="performance",
-                severidade=(
-                    "alta"
-                    if maior_duracao >= 120000
-                    else "media"
-                ),
+                severidade=("alta" if maior_duracao >= 120000 else "media"),
                 valor_atual=maior_duracao,
                 valor_limite=30000,
                 unidade="ms",
@@ -386,15 +356,10 @@ def detectar_alertas_llm(
             )
         )
 
-    total_falhas = int(
-        (~sucessos).sum()
-    )
+    total_falhas = int((~sucessos).sum())
 
     if total_falhas > 0:
-        taxa_falhas = (
-            total_falhas
-            / len(base)
-        ) * 100
+        taxa_falhas = (total_falhas / len(base)) * 100
 
         alertas.append(
             _criar_alerta(
@@ -406,11 +371,7 @@ def detectar_alertas_llm(
                     f"{taxa_falhas:.2f}% das chamadas."
                 ),
                 categoria="confiabilidade",
-                severidade=(
-                    "critica"
-                    if taxa_falhas >= 30
-                    else "alta"
-                ),
+                severidade=("critica" if taxa_falhas >= 30 else "alta"),
                 valor_atual=taxa_falhas,
                 valor_limite=0,
                 unidade="percentual",
@@ -422,9 +383,7 @@ def detectar_alertas_llm(
         )
 
     if len(tokens) > 0:
-        media_tokens = float(
-            tokens.mean()
-        )
+        media_tokens = float(tokens.mean())
 
         if media_tokens >= 10000:
             alertas.append(
@@ -449,9 +408,7 @@ def detectar_alertas_llm(
 
     return sorted(
         alertas,
-        key=lambda item: item[
-            "ordem_severidade"
-        ],
+        key=lambda item: item["ordem_severidade"],
         reverse=True,
     )
 
@@ -462,9 +419,7 @@ def persistir_alerta_llm(
     """
     Persiste um alerta, evitando duplicação aberta.
     """
-    inicializacao = (
-        inicializar_tabela_llm_alerts()
-    )
+    inicializacao = inicializar_tabela_llm_alerts()
 
     if not inicializacao.get("ok"):
         return inicializacao
@@ -535,10 +490,14 @@ def persistir_alerta_llm(
 
         try:
             with engine.begin() as connection:
-                registro = connection.execute(
-                    inserir,
-                    parametros,
-                ).mappings().first()
+                registro = (
+                    connection.execute(
+                        inserir,
+                        parametros,
+                    )
+                    .mappings()
+                    .first()
+                )
 
         except IntegrityError:
             engine.dispose()
@@ -547,9 +506,7 @@ def persistir_alerta_llm(
                 "ok": True,
                 "salvo": False,
                 "duplicado": True,
-                "message": (
-                    "Alerta aberto semelhante já existe."
-                ),
+                "message": ("Alerta aberto semelhante já existe."),
             }
 
         engine.dispose()
@@ -558,12 +515,8 @@ def persistir_alerta_llm(
             "ok": True,
             "salvo": True,
             "duplicado": False,
-            "id": int(
-                registro["id"]
-            ),
-            "criado_em": registro[
-                "criado_em"
-            ],
+            "id": int(registro["id"]),
+            "criado_em": registro["criado_em"],
             "message": "Alerta salvo.",
         }
 
@@ -572,10 +525,7 @@ def persistir_alerta_llm(
             "ok": False,
             "salvo": False,
             "duplicado": False,
-            "message": (
-                "Erro ao persistir alerta: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao persistir alerta: {exc}"),
         }
 
 
@@ -591,29 +541,15 @@ def avaliar_e_persistir_alertas(
         finops,
     )
 
-    resultados = [
-        persistir_alerta_llm(alerta)
-        for alerta in detectados
-    ]
+    resultados = [persistir_alerta_llm(alerta) for alerta in detectados]
 
     return {
-        "ok": all(
-            item.get("ok")
-            for item in resultados
-        ) if resultados else True,
+        "ok": all(item.get("ok") for item in resultados) if resultados else True,
         "alertas_detectados": detectados,
         "resultados_persistencia": resultados,
         "total_detectados": len(detectados),
-        "total_salvos": sum(
-            1
-            for item in resultados
-            if item.get("salvo")
-        ),
-        "total_duplicados": sum(
-            1
-            for item in resultados
-            if item.get("duplicado")
-        ),
+        "total_salvos": sum(1 for item in resultados if item.get("salvo")),
+        "total_duplicados": sum(1 for item in resultados if item.get("duplicado")),
     }
 
 
@@ -625,9 +561,7 @@ def resolver_alerta_llm(
     """
     Marca um alerta aberto como resolvido.
     """
-    inicializacao = (
-        inicializar_tabela_llm_alerts()
-    )
+    inicializacao = inicializar_tabela_llm_alerts()
 
     if not inicializacao.get("ok"):
         return inicializacao
@@ -650,18 +584,17 @@ def resolver_alerta_llm(
         """)
 
         with engine.begin() as connection:
-            registro = connection.execute(
-                comando,
-                {
-                    "alerta_id": int(
-                        alerta_id
-                    ),
-                    "resolvido_por": str(
-                        resolvido_por
-                        or "dashboard"
-                    )[:255],
-                },
-            ).mappings().first()
+            registro = (
+                connection.execute(
+                    comando,
+                    {
+                        "alerta_id": int(alerta_id),
+                        "resolvido_por": str(resolvido_por or "dashboard")[:255],
+                    },
+                )
+                .mappings()
+                .first()
+            )
 
         engine.dispose()
 
@@ -669,33 +602,22 @@ def resolver_alerta_llm(
             return {
                 "ok": True,
                 "resolvido": False,
-                "message": (
-                    "O alerta não existe ou já foi resolvido."
-                ),
+                "message": ("O alerta não existe ou já foi resolvido."),
             }
 
         return {
             "ok": True,
             "resolvido": True,
-            "id": int(
-                registro["id"]
-            ),
-            "resolvido_em": registro[
-                "resolvido_em"
-            ],
-            "message": (
-                "Alerta resolvido com sucesso."
-            ),
+            "id": int(registro["id"]),
+            "resolvido_em": registro["resolvido_em"],
+            "message": ("Alerta resolvido com sucesso."),
         }
 
     except Exception as exc:
         return {
             "ok": False,
             "resolvido": False,
-            "message": (
-                "Erro ao resolver alerta: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao resolver alerta: {exc}"),
         }
 
 
@@ -707,9 +629,7 @@ def carregar_alertas_llm(
     """
     Consulta alertas persistidos.
     """
-    inicializacao = (
-        inicializar_tabela_llm_alerts()
-    )
+    inicializacao = inicializar_tabela_llm_alerts()
 
     if not inicializacao.get("ok"):
         return {
@@ -771,10 +691,7 @@ def carregar_alertas_llm(
             "ok": False,
             "df": pd.DataFrame(),
             "total": 0,
-            "message": (
-                "Erro ao carregar alertas: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao carregar alertas: {exc}"),
         }
 
 

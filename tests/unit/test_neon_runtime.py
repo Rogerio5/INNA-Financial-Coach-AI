@@ -52,9 +52,7 @@ def test_collect_neon_runtime_status_success(
         lambda: FakePool(),
     )
 
-    status = (
-        neon_runtime.collect_neon_runtime_status()
-    )
+    status = neon_runtime.collect_neon_runtime_status()
 
     assert status.configured is True
     assert status.available is True
@@ -71,9 +69,7 @@ def test_collect_neon_runtime_status_handles_failure(
     monkeypatch,
 ):
     def raise_connection_error():
-        raise RuntimeError(
-            "credencial ou endereço privado"
-        )
+        raise RuntimeError("credencial ou endereço privado")
 
     monkeypatch.setattr(
         neon_runtime,
@@ -81,9 +77,7 @@ def test_collect_neon_runtime_status_handles_failure(
         raise_connection_error,
     )
 
-    status = (
-        neon_runtime.collect_neon_runtime_status()
-    )
+    status = neon_runtime.collect_neon_runtime_status()
 
     assert status.configured is False
     assert status.available is False
@@ -94,6 +88,7 @@ def test_collect_neon_runtime_status_handles_failure(
 
     assert "credencial" not in str(payload)
     assert "endereço privado" not in str(payload)
+
 
 class FakeDictCursor(FakeCursor):
     def fetchone(self):
@@ -124,13 +119,10 @@ def test_collect_neon_runtime_accepts_dict_row(
         lambda: FakeDictPool(),
     )
 
-    status = (
-        neon_runtime.collect_neon_runtime_status()
-    )
+    status = neon_runtime.collect_neon_runtime_status()
 
     assert status.configured is True
     assert status.available is True
     assert status.server_version == "17.5"
     assert status.pool_status == "healthy"
     assert status.error_type is None
-

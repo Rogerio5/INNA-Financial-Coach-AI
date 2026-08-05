@@ -1,4 +1,3 @@
-
 LANGUAGE_NAME_BY_CODE = {
     "pt": "Português Brasil",
     "en_us": "English US",
@@ -36,9 +35,7 @@ from src.prompts import build_plan_prompt
 
 LAST_GEMINI_USAGE_METADATA = {
     "provider": "gemini",
-    "modelo_ia": get_model_for_role(
-        LLMRole.FINANCIAL_EXPLANATION
-    ),
+    "modelo_ia": get_model_for_role(LLMRole.FINANCIAL_EXPLANATION),
     "prompt_tokens": 0,
     "completion_tokens": 0,
     "total_tokens": 0,
@@ -133,7 +130,9 @@ def _update_last_gemini_usage(response=None, fallback: bool = False):
         "prompt_tokens": prompt_tokens,
         "completion_tokens": completion_tokens,
         "total_tokens": total_tokens,
-        "custo_estimado_usd": _estimate_gemini_cost_usd(prompt_tokens, completion_tokens),
+        "custo_estimado_usd": _estimate_gemini_cost_usd(
+            prompt_tokens, completion_tokens
+        ),
         "tokens_disponiveis": total_tokens > 0,
     }
 
@@ -246,24 +245,56 @@ def generate_fallback_plan(payload: dict, diagnosis: dict) -> str:
 
     risk_map = {
         "Baixo": {
-            "pt": "Baixo", "en_us": "Low", "en_gb": "Low", "es": "Bajo", "fr": "Faible",
-            "de": "Niedrig", "it": "Basso", "ro": "Scăzut",
-            "uk": "Низький", "ru": "Низкий", "ar": "منخفض",
+            "pt": "Baixo",
+            "en_us": "Low",
+            "en_gb": "Low",
+            "es": "Bajo",
+            "fr": "Faible",
+            "de": "Niedrig",
+            "it": "Basso",
+            "ro": "Scăzut",
+            "uk": "Низький",
+            "ru": "Низкий",
+            "ar": "منخفض",
         },
         "Medio": {
-            "pt": "Médio", "en_us": "Medium", "en_gb": "Medium", "es": "Medio", "fr": "Moyen",
-            "de": "Mittel", "it": "Medio", "ro": "Mediu",
-            "uk": "Середній", "ru": "Средний", "ar": "متوسط",
+            "pt": "Médio",
+            "en_us": "Medium",
+            "en_gb": "Medium",
+            "es": "Medio",
+            "fr": "Moyen",
+            "de": "Mittel",
+            "it": "Medio",
+            "ro": "Mediu",
+            "uk": "Середній",
+            "ru": "Средний",
+            "ar": "متوسط",
         },
         "Médio": {
-            "pt": "Médio", "en_us": "Medium", "en_gb": "Medium", "es": "Medio", "fr": "Moyen",
-            "de": "Mittel", "it": "Medio", "ro": "Mediu",
-            "uk": "Середній", "ru": "Средний", "ar": "متوسط",
+            "pt": "Médio",
+            "en_us": "Medium",
+            "en_gb": "Medium",
+            "es": "Medio",
+            "fr": "Moyen",
+            "de": "Mittel",
+            "it": "Medio",
+            "ro": "Mediu",
+            "uk": "Середній",
+            "ru": "Средний",
+            "ar": "متوسط",
         },
         "Alto": {
-            "pt": "Alto", "en_us": "High", "en_gb": "High", "es": "Alto", "fr": "Élevé",
-            "de": "Hoch", "it": "Alto", "ro": "Ridicat",
-            "uk": "Високий", "ru": "Высокий", "ar": "مرتفع",
+            "pt": "Alto",
+            "en_us": "High",
+            "en_gb": "High",
+            "es": "Alto",
+            "fr": "Élevé",
+            "de": "Hoch",
+            "it": "Alto",
+            "ro": "Ridicat",
+            "uk": "Високий",
+            "ru": "Высокий",
+            "ar": "مرتفع",
         },
     }
 
@@ -655,6 +686,7 @@ def generate_fallback_plan(payload: dict, diagnosis: dict) -> str:
 {t["notice"]} {t["notice_text"]}
 """.strip()
 
+
 def generate_ai_plan(payload: dict, diagnosis: dict) -> str:
     _update_last_gemini_usage(fallback=True)
     if INNA_MOCK_MODE:
@@ -667,9 +699,7 @@ def generate_ai_plan(payload: dict, diagnosis: dict) -> str:
         client = genai.Client(api_key=GEMINI_API_KEY)
         prompt = build_plan_prompt(payload, diagnosis)
 
-        modelo_geracao = get_model_for_role(
-            LLMRole.FINANCIAL_EXPLANATION
-        )
+        modelo_geracao = get_model_for_role(LLMRole.FINANCIAL_EXPLANATION)
 
         response = executar_generate_content_observado(
             client,

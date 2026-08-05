@@ -18,19 +18,9 @@ def test_limitar_score():
 
 
 def test_classificar_score():
-    assert (
-        classificar_score(98)[
-            "classificacao"
-        ]
-        == "Excelente"
-    )
+    assert classificar_score(98)["classificacao"] == "Excelente"
 
-    assert (
-        classificar_score(60)[
-            "status"
-        ]
-        == "critico"
-    )
+    assert classificar_score(60)["status"] == "critico"
 
 
 def test_score_tools_saudavel():
@@ -102,25 +92,17 @@ def test_health_score_global():
         "performance": {"score": 80},
     }
 
-    resultado = calcular_health_score_global(
-        componentes
-    )
+    resultado = calcular_health_score_global(componentes)
 
     assert resultado["score_global"] == 95.0
 
-    assert (
-        resultado["componente_mais_fraco"]
-        == "performance"
-    )
+    assert resultado["componente_mais_fraco"] == "performance"
 
-    assert (
-        resultado["componente_mais_forte"]
-        in {
-            "tools",
-            "memoria",
-            "infraestrutura",
-        }
-    )
+    assert resultado["componente_mais_forte"] in {
+        "tools",
+        "memoria",
+        "infraestrutura",
+    }
 
 
 def test_health_com_componente_ausente():

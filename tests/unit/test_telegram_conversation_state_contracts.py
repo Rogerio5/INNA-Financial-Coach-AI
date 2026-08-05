@@ -53,30 +53,11 @@ def _record(
     updated_at=None,
     expires_at=None,
 ):
-    resolved_created_at = (
-        created_at
-        or NOW
-    )
+    resolved_created_at = created_at or NOW
 
-    resolved_updated_at = (
-        updated_at
-        or (
-            resolved_created_at
-            + timedelta(
-                seconds=1
-            )
-        )
-    )
+    resolved_updated_at = updated_at or (resolved_created_at + timedelta(seconds=1))
 
-    resolved_expires_at = (
-        expires_at
-        or (
-            resolved_updated_at
-            + timedelta(
-                hours=1
-            )
-        )
-    )
+    resolved_expires_at = expires_at or (resolved_updated_at + timedelta(hours=1))
 
     return TelegramConversationState(
         telegram_user_id=1001,
@@ -101,20 +82,11 @@ def _record(
 
 
 def test_default_limits_are_bounded():
-    assert (
-        MIN_STATE_TTL_SECONDS
-        == 60
-    )
+    assert MIN_STATE_TTL_SECONDS == 60
 
-    assert (
-        DEFAULT_STATE_TTL_SECONDS
-        == 86_400
-    )
+    assert DEFAULT_STATE_TTL_SECONDS == 86_400
 
-    assert (
-        MAX_STATE_TTL_SECONDS
-        == 2_592_000
-    )
+    assert MAX_STATE_TTL_SECONDS == 2_592_000
 
     assert MAX_CLEANUP_BATCH == 1_000
 
@@ -169,9 +141,7 @@ def test_rejects_invalid_identity(
     telegram_user_id,
     chat_id,
 ):
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         validate_telegram_identity(
             telegram_user_id,
             chat_id,
@@ -210,9 +180,7 @@ def test_normalizes_language(
     raw_language,
     expected,
 ):
-    assert normalize_telegram_language(
-        raw_language
-    ) == expected
+    assert normalize_telegram_language(raw_language) == expected
 
 
 @pytest.mark.parametrize(
@@ -230,12 +198,8 @@ def test_normalizes_language(
 def test_rejects_invalid_language(
     language,
 ):
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        normalize_telegram_language(
-            language
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        normalize_telegram_language(language)
 
 
 def test_normalizes_state_with_defensive_copy():
@@ -249,13 +213,9 @@ def test_normalizes_state_with_defensive_copy():
         },
     }
 
-    normalized = normalize_telegram_state(
-        original
-    )
+    normalized = normalize_telegram_state(original)
 
-    original["nested"]["items"].append(
-        3
-    )
+    original["nested"]["items"].append(3)
 
     assert normalized == {
         "step": "language",
@@ -292,28 +252,17 @@ def test_normalizes_state_with_defensive_copy():
 def test_rejects_invalid_state(
     state,
 ):
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        normalize_telegram_state(
-            state
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        normalize_telegram_state(state)
 
 
 def test_rejects_oversized_state():
     state = {
-        "value": (
-            "x"
-            * MAX_STATE_JSON_BYTES
-        ),
+        "value": ("x" * MAX_STATE_JSON_BYTES),
     }
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        normalize_telegram_state(
-            state
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        normalize_telegram_state(state)
 
 
 @pytest.mark.parametrize(
@@ -327,12 +276,7 @@ def test_rejects_oversized_state():
 def test_accepts_valid_ttl(
     ttl_seconds,
 ):
-    assert (
-        validate_state_ttl_seconds(
-            ttl_seconds
-        )
-        == ttl_seconds
-    )
+    assert validate_state_ttl_seconds(ttl_seconds) == ttl_seconds
 
 
 @pytest.mark.parametrize(
@@ -349,12 +293,8 @@ def test_accepts_valid_ttl(
 def test_rejects_invalid_ttl(
     ttl_seconds,
 ):
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        validate_state_ttl_seconds(
-            ttl_seconds
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        validate_state_ttl_seconds(ttl_seconds)
 
 
 @pytest.mark.parametrize(
@@ -368,12 +308,7 @@ def test_rejects_invalid_ttl(
 def test_accepts_expected_version(
     version,
 ):
-    assert (
-        validate_expected_version(
-            version
-        )
-        == version
-    )
+    assert validate_expected_version(version) == version
 
 
 @pytest.mark.parametrize(
@@ -389,12 +324,8 @@ def test_accepts_expected_version(
 def test_rejects_invalid_version(
     version,
 ):
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        validate_expected_version(
-            version
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        validate_expected_version(version)
 
 
 @pytest.mark.parametrize(
@@ -408,12 +339,7 @@ def test_rejects_invalid_version(
 def test_accepts_cleanup_limit(
     limit,
 ):
-    assert (
-        validate_cleanup_limit(
-            limit
-        )
-        == limit
-    )
+    assert validate_cleanup_limit(limit) == limit
 
 
 @pytest.mark.parametrize(
@@ -430,12 +356,8 @@ def test_accepts_cleanup_limit(
 def test_rejects_cleanup_limit(
     limit,
 ):
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        validate_cleanup_limit(
-            limit
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        validate_cleanup_limit(limit)
 
 
 def test_record_is_immutable_and_defensive():
@@ -447,59 +369,36 @@ def test_record_is_immutable_and_defensive():
         ],
     }
 
-    record = _record(
-        state=original
-    )
+    record = _record(state=original)
 
-    original["answers"].append(
-        3
-    )
+    original["answers"].append(3)
 
-    assert (
-        record.to_processing_state()
-        == {
-            "step": "language",
-            "answers": [
-                1,
-                2,
-            ],
-        }
-    )
-
-    processing_copy = (
-        record.to_processing_state()
-    )
-
-    processing_copy["answers"].append(
-        4
-    )
-
-    assert (
-        record.to_processing_state()
-        ["answers"]
-        == [
+    assert record.to_processing_state() == {
+        "step": "language",
+        "answers": [
             1,
             2,
-        ]
-    )
+        ],
+    }
 
-    with pytest.raises(
-        TypeError
-    ):
-        record.state["step"] = (
-            "changed"
-        )
+    processing_copy = record.to_processing_state()
 
-    with pytest.raises(
-        FrozenInstanceError
-    ):
+    processing_copy["answers"].append(4)
+
+    assert record.to_processing_state()["answers"] == [
+        1,
+        2,
+    ]
+
+    with pytest.raises(TypeError):
+        record.state["step"] = "changed"
+
+    with pytest.raises(FrozenInstanceError):
         record.language = "en-US"
 
 
 def test_record_repr_does_not_expose_state():
-    secret_value = (
-        "private-financial-message"
-    )
+    secret_value = "private-financial-message"
 
     record = _record(
         state={
@@ -507,15 +406,11 @@ def test_record_repr_does_not_expose_state():
         }
     )
 
-    assert secret_value not in repr(
-        record
-    )
+    assert secret_value not in repr(record)
 
 
 def test_safe_dict_does_not_expose_state():
-    secret_value = (
-        "private-financial-message"
-    )
+    secret_value = "private-financial-message"
 
     record = _record(
         state={
@@ -527,9 +422,7 @@ def test_safe_dict_does_not_expose_state():
 
     assert "state" not in safe
 
-    assert secret_value not in str(
-        safe
-    )
+    assert secret_value not in str(safe)
 
     assert safe["telegram_user_id"] == 1001
     assert safe["chat_id"] == -2001
@@ -545,31 +438,20 @@ def test_record_requires_timezone():
         0,
     )
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         _record(
             created_at=naive,
         )
 
 
 def test_record_validates_timestamp_order():
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         _record(
             created_at=NOW,
-            updated_at=(
-                NOW
-                - timedelta(
-                    seconds=1
-                )
-            ),
+            updated_at=(NOW - timedelta(seconds=1)),
         )
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         _record(
             created_at=NOW,
             updated_at=NOW,
@@ -579,24 +461,12 @@ def test_record_validates_timestamp_order():
 
 def test_record_detects_expiration():
     record = _record(
-        expires_at=(
-            NOW
-            + timedelta(
-                hours=1
-            )
-        ),
+        expires_at=(NOW + timedelta(hours=1)),
     )
 
-    assert record.is_expired(
-        NOW
-    ) is False
+    assert record.is_expired(NOW) is False
 
-    assert record.is_expired(
-        NOW
-        + timedelta(
-            hours=1
-        )
-    ) is True
+    assert record.is_expired(NOW + timedelta(hours=1)) is True
 
 
 def test_exception_hierarchy_is_explicit():

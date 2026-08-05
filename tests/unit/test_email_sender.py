@@ -17,9 +17,7 @@ from src.email_sender import (
 def test_send_text_email(mock_post):
     response = Mock()
     response.status_code = 200
-    response.json.return_value = {
-        "id": "email_teste_123"
-    }
+    response.json.return_value = {"id": "email_teste_123"}
     mock_post.return_value = response
 
     resultado = send_text_email(
@@ -52,9 +50,7 @@ def test_send_text_email(mock_post):
 def test_send_diagnostico_email_preserva_anexo(mock_post):
     response = Mock()
     response.status_code = 200
-    response.json.return_value = {
-        "id": "diagnostico_123"
-    }
+    response.json.return_value = {"id": "diagnostico_123"}
     mock_post.return_value = response
 
     resultado = send_diagnostico_email(
@@ -69,10 +65,7 @@ def test_send_diagnostico_email_preserva_anexo(mock_post):
     payload = mock_post.call_args.kwargs["json"]
 
     assert len(payload["attachments"]) == 1
-    assert (
-        payload["attachments"][0]["filename"]
-        == "relatorio-inna.pdf"
-    )
+    assert payload["attachments"][0]["filename"] == "relatorio-inna.pdf"
 
 
 @patch.dict(
@@ -97,6 +90,4 @@ def test_resend_rejeitado_gera_erro(mock_post):
     except RuntimeError as exc:
         assert "Erro Resend: 422" in str(exc)
     else:
-        raise AssertionError(
-            "Era esperado um RuntimeError."
-        )
+        raise AssertionError("Era esperado um RuntimeError.")

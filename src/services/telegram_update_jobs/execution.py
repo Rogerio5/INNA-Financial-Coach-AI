@@ -16,54 +16,38 @@ from . import worker as worker_module
 MAX_JSON_DEPTH = 64
 MAX_JSON_NODES = 100_000
 
-MAX_UPDATE_ID = (
-    9_223_372_036_854_775_807
-)
+MAX_UPDATE_ID = 9_223_372_036_854_775_807
 
-SHA256_PATTERN = re.compile(
-    r"^[0-9a-f]{64}$"
-)
+SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
-KEY_ID_PATTERN = re.compile(
-    r"^[A-Za-z0-9._:-]{1,64}$"
-)
+KEY_ID_PATTERN = re.compile(r"^[A-Za-z0-9._:-]{1,64}$")
 
 
-class TelegramUpdateExecutionError(
-    RuntimeError
-):
+class TelegramUpdateExecutionError(RuntimeError):
     """
     Erro sanitizado da preparação do worker.
     """
 
 
-class TelegramUpdateExecutionValidationError(
-    TelegramUpdateExecutionError
-):
+class TelegramUpdateExecutionValidationError(TelegramUpdateExecutionError):
     """
     Lease inválido ou incompatível.
     """
 
 
-class TelegramUpdateExecutionConfigurationError(
-    TelegramUpdateExecutionError
-):
+class TelegramUpdateExecutionConfigurationError(TelegramUpdateExecutionError):
     """
     Keyring criptográfico indisponível.
     """
 
 
-class TelegramUpdateExecutionDecryptionError(
-    TelegramUpdateExecutionError
-):
+class TelegramUpdateExecutionDecryptionError(TelegramUpdateExecutionError):
     """
     Falha de autenticidade ou descriptografia.
     """
 
 
-class TelegramUpdateExecutionPayloadError(
-    TelegramUpdateExecutionError
-):
+class TelegramUpdateExecutionPayloadError(TelegramUpdateExecutionError):
     """
     Payload descriptografado fora do contrato.
     """
@@ -99,9 +83,7 @@ def _validate_integer(
         or value < minimum
         or value > maximum
     ):
-        raise TelegramUpdateExecutionValidationError(
-            f"{field_name} inválido."
-        )
+        raise TelegramUpdateExecutionValidationError(f"{field_name} inválido.")
 
     return value
 
@@ -121,22 +103,12 @@ def _validate_bytes(
             memoryview,
         ),
     ):
-        raise TelegramUpdateExecutionValidationError(
-            f"{field_name} inválido."
-        )
+        raise TelegramUpdateExecutionValidationError(f"{field_name} inválido.")
 
-    normalized = bytes(
-        value
-    )
+    normalized = bytes(value)
 
-    if not (
-        minimum
-        <= len(normalized)
-        <= maximum
-    ):
-        raise TelegramUpdateExecutionValidationError(
-            f"{field_name} inválido."
-        )
+    if not (minimum <= len(normalized) <= maximum):
+        raise TelegramUpdateExecutionValidationError(f"{field_name} inválido.")
 
     return normalized
 
@@ -148,9 +120,7 @@ def _validate_worker_lease(
         lease,
         worker_module.TelegramUpdateWorkerLease,
     ):
-        raise TelegramUpdateExecutionValidationError(
-            "Lease do worker inválido."
-        )
+        raise TelegramUpdateExecutionValidationError("Lease do worker inválido.")
 
     _validate_integer(
         lease.update_id,
@@ -160,9 +130,7 @@ def _validate_worker_lease(
     )
 
     if lease.job_status != "processing":
-        raise TelegramUpdateExecutionValidationError(
-            "O job não está em processamento."
-        )
+        raise TelegramUpdateExecutionValidationError("O job não está em processamento.")
 
     if lease.receipt_status != "processing":
         raise TelegramUpdateExecutionValidationError(
@@ -212,37 +180,22 @@ def _validate_worker_lease(
             lease.payload_key_id,
             str,
         )
-        or KEY_ID_PATTERN.fullmatch(
-            lease.payload_key_id
-        )
-        is None
+        or KEY_ID_PATTERN.fullmatch(lease.payload_key_id) is None
     ):
-        raise TelegramUpdateExecutionValidationError(
-            "payload_key_id inválido."
-        )
+        raise TelegramUpdateExecutionValidationError("payload_key_id inválido.")
 
     _validate_bytes(
         lease.payload_ciphertext,
         field_name="payload_ciphertext",
-        minimum=(
-            job_repository
-            .MIN_CIPHERTEXT_BYTES
-        ),
-        maximum=(
-            job_repository
-            .MAX_CIPHERTEXT_BYTES
-        ),
+        minimum=(job_repository.MIN_CIPHERTEXT_BYTES),
+        maximum=(job_repository.MAX_CIPHERTEXT_BYTES),
     )
 
     _validate_bytes(
         lease.payload_nonce,
         field_name="payload_nonce",
-        minimum=(
-            job_repository.NONCE_BYTES
-        ),
-        maximum=(
-            job_repository.NONCE_BYTES
-        ),
+        minimum=(job_repository.NONCE_BYTES),
+        maximum=(job_repository.NONCE_BYTES),
     )
 
     if (
@@ -250,14 +203,9 @@ def _validate_worker_lease(
             lease.lock_token,
             str,
         )
-        or SHA256_PATTERN.fullmatch(
-            lease.lock_token
-        )
-        is None
+        or SHA256_PATTERN.fullmatch(lease.lock_token) is None
     ):
-        raise TelegramUpdateExecutionValidationError(
-            "lock_token inválido."
-        )
+        raise TelegramUpdateExecutionValidationError("lock_token inválido.")
 
     return lease
 
@@ -294,9 +242,7 @@ def _freeze_json_value(
         value,
         float,
     ):
-        if not math.isfinite(
-            value
-        ):
+        if not math.isfinite(value):
             raise TelegramUpdateExecutionPayloadError(
                 "O payload contém número inválido."
             )
@@ -337,21 +283,15 @@ def _freeze_json_value(
                     "O payload contém chave inválida."
                 )
 
-            frozen[
-                raw_key
-            ] = _freeze_json_value(
+            frozen[raw_key] = _freeze_json_value(
                 raw_value,
                 depth=depth + 1,
                 budget=budget,
             )
 
-        return MappingProxyType(
-            frozen
-        )
+        return MappingProxyType(frozen)
 
-    raise TelegramUpdateExecutionPayloadError(
-        "O payload contém tipo incompatível."
-    )
+    raise TelegramUpdateExecutionPayloadError("O payload contém tipo incompatível.")
 
 
 def _thaw_json_value(
@@ -361,27 +301,15 @@ def _thaw_json_value(
         value,
         Mapping,
     ):
-        return {
-            key: _thaw_json_value(
-                item
-            )
-            for key, item in value.items()
-        }
+        return {key: _thaw_json_value(item) for key, item in value.items()}
 
     if isinstance(
         value,
         tuple,
     ):
-        return [
-            _thaw_json_value(
-                item
-            )
-            for item in value
-        ]
+        return [_thaw_json_value(item) for item in value]
 
-    return deepcopy(
-        value
-    )
+    return deepcopy(value)
 
 
 @dataclass(
@@ -413,23 +341,16 @@ class TelegramUpdateWorkerPayload:
             self._payload,
             Mapping,
         ):
-            raise TelegramUpdateExecutionPayloadError(
-                "Payload interno inválido."
-            )
+            raise TelegramUpdateExecutionPayloadError("Payload interno inválido.")
 
-        internal_update_id = (
-            self._payload.get(
-                "update_id"
-            )
-        )
+        internal_update_id = self._payload.get("update_id")
 
         if (
             isinstance(
                 internal_update_id,
                 bool,
             )
-            or internal_update_id
-            != self.update_id
+            or internal_update_id != self.update_id
         ):
             raise TelegramUpdateExecutionPayloadError(
                 "A identidade do payload não confere."
@@ -445,17 +366,13 @@ class TelegramUpdateWorkerPayload:
         afetam a cópia protegida mantida nesta
         instância.
         """
-        restored = _thaw_json_value(
-            self._payload
-        )
+        restored = _thaw_json_value(self._payload)
 
         if not isinstance(
             restored,
             dict,
         ):
-            raise TelegramUpdateExecutionPayloadError(
-                "Payload interno inválido."
-            )
+            raise TelegramUpdateExecutionPayloadError("Payload interno inválido.")
 
         return restored
 
@@ -464,21 +381,11 @@ class TelegramUpdateWorkerPayload:
     ) -> dict[str, object]:
         return {
             "update_id": self.update_id,
-            "job_attempt_count": (
-                self.job_attempt_count
-            ),
-            "job_max_attempts": (
-                self.job_max_attempts
-            ),
-            "receipt_attempt_count": (
-                self.receipt_attempt_count
-            ),
-            "payload_version": (
-                self.payload_version
-            ),
-            "payload_key_id": (
-                self.payload_key_id
-            ),
+            "job_attempt_count": (self.job_attempt_count),
+            "job_max_attempts": (self.job_max_attempts),
+            "receipt_attempt_count": (self.receipt_attempt_count),
+            "payload_version": (self.payload_version),
+            "payload_key_id": (self.payload_key_id),
             "decrypted": True,
         }
 
@@ -486,11 +393,7 @@ class TelegramUpdateWorkerPayload:
 def decrypt_authenticated_telegram_worker_lease(
     lease: worker_module.TelegramUpdateWorkerLease,
     *,
-    keyring: (
-        crypto_service
-        .TelegramUpdateEncryptionKeyring
-        | None
-    ) = None,
+    keyring: (crypto_service.TelegramUpdateEncryptionKeyring | None) = None,
 ) -> TelegramUpdateWorkerPayload:
     """
     Valida e descriptografa um lease pertencente
@@ -500,57 +403,29 @@ def decrypt_authenticated_telegram_worker_lease(
     de repr, logs e retornos seguros. Uma cópia
     mutável só é criada por to_processing_dict().
     """
-    normalized_lease = _validate_worker_lease(
-        lease
-    )
+    normalized_lease = _validate_worker_lease(lease)
 
     try:
-        decrypted = (
-            crypto_service
-            .decrypt_authenticated_telegram_update(
-                update_id=(
-                    normalized_lease.update_id
-                ),
-                payload_ciphertext=(
-                    normalized_lease
-                    .payload_ciphertext
-                ),
-                payload_nonce=(
-                    normalized_lease
-                    .payload_nonce
-                ),
-                payload_key_id=(
-                    normalized_lease
-                    .payload_key_id
-                ),
-                payload_version=(
-                    normalized_lease
-                    .payload_version
-                ),
-                keyring=keyring,
-            )
+        decrypted = crypto_service.decrypt_authenticated_telegram_update(
+            update_id=(normalized_lease.update_id),
+            payload_ciphertext=(normalized_lease.payload_ciphertext),
+            payload_nonce=(normalized_lease.payload_nonce),
+            payload_key_id=(normalized_lease.payload_key_id),
+            payload_version=(normalized_lease.payload_version),
+            keyring=keyring,
         )
 
-    except (
-        crypto_service
-        .TelegramUpdateJobConfigurationError
-    ):
+    except crypto_service.TelegramUpdateJobConfigurationError:
         raise TelegramUpdateExecutionConfigurationError(
             "O keyring da fila não está configurado."
         ) from None
 
-    except (
-        crypto_service
-        .TelegramUpdateJobDecryptionError
-    ):
+    except crypto_service.TelegramUpdateJobDecryptionError:
         raise TelegramUpdateExecutionDecryptionError(
             "O payload do job não pôde ser autenticado."
         ) from None
 
-    except (
-        crypto_service
-        .TelegramUpdateJobServiceError
-    ):
+    except crypto_service.TelegramUpdateJobServiceError:
         raise TelegramUpdateExecutionDecryptionError(
             "O payload do job não pôde ser processado."
         ) from None
@@ -568,17 +443,14 @@ def decrypt_authenticated_telegram_worker_lease(
             "O payload descriptografado é inválido."
         )
 
-    decrypted_update_id = decrypted.get(
-        "update_id"
-    )
+    decrypted_update_id = decrypted.get("update_id")
 
     if (
         isinstance(
             decrypted_update_id,
             bool,
         )
-        or decrypted_update_id
-        != normalized_lease.update_id
+        or decrypted_update_id != normalized_lease.update_id
     ):
         raise TelegramUpdateExecutionPayloadError(
             "A identidade do payload não confere."
@@ -608,29 +480,12 @@ def decrypt_authenticated_telegram_worker_lease(
         )
 
     return TelegramUpdateWorkerPayload(
-        update_id=(
-            normalized_lease.update_id
-        ),
-        job_attempt_count=(
-            normalized_lease
-            .job_attempt_count
-        ),
-        job_max_attempts=(
-            normalized_lease
-            .job_max_attempts
-        ),
-        receipt_attempt_count=(
-            normalized_lease
-            .receipt_attempt_count
-        ),
-        payload_version=(
-            normalized_lease
-            .payload_version
-        ),
-        payload_key_id=(
-            normalized_lease
-            .payload_key_id
-        ),
+        update_id=(normalized_lease.update_id),
+        job_attempt_count=(normalized_lease.job_attempt_count),
+        job_max_attempts=(normalized_lease.job_max_attempts),
+        receipt_attempt_count=(normalized_lease.receipt_attempt_count),
+        payload_version=(normalized_lease.payload_version),
+        payload_key_id=(normalized_lease.payload_key_id),
         _payload=frozen_payload,
     )
 

@@ -21,11 +21,7 @@ def conversation_summary_node(
     O nó retorna somente os campos que precisam ser
     persistidos no checkpoint do LangGraph.
     """
-    safe_state: dict[str, Any] = (
-        dict(state)
-        if isinstance(state, Mapping)
-        else {}
-    )
+    safe_state: dict[str, Any] = dict(state) if isinstance(state, Mapping) else {}
 
     previous_summary = str(
         safe_state.get(
@@ -35,11 +31,7 @@ def conversation_summary_node(
         or ""
     )
 
-    summary_update = (
-        update_conversation_summary_state(
-            safe_state
-        )
-    )
+    summary_update = update_conversation_summary_state(safe_state)
 
     updated_summary = str(
         summary_update.get(
@@ -49,9 +41,7 @@ def conversation_summary_node(
         or ""
     )
 
-    changed = (
-        updated_summary != previous_summary
-    )
+    changed = updated_summary != previous_summary
 
     previous_version = int(
         safe_state.get(
@@ -61,22 +51,14 @@ def conversation_summary_node(
         or 0
     )
 
-    version = (
-        previous_version + 1
-        if changed
-        else previous_version
-    )
+    version = previous_version + 1 if changed else previous_version
 
     history = safe_state.get(
         "conversation_history",
         [],
     )
 
-    source_messages = (
-        len(history)
-        if isinstance(history, list)
-        else 0
-    )
+    source_messages = len(history) if isinstance(history, list) else 0
 
     trace = list(
         summary_update.get(
@@ -88,29 +70,15 @@ def conversation_summary_node(
 
     trace.append(
         "conversation_summary_node:"
-        + (
-            f"updated:v{version}"
-            if changed
-            else f"unchanged:v{version}"
-        )
+        + (f"updated:v{version}" if changed else f"unchanged:v{version}")
     )
 
     return {
-        "conversation_summary": (
-            updated_summary
-        ),
-        "conversation_summary_updated": (
-            changed
-        ),
-        "conversation_summary_version": (
-            version
-        ),
-        "conversation_summary_source_messages": (
-            source_messages
-        ),
-        "conversation_summary_source": (
-            "conversation_history"
-        ),
+        "conversation_summary": (updated_summary),
+        "conversation_summary_updated": (changed),
+        "conversation_summary_version": (version),
+        "conversation_summary_source_messages": (source_messages),
+        "conversation_summary_source": ("conversation_history"),
         "trace": trace,
     }
 

@@ -87,12 +87,7 @@ def normalize_language(
     if language is None:
         return DEFAULT_LANGUAGE
 
-    normalized = (
-        str(language)
-        .strip()
-        .lower()
-        .replace(" ", "_")
-    )
+    normalized = str(language).strip().lower().replace(" ", "_")
 
     canonical = LANGUAGE_ALIASES.get(
         normalized,
@@ -113,11 +108,7 @@ def get_interface_language(
 
     O filtro de idioma dos dados não interfere nesta função.
     """
-    state = (
-        session_state
-        if session_state is not None
-        else st.session_state
-    )
+    state = session_state if session_state is not None else st.session_state
 
     return normalize_language(
         state.get(
@@ -135,15 +126,9 @@ def get_data_language_filter(
 
     Esta função é separada do idioma da interface.
     """
-    state = (
-        session_state
-        if session_state is not None
-        else st.session_state
-    )
+    state = session_state if session_state is not None else st.session_state
 
-    value = state.get(
-        "dashboard_filter_language"
-    )
+    value = state.get("dashboard_filter_language")
 
     if value in (
         None,
@@ -174,9 +159,7 @@ def resolve_language_texts(
     4. dicionário vazio.
     """
     selected = normalize_language(
-        language
-        if language is not None
-        else get_interface_language()
+        language if language is not None else get_interface_language()
     )
 
     if selected in texts_by_language:
@@ -212,9 +195,7 @@ def translate(
     Em modo strict, uma chave ausente gera KeyError para testes/auditoria.
     """
     selected = normalize_language(
-        language
-        if language is not None
-        else get_interface_language()
+        language if language is not None else get_interface_language()
     )
 
     selected_texts = resolve_language_texts(
@@ -234,24 +215,15 @@ def translate(
 
     if value is None:
         if strict:
-            raise KeyError(
-                f"Chave i18n ausente: "
-                f"language={selected!r}, key={key!r}"
-            )
+            raise KeyError(f"Chave i18n ausente: language={selected!r}, key={key!r}")
 
-        value = (
-            default
-            if default is not None
-            else key
-        )
+        value = default if default is not None else key
 
     if not format_values:
         return str(value)
 
     try:
-        return str(value).format(
-            **format_values
-        )
+        return str(value).format(**format_values)
     except (
         KeyError,
         IndexError,
@@ -307,11 +279,7 @@ def normalized_value(
     ):
         pass
 
-    return (
-        str(value)
-        .strip()
-        .casefold()
-    )
+    return str(value).strip().casefold()
 
 
 VALUE_TEXTS: dict[str, dict[str, str]] = {
@@ -596,32 +564,36 @@ def value_t(
     )
 
 
-USEFUL_TRUE_VALUES: frozenset[str] = frozenset({
-    "true",
-    "1",
-    "sim",
-    "yes",
-    "y",
-    "útil",
-    "util",
-    "useful",
-    "utile",
-    "nützlich",
-})
+USEFUL_TRUE_VALUES: frozenset[str] = frozenset(
+    {
+        "true",
+        "1",
+        "sim",
+        "yes",
+        "y",
+        "útil",
+        "util",
+        "useful",
+        "utile",
+        "nützlich",
+    }
+)
 
-USEFUL_FALSE_VALUES: frozenset[str] = frozenset({
-    "false",
-    "0",
-    "não",
-    "nao",
-    "no",
-    "n",
-    "não útil",
-    "nao util",
-    "not useful",
-    "non utile",
-    "nicht nützlich",
-})
+USEFUL_FALSE_VALUES: frozenset[str] = frozenset(
+    {
+        "false",
+        "0",
+        "não",
+        "nao",
+        "no",
+        "n",
+        "não útil",
+        "nao util",
+        "not useful",
+        "non utile",
+        "nicht nützlich",
+    }
+)
 
 
 def translate_useful(
@@ -810,9 +782,7 @@ def translate_known_value(
             ),
         )
 
-    translation_key = value_key_map.get(
-        normalized
-    )
+    translation_key = value_key_map.get(normalized)
 
     if translation_key is None:
         return str(value)
@@ -832,11 +802,13 @@ def localize_dataframe(
     column_texts: Mapping[
         str,
         Mapping[str, str],
-    ] | None = None,
+    ]
+    | None = None,
     value_transforms: Mapping[
         str,
         Callable[[Any], Any],
-    ] | None = None,
+    ]
+    | None = None,
     language: str | None = None,
 ) -> pd.DataFrame:
     """
@@ -844,18 +816,14 @@ def localize_dataframe(
 
     Nunca altera as colunas ou os valores do DataFrame original.
     """
-    localized = dataframe.copy(
-        deep=True
-    )
+    localized = dataframe.copy(deep=True)
 
     if value_transforms:
         for column, transform in value_transforms.items():
             if column not in localized.columns:
                 continue
 
-            localized[column] = localized[
-                column
-            ].map(transform)
+            localized[column] = localized[column].map(transform)
 
     if column_keys and column_texts:
         localized = localized.rename(
@@ -866,8 +834,7 @@ def localize_dataframe(
                     language=language,
                     default=column,
                 )
-                for column, translation_key
-                in column_keys.items()
+                for column, translation_key in column_keys.items()
                 if column in localized.columns
             }
         )
@@ -882,10 +849,7 @@ def ensure_language_parity(
     ],
     *,
     reference_language: str = DEFAULT_LANGUAGE,
-    supported_languages: tuple[
-        str,
-        ...
-    ] = SUPPORTED_LANGUAGES,
+    supported_languages: tuple[str, ...] = SUPPORTED_LANGUAGES,
 ) -> dict[
     str,
     dict[str, set[str]],
@@ -948,8 +912,10 @@ def fill_language_fallbacks(
             dict(texts_by_language["de"]),
         )
 
+
 MENU_PAGE_IDS: tuple[str, ...] = (
     "overview",
+    "platform_modules_catalog",
     "multichannel_events",
     "international_view",
     "diagnostics",
@@ -978,6 +944,7 @@ MENU_GROUP_PAGE_IDS: dict[str, tuple[str, ...]] = {
         "evolution",
         "international_view",
     ),
+    "platform_modules": ("platform_modules_catalog",),
     "financial_solutions": (
         "diagnostics",
         "feedbacks",
@@ -1000,22 +967,16 @@ MENU_GROUP_PAGE_IDS: dict[str, tuple[str, ...]] = {
         "tools_analytics",
         "multichannel_events",
     ),
-    "administration": (
-        "export",
-    ),
+    "administration": ("export",),
 }
 
 
 def menu_group_for_page(
     page_id: str,
 ) -> str:
-    normalized_page_id = normalize_menu_page_id(
-        page_id
-    )
+    normalized_page_id = normalize_menu_page_id(page_id)
 
-    for group_id, page_ids in (
-        MENU_GROUP_PAGE_IDS.items()
-    ):
+    for group_id, page_ids in MENU_GROUP_PAGE_IDS.items():
         if normalized_page_id in page_ids:
             return group_id
 
@@ -1037,9 +998,7 @@ MENU_TEXTS: dict[str, dict[str, str]] = {
         "timeline_viewer": "🧭 Visualizador de Timeline",
         "tools_analytics": "📊 Analytics das Tools",
         "health_center": "❤️ Central de Saúde",
-        "llmops_observability": (
-            "🛰️ Operações de IA e Observabilidade"
-        ),
+        "llmops_observability": ("🛰️ Operações de IA e Observabilidade"),
         "ai_cost_center": "💰 Central de Custos de IA",
         "document_upload": "📄 Upload de Documentos",
         "user_memory": "🧠 Memória do Usuário",
@@ -1059,9 +1018,7 @@ MENU_TEXTS: dict[str, dict[str, str]] = {
         "timeline_viewer": "🧭 Timeline Viewer",
         "tools_analytics": "📊 Tools Analytics",
         "health_center": "❤️ Health Center",
-        "llmops_observability": (
-            "🛰️ AI Operations and Observability"
-        ),
+        "llmops_observability": ("🛰️ AI Operations and Observability"),
         "ai_cost_center": "💰 AI Cost Center",
         "document_upload": "📄 Document Upload",
         "user_memory": "🧠 User Memory",
@@ -1077,19 +1034,11 @@ MENU_TEXTS: dict[str, dict[str, str]] = {
         "executive_reading": "🧠 Lectura Ejecutiva",
         "agent_evaluation": "🧪 Evaluación del Agente",
         "rag_observability": "📊 Observabilidad RAG",
-        "tools_observability": (
-            "🛠️ Observabilidad de herramientas"
-        ),
-        "timeline_viewer": (
-            "🧭 Visor de línea de tiempo"
-        ),
-        "tools_analytics": (
-            "📊 Analítica de herramientas"
-        ),
+        "tools_observability": ("🛠️ Observabilidad de herramientas"),
+        "timeline_viewer": ("🧭 Visor de línea de tiempo"),
+        "tools_analytics": ("📊 Analítica de herramientas"),
         "health_center": "❤️ Centro de Salud",
-        "llmops_observability": (
-            "🛰️ Operaciones de IA y Observabilidad"
-        ),
+        "llmops_observability": ("🛰️ Operaciones de IA y Observabilidad"),
         "ai_cost_center": "💰 Centro de Costos de IA",
         "document_upload": "📄 Carga de documentos",
         "user_memory": "🧠 Memoria del usuario",
@@ -1097,65 +1046,39 @@ MENU_TEXTS: dict[str, dict[str, str]] = {
     },
     "fr": {
         "overview": "📌 Vue d’ensemble",
-        "multichannel_events": (
-            "🌐 Événements multicanaux"
-        ),
+        "multichannel_events": ("🌐 Événements multicanaux"),
         "international_view": "🌎 Vue internationale",
         "diagnostics": "👤 Diagnostics",
         "feedbacks": "💬 Retours",
         "evolution": "📈 Évolution",
         "executive_reading": "🧠 Lecture exécutive",
-        "agent_evaluation": (
-            "🧪 Évaluation de l’agent"
-        ),
+        "agent_evaluation": ("🧪 Évaluation de l’agent"),
         "rag_observability": "📊 Observabilité RAG",
-        "tools_observability": (
-            "🛠️ Observabilité des outils"
-        ),
-        "timeline_viewer": (
-            "🧭 Visionneuse de chronologie"
-        ),
-        "tools_analytics": (
-            "📊 Analyse des outils"
-        ),
+        "tools_observability": ("🛠️ Observabilité des outils"),
+        "timeline_viewer": ("🧭 Visionneuse de chronologie"),
+        "tools_analytics": ("📊 Analyse des outils"),
         "health_center": "❤️ Centre de santé",
-        "llmops_observability": (
-            "🛰️ Opérations IA et Observabilité"
-        ),
+        "llmops_observability": ("🛰️ Opérations IA et Observabilité"),
         "ai_cost_center": "💰 Centre des coûts IA",
-        "document_upload": (
-            "📄 Téléversement de documents"
-        ),
+        "document_upload": ("📄 Téléversement de documents"),
         "user_memory": "🧠 Mémoire utilisateur",
         "export": "📤 Exporter",
     },
     "de": {
         "overview": "📌 Übersicht",
-        "multichannel_events": (
-            "🌐 Mehrkanal-Ereignisse"
-        ),
-        "international_view": (
-            "🌎 Internationale Ansicht"
-        ),
+        "multichannel_events": ("🌐 Mehrkanal-Ereignisse"),
+        "international_view": ("🌎 Internationale Ansicht"),
         "diagnostics": "👤 Diagnosen",
         "feedbacks": "💬 Feedback",
         "evolution": "📈 Entwicklung",
-        "executive_reading": (
-            "🧠 Zusammenfassung"
-        ),
+        "executive_reading": ("🧠 Zusammenfassung"),
         "agent_evaluation": "🧪 Agentenbewertung",
-        "rag_observability": (
-            "📊 RAG-Beobachtbarkeit"
-        ),
-        "tools_observability": (
-            "🛠️ Werkzeugbeobachtung"
-        ),
+        "rag_observability": ("📊 RAG-Beobachtbarkeit"),
+        "tools_observability": ("🛠️ Werkzeugbeobachtung"),
         "timeline_viewer": "🧭 Zeitachsenansicht",
         "tools_analytics": "📊 Werkzeuganalyse",
         "health_center": "❤️ Systemzustand",
-        "llmops_observability": (
-            "🛰️ KI-Betrieb und Beobachtbarkeit"
-        ),
+        "llmops_observability": ("🛰️ KI-Betrieb und Beobachtbarkeit"),
         "ai_cost_center": "💰 KI-Kostenzentrale",
         "document_upload": "📄 Dokumenten-Upload",
         "user_memory": "🧠 Benutzerspeicher",
@@ -1163,203 +1086,132 @@ MENU_TEXTS: dict[str, dict[str, str]] = {
     },
     "it": {
         "overview": "📌 Panoramica",
-        "multichannel_events": (
-            "🌐 Eventi multicanale"
-        ),
-        "international_view": (
-            "🌎 Vista internazionale"
-        ),
+        "multichannel_events": ("🌐 Eventi multicanale"),
+        "international_view": ("🌎 Vista internazionale"),
         "diagnostics": "👤 Diagnostiche",
         "feedbacks": "💬 Feedback",
         "evolution": "📈 Evoluzione",
         "executive_reading": "🧠 Lettura esecutiva",
-        "agent_evaluation": (
-            "🧪 Valutazione agente"
-        ),
+        "agent_evaluation": ("🧪 Valutazione agente"),
         "rag_observability": "📊 Osservabilità RAG",
-        "tools_observability": (
-            "🛠️ Osservabilità degli strumenti"
-        ),
-        "timeline_viewer": (
-            "🧭 Visualizzatore della timeline"
-        ),
-        "tools_analytics": (
-            "📊 Analisi degli strumenti"
-        ),
+        "tools_observability": ("🛠️ Osservabilità degli strumenti"),
+        "timeline_viewer": ("🧭 Visualizzatore della timeline"),
+        "tools_analytics": ("📊 Analisi degli strumenti"),
         "health_center": "❤️ Centro salute",
-        "llmops_observability": (
-            "🛰️ Operazioni IA e Osservabilità"
-        ),
+        "llmops_observability": ("🛰️ Operazioni IA e Osservabilità"),
         "ai_cost_center": "💰 Centro costi IA",
-        "document_upload": (
-            "📄 Caricamento documenti"
-        ),
+        "document_upload": ("📄 Caricamento documenti"),
         "user_memory": "🧠 Memoria utente",
         "export": "📤 Esporta",
     },
     "ro": {
         "overview": "📌 Prezentare generală",
-        "multichannel_events": (
-            "🌐 Evenimente multicanal"
-        ),
-        "international_view": (
-            "🌎 Vizualizare internațională"
-        ),
+        "multichannel_events": ("🌐 Evenimente multicanal"),
+        "international_view": ("🌎 Vizualizare internațională"),
         "diagnostics": "👤 Diagnosticări",
         "feedbacks": "💬 Feedback",
         "evolution": "📈 Evoluție",
         "executive_reading": "🧠 Rezumat executiv",
-        "agent_evaluation": (
-            "🧪 Evaluarea agentului"
-        ),
+        "agent_evaluation": ("🧪 Evaluarea agentului"),
         "rag_observability": "📊 Observabilitate RAG",
-        "tools_observability": (
-            "🛠️ Observabilitatea instrumentelor"
-        ),
-        "timeline_viewer": (
-            "🧭 Vizualizator cronologie"
-        ),
-        "tools_analytics": (
-            "📊 Analiza instrumentelor"
-        ),
+        "tools_observability": ("🛠️ Observabilitatea instrumentelor"),
+        "timeline_viewer": ("🧭 Vizualizator cronologie"),
+        "tools_analytics": ("📊 Analiza instrumentelor"),
         "health_center": "❤️ Centrul de sănătate",
-        "llmops_observability": (
-            "🛰️ Operațiuni IA și Observabilitate"
-        ),
-        "ai_cost_center": (
-            "💰 Centrul costurilor IA"
-        ),
-        "document_upload": (
-            "📄 Încărcare documente"
-        ),
+        "llmops_observability": ("🛰️ Operațiuni IA și Observabilitate"),
+        "ai_cost_center": ("💰 Centrul costurilor IA"),
+        "document_upload": ("📄 Încărcare documente"),
         "user_memory": "🧠 Memoria utilizatorului",
         "export": "📤 Exportă",
     },
     "ua": {
         "overview": "📌 Огляд",
-        "multichannel_events": (
-            "🌐 Багатоканальні події"
-        ),
-        "international_view": (
-            "🌎 Міжнародний огляд"
-        ),
+        "multichannel_events": ("🌐 Багатоканальні події"),
+        "international_view": ("🌎 Міжнародний огляд"),
         "diagnostics": "👤 Діагностики",
         "feedbacks": "💬 Відгуки",
         "evolution": "📈 Динаміка",
-        "executive_reading": (
-            "🧠 Виконавче резюме"
-        ),
+        "executive_reading": ("🧠 Виконавче резюме"),
         "agent_evaluation": "🧪 Оцінка агента",
-        "rag_observability": (
-            "📊 Спостережуваність RAG"
-        ),
-        "tools_observability": (
-            "🛠️ Спостережуваність інструментів"
-        ),
-        "timeline_viewer": (
-            "🧭 Перегляд часової шкали"
-        ),
-        "tools_analytics": (
-            "📊 Аналітика інструментів"
-        ),
-        "health_center": (
-            "❤️ Центр стану системи"
-        ),
-        "llmops_observability": (
-            "🛰️ Операції ШІ та спостережуваність"
-        ),
+        "rag_observability": ("📊 Спостережуваність RAG"),
+        "tools_observability": ("🛠️ Спостережуваність інструментів"),
+        "timeline_viewer": ("🧭 Перегляд часової шкали"),
+        "tools_analytics": ("📊 Аналітика інструментів"),
+        "health_center": ("❤️ Центр стану системи"),
+        "llmops_observability": ("🛰️ Операції ШІ та спостережуваність"),
         "ai_cost_center": "💰 Центр витрат ШІ",
-        "document_upload": (
-            "📄 Завантаження документів"
-        ),
+        "document_upload": ("📄 Завантаження документів"),
         "user_memory": "🧠 Пам’ять користувача",
         "export": "📤 Експорт",
     },
     "ru": {
         "overview": "📌 Обзор",
-        "multichannel_events": (
-            "🌐 Многоканальные события"
-        ),
-        "international_view": (
-            "🌎 Международный обзор"
-        ),
+        "multichannel_events": ("🌐 Многоканальные события"),
+        "international_view": ("🌎 Международный обзор"),
         "diagnostics": "👤 Диагностики",
         "feedbacks": "💬 Отзывы",
         "evolution": "📈 Динамика",
-        "executive_reading": (
-            "🧠 Исполнительное резюме"
-        ),
+        "executive_reading": ("🧠 Исполнительное резюме"),
         "agent_evaluation": "🧪 Оценка агента",
-        "rag_observability": (
-            "📊 Наблюдаемость RAG"
-        ),
-        "tools_observability": (
-            "🛠️ Наблюдаемость инструментов"
-        ),
-        "timeline_viewer": (
-            "🧭 Просмотр временной шкалы"
-        ),
-        "tools_analytics": (
-            "📊 Аналитика инструментов"
-        ),
-        "health_center": (
-            "❤️ Центр состояния системы"
-        ),
-        "llmops_observability": (
-            "🛰️ Операции ИИ и наблюдаемость"
-        ),
+        "rag_observability": ("📊 Наблюдаемость RAG"),
+        "tools_observability": ("🛠️ Наблюдаемость инструментов"),
+        "timeline_viewer": ("🧭 Просмотр временной шкалы"),
+        "tools_analytics": ("📊 Аналитика инструментов"),
+        "health_center": ("❤️ Центр состояния системы"),
+        "llmops_observability": ("🛰️ Операции ИИ и наблюдаемость"),
         "ai_cost_center": "💰 Центр затрат ИИ",
-        "document_upload": (
-            "📄 Загрузка документов"
-        ),
+        "document_upload": ("📄 Загрузка документов"),
         "user_memory": "🧠 Память пользователя",
         "export": "📤 Экспорт",
     },
     "sa": {
         "overview": "📌 نظرة عامة",
-        "multichannel_events": (
-            "🌐 أحداث متعددة القنوات"
-        ),
+        "multichannel_events": ("🌐 أحداث متعددة القنوات"),
         "international_view": "🌎 العرض الدولي",
         "diagnostics": "👤 التشخيصات",
         "feedbacks": "💬 الملاحظات",
         "evolution": "📈 التطور",
-        "executive_reading": (
-            "🧠 الملخص التنفيذي"
-        ),
+        "executive_reading": ("🧠 الملخص التنفيذي"),
         "agent_evaluation": "🧪 تقييم الوكيل",
         "rag_observability": "📊 مراقبة RAG",
         "tools_observability": "🛠️ مراقبة الأدوات",
-        "timeline_viewer": (
-            "🧭 عارض المسار الزمني"
-        ),
+        "timeline_viewer": ("🧭 عارض المسار الزمني"),
         "tools_analytics": "📊 تحليلات الأدوات",
         "health_center": "❤️ مركز صحة النظام",
-        "llmops_observability": (
-            "🛰️ عمليات الذكاء الاصطناعي والمراقبة"
-        ),
-        "ai_cost_center": (
-            "💰 مركز تكاليف الذكاء الاصطناعي"
-        ),
+        "llmops_observability": ("🛰️ عمليات الذكاء الاصطناعي والمراقبة"),
+        "ai_cost_center": ("💰 مركز تكاليف الذكاء الاصطناعي"),
         "document_upload": "📄 تحميل المستندات",
         "user_memory": "🧠 ذاكرة المستخدم",
         "export": "📤 تصدير",
     },
 }
 
-MENU_TEXTS["en_gb"] = dict(
-    MENU_TEXTS["en_us"]
-)
-MENU_TEXTS["en_gb"]["ai_cost_center"] = (
-    "💰 AI Cost Centre"
-)
-MENU_TEXTS["en_gb"]["health_center"] = (
-    "❤️ Health Centre"
-)
+PLATFORM_MODULES_CATALOG_MENU_TEXTS: dict[
+    str,
+    str,
+] = {
+    "pt": "🧩 Catálogo de Módulos",
+    "en_us": "🧩 Module Catalog",
+    "es": "🧩 Catálogo de Módulos",
+    "fr": "🧩 Catalogue des Modules",
+    "de": "🧩 Modulkatalog",
+    "it": "🧩 Catalogo dei Moduli",
+    "ro": "🧩 Catalogul Modulelor",
+    "ua": "🧩 Каталог Модулів",
+    "ru": "🧩 Каталог Модулей",
+    "sa": "🧩 دليل الوحدات",
+}
 
-MENU_TEXTS["ch"] = dict(
-    MENU_TEXTS["de"]
-)
+
+for _language, _label in PLATFORM_MODULES_CATALOG_MENU_TEXTS.items():
+    MENU_TEXTS[_language]["platform_modules_catalog"] = _label
+
+
+MENU_TEXTS["en_gb"] = dict(MENU_TEXTS["en_us"])
+MENU_TEXTS["en_gb"]["ai_cost_center"] = "💰 AI Cost Centre"
+MENU_TEXTS["en_gb"]["health_center"] = "❤️ Health Centre"
+
+MENU_TEXTS["ch"] = dict(MENU_TEXTS["de"])
 
 
 RAG_EVALUATION_LAB_MENU_TEXTS: dict[str, str] = {
@@ -1378,13 +1230,61 @@ RAG_EVALUATION_LAB_MENU_TEXTS: dict[str, str] = {
 }
 
 
-for _language, _label in (
-    RAG_EVALUATION_LAB_MENU_TEXTS.items()
-):
+for _language, _label in RAG_EVALUATION_LAB_MENU_TEXTS.items():
     MENU_TEXTS.setdefault(
         _language,
         {},
     )["rag_evaluation_lab"] = _label
+
+
+# RELATIONSHIP_GRAPH_MENU_INTEGRATION
+_RELATIONSHIP_GRAPH_PAGE_ID = "relationship_graph"
+
+if _RELATIONSHIP_GRAPH_PAGE_ID not in MENU_PAGE_IDS:
+    MENU_PAGE_IDS = (
+        *MENU_PAGE_IDS,
+        _RELATIONSHIP_GRAPH_PAGE_ID,
+    )
+
+
+_platform_modules_pages = MENU_GROUP_PAGE_IDS.get(
+    "platform_modules",
+    (),
+)
+
+if _RELATIONSHIP_GRAPH_PAGE_ID not in _platform_modules_pages:
+    MENU_GROUP_PAGE_IDS["platform_modules"] = (
+        *_platform_modules_pages,
+        _RELATIONSHIP_GRAPH_PAGE_ID,
+    )
+
+
+_RELATIONSHIP_GRAPH_MENU_LABELS = {
+    "pt": "🕸️ Grafo de Relacionamentos",
+    "en_us": "🕸️ Relationship Graph",
+    "en_gb": "🕸️ Relationship Graph",
+    "es": "🕸️ Grafo de Relaciones",
+    "fr": "🕸️ Graphe des Relations",
+    "de": "🕸️ Beziehungsgraph",
+    "ch": "🕸️ Beziehungsgraph",
+    "it": "🕸️ Grafo delle Relazioni",
+    "ro": "🕸️ Graficul Relațiilor",
+    "ua": "🕸️ Граф Взаємозв’язків",
+    "ru": "🕸️ Граф Взаимосвязей",
+    "sa": "🕸️ مخطط العلاقات",
+}
+
+
+for (
+    _relationship_language,
+    _relationship_language_texts,
+) in MENU_TEXTS.items():
+    _relationship_language_texts[_RELATIONSHIP_GRAPH_PAGE_ID] = (
+        _RELATIONSHIP_GRAPH_MENU_LABELS.get(
+            _relationship_language,
+            _RELATIONSHIP_GRAPH_MENU_LABELS["pt"],
+        )
+    )
 
 
 LEGACY_MENU_PAGE_IDS: dict[str, str] = {
@@ -1406,9 +1306,7 @@ LEGACY_MENU_PAGE_IDS: dict[str, str] = {
     "🧭 Timeline Viewer": "timeline_viewer",
     "📊 Analytics Tools": "tools_analytics",
     "❤️ Health Center": "health_center",
-    "🛰️ LLMOps & Observabilidade": (
-        "llmops_observability"
-    ),
+    "🛰️ LLMOps & Observabilidade": ("llmops_observability"),
     "💰 LLM Cost Center": "ai_cost_center",
     "📄 Upload Documentos": "document_upload",
     "🧠 Memória Usuário": "user_memory",
@@ -1439,9 +1337,7 @@ def normalize_menu_page_id(
     if raw_value in MENU_PAGE_IDS:
         return raw_value
 
-    legacy_page = LEGACY_MENU_PAGE_IDS.get(
-        raw_value
-    )
+    legacy_page = LEGACY_MENU_PAGE_IDS.get(raw_value)
 
     if legacy_page is not None:
         return legacy_page
@@ -1460,9 +1356,7 @@ def menu_t(
     language: str | None = None,
 ) -> str:
     """Traduz somente o rótulo visual de uma página."""
-    normalized_page_id = normalize_menu_page_id(
-        page_id
-    )
+    normalized_page_id = normalize_menu_page_id(page_id)
 
     return translate(
         MENU_TEXTS,
@@ -1470,6 +1364,7 @@ def menu_t(
         language=language,
         default=normalized_page_id,
     )
+
 
 MULTICHANNEL_UI_TEXTS: dict[str, dict[str, str]] = {
     "pt": {
@@ -1724,13 +1619,9 @@ MULTICHANNEL_UI_TEXTS: dict[str, dict[str, str]] = {
     },
 }
 
-MULTICHANNEL_UI_TEXTS["en_gb"] = dict(
-    MULTICHANNEL_UI_TEXTS["en_us"]
-)
+MULTICHANNEL_UI_TEXTS["en_gb"] = dict(MULTICHANNEL_UI_TEXTS["en_us"])
 
-MULTICHANNEL_UI_TEXTS["ch"] = dict(
-    MULTICHANNEL_UI_TEXTS["de"]
-)
+MULTICHANNEL_UI_TEXTS["ch"] = dict(MULTICHANNEL_UI_TEXTS["de"])
 
 
 CHANNEL_TEXTS: dict[str, dict[str, str]] = {
@@ -1826,13 +1717,9 @@ CHANNEL_TEXTS: dict[str, dict[str, str]] = {
     },
 }
 
-CHANNEL_TEXTS["en_gb"] = dict(
-    CHANNEL_TEXTS["en_us"]
-)
+CHANNEL_TEXTS["en_gb"] = dict(CHANNEL_TEXTS["en_us"])
 
-CHANNEL_TEXTS["ch"] = dict(
-    CHANNEL_TEXTS["de"]
-)
+CHANNEL_TEXTS["ch"] = dict(CHANNEL_TEXTS["de"])
 
 
 CHANNEL_VALUE_KEYS: dict[str, str] = {
@@ -1882,16 +1769,12 @@ def translate_channel(
 
     Canais técnicos desconhecidos são preservados.
     """
-    normalized = normalized_value(
-        value
-    )
+    normalized = normalized_value(value)
 
     if not normalized:
         normalized = "unknown"
 
-    channel_key = CHANNEL_VALUE_KEYS.get(
-        normalized
-    )
+    channel_key = CHANNEL_VALUE_KEYS.get(normalized)
 
     if channel_key is None:
         return str(value)
@@ -1940,37 +1823,22 @@ def localize_multichannel_dataframe(
         Callable[[Any], Any],
     ] = {}
 
-    if (
-        translate_channel_values
-        and "canal" in dataframe.columns
-    ):
-        transforms["canal"] = (
-            lambda value: translate_channel(
-                value,
-                language=language,
-            )
+    if translate_channel_values and "canal" in dataframe.columns:
+        transforms["canal"] = lambda value: translate_channel(
+            value,
+            language=language,
         )
 
-    if (
-        translate_feedback_values
-        and "util" in dataframe.columns
-    ):
-        transforms["util"] = (
-            lambda value: translate_useful(
-                value,
-                language=language,
-            )
+    if translate_feedback_values and "util" in dataframe.columns:
+        transforms["util"] = lambda value: translate_useful(
+            value,
+            language=language,
         )
 
-    if (
-        translate_status_values
-        and "status" in dataframe.columns
-    ):
-        transforms["status"] = (
-            lambda value: translate_status(
-                value,
-                language=language,
-            )
+    if translate_status_values and "status" in dataframe.columns:
+        transforms["status"] = lambda value: translate_status(
+            value,
+            language=language,
         )
 
     return localize_dataframe(
@@ -1980,6 +1848,7 @@ def localize_multichannel_dataframe(
         value_transforms=transforms,
         language=language,
     )
+
 
 def audit_page_language_pack(
     texts_by_language: Mapping[
@@ -2006,9 +1875,7 @@ def audit_page_language_pack(
         {},
     )
 
-    reference_keys = set(
-        reference_texts
-    )
+    reference_keys = set(reference_texts)
 
     english_texts = texts_by_language.get(
         "en_us",
@@ -2021,16 +1888,12 @@ def audit_page_language_pack(
     ] = {}
 
     for language in SUPPORTED_LANGUAGES:
-        current_texts = texts_by_language.get(
-            language
-        )
+        current_texts = texts_by_language.get(language)
 
         if current_texts is None:
             report[language] = {
                 "missing_language": True,
-                "missing": set(
-                    reference_keys
-                ),
+                "missing": set(reference_keys),
                 "extra": set(),
                 "empty": set(),
                 "key_fallback": set(),
@@ -2038,33 +1901,20 @@ def audit_page_language_pack(
             }
             continue
 
-        current_keys = set(
-            current_texts
-        )
+        current_keys = set(current_texts)
 
-        missing = (
-            reference_keys
-            - current_keys
-        )
+        missing = reference_keys - current_keys
 
-        extra = (
-            current_keys
-            - reference_keys
-        )
+        extra = current_keys - reference_keys
 
         empty = {
             key
-            for key, value
-            in current_texts.items()
-            if value is None
-            or not str(value).strip()
+            for key, value in current_texts.items()
+            if value is None or not str(value).strip()
         }
 
         key_fallback = {
-            key
-            for key, value
-            in current_texts.items()
-            if str(value).strip() == key
+            key for key, value in current_texts.items() if str(value).strip() == key
         }
 
         same_as_english = bool(
@@ -2075,26 +1925,17 @@ def audit_page_language_pack(
                 "en_gb",
             }
             and english_texts
-            and dict(current_texts)
-            == dict(english_texts)
+            and dict(current_texts) == dict(english_texts)
         )
 
-        if (
-            missing
-            or extra
-            or empty
-            or key_fallback
-            or same_as_english
-        ):
+        if missing or extra or empty or key_fallback or same_as_english:
             report[language] = {
                 "missing_language": False,
                 "missing": missing,
                 "extra": extra,
                 "empty": empty,
                 "key_fallback": key_fallback,
-                "same_as_english": (
-                    same_as_english
-                ),
+                "same_as_english": (same_as_english),
             }
 
     return report
@@ -2116,22 +1957,12 @@ def merge_language_texts(
     Útil para páginas grandes divididas em vários blocos.
     """
     for language, texts in additions.items():
-        normalized_language = (
-            normalize_language(
-                language
-            )
-        )
+        normalized_language = normalize_language(language)
 
         base_texts.setdefault(
             normalized_language,
             {},
-        ).update(
-            {
-                str(key): str(value)
-                for key, value
-                in texts.items()
-            }
-        )
+        ).update({str(key): str(value) for key, value in texts.items()})
 
 
 def page_translate(
@@ -2168,244 +1999,100 @@ def page_translate(
 
 TOOLS_VALUE_TEXTS: dict[str, dict[str, str]] = {
     "pt": {
-        "tool.calculo_capacidade_semanal": (
-            "Cálculo de capacidade semanal"
-        ),
-        "tool.simulacao_reserva": (
-            "Simulação de formação de reserva"
-        ),
-        "intent.capacidade_semanal": (
-            "Capacidade semanal"
-        ),
-        "intent.simulacao_reserva": (
-            "Simulação de reserva"
-        ),
-        "origin.dashboard_rag": (
-            "Dashboard RAG"
-        ),
-        "origin.teste_manual": (
-            "Teste manual"
-        ),
+        "tool.calculo_capacidade_semanal": ("Cálculo de capacidade semanal"),
+        "tool.simulacao_reserva": ("Simulação de formação de reserva"),
+        "intent.capacidade_semanal": ("Capacidade semanal"),
+        "intent.simulacao_reserva": ("Simulação de reserva"),
+        "origin.dashboard_rag": ("Dashboard RAG"),
+        "origin.teste_manual": ("Teste manual"),
     },
     "en_us": {
-        "tool.calculo_capacidade_semanal": (
-            "Weekly capacity calculation"
-        ),
-        "tool.simulacao_reserva": (
-            "Reserve building simulation"
-        ),
-        "intent.capacidade_semanal": (
-            "Weekly capacity"
-        ),
-        "intent.simulacao_reserva": (
-            "Reserve simulation"
-        ),
-        "origin.dashboard_rag": (
-            "RAG dashboard"
-        ),
-        "origin.teste_manual": (
-            "Manual test"
-        ),
+        "tool.calculo_capacidade_semanal": ("Weekly capacity calculation"),
+        "tool.simulacao_reserva": ("Reserve building simulation"),
+        "intent.capacidade_semanal": ("Weekly capacity"),
+        "intent.simulacao_reserva": ("Reserve simulation"),
+        "origin.dashboard_rag": ("RAG dashboard"),
+        "origin.teste_manual": ("Manual test"),
     },
     "en_gb": {
-        "tool.calculo_capacidade_semanal": (
-            "Weekly capacity calculation"
-        ),
-        "tool.simulacao_reserva": (
-            "Reserve building simulation"
-        ),
-        "intent.capacidade_semanal": (
-            "Weekly capacity"
-        ),
-        "intent.simulacao_reserva": (
-            "Reserve simulation"
-        ),
-        "origin.dashboard_rag": (
-            "RAG dashboard"
-        ),
-        "origin.teste_manual": (
-            "Manual test"
-        ),
+        "tool.calculo_capacidade_semanal": ("Weekly capacity calculation"),
+        "tool.simulacao_reserva": ("Reserve building simulation"),
+        "intent.capacidade_semanal": ("Weekly capacity"),
+        "intent.simulacao_reserva": ("Reserve simulation"),
+        "origin.dashboard_rag": ("RAG dashboard"),
+        "origin.teste_manual": ("Manual test"),
     },
     "es": {
-        "tool.calculo_capacidade_semanal": (
-            "Cálculo de capacidad semanal"
-        ),
-        "tool.simulacao_reserva": (
-            "Simulación de formación de reserva"
-        ),
-        "intent.capacidade_semanal": (
-            "Capacidad semanal"
-        ),
-        "intent.simulacao_reserva": (
-            "Simulación de reserva"
-        ),
-        "origin.dashboard_rag": (
-            "Panel RAG"
-        ),
-        "origin.teste_manual": (
-            "Prueba manual"
-        ),
+        "tool.calculo_capacidade_semanal": ("Cálculo de capacidad semanal"),
+        "tool.simulacao_reserva": ("Simulación de formación de reserva"),
+        "intent.capacidade_semanal": ("Capacidad semanal"),
+        "intent.simulacao_reserva": ("Simulación de reserva"),
+        "origin.dashboard_rag": ("Panel RAG"),
+        "origin.teste_manual": ("Prueba manual"),
     },
     "fr": {
-        "tool.calculo_capacidade_semanal": (
-            "Calcul de capacité hebdomadaire"
-        ),
-        "tool.simulacao_reserva": (
-            "Simulation de constitution de réserve"
-        ),
-        "intent.capacidade_semanal": (
-            "Capacité hebdomadaire"
-        ),
-        "intent.simulacao_reserva": (
-            "Simulation de réserve"
-        ),
-        "origin.dashboard_rag": (
-            "Tableau de bord RAG"
-        ),
-        "origin.teste_manual": (
-            "Test manuel"
-        ),
+        "tool.calculo_capacidade_semanal": ("Calcul de capacité hebdomadaire"),
+        "tool.simulacao_reserva": ("Simulation de constitution de réserve"),
+        "intent.capacidade_semanal": ("Capacité hebdomadaire"),
+        "intent.simulacao_reserva": ("Simulation de réserve"),
+        "origin.dashboard_rag": ("Tableau de bord RAG"),
+        "origin.teste_manual": ("Test manuel"),
     },
     "de": {
-        "tool.calculo_capacidade_semanal": (
-            "Wöchentliche Kapazitätsberechnung"
-        ),
-        "tool.simulacao_reserva": (
-            "Simulation der Reservebildung"
-        ),
-        "intent.capacidade_semanal": (
-            "Wöchentliche Kapazität"
-        ),
-        "intent.simulacao_reserva": (
-            "Reservesimulation"
-        ),
-        "origin.dashboard_rag": (
-            "RAG-Dashboard"
-        ),
-        "origin.teste_manual": (
-            "Manueller Test"
-        ),
+        "tool.calculo_capacidade_semanal": ("Wöchentliche Kapazitätsberechnung"),
+        "tool.simulacao_reserva": ("Simulation der Reservebildung"),
+        "intent.capacidade_semanal": ("Wöchentliche Kapazität"),
+        "intent.simulacao_reserva": ("Reservesimulation"),
+        "origin.dashboard_rag": ("RAG-Dashboard"),
+        "origin.teste_manual": ("Manueller Test"),
     },
     "it": {
-        "tool.calculo_capacidade_semanal": (
-            "Calcolo della capacità settimanale"
-        ),
-        "tool.simulacao_reserva": (
-            "Simulazione di creazione della riserva"
-        ),
-        "intent.capacidade_semanal": (
-            "Capacità settimanale"
-        ),
-        "intent.simulacao_reserva": (
-            "Simulazione della riserva"
-        ),
-        "origin.dashboard_rag": (
-            "Dashboard RAG"
-        ),
-        "origin.teste_manual": (
-            "Test manuale"
-        ),
+        "tool.calculo_capacidade_semanal": ("Calcolo della capacità settimanale"),
+        "tool.simulacao_reserva": ("Simulazione di creazione della riserva"),
+        "intent.capacidade_semanal": ("Capacità settimanale"),
+        "intent.simulacao_reserva": ("Simulazione della riserva"),
+        "origin.dashboard_rag": ("Dashboard RAG"),
+        "origin.teste_manual": ("Test manuale"),
     },
     "ro": {
-        "tool.calculo_capacidade_semanal": (
-            "Calculul capacității săptămânale"
-        ),
-        "tool.simulacao_reserva": (
-            "Simularea formării rezervei"
-        ),
-        "intent.capacidade_semanal": (
-            "Capacitate săptămânală"
-        ),
-        "intent.simulacao_reserva": (
-            "Simulare rezervă"
-        ),
-        "origin.dashboard_rag": (
-            "Tablou RAG"
-        ),
-        "origin.teste_manual": (
-            "Test manual"
-        ),
+        "tool.calculo_capacidade_semanal": ("Calculul capacității săptămânale"),
+        "tool.simulacao_reserva": ("Simularea formării rezervei"),
+        "intent.capacidade_semanal": ("Capacitate săptămânală"),
+        "intent.simulacao_reserva": ("Simulare rezervă"),
+        "origin.dashboard_rag": ("Tablou RAG"),
+        "origin.teste_manual": ("Test manual"),
     },
     "ua": {
-        "tool.calculo_capacidade_semanal": (
-            "Розрахунок тижневої потужності"
-        ),
-        "tool.simulacao_reserva": (
-            "Симуляція формування резерву"
-        ),
-        "intent.capacidade_semanal": (
-            "Тижнева потужність"
-        ),
-        "intent.simulacao_reserva": (
-            "Симуляція резерву"
-        ),
-        "origin.dashboard_rag": (
-            "RAG-панель"
-        ),
-        "origin.teste_manual": (
-            "Ручний тест"
-        ),
+        "tool.calculo_capacidade_semanal": ("Розрахунок тижневої потужності"),
+        "tool.simulacao_reserva": ("Симуляція формування резерву"),
+        "intent.capacidade_semanal": ("Тижнева потужність"),
+        "intent.simulacao_reserva": ("Симуляція резерву"),
+        "origin.dashboard_rag": ("RAG-панель"),
+        "origin.teste_manual": ("Ручний тест"),
     },
     "ru": {
-        "tool.calculo_capacidade_semanal": (
-            "Еженедельный расчёт мощности"
-        ),
-        "tool.simulacao_reserva": (
-            "Симуляция формирования резерва"
-        ),
-        "intent.capacidade_semanal": (
-            "Еженедельная мощность"
-        ),
-        "intent.simulacao_reserva": (
-            "Симуляция резерва"
-        ),
-        "origin.dashboard_rag": (
-            "RAG-панель"
-        ),
-        "origin.teste_manual": (
-            "Ручной тест"
-        ),
+        "tool.calculo_capacidade_semanal": ("Еженедельный расчёт мощности"),
+        "tool.simulacao_reserva": ("Симуляция формирования резерва"),
+        "intent.capacidade_semanal": ("Еженедельная мощность"),
+        "intent.simulacao_reserva": ("Симуляция резерва"),
+        "origin.dashboard_rag": ("RAG-панель"),
+        "origin.teste_manual": ("Ручной тест"),
     },
     "sa": {
-        "tool.calculo_capacidade_semanal": (
-            "حساب السعة الأسبوعية"
-        ),
-        "tool.simulacao_reserva": (
-            "محاكاة تكوين الاحتياطي"
-        ),
-        "intent.capacidade_semanal": (
-            "السعة الأسبوعية"
-        ),
-        "intent.simulacao_reserva": (
-            "محاكاة الاحتياطي"
-        ),
-        "origin.dashboard_rag": (
-            "لوحة RAG"
-        ),
-        "origin.teste_manual": (
-            "اختبار يدوي"
-        ),
+        "tool.calculo_capacidade_semanal": ("حساب السعة الأسبوعية"),
+        "tool.simulacao_reserva": ("محاكاة تكوين الاحتياطي"),
+        "intent.capacidade_semanal": ("السعة الأسبوعية"),
+        "intent.simulacao_reserva": ("محاكاة الاحتياطي"),
+        "origin.dashboard_rag": ("لوحة RAG"),
+        "origin.teste_manual": ("اختبار يدوي"),
     },
     "ch": {
-        "tool.calculo_capacidade_semanal": (
-            "Wöchentliche Kapazitätsberechnung"
-        ),
-        "tool.simulacao_reserva": (
-            "Simulation der Reservebildung"
-        ),
-        "intent.capacidade_semanal": (
-            "Wöchentliche Kapazität"
-        ),
-        "intent.simulacao_reserva": (
-            "Reservesimulation"
-        ),
-        "origin.dashboard_rag": (
-            "RAG-Dashboard"
-        ),
-        "origin.teste_manual": (
-            "Manueller Test"
-        ),
+        "tool.calculo_capacidade_semanal": ("Wöchentliche Kapazitätsberechnung"),
+        "tool.simulacao_reserva": ("Simulation der Reservebildung"),
+        "intent.capacidade_semanal": ("Wöchentliche Kapazität"),
+        "intent.simulacao_reserva": ("Reservesimulation"),
+        "origin.dashboard_rag": ("RAG-Dashboard"),
+        "origin.teste_manual": ("Manueller Test"),
     },
 }
 
@@ -2422,11 +2109,14 @@ def analytics_value_t(
     Quando não existe uma tradução cadastrada, preserva
     exatamente o valor técnico recebido.
     """
-    idioma = str(
-        language or "pt"
-    ).strip().lower().replace(
-        "-",
-        "_",
+    idioma = (
+        str(language or "pt")
+        .strip()
+        .lower()
+        .replace(
+            "-",
+            "_",
+        )
     )
 
     aliases = {
@@ -2457,32 +2147,18 @@ def analytics_value_t(
     return key
 
 
-
-
 # TOOLS_ANALYTICS_DYNAMIC_TOOL_ALIASES
 #
 # Relaciona nomes técnicos e nomes amigáveis vindos
 # da observabilidade ao mesmo identificador visual.
 
 TOOLS_DYNAMIC_VALUE_ALIASES = {
-    "calculo_capacidade_semanal": (
-        "calculo_capacidade_semanal"
-    ),
-    "calculo_de_capacidade_semanal": (
-        "calculo_capacidade_semanal"
-    ),
-    "simulacao_reserva": (
-        "simulacao_reserva"
-    ),
-    "simulacao_de_reserva": (
-        "simulacao_reserva"
-    ),
-    "simulacao_de_formacao_de_reserva": (
-        "simulacao_reserva"
-    ),
-    "simulacao_formacao_reserva": (
-        "simulacao_reserva"
-    ),
+    "calculo_capacidade_semanal": ("calculo_capacidade_semanal"),
+    "calculo_de_capacidade_semanal": ("calculo_capacidade_semanal"),
+    "simulacao_reserva": ("simulacao_reserva"),
+    "simulacao_de_reserva": ("simulacao_reserva"),
+    "simulacao_de_formacao_de_reserva": ("simulacao_reserva"),
+    "simulacao_formacao_reserva": ("simulacao_reserva"),
 }
 
 
@@ -2499,9 +2175,7 @@ def normalize_dynamic_value_key(
     simulacao_reserva
     -> simulacao_reserva
     """
-    raw = str(
-        value or ""
-    ).strip().lower()
+    raw = str(value or "").strip().lower()
 
     normalized = unicodedata.normalize(
         "NFKD",
@@ -2509,11 +2183,7 @@ def normalize_dynamic_value_key(
     )
 
     without_accents = "".join(
-        character
-        for character in normalized
-        if not unicodedata.combining(
-            character
-        )
+        character for character in normalized if not unicodedata.combining(character)
     )
 
     cleaned = []
@@ -2530,9 +2200,7 @@ def normalize_dynamic_value_key(
             cleaned.append("_")
             previous_separator = True
 
-    key = "".join(
-        cleaned
-    ).strip("_")
+    key = "".join(cleaned).strip("_")
 
     return TOOLS_DYNAMIC_VALUE_ALIASES.get(
         key,
@@ -2551,13 +2219,9 @@ def translate_tool_name(
     Aceita tanto o código técnico quanto o nome
     amigável registrado na observabilidade.
     """
-    raw = str(
-        value or ""
-    ).strip()
+    raw = str(value or "").strip()
 
-    normalized_key = normalize_dynamic_value_key(
-        raw
-    )
+    normalized_key = normalize_dynamic_value_key(raw)
 
     return analytics_value_t(
         f"tool.{normalized_key}",
@@ -2574,9 +2238,7 @@ def translate_intention(
     """
     Traduz visualmente uma intenção.
     """
-    raw = str(
-        value or ""
-    ).strip()
+    raw = str(value or "").strip()
 
     return analytics_value_t(
         f"intent.{raw}",
@@ -2593,13 +2255,10 @@ def translate_origin(
     """
     Traduz visualmente uma origem.
     """
-    raw = str(
-        value or ""
-    ).strip()
+    raw = str(value or "").strip()
 
     return analytics_value_t(
         f"origin.{raw}",
         language=language,
         fallback=raw,
     )
-

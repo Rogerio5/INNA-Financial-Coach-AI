@@ -26,7 +26,6 @@ from src.agents.supervisor_llm import (
     classificar_com_gemini,
 )
 
-
 _RUNTIME_ENVIRONMENT_VARIABLES = [
     "INNA_SUPERVISOR_MODEL",
     "INNA_SUPERVISOR_TIMEOUT_MS",
@@ -44,9 +43,7 @@ def _isolar_configuracao_do_supervisor(
     """
     Impede que o .env local afete os testes unitários.
     """
-    for variable_name in (
-        _RUNTIME_ENVIRONMENT_VARIABLES
-    ):
+    for variable_name in _RUNTIME_ENVIRONMENT_VARIABLES:
         monkeypatch.delenv(
             variable_name,
             raising=False,
@@ -71,35 +68,34 @@ def _isolar_configuracao_do_supervisor(
     reset_supervisor_client_cache()
 
 
-def test_configuracao_padrao_do_supervisor():
+def test_configuracao_padrao_do_supervisor(monkeypatch):
+    # Isola o teste das configuracoes externas do ambiente.
+    monkeypatch.delenv("DEFAULT_SUPERVISOR_MAX_CONTEXT_CHARS", raising=False)
+    monkeypatch.delenv("DEFAULT_SUPERVISOR_MAX_OUTPUT_TOKENS", raising=False)
+    monkeypatch.delenv("DEFAULT_SUPERVISOR_MODEL", raising=False)
+    monkeypatch.delenv("DEFAULT_SUPERVISOR_RETRY_ATTEMPTS", raising=False)
+    monkeypatch.delenv("DEFAULT_SUPERVISOR_TIMEOUT_MS", raising=False)
+    monkeypatch.delenv("DEFAULT_SUPERVISOR_TOTAL_DEADLINE_MS", raising=False)
+    monkeypatch.delenv("INNA_SUPERVISOR_MAX_CONTEXT_CHARS", raising=False)
+    monkeypatch.delenv("INNA_SUPERVISOR_MAX_OUTPUT_TOKENS", raising=False)
+    monkeypatch.delenv("INNA_SUPERVISOR_MODEL", raising=False)
+    monkeypatch.delenv("INNA_SUPERVISOR_RETRY_ATTEMPTS", raising=False)
+    monkeypatch.delenv("INNA_SUPERVISOR_TIMEOUT_MS", raising=False)
+    monkeypatch.delenv("INNA_SUPERVISOR_TOTAL_DEADLINE_MS", raising=False)
+
     config = get_supervisor_runtime_config()
 
     assert config.model == DEFAULT_SUPERVISOR_MODEL
 
-    assert (
-        config.timeout_ms
-        == DEFAULT_SUPERVISOR_TIMEOUT_MS
-    )
+    assert config.timeout_ms == DEFAULT_SUPERVISOR_TIMEOUT_MS
 
-    assert (
-        config.total_deadline_ms
-        == DEFAULT_SUPERVISOR_TOTAL_DEADLINE_MS
-    )
+    assert config.total_deadline_ms == DEFAULT_SUPERVISOR_TOTAL_DEADLINE_MS
 
-    assert (
-        config.retry_attempts
-        == DEFAULT_SUPERVISOR_RETRY_ATTEMPTS
-    )
+    assert config.retry_attempts == DEFAULT_SUPERVISOR_RETRY_ATTEMPTS
 
-    assert (
-        config.max_output_tokens
-        == DEFAULT_SUPERVISOR_MAX_OUTPUT_TOKENS
-    )
+    assert config.max_output_tokens == DEFAULT_SUPERVISOR_MAX_OUTPUT_TOKENS
 
-    assert (
-        config.max_context_characters
-        == DEFAULT_SUPERVISOR_MAX_CONTEXT_CHARS
-    )
+    assert config.max_context_characters == DEFAULT_SUPERVISOR_MAX_CONTEXT_CHARS
 
 
 def test_configuracao_aceita_variaveis_de_ambiente(
@@ -107,7 +103,7 @@ def test_configuracao_aceita_variaveis_de_ambiente(
 ):
     monkeypatch.setenv(
         "INNA_SUPERVISOR_MODEL",
-        "gemini-2.5-flash-lite",
+        "gemini-3.5-flash-lite",
     )
 
     monkeypatch.setenv(
@@ -139,7 +135,7 @@ def test_configuracao_aceita_variaveis_de_ambiente(
 
     config = get_supervisor_runtime_config()
 
-    assert config.model == "gemini-2.5-flash-lite"
+    assert config.model == "gemini-3.5-flash-lite"
     assert config.timeout_ms == 10_000
     assert config.total_deadline_ms == 8_000
     assert config.retry_attempts == 1
@@ -147,9 +143,7 @@ def test_configuracao_aceita_variaveis_de_ambiente(
     assert config.max_context_characters == 8_000
 
 
-@patch(
-    "src.agents.gemini_client.genai.Client"
-)
+@patch("src.agents.gemini_client.genai.Client")
 def test_cliente_gemini_e_reutilizado(
     mock_client_constructor,
 ):
@@ -160,9 +154,7 @@ def test_cliente_gemini_e_reutilizado(
     mock_client_constructor.assert_called_once()
 
 
-@patch(
-    "src.agents.gemini_client.genai.Client"
-)
+@patch("src.agents.gemini_client.genai.Client")
 def test_cliente_recebe_timeout_e_retentativas(
     mock_client_constructor,
     monkeypatch,
@@ -182,34 +174,17 @@ def test_cliente_recebe_timeout_e_retentativas(
 
     get_supervisor_client()
 
-    kwargs = (
-        mock_client_constructor
-        .call_args
-        .kwargs
-    )
+    kwargs = mock_client_constructor.call_args.kwargs
 
-    http_options = kwargs[
-        "http_options"
-    ]
+    http_options = kwargs["http_options"]
 
     assert http_options.timeout == 10_000
 
-    assert (
-        http_options.retry_options.attempts
-        == 1
-    )
+    assert http_options.retry_options.attempts == 1
 
-    assert 429 in (
-        http_options
-        .retry_options
-        .http_status_codes
-    )
+    assert 429 in (http_options.retry_options.http_status_codes)
 
-    assert 503 in (
-        http_options
-        .retry_options
-        .http_status_codes
-    )
+    assert 503 in (http_options.retry_options.http_status_codes)
 
 
 def test_classificacao_usa_modelo_configurado(
@@ -217,7 +192,7 @@ def test_classificacao_usa_modelo_configurado(
 ):
     monkeypatch.setenv(
         "INNA_SUPERVISOR_MODEL",
-        "gemini-2.5-flash-lite",
+        "gemini-3.5-flash-lite",
     )
 
     monkeypatch.setenv(
@@ -229,59 +204,35 @@ def test_classificacao_usa_modelo_configurado(
 
     fake_client = MagicMock()
 
-    fake_client.models.generate_content.return_value = (
-        SimpleNamespace(
-            parsed=SupervisorLLMDecision(
-                intent="educacao_financeira",
-                next_node="education_agent",
-                confidence=0.91,
-                use_rag=True,
-                reason=(
-                    "Orientação financeira inicial."
-                ),
-            ),
-            text="",
-        )
+    fake_client.models.generate_content.return_value = SimpleNamespace(
+        parsed=SupervisorLLMDecision(
+            intent="educacao_financeira",
+            next_node="education_agent",
+            confidence=0.91,
+            use_rag=True,
+            reason=("Orientação financeira inicial."),
+        ),
+        text="",
     )
 
     with patch(
-        "src.agents.supervisor_llm."
-        "get_supervisor_client",
+        "src.agents.supervisor_llm.get_supervisor_client",
         return_value=fake_client,
     ):
         decision = classificar_com_gemini(
-            mensagem=(
-                "Estou perdido financeiramente."
-            ),
+            mensagem=("Estou perdido financeiramente."),
             context={
-                "current_message": (
-                    "Estou perdido financeiramente."
-                ),
-                "rendered_prompt": (
-                    "Contexto protegido."
-                ),
+                "current_message": ("Estou perdido financeiramente."),
+                "rendered_prompt": ("Contexto protegido."),
             },
         )
 
-    call = (
-        fake_client.models.generate_content
-        .call_args
-    )
+    call = fake_client.models.generate_content.call_args
 
-    assert (
-        call.kwargs["model"]
-        == "gemini-2.5-flash-lite"
-    )
+    assert call.kwargs["model"] == "gemini-3.5-flash-lite"
 
-    assert (
-        call.kwargs["config"]
-        .max_output_tokens
-        == 220
-    )
+    assert call.kwargs["config"].max_output_tokens == 220
 
-    assert (
-        decision.classification_source
-        == "gemini"
-    )
+    assert decision.classification_source == "gemini"
 
     assert decision.gemini_called is True

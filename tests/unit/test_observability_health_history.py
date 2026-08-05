@@ -62,24 +62,24 @@ def test_preparar_snapshot():
 
 
 def test_tendencia_sem_dados():
-    resultado = calcular_tendencia_health(
-        pd.DataFrame()
-    )
+    resultado = calcular_tendencia_health(pd.DataFrame())
 
     assert resultado["tem_comparacao"] is False
 
 
 def test_tendencia_melhora():
-    df = pd.DataFrame([
-        {
-            "criado_em": "2026-07-14T11:00:00Z",
-            "score_global": 98.0,
-        },
-        {
-            "criado_em": "2026-07-14T10:00:00Z",
-            "score_global": 95.0,
-        },
-    ])
+    df = pd.DataFrame(
+        [
+            {
+                "criado_em": "2026-07-14T11:00:00Z",
+                "score_global": 98.0,
+            },
+            {
+                "criado_em": "2026-07-14T10:00:00Z",
+                "score_global": 95.0,
+            },
+        ]
+    )
 
     resultado = calcular_tendencia_health(df)
 
@@ -89,16 +89,18 @@ def test_tendencia_melhora():
 
 
 def test_tendencia_piora():
-    df = pd.DataFrame([
-        {
-            "criado_em": "2026-07-14T11:00:00Z",
-            "score_global": 90.0,
-        },
-        {
-            "criado_em": "2026-07-14T10:00:00Z",
-            "score_global": 95.0,
-        },
-    ])
+    df = pd.DataFrame(
+        [
+            {
+                "criado_em": "2026-07-14T11:00:00Z",
+                "score_global": 90.0,
+            },
+            {
+                "criado_em": "2026-07-14T10:00:00Z",
+                "score_global": 95.0,
+            },
+        ]
+    )
 
     resultado = calcular_tendencia_health(df)
 
@@ -107,16 +109,18 @@ def test_tendencia_piora():
 
 
 def test_tendencia_estavel():
-    df = pd.DataFrame([
-        {
-            "criado_em": "2026-07-14T11:00:00Z",
-            "score_global": 97.8,
-        },
-        {
-            "criado_em": "2026-07-14T10:00:00Z",
-            "score_global": 97.8,
-        },
-    ])
+    df = pd.DataFrame(
+        [
+            {
+                "criado_em": "2026-07-14T11:00:00Z",
+                "score_global": 97.8,
+            },
+            {
+                "criado_em": "2026-07-14T10:00:00Z",
+                "score_global": 97.8,
+            },
+        ]
+    )
 
     resultado = calcular_tendencia_health(df)
 

@@ -4,9 +4,7 @@ from pathlib import Path
 
 
 def test_supervisor_subprocess_uses_safe_decode_policy():
-    source = Path(
-        "src/agents/supervisor_deadline.py"
-    ).read_text(
+    source = Path("src/agents/supervisor_deadline.py").read_text(
         encoding="utf-8",
     )
 
@@ -15,9 +13,7 @@ def test_supervisor_subprocess_uses_safe_decode_policy():
 
 
 def test_supervisor_deadline_keeps_hard_timeout():
-    source = Path(
-        "src/agents/supervisor_deadline.py"
-    ).read_text(
+    source = Path("src/agents/supervisor_deadline.py").read_text(
         encoding="utf-8",
     )
 

@@ -56,25 +56,13 @@ def test_classifies_worker_cycle(
         decision=decision,
     )
 
-    assert (
-        entrypoint
-        ._productive_cycle_result_for_runner_result(
-            result
-        )
-        == expected
-    )
+    assert entrypoint._productive_cycle_result_for_runner_result(result) == expected
 
 
 def test_idle_records_cycle_but_not_update():
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     entrypoint.record_productive_runner_result(
         runner_result(
@@ -86,27 +74,15 @@ def test_idle_records_cycle_but_not_update():
 
     snapshot = registry.snapshot()
 
-    assert (
-        "inna_telegram_worker_cycles_total"
-        in snapshot.counters
-    )
+    assert "inna_telegram_worker_cycles_total" in snapshot.counters
 
-    assert (
-        "inna_telegram_worker_updates_total"
-        not in snapshot.counters
-    )
+    assert "inna_telegram_worker_updates_total" not in snapshot.counters
 
 
 def test_completed_records_successful_update():
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     entrypoint.record_productive_runner_result(
         runner_result(
@@ -118,27 +94,13 @@ def test_completed_records_successful_update():
 
     snapshot = registry.snapshot()
 
-    assert sum(
-        snapshot.counters[
-            "inna_telegram_worker_cycles_total"
-        ].values()
-    ) == 1.0
+    assert sum(snapshot.counters["inna_telegram_worker_cycles_total"].values()) == 1.0
 
-    assert sum(
-        snapshot.counters[
-            "inna_telegram_worker_updates_total"
-        ].values()
-    ) == 1.0
+    assert sum(snapshot.counters["inna_telegram_worker_updates_total"].values()) == 1.0
 
-    series = snapshot.counters[
-        "inna_telegram_worker_updates_total"
-    ]
+    series = snapshot.counters["inna_telegram_worker_updates_total"]
 
-    labels = dict(
-        next(
-            iter(series)
-        )
-    )
+    labels = dict(next(iter(series)))
 
     assert labels == {
         "outcome": "success",
@@ -147,42 +109,26 @@ def test_completed_records_successful_update():
 
 
 def test_unavailable_records_failure():
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     entrypoint.record_productive_runner_result(
         runner_result(
             decision="unavailable",
             stage="claim",
-            error_code=(
-                "telegram.claim_unavailable"
-            ),
+            error_code=("telegram.claim_unavailable"),
         ),
         operations=operations,
     )
 
     snapshot = registry.snapshot()
 
-    assert (
-        "inna_telegram_worker_updates_total"
-        in snapshot.counters
-    )
+    assert "inna_telegram_worker_updates_total" in snapshot.counters
 
-    assert (
-        "inna_telegram_failures_total"
-        in snapshot.counters
-    )
+    assert "inna_telegram_failures_total" in snapshot.counters
 
-    rendered = repr(
-        snapshot
-    )
+    rendered = repr(snapshot)
 
     assert "dependency" in rendered
 
@@ -191,71 +137,41 @@ def test_consistency_error_maps_to_persistence():
     result = runner_result(
         decision="consistency_error",
         stage="complete",
-        error_code=(
-            "telegram.completion_inconsistent"
-        ),
+        error_code=("telegram.completion_inconsistent"),
     )
 
-    assert (
-        entrypoint
-        ._productive_error_category_for_result(
-            result
-        )
-        == "persistence"
-    )
+    assert entrypoint._productive_error_category_for_result(result) == "persistence"
 
 
 def test_keyring_error_maps_to_encryption():
     result = runner_result(
         decision="retry_scheduled",
         stage="decrypt",
-        error_code=(
-            "telegram.keyring_unavailable"
-        ),
+        error_code=("telegram.keyring_unavailable"),
     )
 
-    assert (
-        entrypoint
-        ._productive_error_category_for_result(
-            result
-        )
-        == "dependency"
-    )
+    assert entrypoint._productive_error_category_for_result(result) == "dependency"
 
 
 def test_recovery_result_does_not_count_update():
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     entrypoint.record_productive_runner_result(
         runner_result(
             decision="unavailable",
             stage="recovery",
-            error_code=(
-                "telegram.recovery_unavailable"
-            ),
+            error_code=("telegram.recovery_unavailable"),
         ),
         operations=operations,
     )
 
     snapshot = registry.snapshot()
 
-    assert (
-        "inna_telegram_worker_cycles_total"
-        in snapshot.counters
-    )
+    assert "inna_telegram_worker_cycles_total" in snapshot.counters
 
-    assert (
-        "inna_telegram_worker_updates_total"
-        not in snapshot.counters
-    )
+    assert "inna_telegram_worker_updates_total" not in snapshot.counters
 
 
 def test_callback_emits_log_and_metrics(
@@ -288,16 +204,14 @@ def test_callback_emits_log_and_metrics(
         stream=stream,
     )
 
-    operations.record_worker_cycle\
-        .assert_called_once_with(
-            result="processed",
-        )
+    operations.record_worker_cycle.assert_called_once_with(
+        result="processed",
+    )
 
-    operations.record_worker_update\
-        .assert_called_once_with(
-            outcome="success",
-            error_category=None,
-        )
+    operations.record_worker_update.assert_called_once_with(
+        outcome="success",
+        error_category=None,
+    )
 
 
 def test_callback_isolates_logging_failure(
@@ -308,11 +222,7 @@ def test_callback_isolates_logging_failure(
     monkeypatch.setattr(
         entrypoint,
         "emit_runner_result",
-        MagicMock(
-            side_effect=RuntimeError(
-                "private-log-error"
-            )
-        ),
+        MagicMock(side_effect=RuntimeError("private-log-error")),
     )
 
     result = runner_result(
@@ -320,8 +230,7 @@ def test_callback_isolates_logging_failure(
     )
 
     assert (
-        entrypoint
-        .handle_productive_runner_result(
+        entrypoint.handle_productive_runner_result(
             result,
             stream=io.StringIO(),
             operations=operations,
@@ -329,8 +238,7 @@ def test_callback_isolates_logging_failure(
         is None
     )
 
-    operations.record_worker_cycle\
-        .assert_called_once()
+    operations.record_worker_cycle.assert_called_once()
 
 
 def test_callback_isolates_metrics_failure(
@@ -346,19 +254,14 @@ def test_callback_isolates_metrics_failure(
 
     operations = MagicMock()
 
-    operations.record_worker_cycle.side_effect = (
-        RuntimeError(
-            "private-metrics-error"
-        )
-    )
+    operations.record_worker_cycle.side_effect = RuntimeError("private-metrics-error")
 
     result = runner_result(
         decision="completed",
     )
 
     assert (
-        entrypoint
-        .handle_productive_runner_result(
+        entrypoint.handle_productive_runner_result(
             result,
             stream=io.StringIO(),
             operations=operations,

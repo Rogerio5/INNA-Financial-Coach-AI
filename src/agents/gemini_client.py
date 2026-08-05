@@ -41,9 +41,7 @@ def get_supervisor_client() -> genai.Client:
         max_delay=3.0,
         exp_base=2.0,
         jitter=0.2,
-        http_status_codes=(
-            _TRANSIENT_STATUS_CODES
-        ),
+        http_status_codes=(_TRANSIENT_STATUS_CODES),
     )
 
     http_options = types.HttpOptions(

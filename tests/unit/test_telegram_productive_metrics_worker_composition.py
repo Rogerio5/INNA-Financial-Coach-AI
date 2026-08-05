@@ -14,10 +14,7 @@ from src.services.telegram_observability import (
 
 
 def test_runtime_owns_single_registry():
-    runtime = (
-        entrypoint
-        .create_production_telegram_metrics_runtime()
-    )
+    runtime = entrypoint.create_production_telegram_metrics_runtime()
 
     assert isinstance(
         runtime.registry,
@@ -40,13 +37,9 @@ def test_loader_receives_metrics_factory(
         metrics_factory=None,
         event_sink_factory=None,
     ):
-        captured[
-            "metrics_factory"
-        ] = metrics_factory
+        captured["metrics_factory"] = metrics_factory
 
-        captured[
-            "event_sink_factory"
-        ] = event_sink_factory
+        captured["event_sink_factory"] = event_sink_factory
 
         return processor
 
@@ -56,28 +49,18 @@ def test_loader_receives_metrics_factory(
         fake_loader,
     )
 
-    runtime = (
-        entrypoint
-        .create_production_telegram_metrics_runtime()
-    )
+    runtime = entrypoint.create_production_telegram_metrics_runtime()
 
-    result = (
-        entrypoint
-        ._load_productive_telegram_processor(
-            stderr=io.StringIO(),
-            metrics_runtime=runtime,
-        )
+    result = entrypoint._load_productive_telegram_processor(
+        stderr=io.StringIO(),
+        metrics_runtime=runtime,
     )
 
     assert result is processor
 
-    assert callable(
-        captured["metrics_factory"]
-    )
+    assert callable(captured["metrics_factory"])
 
-    metrics = captured[
-        "metrics_factory"
-    ]()
+    metrics = captured["metrics_factory"]()
 
     assert isinstance(
         metrics,
@@ -97,9 +80,7 @@ def test_metrics_factory_uses_same_registry(
     ):
         del event_sink_factory
 
-        captured[
-            "metrics"
-        ] = metrics_factory()
+        captured["metrics"] = metrics_factory()
 
         return MagicMock()
 
@@ -109,16 +90,12 @@ def test_metrics_factory_uses_same_registry(
         fake_loader,
     )
 
-    runtime = (
-        entrypoint
-        .create_production_telegram_metrics_runtime()
-    )
+    runtime = entrypoint.create_production_telegram_metrics_runtime()
 
-    entrypoint\
-        ._load_productive_telegram_processor(
-            stderr=io.StringIO(),
-            metrics_runtime=runtime,
-        )
+    entrypoint._load_productive_telegram_processor(
+        stderr=io.StringIO(),
+        metrics_runtime=runtime,
+    )
 
     metrics = captured["metrics"]
 
@@ -135,16 +112,9 @@ def test_metrics_factory_uses_same_registry(
 
     snapshot = runtime.registry.snapshot()
 
-    assert (
-        "inna_telegram_operations_total"
-        in snapshot.counters
-    )
+    assert "inna_telegram_operations_total" in snapshot.counters
 
-    total = sum(
-        snapshot.counters[
-            "inna_telegram_operations_total"
-        ].values()
-    )
+    total = sum(snapshot.counters["inna_telegram_operations_total"].values())
 
     assert total == 1.0
 
@@ -160,11 +130,8 @@ def test_loader_preserves_legacy_no_argument_mock(
         lambda: processor,
     )
 
-    result = (
-        entrypoint
-        ._load_productive_telegram_processor(
-            stderr=io.StringIO(),
-        )
+    result = entrypoint._load_productive_telegram_processor(
+        stderr=io.StringIO(),
     )
 
     assert result is processor
@@ -181,24 +148,14 @@ def test_processor_keeps_runtime_reference(
         lambda **kwargs: processor,
     )
 
-    runtime = (
-        entrypoint
-        .create_production_telegram_metrics_runtime()
+    runtime = entrypoint.create_production_telegram_metrics_runtime()
+
+    result = entrypoint._load_productive_telegram_processor(
+        stderr=io.StringIO(),
+        metrics_runtime=runtime,
     )
 
-    result = (
-        entrypoint
-        ._load_productive_telegram_processor(
-            stderr=io.StringIO(),
-            metrics_runtime=runtime,
-        )
-    )
-
-    assert (
-        result
-        ._telegram_productive_metrics_runtime
-        is runtime
-    )
+    assert result._telegram_productive_metrics_runtime is runtime
 
 
 def test_main_creates_only_one_runtime(
@@ -209,34 +166,23 @@ def test_main_creates_only_one_runtime(
 
     runtime = MagicMock()
 
-    create_runtime = MagicMock(
-        return_value=runtime
-    )
+    create_runtime = MagicMock(return_value=runtime)
 
     monkeypatch.setattr(
         entrypoint,
-        (
-            "create_production_telegram_"
-            "metrics_runtime"
-        ),
+        ("create_production_telegram_metrics_runtime"),
         create_runtime,
     )
 
     monkeypatch.setattr(
         entrypoint,
         "load_worker_config_from_env",
-        lambda: (
-            entrypoint
-            .TelegramUpdateWorkerConfig()
-        ),
+        lambda: entrypoint.TelegramUpdateWorkerConfig(),
     )
 
     monkeypatch.setattr(
         entrypoint,
-        (
-            "load_telegram_update_"
-            "keyring_from_env"
-        ),
+        ("load_telegram_update_keyring_from_env"),
         lambda: object(),
     )
 
@@ -249,22 +195,15 @@ def test_main_creates_only_one_runtime(
         stderr,
         metrics_runtime,
     ):
-        captured[
-            "stderr"
-        ] = stderr
+        captured["stderr"] = stderr
 
-        captured[
-            "runtime"
-        ] = metrics_runtime
+        captured["runtime"] = metrics_runtime
 
         return processor
 
     monkeypatch.setattr(
         entrypoint,
-        (
-            "_load_productive_telegram_"
-            "processor"
-        ),
+        ("_load_productive_telegram_processor"),
         fake_productive_loader,
     )
 
@@ -289,9 +228,7 @@ def test_main_creates_only_one_runtime(
     monkeypatch.setattr(
         entrypoint,
         "run_telegram_update_worker",
-        MagicMock(
-            return_value=summary
-        ),
+        MagicMock(return_value=summary),
     )
 
     exit_code = entrypoint.main(
@@ -303,12 +240,8 @@ def test_main_creates_only_one_runtime(
         stderr=stderr,
     )
 
-    assert exit_code == (
-        entrypoint.EXIT_OK
-    )
+    assert exit_code == (entrypoint.EXIT_OK)
 
     create_runtime.assert_called_once_with()
 
-    assert captured[
-        "runtime"
-    ] is runtime
+    assert captured["runtime"] is runtime

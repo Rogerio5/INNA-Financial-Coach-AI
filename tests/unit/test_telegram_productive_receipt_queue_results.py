@@ -80,9 +80,7 @@ def result(
             result(
                 decision="ownership_lost",
                 stage="complete",
-                error_code=(
-                    "telegram.completion_ownership_lost"
-                ),
+                error_code=("telegram.completion_ownership_lost"),
             ),
             (
                 "released",
@@ -95,9 +93,7 @@ def result(
                 decision="consistency_error",
                 stage="claim",
                 update_id=None,
-                error_code=(
-                    "telegram.claim_inconsistent"
-                ),
+                error_code=("telegram.claim_inconsistent"),
             ),
             (
                 "claimed",
@@ -111,13 +107,7 @@ def test_receipt_mapping(
     runner_result,
     expected,
 ):
-    assert (
-        entrypoint
-        ._productive_receipt_for_runner_result(
-            runner_result
-        )
-        == expected
-    )
+    assert entrypoint._productive_receipt_for_runner_result(runner_result) == expected
 
 
 @pytest.mark.parametrize(
@@ -155,9 +145,7 @@ def test_receipt_mapping(
             result(
                 decision="ownership_lost",
                 stage="complete",
-                error_code=(
-                    "telegram.completion_ownership_lost"
-                ),
+                error_code=("telegram.completion_ownership_lost"),
             ),
             "release",
             "conflict",
@@ -167,9 +155,7 @@ def test_receipt_mapping(
                 decision="unavailable",
                 stage="recovery",
                 update_id=None,
-                error_code=(
-                    "telegram.recovery_unavailable"
-                ),
+                error_code=("telegram.recovery_unavailable"),
             ),
             "recover",
             "error",
@@ -179,9 +165,7 @@ def test_receipt_mapping(
                 decision="unavailable",
                 stage="claim",
                 update_id=None,
-                error_code=(
-                    "telegram.claim_unavailable"
-                ),
+                error_code=("telegram.claim_unavailable"),
             ),
             "claim",
             "error",
@@ -193,24 +177,15 @@ def test_queue_mapping(
     expected_operation,
     expected_outcome,
 ):
-    mapped = (
-        entrypoint
-        ._productive_queue_for_runner_result(
-            runner_result
-        )
-    )
+    mapped = entrypoint._productive_queue_for_runner_result(runner_result)
 
     assert mapped is not None
 
     operation, outcome, _ = mapped
 
-    assert operation == (
-        expected_operation
-    )
+    assert operation == (expected_operation)
 
-    assert outcome == (
-        expected_outcome
-    )
+    assert outcome == (expected_outcome)
 
 
 def test_idle_does_not_record_receipt_or_queue():
@@ -220,33 +195,15 @@ def test_idle_does_not_record_receipt_or_queue():
         update_id=None,
     )
 
-    assert (
-        entrypoint
-        ._productive_receipt_for_runner_result(
-            idle
-        )
-        is None
-    )
+    assert entrypoint._productive_receipt_for_runner_result(idle) is None
 
-    assert (
-        entrypoint
-        ._productive_queue_for_runner_result(
-            idle
-        )
-        is None
-    )
+    assert entrypoint._productive_queue_for_runner_result(idle) is None
 
 
 def test_records_receipt_and_queue_once():
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     runner_result = result(
         decision="completed",
@@ -254,27 +211,17 @@ def test_records_receipt_and_queue_once():
         job_status="completed",
     )
 
-    entrypoint\
-        .record_productive_receipt_and_queue_result(
-            runner_result,
-            operations=operations,
-        )
+    entrypoint.record_productive_receipt_and_queue_result(
+        runner_result,
+        operations=operations,
+    )
 
     snapshot = registry.snapshot()
 
-    receipt_total = sum(
-        snapshot.counters[
-            "inna_telegram_receipts_total"
-        ].values()
-    )
+    receipt_total = sum(snapshot.counters["inna_telegram_receipts_total"].values())
 
     queue_total = sum(
-        snapshot.counters[
-            (
-                "inna_telegram_"
-                "queue_operations_total"
-            )
-        ].values()
+        snapshot.counters[("inna_telegram_queue_operations_total")].values()
     )
 
     assert receipt_total == 1.0
@@ -282,100 +229,62 @@ def test_records_receipt_and_queue_once():
 
 
 def test_dynamic_error_code_is_not_exported():
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     runner_result = result(
         decision="unavailable",
         stage="failure",
-        error_code=(
-            "private-user-financial-data"
-        ),
+        error_code=("private-user-financial-data"),
     )
 
-    entrypoint\
-        .record_productive_receipt_and_queue_result(
-            runner_result,
-            operations=operations,
-        )
-
-    rendered = repr(
-        registry.snapshot()
+    entrypoint.record_productive_receipt_and_queue_result(
+        runner_result,
+        operations=operations,
     )
 
-    assert (
-        "private-user-financial-data"
-        not in rendered
-    )
+    rendered = repr(registry.snapshot())
+
+    assert "private-user-financial-data" not in rendered
 
     assert "unknown" in rendered
 
 
 def test_idempotent_replay_has_bounded_series():
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     for replay in (
         False,
         True,
     ):
-        entrypoint\
-            .record_productive_receipt_and_queue_result(
-                result(
-                    decision="completed",
-                    stage="complete",
-                    idempotent_replay=replay,
-                ),
-                operations=operations,
-            )
+        entrypoint.record_productive_receipt_and_queue_result(
+            result(
+                decision="completed",
+                stage="complete",
+                idempotent_replay=replay,
+            ),
+            operations=operations,
+        )
 
     snapshot = registry.snapshot()
 
-    receipts = snapshot.counters[
-        "inna_telegram_receipts_total"
-    ]
+    receipts = snapshot.counters["inna_telegram_receipts_total"]
 
-    queue = snapshot.counters[
-        (
-            "inna_telegram_"
-            "queue_operations_total"
-        )
-    ]
+    queue = snapshot.counters[("inna_telegram_queue_operations_total")]
 
     assert len(receipts) == 2
     assert len(queue) == 2
 
-    assert sum(
-        receipts.values()
-    ) == 2.0
+    assert sum(receipts.values()) == 2.0
 
-    assert sum(
-        queue.values()
-    ) == 2.0
+    assert sum(queue.values()) == 2.0
 
-    receipt_outcomes = {
-        dict(labels)["outcome"]
-        for labels in receipts
-    }
+    receipt_outcomes = {dict(labels)["outcome"] for labels in receipts}
 
-    queue_outcomes = {
-        dict(labels)["outcome"]
-        for labels in queue
-    }
+    queue_outcomes = {dict(labels)["outcome"] for labels in queue}
 
     assert receipt_outcomes == {
         "success",

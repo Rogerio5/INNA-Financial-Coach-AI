@@ -28,9 +28,7 @@ class FakeConnection:
 
     def execute(self, *args, **kwargs):
         if not self.results:
-            raise AssertionError(
-                "Não existe resultado falso configurado."
-            )
+            raise AssertionError("Não existe resultado falso configurado.")
 
         return self.results.pop(0)
 
@@ -116,21 +114,15 @@ def test_carregar_eventos_resend(monkeypatch):
         lambda: engine,
     )
 
-    resultado = (
-        resend_webhook.carregar_eventos_resend(
-            limite=100,
-            horas=24,
-        )
+    resultado = resend_webhook.carregar_eventos_resend(
+        limite=100,
+        horas=24,
     )
 
     assert resultado["ok"] is True
     assert resultado["total"] == 2
-    assert resultado["eventos"][0][
-        "evento_tipo"
-    ] == "email.sent"
-    assert resultado["eventos"][1][
-        "evento_tipo"
-    ] == "email.delivered"
+    assert resultado["eventos"][0]["evento_tipo"] == "email.sent"
+    assert resultado["eventos"][1]["evento_tipo"] == "email.delivered"
     assert engine.disposed is True
 
 
@@ -148,9 +140,7 @@ def test_carregar_saude_integracoes(monkeypatch):
         "ultimo_evento_tipo": "email.delivered",
         "ultimo_evento_recebido_em": agora,
         "ultimo_evento_processado": True,
-        "ultimo_evento_resultado": (
-            "notificacao_atualizada"
-        ),
+        "ultimo_evento_resultado": ("notificacao_atualizada"),
         "ultimo_email_entregue_em": agora,
         "emails_entregues": 1,
         "emails_com_falha": 0,
@@ -195,18 +185,13 @@ def test_carregar_saude_integracoes(monkeypatch):
         lambda: engine,
     )
 
-    resultado = (
-        resend_webhook.carregar_saude_integracoes()
-    )
+    resultado = resend_webhook.carregar_saude_integracoes()
 
     assert resultado["ok"] is True
     assert resultado["banco_conectado"] is True
     assert resultado["resend_configurado"] is True
     assert resultado["webhook_configurado"] is True
-    assert (
-        resultado["email_alertas_habilitado"]
-        is True
-    )
+    assert resultado["email_alertas_habilitado"] is True
     assert resultado["emails_entregues"] == 1
     assert resultado["eventos_webhook_24h"] == 2
     assert resultado["falhas_webhook_24h"] == 0
@@ -225,9 +210,7 @@ def test_reenvio_bloqueia_email_entregue(
         "tentativas": 1,
         "provider_message_id": "email_123",
         "codigo": "chamadas_lentas",
-        "titulo": (
-            "Chamadas de LLM com alta latência"
-        ),
+        "titulo": ("Chamadas de LLM com alta latência"),
         "descricao": "Descrição técnica.",
         "categoria": "performance",
         "severidade": "alta",
@@ -238,9 +221,7 @@ def test_reenvio_bloqueia_email_entregue(
         "modelo": None,
         "operacao": None,
         "recomendacao": "Verificar latência.",
-        "criado_em": datetime.now(
-            timezone.utc
-        ),
+        "criado_em": datetime.now(timezone.utc),
     }
 
     engine = FakeEngine(
@@ -272,11 +253,9 @@ def test_reenvio_bloqueia_email_entregue(
         lambda: engine,
     )
 
-    resultado = (
-        notifications.reenviar_notificacao_email(
-            notificacao_id=4,
-            max_tentativas=3,
-        )
+    resultado = notifications.reenviar_notificacao_email(
+        notificacao_id=4,
+        max_tentativas=3,
     )
 
     assert resultado["ok"] is False

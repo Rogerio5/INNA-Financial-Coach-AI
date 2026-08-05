@@ -26,13 +26,9 @@ def recovery_record(
         "status": status,
         "attempt_count": attempt_count,
         "max_attempts": max_attempts,
-        "receipt_attempt_count": (
-            receipt_attempt_count
-        ),
+        "receipt_attempt_count": (receipt_attempt_count),
         "payload_version": 1,
-        "last_error_code": (
-            worker.RECOVERY_ERROR_CODE
-        ),
+        "last_error_code": (worker.RECOVERY_ERROR_CODE),
         "payload_retained": True,
         "ownership_cleared": True,
         "completed_at_cleared": True,
@@ -52,21 +48,9 @@ def summary_row(
 
     return {
         "records": records,
-        "candidate_count": (
-            total
-            if candidate_count is None
-            else candidate_count
-        ),
-        "job_count": (
-            total
-            if job_count is None
-            else job_count
-        ),
-        "receipt_count": (
-            total
-            if receipt_count is None
-            else receipt_count
-        ),
+        "candidate_count": (total if candidate_count is None else candidate_count),
+        "job_count": (total if job_count is None else job_count),
+        "receipt_count": (total if receipt_count is None else receipt_count),
     }
 
 
@@ -154,12 +138,7 @@ def test_recovers_retry_and_dead_letter(
         summary_row(rows),
     )
 
-    batch = (
-        worker
-        .recover_expired_authenticated_telegram_update_jobs_atomic(
-            limit=50
-        )
-    )
+    batch = worker.recover_expired_authenticated_telegram_update_jobs_atomic(limit=50)
 
     assert batch.total == 2
     assert batch.retried == 1
@@ -177,10 +156,7 @@ def test_empty_recovery_is_valid(
         summary_row([]),
     )
 
-    batch = (
-        worker
-        .recover_expired_authenticated_telegram_update_jobs_atomic()
-    )
+    batch = worker.recover_expired_authenticated_telegram_update_jobs_atomic()
 
     assert batch.total == 0
     assert batch.records == ()
@@ -194,19 +170,10 @@ def test_limit_is_forwarded(
         summary_row([]),
     )
 
-    (
-        worker
-        .recover_expired_authenticated_telegram_update_jobs_atomic(
-            limit=25
-        )
-    )
+    (worker.recover_expired_authenticated_telegram_update_jobs_atomic(limit=25))
 
     business = [
-        item
-        for item in cursor.executions
-        if not str(
-            item[0]
-        ).startswith("SET LOCAL")
+        item for item in cursor.executions if not str(item[0]).startswith("SET LOCAL")
     ]
 
     assert business[0][1]["limit"] == 25
@@ -225,14 +192,8 @@ def test_mismatched_counts_roll_back(
         ),
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .recover_expired_authenticated_telegram_update_jobs_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.recover_expired_authenticated_telegram_update_jobs_atomic())
 
     assert tracker.rolled_back == 1
 
@@ -250,14 +211,8 @@ def test_record_count_mismatch_rolls_back(
         ),
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .recover_expired_authenticated_telegram_update_jobs_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.recover_expired_authenticated_telegram_update_jobs_atomic())
 
     assert tracker.rolled_back == 1
 
@@ -284,14 +239,8 @@ def test_incomplete_recovery_is_rejected(
         summary_row([row]),
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .recover_expired_authenticated_telegram_update_jobs_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.recover_expired_authenticated_telegram_update_jobs_atomic())
 
     assert tracker.rolled_back == 1
 
@@ -309,14 +258,8 @@ def test_receipt_attempt_cannot_trail_job(
         summary_row([row]),
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .recover_expired_authenticated_telegram_update_jobs_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.recover_expired_authenticated_telegram_update_jobs_atomic())
 
 
 def test_invalid_error_code_is_rejected(
@@ -324,23 +267,15 @@ def test_invalid_error_code_is_rejected(
 ):
     row = recovery_record()
 
-    row["last_error_code"] = (
-        "telegram.other_error"
-    )
+    row["last_error_code"] = "telegram.other_error"
 
     install_cursor(
         monkeypatch,
         summary_row([row]),
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .recover_expired_authenticated_telegram_update_jobs_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.recover_expired_authenticated_telegram_update_jobs_atomic())
 
 
 def test_database_error_is_sanitized(
@@ -348,10 +283,7 @@ def test_database_error_is_sanitized(
 ):
     @contextmanager
     def failing_cursor(**_kwargs):
-        raise RuntimeError(
-            "postgresql://user:"
-            "secret@host/database"
-        )
+        raise RuntimeError("postgresql://user:secret@host/database")
 
         yield
 
@@ -361,19 +293,10 @@ def test_database_error_is_sanitized(
         failing_cursor,
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerUnavailableError
-    ) as captured:
-        (
-            worker
-            .recover_expired_authenticated_telegram_update_jobs_atomic()
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerUnavailableError) as captured:
+        (worker.recover_expired_authenticated_telegram_update_jobs_atomic())
 
-    assert "secret" not in str(
-        captured.value
-    )
-
+    assert "secret" not in str(captured.value)
 
 
 def test_maximum_recovery_limit_is_accepted(
@@ -384,14 +307,8 @@ def test_maximum_recovery_limit_is_accepted(
         summary_row([]),
     )
 
-    batch = (
-        worker
-        .recover_expired_authenticated_telegram_update_jobs_atomic(
-            limit=(
-                job_repository
-                .MAX_RECOVERY_BATCH
-            )
-        )
+    batch = worker.recover_expired_authenticated_telegram_update_jobs_atomic(
+        limit=(job_repository.MAX_RECOVERY_BATCH)
     )
 
     assert batch.total == 0
@@ -399,19 +316,13 @@ def test_maximum_recovery_limit_is_accepted(
     assert tracker.rolled_back == 0
 
     business = [
-        item
-        for item in cursor.executions
-        if not str(
-            item[0]
-        ).startswith("SET LOCAL")
+        item for item in cursor.executions if not str(item[0]).startswith("SET LOCAL")
     ]
 
     assert len(business) == 1
 
-    assert (
-        business[0][1]["limit"]
-        == job_repository.MAX_RECOVERY_BATCH
-    )
+    assert business[0][1]["limit"] == job_repository.MAX_RECOVERY_BATCH
+
 
 @pytest.mark.parametrize(
     "value",
@@ -425,47 +336,21 @@ def test_maximum_recovery_limit_is_accepted(
 def test_invalid_limit_is_rejected(
     value,
 ):
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerValidationError
-    ):
-        (
-            worker
-            .recover_expired_authenticated_telegram_update_jobs_atomic(
-                limit=value
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerValidationError):
+        (worker.recover_expired_authenticated_telegram_update_jobs_atomic(limit=value))
 
 
 def test_sql_locks_receipt_first():
-    sql = (
-        worker
-        .SQL_RECOVER_EXPIRED_AUTHENTICATED_JOBS
-    )
+    sql = worker.SQL_RECOVER_EXPIRED_AUTHENTICATED_JOBS
 
-    assert (
-        "FOR UPDATE OF receipt SKIP LOCKED"
-        in sql
-    )
+    assert "FOR UPDATE OF receipt SKIP LOCKED" in sql
 
 
 def test_sql_updates_job_and_receipt():
-    sql = (
-        worker
-        .SQL_RECOVER_EXPIRED_AUTHENTICATED_JOBS
-    )
+    sql = worker.SQL_RECOVER_EXPIRED_AUTHENTICATED_JOBS
 
-    assert (
-        "UPDATE public.telegram_update_jobs"
-        in sql
-    )
+    assert "UPDATE public.telegram_update_jobs" in sql
 
-    assert (
-        "public.telegram_update_receipts"
-        in sql
-    )
+    assert "public.telegram_update_receipts" in sql
 
-    assert (
-        "receipt.claim_token ="
-        in sql
-    )
+    assert "receipt.claim_token =" in sql

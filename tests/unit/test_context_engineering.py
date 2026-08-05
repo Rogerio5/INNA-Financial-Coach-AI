@@ -22,13 +22,8 @@ from src.context_engineering.tool_selector import (
 
 
 def test_privacy_filter_masks_email_and_cpf():
-    sanitized, report = (
-        sanitize_sensitive_text(
-            (
-                "Meu e-mail é teste@email.com "
-                "e meu CPF é 123.456.789-00."
-            )
-        )
+    sanitized, report = sanitize_sensitive_text(
+        ("Meu e-mail é teste@email.com e meu CPF é 123.456.789-00.")
     )
 
     assert "teste@email.com" not in sanitized
@@ -39,9 +34,7 @@ def test_privacy_filter_masks_email_and_cpf():
 
 
 def test_estimate_tokens_returns_positive_value():
-    assert estimate_tokens(
-        "Reserva financeira"
-    ) > 0
+    assert estimate_tokens("Reserva financeira") > 0
 
 
 def test_context_budget_detects_overflow():
@@ -89,10 +82,7 @@ def test_history_selector_avoids_current_message():
     )
 
     assert len(selected) == 2
-    assert (
-        selected[-1].content
-        == "Resposta anterior"
-    )
+    assert selected[-1].content == "Resposta anterior"
 
 
 def test_history_selector_keeps_recent_messages():
@@ -110,10 +100,7 @@ def test_history_selector_keeps_recent_messages():
     )
 
     assert len(selected) == 5
-    assert (
-        selected[0].content
-        == "Mensagem 15"
-    )
+    assert selected[0].content == "Mensagem 15"
 
 
 def test_tool_selector_removes_unknown_fields():
@@ -159,9 +146,7 @@ def test_extract_unique_sources():
 
 def test_build_agent_context_complete():
     context = build_agent_context(
-        current_message=(
-            "Como criar uma reserva?"
-        ),
+        current_message=("Como criar uma reserva?"),
         conversation_history=[
             {
                 "role": "user",
@@ -173,14 +158,10 @@ def test_build_agent_context_complete():
             },
             {
                 "role": "user",
-                "content": (
-                    "Como criar uma reserva?"
-                ),
+                "content": ("Como criar uma reserva?"),
             },
         ],
-        conversation_summary=(
-            "Usuário quer organizar o orçamento."
-        ),
+        conversation_summary=("Usuário quer organizar o orçamento."),
         financial_profile={
             "monthly_income": 3000,
             "fixed_expenses": 2000,
@@ -190,62 +171,34 @@ def test_build_agent_context_complete():
             {
                 "tool": "consultar_rag_inna",
                 "ok": True,
-                "sources": [
-                    "Faq Financeiro Inna"
-                ],
+                "sources": ["Faq Financeiro Inna"],
             }
         ],
         language="pt",
         currency="BRL",
     )
 
-    assert (
-        context.current_message
-        == "Como criar uma reserva?"
-    )
+    assert context.current_message == "Como criar uma reserva?"
 
-    assert len(
-        context.selected_history
-    ) == 2
+    assert len(context.selected_history) == 2
 
-    assert (
-        context.financial_profile[
-            "monthly_income"
-        ]
-        == 3000
-    )
+    assert context.financial_profile["monthly_income"] == 3000
 
-    assert (
-        "password"
-        not in context.financial_profile
-    )
+    assert "password" not in context.financial_profile
 
-    assert context.sources == [
-        "Faq Financeiro Inna"
-    ]
+    assert context.sources == ["Faq Financeiro Inna"]
 
-    assert (
-        context.metrics.budget
-        .estimated_input_tokens
-        > 0
-    )
+    assert context.metrics.budget.estimated_input_tokens > 0
 
 
 def test_render_context_for_llm():
     context = build_agent_context(
-        current_message=(
-            "Como criar uma reserva?"
-        ),
+        current_message=("Como criar uma reserva?"),
         conversation_history=[],
     )
 
-    rendered = render_context_for_llm(
-        context
-    )
+    rendered = render_context_for_llm(context)
 
     assert "## INSTRUÇÕES" in rendered
     assert "## SOLICITAÇÃO ATUAL" in rendered
-    assert (
-        "Como criar uma reserva?"
-        in rendered
-    )
+    assert "Como criar uma reserva?" in rendered

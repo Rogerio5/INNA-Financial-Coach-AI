@@ -56,9 +56,7 @@ def test_grafo_acumula_historico_com_checkpointer():
         config=config,
     )
 
-    assert len(
-        primeiro_resultado["conversation_history"]
-    ) == 2
+    assert len(primeiro_resultado["conversation_history"]) == 2
 
     segundo_estado = _criar_estado_inicial(
         "Quero gerar um relatório em PDF.",
@@ -73,9 +71,7 @@ def test_grafo_acumula_historico_com_checkpointer():
         config=config,
     )
 
-    historico = segundo_resultado[
-        "conversation_history"
-    ]
+    historico = segundo_resultado["conversation_history"]
 
     assert len(historico) == 4
 
@@ -126,13 +122,9 @@ def test_threads_diferentes_nao_compartilham_historico():
         },
     )
 
-    assert len(
-        resultado_a["conversation_history"]
-    ) == 2
+    assert len(resultado_a["conversation_history"]) == 2
 
-    assert len(
-        resultado_b["conversation_history"]
-    ) == 2
+    assert len(resultado_b["conversation_history"]) == 2
 
 
 def test_reducer_nao_duplica_historico_completo():

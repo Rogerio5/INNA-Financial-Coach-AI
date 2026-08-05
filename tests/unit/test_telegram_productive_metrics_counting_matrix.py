@@ -50,9 +50,7 @@ def counter_total(
         {},
     )
 
-    return sum(
-        values.values()
-    )
+    return sum(values.values())
 
 
 @pytest.mark.parametrize(
@@ -106,9 +104,7 @@ def counter_total(
                 decision="retry_scheduled",
                 stage="failure",
                 job_status="queued",
-                error_code=(
-                    "telegram.processing_failed"
-                ),
+                error_code=("telegram.processing_failed"),
             ),
             ExpectedTotals(
                 cycles=1.0,
@@ -122,9 +118,7 @@ def counter_total(
                 decision="dead_lettered",
                 stage="failure",
                 job_status="dead_letter",
-                error_code=(
-                    "telegram.processing_failed"
-                ),
+                error_code=("telegram.processing_failed"),
             ),
             ExpectedTotals(
                 cycles=1.0,
@@ -137,9 +131,7 @@ def counter_total(
             result(
                 decision="ownership_lost",
                 stage="complete",
-                error_code=(
-                    "telegram.completion_ownership_lost"
-                ),
+                error_code=("telegram.completion_ownership_lost"),
             ),
             ExpectedTotals(
                 cycles=1.0,
@@ -153,9 +145,7 @@ def counter_total(
                 decision="unavailable",
                 stage="claim",
                 update_id=None,
-                error_code=(
-                    "telegram.claim_unavailable"
-                ),
+                error_code=("telegram.claim_unavailable"),
             ),
             ExpectedTotals(
                 cycles=1.0,
@@ -169,9 +159,7 @@ def counter_total(
                 decision="consistency_error",
                 stage="claim",
                 update_id=None,
-                error_code=(
-                    "telegram.claim_inconsistent"
-                ),
+                error_code=("telegram.claim_inconsistent"),
             ),
             ExpectedTotals(
                 cycles=1.0,
@@ -185,9 +173,7 @@ def counter_total(
                 decision="unavailable",
                 stage="recovery",
                 update_id=None,
-                error_code=(
-                    "telegram.recovery_unavailable"
-                ),
+                error_code=("telegram.recovery_unavailable"),
             ),
             ExpectedTotals(
                 cycles=1.0,
@@ -202,74 +188,63 @@ def test_each_callback_has_expected_counts(
     runner_result,
     expected,
 ):
-    registry = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    registry = InMemoryTelegramProductiveMetrics()
 
-    operations = (
-        TelegramProductiveOperationsRecorder(
-            registry
-        )
-    )
+    operations = TelegramProductiveOperationsRecorder(registry)
 
     entrypoint.record_productive_runner_result(
         runner_result,
         operations=operations,
     )
 
-    entrypoint\
-        .record_productive_receipt_and_queue_result(
-            runner_result,
-            operations=operations,
-        )
+    entrypoint.record_productive_receipt_and_queue_result(
+        runner_result,
+        operations=operations,
+    )
 
     snapshot = registry.snapshot()
 
-    assert counter_total(
-        snapshot,
-        "inna_telegram_worker_cycles_total",
-    ) == expected.cycles
+    assert (
+        counter_total(
+            snapshot,
+            "inna_telegram_worker_cycles_total",
+        )
+        == expected.cycles
+    )
 
-    assert counter_total(
-        snapshot,
-        "inna_telegram_worker_updates_total",
-    ) == expected.updates
+    assert (
+        counter_total(
+            snapshot,
+            "inna_telegram_worker_updates_total",
+        )
+        == expected.updates
+    )
 
-    assert counter_total(
-        snapshot,
-        "inna_telegram_receipts_total",
-    ) == expected.receipts
+    assert (
+        counter_total(
+            snapshot,
+            "inna_telegram_receipts_total",
+        )
+        == expected.receipts
+    )
 
-    assert counter_total(
-        snapshot,
-        "inna_telegram_queue_operations_total",
-    ) == expected.queue
+    assert (
+        counter_total(
+            snapshot,
+            "inna_telegram_queue_operations_total",
+        )
+        == expected.queue
+    )
 
 
 def test_callback_does_not_call_same_method_twice(
     monkeypatch,
 ):
     operations = SimpleNamespace(
-        record_worker_cycle=(
-            __import__(
-                "unittest.mock"
-            ).mock.MagicMock()
-        ),
-        record_worker_update=(
-            __import__(
-                "unittest.mock"
-            ).mock.MagicMock()
-        ),
-        record_receipt=(
-            __import__(
-                "unittest.mock"
-            ).mock.MagicMock()
-        ),
-        record_queue_operation=(
-            __import__(
-                "unittest.mock"
-            ).mock.MagicMock()
-        ),
+        record_worker_cycle=(__import__("unittest.mock").mock.MagicMock()),
+        record_worker_update=(__import__("unittest.mock").mock.MagicMock()),
+        record_receipt=(__import__("unittest.mock").mock.MagicMock()),
+        record_queue_operation=(__import__("unittest.mock").mock.MagicMock()),
     )
 
     monkeypatch.setattr(
@@ -288,30 +263,10 @@ def test_callback_does_not_call_same_method_twice(
         operations=operations,
     )
 
-    assert (
-        operations
-        .record_worker_cycle
-        .call_count
-        == 1
-    )
+    assert operations.record_worker_cycle.call_count == 1
 
-    assert (
-        operations
-        .record_worker_update
-        .call_count
-        == 1
-    )
+    assert operations.record_worker_update.call_count == 1
 
-    assert (
-        operations
-        .record_receipt
-        .call_count
-        == 1
-    )
+    assert operations.record_receipt.call_count == 1
 
-    assert (
-        operations
-        .record_queue_operation
-        .call_count
-        == 1
-    )
+    assert operations.record_queue_operation.call_count == 1

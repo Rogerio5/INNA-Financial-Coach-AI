@@ -643,21 +643,15 @@ def test_evaluation_case_normalizes_expected_terms() -> None:
             "garantia de lucro ",
             "",
         ),
-        expected_trace_terms=(
-            "agent:financial_agent ",
-        ),
+        expected_trace_terms=("agent:financial_agent ",),
     )
 
     assert case.expected_terms == (
         "reserva",
         "emergência",
     )
-    assert case.forbidden_terms == (
-        "garantia de lucro",
-    )
-    assert case.expected_trace_terms == (
-        "agent:financial_agent",
-    )
+    assert case.forbidden_terms == ("garantia de lucro",)
+    assert case.expected_trace_terms == ("agent:financial_agent",)
 
 
 # ============================================================
@@ -896,9 +890,7 @@ def test_retrieval_document_normalizes_fields() -> None:
         rank=1,
     )
 
-    assert document.content == (
-        "Reserva de emergência é importante."
-    )
+    assert document.content == ("Reserva de emergência é importante.")
     assert document.document_id == "doc-001"
     assert document.source == "manual-financeiro"
     assert document.content_hash == "abc123"
@@ -1113,9 +1105,7 @@ def test_evaluation_result_exposes_derived_properties() -> None:
     )
     assert len(result.successful_tools) == 1
     assert len(result.failed_tools) == 1
-    assert result.retrieval_context == (
-        "Reserva de emergência é importante.",
-    )
+    assert result.retrieval_context == ("Reserva de emergência é importante.",)
     assert result.passed_metrics == 1
     assert result.failed_metrics == 1
     assert result.metric_errors == 0
@@ -1152,9 +1142,7 @@ def test_evaluation_result_detects_runtime_errors() -> None:
         case_id="runtime-error",
         input_text="Pergunta",
         actual_output="Resposta",
-        errors=(
-            "tool_timeout",
-        ),
+        errors=("tool_timeout",),
     )
 
     assert result.has_runtime_errors is True

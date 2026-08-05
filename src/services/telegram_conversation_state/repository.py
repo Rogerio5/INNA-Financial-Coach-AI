@@ -194,9 +194,7 @@ RETURNING
 def _serialize_state(
     state: Mapping[str, Any],
 ) -> str:
-    normalized = normalize_telegram_state(
-        state
-    )
+    normalized = normalize_telegram_state(state)
 
     try:
         return json.dumps(
@@ -216,9 +214,7 @@ def _serialize_state(
         OverflowError,
         RecursionError,
     ):
-        raise TelegramConversationStateValidationError(
-            "state inválido."
-        ) from None
+        raise TelegramConversationStateValidationError("state inválido.") from None
 
 
 def _deserialize_state(
@@ -240,11 +236,7 @@ def _deserialize_state(
         ),
     ):
         try:
-            candidate = bytes(
-                candidate
-            ).decode(
-                "utf-8"
-            )
+            candidate = bytes(candidate).decode("utf-8")
 
         except UnicodeDecodeError:
             raise TelegramConversationStateConsistencyError(
@@ -256,9 +248,7 @@ def _deserialize_state(
         str,
     ):
         try:
-            candidate = json.loads(
-                candidate
-            )
+            candidate = json.loads(candidate)
 
         except (
             TypeError,
@@ -270,9 +260,7 @@ def _deserialize_state(
             ) from None
 
     try:
-        return normalize_telegram_state(
-            candidate
-        )
+        return normalize_telegram_state(candidate)
 
     except TelegramConversationStateValidationError:
         raise TelegramConversationStateConsistencyError(
@@ -295,37 +283,21 @@ def _record_from_row(
         )
 
     try:
-        telegram_user_id = row[
-            "telegram_user_id"
-        ]
+        telegram_user_id = row["telegram_user_id"]
 
-        chat_id = row[
-            "chat_id"
-        ]
+        chat_id = row["chat_id"]
 
-        state = _deserialize_state(
-            row["state"]
-        )
+        state = _deserialize_state(row["state"])
 
-        language = row[
-            "language"
-        ]
+        language = row["language"]
 
-        state_version = row[
-            "state_version"
-        ]
+        state_version = row["state_version"]
 
-        expires_at = row[
-            "expires_at"
-        ]
+        expires_at = row["expires_at"]
 
-        created_at = row[
-            "created_at"
-        ]
+        created_at = row["created_at"]
 
-        updated_at = row[
-            "updated_at"
-        ]
+        updated_at = row["updated_at"]
 
     except (
         KeyError,
@@ -337,9 +309,7 @@ def _record_from_row(
 
     try:
         record = TelegramConversationState(
-            telegram_user_id=(
-                telegram_user_id
-            ),
+            telegram_user_id=(telegram_user_id),
             chat_id=chat_id,
             state=state,
             language=language,
@@ -355,20 +325,14 @@ def _record_from_row(
         ) from None
 
     if (
-        expected_telegram_user_id
-        is not None
-        and record.telegram_user_id
-        != expected_telegram_user_id
+        expected_telegram_user_id is not None
+        and record.telegram_user_id != expected_telegram_user_id
     ):
         raise TelegramConversationStateConsistencyError(
             "Identidade persistida inconsistente."
         )
 
-    if (
-        expected_chat_id is not None
-        and record.chat_id
-        != expected_chat_id
-    ):
+    if expected_chat_id is not None and record.chat_id != expected_chat_id:
         raise TelegramConversationStateConsistencyError(
             "Escopo persistido inconsistente."
         )
@@ -426,9 +390,7 @@ def load_telegram_conversation_state(
             dict_cursor=True,
             commit_automatico=False,
         ) as cursor:
-            connection = _require_connection(
-                cursor
-            )
+            connection = _require_connection(cursor)
 
             try:
                 cursor.execute(
@@ -444,15 +406,11 @@ def load_telegram_conversation_state(
                 connection.rollback()
 
             except TelegramConversationStateError:
-                _safe_rollback(
-                    connection
-                )
+                _safe_rollback(connection)
                 raise
 
             except Exception:
-                _safe_rollback(
-                    connection
-                )
+                _safe_rollback(connection)
                 _raise_unavailable()
 
     except TelegramConversationStateError:
@@ -466,12 +424,8 @@ def load_telegram_conversation_state(
 
     return _record_from_row(
         row,
-        expected_telegram_user_id=(
-            normalized_user_id
-        ),
-        expected_chat_id=(
-            normalized_chat_id
-        ),
+        expected_telegram_user_id=(normalized_user_id),
+        expected_chat_id=(normalized_chat_id),
     )
 
 
@@ -480,9 +434,7 @@ def create_telegram_conversation_state(
     chat_id: int,
     state: Mapping[str, Any],
     language: str | None = None,
-    ttl_seconds: int = (
-        DEFAULT_STATE_TTL_SECONDS
-    ),
+    ttl_seconds: int = (DEFAULT_STATE_TTL_SECONDS),
 ) -> TelegramConversationState:
     (
         normalized_user_id,
@@ -492,30 +444,18 @@ def create_telegram_conversation_state(
         chat_id,
     )
 
-    serialized_state = _serialize_state(
-        state
-    )
+    serialized_state = _serialize_state(state)
 
-    normalized_language = (
-        normalize_telegram_language(
-            language
-        )
-    )
+    normalized_language = normalize_telegram_language(language)
 
-    normalized_ttl = (
-        validate_state_ttl_seconds(
-            ttl_seconds
-        )
-    )
+    normalized_ttl = validate_state_ttl_seconds(ttl_seconds)
 
     try:
         with cursor_postgres(
             dict_cursor=True,
             commit_automatico=False,
         ) as cursor:
-            connection = _require_connection(
-                cursor
-            )
+            connection = _require_connection(cursor)
 
             try:
                 cursor.execute(
@@ -540,12 +480,8 @@ def create_telegram_conversation_state(
 
                 record = _record_from_row(
                     row,
-                    expected_telegram_user_id=(
-                        normalized_user_id
-                    ),
-                    expected_chat_id=(
-                        normalized_chat_id
-                    ),
+                    expected_telegram_user_id=(normalized_user_id),
+                    expected_chat_id=(normalized_chat_id),
                 )
 
                 connection.commit()
@@ -553,15 +489,11 @@ def create_telegram_conversation_state(
                 return record
 
             except TelegramConversationStateError:
-                _safe_rollback(
-                    connection
-                )
+                _safe_rollback(connection)
                 raise
 
             except Exception:
-                _safe_rollback(
-                    connection
-                )
+                _safe_rollback(connection)
                 _raise_unavailable()
 
     except TelegramConversationStateError:
@@ -577,9 +509,7 @@ def save_telegram_conversation_state(
     state: Mapping[str, Any],
     language: str | None,
     expected_version: int,
-    ttl_seconds: int = (
-        DEFAULT_STATE_TTL_SECONDS
-    ),
+    ttl_seconds: int = (DEFAULT_STATE_TTL_SECONDS),
 ) -> TelegramConversationState:
     (
         normalized_user_id,
@@ -589,36 +519,20 @@ def save_telegram_conversation_state(
         chat_id,
     )
 
-    serialized_state = _serialize_state(
-        state
-    )
+    serialized_state = _serialize_state(state)
 
-    normalized_language = (
-        normalize_telegram_language(
-            language
-        )
-    )
+    normalized_language = normalize_telegram_language(language)
 
-    normalized_version = (
-        validate_expected_version(
-            expected_version
-        )
-    )
+    normalized_version = validate_expected_version(expected_version)
 
-    normalized_ttl = (
-        validate_state_ttl_seconds(
-            ttl_seconds
-        )
-    )
+    normalized_ttl = validate_state_ttl_seconds(ttl_seconds)
 
     try:
         with cursor_postgres(
             dict_cursor=True,
             commit_automatico=False,
         ) as cursor:
-            connection = _require_connection(
-                cursor
-            )
+            connection = _require_connection(cursor)
 
             try:
                 cursor.execute(
@@ -639,18 +553,13 @@ def save_telegram_conversation_state(
                     connection.rollback()
 
                     raise TelegramConversationStateConflictError(
-                        "Estado ausente, expirado "
-                        "ou versão divergente."
+                        "Estado ausente, expirado ou versão divergente."
                     )
 
                 record = _record_from_row(
                     row,
-                    expected_telegram_user_id=(
-                        normalized_user_id
-                    ),
-                    expected_chat_id=(
-                        normalized_chat_id
-                    ),
+                    expected_telegram_user_id=(normalized_user_id),
+                    expected_chat_id=(normalized_chat_id),
                 )
 
                 connection.commit()
@@ -658,15 +567,11 @@ def save_telegram_conversation_state(
                 return record
 
             except TelegramConversationStateError:
-                _safe_rollback(
-                    connection
-                )
+                _safe_rollback(connection)
                 raise
 
             except Exception:
-                _safe_rollback(
-                    connection
-                )
+                _safe_rollback(connection)
                 _raise_unavailable()
 
     except TelegramConversationStateError:
@@ -693,9 +598,7 @@ def delete_telegram_conversation_state(
             dict_cursor=True,
             commit_automatico=False,
         ) as cursor:
-            connection = _require_connection(
-                cursor
-            )
+            connection = _require_connection(cursor)
 
             try:
                 cursor.execute(
@@ -706,27 +609,18 @@ def delete_telegram_conversation_state(
                     ),
                 )
 
-                deleted_row = (
-                    cursor.fetchone()
-                )
+                deleted_row = cursor.fetchone()
 
                 connection.commit()
 
-                return (
-                    deleted_row
-                    is not None
-                )
+                return deleted_row is not None
 
             except TelegramConversationStateError:
-                _safe_rollback(
-                    connection
-                )
+                _safe_rollback(connection)
                 raise
 
             except Exception:
-                _safe_rollback(
-                    connection
-                )
+                _safe_rollback(connection)
                 _raise_unavailable()
 
     except TelegramConversationStateError:
@@ -739,49 +633,33 @@ def delete_telegram_conversation_state(
 def delete_expired_telegram_conversation_states(
     limit: int = 100,
 ) -> int:
-    normalized_limit = (
-        validate_cleanup_limit(
-            limit
-        )
-    )
+    normalized_limit = validate_cleanup_limit(limit)
 
     try:
         with cursor_postgres(
             dict_cursor=True,
             commit_automatico=False,
         ) as cursor:
-            connection = _require_connection(
-                cursor
-            )
+            connection = _require_connection(cursor)
 
             try:
                 cursor.execute(
                     _DELETE_EXPIRED_STATES_SQL,
-                    (
-                        normalized_limit,
-                    ),
+                    (normalized_limit,),
                 )
 
-                deleted_rows = list(
-                    cursor.fetchall()
-                )
+                deleted_rows = list(cursor.fetchall())
 
                 connection.commit()
 
-                return len(
-                    deleted_rows
-                )
+                return len(deleted_rows)
 
             except TelegramConversationStateError:
-                _safe_rollback(
-                    connection
-                )
+                _safe_rollback(connection)
                 raise
 
             except Exception:
-                _safe_rollback(
-                    connection
-                )
+                _safe_rollback(connection)
                 _raise_unavailable()
 
     except TelegramConversationStateError:

@@ -34,9 +34,7 @@ UPDATE = {
         "chat": {
             "id": 555,
         },
-        "text": (
-            "Quero organizar meu orçamento."
-        ),
+        "text": ("Quero organizar meu orçamento."),
         "entities": [
             {
                 "type": "bold",
@@ -62,12 +60,9 @@ def make_keyring(
     if include_v2:
         keys[KEY_ID_V2] = KEY_V2
 
-    return (
-        crypto_service
-        .TelegramUpdateEncryptionKeyring(
-            active_key_id=active_key_id,
-            keys=keys,
-        )
+    return crypto_service.TelegramUpdateEncryptionKeyring(
+        active_key_id=active_key_id,
+        keys=keys,
     )
 
 
@@ -76,18 +71,11 @@ def make_lease(
     update=UPDATE,
     keyring=None,
 ):
-    resolved_keyring = (
-        keyring
-        if keyring is not None
-        else make_keyring()
-    )
+    resolved_keyring = keyring if keyring is not None else make_keyring()
 
-    encrypted = (
-        crypto_service
-        .encrypt_authenticated_telegram_update(
-            update,
-            keyring=resolved_keyring,
-        )
+    encrypted = crypto_service.encrypt_authenticated_telegram_update(
+        update,
+        keyring=resolved_keyring,
     )
 
     return worker.TelegramUpdateWorkerLease(
@@ -97,18 +85,10 @@ def make_lease(
         job_attempt_count=1,
         job_max_attempts=5,
         receipt_attempt_count=1,
-        payload_version=(
-            encrypted.payload_version
-        ),
-        payload_key_id=(
-            encrypted.payload_key_id
-        ),
-        payload_ciphertext=(
-            encrypted.payload_ciphertext
-        ),
-        payload_nonce=(
-            encrypted.payload_nonce
-        ),
+        payload_version=(encrypted.payload_version),
+        payload_key_id=(encrypted.payload_key_id),
+        payload_ciphertext=(encrypted.payload_ciphertext),
+        payload_nonce=(encrypted.payload_nonce),
         lock_token=LOCK_TOKEN,
     )
 
@@ -118,29 +98,16 @@ def decrypt(
     lease=None,
     keyring=None,
 ):
-    return (
-        execution
-        .decrypt_authenticated_telegram_worker_lease(
-            lease=(
-                lease
-                if lease is not None
-                else make_lease()
-            ),
-            keyring=(
-                keyring
-                if keyring is not None
-                else make_keyring()
-            ),
-        )
+    return execution.decrypt_authenticated_telegram_worker_lease(
+        lease=(lease if lease is not None else make_lease()),
+        keyring=(keyring if keyring is not None else make_keyring()),
     )
 
 
 def test_decrypts_authenticated_worker_lease():
     payload = decrypt()
 
-    restored = (
-        payload.to_processing_dict()
-    )
+    restored = payload.to_processing_dict()
 
     assert restored == UPDATE
     assert payload.update_id == UPDATE_ID
@@ -166,14 +133,9 @@ def test_safe_output_contains_only_metadata():
 def test_repr_hides_decrypted_content():
     payload = decrypt()
 
-    representation = repr(
-        payload
-    )
+    representation = repr(payload)
 
-    assert (
-        "Quero organizar meu orçamento"
-        not in representation
-    )
+    assert "Quero organizar meu orçamento" not in representation
 
     assert LOCK_TOKEN not in representation
     assert "payload_ciphertext" not in representation
@@ -193,40 +155,25 @@ def test_processing_copy_is_independent():
         }
     )
 
-    assert (
-        second["message"]["text"]
-        == UPDATE["message"]["text"]
-    )
+    assert second["message"]["text"] == UPDATE["message"]["text"]
 
-    assert len(
-        second["message"]["entities"]
-    ) == 1
+    assert len(second["message"]["entities"]) == 1
 
 
 def test_internal_payload_is_immutable():
     payload = decrypt()
 
-    with pytest.raises(
-        TypeError
-    ):
-        payload._payload[
-            "update_id"
-        ] = 10
+    with pytest.raises(TypeError):
+        payload._payload["update_id"] = 10
 
-    with pytest.raises(
-        TypeError
-    ):
-        payload._payload[
-            "message"
-        ]["text"] = "alterado"
+    with pytest.raises(TypeError):
+        payload._payload["message"]["text"] = "alterado"
 
 
 def test_nested_lists_are_restored_as_lists():
     payload = decrypt()
 
-    restored = (
-        payload.to_processing_dict()
-    )
+    restored = payload.to_processing_dict()
 
     assert isinstance(
         restored["message"]["entities"],
@@ -255,60 +202,39 @@ def test_rotated_keyring_decrypts_old_payload():
         keyring=rotated_keyring,
     )
 
-    assert (
-        payload.to_processing_dict()
-        == UPDATE
-    )
+    assert payload.to_processing_dict() == UPDATE
 
 
 def test_tampered_ciphertext_is_rejected():
     lease = make_lease()
 
-    tampered = bytearray(
-        lease.payload_ciphertext
-    )
+    tampered = bytearray(lease.payload_ciphertext)
 
     tampered[-1] ^= 1
 
     invalid_lease = replace(
         lease,
-        payload_ciphertext=bytes(
-            tampered
-        ),
+        payload_ciphertext=bytes(tampered),
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionDecryptionError
-    ):
-        decrypt(
-            lease=invalid_lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionDecryptionError):
+        decrypt(lease=invalid_lease)
 
 
 def test_tampered_nonce_is_rejected():
     lease = make_lease()
 
-    tampered = bytearray(
-        lease.payload_nonce
-    )
+    tampered = bytearray(lease.payload_nonce)
 
     tampered[0] ^= 1
 
     invalid_lease = replace(
         lease,
-        payload_nonce=bytes(
-            tampered
-        ),
+        payload_nonce=bytes(tampered),
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionDecryptionError
-    ):
-        decrypt(
-            lease=invalid_lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionDecryptionError):
+        decrypt(lease=invalid_lease)
 
 
 def test_wrong_update_id_is_rejected():
@@ -319,13 +245,8 @@ def test_wrong_update_id_is_rejected():
         update_id=UPDATE_ID + 1,
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionDecryptionError
-    ):
-        decrypt(
-            lease=invalid_lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionDecryptionError):
+        decrypt(lease=invalid_lease)
 
 
 def test_unknown_key_is_rejected():
@@ -336,13 +257,8 @@ def test_unknown_key_is_rejected():
         payload_key_id=KEY_ID_V2,
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionDecryptionError
-    ):
-        decrypt(
-            lease=invalid_lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionDecryptionError):
+        decrypt(lease=invalid_lease)
 
 
 def test_unsupported_version_is_rejected():
@@ -353,13 +269,8 @@ def test_unsupported_version_is_rejected():
         payload_version=2,
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionDecryptionError
-    ):
-        decrypt(
-            lease=invalid_lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionDecryptionError):
+        decrypt(lease=invalid_lease)
 
 
 def test_missing_environment_keyring_is_sanitized(
@@ -377,31 +288,16 @@ def test_missing_environment_keyring_is_sanitized(
         raising=False,
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionConfigurationError
-    ) as captured:
-        (
-            execution
-            .decrypt_authenticated_telegram_worker_lease(
-                lease
-            )
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionConfigurationError) as captured:
+        (execution.decrypt_authenticated_telegram_worker_lease(lease))
 
-    assert (
-        crypto_service.KEYS_ENV_NAME
-        not in str(captured.value)
-    )
+    assert crypto_service.KEYS_ENV_NAME not in str(captured.value)
 
 
 def test_wrong_lease_type_is_rejected():
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionValidationError
-    ):
+    with pytest.raises(execution.TelegramUpdateExecutionValidationError):
         (
-            execution
-            .decrypt_authenticated_telegram_worker_lease(
+            execution.decrypt_authenticated_telegram_worker_lease(
                 {
                     "update_id": UPDATE_ID,
                 },
@@ -449,13 +345,8 @@ def test_invalid_lease_metadata_is_rejected(
         },
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionValidationError
-    ):
-        decrypt(
-            lease=invalid_lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionValidationError):
+        decrypt(lease=invalid_lease)
 
 
 def test_receipt_attempts_cannot_trail_job():
@@ -467,13 +358,8 @@ def test_receipt_attempts_cannot_trail_job():
         receipt_attempt_count=2,
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionValidationError
-    ):
-        decrypt(
-            lease=invalid_lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionValidationError):
+        decrypt(lease=invalid_lease)
 
 
 def test_invalid_ciphertext_size_is_rejected():
@@ -484,13 +370,8 @@ def test_invalid_ciphertext_size_is_rejected():
         payload_ciphertext=b"x",
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionValidationError
-    ):
-        decrypt(
-            lease=invalid_lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionValidationError):
+        decrypt(lease=invalid_lease)
 
 
 def test_invalid_nonce_size_is_rejected():
@@ -501,13 +382,8 @@ def test_invalid_nonce_size_is_rejected():
         payload_nonce=b"short",
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionValidationError
-    ):
-        decrypt(
-            lease=invalid_lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionValidationError):
+        decrypt(lease=invalid_lease)
 
 
 def test_payload_depth_limit_is_enforced():
@@ -515,9 +391,7 @@ def test_payload_depth_limit_is_enforced():
         "value": "fim",
     }
 
-    for _ in range(
-        execution.MAX_JSON_DEPTH + 2
-    ):
+    for _ in range(execution.MAX_JSON_DEPTH + 2):
         nested = {
             "next": nested,
         }
@@ -531,52 +405,31 @@ def test_payload_depth_limit_is_enforced():
         update=deep_update,
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionPayloadError
-    ):
-        decrypt(
-            lease=lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionPayloadError):
+        decrypt(lease=lease)
 
 
 def test_decryption_error_does_not_expose_payload():
     lease = make_lease()
 
-    tampered = bytearray(
-        lease.payload_ciphertext
-    )
+    tampered = bytearray(lease.payload_ciphertext)
 
     tampered[-1] ^= 1
 
     invalid_lease = replace(
         lease,
-        payload_ciphertext=bytes(
-            tampered
-        ),
+        payload_ciphertext=bytes(tampered),
     )
 
-    with pytest.raises(
-        execution
-        .TelegramUpdateExecutionDecryptionError
-    ) as captured:
-        decrypt(
-            lease=invalid_lease
-        )
+    with pytest.raises(execution.TelegramUpdateExecutionDecryptionError) as captured:
+        decrypt(lease=invalid_lease)
 
-    message = str(
-        captured.value
-    )
+    message = str(captured.value)
 
-    assert (
-        "Quero organizar meu orçamento"
-        not in message
-    )
+    assert "Quero organizar meu orçamento" not in message
 
     assert LOCK_TOKEN not in message
-    assert repr(
-        invalid_lease.payload_ciphertext
-    ) not in message
+    assert repr(invalid_lease.payload_ciphertext) not in message
 
 
 def test_payload_metadata_preserves_key_version():

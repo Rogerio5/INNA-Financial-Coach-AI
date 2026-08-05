@@ -3,9 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 
-DASHBOARD_PATH = Path(
-    "src/dashboard.py"
-)
+DASHBOARD_PATH = Path("src/dashboard.py")
 
 
 def _upload_flow() -> str:
@@ -13,16 +11,12 @@ def _upload_flow() -> str:
         encoding="utf-8-sig",
     )
 
-    start = source.index(
-        "def render_upload_documentos_rag"
-    )
+    start = source.index("def render_upload_documentos_rag")
 
     try:
         end = source.index(
             "\ndef ",
-            start + len(
-                "def render_upload_documentos_rag"
-            ),
+            start + len("def render_upload_documentos_rag"),
         )
     except ValueError:
         end = len(source)
@@ -33,13 +27,9 @@ def _upload_flow() -> str:
 def test_versioning_happens_before_file_write():
     flow = _upload_flow()
 
-    version_position = flow.index(
-        "create_document_version_from_context"
-    )
+    version_position = flow.index("create_document_version_from_context")
 
-    write_position = flow.index(
-        "final_path.write_bytes(content_bytes)"
-    )
+    write_position = flow.index("final_path.write_bytes(content_bytes)")
 
     assert version_position < write_position
 
@@ -47,38 +37,21 @@ def test_versioning_happens_before_file_write():
 def test_dashboard_queries_existing_versions():
     flow = _upload_flow()
 
-    assert (
-        "buscar_contexto_versionamento_rag"
-        in flow
-    )
+    assert "buscar_contexto_versionamento_rag" in flow
 
-    assert (
-        "versioning_lookup.get("
-        in flow
-    )
+    assert "versioning_lookup.get(" in flow
 
-    assert (
-        '"contexto"'
-        in flow
-    )
+    assert '"contexto"' in flow
 
 
 def test_dashboard_rejects_duplicate_document():
     flow = _upload_flow()
 
-    assert (
-        "except RagDuplicateDocumentError as exc:"
-        in flow
-    )
+    assert "except RagDuplicateDocumentError as exc:" in flow
 
-    duplicate_start = flow.index(
-        "except RagDuplicateDocumentError as exc:"
-    )
+    duplicate_start = flow.index("except RagDuplicateDocumentError as exc:")
 
-    block = flow[
-        duplicate_start:
-        duplicate_start + 300
-    ]
+    block = flow[duplicate_start : duplicate_start + 300]
 
     assert "return" in block
 
@@ -99,11 +72,5 @@ def test_dashboard_sends_version_metadata():
 def test_dashboard_displays_version():
     flow = _upload_flow()
 
-    assert (
-        "upload_rag_t('version')"
-        in flow
-    )
-    assert (
-        "document_version.version"
-        in flow
-    )
+    assert "upload_rag_t('version')" in flow
+    assert "document_version.version" in flow

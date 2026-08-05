@@ -51,17 +51,10 @@ def create_client(
     runtime=None,
     expected_token="test-operations-token",
 ):
-    runtime = (
-        runtime
-        or create_runtime()
-    )
+    runtime = runtime or create_runtime()
 
-    container = (
-        TelegramOperationalRuntimeContainer(
-            readiness_runtime_factory=(
-                lambda: runtime
-            )
-        )
+    container = TelegramOperationalRuntimeContainer(
+        readiness_runtime_factory=(lambda: runtime)
     )
 
     app = FastAPI()
@@ -69,9 +62,7 @@ def create_client(
     app.include_router(
         create_telegram_operational_router(
             container=container,
-            token_supplier=(
-                lambda: expected_token
-            ),
+            token_supplier=(lambda: expected_token),
         )
     )
 
@@ -84,25 +75,17 @@ def create_client(
 def test_ready_healthy_returns_200():
     client, _ = create_client()
 
-    response = client.get(
-        "/ready"
-    )
+    response = client.get("/ready")
 
     payload = response.json()
 
     assert response.status_code == 200
 
-    assert payload[
-        "probe"
-    ] == "readiness"
+    assert payload["probe"] == "readiness"
 
-    assert payload[
-        "status"
-    ] == "healthy"
+    assert payload["status"] == "healthy"
 
-    assert payload[
-        "ready"
-    ] is True
+    assert payload["ready"] is True
 
 
 def test_ready_degraded_returns_200():
@@ -113,15 +96,11 @@ def test_ready_degraded_returns_200():
         )
     )
 
-    response = client.get(
-        "/ready"
-    )
+    response = client.get("/ready")
 
     assert response.status_code == 200
 
-    assert response.json()[
-        "status"
-    ] == "degraded"
+    assert response.json()["status"] == "degraded"
 
 
 def test_ready_unready_returns_503():
@@ -131,23 +110,17 @@ def test_ready_unready_returns_503():
         )
     )
 
-    response = client.get(
-        "/ready"
-    )
+    response = client.get("/ready")
 
     assert response.status_code == 503
 
-    assert response.json()[
-        "status"
-    ] == "unready"
+    assert response.json()["status"] == "unready"
 
 
 def test_public_ready_does_not_expose_checks():
     client, _ = create_client()
 
-    payload = client.get(
-        "/ready"
-    ).json()
+    payload = client.get("/ready").json()
 
     assert "operational" not in payload
     assert "checks" not in payload
@@ -156,9 +129,7 @@ def test_public_ready_does_not_expose_checks():
 def test_internal_ready_requires_token():
     client, _ = create_client()
 
-    response = client.get(
-        "/internal/ready"
-    )
+    response = client.get("/internal/ready")
 
     assert response.status_code == 401
 
@@ -173,9 +144,7 @@ def test_internal_ready_rejects_wrong_token():
     response = client.get(
         "/internal/ready",
         headers={
-            INTERNAL_OPERATIONS_HEADER: (
-                "wrong-token"
-            ),
+            INTERNAL_OPERATIONS_HEADER: ("wrong-token"),
         },
     )
 
@@ -188,9 +157,7 @@ def test_internal_ready_accepts_correct_token():
     response = client.get(
         "/internal/ready",
         headers={
-            INTERNAL_OPERATIONS_HEADER: (
-                "test-operations-token"
-            ),
+            INTERNAL_OPERATIONS_HEADER: ("test-operations-token"),
         },
     )
 
@@ -201,63 +168,32 @@ def test_internal_ready_accepts_correct_token():
     assert "runtime" in payload
     assert "operational" in payload
 
-    assert payload[
-        "operational"
-    ]["checks"]
+    assert payload["operational"]["checks"]
 
 
 def test_internal_route_is_hidden_from_openapi():
     client, _ = create_client()
 
-    schema = client.get(
-        "/openapi.json"
-    ).json()
+    schema = client.get("/openapi.json").json()
 
-    assert "/ready" in schema[
-        "paths"
-    ]
+    assert "/ready" in schema["paths"]
 
-    assert (
-        "/internal/ready"
-        not in schema["paths"]
-    )
+    assert "/internal/ready" not in schema["paths"]
 
 
 def test_operational_headers_are_preserved():
     client, _ = create_client()
 
-    response = client.get(
-        "/ready"
-    )
+    response = client.get("/ready")
 
-    assert (
-        response.headers[
-            "cache-control"
-        ]
-        == "no-store"
-    )
+    assert response.headers["cache-control"] == "no-store"
 
-    assert (
-        response.headers[
-            "x-content-type-options"
-        ]
-        == "nosniff"
-    )
+    assert response.headers["x-content-type-options"] == "nosniff"
 
-    assert (
-        response.headers[
-            "x-inna-operational-status"
-        ]
-        == "healthy"
-    )
+    assert response.headers["x-inna-operational-status"] == "healthy"
 
-    assert (
-        response.headers[
-            "x-inna-schema-version"
-        ]
-        == (
-            "telegram-operational-status.v1"
-        )
+    assert response.headers["x-inna-schema-version"] == (
+        "telegram-operational-status.v1"
     )
 
 
@@ -269,27 +205,15 @@ def test_runtime_is_singleton_per_container():
     runtime = create_runtime()
 
     def factory():
-        calls[
-            "count"
-        ] += 1
+        calls["count"] += 1
 
         return runtime
 
-    container = (
-        TelegramOperationalRuntimeContainer(
-            readiness_runtime_factory=factory
-        )
-    )
+    container = TelegramOperationalRuntimeContainer(readiness_runtime_factory=factory)
 
-    first = (
-        container
-        .get_readiness_runtime()
-    )
+    first = container.get_readiness_runtime()
 
-    second = (
-        container
-        .get_readiness_runtime()
-    )
+    second = container.get_readiness_runtime()
 
     assert first is second
     assert calls["count"] == 1
@@ -301,29 +225,17 @@ def test_container_reset_recreates_runtime():
     }
 
     def factory():
-        calls[
-            "count"
-        ] += 1
+        calls["count"] += 1
 
         return create_runtime()
 
-    container = (
-        TelegramOperationalRuntimeContainer(
-            readiness_runtime_factory=factory
-        )
-    )
+    container = TelegramOperationalRuntimeContainer(readiness_runtime_factory=factory)
 
-    first = (
-        container
-        .get_readiness_runtime()
-    )
+    first = container.get_readiness_runtime()
 
     container.reset()
 
-    second = (
-        container
-        .get_readiness_runtime()
-    )
+    second = container.get_readiness_runtime()
 
     assert first is not second
     assert calls["count"] == 2
@@ -331,16 +243,10 @@ def test_container_reset_recreates_runtime():
 
 def test_runtime_factory_failure_fails_closed():
     def broken_factory():
-        raise RuntimeError(
-            "postgresql://user:password@private"
-        )
+        raise RuntimeError("postgresql://user:password@private")
 
-    container = (
-        TelegramOperationalRuntimeContainer(
-            readiness_runtime_factory=(
-                broken_factory
-            )
-        )
+    container = TelegramOperationalRuntimeContainer(
+        readiness_runtime_factory=(broken_factory)
     )
 
     app = FastAPI()
@@ -348,46 +254,31 @@ def test_runtime_factory_failure_fails_closed():
     app.include_router(
         create_telegram_operational_router(
             container=container,
-            token_supplier=(
-                lambda: "token"
-            ),
+            token_supplier=(lambda: "token"),
         )
     )
 
-    client = TestClient(
-        app
-    )
+    client = TestClient(app)
 
-    response = client.get(
-        "/ready"
-    )
+    response = client.get("/ready")
 
     assert response.status_code == 503
 
-    assert (
-        response.json()["reason"]
-        == "response_serialization_failure"
-    )
+    assert response.json()["reason"] == "response_serialization_failure"
 
     assert "password" not in response.text
     assert "postgresql://" not in response.text
 
 
 def test_internal_token_is_not_exposed():
-    private_token = (
-        "private-operations-secret"
-    )
+    private_token = "private-operations-secret"
 
-    client, _ = create_client(
-        expected_token=private_token
-    )
+    client, _ = create_client(expected_token=private_token)
 
     response = client.get(
         "/internal/ready",
         headers={
-            INTERNAL_OPERATIONS_HEADER: (
-                "incorrect"
-            ),
+            INTERNAL_OPERATIONS_HEADER: ("incorrect"),
         },
     )
 
@@ -396,14 +287,9 @@ def test_internal_token_is_not_exposed():
 
 
 def test_router_source_uses_constant_time_comparison():
-    path = Path(
-        "api/"
-        "telegram_operational_status.py"
-    )
+    path = Path("api/telegram_operational_status.py")
 
-    source = path.read_text(
-        encoding="utf-8"
-    )
+    source = path.read_text(encoding="utf-8")
 
     tree = ast.parse(
         source,
@@ -430,21 +316,13 @@ def test_router_source_uses_constant_time_comparison():
                 )
             )
 
-    assert any(
-        name == "compare_digest"
-        for name, _ in calls
-    )
+    assert any(name == "compare_digest" for name, _ in calls)
 
 
 def test_router_has_no_mutating_job_calls():
-    path = Path(
-        "api/"
-        "telegram_operational_status.py"
-    )
+    path = Path("api/telegram_operational_status.py")
 
-    source = path.read_text(
-        encoding="utf-8"
-    )
+    source = path.read_text(encoding="utf-8")
 
     forbidden = {
         "claim_next_authenticated_telegram_update_job_atomic",
@@ -459,15 +337,12 @@ def test_router_has_no_mutating_job_calls():
     for name in forbidden:
         assert name not in source
 
+
 def test_internal_route_disabled_returns_404():
     runtime = create_runtime()
 
-    container = (
-        TelegramOperationalRuntimeContainer(
-            readiness_runtime_factory=(
-                lambda: runtime
-            )
-        )
+    container = TelegramOperationalRuntimeContainer(
+        readiness_runtime_factory=(lambda: runtime)
     )
 
     app = FastAPI()
@@ -476,25 +351,19 @@ def test_internal_route_disabled_returns_404():
         create_telegram_operational_router(
             container=container,
             configuration_supplier=(
-                lambda: (
-                    TelegramOperationalConfiguration(
-                        internal_route_enabled=False,
-                    )
+                lambda: TelegramOperationalConfiguration(
+                    internal_route_enabled=False,
                 )
             ),
         )
     )
 
-    client = TestClient(
-        app
-    )
+    client = TestClient(app)
 
     response = client.get(
         "/internal/ready",
         headers={
-            INTERNAL_OPERATIONS_HEADER: (
-                "any-token"
-            ),
+            INTERNAL_OPERATIONS_HEADER: ("any-token"),
         },
     )
 
@@ -503,4 +372,3 @@ def test_internal_route_disabled_returns_404():
     assert response.json() == {
         "detail": "Not Found",
     }
-

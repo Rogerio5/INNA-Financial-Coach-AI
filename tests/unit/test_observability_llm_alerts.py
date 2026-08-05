@@ -23,13 +23,15 @@ def finops_saudavel():
 
 
 def test_sem_alertas():
-    df = pd.DataFrame([
-        {
-            "duracao_ms": 5000,
-            "tokens_totais": 2000,
-            "sucesso": True,
-        }
-    ])
+    df = pd.DataFrame(
+        [
+            {
+                "duracao_ms": 5000,
+                "tokens_totais": 2000,
+                "sucesso": True,
+            }
+        ]
+    )
 
     resultado = detectar_alertas_llm(
         df,
@@ -40,35 +42,36 @@ def test_sem_alertas():
 
 
 def test_detectar_chamada_lenta():
-    df = pd.DataFrame([
-        {
-            "duracao_ms": 173000,
-            "tokens_totais": 3000,
-            "sucesso": True,
-        }
-    ])
+    df = pd.DataFrame(
+        [
+            {
+                "duracao_ms": 173000,
+                "tokens_totais": 3000,
+                "sucesso": True,
+            }
+        ]
+    )
 
     resultado = detectar_alertas_llm(
         df,
         finops_saudavel(),
     )
 
-    codigos = {
-        item["codigo"]
-        for item in resultado
-    }
+    codigos = {item["codigo"] for item in resultado}
 
     assert "chamadas_lentas" in codigos
 
 
 def test_detectar_falha():
-    df = pd.DataFrame([
-        {
-            "duracao_ms": 5000,
-            "tokens_totais": 3000,
-            "sucesso": False,
-        }
-    ])
+    df = pd.DataFrame(
+        [
+            {
+                "duracao_ms": 5000,
+                "tokens_totais": 3000,
+                "sucesso": False,
+            }
+        ]
+    )
 
     resultado = detectar_alertas_llm(
         df,
@@ -91,29 +94,25 @@ def test_detectar_orcamento():
         finops,
     )
 
-    assert (
-        resultado[0]["codigo"]
-        == "orcamento_mensal"
-    )
+    assert resultado[0]["codigo"] == "orcamento_mensal"
 
 
 def test_detectar_tokens_elevados():
-    df = pd.DataFrame([
-        {
-            "duracao_ms": 1000,
-            "tokens_totais": 15000,
-            "sucesso": True,
-        }
-    ])
+    df = pd.DataFrame(
+        [
+            {
+                "duracao_ms": 1000,
+                "tokens_totais": 15000,
+                "sucesso": True,
+            }
+        ]
+    )
 
     resultado = detectar_alertas_llm(
         df,
         finops_saudavel(),
     )
 
-    codigos = {
-        item["codigo"]
-        for item in resultado
-    }
+    codigos = {item["codigo"] for item in resultado}
 
     assert "tokens_elevados" in codigos

@@ -22,9 +22,7 @@ from typing import Callable
 ChunkClassifier = Callable[[str], str]
 
 CHUNKS_DIR_PADRAO = Path("data/knowledge_base/chunks")
-EMBEDDING_READY_DIR_PADRAO = Path(
-    "data/knowledge_base/embedding_ready"
-)
+EMBEDDING_READY_DIR_PADRAO = Path("data/knowledge_base/embedding_ready")
 UPLOADS_DIR_PADRAO = Path("data/knowledge_base/uploads")
 
 
@@ -93,9 +91,7 @@ def dividir_texto_em_chunks(
 
         if linha_limpa.startswith("## "):
             if secao_atual:
-                secoes.append(
-                    "\n".join(secao_atual).strip()
-                )
+                secoes.append("\n".join(secao_atual).strip())
 
             secao_atual = [linha_limpa]
 
@@ -103,9 +99,7 @@ def dividir_texto_em_chunks(
             secao_atual.append(linha_limpa)
 
     if secao_atual:
-        secoes.append(
-            "\n".join(secao_atual).strip()
-        )
+        secoes.append("\n".join(secao_atual).strip())
 
     if not secoes:
         secoes = [texto]
@@ -114,9 +108,7 @@ def dividir_texto_em_chunks(
 
     for secao in secoes:
         chunk_completo = (
-            f"{titulo_documento}\n\n{secao}"
-            if titulo_documento
-            else secao
+            f"{titulo_documento}\n\n{secao}" if titulo_documento else secao
         ).strip()
 
         if len(chunk_completo) <= tamanho_chunk:
@@ -145,11 +137,7 @@ def dividir_texto_em_chunks(
         if parte:
             chunks.append(parte.strip())
 
-    return [
-        chunk
-        for chunk in chunks
-        if chunk.strip()
-    ]
+    return [chunk for chunk in chunks if chunk.strip()]
 
 
 def criar_payload_chunks(
@@ -164,9 +152,7 @@ def criar_payload_chunks(
     Cria o payload estruturado dos chunks.
     """
     if not callable(classificar_chunk):
-        raise ValueError(
-            "A função classificar_chunk é obrigatória."
-        )
+        raise ValueError("A função classificar_chunk é obrigatória.")
 
     base_name = Path(nome_arquivo).stem
 
@@ -175,22 +161,22 @@ def criar_payload_chunks(
     for indice, chunk in enumerate(chunks, start=1):
         categoria = classificar_chunk(chunk) or "geral"
 
-        itens.append({
-            "chunk_id": f"{base_name}_chunk_{indice}",
-            "chunk_index": indice,
-            "texto": chunk,
-            "metadata": {
-                "documento_origem": nome_arquivo,
-                "fonte": str(
-                    UPLOADS_DIR_PADRAO / nome_arquivo
-                ),
-                "categoria": categoria,
-                "origem": origem,
-                "idioma": idioma,
-                "tipo": "documento_upload",
-                "fase": "7.10_chunking_modular",
-            },
-        })
+        itens.append(
+            {
+                "chunk_id": f"{base_name}_chunk_{indice}",
+                "chunk_index": indice,
+                "texto": chunk,
+                "metadata": {
+                    "documento_origem": nome_arquivo,
+                    "fonte": str(UPLOADS_DIR_PADRAO / nome_arquivo),
+                    "categoria": categoria,
+                    "origem": origem,
+                    "idioma": idioma,
+                    "tipo": "documento_upload",
+                    "fase": "7.10_chunking_modular",
+                },
+            }
+        )
 
     return {
         "documento_origem": nome_arquivo,
@@ -210,9 +196,7 @@ def salvar_chunks_documento(
     sobreposicao: int = 0,
     idioma: str = "pt",
     chunks_dir: Path | str = CHUNKS_DIR_PADRAO,
-    embedding_ready_dir: Path | str = (
-        EMBEDDING_READY_DIR_PADRAO
-    ),
+    embedding_ready_dir: Path | str = (EMBEDDING_READY_DIR_PADRAO),
 ) -> tuple[Path, list[str], Path]:
     """
     Processa o texto e salva:
@@ -223,9 +207,7 @@ def salvar_chunks_documento(
     nome_arquivo = Path(nome_arquivo).name
 
     if not nome_arquivo:
-        raise ValueError(
-            "Nome do arquivo não informado."
-        )
+        raise ValueError("Nome do arquivo não informado.")
 
     chunks_dir = Path(chunks_dir)
     embedding_ready_dir = Path(embedding_ready_dir)
@@ -243,23 +225,15 @@ def salvar_chunks_documento(
     )
 
     if not chunks:
-        raise ValueError(
-            "O documento não gerou chunks válidos."
-        )
+        raise ValueError("O documento não gerou chunks válidos.")
 
     base_name = Path(nome_arquivo).stem
-    timestamp = datetime.now().strftime(
-        "%Y%m%d_%H%M%S"
-    )
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    output_path = (
-        chunks_dir
-        / f"{timestamp}_{base_name}_chunks.json"
-    )
+    output_path = chunks_dir / f"{timestamp}_{base_name}_chunks.json"
 
     embedding_ready_path = (
-        embedding_ready_dir
-        / f"{timestamp}_{base_name}_embedding_ready.jsonl"
+        embedding_ready_dir / f"{timestamp}_{base_name}_embedding_ready.jsonl"
     )
 
     payload = criar_payload_chunks(

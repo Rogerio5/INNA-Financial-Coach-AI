@@ -6,18 +6,11 @@ from api import telegram_webhook
 
 
 def test_process_telegram_update_exposes_injectable_bridge():
-    signature = inspect.signature(
-        telegram_webhook.process_telegram_update
-    )
+    signature = inspect.signature(telegram_webhook.process_telegram_update)
 
-    parameter = signature.parameters[
-        "conversation_bridge"
-    ]
+    parameter = signature.parameters["conversation_bridge"]
 
-    assert (
-        parameter.kind
-        is inspect.Parameter.KEYWORD_ONLY
-    )
+    assert parameter.kind is inspect.Parameter.KEYWORD_ONLY
     assert parameter.default is inspect.Parameter.empty
 
 
@@ -33,9 +26,7 @@ def test_process_telegram_update_accepts_fake_bridge_without_database():
 
 
 def test_process_telegram_update_does_not_create_postgres_bridge_directly():
-    source = inspect.getsource(
-        telegram_webhook.process_telegram_update
-    )
+    source = inspect.getsource(telegram_webhook.process_telegram_update)
 
     forbidden_constructors = {
         "create_postgres_telegram_webhook_conversation_bridge(",

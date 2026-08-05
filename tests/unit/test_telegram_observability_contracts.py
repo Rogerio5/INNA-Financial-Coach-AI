@@ -81,6 +81,4 @@ def test_event_fields_are_immutable():
     )
 
     with pytest.raises(TypeError):
-        event.fields[
-            "duration_ms"
-        ] = 20
+        event.fields["duration_ms"] = 20

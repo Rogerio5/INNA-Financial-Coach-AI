@@ -91,36 +91,21 @@ class MetricExecutionOutput:
     score: float | None = None
     reason: str | None = None
     estimated_cost: float = 0.0
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        if self.score is not None and not (
-            0.0 <= float(self.score) <= 1.0
-        ):
-            raise ValueError(
-                "MetricExecutionOutput.score deve estar "
-                "entre 0 e 1."
-            )
+        if self.score is not None and not (0.0 <= float(self.score) <= 1.0):
+            raise ValueError("MetricExecutionOutput.score deve estar entre 0 e 1.")
 
-        estimated_cost = float(
-            self.estimated_cost
-        )
+        estimated_cost = float(self.estimated_cost)
 
         if estimated_cost < 0:
-            raise ValueError(
-                "estimated_cost não pode ser negativo."
-            )
+            raise ValueError("estimated_cost não pode ser negativo.")
 
         object.__setattr__(
             self,
             "score",
-            (
-                None
-                if self.score is None
-                else float(self.score)
-            ),
+            (None if self.score is None else float(self.score)),
         )
         object.__setattr__(
             self,
@@ -135,9 +120,7 @@ class MetricExecutionOutput:
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
 
@@ -153,27 +136,19 @@ class MetricRunResult:
     duration_ms: float
     estimated_cost: float
     error_type: str | None = None
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if self.duration_ms < 0:
-            raise ValueError(
-                "duration_ms não pode ser negativo."
-            )
+            raise ValueError("duration_ms não pode ser negativo.")
 
         if self.estimated_cost < 0:
-            raise ValueError(
-                "estimated_cost não pode ser negativo."
-            )
+            raise ValueError("estimated_cost não pode ser negativo.")
 
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
 
@@ -193,38 +168,25 @@ class EvaluationRunResult:
     total_estimated_cost: float
     external_run: bool
     deepeval_live_enabled: bool
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.run_id.strip():
-            raise ValueError(
-                "run_id não pode ser vazio."
-            )
+            raise ValueError("run_id não pode ser vazio.")
 
         if self.started_at.tzinfo is None:
-            raise ValueError(
-                "started_at precisa de timezone."
-            )
+            raise ValueError("started_at precisa de timezone.")
 
         if self.finished_at.tzinfo is None:
-            raise ValueError(
-                "finished_at precisa de timezone."
-            )
+            raise ValueError("finished_at precisa de timezone.")
 
         if self.finished_at < self.started_at:
-            raise ValueError(
-                "finished_at não pode ser anterior "
-                "a started_at."
-            )
+            raise ValueError("finished_at não pode ser anterior a started_at.")
 
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
     @property
@@ -234,38 +196,32 @@ class EvaluationRunResult:
     @property
     def passed_count(self) -> int:
         return sum(
-            result.status == MetricRunStatus.PASSED
-            for result in self.metric_results
+            result.status == MetricRunStatus.PASSED for result in self.metric_results
         )
 
     @property
     def failed_count(self) -> int:
         return sum(
-            result.status == MetricRunStatus.FAILED
-            for result in self.metric_results
+            result.status == MetricRunStatus.FAILED for result in self.metric_results
         )
 
     @property
     def error_count(self) -> int:
         return sum(
-            result.status == MetricRunStatus.ERROR
-            for result in self.metric_results
+            result.status == MetricRunStatus.ERROR for result in self.metric_results
         )
 
     @property
     def blocked_count(self) -> int:
         return sum(
-            result.status == MetricRunStatus.BLOCKED
-            for result in self.metric_results
+            result.status == MetricRunStatus.BLOCKED for result in self.metric_results
         )
 
     @property
     def skipped_count(self) -> int:
         return sum(
-            result.status == MetricRunStatus.SKIPPED
-            for result in self.metric_results
+            result.status == MetricRunStatus.SKIPPED for result in self.metric_results
         )
-
 
     @property
     def rag_triad(self):
@@ -281,13 +237,10 @@ class EvaluationRunResult:
             aggregate_rag_triad,
         )
 
-        triad_metric_ids = frozenset(
-            RAG_TRIAD_METRIC_IDS
-        )
+        triad_metric_ids = frozenset(RAG_TRIAD_METRIC_IDS)
 
         if not any(
-            result.metric_id.strip().lower()
-            in triad_metric_ids
+            result.metric_id.strip().lower() in triad_metric_ids
             for result in self.metric_results
         ):
             return None
@@ -330,14 +283,10 @@ class EvaluationRunnerSettings:
     maximum_total_cost: float = 0.0
 
     def __post_init__(self) -> None:
-        maximum_total_cost = float(
-            self.maximum_total_cost
-        )
+        maximum_total_cost = float(self.maximum_total_cost)
 
         if maximum_total_cost < 0:
-            raise ValueError(
-                "maximum_total_cost não pode ser negativo."
-            )
+            raise ValueError("maximum_total_cost não pode ser negativo.")
 
         object.__setattr__(
             self,
@@ -345,14 +294,8 @@ class EvaluationRunnerSettings:
             maximum_total_cost,
         )
 
-        if (
-            self.mode == EvaluationRunMode.LIVE
-            and not self.include_live_metrics
-        ):
-            raise ValueError(
-                "O modo LIVE exige "
-                "include_live_metrics=True."
-            )
+        if self.mode == EvaluationRunMode.LIVE and not self.include_live_metrics:
+            raise ValueError("O modo LIVE exige include_live_metrics=True.")
 
 
 class EvaluationRunner:
@@ -370,14 +313,10 @@ class EvaluationRunner:
         deepeval_settings: DeepEvalSettings | None = None,
         executors: Mapping[str, MetricExecutor] | None = None,
     ) -> None:
-        self._registry = (
-            registry
-            or build_default_metric_registry()
-        )
+        self._registry = registry or build_default_metric_registry()
 
         self._deepeval_settings = (
-            deepeval_settings
-            or DeepEvalSettings.from_environment()
+            deepeval_settings or DeepEvalSettings.from_environment()
         )
 
         self._executors: dict[
@@ -406,13 +345,9 @@ class EvaluationRunner:
 
         self._registry.get(normalized)
 
-        if (
-            normalized in self._executors
-            and not replace_existing
-        ):
+        if normalized in self._executors and not replace_existing:
             raise EvaluationRunnerError(
-                f"Executor da métrica {normalized!r} "
-                "já registrado."
+                f"Executor da métrica {normalized!r} já registrado."
             )
 
         self._executors[normalized] = executor
@@ -423,9 +358,7 @@ class EvaluationRunner:
         settings: EvaluationRunnerSettings,
     ) -> MetricSelection:
         include_live = (
-            settings.include_live_metrics
-            or settings.mode
-            == EvaluationRunMode.LIVE
+            settings.include_live_metrics or settings.mode == EvaluationRunMode.LIVE
         )
 
         return self._registry.for_case(
@@ -441,9 +374,7 @@ class EvaluationRunner:
         settings: EvaluationRunnerSettings | None = None,
         metadata: Mapping[str, Any] | None = None,
     ) -> EvaluationRunResult:
-        resolved_settings = (
-            settings or EvaluationRunnerSettings()
-        )
+        resolved_settings = settings or EvaluationRunnerSettings()
 
         started_at = datetime.now(UTC)
         started_counter = perf_counter()
@@ -460,9 +391,7 @@ class EvaluationRunner:
         if resolved_settings.mode == EvaluationRunMode.LIVE:
             self._deepeval_settings.require_live_enabled()
 
-        metric_results: list[
-            MetricRunResult
-        ] = []
+        metric_results: list[MetricRunResult] = []
 
         total_estimated_cost = 0.0
 
@@ -474,34 +403,24 @@ class EvaluationRunner:
                 settings=resolved_settings,
             )
 
-            projected_cost = (
-                total_estimated_cost
-                + result.estimated_cost
-            )
+            projected_cost = total_estimated_cost + result.estimated_cost
 
             if (
                 resolved_settings.maximum_total_cost > 0
-                and projected_cost
-                > resolved_settings.maximum_total_cost
+                and projected_cost > resolved_settings.maximum_total_cost
             ):
                 metric_results.append(
                     MetricRunResult(
                         metric_id=metric.metric_id,
                         status=MetricRunStatus.BLOCKED,
-                        execution_mode=(
-                            metric.execution_mode
-                        ),
+                        execution_mode=(metric.execution_mode),
                         score=None,
                         threshold=metric.threshold,
                         passed=None,
-                        reason=(
-                            "Limite total de custo excedido."
-                        ),
+                        reason=("Limite total de custo excedido."),
                         duration_ms=0.0,
                         estimated_cost=0.0,
-                        error_type=(
-                            EvaluationBudgetError.__name__
-                        ),
+                        error_type=(EvaluationBudgetError.__name__),
                     )
                 )
                 continue
@@ -511,14 +430,11 @@ class EvaluationRunner:
 
             if (
                 result.status == MetricRunStatus.ERROR
-                and not resolved_settings
-                .continue_on_metric_error
+                and not resolved_settings.continue_on_metric_error
             ):
                 break
 
-        duration_ms = (
-            perf_counter() - started_counter
-        ) * 1000
+        duration_ms = (perf_counter() - started_counter) * 1000
 
         finished_at = datetime.now(UTC)
 
@@ -530,29 +446,18 @@ class EvaluationRunner:
         return EvaluationRunResult(
             run_id=run_id,
             case_id=case.case_id,
-            dataset_id=(
-                f"{case.dataset_name}@"
-                f"{case.dataset_version}"
-            ),
+            dataset_id=(f"{case.dataset_name}@{case.dataset_version}"),
             category=case.category,
             profile_id=selection.profile_id,
             mode=resolved_settings.mode,
             status=run_status,
-            metric_results=tuple(
-                metric_results
-            ),
+            metric_results=tuple(metric_results),
             started_at=started_at,
             finished_at=finished_at,
             duration_ms=duration_ms,
-            total_estimated_cost=(
-                total_estimated_cost
-            ),
-            external_run=(
-                resolved_settings.external_run
-            ),
-            deepeval_live_enabled=(
-                self._deepeval_settings.live_enabled
-            ),
+            total_estimated_cost=(total_estimated_cost),
+            external_run=(resolved_settings.external_run),
+            deepeval_live_enabled=(self._deepeval_settings.live_enabled),
             metadata=dict(metadata or {}),
         )
 
@@ -569,27 +474,14 @@ class EvaluationRunner:
         if settings.mode == EvaluationRunMode.DRY_RUN:
             return _planned_result(
                 metric,
-                duration_ms=(
-                    perf_counter() - started
-                )
-                * 1000,
+                duration_ms=(perf_counter() - started) * 1000,
             )
 
-        if (
-            metric.is_live
-            and settings.mode
-            != EvaluationRunMode.LIVE
-        ):
+        if metric.is_live and settings.mode != EvaluationRunMode.LIVE:
             return _skipped_result(
                 metric,
-                reason=(
-                    "Métrica live não executada "
-                    "fora do modo LIVE."
-                ),
-                duration_ms=(
-                    perf_counter() - started
-                )
-                * 1000,
+                reason=("Métrica live não executada fora do modo LIVE."),
+                duration_ms=(perf_counter() - started) * 1000,
             )
 
         try:
@@ -599,29 +491,17 @@ class EvaluationRunner:
                 metric,
                 reason=str(error),
                 error_type=type(error).__name__,
-                duration_ms=(
-                    perf_counter() - started
-                )
-                * 1000,
+                duration_ms=(perf_counter() - started) * 1000,
             )
 
-        executor = self._executors.get(
-            metric.metric_id
-        )
+        executor = self._executors.get(metric.metric_id)
 
         if executor is None:
             return _skipped_result(
                 metric,
-                reason=(
-                    "Executor ainda não registrado."
-                ),
-                error_type=(
-                    MetricExecutorNotFoundError.__name__
-                ),
-                duration_ms=(
-                    perf_counter() - started
-                )
-                * 1000,
+                reason=("Executor ainda não registrado."),
+                error_type=(MetricExecutorNotFoundError.__name__),
+                duration_ms=(perf_counter() - started) * 1000,
             )
 
         try:
@@ -634,26 +514,17 @@ class EvaluationRunner:
             return MetricRunResult(
                 metric_id=metric.metric_id,
                 status=MetricRunStatus.ERROR,
-                execution_mode=(
-                    metric.execution_mode
-                ),
+                execution_mode=(metric.execution_mode),
                 score=None,
                 threshold=metric.threshold,
                 passed=None,
                 reason=str(error),
-                duration_ms=(
-                    perf_counter() - started
-                )
-                * 1000,
+                duration_ms=(perf_counter() - started) * 1000,
                 estimated_cost=0.0,
                 error_type=type(error).__name__,
             )
 
-        status = (
-            MetricRunStatus.PASSED
-            if output.passed
-            else MetricRunStatus.FAILED
-        )
+        status = MetricRunStatus.PASSED if output.passed else MetricRunStatus.FAILED
 
         return MetricRunResult(
             metric_id=metric.metric_id,
@@ -663,13 +534,8 @@ class EvaluationRunner:
             threshold=metric.threshold,
             passed=output.passed,
             reason=output.reason,
-            duration_ms=(
-                perf_counter() - started
-            )
-            * 1000,
-            estimated_cost=(
-                output.estimated_cost
-            ),
+            duration_ms=(perf_counter() - started) * 1000,
+            estimated_cost=(output.estimated_cost),
             metadata=output.metadata,
         )
 
@@ -745,14 +611,9 @@ def _aggregate_run_status(
     if mode == EvaluationRunMode.DRY_RUN:
         return EvaluationRunStatus.PLANNED
 
-    statuses = {
-        result.status
-        for result in results
-    }
+    statuses = {result.status for result in results}
 
-    if statuses == {
-        MetricRunStatus.PASSED
-    }:
+    if statuses == {MetricRunStatus.PASSED}:
         return EvaluationRunStatus.PASSED
 
     if MetricRunStatus.ERROR in statuses:

@@ -40,24 +40,17 @@ class FakePayload:
         self,
         update=None,
     ):
-        self.update = (
-            update
-            or {
-                "update_id": 95001,
-                "message": {
-                    "text": "Olá",
-                },
-            }
-        )
+        self.update = update or {
+            "update_id": 95001,
+            "message": {
+                "text": "Olá",
+            },
+        }
 
     def to_processing_dict(self):
         return {
-            "update_id": (
-                self.update["update_id"]
-            ),
-            "message": dict(
-                self.update["message"]
-            ),
+            "update_id": (self.update["update_id"]),
+            "message": dict(self.update["message"]),
         }
 
 
@@ -101,69 +94,38 @@ def dependencies(
         ]
     )
 
-    return (
-        runner
-        .TelegramUpdateWorkerDependencies(
-            claim=(
-                claim
-                or (
-                    lambda **_kwargs:
-                    make_lease()
+    return runner.TelegramUpdateWorkerDependencies(
+        claim=(claim or (lambda **_kwargs: make_lease())),
+        decrypt=(decrypt or (lambda *_args, **_kwargs: FakePayload())),
+        complete=(
+            complete
+            or (
+                lambda _lease: SimpleNamespace(
+                    job_status="completed",
+                    idempotent_replay=False,
                 )
-            ),
-            decrypt=(
-                decrypt
-                or (
-                    lambda *_args, **_kwargs:
-                    FakePayload()
+            )
+        ),
+        fail=(
+            fail
+            or (
+                lambda *_args, **_kwargs: SimpleNamespace(
+                    job_status="queued",
+                    idempotent_replay=False,
                 )
-            ),
-            complete=(
-                complete
-                or (
-                    lambda _lease:
-                    SimpleNamespace(
-                        job_status="completed",
-                        idempotent_replay=False,
-                    )
-                )
-            ),
-            fail=(
-                fail
-                or (
-                    lambda *_args, **_kwargs:
-                    SimpleNamespace(
-                        job_status="queued",
-                        idempotent_replay=False,
-                    )
-                )
-            ),
-            recover=(
-                recover
-                or (
-                    lambda **_kwargs:
-                    FakeRecovery()
-                )
-            ),
-            monotonic=(
-                lambda: next(
-                    clock_values
-                )
-            ),
-        )
+            )
+        ),
+        recover=(recover or (lambda **_kwargs: FakeRecovery())),
+        monotonic=(lambda: next(clock_values)),
     )
 
 
 def test_run_one_completes_successfully():
     received = []
 
-    result = (
-        runner.run_one_telegram_update_job(
-            lambda update: received.append(
-                update
-            ),
-            dependencies=dependencies(),
-        )
+    result = runner.run_one_telegram_update_job(
+        lambda update: received.append(update),
+        dependencies=dependencies(),
     )
 
     assert result.decision == "completed"
@@ -172,81 +134,57 @@ def test_run_one_completes_successfully():
 
 
 def test_none_processor_result_is_success():
-    result = (
-        runner.run_one_telegram_update_job(
-            lambda _update: None,
-            dependencies=dependencies(),
-        )
+    result = runner.run_one_telegram_update_job(
+        lambda _update: None,
+        dependencies=dependencies(),
     )
 
     assert result.decision == "completed"
 
 
 def test_false_processor_result_schedules_retry():
-    result = (
-        runner.run_one_telegram_update_job(
-            lambda _update: False,
-            dependencies=dependencies(),
-        )
+    result = runner.run_one_telegram_update_job(
+        lambda _update: False,
+        dependencies=dependencies(),
     )
 
-    assert (
-        result.decision
-        == "retry_scheduled"
-    )
+    assert result.decision == "retry_scheduled"
 
-    assert (
-        result.error_code
-        == "telegram.processing_failed"
-    )
+    assert result.error_code == "telegram.processing_failed"
 
 
 def test_transient_exception_schedules_retry():
     def processor(_update):
         raise (
-            runner
-            .TelegramUpdateTransientProcessingError(
-                "telegram.provider_timeout"
-            )
+            runner.TelegramUpdateTransientProcessingError("telegram.provider_timeout")
         )
 
-    result = (
-        runner.run_one_telegram_update_job(
-            processor,
-            dependencies=dependencies(),
-        )
+    result = runner.run_one_telegram_update_job(
+        processor,
+        dependencies=dependencies(),
     )
 
     assert result.decision == "retry_scheduled"
 
-    assert (
-        result.error_code
-        == "telegram.provider_timeout"
-    )
+    assert result.error_code == "telegram.provider_timeout"
 
 
 def test_permanent_exception_dead_letters():
     def processor(_update):
         raise (
-            runner
-            .TelegramUpdatePermanentProcessingError(
-                "telegram.update_rejected"
-            )
+            runner.TelegramUpdatePermanentProcessingError("telegram.update_rejected")
         )
 
-    result = (
-        runner.run_one_telegram_update_job(
-            processor,
-            dependencies=dependencies(
-                fail=(
-                    lambda *_args, **_kwargs:
-                    SimpleNamespace(
-                        job_status="dead_letter",
-                        idempotent_replay=False,
-                    )
+    result = runner.run_one_telegram_update_job(
+        processor,
+        dependencies=dependencies(
+            fail=(
+                lambda *_args, **_kwargs: SimpleNamespace(
+                    job_status="dead_letter",
+                    idempotent_replay=False,
                 )
-            ),
-        )
+            )
+        ),
     )
 
     assert result.decision == "dead_lettered"
@@ -254,34 +192,22 @@ def test_permanent_exception_dead_letters():
 
 def test_unexpected_exception_schedules_retry():
     def processor(_update):
-        raise RuntimeError(
-            "sensitive error"
-        )
+        raise RuntimeError("sensitive error")
 
-    result = (
-        runner.run_one_telegram_update_job(
-            processor,
-            dependencies=dependencies(),
-        )
+    result = runner.run_one_telegram_update_job(
+        processor,
+        dependencies=dependencies(),
     )
 
     assert result.decision == "retry_scheduled"
 
-    assert "sensitive" not in str(
-        result.to_safe_dict()
-    )
+    assert "sensitive" not in str(result.to_safe_dict())
 
 
 def test_idle_when_no_job():
-    result = (
-        runner.run_one_telegram_update_job(
-            lambda _update: None,
-            dependencies=dependencies(
-                claim=(
-                    lambda **_kwargs: None
-                )
-            ),
-        )
+    result = runner.run_one_telegram_update_job(
+        lambda _update: None,
+        dependencies=dependencies(claim=(lambda **_kwargs: None)),
     )
 
     assert result.decision == "idle"
@@ -290,103 +216,60 @@ def test_idle_when_no_job():
 
 def test_claim_unavailable_is_safe():
     def claim(**_kwargs):
-        raise (
-            worker
-            .TelegramUpdateWorkerUnavailableError(
-                "database secret"
-            )
-        )
+        raise (worker.TelegramUpdateWorkerUnavailableError("database secret"))
 
-    result = (
-        runner.run_one_telegram_update_job(
-            lambda _update: None,
-            dependencies=dependencies(
-                claim=claim
-            ),
-        )
+    result = runner.run_one_telegram_update_job(
+        lambda _update: None,
+        dependencies=dependencies(claim=claim),
     )
 
     assert result.decision == "unavailable"
-    assert "secret" not in str(
-        result.to_safe_dict()
-    )
+    assert "secret" not in str(result.to_safe_dict())
 
 
 def test_keyring_error_schedules_retry():
     def decrypt(*_args, **_kwargs):
-        raise (
-            execution
-            .TelegramUpdateExecutionConfigurationError(
-                "secret key"
-            )
-        )
+        raise (execution.TelegramUpdateExecutionConfigurationError("secret key"))
 
-    result = (
-        runner.run_one_telegram_update_job(
-            lambda _update: None,
-            dependencies=dependencies(
-                decrypt=decrypt
-            ),
-        )
+    result = runner.run_one_telegram_update_job(
+        lambda _update: None,
+        dependencies=dependencies(decrypt=decrypt),
     )
 
     assert result.decision == "retry_scheduled"
 
-    assert (
-        result.error_code
-        == "telegram.keyring_unavailable"
-    )
+    assert result.error_code == "telegram.keyring_unavailable"
 
 
 def test_invalid_payload_is_dead_lettered():
     def decrypt(*_args, **_kwargs):
-        raise (
-            execution
-            .TelegramUpdateExecutionPayloadError(
-                "payload detail"
-            )
-        )
+        raise (execution.TelegramUpdateExecutionPayloadError("payload detail"))
 
-    result = (
-        runner.run_one_telegram_update_job(
-            lambda _update: None,
-            dependencies=dependencies(
-                decrypt=decrypt,
-                fail=(
-                    lambda *_args, **_kwargs:
-                    SimpleNamespace(
-                        job_status="dead_letter",
-                        idempotent_replay=False,
-                    )
-                ),
+    result = runner.run_one_telegram_update_job(
+        lambda _update: None,
+        dependencies=dependencies(
+            decrypt=decrypt,
+            fail=(
+                lambda *_args, **_kwargs: SimpleNamespace(
+                    job_status="dead_letter",
+                    idempotent_replay=False,
+                )
             ),
-        )
+        ),
     )
 
     assert result.decision == "dead_lettered"
 
-    assert (
-        result.error_code
-        == "telegram.payload_invalid"
-    )
+    assert result.error_code == "telegram.payload_invalid"
 
 
 def test_completion_ownership_loss():
     def complete(_lease):
-        raise (
-            worker
-            .TelegramUpdateWorkerOwnershipError(
-                "token detail"
-            )
-        )
+        raise (worker.TelegramUpdateWorkerOwnershipError("token detail"))
 
-    result = (
-        runner.run_one_telegram_update_job(
-            lambda _update: None,
-            dependencies=dependencies(
-                complete=complete
-            ),
-        )
+    result = runner.run_one_telegram_update_job(
+        lambda _update: None,
+        dependencies=dependencies(complete=complete),
     )
 
     assert result.decision == "ownership_lost"
@@ -394,27 +277,16 @@ def test_completion_ownership_loss():
 
 def test_failure_unavailable_is_safe():
     def fail(*_args, **_kwargs):
-        raise (
-            worker
-            .TelegramUpdateWorkerUnavailableError(
-                "db password"
-            )
-        )
+        raise (worker.TelegramUpdateWorkerUnavailableError("db password"))
 
-    result = (
-        runner.run_one_telegram_update_job(
-            lambda _update: False,
-            dependencies=dependencies(
-                fail=fail
-            ),
-        )
+    result = runner.run_one_telegram_update_job(
+        lambda _update: False,
+        dependencies=dependencies(fail=fail),
     )
 
     assert result.decision == "unavailable"
 
-    assert "password" not in str(
-        result.to_safe_dict()
-    )
+    assert "password" not in str(result.to_safe_dict())
 
 
 @pytest.mark.parametrize(
@@ -434,14 +306,10 @@ def test_retry_backoff(
     attempt,
     expected,
 ):
-    config = (
-        runner
-        .TelegramUpdateWorkerConfig()
-    )
+    config = runner.TelegramUpdateWorkerConfig()
 
     assert (
-        runner
-        .calculate_worker_retry_delay_seconds(
+        runner.calculate_worker_retry_delay_seconds(
             attempt_count=attempt,
             config=config,
         )
@@ -455,9 +323,7 @@ def test_runner_recovers_then_processes():
     deps = dependencies(
         recover=(
             lambda **kwargs: (
-                received_limits.append(
-                    kwargs["limit"]
-                )
+                received_limits.append(kwargs["limit"])
                 or FakeRecovery(
                     retried=2,
                     dead_lettered=1,
@@ -474,22 +340,17 @@ def test_runner_recovers_then_processes():
 
     stop = FakeStopEvent()
 
-    summary = (
-        runner.run_telegram_update_worker(
-            lambda _update: None,
-            stop_event=stop,
-            dependencies=deps,
-            max_cycles=1,
-        )
+    summary = runner.run_telegram_update_worker(
+        lambda _update: None,
+        stop_event=stop,
+        dependencies=deps,
+        max_cycles=1,
     )
 
     assert received_limits == [100]
     assert summary.recovered_retry == 2
 
-    assert (
-        summary.recovered_dead_letter
-        == 1
-    )
+    assert summary.recovered_dead_letter == 1
 
     assert summary.idle == 1
 
@@ -497,22 +358,18 @@ def test_runner_recovers_then_processes():
 def test_runner_uses_idle_wait():
     stop = FakeStopEvent()
 
-    summary = (
-        runner.run_telegram_update_worker(
-            lambda _update: None,
-            stop_event=stop,
-            dependencies=dependencies(
-                claim=(
-                    lambda **_kwargs: None
-                ),
-                times=[
-                    0.0,
-                    0.0,
-                    1.0,
-                ],
-            ),
-            max_cycles=1,
-        )
+    summary = runner.run_telegram_update_worker(
+        lambda _update: None,
+        stop_event=stop,
+        dependencies=dependencies(
+            claim=(lambda **_kwargs: None),
+            times=[
+                0.0,
+                0.0,
+                1.0,
+            ],
+        ),
+        max_cycles=1,
     )
 
     assert summary.idle == 1
@@ -523,27 +380,20 @@ def test_runner_uses_unavailable_wait():
     stop = FakeStopEvent()
 
     def claim(**_kwargs):
-        raise (
-            worker
-            .TelegramUpdateWorkerUnavailableError(
-                "unavailable"
-            )
-        )
+        raise (worker.TelegramUpdateWorkerUnavailableError("unavailable"))
 
-    summary = (
-        runner.run_telegram_update_worker(
-            lambda _update: None,
-            stop_event=stop,
-            dependencies=dependencies(
-                claim=claim,
-                times=[
-                    0.0,
-                    0.0,
-                    1.0,
-                ],
-            ),
-            max_cycles=1,
-        )
+    summary = runner.run_telegram_update_worker(
+        lambda _update: None,
+        stop_event=stop,
+        dependencies=dependencies(
+            claim=claim,
+            times=[
+                0.0,
+                0.0,
+                1.0,
+            ],
+        ),
+        max_cycles=1,
     )
 
     assert summary.unavailable == 1
@@ -554,30 +404,23 @@ def test_recovery_failure_does_not_claim():
     claimed = []
 
     def recover(**_kwargs):
-        raise RuntimeError(
-            "database secret"
-        )
+        raise RuntimeError("database secret")
 
     stop = FakeStopEvent()
 
-    summary = (
-        runner.run_telegram_update_worker(
-            lambda _update: None,
-            stop_event=stop,
-            dependencies=dependencies(
-                recover=recover,
-                claim=(
-                    lambda **_kwargs:
-                    claimed.append(True)
-                ),
-                times=[
-                    0.0,
-                    0.0,
-                    1.0,
-                ],
-            ),
-            max_cycles=1,
-        )
+    summary = runner.run_telegram_update_worker(
+        lambda _update: None,
+        stop_event=stop,
+        dependencies=dependencies(
+            recover=recover,
+            claim=(lambda **_kwargs: claimed.append(True)),
+            times=[
+                0.0,
+                0.0,
+                1.0,
+            ],
+        ),
+        max_cycles=1,
     )
 
     assert claimed == []
@@ -593,9 +436,7 @@ def test_callback_receives_safe_result():
             lambda _update: None,
             stop_event=FakeStopEvent(),
             dependencies=dependencies(
-                claim=(
-                    lambda **_kwargs: None
-                ),
+                claim=(lambda **_kwargs: None),
                 times=[
                     0.0,
                     0.0,
@@ -609,37 +450,26 @@ def test_callback_receives_safe_result():
 
     assert len(results) == 1
 
-    assert (
-        results[0].to_safe_dict()[
-            "decision"
-        ]
-        == "idle"
-    )
+    assert results[0].to_safe_dict()["decision"] == "idle"
 
 
 def test_callback_failure_is_ignored():
     def callback(_result):
-        raise RuntimeError(
-            "callback secret"
-        )
+        raise RuntimeError("callback secret")
 
-    summary = (
-        runner.run_telegram_update_worker(
-            lambda _update: None,
-            stop_event=FakeStopEvent(),
-            dependencies=dependencies(
-                claim=(
-                    lambda **_kwargs: None
-                ),
-                times=[
-                    0.0,
-                    0.0,
-                    1.0,
-                ],
-            ),
-            on_result=callback,
-            max_cycles=1,
-        )
+    summary = runner.run_telegram_update_worker(
+        lambda _update: None,
+        stop_event=FakeStopEvent(),
+        dependencies=dependencies(
+            claim=(lambda **_kwargs: None),
+            times=[
+                0.0,
+                0.0,
+                1.0,
+            ],
+        ),
+        on_result=callback,
+        max_cycles=1,
     )
 
     assert summary.cycles == 1
@@ -660,26 +490,14 @@ def test_invalid_float_config_is_rejected(
         field_name: 0,
     }
 
-    with pytest.raises(
-        runner
-        .TelegramUpdateRunnerConfigurationError
-    ):
-        (
-            runner
-            .TelegramUpdateWorkerConfig(
-                **values
-            )
-        )
+    with pytest.raises(runner.TelegramUpdateRunnerConfigurationError):
+        (runner.TelegramUpdateWorkerConfig(**values))
 
 
 def test_retry_base_cannot_exceed_maximum():
-    with pytest.raises(
-        runner
-        .TelegramUpdateRunnerConfigurationError
-    ):
+    with pytest.raises(runner.TelegramUpdateRunnerConfigurationError):
         (
-            runner
-            .TelegramUpdateWorkerConfig(
+            runner.TelegramUpdateWorkerConfig(
                 retry_base_delay_seconds=10,
                 retry_max_delay_seconds=5,
             )
@@ -687,24 +505,14 @@ def test_retry_base_cannot_exceed_maximum():
 
 
 def test_processor_error_code_is_sanitized():
-    with pytest.raises(
-        runner
-        .TelegramUpdateRunnerConfigurationError
-    ):
-        (
-            runner
-            .TelegramUpdateTransientProcessingError(
-                "invalid code"
-            )
-        )
+    with pytest.raises(runner.TelegramUpdateRunnerConfigurationError):
+        (runner.TelegramUpdateTransientProcessingError("invalid code"))
 
 
 def test_runner_result_never_contains_payload():
-    result = (
-        runner.run_one_telegram_update_job(
-            lambda _update: None,
-            dependencies=dependencies(),
-        )
+    result = runner.run_one_telegram_update_job(
+        lambda _update: None,
+        dependencies=dependencies(),
     )
 
     safe = result.to_safe_dict()
@@ -713,6 +521,4 @@ def test_runner_result_never_contains_payload():
     assert "lock_token" not in safe
     assert "ciphertext" not in safe
 
-    assert LOCK_TOKEN not in repr(
-        result
-    )
+    assert LOCK_TOKEN not in repr(result)

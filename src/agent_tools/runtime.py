@@ -39,15 +39,10 @@ class InnaToolRuntime:
         cls,
         *,
         registry: ToolRegistry | None = None,
-        permission_policy: (
-            ToolPermissionPolicy | None
-        ) = None,
+        permission_policy: (ToolPermissionPolicy | None) = None,
         max_workers: int = 1,
     ) -> "InnaToolRuntime":
-        resolved_registry = (
-            registry
-            or criar_registro_ferramentas_inna()
-        )
+        resolved_registry = registry or criar_registro_ferramentas_inna()
 
         executor = ToolExecutor(
             registry=resolved_registry,
@@ -95,9 +90,7 @@ def executar_ferramenta_inna(
     call: ToolCall,
     *,
     registry: ToolRegistry | None = None,
-    permission_policy: (
-        ToolPermissionPolicy | None
-    ) = None,
+    permission_policy: (ToolPermissionPolicy | None) = None,
 ) -> ToolResult:
     """
     Executa uma ferramenta usando um runtime isolado.

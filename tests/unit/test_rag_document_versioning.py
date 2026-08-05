@@ -43,10 +43,7 @@ def test_normalizes_logical_document_name(
     filename: str,
     expected: str,
 ):
-    assert (
-        normalize_logical_document_name(filename)
-        == expected
-    )
+    assert normalize_logical_document_name(filename) == expected
 
 
 def test_rejects_empty_logical_name():
@@ -54,15 +51,11 @@ def test_rejects_empty_logical_name():
         RagDocumentVersioningError,
         match="nome lógico",
     ):
-        normalize_logical_document_name(
-            "...md"
-        )
+        normalize_logical_document_name("...md")
 
 
 def test_accepts_valid_sha256():
-    assert validate_content_hash(
-        HASH_A.upper()
-    ) == HASH_A
+    assert validate_content_hash(HASH_A.upper()) == HASH_A
 
 
 @pytest.mark.parametrize(
@@ -82,21 +75,15 @@ def test_rejects_invalid_sha256(
         RagDocumentVersioningError,
         match="SHA-256",
     ):
-        validate_content_hash(
-            content_hash
-        )
+        validate_content_hash(content_hash)
 
 
 def test_first_version_is_one():
-    assert determine_next_document_version(
-        None
-    ) == 1
+    assert determine_next_document_version(None) == 1
 
 
 def test_increments_existing_version():
-    assert determine_next_document_version(
-        4
-    ) == 5
+    assert determine_next_document_version(4) == 5
 
 
 @pytest.mark.parametrize(
@@ -113,16 +100,17 @@ def test_rejects_invalid_current_version(
     with pytest.raises(
         RagDocumentVersioningError,
     ):
-        determine_next_document_version(
-            current_version
-        )
+        determine_next_document_version(current_version)
 
 
 def test_accepts_positive_document_id():
-    assert validate_document_id(
-        10,
-        field_name="document_id",
-    ) == 10
+    assert (
+        validate_document_id(
+            10,
+            field_name="document_id",
+        )
+        == 10
+    )
 
 
 def test_accepts_none_document_id():
@@ -158,9 +146,7 @@ def test_rejects_invalid_document_id(
 def test_accepts_new_content_hash():
     ensure_content_is_not_duplicate(
         new_content_hash=HASH_A,
-        existing_content_hashes=(
-            HASH_B,
-        ),
+        existing_content_hashes=(HASH_B,),
     )
 
 
@@ -190,10 +176,7 @@ def test_creates_initial_document_version():
     assert version.root_document_id is None
     assert version.previous_document_id is None
     assert version.is_initial_version is True
-    assert (
-        version.replaces_previous_version
-        is False
-    )
+    assert version.replaces_previous_version is False
 
 
 def test_creates_incremental_document_version():
@@ -203,9 +186,7 @@ def test_creates_incremental_document_version():
         current_version=2,
         root_document_id=10,
         previous_document_id=12,
-        existing_content_hashes=(
-            HASH_A,
-        ),
+        existing_content_hashes=(HASH_A,),
     )
 
     assert version.logical_name == "reserva"
@@ -213,10 +194,7 @@ def test_creates_incremental_document_version():
     assert version.root_document_id == 10
     assert version.previous_document_id == 12
     assert version.is_initial_version is False
-    assert (
-        version.replaces_previous_version
-        is True
-    )
+    assert version.replaces_previous_version is True
 
 
 def test_new_version_requires_previous_document():

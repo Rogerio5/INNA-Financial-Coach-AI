@@ -42,9 +42,7 @@ _MISSING = object()
 def _normalize_sql(
     sql: str,
 ) -> str:
-    return " ".join(
-        sql.lower().split()
-    )
+    return " ".join(sql.lower().split())
 
 
 def _row(
@@ -58,35 +56,14 @@ def _row(
     updated_at=None,
     expires_at=None,
 ):
-    resolved_created_at = (
-        created_at
-        or NOW
-    )
+    resolved_created_at = created_at or NOW
 
-    resolved_updated_at = (
-        updated_at
-        or (
-            resolved_created_at
-            + timedelta(
-                seconds=1
-            )
-        )
-    )
+    resolved_updated_at = updated_at or (resolved_created_at + timedelta(seconds=1))
 
-    resolved_expires_at = (
-        expires_at
-        or (
-            resolved_updated_at
-            + timedelta(
-                hours=1
-            )
-        )
-    )
+    resolved_expires_at = expires_at or (resolved_updated_at + timedelta(hours=1))
 
     return {
-        "telegram_user_id": (
-            telegram_user_id
-        ),
+        "telegram_user_id": (telegram_user_id),
         "chat_id": chat_id,
         "state": (
             state
@@ -97,15 +74,9 @@ def _row(
         ),
         "language": language,
         "state_version": state_version,
-        "expires_at": (
-            resolved_expires_at
-        ),
-        "created_at": (
-            resolved_created_at
-        ),
-        "updated_at": (
-            resolved_updated_at
-        ),
+        "expires_at": (resolved_expires_at),
+        "created_at": (resolved_created_at),
+        "updated_at": (resolved_updated_at),
     }
 
 
@@ -118,12 +89,8 @@ class FakeConnection:
     ):
         self.commit_calls = 0
         self.rollback_calls = 0
-        self.commit_error = (
-            commit_error
-        )
-        self.rollback_error = (
-            rollback_error
-        )
+        self.commit_error = commit_error
+        self.rollback_error = rollback_error
 
     def commit(
         self,
@@ -151,25 +118,13 @@ class FakeCursor:
         execute_error=None,
         connection=None,
     ):
-        self.connection = (
-            connection
-            if connection is not None
-            else FakeConnection()
-        )
+        self.connection = connection if connection is not None else FakeConnection()
 
-        self.fetchone_result = (
-            fetchone_result
-        )
+        self.fetchone_result = fetchone_result
 
-        self.fetchall_result = (
-            []
-            if fetchall_result is None
-            else fetchall_result
-        )
+        self.fetchall_result = [] if fetchall_result is None else fetchall_result
 
-        self.execute_error = (
-            execute_error
-        )
+        self.execute_error = execute_error
 
         self.execute_calls = []
 
@@ -208,12 +163,8 @@ class FakeCursorContext:
         exit_error=None,
     ):
         self.cursor = cursor
-        self.enter_error = (
-            enter_error
-        )
-        self.exit_error = (
-            exit_error
-        )
+        self.enter_error = enter_error
+        self.exit_error = exit_error
 
     def __enter__(
         self,
@@ -245,36 +196,24 @@ class FakeCursorFactory:
         exit_error=None,
     ):
         self.cursor = cursor
-        self.call_error = (
-            call_error
-        )
-        self.enter_error = (
-            enter_error
-        )
-        self.exit_error = (
-            exit_error
-        )
+        self.call_error = call_error
+        self.enter_error = enter_error
+        self.exit_error = exit_error
         self.calls = []
 
     def __call__(
         self,
         **kwargs,
     ):
-        self.calls.append(
-            kwargs
-        )
+        self.calls.append(kwargs)
 
         if self.call_error is not None:
             raise self.call_error
 
         return FakeCursorContext(
             self.cursor,
-            enter_error=(
-                self.enter_error
-            ),
-            exit_error=(
-                self.exit_error
-            ),
+            enter_error=(self.enter_error),
+            exit_error=(self.exit_error),
         )
 
 
@@ -300,20 +239,16 @@ def _install_cursor(
 def test_load_returns_record(
     monkeypatch,
 ):
-    cursor = FakeCursor(
-        fetchone_result=_row()
-    )
+    cursor = FakeCursor(fetchone_result=_row())
 
     factory = _install_cursor(
         monkeypatch,
         cursor,
     )
 
-    record = (
-        load_telegram_conversation_state(
-            1001,
-            -2001,
-        )
+    record = load_telegram_conversation_state(
+        1001,
+        -2001,
     )
 
     assert isinstance(
@@ -321,29 +256,17 @@ def test_load_returns_record(
         TelegramConversationState,
     )
 
-    assert (
-        record.telegram_user_id
-        == 1001
-    )
+    assert record.telegram_user_id == 1001
 
     assert record.chat_id == -2001
 
-    assert (
-        record.to_processing_state()
-        == {
-            "step": "language",
-        }
-    )
+    assert record.to_processing_state() == {
+        "step": "language",
+    }
 
-    assert (
-        cursor.connection.commit_calls
-        == 0
-    )
+    assert cursor.connection.commit_calls == 0
 
-    assert (
-        cursor.connection.rollback_calls
-        == 1
-    )
+    assert cursor.connection.rollback_calls == 1
 
     assert factory.calls == [
         {
@@ -356,27 +279,21 @@ def test_load_returns_record(
 def test_load_uses_fixed_parameterized_sql(
     monkeypatch,
 ):
-    cursor = FakeCursor(
-        fetchone_result=None
-    )
+    cursor = FakeCursor(fetchone_result=None)
 
     _install_cursor(
         monkeypatch,
         cursor,
     )
 
-    result = (
-        load_telegram_conversation_state(
-            1001,
-            -2001,
-        )
+    result = load_telegram_conversation_state(
+        1001,
+        -2001,
     )
 
     assert result is None
 
-    sql, params = (
-        cursor.execute_calls[0]
-    )
+    sql, params = cursor.execute_calls[0]
 
     assert params == (
         1001,
@@ -386,10 +303,7 @@ def test_load_uses_fixed_parameterized_sql(
     assert "telegram_user_id = %s" in sql
     assert "chat_id = %s" in sql
 
-    assert (
-        "expires_at > current_timestamp"
-        in sql.lower()
-    )
+    assert "expires_at > current_timestamp" in sql.lower()
 
     assert "1001" not in sql
     assert "-2001" not in sql
@@ -398,9 +312,7 @@ def test_load_uses_fixed_parameterized_sql(
 def test_load_treats_missing_or_expired_as_absent(
     monkeypatch,
 ):
-    cursor = FakeCursor(
-        fetchone_result=None
-    )
+    cursor = FakeCursor(fetchone_result=None)
 
     _install_cursor(
         monkeypatch,
@@ -421,42 +333,29 @@ def test_load_treats_missing_or_expired_as_absent(
     [
         '{"step":"language"}',
         b'{"step":"language"}',
-        bytearray(
-            b'{"step":"language"}'
-        ),
-        memoryview(
-            b'{"step":"language"}'
-        ),
+        bytearray(b'{"step":"language"}'),
+        memoryview(b'{"step":"language"}'),
     ],
 )
 def test_load_deserializes_supported_json_forms(
     monkeypatch,
     persisted_state,
 ):
-    cursor = FakeCursor(
-        fetchone_result=_row(
-            state=persisted_state
-        )
-    )
+    cursor = FakeCursor(fetchone_result=_row(state=persisted_state))
 
     _install_cursor(
         monkeypatch,
         cursor,
     )
 
-    record = (
-        load_telegram_conversation_state(
-            1001,
-            -2001,
-        )
+    record = load_telegram_conversation_state(
+        1001,
+        -2001,
     )
 
-    assert (
-        record.to_processing_state()
-        == {
-            "step": "language",
-        }
-    )
+    assert record.to_processing_state() == {
+        "step": "language",
+    }
 
 
 @pytest.mark.parametrize(
@@ -472,20 +371,14 @@ def test_load_rejects_invalid_persisted_state(
     monkeypatch,
     persisted_state,
 ):
-    cursor = FakeCursor(
-        fetchone_result=_row(
-            state=persisted_state
-        )
-    )
+    cursor = FakeCursor(fetchone_result=_row(state=persisted_state))
 
     _install_cursor(
         monkeypatch,
         cursor,
     )
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         load_telegram_conversation_state(
             1001,
             -2001,
@@ -497,22 +390,16 @@ def test_load_rejects_incomplete_row(
 ):
     invalid_row = _row()
 
-    invalid_row.pop(
-        "expires_at"
-    )
+    invalid_row.pop("expires_at")
 
-    cursor = FakeCursor(
-        fetchone_result=invalid_row
-    )
+    cursor = FakeCursor(fetchone_result=invalid_row)
 
     _install_cursor(
         monkeypatch,
         cursor,
     )
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         load_telegram_conversation_state(
             1001,
             -2001,
@@ -535,22 +422,16 @@ def test_load_rejects_identity_mismatch(
     row_override,
 ):
     persisted_row = _row()
-    persisted_row.update(
-        row_override
-    )
+    persisted_row.update(row_override)
 
-    cursor = FakeCursor(
-        fetchone_result=persisted_row
-    )
+    cursor = FakeCursor(fetchone_result=persisted_row)
 
     _install_cursor(
         monkeypatch,
         cursor,
     )
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         load_telegram_conversation_state(
             1001,
             -2001,
@@ -560,25 +441,21 @@ def test_load_rejects_identity_mismatch(
 def test_create_inserts_and_commits(
     monkeypatch,
 ):
-    cursor = FakeCursor(
-        fetchone_result=_row()
-    )
+    cursor = FakeCursor(fetchone_result=_row())
 
     _install_cursor(
         monkeypatch,
         cursor,
     )
 
-    record = (
-        create_telegram_conversation_state(
-            telegram_user_id=1001,
-            chat_id=-2001,
-            state={
-                "step": "language",
-            },
-            language=" pt-BR ",
-            ttl_seconds=3600,
-        )
+    record = create_telegram_conversation_state(
+        telegram_user_id=1001,
+        chat_id=-2001,
+        state={
+            "step": "language",
+        },
+        language=" pt-BR ",
+        ttl_seconds=3600,
     )
 
     assert isinstance(
@@ -588,26 +465,16 @@ def test_create_inserts_and_commits(
 
     assert record.language == "pt-BR"
 
-    assert (
-        cursor.connection.commit_calls
-        == 1
-    )
+    assert cursor.connection.commit_calls == 1
 
-    assert (
-        cursor.connection.rollback_calls
-        == 0
-    )
+    assert cursor.connection.rollback_calls == 0
 
-    sql, params = (
-        cursor.execute_calls[0]
-    )
+    sql, params = cursor.execute_calls[0]
 
     assert params[0] == 1001
     assert params[1] == -2001
 
-    assert json.loads(
-        params[2]
-    ) == {
+    assert json.loads(params[2]) == {
         "step": "language",
     }
 
@@ -620,11 +487,7 @@ def test_create_inserts_and_commits(
 def test_create_can_revive_only_expired_state(
     monkeypatch,
 ):
-    cursor = FakeCursor(
-        fetchone_result=_row(
-            state_version=4
-        )
-    )
+    cursor = FakeCursor(fetchone_result=_row(state_version=4))
 
     _install_cursor(
         monkeypatch,
@@ -641,40 +504,27 @@ def test_create_can_revive_only_expired_state(
         3600,
     )
 
-    sql = (
-        cursor.execute_calls[0][0]
-        .lower()
-    )
+    sql = cursor.execute_calls[0][0].lower()
 
     assert "on conflict" in sql
     assert "do update" in sql
 
-    assert (
-        "expires_at <= current_timestamp"
-        in sql
-    )
+    assert "expires_at <= current_timestamp" in sql
 
-    assert (
-        "state_version + 1"
-        in sql
-    )
+    assert "state_version + 1" in sql
 
 
 def test_create_active_state_raises_conflict(
     monkeypatch,
 ):
-    cursor = FakeCursor(
-        fetchone_result=None
-    )
+    cursor = FakeCursor(fetchone_result=None)
 
     _install_cursor(
         monkeypatch,
         cursor,
     )
 
-    with pytest.raises(
-        TelegramConversationStateConflictError
-    ):
+    with pytest.raises(TelegramConversationStateConflictError):
         create_telegram_conversation_state(
             1001,
             -2001,
@@ -685,15 +535,9 @@ def test_create_active_state_raises_conflict(
             3600,
         )
 
-    assert (
-        cursor.connection.commit_calls
-        == 0
-    )
+    assert cursor.connection.commit_calls == 0
 
-    assert (
-        cursor.connection.rollback_calls
-        >= 1
-    )
+    assert cursor.connection.rollback_calls >= 1
 
 
 def test_create_uses_defensive_state_copy(
@@ -708,11 +552,7 @@ def test_create_uses_defensive_state_copy(
         },
     }
 
-    cursor = FakeCursor(
-        fetchone_result=_row(
-            state=source_state
-        )
-    )
+    cursor = FakeCursor(fetchone_result=_row(state=source_state))
 
     _install_cursor(
         monkeypatch,
@@ -727,19 +567,11 @@ def test_create_uses_defensive_state_copy(
         3600,
     )
 
-    source_state[
-        "nested"
-    ]["items"].append(
-        3
-    )
+    source_state["nested"]["items"].append(3)
 
-    _, params = (
-        cursor.execute_calls[0]
-    )
+    _, params = cursor.execute_calls[0]
 
-    assert json.loads(
-        params[2]
-    ) == {
+    assert json.loads(params[2]) == {
         "nested": {
             "items": [
                 1,
@@ -767,29 +599,23 @@ def test_save_updates_with_optimistic_version(
         cursor,
     )
 
-    record = (
-        save_telegram_conversation_state(
-            telegram_user_id=1001,
-            chat_id=-2001,
-            state={
-                "step": "financial_data",
-            },
-            language="en-US",
-            expected_version=1,
-            ttl_seconds=7200,
-        )
+    record = save_telegram_conversation_state(
+        telegram_user_id=1001,
+        chat_id=-2001,
+        state={
+            "step": "financial_data",
+        },
+        language="en-US",
+        expected_version=1,
+        ttl_seconds=7200,
     )
 
     assert record.state_version == 2
     assert record.language == "en-US"
 
-    sql, params = (
-        cursor.execute_calls[0]
-    )
+    sql, params = cursor.execute_calls[0]
 
-    assert json.loads(
-        params[0]
-    ) == {
+    assert json.loads(params[0]) == {
         "step": "financial_data",
     }
 
@@ -802,46 +628,28 @@ def test_save_updates_with_optimistic_version(
         1,
     )
 
-    normalized_sql = _normalize_sql(
-        sql
-    )
+    normalized_sql = _normalize_sql(sql)
 
-    assert (
-        "state_version = state_version + 1"
-        in normalized_sql
-    )
+    assert "state_version = state_version + 1" in normalized_sql
 
-    assert (
-        "state_version = %s"
-        in normalized_sql
-    )
+    assert "state_version = %s" in normalized_sql
 
-    assert (
-        "expires_at > current_timestamp"
-        in normalized_sql
-    )
+    assert "expires_at > current_timestamp" in normalized_sql
 
-    assert (
-        cursor.connection.commit_calls
-        == 1
-    )
+    assert cursor.connection.commit_calls == 1
 
 
 def test_save_stale_version_raises_conflict(
     monkeypatch,
 ):
-    cursor = FakeCursor(
-        fetchone_result=None
-    )
+    cursor = FakeCursor(fetchone_result=None)
 
     _install_cursor(
         monkeypatch,
         cursor,
     )
 
-    with pytest.raises(
-        TelegramConversationStateConflictError
-    ):
+    with pytest.raises(TelegramConversationStateConflictError):
         save_telegram_conversation_state(
             1001,
             -2001,
@@ -853,15 +661,9 @@ def test_save_stale_version_raises_conflict(
             ttl_seconds=3600,
         )
 
-    assert (
-        cursor.connection.commit_calls
-        == 0
-    )
+    assert cursor.connection.commit_calls == 0
 
-    assert (
-        cursor.connection.rollback_calls
-        >= 1
-    )
+    assert cursor.connection.rollback_calls >= 1
 
 
 @pytest.mark.parametrize(
@@ -884,9 +686,7 @@ def test_save_validates_version_before_database(
         cursor,
     )
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         save_telegram_conversation_state(
             1001,
             -2001,
@@ -913,60 +713,43 @@ def test_delete_returns_true_and_commits(
         cursor,
     )
 
-    result = (
-        delete_telegram_conversation_state(
-            1001,
-            -2001,
-        )
+    result = delete_telegram_conversation_state(
+        1001,
+        -2001,
     )
 
     assert result is True
 
-    assert (
-        cursor.connection.commit_calls
-        == 1
-    )
+    assert cursor.connection.commit_calls == 1
 
-    sql, params = (
-        cursor.execute_calls[0]
-    )
+    sql, params = cursor.execute_calls[0]
 
     assert params == (
         1001,
         -2001,
     )
 
-    assert (
-        "delete from"
-        in sql.lower()
-    )
+    assert "delete from" in sql.lower()
 
 
 def test_delete_returns_false_when_absent(
     monkeypatch,
 ):
-    cursor = FakeCursor(
-        fetchone_result=None
-    )
+    cursor = FakeCursor(fetchone_result=None)
 
     _install_cursor(
         monkeypatch,
         cursor,
     )
 
-    result = (
-        delete_telegram_conversation_state(
-            1001,
-            -2001,
-        )
+    result = delete_telegram_conversation_state(
+        1001,
+        -2001,
     )
 
     assert result is False
 
-    assert (
-        cursor.connection.commit_calls
-        == 1
-    )
+    assert cursor.connection.commit_calls == 1
 
 
 def test_cleanup_deletes_bounded_batch(
@@ -990,47 +773,25 @@ def test_cleanup_deletes_bounded_batch(
         cursor,
     )
 
-    deleted = (
-        delete_expired_telegram_conversation_states(
-            limit=100
-        )
-    )
+    deleted = delete_expired_telegram_conversation_states(limit=100)
 
     assert deleted == 2
 
-    assert (
-        cursor.connection.commit_calls
-        == 1
-    )
+    assert cursor.connection.commit_calls == 1
 
-    sql, params = (
-        cursor.execute_calls[0]
-    )
+    sql, params = cursor.execute_calls[0]
 
-    assert params == (
-        100,
-    )
+    assert params == (100,)
 
-    normalized_sql = _normalize_sql(
-        sql
-    )
+    normalized_sql = _normalize_sql(sql)
 
-    assert (
-        "for update"
-        in normalized_sql
-    )
+    assert "for update" in normalized_sql
 
-    assert (
-        "skip locked"
-        in normalized_sql
-    )
+    assert "skip locked" in normalized_sql
 
     assert "limit %s" in normalized_sql
 
-    assert (
-        "expires_at <= current_timestamp"
-        in normalized_sql
-    )
+    assert "expires_at <= current_timestamp" in normalized_sql
 
 
 @pytest.mark.parametrize(
@@ -1054,12 +815,8 @@ def test_cleanup_validates_limit_before_database(
         cursor,
     )
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        delete_expired_telegram_conversation_states(
-            invalid_limit
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        delete_expired_telegram_conversation_states(invalid_limit)
 
     assert factory.calls == []
 
@@ -1117,28 +874,14 @@ def test_identity_is_validated_before_database(
     )
 
     functions = {
-        "load": (
-            load_telegram_conversation_state
-        ),
-        "create": (
-            create_telegram_conversation_state
-        ),
-        "save": (
-            save_telegram_conversation_state
-        ),
-        "delete": (
-            delete_telegram_conversation_state
-        ),
+        "load": (load_telegram_conversation_state),
+        "create": (create_telegram_conversation_state),
+        "save": (save_telegram_conversation_state),
+        "delete": (delete_telegram_conversation_state),
     }
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        functions[
-            function_name
-        ](
-            *arguments
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        functions[function_name](*arguments)
 
     assert factory.calls == []
 
@@ -1157,15 +900,9 @@ def test_database_errors_are_sanitized(
     monkeypatch,
     operation,
 ):
-    secret = (
-        "private-financial-message"
-    )
+    secret = "private-financial-message"
 
-    cursor = FakeCursor(
-        execute_error=RuntimeError(
-            secret
-        )
-    )
+    cursor = FakeCursor(execute_error=RuntimeError(secret))
 
     _install_cursor(
         monkeypatch,
@@ -1173,63 +910,42 @@ def test_database_errors_are_sanitized(
     )
 
     calls = {
-        "load": lambda: (
-            load_telegram_conversation_state(
-                1001,
-                -2001,
-            )
+        "load": lambda: load_telegram_conversation_state(
+            1001,
+            -2001,
         ),
-        "create": lambda: (
-            create_telegram_conversation_state(
-                1001,
-                -2001,
-                {
-                    "secret": secret,
-                },
-                "pt-BR",
-                3600,
-            )
+        "create": lambda: create_telegram_conversation_state(
+            1001,
+            -2001,
+            {
+                "secret": secret,
+            },
+            "pt-BR",
+            3600,
         ),
-        "save": lambda: (
-            save_telegram_conversation_state(
-                1001,
-                -2001,
-                {
-                    "secret": secret,
-                },
-                "pt-BR",
-                1,
-                3600,
-            )
+        "save": lambda: save_telegram_conversation_state(
+            1001,
+            -2001,
+            {
+                "secret": secret,
+            },
+            "pt-BR",
+            1,
+            3600,
         ),
-        "delete": lambda: (
-            delete_telegram_conversation_state(
-                1001,
-                -2001,
-            )
+        "delete": lambda: delete_telegram_conversation_state(
+            1001,
+            -2001,
         ),
-        "cleanup": lambda: (
-            delete_expired_telegram_conversation_states(
-                100
-            )
-        ),
+        "cleanup": lambda: delete_expired_telegram_conversation_states(100),
     }
 
-    with pytest.raises(
-        TelegramConversationStateUnavailableError
-    ) as captured:
-        calls[
-            operation
-        ]()
+    with pytest.raises(TelegramConversationStateUnavailableError) as captured:
+        calls[operation]()
 
-    assert secret not in str(
-        captured.value
-    )
+    assert secret not in str(captured.value)
 
-    assert (
-        cursor.connection.rollback_calls
-        >= 1
-    )
+    assert cursor.connection.rollback_calls >= 1
 
 
 def test_cursor_factory_errors_are_sanitized(
@@ -1242,22 +958,16 @@ def test_cursor_factory_errors_are_sanitized(
     _install_cursor(
         monkeypatch,
         cursor,
-        call_error=RuntimeError(
-            secret
-        ),
+        call_error=RuntimeError(secret),
     )
 
-    with pytest.raises(
-        TelegramConversationStateUnavailableError
-    ) as captured:
+    with pytest.raises(TelegramConversationStateUnavailableError) as captured:
         load_telegram_conversation_state(
             1001,
             -2001,
         )
 
-    assert secret not in str(
-        captured.value
-    )
+    assert secret not in str(captured.value)
 
 
 def test_commit_failure_rolls_back_and_is_sanitized(
@@ -1265,11 +975,7 @@ def test_commit_failure_rolls_back_and_is_sanitized(
 ):
     secret = "commit-internal-error"
 
-    connection = FakeConnection(
-        commit_error=RuntimeError(
-            secret
-        )
-    )
+    connection = FakeConnection(commit_error=RuntimeError(secret))
 
     cursor = FakeCursor(
         fetchone_result=_row(),
@@ -1281,9 +987,7 @@ def test_commit_failure_rolls_back_and_is_sanitized(
         cursor,
     )
 
-    with pytest.raises(
-        TelegramConversationStateUnavailableError
-    ) as captured:
+    with pytest.raises(TelegramConversationStateUnavailableError) as captured:
         create_telegram_conversation_state(
             1001,
             -2001,
@@ -1292,9 +996,7 @@ def test_commit_failure_rolls_back_and_is_sanitized(
             3600,
         )
 
-    assert secret not in str(
-        captured.value
-    )
+    assert secret not in str(captured.value)
 
     assert connection.commit_calls == 1
     assert connection.rollback_calls >= 1
@@ -1303,9 +1005,7 @@ def test_commit_failure_rolls_back_and_is_sanitized(
 def test_missing_connection_is_unavailable(
     monkeypatch,
 ):
-    cursor = FakeCursor(
-        fetchone_result=None
-    )
+    cursor = FakeCursor(fetchone_result=None)
 
     cursor.connection = None
 
@@ -1314,9 +1014,7 @@ def test_missing_connection_is_unavailable(
         cursor,
     )
 
-    with pytest.raises(
-        TelegramConversationStateUnavailableError
-    ):
+    with pytest.raises(TelegramConversationStateUnavailableError):
         load_telegram_conversation_state(
             1001,
             -2001,
@@ -1339,10 +1037,7 @@ def test_repository_sql_contains_no_dynamic_identity():
         assert "{" not in sql
         assert "}" not in sql
 
-        assert (
-            "public.telegram_conversation_states"
-            in sql
-        )
+        assert "public.telegram_conversation_states" in sql
 
 
 def test_repository_has_no_raw_message_columns():

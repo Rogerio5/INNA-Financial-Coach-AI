@@ -45,44 +45,30 @@ LIMIT %s;
 """
 
 
-class FinancialHistoryQueryError(
-    ValueError
-):
+class FinancialHistoryQueryError(ValueError):
     """Consulta de histórico inválida."""
 
 
-class FinancialHistoryRepositoryError(
-    RuntimeError
-):
+class FinancialHistoryRepositoryError(RuntimeError):
     """Falha segura de acesso ao histórico."""
 
 
 def _normalizar_usuario_id(
     usuario_id: Any,
 ) -> str:
-    value = str(
-        usuario_id or ""
-    ).strip()
+    value = str(usuario_id or "").strip()
 
     if not value:
-        raise FinancialHistoryQueryError(
-            "A identidade do usuário é obrigatória."
-        )
+        raise FinancialHistoryQueryError("A identidade do usuário é obrigatória.")
 
     if len(value) > MAX_USER_ID_LENGTH:
         raise FinancialHistoryQueryError(
-            "A identidade do usuário excede "
-            "o tamanho permitido."
+            "A identidade do usuário excede o tamanho permitido."
         )
 
-    if any(
-        ord(character) < 32
-        or ord(character) == 127
-        for character in value
-    ):
+    if any(ord(character) < 32 or ord(character) == 127 for character in value):
         raise FinancialHistoryQueryError(
-            "A identidade do usuário contém "
-            "caracteres inválidos."
+            "A identidade do usuário contém caracteres inválidos."
         )
 
     return value
@@ -91,18 +77,12 @@ def _normalizar_usuario_id(
 def _normalizar_limite(
     limite: Any,
 ) -> int:
-    if (
-        isinstance(limite, bool)
-        or not isinstance(limite, int)
-    ):
-        raise FinancialHistoryQueryError(
-            "O limite deve ser um número inteiro."
-        )
+    if isinstance(limite, bool) or not isinstance(limite, int):
+        raise FinancialHistoryQueryError("O limite deve ser um número inteiro.")
 
     if not 1 <= limite <= MAX_HISTORY_LIMIT:
         raise FinancialHistoryQueryError(
-            "O limite deve estar entre "
-            f"1 e {MAX_HISTORY_LIMIT}."
+            f"O limite deve estar entre 1 e {MAX_HISTORY_LIMIT}."
         )
 
     return limite
@@ -115,11 +95,7 @@ def _numero_seguro(
         return None
 
     try:
-        number = float(
-            value
-            if not isinstance(value, Decimal)
-            else str(value)
-        )
+        number = float(value if not isinstance(value, Decimal) else str(value))
     except (
         TypeError,
         ValueError,
@@ -159,9 +135,7 @@ def _data_segura(
     if value is None:
         return None
 
-    normalized = str(
-        value
-    ).strip()
+    normalized = str(value).strip()
 
     return normalized[:40] or None
 
@@ -174,57 +148,27 @@ def _texto_seguro(
     if value is None:
         return None
 
-    normalized = str(
-        value
-    ).strip()
+    normalized = str(value).strip()
 
-    return (
-        normalized[:max_length]
-        if normalized
-        else None
-    )
+    return normalized[:max_length] if normalized else None
 
 
 def _converter_registro(
     registro: Any,
 ) -> dict[str, Any]:
-    row = dict(
-        registro or {}
-    )
+    row = dict(registro or {})
 
     # Allowlist explícita. Campos como nome,
     # objetivo, diagnóstico e plano de 30 dias
     # nunca entram no resultado desta consulta.
     return {
-        "data_hora": _data_segura(
-            row.get("data_hora")
+        "data_hora": _data_segura(row.get("data_hora")),
+        "saldo_estimado": _numero_seguro(row.get("saldo_estimado")),
+        ("comprometimento_renda_percentual"): _numero_seguro(
+            row.get("comprometimento_renda_percentual")
         ),
-        "saldo_estimado": _numero_seguro(
-            row.get("saldo_estimado")
-        ),
-        (
-            "comprometimento_"
-            "renda_percentual"
-        ): _numero_seguro(
-            row.get(
-                "comprometimento_"
-                "renda_percentual"
-            )
-        ),
-        "meses_reserva_estimados": (
-            _numero_seguro(
-                row.get(
-                    "meses_reserva_estimados"
-                )
-            )
-        ),
-        "score_financeiro": (
-            _inteiro_seguro(
-                row.get(
-                    "score_financeiro"
-                )
-            )
-        ),
+        "meses_reserva_estimados": (_numero_seguro(row.get("meses_reserva_estimados"))),
+        "score_financeiro": (_inteiro_seguro(row.get("score_financeiro"))),
         "nivel_risco": _texto_seguro(
             row.get("nivel_risco"),
             max_length=30,
@@ -252,17 +196,9 @@ def consultar_historico_financeiro_usuario(
     Registros legados com usuario_id NULL não são
     retornados.
     """
-    normalized_user_id = (
-        _normalizar_usuario_id(
-            usuario_id
-        )
-    )
+    normalized_user_id = _normalizar_usuario_id(usuario_id)
 
-    normalized_limit = (
-        _normalizar_limite(
-            limite
-        )
-    )
+    normalized_limit = _normalizar_limite(limite)
 
     try:
         with cursor_postgres(
@@ -272,14 +208,9 @@ def consultar_historico_financeiro_usuario(
             # Defesa em profundidade: mesmo uma
             # alteração acidental do SQL não poderá
             # escrever nesta transação.
-            cursor.execute(
-                "SET TRANSACTION READ ONLY;"
-            )
+            cursor.execute("SET TRANSACTION READ ONLY;")
 
-            cursor.execute(
-                "SET LOCAL statement_timeout "
-                "= '5000ms';"
-            )
+            cursor.execute("SET LOCAL statement_timeout = '5000ms';")
 
             cursor.execute(
                 SQL_CONSULTAR_HISTORICO_FINANCEIRO,
@@ -289,33 +220,20 @@ def consultar_historico_financeiro_usuario(
                 ),
             )
 
-            registros = (
-                cursor.fetchall()
-                or []
-            )
+            registros = cursor.fetchall() or []
 
     except Exception as exc:
         raise (
             FinancialHistoryRepositoryError(
-                "Não foi possível consultar o "
-                "histórico financeiro."
+                "Não foi possível consultar o histórico financeiro."
             )
         ) from exc
 
-    diagnosticos = [
-        _converter_registro(
-            registro
-        )
-        for registro in registros
-    ]
+    diagnosticos = [_converter_registro(registro) for registro in registros]
 
     return {
-        "possui_historico": bool(
-            diagnosticos
-        ),
-        "total_retornado": len(
-            diagnosticos
-        ),
+        "possui_historico": bool(diagnosticos),
+        "total_retornado": len(diagnosticos),
         "diagnosticos": diagnosticos,
     }
 

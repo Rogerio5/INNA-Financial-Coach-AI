@@ -57,8 +57,7 @@ RAG_LAB_TEXTS: dict[
     "pt": {
         "title": "🧪 Laboratório de Qualidade RAG",
         "subtitle": (
-            "Avaliação, experimentação e comparação "
-            "profissional da RAG Triad."
+            "Avaliação, experimentação e comparação profissional da RAG Triad."
         ),
         "description": (
             "Compare execuções reais usando Answer Relevancy, "
@@ -82,35 +81,27 @@ RAG_LAB_TEXTS: dict[
         "best_score": "Melhor score",
         "incomplete_runs": "Execuções incompletas",
         "no_history": (
-            "Nenhuma execução da RAG Triad foi encontrada "
-            "para os filtros selecionados."
+            "Nenhuma execução da RAG Triad foi encontrada para os filtros selecionados."
         ),
         "timeline": "Evolução da qualidade RAG",
-        "timeline_caption": (
-            "Histórico dos três eixos e do score agregado."
-        ),
+        "timeline_caption": ("Histórico dos três eixos e do score agregado."),
         "comparison": "Comparação de experimentos",
         "comparison_caption": (
-            "Selecione uma execução de referência e uma "
-            "execução candidata."
+            "Selecione uma execução de referência e uma execução candidata."
         ),
         "baseline": "Baseline",
         "candidate": "Candidata",
         "tolerance": "Tolerância de estabilidade",
         "tolerance_help": (
-            "Diferenças dentro da tolerância são classificadas "
-            "como estáveis."
+            "Diferenças dentro da tolerância são classificadas como estáveis."
         ),
         "need_two_runs": (
             "São necessárias pelo menos duas execuções completas "
             "para realizar uma comparação."
         ),
-        "same_run": (
-            "A baseline e a candidata precisam ser diferentes."
-        ),
+        "same_run": ("A baseline e a candidata precisam ser diferentes."),
         "comparison_unavailable": (
-            "A comparação não pôde ser construída com as "
-            "execuções selecionadas."
+            "A comparação não pôde ser construída com as execuções selecionadas."
         ),
         "aggregate_result": "Resultado agregado",
         "baseline_score": "Score da baseline",
@@ -123,9 +114,7 @@ RAG_LAB_TEXTS: dict[
         "unavailable": "Indisponível",
         "candidate_approved": "Candidata aprovada",
         "candidate_failed": "Candidata reprovada",
-        "candidate_unknown": (
-            "A candidata ainda não possui aprovação conclusiva."
-        ),
+        "candidate_unknown": ("A candidata ainda não possui aprovação conclusiva."),
         "axis_comparison": "Comparação por eixo",
         "comparison_chart": "Baseline × candidata",
         "history_table": "Histórico de execuções",
@@ -153,8 +142,7 @@ RAG_LAB_TEXTS: dict[
     "en_us": {
         "title": "🧪 RAG Quality Laboratory",
         "subtitle": (
-            "Professional RAG Triad evaluation, "
-            "experimentation and comparison."
+            "Professional RAG Triad evaluation, experimentation and comparison."
         ),
         "description": (
             "Compare real runs using Answer Relevancy, "
@@ -177,35 +165,21 @@ RAG_LAB_TEXTS: dict[
         "latest_score": "Latest score",
         "best_score": "Best score",
         "incomplete_runs": "Incomplete runs",
-        "no_history": (
-            "No RAG Triad run was found for the "
-            "selected filters."
-        ),
+        "no_history": ("No RAG Triad run was found for the selected filters."),
         "timeline": "RAG quality evolution",
-        "timeline_caption": (
-            "History of the three axes and aggregate score."
-        ),
+        "timeline_caption": ("History of the three axes and aggregate score."),
         "comparison": "Experiment comparison",
-        "comparison_caption": (
-            "Select a reference run and a candidate run."
-        ),
+        "comparison_caption": ("Select a reference run and a candidate run."),
         "baseline": "Baseline",
         "candidate": "Candidate",
         "tolerance": "Stability tolerance",
         "tolerance_help": (
-            "Differences within the tolerance are classified "
-            "as stable."
+            "Differences within the tolerance are classified as stable."
         ),
-        "need_two_runs": (
-            "At least two complete runs are required "
-            "for comparison."
-        ),
-        "same_run": (
-            "Baseline and candidate must be different."
-        ),
+        "need_two_runs": ("At least two complete runs are required for comparison."),
+        "same_run": ("Baseline and candidate must be different."),
         "comparison_unavailable": (
-            "The comparison could not be built with "
-            "the selected runs."
+            "The comparison could not be built with the selected runs."
         ),
         "aggregate_result": "Aggregate result",
         "baseline_score": "Baseline score",
@@ -218,9 +192,7 @@ RAG_LAB_TEXTS: dict[
         "unavailable": "Unavailable",
         "candidate_approved": "Candidate approved",
         "candidate_failed": "Candidate failed",
-        "candidate_unknown": (
-            "The candidate does not have a conclusive result."
-        ),
+        "candidate_unknown": ("The candidate does not have a conclusive result."),
         "axis_comparison": "Axis comparison",
         "comparison_chart": "Baseline × candidate",
         "history_table": "Run history",
@@ -248,8 +220,7 @@ RAG_LAB_TEXTS: dict[
     "es": {
         "title": "🧪 Laboratorio de Calidad RAG",
         "subtitle": (
-            "Evaluación, experimentación y comparación "
-            "profesional de la Tríada RAG."
+            "Evaluación, experimentación y comparación profesional de la Tríada RAG."
         ),
         "description": (
             "Compare ejecuciones reales usando Answer Relevancy, "
@@ -259,9 +230,7 @@ RAG_LAB_TEXTS: dict[
 }
 
 
-for language_code, core_texts in (
-    RAG_LAB_CORE_TEXTS.items()
-):
+for language_code, core_texts in RAG_LAB_CORE_TEXTS.items():
     language_texts = RAG_LAB_TEXTS.setdefault(
         language_code,
         {},
@@ -269,9 +238,7 @@ for language_code, core_texts in (
     language_texts.update(core_texts)
 
 
-for language_code, advanced_texts in (
-    RAG_LAB_ADVANCED_TEXTS.items()
-):
+for language_code, advanced_texts in RAG_LAB_ADVANCED_TEXTS.items():
     language_texts = RAG_LAB_TEXTS.setdefault(
         language_code,
         {},
@@ -282,9 +249,7 @@ for language_code, advanced_texts in (
 RAG_LAB_METRIC_LABELS = {
     "answer-relevancy": "answer_relevancy",
     "faithfulness": "faithfulness",
-    "contextual-relevancy": (
-        "contextual_relevancy"
-    ),
+    "contextual-relevancy": ("contextual_relevancy"),
     "rag-triad-average": "rag_triad_average",
 }
 
@@ -293,9 +258,7 @@ RAG_LAB_STATUS_LABELS = {
     RagLabComparisonStatus.IMPROVED: "improved",
     RagLabComparisonStatus.STABLE: "stable",
     RagLabComparisonStatus.REGRESSED: "regressed",
-    RagLabComparisonStatus.UNAVAILABLE: (
-        "unavailable"
-    ),
+    RagLabComparisonStatus.UNAVAILABLE: ("unavailable"),
 }
 
 
@@ -334,9 +297,7 @@ def rag_lab_t(
         "hybrid_search": "hybrid",
     }
 
-    technical_key = technical_keys.get(
-        key
-    )
+    technical_key = technical_keys.get(key)
 
     if technical_key is not None:
         return technical_label(
@@ -402,9 +363,7 @@ def _metric_label(
 def _status_label(
     status: RagLabComparisonStatus,
 ) -> str:
-    translation_key = RAG_LAB_STATUS_LABELS[
-        status
-    ]
+    translation_key = RAG_LAB_STATUS_LABELS[status]
 
     return rag_lab_t(
         translation_key,
@@ -457,28 +416,16 @@ def _filter_history(
         if branches and branch not in branches:
             continue
 
-        if (
-            environments
-            and environment not in environments
-        ):
+        if environments and environment not in environments:
             continue
 
-        if (
-            status_filter == "approved"
-            and passed is not True
-        ):
+        if status_filter == "approved" and passed is not True:
             continue
 
-        if (
-            status_filter == "failed"
-            and passed is not False
-        ):
+        if status_filter == "failed" and passed is not False:
             continue
 
-        if (
-            status_filter == "partial"
-            and passed is not None
-        ):
+        if status_filter == "partial" and passed is not None:
             continue
 
         selected_entries.append(entry)
@@ -489,17 +436,11 @@ def _filter_history(
 
 
 def _render_header() -> None:
-    st.title(
-        rag_lab_t("title")
-    )
+    st.title(rag_lab_t("title"))
 
-    st.subheader(
-        rag_lab_t("subtitle")
-    )
+    st.subheader(rag_lab_t("subtitle"))
 
-    st.info(
-        rag_lab_t("description")
-    )
+    st.info(rag_lab_t("description"))
 
 
 def _render_filters(
@@ -537,9 +478,7 @@ def _render_filters(
         rag_lab_t("filters"),
         expanded=False,
     ):
-        branch_column, environment_column = (
-            st.columns(2)
-        )
+        branch_column, environment_column = st.columns(2)
 
         with branch_column:
             if available_branches:
@@ -547,17 +486,10 @@ def _render_filters(
                     rag_lab_t("branches"),
                     available_branches,
                     default=available_branches,
-                    key=(
-                        "rag_lab_filter_branches_"
-                        f"{_rag_lab_language()}"
-                    ),
+                    key=(f"rag_lab_filter_branches_{_rag_lab_language()}"),
                 )
             else:
-                st.info(
-                    rag_lab_t(
-                        "no_branch_options"
-                    )
-                )
+                st.info(rag_lab_t("no_branch_options"))
                 selected_branches = []
 
         with environment_column:
@@ -566,17 +498,10 @@ def _render_filters(
                     rag_lab_t("environments"),
                     available_environments,
                     default=available_environments,
-                    key=(
-                        "rag_lab_filter_environments_"
-                        f"{_rag_lab_language()}"
-                    ),
+                    key=(f"rag_lab_filter_environments_{_rag_lab_language()}"),
                 )
             else:
-                st.info(
-                    rag_lab_t(
-                        "no_environment_options"
-                    )
-                )
+                st.info(rag_lab_t("no_environment_options"))
                 selected_environments = []
 
         status_options = (
@@ -596,21 +521,14 @@ def _render_filters(
         status_filter = st.selectbox(
             rag_lab_t("status"),
             status_options,
-            format_func=lambda value: (
-                status_labels[value]
-            ),
-            key=(
-                "rag_lab_filter_status_"
-                f"{_rag_lab_language()}"
-            ),
+            format_func=lambda value: status_labels[value],
+            key=(f"rag_lab_filter_status_{_rag_lab_language()}"),
         )
 
     return _filter_history(
         history,
         branches=set(selected_branches),
-        environments=set(
-            selected_environments
-        ),
+        environments=set(selected_environments),
         status_filter=status_filter,
     )
 
@@ -620,9 +538,7 @@ def _render_summary(
 ) -> None:
     summary = build_rag_lab_summary(history)
 
-    first, second, third, fourth = (
-        st.columns(4)
-    )
+    first, second, third, fourth = st.columns(4)
 
     first.metric(
         rag_lab_t("runs"),
@@ -631,23 +547,17 @@ def _render_summary(
 
     second.metric(
         rag_lab_t("approval_rate"),
-        _percentage(
-            summary.approval_rate
-        ),
+        _percentage(summary.approval_rate),
     )
 
     third.metric(
         rag_lab_t("latest_score"),
-        _percentage(
-            summary.latest_score
-        ),
+        _percentage(summary.latest_score),
     )
 
     fourth.metric(
         rag_lab_t("best_score"),
-        _percentage(
-            summary.best_score
-        ),
+        _percentage(summary.best_score),
     )
 
     fifth, sixth, seventh = st.columns(3)
@@ -671,20 +581,14 @@ def _render_summary(
 def _render_timeline(
     history: Any,
 ) -> None:
-    st.subheader(
-        rag_lab_t("timeline")
-    )
+    st.subheader(rag_lab_t("timeline"))
 
-    st.caption(
-        rag_lab_t("timeline_caption")
-    )
+    st.caption(rag_lab_t("timeline_caption"))
 
     rows = build_rag_lab_timeline(history)
 
     if not rows:
-        st.info(
-            rag_lab_t("no_history")
-        )
+        st.info(rag_lab_t("no_history"))
         return
 
     frame = pd.DataFrame(rows)
@@ -705,16 +609,11 @@ def _render_timeline(
     available_columns = [
         column
         for column in metric_columns
-        if (
-            column in frame.columns
-            and frame[column].notna().any()
-        )
+        if (column in frame.columns and frame[column].notna().any())
     ]
 
     if not available_columns:
-        st.info(
-            rag_lab_t("no_history")
-        )
+        st.info(rag_lab_t("no_history"))
         return
 
     chart_frame = frame[
@@ -735,33 +634,22 @@ def _render_timeline(
         ]
     )
 
-    chart_frame["metric_label"] = (
-        chart_frame["metric_id"].map(
-            lambda metric_id: _metric_label(
-                "rag-triad-average"
-                if metric_id
-                == "rag_triad_score"
-                else metric_id
-            )
+    chart_frame["metric_label"] = chart_frame["metric_id"].map(
+        lambda metric_id: _metric_label(
+            "rag-triad-average" if metric_id == "rag_triad_score" else metric_id
         )
     )
 
     figure = px.line(
-        chart_frame.sort_values(
-            "recorded_at"
-        ),
+        chart_frame.sort_values("recorded_at"),
         x="recorded_at",
         y="score",
         color="metric_label",
         markers=True,
         labels={
-            "recorded_at": (
-                rag_lab_t("recorded_at")
-            ),
+            "recorded_at": (rag_lab_t("recorded_at")),
             "score": rag_lab_t("score"),
-            "metric_label": (
-                rag_lab_t("metric")
-            ),
+            "metric_label": (rag_lab_t("metric")),
         },
     )
 
@@ -770,9 +658,7 @@ def _render_timeline(
         marker={"size": 8},
         connectgaps=False,
         hovertemplate=(
-            "<b>%{x|%d/%m/%Y %H:%M}</b><br>"
-            "%{fullData.name}: %{y:.2%}"
-            "<extra></extra>"
+            "<b>%{x|%d/%m/%Y %H:%M}</b><br>%{fullData.name}: %{y:.2%}<extra></extra>"
         ),
     )
 
@@ -817,61 +703,31 @@ def _render_timeline(
 def _render_comparison_status(
     comparison: Any,
 ) -> None:
-    if (
-        comparison.status
-        == RagLabComparisonStatus.IMPROVED
-    ):
-        st.success(
-            "✅ "
-            + rag_lab_t("improved")
-        )
-    elif (
-        comparison.status
-        == RagLabComparisonStatus.REGRESSED
-    ):
-        st.error(
-            "⚠️ "
-            + rag_lab_t("regressed")
-        )
-    elif (
-        comparison.status
-        == RagLabComparisonStatus.STABLE
-    ):
-        st.info(
-            "➖ "
-            + rag_lab_t("stable")
-        )
+    if comparison.status == RagLabComparisonStatus.IMPROVED:
+        st.success("✅ " + rag_lab_t("improved"))
+    elif comparison.status == RagLabComparisonStatus.REGRESSED:
+        st.error("⚠️ " + rag_lab_t("regressed"))
+    elif comparison.status == RagLabComparisonStatus.STABLE:
+        st.info("➖ " + rag_lab_t("stable"))
     else:
-        st.warning(
-            rag_lab_t("unavailable")
-        )
+        st.warning(rag_lab_t("unavailable"))
 
     if comparison.candidate_passed is True:
-        st.success(
-            rag_lab_t("candidate_approved")
-        )
+        st.success(rag_lab_t("candidate_approved"))
     elif comparison.candidate_passed is False:
-        st.error(
-            rag_lab_t("candidate_failed")
-        )
+        st.error(rag_lab_t("candidate_failed"))
     else:
-        st.warning(
-            rag_lab_t("candidate_unknown")
-        )
+        st.warning(rag_lab_t("candidate_unknown"))
 
 
 def _render_comparison_chart(
     comparison: Any,
 ) -> None:
-    rows = build_rag_lab_comparison_rows(
-        comparison
-    )
+    rows = build_rag_lab_comparison_rows(comparison)
 
     frame = pd.DataFrame(rows)
 
-    frame["metric_label"] = frame[
-        "metric_id"
-    ].map(_metric_label)
+    frame["metric_label"] = frame["metric_id"].map(_metric_label)
 
     chart_frame = frame.melt(
         id_vars=["metric_label"],
@@ -884,19 +740,11 @@ def _render_comparison_chart(
     )
 
     run_labels = {
-        "baseline_score": (
-            rag_lab_t("baseline")
-        ),
-        "candidate_score": (
-            rag_lab_t("candidate")
-        ),
+        "baseline_score": (rag_lab_t("baseline")),
+        "candidate_score": (rag_lab_t("candidate")),
     }
 
-    chart_frame["run_label"] = (
-        chart_frame["run_type"].map(
-            run_labels
-        )
-    )
+    chart_frame["run_label"] = chart_frame["run_type"].map(run_labels)
 
     figure = px.bar(
         chart_frame,
@@ -905,20 +753,14 @@ def _render_comparison_chart(
         color="run_label",
         barmode="group",
         labels={
-            "metric_label": (
-                rag_lab_t("metric")
-            ),
+            "metric_label": (rag_lab_t("metric")),
             "score": rag_lab_t("score"),
             "run_label": "",
         },
     )
 
     figure.update_traces(
-        hovertemplate=(
-            "<b>%{x}</b><br>"
-            "%{fullData.name}: %{y:.2%}"
-            "<extra></extra>"
-        ),
+        hovertemplate=("<b>%{x}</b><br>%{fullData.name}: %{y:.2%}<extra></extra>"),
     )
 
     figure.update_layout(
@@ -957,19 +799,13 @@ def _render_comparison_chart(
 def _render_axis_table(
     comparison: Any,
 ) -> None:
-    rows = build_rag_lab_comparison_rows(
-        comparison
-    )
+    rows = build_rag_lab_comparison_rows(comparison)
 
     frame = pd.DataFrame(rows)
 
-    frame["metric_id"] = frame[
-        "metric_id"
-    ].map(_metric_label)
+    frame["metric_id"] = frame["metric_id"].map(_metric_label)
 
-    frame["status"] = frame[
-        "status"
-    ].map(
+    frame["status"] = frame["status"].map(
         lambda value: rag_lab_t(
             value,
             value,
@@ -981,16 +817,10 @@ def _render_axis_table(
         width="stretch",
         hide_index=True,
         column_config={
-            "metric_id": (
-                st.column_config.TextColumn(
-                    rag_lab_t("metric")
-                )
-            ),
+            "metric_id": (st.column_config.TextColumn(rag_lab_t("metric"))),
             "baseline_score": (
                 st.column_config.ProgressColumn(
-                    rag_lab_t(
-                        "baseline_score"
-                    ),
+                    rag_lab_t("baseline_score"),
                     min_value=0.0,
                     max_value=1.0,
                     format="%.2f",
@@ -998,9 +828,7 @@ def _render_axis_table(
             ),
             "candidate_score": (
                 st.column_config.ProgressColumn(
-                    rag_lab_t(
-                        "candidate_score"
-                    ),
+                    rag_lab_t("candidate_score"),
                     min_value=0.0,
                     max_value=1.0,
                     format="%.2f",
@@ -1012,13 +840,7 @@ def _render_axis_table(
                     format="%+.4f",
                 )
             ),
-            "status": (
-                st.column_config.TextColumn(
-                    rag_lab_t(
-                        "classification"
-                    )
-                )
-            ),
+            "status": (st.column_config.TextColumn(rag_lab_t("classification"))),
         },
     )
 
@@ -1026,13 +848,9 @@ def _render_axis_table(
 def _render_comparison(
     history: Any,
 ) -> None:
-    st.subheader(
-        rag_lab_t("comparison")
-    )
+    st.subheader(rag_lab_t("comparison"))
 
-    st.caption(
-        rag_lab_t("comparison_caption")
-    )
+    st.caption(rag_lab_t("comparison_caption"))
 
     options = build_rag_lab_run_options(
         history,
@@ -1040,73 +858,42 @@ def _render_comparison(
     )
 
     if len(options) < 2:
-        st.warning(
-            rag_lab_t("need_two_runs")
-        )
+        st.warning(rag_lab_t("need_two_runs"))
         return
 
-    default_pair = select_default_comparison(
-        history
-    )
+    default_pair = select_default_comparison(history)
 
     if default_pair is None:
-        st.warning(
-            rag_lab_t("need_two_runs")
-        )
+        st.warning(rag_lab_t("need_two_runs"))
         return
 
-    default_baseline, default_candidate = (
-        default_pair
-    )
+    default_baseline, default_candidate = default_pair
 
-    references = [
-        option.run_reference
-        for option in options
-    ]
+    references = [option.run_reference for option in options]
 
-    option_labels = {
-        option.run_reference: option.label
-        for option in options
-    }
+    option_labels = {option.run_reference: option.label for option in options}
 
     baseline_default_index = (
-        references.index(
-            default_baseline.run_reference
-        )
-        if (
-            default_baseline.run_reference
-            in references
-        )
+        references.index(default_baseline.run_reference)
+        if (default_baseline.run_reference in references)
         else 1
     )
 
     candidate_default_index = (
-        references.index(
-            default_candidate.run_reference
-        )
-        if (
-            default_candidate.run_reference
-            in references
-        )
+        references.index(default_candidate.run_reference)
+        if (default_candidate.run_reference in references)
         else 0
     )
 
-    baseline_column, candidate_column = (
-        st.columns(2)
-    )
+    baseline_column, candidate_column = st.columns(2)
 
     with baseline_column:
         baseline_reference = st.selectbox(
             rag_lab_t("baseline"),
             references,
             index=baseline_default_index,
-            format_func=lambda value: (
-                option_labels[value]
-            ),
-            key=(
-                "rag_lab_baseline_reference_"
-                f"{_rag_lab_language()}"
-            ),
+            format_func=lambda value: option_labels[value],
+            key=(f"rag_lab_baseline_reference_{_rag_lab_language()}"),
         )
 
     with candidate_column:
@@ -1114,13 +901,8 @@ def _render_comparison(
             rag_lab_t("candidate"),
             references,
             index=candidate_default_index,
-            format_func=lambda value: (
-                option_labels[value]
-            ),
-            key=(
-                "rag_lab_candidate_reference_"
-                f"{_rag_lab_language()}"
-            ),
+            format_func=lambda value: option_labels[value],
+            key=(f"rag_lab_candidate_reference_{_rag_lab_language()}"),
         )
 
     tolerance = st.slider(
@@ -1130,96 +912,58 @@ def _render_comparison(
         value=0.005,
         step=0.001,
         format="%.3f",
-        help=rag_lab_t(
-            "tolerance_help"
-        ),
+        help=rag_lab_t("tolerance_help"),
         key="rag_lab_comparison_tolerance",
     )
 
-    if (
-        baseline_reference
-        == candidate_reference
-    ):
-        st.warning(
-            rag_lab_t("same_run")
-        )
+    if baseline_reference == candidate_reference:
+        st.warning(rag_lab_t("same_run"))
         return
 
     comparison = build_selected_comparison(
         history,
-        baseline_reference=(
-            baseline_reference
-        ),
-        candidate_reference=(
-            candidate_reference
-        ),
+        baseline_reference=(baseline_reference),
+        candidate_reference=(candidate_reference),
         tolerance=tolerance,
     )
 
     if comparison is None:
-        st.warning(
-            rag_lab_t(
-                "comparison_unavailable"
-            )
-        )
+        st.warning(rag_lab_t("comparison_unavailable"))
         return
 
-    st.markdown(
-        f"### {rag_lab_t('aggregate_result')}"
-    )
+    st.markdown(f"### {rag_lab_t('aggregate_result')}")
 
-    first, second, third, fourth = (
-        st.columns(4)
-    )
+    first, second, third, fourth = st.columns(4)
 
     first.metric(
         rag_lab_t("baseline_score"),
-        _percentage(
-            comparison.baseline_score
-        ),
+        _percentage(comparison.baseline_score),
     )
 
     second.metric(
         rag_lab_t("candidate_score"),
-        _percentage(
-            comparison.candidate_score
-        ),
+        _percentage(comparison.candidate_score),
     )
 
     third.metric(
         rag_lab_t("delta"),
-        _delta_percentage(
-            comparison.delta
-        ),
+        _delta_percentage(comparison.delta),
     )
 
     fourth.metric(
         rag_lab_t("classification"),
-        _status_label(
-            comparison.status
-        ),
+        _status_label(comparison.status),
     )
 
-    _render_comparison_status(
-        comparison
-    )
+    _render_comparison_status(comparison)
 
-    st.markdown(
-        f"### {rag_lab_t('comparison_chart')}"
-    )
+    st.markdown(f"### {rag_lab_t('comparison_chart')}")
 
-    _render_comparison_chart(
-        comparison
-    )
+    _render_comparison_chart(comparison)
 
-    st.markdown(
-        f"### {rag_lab_t('axis_comparison')}"
-    )
+    st.markdown(f"### {rag_lab_t('axis_comparison')}")
 
-    _render_axis_table(
-        comparison
-    )
-
+    _render_axis_table(comparison)
 
 
 def _metadata_field_label(
@@ -1244,21 +988,11 @@ def _availability_label(
     )
 
     labels = {
-        "available": rag_lab_t(
-            "available"
-        ),
-        "partial": rag_lab_t(
-            "partially_available"
-        ),
-        "unavailable": rag_lab_t(
-            "waiting_real_data"
-        ),
-        "active": rag_lab_t(
-            "available"
-        ),
-        "waiting_data": rag_lab_t(
-            "waiting_real_data"
-        ),
+        "available": rag_lab_t("available"),
+        "partial": rag_lab_t("partially_available"),
+        "unavailable": rag_lab_t("waiting_real_data"),
+        "active": rag_lab_t("available"),
+        "waiting_data": rag_lab_t("waiting_real_data"),
     }
 
     return labels.get(
@@ -1294,28 +1028,16 @@ def _find_entry_by_reference(
 def _render_metadata_coverage(
     history: Any,
 ) -> None:
-    st.subheader(
-        rag_lab_t("metadata_coverage")
-    )
+    st.subheader(rag_lab_t("metadata_coverage"))
 
-    st.caption(
-        rag_lab_t(
-            "metadata_coverage_caption"
-        )
-    )
+    st.caption(rag_lab_t("metadata_coverage_caption"))
 
-    readiness = (
-        build_experiment_metadata_readiness(
-            history
-        )
-    )
+    readiness = build_experiment_metadata_readiness(history)
 
     rows = []
 
     for item in readiness:
-        values = ", ".join(
-            item.distinct_values
-        )
+        values = ", ".join(item.distinct_values)
 
         rows.append(
             {
@@ -1325,24 +1047,10 @@ def _render_metadata_coverage(
                         item.label,
                     )
                 ),
-                "availability": (
-                    _availability_label(
-                        item.availability
-                    )
-                ),
-                "coverage": (
-                    item.coverage_rate
-                ),
-                "registered_runs": (
-                    f"{item.available_runs}/"
-                    f"{item.total_runs}"
-                ),
-                "distinct_values": (
-                    values
-                    or rag_lab_t(
-                        "waiting_real_data"
-                    )
-                ),
+                "availability": (_availability_label(item.availability)),
+                "coverage": (item.coverage_rate),
+                "registered_runs": (f"{item.available_runs}/{item.total_runs}"),
+                "distinct_values": (values or rag_lab_t("waiting_real_data")),
             }
         )
 
@@ -1351,20 +1059,8 @@ def _render_metadata_coverage(
         width="stretch",
         hide_index=True,
         column_config={
-            "field": (
-                st.column_config.TextColumn(
-                    rag_lab_t(
-                        "metadata_coverage"
-                    )
-                )
-            ),
-            "availability": (
-                st.column_config.TextColumn(
-                    rag_lab_t(
-                        "availability"
-                    )
-                )
-            ),
+            "field": (st.column_config.TextColumn(rag_lab_t("metadata_coverage"))),
+            "availability": (st.column_config.TextColumn(rag_lab_t("availability"))),
             "coverage": (
                 st.column_config.ProgressColumn(
                     rag_lab_t("coverage"),
@@ -1374,18 +1070,10 @@ def _render_metadata_coverage(
                 )
             ),
             "registered_runs": (
-                st.column_config.TextColumn(
-                    rag_lab_t(
-                        "registered_runs"
-                    )
-                )
+                st.column_config.TextColumn(rag_lab_t("registered_runs"))
             ),
             "distinct_values": (
-                st.column_config.TextColumn(
-                    rag_lab_t(
-                        "distinct_values"
-                    )
-                )
+                st.column_config.TextColumn(rag_lab_t("distinct_values"))
             ),
         },
     )
@@ -1394,15 +1082,9 @@ def _render_metadata_coverage(
 def _render_run_configuration(
     history: Any,
 ) -> Any | None:
-    st.subheader(
-        rag_lab_t("advanced_experiment")
-    )
+    st.subheader(rag_lab_t("advanced_experiment"))
 
-    st.caption(
-        rag_lab_t(
-            "advanced_experiment_caption"
-        )
-    )
+    st.caption(rag_lab_t("advanced_experiment_caption"))
 
     options = build_rag_lab_run_options(
         history,
@@ -1410,31 +1092,18 @@ def _render_run_configuration(
     )
 
     if not options:
-        st.info(
-            rag_lab_t("no_history")
-        )
+        st.info(rag_lab_t("no_history"))
         return None
 
-    references = [
-        option.run_reference
-        for option in options
-    ]
+    references = [option.run_reference for option in options]
 
-    labels = {
-        option.run_reference: option.label
-        for option in options
-    }
+    labels = {option.run_reference: option.label for option in options}
 
     selected_reference = st.selectbox(
         rag_lab_t("select_run"),
         references,
-        format_func=lambda value: (
-            labels[value]
-        ),
-        key=(
-            "rag_lab_advanced_run_"
-            f"{_rag_lab_language()}"
-        ),
+        format_func=lambda value: labels[value],
+        key=(f"rag_lab_advanced_run_{_rag_lab_language()}"),
     )
 
     entry = _find_entry_by_reference(
@@ -1443,55 +1112,25 @@ def _render_run_configuration(
     )
 
     if entry is None:
-        st.warning(
-            rag_lab_t("no_history")
-        )
+        st.warning(rag_lab_t("no_history"))
         return None
 
-    snapshot = (
-        build_experiment_metadata_snapshot(
-            entry,
-            unavailable_label=rag_lab_t(
-                "not_registered"
-            ),
-            enabled_label=rag_lab_t(
-                "enabled"
-            ),
-            disabled_label=rag_lab_t(
-                "disabled"
-            ),
-        )
+    snapshot = build_experiment_metadata_snapshot(
+        entry,
+        unavailable_label=rag_lab_t("not_registered"),
+        enabled_label=rag_lab_t("enabled"),
+        disabled_label=rag_lab_t("disabled"),
     )
 
-    retrieval_items = [
-        item
-        for item in snapshot
-        if item.category == "retrieval"
-    ]
+    retrieval_items = [item for item in snapshot if item.category == "retrieval"]
 
-    generation_items = [
-        item
-        for item in snapshot
-        if item.category == "generation"
-    ]
+    generation_items = [item for item in snapshot if item.category == "generation"]
 
-    knowledge_items = [
-        item
-        for item in snapshot
-        if item.category == "knowledge"
-    ]
+    knowledge_items = [item for item in snapshot if item.category == "knowledge"]
 
-    evaluation_items = [
-        item
-        for item in snapshot
-        if item.category == "evaluation"
-    ]
+    evaluation_items = [item for item in snapshot if item.category == "evaluation"]
 
-    performance_items = [
-        item
-        for item in snapshot
-        if item.category == "performance"
-    ]
+    performance_items = [item for item in snapshot if item.category == "performance"]
 
     groups = (
         retrieval_items,
@@ -1512,12 +1151,8 @@ def _render_run_configuration(
             )
         )
 
-        for index, item in enumerate(
-            group
-        ):
-            column = columns[
-                index % len(columns)
-            ]
+        for index, item in enumerate(group):
+            column = columns[index % len(columns)]
 
             column.metric(
                 _metadata_field_label(
@@ -1533,53 +1168,21 @@ def _render_run_configuration(
 def _render_capabilities(
     history: Any,
 ) -> None:
-    st.subheader(
-        rag_lab_t(
-            "experimental_comparisons"
-        )
-    )
+    st.subheader(rag_lab_t("experimental_comparisons"))
 
-    st.caption(
-        rag_lab_t(
-            "experimental_comparisons_caption"
-        )
-    )
+    st.caption(rag_lab_t("experimental_comparisons_caption"))
 
-    capabilities = (
-        build_rag_lab_capabilities(
-            history
-        )
-    )
+    capabilities = build_rag_lab_capabilities(history)
 
     rows = []
 
     labels = {
-        "reranker_comparison": rag_lab_t(
-            "capability_reranker"
-        ),
-        "retrieval_strategy_comparison": (
-            rag_lab_t(
-                "capability_retrieval_strategy"
-            )
-        ),
-        "model_prompt_comparison": rag_lab_t(
-            "capability_model_prompt"
-        ),
-        "rag_configuration_comparison": (
-            rag_lab_t(
-                "capability_rag_configuration"
-            )
-        ),
-        "performance_cost_analysis": (
-            rag_lab_t(
-                "capability_performance_cost"
-            )
-        ),
-        "phoenix_trace_integration": (
-            rag_lab_t(
-                "capability_phoenix"
-            )
-        ),
+        "reranker_comparison": rag_lab_t("capability_reranker"),
+        "retrieval_strategy_comparison": (rag_lab_t("capability_retrieval_strategy")),
+        "model_prompt_comparison": rag_lab_t("capability_model_prompt"),
+        "rag_configuration_comparison": (rag_lab_t("capability_rag_configuration")),
+        "performance_cost_analysis": (rag_lab_t("capability_performance_cost")),
+        "phoenix_trace_integration": (rag_lab_t("capability_phoenix")),
     }
 
     for item in capabilities:
@@ -1589,34 +1192,15 @@ def _render_capabilities(
                     item.key,
                     item.key,
                 ),
-                "availability": (
-                    _availability_label(
-                        item.status
-                    )
-                ),
-                "registered_runs": (
-                    f"{item.available_runs}/"
-                    f"{item.total_runs}"
-                ),
+                "availability": (_availability_label(item.status)),
+                "registered_runs": (f"{item.available_runs}/{item.total_runs}"),
                 "message": (
-                    rag_lab_t(
-                        "capability_active_message"
-                    )
-                    if (
-                        item.status
-                        == RagLabCapabilityStatus.ACTIVE
-                    )
+                    rag_lab_t("capability_active_message")
+                    if (item.status == RagLabCapabilityStatus.ACTIVE)
                     else (
-                        rag_lab_t(
-                            "capability_partial_message"
-                        )
-                        if (
-                            item.status
-                            == RagLabCapabilityStatus.PARTIAL
-                        )
-                        else rag_lab_t(
-                            "capability_waiting_message"
-                        )
+                        rag_lab_t("capability_partial_message")
+                        if (item.status == RagLabCapabilityStatus.PARTIAL)
+                        else rag_lab_t("capability_waiting_message")
                     )
                 ),
             }
@@ -1627,30 +1211,12 @@ def _render_capabilities(
         width="stretch",
         hide_index=True,
         column_config={
-            "capability": (
-                st.column_config.TextColumn(
-                    rag_lab_t("capability")
-                )
-            ),
-            "availability": (
-                st.column_config.TextColumn(
-                    rag_lab_t(
-                        "availability"
-                    )
-                )
-            ),
+            "capability": (st.column_config.TextColumn(rag_lab_t("capability"))),
+            "availability": (st.column_config.TextColumn(rag_lab_t("availability"))),
             "registered_runs": (
-                st.column_config.TextColumn(
-                    rag_lab_t(
-                        "registered_runs"
-                    )
-                )
+                st.column_config.TextColumn(rag_lab_t("registered_runs"))
             ),
-            "message": (
-                st.column_config.TextColumn(
-                    rag_lab_t("message")
-                )
-            ),
+            "message": (st.column_config.TextColumn(rag_lab_t("message"))),
         },
     )
 
@@ -1659,111 +1225,70 @@ def _render_quality_gate(
     history: Any,
     selected_entry: Any | None,
 ) -> None:
-    st.subheader(
-        rag_lab_t("quality_gate")
-    )
+    st.subheader(rag_lab_t("quality_gate"))
 
-    st.caption(
-        rag_lab_t(
-            "quality_gate_caption"
-        )
-    )
+    st.caption(rag_lab_t("quality_gate_caption"))
 
     first, second, third = st.columns(3)
 
     with first:
         answer_threshold = st.slider(
-            rag_lab_t(
-                "minimum_answer_relevancy"
-            ),
+            rag_lab_t("minimum_answer_relevancy"),
             min_value=0.0,
             max_value=1.0,
             value=0.70,
             step=0.01,
-            key=(
-                "rag_lab_gate_answer_"
-                "relevancy"
-            ),
+            key=("rag_lab_gate_answer_relevancy"),
         )
 
         faithfulness_threshold = st.slider(
-            rag_lab_t(
-                "minimum_faithfulness"
-            ),
+            rag_lab_t("minimum_faithfulness"),
             min_value=0.0,
             max_value=1.0,
             value=0.70,
             step=0.01,
-            key=(
-                "rag_lab_gate_"
-                "faithfulness"
-            ),
+            key=("rag_lab_gate_faithfulness"),
         )
 
     with second:
         contextual_threshold = st.slider(
-            rag_lab_t(
-                "minimum_contextual_relevancy"
-            ),
+            rag_lab_t("minimum_contextual_relevancy"),
             min_value=0.0,
             max_value=1.0,
             value=0.70,
             step=0.01,
-            key=(
-                "rag_lab_gate_contextual_"
-                "relevancy"
-            ),
+            key=("rag_lab_gate_contextual_relevancy"),
         )
 
         aggregate_threshold = st.slider(
-            rag_lab_t(
-                "minimum_aggregate"
-            ),
+            rag_lab_t("minimum_aggregate"),
             min_value=0.0,
             max_value=1.0,
             value=0.70,
             step=0.01,
-            key=(
-                "rag_lab_gate_aggregate"
-            ),
+            key=("rag_lab_gate_aggregate"),
         )
 
     with third:
         maximum_regression = st.slider(
-            rag_lab_t(
-                "maximum_regression"
-            ),
+            rag_lab_t("maximum_regression"),
             min_value=0.0,
             max_value=1.0,
             value=0.05,
             step=0.01,
-            key=(
-                "rag_lab_gate_regression"
-            ),
+            key=("rag_lab_gate_regression"),
         )
 
     thresholds = QualityGateThresholds(
-        answer_relevancy=(
-            answer_threshold
-        ),
-        faithfulness=(
-            faithfulness_threshold
-        ),
-        contextual_relevancy=(
-            contextual_threshold
-        ),
-        aggregate_score=(
-            aggregate_threshold
-        ),
-        maximum_regression=(
-            maximum_regression
-        ),
+        answer_relevancy=(answer_threshold),
+        faithfulness=(faithfulness_threshold),
+        contextual_relevancy=(contextual_threshold),
+        aggregate_score=(aggregate_threshold),
+        maximum_regression=(maximum_regression),
     )
 
     if selected_entry is None:
-        st.info(
-            rag_lab_t("gate_incomplete")
-        )
+        st.info(rag_lab_t("gate_incomplete"))
         return
 
     result = evaluate_quality_gate(
@@ -1772,83 +1297,47 @@ def _render_quality_gate(
     )
 
     if result.passed is True:
-        st.success(
-            rag_lab_t("gate_passed")
-        )
+        st.success(rag_lab_t("gate_passed"))
     elif result.passed is False:
-        st.error(
-            rag_lab_t("gate_failed")
-        )
+        st.error(rag_lab_t("gate_failed"))
     else:
-        st.warning(
-            rag_lab_t("gate_incomplete")
-        )
+        st.warning(rag_lab_t("gate_incomplete"))
 
     rows = []
 
     for check in result.checks:
         if check.passed is True:
-            result_label = rag_lab_t(
-                "passed"
-            )
+            result_label = rag_lab_t("passed")
         elif check.passed is False:
-            result_label = rag_lab_t(
-                "failed_label"
-            )
+            result_label = rag_lab_t("failed_label")
         else:
-            result_label = rag_lab_t(
-                "inconclusive"
-            )
+            result_label = rag_lab_t("inconclusive")
 
         rows.append(
             {
-                "metric": _metric_label(
-                    check.key
-                ),
+                "metric": _metric_label(check.key),
                 "score": check.score,
-                "threshold": (
-                    check.threshold
-                ),
+                "threshold": (check.threshold),
                 "result": result_label,
                 "reason": (
-                    rag_lab_t(
-                        "gate_reason_score_missing"
-                    )
-                    if check.passed is None
-                    and (
-                        check.key
-                        != "maximum-regression"
-                    )
+                    rag_lab_t("gate_reason_score_missing")
+                    if check.passed is None and (check.key != "maximum-regression")
                     else (
-                        rag_lab_t(
-                            "gate_reason_regression_unavailable"
-                        )
+                        rag_lab_t("gate_reason_regression_unavailable")
                         if check.passed is None
                         else (
-                            rag_lab_t(
-                                "gate_reason_regression_passed"
-                            )
+                            rag_lab_t("gate_reason_regression_passed")
                             if (
-                                check.key
-                                == "maximum-regression"
+                                check.key == "maximum-regression"
                                 and check.passed is True
                             )
                             else (
-                                rag_lab_t(
-                                    "gate_reason_regression_failed"
-                                )
-                                if (
-                                    check.key
-                                    == "maximum-regression"
-                                )
+                                rag_lab_t("gate_reason_regression_failed")
+                                if (check.key == "maximum-regression")
                                 else (
-                                    rag_lab_t(
-                                        "gate_reason_passed"
-                                    )
+                                    rag_lab_t("gate_reason_passed")
                                     if check.passed is True
-                                    else rag_lab_t(
-                                        "gate_reason_failed"
-                                    )
+                                    else rag_lab_t("gate_reason_failed")
                                 )
                             )
                         )
@@ -1862,11 +1351,7 @@ def _render_quality_gate(
         width="stretch",
         hide_index=True,
         column_config={
-            "metric": (
-                st.column_config.TextColumn(
-                    rag_lab_t("metric")
-                )
-            ),
+            "metric": (st.column_config.TextColumn(rag_lab_t("metric"))),
             "score": (
                 st.column_config.NumberColumn(
                     rag_lab_t("score"),
@@ -1879,16 +1364,8 @@ def _render_quality_gate(
                     format="%.4f",
                 )
             ),
-            "result": (
-                st.column_config.TextColumn(
-                    rag_lab_t("result")
-                )
-            ),
-            "reason": (
-                st.column_config.TextColumn(
-                    rag_lab_t("reason")
-                )
-            ),
+            "result": (st.column_config.TextColumn(rag_lab_t("result"))),
+            "reason": (st.column_config.TextColumn(rag_lab_t("reason"))),
         },
     )
 
@@ -1896,58 +1373,33 @@ def _render_quality_gate(
 def _render_ranking(
     history: Any,
 ) -> None:
-    st.subheader(
-        rag_lab_t("ranking")
-    )
+    st.subheader(rag_lab_t("ranking"))
 
-    st.caption(
-        rag_lab_t(
-            "ranking_caption"
-        )
-    )
+    st.caption(rag_lab_t("ranking_caption"))
 
-    ranking = rank_rag_lab_runs(
-        history
-    )
+    ranking = rank_rag_lab_runs(history)
 
     if not ranking:
-        st.info(
-            rag_lab_t("waiting_real_data")
-        )
+        st.info(rag_lab_t("waiting_real_data"))
         return
 
     rows = []
 
     for item in ranking:
         basis = (
-            rag_lab_t(
-                "ranking_quality_performance"
-            )
-            if (
-                item.ranking_basis
-                == "quality_then_performance"
-            )
-            else rag_lab_t(
-                "ranking_quality_only"
-            )
+            rag_lab_t("ranking_quality_performance")
+            if (item.ranking_basis == "quality_then_performance")
+            else rag_lab_t("ranking_quality_only")
         )
 
         rows.append(
             {
                 "position": item.position,
-                "run_reference": (
-                    item.run_reference
-                ),
-                "quality_score": (
-                    item.quality_score
-                ),
-                "failed_metrics": (
-                    item.failing_metric_count
-                ),
+                "run_reference": (item.run_reference),
+                "quality_score": (item.quality_score),
+                "failed_metrics": (item.failing_metric_count),
                 "latency": item.latency_ms,
-                "estimated_cost": (
-                    item.estimated_cost_usd
-                ),
+                "estimated_cost": (item.estimated_cost_usd),
                 "ranking_basis": basis,
             }
         )
@@ -1963,18 +1415,10 @@ def _render_ranking(
                     format="%d",
                 )
             ),
-            "run_reference": (
-                st.column_config.TextColumn(
-                    rag_lab_t(
-                        "run_reference"
-                    )
-                )
-            ),
+            "run_reference": (st.column_config.TextColumn(rag_lab_t("run_reference"))),
             "quality_score": (
                 st.column_config.ProgressColumn(
-                    rag_lab_t(
-                        "quality_score"
-                    ),
+                    rag_lab_t("quality_score"),
                     min_value=0.0,
                     max_value=1.0,
                     format="%.2f",
@@ -1982,9 +1426,7 @@ def _render_ranking(
             ),
             "failed_metrics": (
                 st.column_config.NumberColumn(
-                    rag_lab_t(
-                        "failed_metrics"
-                    ),
+                    rag_lab_t("failed_metrics"),
                     format="%d",
                 )
             ),
@@ -1996,19 +1438,11 @@ def _render_ranking(
             ),
             "estimated_cost": (
                 st.column_config.NumberColumn(
-                    rag_lab_t(
-                        "estimated_cost"
-                    ),
+                    rag_lab_t("estimated_cost"),
                     format="US$ %.6f",
                 )
             ),
-            "ranking_basis": (
-                st.column_config.TextColumn(
-                    rag_lab_t(
-                        "ranking_basis"
-                    )
-                )
-            ),
+            "ranking_basis": (st.column_config.TextColumn(rag_lab_t("ranking_basis"))),
         },
     )
 
@@ -2016,25 +1450,15 @@ def _render_ranking(
 def _render_performance_and_cost(
     history: Any,
 ) -> None:
-    st.subheader(
-        rag_lab_t("performance_cost")
-    )
+    st.subheader(rag_lab_t("performance_cost"))
 
-    cost = (
-        calculate_cost_per_approved_run(
-            history
-        )
-    )
+    cost = calculate_cost_per_approved_run(history)
 
     if cost is None:
-        st.info(
-            rag_lab_t("waiting_real_data")
-        )
+        st.info(rag_lab_t("waiting_real_data"))
     else:
         st.metric(
-            rag_lab_t(
-                "cost_per_approved_run"
-            ),
+            rag_lab_t("cost_per_approved_run"),
             f"US$ {cost:.6f}",
         )
 
@@ -2042,66 +1466,33 @@ def _render_performance_and_cost(
 def _render_phoenix_and_cases(
     history: Any,
 ) -> None:
-    capabilities = {
-        item.key: item
-        for item in (
-            build_rag_lab_capabilities(
-                history
-            )
-        )
-    }
+    capabilities = {item.key: item for item in (build_rag_lab_capabilities(history))}
 
-    phoenix = capabilities.get(
-        "phoenix_trace_integration"
-    )
+    phoenix = capabilities.get("phoenix_trace_integration")
 
-    st.subheader(
-        rag_lab_t("phoenix")
-    )
+    st.subheader(rag_lab_t("phoenix"))
 
-    if (
-        phoenix is None
-        or phoenix.status
-        != RagLabCapabilityStatus.ACTIVE
-    ):
-        st.info(
-            rag_lab_t("phoenix_waiting")
-        )
+    if phoenix is None or phoenix.status != RagLabCapabilityStatus.ACTIVE:
+        st.info(rag_lab_t("phoenix_waiting"))
     else:
-        st.success(
-            rag_lab_t("available")
-        )
+        st.success(rag_lab_t("available"))
 
-    st.subheader(
-        rag_lab_t("case_details")
-    )
+    st.subheader(rag_lab_t("case_details"))
 
-    st.info(
-        rag_lab_t(
-            "case_details_waiting"
-        )
-    )
+    st.info(rag_lab_t("case_details_waiting"))
 
 
 def _render_exports(
     history: Any,
     thresholds: QualityGateThresholds,
 ) -> None:
-    st.subheader(
-        rag_lab_t("exports")
-    )
+    st.subheader(rag_lab_t("exports"))
 
-    csv_data = (
-        export_rag_lab_history_csv(
-            history
-        )
-    )
+    csv_data = export_rag_lab_history_csv(history)
 
-    json_data = (
-        export_rag_lab_report_json(
-            history,
-            quality_gate=thresholds,
-        )
+    json_data = export_rag_lab_report_json(
+        history,
+        quality_gate=thresholds,
     )
 
     first, second = st.columns(2)
@@ -2110,9 +1501,7 @@ def _render_exports(
         st.download_button(
             rag_lab_t("export_csv"),
             data=csv_data,
-            file_name=(
-                "rag-lab-history.csv"
-            ),
+            file_name=("rag-lab-history.csv"),
             mime="text/csv",
             key="rag_lab_export_csv",
         )
@@ -2121,9 +1510,7 @@ def _render_exports(
         st.download_button(
             rag_lab_t("export_json"),
             data=json_data,
-            file_name=(
-                "rag-lab-report.json"
-            ),
+            file_name=("rag-lab-report.json"),
             mime="application/json",
             key="rag_lab_export_json",
         )
@@ -2134,23 +1521,15 @@ def _render_advanced_sections(
 ) -> None:
     st.divider()
 
-    _render_metadata_coverage(
-        history
-    )
+    _render_metadata_coverage(history)
 
     st.divider()
 
-    selected_entry = (
-        _render_run_configuration(
-            history
-        )
-    )
+    selected_entry = _render_run_configuration(history)
 
     st.divider()
 
-    _render_capabilities(
-        history
-    )
+    _render_capabilities(history)
 
     st.divider()
 
@@ -2161,41 +1540,32 @@ def _render_advanced_sections(
 
     st.divider()
 
-    _render_ranking(
-        history
-    )
+    _render_ranking(history)
 
     st.divider()
 
-    _render_performance_and_cost(
-        history
-    )
+    _render_performance_and_cost(history)
 
     st.divider()
 
-    _render_phoenix_and_cases(
-        history
-    )
+    _render_phoenix_and_cases(history)
 
     thresholds = QualityGateThresholds(
         answer_relevancy=float(
             st.session_state.get(
-                "rag_lab_gate_answer_"
-                "relevancy",
+                "rag_lab_gate_answer_relevancy",
                 0.70,
             )
         ),
         faithfulness=float(
             st.session_state.get(
-                "rag_lab_gate_"
-                "faithfulness",
+                "rag_lab_gate_faithfulness",
                 0.70,
             )
         ),
         contextual_relevancy=float(
             st.session_state.get(
-                "rag_lab_gate_contextual_"
-                "relevancy",
+                "rag_lab_gate_contextual_relevancy",
                 0.70,
             )
         ),
@@ -2224,16 +1594,12 @@ def _render_advanced_sections(
 def _render_history_table(
     history: Any,
 ) -> None:
-    st.subheader(
-        rag_lab_t("history_table")
-    )
+    st.subheader(rag_lab_t("history_table"))
 
     rows = build_rag_lab_timeline(history)
 
     if not rows:
-        st.info(
-            rag_lab_t("no_history")
-        )
+        st.info(rag_lab_t("no_history"))
         return
 
     frame = pd.DataFrame(rows)
@@ -2252,28 +1618,10 @@ def _render_history_table(
         width="stretch",
         hide_index=True,
         column_config={
-            "run_reference": (
-                st.column_config.TextColumn(
-                    rag_lab_t(
-                        "run_reference"
-                    )
-                )
-            ),
-            "recorded_at": (
-                st.column_config.DatetimeColumn(
-                    rag_lab_t("recorded_at")
-                )
-            ),
-            "branch": (
-                st.column_config.TextColumn(
-                    rag_lab_t("branch")
-                )
-            ),
-            "environment": (
-                st.column_config.TextColumn(
-                    rag_lab_t("environment")
-                )
-            ),
+            "run_reference": (st.column_config.TextColumn(rag_lab_t("run_reference"))),
+            "recorded_at": (st.column_config.DatetimeColumn(rag_lab_t("recorded_at"))),
+            "branch": (st.column_config.TextColumn(rag_lab_t("branch"))),
+            "environment": (st.column_config.TextColumn(rag_lab_t("environment"))),
             "rag_triad_score": (
                 st.column_config.ProgressColumn(
                     rag_lab_t("triad_score"),
@@ -2283,25 +1631,15 @@ def _render_history_table(
                 )
             ),
             "rag_triad_status": (
-                st.column_config.TextColumn(
-                    rag_lab_t("triad_status")
-                )
+                st.column_config.TextColumn(rag_lab_t("triad_status"))
             ),
             "rag_triad_passed": (
-                st.column_config.CheckboxColumn(
-                    rag_lab_t("triad_passed")
-                )
+                st.column_config.CheckboxColumn(rag_lab_t("triad_passed"))
             ),
-            "complete": (
-                st.column_config.CheckboxColumn(
-                    rag_lab_t("complete")
-                )
-            ),
+            "complete": (st.column_config.CheckboxColumn(rag_lab_t("complete"))),
             "answer-relevancy": (
                 st.column_config.ProgressColumn(
-                    rag_lab_t(
-                        "answer_relevancy"
-                    ),
+                    rag_lab_t("answer_relevancy"),
                     min_value=0.0,
                     max_value=1.0,
                     format="%.2f",
@@ -2309,9 +1647,7 @@ def _render_history_table(
             ),
             "faithfulness": (
                 st.column_config.ProgressColumn(
-                    rag_lab_t(
-                        "faithfulness"
-                    ),
+                    rag_lab_t("faithfulness"),
                     min_value=0.0,
                     max_value=1.0,
                     format="%.2f",
@@ -2319,9 +1655,7 @@ def _render_history_table(
             ),
             "contextual-relevancy": (
                 st.column_config.ProgressColumn(
-                    rag_lab_t(
-                        "contextual_relevancy"
-                    ),
+                    rag_lab_t("contextual_relevancy"),
                     min_value=0.0,
                     max_value=1.0,
                     format="%.2f",
@@ -2348,70 +1682,42 @@ def render_rag_evaluation_lab_page() -> None:
         history_path = st.text_input(
             rag_lab_t("history_file"),
             str(DEFAULT_HISTORY_PATH),
-            key=(
-                "rag_lab_history_path_"
-                f"{_rag_lab_language()}"
-            ),
+            key=(f"rag_lab_history_path_{_rag_lab_language()}"),
         )
 
     try:
-        history = load_dashboard_history(
-            history_path
-        )
+        history = load_dashboard_history(history_path)
     except Exception as exc:
-        st.error(
-            f"{rag_lab_t('load_error')}: "
-            f"{exc}"
-        )
+        st.error(f"{rag_lab_t('load_error')}: {exc}")
         return
 
-    filtered_history = _render_filters(
-        history
-    )
+    filtered_history = _render_filters(history)
 
-    triad_entries = get_rag_lab_entries(
-        filtered_history
-    )
+    triad_entries = get_rag_lab_entries(filtered_history)
 
     if not triad_entries:
-        st.info(
-            rag_lab_t("no_history")
-        )
+        st.info(rag_lab_t("no_history"))
 
-        _render_advanced_sections(
-            filtered_history
-        )
+        _render_advanced_sections(filtered_history)
 
         st.divider()
 
-        _render_history_table(
-            filtered_history
-        )
+        _render_history_table(filtered_history)
 
         return
 
-    _render_summary(
-        filtered_history
-    )
+    _render_summary(filtered_history)
 
     st.divider()
 
-    _render_timeline(
-        filtered_history
-    )
+    _render_timeline(filtered_history)
 
     st.divider()
 
-    _render_comparison(
-        filtered_history
-    )
+    _render_comparison(filtered_history)
 
-    _render_advanced_sections(
-        filtered_history
-    )
+    _render_advanced_sections(filtered_history)
 
     st.divider()
 
-    _render_history_table(
-        filtered_history
-    )
+    _render_history_table(filtered_history)

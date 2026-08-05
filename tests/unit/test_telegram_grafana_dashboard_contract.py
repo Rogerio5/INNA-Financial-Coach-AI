@@ -6,15 +6,9 @@ from pathlib import Path
 import yaml
 
 
-DASHBOARD_PATH = Path(
-    "grafana/dashboards/"
-    "telegram_operational_dashboard.json"
-)
+DASHBOARD_PATH = Path("grafana/dashboards/telegram_operational_dashboard.json")
 
-PROVISIONING_PATH = Path(
-    "grafana/provisioning/dashboards/"
-    "telegram_dashboards.yml"
-)
+PROVISIONING_PATH = Path("grafana/provisioning/dashboards/telegram_dashboards.yml")
 
 REQUIRED_RECORDING_RULES = {
     "inna:telegram_worker_updates:rate5m",
@@ -41,11 +35,7 @@ FORBIDDEN_PRIVATE_TERMS = {
 
 
 def load_dashboard() -> dict:
-    return json.loads(
-        DASHBOARD_PATH.read_text(
-            encoding="utf-8-sig"
-        )
-    )
+    return json.loads(DASHBOARD_PATH.read_text(encoding="utf-8-sig"))
 
 
 def panel_targets(
@@ -67,13 +57,9 @@ def test_dashboard_files_exist():
 def test_dashboard_json_is_valid():
     dashboard = load_dashboard()
 
-    assert dashboard["uid"] == (
-        "inna-telegram-operational"
-    )
+    assert dashboard["uid"] == ("inna-telegram-operational")
 
-    assert dashboard["title"] == (
-        "INNA — Telegram Operational"
-    )
+    assert dashboard["title"] == ("INNA — Telegram Operational")
 
     assert dashboard["schemaVersion"] >= 39
 
@@ -81,23 +67,15 @@ def test_dashboard_json_is_valid():
 def test_dashboard_panel_ids_are_unique():
     dashboard = load_dashboard()
 
-    panel_ids = [
-        panel["id"]
-        for panel in dashboard["panels"]
-    ]
+    panel_ids = [panel["id"] for panel in dashboard["panels"]]
 
-    assert len(panel_ids) == len(
-        set(panel_ids)
-    )
+    assert len(panel_ids) == len(set(panel_ids))
 
 
 def test_dashboard_has_operational_panels():
     dashboard = load_dashboard()
 
-    titles = {
-        panel["title"]
-        for panel in dashboard["panels"]
-    }
+    titles = {panel["title"] for panel in dashboard["panels"]}
 
     expected = {
         "Worker updates",
@@ -110,25 +88,18 @@ def test_dashboard_has_operational_panels():
         "Falhas de fila e receipts",
     }
 
-    assert expected.issubset(
-        titles
-    )
+    assert expected.issubset(titles)
 
 
 def test_dashboard_references_required_rules():
     dashboard = load_dashboard()
 
     expressions = "\n".join(
-        str(target.get("expr", ""))
-        for target in panel_targets(
-            dashboard
-        )
+        str(target.get("expr", "")) for target in panel_targets(dashboard)
     )
 
     missing = {
-        record
-        for record in REQUIRED_RECORDING_RULES
-        if record not in expressions
+        record for record in REQUIRED_RECORDING_RULES if record not in expressions
     }
 
     assert not missing
@@ -138,23 +109,15 @@ def test_dashboard_uses_prometheus_datasource():
     dashboard = load_dashboard()
 
     for panel in dashboard["panels"]:
-        datasource = panel[
-            "datasource"
-        ]
+        datasource = panel["datasource"]
 
-        assert datasource["type"] == (
-            "prometheus"
-        )
+        assert datasource["type"] == ("prometheus")
 
-        assert datasource["uid"] == (
-            "${DS_PROMETHEUS}"
-        )
+        assert datasource["uid"] == ("${DS_PROMETHEUS}")
 
 
 def test_dashboard_has_no_private_identifiers():
-    content = DASHBOARD_PATH.read_text(
-        encoding="utf-8-sig"
-    ).lower()
+    content = DASHBOARD_PATH.read_text(encoding="utf-8-sig").lower()
 
     for term in FORBIDDEN_PRIVATE_TERMS:
         assert term not in content
@@ -171,17 +134,11 @@ def test_dashboard_has_safe_refresh_interval():
 
 
 def test_provisioning_yaml_is_valid():
-    payload = yaml.safe_load(
-        PROVISIONING_PATH.read_text(
-            encoding="utf-8-sig"
-        )
-    )
+    payload = yaml.safe_load(PROVISIONING_PATH.read_text(encoding="utf-8-sig"))
 
     assert payload["apiVersion"] == 1
 
-    providers = payload[
-        "providers"
-    ]
+    providers = payload["providers"]
 
     assert len(providers) == 1
 
@@ -190,6 +147,4 @@ def test_provisioning_yaml_is_valid():
     assert provider["type"] == "file"
     assert provider["folder"] == "INNA"
 
-    assert provider[
-        "options"
-    ]["path"]
+    assert provider["options"]["path"]

@@ -48,9 +48,7 @@ TOOL_DESCRIPTIONS = {
         "Calcula despesas totais, saldo mensal e percentual "
         "de comprometimento da renda."
     ),
-    "calcular_capacidade_semanal": (
-        "Converte um valor mensal em referência semanal."
-    ),
+    "calcular_capacidade_semanal": ("Converte um valor mensal em referência semanal."),
     "simular_formacao_reserva": (
         "Estima quantos meses seriam necessários para atingir "
         "uma meta sem considerar rendimento."
@@ -59,9 +57,7 @@ TOOL_DESCRIPTIONS = {
         "Organiza dados de uma dívida, identifica informações "
         "ausentes e apresenta critérios educativos."
     ),
-    "simular_parcelamento_sem_juros": (
-        "Calcula o valor de parcelas iguais sem juros."
-    ),
+    "simular_parcelamento_sem_juros": ("Calcula o valor de parcelas iguais sem juros."),
     "simular_meta_por_aporte": (
         "Estima o tempo para alcançar uma meta com aportes mensais."
     ),
@@ -103,9 +99,7 @@ def executar_tool(
     argumentos = argumentos or {}
 
     try:
-        resultado = TOOLS[nome](
-            **argumentos
-        )
+        resultado = TOOLS[nome](**argumentos)
 
         return {
             "ok": True,

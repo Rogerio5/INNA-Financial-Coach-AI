@@ -70,12 +70,8 @@ def completed_job_row(
         "max_attempts": max_attempts,
         "payload_version": payload_version,
         "payload_cleared": payload_cleared,
-        "ownership_cleared": (
-            ownership_cleared
-        ),
-        "completed_at_set": (
-            completed_at_set
-        ),
+        "ownership_cleared": (ownership_cleared),
+        "completed_at_set": (completed_at_set),
     }
 
 
@@ -91,9 +87,7 @@ def completed_receipt_row(
         "update_id": update_id,
         "status": status,
         "attempt_count": attempt_count,
-        "completed_at_set": (
-            completed_at_set
-        ),
+        "completed_at_set": (completed_at_set),
         "lease_closed": lease_closed,
     }
 
@@ -103,9 +97,7 @@ class FakeCursor:
         self,
         rows,
     ):
-        self.rows = list(
-            rows
-        )
+        self.rows = list(rows)
 
         self.executions = []
 
@@ -127,9 +119,7 @@ class FakeCursor:
         if not self.rows:
             return None
 
-        return self.rows.pop(
-            0
-        )
+        return self.rows.pop(0)
 
 
 class TransactionTracker:
@@ -145,9 +135,7 @@ def install_transaction(
     monkeypatch,
     rows,
 ):
-    cursor = FakeCursor(
-        rows
-    )
+    cursor = FakeCursor(rows)
 
     tracker = TransactionTracker()
 
@@ -187,22 +175,13 @@ def complete(
     *,
     lease=None,
 ):
-    cursor, tracker = (
-        install_transaction(
-            monkeypatch,
-            rows,
-        )
+    cursor, tracker = install_transaction(
+        monkeypatch,
+        rows,
     )
 
-    outcome = (
-        worker
-        .complete_authenticated_telegram_update_job_atomic(
-            lease=(
-                lease
-                if lease is not None
-                else make_lease()
-            )
-        )
+    outcome = worker.complete_authenticated_telegram_update_job_atomic(
+        lease=(lease if lease is not None else make_lease())
     )
 
     return outcome, cursor, tracker
@@ -216,11 +195,8 @@ def business_executions(
             str(sql),
             parameters,
         )
-        for sql, parameters
-        in cursor.executions
-        if not str(sql).startswith(
-            "SET LOCAL"
-        )
+        for sql, parameters in cursor.executions
+        if not str(sql).startswith("SET LOCAL")
     ]
 
 
@@ -241,10 +217,7 @@ def test_completes_job_and_receipt_atomically(
 
     assert outcome.job_status == "completed"
 
-    assert (
-        outcome.receipt_status
-        == "completed"
-    )
+    assert outcome.receipt_status == "completed"
 
     assert outcome.payload_cleared is True
     assert outcome.ownership_cleared is True
@@ -266,26 +239,15 @@ def test_receipt_is_locked_before_job_update(
         ],
     )
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
     assert len(executions) == 3
 
-    assert (
-        "FOR UPDATE"
-        in executions[0][0]
-    )
+    assert "FOR UPDATE" in executions[0][0]
 
-    assert (
-        "UPDATE public.telegram_update_jobs"
-        in executions[1][0]
-    )
+    assert "UPDATE public.telegram_update_jobs" in executions[1][0]
 
-    assert (
-        "UPDATE public.telegram_update_receipts"
-        in executions[2][0]
-    )
+    assert "UPDATE public.telegram_update_receipts" in executions[2][0]
 
 
 def test_same_token_is_used_for_both_updates(
@@ -300,25 +262,15 @@ def test_same_token_is_used_for_both_updates(
         ],
     )
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
-    assert (
-        executions[1][1]["lock_token"]
-        == LOCK_TOKEN
-    )
+    assert executions[1][1]["lock_token"] == LOCK_TOKEN
 
-    assert (
-        executions[2][1]["lock_token"]
-        == LOCK_TOKEN
-    )
+    assert executions[2][1]["lock_token"] == LOCK_TOKEN
 
 
 def test_payload_and_ownership_are_cleared():
-    sql = (
-        worker.SQL_COMPLETE_OWNED_JOB
-    )
+    sql = worker.SQL_COMPLETE_OWNED_JOB
 
     assert "payload_ciphertext = NULL" in sql
     assert "payload_nonce = NULL" in sql
@@ -330,17 +282,11 @@ def test_payload_and_ownership_are_cleared():
 
 
 def test_completion_requires_active_job_lease():
-    assert (
-        "job.lock_expires_at > NOW()"
-        in worker.SQL_COMPLETE_OWNED_JOB
-    )
+    assert "job.lock_expires_at > NOW()" in worker.SQL_COMPLETE_OWNED_JOB
 
 
 def test_completion_requires_active_receipt_lease():
-    assert (
-        "receipt.lease_expires_at > NOW()"
-        in worker.SQL_COMPLETE_OWNED_RECEIPT
-    )
+    assert "receipt.lease_expires_at > NOW()" in worker.SQL_COMPLETE_OWNED_RECEIPT
 
 
 def test_idempotent_replay_returns_already_completed(
@@ -357,10 +303,7 @@ def test_idempotent_replay_returns_already_completed(
         ],
     )
 
-    assert (
-        outcome.decision
-        == "already_completed"
-    )
+    assert outcome.decision == "already_completed"
 
     assert outcome.idempotent_replay is True
     assert outcome.completed is True
@@ -368,21 +311,13 @@ def test_idempotent_replay_returns_already_completed(
     assert tracker.committed == 1
     assert tracker.rolled_back == 0
 
-    executions = business_executions(
-        cursor
-    )
+    executions = business_executions(cursor)
 
     assert len(executions) == 2
 
-    assert (
-        "UPDATE public.telegram_update_jobs"
-        not in executions[1][0]
-    )
+    assert "UPDATE public.telegram_update_jobs" not in executions[1][0]
 
-    assert (
-        "SELECT"
-        in executions[1][0]
-    )
+    assert "SELECT" in executions[1][0]
 
 
 def test_idempotent_replay_requires_same_token(
@@ -399,16 +334,8 @@ def test_idempotent_replay_requires_same_token(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.committed == 0
     assert tracker.rolled_back == 1
@@ -424,16 +351,8 @@ def test_missing_receipt_rolls_back(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.rolled_back == 1
 
@@ -450,16 +369,8 @@ def test_expired_receipt_lease_rolls_back(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.rolled_back == 1
 
@@ -477,16 +388,8 @@ def test_failed_receipt_cannot_be_completed(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.rolled_back == 1
 
@@ -503,16 +406,8 @@ def test_wrong_receipt_owner_rolls_back(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.rolled_back == 1
 
@@ -528,16 +423,8 @@ def test_job_completion_failure_rolls_back(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.rolled_back == 1
 
@@ -554,16 +441,8 @@ def test_receipt_completion_failure_rolls_back_job(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerOwnershipError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerOwnershipError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.committed == 0
     assert tracker.rolled_back == 1
@@ -581,16 +460,8 @@ def test_mismatched_receipt_update_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.rolled_back == 1
 
@@ -608,16 +479,8 @@ def test_mismatched_job_update_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.rolled_back == 1
 
@@ -635,19 +498,10 @@ def test_wrong_job_attempt_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.rolled_back == 1
-
 
 
 def test_wrong_job_max_attempts_is_rejected(
@@ -663,16 +517,8 @@ def test_wrong_job_max_attempts_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.committed == 0
     assert tracker.rolled_back == 1
@@ -691,19 +537,12 @@ def test_wrong_job_payload_version_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.committed == 0
     assert tracker.rolled_back == 1
+
 
 @pytest.mark.parametrize(
     "field_name",
@@ -725,22 +564,12 @@ def test_incomplete_job_state_is_rejected(
         monkeypatch,
         [
             locked_receipt_row(),
-            completed_job_row(
-                **values
-            ),
+            completed_job_row(**values),
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.rolled_back == 1
 
@@ -759,16 +588,8 @@ def test_incomplete_receipt_state_is_rejected(
         ],
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerConsistencyError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerConsistencyError):
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
     assert tracker.rolled_back == 1
 
@@ -786,9 +607,7 @@ def test_safe_outcome_hides_tokens_and_payload(
     )
 
     safe = outcome.to_safe_dict()
-    representation = repr(
-        outcome
-    )
+    representation = repr(outcome)
 
     assert "lock_token" not in safe
     assert "claim_token" not in safe
@@ -806,10 +625,7 @@ def test_database_error_is_sanitized(
     def failing_cursor(
         **_kwargs,
     ):
-        raise RuntimeError(
-            "postgresql://user:"
-            "secret-value@host/database"
-        )
+        raise RuntimeError("postgresql://user:secret-value@host/database")
 
         yield
 
@@ -819,33 +635,19 @@ def test_database_error_is_sanitized(
         failing_cursor,
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerUnavailableError
-    ) as captured:
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                make_lease()
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerUnavailableError) as captured:
+        (worker.complete_authenticated_telegram_update_job_atomic(make_lease()))
 
-    message = str(
-        captured.value
-    )
+    message = str(captured.value)
 
     assert "secret-value" not in message
     assert "postgresql://" not in message
 
 
 def test_wrong_lease_type_is_rejected():
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerValidationError
-    ):
+    with pytest.raises(worker.TelegramUpdateWorkerValidationError):
         (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
+            worker.complete_authenticated_telegram_update_job_atomic(
                 {
                     "update_id": UPDATE_ID,
                 }
@@ -890,16 +692,8 @@ def test_invalid_lease_is_rejected(
         },
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerValidationError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                invalid_lease
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerValidationError):
+        (worker.complete_authenticated_telegram_update_job_atomic(invalid_lease))
 
 
 def test_receipt_attempts_cannot_trail_job():
@@ -909,52 +703,25 @@ def test_receipt_attempts_cannot_trail_job():
         receipt_attempt_count=2,
     )
 
-    with pytest.raises(
-        worker
-        .TelegramUpdateWorkerValidationError
-    ):
-        (
-            worker
-            .complete_authenticated_telegram_update_job_atomic(
-                invalid_lease
-            )
-        )
+    with pytest.raises(worker.TelegramUpdateWorkerValidationError):
+        (worker.complete_authenticated_telegram_update_job_atomic(invalid_lease))
 
 
 def test_sql_keeps_receipt_first_lock_order():
-    assert (
-        "FOR UPDATE"
-        in worker
-        .SQL_LOCK_RECEIPT_FOR_COMPLETION
-    )
+    assert "FOR UPDATE" in worker.SQL_LOCK_RECEIPT_FOR_COMPLETION
 
 
 def test_job_completion_is_ownership_guarded():
     sql = worker.SQL_COMPLETE_OWNED_JOB
 
-    assert (
-        "job.status = 'processing'"
-        in sql
-    )
+    assert "job.status = 'processing'" in sql
 
-    assert (
-        "job.lock_token = %(lock_token)s"
-        in sql
-    )
+    assert "job.lock_token = %(lock_token)s" in sql
 
 
 def test_receipt_completion_is_ownership_guarded():
-    sql = (
-        worker
-        .SQL_COMPLETE_OWNED_RECEIPT
-    )
+    sql = worker.SQL_COMPLETE_OWNED_RECEIPT
 
-    assert (
-        "receipt.status = 'processing'"
-        in sql
-    )
+    assert "receipt.status = 'processing'" in sql
 
-    assert (
-        "receipt.claim_token = %(lock_token)s"
-        in sql
-    )
+    assert "receipt.claim_token = %(lock_token)s" in sql

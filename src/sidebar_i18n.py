@@ -81,7 +81,9 @@ def render_sidebar_i18n(
     )
 
     risk_filter = RISK_INTERNAL_MAP[selected_language].get(risk_filter_label)
-    feedback_filter = FEEDBACK_INTERNAL_MAP[selected_language].get(feedback_filter_label)
+    feedback_filter = FEEDBACK_INTERNAL_MAP[selected_language].get(
+        feedback_filter_label
+    )
 
     return {
         "selected_language": selected_language,

@@ -26,12 +26,14 @@ def save_interaction(user_data: dict, response: dict) -> None:
         if not file_exists:
             writer.writeheader()
 
-        writer.writerow({
-            "data_hora": datetime.now().isoformat(timespec="seconds"),
-            "nome": user_data.get("nome"),
-            "renda_mensal": user_data.get("renda_mensal"),
-            "saldo_estimado": response.get("saldo_estimado"),
-            "score_financeiro": response.get("score_financeiro"),
-            "nivel_risco": response.get("nivel_risco"),
-            "objetivo": user_data.get("objetivo"),
-        })
+        writer.writerow(
+            {
+                "data_hora": datetime.now().isoformat(timespec="seconds"),
+                "nome": user_data.get("nome"),
+                "renda_mensal": user_data.get("renda_mensal"),
+                "saldo_estimado": response.get("saldo_estimado"),
+                "score_financeiro": response.get("score_financeiro"),
+                "nivel_risco": response.get("nivel_risco"),
+                "objetivo": user_data.get("objetivo"),
+            }
+        )

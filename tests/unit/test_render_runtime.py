@@ -28,9 +28,7 @@ def test_collect_render_runtime_local(
 
     assert status.running_on_render is False
     assert status.environment == "local"
-    assert status.service_name == (
-        "inna-financial-coach-ai"
-    )
+    assert status.service_name == ("inna-financial-coach-ai")
     assert status.service_type == "local-process"
     assert status.region == "local"
     assert status.external_url_configured is False
@@ -91,18 +89,14 @@ def test_collect_render_runtime_production(
     assert status.external_url_configured is True
     assert status.deploy_commit == "1234567890ab"
     assert status.instance_hash
-    assert (
-        status.instance_hash
-        != "instance-private-value"
-    )
+    assert status.instance_hash != "instance-private-value"
     assert status.status == "operational"
 
     payload = status.to_dict()
 
     assert "private-example" not in str(payload)
-    assert "instance-private-value" not in str(
-        payload
-    )
+    assert "instance-private-value" not in str(payload)
+
 
 def test_collect_render_runtime_preserves_staging_environment(
     monkeypatch,
@@ -120,4 +114,3 @@ def test_collect_render_runtime_preserves_staging_environment(
     assert status.environment == "staging"
     assert status.service_name == "inna-staging"
     assert status.status == "operational"
-

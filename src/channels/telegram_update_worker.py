@@ -49,46 +49,24 @@ EXIT_CONFIGURATION_ERROR = 2
 EXIT_INTERRUPTED = 130
 
 
-ENV_LEASE_SECONDS = (
-    "INNA_TELEGRAM_WORKER_LEASE_SECONDS"
-)
+ENV_LEASE_SECONDS = "INNA_TELEGRAM_WORKER_LEASE_SECONDS"
 
-ENV_IDLE_SLEEP_SECONDS = (
-    "INNA_TELEGRAM_WORKER_IDLE_SLEEP_SECONDS"
-)
+ENV_IDLE_SLEEP_SECONDS = "INNA_TELEGRAM_WORKER_IDLE_SLEEP_SECONDS"
 
-ENV_UNAVAILABLE_SLEEP_SECONDS = (
-    "INNA_TELEGRAM_WORKER_"
-    "UNAVAILABLE_SLEEP_SECONDS"
-)
+ENV_UNAVAILABLE_SLEEP_SECONDS = "INNA_TELEGRAM_WORKER_UNAVAILABLE_SLEEP_SECONDS"
 
-ENV_RECOVERY_INTERVAL_SECONDS = (
-    "INNA_TELEGRAM_WORKER_"
-    "RECOVERY_INTERVAL_SECONDS"
-)
+ENV_RECOVERY_INTERVAL_SECONDS = "INNA_TELEGRAM_WORKER_RECOVERY_INTERVAL_SECONDS"
 
-ENV_RECOVERY_BATCH_SIZE = (
-    "INNA_TELEGRAM_WORKER_"
-    "RECOVERY_BATCH_SIZE"
-)
+ENV_RECOVERY_BATCH_SIZE = "INNA_TELEGRAM_WORKER_RECOVERY_BATCH_SIZE"
 
-ENV_RETRY_BASE_DELAY_SECONDS = (
-    "INNA_TELEGRAM_WORKER_"
-    "RETRY_BASE_DELAY_SECONDS"
-)
+ENV_RETRY_BASE_DELAY_SECONDS = "INNA_TELEGRAM_WORKER_RETRY_BASE_DELAY_SECONDS"
 
-ENV_RETRY_MAX_DELAY_SECONDS = (
-    "INNA_TELEGRAM_WORKER_"
-    "RETRY_MAX_DELAY_SECONDS"
-)
+ENV_RETRY_MAX_DELAY_SECONDS = "INNA_TELEGRAM_WORKER_RETRY_MAX_DELAY_SECONDS"
 
 
-def _configuration_error() -> (
-    TelegramUpdateRunnerConfigurationError
-):
+def _configuration_error() -> TelegramUpdateRunnerConfigurationError:
     return TelegramUpdateRunnerConfigurationError(
-        "A configuração do worker Telegram "
-        "é inválida."
+        "A configuração do worker Telegram é inválida."
     )
 
 
@@ -97,9 +75,7 @@ def _read_integer(
     name: str,
     default: int,
 ) -> int:
-    raw_value = environment.get(
-        name
-    )
+    raw_value = environment.get(name)
 
     if raw_value is None:
         return default
@@ -130,9 +106,7 @@ def _read_float(
     name: str,
     default: float,
 ) -> float:
-    raw_value = environment.get(
-        name
-    )
+    raw_value = environment.get(name)
 
     if raw_value is None:
         return default
@@ -143,9 +117,7 @@ def _read_float(
         raise _configuration_error()
 
     try:
-        value = float(
-            normalized
-        )
+        value = float(normalized)
 
     except (
         TypeError,
@@ -154,17 +126,14 @@ def _read_float(
     ):
         raise _configuration_error() from None
 
-    if not math.isfinite(
-        value
-    ):
+    if not math.isfinite(value):
         raise _configuration_error()
 
     return value
 
 
 def load_worker_config_from_env(
-    environment: Mapping[str, str]
-        | None = None,
+    environment: Mapping[str, str] | None = None,
 ) -> TelegramUpdateWorkerConfig:
     """
     Carrega somente configurações operacionais.
@@ -172,15 +141,9 @@ def load_worker_config_from_env(
     Segredos e chaves criptográficas são
     carregados pelo serviço de keyring.
     """
-    resolved_environment = (
-        environment
-        if environment is not None
-        else os.environ
-    )
+    resolved_environment = environment if environment is not None else os.environ
 
-    defaults = (
-        TelegramUpdateWorkerConfig()
-    )
+    defaults = TelegramUpdateWorkerConfig()
 
     try:
         return TelegramUpdateWorkerConfig(
@@ -198,40 +161,35 @@ def load_worker_config_from_env(
                 _read_float(
                     resolved_environment,
                     ENV_UNAVAILABLE_SLEEP_SECONDS,
-                    defaults
-                    .unavailable_sleep_seconds,
+                    defaults.unavailable_sleep_seconds,
                 )
             ),
             recovery_interval_seconds=(
                 _read_float(
                     resolved_environment,
                     ENV_RECOVERY_INTERVAL_SECONDS,
-                    defaults
-                    .recovery_interval_seconds,
+                    defaults.recovery_interval_seconds,
                 )
             ),
             recovery_batch_size=(
                 _read_integer(
                     resolved_environment,
                     ENV_RECOVERY_BATCH_SIZE,
-                    defaults
-                    .recovery_batch_size,
+                    defaults.recovery_batch_size,
                 )
             ),
             retry_base_delay_seconds=(
                 _read_integer(
                     resolved_environment,
                     ENV_RETRY_BASE_DELAY_SECONDS,
-                    defaults
-                    .retry_base_delay_seconds,
+                    defaults.retry_base_delay_seconds,
                 )
             ),
             retry_max_delay_seconds=(
                 _read_integer(
                     resolved_environment,
                     ENV_RETRY_MAX_DELAY_SECONDS,
-                    defaults
-                    .retry_max_delay_seconds,
+                    defaults.retry_max_delay_seconds,
                 )
             ),
         )
@@ -241,7 +199,6 @@ def load_worker_config_from_env(
 
     except Exception:
         raise _configuration_error() from None
-
 
 
 def _observable_bridge_factory_kwargs(
@@ -259,9 +216,7 @@ def _observable_bridge_factory_kwargs(
     de load_telegram_processor.
     """
     try:
-        signature = inspect.signature(
-            bridge_factory
-        )
+        signature = inspect.signature(bridge_factory)
 
     except (
         TypeError,
@@ -290,22 +245,13 @@ def _observable_bridge_factory_kwargs(
     }
 
 
+_TELEGRAM_OPERATIONAL_LOGGER_NAME = "inna.telegram.operations"
 
-_TELEGRAM_OPERATIONAL_LOGGER_NAME = (
-    "inna.telegram.operations"
-)
+_TELEGRAM_OPERATIONAL_LOG_LEVEL_ENV = "TELEGRAM_OPERATIONAL_LOG_LEVEL"
 
-_TELEGRAM_OPERATIONAL_LOG_LEVEL_ENV = (
-    "TELEGRAM_OPERATIONAL_LOG_LEVEL"
-)
+_DEFAULT_TELEGRAM_OPERATIONAL_LOG_LEVEL = "INFO"
 
-_DEFAULT_TELEGRAM_OPERATIONAL_LOG_LEVEL = (
-    "INFO"
-)
-
-_MANAGED_TELEGRAM_LOG_HANDLER_ATTRIBUTE = (
-    "_inna_telegram_structured_handler"
-)
+_MANAGED_TELEGRAM_LOG_HANDLER_ATTRIBUTE = "_inna_telegram_structured_handler"
 
 _ALLOWED_TELEGRAM_OPERATIONAL_LOG_LEVELS = {
     "DEBUG": logging.DEBUG,
@@ -328,30 +274,18 @@ def _resolve_telegram_operational_log_level(
         )
     )
 
-    normalized = str(
-        resolved
-    ).strip().upper()
+    normalized = str(resolved).strip().upper()
 
-    level = (
-        _ALLOWED_TELEGRAM_OPERATIONAL_LOG_LEVELS.get(
-            normalized
-        )
-    )
+    level = _ALLOWED_TELEGRAM_OPERATIONAL_LOG_LEVELS.get(normalized)
 
     if level is None:
-        allowed = ", ".join(
-            sorted(
-                _ALLOWED_TELEGRAM_OPERATIONAL_LOG_LEVELS
-            )
-        )
+        allowed = ", ".join(sorted(_ALLOWED_TELEGRAM_OPERATIONAL_LOG_LEVELS))
 
         raise TelegramUpdateRunnerConfigurationError(
-            "Nível de logging Telegram inválido. "
-            f"Valores permitidos: {allowed}."
+            f"Nível de logging Telegram inválido. Valores permitidos: {allowed}."
         )
 
     return level
-
 
 
 class TelegramProductiveMetricsRuntime:
@@ -361,35 +295,20 @@ class TelegramProductiveMetricsRuntime:
     """
 
     def __init__(self) -> None:
-        registry = (
-            InMemoryTelegramProductiveMetrics()
-        )
+        registry = InMemoryTelegramProductiveMetrics()
 
         self.registry = registry
 
-        self.safe_registry = (
-            SafeTelegramProductiveMetrics(
-                registry
-            )
-        )
+        self.safe_registry = SafeTelegramProductiveMetrics(registry)
 
-        self.adapter = (
-            ProductiveTelegramConversationMetricsAdapter(
-                self.safe_registry
-            )
-        )
+        self.adapter = ProductiveTelegramConversationMetricsAdapter(self.safe_registry)
 
-        self.operations = (
-            SafeTelegramProductiveOperations(
-                TelegramProductiveOperationsRecorder(
-                    self.safe_registry
-                )
-            )
+        self.operations = SafeTelegramProductiveOperations(
+            TelegramProductiveOperationsRecorder(self.safe_registry)
         )
 
 
-def create_production_telegram_metrics_runtime(
-) -> TelegramProductiveMetricsRuntime:
+def create_production_telegram_metrics_runtime() -> TelegramProductiveMetricsRuntime:
     return TelegramProductiveMetricsRuntime()
 
 
@@ -408,9 +327,7 @@ def create_production_telegram_event_sink(
     resolved_logger = (
         logger
         if logger is not None
-        else logging.getLogger(
-            _TELEGRAM_OPERATIONAL_LOGGER_NAME
-        )
+        else logging.getLogger(_TELEGRAM_OPERATIONAL_LOGGER_NAME)
     )
 
     if not isinstance(
@@ -421,15 +338,9 @@ def create_production_telegram_event_sink(
             "Logger operacional Telegram inválido."
         )
 
-    level = (
-        _resolve_telegram_operational_log_level(
-            level_name
-        )
-    )
+    level = _resolve_telegram_operational_log_level(level_name)
 
-    resolved_logger.setLevel(
-        level
-    )
+    resolved_logger.setLevel(level)
 
     resolved_logger.propagate = False
 
@@ -445,11 +356,7 @@ def create_production_telegram_event_sink(
         )
     ]
 
-    desired_stream = (
-        stream
-        if stream is not None
-        else sys.stderr
-    )
+    desired_stream = stream if stream is not None else sys.stderr
 
     matching_handler = next(
         (
@@ -467,18 +374,14 @@ def create_production_telegram_event_sink(
 
     if matching_handler is None:
         for handler in managed_handlers:
-            resolved_logger.removeHandler(
-                handler
-            )
+            resolved_logger.removeHandler(handler)
 
             try:
                 handler.close()
             except Exception:
                 pass
 
-        matching_handler = logging.StreamHandler(
-            desired_stream
-        )
+        matching_handler = logging.StreamHandler(desired_stream)
 
         setattr(
             matching_handler,
@@ -486,23 +389,13 @@ def create_production_telegram_event_sink(
             True,
         )
 
-        matching_handler.setFormatter(
-            logging.Formatter(
-                "%(message)s"
-            )
-        )
+        matching_handler.setFormatter(logging.Formatter("%(message)s"))
 
-        resolved_logger.addHandler(
-            matching_handler
-        )
+        resolved_logger.addHandler(matching_handler)
 
-    matching_handler.setLevel(
-        level
-    )
+    matching_handler.setLevel(level)
 
-    return JsonTelegramOperationalEventSink(
-        logger=resolved_logger
-    )
+    return JsonTelegramOperationalEventSink(logger=resolved_logger)
 
 
 def load_telegram_processor(
@@ -515,9 +408,7 @@ def load_telegram_processor(
         [],
         TelegramOperationalEventSink,
     ] = NoOpTelegramOperationalEventSink,
-    clock: Callable[[], float] = (
-        time.perf_counter
-    ),
+    clock: Callable[[], float] = (time.perf_counter),
 ):
     """
     Compõe o processador produtivo do worker.
@@ -536,16 +427,12 @@ def load_telegram_processor(
         create_postgres_telegram_webhook_conversation_bridge,
     )
 
-    if not callable(
-        process_telegram_update
-    ):
+    if not callable(process_telegram_update):
         raise TelegramUpdateRunnerConfigurationError(
             "O processador Telegram é inválido."
         )
 
-    if not callable(
-        create_postgres_telegram_webhook_conversation_bridge
-    ):
+    if not callable(create_postgres_telegram_webhook_conversation_bridge):
         raise TelegramUpdateRunnerConfigurationError(
             "A factory da conversation bridge é inválida."
         )
@@ -556,9 +443,7 @@ def load_telegram_processor(
         )
 
     if not callable(event_sink_factory):
-        raise TelegramUpdateRunnerConfigurationError(
-            "A factory de eventos é inválida."
-        )
+        raise TelegramUpdateRunnerConfigurationError("A factory de eventos é inválida.")
 
     if not callable(clock):
         raise TelegramUpdateRunnerConfigurationError(
@@ -573,37 +458,28 @@ def load_telegram_processor(
             metrics,
             TelegramConversationMetrics,
         ):
-            raise TypeError(
-                "Coletor de métricas inválido."
-            )
+            raise TypeError("Coletor de métricas inválido.")
 
         if not isinstance(
             event_sink,
             TelegramOperationalEventSink,
         ):
-            raise TypeError(
-                "Event sink inválido."
-            )
+            raise TypeError("Event sink inválido.")
 
-        bridge_factory_kwargs = (
-            _observable_bridge_factory_kwargs(
-                create_postgres_telegram_webhook_conversation_bridge,
-                metrics=metrics,
-                event_sink=event_sink,
-                clock=clock,
-            )
+        bridge_factory_kwargs = _observable_bridge_factory_kwargs(
+            create_postgres_telegram_webhook_conversation_bridge,
+            metrics=metrics,
+            event_sink=event_sink,
+            clock=clock,
         )
 
-        conversation_bridge = (
-            create_postgres_telegram_webhook_conversation_bridge(
-                **bridge_factory_kwargs
-            )
+        conversation_bridge = create_postgres_telegram_webhook_conversation_bridge(
+            **bridge_factory_kwargs
         )
 
     except Exception:
         raise TelegramUpdateRunnerConfigurationError(
-            "Não foi possível compor o estado "
-            "conversacional durável."
+            "Não foi possível compor o estado conversacional durável."
         ) from None
 
     if conversation_bridge is None:
@@ -622,7 +498,6 @@ def load_telegram_processor(
     return process_with_durable_conversation_state
 
 
-
 def _emit_event(
     event: str,
     payload: Mapping[str, object],
@@ -631,9 +506,7 @@ def _emit_event(
 ) -> None:
     record = {
         "event": event,
-        "data": dict(
-            payload
-        ),
+        "data": dict(payload),
     }
 
     serialized = json.dumps(
@@ -675,66 +548,54 @@ def emit_runner_result(
     )
 
 
-
 def _productive_error_category_for_result(
     result: TelegramUpdateRunnerResult,
 ) -> str:
-    error_code = str(
-        getattr(
-            result,
-            "error_code",
-            "",
+    error_code = (
+        str(
+            getattr(
+                result,
+                "error_code",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
-    stage = str(
-        getattr(
-            result,
-            "stage",
-            "",
+    stage = (
+        str(
+            getattr(
+                result,
+                "stage",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
     if "timeout" in error_code:
         return "timeout"
 
-    if (
-        "ownership_lost" in error_code
-        or "ownership" in error_code
-    ):
+    if "ownership_lost" in error_code or "ownership" in error_code:
         return "optimistic_conflict"
 
-    if (
-        "unavailable" in error_code
-        or "unavailable" in stage
-    ):
+    if "unavailable" in error_code or "unavailable" in stage:
         return "dependency"
 
-    if (
-        "inconsistent" in error_code
-        or "consistency" in error_code
-    ):
+    if "inconsistent" in error_code or "consistency" in error_code:
         return "persistence"
 
-    if (
-        "decrypt" in error_code
-        or "keyring" in error_code
-        or "encryption" in error_code
-    ):
+    if "decrypt" in error_code or "keyring" in error_code or "encryption" in error_code:
         return "encryption"
 
-    if (
-        "validation" in error_code
-        or "invalid" in error_code
-    ):
+    if "validation" in error_code or "invalid" in error_code:
         return "validation"
 
-    if (
-        "delivery" in error_code
-        or "send" in error_code
-    ):
+    if "delivery" in error_code or "send" in error_code:
         return "delivery"
 
     return "unknown"
@@ -743,31 +604,36 @@ def _productive_error_category_for_result(
 def _productive_cycle_result_for_runner_result(
     result: TelegramUpdateRunnerResult,
 ) -> str:
-    decision = str(
-        getattr(
-            result,
-            "decision",
-            "",
+    decision = (
+        str(
+            getattr(
+                result,
+                "decision",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
-    stage = str(
-        getattr(
-            result,
-            "stage",
-            "",
+    stage = (
+        str(
+            getattr(
+                result,
+                "stage",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
     if decision == "idle":
         return "empty"
 
-    if (
-        stage == "recovery"
-        and decision != "unavailable"
-    ):
+    if stage == "recovery" and decision != "unavailable":
         return "processed"
 
     if decision in {
@@ -790,23 +656,31 @@ def _productive_cycle_result_for_runner_result(
 def _productive_update_outcome_for_runner_result(
     result: TelegramUpdateRunnerResult,
 ) -> tuple[str, str | None] | None:
-    decision = str(
-        getattr(
-            result,
-            "decision",
-            "",
+    decision = (
+        str(
+            getattr(
+                result,
+                "decision",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
-    stage = str(
-        getattr(
-            result,
-            "stage",
-            "",
+    stage = (
+        str(
+            getattr(
+                result,
+                "stage",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
     idempotent_replay = bool(
         getattr(
@@ -816,10 +690,7 @@ def _productive_update_outcome_for_runner_result(
         )
     )
 
-    if (
-        decision == "idle"
-        or stage == "recovery"
-    ):
+    if decision == "idle" or stage == "recovery":
         return None
 
     if idempotent_replay:
@@ -843,9 +714,7 @@ def _productive_update_outcome_for_runner_result(
     }:
         return (
             "error",
-            _productive_error_category_for_result(
-                result
-            ),
+            _productive_error_category_for_result(result),
         )
 
     return (
@@ -854,32 +723,36 @@ def _productive_update_outcome_for_runner_result(
     )
 
 
-
 def _productive_receipt_for_runner_result(
     result: TelegramUpdateRunnerResult,
 ) -> tuple[str, str, str | None] | None:
-    decision = str(
-        getattr(
-            result,
-            "decision",
-            "",
+    decision = (
+        str(
+            getattr(
+                result,
+                "decision",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
-    stage = str(
-        getattr(
-            result,
-            "stage",
-            "",
+    stage = (
+        str(
+            getattr(
+                result,
+                "stage",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
-    if (
-        decision == "idle"
-        or stage == "recovery"
-    ):
+    if decision == "idle" or stage == "recovery":
         return None
 
     idempotent_replay = bool(
@@ -890,11 +763,7 @@ def _productive_receipt_for_runner_result(
         )
     )
 
-    error_category = (
-        _productive_error_category_for_result(
-            result
-        )
-    )
+    error_category = _productive_error_category_for_result(result)
 
     if idempotent_replay:
         return (
@@ -947,12 +816,7 @@ def _productive_receipt_for_runner_result(
     }:
         return (
             "failed",
-            (
-                "conflict"
-                if decision
-                == "consistency_error"
-                else "error"
-            ),
+            ("conflict" if decision == "consistency_error" else "error"),
             error_category,
         )
 
@@ -966,23 +830,31 @@ def _productive_receipt_for_runner_result(
 def _productive_queue_for_runner_result(
     result: TelegramUpdateRunnerResult,
 ) -> tuple[str, str, str | None] | None:
-    decision = str(
-        getattr(
-            result,
-            "decision",
-            "",
+    decision = (
+        str(
+            getattr(
+                result,
+                "decision",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
-    stage = str(
-        getattr(
-            result,
-            "stage",
-            "",
+    stage = (
+        str(
+            getattr(
+                result,
+                "stage",
+                "",
+            )
+            or ""
         )
-        or ""
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
     if decision == "idle":
         return None
@@ -995,25 +867,13 @@ def _productive_queue_for_runner_result(
         )
     )
 
-    error_category = (
-        _productive_error_category_for_result(
-            result
-        )
-    )
+    error_category = _productive_error_category_for_result(result)
 
     if stage == "recovery":
         return (
             "recover",
-            (
-                "error"
-                if decision == "unavailable"
-                else "success"
-            ),
-            (
-                error_category
-                if decision == "unavailable"
-                else None
-            ),
+            ("error" if decision == "unavailable" else "success"),
+            (error_category if decision == "unavailable" else None),
         )
 
     if stage == "claim":
@@ -1027,12 +887,7 @@ def _productive_queue_for_runner_result(
                     None,
                 )
                 is not None
-                else (
-                    "conflict"
-                    if decision
-                    == "consistency_error"
-                    else "error"
-                )
+                else ("conflict" if decision == "consistency_error" else "error")
             ),
             (
                 None
@@ -1049,33 +904,21 @@ def _productive_queue_for_runner_result(
     if decision == "completed":
         return (
             "acknowledge",
-            (
-                "duplicate"
-                if idempotent_replay
-                else "success"
-            ),
+            ("duplicate" if idempotent_replay else "success"),
             None,
         )
 
     if decision == "retry_scheduled":
         return (
             "release",
-            (
-                "duplicate"
-                if idempotent_replay
-                else "success"
-            ),
+            ("duplicate" if idempotent_replay else "success"),
             None,
         )
 
     if decision == "dead_lettered":
         return (
             "fail",
-            (
-                "duplicate"
-                if idempotent_replay
-                else "success"
-            ),
+            ("duplicate" if idempotent_replay else "success"),
             None,
         )
 
@@ -1091,17 +934,8 @@ def _productive_queue_for_runner_result(
         "consistency_error",
     }:
         return (
-            (
-                "acknowledge"
-                if stage == "complete"
-                else "fail"
-            ),
-            (
-                "conflict"
-                if decision
-                == "consistency_error"
-                else "error"
-            ),
+            ("acknowledge" if stage == "complete" else "fail"),
+            ("conflict" if decision == "consistency_error" else "error"),
             error_category,
         )
 
@@ -1117,11 +951,7 @@ def record_productive_receipt_and_queue_result(
     *,
     operations,
 ) -> None:
-    receipt = (
-        _productive_receipt_for_runner_result(
-            result
-        )
-    )
+    receipt = _productive_receipt_for_runner_result(result)
 
     if receipt is not None:
         (
@@ -1133,16 +963,10 @@ def record_productive_receipt_and_queue_result(
         operations.record_receipt(
             status=receipt_status,
             outcome=receipt_outcome,
-            error_category=(
-                receipt_error_category
-            ),
+            error_category=(receipt_error_category),
         )
 
-    queue_operation = (
-        _productive_queue_for_runner_result(
-            result
-        )
-    )
+    queue_operation = _productive_queue_for_runner_result(result)
 
     if queue_operation is not None:
         (
@@ -1167,28 +991,18 @@ def record_productive_runner_result(
     Converte o contrato seguro do runner em
     métricas agregadas de baixa cardinalidade.
     """
-    cycle_result = (
-        _productive_cycle_result_for_runner_result(
-            result
-        )
-    )
+    cycle_result = _productive_cycle_result_for_runner_result(result)
 
     operations.record_worker_cycle(
         result=cycle_result,
     )
 
-    update_classification = (
-        _productive_update_outcome_for_runner_result(
-            result
-        )
-    )
+    update_classification = _productive_update_outcome_for_runner_result(result)
 
     if update_classification is None:
         return
 
-    outcome, error_category = (
-        update_classification
-    )
+    outcome, error_category = update_classification
 
     operations.record_worker_update(
         outcome=outcome,
@@ -1249,31 +1063,13 @@ def _config_to_safe_dict(
     config: TelegramUpdateWorkerConfig,
 ) -> dict[str, object]:
     return {
-        "lease_seconds": (
-            config.lease_seconds
-        ),
-        "idle_sleep_seconds": (
-            config.idle_sleep_seconds
-        ),
-        "unavailable_sleep_seconds": (
-            config
-            .unavailable_sleep_seconds
-        ),
-        "recovery_interval_seconds": (
-            config
-            .recovery_interval_seconds
-        ),
-        "recovery_batch_size": (
-            config.recovery_batch_size
-        ),
-        "retry_base_delay_seconds": (
-            config
-            .retry_base_delay_seconds
-        ),
-        "retry_max_delay_seconds": (
-            config
-            .retry_max_delay_seconds
-        ),
+        "lease_seconds": (config.lease_seconds),
+        "idle_sleep_seconds": (config.idle_sleep_seconds),
+        "unavailable_sleep_seconds": (config.unavailable_sleep_seconds),
+        "recovery_interval_seconds": (config.recovery_interval_seconds),
+        "recovery_batch_size": (config.recovery_batch_size),
+        "retry_base_delay_seconds": (config.retry_base_delay_seconds),
+        "retry_max_delay_seconds": (config.retry_max_delay_seconds),
     }
 
 
@@ -1321,17 +1117,12 @@ def _install_signal_handlers(
                 signal_number,
                 int,
             )
-            and signal_number
-            not in signal_numbers
+            and signal_number not in signal_numbers
         ):
-            signal_numbers.append(
-                signal_number
-            )
+            signal_numbers.append(signal_number)
 
     for signal_number in signal_numbers:
-        previous_handlers[
-            signal_number
-        ] = signal_module.signal(
+        previous_handlers[signal_number] = signal_module.signal(
             signal_number,
             stop_handler,
         )
@@ -1375,52 +1166,34 @@ def _positive_integer_argument(
         ValueError,
         OverflowError,
     ):
-        raise argparse.ArgumentTypeError(
-            "deve ser um inteiro positivo"
-        ) from None
+        raise argparse.ArgumentTypeError("deve ser um inteiro positivo") from None
 
     if parsed < 1:
-        raise argparse.ArgumentTypeError(
-            "deve ser um inteiro positivo"
-        )
+        raise argparse.ArgumentTypeError("deve ser um inteiro positivo")
 
     return parsed
 
 
-def _build_parser() -> (
-    argparse.ArgumentParser
-):
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog=(
-            "run_telegram_update_worker"
-        ),
-        description=(
-            "Executa o worker durável "
-            "da fila Telegram da INNA."
-        ),
+        prog=("run_telegram_update_worker"),
+        description=("Executa o worker durável da fila Telegram da INNA."),
     )
 
     parser.add_argument(
         "--max-cycles",
         type=_positive_integer_argument,
         default=None,
-        help=(
-            "Limita os ciclos para smoke tests. "
-            "O padrão é execução contínua."
-        ),
+        help=("Limita os ciclos para smoke tests. O padrão é execução contínua."),
     )
 
     return parser
 
 
-
 def _load_productive_telegram_processor(
     *,
     stderr: TextIO,
-    metrics_runtime: (
-        TelegramProductiveMetricsRuntime
-        | None
-    ) = None,
+    metrics_runtime: (TelegramProductiveMetricsRuntime | None) = None,
 ):
     """
     Compõe o processador produtivo com:
@@ -1430,30 +1203,21 @@ def _load_productive_telegram_processor(
     - compatibilidade com loaders e mocks antigos.
     """
     resolved_metrics_runtime = (
-        metrics_runtime
-        or create_production_telegram_metrics_runtime()
+        metrics_runtime or create_production_telegram_metrics_runtime()
     )
 
-    event_sink_factory = lambda: (
-        create_production_telegram_event_sink(
-            stream=stderr
-        )
-    )
+    event_sink_factory = lambda: create_production_telegram_event_sink(stream=stderr)
 
-    metrics_factory = lambda: (
-        CompositeTelegramConversationMetrics(
-            [
-                resolved_metrics_runtime.adapter,
-            ]
-        )
+    metrics_factory = lambda: CompositeTelegramConversationMetrics(
+        [
+            resolved_metrics_runtime.adapter,
+        ]
     )
 
     loader_kwargs = {}
 
     try:
-        signature = inspect.signature(
-            load_telegram_processor
-        )
+        signature = inspect.signature(load_telegram_processor)
     except (
         TypeError,
         ValueError,
@@ -1462,30 +1226,20 @@ def _load_productive_telegram_processor(
 
     if signature is not None:
         try:
-            signature.bind(
-                event_sink_factory=event_sink_factory
-            )
+            signature.bind(event_sink_factory=event_sink_factory)
         except TypeError:
             pass
         else:
-            loader_kwargs[
-                "event_sink_factory"
-            ] = event_sink_factory
+            loader_kwargs["event_sink_factory"] = event_sink_factory
 
         try:
-            signature.bind(
-                metrics_factory=metrics_factory
-            )
+            signature.bind(metrics_factory=metrics_factory)
         except TypeError:
             pass
         else:
-            loader_kwargs[
-                "metrics_factory"
-            ] = metrics_factory
+            loader_kwargs["metrics_factory"] = metrics_factory
 
-    processor = load_telegram_processor(
-        **loader_kwargs
-    )
+    processor = load_telegram_processor(**loader_kwargs)
 
     try:
         setattr(
@@ -1505,50 +1259,28 @@ def main(
     stdout: TextIO | None = None,
     stderr: TextIO | None = None,
 ) -> int:
-    resolved_stdout = (
-        stdout
-        if stdout is not None
-        else sys.stdout
-    )
+    resolved_stdout = stdout if stdout is not None else sys.stdout
 
-    resolved_stderr = (
-        stderr
-        if stderr is not None
-        else sys.stderr
-    )
+    resolved_stderr = stderr if stderr is not None else sys.stderr
 
     parser = _build_parser()
 
     try:
-        arguments = parser.parse_args(
-            list(argv)
-            if argv is not None
-            else None
-        )
+        arguments = parser.parse_args(list(argv) if argv is not None else None)
 
     except SystemExit as error:
-        return int(
-            error.code
-        )
+        return int(error.code)
 
     try:
-        config = (
-            load_worker_config_from_env()
-        )
+        config = load_worker_config_from_env()
 
-        keyring = (
-            load_telegram_update_keyring_from_env()
-        )
+        keyring = load_telegram_update_keyring_from_env()
 
-        metrics_runtime = (
-            create_production_telegram_metrics_runtime()
-        )
+        metrics_runtime = create_production_telegram_metrics_runtime()
 
-        processor = (
-            _load_productive_telegram_processor(
-                stderr=resolved_stderr,
-                metrics_runtime=metrics_runtime,
-            )
+        processor = _load_productive_telegram_processor(
+            stderr=resolved_stderr,
+            metrics_runtime=metrics_runtime,
         )
 
     except (
@@ -1558,10 +1290,7 @@ def main(
         _emit_event(
             "telegram_worker_error",
             {
-                "error_code": (
-                    "telegram.worker_"
-                    "configuration_invalid"
-                ),
+                "error_code": ("telegram.worker_configuration_invalid"),
             },
             stream=resolved_stderr,
         )
@@ -1572,10 +1301,7 @@ def main(
         _emit_event(
             "telegram_worker_error",
             {
-                "error_code": (
-                    "telegram.worker_"
-                    "initialization_failed"
-                ),
+                "error_code": ("telegram.worker_initialization_failed"),
             },
             stream=resolved_stderr,
         )
@@ -1589,39 +1315,25 @@ def main(
     ] = {}
 
     try:
-        previous_handlers = (
-            _install_signal_handlers(
-                stop_event
-            )
-        )
+        previous_handlers = _install_signal_handlers(stop_event)
 
         _emit_event(
             "telegram_worker_started",
-            _config_to_safe_dict(
-                config
-            ),
+            _config_to_safe_dict(config),
             stream=resolved_stdout,
         )
 
-        summary = (
-            run_telegram_update_worker(
-                processor,
-                stop_event=stop_event,
-                config=config,
-                keyring=keyring,
-                on_result=lambda result: (
-                    handle_productive_runner_result(
-                        result,
-                        stream=resolved_stdout,
-                        operations=(
-                            metrics_runtime.operations
-                        ),
-                    )
-                ),
-                max_cycles=(
-                    arguments.max_cycles
-                ),
-            )
+        summary = run_telegram_update_worker(
+            processor,
+            stop_event=stop_event,
+            config=config,
+            keyring=keyring,
+            on_result=lambda result: handle_productive_runner_result(
+                result,
+                stream=resolved_stdout,
+                operations=(metrics_runtime.operations),
+            ),
+            max_cycles=(arguments.max_cycles),
         )
 
     except KeyboardInterrupt:
@@ -1644,10 +1356,7 @@ def main(
         _emit_event(
             "telegram_worker_error",
             {
-                "error_code": (
-                    "telegram.worker_"
-                    "configuration_invalid"
-                ),
+                "error_code": ("telegram.worker_configuration_invalid"),
             },
             stream=resolved_stderr,
         )
@@ -1658,10 +1367,7 @@ def main(
         _emit_event(
             "telegram_worker_error",
             {
-                "error_code": (
-                    "telegram.worker_"
-                    "runtime_failed"
-                ),
+                "error_code": ("telegram.worker_runtime_failed"),
             },
             stream=resolved_stderr,
         )
@@ -1669,9 +1375,7 @@ def main(
         return EXIT_RUNTIME_ERROR
 
     finally:
-        _restore_signal_handlers(
-            previous_handlers
-        )
+        _restore_signal_handlers(previous_handlers)
 
     emit_runner_summary(
         summary,

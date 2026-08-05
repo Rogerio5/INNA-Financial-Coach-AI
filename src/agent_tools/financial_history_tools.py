@@ -27,15 +27,10 @@ from src.services.financial_history.repository import (
     consultar_historico_financeiro_usuario,
 )
 
-
-FINANCIAL_HISTORY_TOOL_NAME = (
-    "consultar_historico_financeiro"
-)
+FINANCIAL_HISTORY_TOOL_NAME = "consultar_historico_financeiro"
 
 
-class ConsultarHistoricoFinanceiroInput(
-    BaseModel
-):
+class ConsultarHistoricoFinanceiroInput(BaseModel):
     """
     Argumentos públicos enviados pelo agente.
 
@@ -51,16 +46,11 @@ class ConsultarHistoricoFinanceiroInput(
         default=DEFAULT_HISTORY_LIMIT,
         ge=1,
         le=MAX_HISTORY_LIMIT,
-        description=(
-            "Quantidade máxima de diagnósticos "
-            "recentes a consultar."
-        ),
+        description=("Quantidade máxima de diagnósticos recentes a consultar."),
     )
 
 
-class HistoricoFinanceiroItem(
-    BaseModel
-):
+class HistoricoFinanceiroItem(BaseModel):
     """Registro financeiro mínimo e permitido."""
 
     model_config = ConfigDict(
@@ -71,13 +61,9 @@ class HistoricoFinanceiroItem(
     data_hora: str | None = None
     saldo_estimado: float | None = None
 
-    comprometimento_renda_percentual: (
-        float | None
-    ) = None
+    comprometimento_renda_percentual: float | None = None
 
-    meses_reserva_estimados: (
-        float | None
-    ) = None
+    meses_reserva_estimados: float | None = None
 
     score_financeiro: int | None = None
     nivel_risco: str | None = None
@@ -85,9 +71,7 @@ class HistoricoFinanceiroItem(
     idioma: str | None = None
 
 
-class ConsultarHistoricoFinanceiroOutput(
-    BaseModel
-):
+class ConsultarHistoricoFinanceiroOutput(BaseModel):
     """Saída validada da ferramenta."""
 
     model_config = ConfigDict(
@@ -102,42 +86,29 @@ class ConsultarHistoricoFinanceiroOutput(
         le=MAX_HISTORY_LIMIT,
     )
 
-    diagnosticos: list[
-        HistoricoFinanceiroItem
-    ] = Field(
+    diagnosticos: list[HistoricoFinanceiroItem] = Field(
         default_factory=list,
         max_length=MAX_HISTORY_LIMIT,
     )
 
-    @model_validator(
-        mode="after"
-    )
+    @model_validator(mode="after")
     def validar_consistencia(
         self,
     ):
-        total_real = len(
-            self.diagnosticos
-        )
+        total_real = len(self.diagnosticos)
 
         if self.total_retornado != total_real:
             raise ValueError(
-                "total_retornado não corresponde "
-                "à quantidade de diagnósticos."
+                "total_retornado não corresponde à quantidade de diagnósticos."
             )
 
-        if self.possui_historico != (
-            total_real > 0
-        ):
-            raise ValueError(
-                "possui_historico está inconsistente."
-            )
+        if self.possui_historico != (total_real > 0):
+            raise ValueError("possui_historico está inconsistente.")
 
         return self
 
 
-class FinancialHistoryToolExecutionError(
-    RuntimeError
-):
+class FinancialHistoryToolExecutionError(RuntimeError):
     """Falha interna e segura da ferramenta."""
 
 
@@ -149,36 +120,24 @@ def executar_consulta_historico_financeiro(
     Executa a consulta utilizando exclusivamente
     a identidade confiável do contexto.
     """
-    trusted_user_id = str(
-        context.user_id or ""
-    ).strip()
+    trusted_user_id = str(context.user_id or "").strip()
 
     if not trusted_user_id:
-        raise FinancialHistoryToolExecutionError(
-            "missing_trusted_user_identity"
-        )
+        raise FinancialHistoryToolExecutionError("missing_trusted_user_identity")
 
     try:
-        result = (
-            consultar_historico_financeiro_usuario(
-                trusted_user_id,
-                limite=payload.limite,
-            )
+        result = consultar_historico_financeiro_usuario(
+            trusted_user_id,
+            limite=payload.limite,
         )
 
     except (
         FinancialHistoryQueryError,
         FinancialHistoryRepositoryError,
     ) as exc:
-        raise FinancialHistoryToolExecutionError(
-            type(exc).__name__
-        ) from exc
+        raise FinancialHistoryToolExecutionError(type(exc).__name__) from exc
 
-    return (
-        ConsultarHistoricoFinanceiroOutput(
-            **result
-        )
-    )
+    return ConsultarHistoricoFinanceiroOutput(**result)
 
 
 def criar_definicao_consultar_historico_financeiro(
@@ -194,28 +153,27 @@ def criar_definicao_consultar_historico_financeiro(
             "A identidade é obtida exclusivamente "
             "do contexto confiável da aplicação."
         ),
-        input_model=(
-            ConsultarHistoricoFinanceiroInput
+        input_model=(ConsultarHistoricoFinanceiroInput),
+        output_model=(ConsultarHistoricoFinanceiroOutput),
+        handler=(executar_consulta_historico_financeiro),
+        allowed_agents=frozenset(
+            {
+                "financial_agent",
+                "report_agent",
+                "research_agent",
+            }
         ),
-        output_model=(
-            ConsultarHistoricoFinanceiroOutput
-        ),
-        handler=(
-            executar_consulta_historico_financeiro
-        ),
-        allowed_agents=frozenset({
-            "financial_agent",
-            "report_agent",
-        }),
         timeout_seconds=timeout_seconds,
         idempotent=True,
         sensitive_output=True,
-        tags=frozenset({
-            "financial_history",
-            "postgresql",
-            "read_only",
-            "user_scoped",
-        }),
+        tags=frozenset(
+            {
+                "financial_history",
+                "postgresql",
+                "read_only",
+                "user_scoped",
+            }
+        ),
     )
 
 

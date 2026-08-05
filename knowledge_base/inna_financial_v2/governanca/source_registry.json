@@ -1,0 +1,183 @@
+{
+  "generated_at": "2026-08-05",
+  "review_note": "Fontes oficiais consultadas para fundamentação e governança da base.",
+  "schema_version": 2,
+  "sources": [
+    {
+      "authority": "Banco Central do Brasil",
+      "source_id": "bcb-caderno-financas-pessoais-2026",
+      "title": "Caderno de Educação Financeira — Gestão de Finanças Pessoais",
+      "topics": [
+        "orçamento",
+        "crédito",
+        "dívidas",
+        "consumo",
+        "planejamento",
+        "poupança"
+      ],
+      "type": "official",
+      "url": "https://www.bcb.gov.br/content/cidadaniafinanceira/documentos_cidadania/Cuidando_do_seu_dinheiro_Gestao_de_Financas_Pessoais/caderno_cidadania_financeira.pdf"
+    },
+    {
+      "authority": "Banco Central do Brasil",
+      "source_id": "bcb-orcamento-pessoal-2026",
+      "title": "Orçamento Pessoal ou Familiar",
+      "topics": [
+        "orçamento",
+        "receitas",
+        "despesas",
+        "planejamento"
+      ],
+      "type": "official",
+      "url": "https://www.bcb.gov.br/content/cidadaniafinanceira/documentos_cidadania/Cuidando_do_seu_dinheiro_Gestao_de_Financas_Pessoais/v4_modulo_2_caderno_educacao_financeira_430206_2026.pdf"
+    },
+    {
+      "authority": "Banco Central do Brasil",
+      "source_id": "bcb-credito-dividas-2026",
+      "title": "Uso do Crédito e Administração das Dívidas",
+      "topics": [
+        "crédito",
+        "juros",
+        "endividamento",
+        "capacidade de pagamento"
+      ],
+      "type": "official",
+      "url": "https://www.bcb.gov.br/content/cidadaniafinanceira/documentos_cidadania/Cuidando_do_seu_dinheiro_Gestao_de_Financas_Pessoais/v4_modulo_3_caderno_educacao_financeira_430206_2026.pdf"
+    },
+    {
+      "authority": "Banco Central do Brasil",
+      "source_id": "bcb-letramento-reserva",
+      "title": "Letramento Financeiro e Reserva de Emergência",
+      "topics": [
+        "reserva de emergência",
+        "resiliência financeira"
+      ],
+      "type": "official",
+      "url": "https://www.bcb.gov.br/cidadaniafinanceira/letramento_financeiro"
+    },
+    {
+      "authority": "Banco Central do Brasil",
+      "source_id": "bcb-pix-seguranca",
+      "title": "Segurança no Pix",
+      "topics": [
+        "Pix",
+        "fraude",
+        "segurança"
+      ],
+      "type": "official",
+      "url": "https://www.bcb.gov.br/estabilidadefinanceira/pix-seguranca"
+    },
+    {
+      "authority": "Banco Central do Brasil",
+      "source_id": "bcb-med-faq",
+      "title": "FAQ do Mecanismo Especial de Devolução (MED)",
+      "topics": [
+        "Pix",
+        "MED",
+        "fraude",
+        "devolução"
+      ],
+      "type": "official",
+      "url": "https://www.bcb.gov.br/meubc/faqs/p/o-que-e-e-como-funciona-o-mecanismo-especial-de-devolucao-med"
+    },
+    {
+      "authority": "Banco Central do Brasil",
+      "source_id": "bcb-vitima-pix-golpe",
+      "title": "Vítima fez um Pix e caiu em um golpe",
+      "topics": [
+        "Pix",
+        "golpe",
+        "banco",
+        "boletim de ocorrência"
+      ],
+      "type": "official",
+      "url": "https://www.bcb.gov.br/meubc/faqs/p/vitima-fez-um-pix-e-caiu-em-um-golpe"
+    },
+    {
+      "authority": "CERT.br / NIC.br",
+      "source_id": "cert-cartilha-seguranca",
+      "title": "Cartilha de Segurança para Internet — versão 4.0",
+      "topics": [
+        "phishing",
+        "engenharia social",
+        "senhas",
+        "dispositivos"
+      ],
+      "type": "official_technical",
+      "url": "https://cartilha.cert.br/livro/cartilha-seguranca-internet.pdf"
+    },
+    {
+      "authority": "CERT.br / NIC.br",
+      "source_id": "cert-golpes-prevencao",
+      "title": "Golpes: Evite Fraudes",
+      "topics": [
+        "fraudes",
+        "verificação",
+        "prevenção"
+      ],
+      "type": "official_technical",
+      "url": "https://cartilha.cert.br/fasciculos/golpes-evite-fraudes/fasciculo-golpes-evite-fraudes.pdf"
+    },
+    {
+      "authority": "CERT.br / NIC.br",
+      "source_id": "cert-golpes-resposta",
+      "title": "Golpes: Caiu? Veja o que Fazer",
+      "topics": [
+        "resposta a incidentes",
+        "senhas",
+        "contenção"
+      ],
+      "type": "official_technical",
+      "url": "https://cartilha.cert.br/fasciculos/golpes-o-que-fazer/fasciculo-golpes-o-que-fazer.pdf"
+    },
+    {
+      "authority": "CERT.br / NIC.br",
+      "source_id": "cert-autenticacao",
+      "title": "Autenticação",
+      "topics": [
+        "senhas",
+        "verificação em duas etapas",
+        "autenticação"
+      ],
+      "type": "official_technical",
+      "url": "https://cartilha.cert.br/fasciculos/autenticacao/fasciculo-autenticacao.pdf"
+    },
+    {
+      "authority": "CERT.br / NIC.br",
+      "source_id": "cert-vazamento-dados",
+      "title": "Vazamento de Dados",
+      "topics": [
+        "vazamento",
+        "senhas",
+        "monitoramento"
+      ],
+      "type": "official_technical",
+      "url": "https://cartilha.cert.br/fasciculos/vazamento-de-dados/fasciculo-vazamento-de-dados.pdf"
+    },
+    {
+      "authority": "Autoridade Nacional de Proteção de Dados",
+      "source_id": "anpd-dados-vazaram",
+      "title": "Meus dados vazaram, e agora?",
+      "topics": [
+        "dados pessoais",
+        "senhas",
+        "autenticação em dois fatores"
+      ],
+      "type": "official",
+      "url": "https://www.gov.br/anpd/pt-br/assuntos/noticias/meus-dados-vazaram-e-agora"
+    },
+    {
+      "authority": "Comissão de Valores Mobiliários",
+      "source_id": "cvm-portal-investidor",
+      "title": "Portal do Investidor e educação financeira",
+      "topics": [
+        "investimentos",
+        "riscos",
+        "fraudes",
+        "educação do investidor"
+      ],
+      "type": "official",
+      "url": "https://www.gov.br/cvm/pt-br"
+    }
+  ]
+}

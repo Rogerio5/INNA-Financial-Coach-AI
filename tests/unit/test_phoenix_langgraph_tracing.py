@@ -30,14 +30,8 @@ def test_build_attributes_hashes_identifiers():
     assert attributes["inna.language"] == "pt"
     assert attributes["inna.currency"] == "BRL"
 
-    assert (
-        attributes["inna.thread_id_hash"]
-        != "thread-real"
-    )
-    assert (
-        attributes["enduser.id_hash"]
-        != "usuario-real"
-    )
+    assert attributes["inna.thread_id_hash"] != "thread-real"
+    assert attributes["enduser.id_hash"] != "usuario-real"
 
     assert "message" not in attributes
     assert "prompt" not in attributes
@@ -96,17 +90,12 @@ def test_traced_execution_uses_safe_attributes(
     ):
         captured["name"] = name
         captured["attributes"] = attributes
-        captured["instrumentation_name"] = (
-            instrumentation_name
-        )
+        captured["instrumentation_name"] = instrumentation_name
 
         yield FakeSpan()
 
     monkeypatch.setattr(
-        (
-            "src.observability.langgraph_tracing."
-            "traced_operation"
-        ),
+        ("src.observability.langgraph_tracing.traced_operation"),
         fake_traced_operation,
     )
 
@@ -118,10 +107,7 @@ def test_traced_execution_uses_safe_attributes(
         pass
 
     assert captured["name"] == "inna.langgraph.execution"
-    assert (
-        captured["instrumentation_name"]
-        == "inna.agents.langgraph"
-    )
+    assert captured["instrumentation_name"] == "inna.agents.langgraph"
 
     attributes = captured["attributes"]
 

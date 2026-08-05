@@ -37,9 +37,7 @@ def _branch_ends(
     builder,
     source: str,
 ) -> set[str]:
-    branches = builder.branches[
-        source
-    ]
+    branches = builder.branches[source]
 
     ends: set[str] = set()
 
@@ -51,10 +49,7 @@ def _branch_ends(
         )
 
         if mapping:
-            ends.update(
-                str(key)
-                for key in mapping
-            )
+            ends.update(str(key) for key in mapping)
 
     return ends
 
@@ -69,15 +64,11 @@ def test_hierarchical_nodes_are_registered():
         "support_team_supervisor",
     }
 
-    assert required.issubset(
-        builder.nodes
-    )
+    assert required.issubset(builder.nodes)
 
 
 def test_supervisor_routes_to_team_router():
-    edges = _edge_pairs(
-        criar_builder_inna()
-    )
+    edges = _edge_pairs(criar_builder_inna())
 
     assert (
         "supervisor",
@@ -116,10 +107,7 @@ def test_team_supervisors_can_reach_governance():
             supervisor,
         )
 
-        assert (
-            "execution_governance"
-            in ends
-        )
+        assert "execution_governance" in ends
 
 
 def test_team_supervisors_can_escalate_to_root():
@@ -140,69 +128,63 @@ def test_team_supervisors_can_escalate_to_root():
 
 
 def test_handoff_requested_returns_to_hierarchy():
-    result = (
-        _selecionar_rota_apos_handoff({
+    result = _selecionar_rota_apos_handoff(
+        {
             "handoff_current": {
                 "status": "requested",
                 "to_agent": "report_agent",
             }
-        })
+        }
     )
 
     assert result == "team_router"
 
 
 def test_handoff_terminal_goes_to_summary():
-    result = (
-        _selecionar_rota_apos_handoff({
+    result = _selecionar_rota_apos_handoff(
+        {
             "handoff_current": {
                 "status": "completed",
                 "to_agent": "report_agent",
             }
-        })
+        }
     )
 
-    assert result == (
-        "conversation_summary"
-    )
+    assert result == ("conversation_summary")
 
 
 def test_normal_team_decision_goes_to_governance():
-    result = (
-        _selecionar_saida_supervisor_equipe({
+    result = _selecionar_saida_supervisor_equipe(
+        {
             "team_requires_root_supervisor": False,
-        })
+        }
     )
 
-    assert result == (
-        "execution_governance"
-    )
+    assert result == ("execution_governance")
 
 
 def test_cross_team_decision_returns_to_root():
-    result = (
-        _selecionar_saida_supervisor_equipe({
+    result = _selecionar_saida_supervisor_equipe(
+        {
             "team_requires_root_supervisor": True,
             "root_supervisor_visits": 1,
             "max_root_supervisor_visits": 3,
-        })
+        }
     )
 
     assert result == "supervisor"
 
 
 def test_root_visit_limit_uses_fallback():
-    result = (
-        _selecionar_saida_supervisor_equipe({
+    result = _selecionar_saida_supervisor_equipe(
+        {
             "team_requires_root_supervisor": True,
             "root_supervisor_visits": 3,
             "max_root_supervisor_visits": 3,
-        })
+        }
     )
 
-    assert result == (
-        "fallback_agent"
-    )
+    assert result == ("fallback_agent")
 
 
 def test_agents_still_use_task_completion():
@@ -223,9 +205,7 @@ def test_agents_still_use_task_completion():
 
 
 def test_summary_remains_the_only_static_end():
-    edges = _edge_pairs(
-        criar_builder_inna()
-    )
+    edges = _edge_pairs(criar_builder_inna())
 
     assert (
         "conversation_summary",

@@ -18,16 +18,13 @@ from src.services.human_review.admin_queries import (
 
 
 def test_build_where_without_filters() -> None:
-    where_sql, parameters = _build_where(
-        HumanReviewAdminFilters()
-    )
+    where_sql, parameters = _build_where(HumanReviewAdminFilters())
 
     assert where_sql == ""
     assert parameters == {}
 
 
-def test_build_where_with_operational_filters(
-) -> None:
+def test_build_where_with_operational_filters() -> None:
     filters = HumanReviewAdminFilters(
         statuses=(
             "pending",
@@ -42,9 +39,7 @@ def test_build_where_with_operational_filters(
         offset=50,
     )
 
-    where_sql, parameters = _build_where(
-        filters
-    )
+    where_sql, parameters = _build_where(filters)
 
     assert "status = ANY" in where_sql
     assert "risk_level = ANY" in where_sql
@@ -65,8 +60,7 @@ def test_build_where_with_operational_filters(
     assert parameters["search"] == "%cartão%"
 
 
-def test_normalize_row_serializes_dates_and_json(
-) -> None:
+def test_normalize_row_serializes_dates_and_json() -> None:
     created_at = datetime(
         2026,
         7,
@@ -76,25 +70,25 @@ def test_normalize_row_serializes_dates_and_json(
         tzinfo=UTC,
     )
 
-    result = _normalize_row({
-        "review_id": "review-1",
-        "created_at": created_at,
-        "updated_at": created_at,
-        "resolved_at": None,
-        "processing_started_at": None,
-        "payload": {
-            "amount": 100,
-        },
-        "corrections": None,
-        "allowed_actions": [
-            "approve",
-            "reject",
-        ],
-    })
-
-    assert result["created_at"] == (
-        created_at.isoformat()
+    result = _normalize_row(
+        {
+            "review_id": "review-1",
+            "created_at": created_at,
+            "updated_at": created_at,
+            "resolved_at": None,
+            "processing_started_at": None,
+            "payload": {
+                "amount": 100,
+            },
+            "corrections": None,
+            "allowed_actions": [
+                "approve",
+                "reject",
+            ],
+        }
     )
+
+    assert result["created_at"] == (created_at.isoformat())
 
     assert result["payload"] == {
         "amount": 100,
@@ -118,8 +112,7 @@ def _cursor_context(
     return factory
 
 
-def test_listar_revisoes_admin_returns_page(
-) -> None:
+def test_listar_revisoes_admin_returns_page() -> None:
     cursor = Mock()
 
     cursor.fetchone.return_value = {
@@ -154,8 +147,7 @@ def test_listar_revisoes_admin_returns_page(
     ]
 
     with patch(
-        "src.services.human_review."
-        "admin_queries.cursor_postgres",
+        "src.services.human_review.admin_queries.cursor_postgres",
         _cursor_context(cursor),
     ):
         page = listar_revisoes_admin(
@@ -169,16 +161,13 @@ def test_listar_revisoes_admin_returns_page(
     assert page.limit == 10
     assert len(page.items) == 1
 
-    assert page.items[0]["status"] == (
-        "pending"
-    )
+    assert page.items[0]["status"] == ("pending")
 
     assert page.has_next is True
     assert cursor.execute.call_count == 2
 
 
-def test_obter_metricas_admin_calculates_rates(
-) -> None:
+def test_obter_metricas_admin_calculates_rates() -> None:
     cursor = Mock()
 
     cursor.fetchone.return_value = {
@@ -224,8 +213,7 @@ def test_obter_metricas_admin_calculates_rates(
     ]
 
     with patch(
-        "src.services.human_review."
-        "admin_queries.cursor_postgres",
+        "src.services.human_review.admin_queries.cursor_postgres",
         _cursor_context(cursor),
     ):
         metrics = obter_metricas_admin()
@@ -238,9 +226,7 @@ def test_obter_metricas_admin_calculates_rates(
     assert metrics.average_wait_seconds == 30.5
     assert metrics.by_risk["high"] == 6
 
-    assert metrics.by_reviewer[
-        "admin-1"
-    ] == 8
+    assert metrics.by_reviewer["admin-1"] == 8
 
 
 @pytest.mark.parametrize(

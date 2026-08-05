@@ -42,11 +42,7 @@ def _normalizar_tags(valor: Any) -> list[str]:
         return [str(item).strip() for item in valor if str(item).strip()]
 
     if isinstance(valor, str):
-        return [
-            item.strip()
-            for item in valor.split(",")
-            if item.strip()
-        ]
+        return [item.strip() for item in valor.split(",") if item.strip()]
 
     return []
 
@@ -57,13 +53,9 @@ def _converter_registro(registro: Any) -> Optional[dict]:
 
     memoria = dict(registro)
 
-    memoria["memoria_json"] = _normalizar_memoria_json(
-        memoria.get("memoria_json")
-    )
+    memoria["memoria_json"] = _normalizar_memoria_json(memoria.get("memoria_json"))
 
-    memoria["tags"] = _normalizar_tags(
-        memoria.get("tags")
-    )
+    memoria["tags"] = _normalizar_tags(memoria.get("tags"))
 
     for campo in (
         "renda_mensal",
@@ -94,11 +86,7 @@ def buscar_memoria_usuario(
             "memoria": None,
         }
 
-    filtro_ativo = (
-        "AND COALESCE(ativo, TRUE) = TRUE"
-        if somente_ativa
-        else ""
-    )
+    filtro_ativo = "AND COALESCE(ativo, TRUE) = TRUE" if somente_ativa else ""
 
     try:
         with cursor_postgres(
@@ -124,9 +112,7 @@ def buscar_memoria_usuario(
         return {
             "ok": True,
             "message": (
-                "Memória encontrada."
-                if memoria
-                else "Nenhuma memória encontrada."
+                "Memória encontrada." if memoria else "Nenhuma memória encontrada."
             ),
             "memoria": memoria,
         }
@@ -173,13 +159,9 @@ def salvar_ou_atualizar_memoria_usuario(
 
             antes = _converter_registro(cursor.fetchone())
 
-            memoria_json = _normalizar_memoria_json(
-                dados_memoria.get("memoria_json")
-            )
+            memoria_json = _normalizar_memoria_json(dados_memoria.get("memoria_json"))
 
-            tags = _normalizar_tags(
-                dados_memoria.get("tags")
-            )
+            tags = _normalizar_tags(dados_memoria.get("tags"))
 
             parametros = {
                 "usuario_id": usuario_id,
@@ -198,8 +180,7 @@ def salvar_ou_atualizar_memoria_usuario(
                 "perfil_financeiro": dados_memoria.get("perfil_financeiro"),
                 "objetivo_principal": dados_memoria.get("objetivo_principal"),
                 "preferencia_linguagem": (
-                    dados_memoria.get("preferencia_linguagem")
-                    or "simples"
+                    dados_memoria.get("preferencia_linguagem") or "simples"
                 ),
                 "canal_origem": origem,
                 "nivel_confianca": (
@@ -295,11 +276,7 @@ def salvar_ou_atualizar_memoria_usuario(
 
             depois = _converter_registro(cursor.fetchone())
 
-            tipo_evento = (
-                "memoria_criada"
-                if antes is None
-                else "memoria_atualizada"
-            )
+            tipo_evento = "memoria_criada" if antes is None else "memoria_atualizada"
 
             cursor.execute(
                 """
@@ -348,8 +325,7 @@ def salvar_ou_atualizar_memoria_usuario(
         return {
             "ok": True,
             "message": (
-                f"Memória do usuário {usuario_id} "
-                "salva/atualizada com sucesso."
+                f"Memória do usuário {usuario_id} salva/atualizada com sucesso."
             ),
             "tipo_evento": tipo_evento,
             "memoria": depois,

@@ -61,9 +61,7 @@ def build_langgraph_attributes(
         attributes["inna.currency"] = str(currency)
 
     if human_review_enabled is not None:
-        attributes["inna.human_review_enabled"] = bool(
-            human_review_enabled
-        )
+        attributes["inna.human_review_enabled"] = bool(human_review_enabled)
 
     return attributes
 
@@ -93,9 +91,7 @@ def add_langgraph_result_attributes(
             "human_review_count",
             0,
         ),
-        "agent.loop_detected": bool(
-            result.get("loop_detected", False)
-        ),
+        "agent.loop_detected": bool(result.get("loop_detected", False)),
         "agent.execution_budget_exceeded": bool(
             result.get(
                 "execution_budget_exceeded",
@@ -124,9 +120,7 @@ def add_langgraph_result_attributes(
     ).strip()
 
     team = str(
-        result.get("current_team")
-        or result.get("team_supervisor")
-        or ""
+        result.get("current_team") or result.get("team_supervisor") or ""
     ).strip()
 
     if route:
@@ -143,16 +137,12 @@ def add_langgraph_result_attributes(
     route_history = result.get("route_history")
 
     if isinstance(route_history, list):
-        safe_fields["agent.route_count"] = len(
-            route_history
-        )
+        safe_fields["agent.route_count"] = len(route_history)
 
     tool_results = result.get("tool_results")
 
     if isinstance(tool_results, list):
-        safe_fields["agent.tool_result_count"] = len(
-            tool_results
-        )
+        safe_fields["agent.tool_result_count"] = len(tool_results)
 
     for name, value in safe_fields.items():
         if isinstance(value, (bool, int, float, str)):

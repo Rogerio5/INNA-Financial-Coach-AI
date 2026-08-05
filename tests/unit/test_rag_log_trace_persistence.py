@@ -28,9 +28,7 @@ class FakeCursor:
 
 class FakeConnection:
     def __init__(self):
-        self.cursor_instance = (
-            FakeCursor()
-        )
+        self.cursor_instance = FakeCursor()
         self.committed = False
         self.rolled_back = False
         self.closed = False
@@ -53,12 +51,8 @@ def _find_insert_execution(
 ):
     return next(
         execution
-        for execution
-        in connection.cursor_instance.executions
-        if (
-            "INSERT INTO inna_rag_logs"
-            in execution[0]
-        )
+        for execution in connection.cursor_instance.executions
+        if ("INSERT INTO inna_rag_logs" in execution[0])
     )
 
 
@@ -89,19 +83,14 @@ def test_persists_trace_id_and_trace_json(
     rag_engine.save_rag_log(
         pergunta="Como criar reserva?",
         resultado={
-            "resposta": (
-                "Comece organizando "
-                "seu orçamento."
-            ),
+            "resposta": ("Comece organizando seu orçamento."),
             "fontes": [
                 {
                     "titulo": "Reserva",
                 }
             ],
             "modo": "rag_hibrido",
-            "trace_id": (
-                "trace-test-123"
-            ),
+            "trace_id": ("trace-test-123"),
             "retrieval_trace": trace,
         },
         tempo_resposta_ms=42,
@@ -109,26 +98,16 @@ def test_persists_trace_id_and_trace_json(
 
     assert connection.committed
     assert connection.closed
-    assert (
-        connection.cursor_instance.closed
-    )
+    assert connection.cursor_instance.closed
 
-    query, params = (
-        _find_insert_execution(
-            connection
-        )
-    )
+    query, params = _find_insert_execution(connection)
 
     assert "trace_id" in query
     assert "retrieval_trace" in query
 
-    assert params[8] == (
-        "trace-test-123"
-    )
+    assert params[8] == ("trace-test-123")
 
-    saved_trace = json.loads(
-        params[9]
-    )
+    saved_trace = json.loads(params[9])
 
     assert saved_trace == trace
 
@@ -154,9 +133,7 @@ def test_accepts_result_without_trace(
         tempo_resposta_ms=10,
     )
 
-    _, params = _find_insert_execution(
-        connection
-    )
+    _, params = _find_insert_execution(connection)
 
     assert params[8] is None
     assert params[9] is None
@@ -182,26 +159,13 @@ def test_prepares_trace_columns_idempotently(
         },
     )
 
-    queries = "\n".join(
-        query
-        for query, _
-        in connection.cursor_instance.executions
-    )
+    queries = "\n".join(query for query, _ in connection.cursor_instance.executions)
 
-    assert (
-        "CREATE TABLE IF NOT EXISTS"
-        in queries
-    )
+    assert "CREATE TABLE IF NOT EXISTS" in queries
 
-    assert (
-        "ADD COLUMN IF NOT EXISTS"
-        in queries
-    )
+    assert "ADD COLUMN IF NOT EXISTS" in queries
 
-    assert (
-        "idx_inna_rag_logs_trace_id"
-        in queries
-    )
+    assert "idx_inna_rag_logs_trace_id" in queries
 
 
 def test_log_failure_does_not_escape(
@@ -209,9 +173,7 @@ def test_log_failure_does_not_escape(
 ):
     class BrokenConnection:
         def cursor(self):
-            raise RuntimeError(
-                "database unavailable"
-            )
+            raise RuntimeError("database unavailable")
 
         def rollback(self):
             pass
@@ -245,13 +207,8 @@ def test_rolls_back_when_insert_fails(
             query,
             params=None,
         ):
-            if (
-                "INSERT INTO inna_rag_logs"
-                in str(query)
-            ):
-                raise RuntimeError(
-                    "insert failed"
-                )
+            if "INSERT INTO inna_rag_logs" in str(query):
+                raise RuntimeError("insert failed")
 
             super().execute(
                 query,
@@ -259,9 +216,7 @@ def test_rolls_back_when_insert_fails(
             )
 
     connection = FakeConnection()
-    connection.cursor_instance = (
-        BrokenCursor()
-    )
+    connection.cursor_instance = BrokenCursor()
 
     monkeypatch.setattr(
         rag_engine,
@@ -279,6 +234,4 @@ def test_rolls_back_when_insert_fails(
 
     assert connection.rolled_back
     assert connection.closed
-    assert (
-        connection.cursor_instance.closed
-    )
+    assert connection.cursor_instance.closed

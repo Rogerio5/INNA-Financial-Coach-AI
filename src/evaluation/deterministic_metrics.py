@@ -87,8 +87,7 @@ class DeterministicMetricConfig:
 
         if self.partial_threshold > self.default_threshold:
             raise ValueError(
-                "partial_threshold não pode ser maior "
-                "que default_threshold."
+                "partial_threshold não pode ser maior que default_threshold."
             )
 
 
@@ -121,8 +120,7 @@ def _validate_score(
 
     if not 0.0 <= float(value) <= 1.0:
         raise ValueError(
-            f"{field_name} deve estar entre 0.0 e 1.0. "
-            f"Valor recebido: {value!r}."
+            f"{field_name} deve estar entre 0.0 e 1.0. Valor recebido: {value!r}."
         )
 
 
@@ -237,10 +235,7 @@ def _exact_match_score(
 ) -> float:
     """Calcula correspondência exata após normalização."""
 
-    return float(
-        _normalized(actual, config)
-        == _normalized(expected, config)
-    )
+    return float(_normalized(actual, config) == _normalized(expected, config))
 
 
 def _contains_term(
@@ -309,11 +304,7 @@ def _flatten_mapping_keys(
         if not key:
             continue
 
-        full_key = (
-            f"{prefix}.{key}"
-            if prefix
-            else key
-        )
+        full_key = f"{prefix}.{key}" if prefix else key
 
         keys.add(key)
         keys.add(full_key)
@@ -384,10 +375,7 @@ def _mapping_contains_subset(
             continue
 
         if isinstance(expected_value, str):
-            if (
-                _normalized(actual_value, config)
-                != _normalized(expected_value, config)
-            ):
+            if _normalized(actual_value, config) != _normalized(expected_value, config):
                 return False
 
             continue
@@ -405,10 +393,7 @@ def _tool_matches(
 ) -> bool:
     """Verifica se uma ferramenta observada atende à expectativa."""
 
-    if (
-        _normalized(observed.name, config)
-        != _normalized(expected.name, config)
-    ):
+    if _normalized(observed.name, config) != _normalized(expected.name, config):
         return False
 
     if not config.evaluate_tool_arguments:
@@ -428,9 +413,7 @@ def _tool_matches(
         observed.arguments,
         expected.arguments,
         config,
-    ) and len(observed.arguments) == len(
-        expected.arguments
-    )
+    ) and len(observed.arguments) == len(expected.arguments)
 
 
 def _matching_tool_calls(
@@ -600,10 +583,7 @@ def evaluate_completion_score(
 
     minimum = case.minimum_completion_score
 
-    if (
-        minimum == 0.0
-        and config.skip_empty_expectations
-    ):
+    if minimum == 0.0 and config.skip_empty_expectations:
         return None
 
     actual = result.task_completion_score
@@ -611,9 +591,7 @@ def evaluate_completion_score(
     if minimum == 0.0:
         score = 1.0
     else:
-        score = _clamp_score(
-            actual / minimum
-        )
+        score = _clamp_score(actual / minimum)
 
     return _metric(
         name="task_completion_score",
@@ -654,11 +632,7 @@ def evaluate_expected_terms(
         )
     )
 
-    missing = tuple(
-        term
-        for term in expected_terms
-        if term not in matched
-    )
+    missing = tuple(term for term in expected_terms if term not in matched)
 
     score = _coverage_score(
         expected_terms,
@@ -705,9 +679,7 @@ def evaluate_forbidden_terms(
         )
     )
 
-    score = 1.0 - (
-        len(found) / len(forbidden_terms)
-    )
+    score = 1.0 - (len(found) / len(forbidden_terms))
 
     return _metric(
         name="forbidden_terms",
@@ -735,9 +707,7 @@ def evaluate_financial_safety(
     potencialmente perigosas ou enganosas.
     """
 
-    forbidden_terms = (
-        config.financial_safety_forbidden_terms
-    )
+    forbidden_terms = config.financial_safety_forbidden_terms
 
     found = tuple(
         term
@@ -752,9 +722,7 @@ def evaluate_financial_safety(
     if not forbidden_terms:
         score = 1.0
     else:
-        score = 1.0 - (
-            len(found) / len(forbidden_terms)
-        )
+        score = 1.0 - (len(found) / len(forbidden_terms))
 
     return _metric(
         name="financial_safety_language",
@@ -796,29 +764,20 @@ def evaluate_expected_tools(
 
         call_count = len(matches)
 
-        minimum_passed = (
-            call_count >= expected.minimum_calls
-        )
+        minimum_passed = call_count >= expected.minimum_calls
 
         maximum_passed = (
-            expected.maximum_calls is None
-            or call_count <= expected.maximum_calls
+            expected.maximum_calls is None or call_count <= expected.maximum_calls
         )
 
         order_passed = True
 
         if expected.call_order is not None:
             order_passed = any(
-                observed.call_index
-                == expected.call_order
-                for observed in matches
+                observed.call_index == expected.call_order for observed in matches
             )
 
-        expectation_passed = (
-            minimum_passed
-            and maximum_passed
-            and order_passed
-        )
+        expectation_passed = minimum_passed and maximum_passed and order_passed
 
         if expectation_passed:
             passed_expectations += 1
@@ -836,9 +795,7 @@ def evaluate_expected_tools(
         )
 
     required_expectations = tuple(
-        expected
-        for expected in expected_tools
-        if expected.required
+        expected for expected in expected_tools if expected.required
     )
 
     required_passed = sum(
@@ -848,20 +805,13 @@ def evaluate_expected_tools(
             expected_tools,
             strict=True,
         )
-        if expected.required
-        and detail["passed"]
+        if expected.required and detail["passed"]
     )
 
     if required_expectations:
-        score = (
-            required_passed
-            / len(required_expectations)
-        )
+        score = required_passed / len(required_expectations)
     else:
-        score = (
-            passed_expectations
-            / len(expected_tools)
-        )
+        score = passed_expectations / len(expected_tools)
 
     return _metric(
         name="expected_tools",
@@ -874,9 +824,7 @@ def evaluate_expected_tools(
             else "Uma ou mais ferramentas obrigatórias não atenderam às expectativas."
         ),
         details={
-            "expectations": tuple(
-                expectation_details
-            ),
+            "expectations": tuple(expectation_details),
         },
     )
 
@@ -893,24 +841,18 @@ def evaluate_forbidden_tools(
     if not forbidden_tools:
         return None
 
-    observed_names = tuple(
-        tool.name
-        for tool in result.tools_called
-    )
+    observed_names = tuple(tool.name for tool in result.tools_called)
 
     found = tuple(
         forbidden
         for forbidden in forbidden_tools
         if any(
-            _normalized(observed, config)
-            == _normalized(forbidden, config)
+            _normalized(observed, config) == _normalized(forbidden, config)
             for observed in observed_names
         )
     )
 
-    score = 1.0 - (
-        len(found) / len(forbidden_tools)
-    )
+    score = 1.0 - (len(found) / len(forbidden_tools))
 
     return _metric(
         name="forbidden_tools",
@@ -943,33 +885,22 @@ def evaluate_structured_output(
     if not expected_keys and not forbidden_keys:
         return None
 
-    available_keys = _flatten_mapping_keys(
-        result.structured_response
-    )
+    available_keys = _flatten_mapping_keys(result.structured_response)
 
-    normalized_available = {
-        _normalized(key, config)
-        for key in available_keys
-    }
+    normalized_available = {_normalized(key, config) for key in available_keys}
 
     matched_expected = tuple(
-        key
-        for key in expected_keys
-        if _normalized(key, config)
-        in normalized_available
+        key for key in expected_keys if _normalized(key, config) in normalized_available
     )
 
     missing_expected = tuple(
-        key
-        for key in expected_keys
-        if key not in matched_expected
+        key for key in expected_keys if key not in matched_expected
     )
 
     found_forbidden = tuple(
         key
         for key in forbidden_keys
-        if _normalized(key, config)
-        in normalized_available
+        if _normalized(key, config) in normalized_available
     )
 
     expectation_score = _coverage_score(
@@ -980,18 +911,11 @@ def evaluate_structured_output(
     forbidden_score = (
         1.0
         if not forbidden_keys
-        else 1.0
-        - (
-            len(found_forbidden)
-            / len(forbidden_keys)
-        )
+        else 1.0 - (len(found_forbidden) / len(forbidden_keys))
     )
 
     if expected_keys and forbidden_keys:
-        score = (
-            expectation_score
-            + forbidden_score
-        ) / 2
+        score = (expectation_score + forbidden_score) / 2
     elif expected_keys:
         score = expectation_score
     else:
@@ -1004,14 +928,11 @@ def evaluate_structured_output(
         threshold=config.default_threshold,
         reason=(
             "A saída estruturada atende às expectativas."
-            if not missing_expected
-            and not found_forbidden
+            if not missing_expected and not found_forbidden
             else "A saída estruturada não atende completamente às expectativas."
         ),
         details={
-            "available_keys": tuple(
-                sorted(available_keys)
-            ),
+            "available_keys": tuple(sorted(available_keys)),
             "matched_expected": matched_expected,
             "missing_expected": missing_expected,
             "found_forbidden": found_forbidden,
@@ -1032,9 +953,7 @@ def evaluate_trace(
     if not expected_terms and not forbidden_terms:
         return None
 
-    trace_text = " ".join(
-        result.trace
-    )
+    trace_text = " ".join(result.trace)
 
     matched_expected = tuple(
         term
@@ -1047,9 +966,7 @@ def evaluate_trace(
     )
 
     missing_expected = tuple(
-        term
-        for term in expected_terms
-        if term not in matched_expected
+        term for term in expected_terms if term not in matched_expected
     )
 
     found_forbidden = tuple(
@@ -1070,18 +987,11 @@ def evaluate_trace(
     forbidden_score = (
         1.0
         if not forbidden_terms
-        else 1.0
-        - (
-            len(found_forbidden)
-            / len(forbidden_terms)
-        )
+        else 1.0 - (len(found_forbidden) / len(forbidden_terms))
     )
 
     if expected_terms and forbidden_terms:
-        score = (
-            expectation_score
-            + forbidden_score
-        ) / 2
+        score = (expectation_score + forbidden_score) / 2
     elif expected_terms:
         score = expectation_score
     else:
@@ -1094,8 +1004,7 @@ def evaluate_trace(
         threshold=config.default_threshold,
         reason=(
             "O trace de execução atende às expectativas."
-            if not missing_expected
-            and not found_forbidden
+            if not missing_expected and not found_forbidden
             else "O trace de execução não atende completamente às expectativas."
         ),
         details={
@@ -1115,22 +1024,15 @@ def evaluate_retrieval_count(
 
     minimum = case.minimum_retrieved_documents
 
-    if (
-        minimum == 0
-        and config.skip_empty_expectations
-    ):
+    if minimum == 0 and config.skip_empty_expectations:
         return None
 
-    actual = len(
-        result.retrieval_documents
-    )
+    actual = len(result.retrieval_documents)
 
     if minimum == 0:
         score = 1.0
     else:
-        score = _clamp_score(
-            actual / minimum
-        )
+        score = _clamp_score(actual / minimum)
 
     return _metric(
         name="retrieval_document_count",
@@ -1161,9 +1063,7 @@ def evaluate_retrieval_terms(
     if not expected_terms:
         return None
 
-    context = " ".join(
-        result.retrieval_context
-    )
+    context = " ".join(result.retrieval_context)
 
     matched = tuple(
         term
@@ -1175,11 +1075,7 @@ def evaluate_retrieval_terms(
         )
     )
 
-    missing = tuple(
-        term
-        for term in expected_terms
-        if term not in matched
-    )
+    missing = tuple(term for term in expected_terms if term not in matched)
 
     score = _coverage_score(
         expected_terms,
@@ -1236,9 +1132,7 @@ def evaluate_latency(
     elif actual == 0:
         score = 1.0
     else:
-        score = _clamp_score(
-            maximum / actual
-        )
+        score = _clamp_score(maximum / actual)
 
     return _metric(
         name="maximum_latency",
@@ -1290,9 +1184,7 @@ def evaluate_cost(
     elif actual == 0:
         score = 1.0
     else:
-        score = _clamp_score(
-            maximum / actual
-        )
+        score = _clamp_score(maximum / actual)
 
     return _metric(
         name="maximum_estimated_cost",
@@ -1318,14 +1210,9 @@ def evaluate_runtime_errors(
 ) -> MetricResult:
     """Avalia erros técnicos produzidos durante a execução."""
 
-    has_errors = bool(
-        result.errors
-    )
+    has_errors = bool(result.errors)
 
-    if (
-        has_errors
-        and config.fail_on_unexpected_runtime_errors
-    ):
+    if has_errors and config.fail_on_unexpected_runtime_errors:
         score = 0.0
     else:
         score = 1.0
@@ -1368,10 +1255,7 @@ def evaluate_deterministically(
     O resultado original não é alterado.
     """
 
-    active_config = (
-        config
-        or DeterministicMetricConfig()
-    )
+    active_config = config or DeterministicMetricConfig()
 
     metrics: list[MetricResult] = []
 
@@ -1538,35 +1422,18 @@ def evaluate_deterministically(
 
     metric_tuple = tuple(metrics)
 
-    valid_metrics = tuple(
-        metric
-        for metric in metric_tuple
-        if metric.error is None
-    )
+    valid_metrics = tuple(metric for metric in metric_tuple if metric.error is None)
 
-    passed_metrics = sum(
-        1
-        for metric in valid_metrics
-        if metric.passed
-    )
+    passed_metrics = sum(1 for metric in valid_metrics if metric.passed)
 
-    failed_metrics = sum(
-        1
-        for metric in valid_metrics
-        if not metric.passed
-    )
+    failed_metrics = sum(1 for metric in valid_metrics if not metric.passed)
 
-    metric_errors = sum(
-        1
-        for metric in metric_tuple
-        if metric.error is not None
-    )
+    metric_errors = sum(1 for metric in metric_tuple if metric.error is not None)
 
     if valid_metrics:
-        average_score = sum(
-            metric.score
-            for metric in valid_metrics
-        ) / len(valid_metrics)
+        average_score = sum(metric.score for metric in valid_metrics) / len(
+            valid_metrics
+        )
     else:
         average_score = 1.0
 
@@ -1608,8 +1475,7 @@ def attach_deterministic_metrics(
     external_metrics = tuple(
         metric
         for metric in result.metric_results
-        if metric.layer
-        != EvaluationLayer.DETERMINISTIC
+        if metric.layer != EvaluationLayer.DETERMINISTIC
     )
 
     merged_metrics = (
@@ -1640,10 +1506,7 @@ def metric_results_by_category(
             [],
         ).append(metric)
 
-    return {
-        category: tuple(values)
-        for category, values in grouped.items()
-    }
+    return {category: tuple(values) for category, values in grouped.items()}
 
 
 def average_metric_score(
@@ -1656,20 +1519,13 @@ def average_metric_score(
     selected = tuple(
         metric
         for metric in metrics
-        if metric.error is None
-        and (
-            category is None
-            or metric.category == category
-        )
+        if metric.error is None and (category is None or metric.category == category)
     )
 
     if not selected:
         return None
 
-    return sum(
-        metric.score
-        for metric in selected
-    ) / len(selected)
+    return sum(metric.score for metric in selected) / len(selected)
 
 
 __all__ = [

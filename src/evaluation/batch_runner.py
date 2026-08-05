@@ -79,10 +79,7 @@ class DatasetBatchSummary:
         if self.total_cases == 0:
             return 0.0
 
-        return (
-            self.passed_cases
-            / self.total_cases
-        )
+        return self.passed_cases / self.total_cases
 
 
 @dataclass(frozen=True, slots=True)
@@ -98,10 +95,7 @@ class CategoryBatchSummary:
         if self.total_cases == 0:
             return 0.0
 
-        return (
-            self.passed_cases
-            / self.total_cases
-        )
+        return self.passed_cases / self.total_cases
 
 
 @dataclass(frozen=True, slots=True)
@@ -147,48 +141,31 @@ class BatchRunResult:
         ...,
     ]
     total_estimated_cost: float
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.batch_id.strip():
-            raise ValueError(
-                "batch_id não pode ser vazio."
-            )
+            raise ValueError("batch_id não pode ser vazio.")
 
         if self.started_at.tzinfo is None:
-            raise ValueError(
-                "started_at precisa de timezone."
-            )
+            raise ValueError("started_at precisa de timezone.")
 
         if self.finished_at.tzinfo is None:
-            raise ValueError(
-                "finished_at precisa de timezone."
-            )
+            raise ValueError("finished_at precisa de timezone.")
 
         if self.finished_at < self.started_at:
-            raise ValueError(
-                "finished_at não pode ser anterior "
-                "a started_at."
-            )
+            raise ValueError("finished_at não pode ser anterior a started_at.")
 
         if self.duration_ms < 0:
-            raise ValueError(
-                "duration_ms não pode ser negativo."
-            )
+            raise ValueError("duration_ms não pode ser negativo.")
 
         if self.total_estimated_cost < 0:
-            raise ValueError(
-                "total_estimated_cost não pode ser negativo."
-            )
+            raise ValueError("total_estimated_cost não pode ser negativo.")
 
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
     @property
@@ -198,33 +175,25 @@ class BatchRunResult:
     @property
     def passed_cases(self) -> int:
         return sum(
-            result.status
-            == BatchCaseStatus.PASSED
-            for result in self.case_results
+            result.status == BatchCaseStatus.PASSED for result in self.case_results
         )
 
     @property
     def failed_cases(self) -> int:
         return sum(
-            result.status
-            == BatchCaseStatus.FAILED
-            for result in self.case_results
+            result.status == BatchCaseStatus.FAILED for result in self.case_results
         )
 
     @property
     def blocked_cases(self) -> int:
         return sum(
-            result.status
-            == BatchCaseStatus.BLOCKED
-            for result in self.case_results
+            result.status == BatchCaseStatus.BLOCKED for result in self.case_results
         )
 
     @property
     def error_cases(self) -> int:
         return sum(
-            result.status
-            == BatchCaseStatus.ERROR
-            for result in self.case_results
+            result.status == BatchCaseStatus.ERROR for result in self.case_results
         )
 
     @property
@@ -232,10 +201,7 @@ class BatchRunResult:
         if not self.case_results:
             return 0.0
 
-        return (
-            self.passed_cases
-            / len(self.case_results)
-        )
+        return self.passed_cases / len(self.case_results)
 
 
 class EvaluationBatchRunner:
@@ -257,9 +223,7 @@ class EvaluationBatchRunner:
 
     def run(
         self,
-        datasets: Iterable[
-            EvaluationDataset
-        ],
+        datasets: Iterable[EvaluationDataset],
         *,
         runner_settings: EvaluationRunnerSettings,
         continue_on_case_error: bool = True,
@@ -270,58 +234,40 @@ class EvaluationBatchRunner:
         started_at = datetime.now(UTC)
         started_counter = perf_counter()
 
-        case_results: list[
-            BatchCaseResult
-        ] = []
+        case_results: list[BatchCaseResult] = []
 
         for dataset in resolved_datasets:
             for case in dataset.cases:
                 try:
-                    payload = (
-                        self._payload_provider(case)
-                    )
+                    payload = self._payload_provider(case)
 
                     evaluation = self._runner.run(
                         case,
                         payload,
                         settings=runner_settings,
                         metadata={
-                            "batch_dataset_id": (
-                                dataset.dataset_id
-                            ),
+                            "batch_dataset_id": (dataset.dataset_id),
                         },
                     )
 
                     case_results.append(
                         BatchCaseResult(
-                            dataset_id=(
-                                dataset.dataset_id
-                            ),
+                            dataset_id=(dataset.dataset_id),
                             case_id=case.case_id,
                             category=case.category,
-                            status=(
-                                _map_evaluation_status(
-                                    evaluation.status
-                                )
-                            ),
+                            status=(_map_evaluation_status(evaluation.status)),
                             evaluation=evaluation,
                         )
                     )
                 except Exception as error:
                     case_results.append(
                         BatchCaseResult(
-                            dataset_id=(
-                                dataset.dataset_id
-                            ),
+                            dataset_id=(dataset.dataset_id),
                             case_id=case.case_id,
                             category=case.category,
-                            status=(
-                                BatchCaseStatus.ERROR
-                            ),
+                            status=(BatchCaseStatus.ERROR),
                             evaluation=None,
-                            error_type=(
-                                type(error).__name__
-                            ),
+                            error_type=(type(error).__name__),
                             error_message=str(error),
                         )
                     )
@@ -332,34 +278,19 @@ class EvaluationBatchRunner:
             if (
                 not continue_on_case_error
                 and case_results
-                and case_results[-1].status
-                == BatchCaseStatus.ERROR
+                and case_results[-1].status == BatchCaseStatus.ERROR
             ):
                 break
 
         finished_at = datetime.now(UTC)
 
-        duration_ms = (
-            perf_counter() - started_counter
-        ) * 1000
+        duration_ms = (perf_counter() - started_counter) * 1000
 
-        dataset_summaries = (
-            _build_dataset_summaries(
-                case_results
-            )
-        )
+        dataset_summaries = _build_dataset_summaries(case_results)
 
-        category_summaries = (
-            _build_category_summaries(
-                case_results
-            )
-        )
+        category_summaries = _build_category_summaries(case_results)
 
-        metric_summaries = (
-            _build_metric_summaries(
-                case_results
-            )
-        )
+        metric_summaries = _build_metric_summaries(case_results)
 
         total_cost = sum(
             result.evaluation.total_estimated_cost
@@ -367,9 +298,7 @@ class EvaluationBatchRunner:
             if result.evaluation is not None
         )
 
-        status = _aggregate_batch_status(
-            case_results
-        )
+        status = _aggregate_batch_status(case_results)
 
         return BatchRunResult(
             batch_id=uuid4().hex,
@@ -379,12 +308,8 @@ class EvaluationBatchRunner:
             finished_at=finished_at,
             duration_ms=duration_ms,
             case_results=tuple(case_results),
-            dataset_summaries=(
-                dataset_summaries
-            ),
-            category_summaries=(
-                category_summaries
-            ),
+            dataset_summaries=(dataset_summaries),
+            category_summaries=(category_summaries),
             metric_summaries=metric_summaries,
             total_estimated_cost=total_cost,
             metadata=dict(metadata or {}),
@@ -395,24 +320,12 @@ def _map_evaluation_status(
     status: EvaluationRunStatus,
 ) -> BatchCaseStatus:
     mapping = {
-        EvaluationRunStatus.PASSED: (
-            BatchCaseStatus.PASSED
-        ),
-        EvaluationRunStatus.FAILED: (
-            BatchCaseStatus.FAILED
-        ),
-        EvaluationRunStatus.BLOCKED: (
-            BatchCaseStatus.BLOCKED
-        ),
-        EvaluationRunStatus.PARTIAL: (
-            BatchCaseStatus.PARTIAL
-        ),
-        EvaluationRunStatus.PLANNED: (
-            BatchCaseStatus.PLANNED
-        ),
-        EvaluationRunStatus.ERROR: (
-            BatchCaseStatus.ERROR
-        ),
+        EvaluationRunStatus.PASSED: (BatchCaseStatus.PASSED),
+        EvaluationRunStatus.FAILED: (BatchCaseStatus.FAILED),
+        EvaluationRunStatus.BLOCKED: (BatchCaseStatus.BLOCKED),
+        EvaluationRunStatus.PARTIAL: (BatchCaseStatus.PARTIAL),
+        EvaluationRunStatus.PLANNED: (BatchCaseStatus.PLANNED),
+        EvaluationRunStatus.ERROR: (BatchCaseStatus.ERROR),
     }
 
     return mapping[status]
@@ -424,26 +337,15 @@ def _aggregate_batch_status(
     if not case_results:
         return BatchRunStatus.ERROR
 
-    statuses = {
-        result.status
-        for result in case_results
-    }
+    statuses = {result.status for result in case_results}
 
-    if statuses == {
-        BatchCaseStatus.PASSED
-    }:
+    if statuses == {BatchCaseStatus.PASSED}:
         return BatchRunStatus.PASSED
 
-    if (
-        BatchCaseStatus.ERROR in statuses
-        and len(statuses) == 1
-    ):
+    if BatchCaseStatus.ERROR in statuses and len(statuses) == 1:
         return BatchRunStatus.ERROR
 
-    if (
-        BatchCaseStatus.FAILED in statuses
-        or BatchCaseStatus.BLOCKED in statuses
-    ):
+    if BatchCaseStatus.FAILED in statuses or BatchCaseStatus.BLOCKED in statuses:
         return BatchRunStatus.FAILED
 
     return BatchRunStatus.PARTIAL
@@ -458,44 +360,25 @@ def _build_dataset_summaries(
     ] = defaultdict(list)
 
     for result in results:
-        grouped[result.dataset_id].append(
-            result
-        )
+        grouped[result.dataset_id].append(result)
 
-    summaries: list[
-        DatasetBatchSummary
-    ] = []
+    summaries: list[DatasetBatchSummary] = []
 
     for dataset_id in sorted(grouped):
         items = grouped[dataset_id]
 
-        counter = Counter(
-            item.status
-            for item in items
-        )
+        counter = Counter(item.status for item in items)
 
         summaries.append(
             DatasetBatchSummary(
                 dataset_id=dataset_id,
                 total_cases=len(items),
-                passed_cases=counter[
-                    BatchCaseStatus.PASSED
-                ],
-                failed_cases=counter[
-                    BatchCaseStatus.FAILED
-                ],
-                blocked_cases=counter[
-                    BatchCaseStatus.BLOCKED
-                ],
-                partial_cases=counter[
-                    BatchCaseStatus.PARTIAL
-                ],
-                planned_cases=counter[
-                    BatchCaseStatus.PLANNED
-                ],
-                error_cases=counter[
-                    BatchCaseStatus.ERROR
-                ],
+                passed_cases=counter[BatchCaseStatus.PASSED],
+                failed_cases=counter[BatchCaseStatus.FAILED],
+                blocked_cases=counter[BatchCaseStatus.BLOCKED],
+                partial_cases=counter[BatchCaseStatus.PARTIAL],
+                planned_cases=counter[BatchCaseStatus.PLANNED],
+                error_cases=counter[BatchCaseStatus.ERROR],
             )
         )
 
@@ -511,13 +394,9 @@ def _build_category_summaries(
     ] = defaultdict(list)
 
     for result in results:
-        grouped[result.category].append(
-            result
-        )
+        grouped[result.category].append(result)
 
-    summaries: list[
-        CategoryBatchSummary
-    ] = []
+    summaries: list[CategoryBatchSummary] = []
 
     for category in sorted(grouped):
         items = grouped[category]
@@ -527,9 +406,7 @@ def _build_category_summaries(
                 category=category,
                 total_cases=len(items),
                 passed_cases=sum(
-                    item.status
-                    == BatchCaseStatus.PASSED
-                    for item in items
+                    item.status == BatchCaseStatus.PASSED for item in items
                 ),
                 failed_cases=sum(
                     item.status
@@ -539,11 +416,7 @@ def _build_category_summaries(
                     }
                     for item in items
                 ),
-                error_cases=sum(
-                    item.status
-                    == BatchCaseStatus.ERROR
-                    for item in items
-                ),
+                error_cases=sum(item.status == BatchCaseStatus.ERROR for item in items),
             )
         )
 
@@ -563,33 +436,18 @@ def _build_metric_summaries(
             continue
 
         for metric in result.evaluation.metric_results:
-            grouped[metric.metric_id].append(
-                metric
-            )
+            grouped[metric.metric_id].append(metric)
 
-    summaries: list[
-        MetricBatchSummary
-    ] = []
+    summaries: list[MetricBatchSummary] = []
 
     for metric_id in sorted(grouped):
         metrics = grouped[metric_id]
 
-        scores = tuple(
-            metric.score
-            for metric in metrics
-            if metric.score is not None
-        )
+        scores = tuple(metric.score for metric in metrics if metric.score is not None)
 
-        average_score = (
-            sum(scores) / len(scores)
-            if scores
-            else None
-        )
+        average_score = sum(scores) / len(scores) if scores else None
 
-        counter = Counter(
-            metric.status.value
-            for metric in metrics
-        )
+        counter = Counter(metric.status.value for metric in metrics)
 
         summaries.append(
             MetricBatchSummary(

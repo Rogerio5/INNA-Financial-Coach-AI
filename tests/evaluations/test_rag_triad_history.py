@@ -12,9 +12,7 @@ def _base_report(
     cases: list[dict],
 ) -> dict:
     return {
-        "report_type": (
-            "inna-evaluation-batch"
-        ),
+        "report_type": ("inna-evaluation-batch"),
         "schema_version": "1.0.0",
         "generated_date": "2026-07-30",
         "run_reference": "run-triad-001",
@@ -62,15 +60,12 @@ def _triad(
         "passed": passed,
         "is_complete": complete,
         "missing_metric_ids": [],
-        "failing_metric_ids": (
-            failing or []
-        ),
+        "failing_metric_ids": (failing or []),
         "axes": [],
     }
 
 
-def test_history_reads_external_case_triad(
-) -> None:
+def test_history_reads_external_case_triad() -> None:
     report = _base_report(
         [
             {
@@ -80,9 +75,7 @@ def test_history_reads_external_case_triad(
         ]
     )
 
-    entry = EvaluationHistoryEntry.from_report(
-        report
-    )
+    entry = EvaluationHistoryEntry.from_report(report)
 
     assert entry.rag_triad is not None
     assert entry.rag_triad.status == "passed"
@@ -92,65 +85,48 @@ def test_history_reads_external_case_triad(
     assert entry.rag_triad.complete_cases == 1
 
 
-def test_history_reads_internal_nested_triad(
-) -> None:
+def test_history_reads_internal_nested_triad() -> None:
     report = _base_report(
         [
             {
                 "case_id": "rag-001",
                 "evaluation": {
-                    "rag_triad": _triad(
-                        score=0.85
-                    ),
+                    "rag_triad": _triad(score=0.85),
                 },
             }
         ]
     )
 
-    entry = EvaluationHistoryEntry.from_report(
-        report
-    )
+    entry = EvaluationHistoryEntry.from_report(report)
 
     assert entry.rag_triad is not None
-    assert entry.rag_triad.average_score == (
-        pytest.approx(0.85)
-    )
+    assert entry.rag_triad.average_score == (pytest.approx(0.85))
 
 
-def test_history_aggregates_multiple_triads(
-) -> None:
+def test_history_aggregates_multiple_triads() -> None:
     report = _base_report(
         [
             {
                 "case_id": "rag-001",
-                "rag_triad": _triad(
-                    score=0.90
-                ),
+                "rag_triad": _triad(score=0.90),
             },
             {
                 "case_id": "rag-002",
-                "rag_triad": _triad(
-                    score=0.80
-                ),
+                "rag_triad": _triad(score=0.80),
             },
         ]
     )
 
-    entry = EvaluationHistoryEntry.from_report(
-        report
-    )
+    entry = EvaluationHistoryEntry.from_report(report)
 
     assert entry.rag_triad is not None
-    assert entry.rag_triad.average_score == (
-        pytest.approx(0.85)
-    )
+    assert entry.rag_triad.average_score == (pytest.approx(0.85))
     assert entry.rag_triad.total_cases == 2
     assert entry.rag_triad.complete_cases == 2
     assert entry.rag_triad.passed is True
 
 
-def test_failed_triad_has_priority(
-) -> None:
+def test_failed_triad_has_priority() -> None:
     report = _base_report(
         [
             {
@@ -171,20 +147,15 @@ def test_failed_triad_has_priority(
         ]
     )
 
-    entry = EvaluationHistoryEntry.from_report(
-        report
-    )
+    entry = EvaluationHistoryEntry.from_report(report)
 
     assert entry.rag_triad is not None
     assert entry.rag_triad.status == "failed"
     assert entry.rag_triad.passed is False
-    assert entry.rag_triad.failing_metric_ids == (
-        "faithfulness",
-    )
+    assert entry.rag_triad.failing_metric_ids == ("faithfulness",)
 
 
-def test_report_without_triad_remains_supported(
-) -> None:
+def test_report_without_triad_remains_supported() -> None:
     report = _base_report(
         [
             {
@@ -193,15 +164,12 @@ def test_report_without_triad_remains_supported(
         ]
     )
 
-    entry = EvaluationHistoryEntry.from_report(
-        report
-    )
+    entry = EvaluationHistoryEntry.from_report(report)
 
     assert entry.rag_triad is None
 
 
-def test_old_history_payload_without_triad_loads(
-) -> None:
+def test_old_history_payload_without_triad_loads() -> None:
     entry = EvaluationHistoryEntry.from_report(
         _base_report(
             [
@@ -215,35 +183,27 @@ def test_old_history_payload_without_triad_loads(
     payload = entry.to_dict()
     payload.pop("rag_triad")
 
-    restored = EvaluationHistoryEntry.from_dict(
-        payload
-    )
+    restored = EvaluationHistoryEntry.from_dict(payload)
 
     assert restored.rag_triad is None
 
 
-def test_history_triad_round_trip(
-) -> None:
+def test_history_triad_round_trip() -> None:
     original = HistoryRagTriad(
         status="failed",
         average_score=0.70,
         passed=False,
         total_cases=2,
         complete_cases=2,
-        failing_metric_ids=(
-            "faithfulness",
-        ),
+        failing_metric_ids=("faithfulness",),
     )
 
-    restored = HistoryRagTriad.from_dict(
-        original.to_dict()
-    )
+    restored = HistoryRagTriad.from_dict(original.to_dict())
 
     assert restored == original
 
 
-def test_entry_serializes_optional_triad(
-) -> None:
+def test_entry_serializes_optional_triad() -> None:
     entry = EvaluationHistoryEntry.from_report(
         _base_report(
             [

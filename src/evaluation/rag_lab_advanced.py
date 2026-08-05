@@ -54,13 +54,9 @@ class QualityGateThresholds:
             self.maximum_regression,
         )
 
-        if any(
-            not 0.0 <= float(value) <= 1.0
-            for value in values
-        ):
+        if any(not 0.0 <= float(value) <= 1.0 for value in values):
             raise ValueError(
-                "Todos os limites do Quality Gate "
-                "devem estar entre 0 e 1."
+                "Todos os limites do Quality Gate devem estar entre 0 e 1."
             )
 
 
@@ -91,13 +87,8 @@ class QualityGateResult:
             "passed": self.passed,
             "complete": self.complete,
             "failed_keys": list(self.failed_keys),
-            "unavailable_keys": list(
-                self.unavailable_keys
-            ),
-            "checks": [
-                check.to_dict()
-                for check in self.checks
-            ],
+            "unavailable_keys": list(self.unavailable_keys),
+            "checks": [check.to_dict() for check in self.checks],
         }
 
 
@@ -268,10 +259,7 @@ def evaluate_quality_gate(
                     score=None,
                     threshold=threshold,
                     passed=None,
-                    reason=(
-                        "Score não registrado "
-                        "nesta execução."
-                    ),
+                    reason=("Score não registrado nesta execução."),
                 )
             )
             continue
@@ -284,42 +272,24 @@ def evaluate_quality_gate(
                 score=score,
                 threshold=threshold,
                 passed=passed,
-                reason=(
-                    "Limite atendido."
-                    if passed
-                    else "Score abaixo do limite."
-                ),
+                reason=("Limite atendido." if passed else "Score abaixo do limite."),
             )
         )
 
     if baseline_entry is not None:
-        baseline_score = _aggregate_score(
-            baseline_entry
-        )
+        baseline_score = _aggregate_score(baseline_entry)
 
-        candidate_score = _aggregate_score(
-            entry
-        )
+        candidate_score = _aggregate_score(entry)
 
-        if (
-            baseline_score is None
-            or candidate_score is None
-        ):
+        if baseline_score is None or candidate_score is None:
             regression_passed = None
             regression_score = None
-            reason = (
-                "Comparação de regressão indisponível."
-            )
+            reason = "Comparação de regressão indisponível."
         else:
-            regression = (
-                baseline_score - candidate_score
-            )
+            regression = baseline_score - candidate_score
 
             regression_score = regression
-            regression_passed = (
-                regression
-                <= thresholds.maximum_regression
-            )
+            regression_passed = regression <= thresholds.maximum_regression
 
             reason = (
                 "Regressão dentro do limite."
@@ -331,33 +301,19 @@ def evaluate_quality_gate(
             QualityGateCheck(
                 key="maximum-regression",
                 score=regression_score,
-                threshold=(
-                    thresholds.maximum_regression
-                ),
+                threshold=(thresholds.maximum_regression),
                 passed=regression_passed,
                 reason=reason,
             )
         )
 
-    unavailable_keys = tuple(
-        check.key
-        for check in checks
-        if check.passed is None
-    )
+    unavailable_keys = tuple(check.key for check in checks if check.passed is None)
 
-    failed_keys = tuple(
-        check.key
-        for check in checks
-        if check.passed is False
-    )
+    failed_keys = tuple(check.key for check in checks if check.passed is False)
 
     complete = not unavailable_keys
 
-    passed = (
-        not failed_keys
-        if complete
-        else None
-    )
+    passed = not failed_keys if complete else None
 
     return QualityGateResult(
         run_reference=str(
@@ -380,12 +336,7 @@ def build_rag_lab_capabilities(
     history: Any,
 ) -> tuple[RagLabCapability, ...]:
     readiness = {
-        item.key: item
-        for item in (
-            build_experiment_metadata_readiness(
-                history
-            )
-        )
+        item.key: item for item in (build_experiment_metadata_readiness(history))
     }
 
     total_runs = len(
@@ -402,18 +353,12 @@ def build_rag_lab_capabilities(
         (
             "reranker_comparison",
             ("reranker_enabled",),
-            (
-                "Comparação entre reranker "
-                "ligado e desligado."
-            ),
+            ("Comparação entre reranker ligado e desligado."),
         ),
         (
             "retrieval_strategy_comparison",
             ("retrieval_strategy",),
-            (
-                "Comparação entre estratégias "
-                "híbrida, vetorial e lexical."
-            ),
+            ("Comparação entre estratégias híbrida, vetorial e lexical."),
         ),
         (
             "model_prompt_comparison",
@@ -421,10 +366,7 @@ def build_rag_lab_capabilities(
                 "model_name",
                 "prompt_version",
             ),
-            (
-                "Comparação por modelo e "
-                "versão de prompt."
-            ),
+            ("Comparação por modelo e versão de prompt."),
         ),
         (
             "rag_configuration_comparison",
@@ -435,10 +377,7 @@ def build_rag_lab_capabilities(
                 "chunk_size",
                 "chunk_overlap",
             ),
-            (
-                "Comparação das configurações "
-                "de recuperação e conhecimento."
-            ),
+            ("Comparação das configurações de recuperação e conhecimento."),
         ),
         (
             "performance_cost_analysis",
@@ -448,36 +387,24 @@ def build_rag_lab_capabilities(
                 "output_tokens",
                 "estimated_cost_usd",
             ),
-            (
-                "Análise de latência, tokens "
-                "e custos."
-            ),
+            ("Análise de latência, tokens e custos."),
         ),
         (
             "phoenix_trace_integration",
             ("phoenix_trace_id",),
-            (
-                "Abertura da trace Phoenix "
-                "relacionada à execução."
-            ),
+            ("Abertura da trace Phoenix relacionada à execução."),
         ),
     )
 
     capabilities: list[RagLabCapability] = []
 
-    for key, required_fields, description in (
-        definitions
-    ):
+    for key, required_fields, description in definitions:
         coverage_values = []
 
         for field_key in required_fields:
             item = readiness.get(field_key)
 
-            coverage_values.append(
-                item.available_runs
-                if item is not None
-                else 0
-            )
+            coverage_values.append(item.available_runs if item is not None else 0)
 
         maximum_available = max(
             coverage_values,
@@ -489,38 +416,22 @@ def build_rag_lab_capabilities(
             default=0,
         )
 
-        if (
-            total_runs > 0
-            and minimum_available == total_runs
-        ):
+        if total_runs > 0 and minimum_available == total_runs:
             status = RagLabCapabilityStatus.ACTIVE
-            message = (
-                f"{description} Dados disponíveis "
-                "em todas as execuções."
-            )
+            message = f"{description} Dados disponíveis em todas as execuções."
         elif maximum_available > 0:
             status = RagLabCapabilityStatus.PARTIAL
-            message = (
-                f"{description} Apenas parte do "
-                "histórico possui os metadados."
-            )
+            message = f"{description} Apenas parte do histórico possui os metadados."
         else:
-            status = (
-                RagLabCapabilityStatus.WAITING_DATA
-            )
-            message = (
-                f"{description} Aguardando "
-                "metadados reais."
-            )
+            status = RagLabCapabilityStatus.WAITING_DATA
+            message = f"{description} Aguardando metadados reais."
 
         capabilities.append(
             RagLabCapability(
                 key=key,
                 status=status,
                 message=message,
-                available_runs=(
-                    maximum_available
-                ),
+                available_runs=(maximum_available),
                 total_runs=total_runs,
             )
         )
@@ -543,19 +454,11 @@ def rank_rag_lab_runs(
         if score is None:
             continue
 
-        metadata = extract_experiment_metadata(
-            entry
-        )
+        metadata = extract_experiment_metadata(entry)
 
-        latency = _normalise_non_negative_number(
-            metadata.get("latency_ms")
-        )
+        latency = _normalise_non_negative_number(metadata.get("latency_ms"))
 
-        cost = _normalise_non_negative_number(
-            metadata.get(
-                "estimated_cost_usd"
-            )
-        )
+        cost = _normalise_non_negative_number(metadata.get("estimated_cost_usd"))
 
         rag_triad = getattr(
             entry,
@@ -579,9 +482,7 @@ def rank_rag_lab_runs(
                 "score": score,
                 "latency": latency,
                 "cost": cost,
-                "failing_metric_count": len(
-                    failing_metric_ids
-                ),
+                "failing_metric_count": len(failing_metric_ids),
             }
         )
 
@@ -589,16 +490,8 @@ def rank_rag_lab_runs(
         key=lambda item: (
             -item["score"],
             item["failing_metric_count"],
-            (
-                item["latency"]
-                if item["latency"] is not None
-                else float("inf")
-            ),
-            (
-                item["cost"]
-                if item["cost"] is not None
-                else float("inf")
-            ),
+            (item["latency"] if item["latency"] is not None else float("inf")),
+            (item["cost"] if item["cost"] is not None else float("inf")),
         )
     )
 
@@ -610,10 +503,7 @@ def rank_rag_lab_runs(
     ):
         entry = item["entry"]
 
-        has_performance_data = (
-            item["latency"] is not None
-            or item["cost"] is not None
-        )
+        has_performance_data = item["latency"] is not None or item["cost"] is not None
 
         ranking.append(
             RagLabRankingEntry(
@@ -648,15 +538,9 @@ def rank_rag_lab_runs(
                 ),
                 quality_score=item["score"],
                 passed=_triad_passed(entry),
-                failing_metric_count=(
-                    item[
-                        "failing_metric_count"
-                    ]
-                ),
+                failing_metric_count=(item["failing_metric_count"]),
                 latency_ms=item["latency"],
-                estimated_cost_usd=(
-                    item["cost"]
-                ),
+                estimated_cost_usd=(item["cost"]),
                 ranking_basis=(
                     "quality_then_performance"
                     if has_performance_data
@@ -682,15 +566,9 @@ def calculate_cost_per_approved_run(
         if _triad_passed(entry) is not True:
             continue
 
-        metadata = extract_experiment_metadata(
-            entry
-        )
+        metadata = extract_experiment_metadata(entry)
 
-        cost = _normalise_non_negative_number(
-            metadata.get(
-                "estimated_cost_usd"
-            )
-        )
+        cost = _normalise_non_negative_number(metadata.get("estimated_cost_usd"))
 
         if cost is None:
             continue
@@ -748,9 +626,7 @@ def export_rag_lab_history_csv(
         "entries",
         (),
     ):
-        metadata = extract_experiment_metadata(
-            entry
-        )
+        metadata = extract_experiment_metadata(entry)
 
         scores = _metric_scores(entry)
 
@@ -785,21 +661,11 @@ def export_rag_lab_history_csv(
                 "evaluation_mode",
                 "",
             ),
-            "rag_triad_score": (
-                _aggregate_score(entry)
-            ),
-            "rag_triad_passed": (
-                _triad_passed(entry)
-            ),
-            "answer_relevancy": scores.get(
-                "answer-relevancy"
-            ),
-            "faithfulness": scores.get(
-                "faithfulness"
-            ),
-            "contextual_relevancy": scores.get(
-                "contextual-relevancy"
-            ),
+            "rag_triad_score": (_aggregate_score(entry)),
+            "rag_triad_passed": (_triad_passed(entry)),
+            "answer_relevancy": scores.get("answer-relevancy"),
+            "faithfulness": scores.get("faithfulness"),
+            "contextual_relevancy": scores.get("contextual-relevancy"),
             **metadata,
         }
 
@@ -826,23 +692,11 @@ def export_rag_lab_report_json(
         "simulation": False,
         "run_count": len(entries),
         "capabilities": [
-            item.to_dict()
-            for item in (
-                build_rag_lab_capabilities(
-                    history
-                )
-            )
+            item.to_dict() for item in (build_rag_lab_capabilities(history))
         ],
-        "ranking": [
-            item.to_dict()
-            for item in rank_rag_lab_runs(
-                history
-            )
-        ],
+        "ranking": [item.to_dict() for item in rank_rag_lab_runs(history)],
         "quality_gate": {
-            "thresholds": asdict(
-                quality_gate
-            ),
+            "thresholds": asdict(quality_gate),
             "results": [
                 evaluate_quality_gate(
                     entry,
@@ -851,11 +705,7 @@ def export_rag_lab_report_json(
                 for entry in entries
             ],
         },
-        "cost_per_approved_run": (
-            calculate_cost_per_approved_run(
-                history
-            )
-        ),
+        "cost_per_approved_run": (calculate_cost_per_approved_run(history)),
     }
 
     return json.dumps(

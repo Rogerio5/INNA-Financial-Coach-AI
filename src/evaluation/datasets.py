@@ -27,9 +27,7 @@ DATASET_SCHEMA_VERSION = "1.0.0"
 DEFAULT_DATASET_NAME = "inna-evaluation"
 DEFAULT_DATASET_VERSION = "1.0.0"
 
-_IDENTIFIER_PATTERN = re.compile(
-    r"^[a-z0-9][a-z0-9._-]{1,127}$"
-)
+_IDENTIFIER_PATTERN = re.compile(r"^[a-z0-9][a-z0-9._-]{1,127}$")
 
 _SEMANTIC_VERSION_PATTERN = re.compile(
     r"^(?:0|[1-9]\d*)"
@@ -51,9 +49,7 @@ def _freeze_mapping(
 ) -> Mapping[str, Any]:
     """Cria uma cópia rasa e imutável de um mapping."""
 
-    return MappingProxyType(
-        dict(value or {})
-    )
+    return MappingProxyType(dict(value or {}))
 
 
 def _normalize_identifier(
@@ -66,9 +62,7 @@ def _normalize_identifier(
     normalized = value.strip().lower()
 
     if not normalized:
-        raise ValueError(
-            f"{field_name} não pode estar vazio."
-        )
+        raise ValueError(f"{field_name} não pode estar vazio.")
 
     if not _IDENTIFIER_PATTERN.fullmatch(normalized):
         raise ValueError(
@@ -89,9 +83,7 @@ def _normalize_version(
 
     normalized = value.strip()
 
-    if not _SEMANTIC_VERSION_PATTERN.fullmatch(
-        normalized
-    ):
+    if not _SEMANTIC_VERSION_PATTERN.fullmatch(normalized):
         raise ValueError(
             f"{field_name} deve usar versionamento "
             f"semântico. Valor recebido: {value!r}."
@@ -141,7 +133,6 @@ def _normalize_string_tuple(
     return tuple(normalized_values)
 
 
-
 def _canonicalize_fingerprint_value(
     value: Any,
 ) -> Any:
@@ -169,10 +160,7 @@ def _canonicalize_fingerprint_value(
 
     if isinstance(value, float):
         if not math.isfinite(value):
-            raise ValueError(
-                "O fingerprint não aceita valores "
-                "NaN ou infinitos."
-            )
+            raise ValueError("O fingerprint não aceita valores NaN ou infinitos.")
 
         if value == 0.0:
             return 0
@@ -184,9 +172,7 @@ def _canonicalize_fingerprint_value(
 
     if isinstance(value, Mapping):
         return {
-            str(key): _canonicalize_fingerprint_value(
-                nested_value
-            )
+            str(key): _canonicalize_fingerprint_value(nested_value)
             for key, nested_value in sorted(
                 value.items(),
                 key=lambda item: str(item[0]),
@@ -204,16 +190,12 @@ def _canonicalize_fingerprint_value(
             bytearray,
         ),
     ):
-        return [
-            _canonicalize_fingerprint_value(item)
-            for item in value
-        ]
+        return [_canonicalize_fingerprint_value(item) for item in value]
 
     if isinstance(value, PrivacyLevel):
         return value.value
 
     return str(value)
-
 
 
 def _require_mapping(
@@ -233,9 +215,7 @@ def _require_mapping(
         return {}
 
     if not isinstance(value, Mapping):
-        raise ValueError(
-            f"{field_name} deve ser um objeto JSON."
-        )
+        raise ValueError(f"{field_name} deve ser um objeto JSON.")
 
     return value
 
@@ -261,9 +241,7 @@ def _require_sequence(
             bytearray,
         ),
     ):
-        raise ValueError(
-            f"{field_name} deve ser uma lista JSON."
-        )
+        raise ValueError(f"{field_name} deve ser uma lista JSON.")
 
     return value
 
@@ -311,9 +289,7 @@ def _parse_bool(
         }:
             return False
 
-    raise ValueError(
-        f"{field_name} deve ser booleano."
-    )
+    raise ValueError(f"{field_name} deve ser booleano.")
 
 
 def _parse_optional_bool(
@@ -345,9 +321,7 @@ def _parse_int(
         return default
 
     if isinstance(value, bool):
-        raise ValueError(
-            f"{field_name} deve ser inteiro."
-        )
+        raise ValueError(f"{field_name} deve ser inteiro.")
 
     try:
         converted = int(value)
@@ -356,14 +330,10 @@ def _parse_int(
         ValueError,
         OverflowError,
     ) as exception:
-        raise ValueError(
-            f"{field_name} deve ser inteiro."
-        ) from exception
+        raise ValueError(f"{field_name} deve ser inteiro.") from exception
 
     if isinstance(value, float) and not value.is_integer():
-        raise ValueError(
-            f"{field_name} não aceita valor fracionário."
-        )
+        raise ValueError(f"{field_name} não aceita valor fracionário.")
 
     return converted
 
@@ -397,9 +367,7 @@ def _parse_float(
         return default
 
     if isinstance(value, bool):
-        raise ValueError(
-            f"{field_name} deve ser numérico."
-        )
+        raise ValueError(f"{field_name} deve ser numérico.")
 
     try:
         converted = float(value)
@@ -408,14 +376,10 @@ def _parse_float(
         ValueError,
         OverflowError,
     ) as exception:
-        raise ValueError(
-            f"{field_name} deve ser numérico."
-        ) from exception
+        raise ValueError(f"{field_name} deve ser numérico.") from exception
 
     if not math.isfinite(converted):
-        raise ValueError(
-            f"{field_name} não aceita NaN ou infinito."
-        )
+        raise ValueError(f"{field_name} não aceita NaN ou infinito.")
 
     return converted
 
@@ -446,9 +410,7 @@ def _serialize_expected_tool(
         "name": tool.name,
         "arguments": dict(tool.arguments),
         "required": tool.required,
-        "allow_additional_arguments": (
-            tool.allow_additional_arguments
-        ),
+        "allow_additional_arguments": (tool.allow_additional_arguments),
         "call_order": tool.call_order,
         "minimum_calls": tool.minimum_calls,
         "maximum_calls": tool.maximum_calls,
@@ -488,13 +450,8 @@ def _deserialize_expected_tool(
             default=True,
         ),
         allow_additional_arguments=_parse_bool(
-            payload.get(
-                "allow_additional_arguments"
-            ),
-            field_name=(
-                "expected_tool."
-                "allow_additional_arguments"
-            ),
+            payload.get("allow_additional_arguments"),
+            field_name=("expected_tool.allow_additional_arguments"),
             default=True,
         ),
         call_order=_parse_optional_int(
@@ -528,8 +485,7 @@ def _serialize_conversation_turn(
         "expected_team": turn.expected_team,
         "expected_intent": turn.expected_intent,
         "expected_tools": [
-            _serialize_expected_tool(tool)
-            for tool in turn.expected_tools
+            _serialize_expected_tool(tool) for tool in turn.expected_tools
         ],
         "metadata": dict(turn.metadata),
     }
@@ -542,27 +498,18 @@ def _deserialize_conversation_turn(
 
     raw_tools = _require_sequence(
         payload.get("expected_tools"),
-        field_name=(
-            "conversation.expected_tools"
-        ),
+        field_name=("conversation.expected_tools"),
     )
 
-    expected_tools: list[
-        ExpectedToolCall
-    ] = []
+    expected_tools: list[ExpectedToolCall] = []
 
     for index, raw_tool in enumerate(raw_tools):
         if not isinstance(raw_tool, Mapping):
             raise ValueError(
-                "conversation.expected_tools"
-                f"[{index}] deve ser um objeto JSON."
+                f"conversation.expected_tools[{index}] deve ser um objeto JSON."
             )
 
-        expected_tools.append(
-            _deserialize_expected_tool(
-                raw_tool
-            )
-        )
+        expected_tools.append(_deserialize_expected_tool(raw_tool))
 
     metadata = _require_mapping(
         payload.get("metadata"),
@@ -587,24 +534,13 @@ def _deserialize_conversation_turn(
             field_name="conversation.turn_index",
             default=0,
         ),
-        expected_output=_normalize_optional_text(
-            payload.get("expected_output")
-        ),
-        expected_agent=_normalize_optional_text(
-            payload.get("expected_agent")
-        ),
-        expected_team=_normalize_optional_text(
-            payload.get("expected_team")
-        ),
-        expected_intent=_normalize_optional_text(
-            payload.get("expected_intent")
-        ),
-        expected_tools=tuple(
-            expected_tools
-        ),
+        expected_output=_normalize_optional_text(payload.get("expected_output")),
+        expected_agent=_normalize_optional_text(payload.get("expected_agent")),
+        expected_team=_normalize_optional_text(payload.get("expected_team")),
+        expected_intent=_normalize_optional_text(payload.get("expected_intent")),
+        expected_tools=tuple(expected_tools),
         metadata=dict(metadata),
     )
-
 
 
 def evaluation_case_to_dict(
@@ -627,73 +563,36 @@ def evaluation_case_to_dict(
         "category": case.category,
         "tags": list(case.tags),
         "conversation": [
-            _serialize_conversation_turn(turn)
-            for turn in case.conversation
+            _serialize_conversation_turn(turn) for turn in case.conversation
         ],
         "expected_output": case.expected_output,
         "expected_agent": case.expected_agent,
         "expected_team": case.expected_team,
         "expected_intent": case.expected_intent,
-        "expected_task_status": (
-            case.expected_task_status
-        ),
+        "expected_task_status": (case.expected_task_status),
         "expected_tools": [
-            _serialize_expected_tool(tool)
-            for tool in case.expected_tools
+            _serialize_expected_tool(tool) for tool in case.expected_tools
         ],
-        "forbidden_tools": list(
-            case.forbidden_tools
-        ),
-        "expected_terms": list(
-            case.expected_terms
-        ),
-        "forbidden_terms": list(
-            case.forbidden_terms
-        ),
-        "expected_structured_keys": list(
-            case.expected_structured_keys
-        ),
-        "forbidden_structured_keys": list(
-            case.forbidden_structured_keys
-        ),
-        "expected_trace_terms": list(
-            case.expected_trace_terms
-        ),
-        "forbidden_trace_terms": list(
-            case.forbidden_trace_terms
-        ),
-        "expected_retrieval_terms": list(
-            case.expected_retrieval_terms
-        ),
-        "minimum_retrieved_documents": (
-            case.minimum_retrieved_documents
-        ),
-        "minimum_completion_score": (
-            case.minimum_completion_score
-        ),
-        "minimum_answer_score": (
-            case.minimum_answer_score
-        ),
-        "maximum_latency_ms": (
-            case.maximum_latency_ms
-        ),
-        "maximum_estimated_cost": (
-            case.maximum_estimated_cost
-        ),
+        "forbidden_tools": list(case.forbidden_tools),
+        "expected_terms": list(case.expected_terms),
+        "forbidden_terms": list(case.forbidden_terms),
+        "expected_structured_keys": list(case.expected_structured_keys),
+        "forbidden_structured_keys": list(case.forbidden_structured_keys),
+        "expected_trace_terms": list(case.expected_trace_terms),
+        "forbidden_trace_terms": list(case.forbidden_trace_terms),
+        "expected_retrieval_terms": list(case.expected_retrieval_terms),
+        "minimum_retrieved_documents": (case.minimum_retrieved_documents),
+        "minimum_completion_score": (case.minimum_completion_score),
+        "minimum_answer_score": (case.minimum_answer_score),
+        "maximum_latency_ms": (case.maximum_latency_ms),
+        "maximum_estimated_cost": (case.maximum_estimated_cost),
         "language": case.language,
         "currency": case.currency,
-        "privacy_level": (
-            case.privacy_level.value
-        ),
-        "external_evaluation_allowed": (
-            case.external_evaluation_allowed
-        ),
-        "human_review_expected": (
-            case.human_review_expected
-        ),
+        "privacy_level": (case.privacy_level.value),
+        "external_evaluation_allowed": (case.external_evaluation_allowed),
+        "human_review_expected": (case.human_review_expected),
         "metadata": dict(case.metadata),
     }
-
 
 
 def evaluation_case_from_dict(
@@ -707,10 +606,7 @@ def evaluation_case_from_dict(
     """
 
     if not isinstance(payload, Mapping):
-        raise ValueError(
-            "O caso de avaliação deve ser "
-            "um objeto JSON."
-        )
+        raise ValueError("O caso de avaliação deve ser um objeto JSON.")
 
     raw_privacy_level = payload.get(
         "privacy_level",
@@ -724,16 +620,11 @@ def evaluation_case_from_dict(
                 raw_privacy_level,
                 PrivacyLevel,
             )
-            else PrivacyLevel(
-                str(raw_privacy_level)
-                .strip()
-                .casefold()
-            )
+            else PrivacyLevel(str(raw_privacy_level).strip().casefold())
         )
     except ValueError as exception:
         raise ValueError(
-            "privacy_level inválido: "
-            f"{raw_privacy_level!r}."
+            f"privacy_level inválido: {raw_privacy_level!r}."
         ) from exception
 
     raw_expected_tools = _require_sequence(
@@ -741,48 +632,26 @@ def evaluation_case_from_dict(
         field_name="expected_tools",
     )
 
-    expected_tools: list[
-        ExpectedToolCall
-    ] = []
+    expected_tools: list[ExpectedToolCall] = []
 
-    for index, raw_tool in enumerate(
-        raw_expected_tools
-    ):
+    for index, raw_tool in enumerate(raw_expected_tools):
         if not isinstance(raw_tool, Mapping):
-            raise ValueError(
-                f"expected_tools[{index}] deve "
-                "ser um objeto JSON."
-            )
+            raise ValueError(f"expected_tools[{index}] deve ser um objeto JSON.")
 
-        expected_tools.append(
-            _deserialize_expected_tool(
-                raw_tool
-            )
-        )
+        expected_tools.append(_deserialize_expected_tool(raw_tool))
 
     raw_conversation = _require_sequence(
         payload.get("conversation"),
         field_name="conversation",
     )
 
-    conversation: list[
-        ConversationTurn
-    ] = []
+    conversation: list[ConversationTurn] = []
 
-    for index, raw_turn in enumerate(
-        raw_conversation
-    ):
+    for index, raw_turn in enumerate(raw_conversation):
         if not isinstance(raw_turn, Mapping):
-            raise ValueError(
-                f"conversation[{index}] deve "
-                "ser um objeto JSON."
-            )
+            raise ValueError(f"conversation[{index}] deve ser um objeto JSON.")
 
-        conversation.append(
-            _deserialize_conversation_turn(
-                raw_turn
-            )
-        )
+        conversation.append(_deserialize_conversation_turn(raw_turn))
 
     metadata = _require_mapping(
         payload.get("metadata"),
@@ -820,130 +689,66 @@ def evaluation_case_from_dict(
                 DEFAULT_DATASET_VERSION,
             )
         ),
-        description=_normalize_optional_text(
-            payload.get("description")
-        ),
+        description=_normalize_optional_text(payload.get("description")),
         category=str(
             payload.get(
                 "category",
                 "general",
             )
         ),
-        tags=_normalize_string_tuple(
-            payload.get("tags")
-        ),
-        conversation=tuple(
-            conversation
-        ),
-        expected_output=_normalize_optional_text(
-            payload.get("expected_output")
-        ),
-        expected_agent=_normalize_optional_text(
-            payload.get("expected_agent")
-        ),
-        expected_team=_normalize_optional_text(
-            payload.get("expected_team")
-        ),
-        expected_intent=_normalize_optional_text(
-            payload.get("expected_intent")
-        ),
+        tags=_normalize_string_tuple(payload.get("tags")),
+        conversation=tuple(conversation),
+        expected_output=_normalize_optional_text(payload.get("expected_output")),
+        expected_agent=_normalize_optional_text(payload.get("expected_agent")),
+        expected_team=_normalize_optional_text(payload.get("expected_team")),
+        expected_intent=_normalize_optional_text(payload.get("expected_intent")),
         expected_task_status=(
-            _normalize_optional_text(
-                payload.get(
-                    "expected_task_status"
-                )
-            )
+            _normalize_optional_text(payload.get("expected_task_status"))
         ),
-        expected_tools=tuple(
-            expected_tools
-        ),
-        forbidden_tools=_normalize_string_tuple(
-            payload.get("forbidden_tools")
-        ),
-        expected_terms=_normalize_string_tuple(
-            payload.get("expected_terms")
-        ),
-        forbidden_terms=_normalize_string_tuple(
-            payload.get("forbidden_terms")
-        ),
+        expected_tools=tuple(expected_tools),
+        forbidden_tools=_normalize_string_tuple(payload.get("forbidden_tools")),
+        expected_terms=_normalize_string_tuple(payload.get("expected_terms")),
+        forbidden_terms=_normalize_string_tuple(payload.get("forbidden_terms")),
         expected_structured_keys=(
-            _normalize_string_tuple(
-                payload.get(
-                    "expected_structured_keys"
-                )
-            )
+            _normalize_string_tuple(payload.get("expected_structured_keys"))
         ),
         forbidden_structured_keys=(
-            _normalize_string_tuple(
-                payload.get(
-                    "forbidden_structured_keys"
-                )
-            )
+            _normalize_string_tuple(payload.get("forbidden_structured_keys"))
         ),
         expected_trace_terms=(
-            _normalize_string_tuple(
-                payload.get(
-                    "expected_trace_terms"
-                )
-            )
+            _normalize_string_tuple(payload.get("expected_trace_terms"))
         ),
         forbidden_trace_terms=(
-            _normalize_string_tuple(
-                payload.get(
-                    "forbidden_trace_terms"
-                )
-            )
+            _normalize_string_tuple(payload.get("forbidden_trace_terms"))
         ),
         expected_retrieval_terms=(
-            _normalize_string_tuple(
-                payload.get(
-                    "expected_retrieval_terms"
-                )
-            )
+            _normalize_string_tuple(payload.get("expected_retrieval_terms"))
         ),
         minimum_retrieved_documents=_parse_int(
-            payload.get(
-                "minimum_retrieved_documents"
-            ),
-            field_name=(
-                "minimum_retrieved_documents"
-            ),
+            payload.get("minimum_retrieved_documents"),
+            field_name=("minimum_retrieved_documents"),
             default=0,
         ),
         minimum_completion_score=_parse_float(
-            payload.get(
-                "minimum_completion_score"
-            ),
-            field_name=(
-                "minimum_completion_score"
-            ),
+            payload.get("minimum_completion_score"),
+            field_name=("minimum_completion_score"),
             default=0.0,
         ),
         minimum_answer_score=_parse_float(
-            payload.get(
-                "minimum_answer_score"
-            ),
+            payload.get("minimum_answer_score"),
             field_name="minimum_answer_score",
             default=0.0,
         ),
         maximum_latency_ms=(
             _parse_optional_float(
-                payload.get(
-                    "maximum_latency_ms"
-                ),
-                field_name=(
-                    "maximum_latency_ms"
-                ),
+                payload.get("maximum_latency_ms"),
+                field_name=("maximum_latency_ms"),
             )
         ),
         maximum_estimated_cost=(
             _parse_optional_float(
-                payload.get(
-                    "maximum_estimated_cost"
-                ),
-                field_name=(
-                    "maximum_estimated_cost"
-                ),
+                payload.get("maximum_estimated_cost"),
+                field_name=("maximum_estimated_cost"),
             )
         ),
         language=str(
@@ -961,23 +766,15 @@ def evaluation_case_from_dict(
         privacy_level=privacy_level,
         external_evaluation_allowed=(
             _parse_bool(
-                payload.get(
-                    "external_evaluation_allowed"
-                ),
-                field_name=(
-                    "external_evaluation_allowed"
-                ),
+                payload.get("external_evaluation_allowed"),
+                field_name=("external_evaluation_allowed"),
                 default=False,
             )
         ),
         human_review_expected=(
             _parse_optional_bool(
-                payload.get(
-                    "human_review_expected"
-                ),
-                field_name=(
-                    "human_review_expected"
-                ),
+                payload.get("human_review_expected"),
+                field_name=("human_review_expected"),
             )
         ),
         metadata=dict(metadata),
@@ -1002,12 +799,8 @@ class EvaluationDataset:
     tags: tuple[str, ...] = ()
 
     schema_version: str = DATASET_SCHEMA_VERSION
-    created_at: datetime = field(
-        default_factory=utc_now
-    )
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    created_at: datetime = field(default_factory=utc_now)
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         normalized_name = _normalize_identifier(
@@ -1020,45 +813,30 @@ class EvaluationDataset:
             field_name="version",
         )
 
-        normalized_schema_version = (
-            _normalize_version(
-                self.schema_version,
-                field_name="schema_version",
-            )
+        normalized_schema_version = _normalize_version(
+            self.schema_version,
+            field_name="schema_version",
         )
 
-        normalized_cases = tuple(
-            self.cases
-        )
+        normalized_cases = tuple(self.cases)
 
-        duplicate_case_ids = _find_duplicates(
-            case.case_id
-            for case in normalized_cases
-        )
+        duplicate_case_ids = _find_duplicates(case.case_id for case in normalized_cases)
 
         if duplicate_case_ids:
             raise ValueError(
                 "O dataset contém case_ids duplicados: "
-                + ", ".join(
-                    sorted(duplicate_case_ids)
-                )
+                + ", ".join(sorted(duplicate_case_ids))
             )
 
         for case in normalized_cases:
-            if (
-                case.dataset_name
-                != normalized_name
-            ):
+            if case.dataset_name != normalized_name:
                 raise ValueError(
                     f"O caso {case.case_id!r} pertence ao "
                     f"dataset {case.dataset_name!r}, mas o "
                     f"catálogo atual é {normalized_name!r}."
                 )
 
-            if (
-                case.dataset_version
-                != normalized_version
-            ):
+            if case.dataset_version != normalized_version:
                 raise ValueError(
                     f"O caso {case.case_id!r} usa a versão "
                     f"{case.dataset_version!r}, mas o dataset "
@@ -1066,9 +844,7 @@ class EvaluationDataset:
                 )
 
         if self.created_at.tzinfo is None:
-            raise ValueError(
-                "created_at deve possuir timezone."
-            )
+            raise ValueError("created_at deve possuir timezone.")
 
         object.__setattr__(
             self,
@@ -1103,16 +879,12 @@ class EvaluationDataset:
         object.__setattr__(
             self,
             "tags",
-            _normalize_string_tuple(
-                self.tags
-            ),
+            _normalize_string_tuple(self.tags),
         )
         object.__setattr__(
             self,
             "metadata",
-            _freeze_mapping(
-                self.metadata
-            ),
+            _freeze_mapping(self.metadata),
         )
 
     def __len__(self) -> int:
@@ -1136,10 +908,7 @@ class EvaluationDataset:
         if not isinstance(case_id, str):
             return False
 
-        return any(
-            case.case_id == case_id
-            for case in self.cases
-        )
+        return any(case.case_id == case_id for case in self.cases)
 
     @property
     def dataset_id(self) -> str:
@@ -1151,24 +920,13 @@ class EvaluationDataset:
     def case_ids(self) -> tuple[str, ...]:
         """Lista ordenada de case_ids."""
 
-        return tuple(
-            case.case_id
-            for case in self.cases
-        )
+        return tuple(case.case_id for case in self.cases)
 
     @property
     def categories(self) -> tuple[str, ...]:
         """Categorias presentes no dataset."""
 
-        return tuple(
-            sorted(
-                {
-                    case.category
-                    for case in self.cases
-                    if case.category
-                }
-            )
-        )
+        return tuple(sorted({case.category for case in self.cases if case.category}))
 
     @property
     def privacy_levels(
@@ -1178,10 +936,7 @@ class EvaluationDataset:
 
         return tuple(
             sorted(
-                {
-                    case.privacy_level
-                    for case in self.cases
-                },
+                {case.privacy_level for case in self.cases},
                 key=lambda level: level.value,
             )
         )
@@ -1193,20 +948,11 @@ class EvaluationDataset:
         payload = {
             "name": self.name,
             "version": self.version,
-            "schema_version": (
-                self.schema_version
-            ),
-            "cases": [
-                evaluation_case_to_dict(case)
-                for case in self.cases
-            ],
+            "schema_version": (self.schema_version),
+            "cases": [evaluation_case_to_dict(case) for case in self.cases],
         }
 
-        canonical_payload = (
-            _canonicalize_fingerprint_value(
-                payload
-            )
-        )
+        canonical_payload = _canonicalize_fingerprint_value(payload)
 
         serialized = json.dumps(
             canonical_payload,
@@ -1231,18 +977,14 @@ class EvaluationDataset:
             if case.case_id == case_id:
                 return case
 
-        raise KeyError(
-            f"Caso não encontrado: {case_id}"
-        )
+        raise KeyError(f"Caso não encontrado: {case_id}")
 
     def select(
         self,
         *,
         case_ids: Iterable[str] | None = None,
         categories: Iterable[str] | None = None,
-        privacy_levels: (
-            Iterable[PrivacyLevel] | None
-        ) = None,
+        privacy_levels: (Iterable[PrivacyLevel] | None) = None,
         external_only: bool = False,
         human_review_only: bool = False,
     ) -> tuple[InnaEvaluationCase, ...]:
@@ -1252,68 +994,40 @@ class EvaluationDataset:
         Todos os filtros informados são aplicados com semântica AND.
         """
 
-        selected_case_ids = (
-            set(case_ids)
-            if case_ids is not None
-            else None
-        )
+        selected_case_ids = set(case_ids) if case_ids is not None else None
 
         selected_categories = (
-            {
-                category.strip().casefold()
-                for category in categories
-                if category.strip()
-            }
+            {category.strip().casefold() for category in categories if category.strip()}
             if categories is not None
             else None
         )
 
         selected_privacy_levels = (
-            set(privacy_levels)
-            if privacy_levels is not None
-            else None
+            set(privacy_levels) if privacy_levels is not None else None
         )
 
-        selected: list[
-            InnaEvaluationCase
-        ] = []
+        selected: list[InnaEvaluationCase] = []
 
         for case in self.cases:
-            if (
-                selected_case_ids is not None
-                and case.case_id
-                not in selected_case_ids
-            ):
+            if selected_case_ids is not None and case.case_id not in selected_case_ids:
                 continue
 
             if (
                 selected_categories is not None
-                and case.category.casefold()
-                not in selected_categories
+                and case.category.casefold() not in selected_categories
             ):
                 continue
 
             if (
-                selected_privacy_levels
-                is not None
-                and case.privacy_level
-                not in selected_privacy_levels
+                selected_privacy_levels is not None
+                and case.privacy_level not in selected_privacy_levels
             ):
                 continue
 
-            if (
-                external_only
-                and not (
-                    case.external_evaluation_allowed
-                )
-            ):
+            if external_only and not (case.external_evaluation_allowed):
                 continue
 
-            if (
-                human_review_only
-                and case.human_review_expected
-                is not True
-            ):
+            if human_review_only and case.human_review_expected is not True:
                 continue
 
             selected.append(case)
@@ -1325,9 +1039,7 @@ class EvaluationDataset:
     ) -> tuple[InnaEvaluationCase, ...]:
         """Retorna casos autorizados para avaliação externa."""
 
-        return self.select(
-            external_only=True
-        )
+        return self.select(external_only=True)
 
     def manifest(
         self,
@@ -1338,10 +1050,7 @@ class EvaluationDataset:
         privacy_counts: dict[str, int] = {}
 
         for case in self.cases:
-            category = (
-                case.category
-                or "uncategorized"
-            )
+            category = case.category or "uncategorized"
 
             category_counts[category] = (
                 category_counts.get(
@@ -1351,9 +1060,7 @@ class EvaluationDataset:
                 + 1
             )
 
-            privacy_key = (
-                case.privacy_level.value
-            )
+            privacy_key = case.privacy_level.value
 
             privacy_counts[privacy_key] = (
                 privacy_counts.get(
@@ -1364,34 +1071,20 @@ class EvaluationDataset:
             )
 
         return {
-            "schema_version": (
-                self.schema_version
-            ),
+            "schema_version": (self.schema_version),
             "dataset_id": self.dataset_id,
             "name": self.name,
             "version": self.version,
             "description": self.description,
             "owner": self.owner,
             "tags": list(self.tags),
-            "created_at": (
-                self.created_at.isoformat()
-            ),
+            "created_at": (self.created_at.isoformat()),
             "case_count": len(self),
-            "case_ids": list(
-                self.case_ids
-            ),
+            "case_ids": list(self.case_ids),
             "categories": category_counts,
-            "privacy_levels": (
-                privacy_counts
-            ),
-            "external_case_count": len(
-                self.public_cases()
-            ),
-            "human_review_case_count": len(
-                self.select(
-                    human_review_only=True
-                )
-            ),
+            "privacy_levels": (privacy_counts),
+            "external_case_count": len(self.public_cases()),
+            "human_review_case_count": len(self.select(human_review_only=True)),
             "fingerprint": self.fingerprint,
             "metadata": dict(self.metadata),
         }
@@ -1406,10 +1099,7 @@ class EvaluationDataset:
         payload = self.manifest()
 
         if include_cases:
-            payload["cases"] = [
-                evaluation_case_to_dict(case)
-                for case in self.cases
-            ]
+            payload["cases"] = [evaluation_case_to_dict(case) for case in self.cases]
 
         return payload
 
@@ -1422,9 +1112,7 @@ class EvaluationDataset:
         """Serializa o dataset para JSON."""
 
         return json.dumps(
-            self.to_dict(
-                include_cases=include_cases
-            ),
+            self.to_dict(include_cases=include_cases),
             ensure_ascii=False,
             indent=indent,
             sort_keys=True,
@@ -1445,26 +1133,15 @@ class EvaluationDataset:
         passa pela camada de sanitização.
         """
 
-        destination_path = Path(
-            destination
-        )
+        destination_path = Path(destination)
 
         if destination_path.suffix.lower() != ".json":
-            destination_path = (
-                destination_path.with_suffix(
-                    ".json"
-                )
-            )
+            destination_path = destination_path.with_suffix(".json")
 
-        destination_path = (
-            destination_path.with_name(
-                safe_artifact_name(
-                    destination_path.name,
-                    default=(
-                        f"{self.name}-"
-                        f"{self.version}.json"
-                    ),
-                )
+        destination_path = destination_path.with_name(
+            safe_artifact_name(
+                destination_path.name,
+                default=(f"{self.name}-{self.version}.json"),
             )
         )
 
@@ -1474,39 +1151,21 @@ class EvaluationDataset:
         )
 
         if external_only:
-            selected_cases = (
-                self.public_cases()
-            )
+            selected_cases = self.public_cases()
 
             payload = {
                 **self.manifest(),
-                "case_count": len(
-                    selected_cases
-                ),
-                "case_ids": [
-                    case.case_id
-                    for case in selected_cases
-                ],
-                "cases": [
-                    evaluation_case_to_dict(
-                        case
-                    )
-                    for case in selected_cases
-                ],
+                "case_count": len(selected_cases),
+                "case_ids": [case.case_id for case in selected_cases],
+                "cases": [evaluation_case_to_dict(case) for case in selected_cases],
                 "external_export": True,
             }
 
-            payload = prepare_external_payload(
-                payload
-            )
+            payload = prepare_external_payload(payload)
 
-            assert_safe_for_external_export(
-                payload
-            )
+            assert_safe_for_external_export(payload)
         else:
-            payload = self.to_dict(
-                include_cases=True
-            )
+            payload = self.to_dict(include_cases=True)
 
         destination_path.write_text(
             json.dumps(
@@ -1533,9 +1192,7 @@ class EvaluationDataset:
         )
 
         cases = tuple(
-            evaluation_case_from_dict(
-                case_payload
-            )
+            evaluation_case_from_dict(case_payload)
             for case_payload in raw_cases
             if isinstance(
                 case_payload,
@@ -1543,14 +1200,10 @@ class EvaluationDataset:
             )
         )
 
-        created_at_raw = payload.get(
-            "created_at"
-        )
+        created_at_raw = payload.get("created_at")
 
         if created_at_raw:
-            created_at = datetime.fromisoformat(
-                str(created_at_raw)
-            )
+            created_at = datetime.fromisoformat(str(created_at_raw))
         else:
             created_at = utc_now()
 
@@ -1580,9 +1233,7 @@ class EvaluationDataset:
                     "",
                 )
             ),
-            tags=_normalize_string_tuple(
-                payload.get("tags")
-            ),
+            tags=_normalize_string_tuple(payload.get("tags")),
             schema_version=str(
                 payload.get(
                     "schema_version",
@@ -1606,17 +1257,12 @@ class EvaluationDataset:
         """Reconstrói um dataset a partir de JSON."""
 
         if isinstance(source, bytes):
-            source = source.decode(
-                "utf-8"
-            )
+            source = source.decode("utf-8")
 
         payload = json.loads(source)
 
         if not isinstance(payload, Mapping):
-            raise ValueError(
-                "O JSON do dataset deve conter "
-                "um objeto na raiz."
-            )
+            raise ValueError("O JSON do dataset deve conter um objeto na raiz.")
 
         return cls.from_dict(payload)
 
@@ -1630,16 +1276,9 @@ class EvaluationDataset:
         source_path = Path(source)
 
         if not source_path.is_file():
-            raise FileNotFoundError(
-                f"Dataset não encontrado: "
-                f"{source_path}"
-            )
+            raise FileNotFoundError(f"Dataset não encontrado: {source_path}")
 
-        return cls.from_json(
-            source_path.read_text(
-                encoding="utf-8"
-            )
-        )
+        return cls.from_json(source_path.read_text(encoding="utf-8"))
 
 
 def _find_duplicates(
@@ -1669,9 +1308,7 @@ class DatasetRegistry:
 
     def __init__(
         self,
-        datasets: Iterable[
-            EvaluationDataset
-        ] = (),
+        datasets: Iterable[EvaluationDataset] = (),
     ) -> None:
         self._datasets: dict[
             str,
@@ -1694,14 +1331,8 @@ class DatasetRegistry:
 
         dataset_id = dataset.dataset_id
 
-        if (
-            dataset_id in self._datasets
-            and not replace_existing
-        ):
-            raise ValueError(
-                f"Dataset já registrado: "
-                f"{dataset_id}"
-            )
+        if dataset_id in self._datasets and not replace_existing:
+            raise ValueError(f"Dataset já registrado: {dataset_id}")
 
         self._datasets[dataset_id] = dataset
 
@@ -1712,20 +1343,12 @@ class DatasetRegistry:
     ) -> EvaluationDataset:
         """Remove e retorna um dataset."""
 
-        dataset_id = (
-            f"{name.strip().lower()}@"
-            f"{version.strip()}"
-        )
+        dataset_id = f"{name.strip().lower()}@{version.strip()}"
 
         try:
-            return self._datasets.pop(
-                dataset_id
-            )
+            return self._datasets.pop(dataset_id)
         except KeyError as exception:
-            raise KeyError(
-                f"Dataset não registrado: "
-                f"{dataset_id}"
-            ) from exception
+            raise KeyError(f"Dataset não registrado: {dataset_id}") from exception
 
     def get(
         self,
@@ -1734,20 +1357,12 @@ class DatasetRegistry:
     ) -> EvaluationDataset:
         """Obtém um dataset específico."""
 
-        dataset_id = (
-            f"{name.strip().lower()}@"
-            f"{version.strip()}"
-        )
+        dataset_id = f"{name.strip().lower()}@{version.strip()}"
 
         try:
-            return self._datasets[
-                dataset_id
-            ]
+            return self._datasets[dataset_id]
         except KeyError as exception:
-            raise KeyError(
-                f"Dataset não registrado: "
-                f"{dataset_id}"
-            ) from exception
+            raise KeyError(f"Dataset não registrado: {dataset_id}") from exception
 
     def versions(
         self,
@@ -1755,17 +1370,12 @@ class DatasetRegistry:
     ) -> tuple[str, ...]:
         """Lista versões registradas de um dataset."""
 
-        normalized_name = (
-            name.strip().lower()
-        )
+        normalized_name = name.strip().lower()
 
         versions = [
             dataset.version
-            for dataset in (
-                self._datasets.values()
-            )
-            if dataset.name
-            == normalized_name
+            for dataset in (self._datasets.values())
+            if dataset.name == normalized_name
         ]
 
         return tuple(
@@ -1784,10 +1394,7 @@ class DatasetRegistry:
         versions = self.versions(name)
 
         if not versions:
-            raise KeyError(
-                f"Nenhuma versão registrada para: "
-                f"{name}"
-            )
+            raise KeyError(f"Nenhuma versão registrada para: {name}")
 
         return self.get(
             name,
@@ -1804,9 +1411,7 @@ class DatasetRegistry:
                 self._datasets.values(),
                 key=lambda dataset: (
                     dataset.name,
-                    _semantic_version_key(
-                        dataset.version
-                    ),
+                    _semantic_version_key(dataset.version),
                 ),
             )
         )
@@ -1822,20 +1427,11 @@ def _semantic_version_key(
         maxsplit=1,
     )[0]
 
-    core, separator, prerelease = (
-        core_and_suffix.partition("-")
-    )
+    core, separator, prerelease = core_and_suffix.partition("-")
 
-    major, minor, patch = (
-        int(part)
-        for part in core.split(".")
-    )
+    major, minor, patch = (int(part) for part in core.split("."))
 
-    release_marker = (
-        "\uffff"
-        if not separator
-        else prerelease
-    )
+    release_marker = "\uffff" if not separator else prerelease
 
     return (
         major,

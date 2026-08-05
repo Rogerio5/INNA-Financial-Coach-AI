@@ -25,21 +25,15 @@ class RagToolResult(BaseModel):
     language: str
 
     answer: str = ""
-    sources: list[str] = Field(
-        default_factory=list
-    )
+    sources: list[str] = Field(default_factory=list)
 
     mode: str = "unknown"
     retrieved_documents: int = 0
     duration_ms: int = 0
 
-    retrieval_context: list[str] = Field(
-        default_factory=list
-    )
+    retrieval_context: list[str] = Field(default_factory=list)
 
-    raw_result: dict[str, Any] = Field(
-        default_factory=dict
-    )
+    raw_result: dict[str, Any] = Field(default_factory=dict)
 
     error_type: str | None = None
     error_message: str | None = None
@@ -105,9 +99,7 @@ def _extrair_contexto_recuperado(
     ).strip()
 
     if contexto:
-        return [
-            contexto[:16000]
-        ]
+        return [contexto[:16000]]
 
     trechos: list[str] = []
 
@@ -130,13 +122,9 @@ def _extrair_contexto_recuperado(
             ).strip()
 
             if trecho and trecho not in trechos:
-                trechos.append(
-                    trecho[:2000]
-                )
+                trechos.append(trecho[:2000])
 
     return trechos
-
-
 
 
 def consultar_rag_inna(
@@ -172,10 +160,7 @@ def consultar_rag_inna(
             question=pergunta,
             language=idioma,
             error_type="ValidationError",
-            error_message=(
-                "A pergunta precisa possuir "
-                "pelo menos 3 caracteres."
-            ),
+            error_message=("A pergunta precisa possuir pelo menos 3 caracteres."),
         )
 
     inicio = time.perf_counter()
@@ -197,10 +182,7 @@ def consultar_rag_inna(
                 "resposta": str(resultado),
             }
 
-        duracao_ms = int(
-            (time.perf_counter() - inicio)
-            * 1000
-        )
+        duracao_ms = int((time.perf_counter() - inicio) * 1000)
 
         resposta = str(
             resultado.get("resposta")
@@ -209,22 +191,10 @@ def consultar_rag_inna(
             or ""
         ).strip()
 
-        fontes = _normalizar_fontes(
-            resultado.get("fontes")
-            or resultado.get("sources")
-        )
-        contexto_recuperado = (
-            _extrair_contexto_recuperado(
-                resultado
-            )
-        )
+        fontes = _normalizar_fontes(resultado.get("fontes") or resultado.get("sources"))
+        contexto_recuperado = _extrair_contexto_recuperado(resultado)
 
-
-        modo = str(
-            resultado.get("modo")
-            or resultado.get("mode")
-            or "rag"
-        )
+        modo = str(resultado.get("modo") or resultado.get("mode") or "rag")
 
         documentos = (
             resultado.get("documentos")
@@ -234,18 +204,12 @@ def consultar_rag_inna(
         )
 
         if isinstance(documentos, (list, tuple)):
-            quantidade_documentos = len(
-                documentos
-            )
+            quantidade_documentos = len(documentos)
 
             if quantidade_documentos == 0:
-                quantidade_documentos = len(
-                    fontes
-                )
+                quantidade_documentos = len(fontes)
         else:
-            quantidade_documentos = len(
-                fontes
-            )
+            quantidade_documentos = len(fontes)
 
         try:
             save_rag_log(
@@ -265,16 +229,11 @@ def consultar_rag_inna(
                 language=idioma,
                 sources=fontes,
                 mode=modo,
-                retrieved_documents=(
-                    quantidade_documentos
-                ),
+                retrieved_documents=(quantidade_documentos),
                 duration_ms=duracao_ms,
                 raw_result=resultado,
                 error_type="EmptyRagAnswer",
-                error_message=(
-                    "O RAG não retornou uma "
-                    "resposta utilizável."
-                ),
+                error_message=("O RAG não retornou uma resposta utilizável."),
             )
 
         return RagToolResult(
@@ -284,21 +243,14 @@ def consultar_rag_inna(
             answer=resposta,
             sources=fontes,
             mode=modo,
-            retrieved_documents=(
-                quantidade_documentos
-            ),
+            retrieved_documents=(quantidade_documentos),
             duration_ms=duracao_ms,
-            retrieval_context=(
-                contexto_recuperado
-            ),
+            retrieval_context=(contexto_recuperado),
             raw_result=resultado,
         )
 
     except Exception as exc:
-        duracao_ms = int(
-            (time.perf_counter() - inicio)
-            * 1000
-        )
+        duracao_ms = int((time.perf_counter() - inicio) * 1000)
 
         return RagToolResult(
             ok=False,
@@ -328,8 +280,7 @@ class BuscarConhecimentoRagInput(BaseModel):
         min_length=3,
         max_length=4000,
         description=(
-            "Pergunta financeira ou educacional "
-            "que será consultada na base da INNA."
+            "Pergunta financeira ou educacional que será consultada na base da INNA."
         ),
     )
 
@@ -341,20 +292,14 @@ class BuscarConhecimentoRagInput(BaseModel):
             r"^[A-Za-z]{2,3}"
             r"(?:-[A-Za-z]{2})?$"
         ),
-        description=(
-            "Idioma da consulta, como pt, en-US "
-            "ou es."
-        ),
+        description=("Idioma da consulta, como pt, en-US ou es."),
     )
 
     top_k: int = Field(
         default=4,
         ge=1,
         le=10,
-        description=(
-            "Quantidade máxima de resultados "
-            "recuperados."
-        ),
+        description=("Quantidade máxima de resultados recuperados."),
     )
 
 
@@ -399,9 +344,7 @@ class BuscarConhecimentoRagOutput(BaseModel):
     )
 
 
-class RagFormalToolExecutionError(
-    RuntimeError
-):
+class RagFormalToolExecutionError(RuntimeError):
     """
     Falha interna e controlada da ferramenta RAG.
     """
@@ -427,18 +370,13 @@ def executar_busca_conhecimento_rag(
 
     if not resultado.ok:
         raise RagFormalToolExecutionError(
-            resultado.error_type
-            or "rag_execution_failed"
+            resultado.error_type or "rag_execution_failed"
         )
 
-    resposta = str(
-        resultado.answer or ""
-    ).strip()
+    resposta = str(resultado.answer or "").strip()
 
     if not resposta:
-        raise RagFormalToolExecutionError(
-            "empty_rag_answer"
-        )
+        raise RagFormalToolExecutionError("empty_rag_answer")
 
     return BuscarConhecimentoRagOutput(
         pergunta=resultado.question,
@@ -446,15 +384,9 @@ def executar_busca_conhecimento_rag(
         resposta=resposta,
         fontes=list(resultado.sources),
         modo=resultado.mode,
-        documentos_recuperados=(
-            resultado.retrieved_documents
-        ),
-        contexto_recuperado=list(
-            resultado.retrieval_context
-        ),
-        duracao_rag_ms=(
-            resultado.duration_ms
-        ),
+        documentos_recuperados=(resultado.retrieved_documents),
+        contexto_recuperado=list(resultado.retrieval_context),
+        duracao_rag_ms=(resultado.duration_ms),
     )
 
 
@@ -473,28 +405,27 @@ def criar_definicao_buscar_conhecimento_rag(
             "híbrida, reranking e geração "
             "fundamentada nas fontes recuperadas."
         ),
-        input_model=(
-            BuscarConhecimentoRagInput
+        input_model=(BuscarConhecimentoRagInput),
+        output_model=(BuscarConhecimentoRagOutput),
+        handler=(executar_busca_conhecimento_rag),
+        allowed_agents=frozenset(
+            {
+                "rag_agent",
+                "education_agent",
+                "research_agent",
+            }
         ),
-        output_model=(
-            BuscarConhecimentoRagOutput
-        ),
-        handler=(
-            executar_busca_conhecimento_rag
-        ),
-        allowed_agents=frozenset({
-            "rag_agent",
-            "education_agent",
-        }),
         timeout_seconds=timeout_seconds,
         idempotent=True,
         sensitive_output=False,
-        tags=frozenset({
-            "rag",
-            "knowledge",
-            "financial_education",
-            "read_only",
-        }),
+        tags=frozenset(
+            {
+                "rag",
+                "knowledge",
+                "financial_education",
+                "read_only",
+            }
+        ),
     )
 
 

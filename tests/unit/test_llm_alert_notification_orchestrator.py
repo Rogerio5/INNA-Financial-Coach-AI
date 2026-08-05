@@ -25,14 +25,8 @@ def criar_alerta():
     }
 
 
-@patch(
-    "src.observability.llm_notifications."
-    "notificar_alerta_email"
-)
-@patch(
-    "src.observability.llm_alerts."
-    "avaliar_e_persistir_alertas"
-)
+@patch("src.observability.llm_notifications.notificar_alerta_email")
+@patch("src.observability.llm_alerts.avaliar_e_persistir_alertas")
 def test_notifica_alerta_novo(
     mock_avaliar,
     mock_notificar,
@@ -62,36 +56,21 @@ def test_notifica_alerta_novo(
         "duplicado": False,
     }
 
-    resultado = (
-        avaliar_persistir_e_notificar_alertas(
-            None,
-            {},
-        )
+    resultado = avaliar_persistir_e_notificar_alertas(
+        None,
+        {},
     )
 
-    assert (
-        resultado[
-            "total_notificacoes_enviadas"
-        ]
-        == 1
-    )
+    assert resultado["total_notificacoes_enviadas"] == 1
 
-    alerta_enviado = (
-        mock_notificar.call_args.args[0]
-    )
+    alerta_enviado = mock_notificar.call_args.args[0]
 
     assert alerta_enviado["id"] == 15
     assert alerta_enviado["status"] == "aberto"
 
 
-@patch(
-    "src.observability.llm_notifications."
-    "notificar_alerta_email"
-)
-@patch(
-    "src.observability.llm_alerts."
-    "avaliar_e_persistir_alertas"
-)
+@patch("src.observability.llm_notifications.notificar_alerta_email")
+@patch("src.observability.llm_alerts.avaliar_e_persistir_alertas")
 def test_nao_notifica_alerta_duplicado(
     mock_avaliar,
     mock_notificar,
@@ -113,25 +92,13 @@ def test_nao_notifica_alerta_duplicado(
         "total_duplicados": 1,
     }
 
-    resultado = (
-        avaliar_persistir_e_notificar_alertas(
-            None,
-            {},
-        )
+    resultado = avaliar_persistir_e_notificar_alertas(
+        None,
+        {},
     )
 
     mock_notificar.assert_not_called()
 
-    assert (
-        resultado[
-            "total_notificacoes_enviadas"
-        ]
-        == 0
-    )
+    assert resultado["total_notificacoes_enviadas"] == 0
 
-    assert (
-        resultado[
-            "total_notificacoes_ignoradas"
-        ]
-        == 1
-    )
+    assert resultado["total_notificacoes_ignoradas"] == 1

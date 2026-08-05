@@ -39,18 +39,11 @@ def test_task_is_partially_completed():
         ],
     )
 
-    assert (
-        result["task_status"]
-        == "partially_completed"
-    )
+    assert result["task_status"] == "partially_completed"
 
-    assert result["missing_requirements"] == [
-        "report_generation"
-    ]
+    assert result["missing_requirements"] == ["report_generation"]
 
-    assert result[
-        "task_completion_score"
-    ] == pytest.approx(
+    assert result["task_completion_score"] == pytest.approx(
         2 / 3,
         abs=0.0001,
     )
@@ -66,27 +59,14 @@ def test_task_waits_for_user_input():
             "income",
         ],
         needs_user_input=True,
-        block_reason=(
-            "Os gastos fixos ainda "
-            "não foram informados."
-        ),
+        block_reason=("Os gastos fixos ainda não foram informados."),
     )
 
-    assert (
-        result["task_status"]
-        == "needs_user_input"
-    )
+    assert result["task_status"] == "needs_user_input"
 
-    assert result["missing_requirements"] == [
-        "fixed_expenses"
-    ]
+    assert result["missing_requirements"] == ["fixed_expenses"]
 
-    assert (
-        "gastos fixos"
-        in result[
-            "task_block_reason"
-        ].lower()
-    )
+    assert "gastos fixos" in result["task_block_reason"].lower()
 
 
 def test_blocked_state_has_priority_over_partial():
@@ -99,10 +79,7 @@ def test_blocked_state_has_priority_over_partial():
             "financial_diagnosis",
         ],
         blocked=True,
-        block_reason=(
-            "A ferramenta de relatório "
-            "está indisponível."
-        ),
+        block_reason=("A ferramenta de relatório está indisponível."),
     )
 
     assert result["task_status"] == "blocked"
@@ -130,9 +107,7 @@ def test_cancelled_state_has_highest_priority():
             "financial_diagnosis",
         ],
         cancelled=True,
-        block_reason=(
-            "Operação cancelada pelo usuário."
-        ),
+        block_reason=("Operação cancelada pelo usuário."),
     )
 
     assert result["task_status"] == "cancelled"
@@ -149,11 +124,7 @@ def test_unknown_completed_requirement_is_discarded():
         ],
     )
 
-    assert result[
-        "completed_requirements"
-    ] == [
-        "financial_diagnosis"
-    ]
+    assert result["completed_requirements"] == ["financial_diagnosis"]
 
 
 def test_duplicate_requirements_are_normalized():
@@ -173,9 +144,7 @@ def test_duplicate_requirements_are_normalized():
         "risk_classification",
     ]
 
-    assert result[
-        "task_completion_score"
-    ] == 0.5
+    assert result["task_completion_score"] == 0.5
 
 
 def test_empty_task_is_considered_completed():
@@ -198,12 +167,8 @@ def test_evidence_is_preserved():
         ],
         evidence={
             "agent": "financial_agent",
-            "tool": (
-                "calcular_diagnostico_financeiro"
-            ),
+            "tool": ("calcular_diagnostico_financeiro"),
         },
     )
 
-    assert result[
-        "task_completion_evidence"
-    ]["agent"] == "financial_agent"
+    assert result["task_completion_evidence"]["agent"] == "financial_agent"

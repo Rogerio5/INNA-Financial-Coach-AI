@@ -23,20 +23,14 @@ def _carregar_database_url() -> str:
         try:
             from dotenv import load_dotenv
 
-            load_dotenv(
-                dotenv_path=Path(".env")
-            )
+            load_dotenv(dotenv_path=Path(".env"))
 
-            database_url = os.getenv(
-                "DATABASE_URL"
-            )
+            database_url = os.getenv("DATABASE_URL")
         except Exception:
             database_url = None
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não encontrada."
-        )
+        raise RuntimeError("DATABASE_URL não encontrada.")
 
     return database_url
 
@@ -45,13 +39,9 @@ def _conectar_postgres():
     try:
         import psycopg2
     except ImportError as exc:
-        raise RuntimeError(
-            "Pacote psycopg2 não instalado."
-        ) from exc
+        raise RuntimeError("Pacote psycopg2 não instalado.") from exc
 
-    return psycopg2.connect(
-        _carregar_database_url()
-    )
+    return psycopg2.connect(_carregar_database_url())
 
 
 def preparar_tabela_eventos_tools(
@@ -126,9 +116,7 @@ def preparar_tabela_eventos_tools(
 
         return {
             "ok": True,
-            "message": (
-                "Tabela de eventos das Tools preparada."
-            ),
+            "message": ("Tabela de eventos das Tools preparada."),
         }
 
     except Exception as exc:
@@ -146,10 +134,7 @@ def preparar_tabela_eventos_tools(
 
         return {
             "ok": False,
-            "message": (
-                "Erro ao preparar observabilidade: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao preparar observabilidade: {exc}"),
         }
 
 
@@ -170,9 +155,7 @@ def registrar_evento_tool(
     try:
         conn = _conectar_postgres()
 
-        preparacao = preparar_tabela_eventos_tools(
-            conn
-        )
+        preparacao = preparar_tabela_eventos_tools(conn)
 
         if not preparacao.get("ok"):
             conn.close()
@@ -180,27 +163,17 @@ def registrar_evento_tool(
 
         cur = conn.cursor()
 
-        tool_nome = resultado_tools.get(
-            "tool_identificada"
-        )
+        tool_nome = resultado_tools.get("tool_identificada")
 
-        execucao = (
-            resultado_tools.get("router", {})
-            .get("execucao")
-            or {}
-        )
+        execucao = resultado_tools.get("router", {}).get("execucao") or {}
 
         erro = None
 
-        if (
-            resultado_tools.get("executada")
-            and not resultado_tools.get("ok")
-        ):
-            erro = resultado_tools.get(
-                "message"
-            )
+        if resultado_tools.get("executada") and not resultado_tools.get("ok"):
+            erro = resultado_tools.get("message")
 
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO tools_eventos_inna (
                 usuario_id,
                 pergunta,
@@ -238,47 +211,48 @@ def registrar_evento_tool(
                 %s::jsonb
             )
             RETURNING id;
-        """, (
-            usuario_id,
-            pergunta,
-            tool_nome,
-            resultado_tools.get("tool_label"),
-            resultado_tools.get("intencao"),
-            resultado_tools.get("confianca"),
-            bool(resultado_tools.get("executada")),
-            bool(resultado_tools.get("ok")),
-            json.dumps(
-                resultado_tools.get(
-                    "argumentos",
-                    {},
+        """,
+            (
+                usuario_id,
+                pergunta,
+                tool_nome,
+                resultado_tools.get("tool_label"),
+                resultado_tools.get("intencao"),
+                resultado_tools.get("confianca"),
+                bool(resultado_tools.get("executada")),
+                bool(resultado_tools.get("ok")),
+                json.dumps(
+                    resultado_tools.get(
+                        "argumentos",
+                        {},
+                    ),
+                    ensure_ascii=False,
+                    default=str,
                 ),
-                ensure_ascii=False,
-                default=str,
-            ),
-            json.dumps(
-                resultado_tools.get("resultado"),
-                ensure_ascii=False,
-                default=str,
-            ),
-            json.dumps(
-                resultado_tools.get(
-                    "dados_ausentes",
-                    [],
+                json.dumps(
+                    resultado_tools.get("resultado"),
+                    ensure_ascii=False,
+                    default=str,
                 ),
-                ensure_ascii=False,
-                default=str,
+                json.dumps(
+                    resultado_tools.get(
+                        "dados_ausentes",
+                        [],
+                    ),
+                    ensure_ascii=False,
+                    default=str,
+                ),
+                resultado_tools.get("message") or execucao.get("message"),
+                erro,
+                duracao_ms,
+                origem,
+                json.dumps(
+                    metadata or {},
+                    ensure_ascii=False,
+                    default=str,
+                ),
             ),
-            resultado_tools.get("message")
-            or execucao.get("message"),
-            erro,
-            duracao_ms,
-            origem,
-            json.dumps(
-                metadata or {},
-                ensure_ascii=False,
-                default=str,
-            ),
-        ))
+        )
 
         evento_id = cur.fetchone()[0]
 
@@ -319,9 +293,7 @@ def carregar_resumo_tools() -> dict:
     try:
         conn = _conectar_postgres()
 
-        preparacao = preparar_tabela_eventos_tools(
-            conn
-        )
+        preparacao = preparar_tabela_eventos_tools(conn)
 
         if not preparacao.get("ok"):
             conn.close()
@@ -361,9 +333,7 @@ def carregar_resumo_tools() -> dict:
             "total_sucesso": int(row[2] or 0),
             "total_falhas": int(row[3] or 0),
             "duracao_media_ms": (
-                round(float(row[4]), 2)
-                if row[4] is not None
-                else 0.0
+                round(float(row[4]), 2) if row[4] is not None else 0.0
             ),
             "tools_distintas": int(row[5] or 0),
         }
@@ -386,10 +356,7 @@ def carregar_resumo_tools() -> dict:
 
         return {
             "ok": False,
-            "message": (
-                "Erro ao carregar resumo das Tools: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao carregar resumo das Tools: {exc}"),
             "resumo": {},
         }
 
@@ -457,10 +424,7 @@ def carregar_eventos_tools(
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro ao carregar eventos: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao carregar eventos: {exc}"),
             "df": None,
         }
 
@@ -533,9 +497,7 @@ def carregar_status_infraestrutura() -> dict:
             "ok": vector_ativo,
             "label": "Extensão pgvector",
             "message": (
-                "Extensão ativa."
-                if vector_ativo
-                else "Extensão não encontrada."
+                "Extensão ativa." if vector_ativo else "Extensão não encontrada."
             ),
         }
 
@@ -546,14 +508,17 @@ def carregar_status_infraestrutura() -> dict:
         }
 
         for chave, tabela in tabelas.items():
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT EXISTS (
                     SELECT 1
                     FROM information_schema.tables
                     WHERE table_schema = 'public'
                       AND table_name = %s
                 );
-            """, (tabela,))
+            """,
+                (tabela,),
+            )
 
             existe = bool(cur.fetchone()[0])
 
@@ -569,9 +534,7 @@ def carregar_status_infraestrutura() -> dict:
         conn = None
 
     except Exception as exc:
-        status["postgresql"]["message"] = (
-            f"Falha na conexão: {exc}"
-        )
+        status["postgresql"]["message"] = f"Falha na conexão: {exc}"
 
     finally:
         try:
@@ -580,41 +543,25 @@ def carregar_status_infraestrutura() -> dict:
         except Exception:
             pass
 
-    api_key = (
-        os.getenv("GEMINI_API_KEY")
-        or os.getenv("GOOGLE_API_KEY")
-    )
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
     if not api_key:
         try:
             from dotenv import load_dotenv
 
-            load_dotenv(
-                dotenv_path=Path(".env")
-            )
+            load_dotenv(dotenv_path=Path(".env"))
 
-            api_key = (
-                os.getenv("GEMINI_API_KEY")
-                or os.getenv("GOOGLE_API_KEY")
-            )
+            api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         except Exception:
             api_key = None
 
     status["gemini"] = {
         "ok": bool(api_key),
         "label": "Configuração Gemini",
-        "message": (
-            "Chave configurada."
-            if api_key
-            else "Chave não encontrada."
-        ),
+        "message": ("Chave configurada." if api_key else "Chave não encontrada."),
     }
 
-    total_ok = sum(
-        1
-        for item in status.values()
-        if item.get("ok")
-    )
+    total_ok = sum(1 for item in status.values() if item.get("ok"))
 
     return {
         "ok": True,
@@ -622,8 +569,6 @@ def carregar_status_infraestrutura() -> dict:
         "total_operacionais": total_ok,
         "status": status,
     }
-
-
 
 
 __all__ = [

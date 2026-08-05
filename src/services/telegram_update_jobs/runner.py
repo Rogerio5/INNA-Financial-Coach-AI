@@ -35,30 +35,22 @@ RunnerStage = Literal[
 ]
 
 
-RUNNER_ERROR_CODE_PATTERN = re.compile(
-    r"^[a-z0-9][a-z0-9._:-]{0,63}$"
-)
+RUNNER_ERROR_CODE_PATTERN = re.compile(r"^[a-z0-9][a-z0-9._:-]{0,63}$")
 
 
-class TelegramUpdateRunnerError(
-    RuntimeError
-):
+class TelegramUpdateRunnerError(RuntimeError):
     """
     Erro sanitizado do runner Telegram.
     """
 
 
-class TelegramUpdateRunnerConfigurationError(
-    TelegramUpdateRunnerError
-):
+class TelegramUpdateRunnerConfigurationError(TelegramUpdateRunnerError):
     """
     Configuração inválida do worker.
     """
 
 
-class TelegramUpdateProcessorError(
-    TelegramUpdateRunnerError
-):
+class TelegramUpdateProcessorError(TelegramUpdateRunnerError):
     """
     Erro conhecido e sanitizado do processador.
     """
@@ -67,31 +59,20 @@ class TelegramUpdateProcessorError(
         self,
         error_code: str,
     ) -> None:
-        normalized = (
-            _validate_error_code(
-                error_code
-            )
-        )
+        normalized = _validate_error_code(error_code)
 
         self.error_code = normalized
 
-        super().__init__(
-            "O processador Telegram "
-            "não concluiu o update."
-        )
+        super().__init__("O processador Telegram não concluiu o update.")
 
 
-class TelegramUpdateTransientProcessingError(
-    TelegramUpdateProcessorError
-):
+class TelegramUpdateTransientProcessingError(TelegramUpdateProcessorError):
     """
     Erro que permite nova tentativa.
     """
 
 
-class TelegramUpdatePermanentProcessingError(
-    TelegramUpdateProcessorError
-):
+class TelegramUpdatePermanentProcessingError(TelegramUpdateProcessorError):
     """
     Erro que deve ir diretamente a dead-letter.
     """
@@ -122,84 +103,56 @@ class TelegramUpdateWorkerConfig:
         _validate_integer(
             self.lease_seconds,
             field_name="lease_seconds",
-            minimum=(
-                repository_module
-                .MIN_LEASE_SECONDS
-            ),
-            maximum=(
-                repository_module
-                .MAX_LEASE_SECONDS
-            ),
+            minimum=(repository_module.MIN_LEASE_SECONDS),
+            maximum=(repository_module.MAX_LEASE_SECONDS),
         )
 
         _validate_positive_float(
             self.idle_sleep_seconds,
-            field_name=(
-                "idle_sleep_seconds"
-            ),
+            field_name=("idle_sleep_seconds"),
             minimum=0.01,
             maximum=60.0,
         )
 
         _validate_positive_float(
             self.unavailable_sleep_seconds,
-            field_name=(
-                "unavailable_sleep_seconds"
-            ),
+            field_name=("unavailable_sleep_seconds"),
             minimum=0.1,
             maximum=300.0,
         )
 
         _validate_positive_float(
             self.recovery_interval_seconds,
-            field_name=(
-                "recovery_interval_seconds"
-            ),
+            field_name=("recovery_interval_seconds"),
             minimum=1.0,
             maximum=3600.0,
         )
 
         _validate_integer(
             self.recovery_batch_size,
-            field_name=(
-                "recovery_batch_size"
-            ),
+            field_name=("recovery_batch_size"),
             minimum=1,
-            maximum=(
-                repository_module
-                .MAX_RECOVERY_BATCH
-            ),
+            maximum=(repository_module.MAX_RECOVERY_BATCH),
         )
 
         base = _validate_integer(
             self.retry_base_delay_seconds,
-            field_name=(
-                "retry_base_delay_seconds"
-            ),
+            field_name=("retry_base_delay_seconds"),
             minimum=0,
-            maximum=(
-                repository_module
-                .MAX_RETRY_DELAY_SECONDS
-            ),
+            maximum=(repository_module.MAX_RETRY_DELAY_SECONDS),
         )
 
         maximum = _validate_integer(
             self.retry_max_delay_seconds,
-            field_name=(
-                "retry_max_delay_seconds"
-            ),
+            field_name=("retry_max_delay_seconds"),
             minimum=0,
-            maximum=(
-                repository_module
-                .MAX_RETRY_DELAY_SECONDS
-            ),
+            maximum=(repository_module.MAX_RETRY_DELAY_SECONDS),
         )
 
         if base > maximum:
             raise (
                 TelegramUpdateRunnerConfigurationError(
-                    "O atraso-base não pode "
-                    "superar o atraso máximo."
+                    "O atraso-base não pode superar o atraso máximo."
                 )
             )
 
@@ -210,43 +163,30 @@ class TelegramUpdateWorkerConfig:
 )
 class TelegramUpdateWorkerDependencies:
     claim: Callable[..., Any] = field(
-        default=(
-            worker_module
-            .claim_next_authenticated_telegram_update_job_atomic
-        )
+        default=(worker_module.claim_next_authenticated_telegram_update_job_atomic)
     )
 
     decrypt: Callable[..., Any] = field(
-        default=(
-            execution_module
-            .decrypt_authenticated_telegram_worker_lease
-        )
+        default=(execution_module.decrypt_authenticated_telegram_worker_lease)
     )
 
     complete: Callable[..., Any] = field(
-        default=(
-            worker_module
-            .complete_authenticated_telegram_update_job_atomic
-        )
+        default=(worker_module.complete_authenticated_telegram_update_job_atomic)
     )
 
     fail: Callable[..., Any] = field(
         default=(
-            worker_module
-            .retry_or_dead_letter_authenticated_telegram_update_job_atomic
+            worker_module.retry_or_dead_letter_authenticated_telegram_update_job_atomic
         )
     )
 
     recover: Callable[..., Any] = field(
         default=(
-            worker_module
-            .recover_expired_authenticated_telegram_update_jobs_atomic
+            worker_module.recover_expired_authenticated_telegram_update_jobs_atomic
         )
     )
 
-    monotonic: Callable[[], float] = field(
-        default=time.monotonic
-    )
+    monotonic: Callable[[], float] = field(default=time.monotonic)
 
     def __post_init__(
         self,
@@ -298,17 +238,11 @@ class TelegramUpdateRunnerResult:
             "decision": self.decision,
             "stage": self.stage,
             "update_id": self.update_id,
-            "job_attempt_count": (
-                self.job_attempt_count
-            ),
-            "job_max_attempts": (
-                self.job_max_attempts
-            ),
+            "job_attempt_count": (self.job_attempt_count),
+            "job_max_attempts": (self.job_max_attempts),
             "job_status": self.job_status,
             "error_code": self.error_code,
-            "idempotent_replay": (
-                self.idempotent_replay
-            ),
+            "idempotent_replay": (self.idempotent_replay),
         }
 
 
@@ -339,29 +273,15 @@ class TelegramUpdateRunnerSummary:
         return {
             "cycles": self.cycles,
             "completed": self.completed,
-            "retry_scheduled": (
-                self.retry_scheduled
-            ),
-            "dead_lettered": (
-                self.dead_lettered
-            ),
+            "retry_scheduled": (self.retry_scheduled),
+            "dead_lettered": (self.dead_lettered),
             "idle": self.idle,
-            "ownership_lost": (
-                self.ownership_lost
-            ),
+            "ownership_lost": (self.ownership_lost),
             "unavailable": self.unavailable,
-            "consistency_errors": (
-                self.consistency_errors
-            ),
-            "recovered_retry": (
-                self.recovered_retry
-            ),
-            "recovered_dead_letter": (
-                self.recovered_dead_letter
-            ),
-            "duration_seconds": (
-                self.duration_seconds
-            ),
+            "consistency_errors": (self.consistency_errors),
+            "recovered_retry": (self.recovered_retry),
+            "recovered_dead_letter": (self.recovered_dead_letter),
+            "duration_seconds": (self.duration_seconds),
         }
 
 
@@ -378,9 +298,7 @@ def _validate_integer(
         or value < minimum
         or value > maximum
     ):
-        raise TelegramUpdateRunnerConfigurationError(
-            f"{field_name} inválido."
-        )
+        raise TelegramUpdateRunnerConfigurationError(f"{field_name} inválido.")
 
     return value
 
@@ -392,34 +310,19 @@ def _validate_positive_float(
     minimum: float,
     maximum: float,
 ) -> float:
-    if (
-        isinstance(value, bool)
-        or not isinstance(
-            value,
-            (
-                int,
-                float,
-            ),
-        )
+    if isinstance(value, bool) or not isinstance(
+        value,
+        (
+            int,
+            float,
+        ),
     ):
-        raise TelegramUpdateRunnerConfigurationError(
-            f"{field_name} inválido."
-        )
+        raise TelegramUpdateRunnerConfigurationError(f"{field_name} inválido.")
 
-    normalized = float(
-        value
-    )
+    normalized = float(value)
 
-    if (
-        not math.isfinite(
-            normalized
-        )
-        or normalized < minimum
-        or normalized > maximum
-    ):
-        raise TelegramUpdateRunnerConfigurationError(
-            f"{field_name} inválido."
-        )
+    if not math.isfinite(normalized) or normalized < minimum or normalized > maximum:
+        raise TelegramUpdateRunnerConfigurationError(f"{field_name} inválido.")
 
     return normalized
 
@@ -431,22 +334,12 @@ def _validate_error_code(
         value,
         str,
     ):
-        raise TelegramUpdateRunnerConfigurationError(
-            "error_code inválido."
-        )
+        raise TelegramUpdateRunnerConfigurationError("error_code inválido.")
 
     normalized = value.strip()
 
-    if (
-        normalized != value
-        or RUNNER_ERROR_CODE_PATTERN.fullmatch(
-            normalized
-        )
-        is None
-    ):
-        raise TelegramUpdateRunnerConfigurationError(
-            "error_code inválido."
-        )
+    if normalized != value or RUNNER_ERROR_CODE_PATTERN.fullmatch(normalized) is None:
+        raise TelegramUpdateRunnerConfigurationError("error_code inválido.")
 
     return normalized
 
@@ -470,21 +363,12 @@ def calculate_worker_retry_delay_seconds(
         maximum=20,
     )
 
-    raw_delay = (
-        config.retry_base_delay_seconds
-        * (
-            2
-            ** (
-                normalized_attempt - 1
-            )
-        )
-    )
+    raw_delay = config.retry_base_delay_seconds * (2 ** (normalized_attempt - 1))
 
     return min(
         raw_delay,
         config.retry_max_delay_seconds,
-        repository_module
-        .MAX_RETRY_DELAY_SECONDS,
+        repository_module.MAX_RETRY_DELAY_SECONDS,
     )
 
 
@@ -501,17 +385,11 @@ def _result_for_lease(
         decision=decision,
         stage=stage,
         update_id=lease.update_id,
-        job_attempt_count=(
-            lease.job_attempt_count
-        ),
-        job_max_attempts=(
-            lease.job_max_attempts
-        ),
+        job_attempt_count=(lease.job_attempt_count),
+        job_max_attempts=(lease.job_max_attempts),
         job_status=job_status,
         error_code=error_code,
-        idempotent_replay=(
-            idempotent_replay
-        ),
+        idempotent_replay=(idempotent_replay),
     )
 
 
@@ -523,19 +401,13 @@ def _finalize_failure(
     error_code: str,
     force_dead_letter: bool,
 ) -> TelegramUpdateRunnerResult:
-    normalized_error = (
-        _validate_error_code(
-            error_code
-        )
-    )
+    normalized_error = _validate_error_code(error_code)
 
     retry_delay = (
         0
         if force_dead_letter
         else calculate_worker_retry_delay_seconds(
-            attempt_count=(
-                lease.job_attempt_count
-            ),
+            attempt_count=(lease.job_attempt_count),
             config=config,
         )
     )
@@ -544,18 +416,11 @@ def _finalize_failure(
         outcome = dependencies.fail(
             lease,
             error_code=normalized_error,
-            retry_delay_seconds=(
-                retry_delay
-            ),
-            force_dead_letter=(
-                force_dead_letter
-            ),
+            retry_delay_seconds=(retry_delay),
+            force_dead_letter=(force_dead_letter),
         )
 
-    except (
-        worker_module
-        .TelegramUpdateWorkerOwnershipError
-    ):
+    except worker_module.TelegramUpdateWorkerOwnershipError:
         return _result_for_lease(
             lease=lease,
             decision="ownership_lost",
@@ -563,10 +428,7 @@ def _finalize_failure(
             error_code=normalized_error,
         )
 
-    except (
-        worker_module
-        .TelegramUpdateWorkerUnavailableError
-    ):
+    except worker_module.TelegramUpdateWorkerUnavailableError:
         return _result_for_lease(
             lease=lease,
             decision="unavailable",
@@ -575,10 +437,8 @@ def _finalize_failure(
         )
 
     except (
-        worker_module
-        .TelegramUpdateWorkerConsistencyError,
-        worker_module
-        .TelegramUpdateWorkerValidationError,
+        worker_module.TelegramUpdateWorkerConsistencyError,
+        worker_module.TelegramUpdateWorkerValidationError,
     ):
         return _result_for_lease(
             lease=lease,
@@ -643,10 +503,8 @@ def run_one_telegram_update_job(
         Any,
     ],
     *,
-    config: TelegramUpdateWorkerConfig
-        | None = None,
-    dependencies: TelegramUpdateWorkerDependencies
-        | None = None,
+    config: TelegramUpdateWorkerConfig | None = None,
+    dependencies: TelegramUpdateWorkerDependencies | None = None,
     keyring: Any = None,
 ) -> TelegramUpdateRunnerResult:
     """
@@ -660,64 +518,40 @@ def run_one_telegram_update_job(
     como sucesso para compatibilidade com o canal
     Telegram atual.
     """
-    if not callable(
-        processor
-    ):
-        raise TelegramUpdateRunnerConfigurationError(
-            "processor inválido."
-        )
+    if not callable(processor):
+        raise TelegramUpdateRunnerConfigurationError("processor inválido.")
 
-    resolved_config = (
-        config
-        or TelegramUpdateWorkerConfig()
-    )
+    resolved_config = config or TelegramUpdateWorkerConfig()
 
-    resolved_dependencies = (
-        dependencies
-        or TelegramUpdateWorkerDependencies()
-    )
+    resolved_dependencies = dependencies or TelegramUpdateWorkerDependencies()
 
     try:
         lease = resolved_dependencies.claim(
-            lease_seconds=(
-                resolved_config
-                .lease_seconds
-            )
+            lease_seconds=(resolved_config.lease_seconds)
         )
 
-    except (
-        worker_module
-        .TelegramUpdateWorkerUnavailableError
-    ):
+    except worker_module.TelegramUpdateWorkerUnavailableError:
         return TelegramUpdateRunnerResult(
             decision="unavailable",
             stage="claim",
-            error_code=(
-                "telegram.claim_unavailable"
-            ),
+            error_code=("telegram.claim_unavailable"),
         )
 
     except (
-        worker_module
-        .TelegramUpdateWorkerConsistencyError,
-        worker_module
-        .TelegramUpdateWorkerValidationError,
+        worker_module.TelegramUpdateWorkerConsistencyError,
+        worker_module.TelegramUpdateWorkerValidationError,
     ):
         return TelegramUpdateRunnerResult(
             decision="consistency_error",
             stage="claim",
-            error_code=(
-                "telegram.claim_inconsistent"
-            ),
+            error_code=("telegram.claim_inconsistent"),
         )
 
     except Exception:
         return TelegramUpdateRunnerResult(
             decision="unavailable",
             stage="claim",
-            error_code=(
-                "telegram.claim_unavailable"
-            ),
+            error_code=("telegram.claim_unavailable"),
         )
 
     if lease is None:
@@ -727,100 +561,65 @@ def run_one_telegram_update_job(
         )
 
     try:
-        protected_payload = (
-            resolved_dependencies.decrypt(
-                lease,
-                keyring=keyring,
-            )
+        protected_payload = resolved_dependencies.decrypt(
+            lease,
+            keyring=keyring,
         )
 
-    except (
-        execution_module
-        .TelegramUpdateExecutionConfigurationError
-    ):
+    except execution_module.TelegramUpdateExecutionConfigurationError:
         return _finalize_failure(
             lease=lease,
-            dependencies=(
-                resolved_dependencies
-            ),
+            dependencies=(resolved_dependencies),
             config=resolved_config,
-            error_code=(
-                "telegram.keyring_unavailable"
-            ),
+            error_code=("telegram.keyring_unavailable"),
             force_dead_letter=False,
         )
 
     except (
-        execution_module
-        .TelegramUpdateExecutionDecryptionError,
-        execution_module
-        .TelegramUpdateExecutionPayloadError,
+        execution_module.TelegramUpdateExecutionDecryptionError,
+        execution_module.TelegramUpdateExecutionPayloadError,
     ):
         return _finalize_failure(
             lease=lease,
-            dependencies=(
-                resolved_dependencies
-            ),
+            dependencies=(resolved_dependencies),
             config=resolved_config,
-            error_code=(
-                "telegram.payload_invalid"
-            ),
+            error_code=("telegram.payload_invalid"),
             force_dead_letter=True,
         )
 
-    except (
-        execution_module
-        .TelegramUpdateExecutionValidationError
-    ):
+    except execution_module.TelegramUpdateExecutionValidationError:
         return _result_for_lease(
             lease=lease,
             decision="consistency_error",
             stage="decrypt",
-            error_code=(
-                "telegram.lease_invalid"
-            ),
+            error_code=("telegram.lease_invalid"),
         )
 
     except Exception:
         return _finalize_failure(
             lease=lease,
-            dependencies=(
-                resolved_dependencies
-            ),
+            dependencies=(resolved_dependencies),
             config=resolved_config,
-            error_code=(
-                "telegram.decrypt_failed"
-            ),
+            error_code=("telegram.decrypt_failed"),
             force_dead_letter=False,
         )
 
     try:
-        update = (
-            protected_payload
-            .to_processing_dict()
-        )
+        update = protected_payload.to_processing_dict()
 
     except Exception:
         return _finalize_failure(
             lease=lease,
-            dependencies=(
-                resolved_dependencies
-            ),
+            dependencies=(resolved_dependencies),
             config=resolved_config,
-            error_code=(
-                "telegram.payload_invalid"
-            ),
+            error_code=("telegram.payload_invalid"),
             force_dead_letter=True,
         )
 
     try:
-        processing_result = processor(
-            update
-        )
+        processing_result = processor(update)
 
-        if inspect.isawaitable(
-            processing_result
-        ):
+        if inspect.isawaitable(processing_result):
             close = getattr(
                 processing_result,
                 "close",
@@ -832,37 +631,25 @@ def run_one_telegram_update_job(
 
             return _finalize_failure(
                 lease=lease,
-                dependencies=(
-                    resolved_dependencies
-                ),
+                dependencies=(resolved_dependencies),
                 config=resolved_config,
-                error_code=(
-                    "telegram.async_processor_unsupported"
-                ),
+                error_code=("telegram.async_processor_unsupported"),
                 force_dead_letter=True,
             )
 
-    except (
-        TelegramUpdatePermanentProcessingError
-    ) as error:
+    except TelegramUpdatePermanentProcessingError as error:
         return _finalize_failure(
             lease=lease,
-            dependencies=(
-                resolved_dependencies
-            ),
+            dependencies=(resolved_dependencies),
             config=resolved_config,
             error_code=error.error_code,
             force_dead_letter=True,
         )
 
-    except (
-        TelegramUpdateTransientProcessingError
-    ) as error:
+    except TelegramUpdateTransientProcessingError as error:
         return _finalize_failure(
             lease=lease,
-            dependencies=(
-                resolved_dependencies
-            ),
+            dependencies=(resolved_dependencies),
             config=resolved_config,
             error_code=error.error_code,
             force_dead_letter=False,
@@ -871,13 +658,9 @@ def run_one_telegram_update_job(
     except Exception:
         return _finalize_failure(
             lease=lease,
-            dependencies=(
-                resolved_dependencies
-            ),
+            dependencies=(resolved_dependencies),
             config=resolved_config,
-            error_code=(
-                "telegram.processing_failed"
-            ),
+            error_code=("telegram.processing_failed"),
             force_dead_letter=False,
         )
 
@@ -887,62 +670,40 @@ def run_one_telegram_update_job(
     if processing_result is False:
         return _finalize_failure(
             lease=lease,
-            dependencies=(
-                resolved_dependencies
-            ),
+            dependencies=(resolved_dependencies),
             config=resolved_config,
-            error_code=(
-                "telegram.processing_failed"
-            ),
+            error_code=("telegram.processing_failed"),
             force_dead_letter=False,
         )
 
     try:
-        outcome = (
-            resolved_dependencies.complete(
-                lease
-            )
-        )
+        outcome = resolved_dependencies.complete(lease)
 
-    except (
-        worker_module
-        .TelegramUpdateWorkerOwnershipError
-    ):
+    except worker_module.TelegramUpdateWorkerOwnershipError:
         return _result_for_lease(
             lease=lease,
             decision="ownership_lost",
             stage="complete",
-            error_code=(
-                "telegram.completion_ownership_lost"
-            ),
+            error_code=("telegram.completion_ownership_lost"),
         )
 
-    except (
-        worker_module
-        .TelegramUpdateWorkerUnavailableError
-    ):
+    except worker_module.TelegramUpdateWorkerUnavailableError:
         return _result_for_lease(
             lease=lease,
             decision="unavailable",
             stage="complete",
-            error_code=(
-                "telegram.completion_unavailable"
-            ),
+            error_code=("telegram.completion_unavailable"),
         )
 
     except (
-        worker_module
-        .TelegramUpdateWorkerConsistencyError,
-        worker_module
-        .TelegramUpdateWorkerValidationError,
+        worker_module.TelegramUpdateWorkerConsistencyError,
+        worker_module.TelegramUpdateWorkerValidationError,
     ):
         return _result_for_lease(
             lease=lease,
             decision="consistency_error",
             stage="complete",
-            error_code=(
-                "telegram.completion_inconsistent"
-            ),
+            error_code=("telegram.completion_inconsistent"),
         )
 
     except Exception:
@@ -950,23 +711,22 @@ def run_one_telegram_update_job(
             lease=lease,
             decision="unavailable",
             stage="complete",
-            error_code=(
-                "telegram.completion_unavailable"
-            ),
+            error_code=("telegram.completion_unavailable"),
         )
 
-    if getattr(
-        outcome,
-        "job_status",
-        None,
-    ) != "completed":
+    if (
+        getattr(
+            outcome,
+            "job_status",
+            None,
+        )
+        != "completed"
+    ):
         return _result_for_lease(
             lease=lease,
             decision="consistency_error",
             stage="complete",
-            error_code=(
-                "telegram.completion_inconsistent"
-            ),
+            error_code=("telegram.completion_inconsistent"),
         )
 
     return _result_for_lease(
@@ -988,16 +748,15 @@ def _notify_safely(
     callback: Callable[
         [TelegramUpdateRunnerResult],
         Any,
-    ] | None,
+    ]
+    | None,
     result: TelegramUpdateRunnerResult,
 ) -> None:
     if callback is None:
         return
 
     try:
-        callback(
-            result
-        )
+        callback(result)
 
     except Exception:
         return
@@ -1010,15 +769,14 @@ def run_telegram_update_worker(
     ],
     *,
     stop_event: Any | None = None,
-    config: TelegramUpdateWorkerConfig
-        | None = None,
-    dependencies: TelegramUpdateWorkerDependencies
-        | None = None,
+    config: TelegramUpdateWorkerConfig | None = None,
+    dependencies: TelegramUpdateWorkerDependencies | None = None,
     keyring: Any = None,
     on_result: Callable[
         [TelegramUpdateRunnerResult],
         Any,
-    ] | None = None,
+    ]
+    | None = None,
     max_cycles: int | None = None,
 ) -> TelegramUpdateRunnerSummary:
     """
@@ -1028,12 +786,8 @@ def run_telegram_update_worker(
     execução controlada; None representa loop
     contínuo de produção.
     """
-    if not callable(
-        processor
-    ):
-        raise TelegramUpdateRunnerConfigurationError(
-            "processor inválido."
-        )
+    if not callable(processor):
+        raise TelegramUpdateRunnerConfigurationError("processor inválido.")
 
     if max_cycles is not None:
         _validate_integer(
@@ -1043,45 +797,28 @@ def run_telegram_update_worker(
             maximum=1_000_000,
         )
 
-    resolved_config = (
-        config
-        or TelegramUpdateWorkerConfig()
-    )
+    resolved_config = config or TelegramUpdateWorkerConfig()
 
-    resolved_dependencies = (
-        dependencies
-        or TelegramUpdateWorkerDependencies()
-    )
+    resolved_dependencies = dependencies or TelegramUpdateWorkerDependencies()
 
-    resolved_stop_event = (
-        stop_event
-        if stop_event is not None
-        else Event()
-    )
+    resolved_stop_event = stop_event if stop_event is not None else Event()
 
-    if (
-        not callable(
-            getattr(
-                resolved_stop_event,
-                "is_set",
-                None,
-            )
+    if not callable(
+        getattr(
+            resolved_stop_event,
+            "is_set",
+            None,
         )
-        or not callable(
-            getattr(
-                resolved_stop_event,
-                "wait",
-                None,
-            )
+    ) or not callable(
+        getattr(
+            resolved_stop_event,
+            "wait",
+            None,
         )
     ):
-        raise TelegramUpdateRunnerConfigurationError(
-            "stop_event inválido."
-        )
+        raise TelegramUpdateRunnerConfigurationError("stop_event inválido.")
 
-    started_at = (
-        resolved_dependencies.monotonic()
-    )
+    started_at = resolved_dependencies.monotonic()
 
     next_recovery_at = started_at
 
@@ -1099,33 +836,20 @@ def run_telegram_update_worker(
     }
 
     while not resolved_stop_event.is_set():
-        if (
-            max_cycles is not None
-            and counters["cycles"]
-            >= max_cycles
-        ):
+        if max_cycles is not None and counters["cycles"] >= max_cycles:
             break
 
         counters["cycles"] += 1
 
-        now = (
-            resolved_dependencies.monotonic()
-        )
+        now = resolved_dependencies.monotonic()
 
         if now >= next_recovery_at:
             try:
-                recovery = (
-                    resolved_dependencies.recover(
-                        limit=(
-                            resolved_config
-                            .recovery_batch_size
-                        )
-                    )
+                recovery = resolved_dependencies.recover(
+                    limit=(resolved_config.recovery_batch_size)
                 )
 
-                counters[
-                    "recovered_retry"
-                ] += int(
+                counters["recovered_retry"] += int(
                     getattr(
                         recovery,
                         "retried",
@@ -1133,9 +857,7 @@ def run_telegram_update_worker(
                     )
                 )
 
-                counters[
-                    "recovered_dead_letter"
-                ] += int(
+                counters["recovered_dead_letter"] += int(
                     getattr(
                         recovery,
                         "dead_lettered",
@@ -1146,14 +868,10 @@ def run_telegram_update_worker(
             except Exception:
                 counters["unavailable"] += 1
 
-                recovery_result = (
-                    TelegramUpdateRunnerResult(
-                        decision="unavailable",
-                        stage="recovery",
-                        error_code=(
-                            "telegram.recovery_unavailable"
-                        ),
-                    )
+                recovery_result = TelegramUpdateRunnerResult(
+                    decision="unavailable",
+                    stage="recovery",
+                    error_code=("telegram.recovery_unavailable"),
                 )
 
                 _notify_safely(
@@ -1161,32 +879,19 @@ def run_telegram_update_worker(
                     recovery_result,
                 )
 
-                next_recovery_at = (
-                    now
-                    + resolved_config
-                    .recovery_interval_seconds
-                )
+                next_recovery_at = now + resolved_config.recovery_interval_seconds
 
-                if resolved_stop_event.wait(
-                    resolved_config
-                    .unavailable_sleep_seconds
-                ):
+                if resolved_stop_event.wait(resolved_config.unavailable_sleep_seconds):
                     break
 
                 continue
 
-            next_recovery_at = (
-                now
-                + resolved_config
-                .recovery_interval_seconds
-            )
+            next_recovery_at = now + resolved_config.recovery_interval_seconds
 
         result = run_one_telegram_update_job(
             processor,
             config=resolved_config,
-            dependencies=(
-                resolved_dependencies
-            ),
+            dependencies=(resolved_dependencies),
             keyring=keyring,
         )
 
@@ -1198,64 +903,36 @@ def run_telegram_update_worker(
         if result.decision == "completed":
             counters["completed"] += 1
 
-        elif (
-            result.decision
-            == "retry_scheduled"
-        ):
-            counters[
-                "retry_scheduled"
-            ] += 1
+        elif result.decision == "retry_scheduled":
+            counters["retry_scheduled"] += 1
 
-        elif (
-            result.decision
-            == "dead_lettered"
-        ):
-            counters[
-                "dead_lettered"
-            ] += 1
+        elif result.decision == "dead_lettered":
+            counters["dead_lettered"] += 1
 
         elif result.decision == "idle":
             counters["idle"] += 1
 
-        elif (
-            result.decision
-            == "ownership_lost"
-        ):
-            counters[
-                "ownership_lost"
-            ] += 1
+        elif result.decision == "ownership_lost":
+            counters["ownership_lost"] += 1
 
         elif result.decision == "unavailable":
             counters["unavailable"] += 1
 
-        elif (
-            result.decision
-            == "consistency_error"
-        ):
-            counters[
-                "consistency_errors"
-            ] += 1
+        elif result.decision == "consistency_error":
+            counters["consistency_errors"] += 1
 
         if result.decision == "idle":
-            if resolved_stop_event.wait(
-                resolved_config
-                .idle_sleep_seconds
-            ):
+            if resolved_stop_event.wait(resolved_config.idle_sleep_seconds):
                 break
 
         elif result.decision in {
             "unavailable",
             "consistency_error",
         }:
-            if resolved_stop_event.wait(
-                resolved_config
-                .unavailable_sleep_seconds
-            ):
+            if resolved_stop_event.wait(resolved_config.unavailable_sleep_seconds):
                 break
 
-    finished_at = (
-        resolved_dependencies.monotonic()
-    )
+    finished_at = resolved_dependencies.monotonic()
 
     duration = max(
         0.0,
@@ -1265,30 +942,14 @@ def run_telegram_update_worker(
     return TelegramUpdateRunnerSummary(
         cycles=counters["cycles"],
         completed=counters["completed"],
-        retry_scheduled=(
-            counters["retry_scheduled"]
-        ),
-        dead_lettered=(
-            counters["dead_lettered"]
-        ),
+        retry_scheduled=(counters["retry_scheduled"]),
+        dead_lettered=(counters["dead_lettered"]),
         idle=counters["idle"],
-        ownership_lost=(
-            counters["ownership_lost"]
-        ),
-        unavailable=(
-            counters["unavailable"]
-        ),
-        consistency_errors=(
-            counters["consistency_errors"]
-        ),
-        recovered_retry=(
-            counters["recovered_retry"]
-        ),
-        recovered_dead_letter=(
-            counters[
-                "recovered_dead_letter"
-            ]
-        ),
+        ownership_lost=(counters["ownership_lost"]),
+        unavailable=(counters["unavailable"]),
+        consistency_errors=(counters["consistency_errors"]),
+        recovered_retry=(counters["recovered_retry"]),
+        recovered_dead_letter=(counters["recovered_dead_letter"]),
         duration_seconds=round(
             duration,
             6,

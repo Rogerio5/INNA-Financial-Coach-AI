@@ -26,13 +26,17 @@ def normalizar_texto(texto: str | None) -> str:
     """
     texto = str(texto or "").strip().lower()
 
-    texto = unicodedata.normalize(
-        "NFKD",
-        texto,
-    ).encode(
-        "ascii",
-        "ignore",
-    ).decode("ascii")
+    texto = (
+        unicodedata.normalize(
+            "NFKD",
+            texto,
+        )
+        .encode(
+            "ascii",
+            "ignore",
+        )
+        .decode("ascii")
+    )
 
     texto = re.sub(
         r"\s+",
@@ -47,10 +51,7 @@ def _tem_algum_termo(
     texto: str,
     termos: list[str],
 ) -> bool:
-    return any(
-        termo in texto
-        for termo in termos
-    )
+    return any(termo in texto for termo in termos)
 
 
 def identificar_intencao_tool(
@@ -148,19 +149,17 @@ def identificar_intencao_tool(
     candidatos = []
 
     for regra in regras:
-        correspondencias = [
-            termo
-            for termo in regra["termos"]
-            if termo in texto
-        ]
+        correspondencias = [termo for termo in regra["termos"] if termo in texto]
 
         if correspondencias:
-            candidatos.append({
-                "intencao": regra["intencao"],
-                "tool": regra["tool"],
-                "correspondencias": correspondencias,
-                "pontuacao": len(correspondencias),
-            })
+            candidatos.append(
+                {
+                    "intencao": regra["intencao"],
+                    "tool": regra["tool"],
+                    "correspondencias": correspondencias,
+                    "pontuacao": len(correspondencias),
+                }
+            )
 
     if not candidatos:
         return {
@@ -169,8 +168,7 @@ def identificar_intencao_tool(
             "tool": None,
             "confianca": 0.0,
             "motivo": (
-                "Nenhuma ferramenta financeira foi "
-                "identificada para a mensagem."
+                "Nenhuma ferramenta financeira foi identificada para a mensagem."
             ),
         }
 
@@ -182,9 +180,7 @@ def identificar_intencao_tool(
     escolhido = candidatos[0]
 
     confianca = min(
-        0.55 + (
-            escolhido["pontuacao"] * 0.15
-        ),
+        0.55 + (escolhido["pontuacao"] * 0.15),
         0.95,
     )
 
@@ -193,9 +189,7 @@ def identificar_intencao_tool(
         "intencao": escolhido["intencao"],
         "tool": escolhido["tool"],
         "confianca": round(confianca, 2),
-        "termos_detectados": escolhido[
-            "correspondencias"
-        ],
+        "termos_detectados": escolhido["correspondencias"],
         "candidatos": candidatos,
         "motivo": "Intenção identificada por regras determinísticas.",
     }
@@ -263,12 +257,8 @@ def extrair_contexto_basico_mensagem(
             ],
         )
 
-        if (
-            _tem_algum_termo(texto, termos_atraso)
-            or (
-                possui_termo_divida
-                and possui_termo_atraso
-            )
+        if _tem_algum_termo(texto, termos_atraso) or (
+            possui_termo_divida and possui_termo_atraso
         ):
             contexto["esta_atrasada"] = True
 
@@ -309,13 +299,9 @@ def mesclar_contextos_tool(
 
     Dados da mensagem têm prioridade por serem mais recentes.
     """
-    resultado = dict(
-        contexto_memoria or {}
-    )
+    resultado = dict(contexto_memoria or {})
 
-    for chave, valor in (
-        contexto_mensagem or {}
-    ).items():
+    for chave, valor in (contexto_mensagem or {}).items():
         if valor is not None:
             resultado[chave] = valor
 
@@ -534,15 +520,11 @@ def montar_argumentos_tool(
         }
 
     dados_ausentes = [
-        campo
-        for campo in obrigatorios
-        if argumentos.get(campo) in (None, "")
+        campo for campo in obrigatorios if argumentos.get(campo) in (None, "")
     ]
 
     argumentos_limpos = {
-        chave: valor
-        for chave, valor in argumentos.items()
-        if valor is not None
+        chave: valor for chave, valor in argumentos.items() if valor is not None
     }
 
     return {
@@ -567,9 +549,7 @@ def rotear_tool(
     """
     Identifica, prepara e opcionalmente executa uma Tool.
     """
-    classificacao = identificar_intencao_tool(
-        mensagem
-    )
+    classificacao = identificar_intencao_tool(mensagem)
 
     if not classificacao.get("ok"):
         return {
@@ -582,11 +562,7 @@ def rotear_tool(
 
     nome_tool = classificacao["tool"]
 
-    contexto_mensagem = (
-        extrair_contexto_basico_mensagem(
-            mensagem
-        )
-    )
+    contexto_mensagem = extrair_contexto_basico_mensagem(mensagem)
 
     contexto_completo = mesclar_contextos_tool(
         contexto_memoria=contexto,

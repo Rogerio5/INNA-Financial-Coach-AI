@@ -33,9 +33,7 @@ def _entry(
         branch=branch,
         commit_sha="abc123",
         environment=environment,
-        evaluation_mode=(
-            "deterministic-synthetic"
-        ),
+        evaluation_mode=("deterministic-synthetic"),
         passed=passed,
         quality_gate_passed=passed,
         pass_rate=pass_rate,
@@ -49,16 +47,8 @@ def _entry(
             HistoryMetric(
                 metric_id="faithfulness",
                 average_score=metric_score,
-                status=(
-                    "stable"
-                    if passed
-                    else "regressed"
-                ),
-                delta_from_baseline=(
-                    0.0
-                    if passed
-                    else -0.20
-                ),
+                status=("stable" if passed else "regressed"),
+                delta_from_baseline=(0.0 if passed else -0.20),
             ),
         ),
     )
@@ -69,9 +59,7 @@ def _history() -> EvaluationHistory:
         entries=(
             _entry(
                 run_reference="run-001",
-                recorded_at=(
-                    "2026-07-27T03:00:00Z"
-                ),
+                recorded_at=("2026-07-27T03:00:00Z"),
                 branch="main",
                 environment="ci",
                 passed=True,
@@ -80,9 +68,7 @@ def _history() -> EvaluationHistory:
             ),
             _entry(
                 run_reference="run-002",
-                recorded_at=(
-                    "2026-07-27T04:00:00Z"
-                ),
+                recorded_at=("2026-07-27T04:00:00Z"),
                 branch="feat/llmops",
                 environment="local",
                 passed=False,
@@ -94,9 +80,7 @@ def _history() -> EvaluationHistory:
 
 
 def test_builds_dashboard_summary() -> None:
-    summary = build_dashboard_summary(
-        _history()
-    )
+    summary = build_dashboard_summary(_history())
 
     assert summary.total_runs == 2
     assert summary.approved_runs == 1
@@ -108,28 +92,17 @@ def test_builds_dashboard_summary() -> None:
     assert summary.tracked_metrics == 1
 
 
-def test_builds_runs_table_newest_first(
-) -> None:
+def test_builds_runs_table_newest_first() -> None:
     rows = build_runs_table(_history())
 
-    assert rows[0]["run_reference"] == (
-        "run-002"
-    )
-    assert rows[1]["run_reference"] == (
-        "run-001"
-    )
+    assert rows[0]["run_reference"] == ("run-002")
+    assert rows[1]["run_reference"] == ("run-001")
 
 
-def test_builds_pass_rate_series_oldest_first(
-) -> None:
-    rows = build_pass_rate_series(
-        _history()
-    )
+def test_builds_pass_rate_series_oldest_first() -> None:
+    rows = build_pass_rate_series(_history())
 
-    assert [
-        row["run_reference"]
-        for row in rows
-    ] == [
+    assert [row["run_reference"] for row in rows] == [
         "run-001",
         "run-002",
     ]
@@ -139,9 +112,7 @@ def test_builds_metric_series() -> None:
     rows = build_metric_series(_history())
 
     assert len(rows) == 2
-    assert rows[0]["metric_id"] == (
-        "faithfulness"
-    )
+    assert rows[0]["metric_id"] == ("faithfulness")
     assert rows[1]["average_score"] == 0.75
 
 
@@ -154,22 +125,15 @@ def test_filters_metric_series() -> None:
     assert rows == []
 
 
-def test_builds_latest_metric_snapshot(
-) -> None:
-    snapshot = build_metric_snapshot(
-        _history().latest()
-    )
+def test_builds_latest_metric_snapshot() -> None:
+    snapshot = build_metric_snapshot(_history().latest())
 
     assert len(snapshot) == 1
-    assert snapshot[0]["status"] == (
-        "regressed"
-    )
+    assert snapshot[0]["status"] == ("regressed")
 
 
 def test_returns_metric_ids() -> None:
-    assert get_metric_ids(_history()) == (
-        "faithfulness",
-    )
+    assert get_metric_ids(_history()) == ("faithfulness",)
 
 
 def test_filters_history() -> None:
@@ -181,16 +145,11 @@ def test_filters_history() -> None:
     )
 
     assert len(filtered.entries) == 1
-    assert (
-        filtered.entries[0].run_reference
-        == "run-001"
-    )
+    assert filtered.entries[0].run_reference == "run-001"
 
 
 def test_empty_history_summary() -> None:
-    summary = build_dashboard_summary(
-        EvaluationHistory.empty()
-    )
+    summary = build_dashboard_summary(EvaluationHistory.empty())
 
     assert summary.total_runs == 0
     assert summary.approval_rate == 0.0

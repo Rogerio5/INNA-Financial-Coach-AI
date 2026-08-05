@@ -48,21 +48,16 @@ from .runtime import (
 )
 
 
-_T = TypeVar(
-    "_T"
-)
+_T = TypeVar("_T")
 
 
 @runtime_checkable
-class TelegramConversationStateRuntimePort(
-    Protocol
-):
+class TelegramConversationStateRuntimePort(Protocol):
     def load_session(
         self,
         telegram_user_id: int,
         chat_id: int,
-    ) -> TelegramConversationSession | None:
-        ...
+    ) -> TelegramConversationSession | None: ...
 
     def open_session(
         self,
@@ -71,8 +66,7 @@ class TelegramConversationStateRuntimePort(
         initial_state: Mapping[str, Any],
         language: str | None = None,
         ttl_seconds: int | None = None,
-    ) -> TelegramConversationSession:
-        ...
+    ) -> TelegramConversationSession: ...
 
     def save_session(
         self,
@@ -80,33 +74,28 @@ class TelegramConversationStateRuntimePort(
         *,
         ttl_seconds: int | None = None,
         only_if_changed: bool = True,
-    ) -> TelegramConversationSession:
-        ...
+    ) -> TelegramConversationSession: ...
 
     def reload_session(
         self,
         session: TelegramConversationSession,
-    ) -> TelegramConversationSession | None:
-        ...
+    ) -> TelegramConversationSession | None: ...
 
     def delete_session(
         self,
         session: TelegramConversationSession,
-    ) -> bool:
-        ...
+    ) -> bool: ...
 
     def delete_identity(
         self,
         telegram_user_id: int,
         chat_id: int,
-    ) -> bool:
-        ...
+    ) -> bool: ...
 
     def cleanup_expired(
         self,
         limit: int = 100,
-    ) -> int:
-        ...
+    ) -> int: ...
 
 
 def _validate_session(
@@ -128,53 +117,30 @@ def _validate_session(
             "Runtime retornou uma sessão removida."
         )
 
-    if (
-        telegram_user_id is not None
-        and value.telegram_user_id
-        != telegram_user_id
-    ):
+    if telegram_user_id is not None and value.telegram_user_id != telegram_user_id:
         raise TelegramConversationStateConsistencyError(
             "Runtime alterou o telegram_user_id."
         )
 
-    if (
-        chat_id is not None
-        and value.chat_id
-        != chat_id
-    ):
-        raise TelegramConversationStateConsistencyError(
-            "Runtime alterou o chat_id."
-        )
+    if chat_id is not None and value.chat_id != chat_id:
+        raise TelegramConversationStateConsistencyError("Runtime alterou o chat_id.")
 
     return value
 
 
-
 _BRIDGE_EVENT_NAMES = {
-    "load_or_open_session": (
-        "telegram_session_load_completed"
-    ),
-    "save_session": (
-        "telegram_session_save_completed"
-    ),
-    "reload_session": (
-        "telegram_session_reload_completed"
-    ),
-    "delete_session": (
-        "telegram_session_delete_completed"
-    ),
-    "resolve_language": (
-        "telegram_language_resolution_completed"
-    ),
+    "load_or_open_session": ("telegram_session_load_completed"),
+    "save_session": ("telegram_session_save_completed"),
+    "reload_session": ("telegram_session_reload_completed"),
+    "delete_session": ("telegram_session_delete_completed"),
+    "resolve_language": ("telegram_language_resolution_completed"),
 }
 
 
 def _classify_observability_error(
     error: BaseException,
 ) -> str:
-    error_name = type(
-        error
-    ).__name__.lower()
+    error_name = type(error).__name__.lower()
 
     if "conflict" in error_name:
         return "optimistic_conflict"
@@ -210,14 +176,9 @@ def _safe_duration_ms(
     started_at: float,
 ) -> float:
     try:
-        finished_at = float(
-            clock()
-        )
+        finished_at = float(clock())
 
-        duration_ms = (
-            finished_at
-            - float(started_at)
-        ) * 1000.0
+        duration_ms = (finished_at - float(started_at)) * 1000.0
 
     except Exception:
         return 0.0
@@ -233,9 +194,7 @@ def _safe_record_bridge_metric(
     record: TelegramConversationMetricRecord,
 ) -> None:
     try:
-        bridge.metrics.record_operation(
-            record
-        )
+        bridge.metrics.record_operation(record)
 
     except Exception:
         # Telemetria nunca interrompe
@@ -248,9 +207,7 @@ def _safe_emit_bridge_event(
     event: TelegramOperationalEvent,
 ) -> None:
     try:
-        bridge.event_sink.emit(
-            event
-        )
+        bridge.event_sink.emit(event)
 
     except Exception:
         # Telemetria nunca interrompe
@@ -262,14 +219,9 @@ def _observe_bridge_operation(
     operation_name: str,
 ):
     if operation_name not in _BRIDGE_EVENT_NAMES:
-        raise ValueError(
-            "Operação observável inválida: "
-            f"{operation_name!r}."
-        )
+        raise ValueError(f"Operação observável inválida: {operation_name!r}.")
 
-    event_name = _BRIDGE_EVENT_NAMES[
-        operation_name
-    ]
+    event_name = _BRIDGE_EVENT_NAMES[operation_name]
 
     def decorator(
         method: Callable[..., _T],
@@ -281,9 +233,7 @@ def _observe_bridge_operation(
             **kwargs: Any,
         ) -> _T:
             try:
-                started_at = float(
-                    self.clock()
-                )
+                started_at = float(self.clock())
 
             except Exception:
                 started_at = 0.0
@@ -296,45 +246,24 @@ def _observe_bridge_operation(
                 )
 
             except Exception as error:
-                duration_ms = (
-                    _safe_duration_ms(
-                        clock=self.clock,
-                        started_at=started_at,
-                    )
+                duration_ms = _safe_duration_ms(
+                    clock=self.clock,
+                    started_at=started_at,
                 )
 
-                error_category = (
-                    _classify_observability_error(
-                        error
-                    )
-                )
+                error_category = _classify_observability_error(error)
 
-                is_conflict = (
-                    error_category
-                    == "optimistic_conflict"
-                )
+                is_conflict = error_category == "optimistic_conflict"
 
-                outcome = (
-                    "conflict"
-                    if is_conflict
-                    else "error"
-                )
+                outcome = "conflict" if is_conflict else "error"
 
-                record = (
-                    TelegramConversationMetricRecord(
-                        operation=operation_name,
-                        component="bridge",
-                        outcome=outcome,
-                        duration_ms=duration_ms,
-                        error_category=(
-                            error_category
-                        ),
-                        conflict_recovered=(
-                            False
-                            if is_conflict
-                            else None
-                        ),
-                    )
+                record = TelegramConversationMetricRecord(
+                    operation=operation_name,
+                    component="bridge",
+                    outcome=outcome,
+                    duration_ms=duration_ms,
+                    error_category=(error_category),
+                    conflict_recovered=(False if is_conflict else None),
                 )
 
                 _safe_record_bridge_metric(
@@ -344,11 +273,7 @@ def _observe_bridge_operation(
 
                 failure_event_name = (
                     "telegram_session_save_conflict"
-                    if (
-                        operation_name
-                        == "save_session"
-                        and is_conflict
-                    )
+                    if (operation_name == "save_session" and is_conflict)
                     else event_name
                 )
 
@@ -356,29 +281,15 @@ def _observe_bridge_operation(
                     self,
                     TelegramOperationalEvent(
                         name=failure_event_name,
-                        level=(
-                            "warning"
-                            if is_conflict
-                            else "error"
-                        ),
+                        level=("warning" if is_conflict else "error"),
                         component="bridge",
                         outcome=outcome,
                         fields=sanitize_event_fields(
                             {
-                                "operation": (
-                                    operation_name
-                                ),
-                                "duration_ms": (
-                                    duration_ms
-                                ),
-                                "error_category": (
-                                    error_category
-                                ),
-                                "conflict_recovered": (
-                                    False
-                                    if is_conflict
-                                    else None
-                                ),
+                                "operation": (operation_name),
+                                "duration_ms": (duration_ms),
+                                "error_category": (error_category),
+                                "conflict_recovered": (False if is_conflict else None),
                             }
                         ),
                     ),
@@ -410,12 +321,8 @@ def _observe_bridge_operation(
                     outcome="success",
                     fields=sanitize_event_fields(
                         {
-                            "operation": (
-                                operation_name
-                            ),
-                            "duration_ms": (
-                                duration_ms
-                            ),
+                            "operation": (operation_name),
+                            "duration_ms": (duration_ms),
                         }
                     ),
                 ),
@@ -435,23 +342,17 @@ class TelegramWebhookConversationBridge:
     runtime_factory: Callable[
         [],
         TelegramConversationStateRuntimePort,
-    ] = field(
-        repr=False
-    )
+    ] = field(repr=False)
 
     default_language: str = "pt-BR"
 
     metrics: TelegramConversationMetrics = field(
-        default_factory=(
-            NoOpTelegramConversationMetrics
-        ),
+        default_factory=(NoOpTelegramConversationMetrics),
         repr=False,
     )
 
     event_sink: TelegramOperationalEventSink = field(
-        default_factory=(
-            NoOpTelegramOperationalEventSink
-        ),
+        default_factory=(NoOpTelegramOperationalEventSink),
         repr=False,
     )
 
@@ -460,10 +361,7 @@ class TelegramWebhookConversationBridge:
         repr=False,
     )
 
-    _runtime: (
-        TelegramConversationStateRuntimePort
-        | None
-    ) = field(
+    _runtime: TelegramConversationStateRuntimePort | None = field(
         default=None,
         init=False,
         repr=False,
@@ -478,27 +376,17 @@ class TelegramWebhookConversationBridge:
     def __post_init__(
         self,
     ) -> None:
-        if not callable(
-            self.runtime_factory
-        ):
-            raise TelegramConversationStateValidationError(
-                "runtime_factory inválido."
-            )
+        if not callable(self.runtime_factory):
+            raise TelegramConversationStateValidationError("runtime_factory inválido.")
 
-        normalized_language = (
-            normalize_telegram_language(
-                self.default_language
-            )
-        )
+        normalized_language = normalize_telegram_language(self.default_language)
 
         if normalized_language is None:
             raise TelegramConversationStateValidationError(
                 "default_language é obrigatório."
             )
 
-        self.default_language = (
-            normalized_language
-        )
+        self.default_language = normalized_language
 
     @property
     def runtime_initialized(
@@ -531,12 +419,8 @@ class TelegramWebhookConversationBridge:
 
         return _validate_session(
             result,
-            telegram_user_id=(
-                normalized_user_id
-            ),
-            chat_id=(
-                normalized_chat_id
-            ),
+            telegram_user_id=(normalized_user_id),
+            chat_id=(normalized_chat_id),
         )
 
     def open_session(
@@ -555,57 +439,31 @@ class TelegramWebhookConversationBridge:
             chat_id,
         )
 
-        normalized_state = (
-            normalize_telegram_state(
-                initial_state
-            )
-        )
+        normalized_state = normalize_telegram_state(initial_state)
 
-        normalized_language = (
-            normalize_telegram_language(
-                language
-            )
-        )
+        normalized_language = normalize_telegram_language(language)
 
         normalized_ttl = (
-            None
-            if ttl_seconds is None
-            else validate_state_ttl_seconds(
-                ttl_seconds
-            )
+            None if ttl_seconds is None else validate_state_ttl_seconds(ttl_seconds)
         )
 
         result = self._invoke(
             lambda: self._get_runtime().open_session(
-                telegram_user_id=(
-                    normalized_user_id
-                ),
-                chat_id=(
-                    normalized_chat_id
-                ),
-                initial_state=(
-                    normalized_state
-                ),
-                language=(
-                    normalized_language
-                ),
-                ttl_seconds=(
-                    normalized_ttl
-                ),
+                telegram_user_id=(normalized_user_id),
+                chat_id=(normalized_chat_id),
+                initial_state=(normalized_state),
+                language=(normalized_language),
+                ttl_seconds=(normalized_ttl),
             )
         )
 
         return _validate_session(
             result,
-            telegram_user_id=(
-                normalized_user_id
-            ),
-            chat_id=(
-                normalized_chat_id
-            ),
+            telegram_user_id=(normalized_user_id),
+            chat_id=(normalized_chat_id),
         )
 
-    @_observe_bridge_operation('load_or_open_session')
+    @_observe_bridge_operation("load_or_open_session")
     def load_or_open_session(
         self,
         telegram_user_id: int,
@@ -622,24 +480,12 @@ class TelegramWebhookConversationBridge:
             chat_id,
         )
 
-        normalized_state = (
-            normalize_telegram_state(
-                initial_state
-            )
-        )
+        normalized_state = normalize_telegram_state(initial_state)
 
-        normalized_language = (
-            normalize_telegram_language(
-                language
-            )
-        )
+        normalized_language = normalize_telegram_language(language)
 
         normalized_ttl = (
-            None
-            if ttl_seconds is None
-            else validate_state_ttl_seconds(
-                ttl_seconds
-            )
+            None if ttl_seconds is None else validate_state_ttl_seconds(ttl_seconds)
         )
 
         existing = self.load_session(
@@ -651,16 +497,14 @@ class TelegramWebhookConversationBridge:
             return existing
 
         return self.open_session(
-            telegram_user_id=(
-                normalized_user_id
-            ),
+            telegram_user_id=(normalized_user_id),
             chat_id=normalized_chat_id,
             initial_state=normalized_state,
             language=normalized_language,
             ttl_seconds=normalized_ttl,
         )
 
-    @_observe_bridge_operation('save_session')
+    @_observe_bridge_operation("save_session")
     def save_session(
         self,
         session: TelegramConversationSession,
@@ -679,64 +523,41 @@ class TelegramWebhookConversationBridge:
                 "Sessão informada para persistência é inválida."
             )
 
-        validated_session = (
-            _validate_session(
-                session
-            )
-        )
+        validated_session = _validate_session(session)
 
         if not isinstance(
             only_if_changed,
             bool,
         ):
-            raise TelegramConversationStateValidationError(
-                "only_if_changed inválido."
-            )
+            raise TelegramConversationStateValidationError("only_if_changed inválido.")
 
         normalized_ttl = (
-            None
-            if ttl_seconds is None
-            else validate_state_ttl_seconds(
-                ttl_seconds
-            )
+            None if ttl_seconds is None else validate_state_ttl_seconds(ttl_seconds)
         )
 
         result = self._invoke(
             lambda: self._get_runtime().save_session(
                 validated_session,
                 ttl_seconds=normalized_ttl,
-                only_if_changed=(
-                    only_if_changed
-                ),
+                only_if_changed=(only_if_changed),
             )
         )
 
         return _validate_session(
             result,
-            telegram_user_id=(
-                validated_session
-                .telegram_user_id
-            ),
-            chat_id=(
-                validated_session.chat_id
-            ),
+            telegram_user_id=(validated_session.telegram_user_id),
+            chat_id=(validated_session.chat_id),
         )
 
-    @_observe_bridge_operation('reload_session')
+    @_observe_bridge_operation("reload_session")
     def reload_session(
         self,
         session: TelegramConversationSession,
     ) -> TelegramConversationSession | None:
-        validated_session = (
-            _validate_session(
-                session
-            )
-        )
+        validated_session = _validate_session(session)
 
         result = self._invoke(
-            lambda: self._get_runtime().reload_session(
-                validated_session
-            )
+            lambda: self._get_runtime().reload_session(validated_session)
         )
 
         if result is None:
@@ -744,30 +565,19 @@ class TelegramWebhookConversationBridge:
 
         return _validate_session(
             result,
-            telegram_user_id=(
-                validated_session
-                .telegram_user_id
-            ),
-            chat_id=(
-                validated_session.chat_id
-            ),
+            telegram_user_id=(validated_session.telegram_user_id),
+            chat_id=(validated_session.chat_id),
         )
 
-    @_observe_bridge_operation('delete_session')
+    @_observe_bridge_operation("delete_session")
     def delete_session(
         self,
         session: TelegramConversationSession,
     ) -> bool:
-        validated_session = (
-            _validate_session(
-                session
-            )
-        )
+        validated_session = _validate_session(session)
 
         deleted = self._invoke(
-            lambda: self._get_runtime().delete_session(
-                validated_session
-            )
+            lambda: self._get_runtime().delete_session(validated_session)
         )
 
         if not isinstance(
@@ -815,7 +625,7 @@ class TelegramWebhookConversationBridge:
 
         return deleted
 
-    @_observe_bridge_operation('resolve_language')
+    @_observe_bridge_operation("resolve_language")
     def resolve_language(
         self,
         telegram_user_id: int,
@@ -834,9 +644,7 @@ class TelegramWebhookConversationBridge:
         resolved_fallback = (
             self.default_language
             if fallback_language is None
-            else normalize_telegram_language(
-                fallback_language
-            )
+            else normalize_telegram_language(fallback_language)
         )
 
         if resolved_fallback is None:
@@ -849,10 +657,7 @@ class TelegramWebhookConversationBridge:
             normalized_chat_id,
         )
 
-        if (
-            session is None
-            or session.language is None
-        ):
+        if session is None or session.language is None:
             return resolved_fallback
 
         return session.language
@@ -861,16 +666,10 @@ class TelegramWebhookConversationBridge:
         self,
         limit: int = 100,
     ) -> int:
-        normalized_limit = (
-            validate_cleanup_limit(
-                limit
-            )
-        )
+        normalized_limit = validate_cleanup_limit(limit)
 
         deleted_count = self._invoke(
-            lambda: self._get_runtime().cleanup_expired(
-                normalized_limit
-            )
+            lambda: self._get_runtime().cleanup_expired(normalized_limit)
         )
 
         if (
@@ -883,8 +682,7 @@ class TelegramWebhookConversationBridge:
                 int,
             )
             or deleted_count < 0
-            or deleted_count
-            > normalized_limit
+            or deleted_count > normalized_limit
         ):
             raise TelegramConversationStateConsistencyError(
                 "Resultado de cleanup do runtime inválido."
@@ -896,12 +694,8 @@ class TelegramWebhookConversationBridge:
         self,
     ) -> dict[str, object]:
         return {
-            "default_language": (
-                self.default_language
-            ),
-            "runtime_initialized": (
-                self.runtime_initialized
-            ),
+            "default_language": (self.default_language),
+            "runtime_initialized": (self.runtime_initialized),
         }
 
     def _get_runtime(
@@ -926,8 +720,7 @@ class TelegramWebhookConversationBridge:
 
             except Exception:
                 raise TelegramConversationStateUnavailableError(
-                    "Runtime conversacional "
-                    "temporariamente indisponível."
+                    "Runtime conversacional temporariamente indisponível."
                 ) from None
 
             if not isinstance(
@@ -957,36 +750,21 @@ class TelegramWebhookConversationBridge:
 
         except Exception:
             raise TelegramConversationStateUnavailableError(
-                "Persistência conversacional "
-                "temporariamente indisponível."
+                "Persistência conversacional temporariamente indisponível."
             ) from None
 
 
 def create_postgres_telegram_webhook_conversation_bridge(
     *,
-    default_ttl_seconds: int = (
-        DEFAULT_STATE_TTL_SECONDS
-    ),
+    default_ttl_seconds: int = (DEFAULT_STATE_TTL_SECONDS),
     default_language: str = "pt-BR",
-    metrics: TelegramConversationMetrics
-        | None = None,
-    event_sink: TelegramOperationalEventSink
-        | None = None,
-    clock: Callable[[], float] = (
-        time.perf_counter
-    ),
+    metrics: TelegramConversationMetrics | None = None,
+    event_sink: TelegramOperationalEventSink | None = None,
+    clock: Callable[[], float] = (time.perf_counter),
 ) -> TelegramWebhookConversationBridge:
-    normalized_ttl = (
-        validate_state_ttl_seconds(
-            default_ttl_seconds
-        )
-    )
+    normalized_ttl = validate_state_ttl_seconds(default_ttl_seconds)
 
-    normalized_language = (
-        normalize_telegram_language(
-            default_language
-        )
-    )
+    normalized_language = normalize_telegram_language(default_language)
 
     if normalized_language is None:
         raise TelegramConversationStateValidationError(
@@ -999,48 +777,33 @@ def create_postgres_telegram_webhook_conversation_bridge(
         )
 
     resolved_metrics = (
-        metrics
-        if metrics is not None
-        else NoOpTelegramConversationMetrics()
+        metrics if metrics is not None else NoOpTelegramConversationMetrics()
     )
 
     resolved_event_sink = (
-        event_sink
-        if event_sink is not None
-        else NoOpTelegramOperationalEventSink()
+        event_sink if event_sink is not None else NoOpTelegramOperationalEventSink()
     )
 
     if not isinstance(
         resolved_metrics,
         TelegramConversationMetrics,
     ):
-        raise TelegramConversationStateValidationError(
-            "Coletor de métricas inválido."
-        )
+        raise TelegramConversationStateValidationError("Coletor de métricas inválido.")
 
     if not isinstance(
         resolved_event_sink,
         TelegramOperationalEventSink,
     ):
-        raise TelegramConversationStateValidationError(
-            "Event sink inválido."
-        )
+        raise TelegramConversationStateValidationError("Event sink inválido.")
 
-    def runtime_factory(
-    ) -> TelegramConversationStateRuntimePort:
-        return (
-            create_postgres_telegram_conversation_state_runtime(
-                default_ttl_seconds=(
-                    normalized_ttl
-                )
-            )
+    def runtime_factory() -> TelegramConversationStateRuntimePort:
+        return create_postgres_telegram_conversation_state_runtime(
+            default_ttl_seconds=(normalized_ttl)
         )
 
     return TelegramWebhookConversationBridge(
         runtime_factory=runtime_factory,
-        default_language=(
-            normalized_language
-        ),
+        default_language=(normalized_language),
         metrics=resolved_metrics,
         event_sink=resolved_event_sink,
         clock=clock,

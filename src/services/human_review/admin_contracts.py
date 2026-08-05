@@ -5,23 +5,27 @@ from datetime import datetime
 from typing import Any
 
 
-ALLOWED_ADMIN_STATUSES = frozenset({
-    "pending",
-    "processing",
-    "approved",
-    "corrected",
-    "rejected",
-    "cancelled",
-    "resume_failed",
-})
+ALLOWED_ADMIN_STATUSES = frozenset(
+    {
+        "pending",
+        "processing",
+        "approved",
+        "corrected",
+        "rejected",
+        "cancelled",
+        "resume_failed",
+    }
+)
 
-ALLOWED_RISK_LEVELS = frozenset({
-    "",
-    "low",
-    "medium",
-    "high",
-    "critical",
-})
+ALLOWED_RISK_LEVELS = frozenset(
+    {
+        "",
+        "low",
+        "medium",
+        "high",
+        "critical",
+    }
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,47 +42,30 @@ class HumanReviewAdminFilters:
     offset: int = 0
 
     def __post_init__(self) -> None:
-        invalid_statuses = (
-            set(self.statuses)
-            - ALLOWED_ADMIN_STATUSES
-        )
+        invalid_statuses = set(self.statuses) - ALLOWED_ADMIN_STATUSES
 
         if invalid_statuses:
             raise ValueError(
-                "Status administrativos inválidos: "
-                f"{sorted(invalid_statuses)}"
+                f"Status administrativos inválidos: {sorted(invalid_statuses)}"
             )
 
-        invalid_risks = (
-            set(self.risk_levels)
-            - ALLOWED_RISK_LEVELS
-        )
+        invalid_risks = set(self.risk_levels) - ALLOWED_RISK_LEVELS
 
         if invalid_risks:
-            raise ValueError(
-                "Níveis de risco inválidos: "
-                f"{sorted(invalid_risks)}"
-            )
+            raise ValueError(f"Níveis de risco inválidos: {sorted(invalid_risks)}")
 
         if not 1 <= self.limit <= 200:
-            raise ValueError(
-                "limit deve estar entre 1 e 200."
-            )
+            raise ValueError("limit deve estar entre 1 e 200.")
 
         if self.offset < 0:
-            raise ValueError(
-                "offset não pode ser negativo."
-            )
+            raise ValueError("offset não pode ser negativo.")
 
         if (
             self.created_from is not None
             and self.created_to is not None
             and self.created_from > self.created_to
         ):
-            raise ValueError(
-                "created_from não pode ser "
-                "posterior a created_to."
-            )
+            raise ValueError("created_from não pode ser posterior a created_to.")
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,10 +77,7 @@ class HumanReviewAdminPage:
 
     @property
     def has_next(self) -> bool:
-        return (
-            self.offset + len(self.items)
-            < self.total
-        )
+        return self.offset + len(self.items) < self.total
 
     @property
     def has_previous(self) -> bool:
@@ -124,15 +108,9 @@ class HumanReviewAdminMetrics:
     average_resolution_seconds: float | None = None
     approval_rate: float = 0.0
     correction_rate: float = 0.0
-    by_risk: dict[str, int] = field(
-        default_factory=dict
-    )
-    by_agent: dict[str, int] = field(
-        default_factory=dict
-    )
-    by_reviewer: dict[str, int] = field(
-        default_factory=dict
-    )
+    by_risk: dict[str, int] = field(default_factory=dict)
+    by_agent: dict[str, int] = field(default_factory=dict)
+    by_reviewer: dict[str, int] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

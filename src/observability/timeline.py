@@ -65,20 +65,14 @@ def _carregar_database_url() -> str:
         try:
             from dotenv import load_dotenv
 
-            load_dotenv(
-                dotenv_path=Path(".env")
-            )
+            load_dotenv(dotenv_path=Path(".env"))
 
-            database_url = os.getenv(
-                "DATABASE_URL"
-            )
+            database_url = os.getenv("DATABASE_URL")
         except Exception:
             database_url = None
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não encontrada."
-        )
+        raise RuntimeError("DATABASE_URL não encontrada.")
 
     return database_url
 
@@ -87,13 +81,9 @@ def _conectar_postgres():
     try:
         import psycopg2
     except ImportError as exc:
-        raise RuntimeError(
-            "Pacote psycopg2 não instalado."
-        ) from exc
+        raise RuntimeError("Pacote psycopg2 não instalado.") from exc
 
-    return psycopg2.connect(
-        _carregar_database_url()
-    )
+    return psycopg2.connect(_carregar_database_url())
 
 
 def preparar_tabela_timeline(
@@ -186,10 +176,7 @@ def preparar_tabela_timeline(
 
         return {
             "ok": False,
-            "message": (
-                "Erro ao preparar Timeline: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao preparar Timeline: {exc}"),
         }
 
 
@@ -216,18 +203,12 @@ def registrar_evento_timeline(
 
     try:
         if not trace_id:
-            raise ValueError(
-                "trace_id não informado."
-            )
+            raise ValueError("trace_id não informado.")
 
         if etapa not in ETAPAS_TIMELINE:
-            raise ValueError(
-                f"Etapa desconhecida: {etapa}"
-            )
+            raise ValueError(f"Etapa desconhecida: {etapa}")
 
-        status_normalizado = str(
-            status or "sucesso"
-        ).lower()
+        status_normalizado = str(status or "sucesso").lower()
 
         status_permitidos = {
             "iniciado",
@@ -237,15 +218,11 @@ def registrar_evento_timeline(
         }
 
         if status_normalizado not in status_permitidos:
-            raise ValueError(
-                f"Status inválido: {status}"
-            )
+            raise ValueError(f"Status inválido: {status}")
 
         conn = _conectar_postgres()
 
-        preparacao = preparar_tabela_timeline(
-            conn
-        )
+        preparacao = preparar_tabela_timeline(conn)
 
         if not preparacao.get("ok"):
             conn.close()
@@ -257,16 +234,13 @@ def registrar_evento_timeline(
         fim = fim_em
 
         if inicio and inicio.tzinfo is None:
-            inicio = inicio.replace(
-                tzinfo=timezone.utc
-            )
+            inicio = inicio.replace(tzinfo=timezone.utc)
 
         if fim and fim.tzinfo is None:
-            fim = fim.replace(
-                tzinfo=timezone.utc
-            )
+            fim = fim.replace(tzinfo=timezone.utc)
 
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO timeline_eventos_inna (
                 trace_id,
                 usuario_id,
@@ -302,27 +276,29 @@ def registrar_evento_timeline(
                 %s::jsonb
             )
             RETURNING id;
-        """, (
-            trace_id,
-            usuario_id,
-            sessao_id,
-            pergunta,
-            etapa,
-            LABELS_ETAPAS[etapa],
-            ETAPAS_TIMELINE[etapa],
-            status_normalizado,
-            inicio,
-            fim,
-            duracao_ms,
-            mensagem,
-            erro,
-            origem,
-            json.dumps(
-                metadata or {},
-                ensure_ascii=False,
-                default=str,
+        """,
+            (
+                trace_id,
+                usuario_id,
+                sessao_id,
+                pergunta,
+                etapa,
+                LABELS_ETAPAS[etapa],
+                ETAPAS_TIMELINE[etapa],
+                status_normalizado,
+                inicio,
+                fim,
+                duracao_ms,
+                mensagem,
+                erro,
+                origem,
+                json.dumps(
+                    metadata or {},
+                    ensure_ascii=False,
+                    default=str,
+                ),
             ),
-        ))
+        )
 
         evento_id = cur.fetchone()[0]
 
@@ -351,10 +327,7 @@ def registrar_evento_timeline(
             "evento_id": None,
             "trace_id": trace_id,
             "etapa": etapa,
-            "message": (
-                "Falha não bloqueante na Timeline: "
-                f"{exc}"
-            ),
+            "message": (f"Falha não bloqueante na Timeline: {exc}"),
         }
 
 
@@ -382,32 +355,25 @@ def executar_etapa_timeline(
     - registro da Timeline.
     """
     inicio_perf = perf_counter()
-    inicio_data = datetime.now(
-        timezone.utc
-    )
+    inicio_data = datetime.now(timezone.utc)
 
     resultado_funcao = None
     erro_texto = None
     status = "sucesso"
 
     try:
-        resultado_funcao = funcao(
-            **(argumentos or {})
-        )
+        resultado_funcao = funcao(**(argumentos or {}))
 
     except Exception as exc:
         status = "falha"
         erro_texto = str(exc)
 
         duracao_ms = round(
-            (perf_counter() - inicio_perf)
-            * 1000,
+            (perf_counter() - inicio_perf) * 1000,
             3,
         )
 
-        fim_data = datetime.now(
-            timezone.utc
-        )
+        fim_data = datetime.now(timezone.utc)
 
         registro = registrar_evento_timeline(
             trace_id=trace_id,
@@ -419,10 +385,7 @@ def executar_etapa_timeline(
             inicio_em=inicio_data,
             fim_em=fim_data,
             duracao_ms=duracao_ms,
-            mensagem=(
-                f"Falha durante a etapa "
-                f"{LABELS_ETAPAS[etapa]}."
-            ),
+            mensagem=(f"Falha durante a etapa {LABELS_ETAPAS[etapa]}."),
             erro=erro_texto,
             origem=origem,
             metadata=metadata,
@@ -440,14 +403,11 @@ def executar_etapa_timeline(
         }
 
     duracao_ms = round(
-        (perf_counter() - inicio_perf)
-        * 1000,
+        (perf_counter() - inicio_perf) * 1000,
         3,
     )
 
-    fim_data = datetime.now(
-        timezone.utc
-    )
+    fim_data = datetime.now(timezone.utc)
 
     registro = registrar_evento_timeline(
         trace_id=trace_id,
@@ -459,10 +419,7 @@ def executar_etapa_timeline(
         inicio_em=inicio_data,
         fim_em=fim_data,
         duracao_ms=duracao_ms,
-        mensagem=(
-            f"Etapa concluída com sucesso: "
-            f"{LABELS_ETAPAS[etapa]}."
-        ),
+        mensagem=(f"Etapa concluída com sucesso: {LABELS_ETAPAS[etapa]}."),
         erro=None,
         origem=origem,
         metadata=metadata,
@@ -537,10 +494,7 @@ def carregar_timeline_trace(
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro ao carregar Timeline: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao carregar Timeline: {exc}"),
             "trace_id": trace_id,
             "df": None,
         }
@@ -607,10 +561,7 @@ def carregar_traces_recentes(
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                "Erro ao carregar traces: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao carregar traces: {exc}"),
             "df": None,
         }
 

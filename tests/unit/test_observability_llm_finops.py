@@ -27,9 +27,7 @@ def test_classificar_orcamento_saudavel():
     )
 
     assert resultado["status"] == "saudavel"
-    assert resultado[
-        "percentual_utilizado"
-    ] == 50.0
+    assert resultado["percentual_utilizado"] == 50.0
 
 
 def test_classificar_orcamento_critico():
@@ -67,16 +65,18 @@ def test_projecao_mensal():
 
 
 def test_analisar_finops():
-    df = pd.DataFrame([
-        {
-            "custo_total_usd": 0.002,
-            "tokens_totais": 3000,
-        },
-        {
-            "custo_total_usd": 0.003,
-            "tokens_totais": 4000,
-        },
-    ])
+    df = pd.DataFrame(
+        [
+            {
+                "custo_total_usd": 0.002,
+                "tokens_totais": 3000,
+            },
+            {
+                "custo_total_usd": 0.003,
+                "tokens_totais": 4000,
+            },
+        ]
+    )
 
     resultado = analisar_finops_llm(
         df,
@@ -90,7 +90,4 @@ def test_analisar_finops():
 
     assert resultado["total_chamadas"] == 2
     assert resultado["tokens_totais"] == 7000
-    assert (
-        resultado["custo_acumulado_usd"]
-        == 0.005
-    )
+    assert resultado["custo_acumulado_usd"] == 0.005

@@ -14,9 +14,7 @@ from src.context_engineering.schemas import (
 )
 
 
-_EMAIL_PATTERN = re.compile(
-    r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"
-)
+_EMAIL_PATTERN = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
 
 _PHONE_PATTERN = re.compile(
     r"(?<!\d)"
@@ -112,25 +110,15 @@ def merge_privacy_reports(
     merged = PrivacyReport()
 
     for report in reports:
-        merged.sensitive_items_found += (
-            report.sensitive_items_found
-        )
+        merged.sensitive_items_found += report.sensitive_items_found
 
-        merged.email_addresses_masked += (
-            report.email_addresses_masked
-        )
+        merged.email_addresses_masked += report.email_addresses_masked
 
-        merged.phone_numbers_masked += (
-            report.phone_numbers_masked
-        )
+        merged.phone_numbers_masked += report.phone_numbers_masked
 
-        merged.cpf_numbers_masked += (
-            report.cpf_numbers_masked
-        )
+        merged.cpf_numbers_masked += report.cpf_numbers_masked
 
-        merged.card_numbers_masked += (
-            report.card_numbers_masked
-        )
+        merged.card_numbers_masked += report.card_numbers_masked
 
     return merged
 

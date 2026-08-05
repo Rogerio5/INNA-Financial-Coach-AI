@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "name": "retrieval-latency-candidate-v1",
+  "cases": [
+    {
+      "case_id": "reserva-financeira-001",
+      "retrieval_latency_ms": 33.0
+    },
+    {
+      "case_id": "orcamento-mensal-001",
+      "retrieval_latency_ms": 37.0
+    },
+    {
+      "case_id": "cartao-credito-001",
+      "retrieval_latency_ms": 34.0
+    },
+    {
+      "case_id": "dividas-priorizacao-001",
+      "retrieval_latency_ms": 42.0
+    },
+    {
+      "case_id": "gastos-fixos-variaveis-001",
+      "retrieval_latency_ms": 41.0
+    }
+  ]
+}

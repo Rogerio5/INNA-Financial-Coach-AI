@@ -19,19 +19,13 @@ from src.services.telegram_observability import (
 ROOT = Path(__file__).resolve().parents[2]
 
 BRIDGE_FILE = (
-    ROOT
-    / "src"
-    / "services"
-    / "telegram_conversation_state"
-    / "webhook_bridge.py"
+    ROOT / "src" / "services" / "telegram_conversation_state" / "webhook_bridge.py"
 )
 
 
 class RaisingClock:
     def __call__(self) -> float:
-        raise RuntimeError(
-            "clock unavailable"
-        )
+        raise RuntimeError("clock unavailable")
 
 
 class RegressiveClock:
@@ -44,9 +38,7 @@ class RegressiveClock:
         )
 
     def __call__(self) -> float:
-        return next(
-            self._values
-        )
+        return next(self._values)
 
 
 class SequenceClock:
@@ -57,9 +49,7 @@ class SequenceClock:
         self._values = iter(values)
 
     def __call__(self) -> float:
-        return next(
-            self._values
-        )
+        return next(self._values)
 
 
 class CountingMetrics:
@@ -91,9 +81,7 @@ class BrokenMetrics:
     ) -> None:
         del record
 
-        raise RuntimeError(
-            "metrics failed"
-        )
+        raise RuntimeError("metrics failed")
 
 
 class BrokenEvents:
@@ -103,9 +91,7 @@ class BrokenEvents:
     ) -> None:
         del event
 
-        raise RuntimeError(
-            "events failed"
-        )
+        raise RuntimeError("events failed")
 
 
 class ObservedOperation:
@@ -119,23 +105,13 @@ class ObservedOperation:
     ) -> None:
         self.clock = clock
 
-        self.metrics = (
-            metrics
-            if metrics is not None
-            else CountingMetrics()
-        )
+        self.metrics = metrics if metrics is not None else CountingMetrics()
 
-        self.event_sink = (
-            event_sink
-            if event_sink is not None
-            else CountingEvents()
-        )
+        self.event_sink = event_sink if event_sink is not None else CountingEvents()
 
         self.failure = failure
 
-    @_observe_bridge_operation(
-        "load_or_open_session"
-    )
+    @_observe_bridge_operation("load_or_open_session")
     def execute(self):
         if self.failure is not None:
             raise self.failure
@@ -145,22 +121,16 @@ class ObservedOperation:
         }
 
 
-class TelegramConversationStateUnavailableError(
-    RuntimeError
-):
+class TelegramConversationStateUnavailableError(RuntimeError):
     pass
 
 
-class TelegramConversationStateValidationError(
-    RuntimeError
-):
+class TelegramConversationStateValidationError(RuntimeError):
     pass
 
 
 def test_regressive_clock_is_clamped_to_zero():
-    operation = ObservedOperation(
-        clock=RegressiveClock()
-    )
+    operation = ObservedOperation(clock=RegressiveClock())
 
     assert operation.execute() == {
         "status": "ok",
@@ -171,16 +141,11 @@ def test_regressive_clock_is_clamped_to_zero():
 
     assert record.duration_ms == 0.0
 
-    assert (
-        event.fields["duration_ms"]
-        == 0.0
-    )
+    assert event.fields["duration_ms"] == 0.0
 
 
 def test_clock_failure_does_not_break_success():
-    operation = ObservedOperation(
-        clock=RaisingClock()
-    )
+    operation = ObservedOperation(clock=RaisingClock())
 
     assert operation.execute() == {
         "status": "ok",
@@ -193,9 +158,7 @@ def test_clock_failure_does_not_break_success():
 
 
 def test_clock_failure_does_not_mask_original_error():
-    expected = RuntimeError(
-        "original operation failure"
-    )
+    expected = RuntimeError("original operation failure")
 
     operation = ObservedOperation(
         clock=RaisingClock(),
@@ -226,9 +189,7 @@ def test_broken_telemetry_does_not_change_success():
 
 
 def test_broken_telemetry_does_not_mask_error():
-    expected = ValueError(
-        "sensitive internal value"
-    )
+    expected = ValueError("sensitive internal value")
 
     operation = ObservedOperation(
         clock=SequenceClock(
@@ -292,31 +253,20 @@ def test_error_categories_are_sanitized(
     record = operation.metrics.records[0]
     event = operation.event_sink.events[0]
 
-    assert (
-        record.error_category
-        == expected_category
-    )
+    assert record.error_category == expected_category
 
-    assert (
-        event.fields["error_category"]
-        == expected_category
-    )
+    assert event.fields["error_category"] == expected_category
 
 
 def test_exception_message_is_not_emitted():
-    sensitive_message = (
-        "postgresql://admin:secret@internal-db/"
-        "message-from-user"
-    )
+    sensitive_message = "postgresql://admin:secret@internal-db/message-from-user"
 
     operation = ObservedOperation(
         clock=SequenceClock(
             1.0,
             1.1,
         ),
-        failure=RuntimeError(
-            sensitive_message
-        ),
+        failure=RuntimeError(sensitive_message),
     )
 
     with pytest.raises(RuntimeError):
@@ -324,9 +274,7 @@ def test_exception_message_is_not_emitted():
 
     event = operation.event_sink.events[0]
 
-    serialized = repr(
-        dict(event.fields)
-    )
+    serialized = repr(dict(event.fields))
 
     assert sensitive_message not in serialized
     assert "internal-db" not in serialized
@@ -343,13 +291,9 @@ def test_exactly_one_metric_and_event_per_success():
 
     operation.execute()
 
-    assert len(
-        operation.metrics.records
-    ) == 1
+    assert len(operation.metrics.records) == 1
 
-    assert len(
-        operation.event_sink.events
-    ) == 1
+    assert len(operation.event_sink.events) == 1
 
 
 def test_exactly_one_metric_and_event_per_error():
@@ -358,21 +302,15 @@ def test_exactly_one_metric_and_event_per_error():
             2.0,
             2.01,
         ),
-        failure=RuntimeError(
-            "failure"
-        ),
+        failure=RuntimeError("failure"),
     )
 
     with pytest.raises(RuntimeError):
         operation.execute()
 
-    assert len(
-        operation.metrics.records
-    ) == 1
+    assert len(operation.metrics.records) == 1
 
-    assert len(
-        operation.event_sink.events
-    ) == 1
+    assert len(operation.event_sink.events) == 1
 
 
 def test_bridge_defaults_are_noop():
@@ -390,9 +328,7 @@ def test_bridge_defaults_are_noop():
         NoOpTelegramOperationalEventSink,
     )
 
-    assert callable(
-        bridge.clock
-    )
+    assert callable(bridge.clock)
 
 
 def test_public_method_signatures_remain_stable():
@@ -427,21 +363,15 @@ def test_public_method_signatures_remain_stable():
         ],
     }
 
-    for name, expected in (
-        expected_parameters.items()
-    ):
+    for name, expected in expected_parameters.items():
         method = getattr(
             TelegramWebhookConversationBridge,
             name,
         )
 
-        signature = inspect.signature(
-            method
-        )
+        signature = inspect.signature(method)
 
-        assert list(
-            signature.parameters
-        ) == expected
+        assert list(signature.parameters) == expected
 
 
 def test_observed_methods_use_wraps_metadata():
@@ -519,16 +449,9 @@ def test_bridge_observability_has_no_sensitive_metric_fields():
         }:
             continue
 
-        text = ast.unparse(
-            node
-        ).lower()
+        text = ast.unparse(node).lower()
 
-        found = sorted(
-            keyword
-            for keyword
-            in forbidden_keywords
-            if keyword in text
-        )
+        found = sorted(keyword for keyword in forbidden_keywords if keyword in text)
 
         if found:
             violations.append(

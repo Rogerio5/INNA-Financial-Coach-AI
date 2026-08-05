@@ -26,43 +26,29 @@ EXPECTED_LANGUAGES = {
 
 
 def test_has_all_supported_languages():
-    assert set(
-        RAG_OBSERVABILITY_TEXTS
-    ) == EXPECTED_LANGUAGES
+    assert set(RAG_OBSERVABILITY_TEXTS) == EXPECTED_LANGUAGES
 
 
 def test_all_languages_have_complete_contract():
-    reference_keys = set(
-        RAG_OBSERVABILITY_TEXTS["pt"]
-    )
+    reference_keys = set(RAG_OBSERVABILITY_TEXTS["pt"])
 
     for language in EXPECTED_LANGUAGES:
-        assert set(
-            RAG_OBSERVABILITY_TEXTS[
-                language
-            ]
-        ) == reference_keys
+        assert set(RAG_OBSERVABILITY_TEXTS[language]) == reference_keys
 
 
 def test_every_translation_is_non_empty():
-    for language, texts in (
-        RAG_OBSERVABILITY_TEXTS.items()
-    ):
+    for language, texts in RAG_OBSERVABILITY_TEXTS.items():
         for key, value in texts.items():
             assert isinstance(
                 value,
                 str,
             )
 
-            assert value.strip(), (
-                f"{language}.{key}"
-            )
+            assert value.strip(), f"{language}.{key}"
 
 
 def test_renderer_is_available():
-    assert callable(
-        render_rag_observability_page
-    )
+    assert callable(render_rag_observability_page)
 
 
 def test_empty_dataframe_is_supported():
@@ -72,10 +58,7 @@ def test_empty_dataframe_is_supported():
 
 
 def test_page_has_no_simulated_data_markers():
-    path = Path(
-        "src/dashboard_pages/"
-        "rag_observability_page.py"
-    )
+    path = Path("src/dashboard_pages/rag_observability_page.py")
 
     source = path.read_text(
         encoding="utf-8",

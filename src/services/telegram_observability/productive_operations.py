@@ -8,23 +8,19 @@ from .productive_metrics import (
 )
 
 
-class TelegramProductiveOperations(
-    Protocol
-):
+class TelegramProductiveOperations(Protocol):
     def record_worker_cycle(
         self,
         *,
         result: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def record_worker_update(
         self,
         *,
         outcome: str,
         error_category: str | None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def record_receipt(
         self,
@@ -32,8 +28,7 @@ class TelegramProductiveOperations(
         status: str,
         outcome: str,
         error_category: str | None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def record_queue_operation(
         self,
@@ -41,8 +36,7 @@ class TelegramProductiveOperations(
         operation: str,
         outcome: str,
         error_category: str | None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 @dataclass(slots=True)
@@ -75,18 +69,13 @@ class TelegramProductiveOperationsRecorder:
         outcome: str,
         error_category: str | None = None,
     ) -> None:
-        resolved_error_category = (
-            error_category
-            or "none"
-        )
+        resolved_error_category = error_category or "none"
 
         self.metrics.increment(
             "inna_telegram_worker_updates_total",
             labels={
                 "outcome": outcome,
-                "error_category": (
-                    resolved_error_category
-                ),
+                "error_category": (resolved_error_category),
             },
         )
 
@@ -99,9 +88,7 @@ class TelegramProductiveOperationsRecorder:
                 labels={
                     "component": "worker",
                     "operation": "process_update",
-                    "error_category": (
-                        resolved_error_category
-                    ),
+                    "error_category": (resolved_error_category),
                 },
             )
 
@@ -112,19 +99,14 @@ class TelegramProductiveOperationsRecorder:
         outcome: str,
         error_category: str | None = None,
     ) -> None:
-        resolved_error_category = (
-            error_category
-            or "none"
-        )
+        resolved_error_category = error_category or "none"
 
         self.metrics.increment(
             "inna_telegram_receipts_total",
             labels={
                 "receipt_status": status,
                 "outcome": outcome,
-                "error_category": (
-                    resolved_error_category
-                ),
+                "error_category": (resolved_error_category),
             },
         )
 
@@ -146,9 +128,7 @@ class TelegramProductiveOperationsRecorder:
                 labels={
                     "component": "receipt",
                     "operation": operation,
-                    "error_category": (
-                        resolved_error_category
-                    ),
+                    "error_category": (resolved_error_category),
                 },
             )
 
@@ -159,22 +139,14 @@ class TelegramProductiveOperationsRecorder:
         outcome: str,
         error_category: str | None = None,
     ) -> None:
-        resolved_error_category = (
-            error_category
-            or "none"
-        )
+        resolved_error_category = error_category or "none"
 
         self.metrics.increment(
-            (
-                "inna_telegram_"
-                "queue_operations_total"
-            ),
+            ("inna_telegram_queue_operations_total"),
             labels={
                 "queue_operation": operation,
                 "outcome": outcome,
-                "error_category": (
-                    resolved_error_category
-                ),
+                "error_category": (resolved_error_category),
             },
         )
 
@@ -199,9 +171,7 @@ class TelegramProductiveOperationsRecorder:
                 labels={
                     "component": "queue",
                     "operation": mapped_operation,
-                    "error_category": (
-                        resolved_error_category
-                    ),
+                    "error_category": (resolved_error_category),
                 },
             )
 

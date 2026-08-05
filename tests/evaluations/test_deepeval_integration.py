@@ -48,29 +48,17 @@ from src.evaluation.deepeval_integration import (
 
 @pytest.fixture
 def public_case() -> InnaEvaluationCase:
-    return build_core_dataset().get_case(
-        "financial-diagnosis-balanced-001"
-    )
+    return build_core_dataset().get_case("financial-diagnosis-balanced-001")
 
 
 @pytest.fixture
 def conversation_case() -> InnaEvaluationCase:
-    return (
-        build_conversation_dataset()
-        .get_case(
-            "conversation-financial-followup-001"
-        )
-    )
+    return build_conversation_dataset().get_case("conversation-financial-followup-001")
 
 
 @pytest.fixture
 def internal_case() -> InnaEvaluationCase:
-    return (
-        build_conversation_dataset()
-        .get_case(
-            "human-review-sensitive-guidance-001"
-        )
-    )
+    return build_conversation_dataset().get_case("human-review-sensitive-guidance-001")
 
 
 @pytest.fixture
@@ -96,9 +84,7 @@ def build_external_case(
         dataset_name="inna-test",
         dataset_version="1.0.0",
         privacy_level=privacy_level,
-        external_evaluation_allowed=(
-            external_evaluation_allowed
-        ),
+        external_evaluation_allowed=(external_evaluation_allowed),
         metadata={
             "synthetic": synthetic,
             "external_safe": external_safe,
@@ -112,15 +98,9 @@ def build_external_case(
 
 
 def test_deepeval_environment_constants() -> None:
-    assert DEEPEVAL_ENABLED_ENV == (
-        "INNA_DEEPEVAL_ENABLED"
-    )
-    assert DEEPEVAL_LIVE_ENV == (
-        "INNA_DEEPEVAL_LIVE"
-    )
-    assert DEEPEVAL_EXTERNAL_ONLY_ENV == (
-        "INNA_DEEPEVAL_EXTERNAL_ONLY"
-    )
+    assert DEEPEVAL_ENABLED_ENV == ("INNA_DEEPEVAL_ENABLED")
+    assert DEEPEVAL_LIVE_ENV == ("INNA_DEEPEVAL_LIVE")
+    assert DEEPEVAL_EXTERNAL_ONLY_ENV == ("INNA_DEEPEVAL_EXTERNAL_ONLY")
 
 
 # ============================================================
@@ -137,9 +117,7 @@ def test_settings_defaults_are_secure() -> None:
 
 
 def test_settings_from_empty_environment() -> None:
-    settings = (
-        DeepEvalSettings.from_environment({})
-    )
+    settings = DeepEvalSettings.from_environment({})
 
     assert settings == DeepEvalSettings(
         enabled=False,
@@ -254,14 +232,12 @@ def test_parse_environment_bool_rejects_invalid_values(
 
 
 def test_settings_from_environment_enabled() -> None:
-    settings = (
-        DeepEvalSettings.from_environment(
-            {
-                DEEPEVAL_ENABLED_ENV: "true",
-                DEEPEVAL_LIVE_ENV: "false",
-                DEEPEVAL_EXTERNAL_ONLY_ENV: "true",
-            }
-        )
+    settings = DeepEvalSettings.from_environment(
+        {
+            DEEPEVAL_ENABLED_ENV: "true",
+            DEEPEVAL_LIVE_ENV: "false",
+            DEEPEVAL_EXTERNAL_ONLY_ENV: "true",
+        }
     )
 
     assert settings.enabled is True
@@ -270,21 +246,17 @@ def test_settings_from_environment_enabled() -> None:
 
 
 def test_settings_can_disable_external_only() -> None:
-    settings = (
-        DeepEvalSettings.from_environment(
-            {
-                DEEPEVAL_EXTERNAL_ONLY_ENV: "false",
-            }
-        )
+    settings = DeepEvalSettings.from_environment(
+        {
+            DEEPEVAL_EXTERNAL_ONLY_ENV: "false",
+        }
     )
 
     assert settings.external_only is False
 
 
 def test_require_enabled_blocks_disabled_settings() -> None:
-    settings = DeepEvalSettings(
-        enabled=False
-    )
+    settings = DeepEvalSettings(enabled=False)
 
     with pytest.raises(
         DeepEvalConfigurationError,
@@ -294,9 +266,7 @@ def test_require_enabled_blocks_disabled_settings() -> None:
 
 
 def test_require_enabled_accepts_enabled_settings() -> None:
-    settings = DeepEvalSettings(
-        enabled=True
-    )
+    settings = DeepEvalSettings(enabled=True)
 
     settings.require_enabled()
 
@@ -393,10 +363,7 @@ def test_real_deepeval_availability() -> None:
 
     assert availability.installed is True
     assert availability.package_version == "4.1.3"
-    assert (
-        availability.llm_test_case_available
-        is True
-    )
+    assert availability.llm_test_case_available is True
     assert availability.evaluate_available is True
     assert availability.ready is True
     assert availability.error is None
@@ -421,10 +388,7 @@ def test_require_deepeval_blocks_unavailable(
     )
 
     monkeypatch.setattr(
-        (
-            "src.evaluation.deepeval_integration."
-            "deepeval_availability"
-        ),
+        ("src.evaluation.deepeval_integration.deepeval_availability"),
         lambda: unavailable,
     )
 
@@ -490,10 +454,7 @@ def test_normalize_text_sequence() -> None:
 
 
 def test_normalize_text_sequence_none() -> None:
-    assert (
-        _normalize_text_sequence(None)
-        == ()
-    )
+    assert _normalize_text_sequence(None) == ()
 
 
 @pytest.mark.parametrize(
@@ -511,9 +472,7 @@ def test_normalize_text_sequence_rejects_single_string(
         ValueError,
         match="sequência de textos",
     ):
-        _normalize_text_sequence(
-            invalid_value
-        )
+        _normalize_text_sequence(invalid_value)
 
 
 # ============================================================
@@ -531,9 +490,7 @@ def test_payload_normalizes_values() -> None:
             " contexto ",
             "contexto",
         ),
-        retrieval_context=(
-            " documento ",
-        ),
+        retrieval_context=(" documento ",),
         metadata={
             "source": "test",
         },
@@ -543,12 +500,8 @@ def test_payload_normalizes_values() -> None:
     assert payload.input_text == "Entrada"
     assert payload.actual_output == "Resposta"
     assert payload.expected_output == "Esperada"
-    assert payload.context == (
-        "contexto",
-    )
-    assert payload.retrieval_context == (
-        "documento",
-    )
+    assert payload.context == ("contexto",)
+    assert payload.retrieval_context == ("documento",)
     assert isinstance(
         payload.metadata,
         MappingProxyType,
@@ -635,32 +588,20 @@ def test_render_conversation_turn() -> None:
 def test_render_conversation_context(
     conversation_case: InnaEvaluationCase,
 ) -> None:
-    context = render_conversation_context(
-        conversation_case
-    )
+    context = render_conversation_context(conversation_case)
 
     assert len(context) == 3
-    assert context[0].startswith(
-        "[0] user:"
-    )
-    assert context[1].startswith(
-        "[1] assistant:"
-    )
-    assert context[2].startswith(
-        "[2] user:"
-    )
+    assert context[0].startswith("[0] user:")
+    assert context[1].startswith("[1] assistant:")
+    assert context[2].startswith("[2] user:")
 
 
 def test_render_case_input_prefers_input_text(
     conversation_case: InnaEvaluationCase,
 ) -> None:
-    rendered = render_case_input(
-        conversation_case
-    )
+    rendered = render_case_input(conversation_case)
 
-    assert rendered == (
-        conversation_case.input_text
-    )
+    assert rendered == (conversation_case.input_text)
 
 
 def test_render_case_input_uses_conversation_when_empty() -> None:
@@ -683,10 +624,7 @@ def test_render_case_input_uses_conversation_when_empty() -> None:
 
     rendered = render_case_input(case)
 
-    assert rendered == (
-        "[0] user: Mensagem inicial.\n"
-        "[1] assistant: Resposta inicial."
-    )
+    assert rendered == ("[0] user: Mensagem inicial.\n[1] assistant: Resposta inicial.")
 
 
 # ============================================================
@@ -697,15 +635,11 @@ def test_render_case_input_uses_conversation_when_empty() -> None:
 def test_external_public_case_is_allowed(
     public_case: InnaEvaluationCase,
 ) -> None:
-    ensure_external_case_allowed(
-        public_case
-    )
+    ensure_external_case_allowed(public_case)
 
 
 def test_external_policy_rejects_flag_disabled() -> None:
-    case = build_external_case(
-        external_evaluation_allowed=False
-    )
+    case = build_external_case(external_evaluation_allowed=False)
 
     with pytest.raises(
         DeepEvalPrivacyError,
@@ -724,9 +658,7 @@ def test_external_policy_rejects_flag_disabled() -> None:
 def test_external_policy_rejects_non_public_privacy(
     privacy_level: PrivacyLevel,
 ) -> None:
-    case = build_external_case(
-        privacy_level=privacy_level
-    )
+    case = build_external_case(privacy_level=privacy_level)
 
     with pytest.raises(
         DeepEvalPrivacyError,
@@ -738,10 +670,7 @@ def test_external_policy_rejects_non_public_privacy(
 def test_restricted_case_cannot_enable_external_evaluation() -> None:
     with pytest.raises(
         ValueError,
-        match=(
-            "RESTRICTED não podem permitir "
-            "avaliação externa"
-        ),
+        match=("RESTRICTED não podem permitir avaliação externa"),
     ):
         build_external_case(
             privacy_level=PrivacyLevel.RESTRICTED,
@@ -763,9 +692,7 @@ def test_restricted_case_is_blocked_by_deepeval_policy() -> None:
 
 
 def test_external_policy_rejects_non_synthetic() -> None:
-    case = build_external_case(
-        synthetic=False
-    )
+    case = build_external_case(synthetic=False)
 
     with pytest.raises(
         DeepEvalPrivacyError,
@@ -775,9 +702,7 @@ def test_external_policy_rejects_non_synthetic() -> None:
 
 
 def test_external_policy_rejects_not_external_safe() -> None:
-    case = build_external_case(
-        external_safe=False
-    )
+    case = build_external_case(external_safe=False)
 
     with pytest.raises(
         DeepEvalPrivacyError,
@@ -793,9 +718,7 @@ def test_internal_hitl_case_is_blocked(
         DeepEvalPrivacyError,
         match="não está autorizado",
     ):
-        ensure_external_case_allowed(
-            internal_case
-        )
+        ensure_external_case_allowed(internal_case)
 
 
 # ============================================================
@@ -810,39 +733,21 @@ def test_build_local_payload(
     payload = build_deepeval_payload(
         public_case,
         actual_output=actual_output,
-        context=(
-            "Contexto adicional.",
-        ),
-        retrieval_context=(
-            "Documento recuperado.",
-        ),
+        context=("Contexto adicional.",),
+        retrieval_context=("Documento recuperado.",),
         metadata={
             "execution_mode": "dry-run",
         },
         external_run=False,
     )
 
-    assert payload.case_id == (
-        public_case.case_id
-    )
-    assert payload.input_text == (
-        public_case.input_text
-    )
-    assert payload.actual_output == (
-        actual_output
-    )
-    assert payload.context == (
-        "Contexto adicional.",
-    )
-    assert payload.retrieval_context == (
-        "Documento recuperado.",
-    )
-    assert payload.metadata[
-        "execution_mode"
-    ] == "dry-run"
-    assert payload.metadata[
-        "dataset_name"
-    ] == public_case.dataset_name
+    assert payload.case_id == (public_case.case_id)
+    assert payload.input_text == (public_case.input_text)
+    assert payload.actual_output == (actual_output)
+    assert payload.context == ("Contexto adicional.",)
+    assert payload.retrieval_context == ("Documento recuperado.",)
+    assert payload.metadata["execution_mode"] == "dry-run"
+    assert payload.metadata["dataset_name"] == public_case.dataset_name
 
 
 def test_build_conversation_payload_combines_context(
@@ -852,26 +757,18 @@ def test_build_conversation_payload_combines_context(
     payload = build_deepeval_payload(
         conversation_case,
         actual_output=actual_output,
-        context=(
-            "Contexto adicional.",
-        ),
+        context=("Contexto adicional.",),
     )
 
     assert len(payload.context) == 4
-    assert payload.context[-1] == (
-        "Contexto adicional."
-    )
+    assert payload.context[-1] == ("Contexto adicional.")
 
 
 def test_build_payload_removes_duplicate_context(
     conversation_case: InnaEvaluationCase,
     actual_output: str,
 ) -> None:
-    conversation_context = (
-        render_conversation_context(
-            conversation_case
-        )
-    )
+    conversation_context = render_conversation_context(conversation_case)
 
     payload = build_deepeval_payload(
         conversation_case,
@@ -883,9 +780,7 @@ def test_build_payload_removes_duplicate_context(
         ),
     )
 
-    assert payload.context.count(
-        conversation_context[0]
-    ) == 1
+    assert payload.context.count(conversation_context[0]) == 1
 
 
 def test_build_external_payload(
@@ -901,15 +796,9 @@ def test_build_external_payload(
         external_run=True,
     )
 
-    assert payload.case_id == (
-        public_case.case_id
-    )
-    assert payload.metadata[
-        "synthetic"
-    ] is True
-    assert payload.metadata[
-        "privacy_level"
-    ] == "public"
+    assert payload.case_id == (public_case.case_id)
+    assert payload.metadata["synthetic"] is True
+    assert payload.metadata["privacy_level"] == "public"
 
 
 def test_build_external_payload_blocks_internal_case(
@@ -948,11 +837,9 @@ def test_supported_constructor_arguments_filters_values() -> None:
         "context": [],
     }
 
-    filtered = (
-        _supported_constructor_arguments(
-            Constructor,
-            values,
-        )
+    filtered = _supported_constructor_arguments(
+        Constructor,
+        values,
     )
 
     assert filtered == {
@@ -977,11 +864,9 @@ def test_supported_constructor_arguments_with_kwargs() -> None:
         "expected_output": "Esperada",
     }
 
-    filtered = (
-        _supported_constructor_arguments(
-            Constructor,
-            values,
-        )
+    filtered = _supported_constructor_arguments(
+        Constructor,
+        values,
     )
 
     assert filtered == values
@@ -999,24 +884,14 @@ def test_create_real_llm_test_case(
     payload = build_deepeval_payload(
         public_case,
         actual_output=actual_output,
-        retrieval_context=(
-            "Documento financeiro sintético.",
-        ),
+        retrieval_context=("Documento financeiro sintético.",),
     )
 
-    test_case = create_llm_test_case(
-        payload
-    )
+    test_case = create_llm_test_case(payload)
 
-    assert test_case.input == (
-        public_case.input_text
-    )
-    assert test_case.actual_output == (
-        actual_output
-    )
-    assert test_case.retrieval_context == [
-        "Documento financeiro sintético."
-    ]
+    assert test_case.input == (public_case.input_text)
+    assert test_case.actual_output == (actual_output)
+    assert test_case.retrieval_context == ["Documento financeiro sintético."]
 
 
 def test_convert_case_to_deepeval(
@@ -1026,9 +901,7 @@ def test_convert_case_to_deepeval(
     conversion = convert_case_to_deepeval(
         public_case,
         actual_output=actual_output,
-        retrieval_context=(
-            "Documento sintético.",
-        ),
+        retrieval_context=("Documento sintético.",),
         metadata={
             "runner": "pytest",
         },
@@ -1038,16 +911,10 @@ def test_convert_case_to_deepeval(
         conversion,
         DeepEvalConversion,
     )
-    assert conversion.case_id == (
-        public_case.case_id
-    )
-    assert conversion.deepeval_version == (
-        "4.1.3"
-    )
+    assert conversion.case_id == (public_case.case_id)
+    assert conversion.deepeval_version == ("4.1.3")
     assert conversion.external_run is False
-    assert conversion.payload.metadata[
-        "runner"
-    ] == "pytest"
+    assert conversion.payload.metadata["runner"] == "pytest"
     assert conversion.llm_test_case.input
 
 
@@ -1092,9 +959,7 @@ def test_conversion_does_not_execute_metrics(
         nonlocal called
         called = True
 
-        raise AssertionError(
-            "deepeval.evaluate não deveria ser chamado."
-        )
+        raise AssertionError("deepeval.evaluate não deveria ser chamado.")
 
     monkeypatch.setattr(
         "deepeval.evaluate",
@@ -1131,9 +996,7 @@ def test_payload_metadata_does_not_share_mutable_reference(
 
     metadata["execution_id"] = "changed"
 
-    assert payload.metadata[
-        "execution_id"
-    ] == "run-001"
+    assert payload.metadata["execution_id"] == "run-001"
 
 
 def test_external_payload_metadata_is_mapping(
@@ -1174,10 +1037,6 @@ def test_external_payload_does_not_include_complete_case_metadata(
         "synthetic",
     }
 
-    assert set(payload.metadata).issuperset(
-        allowed_keys
-    )
+    assert set(payload.metadata).issuperset(allowed_keys)
 
-    assert "external_safe" not in (
-        payload.metadata
-    )
+    assert "external_safe" not in (payload.metadata)

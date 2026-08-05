@@ -20,9 +20,7 @@ class FakeBridge:
         *,
         resolved_language="pt",
     ):
-        self.resolved_language = (
-            resolved_language
-        )
+        self.resolved_language = resolved_language
         self.resolve_calls = []
 
     def resolve_language(
@@ -44,24 +42,17 @@ class FakeBridge:
 
 
 def test_state_language_has_highest_priority():
-    bridge = FakeBridge(
-        resolved_language="fr"
-    )
+    bridge = FakeBridge(resolved_language="fr")
 
-    result = (
-        telegram_webhook
-        ._resolve_durable_telegram_language(
-            chat_id=2001,
-            telegram_user_id=1001,
-            session={
-                "step": "nome",
-                "lang": "es",
-            },
-            conversation_bridge=bridge,
-            durable_session=FakeDurableSession(
-                language="en_us"
-            ),
-        )
+    result = telegram_webhook._resolve_durable_telegram_language(
+        chat_id=2001,
+        telegram_user_id=1001,
+        session={
+            "step": "nome",
+            "lang": "es",
+        },
+        conversation_bridge=bridge,
+        durable_session=FakeDurableSession(language="en_us"),
     )
 
     assert result == "es"
@@ -69,23 +60,16 @@ def test_state_language_has_highest_priority():
 
 
 def test_durable_session_language_has_second_priority():
-    bridge = FakeBridge(
-        resolved_language="fr"
-    )
+    bridge = FakeBridge(resolved_language="fr")
 
-    result = (
-        telegram_webhook
-        ._resolve_durable_telegram_language(
-            chat_id=2001,
-            telegram_user_id=1001,
-            session={
-                "step": "idioma",
-            },
-            conversation_bridge=bridge,
-            durable_session=FakeDurableSession(
-                language="en_us"
-            ),
-        )
+    result = telegram_webhook._resolve_durable_telegram_language(
+        chat_id=2001,
+        telegram_user_id=1001,
+        session={
+            "step": "idioma",
+        },
+        conversation_bridge=bridge,
+        durable_session=FakeDurableSession(language="en_us"),
     )
 
     assert result == "en_us"
@@ -93,23 +77,16 @@ def test_durable_session_language_has_second_priority():
 
 
 def test_bridge_resolves_language_when_state_is_absent():
-    bridge = FakeBridge(
-        resolved_language="de"
-    )
+    bridge = FakeBridge(resolved_language="de")
 
-    result = (
-        telegram_webhook
-        ._resolve_durable_telegram_language(
-            chat_id=-2001,
-            telegram_user_id=1001,
-            session={
-                "step": "idioma",
-            },
-            conversation_bridge=bridge,
-            durable_session=FakeDurableSession(
-                language=None
-            ),
-        )
+    result = telegram_webhook._resolve_durable_telegram_language(
+        chat_id=-2001,
+        telegram_user_id=1001,
+        session={
+            "step": "idioma",
+        },
+        conversation_bridge=bridge,
+        durable_session=FakeDurableSession(language=None),
     )
 
     assert result == "de"
@@ -125,20 +102,14 @@ def test_bridge_resolves_language_when_state_is_absent():
 
 def test_durable_path_does_not_use_user_last_lang():
 
+    bridge = FakeBridge(resolved_language="it")
 
-    bridge = FakeBridge(
-        resolved_language="it"
-    )
-
-    result = (
-        telegram_webhook
-        ._resolve_durable_telegram_language(
-            chat_id=2001,
-            telegram_user_id=1001,
-            session=None,
-            conversation_bridge=bridge,
-            durable_session=None,
-        )
+    result = telegram_webhook._resolve_durable_telegram_language(
+        chat_id=2001,
+        telegram_user_id=1001,
+        session=None,
+        conversation_bridge=bridge,
+        durable_session=None,
     )
 
     assert result == "it"
@@ -146,21 +117,17 @@ def test_durable_path_does_not_use_user_last_lang():
 
 def test_bridge_failure_is_not_replaced_by_legacy_memory():
 
-
     class FailingBridge:
         def resolve_language(
             self,
             *args,
             **kwargs,
         ):
-            raise RuntimeError(
-                "state unavailable"
-            )
+            raise RuntimeError("state unavailable")
 
     try:
         (
-            telegram_webhook
-            ._resolve_durable_telegram_language(
+            telegram_webhook._resolve_durable_telegram_language(
                 chat_id=2001,
                 telegram_user_id=1001,
                 session=None,
@@ -173,6 +140,4 @@ def test_bridge_failure_is_not_replaced_by_legacy_memory():
         assert str(error) == "state unavailable"
 
     else:
-        raise AssertionError(
-            "A falha da bridge deveria ser propagada."
-        )
+        raise AssertionError("A falha da bridge deveria ser propagada.")

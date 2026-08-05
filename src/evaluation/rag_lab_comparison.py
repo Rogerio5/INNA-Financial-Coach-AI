@@ -68,27 +68,19 @@ class RagLabComparison:
     @property
     def has_regression(self) -> bool:
         return bool(
-            self.status
-            == RagLabComparisonStatus.REGRESSED
-            or self.regressed_metric_ids
+            self.status == RagLabComparisonStatus.REGRESSED or self.regressed_metric_ids
         )
 
     @property
     def has_improvement(self) -> bool:
         return bool(
-            self.status
-            == RagLabComparisonStatus.IMPROVED
-            or self.improved_metric_ids
+            self.status == RagLabComparisonStatus.IMPROVED or self.improved_metric_ids
         )
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "baseline_reference": (
-                self.baseline_reference
-            ),
-            "candidate_reference": (
-                self.candidate_reference
-            ),
+            "baseline_reference": (self.baseline_reference),
+            "candidate_reference": (self.candidate_reference),
             "baseline_score": self.baseline_score,
             "candidate_score": self.candidate_score,
             "delta": self.delta,
@@ -98,22 +90,11 @@ class RagLabComparison:
             "candidate_passed": self.candidate_passed,
             "has_regression": self.has_regression,
             "has_improvement": self.has_improvement,
-            "improved_metric_ids": list(
-                self.improved_metric_ids
-            ),
-            "regressed_metric_ids": list(
-                self.regressed_metric_ids
-            ),
-            "stable_metric_ids": list(
-                self.stable_metric_ids
-            ),
-            "unavailable_metric_ids": list(
-                self.unavailable_metric_ids
-            ),
-            "axes": [
-                axis.to_dict()
-                for axis in self.axes
-            ],
+            "improved_metric_ids": list(self.improved_metric_ids),
+            "regressed_metric_ids": list(self.regressed_metric_ids),
+            "stable_metric_ids": list(self.stable_metric_ids),
+            "unavailable_metric_ids": list(self.unavailable_metric_ids),
+            "axes": [axis.to_dict() for axis in self.axes],
         }
 
 
@@ -244,9 +225,7 @@ def compare_rag_triad_entries(
     """
 
     if tolerance < 0:
-        raise ValueError(
-            "tolerance não pode ser negativa."
-        )
+        raise ValueError("tolerance não pode ser negativa.")
 
     baseline_reference = str(
         getattr(
@@ -266,48 +245,28 @@ def compare_rag_triad_entries(
         or "candidate"
     )
 
-    baseline_scores = _metric_scores(
-        baseline
-    )
+    baseline_scores = _metric_scores(baseline)
 
-    candidate_scores = _metric_scores(
-        candidate
-    )
+    candidate_scores = _metric_scores(candidate)
 
-    axis_results: list[
-        RagLabAxisComparison
-    ] = []
+    axis_results: list[RagLabAxisComparison] = []
 
     for metric_id in RAG_TRIAD_METRIC_IDS:
-        baseline_axis_score = (
-            baseline_scores.get(metric_id)
-        )
+        baseline_axis_score = baseline_scores.get(metric_id)
 
-        candidate_axis_score = (
-            candidate_scores.get(metric_id)
-        )
+        candidate_axis_score = candidate_scores.get(metric_id)
 
         delta = (
-            candidate_axis_score
-            - baseline_axis_score
-            if (
-                baseline_axis_score
-                is not None
-                and candidate_axis_score
-                is not None
-            )
+            candidate_axis_score - baseline_axis_score
+            if (baseline_axis_score is not None and candidate_axis_score is not None)
             else None
         )
 
         axis_results.append(
             RagLabAxisComparison(
                 metric_id=metric_id,
-                baseline_score=(
-                    baseline_axis_score
-                ),
-                candidate_score=(
-                    candidate_axis_score
-                ),
+                baseline_score=(baseline_axis_score),
+                candidate_score=(candidate_axis_score),
                 delta=delta,
                 status=_classify_delta(
                     delta,
@@ -316,20 +275,13 @@ def compare_rag_triad_entries(
             )
         )
 
-    baseline_score = _triad_score(
-        baseline
-    )
+    baseline_score = _triad_score(baseline)
 
-    candidate_score = _triad_score(
-        candidate
-    )
+    candidate_score = _triad_score(candidate)
 
     aggregate_delta = (
         candidate_score - baseline_score
-        if (
-            baseline_score is not None
-            and candidate_score is not None
-        )
+        if (baseline_score is not None and candidate_score is not None)
         else None
     )
 
@@ -341,43 +293,28 @@ def compare_rag_triad_entries(
     improved_metric_ids = tuple(
         axis.metric_id
         for axis in axis_results
-        if (
-            axis.status
-            == RagLabComparisonStatus.IMPROVED
-        )
+        if (axis.status == RagLabComparisonStatus.IMPROVED)
     )
 
     regressed_metric_ids = tuple(
         axis.metric_id
         for axis in axis_results
-        if (
-            axis.status
-            == RagLabComparisonStatus.REGRESSED
-        )
+        if (axis.status == RagLabComparisonStatus.REGRESSED)
     )
 
     stable_metric_ids = tuple(
         axis.metric_id
         for axis in axis_results
-        if (
-            axis.status
-            == RagLabComparisonStatus.STABLE
-        )
+        if (axis.status == RagLabComparisonStatus.STABLE)
     )
 
     unavailable_metric_ids = tuple(
         axis.metric_id
         for axis in axis_results
-        if (
-            axis.status
-            == RagLabComparisonStatus.UNAVAILABLE
-        )
+        if (axis.status == RagLabComparisonStatus.UNAVAILABLE)
     )
 
-    complete = bool(
-        aggregate_delta is not None
-        and not unavailable_metric_ids
-    )
+    complete = bool(aggregate_delta is not None and not unavailable_metric_ids)
 
     return RagLabComparison(
         baseline_reference=baseline_reference,
@@ -388,20 +325,10 @@ def compare_rag_triad_entries(
         status=aggregate_status,
         axes=tuple(axis_results),
         complete=complete,
-        baseline_passed=_triad_passed(
-            baseline
-        ),
-        candidate_passed=_triad_passed(
-            candidate
-        ),
-        improved_metric_ids=(
-            improved_metric_ids
-        ),
-        regressed_metric_ids=(
-            regressed_metric_ids
-        ),
+        baseline_passed=_triad_passed(baseline),
+        candidate_passed=_triad_passed(candidate),
+        improved_metric_ids=(improved_metric_ids),
+        regressed_metric_ids=(regressed_metric_ids),
         stable_metric_ids=stable_metric_ids,
-        unavailable_metric_ids=(
-            unavailable_metric_ids
-        ),
+        unavailable_metric_ids=(unavailable_metric_ids),
     )

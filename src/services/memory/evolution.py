@@ -52,13 +52,9 @@ def calcular_evolucao_memoria(
     evolucoes = []
 
     for campo, label in campos.items():
-        antes = _para_float(
-            memoria_anterior.get(campo)
-        )
+        antes = _para_float(memoria_anterior.get(campo))
 
-        depois = _para_float(
-            memoria_nova.get(campo)
-        )
+        depois = _para_float(memoria_nova.get(campo))
 
         if antes is None or depois is None:
             continue
@@ -73,19 +69,17 @@ def calcular_evolucao_memoria(
         if antes != 0:
             percentual = (diferenca / antes) * 100
 
-        evolucoes.append({
-            "campo": campo,
-            "label": label,
-            "antes": antes,
-            "depois": depois,
-            "diferenca": diferenca,
-            "percentual": percentual,
-            "tipo": (
-                "aumento"
-                if diferenca > 0
-                else "redução"
-            ),
-        })
+        evolucoes.append(
+            {
+                "campo": campo,
+                "label": label,
+                "antes": antes,
+                "depois": depois,
+                "diferenca": diferenca,
+                "percentual": percentual,
+                "tipo": ("aumento" if diferenca > 0 else "redução"),
+            }
+        )
 
     if not evolucoes:
         return {
@@ -100,10 +94,10 @@ def calcular_evolucao_memoria(
         sinal = "+" if item["diferenca"] > 0 else ""
 
         partes.append(
-            f'{item["label"]}: '
-            f'{item["antes"]:.2f} -> '
-            f'{item["depois"]:.2f} '
-            f'({sinal}{item["diferenca"]:.2f})'
+            f"{item['label']}: "
+            f"{item['antes']:.2f} -> "
+            f"{item['depois']:.2f} "
+            f"({sinal}{item['diferenca']:.2f})"
         )
 
     return {

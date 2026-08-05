@@ -62,48 +62,33 @@ class ToolDefinition:
             r"[a-z][a-z0-9_]*",
             self.name,
         ):
-            raise ToolRegistrationError(
-                "O nome da ferramenta deve usar "
-                "snake_case."
-            )
+            raise ToolRegistrationError("O nome da ferramenta deve usar snake_case.")
 
         if not self.description.strip():
-            raise ToolRegistrationError(
-                "A descrição da ferramenta é "
-                "obrigatória."
-            )
+            raise ToolRegistrationError("A descrição da ferramenta é obrigatória.")
 
         if not issubclass(
             self.input_model,
             BaseModel,
         ):
-            raise ToolRegistrationError(
-                "input_model deve herdar de BaseModel."
-            )
+            raise ToolRegistrationError("input_model deve herdar de BaseModel.")
 
         if not issubclass(
             self.output_model,
             BaseModel,
         ):
-            raise ToolRegistrationError(
-                "output_model deve herdar de BaseModel."
-            )
+            raise ToolRegistrationError("output_model deve herdar de BaseModel.")
 
         if not callable(self.handler):
-            raise ToolRegistrationError(
-                "handler deve ser executável."
-            )
+            raise ToolRegistrationError("handler deve ser executável.")
 
         if not self.allowed_agents:
             raise ToolRegistrationError(
-                "A ferramenta deve possuir pelo "
-                "menos um agente autorizado."
+                "A ferramenta deve possuir pelo menos um agente autorizado."
             )
 
         if self.timeout_seconds <= 0:
-            raise ToolRegistrationError(
-                "timeout_seconds deve ser positivo."
-            )
+            raise ToolRegistrationError("timeout_seconds deve ser positivo.")
 
 
 class ToolRegistry:
@@ -125,18 +110,10 @@ class ToolRegistry:
         *,
         replace: bool = False,
     ) -> ToolDefinition:
-        if (
-            definition.name in self._tools
-            and not replace
-        ):
-            raise ToolRegistrationError(
-                f"Ferramenta já registrada: "
-                f"{definition.name}"
-            )
+        if definition.name in self._tools and not replace:
+            raise ToolRegistrationError(f"Ferramenta já registrada: {definition.name}")
 
-        self._tools[
-            definition.name
-        ] = definition
+        self._tools[definition.name] = definition
 
         return definition
 
@@ -147,9 +124,7 @@ class ToolRegistry:
         try:
             return self._tools[name]
         except KeyError as exc:
-            raise ToolNotFoundError(
-                name
-            ) from exc
+            raise ToolNotFoundError(name) from exc
 
     def contains(
         self,
@@ -160,10 +135,7 @@ class ToolRegistry:
     def list_definitions(
         self,
     ) -> tuple[ToolDefinition, ...]:
-        return tuple(
-            self._tools[name]
-            for name in sorted(self._tools)
-        )
+        return tuple(self._tools[name] for name in sorted(self._tools))
 
     def schema_catalog(
         self,
@@ -175,33 +147,15 @@ class ToolRegistry:
         return [
             {
                 "name": definition.name,
-                "description": (
-                    definition.description
-                ),
-                "input_schema": (
-                    definition
-                    .input_model
-                    .model_json_schema()
-                ),
-                "allowed_agents": sorted(
-                    definition.allowed_agents
-                ),
-                "timeout_seconds": (
-                    definition.timeout_seconds
-                ),
-                "idempotent": (
-                    definition.idempotent
-                ),
-                "sensitive_output": (
-                    definition.sensitive_output
-                ),
-                "tags": sorted(
-                    definition.tags
-                ),
+                "description": (definition.description),
+                "input_schema": (definition.input_model.model_json_schema()),
+                "allowed_agents": sorted(definition.allowed_agents),
+                "timeout_seconds": (definition.timeout_seconds),
+                "idempotent": (definition.idempotent),
+                "sensitive_output": (definition.sensitive_output),
+                "tags": sorted(definition.tags),
             }
-            for definition in (
-                self.list_definitions()
-            )
+            for definition in (self.list_definitions())
         ]
 
 

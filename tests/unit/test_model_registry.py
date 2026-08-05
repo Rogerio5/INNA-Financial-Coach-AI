@@ -25,9 +25,7 @@ _MODEL_ENVIRONMENT_VARIABLES = [
 def _isolate_model_environment(
     monkeypatch,
 ):
-    for variable_name in (
-        _MODEL_ENVIRONMENT_VARIABLES
-    ):
+    for variable_name in _MODEL_ENVIRONMENT_VARIABLES:
         monkeypatch.delenv(
             variable_name,
             raising=False,
@@ -45,10 +43,7 @@ def test_all_roles_use_flash_lite_by_default():
 
     assert registry
 
-    assert all(
-        model == DEFAULT_TEXT_MODEL
-        for model in registry.values()
-    )
+    assert all(model == DEFAULT_TEXT_MODEL for model in registry.values())
 
 
 def test_global_model_is_used_as_fallback(
@@ -61,19 +56,9 @@ def test_global_model_is_used_as_fallback(
 
     reset_model_registry_cache()
 
-    assert (
-        get_model_for_role(
-            LLMRole.EDUCATION
-        )
-        == "gemini-global-test"
-    )
+    assert get_model_for_role(LLMRole.EDUCATION) == "gemini-global-test"
 
-    assert (
-        get_model_for_role(
-            LLMRole.RAG
-        )
-        == "gemini-global-test"
-    )
+    assert get_model_for_role(LLMRole.RAG) == "gemini-global-test"
 
 
 def test_specific_role_overrides_global_model(
@@ -91,19 +76,9 @@ def test_specific_role_overrides_global_model(
 
     reset_model_registry_cache()
 
-    assert (
-        get_model_for_role(
-            LLMRole.RAG
-        )
-        == "gemini-rag-test"
-    )
+    assert get_model_for_role(LLMRole.RAG) == "gemini-rag-test"
 
-    assert (
-        get_model_for_role(
-            LLMRole.REPORT
-        )
-        == "gemini-global-test"
-    )
+    assert get_model_for_role(LLMRole.REPORT) == "gemini-global-test"
 
 
 def test_blank_specific_value_uses_global(
@@ -121,16 +96,9 @@ def test_blank_specific_value_uses_global(
 
     reset_model_registry_cache()
 
-    assert (
-        get_model_for_role(
-            LLMRole.REPORT
-        )
-        == "gemini-global-test"
-    )
+    assert get_model_for_role(LLMRole.REPORT) == "gemini-global-test"
 
 
 def test_invalid_role_is_rejected():
     with pytest.raises(ValueError):
-        get_model_for_role(
-            "agente_inexistente"
-        )
+        get_model_for_role("agente_inexistente")

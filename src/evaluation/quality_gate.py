@@ -27,9 +27,7 @@ class QualityGateRule(StrEnum):
     MAXIMUM_TOTAL_COST = "maximum-total-cost"
     CRITICAL_METRIC = "critical-metric"
     REQUIRED_DATASET = "required-dataset"
-    SYNTHETIC_PRODUCTION_MISMATCH = (
-        "synthetic-production-mismatch"
-    )
+    SYNTHETIC_PRODUCTION_MISMATCH = "synthetic-production-mismatch"
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,17 +37,13 @@ class QualityGateViolation:
     message: str
     actual: Any = None
     expected: Any = None
-    metadata: dict[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         message = self.message.strip()
 
         if not message:
-            raise ValueError(
-                "message não pode ser vazia."
-            )
+            raise ValueError("message não pode ser vazia.")
 
         object.__setattr__(
             self,
@@ -60,9 +54,7 @@ class QualityGateViolation:
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
 
@@ -88,15 +80,8 @@ class QualityGateSettings:
     fail_on_warning: bool = False
 
     def __post_init__(self) -> None:
-        if not (
-            0.0
-            <= float(self.minimum_pass_rate)
-            <= 1.0
-        ):
-            raise ValueError(
-                "minimum_pass_rate deve estar "
-                "entre 0 e 1."
-            )
+        if not (0.0 <= float(self.minimum_pass_rate) <= 1.0):
+            raise ValueError("minimum_pass_rate deve estar entre 0 e 1.")
 
         for field_name in (
             "maximum_failed_cases",
@@ -104,23 +89,15 @@ class QualityGateSettings:
             "maximum_error_cases",
         ):
             if getattr(self, field_name) < 0:
-                raise ValueError(
-                    f"{field_name} não pode ser negativo."
-                )
+                raise ValueError(f"{field_name} não pode ser negativo.")
 
-        if (
-            self.maximum_total_cost is not None
-            and self.maximum_total_cost < 0
-        ):
-            raise ValueError(
-                "maximum_total_cost não pode ser negativo."
-            )
+        if self.maximum_total_cost is not None and self.maximum_total_cost < 0:
+            raise ValueError("maximum_total_cost não pode ser negativo.")
 
         critical_metric_ids = tuple(
             dict.fromkeys(
                 metric_id.strip().casefold()
-                for metric_id
-                in self.critical_metric_ids
+                for metric_id in self.critical_metric_ids
                 if metric_id.strip()
             )
         )
@@ -128,8 +105,7 @@ class QualityGateSettings:
         required_dataset_ids = tuple(
             dict.fromkeys(
                 dataset_id.strip()
-                for dataset_id
-                in self.required_dataset_ids
+                for dataset_id in self.required_dataset_ids
                 if dataset_id.strip()
             )
         )
@@ -168,8 +144,7 @@ class QualityGateResult:
         return tuple(
             violation
             for violation in self.violations
-            if violation.severity
-            == QualityGateSeverity.CRITICAL
+            if violation.severity == QualityGateSeverity.CRITICAL
         )
 
     @property
@@ -179,8 +154,7 @@ class QualityGateResult:
         return tuple(
             violation
             for violation in self.violations
-            if violation.severity
-            == QualityGateSeverity.ERROR
+            if violation.severity == QualityGateSeverity.ERROR
         )
 
     @property
@@ -190,8 +164,7 @@ class QualityGateResult:
         return tuple(
             violation
             for violation in self.violations
-            if violation.severity
-            == QualityGateSeverity.WARNING
+            if violation.severity == QualityGateSeverity.WARNING
         )
 
 
@@ -201,9 +174,7 @@ def evaluate_quality_gate(
 ) -> QualityGateResult:
     resolved = settings or QualityGateSettings()
 
-    violations: list[
-        QualityGateViolation
-    ] = []
+    violations: list[QualityGateViolation] = []
 
     evaluated_rules = 0
 
@@ -214,9 +185,7 @@ def evaluate_quality_gate(
             QualityGateViolation(
                 rule=QualityGateRule.BATCH_STATUS,
                 severity=QualityGateSeverity.ERROR,
-                message=(
-                    "O lote não terminou com status aprovado."
-                ),
+                message=("O lote não terminou com status aprovado."),
                 actual=batch.status.value,
                 expected=BatchRunStatus.PASSED.value,
             )
@@ -227,14 +196,9 @@ def evaluate_quality_gate(
     if batch.pass_rate < resolved.minimum_pass_rate:
         violations.append(
             QualityGateViolation(
-                rule=(
-                    QualityGateRule.MINIMUM_PASS_RATE
-                ),
+                rule=(QualityGateRule.MINIMUM_PASS_RATE),
                 severity=QualityGateSeverity.ERROR,
-                message=(
-                    "A taxa de aprovação ficou abaixo "
-                    "do limite definido."
-                ),
+                message=("A taxa de aprovação ficou abaixo do limite definido."),
                 actual=batch.pass_rate,
                 expected=resolved.minimum_pass_rate,
             )
@@ -242,71 +206,38 @@ def evaluate_quality_gate(
 
     evaluated_rules += 1
 
-    if (
-        batch.failed_cases
-        > resolved.maximum_failed_cases
-    ):
+    if batch.failed_cases > resolved.maximum_failed_cases:
         violations.append(
             QualityGateViolation(
-                rule=(
-                    QualityGateRule
-                    .MAXIMUM_FAILED_CASES
-                ),
+                rule=(QualityGateRule.MAXIMUM_FAILED_CASES),
                 severity=QualityGateSeverity.ERROR,
-                message=(
-                    "O lote excedeu o máximo de casos "
-                    "reprovados."
-                ),
+                message=("O lote excedeu o máximo de casos reprovados."),
                 actual=batch.failed_cases,
-                expected=(
-                    resolved.maximum_failed_cases
-                ),
+                expected=(resolved.maximum_failed_cases),
             )
         )
 
     evaluated_rules += 1
 
-    if (
-        batch.blocked_cases
-        > resolved.maximum_blocked_cases
-    ):
+    if batch.blocked_cases > resolved.maximum_blocked_cases:
         violations.append(
             QualityGateViolation(
-                rule=(
-                    QualityGateRule
-                    .MAXIMUM_BLOCKED_CASES
-                ),
+                rule=(QualityGateRule.MAXIMUM_BLOCKED_CASES),
                 severity=QualityGateSeverity.ERROR,
-                message=(
-                    "O lote excedeu o máximo de casos "
-                    "bloqueados."
-                ),
+                message=("O lote excedeu o máximo de casos bloqueados."),
                 actual=batch.blocked_cases,
-                expected=(
-                    resolved.maximum_blocked_cases
-                ),
+                expected=(resolved.maximum_blocked_cases),
             )
         )
 
     evaluated_rules += 1
 
-    if (
-        batch.error_cases
-        > resolved.maximum_error_cases
-    ):
+    if batch.error_cases > resolved.maximum_error_cases:
         violations.append(
             QualityGateViolation(
-                rule=(
-                    QualityGateRule
-                    .MAXIMUM_ERROR_CASES
-                ),
-                severity=(
-                    QualityGateSeverity.CRITICAL
-                ),
-                message=(
-                    "O lote excedeu o máximo de casos "
-                    "com erro técnico."
-                ),
+                rule=(QualityGateRule.MAXIMUM_ERROR_CASES),
+                severity=(QualityGateSeverity.CRITICAL),
+                message=("O lote excedeu o máximo de casos com erro técnico."),
                 actual=batch.error_cases,
                 expected=resolved.maximum_error_cases,
             )
@@ -315,56 +246,32 @@ def evaluate_quality_gate(
     if resolved.maximum_total_cost is not None:
         evaluated_rules += 1
 
-        if (
-            batch.total_estimated_cost
-            > resolved.maximum_total_cost
-        ):
+        if batch.total_estimated_cost > resolved.maximum_total_cost:
             violations.append(
                 QualityGateViolation(
-                    rule=(
-                        QualityGateRule
-                        .MAXIMUM_TOTAL_COST
-                    ),
-                    severity=(
-                        QualityGateSeverity.ERROR
-                    ),
-                    message=(
-                        "O custo estimado do lote excedeu "
-                        "o limite permitido."
-                    ),
+                    rule=(QualityGateRule.MAXIMUM_TOTAL_COST),
+                    severity=(QualityGateSeverity.ERROR),
+                    message=("O custo estimado do lote excedeu o limite permitido."),
                     actual=batch.total_estimated_cost,
-                    expected=(
-                        resolved.maximum_total_cost
-                    ),
+                    expected=(resolved.maximum_total_cost),
                 )
             )
 
     metric_summaries = {
-        summary.metric_id: summary
-        for summary in batch.metric_summaries
+        summary.metric_id: summary for summary in batch.metric_summaries
     }
 
     for metric_id in resolved.critical_metric_ids:
         evaluated_rules += 1
 
-        summary = metric_summaries.get(
-            metric_id
-        )
+        summary = metric_summaries.get(metric_id)
 
         if summary is None:
             violations.append(
                 QualityGateViolation(
-                    rule=(
-                        QualityGateRule
-                        .CRITICAL_METRIC
-                    ),
-                    severity=(
-                        QualityGateSeverity.WARNING
-                    ),
-                    message=(
-                        "A métrica crítica não foi "
-                        "executada no lote."
-                    ),
+                    rule=(QualityGateRule.CRITICAL_METRIC),
+                    severity=(QualityGateSeverity.WARNING),
+                    message=("A métrica crítica não foi executada no lote."),
                     actual=None,
                     expected=metric_id,
                     metadata={
@@ -374,24 +281,12 @@ def evaluate_quality_gate(
             )
             continue
 
-        if (
-            summary.failed > 0
-            or summary.blocked > 0
-            or summary.errors > 0
-        ):
+        if summary.failed > 0 or summary.blocked > 0 or summary.errors > 0:
             violations.append(
                 QualityGateViolation(
-                    rule=(
-                        QualityGateRule
-                        .CRITICAL_METRIC
-                    ),
-                    severity=(
-                        QualityGateSeverity.CRITICAL
-                    ),
-                    message=(
-                        "Uma métrica crítica apresentou "
-                        "falha, bloqueio ou erro."
-                    ),
+                    rule=(QualityGateRule.CRITICAL_METRIC),
+                    severity=(QualityGateSeverity.CRITICAL),
+                    message=("Uma métrica crítica apresentou falha, bloqueio ou erro."),
                     actual={
                         "failed": summary.failed,
                         "blocked": summary.blocked,
@@ -408,10 +303,7 @@ def evaluate_quality_gate(
                 )
             )
 
-    dataset_ids = {
-        summary.dataset_id
-        for summary in batch.dataset_summaries
-    }
+    dataset_ids = {summary.dataset_id for summary in batch.dataset_summaries}
 
     for dataset_id in resolved.required_dataset_ids:
         evaluated_rules += 1
@@ -419,20 +311,10 @@ def evaluate_quality_gate(
         if dataset_id not in dataset_ids:
             violations.append(
                 QualityGateViolation(
-                    rule=(
-                        QualityGateRule
-                        .REQUIRED_DATASET
-                    ),
-                    severity=(
-                        QualityGateSeverity.ERROR
-                    ),
-                    message=(
-                        "Um dataset obrigatório não foi "
-                        "executado."
-                    ),
-                    actual=tuple(
-                        sorted(dataset_ids)
-                    ),
+                    rule=(QualityGateRule.REQUIRED_DATASET),
+                    severity=(QualityGateSeverity.ERROR),
+                    message=("Um dataset obrigatório não foi executado."),
+                    actual=tuple(sorted(dataset_ids)),
                     expected=dataset_id,
                 )
             )
@@ -453,13 +335,8 @@ def evaluate_quality_gate(
         if not production_execution:
             violations.append(
                 QualityGateViolation(
-                    rule=(
-                        QualityGateRule
-                        .SYNTHETIC_PRODUCTION_MISMATCH
-                    ),
-                    severity=(
-                        QualityGateSeverity.CRITICAL
-                    ),
+                    rule=(QualityGateRule.SYNTHETIC_PRODUCTION_MISMATCH),
+                    severity=(QualityGateSeverity.CRITICAL),
                     message=(
                         "O quality gate exige execução "
                         "real da aplicação, mas o lote foi "
@@ -476,14 +353,10 @@ def evaluate_quality_gate(
     }
 
     if resolved.fail_on_warning:
-        blocking_severities.add(
-            QualityGateSeverity.WARNING
-        )
+        blocking_severities.add(QualityGateSeverity.WARNING)
 
     passed = not any(
-        violation.severity
-        in blocking_severities
-        for violation in violations
+        violation.severity in blocking_severities for violation in violations
     )
 
     return QualityGateResult(

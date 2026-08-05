@@ -14,10 +14,7 @@ def _edge_pairs(
     pairs: set[tuple[str, str]] = set()
 
     for edge in builder.edges:
-        if (
-            isinstance(edge, tuple)
-            and len(edge) >= 2
-        ):
+        if isinstance(edge, tuple) and len(edge) >= 2:
             source = edge[0]
             target = edge[1]
 
@@ -34,10 +31,7 @@ def _edge_pairs(
                 None,
             )
 
-        if (
-            source is None
-            or target is None
-        ):
+        if source is None or target is None:
             continue
 
         pairs.add(
@@ -53,10 +47,7 @@ def _edge_pairs(
 def test_task_completion_node_is_registered():
     builder = criar_builder_inna()
 
-    assert (
-        "task_completion"
-        in builder.nodes
-    )
+    assert "task_completion" in builder.nodes
 
 
 def test_all_agents_route_to_task_completion():

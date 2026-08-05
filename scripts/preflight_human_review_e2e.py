@@ -6,9 +6,7 @@ from pathlib import Path
 from uuid import uuid4
 
 
-PROJECT_ROOT = Path(
-    __file__
-).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(
@@ -29,31 +27,19 @@ from src.agents.persistence import (
 )
 
 
-GRAPH_PATH = Path(
-    "src/agents/graph.py"
-)
+GRAPH_PATH = Path("src/agents/graph.py")
 
-INTERRUPT_PATH = Path(
-    "src/agents/human_review_interrupt_node.py"
-)
+INTERRUPT_PATH = Path("src/agents/human_review_interrupt_node.py")
 
 
 def _assert_signature() -> None:
-    execute_signature = inspect.signature(
-        executar_nucleo_inna_persistente
-    )
+    execute_signature = inspect.signature(executar_nucleo_inna_persistente)
 
-    resume_signature = inspect.signature(
-        retomar_revisao_humana_persistente
-    )
+    resume_signature = inspect.signature(retomar_revisao_humana_persistente)
 
-    execute_parameters = (
-        execute_signature.parameters
-    )
+    execute_parameters = execute_signature.parameters
 
-    resume_parameters = (
-        resume_signature.parameters
-    )
+    resume_parameters = resume_signature.parameters
 
     required_execute = {
         "mensagem",
@@ -61,15 +47,11 @@ def _assert_signature() -> None:
         "human_review_enabled",
     }
 
-    missing_execute = (
-        required_execute
-        - set(execute_parameters)
-    )
+    missing_execute = required_execute - set(execute_parameters)
 
     if missing_execute:
         raise RuntimeError(
-            "Parâmetros ausentes na execução "
-            f"persistente: {sorted(missing_execute)}"
+            f"Parâmetros ausentes na execução persistente: {sorted(missing_execute)}"
         )
 
     required_resume = {
@@ -77,16 +59,10 @@ def _assert_signature() -> None:
         "decisao",
     }
 
-    missing_resume = (
-        required_resume
-        - set(resume_parameters)
-    )
+    missing_resume = required_resume - set(resume_parameters)
 
     if missing_resume:
-        raise RuntimeError(
-            "Parâmetros ausentes na retomada: "
-            f"{sorted(missing_resume)}"
-        )
+        raise RuntimeError(f"Parâmetros ausentes na retomada: {sorted(missing_resume)}")
 
     print(
         "PERSISTENT_EXECUTION_SIGNATURE:",
@@ -98,9 +74,7 @@ def _assert_signature() -> None:
         resume_signature,
     )
 
-    print(
-        "HUMAN_REVIEW_SIGNATURES_VALIDATED"
-    )
+    print("HUMAN_REVIEW_SIGNATURES_VALIDATED")
 
 
 def _assert_source_contract() -> None:
@@ -109,11 +83,9 @@ def _assert_source_contract() -> None:
         errors="strict",
     )
 
-    interrupt_source = (
-        INTERRUPT_PATH.read_text(
-            encoding="utf-8-sig",
-            errors="strict",
-        )
+    interrupt_source = INTERRUPT_PATH.read_text(
+        encoding="utf-8-sig",
+        errors="strict",
     )
 
     graph_required = [
@@ -132,33 +104,19 @@ def _assert_source_contract() -> None:
         "thread_id",
     ]
 
-    missing_graph = [
-        item
-        for item in graph_required
-        if item not in graph_source
-    ]
+    missing_graph = [item for item in graph_required if item not in graph_source]
 
     missing_interrupt = [
-        item
-        for item in interrupt_required
-        if item not in interrupt_source
+        item for item in interrupt_required if item not in interrupt_source
     ]
 
     if missing_graph:
-        raise RuntimeError(
-            "Contrato ausente em graph.py: "
-            f"{missing_graph}"
-        )
+        raise RuntimeError(f"Contrato ausente em graph.py: {missing_graph}")
 
     if missing_interrupt:
-        raise RuntimeError(
-            "Contrato ausente no nó de interrupt: "
-            f"{missing_interrupt}"
-        )
+        raise RuntimeError(f"Contrato ausente no nó de interrupt: {missing_interrupt}")
 
-    print(
-        "HUMAN_REVIEW_GRAPH_SOURCE_VALIDATED"
-    )
+    print("HUMAN_REVIEW_GRAPH_SOURCE_VALIDATED")
 
 
 def _assert_checkpoint_connection() -> None:
@@ -170,46 +128,28 @@ def _assert_checkpoint_connection() -> None:
     )
 
     if not result.get("ok"):
-        raise RuntimeError(
-            "A memória operacional PostgreSQL "
-            "não está disponível."
-        )
+        raise RuntimeError("A memória operacional PostgreSQL não está disponível.")
 
     with abrir_checkpointer_postgres() as checkpointer:
         checkpointer.setup()
 
-        checkpointer_type = (
-            type(checkpointer).__name__
-        )
+        checkpointer_type = type(checkpointer).__name__
 
         print(
             "CHECKPOINTER_TYPE:",
             checkpointer_type,
         )
 
-        if (
-            "Postgres"
-            not in checkpointer_type
-        ):
-            raise RuntimeError(
-                "O checkpointer ativo não parece "
-                "ser PostgreSQL."
-            )
+        if "Postgres" not in checkpointer_type:
+            raise RuntimeError("O checkpointer ativo não parece ser PostgreSQL.")
 
-    print(
-        "POSTGRES_CHECKPOINTER_VALIDATED"
-    )
+    print("POSTGRES_CHECKPOINTER_VALIDATED")
 
 
 def _assert_empty_thread_lookup() -> None:
-    thread_id = (
-        "preflight-hitl-"
-        + uuid4().hex
-    )
+    thread_id = "preflight-hitl-" + uuid4().hex
 
-    result = consultar_estado_conversa(
-        thread_id=thread_id
-    )
+    result = consultar_estado_conversa(thread_id=thread_id)
 
     print(
         "EMPTY_THREAD_ID:",
@@ -232,19 +172,11 @@ def _assert_empty_thread_lookup() -> None:
             )
 
             if values:
-                raise RuntimeError(
-                    "Um thread aleatório retornou "
-                    "estado inesperado."
-                )
+                raise RuntimeError("Um thread aleatório retornou estado inesperado.")
         else:
-            raise RuntimeError(
-                "Formato inesperado na consulta "
-                "de thread inexistente."
-            )
+            raise RuntimeError("Formato inesperado na consulta de thread inexistente.")
 
-    print(
-        "EMPTY_THREAD_LOOKUP_VALIDATED"
-    )
+    print("EMPTY_THREAD_LOOKUP_VALIDATED")
 
 
 def main() -> None:
@@ -253,9 +185,7 @@ def main() -> None:
     _assert_checkpoint_connection()
     _assert_empty_thread_lookup()
 
-    print(
-        "HUMAN_REVIEW_E2E_PREFLIGHT_VALIDATED"
-    )
+    print("HUMAN_REVIEW_E2E_PREFLIGHT_VALIDATED")
 
 
 if __name__ == "__main__":

@@ -33,17 +33,13 @@ class RagLabSummary:
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "total_history_runs": (
-                self.total_history_runs
-            ),
+            "total_history_runs": (self.total_history_runs),
             "comparable_runs": self.comparable_runs,
             "approved_runs": self.approved_runs,
             "failed_runs": self.failed_runs,
             "incomplete_runs": self.incomplete_runs,
             "approval_rate": self.approval_rate,
-            "latest_reference": (
-                self.latest_reference
-            ),
+            "latest_reference": (self.latest_reference),
             "latest_score": self.latest_score,
             "latest_status": self.latest_status,
             "best_reference": self.best_reference,
@@ -74,9 +70,7 @@ class RagLabRunOption:
             "recorded_at": self.recorded_at,
             "branch": self.branch,
             "environment": self.environment,
-            "evaluation_mode": (
-                self.evaluation_mode
-            ),
+            "evaluation_mode": (self.evaluation_mode),
             "score": self.score,
             "status": self.status,
             "passed": self.passed,
@@ -108,9 +102,7 @@ def _parse_datetime(
     text = str(value or "").strip()
 
     if not text:
-        return datetime.min.replace(
-            tzinfo=UTC
-        )
+        return datetime.min.replace(tzinfo=UTC)
 
     try:
         parsed = datetime.fromisoformat(
@@ -120,14 +112,10 @@ def _parse_datetime(
             )
         )
     except ValueError:
-        return datetime.min.replace(
-            tzinfo=UTC
-        )
+        return datetime.min.replace(tzinfo=UTC)
 
     if parsed.tzinfo is None:
-        parsed = parsed.replace(
-            tzinfo=UTC
-        )
+        parsed = parsed.replace(tzinfo=UTC)
 
     return parsed.astimezone(UTC)
 
@@ -191,11 +179,7 @@ def _triad_passed(
         None,
     )
 
-    return (
-        passed
-        if isinstance(passed, bool)
-        else None
-    )
+    return passed if isinstance(passed, bool) else None
 
 
 def _triad_complete(
@@ -224,11 +208,7 @@ def _triad_complete(
     except (TypeError, ValueError):
         return False
 
-    return bool(
-        total > 0
-        and complete == total
-        and _triad_score(entry) is not None
-    )
+    return bool(total > 0 and complete == total and _triad_score(entry) is not None)
 
 
 def get_rag_lab_entries(
@@ -255,10 +235,7 @@ def get_rag_lab_entries(
         if _triad_of(entry) is None:
             continue
 
-        if (
-            complete_only
-            and not _triad_complete(entry)
-        ):
+        if complete_only and not _triad_complete(entry):
             continue
 
         selected.append(entry)
@@ -289,63 +266,30 @@ def build_rag_lab_summary(
         )
     )
 
-    triad_entries = get_rag_lab_entries(
-        history
-    )
+    triad_entries = get_rag_lab_entries(history)
 
-    complete_entries = tuple(
-        entry
-        for entry in triad_entries
-        if _triad_complete(entry)
-    )
+    complete_entries = tuple(entry for entry in triad_entries if _triad_complete(entry))
 
-    approved_runs = sum(
-        1
-        for entry in triad_entries
-        if _triad_passed(entry) is True
-    )
+    approved_runs = sum(1 for entry in triad_entries if _triad_passed(entry) is True)
 
-    failed_runs = sum(
-        1
-        for entry in triad_entries
-        if _triad_passed(entry) is False
-    )
+    failed_runs = sum(1 for entry in triad_entries if _triad_passed(entry) is False)
 
-    incomplete_runs = sum(
-        1
-        for entry in triad_entries
-        if not _triad_complete(entry)
-    )
+    incomplete_runs = sum(1 for entry in triad_entries if not _triad_complete(entry))
 
-    classified_runs = (
-        approved_runs + failed_runs
-    )
+    classified_runs = approved_runs + failed_runs
 
-    approval_rate = (
-        approved_runs / classified_runs
-        if classified_runs
-        else None
-    )
+    approval_rate = approved_runs / classified_runs if classified_runs else None
 
-    latest = (
-        triad_entries[0]
-        if triad_entries
-        else None
-    )
+    latest = triad_entries[0] if triad_entries else None
 
     scored_entries = tuple(
-        entry
-        for entry in complete_entries
-        if _triad_score(entry) is not None
+        entry for entry in complete_entries if _triad_score(entry) is not None
     )
 
     best = (
         max(
             scored_entries,
-            key=lambda item: (
-                _triad_score(item)
-                or 0.0
-            ),
+            key=lambda item: _triad_score(item) or 0.0,
         )
         if scored_entries
         else None
@@ -354,10 +298,7 @@ def build_rag_lab_summary(
     worst = (
         min(
             scored_entries,
-            key=lambda item: (
-                _triad_score(item)
-                or 0.0
-            ),
+            key=lambda item: _triad_score(item) or 0.0,
         )
         if scored_entries
         else None
@@ -365,9 +306,7 @@ def build_rag_lab_summary(
 
     return RagLabSummary(
         total_history_runs=len(all_entries),
-        comparable_runs=len(
-            complete_entries
-        ),
+        comparable_runs=len(complete_entries),
         approved_runs=approved_runs,
         failed_runs=failed_runs,
         incomplete_runs=incomplete_runs,
@@ -383,16 +322,8 @@ def build_rag_lab_summary(
             if latest is not None
             else None
         ),
-        latest_score=(
-            _triad_score(latest)
-            if latest is not None
-            else None
-        ),
-        latest_status=(
-            _triad_status(latest)
-            if latest is not None
-            else None
-        ),
+        latest_score=(_triad_score(latest) if latest is not None else None),
+        latest_status=(_triad_status(latest) if latest is not None else None),
         best_reference=(
             str(
                 getattr(
@@ -404,11 +335,7 @@ def build_rag_lab_summary(
             if best is not None
             else None
         ),
-        best_score=(
-            _triad_score(best)
-            if best is not None
-            else None
-        ),
+        best_score=(_triad_score(best) if best is not None else None),
         worst_reference=(
             str(
                 getattr(
@@ -420,11 +347,7 @@ def build_rag_lab_summary(
             if worst is not None
             else None
         ),
-        worst_score=(
-            _triad_score(worst)
-            if worst is not None
-            else None
-        ),
+        worst_score=(_triad_score(worst) if worst is not None else None),
     )
 
 
@@ -487,18 +410,9 @@ def build_rag_lab_run_options(
         )
 
         score = _triad_score(entry)
-        score_label = (
-            f"{score:.2%}"
-            if score is not None
-            else "sem score"
-        )
+        score_label = f"{score:.2%}" if score is not None else "sem score"
 
-        label = (
-            f"{reference} | "
-            f"{score_label} | "
-            f"{environment} | "
-            f"{branch}"
-        )
+        label = f"{reference} | {score_label} | {environment} | {branch}"
 
         options.append(
             RagLabRunOption(
@@ -506,15 +420,11 @@ def build_rag_lab_run_options(
                 recorded_at=recorded_at,
                 branch=branch,
                 environment=environment,
-                evaluation_mode=(
-                    evaluation_mode
-                ),
+                evaluation_mode=(evaluation_mode),
                 score=score,
                 status=_triad_status(entry),
                 passed=_triad_passed(entry),
-                complete=_triad_complete(
-                    entry
-                ),
+                complete=_triad_complete(entry),
                 label=label,
             )
         )
@@ -526,16 +436,12 @@ def find_rag_lab_entry(
     history: Any,
     run_reference: str,
 ) -> Any | None:
-    reference = str(
-        run_reference or ""
-    ).strip()
+    reference = str(run_reference or "").strip()
 
     if not reference:
         return None
 
-    for entry in get_rag_lab_entries(
-        history
-    ):
+    for entry in get_rag_lab_entries(history):
         if (
             str(
                 getattr(
@@ -580,10 +486,7 @@ def build_selected_comparison(
     candidate_reference: str,
     tolerance: float = 0.005,
 ) -> RagLabComparison | None:
-    if (
-        baseline_reference
-        == candidate_reference
-    ):
+    if baseline_reference == candidate_reference:
         return None
 
     baseline = find_rag_lab_entry(
@@ -596,10 +499,7 @@ def build_selected_comparison(
         candidate_reference,
     )
 
-    if (
-        baseline is None
-        or candidate is None
-    ):
+    if baseline is None or candidate is None:
         return None
 
     return compare_rag_triad_entries(
@@ -618,12 +518,8 @@ def build_rag_lab_comparison_rows(
         rows.append(
             {
                 "metric_id": axis.metric_id,
-                "baseline_score": (
-                    axis.baseline_score
-                ),
-                "candidate_score": (
-                    axis.candidate_score
-                ),
+                "baseline_score": (axis.baseline_score),
+                "candidate_score": (axis.candidate_score),
                 "delta": axis.delta,
                 "status": axis.status.value,
             }
@@ -632,12 +528,8 @@ def build_rag_lab_comparison_rows(
     rows.append(
         {
             "metric_id": "rag-triad-average",
-            "baseline_score": (
-                comparison.baseline_score
-            ),
-            "candidate_score": (
-                comparison.candidate_score
-            ),
+            "baseline_score": (comparison.baseline_score),
+            "candidate_score": (comparison.candidate_score),
             "delta": comparison.delta,
             "status": comparison.status.value,
         }
@@ -651,9 +543,7 @@ def build_rag_lab_timeline(
 ) -> list[dict[str, Any]]:
     rows = []
 
-    entries = reversed(
-        get_rag_lab_entries(history)
-    )
+    entries = reversed(get_rag_lab_entries(history))
 
     for entry in entries:
         metric_scores = {
@@ -706,26 +596,14 @@ def build_rag_lab_timeline(
                     "",
                 )
             ),
-            "rag_triad_score": (
-                _triad_score(entry)
-            ),
-            "rag_triad_status": (
-                _triad_status(entry)
-            ),
-            "rag_triad_passed": (
-                _triad_passed(entry)
-            ),
-            "complete": (
-                _triad_complete(entry)
-            ),
+            "rag_triad_score": (_triad_score(entry)),
+            "rag_triad_status": (_triad_status(entry)),
+            "rag_triad_passed": (_triad_passed(entry)),
+            "complete": (_triad_complete(entry)),
         }
 
-        for metric_id in (
-            RAG_TRIAD_METRIC_IDS
-        ):
-            row[metric_id] = (
-                metric_scores.get(metric_id)
-            )
+        for metric_id in RAG_TRIAD_METRIC_IDS:
+            row[metric_id] = metric_scores.get(metric_id)
 
         rows.append(row)
 

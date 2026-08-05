@@ -65,8 +65,7 @@ _MONEY_PATTERN = (
 _INCOME_UPDATE_PATTERN = re.compile(
     r"(?:minha\s+)?renda(?:\s+mensal)?"
     r"(?:\s+agora|\s+atualmente)?"
-    r"\s*(?:é|e|era|:|de)?\s*"
-    + _MONEY_PATTERN,
+    r"\s*(?:é|e|era|:|de)?\s*" + _MONEY_PATTERN,
     flags=re.IGNORECASE,
 )
 
@@ -95,35 +94,27 @@ def _to_mapping(
 def _normalize_history(
     history: Any,
 ) -> list[dict[str, str]]:
-    if (
-        not isinstance(history, Sequence)
-        or isinstance(
-            history,
-            (str, bytes, bytearray),
-        )
+    if not isinstance(history, Sequence) or isinstance(
+        history,
+        (str, bytes, bytearray),
     ):
         return []
 
     normalized: list[dict[str, str]] = []
 
     for raw_message in history:
-        message = _to_mapping(
-            raw_message
-        )
+        message = _to_mapping(raw_message)
 
         if message is None:
             continue
 
-        role = str(
-            message.get("role", "")
-        ).strip().lower()
+        role = str(message.get("role", "")).strip().lower()
 
-        content = str(
-            message.get("content", "")
-        ).strip()
+        content = str(message.get("content", "")).strip()
 
         if (
-            role not in {
+            role
+            not in {
                 "user",
                 "assistant",
                 "system",
@@ -133,10 +124,12 @@ def _normalize_history(
         ):
             continue
 
-        normalized.append({
-            "role": role,
-            "content": content,
-        })
+        normalized.append(
+            {
+                "role": role,
+                "content": content,
+            }
+        )
 
     return normalized
 
@@ -152,9 +145,7 @@ def _clean_text(
         str(value or "").strip(),
     )
 
-    sanitized, _ = sanitize_sensitive_text(
-        text
-    )
+    sanitized, _ = sanitize_sensitive_text(text)
 
     return sanitized[:max_characters].strip()
 
@@ -164,9 +155,7 @@ def _extract_existing_facts(
 ) -> dict[str, str]:
     facts: dict[str, str] = {}
 
-    for line in str(
-        summary or ""
-    ).splitlines():
+    for line in str(summary or "").splitlines():
         normalized = line.strip()
 
         if not normalized.startswith("- "):
@@ -185,9 +174,7 @@ def _extract_existing_facts(
         label = label.strip()
         value = value.strip()
 
-        if (
-            label == "Última ação da INNA"
-        ):
+        if label == "Última ação da INNA":
             continue
 
         if label and value:
@@ -212,10 +199,7 @@ def _format_value(
             number = float(value)
 
             formatted = (
-                f"{number:,.2f}"
-                .replace(",", "_")
-                .replace(".", ",")
-                .replace("_", ".")
+                f"{number:,.2f}".replace(",", "_").replace(".", ",").replace("_", ".")
             )
 
             return f"R$ {formatted}"
@@ -238,10 +222,7 @@ def _parse_money_value(
         return None
 
     if "," in text and "." in text:
-        text = (
-            text.replace(".", "")
-            .replace(",", ".")
-        )
+        text = text.replace(".", "").replace(",", ".")
 
     elif "," in text:
         text = text.replace(",", ".")
@@ -257,21 +238,15 @@ def _extract_deterministic_user_facts(
 ) -> dict[str, str]:
     facts: dict[str, str] = {}
 
-    match = _INCOME_UPDATE_PATTERN.search(
-        str(content or "")
-    )
+    match = _INCOME_UPDATE_PATTERN.search(str(content or ""))
 
     if match is not None:
-        income = _parse_money_value(
-            match.group(1)
-        )
+        income = _parse_money_value(match.group(1))
 
         if income is not None:
-            facts["Renda mensal"] = (
-                _format_value(
-                    "renda_mensal",
-                    income,
-                )
+            facts["Renda mensal"] = _format_value(
+                "renda_mensal",
+                income,
             )
 
     return facts
@@ -280,18 +255,10 @@ def _extract_deterministic_user_facts(
 def _extract_user_facts(
     content: str,
 ) -> dict[str, str]:
-    facts = (
-        _extract_deterministic_user_facts(
-            content
-        )
-    )
+    facts = _extract_deterministic_user_facts(content)
 
     try:
-        extracted = (
-            extrair_memoria_da_mensagem_inna(
-                content
-            )
-        )
+        extracted = extrair_memoria_da_mensagem_inna(content)
     except Exception:
         return facts
 
@@ -304,15 +271,10 @@ def _extract_user_facts(
         return facts
 
     for field, value in data.items():
-        if (
-            field in _IGNORED_MEMORY_FIELDS
-            or value is None
-        ):
+        if field in _IGNORED_MEMORY_FIELDS or value is None:
             continue
 
-        label = _FINANCIAL_LABELS.get(
-            field
-        )
+        label = _FINANCIAL_LABELS.get(field)
 
         if not label:
             continue
@@ -356,10 +318,7 @@ def _extract_conversation_action(
         "reserva",
     )
 
-    if not any(
-        term in normalized.lower()
-        for term in action_terms
-    ):
+    if not any(term in normalized.lower() for term in action_terms):
         return None
 
     return normalized
@@ -368,9 +327,7 @@ def _extract_conversation_action(
 def build_conversation_summary(
     *,
     previous_summary: str = "",
-    conversation_history: (
-        list[dict[str, Any]] | None
-    ) = None,
+    conversation_history: (list[dict[str, Any]] | None) = None,
     max_history_messages: int = 20,
     max_summary_tokens: int = 500,
 ) -> str:
@@ -388,13 +345,9 @@ def build_conversation_summary(
         ),
     )
 
-    history = _normalize_history(
-        conversation_history
-    )[-max_history_messages:]
+    history = _normalize_history(conversation_history)[-max_history_messages:]
 
-    facts = _extract_existing_facts(
-        previous_summary
-    )
+    facts = _extract_existing_facts(previous_summary)
 
     latest_action: str | None = None
 
@@ -403,21 +356,13 @@ def build_conversation_summary(
         content = message["content"]
 
         if role == "user":
-            extracted_facts = (
-                _extract_user_facts(
-                    content
-                )
-            )
+            extracted_facts = _extract_user_facts(content)
 
-            facts.update(
-                extracted_facts
-            )
+            facts.update(extracted_facts)
 
-        action = (
-            _extract_conversation_action(
-                role,
-                content,
-            )
+        action = _extract_conversation_action(
+            role,
+            content,
         )
 
         if action:
@@ -434,21 +379,14 @@ def build_conversation_summary(
     ]
 
     for label in sorted(facts):
-        lines.append(
-            f"- {label}: {facts[label]}"
-        )
+        lines.append(f"- {label}: {facts[label]}")
 
     if latest_action:
-        lines.append(
-            "- Última ação da INNA: "
-            + latest_action
-        )
+        lines.append("- Última ação da INNA: " + latest_action)
 
     rendered = "\n".join(lines)
 
-    sanitized, _ = sanitize_sensitive_text(
-        rendered
-    )
+    sanitized, _ = sanitize_sensitive_text(rendered)
 
     return truncate_text_to_token_budget(
         sanitized,
@@ -462,11 +400,7 @@ def update_conversation_summary_state(
     """
     Retorna uma atualização parcial compatível com LangGraph.
     """
-    safe_state = (
-        dict(state)
-        if isinstance(state, Mapping)
-        else {}
-    )
+    safe_state = dict(state) if isinstance(state, Mapping) else {}
 
     previous_summary = str(
         safe_state.get(
@@ -476,33 +410,23 @@ def update_conversation_summary_state(
         or ""
     )
 
-    updated_summary = (
-        build_conversation_summary(
-            previous_summary=previous_summary,
-            conversation_history=safe_state.get(
-                "conversation_history",
-                [],
-            ),
-        )
+    updated_summary = build_conversation_summary(
+        previous_summary=previous_summary,
+        conversation_history=safe_state.get(
+            "conversation_history",
+            [],
+        ),
     )
 
-    trace = list(
-        safe_state.get("trace", [])
-    )
+    trace = list(safe_state.get("trace", []))
 
     trace.append(
         "conversation_summary:"
-        + (
-            "updated"
-            if updated_summary != previous_summary
-            else "unchanged"
-        )
+        + ("updated" if updated_summary != previous_summary else "unchanged")
     )
 
     return {
-        "conversation_summary": (
-            updated_summary
-        ),
+        "conversation_summary": (updated_summary),
         "trace": trace,
     }
 

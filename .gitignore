@@ -72,3 +72,15 @@ artifacts/evaluations/*.tmp
 
 # Security and compliance local evidence
 artifacts/security-compliance/
+.venv-evaluation/
+**/node_modules/
+.backups/
+relationship_graph_*
+week3_*_context.*
+*.zip
+/week3_*_context.*
+/week3_*_contracts.*
+/week3_*_inventory.*
+/week3_*_candidates.*
+/week3_*_entrypoints.*
+/week3_*_audit.*

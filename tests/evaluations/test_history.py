@@ -27,9 +27,7 @@ def _report(
     score: float = 0.95,
 ) -> dict:
     return {
-        "report_type": (
-            "inna-evaluation-batch"
-        ),
+        "report_type": ("inna-evaluation-batch"),
         "schema_version": "1.0.0",
         "generated_date": "2026-07-27",
         "run_reference": run_reference,
@@ -102,9 +100,7 @@ def test_builds_history_entry() -> None:
         recorded_at="2026-07-27T03:30:00Z",
     )
 
-    assert entry.run_reference == (
-        "run-current-001"
-    )
+    assert entry.run_reference == ("run-current-001")
     assert entry.branch == "feat/llmops"
     assert entry.commit_sha == "abc123"
     assert entry.passed
@@ -113,9 +109,7 @@ def test_builds_history_entry() -> None:
     assert entry.dataset_count == 1
     assert entry.metric_count == 1
     assert entry.regression_count == 0
-    assert entry.baseline_id == (
-        "production-v1"
-    )
+    assert entry.baseline_id == ("production-v1")
 
 
 def test_adds_and_loads_history(
@@ -130,9 +124,7 @@ def test_adds_and_loads_history(
         recorded_at="2026-07-27T03:30:00Z",
     )
 
-    history = EvaluationHistory.empty().add(
-        entry
-    )
+    history = EvaluationHistory.empty().add(entry)
 
     destination = tmp_path / "history.json"
 
@@ -147,8 +139,7 @@ def test_adds_and_loads_history(
     assert loaded.latest() == entry
 
 
-def test_rejects_duplicate_run_reference(
-) -> None:
+def test_rejects_duplicate_run_reference() -> None:
     report = _report()
     entry = EvaluationHistoryEntry.from_report(
         report,
@@ -156,9 +147,7 @@ def test_rejects_duplicate_run_reference(
         recorded_at="2026-07-27T03:30:00Z",
     )
 
-    history = EvaluationHistory.empty().add(
-        entry
-    )
+    history = EvaluationHistory.empty().add(entry)
 
     with pytest.raises(
         DuplicateHistoryEntryError,
@@ -193,12 +182,7 @@ def test_replaces_existing_entry() -> None:
     )
 
     assert len(history.entries) == 1
-    assert (
-        history.entries[0]
-        .metrics[0]
-        .average_score
-        == 0.95
-    )
+    assert history.entries[0].metrics[0].average_score == 0.95
 
 
 def test_metric_series() -> None:
@@ -223,15 +207,9 @@ def test_metric_series() -> None:
         recorded_at="2026-07-27T03:31:00Z",
     )
 
-    history = (
-        EvaluationHistory.empty()
-        .add(first)
-        .add(second)
-    )
+    history = EvaluationHistory.empty().add(first).add(second)
 
-    assert history.metric_series(
-        "faithfulness"
-    ) == (
+    assert history.metric_series("faithfulness") == (
         (
             "2026-07-27T03:30:00Z",
             0.90,
@@ -246,9 +224,7 @@ def test_metric_series() -> None:
 def test_missing_history_returns_empty(
     tmp_path: Path,
 ) -> None:
-    history = load_history(
-        tmp_path / "missing.json"
-    )
+    history = load_history(tmp_path / "missing.json")
 
     assert history.entries == ()
     assert history.latest() is None
@@ -277,9 +253,7 @@ def test_append_report_to_history(
     )
 
     assert history_path.exists()
-    assert entry.run_reference == (
-        "run-current-001"
-    )
+    assert entry.run_reference == ("run-current-001")
 
     loaded = load_history(history_path)
 

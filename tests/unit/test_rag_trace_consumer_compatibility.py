@@ -4,13 +4,9 @@ from pathlib import Path
 import ast
 
 
-RAG_TOOLS_PATH = Path(
-    "src/agent_tools/rag_tools.py"
-)
+RAG_TOOLS_PATH = Path("src/agent_tools/rag_tools.py")
 
-API_PATH = Path(
-    "api/main.py"
-)
+API_PATH = Path("api/main.py")
 
 
 def _function_source(
@@ -22,9 +18,7 @@ def _function_source(
     )
 
     tree = ast.parse(source)
-    lines = source.splitlines(
-        keepends=True
-    )
+    lines = source.splitlines(keepends=True)
 
     function = next(
         node
@@ -41,12 +35,7 @@ def _function_source(
         )
     )
 
-    return "".join(
-        lines[
-            function.lineno - 1:
-            function.end_lineno
-        ]
-    )
+    return "".join(lines[function.lineno - 1 : function.end_lineno])
 
 
 def test_rag_tools_calls_answer_with_rag():
@@ -55,10 +44,7 @@ def test_rag_tools_calls_answer_with_rag():
         "consultar_rag_inna",
     )
 
-    assert (
-        "resultado = answer_with_rag("
-        in section
-    )
+    assert "resultado = answer_with_rag(" in section
 
 
 def test_rag_tools_keeps_complete_raw_result():
@@ -67,10 +53,7 @@ def test_rag_tools_keeps_complete_raw_result():
         "consultar_rag_inna",
     )
 
-    assert (
-        "raw_result=resultado"
-        in section
-    )
+    assert "raw_result=resultado" in section
 
 
 def test_rag_tools_preserves_raw_result_on_success():
@@ -79,20 +62,11 @@ def test_rag_tools_preserves_raw_result_on_success():
         "consultar_rag_inna",
     )
 
-    success_position = section.index(
-        "return RagToolResult(\n"
-        "            ok=True,"
-    )
+    success_position = section.index("return RagToolResult(\n            ok=True,")
 
-    success_block = section[
-        success_position:
-        success_position + 700
-    ]
+    success_block = section[success_position : success_position + 700]
 
-    assert (
-        "raw_result=resultado"
-        in success_block
-    )
+    assert "raw_result=resultado" in success_block
 
 
 def test_rag_tools_preserves_raw_result_on_empty_answer():
@@ -101,9 +75,7 @@ def test_rag_tools_preserves_raw_result_on_empty_answer():
         "consultar_rag_inna",
     )
 
-    empty_position = section.index(
-        'error_type="EmptyRagAnswer"'
-    )
+    empty_position = section.index('error_type="EmptyRagAnswer"')
 
     block_start = section.rfind(
         "return RagToolResult(",
@@ -111,15 +83,9 @@ def test_rag_tools_preserves_raw_result_on_empty_answer():
         empty_position,
     )
 
-    empty_block = section[
-        block_start:
-        empty_position + 300
-    ]
+    empty_block = section[block_start : empty_position + 300]
 
-    assert (
-        "raw_result=resultado"
-        in empty_block
-    )
+    assert "raw_result=resultado" in empty_block
 
 
 def test_rag_tools_trace_is_implicitly_compatible():
@@ -128,15 +94,9 @@ def test_rag_tools_trace_is_implicitly_compatible():
         "consultar_rag_inna",
     )
 
-    assert (
-        "raw_result=resultado"
-        in section
-    )
+    assert "raw_result=resultado" in section
 
-    assert (
-        "if not isinstance(resultado, dict):"
-        in section
-    )
+    assert "if not isinstance(resultado, dict):" in section
 
 
 def test_api_calls_answer_with_rag():
@@ -145,10 +105,7 @@ def test_api_calls_answer_with_rag():
         "rag_ask",
     )
 
-    assert (
-        "result = answer_with_rag("
-        in section
-    )
+    assert "result = answer_with_rag(" in section
 
 
 def test_api_returns_complete_rag_result():
@@ -166,10 +123,7 @@ def test_api_logs_trace_id():
         "rag_ask",
     )
 
-    assert (
-        '"trace_id": result.get("trace_id")'
-        in section
-    )
+    assert '"trace_id": result.get("trace_id")' in section
 
 
 def test_api_logs_retrieval_trace():
@@ -178,15 +132,9 @@ def test_api_logs_retrieval_trace():
         "rag_ask",
     )
 
-    assert (
-        '"retrieval_trace": result.get('
-        in section
-    )
+    assert '"retrieval_trace": result.get(' in section
 
-    assert (
-        '"retrieval_trace"'
-        in section
-    )
+    assert '"retrieval_trace"' in section
 
 
 def test_api_preserves_legacy_result_implicitly():
@@ -195,20 +143,11 @@ def test_api_preserves_legacy_result_implicitly():
         "rag_ask",
     )
 
-    assert (
-        "resposta=result.get("
-        in section
-    )
+    assert "resposta=result.get(" in section
 
-    assert (
-        '"modo": result.get("modo")'
-        in section
-    )
+    assert '"modo": result.get("modo")' in section
 
-    assert (
-        '"fontes": result.get("fontes", [])'
-        in section
-    )
+    assert '"fontes": result.get("fontes", [])' in section
 
     assert "return result" in section
 
@@ -264,19 +203,11 @@ def test_api_trace_reads_are_optional():
 
         field = node.args[0]
 
-        if (
-            isinstance(field, ast.Constant)
-            and isinstance(
-                field.value,
-                str,
-            )
+        if isinstance(field, ast.Constant) and isinstance(
+            field.value,
+            str,
         ):
-            optional_fields.add(
-                field.value
-            )
+            optional_fields.add(field.value)
 
     assert "trace_id" in optional_fields
-    assert (
-        "retrieval_trace"
-        in optional_fields
-    )
+    assert "retrieval_trace" in optional_fields

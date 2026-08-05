@@ -33,12 +33,16 @@ STATE_KEY = "hitl_admin_dashboard_state"
 
 
 def _require_admin_identity() -> str:
-    profile = str(
-        st.session_state.get(
-            "perfil_usuario",
-            "",
+    profile = (
+        str(
+            st.session_state.get(
+                "perfil_usuario",
+                "",
+            )
         )
-    ).strip().lower()
+        .strip()
+        .lower()
+    )
 
     user_id = str(
         st.session_state.get(
@@ -47,23 +51,14 @@ def _require_admin_identity() -> str:
         )
     ).strip()
 
-    if (
-        profile != "admin"
-        or not user_id
-    ):
-        raise PermissionError(
-            "Acesso restrito ao administrador "
-            "autenticado da INNA."
-        )
+    if profile != "admin" or not user_id:
+        raise PermissionError("Acesso restrito ao administrador autenticado da INNA.")
 
     return user_id
 
 
-def _get_filters(
-) -> HumanReviewDashboardFilters:
-    value = st.session_state.get(
-        STATE_KEY
-    )
+def _get_filters() -> HumanReviewDashboardFilters:
+    value = st.session_state.get(STATE_KEY)
 
     if isinstance(
         value,
@@ -73,9 +68,7 @@ def _get_filters(
 
     filters = HumanReviewDashboardFilters()
 
-    st.session_state[
-        STATE_KEY
-    ] = filters
+    st.session_state[STATE_KEY] = filters
 
     return filters
 
@@ -83,9 +76,7 @@ def _get_filters(
 def _set_filters(
     filters: HumanReviewDashboardFilters,
 ) -> None:
-    st.session_state[
-        STATE_KEY
-    ] = filters
+    st.session_state[STATE_KEY] = filters
 
 
 def _render_filters(
@@ -95,37 +86,21 @@ def _render_filters(
         "Filtros avançados",
         expanded=True,
     ):
-        with st.form(
-            "hitl_filters_form"
-        ):
+        with st.form("hitl_filters_form"):
             row_one = st.columns(2)
 
             statuses = row_one[0].multiselect(
                 "Status",
-                options=list(
-                    STATUS_LABELS.keys()
-                ),
-                default=list(
-                    current.statuses
-                ),
-                format_func=lambda value: (
-                    STATUS_LABELS[value]
-                ),
+                options=list(STATUS_LABELS.keys()),
+                default=list(current.statuses),
+                format_func=lambda value: STATUS_LABELS[value],
             )
 
             risk_levels = row_one[1].multiselect(
                 "Nível de risco",
-                options=[
-                    value
-                    for value in RISK_LABELS
-                    if value
-                ],
-                default=list(
-                    current.risk_levels
-                ),
-                format_func=lambda value: (
-                    RISK_LABELS[value]
-                ),
+                options=[value for value in RISK_LABELS if value],
+                default=list(current.risk_levels),
+                format_func=lambda value: RISK_LABELS[value],
             )
 
             row_two = st.columns(3)
@@ -149,19 +124,12 @@ def _render_filters(
 
             created_from = row_three[0].date_input(
                 "Data inicial",
-                value=(
-                    current.created_from
-                    or date.today()
-                    - timedelta(days=30)
-                ),
+                value=(current.created_from or date.today() - timedelta(days=30)),
             )
 
             created_to = row_three[1].date_input(
                 "Data final",
-                value=(
-                    current.created_to
-                    or date.today()
-                ),
+                value=(current.created_to or date.today()),
             )
 
             limit = row_three[2].selectbox(
@@ -193,11 +161,9 @@ def _render_filters(
                 ),
             )
 
-            apply_filters = (
-                st.form_submit_button(
-                    "Aplicar filtros",
-                    use_container_width=True,
-                )
+            apply_filters = st.form_submit_button(
+                "Aplicar filtros",
+                use_container_width=True,
             )
 
     if not apply_filters:
@@ -216,21 +182,14 @@ def _render_filters(
     )
 
 
-def render_human_review_admin_page(
-) -> None:
+def render_human_review_admin_page() -> None:
     try:
-        admin_user_id = (
-            _require_admin_identity()
-        )
+        admin_user_id = _require_admin_identity()
     except PermissionError as exc:
-        st.error(
-            str(exc)
-        )
+        st.error(str(exc))
         return
 
-    st.title(
-        "🧑‍⚖️ Revisão Humana — INNA"
-    )
+    st.title("🧑‍⚖️ Revisão Humana — INNA")
 
     st.caption(
         "Centro operacional Human-in-the-Loop "
@@ -240,18 +199,12 @@ def render_human_review_admin_page(
 
     current_filters = _get_filters()
 
-    filters = _render_filters(
-        current_filters
-    )
+    filters = _render_filters(current_filters)
 
     if filters != current_filters:
-        _set_filters(
-            filters
-        )
+        _set_filters(filters)
 
-    top_actions = st.columns(
-        [1, 1, 2]
-    )
+    top_actions = st.columns([1, 1, 2])
 
     if top_actions[0].button(
         "🔄 Atualizar dados",
@@ -259,9 +212,7 @@ def render_human_review_admin_page(
     ):
         st.rerun()
 
-    with top_actions[1].popover(
-        "🛠️ Recuperar claims"
-    ):
+    with top_actions[1].popover("🛠️ Recuperar claims"):
         timeout_seconds = st.number_input(
             "Tempo mínimo sem atualização",
             min_value=30,
@@ -275,46 +226,26 @@ def render_human_review_admin_page(
             use_container_width=True,
         ):
             try:
-                recovered = (
-                    recuperar_claims_hitl_api(
-                        admin_user_id=(
-                            admin_user_id
-                        ),
-                        timeout_seconds=int(
-                            timeout_seconds
-                        ),
-                    )
+                recovered = recuperar_claims_hitl_api(
+                    admin_user_id=(admin_user_id),
+                    timeout_seconds=int(timeout_seconds),
                 )
 
                 if recovered:
-                    st.success(
-                        f"{len(recovered)} claim(s) "
-                        "recuperado(s)."
-                    )
+                    st.success(f"{len(recovered)} claim(s) recuperado(s).")
                 else:
-                    st.info(
-                        "Nenhum claim expirado "
-                        "foi encontrado."
-                    )
+                    st.info("Nenhum claim expirado foi encontrado.")
 
             except HumanReviewDashboardApiError as exc:
-                st.error(
-                    str(exc)
-                )
+                st.error(str(exc))
 
     try:
         metrics = obter_metricas_hitl_api(
             admin_user_id=admin_user_id,
             created_from=(
-                filters.created_from.isoformat()
-                if filters.created_from
-                else ""
+                filters.created_from.isoformat() if filters.created_from else ""
             ),
-            created_to=(
-                filters.created_to.isoformat()
-                if filters.created_to
-                else ""
-            ),
+            created_to=(filters.created_to.isoformat() if filters.created_to else ""),
         )
 
         page = listar_revisoes_hitl_api(
@@ -323,21 +254,19 @@ def render_human_review_admin_page(
         )
 
     except HumanReviewDashboardApiError as exc:
-        st.error(
-            str(exc)
-        )
+        st.error(str(exc))
         return
 
-    overview_tab, queue_tab, audit_tab = st.tabs([
-        "📊 Visão geral",
-        "📋 Fila de revisões",
-        "🔎 Detalhes e decisão",
-    ])
+    overview_tab, queue_tab, audit_tab = st.tabs(
+        [
+            "📊 Visão geral",
+            "📋 Fila de revisões",
+            "🔎 Detalhes e decisão",
+        ]
+    )
 
     with overview_tab:
-        render_metricas_executivas_hitl(
-            metrics
-        )
+        render_metricas_executivas_hitl(metrics)
 
         charts = st.columns(3)
 
@@ -360,22 +289,16 @@ def render_human_review_admin_page(
             )
 
     with queue_tab:
-        render_tabela_revisoes_hitl(
-            page
-        )
+        render_tabela_revisoes_hitl(page)
 
-        navigation = st.columns(
-            [1, 1, 2]
-        )
+        navigation = st.columns([1, 1, 2])
 
         if navigation[0].button(
             "⬅️ Página anterior",
             disabled=not page.has_previous,
             use_container_width=True,
         ):
-            _set_filters(
-                filters.previous_page()
-            )
+            _set_filters(filters.previous_page())
             st.rerun()
 
         if navigation[1].button(
@@ -383,17 +306,10 @@ def render_human_review_admin_page(
             disabled=not page.has_next,
             use_container_width=True,
         ):
-            _set_filters(
-                filters.next_page(
-                    has_next=page.has_next
-                )
-            )
+            _set_filters(filters.next_page(has_next=page.has_next))
             st.rerun()
 
-        available_ids = [
-            record.review_id
-            for record in page.items
-        ]
+        available_ids = [record.review_id for record in page.items]
 
         selected_review_id = st.selectbox(
             "Selecionar revisão para análise",
@@ -401,17 +317,11 @@ def render_human_review_admin_page(
                 "",
                 *available_ids,
             ],
-            format_func=lambda value: (
-                "Selecione uma revisão"
-                if not value
-                else value
-            ),
+            format_func=lambda value: "Selecione uma revisão" if not value else value,
         )
 
         if selected_review_id:
-            st.session_state[
-                "hitl_selected_review_id"
-            ] = selected_review_id
+            st.session_state["hitl_selected_review_id"] = selected_review_id
 
     with audit_tab:
         selected_review_id = str(
@@ -424,17 +334,11 @@ def render_human_review_admin_page(
         manual_review_id = st.text_input(
             "Review ID",
             value=selected_review_id,
-            placeholder=(
-                "Informe o identificador "
-                "da revisão."
-            ),
+            placeholder=("Informe o identificador da revisão."),
         )
 
         if not manual_review_id:
-            st.info(
-                "Selecione uma revisão na fila "
-                "ou informe um Review ID."
-            )
+            st.info("Selecione uma revisão na fila ou informe um Review ID.")
             return
 
         try:
@@ -444,14 +348,10 @@ def render_human_review_admin_page(
             )
 
         except HumanReviewDashboardApiError as exc:
-            st.error(
-                str(exc)
-            )
+            st.error(str(exc))
             return
 
-        render_detalhes_revisao_hitl(
-            record
-        )
+        render_detalhes_revisao_hitl(record)
 
         def submit_decision(
             action: str,
@@ -460,28 +360,17 @@ def render_human_review_admin_page(
             corrections: dict[str, Any],
         ) -> None:
             try:
-                result = (
-                    resolver_revisao_hitl_api(
-                        admin_user_id=(
-                            admin_user_id
-                        ),
-                        review_id=(
-                            record.review_id
-                        ),
-                        thread_id=(
-                            record.thread_id
-                        ),
-                        action=action,
-                        comment=comment,
-                        reason=reason,
-                        corrections=corrections,
-                    )
+                result = resolver_revisao_hitl_api(
+                    admin_user_id=(admin_user_id),
+                    review_id=(record.review_id),
+                    thread_id=(record.thread_id),
+                    action=action,
+                    comment=comment,
+                    reason=reason,
+                    corrections=corrections,
                 )
 
-                st.success(
-                    "Decisão registrada: "
-                    f"{result.status}."
-                )
+                st.success(f"Decisão registrada: {result.status}.")
 
                 st.session_state.pop(
                     "hitl_selected_review_id",
@@ -491,9 +380,7 @@ def render_human_review_admin_page(
                 st.rerun()
 
             except HumanReviewDashboardApiError as exc:
-                st.error(
-                    str(exc)
-                )
+                st.error(str(exc))
 
         render_formulario_decisao_hitl(
             record=record,

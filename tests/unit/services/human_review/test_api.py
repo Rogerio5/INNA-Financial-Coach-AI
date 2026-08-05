@@ -41,60 +41,36 @@ def _record(
         trigger="high_risk",
         risk_level="high",
         payload={},
-        decision_action=(
-            "approve"
-            if status == "approved"
-            else ""
-        ),
-        reviewer_id=(
-            "admin-001"
-            if status == "approved"
-            else ""
-        ),
+        decision_action=("approve" if status == "approved" else ""),
+        reviewer_id=("admin-001" if status == "approved" else ""),
         reviewer_comment="",
         rejection_reason="",
         corrections={},
-        resume_route=(
-            "handoff_coordinator"
-            if status == "approved"
-            else ""
-        ),
+        resume_route=("handoff_coordinator" if status == "approved" else ""),
         processing_request_id="",
         processing_started_at=None,
         failure_reason="",
         created_at=now,
         updated_at=now,
-        resolved_at=(
-            now
-            if status == "approved"
-            else None
-        ),
+        resolved_at=(now if status == "approved" else None),
     )
 
 
 @pytest.fixture
 def client() -> TestClient:
     app = FastAPI()
-    app.include_router(
-        router
-    )
+    app.include_router(router)
 
     def trusted_context():
         return TrustedRequestContext(
             user_id="admin-001",
-            request_id=(
-                "request-00000001"
-            ),
+            request_id=("request-00000001"),
             timestamp=1_700_000_000,
         )
 
-    app.dependency_overrides[
-        require_trusted_request_context
-    ] = trusted_context
+    app.dependency_overrides[require_trusted_request_context] = trusted_context
 
-    return TestClient(
-        app
-    )
+    return TestClient(app)
 
 
 def test_register_human_review(
@@ -104,12 +80,9 @@ def test_register_human_review(
     monkeypatch.setattr(
         service,
         "registrar_revisao_pendente",
-        lambda payload: (
-            repository
-            .HumanReviewWriteResult(
-                record=_record(),
-                status="created",
-            )
+        lambda payload: repository.HumanReviewWriteResult(
+            record=_record(),
+            status="created",
         ),
     )
 
@@ -136,9 +109,7 @@ def test_register_human_review(
     )
 
     assert response.status_code == 201
-    assert response.json()[
-        "created"
-    ] is True
+    assert response.json()["created"] is True
 
 
 def test_list_pending_human_reviews(
@@ -153,9 +124,7 @@ def test_list_pending_human_reviews(
         ],
     )
 
-    response = client.get(
-        "/internal/human-reviews/pending"
-    )
+    response = client.get("/internal/human-reviews/pending")
 
     assert response.status_code == 200
     assert response.json()["count"] == 1
@@ -168,9 +137,7 @@ def test_get_human_review_not_found(
     def raise_not_found(
         review_id,
     ):
-        raise HumanReviewNotFoundError(
-            "A revisão humana não foi encontrada."
-        )
+        raise HumanReviewNotFoundError("A revisão humana não foi encontrada.")
 
     monkeypatch.setattr(
         service,
@@ -178,9 +145,7 @@ def test_get_human_review_not_found(
         raise_not_found,
     )
 
-    response = client.get(
-        "/internal/human-reviews/review-404"
-    )
+    response = client.get("/internal/human-reviews/review-404")
 
     assert response.status_code == 404
 
@@ -189,25 +154,16 @@ def test_resolve_human_review(
     client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    outcome = (
-        service
-        .HumanReviewResolutionOutcome(
-            review=_record(
-                status="approved"
-            ),
-            graph_status="approved",
-            resume_route=(
-                "handoff_coordinator"
-            ),
-        )
+    outcome = service.HumanReviewResolutionOutcome(
+        review=_record(status="approved"),
+        graph_status="approved",
+        resume_route=("handoff_coordinator"),
     )
 
     captured = {}
 
     def fake_resolve(**kwargs):
-        captured.update(
-            kwargs
-        )
+        captured.update(kwargs)
         return outcome
 
     monkeypatch.setattr(
@@ -217,10 +173,7 @@ def test_resolve_human_review(
     )
 
     response = client.post(
-        (
-            "/internal/human-reviews/"
-            "review-001/resolve"
-        ),
+        ("/internal/human-reviews/review-001/resolve"),
         json={
             "thread_id": "thread-001",
             "action": "approve",
@@ -230,19 +183,9 @@ def test_resolve_human_review(
 
     assert response.status_code == 200
 
-    assert (
-        captured[
-            "trusted_reviewer_id"
-        ]
-        == "admin-001"
-    )
+    assert captured["trusted_reviewer_id"] == "admin-001"
 
-    assert (
-        "reviewer_id"
-        not in captured[
-            "decision_payload"
-        ]
-    )
+    assert "reviewer_id" not in captured["decision_payload"]
 
 
 def test_resolve_conflict_returns_409(
@@ -250,9 +193,7 @@ def test_resolve_conflict_returns_409(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     def raise_conflict(**_):
-        raise HumanReviewConflictError(
-            "A revisão já foi processada."
-        )
+        raise HumanReviewConflictError("A revisão já foi processada.")
 
     monkeypatch.setattr(
         service,
@@ -261,10 +202,7 @@ def test_resolve_conflict_returns_409(
     )
 
     response = client.post(
-        (
-            "/internal/human-reviews/"
-            "review-001/resolve"
-        ),
+        ("/internal/human-reviews/review-001/resolve"),
         json={
             "thread_id": "thread-001",
             "action": "approve",
@@ -278,10 +216,7 @@ def test_reject_requires_reason(
     client: TestClient,
 ) -> None:
     response = client.post(
-        (
-            "/internal/human-reviews/"
-            "review-001/resolve"
-        ),
+        ("/internal/human-reviews/review-001/resolve"),
         json={
             "thread_id": "thread-001",
             "action": "reject",
@@ -295,10 +230,7 @@ def test_reviewer_id_is_forbidden_in_body(
     client: TestClient,
 ) -> None:
     response = client.post(
-        (
-            "/internal/human-reviews/"
-            "review-001/resolve"
-        ),
+        ("/internal/human-reviews/review-001/resolve"),
         json={
             "thread_id": "thread-001",
             "action": "approve",
@@ -323,19 +255,11 @@ def test_recover_stale_claims(
     )
 
     response = client.post(
-        (
-            "/internal/human-reviews/"
-            "recover-stale"
-        ),
+        ("/internal/human-reviews/recover-stale"),
         json={
             "timeout_seconds": 300,
         },
     )
 
     assert response.status_code == 200
-    assert (
-        response.json()[
-            "recovered_count"
-        ]
-        == 2
-    )
+    assert response.json()["recovered_count"] == 2

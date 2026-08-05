@@ -13,10 +13,7 @@ def _edge_pairs(builder) -> set[tuple[str, str]]:
     pairs: set[tuple[str, str]] = set()
 
     for edge in builder.edges:
-        if (
-            isinstance(edge, tuple)
-            and len(edge) >= 2
-        ):
+        if isinstance(edge, tuple) and len(edge) >= 2:
             source = edge[0]
             target = edge[1]
         else:
@@ -45,10 +42,7 @@ def _edge_pairs(builder) -> set[tuple[str, str]]:
 def test_handoff_coordinator_is_registered():
     builder = criar_builder_inna()
 
-    assert (
-        "handoff_coordinator"
-        in builder.nodes
-    )
+    assert "handoff_coordinator" in builder.nodes
 
 
 def test_agents_still_route_to_task_completion():
@@ -98,18 +92,18 @@ def test_task_completion_no_longer_skips_coordinator():
 
 
 def test_no_handoff_routes_to_summary():
-    assert _selecionar_rota_apos_handoff(
-        {}
-    ) == "conversation_summary"
+    assert _selecionar_rota_apos_handoff({}) == "conversation_summary"
 
 
 def test_requested_handoff_routes_to_team_router():
-    result = _selecionar_rota_apos_handoff({
-        "handoff_current": {
-            "status": "requested",
-            "to_agent": "report_agent",
+    result = _selecionar_rota_apos_handoff(
+        {
+            "handoff_current": {
+                "status": "requested",
+                "to_agent": "report_agent",
+            }
         }
-    })
+    )
 
     assert result == "team_router"
 
@@ -121,22 +115,26 @@ def test_terminal_handoff_routes_to_summary():
         "rejected",
         "cancelled",
     ):
-        result = _selecionar_rota_apos_handoff({
-            "handoff_current": {
-                "status": status,
-                "to_agent": "report_agent",
+        result = _selecionar_rota_apos_handoff(
+            {
+                "handoff_current": {
+                    "status": status,
+                    "to_agent": "report_agent",
+                }
             }
-        })
+        )
 
         assert result == "conversation_summary"
 
 
 def test_invalid_target_routes_to_summary():
-    result = _selecionar_rota_apos_handoff({
-        "handoff_current": {
-            "status": "requested",
-            "to_agent": "unknown_agent",
+    result = _selecionar_rota_apos_handoff(
+        {
+            "handoff_current": {
+                "status": "requested",
+                "to_agent": "unknown_agent",
+            }
         }
-    })
+    )
 
     assert result == "conversation_summary"

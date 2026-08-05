@@ -29,26 +29,11 @@ from src.context_engineering.tool_selector import (
 
 
 DEFAULT_CONTEXT_INSTRUCTIONS = [
-    (
-        "Responda apenas com informações necessárias "
-        "para a solicitação atual."
-    ),
-    (
-        "Não exponha dados pessoais ou informações "
-        "internas da aplicação."
-    ),
-    (
-        "Quando usar conhecimento recuperado, preserve "
-        "a rastreabilidade das fontes."
-    ),
-    (
-        "Não invente dados financeiros, valores, "
-        "fontes ou ações executadas."
-    ),
-    (
-        "Diferencie orientação educativa de decisão "
-        "financeira pessoal."
-    ),
+    ("Responda apenas com informações necessárias para a solicitação atual."),
+    ("Não exponha dados pessoais ou informações internas da aplicação."),
+    ("Quando usar conhecimento recuperado, preserve a rastreabilidade das fontes."),
+    ("Não invente dados financeiros, valores, fontes ou ações executadas."),
+    ("Diferencie orientação educativa de decisão financeira pessoal."),
 ]
 
 
@@ -74,8 +59,7 @@ def _sanitize_financial_profile(
     return {
         key: value
         for key, value in profile.items()
-        if key in allowed_fields
-        and value is not None
+        if key in allowed_fields and value is not None
     }
 
 
@@ -88,16 +72,10 @@ def _context_to_serializable(
 def build_agent_context(
     *,
     current_message: str,
-    conversation_history: (
-        list[dict[str, Any]] | None
-    ) = None,
+    conversation_history: (list[dict[str, Any]] | None) = None,
     conversation_summary: str = "",
-    financial_profile: (
-        dict[str, Any] | None
-    ) = None,
-    tool_results: (
-        list[dict[str, Any]] | None
-    ) = None,
+    financial_profile: (dict[str, Any] | None) = None,
+    tool_results: (list[dict[str, Any]] | None) = None,
     language: str = "pt",
     currency: str = "BRL",
     max_context_tokens: int = 4000,
@@ -110,26 +88,16 @@ def build_agent_context(
     O histórico persistido permanece completo no banco,
     mas apenas uma seleção entra no prompt.
     """
-    raw_current_message = str(
-        current_message or ""
-    ).strip()
+    raw_current_message = str(current_message or "").strip()
 
-    sanitized_current, current_privacy = (
-        sanitize_sensitive_text(
-            raw_current_message
-        )
-    )
+    sanitized_current, current_privacy = sanitize_sensitive_text(raw_current_message)
 
-    selected_history, history_privacy = (
-        select_relevant_history(
-            conversation_history,
-            current_message=(
-                raw_current_message
-            ),
-            max_messages=max_history_messages,
-            max_tokens=1800,
-            sanitize=True,
-        )
+    selected_history, history_privacy = select_relevant_history(
+        conversation_history,
+        current_message=(raw_current_message),
+        max_messages=max_history_messages,
+        max_tokens=1800,
+        sanitize=True,
     )
 
     selected_tools = select_tool_results(
@@ -142,43 +110,24 @@ def build_agent_context(
         max_sources=12,
     )
 
-    sanitized_summary, summary_privacy = (
-        sanitize_sensitive_text(
-            conversation_summary
-        )
+    sanitized_summary, summary_privacy = sanitize_sensitive_text(conversation_summary)
+
+    sanitized_summary = truncate_text_to_token_budget(
+        sanitized_summary,
+        max_tokens=500,
     )
 
-    sanitized_summary = (
-        truncate_text_to_token_budget(
-            sanitized_summary,
-            max_tokens=500,
-        )
-    )
-
-    clean_profile = (
-        _sanitize_financial_profile(
-            financial_profile
-        )
-    )
+    clean_profile = _sanitize_financial_profile(financial_profile)
 
     metrics = ContextMetrics(
-        history_messages_received=len(
-            conversation_history or []
-        ),
-        history_messages_selected=len(
-            selected_history
-        ),
+        history_messages_received=len(conversation_history or []),
+        history_messages_selected=len(selected_history),
         history_messages_removed=max(
             0,
-            len(conversation_history or [])
-            - len(selected_history),
+            len(conversation_history or []) - len(selected_history),
         ),
-        tool_results_received=len(
-            tool_results or []
-        ),
-        tool_results_selected=len(
-            selected_tools
-        ),
+        tool_results_received=len(tool_results or []),
+        tool_results_selected=len(selected_tools),
         sources_received=sum(
             len(result.get("sources", []))
             if isinstance(
@@ -187,8 +136,7 @@ def build_agent_context(
             )
             else 1
             for result in tool_results or []
-            if isinstance(result, dict)
-            and result.get("sources")
+            if isinstance(result, dict) and result.get("sources")
         ),
         sources_selected=len(sources),
         characters_before=sum(
@@ -207,50 +155,35 @@ def build_agent_context(
     )
 
     metrics.privacy.sensitive_items_found += (
-        current_privacy.sensitive_items_found
-        + summary_privacy.sensitive_items_found
+        current_privacy.sensitive_items_found + summary_privacy.sensitive_items_found
     )
 
     metrics.privacy.email_addresses_masked += (
-        current_privacy.email_addresses_masked
-        + summary_privacy.email_addresses_masked
+        current_privacy.email_addresses_masked + summary_privacy.email_addresses_masked
     )
 
     metrics.privacy.phone_numbers_masked += (
-        current_privacy.phone_numbers_masked
-        + summary_privacy.phone_numbers_masked
+        current_privacy.phone_numbers_masked + summary_privacy.phone_numbers_masked
     )
 
     metrics.privacy.cpf_numbers_masked += (
-        current_privacy.cpf_numbers_masked
-        + summary_privacy.cpf_numbers_masked
+        current_privacy.cpf_numbers_masked + summary_privacy.cpf_numbers_masked
     )
 
     metrics.privacy.card_numbers_masked += (
-        current_privacy.card_numbers_masked
-        + summary_privacy.card_numbers_masked
+        current_privacy.card_numbers_masked + summary_privacy.card_numbers_masked
     )
 
     context = BuiltAgentContext(
         current_message=sanitized_current,
-        language=str(
-            language or "pt"
-        ),
-        currency=str(
-            currency or "BRL"
-        ),
-        conversation_summary=(
-            sanitized_summary
-        ),
+        language=str(language or "pt"),
+        currency=str(currency or "BRL"),
+        conversation_summary=(sanitized_summary),
         selected_history=selected_history,
         financial_profile=clean_profile,
-        selected_tool_results=(
-            selected_tools
-        ),
+        selected_tool_results=(selected_tools),
         sources=sources,
-        instructions=list(
-            DEFAULT_CONTEXT_INSTRUCTIONS
-        ),
+        instructions=list(DEFAULT_CONTEXT_INSTRUCTIONS),
         metrics=metrics,
     )
 
@@ -260,25 +193,15 @@ def build_agent_context(
         default=str,
     )
 
-    estimated_tokens = estimate_tokens(
-        serialized
+    estimated_tokens = estimate_tokens(serialized)
+
+    context.metrics.budget = create_context_budget(
+        max_tokens=max_context_tokens,
+        reserved_output_tokens=(reserved_output_tokens),
+        estimated_input_tokens=(estimated_tokens),
     )
 
-    context.metrics.budget = (
-        create_context_budget(
-            max_tokens=max_context_tokens,
-            reserved_output_tokens=(
-                reserved_output_tokens
-            ),
-            estimated_input_tokens=(
-                estimated_tokens
-            ),
-        )
-    )
-
-    context.metrics.characters_after = len(
-        serialized
-    )
+    context.metrics.characters_after = len(serialized)
 
     return context
 
@@ -290,10 +213,7 @@ def render_context_for_llm(
     Converte o contexto estruturado em texto controlado.
     """
     history_lines = [
-        (
-            f"{message.role.upper()}: "
-            f"{message.content}"
-        )
+        (f"{message.role.upper()}: {message.content}")
         for message in context.selected_history
     ]
 
@@ -303,23 +223,15 @@ def render_context_for_llm(
             ensure_ascii=False,
             default=str,
         )
-        for result in (
-            context.selected_tool_results
-        )
+        for result in (context.selected_tool_results)
     ]
 
     sections = [
         "## INSTRUÇÕES",
-        "\n".join(
-            f"- {instruction}"
-            for instruction in context.instructions
-        ),
+        "\n".join(f"- {instruction}" for instruction in context.instructions),
         "",
         "## CONFIGURAÇÃO",
-        (
-            f"Idioma: {context.language}\n"
-            f"Moeda: {context.currency}"
-        ),
+        (f"Idioma: {context.language}\nMoeda: {context.currency}"),
     ]
 
     if context.conversation_summary:
@@ -367,10 +279,7 @@ def render_context_for_llm(
             [
                 "",
                 "## FONTES DISPONÍVEIS",
-                "\n".join(
-                    f"- {source}"
-                    for source in context.sources
-                ),
+                "\n".join(f"- {source}" for source in context.sources),
             ]
         )
 
@@ -384,10 +293,7 @@ def render_context_for_llm(
 
     rendered = "\n".join(sections).strip()
 
-    available_tokens = (
-        context.metrics.budget
-        .available_input_tokens
-    )
+    available_tokens = context.metrics.budget.available_input_tokens
 
     return truncate_text_to_token_budget(
         rendered,

@@ -20,9 +20,7 @@ from src.services.telegram_observability import (
 )
 
 
-class CapturingHandler(
-    logging.Handler
-):
+class CapturingHandler(logging.Handler):
     def __init__(self) -> None:
         super().__init__()
 
@@ -32,9 +30,7 @@ class CapturingHandler(
         self,
         record,
     ) -> None:
-        self.records.append(
-            record
-        )
+        self.records.append(record)
 
 
 class FixedClock:
@@ -53,10 +49,7 @@ class FixedClock:
 
 class UnsafeObject:
     def __repr__(self) -> str:
-        return (
-            "postgresql://admin:"
-            "secret@internal-db/value"
-        )
+        return "postgresql://admin:secret@internal-db/value"
 
 
 def make_event(
@@ -65,10 +58,7 @@ def make_event(
     fields=None,
 ) -> TelegramOperationalEvent:
     return TelegramOperationalEvent(
-        name=(
-            "telegram_session_"
-            "conflict_detected"
-        ),
+        name=("telegram_session_conflict_detected"),
         level=level,
         component="webhook",
         outcome="conflict",
@@ -77,9 +67,7 @@ def make_event(
             if fields is not None
             else {
                 "operation": "save_session",
-                "error_category": (
-                    "optimistic_conflict"
-                ),
+                "error_category": ("optimistic_conflict"),
                 "conflict_recovered": False,
             }
         ),
@@ -87,21 +75,15 @@ def make_event(
 
 
 def make_logger():
-    logger = logging.Logger(
-        "test.telegram.structured"
-    )
+    logger = logging.Logger("test.telegram.structured")
 
-    logger.setLevel(
-        logging.DEBUG
-    )
+    logger.setLevel(logging.DEBUG)
 
     logger.propagate = False
 
     handler = CapturingHandler()
 
-    logger.addHandler(
-        handler
-    )
+    logger.addHandler(handler)
 
     return logger, handler
 
@@ -120,9 +102,7 @@ def test_timestamp_is_utc_with_milliseconds():
         )
     )
 
-    assert value == (
-        "2026-07-20T00:15:00.987Z"
-    )
+    assert value == ("2026-07-20T00:15:00.987Z")
 
 
 def test_naive_datetime_is_rejected():
@@ -141,11 +121,9 @@ def test_naive_datetime_is_rejected():
 
 
 def test_payload_has_canonical_schema():
-    payload = (
-        build_telegram_structured_log_payload(
-            make_event(),
-            timestamp=FixedClock()(),
-        )
+    payload = build_telegram_structured_log_payload(
+        make_event(),
+        timestamp=FixedClock()(),
     )
 
     assert set(payload) == {
@@ -157,9 +135,7 @@ def test_payload_has_canonical_schema():
         "fields",
     }
 
-    assert payload["timestamp"] == (
-        "2026-07-20T03:15:00.123Z"
-    )
+    assert payload["timestamp"] == ("2026-07-20T03:15:00.123Z")
 
     assert payload["level"] == "warning"
     assert payload["component"] == "webhook"
@@ -167,36 +143,27 @@ def test_payload_has_canonical_schema():
 
 
 def test_serialization_is_one_line_json():
-    serialized = (
-        serialize_telegram_structured_log(
-            make_event(),
-            timestamp=FixedClock()(),
-        )
+    serialized = serialize_telegram_structured_log(
+        make_event(),
+        timestamp=FixedClock()(),
     )
 
     assert "\n" not in serialized
     assert "\r" not in serialized
 
-    parsed = json.loads(
-        serialized
-    )
+    parsed = json.loads(serialized)
 
-    assert parsed["event"] == (
-        "telegram_session_"
-        "conflict_detected"
-    )
+    assert parsed["event"] == ("telegram_session_conflict_detected")
 
 
 def test_unicode_is_preserved():
-    serialized = (
-        serialize_telegram_structured_log(
-            make_event(
-                fields={
-                    "operation": "persistência",
-                }
-            ),
-            timestamp=FixedClock()(),
-        )
+    serialized = serialize_telegram_structured_log(
+        make_event(
+            fields={
+                "operation": "persistência",
+            }
+        ),
+        timestamp=FixedClock()(),
     )
 
     assert "persistência" in serialized
@@ -248,14 +215,9 @@ def test_sink_maps_logging_levels(
         )
     )
 
-    assert len(
-        handler.records
-    ) == 1
+    assert len(handler.records) == 1
 
-    assert (
-        handler.records[0].levelno
-        == numeric_level
-    )
+    assert handler.records[0].levelno == numeric_level
 
 
 def test_sink_emits_exactly_one_record():
@@ -266,39 +228,26 @@ def test_sink_emits_exactly_one_record():
         clock=FixedClock(),
     )
 
-    sink.emit(
-        make_event()
-    )
+    sink.emit(make_event())
 
-    assert len(
-        handler.records
-    ) == 1
+    assert len(handler.records) == 1
 
-    parsed = json.loads(
-        handler.records[0].getMessage()
-    )
+    parsed = json.loads(handler.records[0].getMessage())
 
-    assert parsed["timestamp"] == (
-        "2026-07-20T03:15:00.123Z"
-    )
+    assert parsed["timestamp"] == ("2026-07-20T03:15:00.123Z")
 
 
 def test_non_serializable_value_uses_safe_marker():
-    serialized = (
-        serialize_telegram_structured_log(
-            make_event(
-                fields={
-                    "unsafe": UnsafeObject(),
-                }
-            ),
-            timestamp=FixedClock()(),
-        )
+    serialized = serialize_telegram_structured_log(
+        make_event(
+            fields={
+                "unsafe": UnsafeObject(),
+            }
+        ),
+        timestamp=FixedClock()(),
     )
 
-    assert (
-        "<non-serializable>"
-        in serialized
-    )
+    assert "<non-serializable>" in serialized
 
     assert "internal-db" not in serialized
     assert "secret" not in serialized
@@ -315,70 +264,50 @@ def test_non_serializable_value_uses_safe_marker():
 def test_non_finite_numbers_are_replaced(
     value,
 ):
-    serialized = (
-        serialize_telegram_structured_log(
-            make_event(
-                fields={
-                    "duration": value,
-                }
-            ),
-            timestamp=FixedClock()(),
-        )
+    serialized = serialize_telegram_structured_log(
+        make_event(
+            fields={
+                "duration": value,
+            }
+        ),
+        timestamp=FixedClock()(),
     )
 
-    assert (
-        "<non-finite-number>"
-        in serialized
-    )
+    assert "<non-finite-number>" in serialized
 
-    parsed = json.loads(
-        serialized
-    )
+    parsed = json.loads(serialized)
 
-    assert parsed[
-        "fields"
-    ][
-        "duration"
-    ] == "<non-finite-number>"
+    assert parsed["fields"]["duration"] == "<non-finite-number>"
 
 
 def test_recursive_value_is_safe():
     recursive = {}
     recursive["self"] = recursive
 
-    serialized = (
-        serialize_telegram_structured_log(
-            make_event(
-                fields={
-                    "recursive": recursive,
-                }
-            ),
-            timestamp=FixedClock()(),
-        )
+    serialized = serialize_telegram_structured_log(
+        make_event(
+            fields={
+                "recursive": recursive,
+            }
+        ),
+        timestamp=FixedClock()(),
     )
 
-    assert (
-        "<recursive-value>"
-        in serialized
-    )
+    assert "<recursive-value>" in serialized
 
 
 def test_sensitive_fields_are_removed():
-    serialized = (
-        serialize_telegram_structured_log(
-            make_event(
-                fields={
-                    "operation": "save_session",
-                    "telegram_user_id": 123,
-                    "chat_id": 456,
-                    "token": "super-secret",
-                    "message_text": (
-                        "texto financeiro privado"
-                    ),
-                }
-            ),
-            timestamp=FixedClock()(),
-        )
+    serialized = serialize_telegram_structured_log(
+        make_event(
+            fields={
+                "operation": "save_session",
+                "telegram_user_id": 123,
+                "chat_id": 456,
+                "token": "super-secret",
+                "message_text": ("texto financeiro privado"),
+            }
+        ),
+        timestamp=FixedClock()(),
     )
 
     lowered = serialized.lower()
@@ -401,9 +330,7 @@ def test_invalid_event_is_rejected():
     with pytest.raises(
         TypeError,
     ):
-        sink.emit(
-            object()
-        )
+        sink.emit(object())
 
 
 def test_invalid_logger_is_rejected():
@@ -426,6 +353,4 @@ def test_invalid_clock_result_is_rejected():
     with pytest.raises(
         TypeError,
     ):
-        sink.emit(
-            make_event()
-        )
+        sink.emit(make_event())

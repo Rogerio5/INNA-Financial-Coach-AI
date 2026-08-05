@@ -20,64 +20,48 @@ def _context(
     )
 
 
-def test_admin_context_accepts_authorized_user(
-) -> None:
+def test_admin_context_accepts_authorized_user() -> None:
     context = _context()
 
     with patch(
-        "api.security.human_review_admin."
-        "_configured_admin_user_ids",
-        return_value=frozenset({
-            "admin-local",
-        }),
+        "api.security.human_review_admin._configured_admin_user_ids",
+        return_value=frozenset(
+            {
+                "admin-local",
+            }
+        ),
     ):
-        result = (
-            require_human_review_admin_context(
-                context
-            )
-        )
+        result = require_human_review_admin_context(context)
 
     assert result is context
 
 
-def test_admin_context_rejects_unauthorized_user(
-) -> None:
-    context = _context(
-        user_id="regular-user"
-    )
+def test_admin_context_rejects_unauthorized_user() -> None:
+    context = _context(user_id="regular-user")
 
     with patch(
-        "api.security.human_review_admin."
-        "_configured_admin_user_ids",
-        return_value=frozenset({
-            "admin-local",
-        }),
+        "api.security.human_review_admin._configured_admin_user_ids",
+        return_value=frozenset(
+            {
+                "admin-local",
+            }
+        ),
     ):
-        with pytest.raises(
-            HTTPException
-        ) as exc_info:
-            require_human_review_admin_context(
-                context
-            )
+        with pytest.raises(HTTPException) as exc_info:
+            require_human_review_admin_context(context)
 
     assert exc_info.value.status_code == 403
 
 
-def test_admin_context_rejects_missing_configuration(
-) -> None:
+def test_admin_context_rejects_missing_configuration() -> None:
     context = _context()
 
     with patch(
-        "api.security.human_review_admin."
-        "_configured_admin_user_ids",
+        "api.security.human_review_admin._configured_admin_user_ids",
         return_value=frozenset(),
     ):
-        with pytest.raises(
-            HTTPException
-        ) as exc_info:
-            require_human_review_admin_context(
-                context
-            )
+        with pytest.raises(HTTPException) as exc_info:
+            require_human_review_admin_context(context)
 
     assert exc_info.value.status_code == 503
 
@@ -95,8 +79,10 @@ def test_configured_admin_ids_are_normalized(
     )
 
     assert _configured_admin_user_ids() == (
-        frozenset({
-            "admin-1",
-            "admin-2",
-        })
+        frozenset(
+            {
+                "admin-1",
+                "admin-2",
+            }
+        )
     )

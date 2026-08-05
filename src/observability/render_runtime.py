@@ -72,11 +72,7 @@ def collect_render_runtime_status() -> RenderRuntimeStatus:
 
     environment = _safe_text(
         os.getenv("APP_ENV"),
-        default=(
-            "production"
-            if running_on_render
-            else "local"
-        ),
+        default=("production" if running_on_render else "local"),
     )
 
     service_name = _safe_text(
@@ -86,20 +82,12 @@ def collect_render_runtime_status() -> RenderRuntimeStatus:
 
     service_type = _safe_text(
         os.getenv("RENDER_SERVICE_TYPE"),
-        default=(
-            "web"
-            if running_on_render
-            else "local-process"
-        ),
+        default=("web" if running_on_render else "local-process"),
     )
 
     region = _safe_text(
         os.getenv("RENDER_REGION"),
-        default=(
-            "unknown"
-            if running_on_render
-            else "local"
-        ),
+        default=("unknown" if running_on_render else "local"),
     )
 
     instance_id = _safe_text(
@@ -109,8 +97,7 @@ def collect_render_runtime_status() -> RenderRuntimeStatus:
     uptime_seconds = round(
         max(
             0.0,
-            time.monotonic()
-            - _PROCESS_STARTED_AT,
+            time.monotonic() - _PROCESS_STARTED_AT,
         ),
         3,
     )
@@ -121,23 +108,11 @@ def collect_render_runtime_status() -> RenderRuntimeStatus:
         service_name=service_name,
         service_type=service_type,
         region=region,
-        external_url_configured=bool(
-            os.getenv("RENDER_EXTERNAL_URL")
-        ),
-        deploy_commit=_short_commit(
-            os.getenv("RENDER_GIT_COMMIT")
-        ),
-        instance_hash=(
-            hash_identifier(instance_id)
-            if instance_id
-            else ""
-        ),
+        external_url_configured=bool(os.getenv("RENDER_EXTERNAL_URL")),
+        deploy_commit=_short_commit(os.getenv("RENDER_GIT_COMMIT")),
+        instance_hash=(hash_identifier(instance_id) if instance_id else ""),
         uptime_seconds=uptime_seconds,
-        status=(
-            "operational"
-            if running_on_render
-            else "local"
-        ),
+        status=("operational" if running_on_render else "local"),
     )
 
 

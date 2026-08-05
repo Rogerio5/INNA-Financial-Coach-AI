@@ -15,18 +15,9 @@ from src.services.telegram_observability import (
 
 ROOT = Path(__file__).resolve().parents[2]
 
-WEBHOOK_FILE = (
-    ROOT
-    / "api"
-    / "telegram_webhook.py"
-)
+WEBHOOK_FILE = ROOT / "api" / "telegram_webhook.py"
 
-WORKER_FILE = (
-    ROOT
-    / "src"
-    / "channels"
-    / "telegram_update_worker.py"
-)
+WORKER_FILE = ROOT / "src" / "channels" / "telegram_update_worker.py"
 
 
 class CapturingEventSink:
@@ -37,9 +28,7 @@ class CapturingEventSink:
         self,
         event,
     ) -> None:
-        self.events.append(
-            event
-        )
+        self.events.append(event)
 
 
 class BrokenEventSink:
@@ -49,9 +38,7 @@ class BrokenEventSink:
     ) -> None:
         del event
 
-        raise RuntimeError(
-            "logging unavailable"
-        )
+        raise RuntimeError("logging unavailable")
 
 
 def parse_file(
@@ -90,14 +77,10 @@ def enclosing_function_name(
     parents = {}
 
     for parent in ast.walk(tree):
-        for child in ast.iter_child_nodes(
-            parent
-        ):
+        for child in ast.iter_child_nodes(parent):
             parents[child] = parent
 
-    current = parents.get(
-        target
-    )
+    current = parents.get(target)
 
     while current is not None:
         if isinstance(
@@ -109,31 +92,21 @@ def enclosing_function_name(
         ):
             return current.name
 
-        current = parents.get(
-            current
-        )
+        current = parents.get(current)
 
     return None
 
 
 def test_webhook_has_no_print_calls():
-    tree = parse_file(
-        WEBHOOK_FILE
-    )
+    tree = parse_file(WEBHOOK_FILE)
 
-    assert print_calls(
-        tree
-    ) == []
+    assert print_calls(tree) == []
 
 
 def test_worker_preserves_only_cli_print():
-    tree = parse_file(
-        WORKER_FILE
-    )
+    tree = parse_file(WORKER_FILE)
 
-    calls = print_calls(
-        tree
-    )
+    calls = print_calls(tree)
 
     assert len(calls) == 1
 
@@ -157,22 +130,17 @@ def test_safe_helper_emits_structured_event(
         sink,
     )
 
-    telegram_webhook\
-        ._emit_telegram_operational_event_safely(
-            name=(
-                "telegram_update_processing_failed"
-            ),
-            level="error",
-            component="webhook",
-            outcome="error",
-            operation="process_update",
-            error_category="unknown",
-            stage="process_update",
-        )
+    telegram_webhook._emit_telegram_operational_event_safely(
+        name=("telegram_update_processing_failed"),
+        level="error",
+        component="webhook",
+        outcome="error",
+        operation="process_update",
+        error_category="unknown",
+        stage="process_update",
+    )
 
-    assert len(
-        sink.events
-    ) == 1
+    assert len(sink.events) == 1
 
     event = sink.events[0]
 
@@ -181,17 +149,13 @@ def test_safe_helper_emits_structured_event(
         TelegramOperationalEvent,
     )
 
-    assert event.name == (
-        "telegram_update_processing_failed"
-    )
+    assert event.name == ("telegram_update_processing_failed")
 
     assert event.level == "error"
     assert event.component == "webhook"
     assert event.outcome == "error"
 
-    assert dict(
-        event.fields
-    ) == {
+    assert dict(event.fields) == {
         "operation": "process_update",
         "error_category": "unknown",
         "stage": "process_update",
@@ -207,18 +171,13 @@ def test_safe_helper_swallows_sink_failure(
         BrokenEventSink(),
     )
 
-    result = (
-        telegram_webhook
-        ._emit_telegram_operational_event_safely(
-            name=(
-                "telegram_update_processing_failed"
-            ),
-            level="error",
-            component="webhook",
-            outcome="error",
-            operation="process_update",
-            error_category="unknown",
-        )
+    result = telegram_webhook._emit_telegram_operational_event_safely(
+        name=("telegram_update_processing_failed"),
+        level="error",
+        component="webhook",
+        outcome="error",
+        operation="process_update",
+        error_category="unknown",
     )
 
     assert result is None
@@ -267,16 +226,11 @@ def test_helper_call_sites_do_not_include_sensitive_fields(
                 node.func,
                 ast.Name,
             )
-            and node.func.id
-            == "_emit_telegram_operational_event_safely"
+            and node.func.id == "_emit_telegram_operational_event_safely"
         ):
             continue
 
-        rendered_calls.append(
-            ast.unparse(
-                node
-            ).lower()
-        )
+        rendered_calls.append(ast.unparse(node).lower())
 
     assert rendered_calls
 

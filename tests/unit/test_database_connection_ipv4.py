@@ -11,8 +11,7 @@ from src.database import connection as database
 
 
 FAKE_DATABASE_URL = (
-    "postgresql://user:super-secret@"
-    "db.example:5432/inna?sslmode=require"
+    "postgresql://user:super-secret@db.example:5432/inna?sslmode=require"
 )
 
 
@@ -40,9 +39,7 @@ def clear_ipv4_cache(
     monkeypatch.setattr(
         database,
         "obter_database_url",
-        lambda obrigatoria=True: (
-            FAKE_DATABASE_URL
-        ),
+        lambda obrigatoria=True: FAKE_DATABASE_URL,
     )
 
     yield
@@ -85,11 +82,9 @@ def test_resolver_uses_only_ipv4_and_deduplicates(
         getaddrinfo,
     )
 
-    addresses = (
-        database._resolver_enderecos_ipv4(
-            "db.example",
-            5432,
-        )
+    addresses = database._resolver_enderecos_ipv4(
+        "db.example",
+        5432,
     )
 
     assert addresses == (
@@ -120,18 +115,14 @@ def test_dns_result_is_cached(
         getaddrinfo,
     )
 
-    first = (
-        database._resolver_enderecos_ipv4(
-            "db.example",
-            5432,
-        )
+    first = database._resolver_enderecos_ipv4(
+        "db.example",
+        5432,
     )
 
-    second = (
-        database._resolver_enderecos_ipv4(
-            "db.example",
-            5432,
-        )
+    second = database._resolver_enderecos_ipv4(
+        "db.example",
+        5432,
     )
 
     assert first == second
@@ -144,22 +135,16 @@ def test_connection_preserves_hostname_and_uses_hostaddr(
     monkeypatch.setattr(
         database.socket,
         "getaddrinfo",
-        lambda *args, **kwargs: (
-            _dns_result(
-                "203.0.113.10",
-            )
+        lambda *args, **kwargs: _dns_result(
+            "203.0.113.10",
         ),
     )
 
-    fake_connection = (
-        SimpleNamespace(
-            autocommit=None,
-        )
+    fake_connection = SimpleNamespace(
+        autocommit=None,
     )
 
-    connect = MagicMock(
-        return_value=fake_connection
-    )
+    connect = MagicMock(return_value=fake_connection)
 
     monkeypatch.setattr(
         psycopg2,
@@ -177,21 +162,13 @@ def test_connection_preserves_hostname_and_uses_hostaddr(
 
     _, kwargs = connect.call_args
 
-    assert kwargs["host"] == (
-        "db.example"
-    )
+    assert kwargs["host"] == ("db.example")
 
-    assert kwargs["hostaddr"] == (
-        "203.0.113.10"
-    )
+    assert kwargs["hostaddr"] == ("203.0.113.10")
 
     assert kwargs["port"] == 5432
 
-    assert (
-        1
-        <= kwargs["connect_timeout"]
-        <= 3
-    )
+    assert 1 <= kwargs["connect_timeout"] <= 3
 
 
 def test_connection_falls_back_to_next_ipv4(
@@ -200,18 +177,14 @@ def test_connection_falls_back_to_next_ipv4(
     monkeypatch.setattr(
         database.socket,
         "getaddrinfo",
-        lambda *args, **kwargs: (
-            _dns_result(
-                "203.0.113.10",
-                "203.0.113.11",
-            )
+        lambda *args, **kwargs: _dns_result(
+            "203.0.113.10",
+            "203.0.113.11",
         ),
     )
 
-    fake_connection = (
-        SimpleNamespace(
-            autocommit=None,
-        )
+    fake_connection = SimpleNamespace(
+        autocommit=None,
     )
 
     attempted_addresses = []
@@ -220,17 +193,10 @@ def test_connection_falls_back_to_next_ipv4(
         database_url,
         **kwargs,
     ):
-        attempted_addresses.append(
-            kwargs["hostaddr"]
-        )
+        attempted_addresses.append(kwargs["hostaddr"])
 
-        if (
-            kwargs["hostaddr"]
-            == "203.0.113.10"
-        ):
-            raise RuntimeError(
-                "primeiro endereço indisponível"
-            )
+        if kwargs["hostaddr"] == "203.0.113.10":
+            raise RuntimeError("primeiro endereço indisponível")
 
         return fake_connection
 
@@ -260,15 +226,11 @@ def test_system_policy_uses_default_libpq_resolution(
         "system",
     )
 
-    fake_connection = (
-        SimpleNamespace(
-            autocommit=None,
-        )
+    fake_connection = SimpleNamespace(
+        autocommit=None,
     )
 
-    connect = MagicMock(
-        return_value=fake_connection
-    )
+    connect = MagicMock(return_value=fake_connection)
 
     monkeypatch.setattr(
         psycopg2,
@@ -294,33 +256,23 @@ def test_connection_error_does_not_expose_credentials(
     monkeypatch.setattr(
         database.socket,
         "getaddrinfo",
-        lambda *args, **kwargs: (
-            _dns_result(
-                "203.0.113.10",
-            )
+        lambda *args, **kwargs: _dns_result(
+            "203.0.113.10",
         ),
     )
 
     monkeypatch.setattr(
         psycopg2,
         "connect",
-        MagicMock(
-            side_effect=RuntimeError(
-                FAKE_DATABASE_URL
-            )
-        ),
+        MagicMock(side_effect=RuntimeError(FAKE_DATABASE_URL)),
     )
 
-    with pytest.raises(
-        database.DatabaseConnectionError
-    ) as exc_info:
+    with pytest.raises(database.DatabaseConnectionError) as exc_info:
         database.criar_conexao(
             connect_timeout=2,
         )
 
-    message = str(
-        exc_info.value
-    )
+    message = str(exc_info.value)
 
     assert "super-secret" not in message
     assert "postgresql://" not in message
@@ -335,16 +287,12 @@ def test_invalid_network_policy_is_rejected(
         "invalid",
     )
 
-    with pytest.raises(
-        database.DatabaseConfigurationError
-    ):
+    with pytest.raises(database.DatabaseConfigurationError):
         database.criar_conexao()
 
 
 def test_source_has_no_hardcoded_neon_ip():
-    source = Path(
-        "src/database/connection.py"
-    ).read_text(
+    source = Path("src/database/connection.py").read_text(
         encoding="utf-8",
     )
 
@@ -352,7 +300,4 @@ def test_source_has_no_hardcoded_neon_ip():
     assert "54.232.181.76" not in source
     assert "18.230.255.48" not in source
 
-    assert (
-        "ep-square-mode-"
-        not in source
-    )
+    assert "ep-square-mode-" not in source

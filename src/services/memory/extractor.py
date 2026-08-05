@@ -68,9 +68,7 @@ def _buscar_primeiro_valor(texto: str, padroes: list[str]):
         )
 
         if resultado:
-            valor = normalizar_valor_financeiro(
-                resultado.group(1)
-            )
+            valor = normalizar_valor_financeiro(resultado.group(1))
 
             if valor is not None:
                 return valor
@@ -114,9 +112,7 @@ def extrair_memoria_da_mensagem_inna(mensagem: str) -> dict:
 
     if renda is not None:
         dados["renda_mensal"] = renda
-        eventos.append(
-            f"renda mensal atualizada para {renda:.2f}"
-        )
+        eventos.append(f"renda mensal atualizada para {renda:.2f}")
 
     gastos = _buscar_primeiro_valor(
         texto_lower,
@@ -128,9 +124,7 @@ def extrair_memoria_da_mensagem_inna(mensagem: str) -> dict:
 
     if gastos is not None:
         dados["gastos_mensais"] = gastos
-        eventos.append(
-            f"gastos mensais atualizados para {gastos:.2f}"
-        )
+        eventos.append(f"gastos mensais atualizados para {gastos:.2f}")
 
     reserva = _buscar_primeiro_valor(
         texto_lower,
@@ -143,9 +137,7 @@ def extrair_memoria_da_mensagem_inna(mensagem: str) -> dict:
 
     if reserva is not None:
         dados["valor_reserva"] = reserva
-        eventos.append(
-            f"capacidade de guardar atualizada para {reserva:.2f}"
-        )
+        eventos.append(f"capacidade de guardar atualizada para {reserva:.2f}")
 
     expressoes_com_dividas = [
         "tenho dívida",
@@ -184,9 +176,7 @@ def extrair_memoria_da_mensagem_inna(mensagem: str) -> dict:
 
     if any(expressao in texto_lower for expressao in expressoes_cartao):
         dados["uso_cartao_credito"] = True
-        eventos.append(
-            "usuário informou uso de cartão de crédito"
-        )
+        eventos.append("usuário informou uso de cartão de crédito")
 
     padrao_meta = re.search(
         r"(?:minha\s+meta\s+(?:é|e)|"
@@ -201,9 +191,7 @@ def extrair_memoria_da_mensagem_inna(mensagem: str) -> dict:
 
         dados["ultima_meta"] = meta
         dados["objetivo_principal"] = meta
-        eventos.append(
-            f"meta ou objetivo atualizado: {meta}"
-        )
+        eventos.append(f"meta ou objetivo atualizado: {meta}")
 
     if not dados:
         return {
@@ -263,10 +251,7 @@ def mesclar_memoria_existente(
     resultado = {}
 
     for campo in campos:
-        if (
-            campo in novos_dados
-            and novos_dados[campo] is not None
-        ):
+        if campo in novos_dados and novos_dados[campo] is not None:
             resultado[campo] = novos_dados[campo]
         else:
             resultado[campo] = memoria_atual.get(campo)
@@ -275,18 +260,11 @@ def mesclar_memoria_existente(
     resultado["moeda"] = resultado.get("moeda") or "BRL"
 
     resultado["preferencia_linguagem"] = (
-        resultado.get("preferencia_linguagem")
-        or "simples"
+        resultado.get("preferencia_linguagem") or "simples"
     )
 
-    resultado["memoria_json"] = (
-        resultado.get("memoria_json")
-        or {}
-    )
+    resultado["memoria_json"] = resultado.get("memoria_json") or {}
 
-    resultado["tags"] = (
-        resultado.get("tags")
-        or []
-    )
+    resultado["tags"] = resultado.get("tags") or []
 
     return resultado

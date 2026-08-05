@@ -16,13 +16,8 @@ def test_health_check():
     assert data == {
         "probe": "health",
         "ready": True,
-        "schema_version": (
-            "telegram-operational-status.v1"
-        ),
+        "schema_version": ("telegram-operational-status.v1"),
         "status": "healthy",
     }
 
-    assert (
-        response.headers["cache-control"]
-        == "no-store"
-    )
+    assert response.headers["cache-control"] == "no-store"

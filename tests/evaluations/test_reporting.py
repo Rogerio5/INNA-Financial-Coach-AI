@@ -45,13 +45,9 @@ class ExampleEnum(StrEnum):
 def build_batch():
     return EvaluationBatchRunner(
         runner=build_deterministic_runner(),
-        payload_provider=(
-            SyntheticPassingPayloadProvider()
-        ),
+        payload_provider=(SyntheticPassingPayloadProvider()),
     ).run(
-        (
-            build_core_dataset(),
-        ),
+        (build_core_dataset(),),
         runner_settings=(
             EvaluationRunnerSettings(
                 mode=EvaluationRunMode.LOCAL,
@@ -113,9 +109,7 @@ def test_json_compatible_special_types() -> None:
     serialized = to_json_compatible(value)
 
     assert serialized["enum"] == "value"
-    assert serialized["datetime"].startswith(
-        "2026-07-25"
-    )
+    assert serialized["datetime"].startswith("2026-07-25")
     assert serialized["path"] == "artifact.json"
     assert serialized["mapping"] == {
         "key": "value",
@@ -140,9 +134,7 @@ def test_build_batch_report() -> None:
     )
 
     assert report["schema_version"] == "1.0.0"
-    assert report["report_type"] == (
-        "inna-evaluation-batch"
-    )
+    assert report["report_type"] == ("inna-evaluation-batch")
     assert report["summary"]["total_cases"] == 6
     assert report["summary"]["passed_cases"] == 6
     assert len(report["cases"]) == 6
@@ -170,13 +162,9 @@ def test_report_serializes_to_valid_json() -> None:
 
 
 def test_report_filename() -> None:
-    filename = build_report_filename(
-        build_batch()
-    )
+    filename = build_report_filename(build_batch())
 
-    assert filename.startswith(
-        "inna-evaluation-"
-    )
+    assert filename.startswith("inna-evaluation-")
     assert filename.endswith(".json")
 
 
@@ -191,11 +179,7 @@ def test_write_report(
 
     assert destination.is_file()
 
-    payload = json.loads(
-        destination.read_text(
-            encoding="utf-8"
-        )
-    )
+    payload = json.loads(destination.read_text(encoding="utf-8"))
 
     assert payload["summary"]["total_cases"] == 6
 
@@ -210,9 +194,7 @@ def test_write_custom_filename(
         sanitize=False,
     )
 
-    assert destination.name == (
-        "custom-report.json"
-    )
+    assert destination.name == ("custom-report.json")
 
 
 def test_sanitized_report_excludes_case_content() -> None:
@@ -269,9 +251,7 @@ def test_sanitized_report_uses_metadata_allowlist() -> None:
             "production_execution": False,
             "official_case_count": 6,
             "cli_command": "run-official",
-            "confidential_value": (
-                "Não deve ser exportado."
-            ),
+            "confidential_value": ("Não deve ser exportado."),
         },
     )
 
@@ -332,9 +312,7 @@ def test_sanitized_quality_gate_excludes_raw_values() -> None:
 
     assert gate["passed"] is False
     assert gate["batch_id"] is None
-    assert gate["run_reference"] == (
-        report["run_reference"]
-    )
+    assert gate["run_reference"] == (report["run_reference"])
 
     assert set(violation) == {
         "rule",
@@ -356,9 +334,7 @@ def test_sanitized_report_excludes_internal_batch_ids() -> None:
     )
 
     assert report["batch"]["batch_id"] is None
-    assert report["run_reference"].startswith(
-        "run-"
-    )
+    assert report["run_reference"].startswith("run-")
 
 
 def test_internal_report_preserves_batch_id() -> None:
@@ -369,9 +345,7 @@ def test_internal_report_preserves_batch_id() -> None:
         sanitize=False,
     )
 
-    assert report["batch"]["batch_id"] == (
-        batch.batch_id
-    )
+    assert report["batch"]["batch_id"] == (batch.batch_id)
 
 
 def test_sanitized_report_excludes_internal_timestamps() -> None:
@@ -396,21 +370,13 @@ def test_internal_report_preserves_timestamps() -> None:
     )
 
     assert report["generated_at"] is not None
-    assert report["batch"]["started_at"] == (
-        batch.started_at.isoformat()
-    )
-    assert report["batch"]["finished_at"] == (
-        batch.finished_at.isoformat()
-    )
+    assert report["batch"]["started_at"] == (batch.started_at.isoformat())
+    assert report["batch"]["finished_at"] == (batch.finished_at.isoformat())
 
 
 def test_external_run_reference_is_stable() -> None:
-    first = build_external_run_reference(
-        "batch-internal-001"
-    )
-    second = build_external_run_reference(
-        "batch-internal-001"
-    )
+    first = build_external_run_reference("batch-internal-001")
+    second = build_external_run_reference("batch-internal-001")
 
     assert first == second
     assert first.startswith("run-")
@@ -418,12 +384,8 @@ def test_external_run_reference_is_stable() -> None:
 
 
 def test_external_run_reference_changes_by_batch() -> None:
-    first = build_external_run_reference(
-        "batch-internal-001"
-    )
-    second = build_external_run_reference(
-        "batch-internal-002"
-    )
+    first = build_external_run_reference("batch-internal-001")
+    second = build_external_run_reference("batch-internal-002")
 
     assert first != second
 
@@ -446,9 +408,7 @@ def test_external_generated_date() -> None:
         tzinfo=UTC,
     )
 
-    assert build_external_generated_date(
-        value
-    ) == "2026-07-26"
+    assert build_external_generated_date(value) == "2026-07-26"
 
 
 def test_external_generated_date_requires_timezone() -> None:
@@ -475,21 +435,11 @@ def test_sanitized_report_contains_safe_reference() -> None:
         sanitize=True,
     )
 
-    expected_reference = (
-        build_external_run_reference(
-            batch.batch_id
-        )
-    )
+    expected_reference = build_external_run_reference(batch.batch_id)
 
-    assert report["run_reference"] == (
-        expected_reference
-    )
-    assert report["generated_date"] == (
-        batch.started_at.date().isoformat()
-    )
-    assert report["batch"]["run_reference"] == (
-        expected_reference
-    )
+    assert report["run_reference"] == (expected_reference)
+    assert report["generated_date"] == (batch.started_at.date().isoformat())
+    assert report["batch"]["run_reference"] == (expected_reference)
 
     assert report["batch"]["batch_id"] is None
     assert report["generated_at"] is None
@@ -511,13 +461,9 @@ def test_sanitized_quality_gate_uses_run_reference() -> None:
         sanitize=True,
     )
 
-    assert report["quality_gate"][
-        "batch_id"
-    ] is None
+    assert report["quality_gate"]["batch_id"] is None
 
-    assert report["quality_gate"][
-        "run_reference"
-    ] == report["run_reference"]
+    assert report["quality_gate"]["run_reference"] == report["run_reference"]
 
 
 def test_internal_report_keeps_complete_traceability() -> None:
@@ -528,25 +474,17 @@ def test_internal_report_keeps_complete_traceability() -> None:
         sanitize=False,
     )
 
-    assert report["batch"]["batch_id"] == (
-        batch.batch_id
-    )
+    assert report["batch"]["batch_id"] == (batch.batch_id)
     assert report["generated_at"] is not None
-    assert report["batch"]["started_at"] == (
-        batch.started_at.isoformat()
-    )
-    assert report["batch"]["finished_at"] == (
-        batch.finished_at.isoformat()
-    )
+    assert report["batch"]["started_at"] == (batch.started_at.isoformat())
+    assert report["batch"]["finished_at"] == (batch.finished_at.isoformat())
 
 
 def test_external_projection_rejects_user_content() -> None:
     payload = build_external_projection(
         cases=[
             {
-                "input_text": (
-                    "Conteúdo que não pode ser exportado."
-                ),
+                "input_text": ("Conteúdo que não pode ser exportado."),
             },
         ],
     )
@@ -555,17 +493,13 @@ def test_external_projection_rejects_user_content() -> None:
         EvaluationReportSerializationError,
         match="Campo proibido",
     ):
-        _validate_external_report_projection(
-            payload
-        )
+        _validate_external_report_projection(payload)
 
 
 def test_external_projection_rejects_secret() -> None:
     payload = build_external_projection(
         batch={
-            "api_key": (
-                "valor-que-nao-pode-ser-exportado"
-            ),
+            "api_key": ("valor-que-nao-pode-ser-exportado"),
         },
     )
 
@@ -573,13 +507,10 @@ def test_external_projection_rejects_secret() -> None:
         EvaluationReportSerializationError,
         match="segredo",
     ):
-        _validate_external_report_projection(
-            payload
-        )
+        _validate_external_report_projection(payload)
 
 
-def test_external_projection_rejects_secret_key_case_insensitive(
-) -> None:
+def test_external_projection_rejects_secret_key_case_insensitive() -> None:
     payload = build_external_projection(
         batch={
             "CLIENT_SECRET": "valor-privado",
@@ -590,9 +521,7 @@ def test_external_projection_rejects_secret_key_case_insensitive(
         EvaluationReportSerializationError,
         match="segredo",
     ):
-        _validate_external_report_projection(
-            payload
-        )
+        _validate_external_report_projection(payload)
 
 
 @pytest.mark.parametrize(
@@ -626,6 +555,4 @@ def test_external_projection_rejects_known_secret_keys(
         EvaluationReportSerializationError,
         match="segredo",
     ):
-        _validate_external_report_projection(
-            payload
-        )
+        _validate_external_report_projection(payload)

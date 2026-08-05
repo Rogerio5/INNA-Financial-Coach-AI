@@ -35,6 +35,12 @@ NAVIGATION_GROUPS: tuple[NavigationGroup, ...] = (
         ),
     ),
     NavigationGroup(
+        group_id="platform_modules",
+        icon="🧩",
+        default_page_id="platform_modules_catalog",
+        page_ids=("platform_modules_catalog",),
+    ),
+    NavigationGroup(
         group_id="financial_solutions",
         icon="💰",
         default_page_id="diagnostics",
@@ -80,29 +86,45 @@ NAVIGATION_GROUPS: tuple[NavigationGroup, ...] = (
         group_id="administration",
         icon="🔐",
         default_page_id="export",
-        page_ids=(
-            "export",
-        ),
+        page_ids=("export",),
     ),
 )
 
 
-NAVIGATION_GROUP_IDS: tuple[str, ...] = tuple(
-    group.group_id
+# RELATIONSHIP_GRAPH_NAVIGATION_INTEGRATION
+NAVIGATION_GROUPS = tuple(
+    NavigationGroup(
+        group_id=group.group_id,
+        icon=group.icon,
+        default_page_id=group.default_page_id,
+        page_ids=(
+            (
+                *group.page_ids,
+                "relationship_graph",
+            )
+            if (
+                group.group_id == "platform_modules"
+                and "relationship_graph" not in group.page_ids
+            )
+            else group.page_ids
+        ),
+    )
     for group in NAVIGATION_GROUPS
 )
 
 
+NAVIGATION_GROUP_IDS: tuple[str, ...] = tuple(
+    group.group_id for group in NAVIGATION_GROUPS
+)
+
+
 NAVIGATION_GROUP_BY_ID: dict[str, NavigationGroup] = {
-    group.group_id: group
-    for group in NAVIGATION_GROUPS
+    group.group_id: group for group in NAVIGATION_GROUPS
 }
 
 
 PAGE_TO_NAVIGATION_GROUP: dict[str, str] = {
-    page_id: group.group_id
-    for group in NAVIGATION_GROUPS
-    for page_id in group.page_ids
+    page_id: group.group_id for group in NAVIGATION_GROUPS for page_id in group.page_ids
 }
 
 
@@ -147,15 +169,11 @@ def validate_navigation_registry() -> None:
     """Valida integridade, duplicidade e cobertura do registro."""
 
     registered_pages = [
-        page_id
-        for group in NAVIGATION_GROUPS
-        for page_id in group.page_ids
+        page_id for group in NAVIGATION_GROUPS for page_id in group.page_ids
     ]
 
     if len(registered_pages) != len(set(registered_pages)):
-        raise ValueError(
-            "Existem páginas duplicadas na navegação."
-        )
+        raise ValueError("Existem páginas duplicadas na navegação.")
 
     registered_page_set = set(registered_pages)
     menu_page_set = set(MENU_PAGE_IDS)
@@ -164,23 +182,14 @@ def validate_navigation_registry() -> None:
     unknown_pages = registered_page_set - menu_page_set
 
     if missing_pages:
-        raise ValueError(
-            "Páginas sem grupo: "
-            f"{sorted(missing_pages)}"
-        )
+        raise ValueError(f"Páginas sem grupo: {sorted(missing_pages)}")
 
     if unknown_pages:
-        raise ValueError(
-            "Páginas desconhecidas: "
-            f"{sorted(unknown_pages)}"
-        )
+        raise ValueError(f"Páginas desconhecidas: {sorted(unknown_pages)}")
 
     for group in NAVIGATION_GROUPS:
         if group.default_page_id not in group.page_ids:
-            raise ValueError(
-                "Página padrão fora do grupo: "
-                f"{group.group_id}"
-            )
+            raise ValueError(f"Página padrão fora do grupo: {group.group_id}")
 
 
 validate_navigation_registry()

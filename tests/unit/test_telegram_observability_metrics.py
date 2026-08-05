@@ -24,23 +24,15 @@ def _record(
 
 
 def test_noop_metrics_accepts_record():
-    metrics = (
-        NoOpTelegramConversationMetrics()
-    )
+    metrics = NoOpTelegramConversationMetrics()
 
-    metrics.record_operation(
-        _record()
-    )
+    metrics.record_operation(_record())
 
 
 def test_in_memory_metrics_records_snapshot():
-    metrics = (
-        InMemoryTelegramConversationMetrics()
-    )
+    metrics = InMemoryTelegramConversationMetrics()
 
-    metrics.record_operation(
-        _record()
-    )
+    metrics.record_operation(_record())
 
     snapshot = metrics.snapshot()
 
@@ -49,13 +41,9 @@ def test_in_memory_metrics_records_snapshot():
 
 
 def test_in_memory_metrics_filters_counts():
-    metrics = (
-        InMemoryTelegramConversationMetrics()
-    )
+    metrics = InMemoryTelegramConversationMetrics()
 
-    metrics.record_operation(
-        _record()
-    )
+    metrics.record_operation(_record())
 
     metrics.record_operation(
         _record(
@@ -65,50 +53,40 @@ def test_in_memory_metrics_filters_counts():
         )
     )
 
-    assert metrics.count(
-        operation="save_session",
-        outcome="success",
-    ) == 1
+    assert (
+        metrics.count(
+            operation="save_session",
+            outcome="success",
+        )
+        == 1
+    )
 
-    assert metrics.count(
-        outcome="error",
-        error_category="persistence",
-    ) == 1
+    assert (
+        metrics.count(
+            outcome="error",
+            error_category="persistence",
+        )
+        == 1
+    )
 
 
 def test_in_memory_metrics_preserves_durations():
-    metrics = (
-        InMemoryTelegramConversationMetrics()
-    )
+    metrics = InMemoryTelegramConversationMetrics()
 
-    metrics.record_operation(
-        _record(
-            duration_ms=8.5
-        )
-    )
+    metrics.record_operation(_record(duration_ms=8.5))
 
-    metrics.record_operation(
-        _record(
-            duration_ms=11.5
-        )
-    )
+    metrics.record_operation(_record(duration_ms=11.5))
 
-    assert metrics.durations_ms(
-        operation="save_session"
-    ) == (
+    assert metrics.durations_ms(operation="save_session") == (
         8.5,
         11.5,
     )
 
 
 def test_in_memory_metrics_clear():
-    metrics = (
-        InMemoryTelegramConversationMetrics()
-    )
+    metrics = InMemoryTelegramConversationMetrics()
 
-    metrics.record_operation(
-        _record()
-    )
+    metrics.record_operation(_record())
 
     metrics.clear()
 

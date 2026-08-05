@@ -46,9 +46,7 @@ MAX_REPORT_HISTORY_LIMIT = 20
 def _optional_text(
     value: Any,
 ) -> str | None:
-    normalized = str(
-        value or ""
-    ).strip()
+    normalized = str(value or "").strip()
 
     return normalized or None
 
@@ -79,10 +77,12 @@ def _safe_tool_result(
     }
 
     if result.error is not None:
-        compact.update({
-            "error_code": result.error.code,
-            "retryable": result.error.retryable,
-        })
+        compact.update(
+            {
+                "error_code": result.error.code,
+                "retryable": result.error.retryable,
+            }
+        )
 
     return compact
 
@@ -96,10 +96,7 @@ def _error_response(
     tool_results: list[dict[str, Any]],
     structured_response: dict[str, Any],
 ) -> InnaAgentState:
-    errors = list(
-        state.get("errors", [])
-        or []
-    )
+    errors = list(state.get("errors", []) or [])
 
     errors.append(error_code)
 
@@ -108,19 +105,14 @@ def _error_response(
         intent="relatorio",
         summary=summary,
         recommendations=[
-            (
-                "Confirme se existe um diagnóstico "
-                "financeiro salvo e tente novamente."
-            )
+            ("Confirme se existe um diagnóstico financeiro salvo e tente novamente.")
         ],
         next_steps=[],
         sources=[],
         confidence=0.30,
     )
 
-    structured_response[
-        "agent_response"
-    ] = response.model_dump()
+    structured_response["agent_response"] = response.model_dump()
 
     return {
         **state,
@@ -134,7 +126,8 @@ def _error_response(
         "structured_response": structured_response,
         "tool_results": tool_results,
         "errors": errors,
-        "trace": trace + [
+        "trace": trace
+        + [
             "agent:report_agent:error",
         ],
     }
@@ -146,24 +139,13 @@ def executar_fluxo_relatorio(
     """
     Executa o fluxo completo de preparação do relatório.
     """
-    trusted_user_id = _optional_text(
-        state.get("user_id")
-        or state.get("usuario_id")
-    )
+    trusted_user_id = _optional_text(state.get("user_id") or state.get("usuario_id"))
 
-    session_id = _optional_text(
-        state.get("thread_id")
-        or state.get("session_id")
-    )
+    session_id = _optional_text(state.get("thread_id") or state.get("session_id"))
 
-    trace_id = _optional_text(
-        state.get("trace_id")
-    )
+    trace_id = _optional_text(state.get("trace_id"))
 
-    idioma = str(
-        state.get("language", "pt")
-        or "pt"
-    ).strip()
+    idioma = str(state.get("language", "pt") or "pt").strip()
 
     limite = _normalized_limit(
         state.get(
@@ -172,15 +154,9 @@ def executar_fluxo_relatorio(
         )
     )
 
-    trace = list(
-        state.get("trace", [])
-        or []
-    )
+    trace = list(state.get("trace", []) or [])
 
-    tool_results = list(
-        state.get("tool_results", [])
-        or []
-    )
+    tool_results = list(state.get("tool_results", []) or [])
 
     structured_response = dict(
         state.get(
@@ -190,16 +166,10 @@ def executar_fluxo_relatorio(
         or {}
     )
 
-    structured_response[
-        "report_request"
-    ] = {
+    structured_response["report_request"] = {
         "history_limit": limite,
-        "identity_available": bool(
-            trusted_user_id
-        ),
-        "identity_source": (
-            "tool_execution_context"
-        ),
+        "identity_available": bool(trusted_user_id),
+        "identity_source": ("tool_execution_context"),
         "language": idioma,
     }
 
@@ -211,10 +181,9 @@ def executar_fluxo_relatorio(
                 "porque a identidade autenticada não "
                 "está disponível."
             ),
-            error_code=(
-                "trusted_user_identity_missing"
-            ),
-            trace=trace + [
+            error_code=("trusted_user_identity_missing"),
+            trace=trace
+            + [
                 "report:missing_user_identity",
             ],
             tool_results=tool_results,
@@ -237,9 +206,7 @@ def executar_fluxo_relatorio(
         },
     )
 
-    trace.append(
-        f"tool:{FINANCIAL_HISTORY_TOOL_NAME}:start"
-    )
+    trace.append(f"tool:{FINANCIAL_HISTORY_TOOL_NAME}:start")
 
     history_result = executar_ferramenta_inna(
         ToolCall(
@@ -251,28 +218,15 @@ def executar_fluxo_relatorio(
         )
     )
 
-    compact_history = _safe_tool_result(
-        history_result
-    )
+    compact_history = _safe_tool_result(history_result)
 
-    tool_results.append(
-        compact_history
-    )
+    tool_results.append(compact_history)
 
-    structured_response[
-        "report_history_execution"
-    ] = dict(
-        compact_history
-    )
+    structured_response["report_history_execution"] = dict(compact_history)
 
-    if (
-        history_result.status
-        != ToolStatus.SUCCESS
-        or history_result.output is None
-    ):
+    if history_result.status != ToolStatus.SUCCESS or history_result.output is None:
         trace.append(
-            f"tool:{FINANCIAL_HISTORY_TOOL_NAME}:"
-            f"{history_result.status.value}"
+            f"tool:{FINANCIAL_HISTORY_TOOL_NAME}:{history_result.status.value}"
         )
 
         error_code = (
@@ -294,9 +248,7 @@ def executar_fluxo_relatorio(
             structured_response=structured_response,
         )
 
-    history_output = dict(
-        history_result.output
-    )
+    history_output = dict(history_result.output)
 
     diagnostics = list(
         history_output.get(
@@ -306,42 +258,34 @@ def executar_fluxo_relatorio(
         or []
     )
 
-    structured_response[
-        "report_history_execution"
-    ].update({
-        "has_history": bool(
-            history_output.get(
-                "possui_historico",
-                False,
-            )
-        ),
-        "total_returned": int(
-            history_output.get(
-                "total_retornado",
-                len(diagnostics),
-            )
-            or 0
-        ),
-    })
-
-    trace.append(
-        f"tool:{FINANCIAL_HISTORY_TOOL_NAME}:success"
+    structured_response["report_history_execution"].update(
+        {
+            "has_history": bool(
+                history_output.get(
+                    "possui_historico",
+                    False,
+                )
+            ),
+            "total_returned": int(
+                history_output.get(
+                    "total_retornado",
+                    len(diagnostics),
+                )
+                or 0
+            ),
+        }
     )
 
-    trace.append(
-        f"tool:{PREPARE_FINANCIAL_REPORT_TOOL_NAME}:start"
-    )
+    trace.append(f"tool:{FINANCIAL_HISTORY_TOOL_NAME}:success")
+
+    trace.append(f"tool:{PREPARE_FINANCIAL_REPORT_TOOL_NAME}:start")
 
     prepare_result = executar_ferramenta_inna(
         ToolCall(
-            tool_name=(
-                PREPARE_FINANCIAL_REPORT_TOOL_NAME
-            ),
+            tool_name=(PREPARE_FINANCIAL_REPORT_TOOL_NAME),
             arguments={
                 "diagnosticos": diagnostics,
-                "titulo": (
-                    "Relatório Financeiro INNA"
-                ),
+                "titulo": ("Relatório Financeiro INNA"),
                 "idioma": idioma,
                 "recomendacoes": [],
                 "proximos_passos": [],
@@ -350,29 +294,15 @@ def executar_fluxo_relatorio(
         )
     )
 
-    compact_preparation = _safe_tool_result(
-        prepare_result
-    )
+    compact_preparation = _safe_tool_result(prepare_result)
 
-    tool_results.append(
-        compact_preparation
-    )
+    tool_results.append(compact_preparation)
 
-    structured_response[
-        "report_preparation_execution"
-    ] = dict(
-        compact_preparation
-    )
+    structured_response["report_preparation_execution"] = dict(compact_preparation)
 
-    if (
-        prepare_result.status
-        != ToolStatus.SUCCESS
-        or prepare_result.output is None
-    ):
+    if prepare_result.status != ToolStatus.SUCCESS or prepare_result.output is None:
         trace.append(
-            f"tool:"
-            f"{PREPARE_FINANCIAL_REPORT_TOOL_NAME}:"
-            f"{prepare_result.status.value}"
+            f"tool:{PREPARE_FINANCIAL_REPORT_TOOL_NAME}:{prepare_result.status.value}"
         )
 
         error_code = (
@@ -394,19 +324,11 @@ def executar_fluxo_relatorio(
             structured_response=structured_response,
         )
 
-    prepared_report = dict(
-        prepare_result.output
-    )
+    prepared_report = dict(prepare_result.output)
 
-    trace.append(
-        "risk_reviewer:start"
-    )
+    trace.append("risk_reviewer:start")
 
-    reviewed_report = (
-        apply_risk_review_to_report(
-            prepared_report
-        )
-    )
+    reviewed_report = apply_risk_review_to_report(prepared_report)
 
     risk_review = dict(
         reviewed_report.get(
@@ -416,75 +338,58 @@ def executar_fluxo_relatorio(
         or {}
     )
 
-    structured_response[
-        "financial_report"
-    ] = reviewed_report
+    structured_response["financial_report"] = reviewed_report
 
-    structured_response[
-        "risk_review"
-    ] = risk_review
+    structured_response["risk_review"] = risk_review
 
-    structured_response[
-        "report_preparation_execution"
-    ].update({
-        "total_diagnoses": (
-            reviewed_report.get(
-                "total_diagnosticos",
-                0,
-            )
-        ),
-        "ready_for_risk_review": (
-            reviewed_report.get(
-                "ready_for_risk_review",
-                False,
-            )
-        ),
-        "ready_for_pdf_rendering": (
-            reviewed_report.get(
-                "ready_for_pdf_rendering",
-                False,
-            )
-        ),
-        "financial_values_recalculated": (
-            reviewed_report.get(
-                "financial_values_recalculated",
-                True,
-            )
-        ),
-        "risk_review_approved": (
-            reviewed_report.get(
-                "risk_review_approved",
-                False,
-            )
-        ),
-    })
-
-    trace.append(
-        f"tool:"
-        f"{PREPARE_FINANCIAL_REPORT_TOOL_NAME}:"
-        "success"
+    structured_response["report_preparation_execution"].update(
+        {
+            "total_diagnoses": (
+                reviewed_report.get(
+                    "total_diagnosticos",
+                    0,
+                )
+            ),
+            "ready_for_risk_review": (
+                reviewed_report.get(
+                    "ready_for_risk_review",
+                    False,
+                )
+            ),
+            "ready_for_pdf_rendering": (
+                reviewed_report.get(
+                    "ready_for_pdf_rendering",
+                    False,
+                )
+            ),
+            "financial_values_recalculated": (
+                reviewed_report.get(
+                    "financial_values_recalculated",
+                    True,
+                )
+            ),
+            "risk_review_approved": (
+                reviewed_report.get(
+                    "risk_review_approved",
+                    False,
+                )
+            ),
+        }
     )
+
+    trace.append(f"tool:{PREPARE_FINANCIAL_REPORT_TOOL_NAME}:success")
 
     if risk_review.get(
         "approved",
         False,
     ):
-        trace.append(
-            "risk_reviewer:approved"
-        )
+        trace.append("risk_reviewer:approved")
     else:
-        trace.append(
-            "risk_reviewer:blocked"
-        )
+        trace.append("risk_reviewer:blocked")
 
-    if (
-        reviewed_report.get(
-            "possui_diagnostico"
-        )
-        and risk_review.get(
-            "approved",
-            False,
-        )
+    if reviewed_report.get("possui_diagnostico") and risk_review.get(
+        "approved",
+        False,
     ):
         summary = (
             "O relatório financeiro foi preparado "
@@ -501,36 +406,19 @@ def executar_fluxo_relatorio(
         ]
 
         next_steps = [
-            (
-                "Gerar o PDF a partir da estrutura "
-                "aprovada pelo revisor de risco."
-            )
+            ("Gerar o PDF a partir da estrutura aprovada pelo revisor de risco.")
         ]
 
         confidence = 0.95
 
-    elif not reviewed_report.get(
-        "possui_diagnostico"
-    ):
+    elif not reviewed_report.get("possui_diagnostico"):
         summary = (
-            "Ainda não existem diagnósticos "
-            "financeiros salvos para compor "
-            "o relatório."
+            "Ainda não existem diagnósticos financeiros salvos para compor o relatório."
         )
 
-        recommendations = [
-            (
-                "Realize primeiro um diagnóstico "
-                "financeiro."
-            )
-        ]
+        recommendations = [("Realize primeiro um diagnóstico financeiro.")]
 
-        next_steps = [
-            (
-                "Depois do diagnóstico, solicite "
-                "novamente o relatório."
-            )
-        ]
+        next_steps = [("Depois do diagnóstico, solicite novamente o relatório.")]
 
         confidence = 0.90
 
@@ -542,17 +430,11 @@ def executar_fluxo_relatorio(
         )
 
         recommendations = [
-            (
-                "Revise os achados registrados "
-                "antes de gerar o documento."
-            )
+            ("Revise os achados registrados antes de gerar o documento.")
         ]
 
         next_steps = [
-            (
-                "Corrigir os controles bloqueadores "
-                "e executar uma nova revisão."
-            )
+            ("Corrigir os controles bloqueadores e executar uma nova revisão.")
         ]
 
         confidence = 0.85
@@ -567,9 +449,7 @@ def executar_fluxo_relatorio(
         confidence=confidence,
     )
 
-    structured_response[
-        "agent_response"
-    ] = response.model_dump()
+    structured_response["agent_response"] = response.model_dump()
 
     return {
         **state,
@@ -580,15 +460,11 @@ def executar_fluxo_relatorio(
                 "content": response.summary,
             }
         ],
-        "structured_response": (
-            structured_response
-        ),
+        "structured_response": (structured_response),
         "tool_results": tool_results,
-        "errors": list(
-            state.get("errors", [])
-            or []
-        ),
-        "trace": trace + [
+        "errors": list(state.get("errors", []) or []),
+        "trace": trace
+        + [
             "agent:report_agent",
         ],
     }

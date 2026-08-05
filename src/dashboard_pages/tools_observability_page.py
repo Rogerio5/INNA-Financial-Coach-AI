@@ -14,9 +14,7 @@ import streamlit as st
 
 TOOLS_OBSERVABILITY_BG = "#020617"
 TOOLS_OBSERVABILITY_TEXT = "#F8FAFC"
-TOOLS_OBSERVABILITY_GRID = (
-    "rgba(148, 163, 184, 0.16)"
-)
+TOOLS_OBSERVABILITY_GRID = "rgba(148, 163, 184, 0.16)"
 
 
 TOOLS_OBSERVABILITY_TEXTS = {
@@ -43,9 +41,7 @@ TOOLS_OBSERVABILITY_TEXTS = {
         "average_duration": "Duração média",
         "minimum_duration": "Duração mínima",
         "p95_duration": "Duração P95",
-        "p95_help": (
-            "95% das execuções terminaram abaixo deste tempo."
-        ),
+        "p95_help": ("95% das execuções terminaram abaixo deste tempo."),
         "maximum_duration": "Duração máxima",
         "most_used_tool": "### Tool mais utilizada",
         "execution_count": "{count} execução(ões)",
@@ -58,12 +54,8 @@ TOOLS_OBSERVABILITY_TEXTS = {
         ),
         "no_events": "Ainda não existem eventos para análise.",
         "search_filters": "## Pesquisa e filtros",
-        "search_label": (
-            "Pesquisar usuário, pergunta, Tool ou intenção"
-        ),
-        "search_placeholder": (
-            "Ex.: demo_user, quanto sobra, orçamento..."
-        ),
+        "search_label": ("Pesquisar usuário, pergunta, Tool ou intenção"),
+        "search_placeholder": ("Ex.: demo_user, quanto sobra, orçamento..."),
         "tool": "Ferramenta",
         "origin": "Origem",
         "user": "Usuário",
@@ -122,9 +114,7 @@ TOOLS_OBSERVABILITY_TEXTS = {
         "average_duration": "Average duration",
         "minimum_duration": "Minimum duration",
         "p95_duration": "P95 duration",
-        "p95_help": (
-            "95% of executions finished below this duration."
-        ),
+        "p95_help": ("95% of executions finished below this duration."),
         "maximum_duration": "Maximum duration",
         "most_used_tool": "### Most used tool",
         "execution_count": "{count} execution(s)",
@@ -138,9 +128,7 @@ TOOLS_OBSERVABILITY_TEXTS = {
         "no_events": "There are no events available for analysis.",
         "search_filters": "## Search and filters",
         "search_label": "Search user, question, tool, or intent",
-        "search_placeholder": (
-            "Example: demo_user, remaining balance, budget..."
-        ),
+        "search_placeholder": ("Example: demo_user, remaining balance, budget..."),
         "tool": "Tool",
         "origin": "Origin",
         "user": "User",
@@ -199,10 +187,7 @@ TOOLS_OBSERVABILITY_TEXTS = {
         "average_duration": "Duración media",
         "minimum_duration": "Duración mínima",
         "p95_duration": "Duración P95",
-        "p95_help": (
-            "El 95% de las ejecuciones terminó por debajo "
-            "de esta duración."
-        ),
+        "p95_help": ("El 95% de las ejecuciones terminó por debajo de esta duración."),
         "maximum_duration": "Duración máxima",
         "most_used_tool": "### Herramienta más utilizada",
         "execution_count": "{count} ejecución(es)",
@@ -215,12 +200,8 @@ TOOLS_OBSERVABILITY_TEXTS = {
         ),
         "no_events": "No hay eventos disponibles para analizar.",
         "search_filters": "## Búsqueda y filtros",
-        "search_label": (
-            "Buscar usuario, pregunta, herramienta o intención"
-        ),
-        "search_placeholder": (
-            "Ej.: demo_user, saldo restante, presupuesto..."
-        ),
+        "search_label": ("Buscar usuario, pregunta, herramienta o intención"),
+        "search_placeholder": ("Ej.: demo_user, saldo restante, presupuesto..."),
         "tool": "Herramienta",
         "origin": "Origen",
         "user": "Usuario",
@@ -279,9 +260,7 @@ TOOLS_OBSERVABILITY_TEXTS = {
         "average_duration": "Durée moyenne",
         "minimum_duration": "Durée minimale",
         "p95_duration": "Durée P95",
-        "p95_help": (
-            "95 % des exécutions se sont terminées sous cette durée."
-        ),
+        "p95_help": ("95 % des exécutions se sont terminées sous cette durée."),
         "maximum_duration": "Durée maximale",
         "most_used_tool": "### Outil le plus utilisé",
         "execution_count": "{count} exécution(s)",
@@ -295,12 +274,9 @@ TOOLS_OBSERVABILITY_TEXTS = {
         "no_events": "Aucun événement disponible pour l’analyse.",
         "search_filters": "## Recherche et filtres",
         "search_label": (
-            "Rechercher un utilisateur, une question, "
-            "un outil ou une intention"
+            "Rechercher un utilisateur, une question, un outil ou une intention"
         ),
-        "search_placeholder": (
-            "Ex. : demo_user, solde restant, budget..."
-        ),
+        "search_placeholder": ("Ex. : demo_user, solde restant, budget..."),
         "tool": "Outil",
         "origin": "Origine",
         "user": "Utilisateur",
@@ -338,15 +314,12 @@ TOOLS_OBSERVABILITY_TEXTS = {
     },
 }
 
-TOOLS_OBSERVABILITY_TEXTS["en_gb"] = (
-    TOOLS_OBSERVABILITY_TEXTS["en_us"]
-)
+TOOLS_OBSERVABILITY_TEXTS["en_gb"] = TOOLS_OBSERVABILITY_TEXTS["en_us"]
 
 TOOLS_OBSERVABILITY_TEXTS["de"] = {
     "page_title": "🛠️ Betriebszentrum — INNA-Tools",
     "page_caption": (
-        "Operative Überwachung, Leistung, Nutzung und "
-        "Integrität der Finanzwerkzeuge."
+        "Operative Überwachung, Leistung, Nutzung und Integrität der Finanzwerkzeuge."
     ),
     "loaded_events": "Geladene Ereignisse",
     "time_grouping": "Zeitliche Gruppierung",
@@ -365,10 +338,7 @@ TOOLS_OBSERVABILITY_TEXTS["de"] = {
     "average_duration": "Durchschnittliche Dauer",
     "minimum_duration": "Minimale Dauer",
     "p95_duration": "P95-Dauer",
-    "p95_help": (
-        "95 % der Ausführungen wurden unterhalb "
-        "dieser Dauer abgeschlossen."
-    ),
+    "p95_help": ("95 % der Ausführungen wurden unterhalb dieser Dauer abgeschlossen."),
     "maximum_duration": "Maximale Dauer",
     "most_used_tool": "### Meistverwendetes Tool",
     "execution_count": "{count} Ausführung(en)",
@@ -381,12 +351,8 @@ TOOLS_OBSERVABILITY_TEXTS["de"] = {
     ),
     "no_events": "Keine Ereignisse zur Analyse vorhanden.",
     "search_filters": "## Suche und Filter",
-    "search_label": (
-        "Benutzer, Frage, Tool oder Absicht suchen"
-    ),
-    "search_placeholder": (
-        "Beispiel: demo_user, Restbetrag, Budget..."
-    ),
+    "search_label": ("Benutzer, Frage, Tool oder Absicht suchen"),
+    "search_placeholder": ("Beispiel: demo_user, Restbetrag, Budget..."),
     "tool": "Tool",
     "origin": "Quelle",
     "user": "Benutzer",
@@ -446,10 +412,7 @@ TOOLS_OBSERVABILITY_TEXTS["it"] = {
     "average_duration": "Durata media",
     "minimum_duration": "Durata minima",
     "p95_duration": "Durata P95",
-    "p95_help": (
-        "Il 95% delle esecuzioni è terminato al di sotto "
-        "di questa durata."
-    ),
+    "p95_help": ("Il 95% delle esecuzioni è terminato al di sotto di questa durata."),
     "maximum_duration": "Durata massima",
     "most_used_tool": "### Strumento più utilizzato",
     "execution_count": "{count} esecuzione/i",
@@ -457,17 +420,11 @@ TOOLS_OBSERVABILITY_TEXTS["it"] = {
     "last_execution": "### Ultima esecuzione",
     "no_execution": "Nessuna esecuzione registrata.",
     "infrastructure_state": "## Stato dell’infrastruttura",
-    "operational_components": (
-        "{operational} componenti operativi su {total}."
-    ),
+    "operational_components": ("{operational} componenti operativi su {total}."),
     "no_events": "Nessun evento disponibile per l’analisi.",
     "search_filters": "## Ricerca e filtri",
-    "search_label": (
-        "Cerca utente, domanda, strumento o intenzione"
-    ),
-    "search_placeholder": (
-        "Esempio: demo_user, saldo residuo, budget..."
-    ),
+    "search_label": ("Cerca utente, domanda, strumento o intenzione"),
+    "search_placeholder": ("Esempio: demo_user, saldo residuo, budget..."),
     "tool": "Strumento",
     "origin": "Origine",
     "user": "Utente",
@@ -527,9 +484,7 @@ TOOLS_OBSERVABILITY_TEXTS["ro"] = {
     "average_duration": "Durată medie",
     "minimum_duration": "Durată minimă",
     "p95_duration": "Durată P95",
-    "p95_help": (
-        "95% dintre execuții s-au încheiat sub această durată."
-    ),
+    "p95_help": ("95% dintre execuții s-au încheiat sub această durată."),
     "maximum_duration": "Durată maximă",
     "most_used_tool": "### Cel mai utilizat instrument",
     "execution_count": "{count} execuție/execuții",
@@ -542,12 +497,8 @@ TOOLS_OBSERVABILITY_TEXTS["ro"] = {
     ),
     "no_events": "Nu există evenimente disponibile pentru analiză.",
     "search_filters": "## Căutare și filtre",
-    "search_label": (
-        "Caută utilizator, întrebare, instrument sau intenție"
-    ),
-    "search_placeholder": (
-        "Exemplu: demo_user, sold rămas, buget..."
-    ),
+    "search_label": ("Caută utilizator, întrebare, instrument sau intenție"),
+    "search_placeholder": ("Exemplu: demo_user, sold rămas, buget..."),
     "tool": "Instrument",
     "origin": "Origine",
     "user": "Utilizator",
@@ -607,9 +558,7 @@ TOOLS_OBSERVABILITY_TEXTS["ua"] = {
     "average_duration": "Середня тривалість",
     "minimum_duration": "Мінімальна тривалість",
     "p95_duration": "Тривалість P95",
-    "p95_help": (
-        "95% виконань завершилися швидше за цей час."
-    ),
+    "p95_help": ("95% виконань завершилися швидше за цей час."),
     "maximum_duration": "Максимальна тривалість",
     "most_used_tool": "### Найуживаніший інструмент",
     "execution_count": "{count} виконання",
@@ -617,17 +566,11 @@ TOOLS_OBSERVABILITY_TEXTS["ua"] = {
     "last_execution": "### Останнє виконання",
     "no_execution": "Виконання ще не зареєстровані.",
     "infrastructure_state": "## Стан інфраструктури",
-    "operational_components": (
-        "{operational} із {total} компонентів працюють."
-    ),
+    "operational_components": ("{operational} із {total} компонентів працюють."),
     "no_events": "Немає подій для аналізу.",
     "search_filters": "## Пошук і фільтри",
-    "search_label": (
-        "Пошук користувача, запитання, інструмента або наміру"
-    ),
-    "search_placeholder": (
-        "Приклад: demo_user, залишок, бюджет..."
-    ),
+    "search_label": ("Пошук користувача, запитання, інструмента або наміру"),
+    "search_placeholder": ("Приклад: demo_user, залишок, бюджет..."),
     "tool": "Інструмент",
     "origin": "Джерело",
     "user": "Користувач",
@@ -687,9 +630,7 @@ TOOLS_OBSERVABILITY_TEXTS["ru"] = {
     "average_duration": "Средняя длительность",
     "minimum_duration": "Минимальная длительность",
     "p95_duration": "Длительность P95",
-    "p95_help": (
-        "95% выполнений завершились быстрее этого времени."
-    ),
+    "p95_help": ("95% выполнений завершились быстрее этого времени."),
     "maximum_duration": "Максимальная длительность",
     "most_used_tool": "### Самый используемый инструмент",
     "execution_count": "{count} выполнений",
@@ -697,17 +638,11 @@ TOOLS_OBSERVABILITY_TEXTS["ru"] = {
     "last_execution": "### Последнее выполнение",
     "no_execution": "Выполнения ещё не зарегистрированы.",
     "infrastructure_state": "## Состояние инфраструктуры",
-    "operational_components": (
-        "{operational} из {total} компонентов работают."
-    ),
+    "operational_components": ("{operational} из {total} компонентов работают."),
     "no_events": "Нет событий для анализа.",
     "search_filters": "## Поиск и фильтры",
-    "search_label": (
-        "Поиск пользователя, вопроса, инструмента или намерения"
-    ),
-    "search_placeholder": (
-        "Пример: demo_user, остаток, бюджет..."
-    ),
+    "search_label": ("Поиск пользователя, вопроса, инструмента или намерения"),
+    "search_placeholder": ("Пример: demo_user, остаток, бюджет..."),
     "tool": "Инструмент",
     "origin": "Источник",
     "user": "Пользователь",
@@ -746,9 +681,7 @@ TOOLS_OBSERVABILITY_TEXTS["ru"] = {
 
 TOOLS_OBSERVABILITY_TEXTS["sa"] = {
     "page_title": "🛠️ مركز العمليات — أدوات INNA",
-    "page_caption": (
-        "مراقبة التشغيل والأداء والاستخدام وسلامة الأدوات المالية."
-    ),
+    "page_caption": ("مراقبة التشغيل والأداء والاستخدام وسلامة الأدوات المالية."),
     "loaded_events": "الأحداث المحملة",
     "time_grouping": "التجميع الزمني",
     "hour": "ساعة",
@@ -766,9 +699,7 @@ TOOLS_OBSERVABILITY_TEXTS["sa"] = {
     "average_duration": "متوسط المدة",
     "minimum_duration": "المدة الدنيا",
     "p95_duration": "مدة P95",
-    "p95_help": (
-        "اكتمل 95٪ من عمليات التنفيذ خلال مدة أقل من هذه."
-    ),
+    "p95_help": ("اكتمل 95٪ من عمليات التنفيذ خلال مدة أقل من هذه."),
     "maximum_duration": "المدة القصوى",
     "most_used_tool": "### الأداة الأكثر استخدامًا",
     "execution_count": "{count} عملية تنفيذ",
@@ -776,17 +707,11 @@ TOOLS_OBSERVABILITY_TEXTS["sa"] = {
     "last_execution": "### آخر تنفيذ",
     "no_execution": "لم يتم تسجيل أي تنفيذ.",
     "infrastructure_state": "## حالة البنية التحتية",
-    "operational_components": (
-        "{operational} من أصل {total} مكونات تعمل."
-    ),
+    "operational_components": ("{operational} من أصل {total} مكونات تعمل."),
     "no_events": "لا توجد أحداث متاحة للتحليل.",
     "search_filters": "## البحث والتصفية",
-    "search_label": (
-        "البحث عن مستخدم أو سؤال أو أداة أو نية"
-    ),
-    "search_placeholder": (
-        "مثال: demo_user، الرصيد المتبقي، الميزانية..."
-    ),
+    "search_label": ("البحث عن مستخدم أو سؤال أو أداة أو نية"),
+    "search_placeholder": ("مثال: demo_user، الرصيد المتبقي، الميزانية..."),
     "tool": "الأداة",
     "origin": "المصدر",
     "user": "المستخدم",
@@ -823,33 +748,23 @@ TOOLS_OBSERVABILITY_TEXTS["sa"] = {
     "success_rate_column": "معدل النجاح (%)",
 }
 
-TOOLS_OBSERVABILITY_TEXTS["ch"] = (
-    TOOLS_OBSERVABILITY_TEXTS["de"]
-)
+TOOLS_OBSERVABILITY_TEXTS["ch"] = TOOLS_OBSERVABILITY_TEXTS["de"]
 
 
 # Ajustes finais dos textos visíveis conforme o seletor.
 TOOLS_OBSERVABILITY_TEXTS["pt"].update(
     {
-        "page_title": (
-            "🛠️ Centro de Operações — "
-            "Ferramentas da INNA"
-        ),
+        "page_title": ("🛠️ Centro de Operações — Ferramentas da INNA"),
     }
 )
 
 TOOLS_OBSERVABILITY_TEXTS["en_us"].update(
     {
-        "page_title": (
-            "🛠️ Operations Center — "
-            "INNA Tools"
-        ),
+        "page_title": ("🛠️ Operations Center — INNA Tools"),
     }
 )
 
-TOOLS_OBSERVABILITY_TEXTS["en_gb"] = dict(
-    TOOLS_OBSERVABILITY_TEXTS["en_us"]
-)
+TOOLS_OBSERVABILITY_TEXTS["en_gb"] = dict(TOOLS_OBSERVABILITY_TEXTS["en_us"])
 
 TOOLS_OBSERVABILITY_TEXTS["fr"].update(
     {
@@ -866,9 +781,7 @@ TOOLS_OBSERVABILITY_TEXTS["de"].update(
 )
 
 # O código ch segue o alemão utilizado pelo projeto.
-TOOLS_OBSERVABILITY_TEXTS["ch"] = dict(
-    TOOLS_OBSERVABILITY_TEXTS["de"]
-)
+TOOLS_OBSERVABILITY_TEXTS["ch"] = dict(TOOLS_OBSERVABILITY_TEXTS["de"])
 
 
 def tools_observability_lang() -> str:
@@ -921,7 +834,6 @@ def tools_observability_t(
     return key
 
 
-
 def aplicar_tema_tools_observability_chart(
     fig,
     *,
@@ -952,17 +864,13 @@ def aplicar_tema_tools_observability_chart(
     fig.update_xaxes(
         color=TOOLS_OBSERVABILITY_TEXT,
         gridcolor=TOOLS_OBSERVABILITY_GRID,
-        zerolinecolor=(
-            "rgba(148, 163, 184, 0.25)"
-        ),
+        zerolinecolor=("rgba(148, 163, 184, 0.25)"),
     )
 
     fig.update_yaxes(
         color=TOOLS_OBSERVABILITY_TEXT,
         gridcolor=TOOLS_OBSERVABILITY_GRID,
-        zerolinecolor=(
-            "rgba(148, 163, 184, 0.25)"
-        ),
+        zerolinecolor=("rgba(148, 163, 184, 0.25)"),
     )
 
     return fig
@@ -978,15 +886,12 @@ except ImportError:
     )
 
 
-
 TOOLS_DYNAMIC_TEXTS = {
     "pt": {
         "weekly_capacity": "Cálculo de capacidade semanal",
         "reserve_simulation": "Simulação de formação de reserva",
         "tool_success": "Ferramenta executada com sucesso.",
-        "tool_missing_data": (
-            "Ainda faltam dados para executar a ferramenta."
-        ),
+        "tool_missing_data": ("Ainda faltam dados para executar a ferramenta."),
         "postgresql_neon": "PostgreSQL / Neon",
         "pgvector_extension": "Extensão pgvector",
         "tools_events_table": "Tabela de eventos das Tools",
@@ -995,24 +900,16 @@ TOOLS_DYNAMIC_TEXTS = {
         "gemini_configuration": "Configuração Gemini",
         "operational_connection": "Conexão operacional.",
         "active_extension": "Extensão ativa.",
-        "tools_table_available": (
-            "Tabela tools_eventos_inna disponível."
-        ),
-        "rag_table_available": (
-            "Tabela chunks_embeddings_rag disponível."
-        ),
-        "memory_table_available": (
-            "Tabela memoria_usuarios_inna disponível."
-        ),
+        "tools_table_available": ("Tabela tools_eventos_inna disponível."),
+        "rag_table_available": ("Tabela chunks_embeddings_rag disponível."),
+        "memory_table_available": ("Tabela memoria_usuarios_inna disponível."),
         "configured_key": "Chave configurada.",
     },
     "en_us": {
         "weekly_capacity": "Weekly capacity calculation",
         "reserve_simulation": "Emergency reserve simulation",
         "tool_success": "Tool executed successfully.",
-        "tool_missing_data": (
-            "More data is required to execute the tool."
-        ),
+        "tool_missing_data": ("More data is required to execute the tool."),
         "postgresql_neon": "PostgreSQL / Neon",
         "pgvector_extension": "pgvector extension",
         "tools_events_table": "Tools events table",
@@ -1021,24 +918,16 @@ TOOLS_DYNAMIC_TEXTS = {
         "gemini_configuration": "Gemini configuration",
         "operational_connection": "Operational connection.",
         "active_extension": "Extension active.",
-        "tools_table_available": (
-            "The tools_eventos_inna table is available."
-        ),
-        "rag_table_available": (
-            "The chunks_embeddings_rag table is available."
-        ),
-        "memory_table_available": (
-            "The memoria_usuarios_inna table is available."
-        ),
+        "tools_table_available": ("The tools_eventos_inna table is available."),
+        "rag_table_available": ("The chunks_embeddings_rag table is available."),
+        "memory_table_available": ("The memoria_usuarios_inna table is available."),
         "configured_key": "Key configured.",
     },
     "es": {
         "weekly_capacity": "Cálculo de capacidad semanal",
         "reserve_simulation": "Simulación de creación de reserva",
         "tool_success": "Herramienta ejecutada correctamente.",
-        "tool_missing_data": (
-            "Aún faltan datos para ejecutar la herramienta."
-        ),
+        "tool_missing_data": ("Aún faltan datos para ejecutar la herramienta."),
         "postgresql_neon": "PostgreSQL / Neon",
         "pgvector_extension": "Extensión pgvector",
         "tools_events_table": "Tabla de eventos de las herramientas",
@@ -1047,15 +936,9 @@ TOOLS_DYNAMIC_TEXTS = {
         "gemini_configuration": "Configuración de Gemini",
         "operational_connection": "Conexión operativa.",
         "active_extension": "Extensión activa.",
-        "tools_table_available": (
-            "La tabla tools_eventos_inna está disponible."
-        ),
-        "rag_table_available": (
-            "La tabla chunks_embeddings_rag está disponible."
-        ),
-        "memory_table_available": (
-            "La tabla memoria_usuarios_inna está disponible."
-        ),
+        "tools_table_available": ("La tabla tools_eventos_inna está disponible."),
+        "rag_table_available": ("La tabla chunks_embeddings_rag está disponible."),
+        "memory_table_available": ("La tabla memoria_usuarios_inna está disponible."),
         "configured_key": "Clave configurada.",
     },
     "fr": {
@@ -1063,8 +946,7 @@ TOOLS_DYNAMIC_TEXTS = {
         "reserve_simulation": "Simulation de création d’une réserve",
         "tool_success": "Outil exécuté avec succès.",
         "tool_missing_data": (
-            "Des données supplémentaires sont nécessaires "
-            "pour exécuter l’outil."
+            "Des données supplémentaires sont nécessaires pour exécuter l’outil."
         ),
         "postgresql_neon": "PostgreSQL / Neon",
         "pgvector_extension": "Extension pgvector",
@@ -1074,15 +956,9 @@ TOOLS_DYNAMIC_TEXTS = {
         "gemini_configuration": "Configuration Gemini",
         "operational_connection": "Connexion opérationnelle.",
         "active_extension": "Extension active.",
-        "tools_table_available": (
-            "La table tools_eventos_inna est disponible."
-        ),
-        "rag_table_available": (
-            "La table chunks_embeddings_rag est disponible."
-        ),
-        "memory_table_available": (
-            "La table memoria_usuarios_inna est disponible."
-        ),
+        "tools_table_available": ("La table tools_eventos_inna est disponible."),
+        "rag_table_available": ("La table chunks_embeddings_rag est disponible."),
+        "memory_table_available": ("La table memoria_usuarios_inna est disponible."),
         "configured_key": "Clé configurée.",
     },
     "de": {
@@ -1100,24 +976,16 @@ TOOLS_DYNAMIC_TEXTS = {
         "gemini_configuration": "Gemini-Konfiguration",
         "operational_connection": "Verbindung betriebsbereit.",
         "active_extension": "Erweiterung aktiv.",
-        "tools_table_available": (
-            "Die Tabelle tools_eventos_inna ist verfügbar."
-        ),
-        "rag_table_available": (
-            "Die Tabelle chunks_embeddings_rag ist verfügbar."
-        ),
-        "memory_table_available": (
-            "Die Tabelle memoria_usuarios_inna ist verfügbar."
-        ),
+        "tools_table_available": ("Die Tabelle tools_eventos_inna ist verfügbar."),
+        "rag_table_available": ("Die Tabelle chunks_embeddings_rag ist verfügbar."),
+        "memory_table_available": ("Die Tabelle memoria_usuarios_inna ist verfügbar."),
         "configured_key": "Schlüssel konfiguriert.",
     },
     "it": {
         "weekly_capacity": "Calcolo della capacità settimanale",
         "reserve_simulation": "Simulazione della creazione della riserva",
         "tool_success": "Strumento eseguito correttamente.",
-        "tool_missing_data": (
-            "Sono necessari altri dati per eseguire lo strumento."
-        ),
+        "tool_missing_data": ("Sono necessari altri dati per eseguire lo strumento."),
         "postgresql_neon": "PostgreSQL / Neon",
         "pgvector_extension": "Estensione pgvector",
         "tools_events_table": "Tabella degli eventi degli strumenti",
@@ -1126,15 +994,9 @@ TOOLS_DYNAMIC_TEXTS = {
         "gemini_configuration": "Configurazione Gemini",
         "operational_connection": "Connessione operativa.",
         "active_extension": "Estensione attiva.",
-        "tools_table_available": (
-            "La tabella tools_eventos_inna è disponibile."
-        ),
-        "rag_table_available": (
-            "La tabella chunks_embeddings_rag è disponibile."
-        ),
-        "memory_table_available": (
-            "La tabella memoria_usuarios_inna è disponibile."
-        ),
+        "tools_table_available": ("La tabella tools_eventos_inna è disponibile."),
+        "rag_table_available": ("La tabella chunks_embeddings_rag è disponibile."),
+        "memory_table_available": ("La tabella memoria_usuarios_inna è disponibile."),
         "configured_key": "Chiave configurata.",
     },
     "ro": {
@@ -1152,24 +1014,16 @@ TOOLS_DYNAMIC_TEXTS = {
         "gemini_configuration": "Configurare Gemini",
         "operational_connection": "Conexiune operațională.",
         "active_extension": "Extensie activă.",
-        "tools_table_available": (
-            "Tabelul tools_eventos_inna este disponibil."
-        ),
-        "rag_table_available": (
-            "Tabelul chunks_embeddings_rag este disponibil."
-        ),
-        "memory_table_available": (
-            "Tabelul memoria_usuarios_inna este disponibil."
-        ),
+        "tools_table_available": ("Tabelul tools_eventos_inna este disponibil."),
+        "rag_table_available": ("Tabelul chunks_embeddings_rag este disponibil."),
+        "memory_table_available": ("Tabelul memoria_usuarios_inna este disponibil."),
         "configured_key": "Cheie configurată.",
     },
     "ua": {
         "weekly_capacity": "Розрахунок тижневої спроможності",
         "reserve_simulation": "Моделювання формування резерву",
         "tool_success": "Інструмент успішно виконано.",
-        "tool_missing_data": (
-            "Для виконання інструмента потрібні додаткові дані."
-        ),
+        "tool_missing_data": ("Для виконання інструмента потрібні додаткові дані."),
         "postgresql_neon": "PostgreSQL / Neon",
         "pgvector_extension": "Розширення pgvector",
         "tools_events_table": "Таблиця подій інструментів",
@@ -1178,15 +1032,9 @@ TOOLS_DYNAMIC_TEXTS = {
         "gemini_configuration": "Конфігурація Gemini",
         "operational_connection": "З’єднання працює.",
         "active_extension": "Розширення активне.",
-        "tools_table_available": (
-            "Таблиця tools_eventos_inna доступна."
-        ),
-        "rag_table_available": (
-            "Таблиця chunks_embeddings_rag доступна."
-        ),
-        "memory_table_available": (
-            "Таблиця memoria_usuarios_inna доступна."
-        ),
+        "tools_table_available": ("Таблиця tools_eventos_inna доступна."),
+        "rag_table_available": ("Таблиця chunks_embeddings_rag доступна."),
+        "memory_table_available": ("Таблиця memoria_usuarios_inna доступна."),
         "configured_key": "Ключ налаштовано.",
     },
     "ru": {
@@ -1204,24 +1052,16 @@ TOOLS_DYNAMIC_TEXTS = {
         "gemini_configuration": "Конфигурация Gemini",
         "operational_connection": "Соединение работает.",
         "active_extension": "Расширение активно.",
-        "tools_table_available": (
-            "Таблица tools_eventos_inna доступна."
-        ),
-        "rag_table_available": (
-            "Таблица chunks_embeddings_rag доступна."
-        ),
-        "memory_table_available": (
-            "Таблица memoria_usuarios_inna доступна."
-        ),
+        "tools_table_available": ("Таблица tools_eventos_inna доступна."),
+        "rag_table_available": ("Таблица chunks_embeddings_rag доступна."),
+        "memory_table_available": ("Таблица memoria_usuarios_inna доступна."),
         "configured_key": "Ключ настроен.",
     },
     "sa": {
         "weekly_capacity": "حساب القدرة الأسبوعية",
         "reserve_simulation": "محاكاة تكوين الاحتياطي",
         "tool_success": "تم تنفيذ الأداة بنجاح.",
-        "tool_missing_data": (
-            "يلزم توفير بيانات إضافية لتنفيذ الأداة."
-        ),
+        "tool_missing_data": ("يلزم توفير بيانات إضافية لتنفيذ الأداة."),
         "postgresql_neon": "PostgreSQL / Neon",
         "pgvector_extension": "امتداد pgvector",
         "tools_events_table": "جدول أحداث الأدوات",
@@ -1230,26 +1070,16 @@ TOOLS_DYNAMIC_TEXTS = {
         "gemini_configuration": "إعداد Gemini",
         "operational_connection": "الاتصال يعمل.",
         "active_extension": "الامتداد نشط.",
-        "tools_table_available": (
-            "الجدول tools_eventos_inna متاح."
-        ),
-        "rag_table_available": (
-            "الجدول chunks_embeddings_rag متاح."
-        ),
-        "memory_table_available": (
-            "الجدول memoria_usuarios_inna متاح."
-        ),
+        "tools_table_available": ("الجدول tools_eventos_inna متاح."),
+        "rag_table_available": ("الجدول chunks_embeddings_rag متاح."),
+        "memory_table_available": ("الجدول memoria_usuarios_inna متاح."),
         "configured_key": "تم إعداد المفتاح.",
     },
 }
 
-TOOLS_DYNAMIC_TEXTS["en_gb"] = (
-    TOOLS_DYNAMIC_TEXTS["en_us"]
-)
+TOOLS_DYNAMIC_TEXTS["en_gb"] = TOOLS_DYNAMIC_TEXTS["en_us"]
 
-TOOLS_DYNAMIC_TEXTS["ch"] = (
-    TOOLS_DYNAMIC_TEXTS["de"]
-)
+TOOLS_DYNAMIC_TEXTS["ch"] = TOOLS_DYNAMIC_TEXTS["de"]
 
 
 TOOLS_DYNAMIC_KEYS = {
@@ -1258,9 +1088,7 @@ TOOLS_DYNAMIC_KEYS = {
     "Simulação de formação de reserva": "reserve_simulation",
     "simular_formacao_reserva": "reserve_simulation",
     "Ferramenta executada com sucesso.": "tool_success",
-    "Ainda faltam dados para executar a ferramenta.": (
-        "tool_missing_data"
-    ),
+    "Ainda faltam dados para executar a ferramenta.": ("tool_missing_data"),
     "PostgreSQL / Neon": "postgresql_neon",
     "Extensão pgvector": "pgvector_extension",
     "Tabela de eventos das Tools": "tools_events_table",
@@ -1269,15 +1097,9 @@ TOOLS_DYNAMIC_KEYS = {
     "Configuração Gemini": "gemini_configuration",
     "Conexão operacional.": "operational_connection",
     "Extensão ativa.": "active_extension",
-    "Tabela tools_eventos_inna disponível.": (
-        "tools_table_available"
-    ),
-    "Tabela chunks_embeddings_rag disponível.": (
-        "rag_table_available"
-    ),
-    "Tabela memoria_usuarios_inna disponível.": (
-        "memory_table_available"
-    ),
+    "Tabela tools_eventos_inna disponível.": ("tools_table_available"),
+    "Tabela chunks_embeddings_rag disponível.": ("rag_table_available"),
+    "Tabela memoria_usuarios_inna disponível.": ("memory_table_available"),
     "Chave configurada.": "configured_key",
 }
 
@@ -1289,9 +1111,7 @@ def tools_translate_dynamic(
         return ""
 
     original = str(value).strip()
-    key = TOOLS_DYNAMIC_KEYS.get(
-        original
-    )
+    key = TOOLS_DYNAMIC_KEYS.get(original)
 
     if key is None:
         return original
@@ -1330,11 +1150,7 @@ def preparar_ranking_tools(
 
     base = df.copy()
 
-    base["tool_label"] = (
-        base["tool_label"]
-        .fillna(base["tool_nome"])
-        .fillna("Sem Tool")
-    )
+    base["tool_label"] = base["tool_label"].fillna(base["tool_nome"]).fillna("Sem Tool")
 
     ranking = (
         base.groupby("tool_label")
@@ -1343,9 +1159,7 @@ def preparar_ranking_tools(
             Sucessos=("sucesso", "sum"),
             Falhas=(
                 "sucesso",
-                lambda valores: int(
-                    (~valores.astype(bool)).sum()
-                ),
+                lambda valores: int((~valores.astype(bool)).sum()),
             ),
             Média_ms=("duracao_ms", "mean"),
             Mínimo_ms=("duracao_ms", "min"),
@@ -1359,11 +1173,7 @@ def preparar_ranking_tools(
         )
     )
 
-    ranking["Ferramenta"] = ranking[
-        "Ferramenta"
-    ].map(
-        tools_translate_dynamic
-    )
+    ranking["Ferramenta"] = ranking["Ferramenta"].map(tools_translate_dynamic)
 
     ranking["Taxa de sucesso (%)"] = ranking.apply(
         lambda row: calcular_taxa_sucesso(
@@ -1378,11 +1188,7 @@ def preparar_ranking_tools(
         "Mínimo_ms",
         "Máximo_ms",
     ]:
-        ranking[coluna] = (
-            ranking[coluna]
-            .fillna(0)
-            .round(3)
-        )
+        ranking[coluna] = ranking[coluna].fillna(0).round(3)
 
     return ranking.sort_values(
         by=["Execuções", "Taxa de sucesso (%)"],
@@ -1405,21 +1211,15 @@ def preparar_serie_temporal(
         utc=True,
     )
 
-    temporal = temporal.dropna(
-        subset=["criado_em"]
-    )
+    temporal = temporal.dropna(subset=["criado_em"])
 
     if frequencia == "Hora":
         temporal["Período"] = (
-            temporal["criado_em"]
-            .dt.floor("h")
-            .dt.strftime("%d/%m %H:00")
+            temporal["criado_em"].dt.floor("h").dt.strftime("%d/%m %H:00")
         )
     else:
         temporal["Período"] = (
-            temporal["criado_em"]
-            .dt.floor("D")
-            .dt.strftime("%d/%m/%Y")
+            temporal["criado_em"].dt.floor("D").dt.strftime("%d/%m/%Y")
         )
 
     return (
@@ -1447,46 +1247,26 @@ def preparar_eventos_exibicao(
     tabela["Ferramenta"] = (
         tabela["tool_label"]
         .fillna(tabela["tool_nome"])
-        .fillna(
-            tools_observability_t(
-                "no_tool"
-            )
-        )
-        .map(
-            tools_translate_dynamic
-        )
+        .fillna(tools_observability_t("no_tool"))
+        .map(tools_translate_dynamic)
     )
 
     if "mensagem" in tabela.columns:
-        tabela["mensagem"] = tabela[
-            "mensagem"
-        ].map(
-            tools_translate_dynamic
-        )
+        tabela["mensagem"] = tabela["mensagem"].map(tools_translate_dynamic)
 
-    tabela["Status"] = tabela["sucesso"].map({
-        True: tools_observability_t(
-            "success"
-        ),
-        False: tools_observability_t(
-            "failure"
-        ),
-    })
+    tabela["Status"] = tabela["sucesso"].map(
+        {
+            True: tools_observability_t("success"),
+            False: tools_observability_t("failure"),
+        }
+    )
 
     tabela["Confiança"] = (
-        tabela["confianca"]
-        .fillna(0)
-        .apply(
-            lambda valor: f"{float(valor) * 100:.0f}%"
-        )
+        tabela["confianca"].fillna(0).apply(lambda valor: f"{float(valor) * 100:.0f}%")
     )
 
     tabela["Duração"] = (
-        tabela["duracao_ms"]
-        .fillna(0)
-        .apply(
-            lambda valor: f"{float(valor):.3f} ms"
-        )
+        tabela["duracao_ms"].fillna(0).apply(lambda valor: f"{float(valor):.3f} ms")
     )
 
     tabela["Data"] = pd.to_datetime(
@@ -1508,13 +1288,7 @@ def preparar_eventos_exibicao(
         "erro",
     ]
 
-    return tabela[
-        [
-            coluna
-            for coluna in colunas
-            if coluna in tabela.columns
-        ]
-    ].rename(
+    return tabela[[coluna for coluna in colunas if coluna in tabela.columns]].rename(
         columns={
             "usuario_id": "Usuário",
             "pergunta": "Pergunta",
@@ -1557,9 +1331,7 @@ def render_metricas_executivas(
     """
     Renderiza os KPIs executivos do Operations Center.
     """
-    metricas = calcular_metricas_executivas(
-        df
-    )
+    metricas = calcular_metricas_executivas(df)
 
     st.markdown(tools_observability_t("executive_view"))
 
@@ -1589,9 +1361,7 @@ def render_metricas_executivas(
 
     linha_2[0].metric(
         tools_observability_t("success_rate"),
-        (
-            f"{metricas['taxa_sucesso_percentual']:.2f}%"
-        ),
+        (f"{metricas['taxa_sucesso_percentual']:.2f}%"),
     )
 
     linha_2[1].metric(
@@ -1606,42 +1376,30 @@ def render_metricas_executivas(
 
     linha_2[3].metric(
         tools_observability_t("average_confidence"),
-        (
-            f"{metricas['confianca_media_percentual']:.2f}%"
-        ),
+        (f"{metricas['confianca_media_percentual']:.2f}%"),
     )
 
     linha_3 = st.columns(4)
 
     linha_3[0].metric(
         tools_observability_t("average_duration"),
-        (
-            f"{metricas['duracao_media_ms']:.3f} ms"
-        ),
+        (f"{metricas['duracao_media_ms']:.3f} ms"),
     )
 
     linha_3[1].metric(
         tools_observability_t("minimum_duration"),
-        (
-            f"{metricas['duracao_minima_ms']:.3f} ms"
-        ),
+        (f"{metricas['duracao_minima_ms']:.3f} ms"),
     )
 
     linha_3[2].metric(
         tools_observability_t("p95_duration"),
-        (
-            f"{metricas['duracao_p95_ms']:.3f} ms"
-        ),
-        help=tools_observability_t(
-            "p95_help"
-        ),
+        (f"{metricas['duracao_p95_ms']:.3f} ms"),
+        help=tools_observability_t("p95_help"),
     )
 
     linha_3[3].metric(
         tools_observability_t("maximum_duration"),
-        (
-            f"{metricas['duracao_maxima_ms']:.3f} ms"
-        ),
+        (f"{metricas['duracao_maxima_ms']:.3f} ms"),
     )
 
     tool_top = metricas.get(
@@ -1649,9 +1407,7 @@ def render_metricas_executivas(
         {},
     )
 
-    ultima_execucao = metricas.get(
-        "ultima_execucao"
-    )
+    ultima_execucao = metricas.get("ultima_execucao")
 
     col_destaque_1, col_destaque_2 = st.columns(2)
 
@@ -1660,22 +1416,14 @@ def render_metricas_executivas(
 
         if tool_top.get("nome"):
             st.success(
-                tools_translate_dynamic(
-                    tool_top["nome"]
-                )
+                tools_translate_dynamic(tool_top["nome"])
                 + " — "
-                + tools_observability_t(
-                    "execution_count"
-                ).format(
+                + tools_observability_t("execution_count").format(
                     count=tool_top["total"]
                 )
             )
         else:
-            st.info(
-                tools_observability_t(
-                    "no_dominant_tool"
-                )
-            )
+            st.info(tools_observability_t("no_dominant_tool"))
 
     with col_destaque_2:
         st.markdown(tools_observability_t("last_execution"))
@@ -1687,19 +1435,11 @@ def render_metricas_executivas(
             )
 
             if pd.notna(data_formatada):
-                st.info(
-                    data_formatada.strftime(
-                        "%d/%m/%Y %H:%M:%S"
-                    )
-                )
+                st.info(data_formatada.strftime("%d/%m/%Y %H:%M:%S"))
             else:
                 st.info(str(ultima_execucao))
         else:
-            st.info(
-                tools_observability_t(
-                    "no_execution"
-                )
-            )
+            st.info(tools_observability_t("no_execution"))
 
     return metricas
 
@@ -1724,16 +1464,10 @@ def render_status_infraestrutura(
         0,
     )
 
-    st.progress(
-        operacionais / total
-        if total
-        else 0
-    )
+    st.progress(operacionais / total if total else 0)
 
     st.caption(
-        tools_observability_t(
-            "operational_components"
-        ).format(
+        tools_observability_t("operational_components").format(
             operational=operacionais,
             total=total,
         )
@@ -1741,34 +1475,18 @@ def render_status_infraestrutura(
 
     colunas = st.columns(3)
 
-    for indice, item in enumerate(
-        status.values()
-    ):
-        coluna = colunas[
-            indice % len(colunas)
-        ]
+    for indice, item in enumerate(status.values()):
+        coluna = colunas[indice % len(colunas)]
 
         simbolo = "🟢" if item["ok"] else "🔴"
 
-        label_traduzido = (
-            tools_translate_dynamic(
-                item["label"]
-            )
-        )
+        label_traduzido = tools_translate_dynamic(item["label"])
 
-        mensagem_traduzida = (
-            tools_translate_dynamic(
-                item["message"]
-            )
-        )
+        mensagem_traduzida = tools_translate_dynamic(item["message"])
 
-        coluna.markdown(
-            f"**{simbolo} {label_traduzido}**"
-        )
+        coluna.markdown(f"**{simbolo} {label_traduzido}**")
 
-        coluna.caption(
-            mensagem_traduzida
-        )
+        coluna.caption(mensagem_traduzida)
 
 
 def render_tools_observability_page() -> None:
@@ -1787,55 +1505,35 @@ def render_tools_observability_page() -> None:
 
     st.title(tools_observability_t("page_title"))
 
-    st.caption(
-        tools_observability_t(
-            "page_caption"
-        )
-    )
+    st.caption(tools_observability_t("page_caption"))
 
-    controle_1, controle_2, controle_3 = st.columns(
-        [1, 1, 2]
-    )
+    controle_1, controle_2, controle_3 = st.columns([1, 1, 2])
 
     limite = controle_1.selectbox(
-        tools_observability_t(
-            "loaded_events"
-        ),
+        tools_observability_t("loaded_events"),
         [50, 100, 250, 500, 1000],
         index=1,
     )
 
     frequencia_id = controle_2.selectbox(
-        tools_observability_t(
-            "time_grouping"
-        ),
+        tools_observability_t("time_grouping"),
         ["hour", "day"],
-        format_func=lambda value: (
-            tools_observability_t(value)
-        ),
+        format_func=lambda value: tools_observability_t(value),
     )
 
-    frequencia = (
-        "Hora"
-        if frequencia_id == "hour"
-        else "Dia"
-    )
+    frequencia = "Hora" if frequencia_id == "hour" else "Dia"
 
     with controle_3:
         st.write("")
 
         if st.button(
-            tools_observability_t(
-                "refresh"
-            ),
+            tools_observability_t("refresh"),
             use_container_width=True,
         ):
             st.rerun()
 
     resumo_resultado = carregar_resumo_tools()
-    eventos_resultado = carregar_eventos_tools(
-        limite=int(limite)
-    )
+    eventos_resultado = carregar_eventos_tools(limite=int(limite))
 
     if not resumo_resultado.get("ok"):
         st.error(resumo_resultado["message"])
@@ -1850,75 +1548,43 @@ def render_tools_observability_page() -> None:
     if df is None:
         df = pd.DataFrame()
 
-    render_metricas_executivas(
-        df
-    )
+    render_metricas_executivas(df)
 
     st.divider()
 
-    status_resultado = (
-        carregar_status_infraestrutura()
-    )
+    status_resultado = carregar_status_infraestrutura()
 
-    render_status_infraestrutura(
-        status_resultado
-    )
+    render_status_infraestrutura(status_resultado)
 
     if df.empty:
-        st.info(
-            tools_observability_t(
-                "no_events"
-            )
-        )
+        st.info(tools_observability_t("no_events"))
         return
 
     st.divider()
     st.markdown(tools_observability_t("search_filters"))
 
     pesquisa = st.text_input(
-        tools_observability_t(
-            "search_label"
-        ),
-        placeholder=tools_observability_t(
-            "search_placeholder"
-        ),
+        tools_observability_t("search_label"),
+        placeholder=tools_observability_t("search_placeholder"),
     )
 
     filtro_1, filtro_2, filtro_3 = st.columns(3)
 
     ferramentas = sorted(
-        df["tool_label"]
-        .fillna(df["tool_nome"])
-        .dropna()
-        .unique()
-        .tolist()
+        df["tool_label"].fillna(df["tool_nome"]).dropna().unique().tolist()
     )
 
-    origens = sorted(
-        df["origem"]
-        .dropna()
-        .unique()
-        .tolist()
-    )
+    origens = sorted(df["origem"].dropna().unique().tolist())
 
-    usuarios = sorted(
-        df["usuario_id"]
-        .dropna()
-        .unique()
-        .tolist()
-    )
+    usuarios = sorted(df["usuario_id"].dropna().unique().tolist())
 
     ferramenta = filtro_1.selectbox(
         tools_observability_t("tool"),
         ["__all__"] + ferramentas,
         format_func=lambda value: (
-            tools_observability_t(
-                "all_feminine"
-            )
+            tools_observability_t("all_feminine")
             if value == "__all__"
-            else tools_translate_dynamic(
-                value
-            )
+            else tools_translate_dynamic(value)
         ),
     )
 
@@ -1926,11 +1592,7 @@ def render_tools_observability_page() -> None:
         tools_observability_t("origin"),
         ["__all__"] + origens,
         format_func=lambda value: (
-            tools_observability_t(
-                "all_feminine"
-            )
-            if value == "__all__"
-            else value
+            tools_observability_t("all_feminine") if value == "__all__" else value
         ),
     )
 
@@ -1938,25 +1600,19 @@ def render_tools_observability_page() -> None:
         tools_observability_t("user"),
         ["__all__"] + usuarios,
         format_func=lambda value: (
-            tools_observability_t(
-                "all_masculine"
-            )
-            if value == "__all__"
-            else value
+            tools_observability_t("all_masculine") if value == "__all__" else value
         ),
     )
 
     status = st.radio(
         tools_observability_t("status"),
         ["all", "success", "failure"],
-        format_func=lambda value: (
-            tools_observability_t(
-                {
-                    "all": "all_masculine",
-                    "success": "success",
-                    "failure": "failure",
-                }[value]
-            )
+        format_func=lambda value: tools_observability_t(
+            {
+                "all": "all_masculine",
+                "success": "success",
+                "failure": "failure",
+            }[value]
         ),
         horizontal=True,
     )
@@ -1997,44 +1653,24 @@ def render_tools_observability_page() -> None:
 
         filtrado = filtrado[mascara]
 
-    labels = filtrado[
-        "tool_label"
-    ].fillna(
-        filtrado["tool_nome"]
-    )
+    labels = filtrado["tool_label"].fillna(filtrado["tool_nome"])
 
     if ferramenta != "__all__":
-        filtrado = filtrado[
-            labels == ferramenta
-        ]
+        filtrado = filtrado[labels == ferramenta]
 
     if origem != "__all__":
-        filtrado = filtrado[
-            filtrado["origem"] == origem
-        ]
+        filtrado = filtrado[filtrado["origem"] == origem]
 
     if usuario != "__all__":
-        filtrado = filtrado[
-            filtrado["usuario_id"] == usuario
-        ]
+        filtrado = filtrado[filtrado["usuario_id"] == usuario]
 
     if status == "success":
-        filtrado = filtrado[
-            filtrado["sucesso"].eq(True)
-        ]
+        filtrado = filtrado[filtrado["sucesso"].eq(True)]
 
     elif status == "failure":
-        filtrado = filtrado[
-            filtrado["sucesso"].eq(False)
-        ]
+        filtrado = filtrado[filtrado["sucesso"].eq(False)]
 
-    st.caption(
-        tools_observability_t(
-            "events_found"
-        ).format(
-            count=len(filtrado)
-        )
-    )
+    st.caption(tools_observability_t("events_found").format(count=len(filtrado)))
 
     st.divider()
     st.markdown(tools_observability_t("temporal_evolution"))
@@ -2045,26 +1681,17 @@ def render_tools_observability_page() -> None:
     )
 
     if not serie_temporal.empty:
-        serie_grafico = (
-            serie_temporal[
-                [
-                    "Período",
-                    "Execuções",
-                    "Sucessos",
-                ]
+        serie_grafico = serie_temporal[
+            [
+                "Período",
+                "Execuções",
+                "Sucessos",
             ]
-            .copy()
-        )
+        ].copy()
 
-        period_label = tools_observability_t(
-            "period"
-        )
-        executions_label = tools_observability_t(
-            "executions"
-        )
-        successes_label = tools_observability_t(
-            "successes"
-        )
+        period_label = tools_observability_t("period")
+        executions_label = tools_observability_t("executions")
+        successes_label = tools_observability_t("successes")
 
         serie_grafico = serie_grafico.rename(
             columns={
@@ -2095,18 +1722,12 @@ def render_tools_observability_page() -> None:
             marker={
                 "size": 8,
             },
-            hovertemplate=(
-                "<b>%{x}</b><br>"
-                "%{fullData.name}: %{y:,.0f}"
-                "<extra></extra>"
-            ),
+            hovertemplate=("<b>%{x}</b><br>%{fullData.name}: %{y:,.0f}<extra></extra>"),
         )
 
         fig_evolucao.update_layout(
             xaxis_title=None,
-            yaxis_title=tools_observability_t(
-                "events"
-            ),
+            yaxis_title=tools_observability_t("events"),
             legend_title_text=None,
             hovermode="x unified",
             legend={
@@ -2140,39 +1761,19 @@ def render_tools_observability_page() -> None:
     st.divider()
     st.markdown(tools_observability_t("tool_performance"))
 
-    ranking = preparar_ranking_tools(
-        filtrado
-    )
+    ranking = preparar_ranking_tools(filtrado)
 
     if not ranking.empty:
         ranking_exibicao = ranking.rename(
             columns={
-                "Ferramenta": tools_observability_t(
-                    "tool"
-                ),
-                "Execuções": tools_observability_t(
-                    "executions"
-                ),
-                "Sucessos": tools_observability_t(
-                    "successes"
-                ),
-                "Falhas": tools_observability_t(
-                    "failures"
-                ),
-                "Média_ms": tools_observability_t(
-                    "average_ms"
-                ),
-                "Mínimo_ms": tools_observability_t(
-                    "minimum_ms"
-                ),
-                "Máximo_ms": tools_observability_t(
-                    "maximum_ms"
-                ),
-                "Taxa de sucesso (%)": (
-                    tools_observability_t(
-                        "success_rate_column"
-                    )
-                ),
+                "Ferramenta": tools_observability_t("tool"),
+                "Execuções": tools_observability_t("executions"),
+                "Sucessos": tools_observability_t("successes"),
+                "Falhas": tools_observability_t("failures"),
+                "Média_ms": tools_observability_t("average_ms"),
+                "Mínimo_ms": tools_observability_t("minimum_ms"),
+                "Máximo_ms": tools_observability_t("maximum_ms"),
+                "Taxa de sucesso (%)": (tools_observability_t("success_rate_column")),
             }
         )
 
@@ -2182,12 +1783,8 @@ def render_tools_observability_page() -> None:
             hide_index=True,
         )
 
-        tool_label = tools_observability_t(
-            "tool"
-        )
-        executions_label = tools_observability_t(
-            "executions"
-        )
+        tool_label = tools_observability_t("tool")
+        executions_label = tools_observability_t("executions")
 
         ranking_grafico = (
             ranking[
@@ -2229,19 +1826,13 @@ def render_tools_observability_page() -> None:
             cliponaxis=False,
             marker_line_width=0,
             hovertemplate=(
-                "<b>%{y}</b><br>"
-                + tools_observability_t(
-                    "executions"
-                )
-                + ": %{x:,.0f}"
+                "<b>%{y}</b><br>" + tools_observability_t("executions") + ": %{x:,.0f}"
                 "<extra></extra>"
             ),
         )
 
         fig_performance.update_layout(
-            xaxis_title=tools_observability_t(
-                "executions"
-            ),
+            xaxis_title=tools_observability_t("executions"),
             yaxis_title=None,
             coloraxis_showscale=False,
             showlegend=False,
@@ -2268,33 +1859,20 @@ def render_tools_observability_page() -> None:
     st.divider()
     st.markdown(tools_observability_t("active_users_title"))
 
-    user_label = tools_observability_t(
-        "user"
-    )
-    executions_label = tools_observability_t(
-        "executions"
-    )
+    user_label = tools_observability_t("user")
+    executions_label = tools_observability_t("executions")
 
     usuarios_ranking = (
         filtrado["usuario_id"]
-        .fillna(
-            tools_observability_t(
-                "no_user"
-            )
-        )
+        .fillna(tools_observability_t("no_user"))
         .value_counts()
         .rename_axis(user_label)
-        .reset_index(
-            name=executions_label
-        )
+        .reset_index(name=executions_label)
     )
 
-    usuarios_grafico = (
-        usuarios_ranking.copy()
-        .sort_values(
-            executions_label,
-            ascending=True,
-        )
+    usuarios_grafico = usuarios_ranking.copy().sort_values(
+        executions_label,
+        ascending=True,
     )
 
     fig_usuarios = px.bar(
@@ -2317,19 +1895,13 @@ def render_tools_observability_page() -> None:
         cliponaxis=False,
         marker_line_width=0,
         hovertemplate=(
-            "<b>%{y}</b><br>"
-            + tools_observability_t(
-                "executions"
-            )
-            + ": %{x:,.0f}"
+            "<b>%{y}</b><br>" + tools_observability_t("executions") + ": %{x:,.0f}"
             "<extra></extra>"
         ),
     )
 
     fig_usuarios.update_layout(
-        xaxis_title=tools_observability_t(
-            "executions"
-        ),
+        xaxis_title=tools_observability_t("executions"),
         yaxis_title=None,
         coloraxis_showscale=False,
         showlegend=False,
@@ -2356,43 +1928,19 @@ def render_tools_observability_page() -> None:
     st.divider()
     st.markdown(tools_observability_t("searchable_history"))
 
-    tabela = preparar_eventos_exibicao(
-        filtrado
-    ).rename(
+    tabela = preparar_eventos_exibicao(filtrado).rename(
         columns={
-            "Data": tools_observability_t(
-                "date"
-            ),
-            "Usuário": tools_observability_t(
-                "user"
-            ),
-            "Pergunta": tools_observability_t(
-                "question"
-            ),
-            "Ferramenta": tools_observability_t(
-                "tool"
-            ),
-            "Intenção": tools_observability_t(
-                "intention"
-            ),
-            "Confiança": tools_observability_t(
-                "confidence"
-            ),
-            "Status": tools_observability_t(
-                "status"
-            ),
-            "Duração": tools_observability_t(
-                "duration"
-            ),
-            "Origem": tools_observability_t(
-                "origin"
-            ),
-            "Mensagem": tools_observability_t(
-                "message"
-            ),
-            "Erro": tools_observability_t(
-                "error"
-            ),
+            "Data": tools_observability_t("date"),
+            "Usuário": tools_observability_t("user"),
+            "Pergunta": tools_observability_t("question"),
+            "Ferramenta": tools_observability_t("tool"),
+            "Intenção": tools_observability_t("intention"),
+            "Confiança": tools_observability_t("confidence"),
+            "Status": tools_observability_t("status"),
+            "Duração": tools_observability_t("duration"),
+            "Origem": tools_observability_t("origin"),
+            "Mensagem": tools_observability_t("message"),
+            "Erro": tools_observability_t("error"),
         }
     )
 
@@ -2420,9 +1968,7 @@ def render_tools_observability_page() -> None:
     )
 
     json_bytes = json.dumps(
-        filtrado.to_dict(
-            orient="records"
-        ),
+        filtrado.to_dict(orient="records"),
         ensure_ascii=False,
         indent=2,
         default=str,
@@ -2445,10 +1991,7 @@ def render_tools_observability_page() -> None:
         tools_observability_t("export_excel"),
         data=excel_bytes,
         file_name="inna_tools_operations.xlsx",
-        mime=(
-            "application/vnd.openxmlformats-"
-            "officedocument.spreadsheetml.sheet"
-        ),
+        mime=("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
         use_container_width=True,
     )
 

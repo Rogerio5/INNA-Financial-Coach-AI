@@ -42,9 +42,7 @@ def _record(
     state_version=1,
 ):
     return TelegramConversationState(
-        telegram_user_id=(
-            telegram_user_id
-        ),
+        telegram_user_id=(telegram_user_id),
         chat_id=chat_id,
         state=(
             state
@@ -56,18 +54,8 @@ def _record(
         language=language,
         state_version=state_version,
         created_at=NOW,
-        updated_at=(
-            NOW
-            + timedelta(
-                seconds=1
-            )
-        ),
-        expires_at=(
-            NOW
-            + timedelta(
-                hours=1
-            )
-        ),
+        updated_at=(NOW + timedelta(seconds=1)),
+        expires_at=(NOW + timedelta(hours=1)),
     )
 
 
@@ -81,9 +69,7 @@ def _session(
     created=False,
 ):
     record = _record(
-        telegram_user_id=(
-            telegram_user_id
-        ),
+        telegram_user_id=(telegram_user_id),
         chat_id=chat_id,
         state=state,
         language=language,
@@ -155,13 +141,9 @@ class FakeRuntime:
     ):
         self.open_calls.append(
             {
-                "telegram_user_id": (
-                    telegram_user_id
-                ),
+                "telegram_user_id": (telegram_user_id),
                 "chat_id": chat_id,
-                "initial_state": (
-                    initial_state
-                ),
+                "initial_state": (initial_state),
                 "language": language,
                 "ttl_seconds": ttl_seconds,
             }
@@ -183,9 +165,7 @@ class FakeRuntime:
             {
                 "session": session,
                 "ttl_seconds": ttl_seconds,
-                "only_if_changed": (
-                    only_if_changed
-                ),
+                "only_if_changed": (only_if_changed),
             }
         )
 
@@ -198,9 +178,7 @@ class FakeRuntime:
         self,
         session,
     ):
-        self.reload_calls.append(
-            session
-        )
+        self.reload_calls.append(session)
 
         if self.reload_error is not None:
             raise self.reload_error
@@ -211,9 +189,7 @@ class FakeRuntime:
         self,
         session,
     ):
-        self.delete_calls.append(
-            session
-        )
+        self.delete_calls.append(session)
 
         if self.delete_error is not None:
             raise self.delete_error
@@ -244,9 +220,7 @@ class FakeRuntime:
         self,
         limit=100,
     ):
-        self.cleanup_calls.append(
-            limit
-        )
+        self.cleanup_calls.append(limit)
 
         if self.cleanup_error is not None:
             raise self.cleanup_error
@@ -259,28 +233,18 @@ def _bridge(
     runtime=None,
     default_language="pt-BR",
 ):
-    resolved_runtime = (
-        runtime
-        if runtime is not None
-        else FakeRuntime()
-    )
+    resolved_runtime = runtime if runtime is not None else FakeRuntime()
 
     calls = []
 
     def factory():
-        calls.append(
-            "created"
-        )
+        calls.append("created")
 
         return resolved_runtime
 
-    bridge = (
-        TelegramWebhookConversationBridge(
-            runtime_factory=factory,
-            default_language=(
-                default_language
-            ),
-        )
+    bridge = TelegramWebhookConversationBridge(
+        runtime_factory=factory,
+        default_language=(default_language),
     )
 
     return (
@@ -307,17 +271,23 @@ def test_bridge_is_lazy_and_creates_runtime_once():
 
     runtime.load_result = None
 
-    assert bridge.load_session(
-        1001,
-        -2001,
-    ) is None
+    assert (
+        bridge.load_session(
+            1001,
+            -2001,
+        )
+        is None
+    )
 
     assert bridge.runtime_initialized is True
 
-    assert bridge.load_session(
-        1001,
-        -2001,
-    ) is None
+    assert (
+        bridge.load_session(
+            1001,
+            -2001,
+        )
+        is None
+    )
 
     assert calls == [
         "created",
@@ -336,18 +306,14 @@ def test_bridge_is_lazy_and_creates_runtime_once():
 def test_bridge_rejects_invalid_factory(
     invalid_factory,
 ):
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         TelegramWebhookConversationBridge(
             runtime_factory=invalid_factory,
         )
 
 
 def test_bridge_normalizes_default_language():
-    bridge, _, _ = _bridge(
-        default_language=" pt-BR "
-    )
+    bridge, _, _ = _bridge(default_language=" pt-BR ")
 
     assert bridge.default_language == "pt-BR"
 
@@ -363,9 +329,7 @@ def test_bridge_normalizes_default_language():
 def test_bridge_rejects_invalid_default_language(
     invalid_language,
 ):
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
+    with pytest.raises(TelegramConversationStateValidationError):
         TelegramWebhookConversationBridge(
             runtime_factory=FakeRuntime,
             default_language=invalid_language,
@@ -373,15 +337,11 @@ def test_bridge_rejects_invalid_default_language(
 
 
 def test_factory_invalid_runtime_is_rejected():
-    bridge = (
-        TelegramWebhookConversationBridge(
-            runtime_factory=lambda: object(),
-        )
+    bridge = TelegramWebhookConversationBridge(
+        runtime_factory=lambda: object(),
     )
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         bridge.load_session(
             1001,
             -2001,
@@ -392,27 +352,19 @@ def test_factory_unexpected_error_is_sanitized():
     secret = "database-password"
 
     def broken_factory():
-        raise RuntimeError(
-            secret
-        )
+        raise RuntimeError(secret)
 
-    bridge = (
-        TelegramWebhookConversationBridge(
-            runtime_factory=broken_factory,
-        )
+    bridge = TelegramWebhookConversationBridge(
+        runtime_factory=broken_factory,
     )
 
-    with pytest.raises(
-        TelegramConversationStateUnavailableError
-    ) as captured:
+    with pytest.raises(TelegramConversationStateUnavailableError) as captured:
         bridge.load_session(
             1001,
             -2001,
         )
 
-    assert secret not in str(
-        captured.value
-    )
+    assert secret not in str(captured.value)
 
 
 def test_load_session_returns_none():
@@ -420,10 +372,13 @@ def test_load_session_returns_none():
 
     runtime.load_result = None
 
-    assert bridge.load_session(
-        1001,
-        -2001,
-    ) is None
+    assert (
+        bridge.load_session(
+            1001,
+            -2001,
+        )
+        is None
+    )
 
     assert runtime.load_calls == [
         (
@@ -471,15 +426,11 @@ def test_load_rejects_identity_change(
     bridge, runtime, _ = _bridge()
 
     runtime.load_result = _session(
-        telegram_user_id=(
-            returned_user_id
-        ),
+        telegram_user_id=(returned_user_id),
         chat_id=returned_chat_id,
     )
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         bridge.load_session(
             1001,
             -2001,
@@ -518,11 +469,7 @@ def test_open_normalizes_and_delegates():
         ttl_seconds=600,
     )
 
-    source_state[
-        "items"
-    ].append(
-        3
-    )
+    source_state["items"].append(3)
 
     assert result is expected
 
@@ -546,9 +493,7 @@ def test_open_normalizes_and_delegates():
 def test_load_or_open_returns_existing_without_open():
     bridge, runtime, _ = _bridge()
 
-    existing = _session(
-        state_version=3
-    )
+    existing = _session(state_version=3)
 
     runtime.load_result = existing
 
@@ -569,9 +514,7 @@ def test_load_or_open_returns_existing_without_open():
 def test_load_or_open_opens_when_absent():
     bridge, runtime, _ = _bridge()
 
-    opened = _session(
-        created=True
-    )
+    opened = _session(created=True)
 
     runtime.load_result = None
     runtime.open_result = opened
@@ -588,25 +531,17 @@ def test_load_or_open_opens_when_absent():
 
     assert result is opened
 
-    assert len(
-        runtime.load_calls
-    ) == 1
+    assert len(runtime.load_calls) == 1
 
-    assert len(
-        runtime.open_calls
-    ) == 1
+    assert len(runtime.open_calls) == 1
 
 
 def test_save_delegates_without_hidden_retry():
     bridge, runtime, _ = _bridge()
 
-    current = _session(
-        state_version=1
-    )
+    current = _session(state_version=1)
 
-    saved = _session(
-        state_version=2
-    )
+    saved = _session(state_version=2)
 
     runtime.save_result = saved
 
@@ -632,23 +567,15 @@ def test_save_conflict_propagates_once():
 
     current = _session()
 
-    runtime.save_error = (
-        TelegramConversationStateConflictError(
-            "Versão divergente."
-        )
-    )
+    runtime.save_error = TelegramConversationStateConflictError("Versão divergente.")
 
-    with pytest.raises(
-        TelegramConversationStateConflictError
-    ):
+    with pytest.raises(TelegramConversationStateConflictError):
         bridge.save_session(
             current,
             ttl_seconds=600,
         )
 
-    assert len(
-        runtime.save_calls
-    ) == 1
+    assert len(runtime.save_calls) == 1
 
     assert runtime.reload_calls == []
 
@@ -664,9 +591,7 @@ def test_save_rejects_identity_change():
         state_version=2,
     )
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         bridge.save_session(
             current,
             ttl_seconds=600,
@@ -678,45 +603,31 @@ def test_unexpected_runtime_error_is_sanitized():
 
     secret = "postgres-secret"
 
-    runtime.load_error = RuntimeError(
-        secret
-    )
+    runtime.load_error = RuntimeError(secret)
 
-    with pytest.raises(
-        TelegramConversationStateUnavailableError
-    ) as captured:
+    with pytest.raises(TelegramConversationStateUnavailableError) as captured:
         bridge.load_session(
             1001,
             -2001,
         )
 
-    assert secret not in str(
-        captured.value
-    )
+    assert secret not in str(captured.value)
 
 
 def test_reload_session():
     bridge, runtime, _ = _bridge()
 
-    current = _session(
-        state_version=2
-    )
+    current = _session(state_version=2)
 
-    reloaded = _session(
-        state_version=3
-    )
+    reloaded = _session(state_version=3)
 
     runtime.reload_result = reloaded
 
-    result = bridge.reload_session(
-        current
-    )
+    result = bridge.reload_session(current)
 
     assert result is reloaded
 
-    assert runtime.reload_calls == [
-        current
-    ]
+    assert runtime.reload_calls == [current]
 
 
 def test_reload_can_return_none():
@@ -726,9 +637,7 @@ def test_reload_can_return_none():
 
     runtime.reload_result = None
 
-    assert bridge.reload_session(
-        current
-    ) is None
+    assert bridge.reload_session(current) is None
 
 
 def test_delete_session_requires_runtime_invalidation():
@@ -739,12 +648,8 @@ def test_delete_session_requires_runtime_invalidation():
     runtime.delete_result = True
     runtime.invalidate_on_delete = False
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
-        bridge.delete_session(
-            current
-        )
+    with pytest.raises(TelegramConversationStateConsistencyError):
+        bridge.delete_session(current)
 
 
 def test_delete_session():
@@ -754,16 +659,12 @@ def test_delete_session():
 
     runtime.delete_result = True
 
-    result = bridge.delete_session(
-        current
-    )
+    result = bridge.delete_session(current)
 
     assert result is True
     assert current.deleted is True
 
-    assert runtime.delete_calls == [
-        current
-    ]
+    assert runtime.delete_calls == [current]
 
 
 @pytest.mark.parametrize(
@@ -780,13 +681,9 @@ def test_delete_identity_rejects_invalid_result(
 ):
     bridge, runtime, _ = _bridge()
 
-    runtime.delete_identity_result = (
-        invalid_result
-    )
+    runtime.delete_identity_result = invalid_result
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
+    with pytest.raises(TelegramConversationStateConsistencyError):
         bridge.delete_identity(
             1001,
             -2001,
@@ -798,10 +695,13 @@ def test_delete_identity():
 
     runtime.delete_identity_result = False
 
-    assert bridge.delete_identity(
-        1001,
-        -2001,
-    ) is False
+    assert (
+        bridge.delete_identity(
+            1001,
+            -2001,
+        )
+        is False
+    )
 
     assert runtime.delete_identity_calls == [
         (
@@ -814,41 +714,44 @@ def test_delete_identity():
 def test_resolve_language_uses_persisted_language():
     bridge, runtime, _ = _bridge()
 
-    runtime.load_result = _session(
-        language="en-US"
-    )
+    runtime.load_result = _session(language="en-US")
 
-    assert bridge.resolve_language(
-        1001,
-        -2001,
-    ) == "en-US"
+    assert (
+        bridge.resolve_language(
+            1001,
+            -2001,
+        )
+        == "en-US"
+    )
 
 
 def test_resolve_language_uses_default_when_absent():
-    bridge, runtime, _ = _bridge(
-        default_language="pt-BR"
-    )
+    bridge, runtime, _ = _bridge(default_language="pt-BR")
 
     runtime.load_result = None
 
-    assert bridge.resolve_language(
-        1001,
-        -2001,
-    ) == "pt-BR"
+    assert (
+        bridge.resolve_language(
+            1001,
+            -2001,
+        )
+        == "pt-BR"
+    )
 
 
 def test_resolve_language_uses_explicit_fallback():
     bridge, runtime, _ = _bridge()
 
-    runtime.load_result = _session(
-        language=None
-    )
+    runtime.load_result = _session(language=None)
 
-    assert bridge.resolve_language(
-        1001,
-        -2001,
-        fallback_language=" es ",
-    ) == "es"
+    assert (
+        bridge.resolve_language(
+            1001,
+            -2001,
+            fallback_language=" es ",
+        )
+        == "es"
+    )
 
 
 def test_cleanup_expired():
@@ -856,13 +759,9 @@ def test_cleanup_expired():
 
     runtime.cleanup_result = 3
 
-    assert bridge.cleanup_expired(
-        100
-    ) == 3
+    assert bridge.cleanup_expired(100) == 3
 
-    assert runtime.cleanup_calls == [
-        100
-    ]
+    assert runtime.cleanup_calls == [100]
 
 
 @pytest.mark.parametrize(
@@ -880,16 +779,10 @@ def test_cleanup_rejects_invalid_result(
 ):
     bridge, runtime, _ = _bridge()
 
-    runtime.cleanup_result = (
-        invalid_result
-    )
+    runtime.cleanup_result = invalid_result
 
-    with pytest.raises(
-        TelegramConversationStateConsistencyError
-    ):
-        bridge.cleanup_expired(
-            100
-        )
+    with pytest.raises(TelegramConversationStateConsistencyError):
+        bridge.cleanup_expired(100)
 
 
 def test_bridge_repr_and_safe_dict_are_safe():
@@ -903,19 +796,13 @@ def test_bridge_repr_and_safe_dict_are_safe():
 
         raise AssertionError
 
-    bridge = (
-        TelegramWebhookConversationBridge(
-            runtime_factory=factory,
-        )
+    bridge = TelegramWebhookConversationBridge(
+        runtime_factory=factory,
     )
 
-    assert secret not in repr(
-        bridge
-    )
+    assert secret not in repr(bridge)
 
-    assert secret not in str(
-        bridge.to_safe_dict()
-    )
+    assert secret not in str(bridge.to_safe_dict())
 
 
 def test_postgres_bridge_factory_is_lazy(
@@ -930,9 +817,7 @@ def test_postgres_bridge_factory_is_lazy(
         *,
         default_ttl_seconds,
     ):
-        calls.append(
-            default_ttl_seconds
-        )
+        calls.append(default_ttl_seconds)
 
         return fake_runtime
 
@@ -942,32 +827,29 @@ def test_postgres_bridge_factory_is_lazy(
         fake_runtime_factory,
     )
 
-    bridge = (
-        create_postgres_telegram_webhook_conversation_bridge(
-            default_ttl_seconds=600,
-            default_language="pt-BR",
-        )
+    bridge = create_postgres_telegram_webhook_conversation_bridge(
+        default_ttl_seconds=600,
+        default_language="pt-BR",
     )
 
     assert calls == []
     assert bridge.runtime_initialized is False
 
-    assert bridge.load_session(
-        1001,
-        -2001,
-    ) is None
+    assert (
+        bridge.load_session(
+            1001,
+            -2001,
+        )
+        is None
+    )
 
-    assert calls == [
-        600
-    ]
+    assert calls == [600]
 
     assert bridge.runtime_initialized is True
 
 
 def test_bridge_module_has_no_sql_or_memory_fallback():
-    module_path = (
-        bridge_module.__file__
-    )
+    module_path = bridge_module.__file__
 
     assert module_path is not None
 
@@ -1025,9 +907,7 @@ def test_bridge_module_has_no_sql_or_memory_fallback():
         ),
         (
             "save",
-            (
-                object(),
-            ),
+            (object(),),
         ),
         (
             "delete",
@@ -1038,9 +918,7 @@ def test_bridge_module_has_no_sql_or_memory_fallback():
         ),
         (
             "cleanup",
-            (
-                0,
-            ),
+            (0,),
         ),
     ],
 )
@@ -1058,14 +936,8 @@ def test_validation_happens_before_runtime_creation(
         "cleanup": bridge.cleanup_expired,
     }
 
-    with pytest.raises(
-        TelegramConversationStateValidationError
-    ):
-        methods[
-            operation
-        ](
-            *arguments
-        )
+    with pytest.raises(TelegramConversationStateValidationError):
+        methods[operation](*arguments)
 
     assert calls == []
     assert runtime.load_calls == []

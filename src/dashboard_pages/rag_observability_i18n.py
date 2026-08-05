@@ -56,9 +56,7 @@ RAG_OBSERVABILITY_TEXTS: dict[
         "latency": "Latência",
         "logs_table": "Logs RAG",
         "export": "Exportação",
-        "export_caption": (
-            "O arquivo contém somente os registros reais carregados."
-        ),
+        "export_caption": ("O arquivo contém somente os registros reais carregados."),
         "download_csv": "Baixar logs RAG em CSV",
         "export_unavailable": (
             "A exportação será habilitada quando existirem logs reais."
@@ -124,13 +122,9 @@ RAG_OBSERVABILITY_TEXTS: dict[
         "latency": "Latency",
         "logs_table": "RAG logs",
         "export": "Export",
-        "export_caption": (
-            "The file contains only the real records that were loaded."
-        ),
+        "export_caption": ("The file contains only the real records that were loaded."),
         "download_csv": "Download RAG logs as CSV",
-        "export_unavailable": (
-            "Export will be enabled when real logs are available."
-        ),
+        "export_unavailable": ("Export will be enabled when real logs are available."),
         "field_pergunta": "Question",
         "field_modo": "Mode",
         "field_fontes": "Sources",
@@ -155,14 +149,11 @@ RAG_OBSERVABILITY_NATIVE_OVERRIDES = {
             "recuperación, generación, seguridad y fallback."
         ),
         "real_data_notice": (
-            "Esta página utiliza únicamente registros reales "
-            "de la tabla rag_logs."
+            "Esta página utiliza únicamente registros reales de la tabla rag_logs."
         ),
         "source_status": "Estado de la fuente de datos",
         "source_connected": "Fuente conectada",
-        "source_empty": (
-            "Fuente conectada, pero todavía no hay logs registrados"
-        ),
+        "source_empty": ("Fuente conectada, pero todavía no hay logs registrados"),
         "source_error": "No fue posible consultar los logs RAG",
         "waiting_real_data": "Esperando datos reales",
         "no_logs": "No se encontraron logs RAG.",
@@ -203,9 +194,7 @@ RAG_OBSERVABILITY_NATIVE_OVERRIDES = {
         ),
         "source_status": "État de la source de données",
         "source_connected": "Source connectée",
-        "source_empty": (
-            "Source connectée, mais aucun log n’est encore enregistré"
-        ),
+        "source_empty": ("Source connectée, mais aucun log n’est encore enregistré"),
         "source_error": "Impossible de consulter les logs RAG",
         "waiting_real_data": "En attente de données réelles",
         "no_logs": "Aucun log RAG n’a été trouvé.",
@@ -243,9 +232,7 @@ RAG_OBSERVABILITY_NATIVE_OVERRIDES = {
         ),
         "source_status": "Status der Datenquelle",
         "source_connected": "Datenquelle verbunden",
-        "source_empty": (
-            "Datenquelle verbunden, aber noch keine Logs vorhanden"
-        ),
+        "source_empty": ("Datenquelle verbunden, aber noch keine Logs vorhanden"),
         "source_error": "RAG-Logs konnten nicht abgefragt werden",
         "waiting_real_data": "Warten auf reale Daten",
         "no_logs": "Keine RAG-Logs gefunden.",
@@ -279,9 +266,7 @@ RAG_OBSERVABILITY_NATIVE_OVERRIDES = {
         "title": "📊 Osservabilità RAG",
         "source_status": "Stato della fonte dati",
         "source_connected": "Fonte collegata",
-        "source_empty": (
-            "Fonte collegata, ma non sono ancora presenti log"
-        ),
+        "source_empty": ("Fonte collegata, ma non sono ancora presenti log"),
         "source_error": "Impossibile consultare i log RAG",
         "waiting_real_data": "In attesa di dati reali",
         "no_logs": "Nessun log RAG trovato.",
@@ -315,9 +300,7 @@ RAG_OBSERVABILITY_NATIVE_OVERRIDES = {
         "title": "📊 Observabilitate RAG",
         "source_status": "Starea sursei de date",
         "source_connected": "Sursă conectată",
-        "source_empty": (
-            "Sursa este conectată, dar nu există încă loguri"
-        ),
+        "source_empty": ("Sursa este conectată, dar nu există încă loguri"),
         "source_error": "Logurile RAG nu au putut fi interogate",
         "waiting_real_data": "Se așteaptă date reale",
         "no_logs": "Nu au fost găsite loguri RAG.",
@@ -351,9 +334,7 @@ RAG_OBSERVABILITY_NATIVE_OVERRIDES = {
         "title": "📊 Спостережуваність RAG",
         "source_status": "Стан джерела даних",
         "source_connected": "Джерело підключено",
-        "source_empty": (
-            "Джерело підключено, але журналів ще немає"
-        ),
+        "source_empty": ("Джерело підключено, але журналів ще немає"),
         "source_error": "Не вдалося отримати журнали RAG",
         "waiting_real_data": "Очікування реальних даних",
         "no_logs": "Журналів RAG не знайдено.",
@@ -387,9 +368,7 @@ RAG_OBSERVABILITY_NATIVE_OVERRIDES = {
         "title": "📊 Наблюдаемость RAG",
         "source_status": "Состояние источника данных",
         "source_connected": "Источник подключён",
-        "source_empty": (
-            "Источник подключён, но журналы ещё не зарегистрированы"
-        ),
+        "source_empty": ("Источник подключён, но журналы ещё не зарегистрированы"),
         "source_error": "Не удалось получить журналы RAG",
         "waiting_real_data": "Ожидание реальных данных",
         "no_logs": "Журналы RAG не найдены.",
@@ -423,9 +402,7 @@ RAG_OBSERVABILITY_NATIVE_OVERRIDES = {
         "title": "📊 مراقبة RAG",
         "source_status": "حالة مصدر البيانات",
         "source_connected": "المصدر متصل",
-        "source_empty": (
-            "المصدر متصل، ولكن لم يتم تسجيل سجلات بعد"
-        ),
+        "source_empty": ("المصدر متصل، ولكن لم يتم تسجيل سجلات بعد"),
         "source_error": "تعذر الاستعلام عن سجلات RAG",
         "waiting_real_data": "بانتظار بيانات حقيقية",
         "no_logs": "لم يتم العثور على سجلات RAG.",
@@ -491,9 +468,7 @@ RAG_OBSERVABILITY_NATIVE_OVERRIDES = {
 }
 
 
-RAG_OBSERVABILITY_TEXTS.update(
-    RAG_OBSERVABILITY_NATIVE_OVERRIDES
-)
+RAG_OBSERVABILITY_TEXTS.update(RAG_OBSERVABILITY_NATIVE_OVERRIDES)
 
 
 RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
@@ -536,8 +511,7 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
         "mode": "Mode",
         "total": "Total",
         "latest_questions_caption": (
-            "Enregistrements les plus récents disponibles dans "
-            "la source de données."
+            "Enregistrements les plus récents disponibles dans la source de données."
         ),
         "question": "Question",
         "sources": "Sources",
@@ -562,12 +536,10 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
         ),
         "source_table": "Abgefragte Tabelle",
         "field_coverage_caption": (
-            "Prozentsatz der Datensätze, in denen das jeweilige Feld "
-            "ausgefüllt ist."
+            "Prozentsatz der Datensätze, in denen das jeweilige Feld ausgefüllt ist."
         ),
         "mode_distribution_caption": (
-            "Tatsächliche Anzahl der für jeden RAG-Modus "
-            "gespeicherten Logs."
+            "Tatsächliche Anzahl der für jeden RAG-Modus gespeicherten Logs."
         ),
         "total": "Gesamt",
         "latest_questions_caption": (
@@ -575,8 +547,7 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
         ),
         "export": "Export",
         "export_caption": (
-            "Die Datei enthält ausschließlich die tatsächlich "
-            "geladenen Datensätze."
+            "Die Datei enthält ausschließlich die tatsächlich geladenen Datensätze."
         ),
         "export_unavailable": (
             "Der Export wird aktiviert, sobald reale Logs verfügbar sind."
@@ -594,8 +565,7 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
             "generazione, sicurezza e fallback."
         ),
         "real_data_notice": (
-            "Questa pagina utilizza esclusivamente record reali "
-            "della tabella rag_logs."
+            "Questa pagina utilizza esclusivamente record reali della tabella rag_logs."
         ),
         "source_table": "Tabella interrogata",
         "field_coverage_caption": (
@@ -609,12 +579,9 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
         "latest_questions_caption": (
             "Record più recenti disponibili nella fonte dati."
         ),
-        "export_caption": (
-            "Il file contiene esclusivamente i record reali caricati."
-        ),
+        "export_caption": ("Il file contiene esclusivamente i record reali caricati."),
         "export_unavailable": (
-            "L’esportazione sarà disponibile quando saranno presenti "
-            "log reali."
+            "L’esportazione sarà disponibile quando saranno presenti log reali."
         ),
         "field_pergunta": "Domanda",
         "field_modo": "Modalità",
@@ -629,8 +596,7 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
             "recuperare, generare, siguranță și fallback."
         ),
         "real_data_notice": (
-            "Această pagină utilizează numai înregistrări reale "
-            "din tabelul rag_logs."
+            "Această pagină utilizează numai înregistrări reale din tabelul rag_logs."
         ),
         "source_table": "Tabel interogat",
         "field_coverage_caption": (
@@ -644,12 +610,8 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
             "Cele mai recente înregistrări disponibile în sursa de date."
         ),
         "export": "Export",
-        "export_caption": (
-            "Fișierul conține numai înregistrările reale încărcate."
-        ),
-        "export_unavailable": (
-            "Exportul va fi activat când vor exista loguri reale."
-        ),
+        "export_caption": ("Fișierul conține numai înregistrările reale încărcate."),
+        "export_unavailable": ("Exportul va fi activat când vor exista loguri reale."),
         "field_pergunta": "Întrebare",
         "field_modo": "Mod",
         "field_fontes": "Surse",
@@ -663,24 +625,18 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
             "генерації, безпеки та резервного режиму."
         ),
         "real_data_notice": (
-            "Ця сторінка використовує лише реальні записи "
-            "з таблиці rag_logs."
+            "Ця сторінка використовує лише реальні записи з таблиці rag_logs."
         ),
         "source_table": "Таблиця запиту",
         "field_coverage_caption": (
             "Відсоток записів, у яких заповнене кожне відповідне поле."
         ),
         "mode_distribution_caption": (
-            "Фактична кількість журналів, зареєстрованих "
-            "для кожного режиму RAG."
+            "Фактична кількість журналів, зареєстрованих для кожного режиму RAG."
         ),
         "total": "Усього",
-        "latest_questions_caption": (
-            "Найновіші записи, доступні в джерелі даних."
-        ),
-        "export_caption": (
-            "Файл містить лише фактично завантажені реальні записи."
-        ),
+        "latest_questions_caption": ("Найновіші записи, доступні в джерелі даних."),
+        "export_caption": ("Файл містить лише фактично завантажені реальні записи."),
         "export_unavailable": (
             "Експорт стане доступним після появи реальних журналів."
         ),
@@ -697,8 +653,7 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
             "генерации, безопасности и резервного режима."
         ),
         "real_data_notice": (
-            "Эта страница использует только реальные записи "
-            "из таблицы rag_logs."
+            "Эта страница использует только реальные записи из таблицы rag_logs."
         ),
         "source_table": "Запрашиваемая таблица",
         "field_coverage_caption": (
@@ -735,22 +690,15 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
         ),
         "source_table": "الجدول الذي تم الاستعلام عنه",
         "field_coverage_caption": (
-            "النسبة المئوية للسجلات التي يحتوي فيها كل حقل "
-            "على قيمة مكتملة."
+            "النسبة المئوية للسجلات التي يحتوي فيها كل حقل على قيمة مكتملة."
         ),
         "mode_distribution_caption": (
             "العدد الفعلي للسجلات المسجلة لكل وضع من أوضاع RAG."
         ),
         "total": "الإجمالي",
-        "latest_questions_caption": (
-            "أحدث السجلات المتوفرة في مصدر البيانات."
-        ),
-        "export_caption": (
-            "يحتوي الملف فقط على السجلات الحقيقية التي تم تحميلها."
-        ),
-        "export_unavailable": (
-            "سيتم تفعيل التصدير عند توفر سجلات حقيقية."
-        ),
+        "latest_questions_caption": ("أحدث السجلات المتوفرة في مصدر البيانات."),
+        "export_caption": ("يحتوي الملف فقط على السجلات الحقيقية التي تم تحميلها."),
+        "export_unavailable": ("سيتم تفعيل التصدير عند توفر سجلات حقيقية."),
         "field_pergunta": "السؤال",
         "field_modo": "الوضع",
         "field_fontes": "المصادر",
@@ -759,29 +707,15 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
         "field_seguranca": "الأمان",
     },
     "ch": {
-        "subtitle": (
-            "对真实检索、生成、安全和回退流程进行运行监控。"
-        ),
-        "real_data_notice": (
-            "此页面仅使用 rag_logs 表中的真实记录。"
-        ),
+        "subtitle": ("对真实检索、生成、安全和回退流程进行运行监控。"),
+        "real_data_notice": ("此页面仅使用 rag_logs 表中的真实记录。"),
         "source_table": "查询的数据表",
-        "field_coverage_caption": (
-            "每个字段已填写记录所占的百分比。"
-        ),
-        "mode_distribution_caption": (
-            "每种 RAG 模式实际记录的日志数量。"
-        ),
+        "field_coverage_caption": ("每个字段已填写记录所占的百分比。"),
+        "mode_distribution_caption": ("每种 RAG 模式实际记录的日志数量。"),
         "total": "总计",
-        "latest_questions_caption": (
-            "数据源中可用的最新记录。"
-        ),
-        "export_caption": (
-            "该文件仅包含实际加载的真实记录。"
-        ),
-        "export_unavailable": (
-            "存在真实日志后将启用导出功能。"
-        ),
+        "latest_questions_caption": ("数据源中可用的最新记录。"),
+        "export_caption": ("该文件仅包含实际加载的真实记录。"),
+        "export_unavailable": ("存在真实日志后将启用导出功能。"),
         "field_pergunta": "问题",
         "field_modo": "模式",
         "field_fontes": "来源",
@@ -791,19 +725,15 @@ RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS = {
     },
 }
 
-for language, translations in (
-    RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS.items()
-):
-    RAG_OBSERVABILITY_TEXTS[
-        language
-    ].update(
-        translations
-    )
+for language, translations in RAG_OBSERVABILITY_FULL_NATIVE_TRANSLATIONS.items():
+    RAG_OBSERVABILITY_TEXTS[language].update(translations)
 
 # Rótulos técnicos contextualizados em russo.
-RAG_OBSERVABILITY_TEXTS["ru"].update({
-    "gemini": "Модель Gemini",
-    "fallback": "Резервный режим (Fallback)",
-    "field_gemini": "Использование Gemini",
-    "field_fallback": "Резервный режим (Fallback)",
-})
+RAG_OBSERVABILITY_TEXTS["ru"].update(
+    {
+        "gemini": "Модель Gemini",
+        "fallback": "Резервный режим (Fallback)",
+        "field_gemini": "Использование Gemini",
+        "field_fallback": "Резервный режим (Fallback)",
+    }
+)

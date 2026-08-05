@@ -24,9 +24,7 @@ def labels_to_dict(
 
 def test_normalizes_registered_labels():
     normalized = normalize_metric_labels(
-        metric_name=(
-            "inna_telegram_operations_total"
-        ),
+        metric_name=("inna_telegram_operations_total"),
         labels={
             "component": "WEBHOOK",
             "operation": "PROCESS_UPDATE",
@@ -35,9 +33,7 @@ def test_normalizes_registered_labels():
         },
     )
 
-    assert labels_to_dict(
-        normalized
-    ) == {
+    assert labels_to_dict(normalized) == {
         "component": "webhook",
         "operation": "process_update",
         "outcome": "success",
@@ -47,9 +43,7 @@ def test_normalizes_registered_labels():
 
 def test_unknown_value_is_normalized_when_supported():
     normalized = normalize_metric_labels(
-        metric_name=(
-            "inna_telegram_operations_total"
-        ),
+        metric_name=("inna_telegram_operations_total"),
         labels={
             "component": "new-component",
             "operation": "new-operation",
@@ -58,9 +52,7 @@ def test_unknown_value_is_normalized_when_supported():
         },
     )
 
-    assert labels_to_dict(
-        normalized
-    ) == {
+    assert labels_to_dict(normalized) == {
         "component": "unknown",
         "operation": "unknown",
         "outcome": "unknown",
@@ -90,9 +82,7 @@ def test_rejects_forbidden_label_names(
         match="Label proibida",
     ):
         normalize_metric_labels(
-            metric_name=(
-                "inna_telegram_operations_total"
-            ),
+            metric_name=("inna_telegram_operations_total"),
             labels={
                 "component": "webhook",
                 "operation": "process_update",
@@ -108,9 +98,7 @@ def test_rejects_missing_labels():
         match="Conjunto de labels inválido",
     ):
         normalize_metric_labels(
-            metric_name=(
-                "inna_telegram_operations_total"
-            ),
+            metric_name=("inna_telegram_operations_total"),
             labels={
                 "component": "webhook",
                 "operation": "process_update",
@@ -125,17 +113,13 @@ def test_rejects_unregistered_metric():
         match="Família de métrica",
     ):
         normalize_metric_labels(
-            metric_name=(
-                "inna_unknown_metric_total"
-            ),
+            metric_name=("inna_unknown_metric_total"),
             labels={},
         )
 
 
 def test_counter_accumulates_values():
-    metrics = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    metrics = InMemoryTelegramProductiveMetrics()
 
     labels = {
         "worker_result": "processed",
@@ -154,29 +138,20 @@ def test_counter_accumulates_values():
 
     snapshot = metrics.snapshot()
 
-    values = snapshot.counters[
-        "inna_telegram_worker_cycles_total"
-    ]
+    values = snapshot.counters["inna_telegram_worker_cycles_total"]
 
-    assert next(
-        iter(values.values())
-    ) == 3.0
+    assert next(iter(values.values())) == 3.0
 
 
 def test_counter_rejects_negative_value():
-    metrics = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    metrics = InMemoryTelegramProductiveMetrics()
 
     with pytest.raises(
         ValueError,
         match="não negativo",
     ):
         metrics.increment(
-            (
-                "inna_telegram_"
-                "worker_cycles_total"
-            ),
+            ("inna_telegram_worker_cycles_total"),
             labels={
                 "worker_result": "processed",
             },
@@ -185,13 +160,11 @@ def test_counter_rejects_negative_value():
 
 
 def test_histogram_tracks_count_sum_and_buckets():
-    metrics = (
-        InMemoryTelegramProductiveMetrics(
-            histogram_buckets=(
-                0.1,
-                0.5,
-                1.0,
-            )
+    metrics = InMemoryTelegramProductiveMetrics(
+        histogram_buckets=(
+            0.1,
+            0.5,
+            1.0,
         )
     )
 
@@ -202,44 +175,27 @@ def test_histogram_tracks_count_sum_and_buckets():
     }
 
     metrics.observe(
-        (
-            "inna_telegram_"
-            "operation_duration_seconds"
-        ),
+        ("inna_telegram_operation_duration_seconds"),
         0.25,
         labels=labels,
     )
 
     metrics.observe(
-        (
-            "inna_telegram_"
-            "operation_duration_seconds"
-        ),
+        ("inna_telegram_operation_duration_seconds"),
         0.75,
         labels=labels,
     )
 
     snapshot = metrics.snapshot()
 
-    values = snapshot.histograms[
-        (
-            "inna_telegram_"
-            "operation_duration_seconds"
-        )
-    ]
+    values = snapshot.histograms[("inna_telegram_operation_duration_seconds")]
 
-    histogram = next(
-        iter(values.values())
-    )
+    histogram = next(iter(values.values()))
 
     assert histogram.count == 2
-    assert histogram.sum == pytest.approx(
-        1.0
-    )
+    assert histogram.sum == pytest.approx(1.0)
 
-    assert dict(
-        histogram.buckets
-    ) == {
+    assert dict(histogram.buckets) == {
         0.1: 0,
         0.5: 1,
         1.0: 2,
@@ -247,9 +203,7 @@ def test_histogram_tracks_count_sum_and_buckets():
 
 
 def test_record_conversation_operation_exports_core_metrics():
-    metrics = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    metrics = InMemoryTelegramProductiveMetrics()
 
     metrics.record_conversation_operation(
         TelegramConversationMetricRecord(
@@ -264,36 +218,19 @@ def test_record_conversation_operation_exports_core_metrics():
 
     snapshot = metrics.snapshot()
 
-    assert (
-        "inna_telegram_operations_total"
-        in snapshot.counters
-    )
+    assert "inna_telegram_operations_total" in snapshot.counters
 
-    assert (
-        "inna_telegram_operation_duration_seconds"
-        in snapshot.histograms
-    )
+    assert "inna_telegram_operation_duration_seconds" in snapshot.histograms
 
     histogram = next(
-        iter(
-            snapshot.histograms[
-                (
-                    "inna_telegram_"
-                    "operation_duration_seconds"
-                )
-            ].values()
-        )
+        iter(snapshot.histograms[("inna_telegram_operation_duration_seconds")].values())
     )
 
-    assert histogram.sum == pytest.approx(
-        0.25
-    )
+    assert histogram.sum == pytest.approx(0.25)
 
 
 def test_record_error_increments_failure_counter():
-    metrics = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    metrics = InMemoryTelegramProductiveMetrics()
 
     metrics.record_conversation_operation(
         TelegramConversationMetricRecord(
@@ -308,16 +245,11 @@ def test_record_error_increments_failure_counter():
 
     snapshot = metrics.snapshot()
 
-    assert (
-        "inna_telegram_failures_total"
-        in snapshot.counters
-    )
+    assert "inna_telegram_failures_total" in snapshot.counters
 
 
 def test_record_conflict_increments_conflict_counter():
-    metrics = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    metrics = InMemoryTelegramProductiveMetrics()
 
     metrics.record_conversation_operation(
         TelegramConversationMetricRecord(
@@ -325,25 +257,18 @@ def test_record_conflict_increments_conflict_counter():
             component="webhook",
             outcome="recovered",
             duration_ms=25.0,
-            error_category=(
-                "optimistic_conflict"
-            ),
+            error_category=("optimistic_conflict"),
             conflict_recovered=True,
         )
     )
 
     snapshot = metrics.snapshot()
 
-    assert (
-        "inna_telegram_conflicts_total"
-        in snapshot.counters
-    )
+    assert "inna_telegram_conflicts_total" in snapshot.counters
 
 
 def test_snapshot_is_immutable():
-    metrics = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    metrics = InMemoryTelegramProductiveMetrics()
 
     metrics.increment(
         "inna_telegram_worker_cycles_total",
@@ -359,18 +284,12 @@ def test_snapshot_is_immutable():
         MappingProxyType,
     )
 
-    with pytest.raises(
-        TypeError
-    ):
-        snapshot.counters[
-            "new"
-        ] = {}
+    with pytest.raises(TypeError):
+        snapshot.counters["new"] = {}
 
 
 def test_reset_clears_all_metrics():
-    metrics = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    metrics = InMemoryTelegramProductiveMetrics()
 
     metrics.increment(
         "inna_telegram_worker_cycles_total",
@@ -383,19 +302,13 @@ def test_reset_clears_all_metrics():
 
     snapshot = metrics.snapshot()
 
-    assert dict(
-        snapshot.counters
-    ) == {}
+    assert dict(snapshot.counters) == {}
 
-    assert dict(
-        snapshot.histograms
-    ) == {}
+    assert dict(snapshot.histograms) == {}
 
 
 def test_noop_accepts_operations():
-    metrics = (
-        NoOpTelegramProductiveMetrics()
-    )
+    metrics = NoOpTelegramProductiveMetrics()
 
     metrics.increment(
         "anything",
@@ -420,73 +333,55 @@ def test_safe_wrapper_swallows_delegate_failures():
             *args,
             **kwargs,
         ):
-            raise RuntimeError(
-                "private error"
-            )
+            raise RuntimeError("private error")
 
         def observe(
             self,
             *args,
             **kwargs,
         ):
-            raise RuntimeError(
-                "private error"
-            )
+            raise RuntimeError("private error")
 
-    metrics = (
-        SafeTelegramProductiveMetrics(
-            BrokenMetrics()
+    metrics = SafeTelegramProductiveMetrics(BrokenMetrics())
+
+    assert (
+        metrics.increment(
+            "anything",
+            labels={},
         )
+        is None
     )
 
-    assert metrics.increment(
-        "anything",
-        labels={},
-    ) is None
-
-    assert metrics.observe(
-        "anything",
-        1.0,
-        labels={},
-    ) is None
+    assert (
+        metrics.observe(
+            "anything",
+            1.0,
+            labels={},
+        )
+        is None
+    )
 
 
 def test_registry_is_thread_safe():
-    metrics = (
-        InMemoryTelegramProductiveMetrics()
-    )
+    metrics = InMemoryTelegramProductiveMetrics()
 
     def increment_many():
         for _ in range(500):
             metrics.increment(
-                (
-                    "inna_telegram_"
-                    "worker_cycles_total"
-                ),
+                ("inna_telegram_worker_cycles_total"),
                 labels={
                     "worker_result": "processed",
                 },
             )
 
-    with ThreadPoolExecutor(
-        max_workers=8
-    ) as executor:
-        futures = [
-            executor.submit(
-                increment_many
-            )
-            for _ in range(8)
-        ]
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = [executor.submit(increment_many) for _ in range(8)]
 
         for future in futures:
             future.result()
 
     snapshot = metrics.snapshot()
 
-    values = snapshot.counters[
-        "inna_telegram_worker_cycles_total"
-    ]
+    values = snapshot.counters["inna_telegram_worker_cycles_total"]
 
-    assert next(
-        iter(values.values())
-    ) == 4000.0
+    assert next(iter(values.values())) == 4000.0

@@ -53,21 +53,14 @@ class ToolExecutor:
         self,
         *,
         registry: ToolRegistry,
-        permission_policy: (
-            ToolPermissionPolicy | None
-        ) = None,
+        permission_policy: (ToolPermissionPolicy | None) = None,
         max_workers: int = 4,
     ) -> None:
         if max_workers <= 0:
-            raise ValueError(
-                "max_workers deve ser positivo."
-            )
+            raise ValueError("max_workers deve ser positivo.")
 
         self._registry = registry
-        self._permission_policy = (
-            permission_policy
-            or ToolPermissionPolicy()
-        )
+        self._permission_policy = permission_policy or ToolPermissionPolicy()
 
         self._pool = ThreadPoolExecutor(
             max_workers=max_workers,
@@ -81,38 +74,27 @@ class ToolExecutor:
         call: ToolCall,
     ) -> ToolResult:
         if self._closed:
-            raise RuntimeError(
-                "ToolExecutor já foi encerrado."
-            )
+            raise RuntimeError("ToolExecutor já foi encerrado.")
 
         started_at = _utc_now()
         started_counter = perf_counter()
 
         try:
-            definition = self._registry.get(
-                call.tool_name
-            )
+            definition = self._registry.get(call.tool_name)
         except ToolNotFoundError:
             return self._build_error_result(
                 call=call,
                 status=ToolStatus.NOT_FOUND,
                 code="tool_not_found",
-                message=(
-                    "A ferramenta solicitada não "
-                    "está registrada."
-                ),
+                message=("A ferramenta solicitada não está registrada."),
                 started_at=started_at,
                 started_counter=started_counter,
                 retryable=False,
             )
 
-        permission = (
-            self._permission_policy.evaluate(
-                agent_name=(
-                    call.context.requested_by
-                ),
-                definition=definition,
-            )
+        permission = self._permission_policy.evaluate(
+            agent_name=(call.context.requested_by),
+            definition=definition,
         )
 
         if not permission.allowed:
@@ -121,8 +103,7 @@ class ToolExecutor:
                 status=ToolStatus.DENIED,
                 code="tool_permission_denied",
                 message=(
-                    "O agente não possui permissão "
-                    "para executar esta ferramenta."
+                    "O agente não possui permissão para executar esta ferramenta."
                 ),
                 started_at=started_at,
                 started_counter=started_counter,
@@ -133,23 +114,13 @@ class ToolExecutor:
             )
 
         try:
-            validated_input = (
-                definition.input_model
-                .model_validate(
-                    call.arguments
-                )
-            )
+            validated_input = definition.input_model.model_validate(call.arguments)
         except ValidationError as exc:
             return self._build_error_result(
                 call=call,
-                status=(
-                    ToolStatus.VALIDATION_ERROR
-                ),
+                status=(ToolStatus.VALIDATION_ERROR),
                 code="tool_input_validation_error",
-                message=(
-                    "Os argumentos da ferramenta "
-                    "são inválidos."
-                ),
+                message=("Os argumentos da ferramenta são inválidos."),
                 started_at=started_at,
                 started_counter=started_counter,
                 retryable=False,
@@ -167,11 +138,7 @@ class ToolExecutor:
         )
 
         try:
-            raw_output = future.result(
-                timeout=(
-                    definition.timeout_seconds
-                )
-            )
+            raw_output = future.result(timeout=(definition.timeout_seconds))
         except FutureTimeoutError:
             future.cancel()
 
@@ -179,17 +146,12 @@ class ToolExecutor:
                 call=call,
                 status=ToolStatus.TIMEOUT,
                 code="tool_timeout",
-                message=(
-                    "A ferramenta excedeu o tempo "
-                    "máximo de execução."
-                ),
+                message=("A ferramenta excedeu o tempo máximo de execução."),
                 started_at=started_at,
                 started_counter=started_counter,
                 retryable=True,
                 details={
-                    "timeout_seconds": (
-                        definition.timeout_seconds
-                    ),
+                    "timeout_seconds": (definition.timeout_seconds),
                 },
             )
         except Exception as exc:
@@ -202,36 +164,23 @@ class ToolExecutor:
                 call=call,
                 status=ToolStatus.ERROR,
                 code="tool_execution_error",
-                message=(
-                    "A ferramenta falhou durante "
-                    "a execução."
-                ),
+                message=("A ferramenta falhou durante a execução."),
                 started_at=started_at,
                 started_counter=started_counter,
                 retryable=False,
                 details={
-                    "exception_type": (
-                        type(exc).__name__
-                    ),
+                    "exception_type": (type(exc).__name__),
                 },
             )
 
         try:
-            validated_output = (
-                definition.output_model
-                .model_validate(raw_output)
-            )
+            validated_output = definition.output_model.model_validate(raw_output)
         except ValidationError as exc:
             return self._build_error_result(
                 call=call,
-                status=(
-                    ToolStatus.VALIDATION_ERROR
-                ),
+                status=(ToolStatus.VALIDATION_ERROR),
                 code="tool_output_validation_error",
-                message=(
-                    "A ferramenta produziu uma "
-                    "saída incompatível."
-                ),
+                message=("A ferramenta produziu uma saída incompatível."),
                 started_at=started_at,
                 started_counter=started_counter,
                 retryable=False,
@@ -248,33 +197,19 @@ class ToolExecutor:
             call_id=call.call_id,
             tool_name=call.tool_name,
             status=ToolStatus.SUCCESS,
-            output=validated_output.model_dump(
-                mode="json"
-            ),
+            output=validated_output.model_dump(mode="json"),
             error=None,
             duration_ms=round(
-                (
-                    perf_counter()
-                    - started_counter
-                )
-                * 1000,
+                (perf_counter() - started_counter) * 1000,
                 3,
             ),
             started_at=started_at,
             finished_at=finished_at,
             metadata={
-                "requested_by": (
-                    call.context.requested_by
-                ),
-                "trace_id": (
-                    call.context.trace_id
-                ),
-                "idempotent": (
-                    definition.idempotent
-                ),
-                "sensitive_output": (
-                    definition.sensitive_output
-                ),
+                "requested_by": (call.context.requested_by),
+                "trace_id": (call.context.trace_id),
+                "idempotent": (definition.idempotent),
+                "sensitive_output": (definition.sensitive_output),
             },
         )
 
@@ -302,22 +237,14 @@ class ToolExecutor:
                 details=details or {},
             ),
             duration_ms=round(
-                (
-                    perf_counter()
-                    - started_counter
-                )
-                * 1000,
+                (perf_counter() - started_counter) * 1000,
                 3,
             ),
             started_at=started_at,
             finished_at=_utc_now(),
             metadata={
-                "requested_by": (
-                    call.context.requested_by
-                ),
-                "trace_id": (
-                    call.context.trace_id
-                ),
+                "requested_by": (call.context.requested_by),
+                "trace_id": (call.context.trace_id),
             },
         )
 

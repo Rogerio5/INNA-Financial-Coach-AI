@@ -35,15 +35,10 @@ class InfrastructureHealth:
 def _phoenix_available(
     status: PhoenixRuntimeStatus,
 ) -> bool:
-    return bool(
-        status.initialized
-        and status.enabled
-        and status.ready
-    )
+    return bool(status.initialized and status.enabled and status.ready)
 
 
-def collect_infrastructure_health(
-) -> InfrastructureHealth:
+def collect_infrastructure_health() -> InfrastructureHealth:
     """
     Consolida os componentes sem interromper o dashboard.
 
@@ -66,10 +61,7 @@ def collect_infrastructure_health(
     if not _phoenix_available(phoenix):
         degraded.append("phoenix")
 
-    if (
-        render.running_on_render
-        and render.status != "operational"
-    ):
+    if render.running_on_render and render.status != "operational":
         degraded.append("render")
 
     if unavailable:

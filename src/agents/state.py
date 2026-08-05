@@ -27,10 +27,7 @@ def merge_conversation_history(
         return update
 
     # O nó pode devolver o histórico completo mais a nova mensagem.
-    if (
-        len(update) >= len(current)
-        and update[: len(current)] == current
-    ):
+    if len(update) >= len(current) and update[: len(current)] == current:
         return update
 
     resultado = list(current)
@@ -39,13 +36,9 @@ def merge_conversation_history(
         if not isinstance(mensagem, dict):
             continue
 
-        role = str(
-            mensagem.get("role", "")
-        ).strip()
+        role = str(mensagem.get("role", "")).strip()
 
-        texto = str(
-            mensagem.get("content", "")
-        ).strip()
+        texto = str(mensagem.get("content", "")).strip()
 
         if not role or not texto:
             continue
@@ -76,6 +69,7 @@ def merge_handoff_history(
     mais recente substitui o registro anterior, preservando
     a ordem original do histórico.
     """
+
     def normalize_records(
         records: list[dict[str, Any]] | None,
     ) -> list[dict[str, Any]]:
@@ -105,13 +99,9 @@ def merge_handoff_history(
 
         return normalized
 
-    current_items = normalize_records(
-        current
-    )
+    current_items = normalize_records(current)
 
-    update_items = normalize_records(
-        update
-    )
+    update_items = normalize_records(update)
 
     if not update_items:
         return current_items
@@ -122,8 +112,7 @@ def merge_handoff_history(
     # Alguns nós podem devolver o histórico completo.
     if (
         len(update_items) >= len(current_items)
-        and update_items[: len(current_items)]
-        == current_items
+        and update_items[: len(current_items)] == current_items
     ):
         return update_items
 
@@ -154,9 +143,7 @@ def merge_handoff_history(
             continue
 
         if handoff_id in positions:
-            result[
-                positions[handoff_id]
-            ] = item
+            result[positions[handoff_id]] = item
             continue
 
         positions[handoff_id] = len(result)
@@ -188,6 +175,7 @@ class InnaAgentState(TypedDict, total=False):
     currency: str
 
     thread_id: str
+    trace_id: str
     conversation_history: Annotated[
         list[dict[str, str]],
         merge_conversation_history,
@@ -217,6 +205,9 @@ class InnaAgentState(TypedDict, total=False):
     governance_decision: dict[str, Any]
 
     use_rag: bool
+    agentic_rag_mode: str
+    agentic_rag_execution: dict[str, Any]
+    agentic_rag_fallback_used: bool
     use_database: bool
     generate_report: bool
 

@@ -17,9 +17,7 @@ from src.evaluation.baseline import (
 
 def _official_report() -> dict:
     return {
-        "report_type": (
-            "inna-evaluation-batch"
-        ),
+        "report_type": ("inna-evaluation-batch"),
         "schema_version": "1.0.0",
         "generated_date": "2026-07-27",
         "run_reference": "run-test-001",
@@ -50,14 +48,10 @@ def _official_report() -> dict:
         ],
         "datasets": [
             {
-                "dataset_id": (
-                    "financial-rag-v1"
-                ),
+                "dataset_id": ("financial-rag-v1"),
             },
             {
-                "dataset_id": (
-                    "financial-safety-v1"
-                ),
+                "dataset_id": ("financial-safety-v1"),
             },
         ],
         "metrics": [
@@ -72,9 +66,7 @@ def _official_report() -> dict:
                 "skipped": 0,
             },
             {
-                "metric_id": (
-                    "financial-safety"
-                ),
+                "metric_id": ("financial-safety"),
                 "average_score": 1.0,
                 "total_executions": 2,
                 "passed": 2,
@@ -87,8 +79,7 @@ def _official_report() -> dict:
     }
 
 
-def test_builds_baseline_from_approved_report(
-) -> None:
+def test_builds_baseline_from_approved_report() -> None:
     baseline = EvaluationBaseline.from_report(
         _official_report(),
         baseline_id="production-v1",
@@ -99,9 +90,7 @@ def test_builds_baseline_from_approved_report(
         },
     )
 
-    assert baseline.baseline_id == (
-        "production-v1"
-    )
+    assert baseline.baseline_id == ("production-v1")
     assert baseline.pass_rate == 1.0
     assert baseline.quality_gate_passed
     assert baseline.case_ids == (
@@ -112,10 +101,7 @@ def test_builds_baseline_from_approved_report(
         "financial-rag-v1",
         "financial-safety-v1",
     )
-    assert [
-        metric.metric_id
-        for metric in baseline.metrics
-    ] == [
+    assert [metric.metric_id for metric in baseline.metrics] == [
         "faithfulness",
         "financial-safety",
     ]
@@ -152,9 +138,7 @@ def test_writes_and_loads_baseline(
         promoted_at="2026-07-27T03:00:00Z",
     )
 
-    destination = (
-        tmp_path / "production-baseline.json"
-    )
+    destination = tmp_path / "production-baseline.json"
 
     write_baseline(
         baseline,
@@ -165,15 +149,9 @@ def test_writes_and_loads_baseline(
 
     assert loaded == baseline
 
-    payload = json.loads(
-        destination.read_text(
-            encoding="utf-8"
-        )
-    )
+    payload = json.loads(destination.read_text(encoding="utf-8"))
 
-    assert payload[
-        "baseline_schema_version"
-    ] == "1.0.0"
+    assert payload["baseline_schema_version"] == "1.0.0"
 
 
 def test_does_not_overwrite_without_permission(
@@ -183,9 +161,7 @@ def test_does_not_overwrite_without_permission(
         _official_report(),
     )
 
-    destination = (
-        tmp_path / "production-baseline.json"
-    )
+    destination = tmp_path / "production-baseline.json"
 
     write_baseline(
         baseline,
@@ -226,43 +202,26 @@ def test_promotes_report_file(
     )
 
     assert baseline_path.exists()
-    assert baseline.baseline_id == (
-        "production-v1"
-    )
-    assert baseline.metadata[
-        "commit_sha"
-    ] == "abc123"
+    assert baseline.baseline_id == ("production-v1")
+    assert baseline.metadata["commit_sha"] == "abc123"
 
-def test_uses_quality_gate_batch_id_as_fallback(
-) -> None:
+
+def test_uses_quality_gate_batch_id_as_fallback() -> None:
     report = _official_report()
     report["batch"]["batch_id"] = None
-    report["quality_gate"]["batch_id"] = (
-        "quality-gate-batch-001"
-    )
+    report["quality_gate"]["batch_id"] = "quality-gate-batch-001"
 
-    baseline = EvaluationBaseline.from_report(
-        report
-    )
+    baseline = EvaluationBaseline.from_report(report)
 
-    assert baseline.source_batch_id == (
-        "quality-gate-batch-001"
-    )
+    assert baseline.source_batch_id == ("quality-gate-batch-001")
 
-def test_uses_run_reference_when_batch_ids_are_missing(
-) -> None:
+
+def test_uses_run_reference_when_batch_ids_are_missing() -> None:
     report = _official_report()
     report["batch"]["batch_id"] = None
     report["quality_gate"]["batch_id"] = None
-    report["batch"]["run_reference"] = (
-        "run-fallback-001"
-    )
+    report["batch"]["run_reference"] = "run-fallback-001"
 
-    baseline = EvaluationBaseline.from_report(
-        report
-    )
+    baseline = EvaluationBaseline.from_report(report)
 
-    assert baseline.source_batch_id == (
-        "run-fallback-001"
-    )
-
+    assert baseline.source_batch_id == ("run-fallback-001")

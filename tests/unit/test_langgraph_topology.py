@@ -15,9 +15,7 @@ def _edge_pairs(
 
     for edge in builder.edges:
         if isinstance(edge, tuple):
-            assert len(edge) >= 2, (
-                f"Aresta inválida: {edge!r}"
-            )
+            assert len(edge) >= 2, f"Aresta inválida: {edge!r}"
 
             source = edge[0]
             target = edge[1]
@@ -38,9 +36,7 @@ def _edge_pairs(
 def test_langgraph_has_expected_linear_entry_flow():
     builder = criar_builder_inna()
 
-    edges = _edge_pairs(
-        builder
-    )
+    edges = _edge_pairs(builder)
 
     assert (
         "__start__",
@@ -56,9 +52,7 @@ def test_langgraph_has_expected_linear_entry_flow():
 def test_all_specialized_agents_finish_through_finalization_pipeline():
     builder = criar_builder_inna()
 
-    edges = _edge_pairs(
-        builder
-    )
+    edges = _edge_pairs(builder)
 
     for agent in ALLOWED_AGENT_ROUTES:
         assert (
@@ -86,12 +80,11 @@ def test_all_specialized_agents_finish_through_finalization_pipeline():
         "__end__",
     ) in edges
 
+
 def test_agents_do_not_return_to_supervisor():
     builder = criar_builder_inna()
 
-    edges = _edge_pairs(
-        builder
-    )
+    edges = _edge_pairs(builder)
 
     for agent in ALLOWED_AGENT_ROUTES:
         assert (
@@ -103,9 +96,7 @@ def test_agents_do_not_return_to_supervisor():
 def test_agents_do_not_transition_between_each_other():
     builder = criar_builder_inna()
 
-    edges = _edge_pairs(
-        builder
-    )
+    edges = _edge_pairs(builder)
 
     for source in ALLOWED_AGENT_ROUTES:
         for target in ALLOWED_AGENT_ROUTES:
@@ -118,9 +109,7 @@ def test_agents_do_not_transition_between_each_other():
 def test_current_graph_topology_is_acyclic_by_design():
     builder = criar_builder_inna()
 
-    edges = _edge_pairs(
-        builder
-    )
+    edges = _edge_pairs(builder)
 
     adjacency: dict[str, set[str]] = {}
 
@@ -135,9 +124,7 @@ def test_current_graph_topology_is_acyclic_by_design():
 
     def visit(node: str) -> None:
         if node in visiting:
-            raise AssertionError(
-                f"Ciclo detectado em {node}"
-            )
+            raise AssertionError(f"Ciclo detectado em {node}")
 
         if node in visited:
             return

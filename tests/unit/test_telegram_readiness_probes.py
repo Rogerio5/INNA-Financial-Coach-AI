@@ -35,13 +35,9 @@ class FakeCursor:
         statement,
     ):
         if self.fail:
-            raise RuntimeError(
-                "private database exception"
-            )
+            raise RuntimeError("private database exception")
 
-        self.executed.append(
-            statement
-        )
+        self.executed.append(statement)
 
     def fetchone(
         self,
@@ -109,78 +105,40 @@ def healthy_checks(
             "passed": True,
             "callable": True,
         },
-        metrics_runtime=(
-            lambda: metrics
-        ),
+        metrics_runtime=(lambda: metrics),
     )
 
 
 def test_database_probe_is_required():
-    result = (
-        create_database_readiness_probe(
-            lambda: True
-        )
-        .run()
-    )
+    result = create_database_readiness_probe(lambda: True).run()
 
     assert result.passed
 
-    assert (
-        result.severity
-        is TelegramProbeSeverity.REQUIRED
-    )
+    assert result.severity is TelegramProbeSeverity.REQUIRED
 
 
 def test_metrics_probe_is_optional():
-    result = (
-        create_metrics_runtime_readiness_probe(
-            lambda: False
-        )
-        .run()
-    )
+    result = create_metrics_runtime_readiness_probe(lambda: False).run()
 
     assert not result.passed
 
-    assert (
-        result.severity
-        is TelegramProbeSeverity.OPTIONAL
-    )
+    assert result.severity is TelegramProbeSeverity.OPTIONAL
 
 
 def test_all_dependencies_healthy():
-    snapshot = (
-        create_worker_readiness_service(
-            healthy_checks()
-        )
-        .evaluate()
-    )
+    snapshot = create_worker_readiness_service(healthy_checks()).evaluate()
 
-    assert (
-        snapshot.status
-        is TelegramOperationalStatus.HEALTHY
-    )
+    assert snapshot.status is TelegramOperationalStatus.HEALTHY
 
     assert snapshot.ready is True
 
-    assert len(
-        snapshot.checks
-    ) == 7
+    assert len(snapshot.checks) == 7
 
 
 def test_optional_metrics_failure_is_degraded():
-    snapshot = (
-        create_worker_readiness_service(
-            healthy_checks(
-                metrics=False
-            )
-        )
-        .evaluate()
-    )
+    snapshot = create_worker_readiness_service(healthy_checks(metrics=False)).evaluate()
 
-    assert (
-        snapshot.status
-        is TelegramOperationalStatus.DEGRADED
-    )
+    assert snapshot.status is TelegramOperationalStatus.DEGRADED
 
     assert snapshot.ready is True
 
@@ -209,86 +167,48 @@ def test_required_dependency_failure_is_unready(
         "metrics_runtime": lambda: True,
     }
 
-    values[
-        dependency
-    ] = lambda: False
+    values[dependency] = lambda: False
 
-    snapshot = (
-        create_worker_readiness_service(
-            TelegramWorkerReadinessChecks(
-                **values
-            )
-        )
-        .evaluate()
-    )
+    snapshot = create_worker_readiness_service(
+        TelegramWorkerReadinessChecks(**values)
+    ).evaluate()
 
-    assert (
-        snapshot.status
-        is TelegramOperationalStatus.UNREADY
-    )
+    assert snapshot.status is TelegramOperationalStatus.UNREADY
 
     assert snapshot.ready is False
 
 
 def test_dependency_exception_is_fail_safe():
     def broken():
-        raise RuntimeError(
-            "postgresql://user:password@private"
-        )
+        raise RuntimeError("postgresql://user:password@private")
 
     checks = healthy_checks()
 
-    snapshot = (
-        create_worker_readiness_service(
-            TelegramWorkerReadinessChecks(
-                configuration=(
-                    checks.configuration
-                ),
-                database=broken,
-                job_repository=(
-                    checks.job_repository
-                ),
-                receipt_repository=(
-                    checks.receipt_repository
-                ),
-                keyring=checks.keyring,
-                processor=checks.processor,
-                metrics_runtime=(
-                    checks.metrics_runtime
-                ),
-            )
+    snapshot = create_worker_readiness_service(
+        TelegramWorkerReadinessChecks(
+            configuration=(checks.configuration),
+            database=broken,
+            job_repository=(checks.job_repository),
+            receipt_repository=(checks.receipt_repository),
+            keyring=checks.keyring,
+            processor=checks.processor,
+            metrics_runtime=(checks.metrics_runtime),
         )
-        .evaluate()
-    )
+    ).evaluate()
 
-    payload = repr(
-        snapshot.to_safe_dict()
-    )
+    payload = repr(snapshot.to_safe_dict())
 
-    assert (
-        snapshot.status
-        is TelegramOperationalStatus.UNREADY
-    )
+    assert snapshot.status is TelegramOperationalStatus.UNREADY
 
-    assert (
-        "password"
-        not in payload
-    )
+    assert "password" not in payload
 
-    assert (
-        "postgresql://"
-        not in payload
-    )
+    assert "postgresql://" not in payload
 
 
 def test_factory_check_reports_type_only():
-    check = (
-        create_factory_readiness_check(
-            lambda: FakeKeyring(
-                active_key_id="private-key-id"
-            ),
-            detail_name="implementation",
-        )
+    check = create_factory_readiness_check(
+        lambda: FakeKeyring(active_key_id="private-key-id"),
+        detail_name="implementation",
     )
 
     result = check()
@@ -298,18 +218,13 @@ def test_factory_check_reports_type_only():
         "implementation": "FakeKeyring",
     }
 
-    assert (
-        "private-key-id"
-        not in repr(result)
-    )
+    assert "private-key-id" not in repr(result)
 
 
 def test_factory_check_fails_on_none():
-    check = (
-        create_factory_readiness_check(
-            lambda: None,
-            detail_name="implementation",
-        )
+    check = create_factory_readiness_check(
+        lambda: None,
+        detail_name="implementation",
     )
 
     assert check() == {
@@ -319,50 +234,33 @@ def test_factory_check_fails_on_none():
 
 
 def test_attribute_check_passes():
-    check = (
-        create_attribute_readiness_check(
-            lambda: FakeKeyring(
-                active_key_id="key-v1"
-            ),
-            attribute="active_key_id",
-            expected_type=str,
-        )
+    check = create_attribute_readiness_check(
+        lambda: FakeKeyring(active_key_id="key-v1"),
+        attribute="active_key_id",
+        expected_type=str,
     )
 
     result = check()
 
-    assert result[
-        "passed"
-    ] is True
+    assert result["passed"] is True
 
-    assert (
-        "key-v1"
-        not in repr(result)
-    )
+    assert "key-v1" not in repr(result)
 
 
 def test_attribute_check_rejects_wrong_type():
-    check = (
-        create_attribute_readiness_check(
-            lambda: FakeKeyring(
-                active_key_id=123
-            ),
-            attribute="active_key_id",
-            expected_type=str,
-        )
+    check = create_attribute_readiness_check(
+        lambda: FakeKeyring(active_key_id=123),
+        attribute="active_key_id",
+        expected_type=str,
     )
 
-    assert check()[
-        "passed"
-    ] is False
+    assert check()["passed"] is False
 
 
 def test_callable_attribute_check():
-    check = (
-        create_callable_attribute_check(
-            lambda: FakeRepository(),
-            attribute="find_by_update_id",
-        )
+    check = create_callable_attribute_check(
+        lambda: FakeRepository(),
+        attribute="find_by_update_id",
     )
 
     assert check() == {
@@ -375,67 +273,36 @@ def test_callable_attribute_check():
 def test_database_select_check_executes_only_select():
     cursor = FakeCursor()
 
-    connection = FakeConnection(
-        cursor
-    )
+    connection = FakeConnection(cursor)
 
-    check = (
-        create_database_select_check(
-            lambda: connection
-        )
-    )
+    check = create_database_select_check(lambda: connection)
 
     result = check()
 
-    assert result[
-        "passed"
-    ] is True
+    assert result["passed"] is True
 
-    assert (
-        cursor.executed
-        == ["SELECT 1"]
-    )
+    assert cursor.executed == ["SELECT 1"]
 
     assert cursor.closed is True
     assert connection.closed is True
 
 
 def test_database_select_check_accepts_scalar():
-    cursor = FakeCursor(
-        row=1
-    )
+    cursor = FakeCursor(row=1)
 
-    check = (
-        create_database_select_check(
-            lambda: FakeConnection(
-                cursor
-            )
-        )
-    )
+    check = create_database_select_check(lambda: FakeConnection(cursor))
 
-    assert check()[
-        "passed"
-    ] is True
+    assert check()["passed"] is True
 
 
 def test_database_select_check_failure_closes_resources():
-    cursor = FakeCursor(
-        fail=True
-    )
+    cursor = FakeCursor(fail=True)
 
-    connection = FakeConnection(
-        cursor
-    )
+    connection = FakeConnection(cursor)
 
-    check = (
-        create_database_select_check(
-            lambda: connection
-        )
-    )
+    check = create_database_select_check(lambda: connection)
 
-    with pytest.raises(
-        RuntimeError
-    ):
+    with pytest.raises(RuntimeError):
         check()
 
     assert cursor.closed is True
@@ -445,19 +312,11 @@ def test_database_select_check_failure_closes_resources():
 def test_database_select_check_has_no_write_statement():
     cursor = FakeCursor()
 
-    check = (
-        create_database_select_check(
-            lambda: FakeConnection(
-                cursor
-            )
-        )
-    )
+    check = create_database_select_check(lambda: FakeConnection(cursor))
 
     check()
 
-    rendered = " ".join(
-        cursor.executed
-    ).upper()
+    rendered = " ".join(cursor.executed).upper()
 
     forbidden = (
         "INSERT",
@@ -469,10 +328,7 @@ def test_database_select_check_has_no_write_statement():
         "TRUNCATE",
     )
 
-    assert not any(
-        statement in rendered
-        for statement in forbidden
-    )
+    assert not any(statement in rendered for statement in forbidden)
 
 
 @pytest.mark.parametrize(
@@ -495,41 +351,25 @@ def test_database_select_check_has_no_write_statement():
 def test_helper_requires_valid_name(
     factory,
 ):
-    with pytest.raises(
-        ValueError
-    ):
+    with pytest.raises(ValueError):
         factory()
 
 
 def test_metrics_probe_can_be_omitted():
     checks = healthy_checks()
 
-    snapshot = (
-        create_worker_readiness_service(
-            TelegramWorkerReadinessChecks(
-                configuration=(
-                    checks.configuration
-                ),
-                database=checks.database,
-                job_repository=(
-                    checks.job_repository
-                ),
-                receipt_repository=(
-                    checks.receipt_repository
-                ),
-                keyring=checks.keyring,
-                processor=checks.processor,
-                metrics_runtime=None,
-            )
+    snapshot = create_worker_readiness_service(
+        TelegramWorkerReadinessChecks(
+            configuration=(checks.configuration),
+            database=checks.database,
+            job_repository=(checks.job_repository),
+            receipt_repository=(checks.receipt_repository),
+            keyring=checks.keyring,
+            processor=checks.processor,
+            metrics_runtime=None,
         )
-        .evaluate()
-    )
+    ).evaluate()
 
-    assert (
-        snapshot.status
-        is TelegramOperationalStatus.HEALTHY
-    )
+    assert snapshot.status is TelegramOperationalStatus.HEALTHY
 
-    assert len(
-        snapshot.checks
-    ) == 6
+    assert len(snapshot.checks) == 6

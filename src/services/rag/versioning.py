@@ -23,9 +23,7 @@ from typing import Final
 
 MIN_DOCUMENT_VERSION: Final[int] = 1
 
-_SHA256_PATTERN: Final[re.Pattern[str]] = re.compile(
-    r"^[a-f0-9]{64}$"
-)
+_SHA256_PATTERN: Final[re.Pattern[str]] = re.compile(r"^[a-f0-9]{64}$")
 
 
 class RagDocumentVersioningError(ValueError):
@@ -34,9 +32,7 @@ class RagDocumentVersioningError(ValueError):
     """
 
 
-class RagDuplicateDocumentError(
-    RagDocumentVersioningError
-):
+class RagDuplicateDocumentError(RagDocumentVersioningError):
     """
     Indica que o mesmo conteúdo já foi registrado.
     """
@@ -69,9 +65,7 @@ def normalize_logical_document_name(
     Exemplo:
         Guia Reserva 2026.MD -> guia_reserva_2026
     """
-    original = Path(
-        str(filename or "").strip()
-    ).name
+    original = Path(str(filename or "").strip()).name
 
     stem = Path(original).stem
 
@@ -81,9 +75,7 @@ def normalize_logical_document_name(
     )
 
     normalized = "".join(
-        character
-        for character in normalized
-        if not unicodedata.combining(character)
+        character for character in normalized if not unicodedata.combining(character)
     )
 
     normalized = normalized.lower()
@@ -98,8 +90,7 @@ def normalize_logical_document_name(
 
     if not normalized:
         raise RagDocumentVersioningError(
-            "Não foi possível determinar o nome "
-            "lógico do documento."
+            "Não foi possível determinar o nome lógico do documento."
         )
 
     return normalized
@@ -111,14 +102,11 @@ def validate_content_hash(
     """
     Valida um SHA-256 hexadecimal em letras minúsculas.
     """
-    normalized = str(
-        content_hash or ""
-    ).strip().lower()
+    normalized = str(content_hash or "").strip().lower()
 
     if not _SHA256_PATTERN.fullmatch(normalized):
         raise RagDocumentVersioningError(
-            "O hash do documento deve ser um "
-            "SHA-256 hexadecimal válido."
+            "O hash do documento deve ser um SHA-256 hexadecimal válido."
         )
 
     return normalized
@@ -143,9 +131,7 @@ def validate_document_id(
         ) from exc
 
     if normalized < 1:
-        raise RagDocumentVersioningError(
-            f"{field_name} deve ser maior que zero."
-        )
+        raise RagDocumentVersioningError(f"{field_name} deve ser maior que zero.")
 
     return normalized
 
@@ -162,14 +148,10 @@ def determine_next_document_version(
     try:
         normalized = int(current_version)
     except (TypeError, ValueError) as exc:
-        raise RagDocumentVersioningError(
-            "A versão atual deve ser inteira."
-        ) from exc
+        raise RagDocumentVersioningError("A versão atual deve ser inteira.") from exc
 
     if normalized < MIN_DOCUMENT_VERSION:
-        raise RagDocumentVersioningError(
-            "A versão atual é inválida."
-        )
+        raise RagDocumentVersioningError("A versão atual é inválida.")
 
     return normalized + 1
 
@@ -177,26 +159,20 @@ def determine_next_document_version(
 def ensure_content_is_not_duplicate(
     *,
     new_content_hash: str,
-    existing_content_hashes: list[str]
-    | tuple[str, ...]
-    | set[str],
+    existing_content_hashes: list[str] | tuple[str, ...] | set[str],
 ) -> None:
     """
     Rejeita conteúdo já registrado em qualquer versão.
     """
-    normalized_new_hash = validate_content_hash(
-        new_content_hash
-    )
+    normalized_new_hash = validate_content_hash(new_content_hash)
 
     normalized_existing_hashes = {
-        validate_content_hash(item)
-        for item in existing_content_hashes
+        validate_content_hash(item) for item in existing_content_hashes
     }
 
     if normalized_new_hash in normalized_existing_hashes:
         raise RagDuplicateDocumentError(
-            "Este conteúdo já está registrado "
-            "na base documental."
+            "Este conteúdo já está registrado na base documental."
         )
 
 
@@ -207,31 +183,21 @@ def create_document_version(
     current_version: int | None = None,
     root_document_id: int | None = None,
     previous_document_id: int | None = None,
-    existing_content_hashes: list[str]
-    | tuple[str, ...]
-    | set[str] = (),
+    existing_content_hashes: list[str] | tuple[str, ...] | set[str] = (),
 ) -> RagDocumentVersion:
     """
     Cria os metadados da próxima versão documental.
     """
-    logical_name = (
-        normalize_logical_document_name(filename)
-    )
+    logical_name = normalize_logical_document_name(filename)
 
-    normalized_content_hash = (
-        validate_content_hash(content_hash)
-    )
+    normalized_content_hash = validate_content_hash(content_hash)
 
     ensure_content_is_not_duplicate(
         new_content_hash=normalized_content_hash,
-        existing_content_hashes=(
-            existing_content_hashes
-        ),
+        existing_content_hashes=(existing_content_hashes),
     )
 
-    version = determine_next_document_version(
-        current_version
-    )
+    version = determine_next_document_version(current_version)
 
     normalized_root_id = validate_document_id(
         root_document_id,
@@ -243,34 +209,28 @@ def create_document_version(
         field_name="previous_document_id",
     )
 
-    is_initial_version = (
-        version == MIN_DOCUMENT_VERSION
-    )
+    is_initial_version = version == MIN_DOCUMENT_VERSION
 
     if is_initial_version:
         if normalized_previous_id is not None:
             raise RagDocumentVersioningError(
-                "A versão inicial não pode possuir "
-                "documento anterior."
+                "A versão inicial não pode possuir documento anterior."
             )
 
         if current_version is not None:
             raise RagDocumentVersioningError(
-                "A versão inicial não pode receber "
-                "uma versão atual."
+                "A versão inicial não pode receber uma versão atual."
             )
 
     else:
         if normalized_previous_id is None:
             raise RagDocumentVersioningError(
-                "Uma nova versão precisa informar "
-                "o documento anterior."
+                "Uma nova versão precisa informar o documento anterior."
             )
 
         if normalized_root_id is None:
             raise RagDocumentVersioningError(
-                "Uma nova versão precisa informar "
-                "o documento raiz."
+                "Uma nova versão precisa informar o documento raiz."
             )
 
     return RagDocumentVersion(
@@ -280,9 +240,7 @@ def create_document_version(
         root_document_id=normalized_root_id,
         previous_document_id=normalized_previous_id,
         is_initial_version=is_initial_version,
-        replaces_previous_version=(
-            not is_initial_version
-        ),
+        replaces_previous_version=(not is_initial_version),
     )
 
 
@@ -300,19 +258,10 @@ def create_document_version_from_context(
     return create_document_version(
         filename=filename,
         content_hash=content_hash,
-        current_version=context.get(
-            "current_version"
-        ),
-        root_document_id=context.get(
-            "root_document_id"
-        ),
-        previous_document_id=context.get(
-            "previous_document_id"
-        ),
-        existing_content_hashes=context.get(
-            "existing_content_hashes"
-        )
-        or (),
+        current_version=context.get("current_version"),
+        root_document_id=context.get("root_document_id"),
+        previous_document_id=context.get("previous_document_id"),
+        existing_content_hashes=context.get("existing_content_hashes") or (),
     )
 
 

@@ -56,104 +56,66 @@ NARRATIVE_TEXTS = {
         "health_good": "Boa",
         "health_attention": "Atenção",
         "health_critical": "Crítica",
-        "no_data_title": (
-            "Ainda não existem dados suficientes."
-        ),
+        "no_data_title": ("Ainda não existem dados suficientes."),
         "no_data_summary": (
             "Execute algumas Tools financeiras para "
             "alimentar o painel de observabilidade."
         ),
         "no_data_classification": "Sem dados",
-        "automatic_summary_title": (
-            "Resumo operacional automático"
-        ),
-        "markdown_no_data": (
-            "Sem dados disponíveis."
-        ),
+        "automatic_summary_title": ("Resumo operacional automático"),
+        "markdown_no_data": ("Sem dados disponíveis."),
         "markdown_highlights": "### Destaques",
         "markdown_alerts": "### Alertas",
-        "markdown_recommendations": (
-            "### Recomendações"
-        ),
+        "markdown_recommendations": ("### Recomendações"),
     },
     "en_us": {
         "health_excellent": "Excellent",
         "health_good": "Good",
         "health_attention": "Attention",
         "health_critical": "Critical",
-        "no_data_title": (
-            "There is not enough data yet."
-        ),
+        "no_data_title": ("There is not enough data yet."),
         "no_data_summary": (
-            "Run some financial Tools to populate "
-            "the observability dashboard."
+            "Run some financial Tools to populate the observability dashboard."
         ),
         "no_data_classification": "No data",
-        "automatic_summary_title": (
-            "Automatic operational summary"
-        ),
-        "markdown_no_data": (
-            "No data is available."
-        ),
+        "automatic_summary_title": ("Automatic operational summary"),
+        "markdown_no_data": ("No data is available."),
         "markdown_highlights": "### Highlights",
         "markdown_alerts": "### Alerts",
-        "markdown_recommendations": (
-            "### Recommendations"
-        ),
+        "markdown_recommendations": ("### Recommendations"),
     },
     "en_gb": {
         "health_excellent": "Excellent",
         "health_good": "Good",
         "health_attention": "Attention",
         "health_critical": "Critical",
-        "no_data_title": (
-            "There is not enough data yet."
-        ),
+        "no_data_title": ("There is not enough data yet."),
         "no_data_summary": (
-            "Run some financial Tools to populate "
-            "the observability dashboard."
+            "Run some financial Tools to populate the observability dashboard."
         ),
         "no_data_classification": "No data",
-        "automatic_summary_title": (
-            "Automatic operational summary"
-        ),
-        "markdown_no_data": (
-            "No data is available."
-        ),
+        "automatic_summary_title": ("Automatic operational summary"),
+        "markdown_no_data": ("No data is available."),
         "markdown_highlights": "### Highlights",
         "markdown_alerts": "### Alerts",
-        "markdown_recommendations": (
-            "### Recommendations"
-        ),
+        "markdown_recommendations": ("### Recommendations"),
     },
     "ru": {
         "health_excellent": "Отличное",
         "health_good": "Хорошее",
         "health_attention": "Требует внимания",
         "health_critical": "Критическое",
-        "no_data_title": (
-            "Данных пока недостаточно."
-        ),
+        "no_data_title": ("Данных пока недостаточно."),
         "no_data_summary": (
             "Выполните несколько финансовых Tools, "
             "чтобы заполнить панель наблюдаемости."
         ),
         "no_data_classification": "Нет данных",
-        "automatic_summary_title": (
-            "Автоматическая операционная сводка"
-        ),
-        "markdown_no_data": (
-            "Данные недоступны."
-        ),
-        "markdown_highlights": (
-            "### Сильные стороны"
-        ),
-        "markdown_alerts": (
-            "### Предупреждения"
-        ),
-        "markdown_recommendations": (
-            "### Рекомендации"
-        ),
+        "automatic_summary_title": ("Автоматическая операционная сводка"),
+        "markdown_no_data": ("Данные недоступны."),
+        "markdown_highlights": ("### Сильные стороны"),
+        "markdown_alerts": ("### Предупреждения"),
+        "markdown_recommendations": ("### Рекомендации"),
     },
 }
 
@@ -167,11 +129,14 @@ def normalizar_idioma_narrativa(
     Idiomas ainda sem catálogo próprio usam inglês
     até receberem o pacote nativo completo.
     """
-    codigo = str(
-        idioma or "pt"
-    ).strip().lower().replace(
-        "-",
-        "_",
+    codigo = (
+        str(idioma or "pt")
+        .strip()
+        .lower()
+        .replace(
+            "-",
+            "_",
+        )
     )
 
     normalizado = NARRATIVE_LANGUAGE_ALIASES.get(
@@ -194,9 +159,7 @@ def narrative_t(
     """
     Obtém um texto localizado da narrativa operacional.
     """
-    language = normalizar_idioma_narrativa(
-        idioma
-    )
+    language = normalizar_idioma_narrativa(idioma)
 
     texts = NARRATIVE_TEXTS.get(
         language,
@@ -208,9 +171,7 @@ def narrative_t(
     if value is not None:
         return value
 
-    portuguese_value = NARRATIVE_TEXTS[
-        "pt"
-    ].get(key)
+    portuguese_value = NARRATIVE_TEXTS["pt"].get(key)
 
     if portuguese_value is not None:
         return portuguese_value
@@ -251,9 +212,7 @@ def classificar_saude_operacional(
 
     Score máximo: 100 pontos.
     """
-    idioma = normalizar_idioma_narrativa(
-        idioma
-    )
+    idioma = normalizar_idioma_narrativa(idioma)
 
     score = 100.0
     penalidades = []
@@ -264,10 +223,7 @@ def classificar_saude_operacional(
             35,
         )
         score -= penalidade
-        penalidades.append(
-            f"Taxa de sucesso abaixo de 99%: "
-            f"-{penalidade:.1f} pontos."
-        )
+        penalidades.append(f"Taxa de sucesso abaixo de 99%: -{penalidade:.1f} pontos.")
 
     if confianca_media < 85:
         penalidade = min(
@@ -275,10 +231,7 @@ def classificar_saude_operacional(
             20,
         )
         score -= penalidade
-        penalidades.append(
-            f"Confiança média abaixo de 85%: "
-            f"-{penalidade:.1f} pontos."
-        )
+        penalidades.append(f"Confiança média abaixo de 85%: -{penalidade:.1f} pontos.")
 
     if percentual_sem_tool > 15:
         penalidade = min(
@@ -286,10 +239,7 @@ def classificar_saude_operacional(
             20,
         )
         score -= penalidade
-        penalidades.append(
-            f"Muitas execuções sem Tool: "
-            f"-{penalidade:.1f} pontos."
-        )
+        penalidades.append(f"Muitas execuções sem Tool: -{penalidade:.1f} pontos.")
 
     if p95_ms > 5000:
         penalidade = min(
@@ -297,9 +247,7 @@ def classificar_saude_operacional(
             25,
         )
         score -= penalidade
-        penalidades.append(
-            f"P95 elevado: -{penalidade:.1f} pontos."
-        )
+        penalidades.append(f"P95 elevado: -{penalidade:.1f} pontos.")
 
     score = round(
         max(0.0, min(100.0, score)),
@@ -342,7 +290,6 @@ def classificar_saude_operacional(
     }
 
 
-
 # OPERATIONAL_NARRATIVE_RUSSIAN_DYNAMIC_MESSAGES
 
 
@@ -357,14 +304,9 @@ def _localizar_insights_dinamicos(
     Os identificadores e nomes técnicos das Tools são
     preservados exatamente como foram registrados.
     """
-    language = normalizar_idioma_narrativa(
-        idioma
-    )
+    language = normalizar_idioma_narrativa(idioma)
 
-    if (
-        language != "ru"
-        or not insights.get("tem_dados")
-    ):
+    if language != "ru" or not insights.get("tem_dados"):
         return insights
 
     resultado = dict(insights)
@@ -412,13 +354,9 @@ def _localizar_insights_dinamicos(
         or {}
     )
 
-    tool_mais_usada = metricas.get(
-        "tool_mais_usada"
-    )
+    tool_mais_usada = metricas.get("tool_mais_usada")
 
-    tool_mais_lenta = metricas.get(
-        "tool_mais_lenta"
-    )
+    tool_mais_lenta = metricas.get("tool_mais_lenta")
 
     comparacao = dict(
         metricas.get(
@@ -505,8 +443,7 @@ def _localizar_insights_dinamicos(
         )
 
         recomendacoes.append(
-            "Проверить термины, правила классификации "
-            "и примеры намерений Router."
+            "Проверить термины, правила классификации и примеры намерений Router."
         )
 
     percentual_sem_tool = float(
@@ -524,10 +461,7 @@ def _localizar_insights_dinamicos(
     )
 
     if percentual_sem_tool > 20:
-        alertas.append(
-            f"{percentual_sem_tool:.2f}% выполнений "
-            "не определили Tool."
-        )
+        alertas.append(f"{percentual_sem_tool:.2f}% выполнений не определили Tool.")
 
         recomendacoes.append(
             "Проанализировать вопросы без Tool, чтобы "
@@ -537,8 +471,7 @@ def _localizar_insights_dinamicos(
 
     elif total_sem_tool == 0:
         destaques.append(
-            "Все проанализированные выполнения "
-            "определили Tool, когда это требовалось."
+            "Все проанализированные выполнения определили Tool, когда это требовалось."
         )
 
     if tool_mais_lenta:
@@ -617,10 +550,7 @@ def _localizar_insights_dinamicos(
         )
 
     if variacao_duracao > 30:
-        alertas.append(
-            "Средняя длительность увеличилась на "
-            f"{variacao_duracao:.2f}%."
-        )
+        alertas.append(f"Средняя длительность увеличилась на {variacao_duracao:.2f}%.")
 
         recomendacoes.append(
             "Сравнить последние traces и определить "
@@ -648,10 +578,7 @@ def _localizar_insights_dinamicos(
     )
 
     if tool_mais_usada:
-        resumo_executivo += (
-            "Преобладающей Tool была "
-            f"«{tool_mais_usada['nome']}». "
-        )
+        resumo_executivo += f"Преобладающей Tool была «{tool_mais_usada['nome']}». "
 
     resumo_executivo += (
         "Операционное состояние классифицировано как "
@@ -659,9 +586,7 @@ def _localizar_insights_dinamicos(
         f"оценка: {saude.get('score', 0)}/100."
     )
 
-    resultado["resumo_executivo"] = (
-        resumo_executivo
-    )
+    resultado["resumo_executivo"] = resumo_executivo
 
     resultado["destaques"] = destaques
     resultado["alertas"] = alertas
@@ -679,13 +604,9 @@ def gerar_insights_operacionais(
     """
     Gera narrativa e insights a partir dos eventos das Tools.
     """
-    idioma = str(
-        idioma or "pt"
-    ).strip().lower()
+    idioma = str(idioma or "pt").strip().lower()
 
-    base = preparar_eventos_analytics(
-        df
-    )
+    base = preparar_eventos_analytics(df)
 
     if base.empty:
         resultado = {
@@ -722,11 +643,7 @@ def gerar_insights_operacionais(
 
     total_eventos = len(base)
 
-    total_sucessos = int(
-        base["sucesso"].sum()
-        if "sucesso" in base.columns
-        else 0
-    )
+    total_sucessos = int(base["sucesso"].sum() if "sucesso" in base.columns else 0)
 
     total_falhas = max(
         total_eventos - total_sucessos,
@@ -734,38 +651,22 @@ def gerar_insights_operacionais(
     )
 
     taxa_sucesso = round(
-        (
-            total_sucessos
-            / total_eventos
-        )
-        * 100,
+        (total_sucessos / total_eventos) * 100,
         2,
     )
 
     confianca_media = (
         round(
-            float(
-                base["confianca"]
-                .dropna()
-                .mean()
-            )
-            * 100,
+            float(base["confianca"].dropna().mean()) * 100,
             2,
         )
-        if (
-            "confianca" in base.columns
-            and base["confianca"].notna().any()
-        )
+        if ("confianca" in base.columns and base["confianca"].notna().any())
         else 0.0
     )
 
-    ranking = calcular_ranking_tools(
-        base
-    )
+    ranking = calcular_ranking_tools(base)
 
-    sem_tool = calcular_execucoes_sem_tool(
-        base
-    )
+    sem_tool = calcular_execucoes_sem_tool(base)
 
     comparacao = comparar_periodos(
         base,
@@ -781,46 +682,26 @@ def gerar_insights_operacionais(
 
         tool_mais_usada = {
             "nome": item_mais_usado["ferramenta"],
-            "execucoes": int(
-                item_mais_usado["execucoes"]
-            ),
-            "taxa_sucesso": float(
-                item_mais_usado[
-                    "taxa_sucesso_percentual"
-                ]
-            ),
+            "execucoes": int(item_mais_usado["execucoes"]),
+            "taxa_sucesso": float(item_mais_usado["taxa_sucesso_percentual"]),
         }
 
-        indice_lenta = ranking[
-            "p95_ms"
-        ].idxmax()
+        indice_lenta = ranking["p95_ms"].idxmax()
 
-        item_lento = ranking.loc[
-            indice_lenta
-        ]
+        item_lento = ranking.loc[indice_lenta]
 
         tool_mais_lenta = {
             "nome": item_lento["ferramenta"],
-            "p95_ms": float(
-                item_lento["p95_ms"]
-            ),
-            "media_ms": float(
-                item_lento[
-                    "duracao_media_ms"
-                ]
-            ),
+            "p95_ms": float(item_lento["p95_ms"]),
+            "media_ms": float(item_lento["duracao_media_ms"]),
         }
 
-        p95_global = float(
-            ranking["p95_ms"].max()
-        )
+        p95_global = float(ranking["p95_ms"].max())
 
     saude = classificar_saude_operacional(
         taxa_sucesso=taxa_sucesso,
         confianca_media=confianca_media,
-        percentual_sem_tool=float(
-            sem_tool["percentual"]
-        ),
+        percentual_sem_tool=float(sem_tool["percentual"]),
         p95_ms=p95_global,
         idioma=idioma,
     )
@@ -831,14 +712,12 @@ def gerar_insights_operacionais(
 
     if taxa_sucesso >= 99:
         destaques.append(
-            f"A taxa de sucesso está excelente: "
-            f"{_formatar_percentual(taxa_sucesso)}."
+            f"A taxa de sucesso está excelente: {_formatar_percentual(taxa_sucesso)}."
         )
 
     elif taxa_sucesso >= 95:
         destaques.append(
-            f"A taxa de sucesso está saudável: "
-            f"{_formatar_percentual(taxa_sucesso)}."
+            f"A taxa de sucesso está saudável: {_formatar_percentual(taxa_sucesso)}."
         )
 
     else:
@@ -897,14 +776,12 @@ def gerar_insights_operacionais(
         )
 
         recomendacoes.append(
-            "Revisar termos, regras de classificação e "
-            "exemplos de intenção do Router."
+            "Revisar termos, regras de classificação e exemplos de intenção do Router."
         )
 
     if sem_tool["percentual"] > 20:
         alertas.append(
-            f"{sem_tool['percentual']:.2f}% das execuções "
-            "não identificaram uma Tool."
+            f"{sem_tool['percentual']:.2f}% das execuções não identificaram uma Tool."
         )
 
         recomendacoes.append(
@@ -914,8 +791,7 @@ def gerar_insights_operacionais(
 
     elif sem_tool["total"] == 0:
         destaques.append(
-            "Todas as execuções analisadas identificaram "
-            "uma Tool quando necessário."
+            "Todas as execuções analisadas identificaram uma Tool quando necessário."
         )
 
     if tool_mais_lenta:
@@ -975,10 +851,7 @@ def gerar_insights_operacionais(
         )
 
     if variacao_falhas > 20:
-        alertas.append(
-            f"As falhas aumentaram "
-            f"{variacao_falhas:.2f}% no período atual."
-        )
+        alertas.append(f"As falhas aumentaram {variacao_falhas:.2f}% no período atual.")
 
         recomendacoes.append(
             "Priorizar a análise dos erros mais recentes "
@@ -986,26 +859,20 @@ def gerar_insights_operacionais(
         )
 
     if variacao_duracao > 30:
-        alertas.append(
-            f"A duração média aumentou "
-            f"{variacao_duracao:.2f}%."
-        )
+        alertas.append(f"A duração média aumentou {variacao_duracao:.2f}%.")
 
         recomendacoes.append(
-            "Comparar traces recentes e identificar "
-            "qual etapa apresentou degradação."
+            "Comparar traces recentes e identificar qual etapa apresentou degradação."
         )
 
     if not alertas:
         destaques.append(
-            "Nenhuma anomalia operacional crítica foi "
-            "detectada nos eventos analisados."
+            "Nenhuma anomalia operacional crítica foi detectada nos eventos analisados."
         )
 
     if not recomendacoes:
         recomendacoes.append(
-            "Continuar monitorando volume, confiança, "
-            "P95 e taxa de sucesso."
+            "Continuar monitorando volume, confiança, P95 e taxa de sucesso."
         )
 
     resumo_executivo = (
@@ -1017,10 +884,7 @@ def gerar_insights_operacionais(
     )
 
     if tool_mais_usada:
-        resumo_executivo += (
-            f"A Tool predominante foi "
-            f"“{tool_mais_usada['nome']}”. "
-        )
+        resumo_executivo += f"A Tool predominante foi “{tool_mais_usada['nome']}”. "
 
     resumo_executivo += (
         f"A saúde operacional foi classificada como "
@@ -1095,9 +959,7 @@ def gerar_texto_narrativa(
         "destaques",
         [],
     ):
-        linhas.append(
-            f"- {item}"
-        )
+        linhas.append(f"- {item}")
 
     alertas = insights.get(
         "alertas",
@@ -1105,34 +967,34 @@ def gerar_texto_narrativa(
     )
 
     if alertas:
-        linhas.extend([
-            "",
-            narrative_t(
-                "markdown_alerts",
-                idioma=idioma,
-            ),
-        ])
+        linhas.extend(
+            [
+                "",
+                narrative_t(
+                    "markdown_alerts",
+                    idioma=idioma,
+                ),
+            ]
+        )
 
         for item in alertas:
-            linhas.append(
-                f"- {item}"
-            )
+            linhas.append(f"- {item}")
 
-    linhas.extend([
-        "",
-        narrative_t(
-            "markdown_recommendations",
-            idioma=idioma,
-        ),
-    ])
+    linhas.extend(
+        [
+            "",
+            narrative_t(
+                "markdown_recommendations",
+                idioma=idioma,
+            ),
+        ]
+    )
 
     for item in insights.get(
         "recomendacoes",
         [],
     ):
-        linhas.append(
-            f"- {item}"
-        )
+        linhas.append(f"- {item}")
 
     return "\n".join(linhas).strip()
 

@@ -133,7 +133,9 @@ def cosine_similarity(vector_a: list[float], vector_b: list[float]) -> float:
     return dot / (norm_a * norm_b)
 
 
-def split_text_into_chunks(text: str, max_chars: int = 900, overlap: int = 150) -> list[str]:
+def split_text_into_chunks(
+    text: str, max_chars: int = 900, overlap: int = 150
+) -> list[str]:
     paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
     chunks = []
     current = ""
@@ -182,7 +184,9 @@ def ingest_knowledge_document(
 
         # Embedding profissional: caminho principal com Gemini + pgvector.
         embedding_profissional = generate_gemini_embedding(chunk)
-        embedding_vector_sql = pgvector_to_sql(embedding_profissional) if embedding_profissional else None
+        embedding_vector_sql = (
+            pgvector_to_sql(embedding_profissional) if embedding_profissional else None
+        )
 
         cur.execute(
             """
@@ -213,9 +217,15 @@ def ingest_knowledge_document(
                         "tipo": "base_conhecimento",
                         "origem": "arquivo_markdown",
                         "vector_dim_local": RAG_VECTOR_DIM,
-                        "vector_dim_profissional": 768 if embedding_profissional else None,
-                        "embedding_provider": "gemini" if embedding_profissional else "local_fallback",
-                        "embedding_model": "gemini-embedding-001" if embedding_profissional else "local",
+                        "vector_dim_profissional": 768
+                        if embedding_profissional
+                        else None,
+                        "embedding_provider": "gemini"
+                        if embedding_profissional
+                        else "local_fallback",
+                        "embedding_model": "gemini-embedding-001"
+                        if embedding_profissional
+                        else "local",
                     }
                 ),
             ),
@@ -226,7 +236,6 @@ def ingest_knowledge_document(
     conn.close()
 
     return len(chunks)
-
 
 
 def chunk_text(text: str, max_chars: int = 1200, overlap: int = 150) -> list[str]:
@@ -263,7 +272,6 @@ def chunk_text(text: str, max_chars: int = 1200, overlap: int = 150) -> list[str
     return chunks
 
 
-
 def pgvector_to_sql(vector: list[float]) -> str:
     """
     Converte lista Python para formato aceito pelo pgvector:
@@ -293,9 +301,7 @@ def generate_gemini_embedding(text: str) -> list[float] | None:
         response = client.models.embed_content(
             model=os.getenv("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001"),
             contents=text,
-            config=types.EmbedContentConfig(
-                output_dimensionality=768
-            ),
+            config=types.EmbedContentConfig(output_dimensionality=768),
         )
 
         embedding = response.embeddings[0].values
@@ -370,7 +376,6 @@ def ingest_default_knowledge_base() -> dict[str, Any]:
     }
 
 
-
 def load_chunks(idioma: str = "pt") -> list[dict[str, Any]]:
     """
     Carrega os chunks salvos no banco para busca semântica local.
@@ -432,8 +437,9 @@ def load_chunks(idioma: str = "pt") -> list[dict[str, Any]]:
         conn.close()
 
 
-
-def search_knowledge_base_pgvector(query: str, idioma: str = "pt", top_k: int = 4) -> list[dict]:
+def search_knowledge_base_pgvector(
+    query: str, idioma: str = "pt", top_k: int = 4
+) -> list[dict]:
     """
     Busca principal da INNA:
     Gemini Embeddings + pgvector no Neon/PostgreSQL.
@@ -490,8 +496,9 @@ def search_knowledge_base_pgvector(query: str, idioma: str = "pt", top_k: int = 
         conn.close()
 
 
-
-def search_knowledge_base_text(query: str, idioma: str = "pt", top_k: int = 4) -> list[dict]:
+def search_knowledge_base_text(
+    query: str, idioma: str = "pt", top_k: int = 4
+) -> list[dict]:
     """
     Busca textual complementar no PostgreSQL.
     Ajuda quando a pergunta tem palavras específicas como dívida, reserva,
@@ -503,9 +510,31 @@ def search_knowledge_base_text(query: str, idioma: str = "pt", top_k: int = 4) -
     termos = []
 
     palavras_ignoradas = {
-        "como", "posso", "comecar", "começar", "uma", "para", "por", "que",
-        "qual", "quais", "sobre", "minha", "meu", "me", "da", "de", "do",
-        "das", "dos", "com", "sem", "isso", "esse", "essa", "estou"
+        "como",
+        "posso",
+        "comecar",
+        "começar",
+        "uma",
+        "para",
+        "por",
+        "que",
+        "qual",
+        "quais",
+        "sobre",
+        "minha",
+        "meu",
+        "me",
+        "da",
+        "de",
+        "do",
+        "das",
+        "dos",
+        "com",
+        "sem",
+        "isso",
+        "esse",
+        "essa",
+        "estou",
     }
 
     for termo in re.findall(r"[a-zA-ZÀ-ÿ0-9]+", query.lower() + " " + query_norm):
@@ -593,8 +622,9 @@ def search_knowledge_base_text(query: str, idioma: str = "pt", top_k: int = 4) -
         conn.close()
 
 
-
-def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) -> list[dict]:
+def rerank_knowledge_results(
+    query: str, results: list[dict], top_k: int = 4
+) -> list[dict]:
     """
     Reordena os chunks recuperados pelo RAG híbrido.
 
@@ -611,10 +641,37 @@ def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) ->
     query_norm = normalize_text(query)
 
     stopwords = {
-        "como", "posso", "comecar", "começar", "uma", "um", "para", "por",
-        "que", "qual", "quais", "sobre", "minha", "meu", "me", "da", "de",
-        "do", "das", "dos", "com", "sem", "isso", "esse", "essa", "estou",
-        "esta", "aqui", "ali", "voce", "você"
+        "como",
+        "posso",
+        "comecar",
+        "começar",
+        "uma",
+        "um",
+        "para",
+        "por",
+        "que",
+        "qual",
+        "quais",
+        "sobre",
+        "minha",
+        "meu",
+        "me",
+        "da",
+        "de",
+        "do",
+        "das",
+        "dos",
+        "com",
+        "sem",
+        "isso",
+        "esse",
+        "essa",
+        "estou",
+        "esta",
+        "aqui",
+        "ali",
+        "voce",
+        "você",
     }
 
     termos_query = []
@@ -633,8 +690,25 @@ def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) ->
 
     temas = {
         "reserva": ["reserva", "emergencia", "guardar", "poupar", "imprevisto"],
-        "divida": ["divida", "dívida", "cartao", "cartão", "credito", "crédito", "parcelas", "juros"],
-        "orcamento": ["orcamento", "orçamento", "gastos", "fixos", "variaveis", "variáveis", "despesas"],
+        "divida": [
+            "divida",
+            "dívida",
+            "cartao",
+            "cartão",
+            "credito",
+            "crédito",
+            "parcelas",
+            "juros",
+        ],
+        "orcamento": [
+            "orcamento",
+            "orçamento",
+            "gastos",
+            "fixos",
+            "variaveis",
+            "variáveis",
+            "despesas",
+        ],
         "renda": ["renda", "salario", "salário", "ganho", "recebo"],
     }
 
@@ -697,7 +771,9 @@ def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) ->
         if texto_generico and termos_encontrados <= 1:
             penalidade_generico = 0.20
 
-        score_rerank = score_base + bonus_origem + bonus_termos + bonus_tema - penalidade_generico
+        score_rerank = (
+            score_base + bonus_origem + bonus_termos + bonus_tema - penalidade_generico
+        )
 
         novo_item = dict(item)
         novo_item["score_rerank"] = round(score_rerank, 6)
@@ -715,8 +791,243 @@ def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) ->
     return reranked[:top_k]
 
 
+# INNA_SENTENCE_WINDOW_RETRIEVAL_V1
 
-def search_knowledge_base_hybrid(query: str, idioma: str = "pt", top_k: int = 4) -> list[dict]:
+
+def _sentence_window_boolean_setting(
+    value: bool | None,
+) -> bool:
+    """
+    Resolve a ativação sem alterar o padrão atual do RAG.
+    """
+
+    if value is not None:
+        return bool(value)
+
+    import os
+
+    rendered = (
+        str(
+            os.getenv(
+                "INNA_RAG_SENTENCE_WINDOW_ENABLED",
+                "false",
+            )
+            or "false"
+        )
+        .strip()
+        .lower()
+    )
+
+    return rendered in {
+        "1",
+        "true",
+        "yes",
+        "on",
+        "sim",
+    }
+
+
+def _sentence_window_integer_setting(
+    *,
+    explicit_value: int | None,
+    environment_name: str,
+    default: int,
+    minimum: int,
+    maximum: int,
+) -> int:
+    if explicit_value is not None:
+        raw_value = explicit_value
+    else:
+        import os
+
+        raw_value = os.getenv(
+            environment_name,
+            str(default),
+        )
+
+    try:
+        parsed = int(raw_value)
+    except (
+        TypeError,
+        ValueError,
+    ):
+        parsed = default
+
+    return max(
+        minimum,
+        min(
+            parsed,
+            maximum,
+        ),
+    )
+
+
+def _load_sentence_window_neighbor_chunks(
+    item: dict,
+    *,
+    idioma: str,
+    chunk_radius: int,
+) -> list[dict]:
+    """
+    Carrega chunks vizinhos da mesma fonte no PostgreSQL.
+
+    Em qualquer falha, mantém somente o resultado recuperado.
+    """
+
+    fonte = str(
+        item.get(
+            "fonte",
+            "",
+        )
+        or ""
+    ).strip()
+
+    try:
+        chunk_index = int(
+            item.get(
+                "chunk_index",
+                0,
+            )
+        )
+    except (
+        TypeError,
+        ValueError,
+    ):
+        chunk_index = 0
+
+    if not fonte:
+        return [dict(item)]
+
+    minimum_index = max(
+        0,
+        chunk_index - chunk_radius,
+    )
+
+    maximum_index = chunk_index + chunk_radius
+
+    connection = None
+    cursor = None
+
+    try:
+        connection = get_rag_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT
+                id,
+                titulo,
+                fonte,
+                categoria,
+                idioma,
+                chunk_index,
+                chunk_text,
+                metadata
+            FROM inna_knowledge_chunks
+            WHERE fonte = %s
+              AND idioma = %s
+              AND chunk_index
+                  BETWEEN %s AND %s
+            ORDER BY chunk_index ASC;
+            """,
+            (
+                fonte,
+                idioma,
+                minimum_index,
+                maximum_index,
+            ),
+        )
+
+        rows = cursor.fetchall()
+
+        columns = [description[0] for description in cursor.description]
+
+        neighbors = [
+            dict(
+                zip(
+                    columns,
+                    row,
+                    strict=True,
+                )
+            )
+            for row in rows
+        ]
+
+        return neighbors or [dict(item)]
+
+    except Exception:
+        return [dict(item)]
+
+    finally:
+        if cursor is not None:
+            try:
+                cursor.close()
+            except Exception:
+                pass
+
+        if connection is not None:
+            try:
+                connection.close()
+            except Exception:
+                pass
+
+
+def _apply_sentence_window_to_results(
+    *,
+    query: str,
+    idioma: str,
+    results: list[dict],
+    window_size: int,
+    chunk_radius: int,
+    max_characters: int,
+) -> list[dict]:
+    try:
+        from services.rag.sentence_window import (
+            expand_result_with_sentence_window,
+        )
+    except ImportError:
+        from src.services.rag.sentence_window import (
+            expand_result_with_sentence_window,
+        )
+
+    expanded_results: list[dict] = []
+
+    for item in results:
+        try:
+            neighbor_chunks = _load_sentence_window_neighbor_chunks(
+                item,
+                idioma=idioma,
+                chunk_radius=chunk_radius,
+            )
+
+            expanded = expand_result_with_sentence_window(
+                query=query,
+                result=item,
+                chunks=neighbor_chunks,
+                window_size=window_size,
+                max_characters=max_characters,
+            )
+
+        except Exception:
+            expanded = dict(item)
+
+            expanded["sentence_window_applied"] = False
+
+        expanded_results.append(expanded)
+
+    return expanded_results
+
+
+def search_knowledge_base_hybrid(
+    query: str,
+    idioma: str = "pt",
+    top_k: int = 4,
+    *,
+    sentence_window_enabled: bool | None = None,
+    sentence_window_size: int | None = None,
+    sentence_window_chunk_radius: int | None = None,
+) -> list[dict]:
     """
     RAG híbrido da INNA:
     - busca semântica com Gemini Embeddings + pgvector
@@ -725,7 +1036,9 @@ def search_knowledge_base_hybrid(query: str, idioma: str = "pt", top_k: int = 4)
     - remove duplicados
     - ordena os melhores contextos
     """
-    vector_results = search_knowledge_base_pgvector(query, idioma=idioma, top_k=max(top_k, 6))
+    vector_results = search_knowledge_base_pgvector(
+        query, idioma=idioma, top_k=max(top_k, 6)
+    )
     text_results = search_knowledge_base_text(query, idioma=idioma, top_k=max(top_k, 6))
 
     combinados = {}
@@ -751,7 +1064,9 @@ def search_knowledge_base_hybrid(query: str, idioma: str = "pt", top_k: int = 4)
         if item_id in combinados:
             atual = combinados[item_id]
             atual["score_hibrido"] = float(atual.get("score_hibrido") or 0) + 0.20
-            atual["origem_busca"] = sorted(set(atual.get("origem_busca", []) + ["textual"]))
+            atual["origem_busca"] = sorted(
+                set(atual.get("origem_busca", []) + ["textual"])
+            )
             atual["modo_busca"] = "rag_hibrido_pgvector_text_neon"
         else:
             item["score_hibrido"] = float(item.get("score") or 0)
@@ -760,8 +1075,47 @@ def search_knowledge_base_hybrid(query: str, idioma: str = "pt", top_k: int = 4)
 
     results = list(combinados.values())
 
-    return rerank_knowledge_results(query, results, top_k=top_k)
+    reranked_results = rerank_knowledge_results(
+        query,
+        results,
+        top_k=top_k,
+    )
 
+    if not _sentence_window_boolean_setting(sentence_window_enabled):
+        return reranked_results
+
+    resolved_window_size = _sentence_window_integer_setting(
+        explicit_value=sentence_window_size,
+        environment_name=("INNA_RAG_SENTENCE_WINDOW_SIZE"),
+        default=2,
+        minimum=0,
+        maximum=8,
+    )
+
+    resolved_chunk_radius = _sentence_window_integer_setting(
+        explicit_value=(sentence_window_chunk_radius),
+        environment_name=("INNA_RAG_SENTENCE_WINDOW_CHUNK_RADIUS"),
+        default=1,
+        minimum=0,
+        maximum=4,
+    )
+
+    resolved_max_characters = _sentence_window_integer_setting(
+        explicit_value=None,
+        environment_name=("INNA_RAG_SENTENCE_WINDOW_MAX_CHARACTERS"),
+        default=4000,
+        minimum=300,
+        maximum=12000,
+    )
+
+    return _apply_sentence_window_to_results(
+        query=query,
+        idioma=idioma,
+        results=reranked_results,
+        window_size=resolved_window_size,
+        chunk_radius=resolved_chunk_radius,
+        max_characters=resolved_max_characters,
+    )
 
 
 def search_knowledge_base(
@@ -797,7 +1151,6 @@ def search_knowledge_base(
     return scored[: max(1, min(int(top_k or 5), 10))]
 
 
-
 def extrair_valor_para_guardar(pergunta: str) -> float | None:
     texto = normalize_text(pergunta)
 
@@ -808,34 +1161,27 @@ def extrair_valor_para_guardar(pergunta: str) -> float | None:
         r"consigo\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"consigo\s+juntar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"consigo\s+separar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
-
         r"posso\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"posso\s+juntar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"posso\s+separar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
-
         r"da\s+pra\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"da\s+para\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"daria\s+pra\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"daria\s+para\s+guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
-
         r"eu\s+guardo\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"guardo\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"guardar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
-
         r"eu\s+junto\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"junto\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"juntar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
-
         r"eu\s+separo\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"separo\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"separar\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
-
         r"me\s+sobra\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"sobra\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"sobrou\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"fica\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"resta\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
-
         r"tenho\s+livre\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"dinheiro\s+livre\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
         r"livre\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)",
@@ -853,12 +1199,13 @@ def extrair_valor_para_guardar(pergunta: str) -> float | None:
     return None
 
 
-
 def extrair_valor_por_palavras(pergunta: str, palavras: list[str]) -> float | None:
     texto = normalize_text(pergunta)
 
     for palavra in palavras:
-        padrao = rf"{palavra}\s*(?:de|do|da|é|e|:)?\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)"
+        padrao = (
+            rf"{palavra}\s*(?:de|do|da|é|e|:)?\s*(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)"
+        )
         match = re.search(padrao, texto)
 
         if match:
@@ -874,7 +1221,16 @@ def extrair_valor_por_palavras(pergunta: str, palavras: list[str]) -> float | No
 def extrair_renda_mensal(pergunta: str) -> float | None:
     return extrair_valor_por_palavras(
         pergunta,
-        ["ganho", "recebo", "salario", "renda", "entra", "aposentadoria", "beneficio", "pensao"],
+        [
+            "ganho",
+            "recebo",
+            "salario",
+            "renda",
+            "entra",
+            "aposentadoria",
+            "beneficio",
+            "pensao",
+        ],
     )
 
 
@@ -897,68 +1253,136 @@ def formatar_reais_simples(valor: float) -> str:
     return f"R$ {texto}"
 
 
-
 def detectar_intencao_continuacao(pergunta: str) -> str:
     texto = normalize_text(pergunta)
 
-    confirmou = any(p in texto for p in [
-        "sim", "quero", "pode", "mostre", "me mostre", "continue", "ok", "vamos", "claro"
-    ])
+    confirmou = any(
+        p in texto
+        for p in [
+            "sim",
+            "quero",
+            "pode",
+            "mostre",
+            "me mostre",
+            "continue",
+            "ok",
+            "vamos",
+            "claro",
+        ]
+    )
 
-    negou = any(p in texto for p in [
-        "nao", "não", "cancelar", "pare", "agora nao", "agora não", "depois"
-    ])
+    negou = any(
+        p in texto
+        for p in ["nao", "não", "cancelar", "pare", "agora nao", "agora não", "depois"]
+    )
 
     if negou:
         return "cancelar"
 
-    if any(p in texto for p in [
-        "nao consigo", "não consigo", "muito alto", "apertado", "pesado",
-        "guardar menos", "valor menor", "diminuir", "reduzir valor"
-    ]):
+    if any(
+        p in texto
+        for p in [
+            "nao consigo",
+            "não consigo",
+            "muito alto",
+            "apertado",
+            "pesado",
+            "guardar menos",
+            "valor menor",
+            "diminuir",
+            "reduzir valor",
+        ]
+    ):
         return "ajustar_para_menos"
 
-    if any(p in texto for p in [
-        "guardar mais", "valor maior", "aumentar", "consigo mais"
-    ]):
+    if any(
+        p in texto for p in ["guardar mais", "valor maior", "aumentar", "consigo mais"]
+    ):
         return "ajustar_para_mais"
 
-    if any(p in texto for p in [
-        "divida", "dívida", "devo", "parcelas", "emprestimo", "empréstimo",
-        "cartao", "cartão", "financiamento"
-    ]):
+    if any(
+        p in texto
+        for p in [
+            "divida",
+            "dívida",
+            "devo",
+            "parcelas",
+            "emprestimo",
+            "empréstimo",
+            "cartao",
+            "cartão",
+            "financiamento",
+        ]
+    ):
         return "dividas"
 
-    if any(p in texto for p in [
-        "gasto", "gastos", "conta", "contas", "mercado", "aluguel",
-        "luz", "agua", "internet", "transporte", "organizar"
-    ]):
+    if any(
+        p in texto
+        for p in [
+            "gasto",
+            "gastos",
+            "conta",
+            "contas",
+            "mercado",
+            "aluguel",
+            "luz",
+            "agua",
+            "internet",
+            "transporte",
+            "organizar",
+        ]
+    ):
         return "organizar_gastos"
 
-    if any(p in texto for p in [
-        "reserva", "guardar dinheiro", "juntar dinheiro", "emergencia", "emergência"
-    ]):
+    if any(
+        p in texto
+        for p in [
+            "reserva",
+            "guardar dinheiro",
+            "juntar dinheiro",
+            "emergencia",
+            "emergência",
+        ]
+    ):
         return "reserva"
 
-    if any(p in texto for p in [
-        "esta semana", "desta semana", "semana", "7 dias"
-    ]) and confirmou:
+    if (
+        any(p in texto for p in ["esta semana", "desta semana", "semana", "7 dias"])
+        and confirmou
+    ):
         return "meta_semana"
 
-    if any(p in texto for p in [
-        "mes inteiro", "mês inteiro", "30 dias", "mes", "mês", "4 semanas"
-    ]) and confirmou:
+    if (
+        any(
+            p in texto
+            for p in [
+                "mes inteiro",
+                "mês inteiro",
+                "30 dias",
+                "mes",
+                "mês",
+                "4 semanas",
+            ]
+        )
+        and confirmou
+    ):
         return "meta_mes"
 
-    if confirmou and any(p in texto for p in [
-        "meta simples para esta semana", "esta semana", "semana"
-    ]):
+    if confirmou and any(
+        p in texto for p in ["meta simples para esta semana", "esta semana", "semana"]
+    ):
         return "meta_semana"
 
-    if confirmou and any(p in texto for p in [
-        "meta no mes inteiro", "meta no mês inteiro", "mes inteiro",
-        "mês inteiro", "30 dias"
-    ]):
+    if confirmou and any(
+        p in texto
+        for p in [
+            "meta no mes inteiro",
+            "meta no mês inteiro",
+            "mes inteiro",
+            "mês inteiro",
+            "30 dias",
+        ]
+    ):
         return "meta_mes"
 
     if confirmou:
@@ -1126,19 +1550,37 @@ Aí eu te ajudo a enxergar onde pode melhorar.""",
     }
 
 
-
-
-
-def answer_security_financeira(pergunta: str, modo_base: str = "rag_hibrido_pgvector_text_neon_rerank") -> dict | None:
+def answer_security_financeira(
+    pergunta: str, modo_base: str = "rag_hibrido_pgvector_text_neon_rerank"
+) -> dict | None:
     pergunta_norm = pergunta.lower()
 
     termos_seguranca = [
-        "golpe", "golpes", "fraude", "fraudes", "pix", "link", "sms",
-        "whatsapp", "senha", "token", "cvv", "código", "codigo",
-        "compra desconhecida", "compra não reconhecida", "compra nao reconhecida",
-        "não reconheço", "nao reconheco", "não reconheci",
-        "nao reconheci", "cartão clonado", "cartao clonado",
-        "bloqueada", "bloqueado", "conta do banco"
+        "golpe",
+        "golpes",
+        "fraude",
+        "fraudes",
+        "pix",
+        "link",
+        "sms",
+        "whatsapp",
+        "senha",
+        "token",
+        "cvv",
+        "código",
+        "codigo",
+        "compra desconhecida",
+        "compra não reconhecida",
+        "compra nao reconhecida",
+        "não reconheço",
+        "nao reconheco",
+        "não reconheci",
+        "nao reconheci",
+        "cartão clonado",
+        "cartao clonado",
+        "bloqueada",
+        "bloqueado",
+        "conta do banco",
     ]
 
     if not any(termo in pergunta_norm for termo in termos_seguranca):
@@ -1152,7 +1594,13 @@ def answer_security_financeira(pergunta: str, modo_base: str = "rag_hibrido_pgve
             "Não aceite ajuda de desconhecidos por WhatsApp, SMS ou redes sociais e nunca informe senha, token ou código de segurança. "
             "A INNA orienta de forma educativa e não consegue recuperar PIX nem prometer estorno."
         )
-    elif "código" in pergunta_norm or "codigo" in pergunta_norm or "token" in pergunta_norm or "senha" in pergunta_norm or "whatsapp" in pergunta_norm:
+    elif (
+        "código" in pergunta_norm
+        or "codigo" in pergunta_norm
+        or "token" in pergunta_norm
+        or "senha" in pergunta_norm
+        or "whatsapp" in pergunta_norm
+    ):
         resposta = (
             "Não envie código do banco, senha, token ou código SMS pelo WhatsApp. "
             "Esse tipo de informação pode permitir acesso à sua conta ou autorizar transações. "
@@ -1160,7 +1608,11 @@ def answer_security_financeira(pergunta: str, modo_base: str = "rag_hibrido_pgve
             "Entre no aplicativo oficial do banco ou fale com a central oficial para verificar a situação. "
             "Se você já informou algum dado, troque as senhas, bloqueie cartões se necessário e procure o banco imediatamente pelos canais oficiais. A INNA orienta de forma educativa e preventiva."
         )
-    elif "link" in pergunta_norm or "bloqueada" in pergunta_norm or "bloqueado" in pergunta_norm:
+    elif (
+        "link" in pergunta_norm
+        or "bloqueada" in pergunta_norm
+        or "bloqueado" in pergunta_norm
+    ):
         resposta = (
             "Se você recebeu um link dizendo que sua conta do banco será bloqueada, desconfie. "
             "Não clique no link e não informe senha, token, código SMS, CVV ou número completo do cartão. "
@@ -1168,14 +1620,17 @@ def answer_security_financeira(pergunta: str, modo_base: str = "rag_hibrido_pgve
             "Mensagens com urgência, ameaça de bloqueio ou pedido de dados costumam ser sinais de golpe. A INNA orienta de forma educativa e preventiva."
         )
     elif (
-        ("compra" in pergunta_norm and (
-            "não reconheço" in pergunta_norm
-            or "nao reconheco" in pergunta_norm
-            or "não reconheci" in pergunta_norm
-            or "nao reconheci" in pergunta_norm
-            or "desconhecida" in pergunta_norm
-            or "suspeita" in pergunta_norm
-        ))
+        (
+            "compra" in pergunta_norm
+            and (
+                "não reconheço" in pergunta_norm
+                or "nao reconheco" in pergunta_norm
+                or "não reconheci" in pergunta_norm
+                or "nao reconheci" in pergunta_norm
+                or "desconhecida" in pergunta_norm
+                or "suspeita" in pergunta_norm
+            )
+        )
         or "cartão clonado" in pergunta_norm
         or "cartao clonado" in pergunta_norm
     ):
@@ -1207,7 +1662,9 @@ def answer_security_financeira(pergunta: str, modo_base: str = "rag_hibrido_pgve
     }
 
 
-def generate_gemini_rag_answer(pergunta: str, contexto: str, idioma: str = "pt") -> str | None:
+def generate_gemini_rag_answer(
+    pergunta: str, contexto: str, idioma: str = "pt"
+) -> str | None:
     """
     Gera resposta final usando Gemini + contexto recuperado pelo RAG.
     Se falhar, retorna None para manter o fallback local.
@@ -1224,9 +1681,7 @@ def generate_gemini_rag_answer(pergunta: str, contexto: str, idioma: str = "pt")
 
         client = genai.Client(api_key=api_key)
 
-        idioma_normalizado = str(
-            idioma or "pt"
-        ).strip().lower().replace("-", "_")
+        idioma_normalizado = str(idioma or "pt").strip().lower().replace("-", "_")
 
         aliases_idioma = {
             "pt_br": "pt",
@@ -1314,9 +1769,7 @@ A resposta deve:
 7. Terminar com uma pergunta curta para continuar a conversa, quando fizer sentido.
 """
 
-        modelo_gemini = get_model_for_role(
-            LLMRole.RAG
-        )
+        modelo_gemini = get_model_for_role(LLMRole.RAG)
 
         response = executar_generate_content_observado(
             client,
@@ -1358,8 +1811,6 @@ A resposta deve:
         return None
 
 
-
-
 def save_rag_log(
     pergunta: str,
     resultado: dict,
@@ -1377,26 +1828,13 @@ def save_rag_log(
     cur = None
 
     try:
-        resultado = (
-            resultado
-            if isinstance(resultado, dict)
-            else {}
-        )
+        resultado = resultado if isinstance(resultado, dict) else {}
 
-        modo = str(
-            resultado.get("modo")
-            or ""
-        )
+        modo = str(resultado.get("modo") or "")
 
-        resposta = str(
-            resultado.get("resposta")
-            or ""
-        )
+        resposta = str(resultado.get("resposta") or "")
 
-        fontes = (
-            resultado.get("fontes")
-            or []
-        )
+        fontes = resultado.get("fontes") or []
 
         if not isinstance(
             fontes,
@@ -1407,17 +1845,9 @@ def save_rag_log(
         ):
             fontes = []
 
-        trace_id = (
-            resultado.get("trace_id")
-            or None
-        )
+        trace_id = resultado.get("trace_id") or None
 
-        retrieval_trace = (
-            resultado.get(
-                "retrieval_trace"
-            )
-            or None
-        )
+        retrieval_trace = resultado.get("retrieval_trace") or None
 
         retrieval_trace_json = (
             json.dumps(
@@ -1512,23 +1942,10 @@ def save_rag_log(
                 resposta[:500],
                 len(fontes),
                 "_gemini_answer" in modo,
-                (
-                    "seguranca_financeira"
-                    in modo
-                ),
-                (
-                    "fallback" in modo
-                    or (
-                        "rag_local_sem_custo"
-                        in modo
-                    )
-                ),
+                ("seguranca_financeira" in modo),
+                ("fallback" in modo or ("rag_local_sem_custo" in modo)),
                 tempo_resposta_ms,
-                (
-                    str(trace_id)
-                    if trace_id
-                    else None
-                ),
+                (str(trace_id) if trace_id else None),
                 retrieval_trace_json,
             ),
         )
@@ -1557,7 +1974,6 @@ def save_rag_log(
                 conn.close()
             except Exception:
                 pass
-
 
 
 def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
@@ -1619,31 +2035,25 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
         """
         payload = dict(resultado or {})
 
-        trace_payload = (
-            retrieval_trace.to_dict()
-        )
+        trace_payload = retrieval_trace.to_dict()
 
         if modo:
             trace_payload["search_mode"] = modo
 
-        payload["trace_id"] = (
-            retrieval_trace.trace_id
-        )
+        payload["trace_id"] = retrieval_trace.trace_id
 
-        payload["retrieval_trace"] = (
-            trace_payload
-        )
+        payload["retrieval_trace"] = trace_payload
 
         return payload
 
     if not results:
         return finalizar_resposta_rag(
             {
-            "resposta": "Não encontrei informação suficiente na base de conhecimento da INNA para responder com segurança.",
-            "fontes": [],
-            "contexto_usado": "",
-            "modo": modo_busca,
-        },
+                "resposta": "Não encontrei informação suficiente na base de conhecimento da INNA para responder com segurança.",
+                "fontes": [],
+                "contexto_usado": "",
+                "modo": modo_busca,
+            },
             modo=modo_busca,
         )
 
@@ -1664,9 +2074,18 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     tem_anotacao_financeira = (
         "anotacao_financeira_do_usuario" in pergunta_normalizada
         or (
-            any(p in pergunta_normalizada for p in ["ganho", "recebo", "salario", "renda"])
-            and any(p in pergunta_normalizada for p in ["gasto", "gastei", "pago", "despesa", "conta"])
-            and any(p in pergunta_normalizada for p in ["guardo", "guardar", "sobra", "consigo guardar", "junto"])
+            any(
+                p in pergunta_normalizada
+                for p in ["ganho", "recebo", "salario", "renda"]
+            )
+            and any(
+                p in pergunta_normalizada
+                for p in ["gasto", "gastei", "pago", "despesa", "conta"]
+            )
+            and any(
+                p in pergunta_normalizada
+                for p in ["guardo", "guardar", "sobra", "consigo guardar", "junto"]
+            )
         )
     )
 
@@ -1678,17 +2097,13 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
 
     if intencao_continuacao == "ajustar_para_menos" and not tem_anotacao_financeira:
         return finalizar_resposta_rag(
-            resposta_ajustar_valor(
-                menor=True
-            ),
+            resposta_ajustar_valor(menor=True),
             modo=modo_busca,
         )
 
     if intencao_continuacao == "ajustar_para_mais" and not tem_anotacao_financeira:
         return finalizar_resposta_rag(
-            resposta_ajustar_valor(
-                menor=False
-            ),
+            resposta_ajustar_valor(menor=False),
             modo=modo_busca,
         )
 
@@ -1707,9 +2122,18 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     tem_anotacao_financeira = (
         "anotacao_financeira_do_usuario" in pergunta_normalizada
         or (
-            any(p in pergunta_normalizada for p in ["ganho", "recebo", "salario", "renda"])
-            and any(p in pergunta_normalizada for p in ["gasto", "gastei", "pago", "despesa", "conta"])
-            and any(p in pergunta_normalizada for p in ["guardo", "guardar", "sobra", "consigo guardar", "junto"])
+            any(
+                p in pergunta_normalizada
+                for p in ["ganho", "recebo", "salario", "renda"]
+            )
+            and any(
+                p in pergunta_normalizada
+                for p in ["gasto", "gastei", "pago", "despesa", "conta"]
+            )
+            and any(
+                p in pergunta_normalizada
+                for p in ["guardo", "guardar", "sobra", "consigo guardar", "junto"]
+            )
         )
     )
 
@@ -1770,11 +2194,11 @@ Depois você pode me dizer se quer uma meta menor ou maior."""
 
         return finalizar_resposta_rag(
             {
-            "resposta": resposta,
-            "fontes": [],
-            "contexto_usado": "",
-            "modo": modo_busca,
-        },
+                "resposta": resposta,
+                "fontes": [],
+                "contexto_usado": "",
+                "modo": modo_busca,
+            },
             modo=modo_busca,
         )
 
@@ -1798,11 +2222,11 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
 
         return finalizar_resposta_rag(
             {
-            "resposta": resposta,
-            "fontes": [],
-            "contexto_usado": "",
-            "modo": modo_busca,
-        },
+                "resposta": resposta,
+                "fontes": [],
+                "contexto_usado": "",
+                "modo": modo_busca,
+            },
             modo=modo_busca,
         )
 
@@ -1818,7 +2242,9 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
         for item in results
     ]
 
-    numeros_na_pergunta = re.findall(r"(?<!\\w)(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)(?!\\w)", pergunta_normalizada)
+    numeros_na_pergunta = re.findall(
+        r"(?<!\\w)(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)(?!\\w)", pergunta_normalizada
+    )
 
     pergunta_tem_calculo = (
         tem_anotacao_financeira
@@ -1855,11 +2281,11 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
         if resposta_gemini:
             return finalizar_resposta_rag(
                 {
-                "resposta": resposta_gemini,
-                "fontes": fontes,
-                "contexto_usado": contexto,
-                "modo": modo_busca + "_gemini_answer",
-            },
+                    "resposta": resposta_gemini,
+                    "fontes": fontes,
+                    "contexto_usado": contexto,
+                    "modo": modo_busca + "_gemini_answer",
+                },
                 modo=modo_busca,
             )
     # BLOCO_FORCADO_GEMINI_ABERTO_FIM
@@ -1889,7 +2315,8 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
         and not usuario_confirmou
         and not pedido_mes
         and not pedido_semana
-        and intencao_continuacao not in ["cancelar", "ajustar_para_menos", "ajustar_para_mais"]
+        and intencao_continuacao
+        not in ["cancelar", "ajustar_para_menos", "ajustar_para_mais"]
         and pergunta_explicativa
     )
 
@@ -1899,11 +2326,11 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
         if resposta_gemini:
             return finalizar_resposta_rag(
                 {
-                "resposta": resposta_gemini,
-                "fontes": fontes,
-                "contexto_usado": contexto,
-                "modo": modo_busca + "_gemini_answer",
-            },
+                    "resposta": resposta_gemini,
+                    "fontes": fontes,
+                    "contexto_usado": contexto,
+                    "modo": modo_busca + "_gemini_answer",
+                },
                 modo=modo_busca,
             )
 
@@ -1931,20 +2358,34 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
         or "conta" in pergunta_normalizada
         or "despesa" in pergunta_normalizada
     ):
-        renda_mensal = extrair_renda_mensal(pergunta) if "extrair_renda_mensal" in globals() else None
-        gasto_mensal = extrair_gasto_mensal(pergunta) if "extrair_gasto_mensal" in globals() else None
+        renda_mensal = (
+            extrair_renda_mensal(pergunta)
+            if "extrair_renda_mensal" in globals()
+            else None
+        )
+        gasto_mensal = (
+            extrair_gasto_mensal(pergunta)
+            if "extrair_gasto_mensal" in globals()
+            else None
+        )
 
         valor_semana = valor_para_guardar / 4
 
         linhas = []
 
         if renda_mensal:
-            linhas.append(f"- Renda informada: {formatar_reais_simples(renda_mensal)} por mês.")
+            linhas.append(
+                f"- Renda informada: {formatar_reais_simples(renda_mensal)} por mês."
+            )
 
         if gasto_mensal:
-            linhas.append(f"- Gasto informado: {formatar_reais_simples(gasto_mensal)} por mês.")
+            linhas.append(
+                f"- Gasto informado: {formatar_reais_simples(gasto_mensal)} por mês."
+            )
 
-        linhas.append(f"- Valor que você disse que consegue guardar: {formatar_reais_simples(valor_para_guardar)} por mês.")
+        linhas.append(
+            f"- Valor que você disse que consegue guardar: {formatar_reais_simples(valor_para_guardar)} por mês."
+        )
 
         contexto_financeiro = "\n".join(linhas)
 
@@ -1981,11 +2422,11 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
 
         return finalizar_resposta_rag(
             {
-            "resposta": resposta,
-            "fontes": fontes,
-            "contexto_usado": contexto,
-            "modo": modo_busca,
-        },
+                "resposta": resposta,
+                "fontes": fontes,
+                "contexto_usado": contexto,
+                "modo": modo_busca,
+            },
             modo=modo_busca,
         )
 
@@ -1999,7 +2440,9 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         for item in results
     ]
 
-    numeros_na_pergunta = re.findall(r"(?<!\\w)(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)(?!\\w)", pergunta_normalizada)
+    numeros_na_pergunta = re.findall(
+        r"(?<!\\w)(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)(?!\\w)", pergunta_normalizada
+    )
 
     pergunta_tem_calculo = (
         tem_anotacao_financeira
@@ -2012,7 +2455,8 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         and not usuario_confirmou
         and not pedido_mes
         and not pedido_semana
-        and intencao_continuacao not in ["cancelar", "ajustar_para_menos", "ajustar_para_mais"]
+        and intencao_continuacao
+        not in ["cancelar", "ajustar_para_menos", "ajustar_para_mais"]
     )
 
     if pergunta_aberta_para_gemini:
@@ -2021,11 +2465,11 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         if resposta_gemini:
             return finalizar_resposta_rag(
                 {
-                "resposta": resposta_gemini,
-                "fontes": fontes,
-                "contexto_usado": contexto,
-                "modo": modo_busca + "_gemini_answer",
-            },
+                    "resposta": resposta_gemini,
+                    "fontes": fontes,
+                    "contexto_usado": contexto,
+                    "modo": modo_busca + "_gemini_answer",
+                },
                 modo=modo_busca,
             )
 
@@ -2039,7 +2483,9 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         for item in results
     ]
 
-    numeros_na_pergunta = re.findall(r"(?<!\\w)(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)(?!\\w)", pergunta_normalizada)
+    numeros_na_pergunta = re.findall(
+        r"(?<!\\w)(?:r\$)?\s*([0-9]+(?:[,.][0-9]+)?)(?!\\w)", pergunta_normalizada
+    )
 
     pergunta_explicativa = (
         pergunta_normalizada.startswith("como ")
@@ -2073,11 +2519,11 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         if resposta_gemini:
             return finalizar_resposta_rag(
                 {
-                "resposta": resposta_gemini,
-                "fontes": fontes,
-                "contexto_usado": contexto,
-                "modo": modo_busca + "_gemini_answer",
-            },
+                    "resposta": resposta_gemini,
+                    "fontes": fontes,
+                    "contexto_usado": contexto,
+                    "modo": modo_busca + "_gemini_answer",
+                },
                 modo=modo_busca,
             )
 
@@ -2111,21 +2557,19 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
         if resposta_gemini:
             return finalizar_resposta_rag(
                 {
-                "resposta": resposta_gemini,
-                "fontes": fontes,
-                "contexto_usado": contexto,
-                "modo": modo_busca + "_gemini_answer",
-            },
+                    "resposta": resposta_gemini,
+                    "fontes": fontes,
+                    "contexto_usado": contexto,
+                    "modo": modo_busca + "_gemini_answer",
+                },
                 modo=modo_busca,
             )
 
     pergunta_sobre_tipos_de_gastos = (
         "gastos fixos" in pergunta_normalizada
         and (
-            "gastos variaveis"
-            in pergunta_normalizada
-            or "gastos variáveis"
-            in pergunta_normalizada
+            "gastos variaveis" in pergunta_normalizada
+            or "gastos variáveis" in pergunta_normalizada
         )
         and "reserva" in pergunta_normalizada
     )
@@ -2180,10 +2624,10 @@ Uma forma simples de começar é registrar os gastos fixos e variáveis, verific
 
     return finalizar_resposta_rag(
         {
-        "resposta": resposta,
-        "fontes": fontes,
-        "contexto_usado": contexto,
-        "modo": modo_busca,
-    },
+            "resposta": resposta,
+            "fontes": fontes,
+            "contexto_usado": contexto,
+            "modo": modo_busca,
+        },
         modo=modo_busca,
     )

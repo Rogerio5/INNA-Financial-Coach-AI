@@ -127,10 +127,7 @@ def _normalize_mapping_tuple(
     if not values:
         return ()
 
-    return tuple(
-        _immutable_mapping(value)
-        for value in values
-    )
+    return tuple(_immutable_mapping(value) for value in values)
 
 
 def _validate_score(
@@ -142,8 +139,7 @@ def _validate_score(
 
     if not 0.0 <= float(value) <= 1.0:
         raise ValueError(
-            f"{field_name} deve estar entre 0.0 e 1.0. "
-            f"Valor recebido: {value!r}."
+            f"{field_name} deve estar entre 0.0 e 1.0. Valor recebido: {value!r}."
         )
 
 
@@ -156,8 +152,7 @@ def _validate_non_negative_number(
 
     if value is not None and value < 0:
         raise ValueError(
-            f"{field_name} não pode ser negativo. "
-            f"Valor recebido: {value!r}."
+            f"{field_name} não pode ser negativo. Valor recebido: {value!r}."
         )
 
 
@@ -188,9 +183,7 @@ class ExpectedToolCall:
         normalized_name = self.name.strip()
 
         if not normalized_name:
-            raise ValueError(
-                "ExpectedToolCall.name não pode ser vazio."
-            )
+            raise ValueError("ExpectedToolCall.name não pode ser vazio.")
 
         _validate_non_negative_number(
             self.call_order,
@@ -198,17 +191,11 @@ class ExpectedToolCall:
         )
 
         if self.minimum_calls < 0:
-            raise ValueError(
-                "ExpectedToolCall.minimum_calls não pode ser negativo."
-            )
+            raise ValueError("ExpectedToolCall.minimum_calls não pode ser negativo.")
 
-        if (
-            self.maximum_calls is not None
-            and self.maximum_calls < self.minimum_calls
-        ):
+        if self.maximum_calls is not None and self.maximum_calls < self.minimum_calls:
             raise ValueError(
-                "ExpectedToolCall.maximum_calls não pode ser menor "
-                "que minimum_calls."
+                "ExpectedToolCall.maximum_calls não pode ser menor que minimum_calls."
             )
 
         object.__setattr__(
@@ -251,9 +238,7 @@ class ObservedToolCall:
         normalized_name = self.name.strip()
 
         if not normalized_name:
-            raise ValueError(
-                "ObservedToolCall.name não pode ser vazio."
-            )
+            raise ValueError("ObservedToolCall.name não pode ser vazio.")
 
         _validate_non_negative_number(
             self.duration_ms,
@@ -337,14 +322,11 @@ class ConversationTurn:
 
         if normalized_role not in allowed_roles:
             raise ValueError(
-                "ConversationTurn.role inválido. "
-                f"Valor recebido: {self.role!r}."
+                f"ConversationTurn.role inválido. Valor recebido: {self.role!r}."
             )
 
         if not normalized_content:
-            raise ValueError(
-                "ConversationTurn.content não pode ser vazio."
-            )
+            raise ValueError("ConversationTurn.content não pode ser vazio.")
 
         _validate_non_negative_number(
             self.turn_index,
@@ -364,30 +346,22 @@ class ConversationTurn:
         object.__setattr__(
             self,
             "expected_output",
-            _normalize_optional_string(
-                self.expected_output
-            ),
+            _normalize_optional_string(self.expected_output),
         )
         object.__setattr__(
             self,
             "expected_agent",
-            _normalize_optional_string(
-                self.expected_agent
-            ),
+            _normalize_optional_string(self.expected_agent),
         )
         object.__setattr__(
             self,
             "expected_team",
-            _normalize_optional_string(
-                self.expected_team
-            ),
+            _normalize_optional_string(self.expected_team),
         )
         object.__setattr__(
             self,
             "expected_intent",
-            _normalize_optional_string(
-                self.expected_intent
-            ),
+            _normalize_optional_string(self.expected_intent),
         )
         object.__setattr__(
             self,
@@ -475,34 +449,22 @@ class InnaEvaluationCase:
         case_version = self.case_version.strip()
 
         if not case_id:
-            raise ValueError(
-                "InnaEvaluationCase.case_id não pode ser vazio."
-            )
+            raise ValueError("InnaEvaluationCase.case_id não pode ser vazio.")
 
         if not input_text and not self.conversation:
-            raise ValueError(
-                "O caso precisa de input_text ou conversation."
-            )
+            raise ValueError("O caso precisa de input_text ou conversation.")
 
         if not dataset_name:
-            raise ValueError(
-                "InnaEvaluationCase.dataset_name não pode ser vazio."
-            )
+            raise ValueError("InnaEvaluationCase.dataset_name não pode ser vazio.")
 
         if not dataset_version:
-            raise ValueError(
-                "InnaEvaluationCase.dataset_version não pode ser vazio."
-            )
+            raise ValueError("InnaEvaluationCase.dataset_version não pode ser vazio.")
 
         if not case_version:
-            raise ValueError(
-                "InnaEvaluationCase.case_version não pode ser vazio."
-            )
+            raise ValueError("InnaEvaluationCase.case_version não pode ser vazio.")
 
         if self.minimum_retrieved_documents < 0:
-            raise ValueError(
-                "minimum_retrieved_documents não pode ser negativo."
-            )
+            raise ValueError("minimum_retrieved_documents não pode ser negativo.")
 
         _validate_score(
             self.minimum_completion_score,
@@ -526,20 +488,12 @@ class InnaEvaluationCase:
             self.privacy_level == PrivacyLevel.RESTRICTED
             and self.external_evaluation_allowed
         ):
-            raise ValueError(
-                "Casos RESTRICTED não podem permitir "
-                "avaliação externa."
-            )
+            raise ValueError("Casos RESTRICTED não podem permitir avaliação externa.")
 
-        turn_indexes = [
-            turn.turn_index
-            for turn in self.conversation
-        ]
+        turn_indexes = [turn.turn_index for turn in self.conversation]
 
         if len(turn_indexes) != len(set(turn_indexes)):
-            raise ValueError(
-                "A conversation possui índices de turno duplicados."
-            )
+            raise ValueError("A conversation possui índices de turno duplicados.")
 
         object.__setattr__(
             self,
@@ -574,37 +528,27 @@ class InnaEvaluationCase:
         object.__setattr__(
             self,
             "expected_output",
-            _normalize_optional_string(
-                self.expected_output
-            ),
+            _normalize_optional_string(self.expected_output),
         )
         object.__setattr__(
             self,
             "expected_agent",
-            _normalize_optional_string(
-                self.expected_agent
-            ),
+            _normalize_optional_string(self.expected_agent),
         )
         object.__setattr__(
             self,
             "expected_team",
-            _normalize_optional_string(
-                self.expected_team
-            ),
+            _normalize_optional_string(self.expected_team),
         )
         object.__setattr__(
             self,
             "expected_intent",
-            _normalize_optional_string(
-                self.expected_intent
-            ),
+            _normalize_optional_string(self.expected_intent),
         )
         object.__setattr__(
             self,
             "expected_task_status",
-            _normalize_optional_string(
-                self.expected_task_status
-            ),
+            _normalize_optional_string(self.expected_task_status),
         )
         object.__setattr__(
             self,
@@ -629,58 +573,42 @@ class InnaEvaluationCase:
         object.__setattr__(
             self,
             "forbidden_tools",
-            _normalize_string_tuple(
-                self.forbidden_tools
-            ),
+            _normalize_string_tuple(self.forbidden_tools),
         )
         object.__setattr__(
             self,
             "expected_terms",
-            _normalize_string_tuple(
-                self.expected_terms
-            ),
+            _normalize_string_tuple(self.expected_terms),
         )
         object.__setattr__(
             self,
             "forbidden_terms",
-            _normalize_string_tuple(
-                self.forbidden_terms
-            ),
+            _normalize_string_tuple(self.forbidden_terms),
         )
         object.__setattr__(
             self,
             "expected_structured_keys",
-            _normalize_string_tuple(
-                self.expected_structured_keys
-            ),
+            _normalize_string_tuple(self.expected_structured_keys),
         )
         object.__setattr__(
             self,
             "forbidden_structured_keys",
-            _normalize_string_tuple(
-                self.forbidden_structured_keys
-            ),
+            _normalize_string_tuple(self.forbidden_structured_keys),
         )
         object.__setattr__(
             self,
             "expected_trace_terms",
-            _normalize_string_tuple(
-                self.expected_trace_terms
-            ),
+            _normalize_string_tuple(self.expected_trace_terms),
         )
         object.__setattr__(
             self,
             "forbidden_trace_terms",
-            _normalize_string_tuple(
-                self.forbidden_trace_terms
-            ),
+            _normalize_string_tuple(self.forbidden_trace_terms),
         )
         object.__setattr__(
             self,
             "expected_retrieval_terms",
-            _normalize_string_tuple(
-                self.expected_retrieval_terms
-            ),
+            _normalize_string_tuple(self.expected_retrieval_terms),
         )
         object.__setattr__(
             self,
@@ -722,9 +650,7 @@ class MetricResult:
         normalized_name = self.name.strip()
 
         if not normalized_name:
-            raise ValueError(
-                "MetricResult.name não pode ser vazio."
-            )
+            raise ValueError("MetricResult.name não pode ser vazio.")
 
         _validate_score(
             self.score,
@@ -740,21 +666,11 @@ class MetricResult:
             field_name="MetricResult.duration_ms",
         )
 
-        if (
-            self.started_at is not None
-            and self.started_at.tzinfo is None
-        ):
-            raise ValueError(
-                "MetricResult.started_at precisa possuir timezone."
-            )
+        if self.started_at is not None and self.started_at.tzinfo is None:
+            raise ValueError("MetricResult.started_at precisa possuir timezone.")
 
-        if (
-            self.finished_at is not None
-            and self.finished_at.tzinfo is None
-        ):
-            raise ValueError(
-                "MetricResult.finished_at precisa possuir timezone."
-            )
+        if self.finished_at is not None and self.finished_at.tzinfo is None:
+            raise ValueError("MetricResult.finished_at precisa possuir timezone.")
 
         if (
             self.started_at is not None
@@ -762,16 +678,14 @@ class MetricResult:
             and self.finished_at < self.started_at
         ):
             raise ValueError(
-                "MetricResult.finished_at não pode ser anterior "
-                "a started_at."
+                "MetricResult.finished_at não pode ser anterior a started_at."
             )
 
         calculated_passed = self.score >= self.threshold
 
         if self.error is None and self.passed != calculated_passed:
             raise ValueError(
-                "MetricResult.passed está inconsistente com "
-                "score e threshold."
+                "MetricResult.passed está inconsistente com score e threshold."
             )
 
         object.__setattr__(
@@ -787,16 +701,12 @@ class MetricResult:
         object.__setattr__(
             self,
             "evaluator_model",
-            _normalize_optional_string(
-                self.evaluator_model
-            ),
+            _normalize_optional_string(self.evaluator_model),
         )
         object.__setattr__(
             self,
             "evaluator_version",
-            _normalize_optional_string(
-                self.evaluator_version
-            ),
+            _normalize_optional_string(self.evaluator_version),
         )
         object.__setattr__(
             self,
@@ -831,19 +741,11 @@ class TokenUsage:
 
         for name, value in values.items():
             if value < 0:
-                raise ValueError(
-                    f"{name} não pode ser negativo."
-                )
+                raise ValueError(f"{name} não pode ser negativo.")
 
-        expected_minimum = (
-            self.input_tokens
-            + self.output_tokens
-        )
+        expected_minimum = self.input_tokens + self.output_tokens
 
-        if (
-            self.total_tokens
-            and self.total_tokens < expected_minimum
-        ):
+        if self.total_tokens and self.total_tokens < expected_minimum:
             raise ValueError(
                 "total_tokens não pode ser menor que a soma de "
                 "input_tokens e output_tokens."
@@ -879,9 +781,7 @@ class RetrievalDocument:
         normalized_content = self.content.strip()
 
         if not normalized_content:
-            raise ValueError(
-                "RetrievalDocument.content não pode ser vazio."
-            )
+            raise ValueError("RetrievalDocument.content não pode ser vazio.")
 
         _validate_non_negative_number(
             self.rank,
@@ -902,9 +802,7 @@ class RetrievalDocument:
         object.__setattr__(
             self,
             "document_id",
-            _normalize_optional_string(
-                self.document_id
-            ),
+            _normalize_optional_string(self.document_id),
         )
         object.__setattr__(
             self,
@@ -914,9 +812,7 @@ class RetrievalDocument:
         object.__setattr__(
             self,
             "content_hash",
-            _normalize_optional_string(
-                self.content_hash
-            ),
+            _normalize_optional_string(self.content_hash),
         )
         object.__setattr__(
             self,
@@ -958,14 +854,10 @@ class ModelExecution:
         model_name = self.model_name.strip()
 
         if not provider:
-            raise ValueError(
-                "ModelExecution.provider não pode ser vazio."
-            )
+            raise ValueError("ModelExecution.provider não pode ser vazio.")
 
         if not model_name:
-            raise ValueError(
-                "ModelExecution.model_name não pode ser vazio."
-            )
+            raise ValueError("ModelExecution.model_name não pode ser vazio.")
 
         _validate_non_negative_number(
             self.latency_ms,
@@ -994,9 +886,7 @@ class ModelExecution:
         object.__setattr__(
             self,
             "prompt_version",
-            _normalize_optional_string(
-                self.prompt_version
-            ),
+            _normalize_optional_string(self.prompt_version),
         )
         object.__setattr__(
             self,
@@ -1114,28 +1004,18 @@ class InnaEvaluationResult:
         actual_output = self.actual_output.strip()
 
         if not case_id:
-            raise ValueError(
-                "InnaEvaluationResult.case_id não pode ser vazio."
-            )
+            raise ValueError("InnaEvaluationResult.case_id não pode ser vazio.")
 
         if not self.evaluation_id.strip():
-            raise ValueError(
-                "InnaEvaluationResult.evaluation_id não pode ser vazio."
-            )
+            raise ValueError("InnaEvaluationResult.evaluation_id não pode ser vazio.")
 
         if not self.schema_version.strip():
-            raise ValueError(
-                "InnaEvaluationResult.schema_version não pode ser vazio."
-            )
+            raise ValueError("InnaEvaluationResult.schema_version não pode ser vazio.")
 
-        if (
-            not actual_output
-            and self.status
-            not in {
-                EvaluationStatus.ERROR,
-                EvaluationStatus.SKIPPED,
-            }
-        ):
+        if not actual_output and self.status not in {
+            EvaluationStatus.ERROR,
+            EvaluationStatus.SKIPPED,
+        }:
             raise ValueError(
                 "actual_output não pode ser vazio para resultados "
                 "executados normalmente."
@@ -1156,39 +1036,24 @@ class InnaEvaluationResult:
         )
 
         if self.created_at.tzinfo is None:
-            raise ValueError(
-                "created_at precisa possuir timezone."
-            )
+            raise ValueError("created_at precisa possuir timezone.")
 
         valid_metrics = [
-            metric
-            for metric in self.metric_results
-            if metric.error is None
+            metric for metric in self.metric_results if metric.error is None
         ]
 
-        if (
-            self.status == EvaluationStatus.PASSED
-            and any(
-                not metric.passed
-                for metric in valid_metrics
-            )
+        if self.status == EvaluationStatus.PASSED and any(
+            not metric.passed for metric in valid_metrics
         ):
-            raise ValueError(
-                "Um resultado PASSED não pode conter "
-                "métrica reprovada."
-            )
+            raise ValueError("Um resultado PASSED não pode conter métrica reprovada.")
 
         if (
             self.status == EvaluationStatus.FAILED
             and valid_metrics
-            and all(
-                metric.passed
-                for metric in valid_metrics
-            )
+            and all(metric.passed for metric in valid_metrics)
         ):
             raise ValueError(
-                "Um resultado FAILED deve conter ao menos "
-                "uma métrica reprovada."
+                "Um resultado FAILED deve conter ao menos uma métrica reprovada."
             )
 
         if (
@@ -1283,23 +1148,17 @@ class InnaEvaluationResult:
         object.__setattr__(
             self,
             "application_version",
-            _normalize_optional_string(
-                self.application_version
-            ),
+            _normalize_optional_string(self.application_version),
         )
         object.__setattr__(
             self,
             "graph_version",
-            _normalize_optional_string(
-                self.graph_version
-            ),
+            _normalize_optional_string(self.graph_version),
         )
         object.__setattr__(
             self,
             "prompt_version",
-            _normalize_optional_string(
-                self.prompt_version
-            ),
+            _normalize_optional_string(self.prompt_version),
         )
         object.__setattr__(
             self,
@@ -1319,30 +1178,22 @@ class InnaEvaluationResult:
         object.__setattr__(
             self,
             "user_reference_hash",
-            _normalize_optional_string(
-                self.user_reference_hash
-            ),
+            _normalize_optional_string(self.user_reference_hash),
         )
         object.__setattr__(
             self,
             "human_review_status",
-            _normalize_optional_string(
-                self.human_review_status
-            ),
+            _normalize_optional_string(self.human_review_status),
         )
         object.__setattr__(
             self,
             "human_review_id",
-            _normalize_optional_string(
-                self.human_review_id
-            ),
+            _normalize_optional_string(self.human_review_id),
         )
         object.__setattr__(
             self,
             "structured_response",
-            _immutable_mapping(
-                self.structured_response
-            ),
+            _immutable_mapping(self.structured_response),
         )
         object.__setattr__(
             self,
@@ -1359,10 +1210,7 @@ class InnaEvaluationResult:
     def tools_called_names(self) -> tuple[str, ...]:
         """Retorna somente os nomes das ferramentas chamadas."""
 
-        return tuple(
-            tool.name
-            for tool in self.tools_called
-        )
+        return tuple(tool.name for tool in self.tools_called)
 
     @property
     def successful_tools(self) -> tuple[ObservedToolCall, ...]:
@@ -1376,9 +1224,7 @@ class InnaEvaluationResult:
         }
 
         return tuple(
-            tool
-            for tool in self.tools_called
-            if tool.status in success_statuses
+            tool for tool in self.tools_called if tool.status in success_statuses
         )
 
     @property
@@ -1393,28 +1239,21 @@ class InnaEvaluationResult:
         }
 
         return tuple(
-            tool
-            for tool in self.tools_called
-            if tool.status in failure_statuses
+            tool for tool in self.tools_called if tool.status in failure_statuses
         )
 
     @property
     def retrieval_context(self) -> tuple[str, ...]:
         """Retorna documentos no formato esperado por métricas RAG."""
 
-        return tuple(
-            document.content
-            for document in self.retrieval_documents
-        )
+        return tuple(document.content for document in self.retrieval_documents)
 
     @property
     def average_metric_score(self) -> float | None:
         """Calcula a média das métricas sem erro."""
 
         valid_scores = [
-            metric.score
-            for metric in self.metric_results
-            if metric.error is None
+            metric.score for metric in self.metric_results if metric.error is None
         ]
 
         if not valid_scores:
@@ -1429,8 +1268,7 @@ class InnaEvaluationResult:
         return sum(
             1
             for metric in self.metric_results
-            if metric.error is None
-            and metric.passed
+            if metric.error is None and metric.passed
         )
 
     @property
@@ -1440,19 +1278,14 @@ class InnaEvaluationResult:
         return sum(
             1
             for metric in self.metric_results
-            if metric.error is None
-            and not metric.passed
+            if metric.error is None and not metric.passed
         )
 
     @property
     def metric_errors(self) -> int:
         """Quantidade de métricas que tiveram erro."""
 
-        return sum(
-            1
-            for metric in self.metric_results
-            if metric.error is not None
-        )
+        return sum(1 for metric in self.metric_results if metric.error is not None)
 
     @property
     def has_runtime_errors(self) -> bool:
@@ -1465,8 +1298,7 @@ class InnaEvaluationResult:
         """Soma os tokens de entrada de todas as chamadas de modelo."""
 
         return sum(
-            execution.token_usage.input_tokens
-            for execution in self.model_executions
+            execution.token_usage.input_tokens for execution in self.model_executions
         )
 
     @property
@@ -1474,8 +1306,7 @@ class InnaEvaluationResult:
         """Soma os tokens de saída de todas as chamadas de modelo."""
 
         return sum(
-            execution.token_usage.output_tokens
-            for execution in self.model_executions
+            execution.token_usage.output_tokens for execution in self.model_executions
         )
 
     @property
@@ -1530,24 +1361,16 @@ class EvaluationRunSummary:
 
     def __post_init__(self) -> None:
         if not self.run_id.strip():
-            raise ValueError(
-                "EvaluationRunSummary.run_id não pode ser vazio."
-            )
+            raise ValueError("EvaluationRunSummary.run_id não pode ser vazio.")
 
         if self.started_at.tzinfo is None:
-            raise ValueError(
-                "started_at precisa possuir timezone."
-            )
+            raise ValueError("started_at precisa possuir timezone.")
 
         if self.finished_at.tzinfo is None:
-            raise ValueError(
-                "finished_at precisa possuir timezone."
-            )
+            raise ValueError("finished_at precisa possuir timezone.")
 
         if self.finished_at < self.started_at:
-            raise ValueError(
-                "finished_at não pode ser anterior a started_at."
-            )
+            raise ValueError("finished_at não pode ser anterior a started_at.")
 
         counters = {
             "total_cases": self.total_cases,
@@ -1559,9 +1382,7 @@ class EvaluationRunSummary:
 
         for name, value in counters.items():
             if value < 0:
-                raise ValueError(
-                    f"{name} não pode ser negativo."
-                )
+                raise ValueError(f"{name} não pode ser negativo.")
 
         classified_cases = (
             self.passed_cases
@@ -1571,16 +1392,10 @@ class EvaluationRunSummary:
         )
 
         if classified_cases != self.total_cases:
-            raise ValueError(
-                "A soma dos resultados não corresponde "
-                "a total_cases."
-            )
+            raise ValueError("A soma dos resultados não corresponde a total_cases.")
 
         if self.total_cases != len(self.results):
-            raise ValueError(
-                "total_cases não corresponde à quantidade "
-                "de results."
-            )
+            raise ValueError("total_cases não corresponde à quantidade de results.")
 
         if self.average_score is not None:
             _validate_score(
@@ -1597,15 +1412,10 @@ class EvaluationRunSummary:
             field_name="total_estimated_cost",
         )
 
-        result_case_ids = [
-            result.case_id
-            for result in self.results
-        ]
+        result_case_ids = [result.case_id for result in self.results]
 
         if len(result_case_ids) != len(set(result_case_ids)):
-            raise ValueError(
-                "EvaluationRunSummary possui case_id duplicado."
-            )
+            raise ValueError("EvaluationRunSummary possui case_id duplicado.")
 
         object.__setattr__(
             self,

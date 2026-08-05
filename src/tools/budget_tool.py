@@ -14,14 +14,10 @@ def _valor_nao_negativo(valor: Any, nome: str) -> float:
     try:
         numero = float(valor)
     except (TypeError, ValueError) as exc:
-        raise ValueError(
-            f"{nome} deve ser um valor numérico."
-        ) from exc
+        raise ValueError(f"{nome} deve ser um valor numérico.") from exc
 
     if numero < 0:
-        raise ValueError(
-            f"{nome} não pode ser negativo."
-        )
+        raise ValueError(f"{nome} não pode ser negativo.")
 
     return numero
 
@@ -57,16 +53,13 @@ def analisar_orcamento(
         "dividas_mensais",
     )
 
-    incluem_dividas = bool(
-        gastos_incluem_dividas
-    )
+    incluem_dividas = bool(gastos_incluem_dividas)
 
     if incluem_dividas:
         parcelas_adicionais = 0.0
         despesas_totais = gastos
         base_calculo = (
-            "Os gastos mensais já incluem parcelas "
-            "e compromissos com dívidas."
+            "Os gastos mensais já incluem parcelas e compromissos com dívidas."
         )
     else:
         parcelas_adicionais = dividas
@@ -78,11 +71,7 @@ def analisar_orcamento(
 
     saldo = renda - despesas_totais
 
-    comprometimento = (
-        (despesas_totais / renda) * 100
-        if renda > 0
-        else 0.0
-    )
+    comprometimento = (despesas_totais / renda) * 100 if renda > 0 else 0.0
 
     if renda == 0 and despesas_totais > 0:
         situacao = "sem_renda_informada"

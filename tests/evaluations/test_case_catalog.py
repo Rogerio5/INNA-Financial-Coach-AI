@@ -45,14 +45,8 @@ def test_catalog_constants() -> None:
     assert SAFETY_DATASET_NAME == "inna-safety"
     assert SAFETY_DATASET_VERSION == "1.0.0"
 
-    assert (
-        CONVERSATION_DATASET_NAME
-        == "inna-conversation"
-    )
-    assert (
-        CONVERSATION_DATASET_VERSION
-        == "1.0.0"
-    )
+    assert CONVERSATION_DATASET_NAME == "inna-conversation"
+    assert CONVERSATION_DATASET_VERSION == "1.0.0"
 
 
 # ============================================================
@@ -88,10 +82,7 @@ def test_all_catalog_cases_are_evaluation_cases() -> None:
         *build_conversation_cases(),
     )
 
-    assert all(
-        isinstance(case, InnaEvaluationCase)
-        for case in all_cases
-    )
+    assert all(isinstance(case, InnaEvaluationCase) for case in all_cases)
 
 
 def test_official_case_count() -> None:
@@ -100,17 +91,11 @@ def test_official_case_count() -> None:
 
 def test_all_case_ids_are_unique() -> None:
     all_case_ids = tuple(
-        case.case_id
-        for dataset in official_datasets()
-        for case in dataset
+        case.case_id for dataset in official_datasets() for case in dataset
     )
 
     duplicates = tuple(
-        case_id
-        for case_id, count in Counter(
-            all_case_ids
-        ).items()
-        if count > 1
+        case_id for case_id, count in Counter(all_case_ids).items() if count > 1
     )
 
     assert len(all_case_ids) == 11
@@ -119,9 +104,7 @@ def test_all_case_ids_are_unique() -> None:
 
 def test_case_ids_follow_technical_pattern() -> None:
     all_case_ids = tuple(
-        case.case_id
-        for dataset in official_datasets()
-        for case in dataset
+        case.case_id for dataset in official_datasets() for case in dataset
     )
 
     assert all(
@@ -145,16 +128,10 @@ def test_build_core_dataset() -> None:
         dataset,
         EvaluationDataset,
     )
-    assert dataset.dataset_id == (
-        "inna-core@1.0.0"
-    )
+    assert dataset.dataset_id == ("inna-core@1.0.0")
     assert len(dataset) == 6
-    assert dataset.metadata[
-        "synthetic_only"
-    ] is True
-    assert dataset.metadata[
-        "production_data"
-    ] is False
+    assert dataset.metadata["synthetic_only"] is True
+    assert dataset.metadata["production_data"] is False
 
 
 def test_build_safety_dataset() -> None:
@@ -164,13 +141,9 @@ def test_build_safety_dataset() -> None:
         dataset,
         EvaluationDataset,
     )
-    assert dataset.dataset_id == (
-        "inna-safety@1.0.0"
-    )
+    assert dataset.dataset_id == ("inna-safety@1.0.0")
     assert len(dataset) == 3
-    assert dataset.categories == (
-        "financial-safety",
-    )
+    assert dataset.categories == ("financial-safety",)
 
 
 def test_build_conversation_dataset() -> None:
@@ -180,9 +153,7 @@ def test_build_conversation_dataset() -> None:
         dataset,
         EvaluationDataset,
     )
-    assert dataset.dataset_id == (
-        "inna-conversation@1.0.0"
-    )
+    assert dataset.dataset_id == ("inna-conversation@1.0.0")
     assert len(dataset) == 2
     assert dataset.categories == (
         "conversation",
@@ -196,10 +167,7 @@ def test_official_datasets_count_and_order() -> None:
     assert isinstance(datasets, tuple)
     assert len(datasets) == 3
 
-    assert tuple(
-        dataset.dataset_id
-        for dataset in datasets
-    ) == (
+    assert tuple(dataset.dataset_id for dataset in datasets) == (
         "inna-conversation@1.0.0",
         "inna-core@1.0.0",
         "inna-safety@1.0.0",
@@ -215,44 +183,40 @@ def test_official_registry() -> None:
     )
     assert len(registry) == 3
 
-    assert registry.get(
-        "inna-core",
-        "1.0.0",
-    ).dataset_id == "inna-core@1.0.0"
+    assert (
+        registry.get(
+            "inna-core",
+            "1.0.0",
+        ).dataset_id
+        == "inna-core@1.0.0"
+    )
 
-    assert registry.get(
-        "inna-safety",
-        "1.0.0",
-    ).dataset_id == "inna-safety@1.0.0"
+    assert (
+        registry.get(
+            "inna-safety",
+            "1.0.0",
+        ).dataset_id
+        == "inna-safety@1.0.0"
+    )
 
     assert registry.get(
         "inna-conversation",
         "1.0.0",
-    ).dataset_id == (
-        "inna-conversation@1.0.0"
-    )
+    ).dataset_id == ("inna-conversation@1.0.0")
 
 
 def test_dataset_case_relationships() -> None:
     for dataset in official_datasets():
         for case in dataset:
-            assert case.dataset_name == (
-                dataset.name
-            )
-            assert case.dataset_version == (
-                dataset.version
-            )
+            assert case.dataset_name == (dataset.name)
+            assert case.dataset_version == (dataset.version)
 
 
 def test_all_datasets_have_fingerprints() -> None:
-    fingerprints = tuple(
-        dataset.fingerprint
-        for dataset in official_datasets()
-    )
+    fingerprints = tuple(dataset.fingerprint for dataset in official_datasets())
 
     assert all(
-        isinstance(fingerprint, str)
-        and len(fingerprint) >= 32
+        isinstance(fingerprint, str) and len(fingerprint) >= 32
         for fingerprint in fingerprints
     )
 
@@ -260,14 +224,10 @@ def test_all_datasets_have_fingerprints() -> None:
 
 
 def test_catalog_fingerprints_are_stable() -> None:
-    first = {
-        dataset.dataset_id: dataset.fingerprint
-        for dataset in official_datasets()
-    }
+    first = {dataset.dataset_id: dataset.fingerprint for dataset in official_datasets()}
 
     second = {
-        dataset.dataset_id: dataset.fingerprint
-        for dataset in official_datasets()
+        dataset.dataset_id: dataset.fingerprint for dataset in official_datasets()
     }
 
     assert first == second
@@ -281,20 +241,12 @@ def test_catalog_fingerprints_are_stable() -> None:
 def test_all_cases_are_synthetic() -> None:
     for dataset in official_datasets():
         for case in dataset:
-            assert (
-                case.metadata.get("synthetic")
-                is True
-            )
+            assert case.metadata.get("synthetic") is True
 
 
 def test_no_case_uses_production_data() -> None:
     for dataset in official_datasets():
-        assert (
-            dataset.metadata[
-                "production_data"
-            ]
-            is False
-        )
+        assert dataset.metadata["production_data"] is False
 
 
 def test_external_cases_are_public() -> None:
@@ -308,16 +260,8 @@ def test_external_cases_are_public() -> None:
     assert len(external_cases) == 10
 
     for case in external_cases:
-        assert (
-            case.privacy_level
-            == PrivacyLevel.PUBLIC
-        )
-        assert (
-            case.metadata.get(
-                "external_safe"
-            )
-            is True
-        )
+        assert case.privacy_level == PrivacyLevel.PUBLIC
+        assert case.metadata.get("external_safe") is True
 
 
 def test_internal_cases_are_not_external() -> None:
@@ -332,27 +276,14 @@ def test_internal_cases_are_not_external() -> None:
 
     internal_case = internal_cases[0]
 
-    assert internal_case.case_id == (
-        "human-review-sensitive-guidance-001"
-    )
-    assert (
-        internal_case.privacy_level
-        == PrivacyLevel.INTERNAL
-    )
-    assert (
-        internal_case.metadata.get(
-            "external_safe"
-        )
-        is False
-    )
+    assert internal_case.case_id == ("human-review-sensitive-guidance-001")
+    assert internal_case.privacy_level == PrivacyLevel.INTERNAL
+    assert internal_case.metadata.get("external_safe") is False
 
 
 def test_public_case_count_by_dataset() -> None:
     counts = {
-        dataset.name: len(
-            dataset.public_cases()
-        )
-        for dataset in official_datasets()
+        dataset.name: len(dataset.public_cases()) for dataset in official_datasets()
     }
 
     assert counts == {
@@ -403,60 +334,29 @@ def test_core_categories() -> None:
 def test_financial_calculator_cases(
     case_id: str,
 ) -> None:
-    case = build_core_dataset().get_case(
-        case_id
-    )
+    case = build_core_dataset().get_case(case_id)
 
     assert case.expected_tools
-    assert (
-        case.expected_tools[0].name
-        == "financial_calculator"
-    )
-    assert (
-        case.expected_tools[0].required
-        is True
-    )
-    assert (
-        case.expected_tools[0]
-        .metadata["domain"]
-        == "financial"
-    )
+    assert case.expected_tools[0].name == "financial_calculator"
+    assert case.expected_tools[0].required is True
+    assert case.expected_tools[0].metadata["domain"] == "financial"
 
 
 def test_rag_case_uses_formal_rag_tool() -> None:
-    case = build_core_dataset().get_case(
-        "rag-financial-education-001"
-    )
+    case = build_core_dataset().get_case("rag-financial-education-001")
 
-    assert case.expected_tools == (
-        case.expected_tools[0],
-    )
-    assert (
-        case.expected_tools[0].name
-        == "buscar_conhecimento_rag"
-    )
-    assert (
-        case.minimum_retrieved_documents
-        >= 1
-    )
+    assert case.expected_tools == (case.expected_tools[0],)
+    assert case.expected_tools[0].name == "buscar_conhecimento_rag"
+    assert case.minimum_retrieved_documents >= 1
     assert case.expected_retrieval_terms
 
 
 def test_support_case_forbids_financial_tool() -> None:
-    case = build_core_dataset().get_case(
-        "routing-support-001"
-    )
+    case = build_core_dataset().get_case("routing-support-001")
 
-    assert case.expected_agent == (
-        "support_agent"
-    )
-    assert case.expected_team == (
-        "support_team"
-    )
-    assert (
-        "financial_calculator"
-        in case.forbidden_tools
-    )
+    assert case.expected_agent == ("support_agent")
+    assert case.expected_team == ("support_team")
+    assert "financial_calculator" in case.forbidden_tools
 
 
 def test_core_financial_cases_have_safety_terms() -> None:
@@ -475,10 +375,7 @@ def test_core_financial_cases_have_safety_terms() -> None:
 
     assert relevant_cases
 
-    assert all(
-        case.forbidden_terms
-        for case in relevant_cases
-    )
+    assert all(case.forbidden_terms for case in relevant_cases)
 
 
 # ============================================================
@@ -503,48 +400,28 @@ def test_all_safety_cases_have_forbidden_terms() -> None:
 
 
 def test_guaranteed_profit_case() -> None:
-    case = build_safety_dataset().get_case(
-        "safety-guaranteed-profit-001"
-    )
+    case = build_safety_dataset().get_case("safety-guaranteed-profit-001")
 
     assert "risco" in case.expected_terms
-    assert "lucro garantido" in (
-        case.forbidden_terms
-    )
-    assert "retorno garantido" in (
-        case.forbidden_terms
-    )
-    assert "sem risco" in (
-        case.forbidden_terms
-    )
+    assert "lucro garantido" in (case.forbidden_terms)
+    assert "retorno garantido" in (case.forbidden_terms)
+    assert "sem risco" in (case.forbidden_terms)
 
 
 def test_credit_limit_safety_case() -> None:
-    case = build_safety_dataset().get_case(
-        "safety-credit-limit-001"
-    )
+    case = build_safety_dataset().get_case("safety-credit-limit-001")
 
     assert "risco" in case.expected_terms
     assert "juros" in case.expected_terms
-    assert "use todo o limite" in (
-        case.forbidden_terms
-    )
+    assert "use todo o limite" in (case.forbidden_terms)
 
 
 def test_missing_data_safety_case() -> None:
-    case = build_safety_dataset().get_case(
-        "safety-insufficient-data-001"
-    )
+    case = build_safety_dataset().get_case("safety-insufficient-data-001")
 
-    assert "informações" in (
-        case.expected_terms
-    )
-    assert "objetivo" in (
-        case.expected_terms
-    )
-    assert case.minimum_answer_score == (
-        pytest.approx(0.75)
-    )
+    assert "informações" in (case.expected_terms)
+    assert "objetivo" in (case.expected_terms)
+    assert case.minimum_answer_score == (pytest.approx(0.75))
 
 
 # ============================================================
@@ -553,28 +430,17 @@ def test_missing_data_safety_case() -> None:
 
 
 def test_conversation_case_has_multiple_turns() -> None:
-    case = (
-        build_conversation_dataset()
-        .get_case(
-            "conversation-financial-followup-001"
-        )
-    )
+    case = build_conversation_dataset().get_case("conversation-financial-followup-001")
 
     assert len(case.conversation) == 3
 
-    assert tuple(
-        turn.turn_index
-        for turn in case.conversation
-    ) == (
+    assert tuple(turn.turn_index for turn in case.conversation) == (
         0,
         1,
         2,
     )
 
-    assert tuple(
-        turn.role
-        for turn in case.conversation
-    ) == (
+    assert tuple(turn.role for turn in case.conversation) == (
         "user",
         "assistant",
         "user",
@@ -582,12 +448,7 @@ def test_conversation_case_has_multiple_turns() -> None:
 
 
 def test_conversation_case_preserves_expected_tool() -> None:
-    case = (
-        build_conversation_dataset()
-        .get_case(
-            "conversation-financial-followup-001"
-        )
-    )
+    case = build_conversation_dataset().get_case("conversation-financial-followup-001")
 
     third_turn = case.conversation[2]
 
@@ -599,36 +460,18 @@ def test_conversation_case_preserves_expected_tool() -> None:
         tool,
         ExpectedToolCall,
     )
-    assert tool.name == (
-        "financial_calculator"
-    )
+    assert tool.name == ("financial_calculator")
     assert tool.call_order == 0
 
 
 def test_human_review_case() -> None:
-    case = (
-        build_conversation_dataset()
-        .get_case(
-            "human-review-sensitive-guidance-001"
-        )
-    )
+    case = build_conversation_dataset().get_case("human-review-sensitive-guidance-001")
 
     assert case.human_review_expected is True
-    assert case.expected_task_status == (
-        "pending_review"
-    )
-    assert (
-        case.privacy_level
-        == PrivacyLevel.INTERNAL
-    )
-    assert (
-        case.external_evaluation_allowed
-        is False
-    )
-    assert (
-        case.metadata["requires_hitl"]
-        is True
-    )
+    assert case.expected_task_status == ("pending_review")
+    assert case.privacy_level == PrivacyLevel.INTERNAL
+    assert case.external_evaluation_allowed is False
+    assert case.metadata["requires_hitl"] is True
 
 
 def test_only_one_case_requires_human_review() -> None:
@@ -640,9 +483,7 @@ def test_only_one_case_requires_human_review() -> None:
     )
 
     assert len(cases) == 1
-    assert cases[0].case_id == (
-        "human-review-sensitive-guidance-001"
-    )
+    assert cases[0].case_id == ("human-review-sensitive-guidance-001")
 
 
 # ============================================================
@@ -680,10 +521,7 @@ def test_external_cases_have_expected_agents() -> None:
 def test_external_cases_have_completion_threshold() -> None:
     for dataset in official_datasets():
         for case in dataset.public_cases():
-            assert (
-                case.minimum_completion_score
-                > 0
-            )
+            assert case.minimum_completion_score > 0
 
 
 def test_tool_metadata_marks_synthetic_tools() -> None:
@@ -697,10 +535,7 @@ def test_tool_metadata_marks_synthetic_tools() -> None:
     assert tools
 
     for tool in tools:
-        assert (
-            tool.metadata.get("synthetic")
-            is True
-        )
+        assert tool.metadata.get("synthetic") is True
 
 
 # ============================================================
@@ -721,17 +556,11 @@ def test_catalog_dataset_json_roundtrip(
 ) -> None:
     dataset = builder()
 
-    restored = EvaluationDataset.from_json(
-        dataset.to_json()
-    )
+    restored = EvaluationDataset.from_json(dataset.to_json())
 
-    assert restored.dataset_id == (
-        dataset.dataset_id
-    )
+    assert restored.dataset_id == (dataset.dataset_id)
     assert restored.cases == dataset.cases
-    assert restored.fingerprint == (
-        dataset.fingerprint
-    )
+    assert restored.fingerprint == (dataset.fingerprint)
 
 
 @pytest.mark.parametrize(
@@ -748,34 +577,20 @@ def test_external_export(
 ) -> None:
     dataset = builder()
 
-    destination = (
-        tmp_path
-        / f"{dataset.name}.json"
-    )
+    destination = tmp_path / f"{dataset.name}.json"
 
     exported = dataset.export_json(
         destination,
         external_only=True,
     )
 
-    payload = json.loads(
-        exported.read_text(
-            encoding="utf-8"
-        )
-    )
+    payload = json.loads(exported.read_text(encoding="utf-8"))
 
     assert payload["external_export"] is True
-    assert payload["case_count"] == len(
-        dataset.public_cases()
-    )
+    assert payload["case_count"] == len(dataset.public_cases())
 
     for case_payload in payload["cases"]:
-        assert (
-            case_payload[
-                "external_evaluation_allowed"
-            ]
-            is True
-        )
+        assert case_payload["external_evaluation_allowed"] is True
 
 
 def test_conversation_external_export_excludes_hitl(
@@ -788,18 +603,10 @@ def test_conversation_external_export_excludes_hitl(
         external_only=True,
     )
 
-    rendered = exported.read_text(
-        encoding="utf-8"
-    )
+    rendered = exported.read_text(encoding="utf-8")
 
-    assert (
-        "conversation-financial-followup-001"
-        in rendered
-    )
-    assert (
-        "human-review-sensitive-guidance-001"
-        not in rendered
-    )
+    assert "conversation-financial-followup-001" in rendered
+    assert "human-review-sensitive-guidance-001" not in rendered
 
 
 def test_external_exports_contain_ten_cases(
@@ -809,19 +616,12 @@ def test_external_exports_contain_ten_cases(
 
     for dataset in official_datasets():
         exported = dataset.export_json(
-            tmp_path
-            / f"{dataset.name}.json",
+            tmp_path / f"{dataset.name}.json",
             external_only=True,
         )
 
-        payload = json.loads(
-            exported.read_text(
-                encoding="utf-8"
-            )
-        )
+        payload = json.loads(exported.read_text(encoding="utf-8"))
 
-        total_exported += int(
-            payload["case_count"]
-        )
+        total_exported += int(payload["case_count"])
 
     assert total_exported == 10

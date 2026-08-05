@@ -41,10 +41,7 @@ def _normalize_requirements(
     for value in values or []:
         item = str(value).strip()
 
-        if (
-            item
-            and item not in normalized
-        ):
+        if item and item not in normalized:
             normalized.append(item)
 
     return normalized
@@ -68,17 +65,11 @@ def evaluate_task_completion(
     cancelled -> failed -> blocked -> needs_user_input
     -> completed -> partially_completed -> pending.
     """
-    normalized_requirements = (
-        _normalize_requirements(
-            requirements
-        )
-    )
+    normalized_requirements = _normalize_requirements(requirements)
 
     normalized_completed = [
         item
-        for item in _normalize_requirements(
-            completed
-        )
+        for item in _normalize_requirements(completed)
         if item in normalized_requirements
     ]
 
@@ -88,15 +79,9 @@ def evaluate_task_completion(
         if requirement not in normalized_completed
     ]
 
-    total = len(
-        normalized_requirements
-    )
+    total = len(normalized_requirements)
 
-    completion_score = (
-        len(normalized_completed) / total
-        if total
-        else 0.0
-    )
+    completion_score = len(normalized_completed) / total if total else 0.0
 
     if cancelled:
         status: TaskStatus = "cancelled"
@@ -110,10 +95,7 @@ def evaluate_task_completion(
     elif needs_user_input:
         status = "needs_user_input"
 
-    elif (
-        total > 0
-        and not missing
-    ):
+    elif total > 0 and not missing:
         status = "completed"
 
     elif normalized_completed:
@@ -125,9 +107,7 @@ def evaluate_task_completion(
     else:
         status = "completed"
 
-    reason = str(
-        block_reason or ""
-    ).strip()
+    reason = str(block_reason or "").strip()
 
     if (
         status
@@ -139,28 +119,19 @@ def evaluate_task_completion(
         }
         and not reason
     ):
-        reason = (
-            "A tarefa não pôde ser concluída "
-            "no estado atual."
-        )
+        reason = "A tarefa não pôde ser concluída no estado atual."
 
     return {
         "task_status": status,
-        "task_requirements": (
-            normalized_requirements
-        ),
-        "completed_requirements": (
-            normalized_completed
-        ),
+        "task_requirements": (normalized_requirements),
+        "completed_requirements": (normalized_completed),
         "missing_requirements": missing,
         "task_block_reason": reason,
         "task_completion_score": round(
             completion_score,
             4,
         ),
-        "task_completion_evidence": dict(
-            evidence or {}
-        ),
+        "task_completion_evidence": dict(evidence or {}),
     }
 
 

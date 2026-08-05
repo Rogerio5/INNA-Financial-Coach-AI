@@ -28,9 +28,7 @@ def test_analisar_orcamento():
 
     assert resultado["despesas_totais"] == 3800.0
     assert resultado["saldo_mensal"] == 2500.0
-    assert resultado[
-        "renda_comprometida_percentual"
-    ] == 60.32
+    assert resultado["renda_comprometida_percentual"] == 60.32
     assert resultado["situacao"] == "saldo_positivo"
 
 
@@ -45,14 +43,9 @@ def test_analisar_orcamento_deficit():
 
 
 def test_capacidade_semanal():
-    resultado = calcular_capacidade_semanal(
-        1200
-    )
+    resultado = calcular_capacidade_semanal(1200)
 
-    assert (
-        resultado["valor_semanal_estimado"]
-        == 300.0
-    )
+    assert resultado["valor_semanal_estimado"] == 300.0
 
 
 def test_simular_formacao_reserva():
@@ -82,15 +75,9 @@ def test_divida_identifica_dados_ausentes():
         esta_atrasada=True,
     )
 
-    assert "parcela_mensal" in resultado[
-        "dados_ausentes"
-    ]
-    assert "divida_atrasada" in resultado[
-        "sinais_de_atencao"
-    ]
-    assert resultado[
-        "tem_dados_suficientes"
-    ] is False
+    assert "parcela_mensal" in resultado["dados_ausentes"]
+    assert "divida_atrasada" in resultado["sinais_de_atencao"]
+    assert resultado["tem_dados_suficientes"] is False
 
 
 def test_divida_completa():
@@ -103,9 +90,7 @@ def test_divida_completa():
         tipo_divida="cartao",
     )
 
-    assert resultado[
-        "tem_dados_suficientes"
-    ] is True
+    assert resultado["tem_dados_suficientes"] is True
     assert resultado["tipo_divida"] == "cartao"
 
 
@@ -131,10 +116,7 @@ def test_simular_meta_por_aporte():
 def test_registry_lista_tools():
     tools = listar_tools()
 
-    nomes = {
-        item["nome"]
-        for item in tools
-    }
+    nomes = {item["nome"] for item in tools}
 
     assert "analisar_orcamento" in nomes
     assert "simular_formacao_reserva" in nomes
@@ -149,9 +131,7 @@ def test_registry_executa_tool():
     )
 
     assert resultado["ok"] is True
-    assert resultado["resultado"][
-        "valor_semanal_estimado"
-    ] == 300.0
+    assert resultado["resultado"]["valor_semanal_estimado"] == 300.0
 
 
 def test_registry_tool_inexistente():
@@ -170,6 +150,7 @@ def test_rejeitar_valor_negativo():
             gastos_mensais=0,
         )
 
+
 def test_orcamento_nao_duplica_dividas_incluidas_nos_gastos():
     resultado = analisar_orcamento(
         renda_mensal=6300,
@@ -180,10 +161,7 @@ def test_orcamento_nao_duplica_dividas_incluidas_nos_gastos():
 
     assert resultado["despesas_totais"] == 3300.0
     assert resultado["saldo_mensal"] == 3000.0
-    assert (
-        resultado["parcelas_adicionais_consideradas"]
-        == 0.0
-    )
+    assert resultado["parcelas_adicionais_consideradas"] == 0.0
 
 
 def test_orcamento_acrescenta_dividas_quando_separadas():
@@ -196,8 +174,4 @@ def test_orcamento_acrescenta_dividas_quando_separadas():
 
     assert resultado["despesas_totais"] == 3800.0
     assert resultado["saldo_mensal"] == 2500.0
-    assert (
-        resultado["parcelas_adicionais_consideradas"]
-        == 500.0
-    )
-
+    assert resultado["parcelas_adicionais_consideradas"] == 500.0

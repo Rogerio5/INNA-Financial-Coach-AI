@@ -13,10 +13,7 @@ from api.security.telegram_webhook import (
 )
 
 
-SECRET = (
-    "Webhook_Secret_"
-    "0123456789abcdef0123456789abcdef"
-)
+SECRET = "Webhook_Secret_0123456789abcdef0123456789abcdef"
 
 CLAIM_TOKEN = "c" * 64
 FINGERPRINT = "a" * 64
@@ -37,22 +34,16 @@ def configure_secret(
 def _client() -> TestClient:
     app = FastAPI()
 
-    app.include_router(
-        telegram_webhook.router
-    )
+    app.include_router(telegram_webhook.router)
 
-    return TestClient(
-        app
-    )
+    return TestClient(app)
 
 
 def _path() -> str:
     route = next(
         route
-        for route
-        in telegram_webhook.router.routes
-        if route.name
-        == "telegram_webhook"
+        for route in telegram_webhook.router.routes
+        if route.name == "telegram_webhook"
     )
 
     return route.path
@@ -72,23 +63,12 @@ def _update() -> dict:
 
 
 def _lease():
-    return (
-        telegram_webhook
-        .TelegramUpdateProcessingLease(
-            update_id=1001,
-            attempt_count=1,
-            claim_token=CLAIM_TOKEN,
-            update_fingerprint=(
-                FINGERPRINT
-            ),
-        )
+    return telegram_webhook.TelegramUpdateProcessingLease(
+        update_id=1001,
+        attempt_count=1,
+        claim_token=CLAIM_TOKEN,
+        update_fingerprint=(FINGERPRINT),
     )
-
-
-
-
-
-
 
 
 @pytest.mark.parametrize(
@@ -107,11 +87,7 @@ def test_background_success_completes_receipt(
     monkeypatch.setattr(
         telegram_webhook,
         "process_telegram_update",
-        MagicMock(
-            return_value=(
-                processing_result
-            )
-        ),
+        MagicMock(return_value=(processing_result)),
     )
 
     complete = MagicMock()
@@ -132,12 +108,10 @@ def test_background_success_completes_receipt(
     telegram_webhook.process_claimed_telegram_update(
         _update(),
         lease,
-            conversation_bridge=object(),
+        conversation_bridge=object(),
     )
 
-    complete.assert_called_once_with(
-        lease
-    )
+    complete.assert_called_once_with(lease)
 
     fail.assert_not_called()
 
@@ -150,9 +124,7 @@ def test_background_processing_failure_marks_failed(
     monkeypatch.setattr(
         telegram_webhook,
         "process_telegram_update",
-        MagicMock(
-            return_value=False
-        ),
+        MagicMock(return_value=False),
     )
 
     complete = MagicMock()
@@ -173,16 +145,14 @@ def test_background_processing_failure_marks_failed(
     telegram_webhook.process_claimed_telegram_update(
         _update(),
         lease,
-            conversation_bridge=object(),
+        conversation_bridge=object(),
     )
 
     complete.assert_not_called()
 
     fail.assert_called_once_with(
         lease,
-        error_code=(
-            "telegram.processing_failed"
-        ),
+        error_code=("telegram.processing_failed"),
     )
 
 
@@ -194,11 +164,7 @@ def test_background_exception_marks_failed(
     monkeypatch.setattr(
         telegram_webhook,
         "process_telegram_update",
-        MagicMock(
-            side_effect=RuntimeError(
-                "secret processing details"
-            )
-        ),
+        MagicMock(side_effect=RuntimeError("secret processing details")),
     )
 
     fail = MagicMock()
@@ -212,7 +178,7 @@ def test_background_exception_marks_failed(
     telegram_webhook.process_claimed_telegram_update(
         _update(),
         lease,
-            conversation_bridge=object(),
+        conversation_bridge=object(),
     )
 
     fail.assert_called_once()
@@ -226,9 +192,7 @@ def test_complete_failure_attempts_safe_fail(
     monkeypatch.setattr(
         telegram_webhook,
         "process_telegram_update",
-        MagicMock(
-            return_value=True
-        ),
+        MagicMock(return_value=True),
     )
 
     monkeypatch.setattr(
@@ -236,8 +200,7 @@ def test_complete_failure_attempts_safe_fail(
         "complete_authenticated_telegram_update",
         MagicMock(
             side_effect=(
-                telegram_webhook
-                .TelegramUpdateReceiptUnavailableError(
+                telegram_webhook.TelegramUpdateReceiptUnavailableError(
                     "database secret"
                 )
             )
@@ -255,7 +218,7 @@ def test_complete_failure_attempts_safe_fail(
     telegram_webhook.process_claimed_telegram_update(
         _update(),
         lease,
-            conversation_bridge=object(),
+        conversation_bridge=object(),
     )
 
     fail.assert_called_once()
@@ -270,9 +233,7 @@ def test_background_receipt_error_is_sanitized(
     monkeypatch.setattr(
         telegram_webhook,
         "process_telegram_update",
-        MagicMock(
-            return_value=False
-        ),
+        MagicMock(return_value=False),
     )
 
     monkeypatch.setattr(
@@ -280,10 +241,8 @@ def test_background_receipt_error_is_sanitized(
         "fail_authenticated_telegram_update",
         MagicMock(
             side_effect=(
-                telegram_webhook
-                .TelegramUpdateReceiptServiceError(
-                    "postgresql://user:"
-                    "super-secret@database"
+                telegram_webhook.TelegramUpdateReceiptServiceError(
+                    "postgresql://user:super-secret@database"
                 )
             )
         ),
@@ -292,7 +251,7 @@ def test_background_receipt_error_is_sanitized(
     telegram_webhook.process_claimed_telegram_update(
         _update(),
         lease,
-            conversation_bridge=object(),
+        conversation_bridge=object(),
     )
 
     output = capsys.readouterr().out
@@ -302,33 +261,14 @@ def test_background_receipt_error_is_sanitized(
 
 
 def test_memory_cache_was_removed():
-    source = Path(
-        "api/telegram_webhook.py"
-    ).read_text(
-        encoding="utf-8"
-    )
+    source = Path("api/telegram_webhook.py").read_text(encoding="utf-8")
 
-    assert (
-        "PROCESSED_UPDATES"
-        not in source
-    )
+    assert "PROCESSED_UPDATES" not in source
 
-    assert (
-        "claim_authenticated_telegram_update"
-        in source
-    )
+    assert "claim_authenticated_telegram_update" in source
 
-    assert (
-        "process_claimed_telegram_update"
-        in source
-    )
+    assert "process_claimed_telegram_update" in source
 
-    assert (
-        "complete_authenticated_telegram_update"
-        in source
-    )
+    assert "complete_authenticated_telegram_update" in source
 
-    assert (
-        "fail_authenticated_telegram_update"
-        in source
-    )
+    assert "fail_authenticated_telegram_update" in source

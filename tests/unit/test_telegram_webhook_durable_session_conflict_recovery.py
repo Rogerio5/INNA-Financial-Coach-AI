@@ -25,18 +25,14 @@ class FakeSession:
         state,
     ):
         self.state = dict(state)
-        self.replace_calls.append(
-            dict(state)
-        )
+        self.replace_calls.append(dict(state))
 
     def set_language(
         self,
         language,
     ):
         self.language = language
-        self.language_calls.append(
-            language
-        )
+        self.language_calls.append(language)
 
 
 def test_conflict_reloads_reapplies_and_saves_once_more(
@@ -48,13 +44,9 @@ def test_conflict_reloads_reapplies_and_saves_once_more(
         FakeConflictError,
     )
 
-    original = FakeSession(
-        "original"
-    )
+    original = FakeSession("original")
 
-    reloaded = FakeSession(
-        "reloaded"
-    )
+    reloaded = FakeSession("reloaded")
 
     class Bridge:
         def __init__(self):
@@ -67,14 +59,10 @@ def test_conflict_reloads_reapplies_and_saves_once_more(
             *,
             only_if_changed=True,
         ):
-            self.save_calls.append(
-                session
-            )
+            self.save_calls.append(session)
 
             if len(self.save_calls) == 1:
-                raise FakeConflictError(
-                    "version conflict"
-                )
+                raise FakeConflictError("version conflict")
 
             return session
 
@@ -82,9 +70,7 @@ def test_conflict_reloads_reapplies_and_saves_once_more(
             self,
             session,
         ):
-            self.reload_calls.append(
-                session
-            )
+            self.reload_calls.append(session)
             return reloaded
 
     bridge = Bridge()
@@ -95,14 +81,11 @@ def test_conflict_reloads_reapplies_and_saves_once_more(
         "nome": "Rogerio",
     }
 
-    result = (
-        telegram_webhook
-        ._sync_and_save_durable_telegram_session(
-            conversation_bridge=bridge,
-            durable_session=original,
-            processing_state=state,
-            language="pt",
-        )
+    result = telegram_webhook._sync_and_save_durable_telegram_session(
+        conversation_bridge=bridge,
+        durable_session=original,
+        processing_state=state,
+        language="pt",
     )
 
     assert result is reloaded
@@ -112,9 +95,7 @@ def test_conflict_reloads_reapplies_and_saves_once_more(
         reloaded,
     ]
 
-    assert bridge.reload_calls == [
-        original
-    ]
+    assert bridge.reload_calls == [original]
 
     assert reloaded.state == state
     assert reloaded.language == "pt"
@@ -129,13 +110,9 @@ def test_second_conflict_is_propagated(
         FakeConflictError,
     )
 
-    original = FakeSession(
-        "original"
-    )
+    original = FakeSession("original")
 
-    reloaded = FakeSession(
-        "reloaded"
-    )
+    reloaded = FakeSession("reloaded")
 
     class Bridge:
         def __init__(self):
@@ -150,9 +127,7 @@ def test_second_conflict_is_propagated(
         ):
             self.save_count += 1
 
-            raise FakeConflictError(
-                f"conflict-{self.save_count}"
-            )
+            raise FakeConflictError(f"conflict-{self.save_count}")
 
         def reload_session(
             self,
@@ -168,8 +143,7 @@ def test_second_conflict_is_propagated(
         match="conflict-2",
     ):
         (
-            telegram_webhook
-            ._sync_and_save_durable_telegram_session(
+            telegram_webhook._sync_and_save_durable_telegram_session(
                 conversation_bridge=bridge,
                 durable_session=original,
                 processing_state={
@@ -192,9 +166,7 @@ def test_reload_none_propagates_original_conflict(
         FakeConflictError,
     )
 
-    original = FakeSession(
-        "original"
-    )
+    original = FakeSession("original")
 
     class Bridge:
         def save_session(
@@ -203,9 +175,7 @@ def test_reload_none_propagates_original_conflict(
             *,
             only_if_changed=True,
         ):
-            raise FakeConflictError(
-                "original conflict"
-            )
+            raise FakeConflictError("original conflict")
 
         def reload_session(
             self,
@@ -218,8 +188,7 @@ def test_reload_none_propagates_original_conflict(
         match="original conflict",
     ):
         (
-            telegram_webhook
-            ._sync_and_save_durable_telegram_session(
+            telegram_webhook._sync_and_save_durable_telegram_session(
                 conversation_bridge=Bridge(),
                 durable_session=original,
                 processing_state={
@@ -239,9 +208,7 @@ def test_non_conflict_failure_is_not_retried(
         FakeConflictError,
     )
 
-    original = FakeSession(
-        "original"
-    )
+    original = FakeSession("original")
 
     class Bridge:
         def __init__(self):
@@ -256,9 +223,7 @@ def test_non_conflict_failure_is_not_retried(
         ):
             self.save_count += 1
 
-            raise RuntimeError(
-                "database unavailable"
-            )
+            raise RuntimeError("database unavailable")
 
         def reload_session(
             self,
@@ -274,8 +239,7 @@ def test_non_conflict_failure_is_not_retried(
         match="database unavailable",
     ):
         (
-            telegram_webhook
-            ._sync_and_save_durable_telegram_session(
+            telegram_webhook._sync_and_save_durable_telegram_session(
                 conversation_bridge=bridge,
                 durable_session=original,
                 processing_state={
@@ -298,9 +262,7 @@ def test_success_does_not_reload(
         FakeConflictError,
     )
 
-    original = FakeSession(
-        "original"
-    )
+    original = FakeSession("original")
 
     class Bridge:
         def __init__(self):
@@ -325,16 +287,13 @@ def test_success_does_not_reload(
 
     bridge = Bridge()
 
-    result = (
-        telegram_webhook
-        ._sync_and_save_durable_telegram_session(
-            conversation_bridge=bridge,
-            durable_session=original,
-            processing_state={
-                "step": "nome",
-                "lang": "pt",
-            },
-        )
+    result = telegram_webhook._sync_and_save_durable_telegram_session(
+        conversation_bridge=bridge,
+        durable_session=original,
+        processing_state={
+            "step": "nome",
+            "lang": "pt",
+        },
     )
 
     assert result is original

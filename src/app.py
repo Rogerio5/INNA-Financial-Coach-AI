@@ -1,4 +1,3 @@
-
 def normalizar_risco_dashboard_inna(valor):
     mapa = {
         "low": "Baixo",
@@ -37,6 +36,7 @@ def normalizar_dataframe_risco_dashboard_inna(df):
 
     return df
 
+
 import os
 import sys
 from pathlib import Path
@@ -60,7 +60,14 @@ import streamlit.components.v1 as components
 from streamlit_js_eval import streamlit_js_eval
 import requests
 
-from src.api_client import gerar_diagnostico_api, enviar_feedback_api, baixar_relatorio_pdf_api, buscar_historico_usuario_api, verificar_api_online, enviar_relatorio_email
+from src.api_client import (
+    gerar_diagnostico_api,
+    enviar_feedback_api,
+    baixar_relatorio_pdf_api,
+    buscar_historico_usuario_api,
+    verificar_api_online,
+    enviar_relatorio_email,
+)
 from src.dashboard_pages.human_review.page import (
     render_human_review_admin_page,
 )
@@ -71,7 +78,6 @@ st.set_page_config(
     page_icon="💰",
     layout="wide",
 )
-
 
 
 def add_inna_chat_message_safe(role: str, content: str) -> None:
@@ -95,14 +101,17 @@ def add_inna_chat_message_safe(role: str, content: str) -> None:
         if last_role == role and last_content.lower() == content_clean.lower():
             return
 
-    st.session_state.inna_chat_history.append({
-        "role": role,
-        "content": content_clean,
-    })
+    st.session_state.inna_chat_history.append(
+        {
+            "role": role,
+            "content": content_clean,
+        }
+    )
 
 
 def apply_inna_dark_form_fix():
-    st.markdown("""
+    st.markdown(
+        """
     <style>
     /* ===== INPUTS / TEXTAREA / NUMBER INPUT ===== */
     div[data-baseweb="input"] > div,
@@ -244,15 +253,16 @@ def apply_inna_dark_form_fix():
 }
 
 </style>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 
 apply_inna_dark_form_fix()
 
 
-
-
-st.markdown("""
+st.markdown(
+    """
 <style>
 [data-testid="stAppViewContainer"] {
     background: linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
@@ -856,7 +866,9 @@ div[data-testid="stHorizontalBlock"] .stButton > button {
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 APP_MENU_OPTIONS_USER = [
     "🏠 Início",
     "🧾 Diagnóstico",
@@ -924,6 +936,7 @@ BROWSER_LANG_TO_APP_LANG = {
     "fr-ch": "ch",
     "it-ch": "ch",
 }
+
 
 def detect_browser_language() -> str:
     browser_lang = streamlit_js_eval(
@@ -1656,7 +1669,8 @@ if "theme_selector_top" in st.session_state:
     st.session_state.theme_name = st.session_state.theme_selector_top
 
 theme = THEMES_INNA[st.session_state.theme_name]
-st.markdown(f"""
+st.markdown(
+    f"""
 <style>
 .stApp {{
     background: {theme["bg"]} !important;
@@ -1731,10 +1745,9 @@ div[data-baseweb="select"] > div {{
     border: 1px solid {theme["border"]} !important;
 }}
 </style>
-""", unsafe_allow_html=True)
-
-
-
+""",
+    unsafe_allow_html=True,
+)
 
 
 MENU_TEXTS_INNA = {
@@ -1884,10 +1897,10 @@ MENU_TEXTS_INNA = {
     },
 }
 
+
 def menu_t(menu_item: str) -> str:
     lang = app_lang if app_lang in MENU_TEXTS_INNA else "pt"
     return MENU_TEXTS_INNA.get(lang, MENU_TEXTS_INNA["pt"]).get(menu_item, menu_item)
-
 
 
 # ==========================================
@@ -2064,13 +2077,16 @@ MENU_TEXTS_INNA_SAFE = {
     },
 }
 
+
 def menu_t(menu_item: str) -> str:
     lang = app_lang if app_lang in MENU_TEXTS_INNA_SAFE else "pt"
-    return MENU_TEXTS_INNA_SAFE.get(lang, MENU_TEXTS_INNA_SAFE["pt"]).get(menu_item, menu_item)
+    return MENU_TEXTS_INNA_SAFE.get(lang, MENU_TEXTS_INNA_SAFE["pt"]).get(
+        menu_item, menu_item
+    )
+
 
 def top_menu_t(menu_item: str) -> str:
     return menu_t(menu_item)
-
 
 
 # ==========================================
@@ -2319,12 +2335,17 @@ MENU_LABELS_FINAL = {
     },
 }
 
+
 def menu_label_final(menu_item: str) -> str:
     lang = st.session_state.get("app_lang", app_lang)
-    return MENU_LABELS_FINAL.get(lang, MENU_LABELS_FINAL["pt"]).get(menu_item, menu_item)
+    return MENU_LABELS_FINAL.get(lang, MENU_LABELS_FINAL["pt"]).get(
+        menu_item, menu_item
+    )
+
 
 def menu_t(menu_item: str) -> str:
     return menu_label_final(menu_item)
+
 
 def top_menu_t(menu_item: str) -> str:
     return menu_label_final(menu_item)
@@ -2619,6 +2640,7 @@ MENU_LABELS_INNA = {
 for lang_code in ["de", "fr", "it", "ro", "ru", "uk", "ar", "ch"]:
     MENU_LABELS_INNA[lang_code] = MENU_LABELS_INNA["en_us"]
 
+
 def ui_t(key: str) -> str:
     lang = app_lang if app_lang in GLOBAL_UI_TEXTS_INNA else "pt"
     return GLOBAL_UI_TEXTS_INNA.get(lang, GLOBAL_UI_TEXTS_INNA["pt"]).get(
@@ -2626,9 +2648,11 @@ def ui_t(key: str) -> str:
         GLOBAL_UI_TEXTS_INNA["pt"].get(key, key),
     )
 
+
 def menu_t(key: str) -> str:
     lang = app_lang if app_lang in MENU_LABELS_INNA else "pt"
     return MENU_LABELS_INNA.get(lang, MENU_LABELS_INNA["pt"]).get(key, key)
+
 
 # MENU_LABELS_INNA_COMPLETO
 MENU_LABELS_INNA = {
@@ -2790,9 +2814,12 @@ MENU_LABELS_INNA = {
     },
 }
 
+
 def menu_t(key: str) -> str:
     lang = app_lang if app_lang in MENU_LABELS_INNA else "pt"
     return MENU_LABELS_INNA.get(lang, MENU_LABELS_INNA["pt"]).get(key, key)
+
+
 def translate_risk_app(risk: str) -> str:
     """
     Traduz/normaliza risco para o idioma atual do app.
@@ -2847,6 +2874,7 @@ def translate_risk_app(risk: str) -> str:
 
     return risk_map.get(risk_key, {}).get(lang, risk_key)
 
+
 def label_with_currency(key: str) -> str:
     currency = current_currency_info.get("moeda", "")
     symbol = current_currency_info.get("simbolo", "")
@@ -2897,6 +2925,7 @@ def tr(key: str) -> str:
         APP_TRANSLATIONS["pt"].get(key, key),
     )
 
+
 current_currency_info = CURRENCY_BY_LANG.get(app_lang, CURRENCY_BY_LANG["pt"])
 
 st.sidebar.title("💰 INNA")
@@ -2910,11 +2939,14 @@ if "app_menu_selected" not in st.session_state:
 # TOPO PRINCIPAL DA INNA
 # =============================
 
-st.markdown("""
+st.markdown(
+    """
 <div class="inna-top-title">💰 INNA Financial Coach AI</div>
 <div class="inna-top-subtitle">Educadora Financeira Inteligente • Web App • IA • Diagnóstico financeiro</div>
 <div class="inna-top-divider"></div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # Linha superior: idioma, tema e login/sair
 top_lang_col, top_theme_col, top_login_col = st.columns([1.4, 1.1, 1])
@@ -2927,7 +2959,7 @@ with top_lang_col:
         format_func=lambda key: APP_LANG_LABELS[key],
         key="app_lang_top",
     )
-    
+
 
 # Atualiza idioma e moeda após mudança no seletor superior
 st.session_state.app_lang = app_lang
@@ -2953,7 +2985,11 @@ with top_login_col:
             st.session_state.show_login_page = False
             st.rerun()
     else:
-        if st.button(ui_t("login_button") if "ui_t" in globals() else "🔑 Entrar", use_container_width=True, key="btn_top_entrar"):
+        if st.button(
+            ui_t("login_button") if "ui_t" in globals() else "🔑 Entrar",
+            use_container_width=True,
+            key="btn_top_entrar",
+        ):
             st.session_state.show_login_page = True
             st.rerun()
 
@@ -3130,7 +3166,11 @@ menu_cols = st.columns(len(menu_options_top))
 for index_menu, menu_item in enumerate(menu_options_top):
     with menu_cols[index_menu]:
         label_menu = top_menu_t(menu_item)
-        if st.button(label_menu, use_container_width=True, key=f"top_menu_{index_menu}_{menu_item}"):
+        if st.button(
+            label_menu,
+            use_container_width=True,
+            key=f"top_menu_{index_menu}_{menu_item}",
+        ):
             st.session_state.app_menu_selected = menu_item
             st.rerun()
 
@@ -3158,15 +3198,15 @@ else:
     st.sidebar.info(ui_t("public_access"))
     st.sidebar.caption(ui_t("login_needed"))
 
-    if st.sidebar.button(ui_t("login_button"), use_container_width=True, key="btn_sidebar_login_publico"):
+    if st.sidebar.button(
+        ui_t("login_button"), use_container_width=True, key="btn_sidebar_login_publico"
+    ):
         st.session_state.app_menu_selected = "🔑 Entrar"
         st.rerun()
 
 st.sidebar.divider()
 
 st.sidebar.caption(ui_t("browser_warning"))
-
-
 
 
 HOME_TEXTS_INNA = {
@@ -3581,6 +3621,7 @@ HOME_TEXTS_INNA = {
 
 HOME_TEXTS_INNA["en_gb"] = HOME_TEXTS_INNA["en_us"].copy()
 
+
 def home_t(key: str) -> str:
     lang = app_lang if app_lang in HOME_TEXTS_INNA else "pt"
     return HOME_TEXTS_INNA.get(lang, HOME_TEXTS_INNA["pt"]).get(
@@ -3740,6 +3781,7 @@ LOGIN_TEXTS_SAFE_INNA = {
     },
 }
 
+
 def login_t(key: str) -> str:
     lang = st.session_state.get("app_lang", app_lang)
     return LOGIN_TEXTS_SAFE_INNA.get(lang, LOGIN_TEXTS_SAFE_INNA["pt"]).get(
@@ -3757,8 +3799,14 @@ def tela_login_inna_inline(destino_apos_login="📊 Panorama"):
         st.markdown(f"### {login_t('title')}")
         st.caption(login_t("caption"))
 
-        email_login = st.text_input(login_t("email"), key=f"login_email_inline_{destino_apos_login}")
-        senha_login = st.text_input(login_t("password"), type="password", key=f"login_senha_inline_{destino_apos_login}")
+        email_login = st.text_input(
+            login_t("email"), key=f"login_email_inline_{destino_apos_login}"
+        )
+        senha_login = st.text_input(
+            login_t("password"),
+            type="password",
+            key=f"login_senha_inline_{destino_apos_login}",
+        )
 
         with st.expander(login_t("demo")):
             st.info(
@@ -3766,7 +3814,11 @@ def tela_login_inna_inline(destino_apos_login="📊 Panorama"):
                 f"Administrador: {INNA_ADMIN_EMAIL} | Senha: {INNA_ADMIN_PASSWORD}"
             )
 
-        if st.button(login_t("button"), use_container_width=True, key=f"btn_login_inline_{destino_apos_login}"):
+        if st.button(
+            login_t("button"),
+            use_container_width=True,
+            key=f"btn_login_inline_{destino_apos_login}",
+        ):
             if email_login == INNA_USER_EMAIL and senha_login == INNA_USER_PASSWORD:
                 st.session_state.logado = True
                 st.session_state.show_login_page = False
@@ -3787,6 +3839,8 @@ def tela_login_inna_inline(destino_apos_login="📊 Panorama"):
 
             else:
                 st.error(login_t("error"))
+
+
 PAGINAS_PUBLICAS_INNA = ["🏠 Início", "🔑 Entrar", "ℹ️ Sobre"]
 
 
@@ -3794,8 +3848,6 @@ PAGINAS_PUBLICAS_INNA = ["🏠 Início", "🔑 Entrar", "ℹ️ Sobre"]
 if st.session_state.get("show_login_page") and not st.session_state.get("logado"):
     tela_login_inna_inline(destino_apos_login="📊 Panorama")
     st.stop()
-
-
 
 
 if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
@@ -3806,7 +3858,8 @@ if not st.session_state.get("logado") and app_menu not in PAGINAS_PUBLICAS_INNA:
 # AJUSTE VISUAL DOS CONTAINERS/CARDS
 # =============================
 
-st.markdown(f"""
+st.markdown(
+    f"""
 <style>
 
 /* Remove aparência cinza fraca dos containers com borda */
@@ -3855,13 +3908,16 @@ div[data-testid="stVerticalBlockBorderWrapper"] h3 {{
 }}
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # =============================
 # MENU SUPERIOR / SIDEBAR OCULTA
 # =============================
 
-st.markdown("""
+st.markdown(
+    """
 <style>
 [data-testid="stSidebar"] {
     display: none !important;
@@ -3901,13 +3957,16 @@ div[data-testid="stHorizontalBlock"] button {
     min-height: 40px;
 }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # =============================
 # AJUSTE FINAL DO CTA DA LANDING PAGE
 # =============================
 
-st.markdown(f"""
+st.markdown(
+    f"""
 <style>
 
 /* CTA final da landing page */
@@ -3949,9 +4008,12 @@ body:not(.dark) .cta-box {{
 }}
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
-st.markdown(f"""
+st.markdown(
+    f"""
 <style>
 
 /* ===== TOPO / TÍTULO ===== */
@@ -4067,13 +4129,16 @@ div[data-testid="metric-container"] {{
 }}
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ==========================================
 # AJUSTE FINAL DA LANDING PAGE
 # warning + cta + ações finais
 # ==========================================
-st.markdown(f"""
+st.markdown(
+    f"""
 <style>
 
 /* ===== AVISO IMPORTANTE ===== */
@@ -4162,12 +4227,15 @@ section[data-testid="stSidebar"] + div .warning-box strong {{
 }}
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ==========================================
 # CTA E AVISO FINAL - FUNDO ESCURO + BORDA DOURADA
 # ==========================================
-st.markdown("""
+st.markdown(
+    """
 <style>
 
 /* Aviso importante */
@@ -4229,12 +4297,15 @@ st.markdown("""
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ==========================================
 # CTA FINAL DEFINITIVO - ESCURO + DOURADO
 # ==========================================
-st.markdown("""
+st.markdown(
+    """
 <style>
 
 /* Força o CTA final a NÃO ficar branco */
@@ -4306,12 +4377,15 @@ st.markdown("""
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ==========================================
 # PADRÃO FINAL: AVISO + CTA COMO CARD PREMIUM
 # ==========================================
-st.markdown("""
+st.markdown(
+    """
 <style>
 
 /* Aviso importante e CTA final no mesmo padrão */
@@ -4370,12 +4444,15 @@ st.markdown("""
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ==========================================
 # FORÇA FINAL DO CTA - CORREÇÃO DEFINITIVA
 # ==========================================
-st.markdown("""
+st.markdown(
+    """
 <style>
 
 /* CTA final definitivo */
@@ -4424,12 +4501,15 @@ st.markdown("""
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ==========================================
 # CTA FINAL PREMIUM - CLASSE EXCLUSIVA
 # ==========================================
-st.markdown("""
+st.markdown(
+    """
 <style>
 
 .final-cta-premium {
@@ -4470,7 +4550,9 @@ st.markdown("""
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ==========================================
 # FINAL DA LANDING POR TEMA
@@ -4502,7 +4584,9 @@ elif landing_theme_name in ["Escuro preto", "Preto dourado", "Preto vermelho"]:
     landing_cta_border = "#D4AF37"
 
 else:
-    landing_warning_bg = "linear-gradient(135deg, #164A86 0%, #071C36 48%, #03101E 100%)"
+    landing_warning_bg = (
+        "linear-gradient(135deg, #164A86 0%, #071C36 48%, #03101E 100%)"
+    )
     landing_warning_text = "#FFFFFF"
     landing_warning_strong = "#F6D889"
     landing_warning_border = "#D4AF37"
@@ -4513,7 +4597,8 @@ else:
     landing_cta_border = "#D4AF37"
 
 
-st.markdown(f"""
+st.markdown(
+    f"""
 <style>
 
 /* ===== AVISO IMPORTANTE POR TEMA ===== */
@@ -4588,12 +4673,15 @@ st.markdown(f"""
 }}
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ==========================================
 # LANDING PAGE MAIS COMPACTA
 # ==========================================
-st.markdown("""
+st.markdown(
+    """
 <style>
 
 /* Área geral mais compacta */
@@ -4726,12 +4814,15 @@ h2, h3 {
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ==========================================
 # REDUZIR ESPAÇO ENTRE MENU SUPERIOR E HERO
 # ==========================================
-st.markdown("""
+st.markdown(
+    """
 <style>
 
 /* Reduz espaço geral do topo */
@@ -4782,15 +4873,15 @@ div[data-testid="stImage"] {
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 if app_menu == "🏠 Início":
-
     # HERO PRINCIPAL DA INNA SEM HTML GRANDE
     # Foto à esquerda, textos/cards à direita, sem aparecer código na tela
 
     st.markdown(
-        f'<div class="premium-badge">{home_t("badge")}</div>',
-        unsafe_allow_html=True
+        f'<div class="premium-badge">{home_t("badge")}</div>', unsafe_allow_html=True
     )
 
     hero_col_img, hero_col_text = st.columns([0.9, 1.25], vertical_alignment="center")
@@ -4812,165 +4903,233 @@ if app_menu == "🏠 Início":
 
             with card_1:
                 with st.container(border=True):
-                    st.markdown("### 📋 " + home_t("feature_1_title").replace("📋 ", ""))
+                    st.markdown(
+                        "### 📋 " + home_t("feature_1_title").replace("📋 ", "")
+                    )
                     st.write(home_t("feature_1_text"))
 
                 with st.container(border=True):
-                    st.markdown("### 📄 " + home_t("feature_3_title").replace("📄 ", ""))
+                    st.markdown(
+                        "### 📄 " + home_t("feature_3_title").replace("📄 ", "")
+                    )
                     st.write(home_t("feature_3_text"))
 
             with card_2:
                 with st.container(border=True):
-                    st.markdown("### 🧠 " + home_t("feature_2_title").replace("🧠 ", ""))
+                    st.markdown(
+                        "### 🧠 " + home_t("feature_2_title").replace("🧠 ", "")
+                    )
                     st.write(home_t("feature_2_text"))
 
                 with st.container(border=True):
-                    st.markdown("### 🌐 " + home_t("feature_4_title").replace("🌐 ", ""))
+                    st.markdown(
+                        "### 🌐 " + home_t("feature_4_title").replace("🌐 ", "")
+                    )
                     st.write(home_t("feature_4_text"))
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown(f"""
+    st.markdown(
+        f"""
     <div class="info-box">
         {home_t("intro")}
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
-    st.markdown(f'<div class="section-title">{home_t("what_title")}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="section-title">{home_t("what_title")}</div>',
+        unsafe_allow_html=True,
+    )
 
-    st.markdown(f"""
+    st.markdown(
+        f"""
     <div class="text-normal">
         {home_t("what_text")}
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
-    st.markdown(f'<div class="section-title">{home_t("features_title")}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="section-title">{home_t("features_title")}</div>',
+        unsafe_allow_html=True,
+    )
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div class="feature-card">
             <h3>{home_t("feature_1_title")}</h3>
             <p>{home_t("feature_1_text")}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div class="feature-card">
             <h3>{home_t("feature_3_title")}</h3>
             <p>{home_t("feature_3_text")}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
     with col2:
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div class="feature-card">
             <h3>{home_t("feature_2_title")}</h3>
             <p>{home_t("feature_2_text")}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div class="feature-card">
             <h3>{home_t("feature_4_title")}</h3>
             <p>{home_t("feature_4_text")}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
-    st.markdown(f'<div class="section-title">{home_t("how_title")}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="section-title">{home_t("how_title")}</div>',
+        unsafe_allow_html=True,
+    )
 
     col_step1, col_step2, col_step3, col_step4 = st.columns(4)
 
     with col_step1:
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div class="step-card">
             <h3>1</h3>
             <h4>{home_t("step_1_title")}</h4>
             <p>{home_t("step_1_text")}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
     with col_step2:
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div class="step-card">
             <h3>2</h3>
             <h4>{home_t("step_2_title")}</h4>
             <p>{home_t("step_2_text")}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
     with col_step3:
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div class="step-card">
             <h3>3</h3>
             <h4>{home_t("step_3_title")}</h4>
             <p>{home_t("step_3_text")}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
     with col_step4:
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div class="step-card">
             <h3>4</h3>
             <h4>{home_t("step_4_title")}</h4>
             <p>{home_t("step_4_text")}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
-    st.markdown(f'<div class="section-title">{home_t("quick_title")}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="section-title">{home_t("quick_title")}</div>',
+        unsafe_allow_html=True,
+    )
 
     m1, m2, m3, m4 = st.columns(4)
 
     with m1:
         st.metric(
             home_t("income"),
-            format_currency_app(3500, current_currency_info["simbolo"], current_currency_info["moeda"]),
-            "+12%"
+            format_currency_app(
+                3500, current_currency_info["simbolo"], current_currency_info["moeda"]
+            ),
+            "+12%",
         )
     with m2:
         st.metric(
             home_t("expenses"),
-            format_currency_app(2150, current_currency_info["simbolo"], current_currency_info["moeda"]),
-            "-5%"
+            format_currency_app(
+                2150, current_currency_info["simbolo"], current_currency_info["moeda"]
+            ),
+            "-5%",
         )
     with m3:
         st.metric(
             home_t("debts"),
-            format_currency_app(780, current_currency_info["simbolo"], current_currency_info["moeda"]),
-            "-10%"
+            format_currency_app(
+                780, current_currency_info["simbolo"], current_currency_info["moeda"]
+            ),
+            "-10%",
         )
     with m4:
         st.metric(
             home_t("reserve"),
-            format_currency_app(1200, current_currency_info["simbolo"], current_currency_info["moeda"]),
-            "+18%"
+            format_currency_app(
+                1200, current_currency_info["simbolo"], current_currency_info["moeda"]
+            ),
+            "+18%",
         )
 
-    st.markdown(f"""
+    st.markdown(
+        f"""
     <div class="warning-box">
         <strong>{home_t("warning")}</strong>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
-    st.markdown(f"""
+    st.markdown(
+        f"""
     <div class="final-cta-premium">
         <div class="final-cta-title">{home_t("cta_title")}</div>
         <div class="final-cta-subtitle">{home_t("cta_text")}</div>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
     col_start1, col_start2, col_start3 = st.columns(3)
 
     if col_start1.button(home_t("btn_start"), use_container_width=True):
-        st.session_state.app_menu_selected = "🧾 Diagnóstico" if st.session_state.get("logado") else "🔑 Entrar"
+        st.session_state.app_menu_selected = (
+            "🧾 Diagnóstico" if st.session_state.get("logado") else "🔑 Entrar"
+        )
         st.rerun()
 
     if col_start2.button(home_t("btn_report"), use_container_width=True):
-        st.session_state.app_menu_selected = "📄 Relatório" if st.session_state.get("logado") else "🔑 Entrar"
+        st.session_state.app_menu_selected = (
+            "📄 Relatório" if st.session_state.get("logado") else "🔑 Entrar"
+        )
         st.rerun()
 
     if col_start3.button(home_t("btn_about"), use_container_width=True):
@@ -4978,7 +5137,6 @@ if app_menu == "🏠 Início":
         st.rerun()
 
     st.stop()
-
 
 
 CHAT_TEXTS_INNA = {
@@ -5111,33 +5269,33 @@ def formatar_mensagem_chat_inna(texto: str) -> str:
     # Remove aviso repetido no chat
     texto = texto.replace(
         "Essa orientação é educativa e não substitui consultoria financeira profissional.",
-        ""
+        "",
     )
 
     # Linguagem mais simples e orientativa
     texto = texto.replace(
         "A INNA sugere este caminho para melhorar sua reserva financeira:",
-        "Vamos por partes. Vou te orientar de um jeito simples:"
+        "Vamos por partes. Vou te orientar de um jeito simples:",
     )
 
     texto = texto.replace(
         "Vamos por partes. O melhor caminho para melhorar sua reserva é:",
-        "Vamos por partes. Vou te orientar de um jeito simples:"
+        "Vamos por partes. Vou te orientar de um jeito simples:",
     )
 
     texto = texto.replace(
         "Melhor caminho para melhorar sua reserva financeira:",
-        "Vou te mostrar um caminho simples para começar:"
+        "Vou te mostrar um caminho simples para começar:",
     )
 
     texto = texto.replace(
         "Quer que eu te mostre o melhor caminho agora?",
-        "<div class='inna-pergunta-proximo-passo'>Quer que eu monte uma meta simples para esta semana?</div>"
+        "<div class='inna-pergunta-proximo-passo'>Quer que eu monte uma meta simples para esta semana?</div>",
     )
 
     texto = texto.replace(
         "Quer que eu monte uma meta simples para esta semana?",
-        "<div class='inna-pergunta-proximo-passo'>Quer que eu monte uma meta simples para esta semana?</div>"
+        "<div class='inna-pergunta-proximo-passo'>Quer que eu monte uma meta simples para esta semana?</div>",
     )
 
     # Corrige R$ para o Streamlit/Markdown não interpretar o símbolo $
@@ -5153,11 +5311,15 @@ def chat_t(key: str) -> str:
         key,
         CHAT_TEXTS_INNA["pt"].get(key, key),
     )
+
+
 if app_menu == "💬 Conversar":
     st.title(chat_t("title"))
     st.caption(chat_t("caption"))
 
-    st.info("Chat educativo conectado ao RAG local da INNA. Faça uma pergunta e continue conversando na mesma página.")
+    st.info(
+        "Chat educativo conectado ao RAG local da INNA. Faça uma pergunta e continue conversando na mesma página."
+    )
 
     if "inna_chat_history" not in st.session_state:
         st.session_state.inna_chat_history = [
@@ -5179,7 +5341,9 @@ if app_menu == "💬 Conversar":
         st.rerun()
 
     st.write("### 💡 Perguntas rápidas")
-    st.caption("Escolha uma pergunta para começar a conversa com a INNA de forma mais fácil.")
+    st.caption(
+        "Escolha uma pergunta para começar a conversa com a INNA de forma mais fácil."
+    )
 
     quick_questions = [
         "Como melhorar minha reserva?",
@@ -5193,7 +5357,11 @@ if app_menu == "💬 Conversar":
 
     for index_question, question in enumerate(quick_questions):
         with quick_cols[index_question % 2]:
-            if st.button(question, use_container_width=True, key=f"quick_question_{index_question}"):
+            if st.button(
+                question,
+                use_container_width=True,
+                key=f"quick_question_{index_question}",
+            ):
                 st.session_state.quick_chat_question_inna = question
                 st.rerun()
 
@@ -5207,7 +5375,9 @@ if app_menu == "💬 Conversar":
                     unsafe_allow_html=True,
                 )
 
-            st.markdown(formatar_mensagem_chat_inna(message["content"]), unsafe_allow_html=True)
+            st.markdown(
+                formatar_mensagem_chat_inna(message["content"]), unsafe_allow_html=True
+            )
 
     pergunta_rapida_pendente = st.session_state.pop("quick_chat_question_inna", "")
 
@@ -5247,16 +5417,15 @@ if app_menu == "💬 Conversar":
 
     texto_digitado_chat = str(pergunta_demo or "").lower()
 
-    parece_anotacao_financeira = (
-        any(char.isdigit() for char in texto_digitado_chat)
-        and (
-            "ganho" in texto_digitado_chat
-            or "salario" in texto_digitado_chat
-            or "salário" in texto_digitado_chat
-            or "gasto" in texto_digitado_chat
-            or "guardar" in texto_digitado_chat
-            or "sobra" in texto_digitado_chat
-        )
+    parece_anotacao_financeira = any(
+        char.isdigit() for char in texto_digitado_chat
+    ) and (
+        "ganho" in texto_digitado_chat
+        or "salario" in texto_digitado_chat
+        or "salário" in texto_digitado_chat
+        or "gasto" in texto_digitado_chat
+        or "guardar" in texto_digitado_chat
+        or "sobra" in texto_digitado_chat
     )
 
     if parece_anotacao_financeira:
@@ -5318,7 +5487,6 @@ if app_menu == "💬 Conversar":
                 "pensao",
                 "bico",
                 "extra",
-
                 "gasto",
                 "gastos",
                 "conta",
@@ -5341,7 +5509,6 @@ if app_menu == "💬 Conversar":
                 "parcelas",
                 "divida",
                 "dívida",
-
                 "guardo",
                 "guardar",
                 "juntar",
@@ -5361,9 +5528,10 @@ if app_menu == "💬 Conversar":
                 "livre",
             ]
 
-            parece_anotacao_financeira = (
-                any(char.isdigit() for char in texto_anotacao)
-                and any(palavra in texto_anotacao for palavra in palavras_anotacao_financeira)
+            parece_anotacao_financeira = any(
+                char.isdigit() for char in texto_anotacao
+            ) and any(
+                palavra in texto_anotacao for palavra in palavras_anotacao_financeira
             )
 
             if parece_anotacao_financeira:
@@ -5376,7 +5544,10 @@ if app_menu == "💬 Conversar":
                     f"Texto do usuário:\n{pergunta_usuario}"
                 )
 
-            elif pergunta_usuario.lower().strip("?!. ") in continuacoes_curtas and ultima_resposta_inna:
+            elif (
+                pergunta_usuario.lower().strip("?!. ") in continuacoes_curtas
+                and ultima_resposta_inna
+            ):
                 pergunta_para_rag = (
                     "CONTINUACAO_DA_CONVERSA\n"
                     "O usuário respondeu de forma curta e quer continuar. "
@@ -5388,11 +5559,13 @@ if app_menu == "💬 Conversar":
                     f"Resposta curta do usuário:\n{pergunta_usuario}"
                 )
 
-            st.session_state.inna_chat_history.append({
-                "role": "user",
-                "content": pergunta_usuario,
-                "source": None,
-            })
+            st.session_state.inna_chat_history.append(
+                {
+                    "role": "user",
+                    "content": pergunta_usuario,
+                    "source": None,
+                }
+            )
 
             try:
                 api_base_url = API_BASE_URL
@@ -5413,7 +5586,10 @@ if app_menu == "💬 Conversar":
                 if rag_response.status_code == 200:
                     rag_data = rag_response.json()
 
-                    resposta_rag = rag_data.get("resposta") or "Não encontrei uma resposta suficiente na base da INNA."
+                    resposta_rag = (
+                        rag_data.get("resposta")
+                        or "Não encontrei uma resposta suficiente na base da INNA."
+                    )
                     fontes_rag = rag_data.get("fontes", [])
 
                     fonte_resumida = None
@@ -5422,11 +5598,13 @@ if app_menu == "💬 Conversar":
                         fonte_principal = fontes_rag[0]
                         fonte_resumida = "📚 Fonte usada pela INNA"
 
-                    st.session_state.inna_chat_history.append({
-                        "role": "assistant",
-                        "content": resposta_rag,
-                        "source": fonte_resumida,
-                    })
+                    st.session_state.inna_chat_history.append(
+                        {
+                            "role": "assistant",
+                            "content": resposta_rag,
+                            "source": fonte_resumida,
+                        }
+                    )
 
                     st.session_state.limpar_chat_input_inna = True
                     st.rerun()
@@ -5438,7 +5616,9 @@ if app_menu == "💬 Conversar":
                     )
 
             except requests.exceptions.ConnectionError:
-                st.error("Não foi possível conectar na FastAPI. Confirme se a API está rodando em http://127.0.0.1:8000.")
+                st.error(
+                    "Não foi possível conectar na FastAPI. Confirme se a API está rodando em http://127.0.0.1:8000."
+                )
 
             except requests.exceptions.Timeout:
                 st.error("A API demorou muito para responder. Tente novamente.")
@@ -5452,11 +5632,12 @@ if app_menu == "💬 Conversar":
     st.stop()
 
 
-
 def render_observabilidade_rag_inna():
     st.divider()
     st.subheader("📊 Observabilidade RAG — INNA")
-    st.caption("Métricas das perguntas respondidas pelo RAG, Gemini, fallback e Segurança Financeira.")
+    st.caption(
+        "Métricas das perguntas respondidas pelo RAG, Gemini, fallback e Segurança Financeira."
+    )
 
     try:
         from src.rag_engine import get_rag_connection
@@ -5476,7 +5657,9 @@ def render_observabilidade_rag_inna():
             COALESCE(MAX(tempo_resposta_ms), 0)
         FROM inna_rag_logs;
         """)
-        gemini_total, seguranca_total, fallback_total, tempo_medio, tempo_maximo = cur_obs.fetchone()
+        gemini_total, seguranca_total, fallback_total, tempo_medio, tempo_maximo = (
+            cur_obs.fetchone()
+        )
 
         c1, c2, c3, c4, c5 = st.columns(5)
         c1.metric("Perguntas", total_logs)
@@ -5534,8 +5717,6 @@ def render_observabilidade_rag_inna():
         st.warning(f"Não foi possível carregar métricas RAG: {error}")
 
 
-
-
 if app_menu == "📊 Observabilidade RAG":
     render_observabilidade_rag_inna()
     st.stop()
@@ -5546,32 +5727,17 @@ if app_menu in [
     "Admin",
     "Admin Analytics",
 ]:
-    authenticated = bool(
-        st.session_state.get("logado")
-    )
+    authenticated = bool(st.session_state.get("logado"))
 
-    is_admin = (
-        st.session_state.get(
-            "perfil_usuario"
-        )
-        == "admin"
-    )
+    is_admin = st.session_state.get("perfil_usuario") == "admin"
 
     if not authenticated or not is_admin:
-        st.error(
-            "Acesso restrito ao administrador "
-            "autenticado da INNA."
-        )
+        st.error("Acesso restrito ao administrador autenticado da INNA.")
         st.stop()
 
-    st.title(
-        "🔐 Admin Analytics — INNA"
-    )
+    st.title("🔐 Admin Analytics — INNA")
 
-    st.caption(
-        "Dashboard administrativo geral "
-        "da plataforma INNA."
-    )
+    st.caption("Dashboard administrativo geral da plataforma INNA.")
 
     try:
         from src.dashboard import main as render_admin_analytics
@@ -5585,10 +5751,7 @@ if app_menu in [
         render_admin_analytics_fragment()
 
     except Exception:
-        st.error(
-            "Não foi possível carregar o Dashboard Analytics "
-            "integrado."
-        )
+        st.error("Não foi possível carregar o Dashboard Analytics integrado.")
 
     st.stop()
 
@@ -5597,16 +5760,9 @@ if app_menu in [
     "🧑‍⚖️ Revisão Humana",
     "Revisão Humana",
 ]:
-    authenticated = bool(
-        st.session_state.get("logado")
-    )
+    authenticated = bool(st.session_state.get("logado"))
 
-    is_admin = (
-        st.session_state.get(
-            "perfil_usuario"
-        )
-        == "admin"
-    )
+    is_admin = st.session_state.get("perfil_usuario") == "admin"
 
     admin_identity = str(
         st.session_state.get(
@@ -5615,15 +5771,8 @@ if app_menu in [
         )
     ).strip()
 
-    if (
-        not authenticated
-        or not is_admin
-        or not admin_identity
-    ):
-        st.error(
-            "Acesso restrito ao administrador "
-            "autenticado da INNA."
-        )
+    if not authenticated or not is_admin or not admin_identity:
+        st.error("Acesso restrito ao administrador autenticado da INNA.")
         st.stop()
 
     render_human_review_admin_page()
@@ -5813,12 +5962,15 @@ LOGIN_TEXTS_INNA = {
     },
 }
 
+
 def login_t(key: str) -> str:
     lang = app_lang if app_lang in LOGIN_TEXTS_INNA else "pt"
     return LOGIN_TEXTS_INNA.get(lang, LOGIN_TEXTS_INNA["pt"]).get(
         key,
         LOGIN_TEXTS_INNA["pt"].get(key, key),
     )
+
+
 if app_menu == "🔑 Entrar":
     st.title(login_t("title"))
     st.caption(login_t("caption"))
@@ -5830,7 +5982,9 @@ if app_menu == "🔑 Entrar":
         st.markdown(f"#### {login_t('subtitle')}")
 
         email_login = st.text_input(login_t("email"), key="login_email")
-        senha_login = st.text_input(login_t("password"), type="password", key="login_senha")
+        senha_login = st.text_input(
+            login_t("password"), type="password", key="login_senha"
+        )
 
         with st.expander(login_t("demo")):
             st.info(
@@ -5892,7 +6046,6 @@ if app_menu == "ℹ️ Sobre":
 
     st.success(ui_t("about_success"))
     st.stop()
-
 
 
 INTERNAL_PAGE_TEXTS_INNA = {
@@ -6205,7 +6358,12 @@ INTERNAL_PAGE_TEXTS_INNA = {
 }
 
 for lang_code in ["uk", "ar", "ch"]:
-    INTERNAL_PAGE_TEXTS_INNA[lang_code] = INTERNAL_PAGE_TEXTS_INNA.get(lang_code, INTERNAL_PAGE_TEXTS_INNA["en_us"]) if lang_code in INTERNAL_PAGE_TEXTS_INNA else INTERNAL_PAGE_TEXTS_INNA["en_us"]
+    INTERNAL_PAGE_TEXTS_INNA[lang_code] = (
+        INTERNAL_PAGE_TEXTS_INNA.get(lang_code, INTERNAL_PAGE_TEXTS_INNA["en_us"])
+        if lang_code in INTERNAL_PAGE_TEXTS_INNA
+        else INTERNAL_PAGE_TEXTS_INNA["en_us"]
+    )
+
 
 def page_t(key: str) -> str:
     lang = app_lang if app_lang in INTERNAL_PAGE_TEXTS_INNA else "pt"
@@ -6213,7 +6371,11 @@ def page_t(key: str) -> str:
         key,
         INTERNAL_PAGE_TEXTS_INNA["pt"].get(key, key),
     )
-st.caption(f"{page_t('current_page')}: {menu_t(app_menu) if 'menu_t' in globals() else app_menu}")
+
+
+st.caption(
+    f"{page_t('current_page')}: {menu_t(app_menu) if 'menu_t' in globals() else app_menu}"
+)
 
 
 if app_menu == "📊 Panorama":
@@ -6437,7 +6599,9 @@ if app_menu == "📚 Histórico":
                     with st.expander(f"Diagnóstico {item['id']} — {item['nome']}"):
                         st.write(f"**Score:** {item.get('score_financeiro')}")
                         st.write(f"**Risco:** {item.get('nivel_risco')}")
-                        st.write(f"**Moeda:** {item.get('moeda')} {item.get('simbolo_moeda')}")
+                        st.write(
+                            f"**Moeda:** {item.get('moeda')} {item.get('simbolo_moeda')}"
+                        )
 
                         st.write(f"**{tr('diagnosis')}:**")
                         st.write(item["diagnostico"])
@@ -6548,33 +6712,28 @@ if submitted:
         "simbolo_moeda": currency_info["simbolo"],
     }
 
-    usuario_id_confiavel = str(
-        st.session_state.get(
-            "usuario"
-        )
-        or ""
-    ).strip()
+    usuario_id_confiavel = str(st.session_state.get("usuario") or "").strip()
 
     if not usuario_id_confiavel:
-        st.error(
-            "Sua sessão não possui uma identidade "
-            "autenticada. Entre novamente."
-        )
+        st.error("Sua sessão não possui uma identidade autenticada. Entre novamente.")
         st.stop()
 
     try:
         with st.spinner(tr("loading")):
             response = gerar_diagnostico_api(
                 payload,
-                usuario_id_confiavel=(
-                    usuario_id_confiavel
-                ),
+                usuario_id_confiavel=(usuario_id_confiavel),
             )
 
         # Garante que moeda e símbolo apareçam na interface,
         # mesmo quando a API não devolver esses campos no response.
-        response.setdefault("moeda", payload.get("moeda", current_currency_info["moeda"]))
-        response.setdefault("simbolo_moeda", payload.get("simbolo_moeda", current_currency_info["simbolo"]))
+        response.setdefault(
+            "moeda", payload.get("moeda", current_currency_info["moeda"])
+        )
+        response.setdefault(
+            "simbolo_moeda",
+            payload.get("simbolo_moeda", current_currency_info["simbolo"]),
+        )
 
         st.session_state.last_payload = payload
         st.session_state.last_response = response
@@ -6661,11 +6820,17 @@ if st.session_state.last_response:
         )
 
         if st.button(tr("email_button"), key=f"btn_email_{diagnostico_id}"):
-            if not email_destino or "@" not in email_destino or "." not in email_destino:
+            if (
+                not email_destino
+                or "@" not in email_destino
+                or "." not in email_destino
+            ):
                 st.warning(tr("email_invalid"))
             else:
                 try:
-                    currency_info = CURRENCY_BY_LANG.get(app_lang, CURRENCY_BY_LANG["pt"])
+                    currency_info = CURRENCY_BY_LANG.get(
+                        app_lang, CURRENCY_BY_LANG["pt"]
+                    )
                     enviar_relatorio_email(
                         diagnostico_id,
                         email_destino,
@@ -6679,7 +6844,6 @@ if st.session_state.last_response:
 
     else:
         st.warning(tr("pdf_unavailable"))
-
 
     st.divider()
 
@@ -6764,12 +6928,8 @@ if buscar_historico:
 
             score_data = [
                 {
-                    "Diagnóstico": (
-                        f"ID {item['id']}"
-                    ),
-                    "Score financeiro": float(
-                        item["score_financeiro"]
-                    ),
+                    "Diagnóstico": (f"ID {item['id']}"),
+                    "Score financeiro": float(item["score_financeiro"]),
                 }
                 for item in historico_ordenado
             ]
@@ -6799,13 +6959,9 @@ if buscar_historico:
                     },
                 },
                 fill="tozeroy",
-                fillcolor=(
-                    "rgba(56, 189, 248, 0.15)"
-                ),
+                fillcolor=("rgba(56, 189, 248, 0.15)"),
                 hovertemplate=(
-                    "<b>%{x}</b><br>"
-                    "Score financeiro: %{y:.1f}/100"
-                    "<extra></extra>"
+                    "<b>%{x}</b><br>Score financeiro: %{y:.1f}/100<extra></extra>"
                 ),
             )
 
@@ -6836,20 +6992,14 @@ if buscar_historico:
 
             fig_score_historico.update_xaxes(
                 color="#F8FAFC",
-                gridcolor=(
-                    "rgba(148, 163, 184, 0.16)"
-                ),
+                gridcolor=("rgba(148, 163, 184, 0.16)"),
             )
 
             fig_score_historico.update_yaxes(
                 range=[0, 100],
                 color="#F8FAFC",
-                gridcolor=(
-                    "rgba(148, 163, 184, 0.16)"
-                ),
-                zerolinecolor=(
-                    "rgba(148, 163, 184, 0.25)"
-                ),
+                gridcolor=("rgba(148, 163, 184, 0.16)"),
+                zerolinecolor=("rgba(148, 163, 184, 0.25)"),
             )
 
             st.plotly_chart(
@@ -6872,8 +7022,12 @@ if buscar_historico:
                         f"**{tr('estimated_balance')}:** "
                         f"{format_currency_app(item['saldo_estimado'], item.get('simbolo_moeda', current_currency_info['simbolo']), item.get('moeda', current_currency_info['moeda']))}"
                     )
-                    st.write(f"**{tr('income_commitment')}:** {item['comprometimento_renda_percentual']:.2f}%")
-                    st.write(f"**{tr('reserve_months')}:** {item['meses_reserva_estimados']:.2f}")
+                    st.write(
+                        f"**{tr('income_commitment')}:** {item['comprometimento_renda_percentual']:.2f}%"
+                    )
+                    st.write(
+                        f"**{tr('reserve_months')}:** {item['meses_reserva_estimados']:.2f}"
+                    )
                     st.write(f"**{tr('goal')}:** {item.get('objetivo', '')}")
 
                     st.write(f"**{tr('diagnosis')}:**")

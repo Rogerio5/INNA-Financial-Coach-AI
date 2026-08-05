@@ -21,9 +21,7 @@ import streamlit as st
 
 TIMELINE_CHART_BG = "#020617"
 TIMELINE_CHART_TEXT = "#F8FAFC"
-TIMELINE_CHART_GRID = (
-    "rgba(148, 163, 184, 0.16)"
-)
+TIMELINE_CHART_GRID = "rgba(148, 163, 184, 0.16)"
 
 
 TIMELINE_TEXTS = {
@@ -53,13 +51,9 @@ TIMELINE_TEXTS = {
         "ignored": "Ignoradas",
         "total_duration": "Duração total",
         "cold_start_warning": (
-            "Possível cold start detectado: "
-            "a execução ultrapassou 30 segundos."
+            "Possível cold start detectado: a execução ultrapassou 30 segundos."
         ),
-        "execution_ok": (
-            "Execução dentro do limite esperado "
-            "para o ambiente atual."
-        ),
+        "execution_ok": ("Execução dentro do limite esperado para o ambiente atual."),
         "slowest_step": "Etapa mais lenta",
         "question": "### Pergunta",
         "execution_path": "## Caminho da execução",
@@ -83,29 +77,19 @@ TIMELINE_TEXTS = {
         "message": "Mensagem",
         "error": "Erro",
         "minimum_two_traces": (
-            "São necessários pelo menos dois traces "
-            "para fazer uma comparação."
+            "São necessários pelo menos dois traces para fazer uma comparação."
         ),
-        "ignore_cold_start": (
-            "Ignorar traces classificados como cold start"
-        ),
+        "ignore_cold_start": ("Ignorar traces classificados como cold start"),
         "not_enough_after_filter": (
-            "Não existem dois traces disponíveis após "
-            "aplicar o filtro de cold start."
+            "Não existem dois traces disponíveis após aplicar o filtro de cold start."
         ),
         "chart_scale": "Escala do gráfico",
         "linear": "Linear",
         "logarithmic": "Logarítmica",
         "different_traces": "Selecione dois traces diferentes.",
-        "trace_b_slower": (
-            "O Trace B foi {percent:.2f}% mais lento que o Trace A."
-        ),
-        "trace_b_faster": (
-            "O Trace B foi {percent:.2f}% mais rápido que o Trace A."
-        ),
-        "same_duration": (
-            "Os dois traces tiveram a mesma duração total."
-        ),
+        "trace_b_slower": ("O Trace B foi {percent:.2f}% mais lento que o Trace A."),
+        "trace_b_faster": ("O Trace B foi {percent:.2f}% mais rápido que o Trace A."),
+        "same_duration": ("Os dois traces tiveram a mesma duração total."),
         "absolute_difference": "Diferença absoluta",
         "percentage_difference": "Diferença percentual",
         "slowest_step_column": "Etapa mais lenta",
@@ -128,9 +112,7 @@ TIMELINE_TEXTS = {
         "no_traces": "No traces have been recorded yet.",
         "search_filters": "## Search and filters",
         "search_label": "Search user, question, or Trace ID",
-        "search_placeholder": (
-            "Example: demo_user, remaining balance..."
-        ),
+        "search_placeholder": ("Example: demo_user, remaining balance..."),
         "user": "User",
         "origin": "Origin",
         "all_masculine": "All",
@@ -145,12 +127,10 @@ TIMELINE_TEXTS = {
         "ignored": "Skipped",
         "total_duration": "Total duration",
         "cold_start_warning": (
-            "Possible cold start detected: "
-            "the execution exceeded 30 seconds."
+            "Possible cold start detected: the execution exceeded 30 seconds."
         ),
         "execution_ok": (
-            "Execution completed within the expected limit "
-            "for the current environment."
+            "Execution completed within the expected limit for the current environment."
         ),
         "slowest_step": "Slowest step",
         "question": "### Question",
@@ -174,35 +154,23 @@ TIMELINE_TEXTS = {
         "step": "Step",
         "message": "Message",
         "error": "Error",
-        "minimum_two_traces": (
-            "At least two traces are required for comparison."
-        ),
-        "ignore_cold_start": (
-            "Ignore traces classified as cold starts"
-        ),
+        "minimum_two_traces": ("At least two traces are required for comparison."),
+        "ignore_cold_start": ("Ignore traces classified as cold starts"),
         "not_enough_after_filter": (
-            "Two traces are not available after applying "
-            "the cold-start filter."
+            "Two traces are not available after applying the cold-start filter."
         ),
         "chart_scale": "Chart scale",
         "linear": "Linear",
         "logarithmic": "Logarithmic",
         "different_traces": "Select two different traces.",
-        "trace_b_slower": (
-            "Trace B was {percent:.2f}% slower than Trace A."
-        ),
-        "trace_b_faster": (
-            "Trace B was {percent:.2f}% faster than Trace A."
-        ),
-        "same_duration": (
-            "Both traces had the same total duration."
-        ),
+        "trace_b_slower": ("Trace B was {percent:.2f}% slower than Trace A."),
+        "trace_b_faster": ("Trace B was {percent:.2f}% faster than Trace A."),
+        "same_duration": ("Both traces had the same total duration."),
         "absolute_difference": "Absolute difference",
         "percentage_difference": "Percentage difference",
         "slowest_step_column": "Slowest step",
         "log_caption": (
-            "Logarithmic scale: displayed values represent "
-            "log10(duration in ms + 1)."
+            "Logarithmic scale: displayed values represent log10(duration in ms + 1)."
         ),
         "log_axis": "log10(duration in ms + 1)",
         "duration_axis": "Duration (ms)",
@@ -219,9 +187,7 @@ TIMELINE_TEXTS = {
         "no_traces": "Todavía no hay trazas registradas.",
         "search_filters": "## Búsqueda y filtros",
         "search_label": "Buscar usuario, pregunta o Trace ID",
-        "search_placeholder": (
-            "Ej.: demo_user, saldo restante..."
-        ),
+        "search_placeholder": ("Ej.: demo_user, saldo restante..."),
         "user": "Usuario",
         "origin": "Origen",
         "all_masculine": "Todos",
@@ -236,12 +202,10 @@ TIMELINE_TEXTS = {
         "ignored": "Omitidas",
         "total_duration": "Duración total",
         "cold_start_warning": (
-            "Posible cold start detectado: "
-            "la ejecución superó los 30 segundos."
+            "Posible cold start detectado: la ejecución superó los 30 segundos."
         ),
         "execution_ok": (
-            "Ejecución dentro del límite esperado "
-            "para el entorno actual."
+            "Ejecución dentro del límite esperado para el entorno actual."
         ),
         "slowest_step": "Etapa más lenta",
         "question": "### Pregunta",
@@ -265,35 +229,23 @@ TIMELINE_TEXTS = {
         "step": "Etapa",
         "message": "Mensaje",
         "error": "Error",
-        "minimum_two_traces": (
-            "Se necesitan al menos dos trazas para compararlas."
-        ),
-        "ignore_cold_start": (
-            "Ignorar trazas clasificadas como cold start"
-        ),
+        "minimum_two_traces": ("Se necesitan al menos dos trazas para compararlas."),
+        "ignore_cold_start": ("Ignorar trazas clasificadas como cold start"),
         "not_enough_after_filter": (
-            "No hay dos trazas disponibles después de aplicar "
-            "el filtro de cold start."
+            "No hay dos trazas disponibles después de aplicar el filtro de cold start."
         ),
         "chart_scale": "Escala del gráfico",
         "linear": "Lineal",
         "logarithmic": "Logarítmica",
         "different_traces": "Selecciona dos trazas diferentes.",
-        "trace_b_slower": (
-            "La traza B fue un {percent:.2f}% más lenta que la A."
-        ),
-        "trace_b_faster": (
-            "La traza B fue un {percent:.2f}% más rápida que la A."
-        ),
-        "same_duration": (
-            "Las dos trazas tuvieron la misma duración total."
-        ),
+        "trace_b_slower": ("La traza B fue un {percent:.2f}% más lenta que la A."),
+        "trace_b_faster": ("La traza B fue un {percent:.2f}% más rápida que la A."),
+        "same_duration": ("Las dos trazas tuvieron la misma duración total."),
         "absolute_difference": "Diferencia absoluta",
         "percentage_difference": "Diferencia porcentual",
         "slowest_step_column": "Etapa más lenta",
         "log_caption": (
-            "Escala logarítmica: los valores representan "
-            "log10(duración en ms + 1)."
+            "Escala logarítmica: los valores representan log10(duración en ms + 1)."
         ),
         "log_axis": "log10(duración en ms + 1)",
         "duration_axis": "Duración (ms)",
@@ -310,9 +262,7 @@ TIMELINE_TEXTS = {
         "no_traces": "لا توجد مسارات مسجلة حتى الآن.",
         "search_filters": "## البحث والتصفية",
         "search_label": "البحث عن مستخدم أو سؤال أو Trace ID",
-        "search_placeholder": (
-            "مثال: demo_user، الرصيد المتبقي..."
-        ),
+        "search_placeholder": ("مثال: demo_user، الرصيد المتبقي..."),
         "user": "المستخدم",
         "origin": "المصدر",
         "all_masculine": "الكل",
@@ -326,13 +276,8 @@ TIMELINE_TEXTS = {
         "failures": "الإخفاقات",
         "ignored": "المتجاهلة",
         "total_duration": "المدة الإجمالية",
-        "cold_start_warning": (
-            "تم اكتشاف بدء بارد محتمل: "
-            "تجاوز التنفيذ 30 ثانية."
-        ),
-        "execution_ok": (
-            "اكتمل التنفيذ ضمن الحد المتوقع للبيئة الحالية."
-        ),
+        "cold_start_warning": ("تم اكتشاف بدء بارد محتمل: تجاوز التنفيذ 30 ثانية."),
+        "execution_ok": ("اكتمل التنفيذ ضمن الحد المتوقع للبيئة الحالية."),
         "slowest_step": "أبطأ مرحلة",
         "question": "### السؤال",
         "execution_path": "## مسار التنفيذ",
@@ -355,34 +300,21 @@ TIMELINE_TEXTS = {
         "step": "المرحلة",
         "message": "الرسالة",
         "error": "الخطأ",
-        "minimum_two_traces": (
-            "يلزم وجود مسارين على الأقل لإجراء المقارنة."
-        ),
-        "ignore_cold_start": (
-            "تجاهل المسارات المصنفة كبداية باردة"
-        ),
-        "not_enough_after_filter": (
-            "لا يتوفر مساران بعد تطبيق مرشح البداية الباردة."
-        ),
+        "minimum_two_traces": ("يلزم وجود مسارين على الأقل لإجراء المقارنة."),
+        "ignore_cold_start": ("تجاهل المسارات المصنفة كبداية باردة"),
+        "not_enough_after_filter": ("لا يتوفر مساران بعد تطبيق مرشح البداية الباردة."),
         "chart_scale": "مقياس الرسم",
         "linear": "خطي",
         "logarithmic": "لوغاريتمي",
         "different_traces": "اختر مسارين مختلفين.",
-        "trace_b_slower": (
-            "كان المسار B أبطأ بنسبة {percent:.2f}% من المسار A."
-        ),
-        "trace_b_faster": (
-            "كان المسار B أسرع بنسبة {percent:.2f}% من المسار A."
-        ),
-        "same_duration": (
-            "كان للمسارين المدة الإجمالية نفسها."
-        ),
+        "trace_b_slower": ("كان المسار B أبطأ بنسبة {percent:.2f}% من المسار A."),
+        "trace_b_faster": ("كان المسار B أسرع بنسبة {percent:.2f}% من المسار A."),
+        "same_duration": ("كان للمسارين المدة الإجمالية نفسها."),
         "absolute_difference": "الفرق المطلق",
         "percentage_difference": "الفرق النسبي",
         "slowest_step_column": "أبطأ مرحلة",
         "log_caption": (
-            "المقياس اللوغاريتمي: تمثل القيم "
-            "log10(المدة بالمللي ثانية + 1)."
+            "المقياس اللوغاريتمي: تمثل القيم log10(المدة بالمللي ثانية + 1)."
         ),
         "log_axis": "log10(المدة بالمللي ثانية + 1)",
         "duration_axis": "المدة (مللي ثانية)",
@@ -418,12 +350,10 @@ TIMELINE_TEXTS["fr"] = {
     "ignored": "Ignorées",
     "total_duration": "Durée totale",
     "cold_start_warning": (
-        "Démarrage à froid possible détecté : "
-        "l’exécution a dépassé 30 secondes."
+        "Démarrage à froid possible détecté : l’exécution a dépassé 30 secondes."
     ),
     "execution_ok": (
-        "Exécution terminée dans la limite attendue "
-        "pour l’environnement actuel."
+        "Exécution terminée dans la limite attendue pour l’environnement actuel."
     ),
     "slowest_step": "Étape la plus lente",
     "question": "### Question",
@@ -450,9 +380,7 @@ TIMELINE_TEXTS["fr"] = {
     "minimum_two_traces": (
         "Au moins deux traces sont nécessaires pour la comparaison."
     ),
-    "ignore_cold_start": (
-        "Ignorer les traces classées comme démarrage à froid"
-    ),
+    "ignore_cold_start": ("Ignorer les traces classées comme démarrage à froid"),
     "not_enough_after_filter": (
         "Deux traces ne sont pas disponibles après "
         "l’application du filtre de démarrage à froid."
@@ -461,15 +389,9 @@ TIMELINE_TEXTS["fr"] = {
     "linear": "Linéaire",
     "logarithmic": "Logarithmique",
     "different_traces": "Sélectionnez deux traces différentes.",
-    "trace_b_slower": (
-        "La trace B était {percent:.2f}% plus lente que la trace A."
-    ),
-    "trace_b_faster": (
-        "La trace B était {percent:.2f}% plus rapide que la trace A."
-    ),
-    "same_duration": (
-        "Les deux traces avaient la même durée totale."
-    ),
+    "trace_b_slower": ("La trace B était {percent:.2f}% plus lente que la trace A."),
+    "trace_b_faster": ("La trace B était {percent:.2f}% plus rapide que la trace A."),
+    "same_duration": ("Les deux traces avaient la même durée totale."),
     "absolute_difference": "Différence absolue",
     "percentage_difference": "Différence en pourcentage",
     "slowest_step_column": "Étape la plus lente",
@@ -508,8 +430,7 @@ TIMELINE_TEXTS["de"] = {
     "ignored": "Übersprungen",
     "total_duration": "Gesamtdauer",
     "cold_start_warning": (
-        "Möglicher Kaltstart erkannt: "
-        "Die Ausführung dauerte länger als 30 Sekunden."
+        "Möglicher Kaltstart erkannt: Die Ausführung dauerte länger als 30 Sekunden."
     ),
     "execution_ok": (
         "Die Ausführung lag innerhalb des erwarteten Grenzwerts "
@@ -540,26 +461,17 @@ TIMELINE_TEXTS["de"] = {
     "minimum_two_traces": (
         "Für einen Vergleich sind mindestens zwei Traces erforderlich."
     ),
-    "ignore_cold_start": (
-        "Als Kaltstart klassifizierte Traces ignorieren"
-    ),
+    "ignore_cold_start": ("Als Kaltstart klassifizierte Traces ignorieren"),
     "not_enough_after_filter": (
-        "Nach Anwendung des Kaltstartfilters sind "
-        "keine zwei Traces verfügbar."
+        "Nach Anwendung des Kaltstartfilters sind keine zwei Traces verfügbar."
     ),
     "chart_scale": "Diagrammskala",
     "linear": "Linear",
     "logarithmic": "Logarithmisch",
     "different_traces": "Wählen Sie zwei unterschiedliche Traces.",
-    "trace_b_slower": (
-        "Trace B war {percent:.2f}% langsamer als Trace A."
-    ),
-    "trace_b_faster": (
-        "Trace B war {percent:.2f}% schneller als Trace A."
-    ),
-    "same_duration": (
-        "Beide Traces hatten dieselbe Gesamtdauer."
-    ),
+    "trace_b_slower": ("Trace B war {percent:.2f}% langsamer als Trace A."),
+    "trace_b_faster": ("Trace B war {percent:.2f}% schneller als Trace A."),
+    "same_duration": ("Beide Traces hatten dieselbe Gesamtdauer."),
     "absolute_difference": "Absolute Differenz",
     "percentage_difference": "Prozentuale Differenz",
     "slowest_step_column": "Langsamster Schritt",
@@ -598,12 +510,10 @@ TIMELINE_TEXTS["it"] = {
     "ignored": "Ignorate",
     "total_duration": "Durata totale",
     "cold_start_warning": (
-        "Possibile cold start rilevato: "
-        "l’esecuzione ha superato i 30 secondi."
+        "Possibile cold start rilevato: l’esecuzione ha superato i 30 secondi."
     ),
     "execution_ok": (
-        "Esecuzione completata entro il limite previsto "
-        "per l’ambiente attuale."
+        "Esecuzione completata entro il limite previsto per l’ambiente attuale."
     ),
     "slowest_step": "Fase più lenta",
     "question": "### Domanda",
@@ -627,15 +537,10 @@ TIMELINE_TEXTS["it"] = {
     "step": "Fase",
     "message": "Messaggio",
     "error": "Errore",
-    "minimum_two_traces": (
-        "Sono necessari almeno due trace per il confronto."
-    ),
-    "ignore_cold_start": (
-        "Ignora i trace classificati come cold start"
-    ),
+    "minimum_two_traces": ("Sono necessari almeno due trace per il confronto."),
+    "ignore_cold_start": ("Ignora i trace classificati come cold start"),
     "not_enough_after_filter": (
-        "Non sono disponibili due trace dopo "
-        "l’applicazione del filtro cold start."
+        "Non sono disponibili due trace dopo l’applicazione del filtro cold start."
     ),
     "chart_scale": "Scala del grafico",
     "linear": "Lineare",
@@ -647,9 +552,7 @@ TIMELINE_TEXTS["it"] = {
     "trace_b_faster": (
         "Il trace B è stato più veloce del {percent:.2f}% rispetto al trace A."
     ),
-    "same_duration": (
-        "I due trace hanno avuto la stessa durata totale."
-    ),
+    "same_duration": ("I due trace hanno avuto la stessa durata totale."),
     "absolute_difference": "Differenza assoluta",
     "percentage_difference": "Differenza percentuale",
     "slowest_step_column": "Fase più lenta",
@@ -672,22 +575,14 @@ TIMELINE_TEXTS["ro"] = {
     "refresh": "🔄 Actualizează cronologia",
     "no_traces": "Nu există încă trasări înregistrate.",
     "search_filters": "## Căutare și filtre",
-    "search_label": (
-        "Caută utilizator, întrebare sau Trace ID"
-    ),
-    "search_placeholder": (
-        "Exemplu: demo_user, sold rămas..."
-    ),
+    "search_label": ("Caută utilizator, întrebare sau Trace ID"),
+    "search_placeholder": ("Exemplu: demo_user, sold rămas..."),
     "user": "Utilizator",
     "origin": "Origine",
     "all_masculine": "Toți",
     "all_feminine": "Toate",
-    "only_failures": (
-        "Afișează numai trasările cu erori"
-    ),
-    "traces_found": (
-        "{count} trasare/trasări găsită/găsite."
-    ),
+    "only_failures": ("Afișează numai trasările cu erori"),
+    "traces_found": ("{count} trasare/trasări găsită/găsite."),
     "recent_traces": "## Trasări recente",
     "select_trace": "Selectează un Trace ID",
     "execution_summary": "## Rezumatul execuției",
@@ -696,13 +591,9 @@ TIMELINE_TEXTS["ro"] = {
     "ignored": "Ignorate",
     "total_duration": "Durată totală",
     "cold_start_warning": (
-        "A fost detectat un posibil cold start: "
-        "execuția a depășit 30 de secunde."
+        "A fost detectat un posibil cold start: execuția a depășit 30 de secunde."
     ),
-    "execution_ok": (
-        "Execuția s-a încheiat în limita așteptată "
-        "pentru mediul actual."
-    ),
+    "execution_ok": ("Execuția s-a încheiat în limita așteptată pentru mediul actual."),
     "slowest_step": "Cea mai lentă etapă",
     "question": "### Întrebare",
     "execution_path": "## Traseul execuției",
@@ -725,40 +616,27 @@ TIMELINE_TEXTS["ro"] = {
     "step": "Etapă",
     "message": "Mesaj",
     "error": "Eroare",
-    "minimum_two_traces": (
-        "Sunt necesare cel puțin două trasări "
-        "pentru comparație."
-    ),
-    "ignore_cold_start": (
-        "Ignoră trasările clasificate drept cold start"
-    ),
+    "minimum_two_traces": ("Sunt necesare cel puțin două trasări pentru comparație."),
+    "ignore_cold_start": ("Ignoră trasările clasificate drept cold start"),
     "not_enough_after_filter": (
-        "Nu sunt disponibile două trasări după "
-        "aplicarea filtrului cold start."
+        "Nu sunt disponibile două trasări după aplicarea filtrului cold start."
     ),
     "chart_scale": "Scara graficului",
     "linear": "Liniară",
     "logarithmic": "Logaritmică",
-    "different_traces": (
-        "Selectează două trasări diferite."
-    ),
+    "different_traces": ("Selectează două trasări diferite."),
     "trace_b_slower": (
-        "Trasarea B a fost cu {percent:.2f}% "
-        "mai lentă decât trasarea A."
+        "Trasarea B a fost cu {percent:.2f}% mai lentă decât trasarea A."
     ),
     "trace_b_faster": (
-        "Trasarea B a fost cu {percent:.2f}% "
-        "mai rapidă decât trasarea A."
+        "Trasarea B a fost cu {percent:.2f}% mai rapidă decât trasarea A."
     ),
-    "same_duration": (
-        "Cele două trasări au avut aceeași durată totală."
-    ),
+    "same_duration": ("Cele două trasări au avut aceeași durată totală."),
     "absolute_difference": "Diferență absolută",
     "percentage_difference": "Diferență procentuală",
     "slowest_step_column": "Cea mai lentă etapă",
     "log_caption": (
-        "Scară logaritmică: valorile afișate reprezintă "
-        "log10(durata în ms + 1)."
+        "Scară logaritmică: valorile afișate reprezintă log10(durata în ms + 1)."
     ),
     "log_axis": "log10(durata în ms + 1)",
     "duration_axis": "Durată (ms)",
@@ -775,19 +653,13 @@ TIMELINE_TEXTS["ua"] = {
     "refresh": "🔄 Оновити часову шкалу",
     "no_traces": "Трасування ще не зареєстровані.",
     "search_filters": "## Пошук і фільтри",
-    "search_label": (
-        "Пошук користувача, запитання або Trace ID"
-    ),
-    "search_placeholder": (
-        "Приклад: demo_user, залишок коштів..."
-    ),
+    "search_label": ("Пошук користувача, запитання або Trace ID"),
+    "search_placeholder": ("Приклад: demo_user, залишок коштів..."),
     "user": "Користувач",
     "origin": "Джерело",
     "all_masculine": "Усі",
     "all_feminine": "Усі",
-    "only_failures": (
-        "Показувати лише трасування з помилками"
-    ),
+    "only_failures": ("Показувати лише трасування з помилками"),
     "traces_found": "Знайдено трасувань: {count}.",
     "recent_traces": "## Останні трасування",
     "select_trace": "Виберіть Trace ID",
@@ -797,12 +669,10 @@ TIMELINE_TEXTS["ua"] = {
     "ignored": "Пропущені",
     "total_duration": "Загальна тривалість",
     "cold_start_warning": (
-        "Виявлено можливий холодний запуск: "
-        "виконання тривало понад 30 секунд."
+        "Виявлено можливий холодний запуск: виконання тривало понад 30 секунд."
     ),
     "execution_ok": (
-        "Виконання завершилося в межах очікуваного "
-        "часу для поточного середовища."
+        "Виконання завершилося в межах очікуваного часу для поточного середовища."
     ),
     "slowest_step": "Найповільніший етап",
     "question": "### Запитання",
@@ -826,34 +696,20 @@ TIMELINE_TEXTS["ua"] = {
     "step": "Етап",
     "message": "Повідомлення",
     "error": "Помилка",
-    "minimum_two_traces": (
-        "Для порівняння потрібно щонайменше два трасування."
-    ),
-    "ignore_cold_start": (
-        "Ігнорувати трасування, класифіковані "
-        "як холодний запуск"
-    ),
+    "minimum_two_traces": ("Для порівняння потрібно щонайменше два трасування."),
+    "ignore_cold_start": ("Ігнорувати трасування, класифіковані як холодний запуск"),
     "not_enough_after_filter": (
-        "Після застосування фільтра холодного запуску "
-        "немає двох доступних трасувань."
+        "Після застосування фільтра холодного запуску немає двох доступних трасувань."
     ),
     "chart_scale": "Масштаб графіка",
     "linear": "Лінійний",
     "logarithmic": "Логарифмічний",
-    "different_traces": (
-        "Виберіть два різні трасування."
-    ),
+    "different_traces": ("Виберіть два різні трасування."),
     "trace_b_slower": (
-        "Трасування B було на {percent:.2f}% "
-        "повільнішим за трасування A."
+        "Трасування B було на {percent:.2f}% повільнішим за трасування A."
     ),
-    "trace_b_faster": (
-        "Трасування B було на {percent:.2f}% "
-        "швидшим за трасування A."
-    ),
-    "same_duration": (
-        "Обидва трасування мали однакову загальну тривалість."
-    ),
+    "trace_b_faster": ("Трасування B було на {percent:.2f}% швидшим за трасування A."),
+    "same_duration": ("Обидва трасування мали однакову загальну тривалість."),
     "absolute_difference": "Абсолютна різниця",
     "percentage_difference": "Відсоткова різниця",
     "slowest_step_column": "Найповільніший етап",
@@ -876,19 +732,13 @@ TIMELINE_TEXTS["ru"] = {
     "refresh": "🔄 Обновить временную шкалу",
     "no_traces": "Трассировки ещё не зарегистрированы.",
     "search_filters": "## Поиск и фильтры",
-    "search_label": (
-        "Поиск пользователя, вопроса или Trace ID"
-    ),
-    "search_placeholder": (
-        "Пример: demo_user, остаток средств..."
-    ),
+    "search_label": ("Поиск пользователя, вопроса или Trace ID"),
+    "search_placeholder": ("Пример: demo_user, остаток средств..."),
     "user": "Пользователь",
     "origin": "Источник",
     "all_masculine": "Все",
     "all_feminine": "Все",
-    "only_failures": (
-        "Показывать только трассировки с ошибками"
-    ),
+    "only_failures": ("Показывать только трассировки с ошибками"),
     "traces_found": "Найдено трассировок: {count}.",
     "recent_traces": "## Последние трассировки",
     "select_trace": "Выберите Trace ID",
@@ -898,12 +748,10 @@ TIMELINE_TEXTS["ru"] = {
     "ignored": "Пропущенные",
     "total_duration": "Общая длительность",
     "cold_start_warning": (
-        "Обнаружен возможный холодный запуск: "
-        "выполнение заняло более 30 секунд."
+        "Обнаружен возможный холодный запуск: выполнение заняло более 30 секунд."
     ),
     "execution_ok": (
-        "Выполнение завершилось в пределах ожидаемого "
-        "времени для текущей среды."
+        "Выполнение завершилось в пределах ожидаемого времени для текущей среды."
     ),
     "slowest_step": "Самый медленный этап",
     "question": "### Вопрос",
@@ -927,34 +775,20 @@ TIMELINE_TEXTS["ru"] = {
     "step": "Этап",
     "message": "Сообщение",
     "error": "Ошибка",
-    "minimum_two_traces": (
-        "Для сравнения необходимы как минимум две трассировки."
-    ),
+    "minimum_two_traces": ("Для сравнения необходимы как минимум две трассировки."),
     "ignore_cold_start": (
-        "Игнорировать трассировки, классифицированные "
-        "как холодный запуск"
+        "Игнорировать трассировки, классифицированные как холодный запуск"
     ),
     "not_enough_after_filter": (
-        "После применения фильтра холодного запуска "
-        "нет двух доступных трассировок."
+        "После применения фильтра холодного запуска нет двух доступных трассировок."
     ),
     "chart_scale": "Масштаб графика",
     "linear": "Линейный",
     "logarithmic": "Логарифмический",
-    "different_traces": (
-        "Выберите две разные трассировки."
-    ),
-    "trace_b_slower": (
-        "Трассировка B была на {percent:.2f}% "
-        "медленнее трассировки A."
-    ),
-    "trace_b_faster": (
-        "Трассировка B была на {percent:.2f}% "
-        "быстрее трассировки A."
-    ),
-    "same_duration": (
-        "Обе трассировки имели одинаковую общую длительность."
-    ),
+    "different_traces": ("Выберите две разные трассировки."),
+    "trace_b_slower": ("Трассировка B была на {percent:.2f}% медленнее трассировки A."),
+    "trace_b_faster": ("Трассировка B была на {percent:.2f}% быстрее трассировки A."),
+    "same_duration": ("Обе трассировки имели одинаковую общую длительность."),
     "absolute_difference": "Абсолютная разница",
     "percentage_difference": "Процентная разница",
     "slowest_step_column": "Самый медленный этап",
@@ -970,9 +804,7 @@ TIMELINE_TEXTS["ru"] = {
 # Ajustes finais dos textos visíveis conforme o seletor.
 TIMELINE_TEXTS["pt"].update(
     {
-        "page_title": (
-            "🧭 Linha do tempo das execuções — INNA"
-        ),
+        "page_title": ("🧭 Linha do tempo das execuções — INNA"),
         "status": "Situação",
         "linear": "Escala linear",
     }
@@ -980,29 +812,21 @@ TIMELINE_TEXTS["pt"].update(
 
 TIMELINE_TEXTS["en_us"].update(
     {
-        "page_title": (
-            "🧭 Execution timeline — INNA"
-        ),
+        "page_title": ("🧭 Execution timeline — INNA"),
     }
 )
 
-TIMELINE_TEXTS["en_gb"] = dict(
-    TIMELINE_TEXTS["en_us"]
-)
+TIMELINE_TEXTS["en_gb"] = dict(TIMELINE_TEXTS["en_us"])
 
 TIMELINE_TEXTS["es"].update(
     {
-        "page_title": (
-            "🧭 Línea de tiempo de las ejecuciones — INNA"
-        ),
+        "page_title": ("🧭 Línea de tiempo de las ejecuciones — INNA"),
     }
 )
 
 TIMELINE_TEXTS["fr"].update(
     {
-        "page_title": (
-            "🧭 Chronologie des exécutions — INNA"
-        ),
+        "page_title": ("🧭 Chronologie des exécutions — INNA"),
         "question": "### Question posée",
         "possible": "Éventuel",
         "message": "Message technique",
@@ -1011,9 +835,7 @@ TIMELINE_TEXTS["fr"].update(
 
 TIMELINE_TEXTS["de"].update(
     {
-        "page_title": (
-            "🧭 Zeitachse der Ausführungen — INNA"
-        ),
+        "page_title": ("🧭 Zeitachse der Ausführungen — INNA"),
         "start": "Beginn",
         "status": "Zustand",
         "linear": "Lineare Skala",
@@ -1022,48 +844,36 @@ TIMELINE_TEXTS["de"].update(
 
 TIMELINE_TEXTS["it"].update(
     {
-        "page_title": (
-            "🧭 Cronologia delle esecuzioni — INNA"
-        ),
+        "page_title": ("🧭 Cronologia delle esecuzioni — INNA"),
     }
 )
 
 TIMELINE_TEXTS["ro"].update(
     {
-        "page_title": (
-            "🧭 Cronologia execuțiilor — INNA"
-        ),
+        "page_title": ("🧭 Cronologia execuțiilor — INNA"),
     }
 )
 
 TIMELINE_TEXTS["ua"].update(
     {
-        "page_title": (
-            "🧭 Хронологія виконань — INNA"
-        ),
+        "page_title": ("🧭 Хронологія виконань — INNA"),
     }
 )
 
 TIMELINE_TEXTS["ru"].update(
     {
-        "page_title": (
-            "🧭 Хронология выполнений — INNA"
-        ),
+        "page_title": ("🧭 Хронология выполнений — INNA"),
     }
 )
 
 TIMELINE_TEXTS["sa"].update(
     {
-        "page_title": (
-            "🧭 المخطط الزمني لعمليات التنفيذ — INNA"
-        ),
+        "page_title": ("🧭 المخطط الزمني لعمليات التنفيذ — INNA"),
     }
 )
 
 # O código ch segue o alemão utilizado pelo projeto.
-TIMELINE_TEXTS["ch"] = dict(
-    TIMELINE_TEXTS["de"]
-)
+TIMELINE_TEXTS["ch"] = dict(TIMELINE_TEXTS["de"])
 
 
 def timeline_lang() -> str:
@@ -1116,7 +926,6 @@ def timeline_t(
     return key
 
 
-
 def aplicar_tema_timeline_chart(
     fig,
     *,
@@ -1147,17 +956,13 @@ def aplicar_tema_timeline_chart(
     fig.update_xaxes(
         color=TIMELINE_CHART_TEXT,
         gridcolor=TIMELINE_CHART_GRID,
-        zerolinecolor=(
-            "rgba(148, 163, 184, 0.25)"
-        ),
+        zerolinecolor=("rgba(148, 163, 184, 0.25)"),
     )
 
     fig.update_yaxes(
         color=TIMELINE_CHART_TEXT,
         gridcolor=TIMELINE_CHART_GRID,
-        zerolinecolor=(
-            "rgba(148, 163, 184, 0.25)"
-        ),
+        zerolinecolor=("rgba(148, 163, 184, 0.25)"),
     )
 
     return fig
@@ -1180,7 +985,6 @@ STATUS_LABELS = {
 }
 
 
-
 TIMELINE_DYNAMIC_TEXTS = {
     "pt": {
         "steps": {
@@ -1197,9 +1001,7 @@ TIMELINE_DYNAMIC_TEXTS = {
         "step_completed": "Etapa concluída com sucesso: {step}.",
         "completed": "{step} concluída com sucesso.",
         "question_received_rag": "Pergunta recebida pelo fluxo RAG.",
-        "final_response_ready": (
-            "Resposta final preparada para entrega ao dashboard."
-        ),
+        "final_response_ready": ("Resposta final preparada para entrega ao dashboard."),
         "tool_result": (
             "Resultado da Tool registrado. O tempo total foi "
             "contabilizado na etapa do Router/Orquestrador."
@@ -1219,9 +1021,7 @@ TIMELINE_DYNAMIC_TEXTS = {
         },
         "step_completed": "Step completed successfully: {step}.",
         "completed": "{step} completed successfully.",
-        "question_received_rag": (
-            "Question received by the RAG flow."
-        ),
+        "question_received_rag": ("Question received by the RAG flow."),
         "final_response_ready": (
             "Final response prepared for delivery to the dashboard."
         ),
@@ -1244,12 +1044,8 @@ TIMELINE_DYNAMIC_TEXTS = {
         },
         "step_completed": "Etapa completada correctamente: {step}.",
         "completed": "{step} completada correctamente.",
-        "question_received_rag": (
-            "Pregunta recibida por el flujo RAG."
-        ),
-        "final_response_ready": (
-            "Respuesta final preparada para entregarse al panel."
-        ),
+        "question_received_rag": ("Pregunta recibida por el flujo RAG."),
+        "final_response_ready": ("Respuesta final preparada para entregarse al panel."),
         "tool_result": (
             "Resultado de la herramienta registrado. El tiempo total "
             "se contabilizó en la etapa Router/Orquestador."
@@ -1269,12 +1065,8 @@ TIMELINE_DYNAMIC_TEXTS = {
         },
         "step_completed": "Étape terminée avec succès : {step}.",
         "completed": "{step} terminé avec succès.",
-        "question_received_rag": (
-            "Question reçue par le flux RAG."
-        ),
-        "final_response_ready": (
-            "Réponse finale préparée pour le tableau de bord."
-        ),
+        "question_received_rag": ("Question reçue par le flux RAG."),
+        "final_response_ready": ("Réponse finale préparée pour le tableau de bord."),
         "tool_result": (
             "Résultat de l’outil enregistré. Le temps total a été "
             "comptabilisé dans l’étape Router/Orchestrateur."
@@ -1294,12 +1086,8 @@ TIMELINE_DYNAMIC_TEXTS = {
         },
         "step_completed": "Schritt erfolgreich abgeschlossen: {step}.",
         "completed": "{step} erfolgreich abgeschlossen.",
-        "question_received_rag": (
-            "Frage vom RAG-Ablauf empfangen."
-        ),
-        "final_response_ready": (
-            "Endgültige Antwort für das Dashboard vorbereitet."
-        ),
+        "question_received_rag": ("Frage vom RAG-Ablauf empfangen."),
+        "final_response_ready": ("Endgültige Antwort für das Dashboard vorbereitet."),
         "tool_result": (
             "Tool-Ergebnis erfasst. Die Gesamtzeit wurde dem "
             "Router-/Orchestrator-Schritt zugerechnet."
@@ -1319,12 +1107,8 @@ TIMELINE_DYNAMIC_TEXTS = {
         },
         "step_completed": "Fase completata correttamente: {step}.",
         "completed": "{step} completata correttamente.",
-        "question_received_rag": (
-            "Domanda ricevuta dal flusso RAG."
-        ),
-        "final_response_ready": (
-            "Risposta finale preparata per il dashboard."
-        ),
+        "question_received_rag": ("Domanda ricevuta dal flusso RAG."),
+        "final_response_ready": ("Risposta finale preparata per il dashboard."),
         "tool_result": (
             "Risultato dello strumento registrato. Il tempo totale "
             "è stato conteggiato nella fase Router/Orchestratore."
@@ -1344,12 +1128,8 @@ TIMELINE_DYNAMIC_TEXTS = {
         },
         "step_completed": "Etapă finalizată cu succes: {step}.",
         "completed": "{step} finalizată cu succes.",
-        "question_received_rag": (
-            "Întrebare primită de fluxul RAG."
-        ),
-        "final_response_ready": (
-            "Răspuns final pregătit pentru dashboard."
-        ),
+        "question_received_rag": ("Întrebare primită de fluxul RAG."),
+        "final_response_ready": ("Răspuns final pregătit pentru dashboard."),
         "tool_result": (
             "Rezultatul instrumentului a fost înregistrat. Timpul "
             "total a fost atribuit etapei Router/Orchestrator."
@@ -1369,12 +1149,8 @@ TIMELINE_DYNAMIC_TEXTS = {
         },
         "step_completed": "Етап успішно завершено: {step}.",
         "completed": "{step} успішно завершено.",
-        "question_received_rag": (
-            "Запитання отримано потоком RAG."
-        ),
-        "final_response_ready": (
-            "Фінальну відповідь підготовлено для панелі."
-        ),
+        "question_received_rag": ("Запитання отримано потоком RAG."),
+        "final_response_ready": ("Фінальну відповідь підготовлено для панелі."),
         "tool_result": (
             "Результат інструмента зареєстровано. Загальний час "
             "враховано на етапі Router/Оркестратор."
@@ -1394,12 +1170,8 @@ TIMELINE_DYNAMIC_TEXTS = {
         },
         "step_completed": "Этап успешно завершён: {step}.",
         "completed": "{step} успешно завершён.",
-        "question_received_rag": (
-            "Вопрос получен потоком RAG."
-        ),
-        "final_response_ready": (
-            "Финальный ответ подготовлен для панели."
-        ),
+        "question_received_rag": ("Вопрос получен потоком RAG."),
+        "final_response_ready": ("Финальный ответ подготовлен для панели."),
         "tool_result": (
             "Результат инструмента зарегистрирован. Общее время "
             "учтено на этапе Router/Оркестратор."
@@ -1419,26 +1191,17 @@ TIMELINE_DYNAMIC_TEXTS = {
         },
         "step_completed": "اكتملت المرحلة بنجاح: {step}.",
         "completed": "اكتملت بنجاح: {step}.",
-        "question_received_rag": (
-            "تم استلام السؤال بواسطة تدفق RAG."
-        ),
-        "final_response_ready": (
-            "تم إعداد الإجابة النهائية لإرسالها إلى لوحة التحكم."
-        ),
+        "question_received_rag": ("تم استلام السؤال بواسطة تدفق RAG."),
+        "final_response_ready": ("تم إعداد الإجابة النهائية لإرسالها إلى لوحة التحكم."),
         "tool_result": (
-            "تم تسجيل نتيجة الأداة. تم احتساب الوقت الإجمالي "
-            "في مرحلة الموجّه والمنسق."
+            "تم تسجيل نتيجة الأداة. تم احتساب الوقت الإجمالي في مرحلة الموجّه والمنسق."
         ),
     },
 }
 
-TIMELINE_DYNAMIC_TEXTS["en_gb"] = (
-    TIMELINE_DYNAMIC_TEXTS["en_us"]
-)
+TIMELINE_DYNAMIC_TEXTS["en_gb"] = TIMELINE_DYNAMIC_TEXTS["en_us"]
 
-TIMELINE_DYNAMIC_TEXTS["ch"] = (
-    TIMELINE_DYNAMIC_TEXTS["de"]
-)
+TIMELINE_DYNAMIC_TEXTS["ch"] = TIMELINE_DYNAMIC_TEXTS["de"]
 
 
 def timeline_translate_step(
@@ -1476,9 +1239,7 @@ def timeline_translate_message(
     )
 
     exact_messages = {
-        "Pergunta recebida pelo fluxo RAG.": (
-            texts["question_received_rag"]
-        ),
+        "Pergunta recebida pelo fluxo RAG.": (texts["question_received_rag"]),
         "Resposta final preparada para entrega ao dashboard.": (
             texts["final_response_ready"]
         ),
@@ -1493,28 +1254,17 @@ def timeline_translate_message(
 
     prefix = "Etapa concluída com sucesso: "
 
-    if (
-        original.startswith(prefix)
-        and original.endswith(".")
-    ):
-        step = original[
-            len(prefix):-1
-        ]
+    if original.startswith(prefix) and original.endswith("."):
+        step = original[len(prefix) : -1]
 
-        return texts["step_completed"].format(
-            step=timeline_translate_step(step)
-        )
+        return texts["step_completed"].format(step=timeline_translate_step(step))
 
     suffix = " concluída com sucesso."
 
     if original.endswith(suffix):
-        step = original[
-            :-len(suffix)
-        ]
+        step = original[: -len(suffix)]
 
-        return texts["completed"].format(
-            step=timeline_translate_step(step)
-        )
+        return texts["completed"].format(step=timeline_translate_step(step))
 
     return original
 
@@ -1526,9 +1276,7 @@ def formatar_duracao_ms(
     Formata duração em ms ou segundos.
     """
     if valor is None or pd.isna(valor):
-        return timeline_t(
-            "not_measured"
-        )
+        return timeline_t("not_measured")
 
     duracao = float(valor)
 
@@ -1565,9 +1313,7 @@ def calcular_resumo_trace(
         errors="coerce",
     )
 
-    duracao_total = float(
-        duracoes.fillna(0).sum()
-    )
+    duracao_total = float(duracoes.fillna(0).sum())
 
     etapa_mais_lenta = None
     duracao_mais_lenta = 0.0
@@ -1580,9 +1326,7 @@ def calcular_resumo_trace(
             "etapa_label",
         ]
 
-        duracao_mais_lenta = float(
-            duracoes.loc[indice]
-        )
+        duracao_mais_lenta = float(duracoes.loc[indice])
 
     total_falhas = int(
         (
@@ -1617,9 +1361,7 @@ def calcular_resumo_trace(
             duracao_mais_lenta,
             3,
         ),
-        "possivel_cold_start": (
-            duracao_total >= 30000
-        ),
+        "possivel_cold_start": (duracao_total >= 30000),
     }
 
 
@@ -1637,33 +1379,19 @@ def preparar_traces_exibicao(
     tabela["Início"] = pd.to_datetime(
         tabela["inicio_trace"],
         errors="coerce",
-    ).dt.strftime(
-        "%d/%m/%Y %H:%M:%S"
-    )
+    ).dt.strftime("%d/%m/%Y %H:%M:%S")
 
-    tabela["Duração total"] = tabela[
-        "duracao_total_ms"
-    ].apply(
-        formatar_duracao_ms
-    )
+    tabela["Duração total"] = tabela["duracao_total_ms"].apply(formatar_duracao_ms)
 
-    tabela["Status"] = tabela[
-        "total_falhas"
-    ].apply(
+    tabela["Status"] = tabela["total_falhas"].apply(
         lambda total: (
-            timeline_t("with_failure")
-            if int(total or 0) > 0
-            else timeline_t("success")
+            timeline_t("with_failure") if int(total or 0) > 0 else timeline_t("success")
         )
     )
 
-    tabela["Cold start"] = tabela[
-        "duracao_total_ms"
-    ].apply(
+    tabela["Cold start"] = tabela["duracao_total_ms"].apply(
         lambda valor: (
-            timeline_t("possible")
-            if float(valor or 0) >= 30000
-            else timeline_t("no")
+            timeline_t("possible") if float(valor or 0) >= 30000 else timeline_t("no")
         )
     )
 
@@ -1680,13 +1408,7 @@ def preparar_traces_exibicao(
         "Status",
     ]
 
-    return tabela[
-        [
-            coluna
-            for coluna in colunas
-            if coluna in tabela.columns
-        ]
-    ].rename(
+    return tabela[[coluna for coluna in colunas if coluna in tabela.columns]].rename(
         columns={
             "trace_id": "Trace ID",
             "usuario_id": "Usuário",
@@ -1709,39 +1431,25 @@ def preparar_timeline_exibicao(
 
     tabela = df.copy()
 
-    tabela["etapa_label"] = tabela[
-        "etapa_label"
-    ].map(
-        timeline_translate_step
-    )
+    tabela["etapa_label"] = tabela["etapa_label"].map(timeline_translate_step)
 
     if "mensagem" in tabela.columns:
-        tabela["mensagem"] = tabela[
-            "mensagem"
-        ].map(
-            timeline_translate_message
+        tabela["mensagem"] = tabela["mensagem"].map(timeline_translate_message)
+
+    tabela["Status visual"] = (
+        tabela["status"].map(timeline_status_labels()).fillna(tabela["status"])
+    )
+
+    tabela["Duração"] = tabela["duracao_ms"].apply(formatar_duracao_ms)
+
+    tabela["Início"] = (
+        pd.to_datetime(
+            tabela["inicio_em"],
+            errors="coerce",
         )
-
-    tabela["Status visual"] = tabela[
-        "status"
-    ].map(
-        timeline_status_labels()
-    ).fillna(
-        tabela["status"]
+        .dt.strftime("%H:%M:%S.%f")
+        .str[:-3]
     )
-
-    tabela["Duração"] = tabela[
-        "duracao_ms"
-    ].apply(
-        formatar_duracao_ms
-    )
-
-    tabela["Início"] = pd.to_datetime(
-        tabela["inicio_em"],
-        errors="coerce",
-    ).dt.strftime(
-        "%H:%M:%S.%f"
-    ).str[:-3]
 
     colunas = [
         "ordem",
@@ -1753,13 +1461,7 @@ def preparar_timeline_exibicao(
         "erro",
     ]
 
-    return tabela[
-        [
-            coluna
-            for coluna in colunas
-            if coluna in tabela.columns
-        ]
-    ].rename(
+    return tabela[[coluna for coluna in colunas if coluna in tabela.columns]].rename(
         columns={
             "ordem": "Ordem",
             "etapa_label": "Etapa",
@@ -1781,11 +1483,7 @@ def render_etapas_timeline(
             "criado_em",
         ]
     ).iterrows():
-
-        status = str(
-            evento.get("status")
-            or ""
-        )
+        status = str(evento.get("status") or "")
 
         simbolo = {
             "sucesso": "✅",
@@ -1797,38 +1495,18 @@ def render_etapas_timeline(
             "ℹ️",
         )
 
-        etapa = timeline_translate_step(
-            evento.get(
-                "etapa_label"
-            )
-        )
+        etapa = timeline_translate_step(evento.get("etapa_label"))
 
-        duracao = formatar_duracao_ms(
-            evento.get("duracao_ms")
-        )
+        duracao = formatar_duracao_ms(evento.get("duracao_ms"))
 
-        with st.container(
-            border=True
-        ):
-            col_1, col_2, col_3 = st.columns(
-                [0.5, 3, 1.2]
-            )
+        with st.container(border=True):
+            col_1, col_2, col_3 = st.columns([0.5, 3, 1.2])
 
-            col_1.markdown(
-                f"### {simbolo}"
-            )
+            col_1.markdown(f"### {simbolo}")
 
-            col_2.markdown(
-                f"**{etapa}**"
-            )
+            col_2.markdown(f"**{etapa}**")
 
-            col_2.caption(
-                timeline_translate_message(
-                    evento.get(
-                        "mensagem"
-                    )
-                )
-            )
+            col_2.caption(timeline_translate_message(evento.get("mensagem")))
 
             col_3.metric(
                 timeline_t("duration"),
@@ -1838,34 +1516,22 @@ def render_etapas_timeline(
             erro = evento.get("erro")
 
             if erro and not pd.isna(erro):
-                st.error(
-                    str(erro)
-                )
+                st.error(str(erro))
 
-            metadata = evento.get(
-                "metadata"
-            )
+            metadata = evento.get("metadata")
 
             if metadata:
-                with st.popover(
-                    timeline_t(
-                        "view_metadata"
-                    )
-                ):
+                with st.popover(timeline_t("view_metadata")):
                     if isinstance(
                         metadata,
                         str,
                     ):
                         try:
-                            metadata = json.loads(
-                                metadata
-                            )
+                            metadata = json.loads(metadata)
                         except Exception:
                             pass
 
-                    st.json(
-                        metadata
-                    )
+                    st.json(metadata)
 
 
 def calcular_diferenca_traces(
@@ -1877,26 +1543,14 @@ def calcular_diferenca_traces(
 
     O percentual usa o Trace A como referência.
     """
-    duracao_a = float(
-        duracao_a_ms or 0
-    )
+    duracao_a = float(duracao_a_ms or 0)
 
-    duracao_b = float(
-        duracao_b_ms or 0
-    )
+    duracao_b = float(duracao_b_ms or 0)
 
-    diferenca_absoluta = (
-        duracao_b - duracao_a
-    )
+    diferenca_absoluta = duracao_b - duracao_a
 
     diferenca_percentual = (
-        (
-            diferenca_absoluta
-            / duracao_a
-        )
-        * 100
-        if duracao_a > 0
-        else 0.0
+        (diferenca_absoluta / duracao_a) * 100 if duracao_a > 0 else 0.0
     )
 
     return {
@@ -1919,19 +1573,13 @@ def render_comparacao_traces(
     escala selecionável e diferença percentual.
     """
     if traces_df is None or len(traces_df) < 2:
-        st.info(
-            timeline_t(
-                "minimum_two_traces"
-            )
-        )
+        st.info(timeline_t("minimum_two_traces"))
         return
 
     base = traces_df.copy()
 
     ignorar_cold_start = st.checkbox(
-        timeline_t(
-            "ignore_cold_start"
-        ),
+        timeline_t("ignore_cold_start"),
         value=False,
         key="timeline_compare_ignore_cold_start",
     )
@@ -1941,15 +1589,12 @@ def render_comparacao_traces(
             pd.to_numeric(
                 base["duracao_total_ms"],
                 errors="coerce",
-            ).fillna(0) < 30000
+            ).fillna(0)
+            < 30000
         ]
 
     if len(base) < 2:
-        st.warning(
-            timeline_t(
-                "not_enough_after_filter"
-            )
-        )
+        st.warning(timeline_t("not_enough_after_filter"))
         return
 
     escala = st.radio(
@@ -1958,16 +1603,12 @@ def render_comparacao_traces(
             "linear",
             "logarithmic",
         ],
-        format_func=lambda value: (
-            timeline_t(value)
-        ),
+        format_func=lambda value: timeline_t(value),
         horizontal=True,
         key="timeline_compare_scale",
     )
 
-    opcoes = base[
-        "trace_id"
-    ].astype(str).tolist()
+    opcoes = base["trace_id"].astype(str).tolist()
 
     col_1, col_2 = st.columns(2)
 
@@ -1989,11 +1630,7 @@ def render_comparacao_traces(
     )
 
     if trace_a == trace_b:
-        st.warning(
-            timeline_t(
-                "different_traces"
-            )
-        )
+        st.warning(timeline_t("different_traces"))
         return
 
     try:
@@ -2005,132 +1642,72 @@ def render_comparacao_traces(
             carregar_timeline_trace,
         )
 
-    resultado_a = carregar_timeline_trace(
-        trace_a
-    )
+    resultado_a = carregar_timeline_trace(trace_a)
 
-    resultado_b = carregar_timeline_trace(
-        trace_b
-    )
+    resultado_b = carregar_timeline_trace(trace_b)
 
     df_a = resultado_a.get("df")
     df_b = resultado_b.get("df")
 
-    resumo_a = calcular_resumo_trace(
-        df_a
-    )
+    resumo_a = calcular_resumo_trace(df_a)
 
-    resumo_b = calcular_resumo_trace(
-        df_b
-    )
+    resumo_b = calcular_resumo_trace(df_b)
 
-    duracao_a = float(
-        resumo_a["duracao_total_ms"]
-    )
+    duracao_a = float(resumo_a["duracao_total_ms"])
 
-    duracao_b = float(
-        resumo_b["duracao_total_ms"]
-    )
+    duracao_b = float(resumo_b["duracao_total_ms"])
 
     diferenca = calcular_diferenca_traces(
         duracao_a,
         duracao_b,
     )
 
-    diferenca_absoluta = diferenca[
-        "diferenca_absoluta_ms"
-    ]
+    diferenca_absoluta = diferenca["diferenca_absoluta_ms"]
 
-    diferenca_percentual = diferenca[
-        "diferenca_percentual"
-    ]
+    diferenca_percentual = diferenca["diferenca_percentual"]
 
-    comparacao = pd.DataFrame([
-        {
-            "Trace": "A",
-            "Trace ID": trace_a,
-            "Etapas": resumo_a[
-                "total_etapas"
-            ],
-            "Falhas": resumo_a[
-                "total_falhas"
-            ],
-            "Duração total": (
-                formatar_duracao_ms(
-                    duracao_a
-                )
-            ),
-            "Etapa mais lenta": (
-                timeline_translate_step(
-                    resumo_a[
-                        "etapa_mais_lenta"
-                    ]
-                )
-            ),
-            "Cold start": (
-                timeline_t(
-                    "possible"
-                )
-                if resumo_a[
-                    "possivel_cold_start"
-                ]
-                else timeline_t(
-                    "no"
-                )
-            ),
-        },
-        {
-            "Trace": "B",
-            "Trace ID": trace_b,
-            "Etapas": resumo_b[
-                "total_etapas"
-            ],
-            "Falhas": resumo_b[
-                "total_falhas"
-            ],
-            "Duração total": (
-                formatar_duracao_ms(
-                    duracao_b
-                )
-            ),
-            "Etapa mais lenta": (
-                timeline_translate_step(
-                    resumo_b[
-                        "etapa_mais_lenta"
-                    ]
-                )
-            ),
-            "Cold start": (
-                timeline_t(
-                    "possible"
-                )
-                if resumo_b[
-                    "possivel_cold_start"
-                ]
-                else timeline_t(
-                    "no"
-                )
-            ),
-        },
-    ])
+    comparacao = pd.DataFrame(
+        [
+            {
+                "Trace": "A",
+                "Trace ID": trace_a,
+                "Etapas": resumo_a["total_etapas"],
+                "Falhas": resumo_a["total_falhas"],
+                "Duração total": (formatar_duracao_ms(duracao_a)),
+                "Etapa mais lenta": (
+                    timeline_translate_step(resumo_a["etapa_mais_lenta"])
+                ),
+                "Cold start": (
+                    timeline_t("possible")
+                    if resumo_a["possivel_cold_start"]
+                    else timeline_t("no")
+                ),
+            },
+            {
+                "Trace": "B",
+                "Trace ID": trace_b,
+                "Etapas": resumo_b["total_etapas"],
+                "Falhas": resumo_b["total_falhas"],
+                "Duração total": (formatar_duracao_ms(duracao_b)),
+                "Etapa mais lenta": (
+                    timeline_translate_step(resumo_b["etapa_mais_lenta"])
+                ),
+                "Cold start": (
+                    timeline_t("possible")
+                    if resumo_b["possivel_cold_start"]
+                    else timeline_t("no")
+                ),
+            },
+        ]
+    )
 
     comparacao_exibicao = comparacao.rename(
         columns={
-            "Etapas": timeline_t(
-                "steps"
-            ),
-            "Falhas": timeline_t(
-                "failures"
-            ),
-            "Duração total": timeline_t(
-                "total_duration"
-            ),
-            "Etapa mais lenta": timeline_t(
-                "slowest_step_column"
-            ),
-            "Cold start": timeline_t(
-                "cold_start"
-            ),
+            "Etapas": timeline_t("steps"),
+            "Falhas": timeline_t("failures"),
+            "Duração total": timeline_t("total_duration"),
+            "Etapa mais lenta": timeline_t("slowest_step_column"),
+            "Cold start": timeline_t("cold_start"),
         }
     )
 
@@ -2142,77 +1719,49 @@ def render_comparacao_traces(
 
     if diferenca_percentual > 0:
         st.warning(
-            timeline_t(
-                "trace_b_slower"
-            ).format(
-                percent=abs(
-                    diferenca_percentual
-                )
-            )
+            timeline_t("trace_b_slower").format(percent=abs(diferenca_percentual))
         )
 
     elif diferenca_percentual < 0:
         st.success(
-            timeline_t(
-                "trace_b_faster"
-            ).format(
-                percent=abs(
-                    diferenca_percentual
-                )
-            )
+            timeline_t("trace_b_faster").format(percent=abs(diferenca_percentual))
         )
 
     else:
-        st.info(
-            timeline_t(
-                "same_duration"
-            )
-        )
+        st.info(timeline_t("same_duration"))
 
     col_delta_1, col_delta_2 = st.columns(2)
 
     col_delta_1.metric(
-        timeline_t(
-            "absolute_difference"
-        ),
-        formatar_duracao_ms(
-            abs(diferenca_absoluta)
-        ),
+        timeline_t("absolute_difference"),
+        formatar_duracao_ms(abs(diferenca_absoluta)),
     )
 
     col_delta_2.metric(
-        timeline_t(
-            "percentage_difference"
-        ),
+        timeline_t("percentage_difference"),
         f"{abs(diferenca_percentual):.2f}%",
     )
 
-    etapas_a = (
-        df_a[
-            [
-                "etapa_label",
-                "duracao_ms",
-            ]
+    etapas_a = df_a[
+        [
+            "etapa_label",
+            "duracao_ms",
         ]
-        .rename(
-            columns={
-                "duracao_ms": "Trace A",
-            }
-        )
+    ].rename(
+        columns={
+            "duracao_ms": "Trace A",
+        }
     )
 
-    etapas_b = (
-        df_b[
-            [
-                "etapa_label",
-                "duracao_ms",
-            ]
+    etapas_b = df_b[
+        [
+            "etapa_label",
+            "duracao_ms",
         ]
-        .rename(
-            columns={
-                "duracao_ms": "Trace B",
-            }
-        )
+    ].rename(
+        columns={
+            "duracao_ms": "Trace B",
+        }
     )
 
     grafico = etapas_a.merge(
@@ -2221,11 +1770,7 @@ def render_comparacao_traces(
         how="outer",
     ).fillna(0)
 
-    grafico["etapa_label"] = grafico[
-        "etapa_label"
-    ].map(
-        timeline_translate_step
-    )
+    grafico["etapa_label"] = grafico["etapa_label"].map(timeline_translate_step)
 
     grafico["Trace A"] = pd.to_numeric(
         grafico["Trace A"],
@@ -2242,19 +1787,11 @@ def render_comparacao_traces(
 
         grafico_plot = grafico.copy()
 
-        grafico_plot["Trace A"] = np.log10(
-            grafico_plot["Trace A"] + 1
-        )
+        grafico_plot["Trace A"] = np.log10(grafico_plot["Trace A"] + 1)
 
-        grafico_plot["Trace B"] = np.log10(
-            grafico_plot["Trace B"] + 1
-        )
+        grafico_plot["Trace B"] = np.log10(grafico_plot["Trace B"] + 1)
 
-        st.caption(
-            timeline_t(
-                "log_caption"
-            )
-        )
+        st.caption(timeline_t("log_caption"))
     else:
         grafico_plot = grafico
 
@@ -2287,11 +1824,9 @@ def render_comparacao_traces(
         how="left",
     )
 
-    grafico_longo[
-        "Duração formatada"
-    ] = grafico_longo[
-        "Duracao_real_ms"
-    ].map(formatar_duracao_ms)
+    grafico_longo["Duração formatada"] = grafico_longo["Duracao_real_ms"].map(
+        formatar_duracao_ms
+    )
 
     ordem_etapas = (
         grafico.assign(
@@ -2332,19 +1867,14 @@ def render_comparacao_traces(
         cliponaxis=False,
         marker_line_width=0,
         hovertemplate=(
-            "<b>%{y}</b><br>"
-            "%{fullData.name}: "
-            "%{customdata[0]}"
-            "<extra></extra>"
+            "<b>%{y}</b><br>%{fullData.name}: %{customdata[0]}<extra></extra>"
         ),
     )
 
     titulo_eixo = (
         timeline_t("log_axis")
         if escala == "logarithmic"
-        else timeline_t(
-            "duration_axis"
-        )
+        else timeline_t("duration_axis")
     )
 
     fig_comparacao.update_layout(
@@ -2383,6 +1913,7 @@ def render_comparacao_traces(
         },
     )
 
+
 def render_timeline_viewer_page() -> None:
     """
     Renderiza o Timeline Viewer.
@@ -2398,17 +1929,11 @@ def render_timeline_viewer_page() -> None:
             carregar_traces_recentes,
         )
 
-    st.title(
-        timeline_t("page_title")
-    )
+    st.title(timeline_t("page_title"))
 
-    st.caption(
-        timeline_t("page_caption")
-    )
+    st.caption(timeline_t("page_caption"))
 
-    col_1, col_2 = st.columns(
-        [1, 3]
-    )
+    col_1, col_2 = st.columns([1, 3])
 
     limite = col_1.selectbox(
         timeline_t("trace_quantity"),
@@ -2432,65 +1957,37 @@ def render_timeline_viewer_page() -> None:
         ):
             st.rerun()
 
-    resultado_traces = carregar_traces_recentes(
-        limite=int(limite)
-    )
+    resultado_traces = carregar_traces_recentes(limite=int(limite))
 
     if not resultado_traces.get("ok"):
-        st.error(
-            resultado_traces.get(
-                "message"
-            )
-        )
+        st.error(resultado_traces.get("message"))
         return
 
-    traces_df = resultado_traces.get(
-        "df"
-    )
+    traces_df = resultado_traces.get("df")
 
     if traces_df is None or traces_df.empty:
-        st.info(
-            timeline_t("no_traces")
-        )
+        st.info(timeline_t("no_traces"))
         return
 
-    st.markdown(
-        timeline_t("search_filters")
-    )
+    st.markdown(timeline_t("search_filters"))
 
     pesquisa = st.text_input(
         timeline_t("search_label"),
-        placeholder=timeline_t(
-            "search_placeholder"
-        ),
+        placeholder=timeline_t("search_placeholder"),
         key="timeline_viewer_search",
     )
 
     filtro_1, filtro_2 = st.columns(2)
 
-    usuarios = sorted(
-        traces_df["usuario_id"]
-        .dropna()
-        .astype(str)
-        .unique()
-        .tolist()
-    )
+    usuarios = sorted(traces_df["usuario_id"].dropna().astype(str).unique().tolist())
 
-    origens = sorted(
-        traces_df["origem"]
-        .dropna()
-        .astype(str)
-        .unique()
-        .tolist()
-    )
+    origens = sorted(traces_df["origem"].dropna().astype(str).unique().tolist())
 
     usuario = filtro_1.selectbox(
         timeline_t("user"),
         options=["__all__"] + usuarios,
         format_func=lambda value: (
-            timeline_t("all_masculine")
-            if value == "__all__"
-            else value
+            timeline_t("all_masculine") if value == "__all__" else value
         ),
         key="timeline_viewer_user",
     )
@@ -2499,9 +1996,7 @@ def render_timeline_viewer_page() -> None:
         timeline_t("origin"),
         options=["__all__"] + origens,
         format_func=lambda value: (
-            timeline_t("all_feminine")
-            if value == "__all__"
-            else value
+            timeline_t("all_feminine") if value == "__all__" else value
         ),
         key="timeline_viewer_origin",
     )
@@ -2543,73 +2038,33 @@ def render_timeline_viewer_page() -> None:
                     )
                 )
 
-        filtrado = filtrado[
-            mascara
-        ]
+        filtrado = filtrado[mascara]
 
     if usuario != "__all__":
-        filtrado = filtrado[
-            filtrado["usuario_id"].astype(str)
-            == usuario
-        ]
+        filtrado = filtrado[filtrado["usuario_id"].astype(str) == usuario]
 
     if origem != "__all__":
-        filtrado = filtrado[
-            filtrado["origem"].astype(str)
-            == origem
-        ]
+        filtrado = filtrado[filtrado["origem"].astype(str) == origem]
 
     if somente_falhas:
-        filtrado = filtrado[
-            filtrado["total_falhas"] > 0
-        ]
+        filtrado = filtrado[filtrado["total_falhas"] > 0]
 
-    st.caption(
-        timeline_t(
-            "traces_found"
-        ).format(
-            count=len(filtrado)
-        )
-    )
+    st.caption(timeline_t("traces_found").format(count=len(filtrado)))
 
-    st.markdown(
-        timeline_t("recent_traces")
-    )
+    st.markdown(timeline_t("recent_traces"))
 
-    traces_exibicao = (
-        preparar_traces_exibicao(
-            filtrado
-        ).rename(
-            columns={
-                "Início": timeline_t(
-                    "start"
-                ),
-                "Usuário": timeline_t(
-                    "user"
-                ),
-                "Pergunta": timeline_t(
-                    "question"
-                ).removeprefix("### "),
-                "Etapas": timeline_t(
-                    "steps"
-                ),
-                "Falhas": timeline_t(
-                    "failures"
-                ),
-                "Duração total": timeline_t(
-                    "total_duration"
-                ),
-                "Cold start": timeline_t(
-                    "cold_start"
-                ),
-                "Origem": timeline_t(
-                    "origin"
-                ),
-                "Status": timeline_t(
-                    "status"
-                ),
-            }
-        )
+    traces_exibicao = preparar_traces_exibicao(filtrado).rename(
+        columns={
+            "Início": timeline_t("start"),
+            "Usuário": timeline_t("user"),
+            "Pergunta": timeline_t("question").removeprefix("### "),
+            "Etapas": timeline_t("steps"),
+            "Falhas": timeline_t("failures"),
+            "Duração total": timeline_t("total_duration"),
+            "Cold start": timeline_t("cold_start"),
+            "Origem": timeline_t("origin"),
+            "Status": timeline_t("status"),
+        }
     )
 
     st.dataframe(
@@ -2621,9 +2076,7 @@ def render_timeline_viewer_page() -> None:
     if filtrado.empty:
         return
 
-    opcoes_trace = filtrado[
-        "trace_id"
-    ].astype(str).tolist()
+    opcoes_trace = filtrado["trace_id"].astype(str).tolist()
 
     trace_selecionado = st.selectbox(
         timeline_t("select_trace"),
@@ -2631,32 +2084,18 @@ def render_timeline_viewer_page() -> None:
         key="timeline_viewer_trace",
     )
 
-    resultado_timeline = (
-        carregar_timeline_trace(
-            trace_selecionado
-        )
-    )
+    resultado_timeline = carregar_timeline_trace(trace_selecionado)
 
     if not resultado_timeline.get("ok"):
-        st.error(
-            resultado_timeline.get(
-                "message"
-            )
-        )
+        st.error(resultado_timeline.get("message"))
         return
 
-    timeline_df = resultado_timeline.get(
-        "df"
-    )
+    timeline_df = resultado_timeline.get("df")
 
-    resumo = calcular_resumo_trace(
-        timeline_df
-    )
+    resumo = calcular_resumo_trace(timeline_df)
 
     st.divider()
-    st.markdown(
-        timeline_t("execution_summary")
-    )
+    st.markdown(timeline_t("execution_summary"))
 
     linha_1 = st.columns(4)
 
@@ -2677,99 +2116,53 @@ def render_timeline_viewer_page() -> None:
 
     linha_1[3].metric(
         timeline_t("total_duration"),
-        formatar_duracao_ms(
-            resumo["duracao_total_ms"]
-        ),
+        formatar_duracao_ms(resumo["duracao_total_ms"]),
     )
 
     if resumo["possivel_cold_start"]:
-        st.warning(
-            timeline_t(
-                "cold_start_warning"
-            )
-        )
+        st.warning(timeline_t("cold_start_warning"))
     else:
-        st.success(
-            timeline_t(
-                "execution_ok"
-            )
-        )
+        st.success(timeline_t("execution_ok"))
 
     if resumo["etapa_mais_lenta"]:
-        duracao_etapa_mais_lenta = (
-            formatar_duracao_ms(
-                resumo[
-                    "duracao_etapa_mais_lenta_ms"
-                ]
-            )
+        duracao_etapa_mais_lenta = formatar_duracao_ms(
+            resumo["duracao_etapa_mais_lenta_ms"]
         )
 
         st.info(
             timeline_t("slowest_step")
             + ": "
-            + timeline_translate_step(
-                resumo["etapa_mais_lenta"]
-            )
+            + timeline_translate_step(resumo["etapa_mais_lenta"])
             + " — "
             + duracao_etapa_mais_lenta
         )
 
-    pergunta = (
-        timeline_df["pergunta"]
-        .dropna()
-        .astype(str)
-    )
+    pergunta = timeline_df["pergunta"].dropna().astype(str)
 
     if not pergunta.empty:
-        st.markdown(
-            timeline_t("question")
-        )
+        st.markdown(timeline_t("question"))
 
         st.code(
             pergunta.iloc[0],
             language=None,
         )
 
-    st.markdown(
-        timeline_t("execution_path")
-    )
+    st.markdown(timeline_t("execution_path"))
 
-    render_etapas_timeline(
-        timeline_df
-    )
+    render_etapas_timeline(timeline_df)
 
-    st.markdown(
-        timeline_t("technical_table")
-    )
+    st.markdown(timeline_t("technical_table"))
 
-    timeline_exibicao = (
-        preparar_timeline_exibicao(
-            timeline_df
-        ).rename(
-            columns={
-                "Ordem": timeline_t(
-                    "order"
-                ),
-                "Etapa": timeline_t(
-                    "step"
-                ),
-                "Status visual": timeline_t(
-                    "status"
-                ),
-                "Duração": timeline_t(
-                    "duration"
-                ),
-                "Início": timeline_t(
-                    "start"
-                ),
-                "Mensagem": timeline_t(
-                    "message"
-                ),
-                "Erro": timeline_t(
-                    "error"
-                ),
-            }
-        )
+    timeline_exibicao = preparar_timeline_exibicao(timeline_df).rename(
+        columns={
+            "Ordem": timeline_t("order"),
+            "Etapa": timeline_t("step"),
+            "Status visual": timeline_t("status"),
+            "Duração": timeline_t("duration"),
+            "Início": timeline_t("start"),
+            "Mensagem": timeline_t("message"),
+            "Erro": timeline_t("error"),
+        }
     )
 
     st.dataframe(
@@ -2779,13 +2172,9 @@ def render_timeline_viewer_page() -> None:
     )
 
     st.divider()
-    st.markdown(
-        timeline_t("compare_traces")
-    )
+    st.markdown(timeline_t("compare_traces"))
 
-    render_comparacao_traces(
-        traces_df
-    )
+    render_comparacao_traces(traces_df)
 
 
 __all__ = [

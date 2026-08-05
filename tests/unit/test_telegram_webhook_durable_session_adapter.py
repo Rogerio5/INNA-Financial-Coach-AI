@@ -57,17 +57,12 @@ def test_adapter_loads_session_with_trusted_identity():
         language="pt",
     )
 
-    bridge = FakeBridge(
-        durable_session
-    )
+    bridge = FakeBridge(durable_session)
 
-    loaded, processing_state = (
-        telegram_webhook
-        ._load_or_open_durable_telegram_session(
-            conversation_bridge=bridge,
-            telegram_user_id=1001,
-            chat_id=-2001,
-        )
+    loaded, processing_state = telegram_webhook._load_or_open_durable_telegram_session(
+        conversation_bridge=bridge,
+        telegram_user_id=1001,
+        chat_id=-2001,
     )
 
     assert loaded is durable_session
@@ -102,17 +97,12 @@ def test_adapter_returns_mutable_copy():
         language="pt",
     )
 
-    bridge = FakeBridge(
-        durable_session
-    )
+    bridge = FakeBridge(durable_session)
 
-    _, processing_state = (
-        telegram_webhook
-        ._load_or_open_durable_telegram_session(
-            conversation_bridge=bridge,
-            telegram_user_id=1001,
-            chat_id=2001,
-        )
+    _, processing_state = telegram_webhook._load_or_open_durable_telegram_session(
+        conversation_bridge=bridge,
+        telegram_user_id=1001,
+        chat_id=2001,
     )
 
     processing_state["step"] = "renda"
@@ -129,17 +119,12 @@ def test_adapter_fills_missing_step_and_language():
         language="es",
     )
 
-    bridge = FakeBridge(
-        durable_session
-    )
+    bridge = FakeBridge(durable_session)
 
-    _, processing_state = (
-        telegram_webhook
-        ._load_or_open_durable_telegram_session(
-            conversation_bridge=bridge,
-            telegram_user_id=1001,
-            chat_id=2001,
-        )
+    _, processing_state = telegram_webhook._load_or_open_durable_telegram_session(
+        conversation_bridge=bridge,
+        telegram_user_id=1001,
+        chat_id=2001,
     )
 
     assert processing_state == {
@@ -154,17 +139,12 @@ def test_adapter_uses_pt_when_language_is_absent():
         language=None,
     )
 
-    bridge = FakeBridge(
-        durable_session
-    )
+    bridge = FakeBridge(durable_session)
 
-    _, processing_state = (
-        telegram_webhook
-        ._load_or_open_durable_telegram_session(
-            conversation_bridge=bridge,
-            telegram_user_id=1001,
-            chat_id=2001,
-        )
+    _, processing_state = telegram_webhook._load_or_open_durable_telegram_session(
+        conversation_bridge=bridge,
+        telegram_user_id=1001,
+        chat_id=2001,
     )
 
     assert processing_state == {
@@ -179,8 +159,7 @@ def test_adapter_rejects_missing_bridge():
         match="conversation_bridge é obrigatória",
     ):
         (
-            telegram_webhook
-            ._load_or_open_durable_telegram_session(
+            telegram_webhook._load_or_open_durable_telegram_session(
                 conversation_bridge=None,
                 telegram_user_id=1001,
                 chat_id=2001,
@@ -195,17 +174,14 @@ def test_adapter_does_not_hide_bridge_failure():
             *args,
             **kwargs,
         ):
-            raise RuntimeError(
-                "state storage unavailable"
-            )
+            raise RuntimeError("state storage unavailable")
 
     with pytest.raises(
         RuntimeError,
         match="state storage unavailable",
     ):
         (
-            telegram_webhook
-            ._load_or_open_durable_telegram_session(
+            telegram_webhook._load_or_open_durable_telegram_session(
                 conversation_bridge=FailingBridge(),
                 telegram_user_id=1001,
                 chat_id=2001,
@@ -220,20 +196,14 @@ def test_adapter_rejects_invalid_processing_state():
         def to_processing_state(self):
             return []
 
-    bridge = FakeBridge(
-        InvalidSession()
-    )
+    bridge = FakeBridge(InvalidSession())
 
     with pytest.raises(
         TypeError,
-        match=(
-            "estado conversacional "
-            "carregado é inválido"
-        ),
+        match=("estado conversacional carregado é inválido"),
     ):
         (
-            telegram_webhook
-            ._load_or_open_durable_telegram_session(
+            telegram_webhook._load_or_open_durable_telegram_session(
                 conversation_bridge=bridge,
                 telegram_user_id=1001,
                 chat_id=2001,

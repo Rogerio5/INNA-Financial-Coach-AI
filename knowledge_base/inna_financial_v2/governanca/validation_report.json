@@ -1,0 +1,27 @@
+{
+  "document_count": 16,
+  "duplicate_group_count": 0,
+  "education_document_count": 8,
+  "errors": [],
+  "passed": true,
+  "schema_version": 2,
+  "security_document_count": 8,
+  "word_counts": {
+    "educadora_financeira/01_orcamento_fluxo_caixa.md": 342,
+    "educadora_financeira/02_gastos_fixos_variaveis_eventuais.md": 267,
+    "educadora_financeira/03_reserva_emergencia.md": 264,
+    "educadora_financeira/04_cartao_credito_responsavel.md": 254,
+    "educadora_financeira/05_priorizacao_dividas.md": 230,
+    "educadora_financeira/06_credito_juros_negociacao.md": 201,
+    "educadora_financeira/07_metas_consumo_planejado.md": 275,
+    "educadora_financeira/08_investimentos_basicos_limites.md": 252,
+    "seguranca_financeira/01_pix_suspeito_med.md": 227,
+    "seguranca_financeira/02_phishing_engenharia_social.md": 280,
+    "seguranca_financeira/03_cartao_compra_nao_reconhecida.md": 235,
+    "seguranca_financeira/04_boleto_pagamento_falso.md": 214,
+    "seguranca_financeira/05_conta_invadida_falsa_identidade.md": 209,
+    "seguranca_financeira/06_celular_perdido_roubado.md": 218,
+    "seguranca_financeira/07_vazamento_dados_senhas.md": 210,
+    "seguranca_financeira/08_resposta_incidente_evidencias.md": 258
+  }
+}

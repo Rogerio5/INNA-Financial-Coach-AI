@@ -37,21 +37,25 @@ def test_handoff_fields_exist_in_agent_state():
         "handoff_reason",
     }
 
-    assert expected_fields.issubset(
-        hints
-    )
+    assert expected_fields.issubset(hints)
 
 
 def test_empty_handoff_history_merge():
-    assert merge_handoff_history(
-        None,
-        None,
-    ) == []
+    assert (
+        merge_handoff_history(
+            None,
+            None,
+        )
+        == []
+    )
 
-    assert merge_handoff_history(
-        [],
-        [],
-    ) == []
+    assert (
+        merge_handoff_history(
+            [],
+            [],
+        )
+        == []
+    )
 
 
 def test_new_handoff_is_appended():
@@ -84,10 +88,7 @@ def test_multiple_handoffs_preserve_order():
         [second],
     )
 
-    assert [
-        item["handoff_id"]
-        for item in result
-    ] == [
+    assert [item["handoff_id"] for item in result] == [
         "handoff-001",
         "handoff-002",
     ]
@@ -139,17 +140,12 @@ def test_update_does_not_change_original_position():
         ],
     )
 
-    assert [
-        item["handoff_id"]
-        for item in result
-    ] == [
+    assert [item["handoff_id"] for item in result] == [
         "handoff-001",
         "handoff-002",
     ]
 
-    assert result[0]["status"] == (
-        "completed"
-    )
+    assert result[0]["status"] == ("completed")
 
 
 def test_complete_history_return_is_not_duplicated():
@@ -210,9 +206,7 @@ def test_reducer_does_not_mutate_original_records():
 
     result[0]["status"] = "completed"
 
-    assert original["status"] == (
-        "requested"
-    )
+    assert original["status"] == ("requested")
 
 
 def test_same_update_is_idempotent():
@@ -231,9 +225,7 @@ def test_same_update_is_idempotent():
         [requested],
     )
 
-    assert second_result == [
-        requested
-    ]
+    assert second_result == [requested]
 
 
 def test_invalid_current_records_are_ignored():
@@ -287,7 +279,4 @@ def test_handoff_id_is_normalized():
         [record],
     )
 
-    assert result[0]["handoff_id"] == (
-        "handoff-001"
-    )
-
+    assert result[0]["handoff_id"] == ("handoff-001")

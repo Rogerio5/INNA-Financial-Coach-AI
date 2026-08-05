@@ -33,28 +33,20 @@ from .health import (
 
 
 def _carregar_database_url() -> str:
-    database_url = os.getenv(
-        "DATABASE_URL"
-    )
+    database_url = os.getenv("DATABASE_URL")
 
     if not database_url:
         try:
             from dotenv import load_dotenv
 
-            load_dotenv(
-                dotenv_path=Path(".env")
-            )
+            load_dotenv(dotenv_path=Path(".env"))
 
-            database_url = os.getenv(
-                "DATABASE_URL"
-            )
+            database_url = os.getenv("DATABASE_URL")
         except Exception:
             database_url = None
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não encontrada."
-        )
+        raise RuntimeError("DATABASE_URL não encontrada.")
 
     return database_url
 
@@ -77,28 +69,21 @@ def _consultar_total_memorias() -> dict[str, Any]:
         """)
 
         with engine.connect() as connection:
-            resultado = connection.execute(
-                query
-            ).scalar()
+            resultado = connection.execute(query).scalar()
 
         engine.dispose()
 
         return {
             "ok": True,
             "total": int(resultado or 0),
-            "message": (
-                "Memórias consultadas com sucesso."
-            ),
+            "message": ("Memórias consultadas com sucesso."),
         }
 
     except Exception as exc:
         return {
             "ok": False,
             "total": 0,
-            "message": (
-                "Erro ao consultar memórias: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao consultar memórias: {exc}"),
         }
 
 
@@ -109,15 +94,9 @@ def _extrair_status_componente(
     """
     Extrai o estado booleano de um componente.
     """
-    status = (
-        status_infraestrutura
-        .get("status", {})
-        .get(chave, {})
-    )
+    status = status_infraestrutura.get("status", {}).get(chave, {})
 
-    return bool(
-        status.get("ok")
-    )
+    return bool(status.get("ok"))
 
 
 def _calcular_metricas_tools(
@@ -128,9 +107,7 @@ def _calcular_metricas_tools(
     """
     Converte eventos das Tools em score e métricas.
     """
-    base = preparar_eventos_analytics(
-        df
-    )
+    base = preparar_eventos_analytics(df)
 
     if base.empty:
         score = calcular_score_tools(
@@ -153,9 +130,7 @@ def _calcular_metricas_tools(
 
     total = len(base)
 
-    sucessos = int(
-        base["sucesso"].sum()
-    )
+    sucessos = int(base["sucesso"].sum())
 
     taxa_sucesso = round(
         (sucessos / total) * 100,
@@ -176,23 +151,15 @@ def _calcular_metricas_tools(
         else 0.0
     )
 
-    sem_tool = calcular_execucoes_sem_tool(
-        base
-    )
+    sem_tool = calcular_execucoes_sem_tool(base)
 
-    percentis = calcular_percentis(
-        base["duracao_ms"]
-    )
+    percentis = calcular_percentis(base["duracao_ms"])
 
     score = calcular_score_tools(
         taxa_sucesso=taxa_sucesso,
         confianca_media=confianca_media,
-        percentual_sem_tool=float(
-            sem_tool["percentual"]
-        ),
-        total_anomalias=int(
-            total_anomalias
-        ),
+        percentual_sem_tool=float(sem_tool["percentual"]),
+        total_anomalias=int(total_anomalias),
     )
 
     return {
@@ -201,12 +168,8 @@ def _calcular_metricas_tools(
             "total_eventos": total,
             "taxa_sucesso": taxa_sucesso,
             "confianca_media": confianca_media,
-            "percentual_sem_tool": float(
-                sem_tool["percentual"]
-            ),
-            "p95_tools_ms": float(
-                percentis["p95"]
-            ),
+            "percentual_sem_tool": float(sem_tool["percentual"]),
+            "p95_tools_ms": float(percentis["p95"]),
         },
     }
 
@@ -254,39 +217,23 @@ def _calcular_metricas_timeline(
         ).sum()
     )
 
-    total_cold_start = int(
-        (duracoes >= 30000).sum()
-    )
+    total_cold_start = int((duracoes >= 30000).sum())
 
     percentual_cold_start = round(
-        (
-            total_cold_start
-            / traces_analisados
-        )
-        * 100,
+        (total_cold_start / traces_analisados) * 100,
         2,
     )
 
     p95_trace_ms = round(
-        float(
-            duracoes.quantile(0.95)
-        ),
+        float(duracoes.quantile(0.95)),
         3,
     )
 
-    duracoes_sem_cold_start = (
-        duracoes[
-            duracoes < 30000
-        ]
-    )
+    duracoes_sem_cold_start = duracoes[duracoes < 30000]
 
     p95_trace_sem_cold_start_ms = (
         round(
-            float(
-                duracoes_sem_cold_start.quantile(
-                    0.95
-                )
-            ),
+            float(duracoes_sem_cold_start.quantile(0.95)),
             3,
         )
         if not duracoes_sem_cold_start.empty
@@ -296,27 +243,17 @@ def _calcular_metricas_timeline(
     score = calcular_score_timeline(
         traces_analisados=traces_analisados,
         traces_com_falha=traces_com_falha,
-        percentual_cold_start=(
-            percentual_cold_start
-        ),
+        percentual_cold_start=(percentual_cold_start),
     )
 
     return {
         "score": score,
         "metricas": {
-            "traces_analisados": (
-                traces_analisados
-            ),
-            "traces_com_falha": (
-                traces_com_falha
-            ),
-            "percentual_cold_start": (
-                percentual_cold_start
-            ),
+            "traces_analisados": (traces_analisados),
+            "traces_com_falha": (traces_com_falha),
+            "percentual_cold_start": (percentual_cold_start),
             "p95_trace_ms": p95_trace_ms,
-            "p95_trace_sem_cold_start_ms": (
-                p95_trace_sem_cold_start_ms
-            ),
+            "p95_trace_sem_cold_start_ms": (p95_trace_sem_cold_start_ms),
         },
     }
 
@@ -345,9 +282,7 @@ def coletar_health_score_real(
             carregar_status_infraestrutura,
         )
 
-    status_infra = (
-        carregar_status_infraestrutura()
-    )
+    status_infra = carregar_status_infraestrutura()
 
     if not status_infra.get("ok"):
         erros_coleta.append(
@@ -375,13 +310,9 @@ def coletar_health_score_real(
     # -----------------------------------------------------
     # Eventos das Tools e anomalias
     # -----------------------------------------------------
-    eventos_resultado = carregar_eventos_tools(
-        limite=int(limite_eventos_tools)
-    )
+    eventos_resultado = carregar_eventos_tools(limite=int(limite_eventos_tools))
 
-    eventos_df = eventos_resultado.get(
-        "df"
-    )
+    eventos_df = eventos_resultado.get("df")
 
     if not eventos_resultado.get("ok"):
         erros_coleta.append(
@@ -396,11 +327,7 @@ def coletar_health_score_real(
             detectar_anomalias_operacionais,
         )
 
-        resultado_anomalias = (
-            detectar_anomalias_operacionais(
-                eventos_df
-            )
-        )
+        resultado_anomalias = detectar_anomalias_operacionais(eventos_df)
 
         total_anomalias = int(
             resultado_anomalias.get(
@@ -418,16 +345,11 @@ def coletar_health_score_real(
 
         total_anomalias = 0
 
-        erros_coleta.append(
-            "Erro ao calcular anomalias: "
-            f"{exc}"
-        )
+        erros_coleta.append(f"Erro ao calcular anomalias: {exc}")
 
-    tools_resultado = (
-        _calcular_metricas_tools(
-            eventos_df,
-            total_anomalias=total_anomalias,
-        )
+    tools_resultado = _calcular_metricas_tools(
+        eventos_df,
+        total_anomalias=total_anomalias,
     )
 
     # -----------------------------------------------------
@@ -443,9 +365,7 @@ def coletar_health_score_real(
                 carregar_resumo_embeddings,
             )
 
-        resumo_rag = (
-            carregar_resumo_embeddings()
-        )
+        resumo_rag = carregar_resumo_embeddings()
 
         if not resumo_rag.get("ok"):
             erros_coleta.append(
@@ -460,10 +380,7 @@ def coletar_health_score_real(
             "ok": False,
         }
 
-        erros_coleta.append(
-            "Erro ao consultar o RAG: "
-            f"{exc}"
-        )
+        erros_coleta.append(f"Erro ao consultar o RAG: {exc}")
 
     documentos_ativos = int(
         resumo_rag.get(
@@ -498,13 +415,9 @@ def coletar_health_score_real(
 
     score_rag = calcular_score_rag(
         documentos_ativos=documentos_ativos,
-        documentos_com_embeddings=(
-            documentos_com_embeddings
-        ),
+        documentos_com_embeddings=(documentos_com_embeddings),
         embeddings_ativos=embeddings_ativos,
-        embeddings_inativos=(
-            embeddings_inativos
-        ),
+        embeddings_inativos=(embeddings_inativos),
     )
 
     # -----------------------------------------------------
@@ -512,28 +425,20 @@ def coletar_health_score_real(
     # -----------------------------------------------------
     memorias = _consultar_total_memorias()
 
-    memoria_disponivel = (
-        _extrair_status_componente(
-            status_infra,
-            "memory_table",
-        )
+    memoria_disponivel = _extrair_status_componente(
+        status_infra,
+        "memory_table",
     )
 
     score_memoria = calcular_score_memoria(
-        tabela_disponivel=(
-            memoria_disponivel
-        ),
+        tabela_disponivel=(memoria_disponivel),
         total_usuarios_com_memoria=int(
             memorias.get(
                 "total",
                 0,
             )
         ),
-        erros_memoria=(
-            0
-            if memorias.get("ok")
-            else 1
-        ),
+        erros_memoria=(0 if memorias.get("ok") else 1),
     )
 
     if not memorias.get("ok"):
@@ -552,15 +457,9 @@ def coletar_health_score_real(
             carregar_traces_recentes,
         )
 
-        traces_resultado = (
-            carregar_traces_recentes(
-                limite=int(limite_traces)
-            )
-        )
+        traces_resultado = carregar_traces_recentes(limite=int(limite_traces))
 
-        traces_df = traces_resultado.get(
-            "df"
-        )
+        traces_df = traces_resultado.get("df")
 
         if not traces_resultado.get("ok"):
             erros_coleta.append(
@@ -573,90 +472,50 @@ def coletar_health_score_real(
     except Exception as exc:
         traces_df = pd.DataFrame()
 
-        erros_coleta.append(
-            "Erro ao consultar a Timeline: "
-            f"{exc}"
-        )
+        erros_coleta.append(f"Erro ao consultar a Timeline: {exc}")
 
-    timeline_resultado = (
-        _calcular_metricas_timeline(
-            traces_df
-        )
-    )
+    timeline_resultado = _calcular_metricas_timeline(traces_df)
 
     # -----------------------------------------------------
     # Performance
     # -----------------------------------------------------
-    score_performance = (
-        calcular_score_performance(
-            p95_tools_ms=float(
-                tools_resultado[
-                    "metricas"
-                ]["p95_tools_ms"]
-            ),
-            p95_trace_ms=float(
-                timeline_resultado[
-                    "metricas"
-                ][
-                    "p95_trace_sem_cold_start_ms"
-                ]
-            ),
-        )
+    score_performance = calcular_score_performance(
+        p95_tools_ms=float(tools_resultado["metricas"]["p95_tools_ms"]),
+        p95_trace_ms=float(
+            timeline_resultado["metricas"]["p95_trace_sem_cold_start_ms"]
+        ),
     )
 
     componentes = {
-        "tools": tools_resultado[
-            "score"
-        ],
+        "tools": tools_resultado["score"],
         "rag": score_rag,
         "memoria": score_memoria,
         "infraestrutura": score_infra,
-        "timeline": timeline_resultado[
-            "score"
-        ],
+        "timeline": timeline_resultado["score"],
         "performance": score_performance,
     }
 
-    health_global = (
-        calcular_health_score_global(
-            componentes
-        )
-    )
+    health_global = calcular_health_score_global(componentes)
 
     return {
         "ok": len(erros_coleta) == 0,
         "message": (
             "Health Score calculado com sucesso."
             if not erros_coleta
-            else (
-                "Health Score calculado com "
-                "alertas de coleta."
-            )
+            else ("Health Score calculado com alertas de coleta.")
         ),
         "health": health_global,
         "componentes_brutos": componentes,
         "metricas": {
-            "tools": tools_resultado[
-                "metricas"
-            ],
+            "tools": tools_resultado["metricas"],
             "rag": {
-                "documentos_ativos": (
-                    documentos_ativos
-                ),
-                "documentos_com_embeddings": (
-                    documentos_com_embeddings
-                ),
-                "embeddings_ativos": (
-                    embeddings_ativos
-                ),
-                "embeddings_inativos": (
-                    embeddings_inativos
-                ),
+                "documentos_ativos": (documentos_ativos),
+                "documentos_com_embeddings": (documentos_com_embeddings),
+                "embeddings_ativos": (embeddings_ativos),
+                "embeddings_inativos": (embeddings_inativos),
             },
             "memoria": {
-                "tabela_disponivel": (
-                    memoria_disponivel
-                ),
+                "tabela_disponivel": (memoria_disponivel),
                 "usuarios_com_memoria": int(
                     memorias.get(
                         "total",
@@ -682,9 +541,7 @@ def coletar_health_score_real(
                     {},
                 ),
             },
-            "timeline": timeline_resultado[
-                "metricas"
-            ],
+            "timeline": timeline_resultado["metricas"],
         },
         "anomalias": resultado_anomalias,
         "erros_coleta": erros_coleta,

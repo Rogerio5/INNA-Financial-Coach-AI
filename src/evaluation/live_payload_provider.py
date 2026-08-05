@@ -20,21 +20,15 @@ GraphState = Mapping[str, Any]
 GraphExecutor = Callable[..., GraphState]
 
 
-class LivePayloadProviderError(
-    PayloadProviderError
-):
+class LivePayloadProviderError(PayloadProviderError):
     """Falha controlada na avaliação real da INNA."""
 
 
-class EmptyLiveResponseError(
-    LivePayloadProviderError
-):
+class EmptyLiveResponseError(LivePayloadProviderError):
     """A execução real não produziu resposta avaliável."""
 
 
-class InvalidLiveStateError(
-    LivePayloadProviderError
-):
+class InvalidLiveStateError(LivePayloadProviderError):
     """O grafo retornou um estado incompatível."""
 
 
@@ -89,10 +83,7 @@ def _text_sequence(
 
         return ()
 
-    if (
-        not isinstance(value, Sequence)
-        or isinstance(value, (str, bytes))
-    ):
+    if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
         return ()
 
     normalized_items: list[str] = []
@@ -100,14 +91,8 @@ def _text_sequence(
     for item in value:
         normalized = _text(item)
 
-        if (
-            normalized
-            and normalized
-            not in normalized_items
-        ):
-            normalized_items.append(
-                normalized
-            )
+        if normalized and normalized not in normalized_items:
+            normalized_items.append(normalized)
 
     return tuple(normalized_items)
 
@@ -120,23 +105,16 @@ def _called_tools(
         (),
     )
 
-    if (
-        not isinstance(raw_results, Sequence)
-        or isinstance(raw_results, (str, bytes))
-    ):
+    if not isinstance(raw_results, Sequence) or isinstance(raw_results, (str, bytes)):
         return ()
 
     calls: list[dict[str, Any]] = []
 
-    for index, raw_result in enumerate(
-        raw_results
-    ):
+    for index, raw_result in enumerate(raw_results):
         result = _mapping(raw_result)
 
         tool_name = _text(
-            result.get("tool")
-            or result.get("tool_name")
-            or result.get("name")
+            result.get("tool") or result.get("tool_name") or result.get("name")
         )
 
         if not tool_name:
@@ -221,11 +199,7 @@ def _latency_ms(
 ) -> float:
     rag = _rag_execution(state)
 
-    value = (
-        rag.get("duration_ms")
-        or rag.get("rag_duration_ms")
-        or 0.0
-    )
+    value = rag.get("duration_ms") or rag.get("rag_duration_ms") or 0.0
 
     try:
         return max(
@@ -259,13 +233,7 @@ def _human_review_metadata(
     metadata: dict[str, Any] = {}
 
     if "human_review_requested" in state:
-        metadata[
-            "human_review_requested"
-        ] = bool(
-            state.get(
-                "human_review_requested"
-            )
-        )
+        metadata["human_review_requested"] = bool(state.get("human_review_requested"))
 
     status = _text(
         state.get(
@@ -275,9 +243,7 @@ def _human_review_metadata(
     )
 
     if status:
-        metadata[
-            "human_review_status"
-        ] = status
+        metadata["human_review_status"] = status
 
     return metadata
 
@@ -292,32 +258,22 @@ class LiveInnaPayloadProvider:
     não dependam de banco, rede ou modelo generativo.
     """
 
-    graph_executor: GraphExecutor = (
-        _default_graph_executor
-    )
+    graph_executor: GraphExecutor = _default_graph_executor
 
-    user_id_prefix: str = (
-        "inna-live-evaluation"
-    )
+    user_id_prefix: str = "inna-live-evaluation"
 
     estimated_cost: float = 0.0
 
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         prefix = self.user_id_prefix.strip()
 
         if not prefix:
-            raise ValueError(
-                "user_id_prefix não pode ser vazio."
-            )
+            raise ValueError("user_id_prefix não pode ser vazio.")
 
         if self.estimated_cost < 0:
-            raise ValueError(
-                "estimated_cost não pode ser negativo."
-            )
+            raise ValueError("estimated_cost não pode ser negativo.")
 
         object.__setattr__(
             self,
@@ -328,9 +284,7 @@ class LiveInnaPayloadProvider:
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
     def __call__(
@@ -339,18 +293,14 @@ class LiveInnaPayloadProvider:
     ) -> DeepEvalCasePayload:
         state = self.graph_executor(
             mensagem=case.input_text,
-            usuario_id=(
-                f"{self.user_id_prefix}:"
-                f"{case.case_id}"
-            ),
+            usuario_id=(f"{self.user_id_prefix}:{case.case_id}"),
             idioma=case.language,
             moeda=case.currency,
         )
 
         if not isinstance(state, Mapping):
             raise InvalidLiveStateError(
-                "O executor real não retornou "
-                "um estado do tipo Mapping."
+                "O executor real não retornou um estado do tipo Mapping."
             )
 
         actual_output = _text(
@@ -362,13 +312,10 @@ class LiveInnaPayloadProvider:
 
         if not actual_output:
             raise EmptyLiveResponseError(
-                "A execução real terminou sem "
-                "resposta avaliável."
+                "A execução real terminou sem resposta avaliável."
             )
 
-        structured_output = dict(
-            _structured_response(state)
-        )
+        structured_output = dict(_structured_response(state))
 
         observed_metadata: dict[str, Any] = {
             "actual_agent": _text(
@@ -395,44 +342,26 @@ class LiveInnaPayloadProvider:
                     "",
                 )
             ),
-            "task_completion_score": (
-                _completion_score(state)
-            ),
-            "called_tools": _called_tools(
-                state
-            ),
-            "retrieved_documents": (
-                _retrieved_documents(state)
-            ),
-            "latency_ms": _latency_ms(
-                state
-            ),
-            "estimated_cost": (
-                self.estimated_cost
-            ),
-            "structured_output": (
-                structured_output
-            ),
+            "task_completion_score": (_completion_score(state)),
+            "called_tools": _called_tools(state),
+            "retrieved_documents": (_retrieved_documents(state)),
+            "latency_ms": _latency_ms(state),
+            "estimated_cost": (self.estimated_cost),
+            "structured_output": (structured_output),
             "live_provider": True,
             "synthetic_provider": False,
             "production_execution": True,
             "graph_execution": True,
         }
 
-        observed_metadata.update(
-            _human_review_metadata(state)
-        )
+        observed_metadata.update(_human_review_metadata(state))
 
-        observed_metadata.update(
-            dict(self.metadata)
-        )
+        observed_metadata.update(dict(self.metadata))
 
         return build_deepeval_payload(
             case,
             actual_output=actual_output,
-            retrieval_context=(
-                _retrieval_context(state)
-            ),
+            retrieval_context=(_retrieval_context(state)),
             metadata=observed_metadata,
         )
 

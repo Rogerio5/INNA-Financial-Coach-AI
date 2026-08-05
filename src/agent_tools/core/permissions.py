@@ -42,11 +42,9 @@ class ToolPermissionPolicy:
         agent_name: str,
         definition: ToolDefinition,
     ) -> ToolPermissionDecision:
-        denied_tools = (
-            self.explicit_denials.get(
-                agent_name,
-                frozenset(),
-            )
+        denied_tools = self.explicit_denials.get(
+            agent_name,
+            frozenset(),
         )
 
         if definition.name in denied_tools:

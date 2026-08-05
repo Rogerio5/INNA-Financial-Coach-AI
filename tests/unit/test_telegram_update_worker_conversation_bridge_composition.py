@@ -47,10 +47,7 @@ def test_worker_composes_single_bridge_and_reuses_it(
         fake_process,
     )
 
-    processor = (
-        telegram_update_worker
-        .load_telegram_processor()
-    )
+    processor = telegram_update_worker.load_telegram_processor()
 
     assert callable(processor)
     assert created_bridges == [fake_bridge]
@@ -112,10 +109,7 @@ def test_worker_does_not_create_bridge_per_update(
         fake_process,
     )
 
-    processor = (
-        telegram_update_worker
-        .load_telegram_processor()
-    )
+    processor = telegram_update_worker.load_telegram_processor()
 
     processor({"update_id": 1})
     processor({"update_id": 2})
@@ -135,10 +129,7 @@ def test_worker_rejects_invalid_bridge_factory(
         None,
     )
 
-    with pytest.raises(
-        telegram_update_worker
-        .TelegramUpdateRunnerConfigurationError
-    ):
+    with pytest.raises(telegram_update_worker.TelegramUpdateRunnerConfigurationError):
         telegram_update_worker.load_telegram_processor()
 
 
@@ -148,9 +139,7 @@ def test_worker_wraps_bridge_composition_failure(
     from src.services import telegram_conversation_state
 
     def failing_factory():
-        raise RuntimeError(
-            "database details must not escape"
-        )
+        raise RuntimeError("database details must not escape")
 
     monkeypatch.setattr(
         telegram_conversation_state,
@@ -159,20 +148,13 @@ def test_worker_wraps_bridge_composition_failure(
     )
 
     with pytest.raises(
-        telegram_update_worker
-        .TelegramUpdateRunnerConfigurationError,
-        match=(
-            "Não foi possível compor "
-            "o estado conversacional durável"
-        ),
+        telegram_update_worker.TelegramUpdateRunnerConfigurationError,
+        match=("Não foi possível compor o estado conversacional durável"),
     ) as captured:
         telegram_update_worker.load_telegram_processor()
 
     assert captured.value.__cause__ is None
-    assert (
-        "database details"
-        not in str(captured.value)
-    )
+    assert "database details" not in str(captured.value)
 
 
 def test_worker_rejects_none_bridge(
@@ -187,30 +169,17 @@ def test_worker_rejects_none_bridge(
     )
 
     with pytest.raises(
-        telegram_update_worker
-        .TelegramUpdateRunnerConfigurationError,
+        telegram_update_worker.TelegramUpdateRunnerConfigurationError,
         match="conversation bridge criada é inválida",
     ):
         telegram_update_worker.load_telegram_processor()
 
 
 def test_worker_composition_source_has_no_direct_runtime_creation():
-    source = inspect.getsource(
-        telegram_update_worker
-        .load_telegram_processor
-    )
+    source = inspect.getsource(telegram_update_worker.load_telegram_processor)
 
-    assert (
-        "create_postgres_telegram_webhook_conversation_bridge"
-        in source
-    )
+    assert "create_postgres_telegram_webhook_conversation_bridge" in source
 
-    assert (
-        "create_postgres_telegram_conversation_state_runtime("
-        not in source
-    )
+    assert "create_postgres_telegram_conversation_state_runtime(" not in source
 
-    assert (
-        "conversation_bridge=conversation_bridge"
-        in source
-    )
+    assert "conversation_bridge=conversation_bridge" in source

@@ -16,9 +16,7 @@ def test_starts_trace_with_unique_identifier():
     )
 
     assert trace.trace_id
-    assert trace.query == (
-        "Como criar reserva?"
-    )
+    assert trace.query == ("Como criar reserva?")
     assert trace.language == "pt"
     assert trace.top_k == 4
     assert trace.finished_at is None
@@ -30,9 +28,7 @@ def test_rejects_empty_query():
         ValueError,
         match="não pode estar vazia",
     ):
-        start_retrieval_trace(
-            query="   "
-        )
+        start_retrieval_trace(query="   ")
 
 
 @pytest.mark.parametrize(
@@ -72,9 +68,7 @@ def test_builds_structured_result_trace():
         }
     ]
 
-    traces = build_result_traces(
-        results
-    )
+    traces = build_result_traces(results)
 
     assert len(traces) == 1
 
@@ -104,9 +98,7 @@ def test_accepts_string_search_origin():
         ]
     )
 
-    assert traces[0].search_origins == (
-        "textual",
-    )
+    assert traces[0].search_origins == ("textual",)
 
 
 def test_invalid_score_becomes_none():
@@ -139,17 +131,13 @@ def test_finish_records_results_and_time():
                 "score": 0.82,
             },
         ],
-        search_mode=(
-            "rag_hibrido_rerank"
-        ),
+        search_mode=("rag_hibrido_rerank"),
     )
 
     assert trace.finished_at
     assert trace.total_time_ms is not None
     assert trace.total_time_ms >= 0
-    assert trace.search_mode == (
-        "rag_hibrido_rerank"
-    )
+    assert trace.search_mode == ("rag_hibrido_rerank")
     assert len(trace.results) == 2
 
 
@@ -176,12 +164,8 @@ def test_trace_can_be_serialized():
     assert payload["query"] == "orçamento"
     assert payload["search_mode"] == "hybrid"
     assert payload["results_total"] == 1
-    assert payload["results"][0][
-        "position"
-    ] == 1
-    assert payload["results"][0][
-        "rerank_score"
-    ] == 1.2
+    assert payload["results"][0]["position"] == 1
+    assert payload["results"][0]["rerank_score"] == 1.2
 
 
 def test_preserves_final_ranking_positions():

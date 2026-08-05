@@ -1,0 +1,13 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Fixtures de teste e identificadores internos conhecidos"
+paths = [
+  '''tests/evaluations/test_privacy\.py''',
+  '''tests/unit/test_secure_telegram_pii_client\.py''',
+  '''tests/unit/test_secure_telegram_polling_client\.py''',
+  '''tests/evaluations/fixtures/financial_documents_dry_run\.json''',
+  '''tests/unit/test_telegram_operational_config\.py''',
+  '''src/evaluation/financial_vector_retrieval_evaluation\.py''',
+]

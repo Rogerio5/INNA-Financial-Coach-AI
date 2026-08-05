@@ -69,12 +69,7 @@ class ExampleStatus(StrEnum):
 
 class UnknownObject:
     def __repr__(self) -> str:
-        return (
-            "UnknownObject("
-            "email=usuario@exemplo.com, "
-            "token=segredo123"
-            ")"
-        )
+        return "UnknownObject(email=usuario@exemplo.com, token=segredo123)"
 
 
 # ============================================================
@@ -114,10 +109,13 @@ def test_normalize_key_accepts_non_string() -> None:
 def test_truncate_text_preserves_short_text() -> None:
     value = "texto curto"
 
-    assert truncate_text(
-        value,
-        max_length=100,
-    ) == value
+    assert (
+        truncate_text(
+            value,
+            max_length=100,
+        )
+        == value
+    )
 
 
 def test_truncate_text_limits_long_text() -> None:
@@ -160,18 +158,14 @@ def test_truncate_text_rejects_invalid_limit(
 
 
 def test_sanitize_text_redacts_email() -> None:
-    sanitized = sanitize_text(
-        "Entre em contato com usuario@exemplo.com."
-    )
+    sanitized = sanitize_text("Entre em contato com usuario@exemplo.com.")
 
     assert "usuario@exemplo.com" not in sanitized
     assert REDACTED_EMAIL in sanitized
 
 
 def test_sanitize_text_redacts_phone() -> None:
-    sanitized = sanitize_text(
-        "Meu telefone é (14) 99999-9999."
-    )
+    sanitized = sanitize_text("Meu telefone é (14) 99999-9999.")
 
     assert "99999-9999" not in sanitized
     assert REDACTED_PHONE in sanitized
@@ -189,19 +183,14 @@ def test_sanitize_text_redacts_phone() -> None:
 def test_sanitize_text_redacts_documents(
     document: str,
 ) -> None:
-    sanitized = sanitize_text(
-        f"Documento: {document}"
-    )
+    sanitized = sanitize_text(f"Documento: {document}")
 
     assert document not in sanitized
     assert REDACTED_DOCUMENT in sanitized
 
 
 def test_sanitize_text_redacts_database_url() -> None:
-    value = (
-        "Falha de conexão em "
-        "postgresql://user:password@host:5432/database"
-    )
+    value = "Falha de conexão em postgresql://user:password@host:5432/database"
 
     sanitized = sanitize_text(value)
 
@@ -226,42 +215,30 @@ def test_sanitize_text_redacts_database_url() -> None:
 def test_sanitize_text_redacts_supported_database_urls(
     database_url: str,
 ) -> None:
-    sanitized = sanitize_text(
-        f"Conexão: {database_url}"
-    )
+    sanitized = sanitize_text(f"Conexão: {database_url}")
 
     assert database_url not in sanitized
     assert REDACTED_DATABASE_URL in sanitized
 
 
 def test_sanitize_text_redacts_bearer_token() -> None:
-    sanitized = sanitize_text(
-        "Authorization: Bearer token-secreto-123"
-    )
+    sanitized = sanitize_text("Authorization: Bearer token-secreto-123")
 
     assert "token-secreto-123" not in sanitized
     assert REDACTED_AUTH in sanitized
 
 
 def test_sanitize_text_redacts_basic_auth() -> None:
-    sanitized = sanitize_text(
-        "Authorization: Basic dXNlcjpwYXNzd29yZA=="
-    )
+    sanitized = sanitize_text("Authorization: Basic dXNlcjpwYXNzd29yZA==")
 
     assert "dXNlcjpwYXNzd29yZA==" not in sanitized
     assert REDACTED_AUTH in sanitized
 
 
 def test_sanitize_text_redacts_jwt() -> None:
-    token = (
-        "eyJhbGciOiJIUzI1NiJ9."
-        "eyJzdWIiOiIxMjM0NTY3ODkwIn0."
-        "signature123"
-    )
+    token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.signature123"
 
-    sanitized = sanitize_text(
-        f"JWT: {token}"
-    )
+    sanitized = sanitize_text(f"JWT: {token}")
 
     assert token not in sanitized
     assert REDACTED_AUTH in sanitized
@@ -309,18 +286,12 @@ abcdefghijklmnopqrstuvwxyz
 
 
 def test_sanitize_text_removes_http_url_credentials() -> None:
-    value = (
-        "Acesse "
-        "https://usuario:senha@servidor.exemplo.com/recurso"
-    )
+    value = "Acesse https://usuario:senha@servidor.exemplo.com/recurso"
 
     sanitized = sanitize_text(value)
 
     assert "usuario:senha@" not in sanitized
-    assert (
-        "https://servidor.exemplo.com/recurso"
-        in sanitized
-    )
+    assert "https://servidor.exemplo.com/recurso" in sanitized
 
 
 def test_sanitize_text_preserves_safe_http_url() -> None:
@@ -332,9 +303,7 @@ def test_sanitize_text_preserves_safe_http_url() -> None:
 
 
 def test_sanitize_text_redacts_valid_credit_card() -> None:
-    sanitized = sanitize_text(
-        "Cartão de teste: 4111 1111 1111 1111"
-    )
+    sanitized = sanitize_text("Cartão de teste: 4111 1111 1111 1111")
 
     assert "4111" not in sanitized
     assert REDACTED_CARD in sanitized
@@ -343,17 +312,13 @@ def test_sanitize_text_redacts_valid_credit_card() -> None:
 def test_sanitize_text_preserves_non_card_number() -> None:
     number = "1234 5678 9012 3456"
 
-    sanitized = sanitize_text(
-        f"Sequência de teste: {number}"
-    )
+    sanitized = sanitize_text(f"Sequência de teste: {number}")
 
     assert number in sanitized
 
 
 def test_sanitize_text_redacts_valid_ipv4() -> None:
-    sanitized = sanitize_text(
-        "Servidor interno: 192.168.0.10"
-    )
+    sanitized = sanitize_text("Servidor interno: 192.168.0.10")
 
     assert "192.168.0.10" not in sanitized
     assert REDACTED_IP in sanitized
@@ -362,9 +327,7 @@ def test_sanitize_text_redacts_valid_ipv4() -> None:
 def test_sanitize_text_preserves_invalid_ipv4() -> None:
     invalid_ip = "999.999.999.999"
 
-    sanitized = sanitize_text(
-        f"Valor inválido: {invalid_ip}"
-    )
+    sanitized = sanitize_text(f"Valor inválido: {invalid_ip}")
 
     assert invalid_ip in sanitized
 
@@ -518,9 +481,7 @@ def test_hash_identifier_accepts_default_digest_size() -> None:
 
     assert result is not None
 
-    expected_hex_length = (
-        DEFAULT_HASH_DIGEST_SIZE * 2
-    )
+    expected_hex_length = DEFAULT_HASH_DIGEST_SIZE * 2
 
     digest = result.split(
         "_",
@@ -531,13 +492,9 @@ def test_hash_identifier_accepts_default_digest_size() -> None:
 
 
 def test_content_hash_is_stable() -> None:
-    first = content_hash(
-        "Documento financeiro de teste"
-    )
+    first = content_hash("Documento financeiro de teste")
 
-    second = content_hash(
-        "Documento financeiro de teste"
-    )
+    second = content_hash("Documento financeiro de teste")
 
     assert first == second
 
@@ -550,9 +507,7 @@ def test_content_hash_changes_for_different_content() -> None:
 
 
 def test_content_hash_accepts_bytes() -> None:
-    result = content_hash(
-        b"conteudo-binario"
-    )
+    result = content_hash(b"conteudo-binario")
 
     assert isinstance(result, str)
     assert result
@@ -588,9 +543,7 @@ def test_sanitize_mapping_redacts_sensitive_keys() -> None:
     payload = {
         "api_key": "secret-api-key",
         "password": "secret-password",
-        "database_url": (
-            "postgresql://user:pass@host/db"
-        ),
+        "database_url": ("postgresql://user:pass@host/db"),
         "authorization": "Bearer token",
     }
 
@@ -598,14 +551,8 @@ def test_sanitize_mapping_redacts_sensitive_keys() -> None:
 
     assert sanitized["api_key"] == REDACTED_SECRET
     assert sanitized["password"] == REDACTED_SECRET
-    assert (
-        sanitized["database_url"]
-        == REDACTED_SECRET
-    )
-    assert (
-        sanitized["authorization"]
-        == REDACTED_SECRET
-    )
+    assert sanitized["database_url"] == REDACTED_SECRET
+    assert sanitized["authorization"] == REDACTED_SECRET
 
 
 @pytest.mark.parametrize(
@@ -635,10 +582,7 @@ def test_sanitize_mapping_redacts_supported_secret_fields(
         }
     )
 
-    assert (
-        sanitized[field_name]
-        == REDACTED_SECRET
-    )
+    assert sanitized[field_name] == REDACTED_SECRET
 
 
 @pytest.mark.parametrize(
@@ -668,10 +612,7 @@ def test_sanitize_mapping_redacts_personal_fields(
         }
     )
 
-    assert (
-        sanitized[field_name]
-        == REDACTED_PERSONAL_DATA
-    )
+    assert sanitized[field_name] == REDACTED_PERSONAL_DATA
 
 
 @pytest.mark.parametrize(
@@ -705,10 +646,7 @@ def test_sanitize_mapping_redacts_financial_fields(
         }
     )
 
-    assert (
-        sanitized[field_name]
-        == REDACTED_FINANCIAL_DATA
-    )
+    assert sanitized[field_name] == REDACTED_FINANCIAL_DATA
 
 
 @pytest.mark.parametrize(
@@ -746,10 +684,7 @@ def test_sanitize_mapping_can_preserve_personal_fields() -> None:
         redact_personal_fields=False,
     )
 
-    assert (
-        sanitized["email"]
-        == REDACTED_EMAIL
-    )
+    assert sanitized["email"] == REDACTED_EMAIL
 
 
 def test_sanitize_mapping_can_preserve_financial_values() -> None:
@@ -768,21 +703,14 @@ def test_sanitize_mapping_can_preserve_financial_values() -> None:
 
 
 def test_sanitize_mapping_limits_items() -> None:
-    payload = {
-        f"field_{index}": index
-        for index in range(10)
-    }
+    payload = {f"field_{index}": index for index in range(10)}
 
     sanitized = sanitize_mapping(
         payload,
         max_items=3,
     )
 
-    regular_keys = [
-        key
-        for key in sanitized
-        if key != "_truncated_items"
-    ]
+    regular_keys = [key for key in sanitized if key != "_truncated_items"]
 
     assert len(regular_keys) == 3
     assert sanitized["_truncated_items"] == 7
@@ -888,9 +816,7 @@ def test_sanitize_value_preserves_primitive_values(
 
 
 def test_sanitize_value_handles_enum() -> None:
-    sanitized = sanitize_value(
-        ExampleStatus.ACTIVE
-    )
+    sanitized = sanitize_value(ExampleStatus.ACTIVE)
 
     assert sanitized == "active"
 
@@ -905,22 +831,10 @@ def test_sanitize_value_handles_dataclass() -> None:
 
     sanitized = sanitize_value(payload)
 
-    assert (
-        sanitized["email"]
-        == REDACTED_PERSONAL_DATA
-    )
-    assert (
-        sanitized["income"]
-        == REDACTED_FINANCIAL_DATA
-    )
-    assert (
-        sanitized["token"]
-        == REDACTED_SECRET
-    )
-    assert (
-        sanitized["message"]
-        == "Mensagem segura"
-    )
+    assert sanitized["email"] == REDACTED_PERSONAL_DATA
+    assert sanitized["income"] == REDACTED_FINANCIAL_DATA
+    assert sanitized["token"] == REDACTED_SECRET
+    assert sanitized["message"] == "Mensagem segura"
 
 
 def test_sanitize_value_handles_pydantic_model() -> None:
@@ -933,28 +847,15 @@ def test_sanitize_value_handles_pydantic_model() -> None:
 
     sanitized = sanitize_value(payload)
 
-    assert (
-        sanitized["email"]
-        == REDACTED_PERSONAL_DATA
-    )
-    assert (
-        sanitized["monthly_income"]
-        == REDACTED_FINANCIAL_DATA
-    )
-    assert (
-        sanitized["api_key"]
-        == REDACTED_SECRET
-    )
-    assert (
-        sanitized["description"]
-        == "Teste seguro"
-    )
+    assert sanitized["email"] == REDACTED_PERSONAL_DATA
+    assert sanitized["monthly_income"] == REDACTED_FINANCIAL_DATA
+    assert sanitized["api_key"] == REDACTED_SECRET
+    assert sanitized["description"] == "Teste seguro"
 
 
 def test_sanitize_value_handles_exception() -> None:
     error = RuntimeError(
-        "Erro em postgresql://user:pass@host/db "
-        "para usuario@exemplo.com"
+        "Erro em postgresql://user:pass@host/db para usuario@exemplo.com"
     )
 
     sanitized = sanitize_value(error)
@@ -966,18 +867,14 @@ def test_sanitize_value_handles_exception() -> None:
 
 
 def test_sanitize_value_handles_binary_data() -> None:
-    sanitized = sanitize_value(
-        b"secret binary data"
-    )
+    sanitized = sanitize_value(b"secret binary data")
 
     assert REDACTED_BINARY in sanitized
     assert "18 bytes" in sanitized
 
 
 def test_sanitize_value_handles_bytearray() -> None:
-    value = bytearray(
-        b"binary"
-    )
+    value = bytearray(b"binary")
 
     sanitized = sanitize_value(value)
 
@@ -986,9 +883,7 @@ def test_sanitize_value_handles_bytearray() -> None:
 
 
 def test_sanitize_value_handles_unknown_object() -> None:
-    sanitized = sanitize_value(
-        UnknownObject()
-    )
+    sanitized = sanitize_value(UnknownObject())
 
     assert "usuario@exemplo.com" not in sanitized
     assert "segredo123" not in sanitized
@@ -1022,10 +917,7 @@ def test_sanitize_headers_redacts_sensitive_headers(
         }
     )
 
-    assert (
-        sanitized[header_name]
-        == REDACTED_AUTH
-    )
+    assert sanitized[header_name] == REDACTED_AUTH
 
 
 def test_sanitize_headers_preserves_safe_headers() -> None:
@@ -1037,18 +929,9 @@ def test_sanitize_headers_preserves_safe_headers() -> None:
         }
     )
 
-    assert (
-        sanitized["Content-Type"]
-        == "application/json"
-    )
-    assert (
-        sanitized["Accept"]
-        == "application/json"
-    )
-    assert (
-        sanitized["X-Request-ID"]
-        == "request-123"
-    )
+    assert sanitized["Content-Type"] == "application/json"
+    assert sanitized["Accept"] == "application/json"
+    assert sanitized["X-Request-ID"] == "request-123"
 
 
 def test_sanitize_headers_allowlist_removes_unknown_headers() -> None:
@@ -1069,15 +952,11 @@ def test_sanitize_headers_allowlist_removes_unknown_headers() -> None:
 def test_sanitize_headers_sanitizes_value_content() -> None:
     sanitized = sanitize_headers(
         {
-            "User-Agent": (
-                "client usuario@exemplo.com"
-            ),
+            "User-Agent": ("client usuario@exemplo.com"),
         }
     )
 
-    assert "usuario@exemplo.com" not in (
-        sanitized["User-Agent"]
-    )
+    assert "usuario@exemplo.com" not in (sanitized["User-Agent"])
 
 
 # ============================================================
@@ -1086,9 +965,7 @@ def test_sanitize_headers_sanitizes_value_content() -> None:
 
 
 def test_sanitize_exception_includes_type_by_default() -> None:
-    sanitized = sanitize_exception(
-        RuntimeError("Falha segura")
-    )
+    sanitized = sanitize_exception(RuntimeError("Falha segura"))
 
     assert sanitized["type"] == "RuntimeError"
     assert sanitized["message"] == "Falha segura"
@@ -1120,9 +997,7 @@ def test_sanitize_exception_redacts_sensitive_content() -> None:
 
 
 def test_sanitize_exception_limits_message_size() -> None:
-    error = RuntimeError(
-        "x" * 100
-    )
+    error = RuntimeError("x" * 100)
 
     sanitized = sanitize_exception(
         error,
@@ -1151,10 +1026,7 @@ def test_sanitize_exception_limits_message_size() -> None:
 def test_sanitize_pix_key_always_redacts(
     pix_key: str,
 ) -> None:
-    assert (
-        sanitize_pix_key(pix_key)
-        == REDACTED_PIX
-    )
+    assert sanitize_pix_key(pix_key) == REDACTED_PIX
 
 
 def test_sanitize_pix_key_preserves_empty_value() -> None:
@@ -1173,11 +1045,7 @@ def test_sanitize_pix_key_preserves_empty_value() -> None:
         "postgresql://user:pass@host/db",
         "Authorization: Bearer segredo",
         "Authorization: Basic dXNlcjpwYXNz",
-        (
-            "eyJhbGciOiJIUzI1NiJ9."
-            "eyJzdWIiOiIxMjMifQ."
-            "signature"
-        ),
+        ("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMifQ.signature"),
         "api_key=segredo123",
         """
 -----BEGIN PRIVATE KEY-----
@@ -1249,9 +1117,7 @@ def test_assert_safe_for_external_export_blocks_secret() -> None:
     ):
         assert_safe_for_external_export(
             {
-                "database": (
-                    "postgresql://user:pass@host/db"
-                ),
+                "database": ("postgresql://user:pass@host/db"),
             }
         )
 
@@ -1297,17 +1163,13 @@ def test_prepare_external_payload_redacts_every_sensitive_category() -> None:
         "phone": "(14) 99999-9999",
         "cpf": "123.456.789-09",
         "api_key": "chave-secreta",
-        "database_url": (
-            "postgresql://user:pass@host/db"
-        ),
+        "database_url": ("postgresql://user:pass@host/db"),
         "financial_data": {
             "income": 3000,
             "debt": 500,
         },
         "pix_key": "usuario@exemplo.com",
-        "trace_id": (
-            "550e8400-e29b-41d4-a716-446655440000"
-        ),
+        "trace_id": ("550e8400-e29b-41d4-a716-446655440000"),
     }
 
     sanitized = prepare_external_payload(payload)
@@ -1320,10 +1182,7 @@ def test_prepare_external_payload_redacts_every_sensitive_category() -> None:
     assert "postgresql://" not in rendered
     assert '"income": 3000' not in rendered
     assert '"debt": 500' not in rendered
-    assert (
-        "550e8400-e29b-41d4-a716-446655440000"
-        not in rendered
-    )
+    assert "550e8400-e29b-41d4-a716-446655440000" not in rendered
 
 
 def test_prepare_external_payload_preserves_safe_metadata() -> None:
@@ -1352,10 +1211,7 @@ def test_prepare_external_payload_limits_large_strings() -> None:
 
 
 def test_prepare_external_payload_limits_items() -> None:
-    payload = {
-        f"field_{index}": index
-        for index in range(10)
-    }
+    payload = {f"field_{index}": index for index in range(10)}
 
     sanitized = prepare_external_payload(
         payload,
@@ -1392,24 +1248,14 @@ def test_prepare_internal_payload_preserves_financial_values() -> None:
 
     sanitized = prepare_internal_payload(payload)
 
-    assert (
-        sanitized["financial_context"][
-            "monthly_income"
-        ]
-        == 3000
-    )
-    assert (
-        sanitized["financial_context"]["debt"]
-        == 500
-    )
+    assert sanitized["financial_context"]["monthly_income"] == 3000
+    assert sanitized["financial_context"]["debt"] == 500
 
 
 def test_prepare_internal_payload_blocks_remaining_secret() -> None:
     class SecretObject:
         def __repr__(self) -> str:
-            return (
-                "postgresql://user:pass@host/db"
-            )
+            return "postgresql://user:pass@host/db"
 
     sanitized = prepare_internal_payload(
         {
@@ -1514,10 +1360,7 @@ def test_safe_artifact_name_normalizes_values(
     original: str,
     expected: str,
 ) -> None:
-    assert (
-        safe_artifact_name(original)
-        == expected
-    )
+    assert safe_artifact_name(original) == expected
 
 
 def test_safe_artifact_name_uses_default_for_empty_value() -> None:
@@ -1540,9 +1383,7 @@ def test_safe_artifact_name_limits_length() -> None:
 
 
 def test_safe_artifact_name_blocks_path_traversal() -> None:
-    artifact_name = safe_artifact_name(
-        "../../Relatório INNA.json"
-    )
+    artifact_name = safe_artifact_name("../../Relatório INNA.json")
 
     assert ".." not in artifact_name
     assert "/" not in artifact_name

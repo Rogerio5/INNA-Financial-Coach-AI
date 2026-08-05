@@ -164,7 +164,6 @@ PDF_TEXTS = {
         "days": "zile",
         "months": "lună/luni",
     },
-
     "ru": {
         "report_title": "Отчёт финансовой диагностики",
         "field": "Поле",
@@ -222,9 +221,7 @@ PDF_TEXTS = {
         "days": "أيام",
         "months": "شهر",
     },
-
 }
-
 
 
 RISK_TRANSLATIONS = {
@@ -286,6 +283,7 @@ RISK_TRANSLATIONS = {
     },
 }
 
+
 def get_pdf_font_name() -> str:
     possible_paths = [
         "fonts/DejaVuSans.ttf",
@@ -309,16 +307,13 @@ def get_pdf_font_name() -> str:
     return "Helvetica"
 
 
-
-
-
-
 def force_pdf_language(diagnostico: dict) -> str:
     idioma = str(diagnostico.get("idioma") or "").lower().strip()
 
     conteudo = (
-        str(diagnostico.get("diagnostico", "")) + " " +
-        str(diagnostico.get("plano_30_dias", ""))
+        str(diagnostico.get("diagnostico", ""))
+        + " "
+        + str(diagnostico.get("plano_30_dias", ""))
     ).lower()
 
     # Idiomas com alfabetos específicos
@@ -333,26 +328,54 @@ def force_pdf_language(diagnostico: dict) -> str:
 
     # Detecta alemão mesmo se o campo idioma vier errado como pt
     german_markers = [
-        "finanzdiagnose", "finanzscore", "risikostufe", "rücklage",
-        "einkommensbindung", "monatlicher überschuss", "woche",
-        "wichtiger hinweis", "auf grundlage", "schulden"
+        "finanzdiagnose",
+        "finanzscore",
+        "risikostufe",
+        "rücklage",
+        "einkommensbindung",
+        "monatlicher überschuss",
+        "woche",
+        "wichtiger hinweis",
+        "auf grundlage",
+        "schulden",
     ]
     if any(marker in conteudo for marker in german_markers):
         return "de"
 
-    french_markers = ["diagnostic financier", "semaine", "épargne", "revenu", "avis important"]
+    french_markers = [
+        "diagnostic financier",
+        "semaine",
+        "épargne",
+        "revenu",
+        "avis important",
+    ]
     if any(marker in conteudo for marker in french_markers):
         return "fr"
 
-    spanish_markers = ["diagnóstico financiero", "semana", "ingresos", "aviso importante"]
+    spanish_markers = [
+        "diagnóstico financiero",
+        "semana",
+        "ingresos",
+        "aviso importante",
+    ]
     if any(marker in conteudo for marker in spanish_markers):
         return "es"
 
-    italian_markers = ["diagnosi finanziaria", "settimana", "reddito", "avviso importante"]
+    italian_markers = [
+        "diagnosi finanziaria",
+        "settimana",
+        "reddito",
+        "avviso importante",
+    ]
     if any(marker in conteudo for marker in italian_markers):
         return "it"
 
-    romanian_markers = ["diagnostic financiar", "săptămâna", "venit", "avertisment important"]
+    romanian_markers = [
+        "diagnostic financiar",
+        "săptămâna",
+        "venit",
+        "avertisment important",
+    ]
     if any(marker in conteudo for marker in romanian_markers):
         return "ro"
 
@@ -394,7 +417,9 @@ def format_money(value, symbol="R$", currency="BRL") -> str:
         return f"{symbol} {number:,.2f}".replace(",", "'")
 
     if currency in ["EUR", "BRL", "RON", "UAH", "RUB"]:
-        formatted = f"{number:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        formatted = (
+            f"{number:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        )
         return f"{symbol} {formatted}"
 
     return f"{symbol} {number:,.2f}"
@@ -406,15 +431,45 @@ def normalizar_texto_pdf(texto: str) -> str:
     return str(texto).replace("\n", "<br/>")
 
 
-
 def translate_risk_pdf(risk: str, idioma: str) -> str:
     risk_raw = str(risk or "").strip().lower()
     idioma = str(idioma or "pt").lower().strip()
 
     # Normaliza entradas em vários idiomas para um código técnico
-    low_values = {"baixo", "bajo", "low", "faible", "niedrig", "basso", "scăzut", "низкий", "низький", "منخفض"}
-    medium_values = {"medio", "médio", "medium", "moyen", "mittel", "mediu", "средний", "середній", "متوسط"}
-    high_values = {"alto", "high", "élevé", "eleve", "hoch", "ridicat", "высокий", "високий", "مرتفع"}
+    low_values = {
+        "baixo",
+        "bajo",
+        "low",
+        "faible",
+        "niedrig",
+        "basso",
+        "scăzut",
+        "низкий",
+        "низький",
+        "منخفض",
+    }
+    medium_values = {
+        "medio",
+        "médio",
+        "medium",
+        "moyen",
+        "mittel",
+        "mediu",
+        "средний",
+        "середній",
+        "متوسط",
+    }
+    high_values = {
+        "alto",
+        "high",
+        "élevé",
+        "eleve",
+        "hoch",
+        "ridicat",
+        "высокий",
+        "високий",
+        "مرتفع",
+    }
 
     if risk_raw in low_values:
         code = "low"
@@ -427,27 +482,55 @@ def translate_risk_pdf(risk: str, idioma: str) -> str:
 
     translations = {
         "low": {
-            "pt": "Baixo", "en_us": "Low", "en_gb": "Low", "es": "Bajo",
-            "fr": "Faible", "de": "Niedrig", "ch": "Niedrig", "it": "Basso",
-            "ro": "Scăzut", "uk": "Низький", "ru": "Низкий", "ar": "منخفض",
+            "pt": "Baixo",
+            "en_us": "Low",
+            "en_gb": "Low",
+            "es": "Bajo",
+            "fr": "Faible",
+            "de": "Niedrig",
+            "ch": "Niedrig",
+            "it": "Basso",
+            "ro": "Scăzut",
+            "uk": "Низький",
+            "ru": "Низкий",
+            "ar": "منخفض",
         },
         "medium": {
-            "pt": "Médio", "en_us": "Medium", "en_gb": "Medium", "es": "Medio",
-            "fr": "Moyen", "de": "Mittel", "ch": "Mittel", "it": "Medio",
-            "ro": "Mediu", "uk": "Середній", "ru": "Средний", "ar": "متوسط",
+            "pt": "Médio",
+            "en_us": "Medium",
+            "en_gb": "Medium",
+            "es": "Medio",
+            "fr": "Moyen",
+            "de": "Mittel",
+            "ch": "Mittel",
+            "it": "Medio",
+            "ro": "Mediu",
+            "uk": "Середній",
+            "ru": "Средний",
+            "ar": "متوسط",
         },
         "high": {
-            "pt": "Alto", "en_us": "High", "en_gb": "High", "es": "Alto",
-            "fr": "Élevé", "de": "Hoch", "ch": "Hoch", "it": "Alto",
-            "ro": "Ridicat", "uk": "Високий", "ru": "Высокий", "ar": "مرتفع",
+            "pt": "Alto",
+            "en_us": "High",
+            "en_gb": "High",
+            "es": "Alto",
+            "fr": "Élevé",
+            "de": "Hoch",
+            "ch": "Hoch",
+            "it": "Alto",
+            "ro": "Ridicat",
+            "uk": "Високий",
+            "ru": "Высокий",
+            "ar": "مرتفع",
         },
     }
 
     return translations[code].get(idioma, translations[code]["pt"])
 
 
-
-def force_currency_for_pdf_language(diagnostico: dict, idioma: str, moeda: str, simbolo: str) -> tuple[str, str]:
+def force_currency_for_pdf_language(
+    diagnostico: dict, idioma: str, moeda: str, simbolo: str
+) -> tuple[str, str]:
     diagnostico_texto = str(diagnostico.get("diagnostico", "")).lower()
     plano_texto = str(diagnostico.get("plano_30_dias", "")).lower()
 
@@ -462,8 +545,6 @@ def force_currency_for_pdf_language(diagnostico: dict, idioma: str, moeda: str, 
         return "BRL", "R$"
 
     return moeda, simbolo
-
-
 
 
 def clean_action_plan_notice_for_pdf(texto: str) -> str:
@@ -536,7 +617,9 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     moeda = diagnostico.get("moeda") or currency_default["moeda"]
     simbolo = diagnostico.get("simbolo_moeda") or currency_default["simbolo"]
 
-    moeda, simbolo = force_currency_for_pdf_language(diagnostico, idioma, moeda, simbolo)
+    moeda, simbolo = force_currency_for_pdf_language(
+        diagnostico, idioma, moeda, simbolo
+    )
 
     # Regra principal:
     # pt = Brasil = BRL/R$
@@ -551,13 +634,13 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
         moeda = currency_default["moeda"]
         simbolo = currency_default["simbolo"]
 
-
     # Correção definitiva PT-BR:
     # Se o conteúdo do relatório está em português, força idioma, moeda,
     # labels e unidades para português do Brasil.
     texto_check_pt = (
-        str(diagnostico.get("diagnostico", "")) + " " +
-        str(diagnostico.get("plano_30_dias", ""))
+        str(diagnostico.get("diagnostico", ""))
+        + " "
+        + str(diagnostico.get("plano_30_dias", ""))
     ).lower()
 
     if (
@@ -569,25 +652,27 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     ):
         idioma = "pt"
         textos = PDF_TEXTS["pt"].copy()
-        textos.update({
-            "report_title": "Relatório de Diagnóstico Financeiro",
-            "field": "Campo",
-            "value": "Valor",
-            "name": "Nome",
-            "date": "Data de geração",
-            "balance": "Saldo estimado",
-            "score": "Score financeiro",
-            "risk": "Nível de risco",
-            "income_commitment": "Comprometimento da renda",
-            "reserve_months": "Reserva de emergência",
-            "diagnosis": "Diagnóstico",
-            "action_plan": "Plano de Ação de 30 Dias",
-            "important_notice": "Aviso Importante",
-            "notice_text": "A INNA atua como educadora financeira digital. Ela orienta de forma educativa, não indica compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
-            "approx": "aprox.",
-            "days": "dias",
-            "months": "mês(es)",
-        })
+        textos.update(
+            {
+                "report_title": "Relatório de Diagnóstico Financeiro",
+                "field": "Campo",
+                "value": "Valor",
+                "name": "Nome",
+                "date": "Data de geração",
+                "balance": "Saldo estimado",
+                "score": "Score financeiro",
+                "risk": "Nível de risco",
+                "income_commitment": "Comprometimento da renda",
+                "reserve_months": "Reserva de emergência",
+                "diagnosis": "Diagnóstico",
+                "action_plan": "Plano de Ação de 30 Dias",
+                "important_notice": "Aviso Importante",
+                "notice_text": "A INNA atua como educadora financeira digital. Ela orienta de forma educativa, não indica compra ou venda de ativos, não promete rentabilidade e não substitui profissionais certificados.",
+                "approx": "aprox.",
+                "days": "dias",
+                "months": "mês(es)",
+            }
+        )
         moeda = "BRL"
         simbolo = "R$"
 
@@ -641,7 +726,6 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
             idioma,
         )
 
-
     doc = SimpleDocTemplate(
         buffer,
         pagesize=A4,
@@ -688,7 +772,12 @@ def gerar_relatorio_pdf(diagnostico: dict) -> bytes:
     elements.append(Paragraph("INNA Financial Coach AI", title_style))
     elements.append(Paragraph(textos["report_title"], heading_style))
 
-    data_geracao = diagnostico.get("data_geracao") or diagnostico.get("created_at") or diagnostico.get("data_hora") or diagnostico.get("data_hora")
+    data_geracao = (
+        diagnostico.get("data_geracao")
+        or diagnostico.get("created_at")
+        or diagnostico.get("data_hora")
+        or diagnostico.get("data_hora")
+    )
     if not data_geracao:
         data_geracao = datetime.now().strftime("%d/%m/%Y %H:%M")
 

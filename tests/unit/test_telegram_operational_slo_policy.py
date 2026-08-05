@@ -22,43 +22,19 @@ from src.services.telegram_observability import (
 
 
 def test_default_policy_values():
-    policy = (
-        TelegramOperationalSloPolicy()
-    )
+    policy = TelegramOperationalSloPolicy()
 
-    assert (
-        policy
-        .availability
-        .objective_ratio
-        == 0.995
-    )
+    assert policy.availability.objective_ratio == 0.995
 
-    assert (
-        policy
-        .success_rate
-        .objective_ratio
-        == 0.99
-    )
+    assert policy.success_rate.objective_ratio == 0.99
 
-    assert (
-        policy.latency.p95_seconds
-        == 2.0
-    )
+    assert policy.latency.p95_seconds == 2.0
 
-    assert (
-        policy.latency.p99_seconds
-        == 5.0
-    )
+    assert policy.latency.p99_seconds == 5.0
 
-    assert (
-        policy.backlog.warning_jobs
-        == 25
-    )
+    assert policy.backlog.warning_jobs == 25
 
-    assert (
-        policy.backlog.critical_jobs
-        == 100
-    )
+    assert policy.backlog.critical_jobs == 100
 
 
 def test_availability_error_budget():
@@ -67,67 +43,35 @@ def test_availability_error_budget():
         window_days=30,
     )
 
-    assert (
-        slo.error_budget_ratio
-        == pytest.approx(
-            0.005
-        )
-    )
+    assert slo.error_budget_ratio == pytest.approx(0.005)
 
-    assert (
-        slo.window_seconds
-        == 2592000
-    )
+    assert slo.window_seconds == 2592000
 
-    assert (
-        slo.allowed_unavailable_seconds
-        == pytest.approx(
-            12960.0
-        )
-    )
+    assert slo.allowed_unavailable_seconds == pytest.approx(12960.0)
 
 
 def test_success_failure_budget():
-    slo = TelegramSuccessRateSlo(
-        objective_ratio=0.99
-    )
+    slo = TelegramSuccessRateSlo(objective_ratio=0.99)
 
-    assert (
-        slo.failure_budget_ratio
-        == pytest.approx(
-            0.01
-        )
-    )
+    assert slo.failure_budget_ratio == pytest.approx(0.01)
 
 
 def test_safe_dict_is_immutable():
-    payload = (
-        TelegramOperationalSloPolicy()
-        .to_safe_dict()
-    )
+    payload = TelegramOperationalSloPolicy().to_safe_dict()
 
     assert isinstance(
         payload,
         MappingProxyType,
     )
 
-    with pytest.raises(
-        TypeError
-    ):
-        payload[
-            "availability"
-        ] = {}
+    with pytest.raises(TypeError):
+        payload["availability"] = {}
 
 
 def test_safe_dict_has_expected_sections():
-    payload = (
-        TelegramOperationalSloPolicy()
-        .to_safe_dict()
-    )
+    payload = TelegramOperationalSloPolicy().to_safe_dict()
 
-    assert set(
-        payload
-    ) == {
+    assert set(payload) == {
         "availability",
         "success_rate",
         "latency",
@@ -190,9 +134,7 @@ def test_calculate_burn_rate():
         objective_ratio=0.995,
     )
 
-    assert burn_rate == pytest.approx(
-        2.0
-    )
+    assert burn_rate == pytest.approx(2.0)
 
 
 @pytest.mark.parametrize(
@@ -227,12 +169,7 @@ def test_classify_burn_rate(
     burn_rate,
     expected,
 ):
-    assert (
-        classify_burn_rate(
-            burn_rate=burn_rate
-        )
-        is expected
-    )
+    assert classify_burn_rate(burn_rate=burn_rate) is expected
 
 
 @pytest.mark.parametrize(
@@ -250,18 +187,12 @@ def test_classify_burn_rate(
 def test_invalid_availability_objective(
     objective,
 ):
-    with pytest.raises(
-        TelegramSloPolicyError
-    ):
-        TelegramAvailabilitySlo(
-            objective_ratio=objective
-        )
+    with pytest.raises(TelegramSloPolicyError):
+        TelegramAvailabilitySlo(objective_ratio=objective)
 
 
 def test_critical_burn_must_exceed_warning():
-    with pytest.raises(
-        TelegramSloPolicyError
-    ):
+    with pytest.raises(TelegramSloPolicyError):
         TelegramAvailabilitySlo(
             warning_burn_rate=6,
             critical_burn_rate=6,
@@ -269,9 +200,7 @@ def test_critical_burn_must_exceed_warning():
 
 
 def test_p99_must_not_be_below_p95():
-    with pytest.raises(
-        TelegramSloPolicyError
-    ):
+    with pytest.raises(TelegramSloPolicyError):
         TelegramLatencySlo(
             p95_seconds=5,
             p99_seconds=2,
@@ -279,9 +208,7 @@ def test_p99_must_not_be_below_p95():
 
 
 def test_backlog_critical_must_exceed_warning():
-    with pytest.raises(
-        TelegramSloPolicyError
-    ):
+    with pytest.raises(TelegramSloPolicyError):
         TelegramBacklogSlo(
             warning_jobs=100,
             critical_jobs=100,
@@ -289,9 +216,7 @@ def test_backlog_critical_must_exceed_warning():
 
 
 def test_dead_letter_critical_must_exceed_warning():
-    with pytest.raises(
-        TelegramSloPolicyError
-    ):
+    with pytest.raises(TelegramSloPolicyError):
         TelegramDeadLetterSlo(
             warning_count=5,
             critical_count=5,
@@ -299,9 +224,7 @@ def test_dead_letter_critical_must_exceed_warning():
 
 
 def test_freshness_critical_must_exceed_warning():
-    with pytest.raises(
-        TelegramSloPolicyError
-    ):
+    with pytest.raises(TelegramSloPolicyError):
         TelegramMetricFreshnessSlo(
             warning_seconds=300,
             critical_seconds=120,
@@ -309,9 +232,7 @@ def test_freshness_critical_must_exceed_warning():
 
 
 def test_windows_must_be_ordered():
-    with pytest.raises(
-        TelegramSloPolicyError
-    ):
+    with pytest.raises(TelegramSloPolicyError):
         TelegramSloWindows(
             short_window_seconds=3600,
             medium_window_seconds=300,
@@ -331,9 +252,7 @@ def test_windows_must_be_ordered():
 def test_classification_rejects_invalid_value(
     value,
 ):
-    with pytest.raises(
-        TelegramSloPolicyError
-    ):
+    with pytest.raises(TelegramSloPolicyError):
         classify_threshold(
             value=value,
             warning_threshold=25,
@@ -342,9 +261,7 @@ def test_classification_rejects_invalid_value(
 
 
 def test_classification_rejects_invalid_threshold_order():
-    with pytest.raises(
-        TelegramSloPolicyError
-    ):
+    with pytest.raises(TelegramSloPolicyError):
         classify_threshold(
             value=10,
             warning_threshold=100,
@@ -380,22 +297,15 @@ def test_invalid_burn_rate_input(
     error_ratio,
     objective,
 ):
-    with pytest.raises(
-        TelegramSloPolicyError
-    ):
+    with pytest.raises(TelegramSloPolicyError):
         calculate_burn_rate(
-            observed_error_ratio=(
-                error_ratio
-            ),
+            observed_error_ratio=(error_ratio),
             objective_ratio=objective,
         )
 
 
 def test_policy_has_no_secret_fields():
-    rendered = repr(
-        TelegramOperationalSloPolicy()
-        .to_safe_dict()
-    ).lower()
+    rendered = repr(TelegramOperationalSloPolicy().to_safe_dict()).lower()
 
     forbidden = {
         "token",
@@ -409,22 +319,16 @@ def test_policy_has_no_secret_fields():
     for value in forbidden:
         assert value not in rendered
 
+
 def test_calculated_burn_rate_at_warning_boundary():
     burn_rate = calculate_burn_rate(
         observed_error_ratio=0.01,
         objective_ratio=0.995,
     )
 
-    assert burn_rate == pytest.approx(
-        2.0
-    )
+    assert burn_rate == pytest.approx(2.0)
 
-    assert (
-        classify_burn_rate(
-            burn_rate=burn_rate
-        )
-        is TelegramSloSeverity.WARNING
-    )
+    assert classify_burn_rate(burn_rate=burn_rate) is TelegramSloSeverity.WARNING
 
 
 def test_float_value_immediately_below_boundary_within_tolerance():
@@ -451,4 +355,3 @@ def test_value_materially_below_boundary_remains_normal():
         )
         is None
     )
-

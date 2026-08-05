@@ -32,9 +32,7 @@ def select_tool_results(
 
     selected: list[dict[str, Any]] = []
 
-    for raw_result in reversed(
-        list(tool_results or [])
-    ):
+    for raw_result in reversed(list(tool_results or [])):
         if not isinstance(raw_result, dict):
             continue
 
@@ -86,14 +84,9 @@ def extract_unique_sources(
             continue
 
         for source in raw_sources:
-            normalized = str(
-                source or ""
-            ).strip()
+            normalized = str(source or "").strip()
 
-            if (
-                normalized
-                and normalized not in sources
-            ):
+            if normalized and normalized not in sources:
                 sources.append(normalized)
 
             if len(sources) >= max_sources:

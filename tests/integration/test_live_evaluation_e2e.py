@@ -9,38 +9,22 @@ from pathlib import Path
 import pytest
 from dotenv import load_dotenv
 
-PROJECT_ROOT = Path(
-    __file__
-).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 load_dotenv(
     PROJECT_ROOT / ".env",
     override=False,
 )
 
-RUN_FLAG = (
-    "RUN_LIVE_EVALUATION_TESTS"
-)
+RUN_FLAG = "RUN_LIVE_EVALUATION_TESTS"
 
-CASE_ID = (
-    "rag-financial-education-001"
-)
+CASE_ID = "rag-financial-education-001"
 
-REPORT_DIRECTORY = (
-    PROJECT_ROOT
-    / "artifacts"
-    / "live-evaluation-e2e"
-)
+REPORT_DIRECTORY = PROJECT_ROOT / "artifacts" / "live-evaluation-e2e"
 
-REPORT_PATH = (
-    REPORT_DIRECTORY
-    / "live-evaluation-e2e-report.txt"
-)
+REPORT_PATH = REPORT_DIRECTORY / "live-evaluation-e2e-report.txt"
 
-JSON_PATH = (
-    REPORT_DIRECTORY
-    / "live-evaluation-result.json"
-)
+JSON_PATH = REPORT_DIRECTORY / "live-evaluation-result.json"
 
 TIMEOUT_SECONDS = 240
 
@@ -52,22 +36,17 @@ pytestmark = [
 
 
 def _live_test_enabled() -> bool:
-    return (
-        str(
-            os.getenv(
-                RUN_FLAG,
-                "",
-            )
+    return str(
+        os.getenv(
+            RUN_FLAG,
+            "",
         )
-        .strip()
-        .lower()
-        in {
-            "1",
-            "true",
-            "yes",
-            "on",
-        }
-    )
+    ).strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
 
 
 def _required_environment() -> tuple[str, ...]:
@@ -79,9 +58,7 @@ def _required_environment() -> tuple[str, ...]:
             "",
         )
     ).strip():
-        missing.append(
-            "DATABASE_URL"
-        )
+        missing.append("DATABASE_URL")
 
     gemini_configured = bool(
         str(
@@ -99,9 +76,7 @@ def _required_environment() -> tuple[str, ...]:
     )
 
     if not gemini_configured:
-        missing.append(
-            "GEMINI_API_KEY ou GOOGLE_API_KEY"
-        )
+        missing.append("GEMINI_API_KEY ou GOOGLE_API_KEY")
 
     return tuple(missing)
 
@@ -118,22 +93,24 @@ def _write_report(
         exist_ok=True,
     )
 
-    report = "\n".join([
-        "INNA LIVE EVALUATION E2E REPORT",
-        "================================",
-        f"case_id={CASE_ID}",
-        f"timeout={timeout}",
-        f"return_code={return_code}",
-        "",
-        "STDOUT",
-        "------",
-        stdout,
-        "",
-        "STDERR",
-        "------",
-        stderr,
-        "",
-    ])
+    report = "\n".join(
+        [
+            "INNA LIVE EVALUATION E2E REPORT",
+            "================================",
+            f"case_id={CASE_ID}",
+            f"timeout={timeout}",
+            f"return_code={return_code}",
+            "",
+            "STDOUT",
+            "------",
+            stdout,
+            "",
+            "STDERR",
+            "------",
+            stderr,
+            "",
+        ]
+    )
 
     REPORT_PATH.write_text(
         report,
@@ -146,19 +123,13 @@ def _parse_json_output(
 ) -> dict[str, object]:
     normalized = stdout.strip()
 
-    assert normalized, (
-        "A CLI live não produziu saída JSON."
-    )
+    assert normalized, "A CLI live não produziu saída JSON."
 
     try:
-        payload = json.loads(
-            normalized
-        )
+        payload = json.loads(normalized)
     except json.JSONDecodeError as exception:
         pytest.fail(
-            "A CLI live produziu JSON inválido.\n"
-            f"Saída:\n{stdout}\n"
-            f"Erro: {exception}",
+            f"A CLI live produziu JSON inválido.\nSaída:\n{stdout}\nErro: {exception}",
             pytrace=False,
         )
 
@@ -172,28 +143,24 @@ def _parse_json_output(
 
 @pytest.mark.skipif(
     not _live_test_enabled(),
-    reason=(
-        "Teste live de avaliação desativado. "
-        "Defina RUN_LIVE_EVALUATION_TESTS=1."
-    ),
+    reason=("Teste live de avaliação desativado. Defina RUN_LIVE_EVALUATION_TESTS=1."),
 )
 def test_live_evaluation_e2e() -> None:
     missing = _required_environment()
 
-    assert not missing, (
-        "Variáveis obrigatórias ausentes: "
-        f"{list(missing)}"
-    )
+    assert not missing, f"Variáveis obrigatórias ausentes: {list(missing)}"
 
     environment = os.environ.copy()
 
-    environment.update({
-        "RUN_LIVE_EVALUATION_TESTS": "1",
-        "RUN_LIVE_GEMINI_TESTS": "0",
-        "RUN_HITL_E2E_TESTS": "0",
-        "PYTHONUNBUFFERED": "1",
-        "PYTHONDONTWRITEBYTECODE": "1",
-    })
+    environment.update(
+        {
+            "RUN_LIVE_EVALUATION_TESTS": "1",
+            "RUN_LIVE_GEMINI_TESTS": "0",
+            "RUN_HITL_E2E_TESTS": "0",
+            "PYTHONUNBUFFERED": "1",
+            "PYTHONDONTWRITEBYTECODE": "1",
+        }
+    )
 
     stdout = ""
     stderr = ""
@@ -226,9 +193,7 @@ def test_live_evaluation_e2e() -> None:
         stderr = completed.stderr
 
         _write_report(
-            return_code=(
-                completed.returncode
-            ),
+            return_code=(completed.returncode),
             stdout=stdout,
             stderr=stderr,
             timeout=False,
@@ -241,9 +206,7 @@ def test_live_evaluation_e2e() -> None:
             f"STDERR:\n{stderr}"
         )
 
-        payload = _parse_json_output(
-            stdout
-        )
+        payload = _parse_json_output(stdout)
 
         REPORT_DIRECTORY.mkdir(
             parents=True,
@@ -260,85 +223,36 @@ def test_live_evaluation_e2e() -> None:
             encoding="utf-8",
         )
 
-        assert (
-            payload.get("command")
-            == "run-live"
-        )
+        assert payload.get("command") == "run-live"
 
-        assert (
-            payload.get("case_id")
-            == CASE_ID
-        )
+        assert payload.get("case_id") == CASE_ID
 
-        assert (
-            payload.get("execution_type")
-            == "live-application-evaluation"
-        )
+        assert payload.get("execution_type") == "live-application-evaluation"
 
-        assert (
-            payload.get(
-                "production_evaluation"
-            )
-            is True
-        )
+        assert payload.get("production_evaluation") is True
 
-        assert (
-            payload.get("batch_status")
-            == "passed"
-        )
+        assert payload.get("batch_status") == "passed"
 
-        assert (
-            payload.get("total_cases")
-            == 1
-        )
+        assert payload.get("total_cases") == 1
 
-        assert (
-            payload.get("passed_cases")
-            == 1
-        )
+        assert payload.get("passed_cases") == 1
 
-        assert (
-            payload.get("failed_cases")
-            == 0
-        )
+        assert payload.get("failed_cases") == 0
 
-        assert (
-            payload.get("blocked_cases")
-            == 0
-        )
+        assert payload.get("blocked_cases") == 0
 
-        assert (
-            payload.get("error_cases")
-            == 0
-        )
+        assert payload.get("error_cases") == 0
 
-        assert (
-            payload.get("pass_rate")
-            == 1.0
-        )
+        assert payload.get("pass_rate") == 1.0
 
-        assert (
-            payload.get(
-                "quality_gate_passed"
-            )
-            is True
-        )
+        assert payload.get("quality_gate_passed") is True
 
-        assert (
-            payload.get(
-                "quality_gate_violations"
-            )
-            == []
-        )
+        assert payload.get("quality_gate_violations") == []
 
     except subprocess.TimeoutExpired as exception:
-        stdout = str(
-            exception.stdout or ""
-        )
+        stdout = str(exception.stdout or "")
 
-        stderr = str(
-            exception.stderr or ""
-        )
+        stderr = str(exception.stderr or "")
 
         _write_report(
             return_code=None,
@@ -348,7 +262,6 @@ def test_live_evaluation_e2e() -> None:
         )
 
         pytest.fail(
-            "A avaliação live excedeu "
-            f"{TIMEOUT_SECONDS} segundos.",
+            f"A avaliação live excedeu {TIMEOUT_SECONDS} segundos.",
             pytrace=False,
         )

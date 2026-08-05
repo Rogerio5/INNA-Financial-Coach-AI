@@ -6,12 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 
-PACKAGE = (
-    ROOT
-    / "src"
-    / "services"
-    / "telegram_observability"
-)
+PACKAGE = ROOT / "src" / "services" / "telegram_observability"
 
 
 def test_observability_package_has_no_prometheus_dependency():
@@ -37,9 +32,7 @@ def test_observability_package_has_no_prometheus_dependency():
                 for alias in node.names:
                     module = alias.name
 
-                    if module.startswith(
-                        "prometheus"
-                    ):
+                    if module.startswith("prometheus"):
                         violations.append(
                             (
                                 path.name,
@@ -52,30 +45,18 @@ def test_observability_package_has_no_prometheus_dependency():
                 node,
                 ast.ImportFrom,
             ):
-                module = (
-                    node.module
-                    or ""
-                )
+                module = node.module or ""
 
-                is_absolute_import = (
-                    node.level == 0
-                )
+                is_absolute_import = node.level == 0
 
                 is_external_prometheus = (
                     module == "prometheus"
-                    or module.startswith(
-                        "prometheus."
-                    )
+                    or module.startswith("prometheus.")
                     or module == "prometheus_client"
-                    or module.startswith(
-                        "prometheus_client."
-                    )
+                    or module.startswith("prometheus_client.")
                 )
 
-                if (
-                    is_absolute_import
-                    and is_external_prometheus
-                ):
+                if is_absolute_import and is_external_prometheus:
                     violations.append(
                         (
                             path.name,
@@ -88,10 +69,7 @@ def test_observability_package_has_no_prometheus_dependency():
 
 
 def test_observability_contracts_have_no_io_calls():
-    target = (
-        PACKAGE
-        / "contracts.py"
-    )
+    target = PACKAGE / "contracts.py"
 
     source = target.read_text(
         encoding="utf-8",
@@ -145,10 +123,7 @@ def test_observability_contracts_have_no_io_calls():
 
 
 def test_metric_labels_exclude_high_cardinality_ids():
-    target = (
-        PACKAGE
-        / "contracts.py"
-    )
+    target = PACKAGE / "contracts.py"
 
     source = target.read_text(
         encoding="utf-8",
@@ -175,8 +150,7 @@ def test_metric_labels_exclude_high_cardinality_ids():
             node,
             ast.ClassDef,
         )
-        and node.name
-        == "TelegramConversationMetricRecord"
+        and node.name == "TelegramConversationMetricRecord"
     )
 
     field_names = {
@@ -192,7 +166,4 @@ def test_metric_labels_exclude_high_cardinality_ids():
         )
     }
 
-    assert (
-        field_names
-        & forbidden
-    ) == set()
+    assert (field_names & forbidden) == set()

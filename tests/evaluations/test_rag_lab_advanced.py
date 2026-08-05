@@ -86,25 +86,17 @@ def test_quality_gate_detects_failure():
 
 def test_quality_gate_validates_thresholds():
     with pytest.raises(ValueError):
-        QualityGateThresholds(
-            aggregate_score=1.10
-        )
+        QualityGateThresholds(aggregate_score=1.10)
 
 
 def test_capabilities_wait_for_real_metadata():
     capabilities = {
         item.key: item
-        for item in build_rag_lab_capabilities(
-            _history(
-                _entry("run-1", score=0.8)
-            )
-        )
+        for item in build_rag_lab_capabilities(_history(_entry("run-1", score=0.8)))
     }
 
     assert (
-        capabilities[
-            "reranker_comparison"
-        ].status
+        capabilities["reranker_comparison"].status
         == RagLabCapabilityStatus.WAITING_DATA
     )
 
@@ -114,32 +106,18 @@ def test_capability_becomes_active():
         _entry(
             "run-1",
             score=0.8,
-            metadata={
-                "reranker_enabled": True
-            },
+            metadata={"reranker_enabled": True},
         ),
         _entry(
             "run-2",
             score=0.9,
-            metadata={
-                "reranker_enabled": False
-            },
+            metadata={"reranker_enabled": False},
         ),
     )
 
-    capabilities = {
-        item.key: item
-        for item in build_rag_lab_capabilities(
-            history
-        )
-    }
+    capabilities = {item.key: item for item in build_rag_lab_capabilities(history)}
 
-    assert (
-        capabilities[
-            "reranker_comparison"
-        ].status
-        == RagLabCapabilityStatus.ACTIVE
-    )
+    assert capabilities["reranker_comparison"].status == RagLabCapabilityStatus.ACTIVE
 
 
 def test_ranking_prefers_highest_quality():
@@ -152,21 +130,11 @@ def test_ranking_prefers_highest_quality():
 
     assert ranking[0].run_reference == "high"
     assert ranking[0].position == 1
-    assert (
-        ranking[0].ranking_basis
-        == "quality_only"
-    )
+    assert ranking[0].ranking_basis == "quality_only"
 
 
 def test_cost_per_approved_run_requires_real_cost():
-    assert (
-        calculate_cost_per_approved_run(
-            _history(
-                _entry("run", score=0.90)
-            )
-        )
-        is None
-    )
+    assert calculate_cost_per_approved_run(_history(_entry("run", score=0.90))) is None
 
 
 def test_cost_per_approved_run_uses_real_values():
@@ -175,16 +143,12 @@ def test_cost_per_approved_run_uses_real_values():
             _entry(
                 "run-1",
                 score=0.90,
-                metadata={
-                    "estimated_cost_usd": 0.01
-                },
+                metadata={"estimated_cost_usd": 0.01},
             ),
             _entry(
                 "run-2",
                 score=0.91,
-                metadata={
-                    "estimated_cost_usd": 0.03
-                },
+                metadata={"estimated_cost_usd": 0.03},
             ),
         )
     )
@@ -198,9 +162,7 @@ def test_csv_export_contains_real_data():
             _entry(
                 "run-real",
                 score=0.88,
-                metadata={
-                    "retrieval_strategy": "hybrid"
-                },
+                metadata={"retrieval_strategy": "hybrid"},
             )
         )
     )
@@ -212,12 +174,8 @@ def test_csv_export_contains_real_data():
 
 def test_json_export_marks_no_simulation():
     json_text = export_rag_lab_report_json(
-        _history(
-            _entry("run-real", score=0.88)
-        ),
-        quality_gate=(
-            QualityGateThresholds()
-        ),
+        _history(_entry("run-real", score=0.88)),
+        quality_gate=(QualityGateThresholds()),
     )
 
     assert '"simulation": false' in json_text

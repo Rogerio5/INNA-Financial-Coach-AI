@@ -12,14 +12,10 @@ def _valor_nao_negativo(valor: Any, nome: str) -> float:
     try:
         numero = float(valor)
     except (TypeError, ValueError) as exc:
-        raise ValueError(
-            f"{nome} deve ser numérico."
-        ) from exc
+        raise ValueError(f"{nome} deve ser numérico.") from exc
 
     if numero < 0:
-        raise ValueError(
-            f"{nome} não pode ser negativo."
-        )
+        raise ValueError(f"{nome} não pode ser negativo.")
 
     return numero
 
@@ -40,9 +36,7 @@ def calcular_capacidade_semanal(
     semanas = float(semanas_por_mes)
 
     if semanas <= 0:
-        raise ValueError(
-            "semanas_por_mes deve ser maior que zero."
-        )
+        raise ValueError("semanas_por_mes deve ser maior que zero.")
 
     semanal = mensal / semanas
 

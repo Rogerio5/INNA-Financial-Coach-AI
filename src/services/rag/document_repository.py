@@ -39,9 +39,7 @@ def _carregar_database_url() -> str:
             database_url = None
 
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL não encontrada."
-        )
+        raise RuntimeError("DATABASE_URL não encontrada.")
 
     return database_url
 
@@ -50,13 +48,9 @@ def _conectar_postgres():
     try:
         import psycopg2
     except ImportError as exc:
-        raise RuntimeError(
-            "Pacote psycopg2 não instalado."
-        ) from exc
+        raise RuntimeError("Pacote psycopg2 não instalado.") from exc
 
-    return psycopg2.connect(
-        _carregar_database_url()
-    )
+    return psycopg2.connect(_carregar_database_url())
 
 
 def _criar_engine_sqlalchemy():
@@ -66,9 +60,7 @@ def _criar_engine_sqlalchemy():
     try:
         from sqlalchemy import create_engine
     except ImportError as exc:
-        raise RuntimeError(
-            "Pacote SQLAlchemy não instalado."
-        ) from exc
+        raise RuntimeError("Pacote SQLAlchemy não instalado.") from exc
 
     return create_engine(
         _carregar_database_url(),
@@ -220,9 +212,7 @@ def preparar_tabelas_documentos(
 
         return {
             "ok": True,
-            "message": (
-                "Tabelas de documentos criadas/validadas."
-            ),
+            "message": ("Tabelas de documentos criadas/validadas."),
         }
 
     except Exception as exc:
@@ -240,10 +230,7 @@ def preparar_tabelas_documentos(
 
         return {
             "ok": False,
-            "message": (
-                "Erro ao preparar tabelas de documentos: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao preparar tabelas de documentos: {exc}"),
         }
 
 
@@ -270,9 +257,7 @@ def registrar_historico_documento(
         if conexao_propria:
             conn = _conectar_postgres()
 
-            preparacao = preparar_tabelas_documentos(
-                conn
-            )
+            preparacao = preparar_tabelas_documentos(conn)
 
             if not preparacao.get("ok"):
                 conn.close()
@@ -319,9 +304,7 @@ def registrar_historico_documento(
             ),
         )
 
-        historico_id = int(
-            cur.fetchone()[0]
-        )
+        historico_id = int(cur.fetchone()[0])
 
         if conexao_propria:
             conn.commit()
@@ -334,9 +317,7 @@ def registrar_historico_documento(
         return {
             "ok": True,
             "id": historico_id,
-            "message": (
-                "Histórico do documento registrado."
-            ),
+            "message": ("Histórico do documento registrado."),
         }
 
     except Exception as exc:
@@ -349,10 +330,7 @@ def registrar_historico_documento(
 
         return {
             "ok": False,
-            "message": (
-                "Erro ao registrar histórico: "
-                f"{exc}"
-            ),
+            "message": (f"Erro ao registrar histórico: {exc}"),
         }
 
 
@@ -382,9 +360,7 @@ def registrar_documento(
     try:
         conn = _conectar_postgres()
 
-        preparacao = preparar_tabelas_documentos(
-            conn
-        )
+        preparacao = preparar_tabelas_documentos(conn)
 
         if not preparacao.get("ok"):
             conn.close()
@@ -446,11 +422,7 @@ def registrar_documento(
                 nome_logico,
                 content_hash,
                 int(versao),
-                (
-                    int(documento_raiz_id)
-                    if documento_raiz_id is not None
-                    else None
-                ),
+                (int(documento_raiz_id) if documento_raiz_id is not None else None),
                 (
                     int(documento_anterior_id)
                     if documento_anterior_id is not None
@@ -461,9 +433,7 @@ def registrar_documento(
             ),
         )
 
-        documento_id = int(
-            cur.fetchone()[0]
-        )
+        documento_id = int(cur.fetchone()[0])
 
         registrar_historico_documento(
             documento_id=documento_id,
@@ -479,9 +449,7 @@ def registrar_documento(
                 "content_hash": content_hash,
                 "versao": int(versao),
                 "documento_raiz_id": documento_raiz_id,
-                "documento_anterior_id": (
-                    documento_anterior_id
-                ),
+                "documento_anterior_id": (documento_anterior_id),
             },
             origem=origem,
             conn=conn,
@@ -499,17 +467,10 @@ def registrar_documento(
             "content_hash": content_hash,
             "versao": int(versao),
             "documento_raiz_id": (
-                documento_raiz_id
-                if documento_raiz_id is not None
-                else documento_id
+                documento_raiz_id if documento_raiz_id is not None else documento_id
             ),
-            "documento_anterior_id": (
-                documento_anterior_id
-            ),
-            "message": (
-                "Metadata salva no Neon/PostgreSQL "
-                f"com id {documento_id}."
-            ),
+            "documento_anterior_id": (documento_anterior_id),
+            "message": (f"Metadata salva no Neon/PostgreSQL com id {documento_id}."),
         }
 
     except Exception as exc:
@@ -522,12 +483,8 @@ def registrar_documento(
 
         return {
             "ok": False,
-            "message": (
-                "Erro ao salvar metadata no "
-                f"Neon/PostgreSQL: {exc}"
-            ),
+            "message": (f"Erro ao salvar metadata no Neon/PostgreSQL: {exc}"),
         }
-
 
 
 def buscar_contexto_versionamento_documento(
@@ -543,17 +500,12 @@ def buscar_contexto_versionamento_documento(
     - hashes existentes;
     - quantidade de versões.
     """
-    nome_logico_normalizado = str(
-        nome_logico or ""
-    ).strip()
+    nome_logico_normalizado = str(nome_logico or "").strip()
 
     if not nome_logico_normalizado:
         return {
             "ok": False,
-            "message": (
-                "O nome lógico do documento "
-                "não foi informado."
-            ),
+            "message": ("O nome lógico do documento não foi informado."),
             "contexto": None,
         }
 
@@ -562,17 +514,13 @@ def buscar_contexto_versionamento_documento(
     try:
         conn = _conectar_postgres()
 
-        preparacao = preparar_tabelas_documentos(
-            conn
-        )
+        preparacao = preparar_tabelas_documentos(conn)
 
         if not preparacao.get("ok"):
             conn.close()
             return {
                 "ok": False,
-                "message": preparacao.get(
-                    "message"
-                ),
+                "message": preparacao.get("message"),
                 "contexto": None,
             }
 
@@ -591,9 +539,7 @@ def buscar_contexto_versionamento_documento(
                 COALESCE(versao, 1) DESC,
                 id DESC;
             """,
-            (
-                nome_logico_normalizado,
-            ),
+            (nome_logico_normalizado,),
         )
 
         rows = cur.fetchall()
@@ -604,14 +550,9 @@ def buscar_contexto_versionamento_documento(
         if not rows:
             return {
                 "ok": True,
-                "message": (
-                    "Nenhuma versão anterior "
-                    "encontrada."
-                ),
+                "message": ("Nenhuma versão anterior encontrada."),
                 "contexto": {
-                    "nome_logico": (
-                        nome_logico_normalizado
-                    ),
+                    "nome_logico": (nome_logico_normalizado),
                     "current_version": None,
                     "root_document_id": None,
                     "previous_document_id": None,
@@ -622,48 +563,25 @@ def buscar_contexto_versionamento_documento(
 
         latest = rows[0]
 
-        latest_document_id = int(
-            latest[0]
-        )
+        latest_document_id = int(latest[0])
 
-        current_version = int(
-            latest[1] or 1
-        )
+        current_version = int(latest[1] or 1)
 
         root_document_id = (
-            int(latest[2])
-            if latest[2] is not None
-            else latest_document_id
+            int(latest[2]) if latest[2] is not None else latest_document_id
         )
 
-        existing_hashes = [
-            str(row[3]).strip().lower()
-            for row in rows
-            if row[3]
-        ]
+        existing_hashes = [str(row[3]).strip().lower() for row in rows if row[3]]
 
         return {
             "ok": True,
-            "message": (
-                "Contexto de versionamento "
-                "carregado."
-            ),
+            "message": ("Contexto de versionamento carregado."),
             "contexto": {
-                "nome_logico": (
-                    nome_logico_normalizado
-                ),
-                "current_version": (
-                    current_version
-                ),
-                "root_document_id": (
-                    root_document_id
-                ),
-                "previous_document_id": (
-                    latest_document_id
-                ),
-                "existing_content_hashes": (
-                    existing_hashes
-                ),
+                "nome_logico": (nome_logico_normalizado),
+                "current_version": (current_version),
+                "root_document_id": (root_document_id),
+                "previous_document_id": (latest_document_id),
+                "existing_content_hashes": (existing_hashes),
                 "total_versions": len(rows),
             },
         }
@@ -678,13 +596,9 @@ def buscar_contexto_versionamento_documento(
 
         return {
             "ok": False,
-            "message": (
-                "Erro ao buscar contexto de "
-                f"versionamento: {exc}"
-            ),
+            "message": (f"Erro ao buscar contexto de versionamento: {exc}"),
             "contexto": None,
         }
-
 
 
 def listar_documentos(
@@ -705,9 +619,7 @@ def listar_documentos(
     try:
         conn = _conectar_postgres()
 
-        preparacao = preparar_tabelas_documentos(
-            conn
-        )
+        preparacao = preparar_tabelas_documentos(conn)
 
         if not preparacao.get("ok"):
             conn.close()
@@ -835,9 +747,7 @@ def buscar_documento_por_id(
             "atualizado_em",
         ]
 
-        documento = dict(
-            zip(colunas, row)
-        )
+        documento = dict(zip(colunas, row))
 
         return {
             "ok": True,
@@ -848,9 +758,7 @@ def buscar_documento_por_id(
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                f"Erro ao buscar documento: {exc}"
-            ),
+            "message": (f"Erro ao buscar documento: {exc}"),
             "documento": None,
         }
 
@@ -926,9 +834,7 @@ def atualizar_processamento_documento(
                 "caminho_embedding_anterior": anterior[2],
                 "total_chunks_anterior": anterior[3],
                 "caminho_chunks_novo": caminho_chunks,
-                "caminho_embedding_novo": (
-                    caminho_embedding_ready
-                ),
+                "caminho_embedding_novo": (caminho_embedding_ready),
                 "total_chunks_novo": int(total_chunks),
             },
             origem="dashboard_reprocessamento",
@@ -941,10 +847,7 @@ def atualizar_processamento_documento(
 
         return {
             "ok": True,
-            "message": (
-                "Metadata do documento atualizada "
-                "após reprocessamento."
-            ),
+            "message": ("Metadata do documento atualizada após reprocessamento."),
         }
 
     except Exception as exc:
@@ -957,10 +860,7 @@ def atualizar_processamento_documento(
 
         return {
             "ok": False,
-            "message": (
-                "Erro ao atualizar metadata do "
-                f"documento: {exc}"
-            ),
+            "message": (f"Erro ao atualizar metadata do documento: {exc}"),
         }
 
 
@@ -976,9 +876,7 @@ def atualizar_status_documento(
     try:
         conn = _conectar_postgres()
 
-        preparacao = preparar_tabelas_documentos(
-            conn
-        )
+        preparacao = preparar_tabelas_documentos(conn)
 
         if not preparacao.get("ok"):
             conn.close()
@@ -1025,11 +923,7 @@ def atualizar_status_documento(
 
         registrar_historico_documento(
             documento_id=int(documento_id),
-            tipo_evento=(
-                "documento_ativado"
-                if ativo_novo
-                else "documento_desativado"
-            ),
+            tipo_evento=("documento_ativado" if ativo_novo else "documento_desativado"),
             ativo_anterior=ativo_anterior,
             ativo_novo=ativo_novo,
             origem="dashboard_status",
@@ -1040,17 +934,11 @@ def atualizar_status_documento(
         cur.close()
         conn.close()
 
-        estado = (
-            "ativado"
-            if ativo_novo
-            else "desativado"
-        )
+        estado = "ativado" if ativo_novo else "desativado"
 
         return {
             "ok": True,
-            "message": (
-                f"Documento {estado} com sucesso."
-            ),
+            "message": (f"Documento {estado} com sucesso."),
             "ativo": ativo_novo,
         }
 
@@ -1064,10 +952,7 @@ def atualizar_status_documento(
 
         return {
             "ok": False,
-            "message": (
-                "Erro ao atualizar status do "
-                f"documento: {exc}"
-            ),
+            "message": (f"Erro ao atualizar status do documento: {exc}"),
         }
 
 
@@ -1130,9 +1015,7 @@ def listar_historico_documento(
     except Exception as exc:
         return {
             "ok": False,
-            "message": (
-                f"Erro ao carregar histórico: {exc}"
-            ),
+            "message": (f"Erro ao carregar histórico: {exc}"),
             "df": pd.DataFrame(),
         }
 

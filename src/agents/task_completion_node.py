@@ -27,9 +27,7 @@ SPECIALIZED_AGENTS = {
 def _normalize_text(
     value: Any,
 ) -> str:
-    return str(
-        value or ""
-    ).strip()
+    return str(value or "").strip()
 
 
 def _resolve_current_agent(
@@ -68,16 +66,10 @@ def _resolve_current_agent(
         [],
     )
 
-    for item in reversed(
-        list(trace or [])
-    ):
-        normalized = _normalize_text(
-            item
-        )
+    for item in reversed(list(trace or [])):
+        normalized = _normalize_text(item)
 
-        if not normalized.startswith(
-            "agent:"
-        ):
+        if not normalized.startswith("agent:"):
             continue
 
         candidate = normalized.split(
@@ -89,7 +81,6 @@ def _resolve_current_agent(
             return candidate
 
     return ""
-
 
 
 def _requirements_for_state(
@@ -136,7 +127,6 @@ def _requirements_for_state(
     ]
 
 
-
 def _has_report_evidence(
     *,
     current_agent: str,
@@ -158,12 +148,7 @@ def _has_report_evidence(
         }
 
         if any(
-            key in structured_response
-            and bool(
-                structured_response.get(
-                    key
-                )
-            )
+            key in structured_response and bool(structured_response.get(key))
             for key in report_keys
         ):
             return True
@@ -189,10 +174,7 @@ def _has_report_evidence(
                 )
             ).lower()
 
-            if (
-                "report" in tool_name
-                or "relatorio" in tool_name
-            ):
+            if "report" in tool_name or "relatorio" in tool_name:
                 return True
 
     return False
@@ -230,7 +212,6 @@ def _financial_inputs_resolved(
     )
 
 
-
 def _rag_retrieval_executed(
     state: InnaAgentState,
 ) -> bool:
@@ -260,21 +241,13 @@ def _rag_retrieval_executed(
                 )
             ).lower()
 
-            successful = (
-                item.get("ok") is True
-                or item.get("status")
-                in {
-                    "success",
-                    "completed",
-                    "ok",
-                }
-            )
+            successful = item.get("ok") is True or item.get("status") in {
+                "success",
+                "completed",
+                "ok",
+            }
 
-            if (
-                tool_name
-                == "buscar_conhecimento_rag"
-                and successful
-            ):
+            if tool_name == "buscar_conhecimento_rag" and successful:
                 successful_tool = True
                 break
 
@@ -306,9 +279,7 @@ def _rag_retrieval_executed(
     )
 
     try:
-        retrieved_documents = int(
-            retrieved_documents or 0
-        )
+        retrieved_documents = int(retrieved_documents or 0)
     except (TypeError, ValueError):
         retrieved_documents = 0
 
@@ -317,21 +288,11 @@ def _rag_retrieval_executed(
         [],
     )
 
-    has_sources = (
-        isinstance(sources, (list, tuple))
-        and any(
-            _normalize_text(source)
-            for source in sources
-        )
+    has_sources = isinstance(sources, (list, tuple)) and any(
+        _normalize_text(source) for source in sources
     )
 
-    return (
-        successful_tool
-        and (
-            retrieved_documents > 0
-            or has_sources
-        )
-    )
+    return successful_tool and (retrieved_documents > 0 or has_sources)
 
 
 def _financial_calculation_executed(
@@ -378,27 +339,16 @@ def _financial_calculation_executed(
             )
         ).lower()
 
-        successful = (
-            item.get("ok") is True
-            or item.get("status")
-            in {
-                "success",
-                "completed",
-                "ok",
-            }
-        )
+        successful = item.get("ok") is True or item.get("status") in {
+            "success",
+            "completed",
+            "ok",
+        }
 
-        if (
-            successful
-            and any(
-                marker in tool_name
-                for marker in financial_markers
-            )
-        ):
+        if successful and any(marker in tool_name for marker in financial_markers):
             return True
 
     return False
-
 
 
 def _completed_requirements(
@@ -427,78 +377,39 @@ def _completed_requirements(
     )
 
     if current_agent:
-        completed.append(
-            "agent_execution"
-        )
+        completed.append("agent_execution")
+
+    if "financial_inputs_resolved" in requirements and _financial_inputs_resolved(
+        state
+    ):
+        completed.append("financial_inputs_resolved")
 
     if (
-        "financial_inputs_resolved"
-        in requirements
-        and _financial_inputs_resolved(
-            state
-        )
+        "financial_calculation_executed" in requirements
+        and _financial_calculation_executed(state)
     ):
-        completed.append(
-            "financial_inputs_resolved"
-        )
+        completed.append("financial_calculation_executed")
 
-    if (
-        "financial_calculation_executed"
-        in requirements
-        and _financial_calculation_executed(
-            state
-        )
-    ):
-        completed.append(
-            "financial_calculation_executed"
-        )
+    if "rag_retrieval_executed" in requirements and _rag_retrieval_executed(state):
+        completed.append("rag_retrieval_executed")
 
-    if (
-        "rag_retrieval_executed"
-        in requirements
-        and _rag_retrieval_executed(
-            state
-        )
-    ):
-        completed.append(
-            "rag_retrieval_executed"
-        )
-
-    requires_rag = (
-        "rag_retrieval_executed"
-        in requirements
-    )
+    requires_rag = "rag_retrieval_executed" in requirements
 
     response_generated = (
-        _is_substantive_response(response)
-        if requires_rag
-        else bool(response)
+        _is_substantive_response(response) if requires_rag else bool(response)
     )
 
     if response_generated:
-        completed.append(
-            "response_generation"
-        )
+        completed.append("response_generation")
 
-    if (
-        "report_generation"
-        in requirements
-        and _has_report_evidence(
-            current_agent=current_agent,
-            structured_response=(
-                structured_response
-            ),
-            tool_results=tool_results,
-        )
+    if "report_generation" in requirements and _has_report_evidence(
+        current_agent=current_agent,
+        structured_response=(structured_response),
+        tool_results=tool_results,
     ):
-        completed.append(
-            "report_generation"
-        )
+        completed.append("report_generation")
 
     return completed
-
-
-
 
 
 def _is_substantive_response(
@@ -508,9 +419,7 @@ def _is_substantive_response(
     Impede que placeholders e mensagens de roteamento
     sejam considerados respostas finais.
     """
-    normalized = _normalize_text(
-        response
-    ).lower()
+    normalized = _normalize_text(response).lower()
 
     if not normalized:
         return False
@@ -525,15 +434,10 @@ def _is_substantive_response(
         "processando sua solicitacao",
     )
 
-    if any(
-        marker in normalized
-        for marker in placeholders
-    ):
+    if any(marker in normalized for marker in placeholders):
         return False
 
-    return len(
-        normalized.split()
-    ) >= 8
+    return len(normalized.split()) >= 8
 
 
 def _requires_user_input(
@@ -553,13 +457,7 @@ def _requires_user_input(
         "forneca os dados",
     )
 
-    return (
-        bool(normalized)
-        and any(
-            marker in normalized
-            for marker in markers
-        )
-    )
+    return bool(normalized) and any(marker in normalized for marker in markers)
 
 
 def task_completion_node(
@@ -568,24 +466,14 @@ def task_completion_node(
     """
     Avalia formalmente se a tarefa foi concluída.
     """
-    current_agent = (
-        _resolve_current_agent(
-            state
-        )
-    )
+    current_agent = _resolve_current_agent(state)
 
-    requirements = (
-        _requirements_for_state(
-            state
-        )
-    )
+    requirements = _requirements_for_state(state)
 
-    completed = (
-        _completed_requirements(
-            state,
-            requirements,
-            current_agent=current_agent,
-        )
+    completed = _completed_requirements(
+        state,
+        requirements,
+        current_agent=current_agent,
     )
 
     errors = [
@@ -604,11 +492,7 @@ def task_completion_node(
         )
     )
 
-    needs_user_input = (
-        _requires_user_input(
-            response
-        )
-    )
+    needs_user_input = _requires_user_input(response)
 
     failed = bool(errors)
 
@@ -618,10 +502,7 @@ def task_completion_node(
         block_reason = errors[-1]
 
     elif needs_user_input:
-        block_reason = (
-            "A execução depende de informações "
-            "adicionais do usuário."
-        )
+        block_reason = "A execução depende de informações adicionais do usuário."
 
     tool_results = state.get(
         "tool_results",
@@ -631,22 +512,14 @@ def task_completion_node(
     result = evaluate_task_completion(
         requirements=requirements,
         completed=completed,
-        needs_user_input=(
-            needs_user_input
-        ),
+        needs_user_input=(needs_user_input),
         failed=failed,
         block_reason=block_reason,
         evidence={
-            "intent": state.get(
-                "intent"
-            ),
-            "agent": (
-                current_agent or None
-            ),
+            "intent": state.get("intent"),
+            "agent": (current_agent or None),
             "agent_resolution": (
-                "explicit_or_inferred"
-                if current_agent
-                else "unresolved"
+                "explicit_or_inferred" if current_agent else "unresolved"
             ),
             "tool_results_count": (
                 len(tool_results)
@@ -656,9 +529,7 @@ def task_completion_node(
                 )
                 else 0
             ),
-            "has_response": bool(
-                response
-            ),
+            "has_response": bool(response),
         },
     )
 
@@ -670,9 +541,7 @@ def task_completion_node(
     )
 
     trace.append(
-        "task_completion:"
-        f"{result['task_status']}:"
-        f"{result['task_completion_score']}"
+        f"task_completion:{result['task_status']}:{result['task_completion_score']}"
     )
 
     return {

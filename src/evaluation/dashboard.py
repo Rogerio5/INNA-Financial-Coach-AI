@@ -31,9 +31,7 @@ from src.observability.phoenix_runtime import (
 
 LLMOPS_CHART_BG = "#020617"
 LLMOPS_CHART_TEXT = "#F8FAFC"
-LLMOPS_CHART_GRID = (
-    "rgba(148, 163, 184, 0.16)"
-)
+LLMOPS_CHART_GRID = "rgba(148, 163, 184, 0.16)"
 
 LLMOPS_METRIC_COLORS = [
     "#38BDF8",
@@ -77,25 +75,19 @@ def aplicar_tema_llmops_chart(
     fig.update_xaxes(
         color=LLMOPS_CHART_TEXT,
         gridcolor=LLMOPS_CHART_GRID,
-        zerolinecolor=(
-            "rgba(148, 163, 184, 0.25)"
-        ),
+        zerolinecolor=("rgba(148, 163, 184, 0.25)"),
     )
 
     fig.update_yaxes(
         color=LLMOPS_CHART_TEXT,
         gridcolor=LLMOPS_CHART_GRID,
-        zerolinecolor=(
-            "rgba(148, 163, 184, 0.25)"
-        ),
+        zerolinecolor=("rgba(148, 163, 184, 0.25)"),
     )
 
     return fig
 
 
-DEFAULT_HISTORY_PATH = Path(
-    "evaluation/history/evaluation-history.json"
-)
+DEFAULT_HISTORY_PATH = Path("evaluation/history/evaluation-history.json")
 
 
 LLMOPS_TEXTS = {
@@ -124,9 +116,7 @@ LLMOPS_TEXTS = {
         "latest_snapshot": "Latest execution snapshot",
         "runs_history": "Execution history",
         "no_registered_run": "No execution has been recorded.",
-        "no_filtered_runs": (
-            "No execution was found for the selected filters."
-        ),
+        "no_filtered_runs": ("No execution was found for the selected filters."),
         "pass_rate": "Pass rate",
         "approved": "Approved",
         "quality_gate": "Quality Gate",
@@ -140,9 +130,7 @@ LLMOPS_TEXTS = {
         "latest_snapshot": "Latest execution snapshot",
         "runs_history": "Execution history",
         "no_registered_run": "No execution has been recorded.",
-        "no_filtered_runs": (
-            "No execution was found for the selected filters."
-        ),
+        "no_filtered_runs": ("No execution was found for the selected filters."),
         "pass_rate": "Pass rate",
         "approved": "Approved",
         "quality_gate": "Quality Gate",
@@ -172,9 +160,7 @@ LLMOPS_TEXTS = {
         "latest_snapshot": "Aperçu de la dernière exécution",
         "runs_history": "Historique des exécutions",
         "no_registered_run": "Aucune exécution enregistrée.",
-        "no_filtered_runs": (
-            "Aucune exécution trouvée pour les filtres sélectionnés."
-        ),
+        "no_filtered_runs": ("Aucune exécution trouvée pour les filtres sélectionnés."),
         "pass_rate": "Taux de réussite",
         "approved": "Approuvée",
         "quality_gate": "Contrôle qualité",
@@ -188,9 +174,7 @@ LLMOPS_TEXTS = {
         "latest_snapshot": "Snapshot der neuesten Ausführung",
         "runs_history": "Ausführungsverlauf",
         "no_registered_run": "Keine Ausführung registriert.",
-        "no_filtered_runs": (
-            "Keine Ausführung für die ausgewählten Filter gefunden."
-        ),
+        "no_filtered_runs": ("Keine Ausführung für die ausgewählten Filter gefunden."),
         "pass_rate": "Erfolgsquote",
         "approved": "Genehmigt",
         "quality_gate": "Qualitätsprüfung",
@@ -204,9 +188,7 @@ LLMOPS_TEXTS = {
         "latest_snapshot": "Snapshot dell’esecuzione più recente",
         "runs_history": "Cronologia delle esecuzioni",
         "no_registered_run": "Nessuna esecuzione registrata.",
-        "no_filtered_runs": (
-            "Nessuna esecuzione trovata per i filtri selezionati."
-        ),
+        "no_filtered_runs": ("Nessuna esecuzione trovata per i filtri selezionati."),
         "pass_rate": "Tasso di approvazione",
         "approved": "Approvata",
         "quality_gate": "Controllo qualità",
@@ -236,9 +218,7 @@ LLMOPS_TEXTS = {
         "latest_snapshot": "Знімок останнього виконання",
         "runs_history": "Історія виконань",
         "no_registered_run": "Немає зареєстрованих виконань.",
-        "no_filtered_runs": (
-            "Для вибраних фільтрів виконань не знайдено."
-        ),
+        "no_filtered_runs": ("Для вибраних фільтрів виконань не знайдено."),
         "pass_rate": "Рівень успішності",
         "approved": "Схвалено",
         "quality_gate": "Контроль якості",
@@ -252,9 +232,7 @@ LLMOPS_TEXTS = {
         "latest_snapshot": "Снимок последнего выполнения",
         "runs_history": "История выполнений",
         "no_registered_run": "Нет зарегистрированных выполнений.",
-        "no_filtered_runs": (
-            "Для выбранных фильтров выполнения не найдены."
-        ),
+        "no_filtered_runs": ("Для выбранных фильтров выполнения не найдены."),
         "pass_rate": "Уровень успешности",
         "approved": "Одобрено",
         "quality_gate": "Контроль качества",
@@ -268,9 +246,7 @@ LLMOPS_TEXTS = {
         "latest_snapshot": "لقطة لأحدث عملية تشغيل",
         "runs_history": "سجل عمليات التشغيل",
         "no_registered_run": "لا توجد عملية تشغيل مسجلة.",
-        "no_filtered_runs": (
-            "لم يتم العثور على عمليات تشغيل للفلاتر المحددة."
-        ),
+        "no_filtered_runs": ("لم يتم العثور على عمليات تشغيل للفلاتر المحددة."),
         "pass_rate": "معدل النجاح",
         "approved": "معتمدة",
         "quality_gate": "بوابة الجودة",
@@ -279,13 +255,603 @@ LLMOPS_TEXTS = {
 
 
 # LLMOps filter and summary translations.
-LLMOPS_FILTER_SUMMARY_TEXTS = {'pt': {'filters': 'Filtros', 'branches': 'Branches', 'environments': 'Ambientes', 'run_status': 'Status da execução', 'all_runs': 'Todas', 'approved_runs_option': 'Aprovadas', 'failed_runs_option': 'Reprovadas', 'total_runs': 'Execuções', 'approval_rate': 'Taxa de aprovação', 'latest_pass_rate': 'Taxa de aprovação mais recente', 'tracked_metrics': 'Métricas monitoradas', 'approved_runs': 'Execuções aprovadas', 'failed_runs': 'Execuções reprovadas', 'recent_regressions': 'Regressões recentes', 'recent_violations': 'Violações recentes', 'gate_approved': 'Quality Gate mais recente: aprovado.', 'gate_failed': 'Quality Gate mais recente: reprovado.', 'no_runs': 'Nenhuma execução disponível.'}, 'en_us': {'filters': 'Filters', 'branches': 'Branches', 'environments': 'Environments', 'run_status': 'Execution status', 'all_runs': 'All', 'approved_runs_option': 'Approved', 'failed_runs_option': 'Failed', 'total_runs': 'Executions', 'approval_rate': 'Approval rate', 'latest_pass_rate': 'Latest pass rate', 'tracked_metrics': 'Tracked metrics', 'approved_runs': 'Approved executions', 'failed_runs': 'Failed executions', 'recent_regressions': 'Recent regressions', 'recent_violations': 'Recent violations', 'gate_approved': 'Latest Quality Gate: approved.', 'gate_failed': 'Latest Quality Gate: failed.', 'no_runs': 'No execution is available.'}, 'es': {'filters': 'Filtros', 'branches': 'Ramas', 'environments': 'Entornos', 'run_status': 'Estado de la ejecución', 'all_runs': 'Todas', 'approved_runs_option': 'Aprobadas', 'failed_runs_option': 'Reprobadas', 'total_runs': 'Ejecuciones', 'approval_rate': 'Tasa de aprobación', 'latest_pass_rate': 'Última tasa de aprobación', 'tracked_metrics': 'Métricas monitoreadas', 'approved_runs': 'Ejecuciones aprobadas', 'failed_runs': 'Ejecuciones reprobadas', 'recent_regressions': 'Regresiones recientes', 'recent_violations': 'Infracciones recientes', 'gate_approved': 'Última puerta de calidad: aprobada.', 'gate_failed': 'Última puerta de calidad: reprobada.', 'no_runs': 'No hay ejecuciones disponibles.'}, 'fr': {'filters': 'Filtres', 'branches': 'Branches', 'environments': 'Environnements', 'run_status': 'État de l’exécution', 'all_runs': 'Toutes', 'approved_runs_option': 'Approuvées', 'failed_runs_option': 'Échouées', 'total_runs': 'Exécutions', 'approval_rate': 'Taux d’approbation', 'latest_pass_rate': 'Dernier taux de réussite', 'tracked_metrics': 'Métriques surveillées', 'approved_runs': 'Exécutions approuvées', 'failed_runs': 'Exécutions échouées', 'recent_regressions': 'Régressions récentes', 'recent_violations': 'Violations récentes', 'gate_approved': 'Dernier contrôle qualité : approuvé.', 'gate_failed': 'Dernier contrôle qualité : échoué.', 'no_runs': 'Aucune exécution disponible.'}, 'de': {'filters': 'Filter', 'branches': 'Branches', 'environments': 'Umgebungen', 'run_status': 'Ausführungsstatus', 'all_runs': 'Alle', 'approved_runs_option': 'Genehmigt', 'failed_runs_option': 'Fehlgeschlagen', 'total_runs': 'Ausführungen', 'approval_rate': 'Genehmigungsquote', 'latest_pass_rate': 'Neueste Erfolgsquote', 'tracked_metrics': 'Überwachte Metriken', 'approved_runs': 'Genehmigte Ausführungen', 'failed_runs': 'Fehlgeschlagene Ausführungen', 'recent_regressions': 'Aktuelle Regressionen', 'recent_violations': 'Aktuelle Verstöße', 'gate_approved': 'Neueste Qualitätsprüfung: genehmigt.', 'gate_failed': 'Neueste Qualitätsprüfung: fehlgeschlagen.', 'no_runs': 'Keine Ausführung verfügbar.'}, 'it': {'filters': 'Filtri', 'branches': 'Branch', 'environments': 'Ambienti', 'run_status': 'Stato dell’esecuzione', 'all_runs': 'Tutte', 'approved_runs_option': 'Approvate', 'failed_runs_option': 'Non approvate', 'total_runs': 'Esecuzioni', 'approval_rate': 'Tasso di approvazione', 'latest_pass_rate': 'Ultimo tasso di approvazione', 'tracked_metrics': 'Metriche monitorate', 'approved_runs': 'Esecuzioni approvate', 'failed_runs': 'Esecuzioni non approvate', 'recent_regressions': 'Regressioni recenti', 'recent_violations': 'Violazioni recenti', 'gate_approved': 'Ultimo controllo qualità: approvato.', 'gate_failed': 'Ultimo controllo qualità: non approvato.', 'no_runs': 'Nessuna esecuzione disponibile.'}, 'ro': {'filters': 'Filtre', 'branches': 'Ramuri', 'environments': 'Medii', 'run_status': 'Starea execuției', 'all_runs': 'Toate', 'approved_runs_option': 'Aprobate', 'failed_runs_option': 'Respinse', 'total_runs': 'Execuții', 'approval_rate': 'Rată de aprobare', 'latest_pass_rate': 'Cea mai recentă rată de aprobare', 'tracked_metrics': 'Metrici monitorizate', 'approved_runs': 'Execuții aprobate', 'failed_runs': 'Execuții respinse', 'recent_regressions': 'Regresii recente', 'recent_violations': 'Încălcări recente', 'gate_approved': 'Cel mai recent control: aprobat.', 'gate_failed': 'Cel mai recent control: respins.', 'no_runs': 'Nu există execuții disponibile.'}, 'ua': {'filters': 'Фільтри', 'branches': 'Гілки', 'environments': 'Середовища', 'run_status': 'Статус виконання', 'all_runs': 'Усі', 'approved_runs_option': 'Схвалені', 'failed_runs_option': 'Відхилені', 'total_runs': 'Виконання', 'approval_rate': 'Рівень схвалення', 'latest_pass_rate': 'Останній рівень успішності', 'tracked_metrics': 'Відстежувані метрики', 'approved_runs': 'Схвалені виконання', 'failed_runs': 'Відхилені виконання', 'recent_regressions': 'Останні регресії', 'recent_violations': 'Останні порушення', 'gate_approved': 'Останній контроль якості: схвалено.', 'gate_failed': 'Останній контроль якості: відхилено.', 'no_runs': 'Немає доступних виконань.'}, 'ru': {'filters': 'Фильтры', 'branches': 'Ветки', 'environments': 'Среды', 'run_status': 'Статус выполнения', 'all_runs': 'Все', 'approved_runs_option': 'Одобрено', 'failed_runs_option': 'Отклонено', 'total_runs': 'Выполнения', 'approval_rate': 'Уровень одобрения', 'latest_pass_rate': 'Последний уровень успешности', 'tracked_metrics': 'Отслеживаемые метрики', 'approved_runs': 'Одобренные выполнения', 'failed_runs': 'Отклонённые выполнения', 'recent_regressions': 'Последние регрессии', 'recent_violations': 'Последние нарушения', 'gate_approved': 'Последний контроль качества: одобрено.', 'gate_failed': 'Последний контроль качества: отклонено.', 'no_runs': 'Нет доступных выполнений.'}, 'sa': {'filters': 'الفلاتر', 'branches': 'الفروع', 'environments': 'البيئات', 'run_status': 'حالة التشغيل', 'all_runs': 'الكل', 'approved_runs_option': 'معتمدة', 'failed_runs_option': 'مرفوضة', 'total_runs': 'عمليات التشغيل', 'approval_rate': 'معدل الاعتماد', 'latest_pass_rate': 'أحدث معدل نجاح', 'tracked_metrics': 'المقاييس المراقبة', 'approved_runs': 'عمليات معتمدة', 'failed_runs': 'عمليات مرفوضة', 'recent_regressions': 'الانحدارات الأخيرة', 'recent_violations': 'المخالفات الأخيرة', 'gate_approved': 'أحدث بوابة جودة: معتمدة.', 'gate_failed': 'أحدث بوابة جودة: مرفوضة.', 'no_runs': 'لا توجد عمليات تشغيل متاحة.'}, 'en_gb': {'filters': 'Filters', 'branches': 'Branches', 'environments': 'Environments', 'run_status': 'Execution status', 'all_runs': 'All', 'approved_runs_option': 'Approved', 'failed_runs_option': 'Failed', 'total_runs': 'Executions', 'approval_rate': 'Approval rate', 'latest_pass_rate': 'Latest pass rate', 'tracked_metrics': 'Tracked metrics', 'approved_runs': 'Approved executions', 'failed_runs': 'Failed executions', 'recent_regressions': 'Recent regressions', 'recent_violations': 'Recent violations', 'gate_approved': 'Latest Quality Gate: approved.', 'gate_failed': 'Latest Quality Gate: failed.', 'no_runs': 'No execution is available.'}, 'ch': {'filters': 'Filter', 'branches': 'Branches', 'environments': 'Umgebungen', 'run_status': 'Ausführungsstatus', 'all_runs': 'Alle', 'approved_runs_option': 'Genehmigt', 'failed_runs_option': 'Fehlgeschlagen', 'total_runs': 'Ausführungen', 'approval_rate': 'Genehmigungsquote', 'latest_pass_rate': 'Neueste Erfolgsquote', 'tracked_metrics': 'Überwachte Metriken', 'approved_runs': 'Genehmigte Ausführungen', 'failed_runs': 'Fehlgeschlagene Ausführungen', 'recent_regressions': 'Aktuelle Regressionen', 'recent_violations': 'Aktuelle Verstöße', 'gate_approved': 'Neueste Qualitätsprüfung: genehmigt.', 'gate_failed': 'Neueste Qualitätsprüfung: fehlgeschlagen.', 'no_runs': 'Keine Ausführung verfügbar.'}}
+LLMOPS_FILTER_SUMMARY_TEXTS = {
+    "pt": {
+        "filters": "Filtros",
+        "branches": "Branches",
+        "environments": "Ambientes",
+        "run_status": "Status da execução",
+        "all_runs": "Todas",
+        "approved_runs_option": "Aprovadas",
+        "failed_runs_option": "Reprovadas",
+        "total_runs": "Execuções",
+        "approval_rate": "Taxa de aprovação",
+        "latest_pass_rate": "Taxa de aprovação mais recente",
+        "tracked_metrics": "Métricas monitoradas",
+        "approved_runs": "Execuções aprovadas",
+        "failed_runs": "Execuções reprovadas",
+        "recent_regressions": "Regressões recentes",
+        "recent_violations": "Violações recentes",
+        "gate_approved": "Quality Gate mais recente: aprovado.",
+        "gate_failed": "Quality Gate mais recente: reprovado.",
+        "no_runs": "Nenhuma execução disponível.",
+    },
+    "en_us": {
+        "filters": "Filters",
+        "branches": "Branches",
+        "environments": "Environments",
+        "run_status": "Execution status",
+        "all_runs": "All",
+        "approved_runs_option": "Approved",
+        "failed_runs_option": "Failed",
+        "total_runs": "Executions",
+        "approval_rate": "Approval rate",
+        "latest_pass_rate": "Latest pass rate",
+        "tracked_metrics": "Tracked metrics",
+        "approved_runs": "Approved executions",
+        "failed_runs": "Failed executions",
+        "recent_regressions": "Recent regressions",
+        "recent_violations": "Recent violations",
+        "gate_approved": "Latest Quality Gate: approved.",
+        "gate_failed": "Latest Quality Gate: failed.",
+        "no_runs": "No execution is available.",
+    },
+    "es": {
+        "filters": "Filtros",
+        "branches": "Ramas",
+        "environments": "Entornos",
+        "run_status": "Estado de la ejecución",
+        "all_runs": "Todas",
+        "approved_runs_option": "Aprobadas",
+        "failed_runs_option": "Reprobadas",
+        "total_runs": "Ejecuciones",
+        "approval_rate": "Tasa de aprobación",
+        "latest_pass_rate": "Última tasa de aprobación",
+        "tracked_metrics": "Métricas monitoreadas",
+        "approved_runs": "Ejecuciones aprobadas",
+        "failed_runs": "Ejecuciones reprobadas",
+        "recent_regressions": "Regresiones recientes",
+        "recent_violations": "Infracciones recientes",
+        "gate_approved": "Última puerta de calidad: aprobada.",
+        "gate_failed": "Última puerta de calidad: reprobada.",
+        "no_runs": "No hay ejecuciones disponibles.",
+    },
+    "fr": {
+        "filters": "Filtres",
+        "branches": "Branches",
+        "environments": "Environnements",
+        "run_status": "État de l’exécution",
+        "all_runs": "Toutes",
+        "approved_runs_option": "Approuvées",
+        "failed_runs_option": "Échouées",
+        "total_runs": "Exécutions",
+        "approval_rate": "Taux d’approbation",
+        "latest_pass_rate": "Dernier taux de réussite",
+        "tracked_metrics": "Métriques surveillées",
+        "approved_runs": "Exécutions approuvées",
+        "failed_runs": "Exécutions échouées",
+        "recent_regressions": "Régressions récentes",
+        "recent_violations": "Violations récentes",
+        "gate_approved": "Dernier contrôle qualité : approuvé.",
+        "gate_failed": "Dernier contrôle qualité : échoué.",
+        "no_runs": "Aucune exécution disponible.",
+    },
+    "de": {
+        "filters": "Filter",
+        "branches": "Branches",
+        "environments": "Umgebungen",
+        "run_status": "Ausführungsstatus",
+        "all_runs": "Alle",
+        "approved_runs_option": "Genehmigt",
+        "failed_runs_option": "Fehlgeschlagen",
+        "total_runs": "Ausführungen",
+        "approval_rate": "Genehmigungsquote",
+        "latest_pass_rate": "Neueste Erfolgsquote",
+        "tracked_metrics": "Überwachte Metriken",
+        "approved_runs": "Genehmigte Ausführungen",
+        "failed_runs": "Fehlgeschlagene Ausführungen",
+        "recent_regressions": "Aktuelle Regressionen",
+        "recent_violations": "Aktuelle Verstöße",
+        "gate_approved": "Neueste Qualitätsprüfung: genehmigt.",
+        "gate_failed": "Neueste Qualitätsprüfung: fehlgeschlagen.",
+        "no_runs": "Keine Ausführung verfügbar.",
+    },
+    "it": {
+        "filters": "Filtri",
+        "branches": "Branch",
+        "environments": "Ambienti",
+        "run_status": "Stato dell’esecuzione",
+        "all_runs": "Tutte",
+        "approved_runs_option": "Approvate",
+        "failed_runs_option": "Non approvate",
+        "total_runs": "Esecuzioni",
+        "approval_rate": "Tasso di approvazione",
+        "latest_pass_rate": "Ultimo tasso di approvazione",
+        "tracked_metrics": "Metriche monitorate",
+        "approved_runs": "Esecuzioni approvate",
+        "failed_runs": "Esecuzioni non approvate",
+        "recent_regressions": "Regressioni recenti",
+        "recent_violations": "Violazioni recenti",
+        "gate_approved": "Ultimo controllo qualità: approvato.",
+        "gate_failed": "Ultimo controllo qualità: non approvato.",
+        "no_runs": "Nessuna esecuzione disponibile.",
+    },
+    "ro": {
+        "filters": "Filtre",
+        "branches": "Ramuri",
+        "environments": "Medii",
+        "run_status": "Starea execuției",
+        "all_runs": "Toate",
+        "approved_runs_option": "Aprobate",
+        "failed_runs_option": "Respinse",
+        "total_runs": "Execuții",
+        "approval_rate": "Rată de aprobare",
+        "latest_pass_rate": "Cea mai recentă rată de aprobare",
+        "tracked_metrics": "Metrici monitorizate",
+        "approved_runs": "Execuții aprobate",
+        "failed_runs": "Execuții respinse",
+        "recent_regressions": "Regresii recente",
+        "recent_violations": "Încălcări recente",
+        "gate_approved": "Cel mai recent control: aprobat.",
+        "gate_failed": "Cel mai recent control: respins.",
+        "no_runs": "Nu există execuții disponibile.",
+    },
+    "ua": {
+        "filters": "Фільтри",
+        "branches": "Гілки",
+        "environments": "Середовища",
+        "run_status": "Статус виконання",
+        "all_runs": "Усі",
+        "approved_runs_option": "Схвалені",
+        "failed_runs_option": "Відхилені",
+        "total_runs": "Виконання",
+        "approval_rate": "Рівень схвалення",
+        "latest_pass_rate": "Останній рівень успішності",
+        "tracked_metrics": "Відстежувані метрики",
+        "approved_runs": "Схвалені виконання",
+        "failed_runs": "Відхилені виконання",
+        "recent_regressions": "Останні регресії",
+        "recent_violations": "Останні порушення",
+        "gate_approved": "Останній контроль якості: схвалено.",
+        "gate_failed": "Останній контроль якості: відхилено.",
+        "no_runs": "Немає доступних виконань.",
+    },
+    "ru": {
+        "filters": "Фильтры",
+        "branches": "Ветки",
+        "environments": "Среды",
+        "run_status": "Статус выполнения",
+        "all_runs": "Все",
+        "approved_runs_option": "Одобрено",
+        "failed_runs_option": "Отклонено",
+        "total_runs": "Выполнения",
+        "approval_rate": "Уровень одобрения",
+        "latest_pass_rate": "Последний уровень успешности",
+        "tracked_metrics": "Отслеживаемые метрики",
+        "approved_runs": "Одобренные выполнения",
+        "failed_runs": "Отклонённые выполнения",
+        "recent_regressions": "Последние регрессии",
+        "recent_violations": "Последние нарушения",
+        "gate_approved": "Последний контроль качества: одобрено.",
+        "gate_failed": "Последний контроль качества: отклонено.",
+        "no_runs": "Нет доступных выполнений.",
+    },
+    "sa": {
+        "filters": "الفلاتر",
+        "branches": "الفروع",
+        "environments": "البيئات",
+        "run_status": "حالة التشغيل",
+        "all_runs": "الكل",
+        "approved_runs_option": "معتمدة",
+        "failed_runs_option": "مرفوضة",
+        "total_runs": "عمليات التشغيل",
+        "approval_rate": "معدل الاعتماد",
+        "latest_pass_rate": "أحدث معدل نجاح",
+        "tracked_metrics": "المقاييس المراقبة",
+        "approved_runs": "عمليات معتمدة",
+        "failed_runs": "عمليات مرفوضة",
+        "recent_regressions": "الانحدارات الأخيرة",
+        "recent_violations": "المخالفات الأخيرة",
+        "gate_approved": "أحدث بوابة جودة: معتمدة.",
+        "gate_failed": "أحدث بوابة جودة: مرفوضة.",
+        "no_runs": "لا توجد عمليات تشغيل متاحة.",
+    },
+    "en_gb": {
+        "filters": "Filters",
+        "branches": "Branches",
+        "environments": "Environments",
+        "run_status": "Execution status",
+        "all_runs": "All",
+        "approved_runs_option": "Approved",
+        "failed_runs_option": "Failed",
+        "total_runs": "Executions",
+        "approval_rate": "Approval rate",
+        "latest_pass_rate": "Latest pass rate",
+        "tracked_metrics": "Tracked metrics",
+        "approved_runs": "Approved executions",
+        "failed_runs": "Failed executions",
+        "recent_regressions": "Recent regressions",
+        "recent_violations": "Recent violations",
+        "gate_approved": "Latest Quality Gate: approved.",
+        "gate_failed": "Latest Quality Gate: failed.",
+        "no_runs": "No execution is available.",
+    },
+    "ch": {
+        "filters": "Filter",
+        "branches": "Branches",
+        "environments": "Umgebungen",
+        "run_status": "Ausführungsstatus",
+        "all_runs": "Alle",
+        "approved_runs_option": "Genehmigt",
+        "failed_runs_option": "Fehlgeschlagen",
+        "total_runs": "Ausführungen",
+        "approval_rate": "Genehmigungsquote",
+        "latest_pass_rate": "Neueste Erfolgsquote",
+        "tracked_metrics": "Überwachte Metriken",
+        "approved_runs": "Genehmigte Ausführungen",
+        "failed_runs": "Fehlgeschlagene Ausführungen",
+        "recent_regressions": "Aktuelle Regressionen",
+        "recent_violations": "Aktuelle Verstöße",
+        "gate_approved": "Neueste Qualitätsprüfung: genehmigt.",
+        "gate_failed": "Neueste Qualitätsprüfung: fehlgeschlagen.",
+        "no_runs": "Keine Ausführung verfügbar.",
+    },
+}
 
 for idioma, textos in LLMOPS_FILTER_SUMMARY_TEXTS.items():
     LLMOPS_TEXTS.setdefault(idioma, {}).update(textos)
 
 
-LLMOPS_INFRA_TEXTS = {'pt': {'infra_error': 'Não foi possível coletar o status da infraestrutura neste momento.', 'technical_details': 'Detalhes técnicos', 'infrastructure_title': 'Infraestrutura e observabilidade', 'operational': 'Operacional', 'degraded': 'Degradada', 'unavailable': 'Indisponível', 'general_status': 'Status geral', 'available': 'Disponível', 'inactive': 'Inativo', 'active': 'Ativo', 'no_measurement': 'sem medição', 'sample': 'Amostragem', 'project': 'Projeto', 'execution': 'Execução', 'local': 'Local', 'service': 'Serviço', 'infrastructure_details': 'Detalhes técnicos da infraestrutura', 'pool_size': 'Tamanho do pool', 'available_connections': 'Conexões disponíveis', 'waiting_requests': 'Requisições aguardando', 'application_tracing': 'Aplicação e rastreamento', 'environment': 'Ambiente', 'region': 'Região', 'phoenix_processor': 'Processador do Phoenix', 'content_capture': 'Captura de conteúdo', 'unavailable_components': 'Componentes indisponíveis', 'degraded_components': 'Componentes degradados'}, 'en_us': {'infra_error': 'The infrastructure status could not be collected at this time.', 'technical_details': 'Technical details', 'infrastructure_title': 'Infrastructure and observability', 'operational': 'Operational', 'degraded': 'Degraded', 'unavailable': 'Unavailable', 'general_status': 'Overall status', 'available': 'Available', 'inactive': 'Inactive', 'active': 'Active', 'no_measurement': 'no measurement', 'sample': 'Sampling', 'project': 'Project', 'execution': 'Execution', 'local': 'Local', 'service': 'Service', 'infrastructure_details': 'Infrastructure technical details', 'pool_size': 'Pool size', 'available_connections': 'Available connections', 'waiting_requests': 'Waiting requests', 'application_tracing': 'Application and tracing', 'environment': 'Environment', 'region': 'Region', 'phoenix_processor': 'Phoenix processor', 'content_capture': 'Content capture', 'unavailable_components': 'Unavailable components', 'degraded_components': 'Degraded components'}, 'es': {'infra_error': 'No fue posible recopilar el estado de la infraestructura.', 'technical_details': 'Detalles técnicos', 'infrastructure_title': 'Infraestructura y observabilidad', 'operational': 'Operativa', 'degraded': 'Degradada', 'unavailable': 'No disponible', 'general_status': 'Estado general', 'available': 'Disponible', 'inactive': 'Inactivo', 'active': 'Activo', 'no_measurement': 'sin medición', 'sample': 'Muestreo', 'project': 'Proyecto', 'execution': 'Ejecución', 'local': 'Local', 'service': 'Servicio', 'infrastructure_details': 'Detalles técnicos de la infraestructura', 'pool_size': 'Tamaño del pool', 'available_connections': 'Conexiones disponibles', 'waiting_requests': 'Solicitudes en espera', 'application_tracing': 'Aplicación y rastreo', 'environment': 'Entorno', 'region': 'Región', 'phoenix_processor': 'Procesador de Phoenix', 'content_capture': 'Captura de contenido', 'unavailable_components': 'Componentes no disponibles', 'degraded_components': 'Componentes degradados'}, 'en_gb': {'infra_error': 'The infrastructure status could not be collected at this time.', 'technical_details': 'Technical details', 'infrastructure_title': 'Infrastructure and observability', 'operational': 'Operational', 'degraded': 'Degraded', 'unavailable': 'Unavailable', 'general_status': 'Overall status', 'available': 'Available', 'inactive': 'Inactive', 'active': 'Active', 'no_measurement': 'no measurement', 'sample': 'Sampling', 'project': 'Project', 'execution': 'Execution', 'local': 'Local', 'service': 'Service', 'infrastructure_details': 'Infrastructure technical details', 'pool_size': 'Pool size', 'available_connections': 'Available connections', 'waiting_requests': 'Waiting requests', 'application_tracing': 'Application and tracing', 'environment': 'Environment', 'region': 'Region', 'phoenix_processor': 'Phoenix processor', 'content_capture': 'Content capture', 'unavailable_components': 'Unavailable components', 'degraded_components': 'Degraded components'}, 'fr': {'infra_error': 'The infrastructure status could not be collected at this time.', 'technical_details': 'Technical details', 'infrastructure_title': 'Infrastructure and observability', 'operational': 'Operational', 'degraded': 'Degraded', 'unavailable': 'Unavailable', 'general_status': 'Overall status', 'available': 'Available', 'inactive': 'Inactive', 'active': 'Active', 'no_measurement': 'no measurement', 'sample': 'Sampling', 'project': 'Project', 'execution': 'Execution', 'local': 'Local', 'service': 'Service', 'infrastructure_details': 'Infrastructure technical details', 'pool_size': 'Pool size', 'available_connections': 'Available connections', 'waiting_requests': 'Waiting requests', 'application_tracing': 'Application and tracing', 'environment': 'Environment', 'region': 'Region', 'phoenix_processor': 'Phoenix processor', 'content_capture': 'Content capture', 'unavailable_components': 'Unavailable components', 'degraded_components': 'Degraded components'}, 'de': {'infra_error': 'The infrastructure status could not be collected at this time.', 'technical_details': 'Technical details', 'infrastructure_title': 'Infrastructure and observability', 'operational': 'Operational', 'degraded': 'Degraded', 'unavailable': 'Unavailable', 'general_status': 'Overall status', 'available': 'Available', 'inactive': 'Inactive', 'active': 'Active', 'no_measurement': 'no measurement', 'sample': 'Sampling', 'project': 'Project', 'execution': 'Execution', 'local': 'Local', 'service': 'Service', 'infrastructure_details': 'Infrastructure technical details', 'pool_size': 'Pool size', 'available_connections': 'Available connections', 'waiting_requests': 'Waiting requests', 'application_tracing': 'Application and tracing', 'environment': 'Environment', 'region': 'Region', 'phoenix_processor': 'Phoenix processor', 'content_capture': 'Content capture', 'unavailable_components': 'Unavailable components', 'degraded_components': 'Degraded components'}, 'it': {'infra_error': 'The infrastructure status could not be collected at this time.', 'technical_details': 'Technical details', 'infrastructure_title': 'Infrastructure and observability', 'operational': 'Operational', 'degraded': 'Degraded', 'unavailable': 'Unavailable', 'general_status': 'Overall status', 'available': 'Available', 'inactive': 'Inactive', 'active': 'Active', 'no_measurement': 'no measurement', 'sample': 'Sampling', 'project': 'Project', 'execution': 'Execution', 'local': 'Local', 'service': 'Service', 'infrastructure_details': 'Infrastructure technical details', 'pool_size': 'Pool size', 'available_connections': 'Available connections', 'waiting_requests': 'Waiting requests', 'application_tracing': 'Application and tracing', 'environment': 'Environment', 'region': 'Region', 'phoenix_processor': 'Phoenix processor', 'content_capture': 'Content capture', 'unavailable_components': 'Unavailable components', 'degraded_components': 'Degraded components'}, 'ro': {'infra_error': 'The infrastructure status could not be collected at this time.', 'technical_details': 'Technical details', 'infrastructure_title': 'Infrastructure and observability', 'operational': 'Operational', 'degraded': 'Degraded', 'unavailable': 'Unavailable', 'general_status': 'Overall status', 'available': 'Available', 'inactive': 'Inactive', 'active': 'Active', 'no_measurement': 'no measurement', 'sample': 'Sampling', 'project': 'Project', 'execution': 'Execution', 'local': 'Local', 'service': 'Service', 'infrastructure_details': 'Infrastructure technical details', 'pool_size': 'Pool size', 'available_connections': 'Available connections', 'waiting_requests': 'Waiting requests', 'application_tracing': 'Application and tracing', 'environment': 'Environment', 'region': 'Region', 'phoenix_processor': 'Phoenix processor', 'content_capture': 'Content capture', 'unavailable_components': 'Unavailable components', 'degraded_components': 'Degraded components'}, 'ua': {'infra_error': 'The infrastructure status could not be collected at this time.', 'technical_details': 'Technical details', 'infrastructure_title': 'Infrastructure and observability', 'operational': 'Operational', 'degraded': 'Degraded', 'unavailable': 'Unavailable', 'general_status': 'Overall status', 'available': 'Available', 'inactive': 'Inactive', 'active': 'Active', 'no_measurement': 'no measurement', 'sample': 'Sampling', 'project': 'Project', 'execution': 'Execution', 'local': 'Local', 'service': 'Service', 'infrastructure_details': 'Infrastructure technical details', 'pool_size': 'Pool size', 'available_connections': 'Available connections', 'waiting_requests': 'Waiting requests', 'application_tracing': 'Application and tracing', 'environment': 'Environment', 'region': 'Region', 'phoenix_processor': 'Phoenix processor', 'content_capture': 'Content capture', 'unavailable_components': 'Unavailable components', 'degraded_components': 'Degraded components'}, 'ru': {'infra_error': 'The infrastructure status could not be collected at this time.', 'technical_details': 'Technical details', 'infrastructure_title': 'Infrastructure and observability', 'operational': 'Operational', 'degraded': 'Degraded', 'unavailable': 'Unavailable', 'general_status': 'Overall status', 'available': 'Available', 'inactive': 'Inactive', 'active': 'Active', 'no_measurement': 'no measurement', 'sample': 'Sampling', 'project': 'Project', 'execution': 'Execution', 'local': 'Local', 'service': 'Service', 'infrastructure_details': 'Infrastructure technical details', 'pool_size': 'Pool size', 'available_connections': 'Available connections', 'waiting_requests': 'Waiting requests', 'application_tracing': 'Application and tracing', 'environment': 'Environment', 'region': 'Region', 'phoenix_processor': 'Phoenix processor', 'content_capture': 'Content capture', 'unavailable_components': 'Unavailable components', 'degraded_components': 'Degraded components'}, 'sa': {'infra_error': 'The infrastructure status could not be collected at this time.', 'technical_details': 'Technical details', 'infrastructure_title': 'Infrastructure and observability', 'operational': 'Operational', 'degraded': 'Degraded', 'unavailable': 'Unavailable', 'general_status': 'Overall status', 'available': 'Available', 'inactive': 'Inactive', 'active': 'Active', 'no_measurement': 'no measurement', 'sample': 'Sampling', 'project': 'Project', 'execution': 'Execution', 'local': 'Local', 'service': 'Service', 'infrastructure_details': 'Infrastructure technical details', 'pool_size': 'Pool size', 'available_connections': 'Available connections', 'waiting_requests': 'Waiting requests', 'application_tracing': 'Application and tracing', 'environment': 'Environment', 'region': 'Region', 'phoenix_processor': 'Phoenix processor', 'content_capture': 'Content capture', 'unavailable_components': 'Unavailable components', 'degraded_components': 'Degraded components'}, 'ch': {'infra_error': 'The infrastructure status could not be collected at this time.', 'technical_details': 'Technical details', 'infrastructure_title': 'Infrastructure and observability', 'operational': 'Operational', 'degraded': 'Degraded', 'unavailable': 'Unavailable', 'general_status': 'Overall status', 'available': 'Available', 'inactive': 'Inactive', 'active': 'Active', 'no_measurement': 'no measurement', 'sample': 'Sampling', 'project': 'Project', 'execution': 'Execution', 'local': 'Local', 'service': 'Service', 'infrastructure_details': 'Infrastructure technical details', 'pool_size': 'Pool size', 'available_connections': 'Available connections', 'waiting_requests': 'Waiting requests', 'application_tracing': 'Application and tracing', 'environment': 'Environment', 'region': 'Region', 'phoenix_processor': 'Phoenix processor', 'content_capture': 'Content capture', 'unavailable_components': 'Unavailable components', 'degraded_components': 'Degraded components'}}
+LLMOPS_INFRA_TEXTS = {
+    "pt": {
+        "infra_error": "Não foi possível coletar o status da infraestrutura neste momento.",
+        "technical_details": "Detalhes técnicos",
+        "infrastructure_title": "Infraestrutura e observabilidade",
+        "operational": "Operacional",
+        "degraded": "Degradada",
+        "unavailable": "Indisponível",
+        "general_status": "Status geral",
+        "available": "Disponível",
+        "inactive": "Inativo",
+        "active": "Ativo",
+        "no_measurement": "sem medição",
+        "sample": "Amostragem",
+        "project": "Projeto",
+        "execution": "Execução",
+        "local": "Local",
+        "service": "Serviço",
+        "infrastructure_details": "Detalhes técnicos da infraestrutura",
+        "pool_size": "Tamanho do pool",
+        "available_connections": "Conexões disponíveis",
+        "waiting_requests": "Requisições aguardando",
+        "application_tracing": "Aplicação e rastreamento",
+        "environment": "Ambiente",
+        "region": "Região",
+        "phoenix_processor": "Processador do Phoenix",
+        "content_capture": "Captura de conteúdo",
+        "unavailable_components": "Componentes indisponíveis",
+        "degraded_components": "Componentes degradados",
+    },
+    "en_us": {
+        "infra_error": "The infrastructure status could not be collected at this time.",
+        "technical_details": "Technical details",
+        "infrastructure_title": "Infrastructure and observability",
+        "operational": "Operational",
+        "degraded": "Degraded",
+        "unavailable": "Unavailable",
+        "general_status": "Overall status",
+        "available": "Available",
+        "inactive": "Inactive",
+        "active": "Active",
+        "no_measurement": "no measurement",
+        "sample": "Sampling",
+        "project": "Project",
+        "execution": "Execution",
+        "local": "Local",
+        "service": "Service",
+        "infrastructure_details": "Infrastructure technical details",
+        "pool_size": "Pool size",
+        "available_connections": "Available connections",
+        "waiting_requests": "Waiting requests",
+        "application_tracing": "Application and tracing",
+        "environment": "Environment",
+        "region": "Region",
+        "phoenix_processor": "Phoenix processor",
+        "content_capture": "Content capture",
+        "unavailable_components": "Unavailable components",
+        "degraded_components": "Degraded components",
+    },
+    "es": {
+        "infra_error": "No fue posible recopilar el estado de la infraestructura.",
+        "technical_details": "Detalles técnicos",
+        "infrastructure_title": "Infraestructura y observabilidad",
+        "operational": "Operativa",
+        "degraded": "Degradada",
+        "unavailable": "No disponible",
+        "general_status": "Estado general",
+        "available": "Disponible",
+        "inactive": "Inactivo",
+        "active": "Activo",
+        "no_measurement": "sin medición",
+        "sample": "Muestreo",
+        "project": "Proyecto",
+        "execution": "Ejecución",
+        "local": "Local",
+        "service": "Servicio",
+        "infrastructure_details": "Detalles técnicos de la infraestructura",
+        "pool_size": "Tamaño del pool",
+        "available_connections": "Conexiones disponibles",
+        "waiting_requests": "Solicitudes en espera",
+        "application_tracing": "Aplicación y rastreo",
+        "environment": "Entorno",
+        "region": "Región",
+        "phoenix_processor": "Procesador de Phoenix",
+        "content_capture": "Captura de contenido",
+        "unavailable_components": "Componentes no disponibles",
+        "degraded_components": "Componentes degradados",
+    },
+    "en_gb": {
+        "infra_error": "The infrastructure status could not be collected at this time.",
+        "technical_details": "Technical details",
+        "infrastructure_title": "Infrastructure and observability",
+        "operational": "Operational",
+        "degraded": "Degraded",
+        "unavailable": "Unavailable",
+        "general_status": "Overall status",
+        "available": "Available",
+        "inactive": "Inactive",
+        "active": "Active",
+        "no_measurement": "no measurement",
+        "sample": "Sampling",
+        "project": "Project",
+        "execution": "Execution",
+        "local": "Local",
+        "service": "Service",
+        "infrastructure_details": "Infrastructure technical details",
+        "pool_size": "Pool size",
+        "available_connections": "Available connections",
+        "waiting_requests": "Waiting requests",
+        "application_tracing": "Application and tracing",
+        "environment": "Environment",
+        "region": "Region",
+        "phoenix_processor": "Phoenix processor",
+        "content_capture": "Content capture",
+        "unavailable_components": "Unavailable components",
+        "degraded_components": "Degraded components",
+    },
+    "fr": {
+        "infra_error": "The infrastructure status could not be collected at this time.",
+        "technical_details": "Technical details",
+        "infrastructure_title": "Infrastructure and observability",
+        "operational": "Operational",
+        "degraded": "Degraded",
+        "unavailable": "Unavailable",
+        "general_status": "Overall status",
+        "available": "Available",
+        "inactive": "Inactive",
+        "active": "Active",
+        "no_measurement": "no measurement",
+        "sample": "Sampling",
+        "project": "Project",
+        "execution": "Execution",
+        "local": "Local",
+        "service": "Service",
+        "infrastructure_details": "Infrastructure technical details",
+        "pool_size": "Pool size",
+        "available_connections": "Available connections",
+        "waiting_requests": "Waiting requests",
+        "application_tracing": "Application and tracing",
+        "environment": "Environment",
+        "region": "Region",
+        "phoenix_processor": "Phoenix processor",
+        "content_capture": "Content capture",
+        "unavailable_components": "Unavailable components",
+        "degraded_components": "Degraded components",
+    },
+    "de": {
+        "infra_error": "The infrastructure status could not be collected at this time.",
+        "technical_details": "Technical details",
+        "infrastructure_title": "Infrastructure and observability",
+        "operational": "Operational",
+        "degraded": "Degraded",
+        "unavailable": "Unavailable",
+        "general_status": "Overall status",
+        "available": "Available",
+        "inactive": "Inactive",
+        "active": "Active",
+        "no_measurement": "no measurement",
+        "sample": "Sampling",
+        "project": "Project",
+        "execution": "Execution",
+        "local": "Local",
+        "service": "Service",
+        "infrastructure_details": "Infrastructure technical details",
+        "pool_size": "Pool size",
+        "available_connections": "Available connections",
+        "waiting_requests": "Waiting requests",
+        "application_tracing": "Application and tracing",
+        "environment": "Environment",
+        "region": "Region",
+        "phoenix_processor": "Phoenix processor",
+        "content_capture": "Content capture",
+        "unavailable_components": "Unavailable components",
+        "degraded_components": "Degraded components",
+    },
+    "it": {
+        "infra_error": "The infrastructure status could not be collected at this time.",
+        "technical_details": "Technical details",
+        "infrastructure_title": "Infrastructure and observability",
+        "operational": "Operational",
+        "degraded": "Degraded",
+        "unavailable": "Unavailable",
+        "general_status": "Overall status",
+        "available": "Available",
+        "inactive": "Inactive",
+        "active": "Active",
+        "no_measurement": "no measurement",
+        "sample": "Sampling",
+        "project": "Project",
+        "execution": "Execution",
+        "local": "Local",
+        "service": "Service",
+        "infrastructure_details": "Infrastructure technical details",
+        "pool_size": "Pool size",
+        "available_connections": "Available connections",
+        "waiting_requests": "Waiting requests",
+        "application_tracing": "Application and tracing",
+        "environment": "Environment",
+        "region": "Region",
+        "phoenix_processor": "Phoenix processor",
+        "content_capture": "Content capture",
+        "unavailable_components": "Unavailable components",
+        "degraded_components": "Degraded components",
+    },
+    "ro": {
+        "infra_error": "The infrastructure status could not be collected at this time.",
+        "technical_details": "Technical details",
+        "infrastructure_title": "Infrastructure and observability",
+        "operational": "Operational",
+        "degraded": "Degraded",
+        "unavailable": "Unavailable",
+        "general_status": "Overall status",
+        "available": "Available",
+        "inactive": "Inactive",
+        "active": "Active",
+        "no_measurement": "no measurement",
+        "sample": "Sampling",
+        "project": "Project",
+        "execution": "Execution",
+        "local": "Local",
+        "service": "Service",
+        "infrastructure_details": "Infrastructure technical details",
+        "pool_size": "Pool size",
+        "available_connections": "Available connections",
+        "waiting_requests": "Waiting requests",
+        "application_tracing": "Application and tracing",
+        "environment": "Environment",
+        "region": "Region",
+        "phoenix_processor": "Phoenix processor",
+        "content_capture": "Content capture",
+        "unavailable_components": "Unavailable components",
+        "degraded_components": "Degraded components",
+    },
+    "ua": {
+        "infra_error": "The infrastructure status could not be collected at this time.",
+        "technical_details": "Technical details",
+        "infrastructure_title": "Infrastructure and observability",
+        "operational": "Operational",
+        "degraded": "Degraded",
+        "unavailable": "Unavailable",
+        "general_status": "Overall status",
+        "available": "Available",
+        "inactive": "Inactive",
+        "active": "Active",
+        "no_measurement": "no measurement",
+        "sample": "Sampling",
+        "project": "Project",
+        "execution": "Execution",
+        "local": "Local",
+        "service": "Service",
+        "infrastructure_details": "Infrastructure technical details",
+        "pool_size": "Pool size",
+        "available_connections": "Available connections",
+        "waiting_requests": "Waiting requests",
+        "application_tracing": "Application and tracing",
+        "environment": "Environment",
+        "region": "Region",
+        "phoenix_processor": "Phoenix processor",
+        "content_capture": "Content capture",
+        "unavailable_components": "Unavailable components",
+        "degraded_components": "Degraded components",
+    },
+    "ru": {
+        "infra_error": "The infrastructure status could not be collected at this time.",
+        "technical_details": "Technical details",
+        "infrastructure_title": "Infrastructure and observability",
+        "operational": "Operational",
+        "degraded": "Degraded",
+        "unavailable": "Unavailable",
+        "general_status": "Overall status",
+        "available": "Available",
+        "inactive": "Inactive",
+        "active": "Active",
+        "no_measurement": "no measurement",
+        "sample": "Sampling",
+        "project": "Project",
+        "execution": "Execution",
+        "local": "Local",
+        "service": "Service",
+        "infrastructure_details": "Infrastructure technical details",
+        "pool_size": "Pool size",
+        "available_connections": "Available connections",
+        "waiting_requests": "Waiting requests",
+        "application_tracing": "Application and tracing",
+        "environment": "Environment",
+        "region": "Region",
+        "phoenix_processor": "Phoenix processor",
+        "content_capture": "Content capture",
+        "unavailable_components": "Unavailable components",
+        "degraded_components": "Degraded components",
+    },
+    "sa": {
+        "infra_error": "The infrastructure status could not be collected at this time.",
+        "technical_details": "Technical details",
+        "infrastructure_title": "Infrastructure and observability",
+        "operational": "Operational",
+        "degraded": "Degraded",
+        "unavailable": "Unavailable",
+        "general_status": "Overall status",
+        "available": "Available",
+        "inactive": "Inactive",
+        "active": "Active",
+        "no_measurement": "no measurement",
+        "sample": "Sampling",
+        "project": "Project",
+        "execution": "Execution",
+        "local": "Local",
+        "service": "Service",
+        "infrastructure_details": "Infrastructure technical details",
+        "pool_size": "Pool size",
+        "available_connections": "Available connections",
+        "waiting_requests": "Waiting requests",
+        "application_tracing": "Application and tracing",
+        "environment": "Environment",
+        "region": "Region",
+        "phoenix_processor": "Phoenix processor",
+        "content_capture": "Content capture",
+        "unavailable_components": "Unavailable components",
+        "degraded_components": "Degraded components",
+    },
+    "ch": {
+        "infra_error": "The infrastructure status could not be collected at this time.",
+        "technical_details": "Technical details",
+        "infrastructure_title": "Infrastructure and observability",
+        "operational": "Operational",
+        "degraded": "Degraded",
+        "unavailable": "Unavailable",
+        "general_status": "Overall status",
+        "available": "Available",
+        "inactive": "Inactive",
+        "active": "Active",
+        "no_measurement": "no measurement",
+        "sample": "Sampling",
+        "project": "Project",
+        "execution": "Execution",
+        "local": "Local",
+        "service": "Service",
+        "infrastructure_details": "Infrastructure technical details",
+        "pool_size": "Pool size",
+        "available_connections": "Available connections",
+        "waiting_requests": "Waiting requests",
+        "application_tracing": "Application and tracing",
+        "environment": "Environment",
+        "region": "Region",
+        "phoenix_processor": "Phoenix processor",
+        "content_capture": "Content capture",
+        "unavailable_components": "Unavailable components",
+        "degraded_components": "Degraded components",
+    },
+}
 
 
 # LLMOPS_NATIVE_INFRA_TRANSLATIONS
@@ -293,13 +859,10 @@ LLMOPS_INFRA_TEXTS = {'pt': {'infra_error': 'Não foi possível coletar o status
 LLMOPS_NATIVE_INFRA_TEXTS = {
     "fr": {
         "infra_error": (
-            "Impossible de collecter l’état de "
-            "l’infrastructure pour le moment."
+            "Impossible de collecter l’état de l’infrastructure pour le moment."
         ),
         "technical_details": "Détails techniques",
-        "infrastructure_title": (
-            "Infrastructure et observabilité"
-        ),
+        "infrastructure_title": ("Infrastructure et observabilité"),
         "operational": "Opérationnelle",
         "degraded": "Dégradée",
         "unavailable": "Indisponible",
@@ -313,37 +876,22 @@ LLMOPS_NATIVE_INFRA_TEXTS = {
         "execution": "Exécution",
         "local": "Locale",
         "service": "Service",
-        "infrastructure_details": (
-            "Détails techniques de l’infrastructure"
-        ),
+        "infrastructure_details": ("Détails techniques de l’infrastructure"),
         "pool_size": "Taille du pool",
-        "available_connections": (
-            "Connexions disponibles"
-        ),
+        "available_connections": ("Connexions disponibles"),
         "waiting_requests": "Requêtes en attente",
-        "application_tracing": (
-            "Application et traçage"
-        ),
+        "application_tracing": ("Application et traçage"),
         "environment": "Environnement",
         "region": "Région",
         "phoenix_processor": "Processeur Phoenix",
         "content_capture": "Capture du contenu",
-        "unavailable_components": (
-            "Composants indisponibles"
-        ),
-        "degraded_components": (
-            "Composants dégradés"
-        ),
+        "unavailable_components": ("Composants indisponibles"),
+        "degraded_components": ("Composants dégradés"),
     },
     "de": {
-        "infra_error": (
-            "Der Infrastrukturstatus konnte derzeit "
-            "nicht erfasst werden."
-        ),
+        "infra_error": ("Der Infrastrukturstatus konnte derzeit nicht erfasst werden."),
         "technical_details": "Technische Details",
-        "infrastructure_title": (
-            "Infrastruktur und Beobachtbarkeit"
-        ),
+        "infrastructure_title": ("Infrastruktur und Beobachtbarkeit"),
         "operational": "Betriebsbereit",
         "degraded": "Beeinträchtigt",
         "unavailable": "Nicht verfügbar",
@@ -357,37 +905,24 @@ LLMOPS_NATIVE_INFRA_TEXTS = {
         "execution": "Ausführung",
         "local": "Lokal",
         "service": "Dienst",
-        "infrastructure_details": (
-            "Technische Infrastrukturdetails"
-        ),
+        "infrastructure_details": ("Technische Infrastrukturdetails"),
         "pool_size": "Poolgröße",
-        "available_connections": (
-            "Verfügbare Verbindungen"
-        ),
+        "available_connections": ("Verfügbare Verbindungen"),
         "waiting_requests": "Wartende Anfragen",
-        "application_tracing": (
-            "Anwendung und Tracing"
-        ),
+        "application_tracing": ("Anwendung und Tracing"),
         "environment": "Umgebung",
         "region": "Region",
         "phoenix_processor": "Phoenix-Prozessor",
         "content_capture": "Inhaltserfassung",
-        "unavailable_components": (
-            "Nicht verfügbare Komponenten"
-        ),
-        "degraded_components": (
-            "Beeinträchtigte Komponenten"
-        ),
+        "unavailable_components": ("Nicht verfügbare Komponenten"),
+        "degraded_components": ("Beeinträchtigte Komponenten"),
     },
     "it": {
         "infra_error": (
-            "Al momento non è stato possibile raccogliere "
-            "lo stato dell’infrastruttura."
+            "Al momento non è stato possibile raccogliere lo stato dell’infrastruttura."
         ),
         "technical_details": "Dettagli tecnici",
-        "infrastructure_title": (
-            "Infrastruttura e osservabilità"
-        ),
+        "infrastructure_title": ("Infrastruttura e osservabilità"),
         "operational": "Operativa",
         "degraded": "Degradata",
         "unavailable": "Non disponibile",
@@ -401,37 +936,24 @@ LLMOPS_NATIVE_INFRA_TEXTS = {
         "execution": "Esecuzione",
         "local": "Locale",
         "service": "Servizio",
-        "infrastructure_details": (
-            "Dettagli tecnici dell’infrastruttura"
-        ),
+        "infrastructure_details": ("Dettagli tecnici dell’infrastruttura"),
         "pool_size": "Dimensione del pool",
-        "available_connections": (
-            "Connessioni disponibili"
-        ),
+        "available_connections": ("Connessioni disponibili"),
         "waiting_requests": "Richieste in attesa",
-        "application_tracing": (
-            "Applicazione e tracciamento"
-        ),
+        "application_tracing": ("Applicazione e tracciamento"),
         "environment": "Ambiente",
         "region": "Regione",
         "phoenix_processor": "Processore Phoenix",
         "content_capture": "Acquisizione dei contenuti",
-        "unavailable_components": (
-            "Componenti non disponibili"
-        ),
-        "degraded_components": (
-            "Componenti degradati"
-        ),
+        "unavailable_components": ("Componenti non disponibili"),
+        "degraded_components": ("Componenti degradati"),
     },
     "ro": {
         "infra_error": (
-            "Starea infrastructurii nu a putut fi "
-            "colectată în acest moment."
+            "Starea infrastructurii nu a putut fi colectată în acest moment."
         ),
         "technical_details": "Detalii tehnice",
-        "infrastructure_title": (
-            "Infrastructură și observabilitate"
-        ),
+        "infrastructure_title": ("Infrastructură și observabilitate"),
         "operational": "Operațională",
         "degraded": "Degradată",
         "unavailable": "Indisponibilă",
@@ -445,37 +967,22 @@ LLMOPS_NATIVE_INFRA_TEXTS = {
         "execution": "Execuție",
         "local": "Locală",
         "service": "Serviciu",
-        "infrastructure_details": (
-            "Detalii tehnice ale infrastructurii"
-        ),
+        "infrastructure_details": ("Detalii tehnice ale infrastructurii"),
         "pool_size": "Dimensiunea pool-ului",
-        "available_connections": (
-            "Conexiuni disponibile"
-        ),
+        "available_connections": ("Conexiuni disponibile"),
         "waiting_requests": "Cereri în așteptare",
-        "application_tracing": (
-            "Aplicație și trasare"
-        ),
+        "application_tracing": ("Aplicație și trasare"),
         "environment": "Mediu",
         "region": "Regiune",
         "phoenix_processor": "Procesor Phoenix",
         "content_capture": "Capturarea conținutului",
-        "unavailable_components": (
-            "Componente indisponibile"
-        ),
-        "degraded_components": (
-            "Componente degradate"
-        ),
+        "unavailable_components": ("Componente indisponibile"),
+        "degraded_components": ("Componente degradate"),
     },
     "ua": {
-        "infra_error": (
-            "Наразі не вдалося отримати стан "
-            "інфраструктури."
-        ),
+        "infra_error": ("Наразі не вдалося отримати стан інфраструктури."),
         "technical_details": "Технічні відомості",
-        "infrastructure_title": (
-            "Інфраструктура та спостережуваність"
-        ),
+        "infrastructure_title": ("Інфраструктура та спостережуваність"),
         "operational": "Працює",
         "degraded": "Працює з обмеженнями",
         "unavailable": "Недоступна",
@@ -489,37 +996,24 @@ LLMOPS_NATIVE_INFRA_TEXTS = {
         "execution": "Виконання",
         "local": "Локально",
         "service": "Сервіс",
-        "infrastructure_details": (
-            "Технічні відомості інфраструктури"
-        ),
+        "infrastructure_details": ("Технічні відомості інфраструктури"),
         "pool_size": "Розмір пулу",
-        "available_connections": (
-            "Доступні з’єднання"
-        ),
+        "available_connections": ("Доступні з’єднання"),
         "waiting_requests": "Запити в очікуванні",
-        "application_tracing": (
-            "Застосунок і трасування"
-        ),
+        "application_tracing": ("Застосунок і трасування"),
         "environment": "Середовище",
         "region": "Регіон",
         "phoenix_processor": "Процесор Phoenix",
         "content_capture": "Захоплення вмісту",
-        "unavailable_components": (
-            "Недоступні компоненти"
-        ),
-        "degraded_components": (
-            "Компоненти з обмеженнями"
-        ),
+        "unavailable_components": ("Недоступні компоненти"),
+        "degraded_components": ("Компоненти з обмеженнями"),
     },
     "ru": {
         "infra_error": (
-            "В настоящее время не удалось получить "
-            "состояние инфраструктуры."
+            "В настоящее время не удалось получить состояние инфраструктуры."
         ),
         "technical_details": "Технические сведения",
-        "infrastructure_title": (
-            "Инфраструктура и наблюдаемость"
-        ),
+        "infrastructure_title": ("Инфраструктура и наблюдаемость"),
         "operational": "Работает",
         "degraded": "Работает с ограничениями",
         "unavailable": "Недоступна",
@@ -533,36 +1027,22 @@ LLMOPS_NATIVE_INFRA_TEXTS = {
         "execution": "Выполнение",
         "local": "Локально",
         "service": "Сервис",
-        "infrastructure_details": (
-            "Технические сведения об инфраструктуре"
-        ),
+        "infrastructure_details": ("Технические сведения об инфраструктуре"),
         "pool_size": "Размер пула",
-        "available_connections": (
-            "Доступные соединения"
-        ),
+        "available_connections": ("Доступные соединения"),
         "waiting_requests": "Ожидающие запросы",
-        "application_tracing": (
-            "Приложение и трассировка"
-        ),
+        "application_tracing": ("Приложение и трассировка"),
         "environment": "Среда",
         "region": "Регион",
         "phoenix_processor": "Процессор Phoenix",
         "content_capture": "Захват содержимого",
-        "unavailable_components": (
-            "Недоступные компоненты"
-        ),
-        "degraded_components": (
-            "Компоненты с ограничениями"
-        ),
+        "unavailable_components": ("Недоступные компоненты"),
+        "degraded_components": ("Компоненты с ограничениями"),
     },
     "sa": {
-        "infra_error": (
-            "تعذر جمع حالة البنية التحتية في الوقت الحالي."
-        ),
+        "infra_error": ("تعذر جمع حالة البنية التحتية في الوقت الحالي."),
         "technical_details": "التفاصيل التقنية",
-        "infrastructure_title": (
-            "البنية التحتية وقابلية المراقبة"
-        ),
+        "infrastructure_title": ("البنية التحتية وقابلية المراقبة"),
         "operational": "تعمل",
         "degraded": "متدهورة",
         "unavailable": "غير متاحة",
@@ -576,44 +1056,211 @@ LLMOPS_NATIVE_INFRA_TEXTS = {
         "execution": "التنفيذ",
         "local": "محلي",
         "service": "الخدمة",
-        "infrastructure_details": (
-            "التفاصيل التقنية للبنية التحتية"
-        ),
+        "infrastructure_details": ("التفاصيل التقنية للبنية التحتية"),
         "pool_size": "حجم مجمع الاتصالات",
-        "available_connections": (
-            "الاتصالات المتاحة"
-        ),
+        "available_connections": ("الاتصالات المتاحة"),
         "waiting_requests": "الطلبات المنتظرة",
-        "application_tracing": (
-            "التطبيق والتتبع"
-        ),
+        "application_tracing": ("التطبيق والتتبع"),
         "environment": "البيئة",
         "region": "المنطقة",
         "phoenix_processor": "معالج Phoenix",
         "content_capture": "التقاط المحتوى",
-        "unavailable_components": (
-            "المكونات غير المتاحة"
-        ),
-        "degraded_components": (
-            "المكونات المتدهورة"
-        ),
+        "unavailable_components": ("المكونات غير المتاحة"),
+        "degraded_components": ("المكونات المتدهورة"),
     },
 }
 
-LLMOPS_NATIVE_INFRA_TEXTS["ch"] = dict(
-    LLMOPS_NATIVE_INFRA_TEXTS["de"]
-)
+LLMOPS_NATIVE_INFRA_TEXTS["ch"] = dict(LLMOPS_NATIVE_INFRA_TEXTS["de"])
 
 for idioma, textos in LLMOPS_NATIVE_INFRA_TEXTS.items():
-    LLMOPS_INFRA_TEXTS[idioma] = dict(
-        textos
-    )
+    LLMOPS_INFRA_TEXTS[idioma] = dict(textos)
 
 for idioma, textos in LLMOPS_INFRA_TEXTS.items():
     LLMOPS_TEXTS.setdefault(idioma, {}).update(textos)
 
 
-LLMOPS_CHART_TEXTS = {'pt': {'pass_rate_chart': 'Evolução da taxa de aprovação', 'no_runs_chart': 'Não há execuções para exibir.', 'date': 'Data', 'metric_trend_chart': 'Tendência das métricas', 'no_metrics': 'Não há métricas disponíveis.', 'displayed_metrics': 'Métricas exibidas', 'select_metric': 'Selecione pelo menos uma métrica.', 'no_metric_data': 'Nenhum dado encontrado para as métricas selecionadas.', 'average_score': 'Pontuação média', 'metric': 'Métrica', 'llmops_filters': 'Filtros LLMOps', 'history_file': 'Arquivo de histórico', 'history_load_error': 'Não foi possível carregar o histórico'}, 'en_us': {'pass_rate_chart': 'Pass rate evolution', 'no_runs_chart': 'There are no executions to display.', 'date': 'Date', 'metric_trend_chart': 'Metric trends', 'no_metrics': 'No metrics are available.', 'displayed_metrics': 'Displayed metrics', 'select_metric': 'Select at least one metric.', 'no_metric_data': 'No data was found for the selected metrics.', 'average_score': 'Average score', 'metric': 'Metric', 'llmops_filters': 'LLMOps filters', 'history_file': 'History file', 'history_load_error': 'Could not load the history'}, 'en_gb': {'pass_rate_chart': 'Pass rate evolution', 'no_runs_chart': 'There are no executions to display.', 'date': 'Date', 'metric_trend_chart': 'Metric trends', 'no_metrics': 'No metrics are available.', 'displayed_metrics': 'Displayed metrics', 'select_metric': 'Select at least one metric.', 'no_metric_data': 'No data was found for the selected metrics.', 'average_score': 'Average score', 'metric': 'Metric', 'llmops_filters': 'LLMOps filters', 'history_file': 'History file', 'history_load_error': 'Could not load the history'}, 'es': {'pass_rate_chart': 'Evolución de la tasa de aprobación', 'no_runs_chart': 'No hay ejecuciones para mostrar.', 'date': 'Fecha', 'metric_trend_chart': 'Tendencia de las métricas', 'no_metrics': 'No hay métricas disponibles.', 'displayed_metrics': 'Métricas mostradas', 'select_metric': 'Seleccione al menos una métrica.', 'no_metric_data': 'No se encontraron datos para las métricas seleccionadas.', 'average_score': 'Puntuación media', 'metric': 'Métrica', 'llmops_filters': 'Filtros LLMOps', 'history_file': 'Archivo de historial', 'history_load_error': 'No fue posible cargar el historial'}, 'fr': {'pass_rate_chart': 'Évolution du taux de réussite', 'no_runs_chart': 'Aucune exécution à afficher.', 'date': 'Date', 'metric_trend_chart': 'Tendance des métriques', 'no_metrics': 'Aucune métrique disponible.', 'displayed_metrics': 'Métriques affichées', 'select_metric': 'Sélectionnez au moins une métrique.', 'no_metric_data': 'Aucune donnée trouvée pour les métriques sélectionnées.', 'average_score': 'Score moyen', 'metric': 'Métrique', 'llmops_filters': 'Filtres LLMOps', 'history_file': 'Fichier d’historique', 'history_load_error': 'Impossible de charger l’historique'}, 'de': {'pass_rate_chart': 'Entwicklung der Erfolgsquote', 'no_runs_chart': 'Keine Ausführungen zum Anzeigen.', 'date': 'Datum', 'metric_trend_chart': 'Metriktrends', 'no_metrics': 'Keine Metriken verfügbar.', 'displayed_metrics': 'Angezeigte Metriken', 'select_metric': 'Wählen Sie mindestens eine Metrik.', 'no_metric_data': 'Keine Daten für die ausgewählten Metriken gefunden.', 'average_score': 'Durchschnittswert', 'metric': 'Metrik', 'llmops_filters': 'LLMOps-Filter', 'history_file': 'Verlaufsdatei', 'history_load_error': 'Verlauf konnte nicht geladen werden'}, 'it': {'pass_rate_chart': 'Evoluzione del tasso di approvazione', 'no_runs_chart': 'Nessuna esecuzione da mostrare.', 'date': 'Data', 'metric_trend_chart': 'Tendenza delle metriche', 'no_metrics': 'Nessuna metrica disponibile.', 'displayed_metrics': 'Metriche visualizzate', 'select_metric': 'Seleziona almeno una metrica.', 'no_metric_data': 'Nessun dato trovato per le metriche selezionate.', 'average_score': 'Punteggio medio', 'metric': 'Metrica', 'llmops_filters': 'Filtri LLMOps', 'history_file': 'File storico', 'history_load_error': 'Impossibile caricare lo storico'}, 'ro': {'pass_rate_chart': 'Evoluția ratei de aprobare', 'no_runs_chart': 'Nu există execuții de afișat.', 'date': 'Dată', 'metric_trend_chart': 'Tendința metricilor', 'no_metrics': 'Nu există metrici disponibile.', 'displayed_metrics': 'Metrici afișate', 'select_metric': 'Selectați cel puțin o metrică.', 'no_metric_data': 'Nu au fost găsite date pentru metricile selectate.', 'average_score': 'Scor mediu', 'metric': 'Metrică', 'llmops_filters': 'Filtre LLMOps', 'history_file': 'Fișier istoric', 'history_load_error': 'Istoricul nu a putut fi încărcat'}, 'ua': {'pass_rate_chart': 'Динаміка рівня успішності', 'no_runs_chart': 'Немає виконань для відображення.', 'date': 'Дата', 'metric_trend_chart': 'Тенденції метрик', 'no_metrics': 'Немає доступних метрик.', 'displayed_metrics': 'Відображені метрики', 'select_metric': 'Виберіть принаймні одну метрику.', 'no_metric_data': 'Для вибраних метрик даних не знайдено.', 'average_score': 'Середня оцінка', 'metric': 'Метрика', 'llmops_filters': 'Фільтри LLMOps', 'history_file': 'Файл історії', 'history_load_error': 'Не вдалося завантажити історію'}, 'ru': {'pass_rate_chart': 'Динамика уровня успешности', 'no_runs_chart': 'Нет выполнений для отображения.', 'date': 'Дата', 'metric_trend_chart': 'Тенденции метрик', 'no_metrics': 'Нет доступных метрик.', 'displayed_metrics': 'Отображаемые метрики', 'select_metric': 'Выберите хотя бы одну метрику.', 'no_metric_data': 'Для выбранных метрик данные не найдены.', 'average_score': 'Средняя оценка', 'metric': 'Метрика', 'llmops_filters': 'Фильтры LLMOps', 'history_file': 'Файл истории', 'history_load_error': 'Не удалось загрузить историю'}, 'sa': {'pass_rate_chart': 'تطور معدل النجاح', 'no_runs_chart': 'لا توجد عمليات تشغيل للعرض.', 'date': 'التاريخ', 'metric_trend_chart': 'اتجاهات المقاييس', 'no_metrics': 'لا توجد مقاييس متاحة.', 'displayed_metrics': 'المقاييس المعروضة', 'select_metric': 'حدد مقياسًا واحدًا على الأقل.', 'no_metric_data': 'لم يتم العثور على بيانات للمقاييس المحددة.', 'average_score': 'متوسط النتيجة', 'metric': 'المقياس', 'llmops_filters': 'فلاتر LLMOps', 'history_file': 'ملف السجل', 'history_load_error': 'تعذر تحميل السجل'}, 'ch': {'pass_rate_chart': 'Entwicklung der Erfolgsquote', 'no_runs_chart': 'Keine Ausführungen zum Anzeigen.', 'date': 'Datum', 'metric_trend_chart': 'Metriktrends', 'no_metrics': 'Keine Metriken verfügbar.', 'displayed_metrics': 'Angezeigte Metriken', 'select_metric': 'Wählen Sie mindestens eine Metrik.', 'no_metric_data': 'Keine Daten für die ausgewählten Metriken gefunden.', 'average_score': 'Durchschnittswert', 'metric': 'Metrik', 'llmops_filters': 'LLMOps-Filter', 'history_file': 'Verlaufsdatei', 'history_load_error': 'Verlauf konnte nicht geladen werden'}}
+LLMOPS_CHART_TEXTS = {
+    "pt": {
+        "pass_rate_chart": "Evolução da taxa de aprovação",
+        "no_runs_chart": "Não há execuções para exibir.",
+        "date": "Data",
+        "metric_trend_chart": "Tendência das métricas",
+        "no_metrics": "Não há métricas disponíveis.",
+        "displayed_metrics": "Métricas exibidas",
+        "select_metric": "Selecione pelo menos uma métrica.",
+        "no_metric_data": "Nenhum dado encontrado para as métricas selecionadas.",
+        "average_score": "Pontuação média",
+        "metric": "Métrica",
+        "llmops_filters": "Filtros LLMOps",
+        "history_file": "Arquivo de histórico",
+        "history_load_error": "Não foi possível carregar o histórico",
+    },
+    "en_us": {
+        "pass_rate_chart": "Pass rate evolution",
+        "no_runs_chart": "There are no executions to display.",
+        "date": "Date",
+        "metric_trend_chart": "Metric trends",
+        "no_metrics": "No metrics are available.",
+        "displayed_metrics": "Displayed metrics",
+        "select_metric": "Select at least one metric.",
+        "no_metric_data": "No data was found for the selected metrics.",
+        "average_score": "Average score",
+        "metric": "Metric",
+        "llmops_filters": "LLMOps filters",
+        "history_file": "History file",
+        "history_load_error": "Could not load the history",
+    },
+    "en_gb": {
+        "pass_rate_chart": "Pass rate evolution",
+        "no_runs_chart": "There are no executions to display.",
+        "date": "Date",
+        "metric_trend_chart": "Metric trends",
+        "no_metrics": "No metrics are available.",
+        "displayed_metrics": "Displayed metrics",
+        "select_metric": "Select at least one metric.",
+        "no_metric_data": "No data was found for the selected metrics.",
+        "average_score": "Average score",
+        "metric": "Metric",
+        "llmops_filters": "LLMOps filters",
+        "history_file": "History file",
+        "history_load_error": "Could not load the history",
+    },
+    "es": {
+        "pass_rate_chart": "Evolución de la tasa de aprobación",
+        "no_runs_chart": "No hay ejecuciones para mostrar.",
+        "date": "Fecha",
+        "metric_trend_chart": "Tendencia de las métricas",
+        "no_metrics": "No hay métricas disponibles.",
+        "displayed_metrics": "Métricas mostradas",
+        "select_metric": "Seleccione al menos una métrica.",
+        "no_metric_data": "No se encontraron datos para las métricas seleccionadas.",
+        "average_score": "Puntuación media",
+        "metric": "Métrica",
+        "llmops_filters": "Filtros LLMOps",
+        "history_file": "Archivo de historial",
+        "history_load_error": "No fue posible cargar el historial",
+    },
+    "fr": {
+        "pass_rate_chart": "Évolution du taux de réussite",
+        "no_runs_chart": "Aucune exécution à afficher.",
+        "date": "Date",
+        "metric_trend_chart": "Tendance des métriques",
+        "no_metrics": "Aucune métrique disponible.",
+        "displayed_metrics": "Métriques affichées",
+        "select_metric": "Sélectionnez au moins une métrique.",
+        "no_metric_data": "Aucune donnée trouvée pour les métriques sélectionnées.",
+        "average_score": "Score moyen",
+        "metric": "Métrique",
+        "llmops_filters": "Filtres LLMOps",
+        "history_file": "Fichier d’historique",
+        "history_load_error": "Impossible de charger l’historique",
+    },
+    "de": {
+        "pass_rate_chart": "Entwicklung der Erfolgsquote",
+        "no_runs_chart": "Keine Ausführungen zum Anzeigen.",
+        "date": "Datum",
+        "metric_trend_chart": "Metriktrends",
+        "no_metrics": "Keine Metriken verfügbar.",
+        "displayed_metrics": "Angezeigte Metriken",
+        "select_metric": "Wählen Sie mindestens eine Metrik.",
+        "no_metric_data": "Keine Daten für die ausgewählten Metriken gefunden.",
+        "average_score": "Durchschnittswert",
+        "metric": "Metrik",
+        "llmops_filters": "LLMOps-Filter",
+        "history_file": "Verlaufsdatei",
+        "history_load_error": "Verlauf konnte nicht geladen werden",
+    },
+    "it": {
+        "pass_rate_chart": "Evoluzione del tasso di approvazione",
+        "no_runs_chart": "Nessuna esecuzione da mostrare.",
+        "date": "Data",
+        "metric_trend_chart": "Tendenza delle metriche",
+        "no_metrics": "Nessuna metrica disponibile.",
+        "displayed_metrics": "Metriche visualizzate",
+        "select_metric": "Seleziona almeno una metrica.",
+        "no_metric_data": "Nessun dato trovato per le metriche selezionate.",
+        "average_score": "Punteggio medio",
+        "metric": "Metrica",
+        "llmops_filters": "Filtri LLMOps",
+        "history_file": "File storico",
+        "history_load_error": "Impossibile caricare lo storico",
+    },
+    "ro": {
+        "pass_rate_chart": "Evoluția ratei de aprobare",
+        "no_runs_chart": "Nu există execuții de afișat.",
+        "date": "Dată",
+        "metric_trend_chart": "Tendința metricilor",
+        "no_metrics": "Nu există metrici disponibile.",
+        "displayed_metrics": "Metrici afișate",
+        "select_metric": "Selectați cel puțin o metrică.",
+        "no_metric_data": "Nu au fost găsite date pentru metricile selectate.",
+        "average_score": "Scor mediu",
+        "metric": "Metrică",
+        "llmops_filters": "Filtre LLMOps",
+        "history_file": "Fișier istoric",
+        "history_load_error": "Istoricul nu a putut fi încărcat",
+    },
+    "ua": {
+        "pass_rate_chart": "Динаміка рівня успішності",
+        "no_runs_chart": "Немає виконань для відображення.",
+        "date": "Дата",
+        "metric_trend_chart": "Тенденції метрик",
+        "no_metrics": "Немає доступних метрик.",
+        "displayed_metrics": "Відображені метрики",
+        "select_metric": "Виберіть принаймні одну метрику.",
+        "no_metric_data": "Для вибраних метрик даних не знайдено.",
+        "average_score": "Середня оцінка",
+        "metric": "Метрика",
+        "llmops_filters": "Фільтри LLMOps",
+        "history_file": "Файл історії",
+        "history_load_error": "Не вдалося завантажити історію",
+    },
+    "ru": {
+        "pass_rate_chart": "Динамика уровня успешности",
+        "no_runs_chart": "Нет выполнений для отображения.",
+        "date": "Дата",
+        "metric_trend_chart": "Тенденции метрик",
+        "no_metrics": "Нет доступных метрик.",
+        "displayed_metrics": "Отображаемые метрики",
+        "select_metric": "Выберите хотя бы одну метрику.",
+        "no_metric_data": "Для выбранных метрик данные не найдены.",
+        "average_score": "Средняя оценка",
+        "metric": "Метрика",
+        "llmops_filters": "Фильтры LLMOps",
+        "history_file": "Файл истории",
+        "history_load_error": "Не удалось загрузить историю",
+    },
+    "sa": {
+        "pass_rate_chart": "تطور معدل النجاح",
+        "no_runs_chart": "لا توجد عمليات تشغيل للعرض.",
+        "date": "التاريخ",
+        "metric_trend_chart": "اتجاهات المقاييس",
+        "no_metrics": "لا توجد مقاييس متاحة.",
+        "displayed_metrics": "المقاييس المعروضة",
+        "select_metric": "حدد مقياسًا واحدًا على الأقل.",
+        "no_metric_data": "لم يتم العثور على بيانات للمقاييس المحددة.",
+        "average_score": "متوسط النتيجة",
+        "metric": "المقياس",
+        "llmops_filters": "فلاتر LLMOps",
+        "history_file": "ملف السجل",
+        "history_load_error": "تعذر تحميل السجل",
+    },
+    "ch": {
+        "pass_rate_chart": "Entwicklung der Erfolgsquote",
+        "no_runs_chart": "Keine Ausführungen zum Anzeigen.",
+        "date": "Datum",
+        "metric_trend_chart": "Metriktrends",
+        "no_metrics": "Keine Metriken verfügbar.",
+        "displayed_metrics": "Angezeigte Metriken",
+        "select_metric": "Wählen Sie mindestens eine Metrik.",
+        "no_metric_data": "Keine Daten für die ausgewählten Metriken gefunden.",
+        "average_score": "Durchschnittswert",
+        "metric": "Metrik",
+        "llmops_filters": "LLMOps-Filter",
+        "history_file": "Verlaufsdatei",
+        "history_load_error": "Verlauf konnte nicht geladen werden",
+    },
+}
 
 for idioma, textos in LLMOPS_CHART_TEXTS.items():
     LLMOPS_TEXTS.setdefault(idioma, {}).update(textos)
@@ -621,11 +1268,9 @@ for idioma, textos in LLMOPS_CHART_TEXTS.items():
 LLMOPS_TEXTS["ch"] = LLMOPS_TEXTS["de"]
 
 for language in LLMOPS_TEXTS:
-    LLMOPS_TEXTS[language]["quality_gate"] = (
-        technical_label(
-            language,
-            "quality_gate",
-        )
+    LLMOPS_TEXTS[language]["quality_gate"] = technical_label(
+        language,
+        "quality_gate",
     )
 
 
@@ -651,9 +1296,7 @@ def llmops_t(
         "quality_gate": "quality_gate",
     }
 
-    technical_key = technical_keys.get(
-        key
-    )
+    technical_key = technical_keys.get(key)
 
     if technical_key is not None:
         return technical_label(
@@ -679,16 +1322,13 @@ LLMOPS_RAG_TRIAD_TEXTS = {
         "rag_triad_latest_status": "Status mais recente",
         "rag_triad_chart": "Evolução da RAG Triad",
         "rag_triad_no_data": (
-            "Ainda não existem execuções com RAG Triad "
-            "no histórico selecionado."
+            "Ainda não existem execuções com RAG Triad no histórico selecionado."
         ),
         "rag_triad_snapshot": "Snapshot da RAG Triad",
         "rag_triad_complete_cases": "Casos completos",
         "rag_triad_total_cases": "Casos avaliados",
         "rag_triad_completeness": "Completude",
-        "rag_triad_failing_metrics": (
-            "Métricas reprovadas ou indisponíveis"
-        ),
+        "rag_triad_failing_metrics": ("Métricas reprovadas ou indisponíveis"),
         "rag_triad_no_failures": (
             "Nenhuma métrica reprovada na execução mais recente."
         ),
@@ -708,19 +1348,14 @@ LLMOPS_RAG_TRIAD_TEXTS = {
         "rag_triad_latest_status": "Latest status",
         "rag_triad_chart": "RAG Triad evolution",
         "rag_triad_no_data": (
-            "There are no RAG Triad runs in the "
-            "selected history yet."
+            "There are no RAG Triad runs in the selected history yet."
         ),
         "rag_triad_snapshot": "RAG Triad snapshot",
         "rag_triad_complete_cases": "Complete cases",
         "rag_triad_total_cases": "Evaluated cases",
         "rag_triad_completeness": "Completeness",
-        "rag_triad_failing_metrics": (
-            "Failed or unavailable metrics"
-        ),
-        "rag_triad_no_failures": (
-            "No metric failed in the latest run."
-        ),
+        "rag_triad_failing_metrics": ("Failed or unavailable metrics"),
+        "rag_triad_no_failures": ("No metric failed in the latest run."),
         "rag_triad_approved": "RAG Triad passed",
         "rag_triad_failed": "RAG Triad failed",
         "rag_triad_partial": "Partial RAG Triad",
@@ -737,19 +1372,14 @@ LLMOPS_RAG_TRIAD_TEXTS = {
         "rag_triad_latest_status": "Estado más reciente",
         "rag_triad_chart": "Evolución de RAG Triad",
         "rag_triad_no_data": (
-            "Todavía no hay ejecuciones con RAG Triad "
-            "en el historial seleccionado."
+            "Todavía no hay ejecuciones con RAG Triad en el historial seleccionado."
         ),
         "rag_triad_snapshot": "Resumen de RAG Triad",
         "rag_triad_complete_cases": "Casos completos",
         "rag_triad_total_cases": "Casos evaluados",
         "rag_triad_completeness": "Completitud",
-        "rag_triad_failing_metrics": (
-            "Métricas reprobadas o no disponibles"
-        ),
-        "rag_triad_no_failures": (
-            "Ninguna métrica falló en la última ejecución."
-        ),
+        "rag_triad_failing_metrics": ("Métricas reprobadas o no disponibles"),
+        "rag_triad_no_failures": ("Ninguna métrica falló en la última ejecución."),
         "rag_triad_approved": "RAG Triad aprobada",
         "rag_triad_failed": "RAG Triad reprobada",
         "rag_triad_partial": "RAG Triad parcial",
@@ -760,455 +1390,198 @@ LLMOPS_RAG_TRIAD_TEXTS = {
     },
 }
 
-LLMOPS_RAG_TRIAD_TEXTS["en_gb"] = dict(
-    LLMOPS_RAG_TRIAD_TEXTS["en_us"]
-)
+LLMOPS_RAG_TRIAD_TEXTS["en_gb"] = dict(LLMOPS_RAG_TRIAD_TEXTS["en_us"])
 
 LLMOPS_RAG_TRIAD_TEXTS.update(
     {
         "fr": {
             "rag_triad_title": "RAG Triad",
-            "rag_triad_runs": (
-                "Exécutions avec RAG Triad"
-            ),
-            "rag_triad_pass_rate": (
-                "Taux de réussite de RAG Triad"
-            ),
-            "rag_triad_latest_score": (
-                "Dernier score"
-            ),
-            "rag_triad_latest_status": (
-                "Dernier statut"
-            ),
-            "rag_triad_chart": (
-                "Évolution de RAG Triad"
-            ),
+            "rag_triad_runs": ("Exécutions avec RAG Triad"),
+            "rag_triad_pass_rate": ("Taux de réussite de RAG Triad"),
+            "rag_triad_latest_score": ("Dernier score"),
+            "rag_triad_latest_status": ("Dernier statut"),
+            "rag_triad_chart": ("Évolution de RAG Triad"),
             "rag_triad_no_data": (
                 "Aucune exécution avec RAG Triad "
                 "n’est encore disponible dans "
                 "l’historique sélectionné."
             ),
-            "rag_triad_snapshot": (
-                "Aperçu de RAG Triad"
-            ),
-            "rag_triad_complete_cases": (
-                "Cas complets"
-            ),
-            "rag_triad_total_cases": (
-                "Cas évalués"
-            ),
-            "rag_triad_completeness": (
-                "Complétude"
-            ),
-            "rag_triad_failing_metrics": (
-                "Métriques échouées ou indisponibles"
-            ),
+            "rag_triad_snapshot": ("Aperçu de RAG Triad"),
+            "rag_triad_complete_cases": ("Cas complets"),
+            "rag_triad_total_cases": ("Cas évalués"),
+            "rag_triad_completeness": ("Complétude"),
+            "rag_triad_failing_metrics": ("Métriques échouées ou indisponibles"),
             "rag_triad_no_failures": (
-                "Aucune métrique n’a échoué lors "
-                "de la dernière exécution."
+                "Aucune métrique n’a échoué lors de la dernière exécution."
             ),
-            "rag_triad_approved": (
-                "RAG Triad approuvée"
-            ),
-            "rag_triad_failed": (
-                "RAG Triad échouée"
-            ),
-            "rag_triad_partial": (
-                "RAG Triad partielle"
-            ),
-            "rag_triad_unknown": (
-                "Aucun résultat consolidé"
-            ),
-            "rag_triad_score": (
-                "Score de RAG Triad"
-            ),
-            "rag_triad_status": (
-                "Statut de RAG Triad"
-            ),
-            "rag_triad_passed": (
-                "RAG Triad approuvée"
-            ),
+            "rag_triad_approved": ("RAG Triad approuvée"),
+            "rag_triad_failed": ("RAG Triad échouée"),
+            "rag_triad_partial": ("RAG Triad partielle"),
+            "rag_triad_unknown": ("Aucun résultat consolidé"),
+            "rag_triad_score": ("Score de RAG Triad"),
+            "rag_triad_status": ("Statut de RAG Triad"),
+            "rag_triad_passed": ("RAG Triad approuvée"),
         },
         "de": {
             "rag_triad_title": "RAG Triad",
-            "rag_triad_runs": (
-                "Ausführungen mit RAG Triad"
-            ),
-            "rag_triad_pass_rate": (
-                "Erfolgsquote der RAG Triad"
-            ),
-            "rag_triad_latest_score": (
-                "Neuester Wert"
-            ),
-            "rag_triad_latest_status": (
-                "Neuester Status"
-            ),
-            "rag_triad_chart": (
-                "Entwicklung der RAG Triad"
-            ),
+            "rag_triad_runs": ("Ausführungen mit RAG Triad"),
+            "rag_triad_pass_rate": ("Erfolgsquote der RAG Triad"),
+            "rag_triad_latest_score": ("Neuester Wert"),
+            "rag_triad_latest_status": ("Neuester Status"),
+            "rag_triad_chart": ("Entwicklung der RAG Triad"),
             "rag_triad_no_data": (
                 "Im ausgewählten Verlauf sind "
                 "noch keine Ausführungen mit "
                 "RAG Triad vorhanden."
             ),
-            "rag_triad_snapshot": (
-                "Momentaufnahme der RAG Triad"
-            ),
-            "rag_triad_complete_cases": (
-                "Vollständige Fälle"
-            ),
-            "rag_triad_total_cases": (
-                "Bewertete Fälle"
-            ),
-            "rag_triad_completeness": (
-                "Vollständigkeit"
-            ),
+            "rag_triad_snapshot": ("Momentaufnahme der RAG Triad"),
+            "rag_triad_complete_cases": ("Vollständige Fälle"),
+            "rag_triad_total_cases": ("Bewertete Fälle"),
+            "rag_triad_completeness": ("Vollständigkeit"),
             "rag_triad_failing_metrics": (
-                "Fehlgeschlagene oder nicht "
-                "verfügbare Metriken"
+                "Fehlgeschlagene oder nicht verfügbare Metriken"
             ),
             "rag_triad_no_failures": (
-                "Bei der neuesten Ausführung ist "
-                "keine Metrik fehlgeschlagen."
+                "Bei der neuesten Ausführung ist keine Metrik fehlgeschlagen."
             ),
-            "rag_triad_approved": (
-                "RAG Triad bestanden"
-            ),
-            "rag_triad_failed": (
-                "RAG Triad fehlgeschlagen"
-            ),
-            "rag_triad_partial": (
-                "Teilweise RAG Triad"
-            ),
-            "rag_triad_unknown": (
-                "Kein konsolidiertes Ergebnis"
-            ),
-            "rag_triad_score": (
-                "Wert der RAG Triad"
-            ),
-            "rag_triad_status": (
-                "Status der RAG Triad"
-            ),
-            "rag_triad_passed": (
-                "RAG Triad bestanden"
-            ),
+            "rag_triad_approved": ("RAG Triad bestanden"),
+            "rag_triad_failed": ("RAG Triad fehlgeschlagen"),
+            "rag_triad_partial": ("Teilweise RAG Triad"),
+            "rag_triad_unknown": ("Kein konsolidiertes Ergebnis"),
+            "rag_triad_score": ("Wert der RAG Triad"),
+            "rag_triad_status": ("Status der RAG Triad"),
+            "rag_triad_passed": ("RAG Triad bestanden"),
         },
         "it": {
             "rag_triad_title": "RAG Triad",
-            "rag_triad_runs": (
-                "Esecuzioni con RAG Triad"
-            ),
-            "rag_triad_pass_rate": (
-                "Tasso di approvazione di RAG Triad"
-            ),
-            "rag_triad_latest_score": (
-                "Punteggio più recente"
-            ),
-            "rag_triad_latest_status": (
-                "Stato più recente"
-            ),
-            "rag_triad_chart": (
-                "Evoluzione di RAG Triad"
-            ),
+            "rag_triad_runs": ("Esecuzioni con RAG Triad"),
+            "rag_triad_pass_rate": ("Tasso di approvazione di RAG Triad"),
+            "rag_triad_latest_score": ("Punteggio più recente"),
+            "rag_triad_latest_status": ("Stato più recente"),
+            "rag_triad_chart": ("Evoluzione di RAG Triad"),
             "rag_triad_no_data": (
                 "Non sono ancora presenti esecuzioni "
                 "con RAG Triad nello storico selezionato."
             ),
-            "rag_triad_snapshot": (
-                "Riepilogo di RAG Triad"
-            ),
-            "rag_triad_complete_cases": (
-                "Casi completi"
-            ),
-            "rag_triad_total_cases": (
-                "Casi valutati"
-            ),
-            "rag_triad_completeness": (
-                "Completezza"
-            ),
-            "rag_triad_failing_metrics": (
-                "Metriche non approvate o non disponibili"
-            ),
+            "rag_triad_snapshot": ("Riepilogo di RAG Triad"),
+            "rag_triad_complete_cases": ("Casi completi"),
+            "rag_triad_total_cases": ("Casi valutati"),
+            "rag_triad_completeness": ("Completezza"),
+            "rag_triad_failing_metrics": ("Metriche non approvate o non disponibili"),
             "rag_triad_no_failures": (
-                "Nessuna metrica è stata respinta "
-                "nell’esecuzione più recente."
+                "Nessuna metrica è stata respinta nell’esecuzione più recente."
             ),
-            "rag_triad_approved": (
-                "RAG Triad approvata"
-            ),
-            "rag_triad_failed": (
-                "RAG Triad non approvata"
-            ),
-            "rag_triad_partial": (
-                "RAG Triad parziale"
-            ),
-            "rag_triad_unknown": (
-                "Nessun risultato consolidato"
-            ),
-            "rag_triad_score": (
-                "Punteggio di RAG Triad"
-            ),
-            "rag_triad_status": (
-                "Stato di RAG Triad"
-            ),
-            "rag_triad_passed": (
-                "RAG Triad approvata"
-            ),
+            "rag_triad_approved": ("RAG Triad approvata"),
+            "rag_triad_failed": ("RAG Triad non approvata"),
+            "rag_triad_partial": ("RAG Triad parziale"),
+            "rag_triad_unknown": ("Nessun risultato consolidato"),
+            "rag_triad_score": ("Punteggio di RAG Triad"),
+            "rag_triad_status": ("Stato di RAG Triad"),
+            "rag_triad_passed": ("RAG Triad approvata"),
         },
         "ro": {
             "rag_triad_title": "RAG Triad",
-            "rag_triad_runs": (
-                "Execuții cu RAG Triad"
-            ),
-            "rag_triad_pass_rate": (
-                "Rata de aprobare RAG Triad"
-            ),
-            "rag_triad_latest_score": (
-                "Cel mai recent scor"
-            ),
-            "rag_triad_latest_status": (
-                "Cea mai recentă stare"
-            ),
-            "rag_triad_chart": (
-                "Evoluția RAG Triad"
-            ),
+            "rag_triad_runs": ("Execuții cu RAG Triad"),
+            "rag_triad_pass_rate": ("Rata de aprobare RAG Triad"),
+            "rag_triad_latest_score": ("Cel mai recent scor"),
+            "rag_triad_latest_status": ("Cea mai recentă stare"),
+            "rag_triad_chart": ("Evoluția RAG Triad"),
             "rag_triad_no_data": (
-                "Nu există încă execuții cu RAG Triad "
-                "în istoricul selectat."
+                "Nu există încă execuții cu RAG Triad în istoricul selectat."
             ),
-            "rag_triad_snapshot": (
-                "Rezumat RAG Triad"
-            ),
-            "rag_triad_complete_cases": (
-                "Cazuri complete"
-            ),
-            "rag_triad_total_cases": (
-                "Cazuri evaluate"
-            ),
-            "rag_triad_completeness": (
-                "Completitudine"
-            ),
-            "rag_triad_failing_metrics": (
-                "Metrici respinse sau indisponibile"
-            ),
+            "rag_triad_snapshot": ("Rezumat RAG Triad"),
+            "rag_triad_complete_cases": ("Cazuri complete"),
+            "rag_triad_total_cases": ("Cazuri evaluate"),
+            "rag_triad_completeness": ("Completitudine"),
+            "rag_triad_failing_metrics": ("Metrici respinse sau indisponibile"),
             "rag_triad_no_failures": (
-                "Nicio metrică nu a fost respinsă "
-                "în cea mai recentă execuție."
+                "Nicio metrică nu a fost respinsă în cea mai recentă execuție."
             ),
-            "rag_triad_approved": (
-                "RAG Triad aprobată"
-            ),
-            "rag_triad_failed": (
-                "RAG Triad respinsă"
-            ),
-            "rag_triad_partial": (
-                "RAG Triad parțială"
-            ),
-            "rag_triad_unknown": (
-                "Fără rezultat consolidat"
-            ),
-            "rag_triad_score": (
-                "Scor RAG Triad"
-            ),
-            "rag_triad_status": (
-                "Stare RAG Triad"
-            ),
-            "rag_triad_passed": (
-                "RAG Triad aprobată"
-            ),
+            "rag_triad_approved": ("RAG Triad aprobată"),
+            "rag_triad_failed": ("RAG Triad respinsă"),
+            "rag_triad_partial": ("RAG Triad parțială"),
+            "rag_triad_unknown": ("Fără rezultat consolidat"),
+            "rag_triad_score": ("Scor RAG Triad"),
+            "rag_triad_status": ("Stare RAG Triad"),
+            "rag_triad_passed": ("RAG Triad aprobată"),
         },
         "ua": {
             "rag_triad_title": "RAG Triad",
-            "rag_triad_runs": (
-                "Виконання з RAG Triad"
-            ),
-            "rag_triad_pass_rate": (
-                "Рівень успішності RAG Triad"
-            ),
-            "rag_triad_latest_score": (
-                "Остання оцінка"
-            ),
-            "rag_triad_latest_status": (
-                "Останній статус"
-            ),
-            "rag_triad_chart": (
-                "Динаміка RAG Triad"
-            ),
-            "rag_triad_no_data": (
-                "У вибраній історії ще немає "
-                "виконань із RAG Triad."
-            ),
-            "rag_triad_snapshot": (
-                "Знімок RAG Triad"
-            ),
-            "rag_triad_complete_cases": (
-                "Повні випадки"
-            ),
-            "rag_triad_total_cases": (
-                "Оцінені випадки"
-            ),
-            "rag_triad_completeness": (
-                "Повнота"
-            ),
-            "rag_triad_failing_metrics": (
-                "Невдалі або недоступні метрики"
-            ),
+            "rag_triad_runs": ("Виконання з RAG Triad"),
+            "rag_triad_pass_rate": ("Рівень успішності RAG Triad"),
+            "rag_triad_latest_score": ("Остання оцінка"),
+            "rag_triad_latest_status": ("Останній статус"),
+            "rag_triad_chart": ("Динаміка RAG Triad"),
+            "rag_triad_no_data": ("У вибраній історії ще немає виконань із RAG Triad."),
+            "rag_triad_snapshot": ("Знімок RAG Triad"),
+            "rag_triad_complete_cases": ("Повні випадки"),
+            "rag_triad_total_cases": ("Оцінені випадки"),
+            "rag_triad_completeness": ("Повнота"),
+            "rag_triad_failing_metrics": ("Невдалі або недоступні метрики"),
             "rag_triad_no_failures": (
-                "Під час останнього виконання "
-                "жодна метрика не завершилася невдало."
+                "Під час останнього виконання жодна метрика не завершилася невдало."
             ),
-            "rag_triad_approved": (
-                "RAG Triad пройдено"
-            ),
-            "rag_triad_failed": (
-                "RAG Triad не пройдено"
-            ),
-            "rag_triad_partial": (
-                "Частковий результат RAG Triad"
-            ),
-            "rag_triad_unknown": (
-                "Немає консолідованого результату"
-            ),
-            "rag_triad_score": (
-                "Оцінка RAG Triad"
-            ),
-            "rag_triad_status": (
-                "Статус RAG Triad"
-            ),
-            "rag_triad_passed": (
-                "RAG Triad пройдено"
-            ),
+            "rag_triad_approved": ("RAG Triad пройдено"),
+            "rag_triad_failed": ("RAG Triad не пройдено"),
+            "rag_triad_partial": ("Частковий результат RAG Triad"),
+            "rag_triad_unknown": ("Немає консолідованого результату"),
+            "rag_triad_score": ("Оцінка RAG Triad"),
+            "rag_triad_status": ("Статус RAG Triad"),
+            "rag_triad_passed": ("RAG Triad пройдено"),
         },
         "ru": {
             "rag_triad_title": "RAG Triad",
-            "rag_triad_runs": (
-                "Запуски с RAG Triad"
-            ),
-            "rag_triad_pass_rate": (
-                "Уровень успешности RAG Triad"
-            ),
-            "rag_triad_latest_score": (
-                "Последняя оценка"
-            ),
-            "rag_triad_latest_status": (
-                "Последний статус"
-            ),
-            "rag_triad_chart": (
-                "Динамика RAG Triad"
-            ),
-            "rag_triad_no_data": (
-                "В выбранной истории пока нет "
-                "запусков с RAG Triad."
-            ),
-            "rag_triad_snapshot": (
-                "Снимок RAG Triad"
-            ),
-            "rag_triad_complete_cases": (
-                "Полные случаи"
-            ),
-            "rag_triad_total_cases": (
-                "Оценённые случаи"
-            ),
-            "rag_triad_completeness": (
-                "Полнота"
-            ),
-            "rag_triad_failing_metrics": (
-                "Неуспешные или недоступные метрики"
-            ),
+            "rag_triad_runs": ("Запуски с RAG Triad"),
+            "rag_triad_pass_rate": ("Уровень успешности RAG Triad"),
+            "rag_triad_latest_score": ("Последняя оценка"),
+            "rag_triad_latest_status": ("Последний статус"),
+            "rag_triad_chart": ("Динамика RAG Triad"),
+            "rag_triad_no_data": ("В выбранной истории пока нет запусков с RAG Triad."),
+            "rag_triad_snapshot": ("Снимок RAG Triad"),
+            "rag_triad_complete_cases": ("Полные случаи"),
+            "rag_triad_total_cases": ("Оценённые случаи"),
+            "rag_triad_completeness": ("Полнота"),
+            "rag_triad_failing_metrics": ("Неуспешные или недоступные метрики"),
             "rag_triad_no_failures": (
-                "В последнем запуске ни одна "
-                "метрика не завершилась неуспешно."
+                "В последнем запуске ни одна метрика не завершилась неуспешно."
             ),
-            "rag_triad_approved": (
-                "RAG Triad пройдена"
-            ),
-            "rag_triad_failed": (
-                "RAG Triad не пройдена"
-            ),
-            "rag_triad_partial": (
-                "Частичный результат RAG Triad"
-            ),
-            "rag_triad_unknown": (
-                "Нет консолидированного результата"
-            ),
-            "rag_triad_score": (
-                "Оценка RAG Triad"
-            ),
-            "rag_triad_status": (
-                "Статус RAG Triad"
-            ),
-            "rag_triad_passed": (
-                "RAG Triad пройдена"
-            ),
+            "rag_triad_approved": ("RAG Triad пройдена"),
+            "rag_triad_failed": ("RAG Triad не пройдена"),
+            "rag_triad_partial": ("Частичный результат RAG Triad"),
+            "rag_triad_unknown": ("Нет консолидированного результата"),
+            "rag_triad_score": ("Оценка RAG Triad"),
+            "rag_triad_status": ("Статус RAG Triad"),
+            "rag_triad_passed": ("RAG Triad пройдена"),
         },
         "sa": {
             "rag_triad_title": "RAG Triad",
-            "rag_triad_runs": (
-                "عمليات التشغيل باستخدام RAG Triad"
-            ),
-            "rag_triad_pass_rate": (
-                "معدل نجاح RAG Triad"
-            ),
-            "rag_triad_latest_score": (
-                "أحدث نتيجة"
-            ),
-            "rag_triad_latest_status": (
-                "أحدث حالة"
-            ),
-            "rag_triad_chart": (
-                "تطور RAG Triad"
-            ),
+            "rag_triad_runs": ("عمليات التشغيل باستخدام RAG Triad"),
+            "rag_triad_pass_rate": ("معدل نجاح RAG Triad"),
+            "rag_triad_latest_score": ("أحدث نتيجة"),
+            "rag_triad_latest_status": ("أحدث حالة"),
+            "rag_triad_chart": ("تطور RAG Triad"),
             "rag_triad_no_data": (
-                "لا توجد حتى الآن عمليات تشغيل "
-                "باستخدام RAG Triad في السجل المحدد."
+                "لا توجد حتى الآن عمليات تشغيل باستخدام RAG Triad في السجل المحدد."
             ),
-            "rag_triad_snapshot": (
-                "ملخص RAG Triad"
-            ),
-            "rag_triad_complete_cases": (
-                "الحالات المكتملة"
-            ),
-            "rag_triad_total_cases": (
-                "الحالات التي تم تقييمها"
-            ),
-            "rag_triad_completeness": (
-                "الاكتمال"
-            ),
-            "rag_triad_failing_metrics": (
-                "المقاييس الفاشلة أو غير المتاحة"
-            ),
-            "rag_triad_no_failures": (
-                "لم يفشل أي مقياس في أحدث عملية تشغيل."
-            ),
-            "rag_triad_approved": (
-                "تم اجتياز RAG Triad"
-            ),
-            "rag_triad_failed": (
-                "لم يتم اجتياز RAG Triad"
-            ),
-            "rag_triad_partial": (
-                "نتيجة جزئية لـ RAG Triad"
-            ),
-            "rag_triad_unknown": (
-                "لا توجد نتيجة موحدة"
-            ),
-            "rag_triad_score": (
-                "نتيجة RAG Triad"
-            ),
-            "rag_triad_status": (
-                "حالة RAG Triad"
-            ),
-            "rag_triad_passed": (
-                "تم اجتياز RAG Triad"
-            ),
+            "rag_triad_snapshot": ("ملخص RAG Triad"),
+            "rag_triad_complete_cases": ("الحالات المكتملة"),
+            "rag_triad_total_cases": ("الحالات التي تم تقييمها"),
+            "rag_triad_completeness": ("الاكتمال"),
+            "rag_triad_failing_metrics": ("المقاييس الفاشلة أو غير المتاحة"),
+            "rag_triad_no_failures": ("لم يفشل أي مقياس في أحدث عملية تشغيل."),
+            "rag_triad_approved": ("تم اجتياز RAG Triad"),
+            "rag_triad_failed": ("لم يتم اجتياز RAG Triad"),
+            "rag_triad_partial": ("نتيجة جزئية لـ RAG Triad"),
+            "rag_triad_unknown": ("لا توجد نتيجة موحدة"),
+            "rag_triad_score": ("نتيجة RAG Triad"),
+            "rag_triad_status": ("حالة RAG Triad"),
+            "rag_triad_passed": ("تم اجتياز RAG Triad"),
         },
     }
 )
 
 # O código ch segue o alemão utilizado pelo projeto.
-LLMOPS_RAG_TRIAD_TEXTS["ch"] = dict(
-    LLMOPS_RAG_TRIAD_TEXTS["de"]
-)
+LLMOPS_RAG_TRIAD_TEXTS["ch"] = dict(LLMOPS_RAG_TRIAD_TEXTS["de"])
 
 for idioma in (
     "fr",
@@ -1222,14 +1595,10 @@ for idioma in (
 ):
     LLMOPS_RAG_TRIAD_TEXTS.setdefault(
         idioma,
-        dict(
-            LLMOPS_RAG_TRIAD_TEXTS["en_us"]
-        ),
+        dict(LLMOPS_RAG_TRIAD_TEXTS["en_us"]),
     )
 
-for idioma, textos in (
-    LLMOPS_RAG_TRIAD_TEXTS.items()
-):
+for idioma, textos in LLMOPS_RAG_TRIAD_TEXTS.items():
     LLMOPS_TEXTS.setdefault(
         idioma,
         {},
@@ -1338,9 +1707,7 @@ def llmops_column_labels() -> dict[str, str]:
 def traduzir_colunas_llmops(
     frame: pd.DataFrame,
 ) -> pd.DataFrame:
-    return frame.rename(
-        columns=llmops_column_labels()
-    )
+    return frame.rename(columns=llmops_column_labels())
 
 
 def _percentage(
@@ -1353,13 +1720,9 @@ def _percentage(
 
 
 def _render_header() -> None:
-    st.title(
-        llmops_t("title")
-    )
+    st.title(llmops_t("title"))
 
-    st.caption(
-        llmops_t("caption")
-    )
+    st.caption(llmops_t("caption"))
 
 
 def _render_infrastructure_status() -> None:
@@ -1372,9 +1735,7 @@ def _render_infrastructure_status() -> None:
         initialize_phoenix()
         health = collect_infrastructure_health()
     except Exception as exc:
-        st.warning(
-            llmops_t("infra_error")
-        )
+        st.warning(llmops_t("infra_error"))
 
         with st.expander(
             llmops_t("technical_details"),
@@ -1384,20 +1745,12 @@ def _render_infrastructure_status() -> None:
 
         return
 
-    st.subheader(
-        llmops_t("infrastructure_title")
-    )
+    st.subheader(llmops_t("infrastructure_title"))
 
     status_labels = {
-        "operational": llmops_t(
-            "operational"
-        ),
-        "degraded": llmops_t(
-            "degraded"
-        ),
-        "unavailable": llmops_t(
-            "unavailable"
-        ),
+        "operational": llmops_t("operational"),
+        "degraded": llmops_t("degraded"),
+        "unavailable": llmops_t("unavailable"),
     }
 
     status_label = status_labels.get(
@@ -1405,10 +1758,7 @@ def _render_infrastructure_status() -> None:
         health.status,
     )
 
-    status_message = (
-        f"{llmops_t('general_status')}: "
-        f"{status_label}"
-    )
+    status_message = f"{llmops_t('general_status')}: {status_label}"
 
     if health.status == "operational":
         st.success(status_message)
@@ -1417,9 +1767,7 @@ def _render_infrastructure_status() -> None:
     else:
         st.error(status_message)
 
-    neon_column, phoenix_column, render_column = (
-        st.columns(3)
-    )
+    neon_column, phoenix_column, render_column = st.columns(3)
 
     with neon_column:
         st.metric(
@@ -1431,148 +1779,83 @@ def _render_infrastructure_status() -> None:
             ),
             (
                 f"{health.neon.latency_ms:.0f} ms"
-                if health.neon.latency_ms
-                is not None
-                else llmops_t(
-                    "no_measurement"
-                )
+                if health.neon.latency_ms is not None
+                else llmops_t("no_measurement")
             ),
         )
 
-        st.caption(
-            f"Pool: {health.neon.pool_status}"
-        )
+        st.caption(f"Pool: {health.neon.pool_status}")
 
     with phoenix_column:
         st.metric(
             "Phoenix",
-            (
-                llmops_t("active")
-                if health.phoenix.ready
-                else llmops_t("inactive")
-            ),
-            (
-                f"{llmops_t('sample')} "
-                f"{health.phoenix.sample_rate:.0%}"
-            ),
+            (llmops_t("active") if health.phoenix.ready else llmops_t("inactive")),
+            (f"{llmops_t('sample')} {health.phoenix.sample_rate:.0%}"),
         )
 
-        st.caption(
-            f"{llmops_t('project')}: "
-            f"{health.phoenix.project_name}"
-        )
+        st.caption(f"{llmops_t('project')}: {health.phoenix.project_name}")
 
     with render_column:
         st.metric(
             llmops_t("execution"),
-            (
-                "Render"
-                if health.render.running_on_render
-                else llmops_t("local")
-            ),
+            ("Render" if health.render.running_on_render else llmops_t("local")),
             health.render.environment,
         )
 
-        st.caption(
-            f"{llmops_t('service')}: "
-            f"{health.render.service_name}"
-        )
+        st.caption(f"{llmops_t('service')}: {health.render.service_name}")
 
     with st.expander(
-        llmops_t(
-            "infrastructure_details"
-        ),
+        llmops_t("infrastructure_details"),
         expanded=False,
     ):
-        detail_column_1, detail_column_2 = (
-            st.columns(2)
-        )
+        detail_column_1, detail_column_2 = st.columns(2)
 
         with detail_column_1:
             st.write("**Neon**")
 
-            st.write(
-                "PostgreSQL: "
-                f"{health.neon.server_version or '—'}"
-            )
+            st.write(f"PostgreSQL: {health.neon.server_version or '—'}")
+
+            st.write(f"{llmops_t('pool_size')}: {health.neon.pool_size}")
 
             st.write(
-                f"{llmops_t('pool_size')}: "
-                f"{health.neon.pool_size}"
+                f"{llmops_t('available_connections')}: {health.neon.pool_available}"
             )
 
-            st.write(
-                f"{llmops_t('available_connections')}: "
-                f"{health.neon.pool_available}"
-            )
-
-            st.write(
-                f"{llmops_t('waiting_requests')}: "
-                f"{health.neon.pool_waiting}"
-            )
+            st.write(f"{llmops_t('waiting_requests')}: {health.neon.pool_waiting}")
 
         with detail_column_2:
-            st.write(
-                f"**{llmops_t('application_tracing')}**"
-            )
+            st.write(f"**{llmops_t('application_tracing')}**")
 
-            st.write(
-                f"{llmops_t('environment')}: "
-                f"{health.render.environment}"
-            )
+            st.write(f"{llmops_t('environment')}: {health.render.environment}")
 
-            st.write(
-                f"{llmops_t('region')}: "
-                f"{health.render.region}"
-            )
+            st.write(f"{llmops_t('region')}: {health.render.region}")
 
-            st.write(
-                f"{llmops_t('phoenix_processor')}: "
-                f"{health.phoenix.processor}"
-            )
+            st.write(f"{llmops_t('phoenix_processor')}: {health.phoenix.processor}")
 
-            st.write(
-                f"{llmops_t('content_capture')}: "
-                f"{health.phoenix.capture_content}"
-            )
+            st.write(f"{llmops_t('content_capture')}: {health.phoenix.capture_content}")
 
         if health.unavailable_components:
             st.error(
                 f"{llmops_t('unavailable_components')}: "
-                + ", ".join(
-                    health.unavailable_components
-                )
+                + ", ".join(health.unavailable_components)
             )
 
         if health.degraded_components:
             st.warning(
                 f"{llmops_t('degraded_components')}: "
-                + ", ".join(
-                    health.degraded_components
-                )
+                + ", ".join(health.degraded_components)
             )
+
 
 def _render_filters(
     history,
     controls,
 ):
-    controls.header(
-        llmops_t("filters")
-    )
+    controls.header(llmops_t("filters"))
 
-    available_branches = sorted(
-        {
-            entry.branch
-            for entry in history.entries
-        }
-    )
+    available_branches = sorted({entry.branch for entry in history.entries})
 
-    available_environments = sorted(
-        {
-            entry.environment
-            for entry in history.entries
-        }
-    )
+    available_environments = sorted({entry.environment for entry in history.entries})
 
     branches = controls.multiselect(
         llmops_t("branches"),
@@ -1594,20 +1877,14 @@ def _render_filters(
 
     status_labels = {
         "all": llmops_t("all_runs"),
-        "approved": llmops_t(
-            "approved_runs_option"
-        ),
-        "failed": llmops_t(
-            "failed_runs_option"
-        ),
+        "approved": llmops_t("approved_runs_option"),
+        "failed": llmops_t("failed_runs_option"),
     }
 
     status_option = controls.selectbox(
         llmops_t("run_status"),
         status_options,
-        format_func=lambda value: (
-            status_labels[value]
-        ),
+        format_func=lambda value: status_labels[value],
     )
 
     passed_filter = {
@@ -1616,17 +1893,9 @@ def _render_filters(
         "failed": False,
     }[status_option]
 
-    selected_branches = (
-        set(branches)
-        if branches
-        else set()
-    )
+    selected_branches = set(branches) if branches else set()
 
-    selected_environments = (
-        set(environments)
-        if environments
-        else set()
-    )
+    selected_environments = set(environments) if environments else set()
 
     return filter_history(
         history,
@@ -1635,14 +1904,11 @@ def _render_filters(
         passed=passed_filter,
     )
 
-def _render_summary(history) -> None:
-    summary = build_dashboard_summary(
-        history
-    )
 
-    first, second, third, fourth = (
-        st.columns(4)
-    )
+def _render_summary(history) -> None:
+    summary = build_dashboard_summary(history)
+
+    first, second, third, fourth = st.columns(4)
 
     first.metric(
         llmops_t("total_runs"),
@@ -1651,16 +1917,12 @@ def _render_summary(history) -> None:
 
     second.metric(
         llmops_t("approval_rate"),
-        _percentage(
-            summary.approval_rate
-        ),
+        _percentage(summary.approval_rate),
     )
 
     third.metric(
         llmops_t("latest_pass_rate"),
-        _percentage(
-            summary.latest_pass_rate
-        ),
+        _percentage(summary.latest_pass_rate),
     )
 
     fourth.metric(
@@ -1668,9 +1930,7 @@ def _render_summary(history) -> None:
         summary.tracked_metrics,
     )
 
-    fifth, sixth, seventh, eighth = (
-        st.columns(4)
-    )
+    fifth, sixth, seventh, eighth = st.columns(4)
 
     fifth.metric(
         llmops_t("approved_runs"),
@@ -1692,37 +1952,21 @@ def _render_summary(history) -> None:
         summary.latest_violations,
     )
 
-    if (
-        summary.latest_quality_gate_passed
-        is True
-    ):
-        st.success(
-            llmops_t("gate_approved")
-        )
-    elif (
-        summary.latest_quality_gate_passed
-        is False
-    ):
-        st.error(
-            llmops_t("gate_failed")
-        )
+    if summary.latest_quality_gate_passed is True:
+        st.success(llmops_t("gate_approved"))
+    elif summary.latest_quality_gate_passed is False:
+        st.error(llmops_t("gate_failed"))
     else:
-        st.info(
-            llmops_t("no_runs")
-        )
+        st.info(llmops_t("no_runs"))
 
 
 def _render_pass_rate_chart(history) -> None:
-    st.subheader(
-        llmops_t("pass_rate_chart")
-    )
+    st.subheader(llmops_t("pass_rate_chart"))
 
     rows = build_pass_rate_series(history)
 
     if not rows:
-        st.info(
-            llmops_t("no_runs_chart")
-        )
+        st.info(llmops_t("no_runs_chart"))
         return
 
     frame = pd.DataFrame(rows)
@@ -1742,9 +1986,7 @@ def _render_pass_rate_chart(history) -> None:
         ],
         labels={
             "recorded_at": llmops_t("date"),
-            "pass_rate": llmops_t(
-                "approval_rate"
-            ),
+            "pass_rate": llmops_t("approval_rate"),
         },
     )
 
@@ -1769,9 +2011,7 @@ def _render_pass_rate_chart(history) -> None:
 
     fig_pass_rate.update_layout(
         xaxis_title=None,
-        yaxis_title=llmops_t(
-            "approval_rate"
-        ),
+        yaxis_title=llmops_t("approval_rate"),
         showlegend=False,
         hovermode="x unified",
     )
@@ -1800,33 +2040,24 @@ def _render_pass_rate_chart(history) -> None:
         },
     )
 
-def _render_metric_chart(history) -> None:
-    st.subheader(
-        llmops_t("metric_trend_chart")
-    )
 
-    available_metrics = get_metric_ids(
-        history
-    )
+def _render_metric_chart(history) -> None:
+    st.subheader(llmops_t("metric_trend_chart"))
+
+    available_metrics = get_metric_ids(history)
 
     if not available_metrics:
-        st.info(
-            llmops_t("no_metrics")
-        )
+        st.info(llmops_t("no_metrics"))
         return
 
     selected_metrics = st.multiselect(
         llmops_t("displayed_metrics"),
         available_metrics,
-        default=list(
-            available_metrics[:5]
-        ),
+        default=list(available_metrics[:5]),
     )
 
     if not selected_metrics:
-        st.warning(
-            llmops_t("select_metric")
-        )
+        st.warning(llmops_t("select_metric"))
         return
 
     rows = build_metric_series(
@@ -1837,9 +2068,7 @@ def _render_metric_chart(history) -> None:
     frame = pd.DataFrame(rows)
 
     if frame.empty:
-        st.info(
-            llmops_t("no_metric_data")
-        )
+        st.info(llmops_t("no_metric_data"))
         return
 
     frame["recorded_at"] = pd.to_datetime(
@@ -1854,9 +2083,7 @@ def _render_metric_chart(history) -> None:
         aggfunc="last",
     ).sort_index()
 
-    metricas_disponiveis = list(
-        pivot.columns
-    )
+    metricas_disponiveis = list(pivot.columns)
 
     metricas_plot = pivot.reset_index()
 
@@ -1865,14 +2092,10 @@ def _render_metric_chart(history) -> None:
         x="recorded_at",
         y=metricas_disponiveis,
         markers=True,
-        color_discrete_sequence=(
-            LLMOPS_METRIC_COLORS
-        ),
+        color_discrete_sequence=(LLMOPS_METRIC_COLORS),
         labels={
             "recorded_at": llmops_t("date"),
-            "value": llmops_t(
-                "average_score"
-            ),
+            "value": llmops_t("average_score"),
             "variable": llmops_t("metric"),
         },
     )
@@ -1882,20 +2105,14 @@ def _render_metric_chart(history) -> None:
         marker={"size": 7},
         connectgaps=False,
         hovertemplate=(
-            "<b>%{x|%d/%m/%Y %H:%M}</b><br>"
-            "%{fullData.name}: %{y:.2%}"
-            "<extra></extra>"
+            "<b>%{x|%d/%m/%Y %H:%M}</b><br>%{fullData.name}: %{y:.2%}<extra></extra>"
         ),
     )
 
     fig_metricas.update_layout(
         xaxis_title=None,
-        yaxis_title=llmops_t(
-            "average_score"
-        ),
-        legend_title_text=llmops_t(
-            "metric"
-        ),
+        yaxis_title=llmops_t("average_score"),
+        legend_title_text=llmops_t("metric"),
         hovermode="x unified",
         legend={
             "orientation": "h",
@@ -1930,6 +2147,7 @@ def _render_metric_chart(history) -> None:
         },
     )
 
+
 def _render_rag_triad_section(
     history,
 ) -> None:
@@ -1940,17 +2158,11 @@ def _render_rag_triad_section(
     sendo aceitos e exibem um estado vazio controlado.
     """
 
-    st.subheader(
-        llmops_t("rag_triad_title")
-    )
+    st.subheader(llmops_t("rag_triad_title"))
 
-    summary = build_dashboard_summary(
-        history
-    )
+    summary = build_dashboard_summary(history)
 
-    first, second, third, fourth = (
-        st.columns(4)
-    )
+    first, second, third, fourth = st.columns(4)
 
     first.metric(
         llmops_t("rag_triad_runs"),
@@ -1959,34 +2171,23 @@ def _render_rag_triad_section(
 
     second.metric(
         llmops_t("rag_triad_pass_rate"),
-        _percentage(
-            summary.rag_triad_pass_rate
-        ),
+        _percentage(summary.rag_triad_pass_rate),
     )
 
     third.metric(
         llmops_t("rag_triad_latest_score"),
-        _percentage(
-            summary.latest_rag_triad_score
-        ),
+        _percentage(summary.latest_rag_triad_score),
     )
 
     fourth.metric(
         llmops_t("rag_triad_latest_status"),
-        (
-            summary.latest_rag_triad_status
-            or "—"
-        ),
+        (summary.latest_rag_triad_status or "—"),
     )
 
-    rows = build_rag_triad_series(
-        history
-    )
+    rows = build_rag_triad_series(history)
 
     if not rows:
-        st.info(
-            llmops_t("rag_triad_no_data")
-        )
+        st.info(llmops_t("rag_triad_no_data"))
         return
 
     frame = pd.DataFrame(rows)
@@ -1996,25 +2197,17 @@ def _render_rag_triad_section(
         utc=True,
     )
 
-    chart_frame = frame.dropna(
-        subset=["average_score"]
-    )
+    chart_frame = frame.dropna(subset=["average_score"])
 
     if not chart_frame.empty:
         fig_rag_triad = px.line(
-            chart_frame.sort_values(
-                "recorded_at"
-            ),
+            chart_frame.sort_values("recorded_at"),
             x="recorded_at",
             y="average_score",
             markers=True,
             labels={
-                "recorded_at": llmops_t(
-                    "date"
-                ),
-                "average_score": llmops_t(
-                    "rag_triad_score"
-                ),
+                "recorded_at": llmops_t("date"),
+                "average_score": llmops_t("rag_triad_score"),
             },
         )
 
@@ -2031,9 +2224,7 @@ def _render_rag_triad_section(
 
         fig_rag_triad.update_layout(
             xaxis_title=None,
-            yaxis_title=llmops_t(
-                "rag_triad_score"
-            ),
+            yaxis_title=llmops_t("rag_triad_score"),
             showlegend=False,
             hovermode="x unified",
         )
@@ -2055,10 +2246,7 @@ def _render_rag_triad_section(
         st.plotly_chart(
             fig_rag_triad,
             width="stretch",
-            key=(
-                "llmops_rag_triad_"
-                "evolution_chart"
-            ),
+            key=("llmops_rag_triad_evolution_chart"),
             config={
                 "displayModeBar": False,
                 "responsive": True,
@@ -2067,20 +2255,14 @@ def _render_rag_triad_section(
 
     latest = history.latest()
 
-    snapshot = build_rag_triad_snapshot(
-        latest
-    )
+    snapshot = build_rag_triad_snapshot(latest)
 
     if snapshot is None:
         return
 
-    st.markdown(
-        f"**{llmops_t('rag_triad_snapshot')}**"
-    )
+    st.markdown(f"**{llmops_t('rag_triad_snapshot')}**")
 
-    snapshot_first, snapshot_second, snapshot_third = (
-        st.columns(3)
-    )
+    snapshot_first, snapshot_second, snapshot_third = st.columns(3)
 
     snapshot_first.metric(
         llmops_t("rag_triad_total_cases"),
@@ -2094,98 +2276,61 @@ def _render_rag_triad_section(
 
     snapshot_third.metric(
         llmops_t("rag_triad_completeness"),
-        _percentage(
-            snapshot["completeness_rate"]
-        ),
+        _percentage(snapshot["completeness_rate"]),
     )
 
     status = snapshot["status"]
 
     if snapshot["passed"] is True:
-        st.success(
-            llmops_t("rag_triad_approved")
-        )
+        st.success(llmops_t("rag_triad_approved"))
     elif snapshot["passed"] is False:
-        st.error(
-            llmops_t("rag_triad_failed")
-        )
+        st.error(llmops_t("rag_triad_failed"))
     elif status in {
         "partial",
         "planned",
     }:
-        st.warning(
-            llmops_t("rag_triad_partial")
-        )
+        st.warning(llmops_t("rag_triad_partial"))
     else:
-        st.info(
-            llmops_t("rag_triad_unknown")
-        )
+        st.info(llmops_t("rag_triad_unknown"))
 
-    failing_metrics = snapshot[
-        "failing_metric_ids"
-    ]
+    failing_metrics = snapshot["failing_metric_ids"]
 
     if failing_metrics:
         st.warning(
-            f"{llmops_t('rag_triad_failing_metrics')}: "
-            + ", ".join(failing_metrics)
+            f"{llmops_t('rag_triad_failing_metrics')}: " + ", ".join(failing_metrics)
         )
     else:
-        st.caption(
-            llmops_t("rag_triad_no_failures")
-        )
+        st.caption(llmops_t("rag_triad_no_failures"))
 
 
 def _render_latest_snapshot(history) -> None:
-    st.subheader(
-        llmops_t("latest_snapshot")
-    )
+    st.subheader(llmops_t("latest_snapshot"))
 
     latest = history.latest()
 
     if latest is None:
-        st.info(
-            llmops_t("no_registered_run")
-        )
+        st.info(llmops_t("no_registered_run"))
         return
 
     column_labels = llmops_column_labels()
 
     st.write(
         {
-            column_labels["run_reference"]: (
-                latest.run_reference
-            ),
-            column_labels["branch"]: (
-                latest.branch
-            ),
-            column_labels["commit_sha"]: (
-                latest.commit_sha
-            ),
-            column_labels["environment"]: (
-                latest.environment
-            ),
-            column_labels["evaluation_mode"]: (
-                latest.evaluation_mode
-            ),
-            column_labels["baseline_id"]: (
-                latest.baseline_id
-            ),
-            column_labels["recorded_at"]: (
-                latest.recorded_at
-            ),
+            column_labels["run_reference"]: (latest.run_reference),
+            column_labels["branch"]: (latest.branch),
+            column_labels["commit_sha"]: (latest.commit_sha),
+            column_labels["environment"]: (latest.environment),
+            column_labels["evaluation_mode"]: (latest.evaluation_mode),
+            column_labels["baseline_id"]: (latest.baseline_id),
+            column_labels["recorded_at"]: (latest.recorded_at),
         }
     )
 
-    snapshot = build_metric_snapshot(
-        latest
-    )
+    snapshot = build_metric_snapshot(latest)
 
     if snapshot:
         frame = pd.DataFrame(snapshot)
-        frame = traduzir_colunas_llmops(
-            frame
-        )
+        frame = traduzir_colunas_llmops(frame)
 
         st.dataframe(
             frame,
@@ -2195,16 +2340,12 @@ def _render_latest_snapshot(history) -> None:
 
 
 def _render_runs_table(history) -> None:
-    st.subheader(
-        llmops_t("runs_history")
-    )
+    st.subheader(llmops_t("runs_history"))
 
     rows = build_runs_table(history)
 
     if not rows:
-        st.info(
-            llmops_t("no_filtered_runs")
-        )
+        st.info(llmops_t("no_filtered_runs"))
         return
 
     frame = pd.DataFrame(rows)
@@ -2216,50 +2357,22 @@ def _render_runs_table(history) -> None:
         hide_index=True,
         column_config={
             "run_reference": (
-                st.column_config.TextColumn(
-                    column_labels["run_reference"]
-                )
+                st.column_config.TextColumn(column_labels["run_reference"])
             ),
-            "branch": (
-                st.column_config.TextColumn(
-                    column_labels["branch"]
-                )
-            ),
-            "commit_sha": (
-                st.column_config.TextColumn(
-                    column_labels["commit_sha"]
-                )
-            ),
-            "environment": (
-                st.column_config.TextColumn(
-                    column_labels["environment"]
-                )
-            ),
+            "branch": (st.column_config.TextColumn(column_labels["branch"])),
+            "commit_sha": (st.column_config.TextColumn(column_labels["commit_sha"])),
+            "environment": (st.column_config.TextColumn(column_labels["environment"])),
             "evaluation_mode": (
-                st.column_config.TextColumn(
-                    column_labels["evaluation_mode"]
-                )
+                st.column_config.TextColumn(column_labels["evaluation_mode"])
             ),
-            "baseline_id": (
-                st.column_config.TextColumn(
-                    column_labels["baseline_id"]
-                )
-            ),
+            "baseline_id": (st.column_config.TextColumn(column_labels["baseline_id"])),
             "recorded_at": (
-                st.column_config.DatetimeColumn(
-                    column_labels["recorded_at"]
-                )
+                st.column_config.DatetimeColumn(column_labels["recorded_at"])
             ),
             "regressions": (
-                st.column_config.NumberColumn(
-                    column_labels["regressions"]
-                )
+                st.column_config.NumberColumn(column_labels["regressions"])
             ),
-            "violations": (
-                st.column_config.NumberColumn(
-                    column_labels["violations"]
-                )
-            ),
+            "violations": (st.column_config.NumberColumn(column_labels["violations"])),
             "pass_rate": (
                 st.column_config.ProgressColumn(
                     llmops_t("pass_rate"),
@@ -2268,60 +2381,32 @@ def _render_runs_table(history) -> None:
                     format="%.2f",
                 )
             ),
-            "passed": (
-                st.column_config.CheckboxColumn(
-                    llmops_t("approved")
-                )
-            ),
+            "passed": (st.column_config.CheckboxColumn(llmops_t("approved"))),
             "quality_gate_passed": (
-                st.column_config.CheckboxColumn(
-                    llmops_t("quality_gate")
-                )
+                st.column_config.CheckboxColumn(llmops_t("quality_gate"))
             ),
             "rag_triad_status": (
-                st.column_config.TextColumn(
-                    column_labels[
-                        "rag_triad_status"
-                    ]
-                )
+                st.column_config.TextColumn(column_labels["rag_triad_status"])
             ),
             "rag_triad_score": (
                 st.column_config.ProgressColumn(
-                    column_labels[
-                        "rag_triad_score"
-                    ],
+                    column_labels["rag_triad_score"],
                     min_value=0.0,
                     max_value=1.0,
                     format="%.2f",
                 )
             ),
             "rag_triad_passed": (
-                st.column_config.CheckboxColumn(
-                    column_labels[
-                        "rag_triad_passed"
-                    ]
-                )
+                st.column_config.CheckboxColumn(column_labels["rag_triad_passed"])
             ),
             "rag_triad_total_cases": (
-                st.column_config.NumberColumn(
-                    column_labels[
-                        "rag_triad_total_cases"
-                    ]
-                )
+                st.column_config.NumberColumn(column_labels["rag_triad_total_cases"])
             ),
             "rag_triad_complete_cases": (
-                st.column_config.NumberColumn(
-                    column_labels[
-                        "rag_triad_complete_cases"
-                    ]
-                )
+                st.column_config.NumberColumn(column_labels["rag_triad_complete_cases"])
             ),
             "rag_triad_failing_metrics": (
-                st.column_config.ListColumn(
-                    column_labels[
-                        "rag_triad_failing_metrics"
-                    ]
-                )
+                st.column_config.ListColumn(column_labels["rag_triad_failing_metrics"])
             ),
         },
     )
@@ -2351,14 +2436,10 @@ def render_llmops_dashboard(
             llmops_t("llmops_filters"),
             expanded=False,
         )
-        history_key = (
-            "llmops_integrated_history_path"
-        )
+        history_key = "llmops_integrated_history_path"
     else:
         controls = st.sidebar
-        history_key = (
-            "llmops_standalone_history_path"
-        )
+        history_key = "llmops_standalone_history_path"
 
     history_path = controls.text_input(
         llmops_t("history_file"),
@@ -2367,14 +2448,9 @@ def render_llmops_dashboard(
     )
 
     try:
-        history = load_dashboard_history(
-            history_path
-        )
+        history = load_dashboard_history(history_path)
     except Exception as exc:
-        st.error(
-            f"{llmops_t('history_load_error')}: "
-            f"{exc}"
-        )
+        st.error(f"{llmops_t('history_load_error')}: {exc}")
         return
 
     filtered_history = _render_filters(
@@ -2386,29 +2462,19 @@ def render_llmops_dashboard(
 
     st.divider()
 
-    _render_pass_rate_chart(
-        filtered_history
-    )
+    _render_pass_rate_chart(filtered_history)
 
-    _render_metric_chart(
-        filtered_history
-    )
+    _render_metric_chart(filtered_history)
 
     st.divider()
 
-    _render_rag_triad_section(
-        filtered_history
-    )
+    _render_rag_triad_section(filtered_history)
 
     st.divider()
 
-    _render_latest_snapshot(
-        filtered_history
-    )
+    _render_latest_snapshot(filtered_history)
 
-    _render_runs_table(
-        filtered_history
-    )
+    _render_runs_table(filtered_history)
 
 
 def main() -> None:
@@ -2420,9 +2486,7 @@ def main() -> None:
 
     apply_admin_dark_theme()
 
-    render_llmops_dashboard(
-        integrated=False
-    )
+    render_llmops_dashboard(integrated=False)
 
 
 if __name__ == "__main__":

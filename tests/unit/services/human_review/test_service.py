@@ -48,7 +48,8 @@ def _record(
         updated_at=now,
         resolved_at=(
             now
-            if status in {
+            if status
+            in {
                 "approved",
                 "corrected",
                 "rejected",
@@ -116,9 +117,7 @@ def test_resolver_revisao_approve(
                 "status": "approved",
             },
             "human_review_status": "approved",
-            "human_review_resume_route": (
-                "handoff_coordinator"
-            ),
+            "human_review_resume_route": ("handoff_coordinator"),
         }
 
     outcome = service.resolver_revisao_humana(
@@ -136,17 +135,11 @@ def test_resolver_revisao_approve(
     assert len(claimed) == 1
     assert len(finalized) == 1
     assert outcome.review.status == "approved"
-    assert (
-        outcome.resume_route
-        == "handoff_coordinator"
-    )
+    assert outcome.resume_route == "handoff_coordinator"
 
 
-def test_reviewer_body_nao_pode_trocar_identidade(
-) -> None:
-    with pytest.raises(
-        HumanReviewValidationError
-    ):
+def test_reviewer_body_nao_pode_trocar_identidade() -> None:
+    with pytest.raises(HumanReviewValidationError):
         service.resolver_revisao_humana(
             review_id="review-001",
             thread_id="thread-001",
@@ -161,9 +154,7 @@ def test_reviewer_body_nao_pode_trocar_identidade(
 
 
 def test_correct_exige_corrections() -> None:
-    with pytest.raises(
-        HumanReviewValidationError
-    ):
+    with pytest.raises(HumanReviewValidationError):
         service.resolver_revisao_humana(
             review_id="review-001",
             thread_id="thread-001",
@@ -184,9 +175,7 @@ def test_status_do_grafo_deve_corresponder_acao(
     monkeypatch.setattr(
         repository,
         "reivindicar_revisao",
-        lambda command: _record(
-            status="processing"
-        ),
+        lambda command: _record(status="processing"),
     )
 
     def fake_failure(
@@ -201,9 +190,7 @@ def test_status_do_grafo_deve_corresponder_acao(
             )
         )
 
-        return _record(
-            status="resume_failed"
-        )
+        return _record(status="resume_failed")
 
     monkeypatch.setattr(
         repository,
@@ -219,14 +206,10 @@ def test_status_do_grafo_deve_corresponder_acao(
                 "status": "rejected",
             },
             "human_review_status": "rejected",
-            "human_review_resume_route": (
-                "conversation_summary"
-            ),
+            "human_review_resume_route": ("conversation_summary"),
         }
 
-    with pytest.raises(
-        HumanReviewResumeError
-    ):
+    with pytest.raises(HumanReviewResumeError):
         service.resolver_revisao_humana(
             review_id="review-001",
             thread_id="thread-001",
@@ -249,9 +232,7 @@ def test_falha_no_langgraph_marca_resume_failed(
     monkeypatch.setattr(
         repository,
         "reivindicar_revisao",
-        lambda command: _record(
-            status="processing"
-        ),
+        lambda command: _record(status="processing"),
     )
 
     def fake_failure(
@@ -259,13 +240,9 @@ def test_falha_no_langgraph_marca_resume_failed(
         *,
         failure_reason,
     ):
-        failure_calls.append(
-            failure_reason
-        )
+        failure_calls.append(failure_reason)
 
-        return _record(
-            status="resume_failed"
-        )
+        return _record(status="resume_failed")
 
     monkeypatch.setattr(
         repository,
@@ -274,13 +251,9 @@ def test_falha_no_langgraph_marca_resume_failed(
     )
 
     def fake_resume(**_):
-        raise RuntimeError(
-            "erro interno sensível"
-        )
+        raise RuntimeError("erro interno sensível")
 
-    with pytest.raises(
-        HumanReviewResumeError
-    ):
+    with pytest.raises(HumanReviewResumeError):
         service.resolver_revisao_humana(
             review_id="review-001",
             thread_id="thread-001",
@@ -293,10 +266,7 @@ def test_falha_no_langgraph_marca_resume_failed(
         )
 
     assert len(failure_calls) == 1
-    assert (
-        "erro interno sensível"
-        not in failure_calls[0]
-    )
+    assert "erro interno sensível" not in failure_calls[0]
 
 
 def test_registrar_payload_de_interrupt(
@@ -318,26 +288,28 @@ def test_registrar_payload_de_interrupt(
         fake_create,
     )
 
-    result = service.registrar_revisao_pendente({
-        "type": "human_review",
-        "version": "1.0",
-        "review_id": "review-001",
-        "thread_id": "thread-001",
-        "status": "pending",
-        "requested_by": "policy",
-        "reason": "Risco elevado.",
-        "trigger": "high_risk",
-        "risk_level": "high",
-        "payload": {
-            "resposta": "Em revisão",
-        },
-        "allowed_actions": [
-            "approve",
-            "correct",
-            "reject",
-            "cancel",
-        ],
-    })
+    result = service.registrar_revisao_pendente(
+        {
+            "type": "human_review",
+            "version": "1.0",
+            "review_id": "review-001",
+            "thread_id": "thread-001",
+            "status": "pending",
+            "requested_by": "policy",
+            "reason": "Risco elevado.",
+            "trigger": "high_risk",
+            "risk_level": "high",
+            "payload": {
+                "resposta": "Em revisão",
+            },
+            "allowed_actions": [
+                "approve",
+                "correct",
+                "reject",
+                "cancel",
+            ],
+        }
+    )
 
     assert result.created is True
     assert len(captured) == 1
@@ -371,39 +343,40 @@ def test_registrar_interrupt_normaliza_status_pendente(
         fake_create,
     )
 
-    result = service.registrar_revisao_pendente({
-        "type": "human_review",
-        "version": "1.0",
-        "review_id": "review-status-test",
-        "thread_id": "thread-status-test",
-        "status": interrupt_status,
-        "requested_by": "human_review_policy",
-        "reason": "Revisão forçada.",
-        "trigger": "forced_review",
-        "risk_level": "medium",
-        "payload": {},
-        "allowed_actions": [
-            "approve",
-            "correct",
-            "reject",
-            "cancel",
-        ],
-    })
+    result = service.registrar_revisao_pendente(
+        {
+            "type": "human_review",
+            "version": "1.0",
+            "review_id": "review-status-test",
+            "thread_id": "thread-status-test",
+            "status": interrupt_status,
+            "requested_by": "human_review_policy",
+            "reason": "Revisão forçada.",
+            "trigger": "forced_review",
+            "risk_level": "medium",
+            "payload": {},
+            "allowed_actions": [
+                "approve",
+                "correct",
+                "reject",
+                "cancel",
+            ],
+        }
+    )
 
     assert result.created is True
     assert len(captured) == 1
     assert captured[0].status == "pending"
 
 
-def test_registrar_interrupt_rejeita_status_desconhecido(
-) -> None:
-    with pytest.raises(
-        HumanReviewValidationError
-    ):
-        service.registrar_revisao_pendente({
-            "type": "human_review",
-            "review_id": "review-invalid-status",
-            "thread_id": "thread-invalid-status",
-            "status": "completed",
-            "payload": {},
-        })
+def test_registrar_interrupt_rejeita_status_desconhecido() -> None:
+    with pytest.raises(HumanReviewValidationError):
+        service.registrar_revisao_pendente(
+            {
+                "type": "human_review",
+                "review_id": "review-invalid-status",
+                "thread_id": "thread-invalid-status",
+                "status": "completed",
+                "payload": {},
+            }
+        )

@@ -39,12 +39,7 @@ def sum_handler(
 ) -> SumOutput:
     del context
 
-    return SumOutput(
-        result=(
-            payload.first
-            + payload.second
-        )
-    )
+    return SumOutput(result=(payload.first + payload.second))
 
 
 def build_registry(
@@ -56,22 +51,22 @@ def build_registry(
     registry.register(
         ToolDefinition(
             name="calculate_sum",
-            description=(
-                "Calcula a soma de dois números."
-            ),
+            description=("Calcula a soma de dois números."),
             input_model=SumInput,
             output_model=SumOutput,
             handler=sum_handler,
-            allowed_agents=frozenset({
-                "financial_agent",
-            }),
-            timeout_seconds=(
-                timeout_seconds
+            allowed_agents=frozenset(
+                {
+                    "financial_agent",
+                }
             ),
-            tags=frozenset({
-                "financial",
-                "deterministic",
-            }),
+            timeout_seconds=(timeout_seconds),
+            tags=frozenset(
+                {
+                    "financial",
+                    "deterministic",
+                }
+            ),
         )
     )
 
@@ -105,12 +100,8 @@ def build_call(
 def test_execute_registered_tool_successfully():
     registry = build_registry()
 
-    with ToolExecutor(
-        registry=registry
-    ) as executor:
-        result = executor.execute(
-            build_call()
-        )
+    with ToolExecutor(registry=registry) as executor:
+        result = executor.execute(build_call())
 
     assert result.ok is True
     assert result.status == ToolStatus.SUCCESS
@@ -123,9 +114,7 @@ def test_execute_registered_tool_successfully():
 def test_rejects_invalid_tool_arguments():
     registry = build_registry()
 
-    with ToolExecutor(
-        registry=registry
-    ) as executor:
+    with ToolExecutor(registry=registry) as executor:
         result = executor.execute(
             build_call(
                 arguments={
@@ -135,15 +124,9 @@ def test_rejects_invalid_tool_arguments():
             )
         )
 
-    assert (
-        result.status
-        == ToolStatus.VALIDATION_ERROR
-    )
+    assert result.status == ToolStatus.VALIDATION_ERROR
 
-    assert (
-        result.error.code
-        == "tool_input_validation_error"
-    )
+    assert result.error.code == "tool_input_validation_error"
 
 
 def test_denies_unauthorized_agent():
@@ -151,42 +134,24 @@ def test_denies_unauthorized_agent():
 
     with ToolExecutor(
         registry=registry,
-        permission_policy=(
-            ToolPermissionPolicy()
-        ),
+        permission_policy=(ToolPermissionPolicy()),
     ) as executor:
-        result = executor.execute(
-            build_call(
-                agent="report_agent"
-            )
-        )
+        result = executor.execute(build_call(agent="report_agent"))
 
     assert result.status == ToolStatus.DENIED
 
-    assert (
-        result.error.code
-        == "tool_permission_denied"
-    )
+    assert result.error.code == "tool_permission_denied"
 
 
 def test_returns_not_found_for_unknown_tool():
     registry = build_registry()
 
-    with ToolExecutor(
-        registry=registry
-    ) as executor:
-        result = executor.execute(
-            build_call(
-                tool_name="unknown_tool"
-            )
-        )
+    with ToolExecutor(registry=registry) as executor:
+        result = executor.execute(build_call(tool_name="unknown_tool"))
 
     assert result.status == ToolStatus.NOT_FOUND
 
-    assert (
-        result.error.code
-        == "tool_not_found"
-    )
+    assert result.error.code == "tool_not_found"
 
 
 def test_validates_tool_output():
@@ -206,36 +171,24 @@ def test_validates_tool_output():
     registry.register(
         ToolDefinition(
             name="invalid_output",
-            description=(
-                "Ferramenta com saída inválida."
-            ),
+            description=("Ferramenta com saída inválida."),
             input_model=SumInput,
             output_model=SumOutput,
             handler=invalid_output_handler,
-            allowed_agents=frozenset({
-                "financial_agent",
-            }),
+            allowed_agents=frozenset(
+                {
+                    "financial_agent",
+                }
+            ),
         )
     )
 
-    with ToolExecutor(
-        registry=registry
-    ) as executor:
-        result = executor.execute(
-            build_call(
-                tool_name="invalid_output"
-            )
-        )
+    with ToolExecutor(registry=registry) as executor:
+        result = executor.execute(build_call(tool_name="invalid_output"))
 
-    assert (
-        result.status
-        == ToolStatus.VALIDATION_ERROR
-    )
+    assert result.status == ToolStatus.VALIDATION_ERROR
 
-    assert (
-        result.error.code
-        == "tool_output_validation_error"
-    )
+    assert result.error.code == "tool_output_validation_error"
 
 
 def test_enforces_tool_timeout():
@@ -249,37 +202,26 @@ def test_enforces_tool_timeout():
 
         time.sleep(0.05)
 
-        return SumOutput(
-            result=(
-                payload.first
-                + payload.second
-            )
-        )
+        return SumOutput(result=(payload.first + payload.second))
 
     registry.register(
         ToolDefinition(
             name="slow_tool",
-            description=(
-                "Ferramenta propositalmente lenta."
-            ),
+            description=("Ferramenta propositalmente lenta."),
             input_model=SumInput,
             output_model=SumOutput,
             handler=slow_handler,
-            allowed_agents=frozenset({
-                "financial_agent",
-            }),
+            allowed_agents=frozenset(
+                {
+                    "financial_agent",
+                }
+            ),
             timeout_seconds=0.01,
         )
     )
 
-    with ToolExecutor(
-        registry=registry
-    ) as executor:
-        result = executor.execute(
-            build_call(
-                tool_name="slow_tool"
-            )
-        )
+    with ToolExecutor(registry=registry) as executor:
+        result = executor.execute(build_call(tool_name="slow_tool"))
 
     assert result.status == ToolStatus.TIMEOUT
     assert result.error.code == "tool_timeout"
@@ -290,11 +232,7 @@ def test_rejects_duplicate_registration():
     registry = build_registry()
 
     try:
-        registry.register(
-            registry.get(
-                "calculate_sum"
-            )
-        )
+        registry.register(registry.get("calculate_sum"))
     except ToolRegistrationError:
         duplicate_rejected = True
     else:

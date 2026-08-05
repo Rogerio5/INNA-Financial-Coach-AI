@@ -25,9 +25,7 @@ load_dotenv(
 )
 
 
-DEFAULT_SUPERVISOR_MODEL = (
-    DEFAULT_TEXT_MODEL
-)
+DEFAULT_SUPERVISOR_MODEL = DEFAULT_TEXT_MODEL
 
 DEFAULT_SUPERVISOR_TIMEOUT_MS = 15_000
 DEFAULT_SUPERVISOR_TOTAL_DEADLINE_MS = 8_000
@@ -43,9 +41,7 @@ def _read_int_environment(
     minimum: int,
     maximum: int,
 ) -> int:
-    raw_value = str(
-        os.getenv(name, "")
-    ).strip()
+    raw_value = str(os.getenv(name, "")).strip()
 
     if not raw_value:
         return default
@@ -77,11 +73,8 @@ class SupervisorRuntimeConfig:
 
 
 @lru_cache(maxsize=1)
-def get_supervisor_runtime_config(
-) -> SupervisorRuntimeConfig:
-    model = get_model_for_role(
-        LLMRole.SUPERVISOR
-    )
+def get_supervisor_runtime_config() -> SupervisorRuntimeConfig:
+    model = get_model_for_role(LLMRole.SUPERVISOR)
 
     return SupervisorRuntimeConfig(
         model=model,
@@ -122,16 +115,11 @@ def get_supervisor_runtime_config(
 
 def get_gemini_api_key() -> str:
     api_key = str(
-        os.getenv("GEMINI_API_KEY")
-        or os.getenv("GOOGLE_API_KEY")
-        or ""
+        os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or ""
     ).strip()
 
     if not api_key:
-        raise RuntimeError(
-            "GEMINI_API_KEY ou GOOGLE_API_KEY "
-            "não configurada."
-        )
+        raise RuntimeError("GEMINI_API_KEY ou GOOGLE_API_KEY não configurada.")
 
     return api_key
 

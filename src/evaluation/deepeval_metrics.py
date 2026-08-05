@@ -14,9 +14,7 @@ from src.evaluation.deepeval_integration import (
     DeepEvalCasePayload,
 )
 
-_METRIC_ID_PATTERN = re.compile(
-    r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
-)
+_METRIC_ID_PATTERN = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$")
 
 
 class MetricRegistryError(RuntimeError):
@@ -93,76 +91,43 @@ class MetricDefinition:
     criteria: str | None = None
     strict_mode: bool = False
     enabled: bool = True
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         metric_id = self.metric_id.strip().casefold()
         display_name = self.display_name.strip()
         description = self.description.strip()
 
-        if not _METRIC_ID_PATTERN.fullmatch(
-            metric_id
-        ):
+        if not _METRIC_ID_PATTERN.fullmatch(metric_id):
             raise ValueError(
-                "metric_id inválido. Use letras minúsculas, "
-                "números e hífens."
+                "metric_id inválido. Use letras minúsculas, números e hífens."
             )
 
         if not display_name:
-            raise ValueError(
-                "display_name não pode ser vazio."
-            )
+            raise ValueError("display_name não pode ser vazio.")
 
         if not description:
-            raise ValueError(
-                "description não pode ser vazia."
-            )
+            raise ValueError("description não pode ser vazia.")
 
-        if self.threshold is not None and not (
-            0.0 <= float(self.threshold) <= 1.0
-        ):
-            raise ValueError(
-                "threshold deve estar entre 0 e 1."
-            )
+        if self.threshold is not None and not (0.0 <= float(self.threshold) <= 1.0):
+            raise ValueError("threshold deve estar entre 0 e 1.")
 
-        required_fields = tuple(
-            dict.fromkeys(self.required_fields)
-        )
+        required_fields = tuple(dict.fromkeys(self.required_fields))
 
-        categories = _normalize_categories(
-            self.categories
-        )
+        categories = _normalize_categories(self.categories)
 
-        deepeval_class_name = _optional_text(
-            self.deepeval_class_name
-        )
+        deepeval_class_name = _optional_text(self.deepeval_class_name)
 
-        criteria = _optional_text(
-            self.criteria
-        )
+        criteria = _optional_text(self.criteria)
 
-        if (
-            self.execution_mode
-            == MetricExecutionMode.LIVE_OPT_IN
-            and self.kind
-            not in {
-                MetricKind.DEEPEVAL,
-                MetricKind.GEVAL,
-            }
-        ):
-            raise ValueError(
-                "Métricas live devem ser DEEPEVAL ou GEVAL."
-            )
+        if self.execution_mode == MetricExecutionMode.LIVE_OPT_IN and self.kind not in {
+            MetricKind.DEEPEVAL,
+            MetricKind.GEVAL,
+        }:
+            raise ValueError("Métricas live devem ser DEEPEVAL ou GEVAL.")
 
-        if (
-            self.kind == MetricKind.GEVAL
-            and criteria is None
-        ):
-            raise ValueError(
-                "Métricas GEVAL exigem criteria."
-            )
+        if self.kind == MetricKind.GEVAL and criteria is None:
+            raise ValueError("Métricas GEVAL exigem criteria.")
 
         if (
             self.kind
@@ -172,10 +137,7 @@ class MetricDefinition:
             }
             and deepeval_class_name is None
         ):
-            raise ValueError(
-                "Métricas DeepEval exigem "
-                "deepeval_class_name."
-            )
+            raise ValueError("Métricas DeepEval exigem deepeval_class_name.")
 
         object.__setattr__(
             self,
@@ -215,24 +177,16 @@ class MetricDefinition:
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
     @property
     def is_live(self) -> bool:
-        return (
-            self.execution_mode
-            == MetricExecutionMode.LIVE_OPT_IN
-        )
+        return self.execution_mode == MetricExecutionMode.LIVE_OPT_IN
 
     @property
     def is_local(self) -> bool:
-        return (
-            self.execution_mode
-            == MetricExecutionMode.LOCAL
-        )
+        return self.execution_mode == MetricExecutionMode.LOCAL
 
     @property
     def is_llm_judge(self) -> bool:
@@ -247,10 +201,7 @@ class MetricDefinition:
     ) -> bool:
         normalized = category.strip().casefold()
 
-        return (
-            not self.categories
-            or normalized in self.categories
-        )
+        return not self.categories or normalized in self.categories
 
     def validate_payload(
         self,
@@ -262,14 +213,10 @@ class MetricDefinition:
         )
 
         if missing:
-            rendered = ", ".join(
-                field.value
-                for field in missing
-            )
+            rendered = ", ".join(field.value for field in missing)
 
             raise MetricInputValidationError(
-                f"A métrica {self.metric_id!r} requer: "
-                f"{rendered}."
+                f"A métrica {self.metric_id!r} requer: {rendered}."
             )
 
 
@@ -282,26 +229,18 @@ class MetricProfile:
     metric_ids: tuple[str, ...]
     description: str
     enabled: bool = True
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         profile_id = self.profile_id.strip().casefold()
         category = self.category.strip().casefold()
         description = self.description.strip()
 
-        if not _METRIC_ID_PATTERN.fullmatch(
-            profile_id
-        ):
-            raise ValueError(
-                "profile_id inválido."
-            )
+        if not _METRIC_ID_PATTERN.fullmatch(profile_id):
+            raise ValueError("profile_id inválido.")
 
         if not category:
-            raise ValueError(
-                "category não pode ser vazia."
-            )
+            raise ValueError("category não pode ser vazia.")
 
         metric_ids = tuple(
             dict.fromkeys(
@@ -312,24 +251,14 @@ class MetricProfile:
         )
 
         if not metric_ids:
-            raise ValueError(
-                "MetricProfile precisa de pelo menos "
-                "uma métrica."
-            )
+            raise ValueError("MetricProfile precisa de pelo menos uma métrica.")
 
         for metric_id in metric_ids:
-            if not _METRIC_ID_PATTERN.fullmatch(
-                metric_id
-            ):
-                raise ValueError(
-                    f"metric_id inválido no perfil: "
-                    f"{metric_id!r}."
-                )
+            if not _METRIC_ID_PATTERN.fullmatch(metric_id):
+                raise ValueError(f"metric_id inválido no perfil: {metric_id!r}.")
 
         if not description:
-            raise ValueError(
-                "description não pode ser vazia."
-            )
+            raise ValueError("description não pode ser vazia.")
 
         object.__setattr__(
             self,
@@ -354,9 +283,7 @@ class MetricProfile:
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
 
@@ -372,30 +299,19 @@ class MetricSelection:
 
     @property
     def metric_ids(self) -> tuple[str, ...]:
-        return tuple(
-            metric.metric_id
-            for metric in self.metrics
-        )
+        return tuple(metric.metric_id for metric in self.metrics)
 
     @property
     def local_metrics(
         self,
     ) -> tuple[MetricDefinition, ...]:
-        return tuple(
-            metric
-            for metric in self.metrics
-            if metric.is_local
-        )
+        return tuple(metric for metric in self.metrics if metric.is_local)
 
     @property
     def live_metrics(
         self,
     ) -> tuple[MetricDefinition, ...]:
-        return tuple(
-            metric
-            for metric in self.metrics
-            if metric.is_live
-        )
+        return tuple(metric for metric in self.metrics if metric.is_live)
 
 
 class MetricRegistry:
@@ -408,12 +324,8 @@ class MetricRegistry:
 
     def __init__(
         self,
-        metrics: Iterable[
-            MetricDefinition
-        ] = (),
-        profiles: Iterable[
-            MetricProfile
-        ] = (),
+        metrics: Iterable[MetricDefinition] = (),
+        profiles: Iterable[MetricProfile] = (),
     ) -> None:
         self._metrics: dict[
             str,
@@ -445,14 +357,8 @@ class MetricRegistry:
         *,
         replace_existing: bool = False,
     ) -> None:
-        if (
-            metric.metric_id in self._metrics
-            and not replace_existing
-        ):
-            raise MetricRegistryError(
-                f"Métrica {metric.metric_id!r} "
-                "já registrada."
-            )
+        if metric.metric_id in self._metrics and not replace_existing:
+            raise MetricRegistryError(f"Métrica {metric.metric_id!r} já registrada.")
 
         self._metrics[metric.metric_id] = metric
 
@@ -470,29 +376,17 @@ class MetricRegistry:
 
         if missing_metrics:
             raise MetricRegistryError(
-                "Perfil referencia métricas não "
-                f"registradas: {missing_metrics}."
+                f"Perfil referencia métricas não registradas: {missing_metrics}."
             )
 
-        if (
-            profile.profile_id in self._profiles
-            and not replace_existing
-        ):
-            raise MetricRegistryError(
-                f"Perfil {profile.profile_id!r} "
-                "já registrado."
-            )
+        if profile.profile_id in self._profiles and not replace_existing:
+            raise MetricRegistryError(f"Perfil {profile.profile_id!r} já registrado.")
 
-        existing_profile_id = (
-            self._profiles_by_category.get(
-                profile.category
-            )
-        )
+        existing_profile_id = self._profiles_by_category.get(profile.category)
 
         if (
             existing_profile_id is not None
-            and existing_profile_id
-            != profile.profile_id
+            and existing_profile_id != profile.profile_id
             and not replace_existing
         ):
             raise MetricRegistryError(
@@ -504,21 +398,16 @@ class MetricRegistry:
         if (
             replace_existing
             and existing_profile_id is not None
-            and existing_profile_id
-            != profile.profile_id
+            and existing_profile_id != profile.profile_id
         ):
             self._profiles.pop(
                 existing_profile_id,
                 None,
             )
 
-        self._profiles[
-            profile.profile_id
-        ] = profile
+        self._profiles[profile.profile_id] = profile
 
-        self._profiles_by_category[
-            profile.category
-        ] = profile.profile_id
+        self._profiles_by_category[profile.category] = profile.profile_id
 
     def get(
         self,
@@ -530,8 +419,7 @@ class MetricRegistry:
             return self._metrics[normalized]
         except KeyError as exception:
             raise MetricNotFoundError(
-                f"Métrica {normalized!r} "
-                "não registrada."
+                f"Métrica {normalized!r} não registrada."
             ) from exception
 
     def get_profile(
@@ -544,8 +432,7 @@ class MetricRegistry:
             return self._profiles[normalized]
         except KeyError as exception:
             raise MetricProfileNotFoundError(
-                f"Perfil {normalized!r} "
-                "não registrado."
+                f"Perfil {normalized!r} não registrado."
             ) from exception
 
     def profile_for_category(
@@ -554,21 +441,14 @@ class MetricRegistry:
     ) -> MetricProfile:
         normalized = category.strip().casefold()
 
-        profile_id = self._profiles_by_category.get(
-            normalized
-        )
+        profile_id = self._profiles_by_category.get(normalized)
 
         if profile_id is None:
-            profile_id = (
-                self._profiles_by_category.get(
-                    "default"
-                )
-            )
+            profile_id = self._profiles_by_category.get("default")
 
         if profile_id is None:
             raise MetricProfileNotFoundError(
-                "Nenhum perfil registrado para "
-                f"a categoria {normalized!r}."
+                f"Nenhum perfil registrado para a categoria {normalized!r}."
             )
 
         return self.get_profile(profile_id)
@@ -580,9 +460,7 @@ class MetricRegistry:
         include_live: bool = False,
         include_disabled: bool = False,
     ) -> tuple[MetricDefinition, ...]:
-        profile = self.profile_for_category(
-            category
-        )
+        profile = self.profile_for_category(category)
 
         if not profile.enabled and not include_disabled:
             return ()
@@ -609,9 +487,7 @@ class MetricRegistry:
         include_live: bool = False,
         include_disabled: bool = False,
     ) -> MetricSelection:
-        profile = self.profile_for_category(
-            case.category
-        )
+        profile = self.profile_for_category(case.category)
 
         metrics = self.for_category(
             case.category,
@@ -658,20 +534,12 @@ class MetricRegistry:
     def local_metrics(
         self,
     ) -> tuple[MetricDefinition, ...]:
-        return tuple(
-            metric
-            for metric in self.all_metrics()
-            if metric.is_local
-        )
+        return tuple(metric for metric in self.all_metrics() if metric.is_local)
 
     def live_metrics(
         self,
     ) -> tuple[MetricDefinition, ...]:
-        return tuple(
-            metric
-            for metric in self.all_metrics()
-            if metric.is_live
-        )
+        return tuple(metric for metric in self.all_metrics() if metric.is_live)
 
     def validate_selection(
         self,
@@ -704,15 +572,11 @@ def _normalize_categories(
             bytearray,
         ),
     ):
-        raise ValueError(
-            "categories deve ser uma sequência."
-        )
+        raise ValueError("categories deve ser uma sequência.")
 
     return tuple(
         dict.fromkeys(
-            category.strip().casefold()
-            for category in categories
-            if category.strip()
+            category.strip().casefold() for category in categories if category.strip()
         )
     )
 
@@ -724,43 +588,28 @@ def required_payload_fields_missing(
     missing: list[MetricInputField] = []
 
     for field_name in metric.required_fields:
-        if (
-            field_name == MetricInputField.INPUT
-            and not payload.input_text
-        ):
+        if field_name == MetricInputField.INPUT and not payload.input_text:
+            missing.append(field_name)
+
+        elif field_name == MetricInputField.ACTUAL_OUTPUT and not payload.actual_output:
             missing.append(field_name)
 
         elif (
-            field_name
-            == MetricInputField.ACTUAL_OUTPUT
-            and not payload.actual_output
-        ):
-            missing.append(field_name)
-
-        elif (
-            field_name
-            == MetricInputField.EXPECTED_OUTPUT
+            field_name == MetricInputField.EXPECTED_OUTPUT
             and not payload.expected_output
         ):
             missing.append(field_name)
 
-        elif (
-            field_name == MetricInputField.CONTEXT
-            and not payload.context
-        ):
+        elif field_name == MetricInputField.CONTEXT and not payload.context:
             missing.append(field_name)
 
         elif (
-            field_name
-            == MetricInputField.RETRIEVAL_CONTEXT
+            field_name == MetricInputField.RETRIEVAL_CONTEXT
             and not payload.retrieval_context
         ):
             missing.append(field_name)
 
-        elif (
-            field_name == MetricInputField.METADATA
-            and not payload.metadata
-        ):
+        elif field_name == MetricInputField.METADATA and not payload.metadata:
             missing.append(field_name)
 
     return tuple(missing)
@@ -787,99 +636,71 @@ def build_default_metrics() -> tuple[
         MetricDefinition(
             metric_id="expected-terms",
             display_name="Expected Terms",
-            description=(
-                "Verifica presença dos termos obrigatórios."
-            ),
+            description=("Verifica presença dos termos obrigatórios."),
             kind=MetricKind.DETERMINISTIC,
             execution_mode=MetricExecutionMode.LOCAL,
             threshold=1.0,
-            required_fields=(
-                MetricInputField.ACTUAL_OUTPUT,
-            ),
+            required_fields=(MetricInputField.ACTUAL_OUTPUT,),
         ),
         MetricDefinition(
             metric_id="forbidden-terms",
             display_name="Forbidden Terms",
-            description=(
-                "Bloqueia termos proibidos ou arriscados."
-            ),
+            description=("Bloqueia termos proibidos ou arriscados."),
             kind=MetricKind.POLICY,
             execution_mode=MetricExecutionMode.LOCAL,
             threshold=1.0,
-            required_fields=(
-                MetricInputField.ACTUAL_OUTPUT,
-            ),
+            required_fields=(MetricInputField.ACTUAL_OUTPUT,),
         ),
         MetricDefinition(
             metric_id="retrieval-contract",
             display_name="Retrieval Contract",
-            description=(
-                "Valida documentos e termos recuperados."
-            ),
+            description=("Valida documentos e termos recuperados."),
             kind=MetricKind.DETERMINISTIC,
             execution_mode=MetricExecutionMode.LOCAL,
             threshold=1.0,
-            required_fields=(
-                MetricInputField.RETRIEVAL_CONTEXT,
-            ),
+            required_fields=(MetricInputField.RETRIEVAL_CONTEXT,),
         ),
         MetricDefinition(
             metric_id="latency-budget",
             display_name="Latency Budget",
-            description=(
-                "Valida o limite de latência definido no caso."
-            ),
+            description=("Valida o limite de latência definido no caso."),
             kind=MetricKind.DETERMINISTIC,
             execution_mode=MetricExecutionMode.LOCAL,
             threshold=1.0,
-            required_fields=(
-                MetricInputField.METADATA,
-            ),
+            required_fields=(MetricInputField.METADATA,),
         ),
         MetricDefinition(
             metric_id="cost-budget",
             display_name="Cost Budget",
-            description=(
-                "Valida o custo estimado da execução."
-            ),
+            description=("Valida o custo estimado da execução."),
             kind=MetricKind.DETERMINISTIC,
             execution_mode=MetricExecutionMode.LOCAL,
             threshold=1.0,
-            required_fields=(
-                MetricInputField.METADATA,
-            ),
+            required_fields=(MetricInputField.METADATA,),
         ),
         MetricDefinition(
             metric_id="answer-relevancy",
             display_name="Answer Relevancy",
             description=(
-                "Avalia se a resposta atende diretamente "
-                "à entrada apresentada."
+                "Avalia se a resposta atende diretamente à entrada apresentada."
             ),
             kind=MetricKind.DEEPEVAL,
-            execution_mode=(
-                MetricExecutionMode.LIVE_OPT_IN
-            ),
+            execution_mode=(MetricExecutionMode.LIVE_OPT_IN),
             threshold=0.80,
             required_fields=(
                 MetricInputField.INPUT,
                 MetricInputField.ACTUAL_OUTPUT,
             ),
-            deepeval_class_name=(
-                "AnswerRelevancyMetric"
-            ),
+            deepeval_class_name=("AnswerRelevancyMetric"),
         ),
         MetricDefinition(
             metric_id="faithfulness",
             display_name="Faithfulness",
             description=(
-                "Avalia se a resposta está fundamentada "
-                "no contexto recuperado."
+                "Avalia se a resposta está fundamentada no contexto recuperado."
             ),
             kind=MetricKind.DEEPEVAL,
-            execution_mode=(
-                MetricExecutionMode.LIVE_OPT_IN
-            ),
+            execution_mode=(MetricExecutionMode.LIVE_OPT_IN),
             threshold=0.80,
             required_fields=(
                 MetricInputField.INPUT,
@@ -890,21 +711,14 @@ def build_default_metrics() -> tuple[
                 "rag",
                 "emergency-fund",
             ),
-            deepeval_class_name=(
-                "FaithfulnessMetric"
-            ),
+            deepeval_class_name=("FaithfulnessMetric"),
         ),
         MetricDefinition(
             metric_id="contextual-relevancy",
             display_name="Contextual Relevancy",
-            description=(
-                "Avalia a relevância do conteúdo recuperado "
-                "para a entrada."
-            ),
+            description=("Avalia a relevância do conteúdo recuperado para a entrada."),
             kind=MetricKind.DEEPEVAL,
-            execution_mode=(
-                MetricExecutionMode.LIVE_OPT_IN
-            ),
+            execution_mode=(MetricExecutionMode.LIVE_OPT_IN),
             threshold=0.75,
             required_fields=(
                 MetricInputField.INPUT,
@@ -914,9 +728,7 @@ def build_default_metrics() -> tuple[
                 "rag",
                 "emergency-fund",
             ),
-            deepeval_class_name=(
-                "ContextualRelevancyMetric"
-            ),
+            deepeval_class_name=("ContextualRelevancyMetric"),
         ),
         MetricDefinition(
             metric_id="financial-quality",
@@ -926,9 +738,7 @@ def build_default_metrics() -> tuple[
                 "caráter educativo da orientação financeira."
             ),
             kind=MetricKind.GEVAL,
-            execution_mode=(
-                MetricExecutionMode.LIVE_OPT_IN
-            ),
+            execution_mode=(MetricExecutionMode.LIVE_OPT_IN),
             threshold=0.80,
             required_fields=(
                 MetricInputField.INPUT,
@@ -950,9 +760,7 @@ def build_default_metrics() -> tuple[
                 "recomendações financeiras inseguras."
             ),
             kind=MetricKind.GEVAL,
-            execution_mode=(
-                MetricExecutionMode.LIVE_OPT_IN
-            ),
+            execution_mode=(MetricExecutionMode.LIVE_OPT_IN),
             threshold=0.90,
             required_fields=(
                 MetricInputField.INPUT,
@@ -971,22 +779,17 @@ def build_default_metrics() -> tuple[
             metric_id="conversation-consistency",
             display_name="Conversation Consistency",
             description=(
-                "Avalia a coerência da resposta com o "
-                "histórico conversacional."
+                "Avalia a coerência da resposta com o histórico conversacional."
             ),
             kind=MetricKind.GEVAL,
-            execution_mode=(
-                MetricExecutionMode.LIVE_OPT_IN
-            ),
+            execution_mode=(MetricExecutionMode.LIVE_OPT_IN),
             threshold=0.80,
             required_fields=(
                 MetricInputField.INPUT,
                 MetricInputField.ACTUAL_OUTPUT,
                 MetricInputField.CONTEXT,
             ),
-            categories=(
-                "conversation",
-            ),
+            categories=("conversation",),
             deepeval_class_name="GEval",
             criteria=(
                 "Avalie se a resposta mantém consistência "
@@ -997,16 +800,11 @@ def build_default_metrics() -> tuple[
         MetricDefinition(
             metric_id="human-review-policy",
             display_name="Human Review Policy",
-            description=(
-                "Valida encaminhamento e status de revisão "
-                "humana."
-            ),
+            description=("Valida encaminhamento e status de revisão humana."),
             kind=MetricKind.POLICY,
             execution_mode=MetricExecutionMode.LOCAL,
             threshold=1.0,
-            categories=(
-                "human-review",
-            ),
+            categories=("human-review",),
         ),
     )
 
@@ -1027,10 +825,7 @@ def build_default_profiles() -> tuple[
                 "forbidden-terms",
                 "answer-relevancy",
             ),
-            description=(
-                "Perfil padrão para categorias sem "
-                "configuração específica."
-            ),
+            description=("Perfil padrão para categorias sem configuração específica."),
         ),
         MetricProfile(
             profile_id="financial-profile",
@@ -1045,9 +840,7 @@ def build_default_profiles() -> tuple[
                 "financial-quality",
                 "financial-safety",
             ),
-            description=(
-                "Diagnóstico financeiro completo."
-            ),
+            description=("Diagnóstico financeiro completo."),
         ),
         MetricProfile(
             profile_id="budget-profile",
@@ -1074,9 +867,7 @@ def build_default_profiles() -> tuple[
                 "financial-quality",
                 "financial-safety",
             ),
-            description=(
-                "Avaliação de organização de dívidas."
-            ),
+            description=("Avaliação de organização de dívidas."),
         ),
         MetricProfile(
             profile_id="emergency-fund-profile",
@@ -1092,9 +883,7 @@ def build_default_profiles() -> tuple[
                 "financial-quality",
                 "financial-safety",
             ),
-            description=(
-                "Avaliação de reserva de emergência."
-            ),
+            description=("Avaliação de reserva de emergência."),
         ),
         MetricProfile(
             profile_id="rag-profile",
@@ -1118,9 +907,7 @@ def build_default_profiles() -> tuple[
                 "forbidden-terms",
                 "latency-budget",
             ),
-            description=(
-                "Avaliação determinística de roteamento."
-            ),
+            description=("Avaliação determinística de roteamento."),
         ),
         MetricProfile(
             profile_id="safety-profile",
@@ -1132,9 +919,7 @@ def build_default_profiles() -> tuple[
                 "answer-relevancy",
                 "financial-safety",
             ),
-            description=(
-                "Avaliação de segurança financeira."
-            ),
+            description=("Avaliação de segurança financeira."),
         ),
         MetricProfile(
             profile_id="conversation-profile",
@@ -1147,9 +932,7 @@ def build_default_profiles() -> tuple[
                 "conversation-consistency",
                 "financial-safety",
             ),
-            description=(
-                "Avaliação de conversas multi-turno."
-            ),
+            description=("Avaliação de conversas multi-turno."),
         ),
         MetricProfile(
             profile_id="human-review-profile",
@@ -1159,9 +942,7 @@ def build_default_profiles() -> tuple[
                 "human-review-policy",
                 "forbidden-terms",
             ),
-            description=(
-                "Avaliação local de casos HITL."
-            ),
+            description=("Avaliação local de casos HITL."),
         ),
     )
 

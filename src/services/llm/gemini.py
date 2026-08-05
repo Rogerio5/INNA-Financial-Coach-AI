@@ -17,6 +17,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 from typing import Any
+
 try:
     from observability.llm_tracking import (
         executar_generate_content_observado,
@@ -68,10 +69,7 @@ def obter_api_key_gemini() -> str:
     """
     carregar_variaveis_ambiente()
 
-    api_key = (
-        os.getenv("GEMINI_API_KEY")
-        or os.getenv("GOOGLE_API_KEY")
-    )
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
     if not api_key:
         raise GeminiTextConfigurationError(
@@ -89,13 +87,10 @@ def criar_cliente_gemini():
         from google import genai
     except ImportError as exc:
         raise GeminiTextConfigurationError(
-            "Pacote google-genai não instalado. "
-            "Execute: pip install -U google-genai"
+            "Pacote google-genai não instalado. Execute: pip install -U google-genai"
         ) from exc
 
-    return genai.Client(
-        api_key=obter_api_key_gemini()
-    )
+    return genai.Client(api_key=obter_api_key_gemini())
 
 
 def _normalizar_prompt(prompt: Any) -> str:
@@ -105,9 +100,7 @@ def _normalizar_prompt(prompt: Any) -> str:
     prompt_normalizado = str(prompt or "").strip()
 
     if not prompt_normalizado:
-        raise ValueError(
-            "Não é possível gerar resposta com prompt vazio."
-        )
+        raise ValueError("Não é possível gerar resposta com prompt vazio.")
 
     return prompt_normalizado
 
@@ -180,19 +173,14 @@ def gerar_texto_gemini(
     try:
         from google.genai import types
 
-        modelo_resolvido = (
-            str(modelo or "").strip()
-            or get_model_for_role(role)
-        )
+        modelo_resolvido = str(modelo or "").strip() or get_model_for_role(role)
 
         client = criar_cliente_gemini()
 
         config = types.GenerateContentConfig(
             temperature=temperatura,
             max_output_tokens=max_tokens,
-            thinking_config=types.ThinkingConfig(
-                thinking_budget=0
-            ),
+            thinking_config=types.ThinkingConfig(thinking_budget=0),
         )
 
         response = executar_generate_content_observado(
@@ -227,8 +215,7 @@ def gerar_texto_gemini(
 
     except Exception as exc:
         raise GeminiTextGenerationError(
-            "Não foi possível gerar a resposta Gemini: "
-            f"{type(exc).__name__}: {exc}"
+            f"Não foi possível gerar a resposta Gemini: {type(exc).__name__}: {exc}"
         ) from exc
 
 
@@ -247,9 +234,7 @@ def testar_servico_gemini() -> dict:
             "ok": True,
             "message": "Serviço textual Gemini validado.",
             "response": resposta,
-            "model": get_model_for_role(
-                LLMRole.DEFAULT
-            ),
+            "model": get_model_for_role(LLMRole.DEFAULT),
             "sdk": "google-genai",
         }
 
@@ -258,9 +243,7 @@ def testar_servico_gemini() -> dict:
             "ok": False,
             "message": str(exc),
             "response": "",
-            "model": get_model_for_role(
-                LLMRole.DEFAULT
-            ),
+            "model": get_model_for_role(LLMRole.DEFAULT),
             "sdk": "google-genai",
         }
 

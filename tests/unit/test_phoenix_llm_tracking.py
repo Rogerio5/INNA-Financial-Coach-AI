@@ -24,9 +24,7 @@ def fake_traced_operation(
     span = FakeSpan()
     span.attributes.update(attributes or {})
     span.attributes["test.span_name"] = name
-    span.attributes["test.instrumentation"] = (
-        instrumentation_name or ""
-    )
+    span.attributes["test.instrumentation"] = instrumentation_name or ""
 
     fake_traced_operation.last_span = span
 
@@ -92,28 +90,16 @@ def test_successful_llm_call_creates_sanitized_span(
     assert span.attributes["llm.model_name"] == "gemini-test"
     assert span.attributes["inna.llm.operation"] == "generate_content"
     assert span.attributes["llm.provider"] == "google"
-    assert (
-        span.attributes["openinference.span.kind"]
-        == "LLM"
-    )
+    assert span.attributes["openinference.span.kind"] == "LLM"
     assert span.attributes["inna.llm.origin"] == "unit-test"
     assert span.attributes["llm.token_count.prompt"] == 12
     assert span.attributes["llm.token_count.completion"] == 8
     assert span.attributes["llm.token_count.total"] == 20
     assert span.attributes["llm.success"] is True
 
-    assert (
-        span.attributes["enduser.id_hash"]
-        != "usuario-real"
-    )
-    assert (
-        span.attributes["inna.trace_id_hash"]
-        != "trace-real"
-    )
-    assert (
-        span.attributes["inna.request_id_hash"]
-        != "request-real"
-    )
+    assert span.attributes["enduser.id_hash"] != "usuario-real"
+    assert span.attributes["inna.trace_id_hash"] != "trace-real"
+    assert span.attributes["inna.request_id_hash"] != "request-real"
 
     assert "prompt" not in span.attributes
     assert "response" not in span.attributes
@@ -127,9 +113,7 @@ def test_failed_llm_call_records_error_type_only(
     telemetry_mocks,
 ):
     def failing_call():
-        raise RuntimeError(
-            "mensagem privada que não deve ir ao Phoenix"
-        )
+        raise RuntimeError("mensagem privada que não deve ir ao Phoenix")
 
     with pytest.raises(RuntimeError):
         llm_tracking.executar_llm_observado(
@@ -146,8 +130,7 @@ def test_failed_llm_call_records_error_type_only(
     assert span.attributes["llm.error_type"] == "RuntimeError"
 
     assert not any(
-        "mensagem privada" in str(value)
-        for value in span.attributes.values()
+        "mensagem privada" in str(value) for value in span.attributes.values()
     )
 
     assert len(telemetry_mocks) == 1
@@ -163,17 +146,13 @@ def test_generate_content_does_not_export_contents(
             assert kwargs["contents"] == "pergunta confidencial"
             return SimpleNamespace(text="resposta confidencial")
 
-    client = SimpleNamespace(
-        models=FakeModels()
-    )
+    client = SimpleNamespace(models=FakeModels())
 
-    result = (
-        llm_tracking.executar_generate_content_observado(
-            client,
-            modelo="gemini-test",
-            contents="pergunta confidencial",
-            origem="unit-test",
-        )
+    result = llm_tracking.executar_generate_content_observado(
+        client,
+        modelo="gemini-test",
+        contents="pergunta confidencial",
+        origem="unit-test",
     )
 
     assert result.text == "resposta confidencial"

@@ -36,9 +36,7 @@ DICT_CATALOGS = {
     "notificacoes": LLM_NOTIFICATION_TEXTS,
     "eventos_resend": LLM_RESEND_EVENT_TEXTS,
     "secao_alertas": LLM_ALERT_SECTION_TEXTS,
-    "secao_alertas_dinamica": (
-        LLM_ALERT_SECTION_DYNAMIC_TEXTS
-    ),
+    "secao_alertas_dinamica": (LLM_ALERT_SECTION_DYNAMIC_TEXTS),
     "visual_alertas": LLM_COST_ALERT_VISUAL_TEXTS,
     "conteudo_alertas": LLM_ALERT_CONTENT_TEXTS,
     "pagina": LLM_COST_PAGE_TEXTS,
@@ -51,22 +49,15 @@ def test_llm_cost_catalogs_have_all_languages():
     for catalog in DICT_CATALOGS.values():
         assert set(catalog) == LANGUAGES
 
-    assert (
-        set(LLM_ALERT_UNKNOWN_ERROR_TEXTS)
-        == LANGUAGES
-    )
+    assert set(LLM_ALERT_UNKNOWN_ERROR_TEXTS) == LANGUAGES
 
 
 def test_llm_cost_catalog_contracts_are_complete():
     for catalog_name, catalog in DICT_CATALOGS.items():
-        expected_keys = set(
-            catalog["en_us"]
-        )
+        expected_keys = set(catalog["en_us"])
 
         for language in LANGUAGES:
-            assert set(
-                catalog[language]
-            ) == expected_keys, (
+            assert set(catalog[language]) == expected_keys, (
                 catalog_name,
                 language,
             )
@@ -119,22 +110,16 @@ def test_llm_cost_catalog_texts_are_non_empty():
 
 def test_unknown_error_catalog_is_complete():
     for language in LANGUAGES:
-        value = LLM_ALERT_UNKNOWN_ERROR_TEXTS[
-            language
-        ]
+        value = LLM_ALERT_UNKNOWN_ERROR_TEXTS[language]
 
         assert isinstance(value, str)
         assert value.strip()
 
     assert (
-        LLM_ALERT_UNKNOWN_ERROR_TEXTS["en_gb"]
-        == LLM_ALERT_UNKNOWN_ERROR_TEXTS["en_us"]
+        LLM_ALERT_UNKNOWN_ERROR_TEXTS["en_gb"] == LLM_ALERT_UNKNOWN_ERROR_TEXTS["en_us"]
     )
 
-    assert (
-        LLM_ALERT_UNKNOWN_ERROR_TEXTS["ch"]
-        == LLM_ALERT_UNKNOWN_ERROR_TEXTS["de"]
-    )
+    assert LLM_ALERT_UNKNOWN_ERROR_TEXTS["ch"] == LLM_ALERT_UNKNOWN_ERROR_TEXTS["de"]
 
 
 def test_llm_cost_titles_follow_selector():
@@ -149,27 +134,16 @@ def test_llm_cost_titles_follow_selector():
         "ro": "💰 Centrul costurilor IA",
         "ua": "💰 Центр витрат ШІ",
         "ru": "💰 Центр затрат ИИ",
-        "sa": (
-            "💰 مركز تكاليف الذكاء الاصطناعي"
-        ),
+        "sa": ("💰 مركز تكاليف الذكاء الاصطناعي"),
         "ch": "💰 KI-Kostenzentrale",
     }
 
     for language, expected in expected_titles.items():
-        assert (
-            LLM_COST_PAGE_TEXTS[
-                language
-            ]["title"]
-            == expected
-        )
+        assert LLM_COST_PAGE_TEXTS[language]["title"] == expected
 
 
 def test_llm_cost_captions_are_localized():
-    english_caption = (
-        LLM_COST_PAGE_TEXTS[
-            "en_us"
-        ]["caption"]
-    )
+    english_caption = LLM_COST_PAGE_TEXTS["en_us"]["caption"]
 
     for language in {
         "pt",
@@ -182,59 +156,25 @@ def test_llm_cost_captions_are_localized():
         "ru",
         "sa",
     }:
-        assert (
-            LLM_COST_PAGE_TEXTS[
-                language
-            ]["caption"]
-            != english_caption
-        )
+        assert LLM_COST_PAGE_TEXTS[language]["caption"] != english_caption
 
 
 def test_ch_follows_german_in_llm_cost_catalogs():
     for catalog_name, catalog in DICT_CATALOGS.items():
-        assert (
-            catalog["ch"]
-            == catalog["de"]
-        ), catalog_name
+        assert catalog["ch"] == catalog["de"], catalog_name
 
 
 def test_italian_database_label_is_native():
-    assert (
-        LLM_ALERT_SECTION_TEXTS[
-            "it"
-        ]["database"]
-        == "Banca dati"
-    )
+    assert LLM_ALERT_SECTION_TEXTS["it"]["database"] == "Banca dati"
 
-    assert (
-        LLM_ALERT_SECTION_DYNAMIC_TEXTS[
-            "it"
-        ]["database"]
-        == "Banca dati"
-    )
+    assert LLM_ALERT_SECTION_DYNAMIC_TEXTS["it"]["database"] == "Banca dati"
 
 
 def test_protected_technical_terms_are_preserved():
-    assert (
-        LLM_TABLE_TEXTS["pt"]["cost_usd"]
-        == "Custo (USD)"
-    )
+    assert LLM_TABLE_TEXTS["pt"]["cost_usd"] == "Custo (USD)"
 
-    assert (
-        LLM_DETAIL_TEXTS["pt"]["trace"]
-        == "Trace"
-    )
+    assert LLM_DETAIL_TEXTS["pt"]["trace"] == "Trace"
 
-    assert (
-        LLM_NOTIFICATION_TEXTS[
-            "pt"
-        ]["message_id"]
-        == "Message ID"
-    )
+    assert LLM_NOTIFICATION_TEXTS["pt"]["message_id"] == "Message ID"
 
-    assert (
-        LLM_RESEND_EVENT_TEXTS[
-            "pt"
-        ]["svix_id"]
-        == "Svix ID"
-    )
+    assert LLM_RESEND_EVENT_TEXTS["pt"]["svix_id"] == "Svix ID"

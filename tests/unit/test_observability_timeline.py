@@ -34,14 +34,10 @@ def test_ordem_das_etapas():
 
 
 def test_todas_etapas_possuem_label():
-    assert set(ETAPAS_TIMELINE) == set(
-        LABELS_ETAPAS
-    )
+    assert set(ETAPAS_TIMELINE) == set(LABELS_ETAPAS)
 
 
-@patch(
-    "src.observability.timeline._conectar_postgres"
-)
+@patch("src.observability.timeline._conectar_postgres")
 def test_etapa_invalida_nao_acessa_banco(
     mock_conectar,
 ):
@@ -56,9 +52,7 @@ def test_etapa_invalida_nao_acessa_banco(
     mock_conectar.assert_not_called()
 
 
-@patch(
-    "src.observability.timeline.registrar_evento_timeline"
-)
+@patch("src.observability.timeline.registrar_evento_timeline")
 def test_executar_etapa_com_sucesso(
     mock_registrar,
 ):
@@ -83,9 +77,7 @@ def test_executar_etapa_com_sucesso(
     mock_registrar.assert_called_once()
 
 
-@patch(
-    "src.observability.timeline.registrar_evento_timeline"
-)
+@patch("src.observability.timeline.registrar_evento_timeline")
 def test_executar_etapa_com_falha_sem_propagar(
     mock_registrar,
 ):
@@ -108,17 +100,13 @@ def test_executar_etapa_com_falha_sem_propagar(
     assert resultado["resultado"] is None
     assert resultado["erro"] == "Erro simulado"
 
-    argumentos_registro = (
-        mock_registrar.call_args.kwargs
-    )
+    argumentos_registro = mock_registrar.call_args.kwargs
 
     assert argumentos_registro["status"] == "falha"
     assert argumentos_registro["erro"] == "Erro simulado"
 
 
-@patch(
-    "src.observability.timeline.registrar_evento_timeline"
-)
+@patch("src.observability.timeline.registrar_evento_timeline")
 def test_falha_no_registro_nao_apaga_resultado(
     mock_registrar,
 ):

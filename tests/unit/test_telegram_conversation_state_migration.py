@@ -4,19 +4,10 @@ import re
 from pathlib import Path
 
 
-ROOT = (
-    Path(__file__)
-    .resolve()
-    .parents[2]
-)
+ROOT = Path(__file__).resolve().parents[2]
 
 MIGRATION_PATH = (
-    ROOT
-    / "migrations"
-    / (
-        "20260719_005_create_"
-        "telegram_conversation_states.sql"
-    )
+    ROOT / "migrations" / ("20260719_005_create_telegram_conversation_states.sql")
 )
 
 
@@ -41,32 +32,20 @@ def test_migration_file_exists():
 def test_migration_is_transactional():
     normalized = _normalized()
 
-    assert normalized.startswith(
-        "begin;"
-    )
+    assert normalized.startswith("begin;")
 
-    assert normalized.endswith(
-        "commit;"
-    )
+    assert normalized.endswith("commit;")
 
-    assert (
-        "set local lock_timeout"
-        in normalized
-    )
+    assert "set local lock_timeout" in normalized
 
-    assert (
-        "set local statement_timeout"
-        in normalized
-    )
+    assert "set local statement_timeout" in normalized
 
 
 def test_creates_expected_table():
     normalized = _normalized()
 
     assert (
-        "create table if not exists "
-        "public.telegram_conversation_states"
-        in normalized
+        "create table if not exists public.telegram_conversation_states" in normalized
     )
 
 
@@ -91,105 +70,57 @@ def test_has_required_columns():
 def test_uses_composite_identity():
     normalized = _normalized()
 
-    assert (
-        "primary key "
-        "( telegram_user_id, chat_id )"
-        in normalized
-    )
+    assert "primary key ( telegram_user_id, chat_id )" in normalized
 
 
 def test_validates_trusted_identifiers():
     normalized = _normalized()
 
-    assert (
-        "telegram_user_id > 0"
-        in normalized
-    )
+    assert "telegram_user_id > 0" in normalized
 
-    assert (
-        "chat_id <> 0"
-        in normalized
-    )
+    assert "chat_id <> 0" in normalized
 
 
 def test_state_must_be_json_object():
     normalized = _normalized()
 
-    assert (
-        "jsonb_typeof(state) = 'object'"
-        in normalized
-    )
+    assert "jsonb_typeof(state) = 'object'" in normalized
 
-    assert (
-        "default '{}'::jsonb"
-        in normalized
-    )
+    assert "default '{}'::jsonb" in normalized
 
 
 def test_language_is_bounded_and_trimmed():
     normalized = _normalized()
 
-    assert (
-        "language = btrim(language)"
-        in normalized
-    )
+    assert "language = btrim(language)" in normalized
 
-    assert (
-        "char_length(language) "
-        "between 2 and 16"
-        in normalized
-    )
+    assert "char_length(language) between 2 and 16" in normalized
 
 
 def test_state_version_supports_optimistic_locking():
     normalized = _normalized()
 
-    assert (
-        "state_version bigint not null "
-        "default 1"
-        in normalized
-    )
+    assert "state_version bigint not null default 1" in normalized
 
-    assert (
-        "state_version >= 1"
-        in normalized
-    )
+    assert "state_version >= 1" in normalized
 
 
 def test_timestamps_and_expiration_are_consistent():
     normalized = _normalized()
 
-    assert (
-        "updated_at >= created_at"
-        in normalized
-    )
+    assert "updated_at >= created_at" in normalized
 
-    assert (
-        "expires_at > updated_at"
-        in normalized
-    )
+    assert "expires_at > updated_at" in normalized
 
 
 def test_has_cleanup_and_monitoring_indexes():
     normalized = _normalized()
 
-    assert (
-        "idx_telegram_conversation_states_"
-        "expires_at"
-        in normalized
-    )
+    assert "idx_telegram_conversation_states_expires_at" in normalized
 
-    assert (
-        "idx_telegram_conversation_states_"
-        "updated_at"
-        in normalized
-    )
+    assert "idx_telegram_conversation_states_updated_at" in normalized
 
-    assert (
-        "on public.telegram_conversation_states "
-        "( expires_at )"
-        in normalized
-    )
+    assert "on public.telegram_conversation_states ( expires_at )" in normalized
 
 
 def test_does_not_store_raw_telegram_update():

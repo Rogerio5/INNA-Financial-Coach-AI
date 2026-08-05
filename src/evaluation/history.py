@@ -21,25 +21,16 @@ class EvaluationHistoryError(RuntimeError):
     """Erro base do histórico de avaliações."""
 
 
-class EvaluationHistorySchemaError(
-    EvaluationHistoryError
-):
+class EvaluationHistorySchemaError(EvaluationHistoryError):
     """O histórico possui estrutura inválida."""
 
 
-class DuplicateHistoryEntryError(
-    EvaluationHistoryError
-):
+class DuplicateHistoryEntryError(EvaluationHistoryError):
     """Já existe uma entrada para a execução."""
 
 
 def _utc_now() -> str:
-    return (
-        datetime.now(UTC)
-        .replace(microsecond=0)
-        .isoformat()
-        .replace("+00:00", "Z")
-    )
+    return datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def _required_text(
@@ -48,9 +39,7 @@ def _required_text(
     field_name: str,
 ) -> str:
     if not isinstance(value, str) or not value.strip():
-        raise EvaluationHistorySchemaError(
-            f"{field_name} deve ser texto não vazio."
-        )
+        raise EvaluationHistorySchemaError(f"{field_name} deve ser texto não vazio.")
 
     return value.strip()
 
@@ -64,9 +53,7 @@ def _required_number(
         value,
         (int, float),
     ):
-        raise EvaluationHistorySchemaError(
-            f"{field_name} deve ser numérico."
-        )
+        raise EvaluationHistorySchemaError(f"{field_name} deve ser numérico.")
 
     return float(value)
 
@@ -80,14 +67,10 @@ def _required_integer(
         value,
         int,
     ):
-        raise EvaluationHistorySchemaError(
-            f"{field_name} deve ser inteiro."
-        )
+        raise EvaluationHistorySchemaError(f"{field_name} deve ser inteiro.")
 
     if value < 0:
-        raise EvaluationHistorySchemaError(
-            f"{field_name} não pode ser negativo."
-        )
+        raise EvaluationHistorySchemaError(f"{field_name} não pode ser negativo.")
 
     return value
 
@@ -98,9 +81,7 @@ def _required_bool(
     field_name: str,
 ) -> bool:
     if not isinstance(value, bool):
-        raise EvaluationHistorySchemaError(
-            f"{field_name} deve ser booleano."
-        )
+        raise EvaluationHistorySchemaError(f"{field_name} deve ser booleano.")
 
     return value
 
@@ -111,9 +92,7 @@ def _required_mapping(
     field_name: str,
 ) -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
-        raise EvaluationHistorySchemaError(
-            f"{field_name} deve ser um objeto."
-        )
+        raise EvaluationHistorySchemaError(f"{field_name} deve ser um objeto.")
 
     return value
 
@@ -124,9 +103,7 @@ def _required_sequence(
     field_name: str,
 ) -> Sequence[Any]:
     if not isinstance(value, list):
-        raise EvaluationHistorySchemaError(
-            f"{field_name} deve ser uma lista."
-        )
+        raise EvaluationHistorySchemaError(f"{field_name} deve ser uma lista.")
 
     return value
 
@@ -143,16 +120,12 @@ class HistoryMetric:
         cls,
         payload: Mapping[str, Any],
     ) -> HistoryMetric:
-        delta = payload.get(
-            "delta_from_baseline"
-        )
+        delta = payload.get("delta_from_baseline")
 
         if delta is not None:
             delta = _required_number(
                 delta,
-                field_name=(
-                    "metrics[].delta_from_baseline"
-                ),
+                field_name=("metrics[].delta_from_baseline"),
             )
 
         score = _required_number(
@@ -162,8 +135,7 @@ class HistoryMetric:
 
         if not 0.0 <= score <= 1.0:
             raise EvaluationHistorySchemaError(
-                "metrics[].average_score deve estar "
-                "entre 0 e 1."
+                "metrics[].average_score deve estar entre 0 e 1."
             )
 
         return cls(
@@ -184,9 +156,7 @@ class HistoryMetric:
             "metric_id": self.metric_id,
             "average_score": self.average_score,
             "status": self.status,
-            "delta_from_baseline": (
-                self.delta_from_baseline
-            ),
+            "delta_from_baseline": (self.delta_from_baseline),
         }
 
 
@@ -209,55 +179,36 @@ class HistoryRagTriad:
 
     def __post_init__(self) -> None:
         if not self.status.strip():
-            raise ValueError(
-                "status da RAG Triad não pode ser vazio."
-            )
+            raise ValueError("status da RAG Triad não pode ser vazio.")
 
-        if self.average_score is not None and not (
-            0.0 <= self.average_score <= 1.0
-        ):
-            raise ValueError(
-                "average_score da RAG Triad deve estar "
-                "entre 0 e 1."
-            )
+        if self.average_score is not None and not (0.0 <= self.average_score <= 1.0):
+            raise ValueError("average_score da RAG Triad deve estar entre 0 e 1.")
 
         if self.total_cases < 0:
-            raise ValueError(
-                "total_cases não pode ser negativo."
-            )
+            raise ValueError("total_cases não pode ser negativo.")
 
         if self.complete_cases < 0:
-            raise ValueError(
-                "complete_cases não pode ser negativo."
-            )
+            raise ValueError("complete_cases não pode ser negativo.")
 
         if self.complete_cases > self.total_cases:
-            raise ValueError(
-                "complete_cases não pode superar "
-                "total_cases."
-            )
+            raise ValueError("complete_cases não pode superar total_cases.")
 
     @classmethod
     def from_dict(
         cls,
         payload: Mapping[str, Any],
     ) -> HistoryRagTriad:
-        average_score = payload.get(
-            "average_score"
-        )
+        average_score = payload.get("average_score")
 
         if average_score is not None:
             average_score = _required_number(
                 average_score,
-                field_name=(
-                    "rag_triad.average_score"
-                ),
+                field_name=("rag_triad.average_score"),
             )
 
             if not 0.0 <= average_score <= 1.0:
                 raise EvaluationHistorySchemaError(
-                    "rag_triad.average_score deve estar "
-                    "entre 0 e 1."
+                    "rag_triad.average_score deve estar entre 0 e 1."
                 )
 
         passed = payload.get("passed")
@@ -273,9 +224,7 @@ class HistoryRagTriad:
                 "failing_metric_ids",
                 [],
             ),
-            field_name=(
-                "rag_triad.failing_metric_ids"
-            ),
+            field_name=("rag_triad.failing_metric_ids"),
         )
 
         failing_metric_ids = tuple(
@@ -283,10 +232,7 @@ class HistoryRagTriad:
                 {
                     _required_text(
                         value,
-                        field_name=(
-                            "rag_triad."
-                            "failing_metric_ids[]"
-                        ),
+                        field_name=("rag_triad.failing_metric_ids[]"),
                     )
                     for value in failing_payload
                 }
@@ -302,19 +248,13 @@ class HistoryRagTriad:
             passed=passed,
             total_cases=_required_integer(
                 payload.get("total_cases"),
-                field_name=(
-                    "rag_triad.total_cases"
-                ),
+                field_name=("rag_triad.total_cases"),
             ),
             complete_cases=_required_integer(
                 payload.get("complete_cases"),
-                field_name=(
-                    "rag_triad.complete_cases"
-                ),
+                field_name=("rag_triad.complete_cases"),
             ),
-            failing_metric_ids=(
-                failing_metric_ids
-            ),
+            failing_metric_ids=(failing_metric_ids),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -323,12 +263,8 @@ class HistoryRagTriad:
             "average_score": self.average_score,
             "passed": self.passed,
             "total_cases": self.total_cases,
-            "complete_cases": (
-                self.complete_cases
-            ),
-            "failing_metric_ids": list(
-                self.failing_metric_ids
-            ),
+            "complete_cases": (self.complete_cases),
+            "failing_metric_ids": list(self.failing_metric_ids),
         }
 
 
@@ -345,9 +281,7 @@ def _case_rag_triad_payload(
     if isinstance(direct, Mapping):
         return direct
 
-    evaluation = case_payload.get(
-        "evaluation"
-    )
+    evaluation = case_payload.get("evaluation")
 
     if not isinstance(evaluation, Mapping):
         return None
@@ -379,9 +313,7 @@ def _aggregate_history_rag_triad(
             field_name=f"cases[{index}]",
         )
 
-        triad = _case_rag_triad_payload(
-            case_payload
-        )
+        triad = _case_rag_triad_payload(case_payload)
 
         if triad is not None:
             triads.append(triad)
@@ -398,30 +330,22 @@ def _aggregate_history_rag_triad(
     for index, triad in enumerate(triads):
         status = _required_text(
             triad.get("status"),
-            field_name=(
-                f"cases[].rag_triad[{index}].status"
-            ),
+            field_name=(f"cases[].rag_triad[{index}].status"),
         ).lower()
 
         statuses.append(status)
 
-        score = triad.get(
-            "aggregate_score"
-        )
+        score = triad.get("aggregate_score")
 
         if score is not None:
             normalized_score = _required_number(
                 score,
-                field_name=(
-                    "cases[].rag_triad."
-                    "aggregate_score"
-                ),
+                field_name=("cases[].rag_triad.aggregate_score"),
             )
 
             if not 0.0 <= normalized_score <= 1.0:
                 raise EvaluationHistorySchemaError(
-                    "RAG Triad aggregate_score deve "
-                    "estar entre 0 e 1."
+                    "RAG Triad aggregate_score deve estar entre 0 e 1."
                 )
 
             scores.append(normalized_score)
@@ -431,23 +355,17 @@ def _aggregate_history_rag_triad(
         if passed is not None:
             passed = _required_bool(
                 passed,
-                field_name=(
-                    "cases[].rag_triad.passed"
-                ),
+                field_name=("cases[].rag_triad.passed"),
             )
 
         passed_values.append(passed)
 
-        is_complete = triad.get(
-            "is_complete"
-        )
+        is_complete = triad.get("is_complete")
 
         if is_complete is not None:
             is_complete = _required_bool(
                 is_complete,
-                field_name=(
-                    "cases[].rag_triad.is_complete"
-                ),
+                field_name=("cases[].rag_triad.is_complete"),
             )
 
             if is_complete:
@@ -460,18 +378,12 @@ def _aggregate_history_rag_triad(
 
         for metric_id in _required_sequence(
             failing,
-            field_name=(
-                "cases[].rag_triad."
-                "failing_metric_ids"
-            ),
+            field_name=("cases[].rag_triad.failing_metric_ids"),
         ):
             failing_metric_ids.add(
                 _required_text(
                     metric_id,
-                    field_name=(
-                        "cases[].rag_triad."
-                        "failing_metric_ids[]"
-                    ),
+                    field_name=("cases[].rag_triad.failing_metric_ids[]"),
                 )
             )
 
@@ -486,38 +398,24 @@ def _aggregate_history_rag_triad(
     )
 
     aggregate_status = next(
-        (
-            candidate
-            for candidate in status_priority
-            if candidate in statuses
-        ),
+        (candidate for candidate in status_priority if candidate in statuses),
         "unavailable",
     )
 
     aggregate_passed: bool | None
 
-    if any(
-        value is False
-        for value in passed_values
-    ):
+    if any(value is False for value in passed_values):
         aggregate_passed = False
     elif (
         passed_values
-        and all(
-            value is True
-            for value in passed_values
-        )
+        and all(value is True for value in passed_values)
         and complete_cases == len(triads)
     ):
         aggregate_passed = True
     else:
         aggregate_passed = None
 
-    average_score = (
-        sum(scores) / len(scores)
-        if scores
-        else None
-    )
+    average_score = sum(scores) / len(scores) if scores else None
 
     return HistoryRagTriad(
         status=aggregate_status,
@@ -525,9 +423,7 @@ def _aggregate_history_rag_triad(
         passed=aggregate_passed,
         total_cases=len(triads),
         complete_cases=complete_cases,
-        failing_metric_ids=tuple(
-            sorted(failing_metric_ids)
-        ),
+        failing_metric_ids=tuple(sorted(failing_metric_ids)),
     )
 
 
@@ -561,9 +457,7 @@ class EvaluationHistoryEntry:
         branch: str = "unknown",
         commit_sha: str = "unknown",
         environment: str = "local",
-        evaluation_mode: str = (
-            "deterministic-synthetic"
-        ),
+        evaluation_mode: str = ("deterministic-synthetic"),
         recorded_at: str | None = None,
     ) -> EvaluationHistoryEntry:
         summary = _required_mapping(
@@ -595,15 +489,12 @@ class EvaluationHistoryEntry:
 
         if comparison is not None:
             comparison_metrics = {
-                metric.metric_id: metric
-                for metric in comparison.metrics
+                metric.metric_id: metric for metric in comparison.metrics
             }
 
         metrics: list[HistoryMetric] = []
 
-        for index, raw_metric in enumerate(
-            metrics_payload
-        ):
+        for index, raw_metric in enumerate(metrics_payload):
             metric = _required_mapping(
                 raw_metric,
                 field_name=f"metrics[{index}]",
@@ -611,21 +502,15 @@ class EvaluationHistoryEntry:
 
             metric_id = _required_text(
                 metric.get("metric_id"),
-                field_name=(
-                    f"metrics[{index}].metric_id"
-                ),
+                field_name=(f"metrics[{index}].metric_id"),
             )
 
             score = _required_number(
                 metric.get("average_score"),
-                field_name=(
-                    f"metrics[{index}].average_score"
-                ),
+                field_name=(f"metrics[{index}].average_score"),
             )
 
-            comparison_metric = (
-                comparison_metrics.get(metric_id)
-            )
+            comparison_metric = comparison_metrics.get(metric_id)
 
             metrics.append(
                 HistoryMetric(
@@ -637,9 +522,7 @@ class EvaluationHistoryEntry:
                         else "not-compared"
                     ),
                     delta_from_baseline=(
-                        comparison_metric.delta
-                        if comparison_metric
-                        else None
+                        comparison_metric.delta if comparison_metric else None
                     ),
                 )
             )
@@ -681,43 +564,27 @@ class EvaluationHistoryEntry:
                 field_name="evaluation_mode",
             ),
             passed=(
-                comparison.passed
-                if comparison is not None
-                else quality_gate_passed
+                comparison.passed if comparison is not None else quality_gate_passed
             ),
-            quality_gate_passed=(
-                quality_gate_passed
-            ),
+            quality_gate_passed=(quality_gate_passed),
             pass_rate=pass_rate,
             case_count=len(cases),
             dataset_count=len(datasets),
             metric_count=len(metrics),
             regression_count=(
-                len(comparison.regressed_metrics)
-                if comparison is not None
-                else 0
+                len(comparison.regressed_metrics) if comparison is not None else 0
             ),
             violation_count=(
-                len(comparison.violations)
-                if comparison is not None
-                else 0
+                len(comparison.violations) if comparison is not None else 0
             ),
-            baseline_id=(
-                comparison.baseline_id
-                if comparison is not None
-                else None
-            ),
+            baseline_id=(comparison.baseline_id if comparison is not None else None),
             metrics=tuple(
                 sorted(
                     metrics,
                     key=lambda item: item.metric_id,
                 )
             ),
-            rag_triad=(
-                _aggregate_history_rag_triad(
-                    cases
-                )
-            ),
+            rag_triad=(_aggregate_history_rag_triad(cases)),
         )
 
     @classmethod
@@ -748,9 +615,7 @@ class EvaluationHistoryEntry:
                 field_name="baseline_id",
             )
 
-        rag_triad_payload = payload.get(
-            "rag_triad"
-        )
+        rag_triad_payload = payload.get("rag_triad")
 
         rag_triad = None
 
@@ -772,12 +637,8 @@ class EvaluationHistoryEntry:
                 field_name="run_reference",
             ),
             report_generated_date=_required_text(
-                payload.get(
-                    "report_generated_date"
-                ),
-                field_name=(
-                    "report_generated_date"
-                ),
+                payload.get("report_generated_date"),
+                field_name=("report_generated_date"),
             ),
             branch=_required_text(
                 payload.get("branch"),
@@ -800,9 +661,7 @@ class EvaluationHistoryEntry:
                 field_name="passed",
             ),
             quality_gate_passed=_required_bool(
-                payload.get(
-                    "quality_gate_passed"
-                ),
+                payload.get("quality_gate_passed"),
                 field_name="quality_gate_passed",
             ),
             pass_rate=_required_number(
@@ -838,38 +697,23 @@ class EvaluationHistoryEntry:
         return {
             "recorded_at": self.recorded_at,
             "run_reference": self.run_reference,
-            "report_generated_date": (
-                self.report_generated_date
-            ),
+            "report_generated_date": (self.report_generated_date),
             "branch": self.branch,
             "commit_sha": self.commit_sha,
             "environment": self.environment,
-            "evaluation_mode": (
-                self.evaluation_mode
-            ),
+            "evaluation_mode": (self.evaluation_mode),
             "passed": self.passed,
-            "quality_gate_passed": (
-                self.quality_gate_passed
-            ),
+            "quality_gate_passed": (self.quality_gate_passed),
             "pass_rate": self.pass_rate,
             "case_count": self.case_count,
             "dataset_count": self.dataset_count,
             "metric_count": self.metric_count,
-            "regression_count": (
-                self.regression_count
-            ),
-            "violation_count": (
-                self.violation_count
-            ),
+            "regression_count": (self.regression_count),
+            "violation_count": (self.violation_count),
             "baseline_id": self.baseline_id,
-            "metrics": [
-                metric.to_dict()
-                for metric in self.metrics
-            ],
+            "metrics": [metric.to_dict() for metric in self.metrics],
             "rag_triad": (
-                self.rag_triad.to_dict()
-                if self.rag_triad is not None
-                else None
+                self.rag_triad.to_dict() if self.rag_triad is not None else None
             ),
         }
 
@@ -877,9 +721,7 @@ class EvaluationHistoryEntry:
 @dataclass(frozen=True, slots=True)
 class EvaluationHistory:
     entries: tuple[EvaluationHistoryEntry, ...]
-    history_schema_version: str = (
-        HISTORY_SCHEMA_VERSION
-    )
+    history_schema_version: str = HISTORY_SCHEMA_VERSION
 
     @classmethod
     def empty(cls) -> EvaluationHistory:
@@ -897,8 +739,7 @@ class EvaluationHistory:
 
         if schema_version != HISTORY_SCHEMA_VERSION:
             raise EvaluationHistorySchemaError(
-                "Versão de histórico não suportada: "
-                f"{schema_version!r}."
+                f"Versão de histórico não suportada: {schema_version!r}."
             )
 
         entries = tuple(
@@ -916,29 +757,21 @@ class EvaluationHistory:
             )
         )
 
-        references = [
-            entry.run_reference
-            for entry in entries
-        ]
+        references = [entry.run_reference for entry in entries]
 
         if len(references) != len(set(references)):
             raise EvaluationHistorySchemaError(
-                "O histórico possui run_reference "
-                "duplicado."
+                "O histórico possui run_reference duplicado."
             )
 
         return cls(
             entries=tuple(
                 sorted(
                     entries,
-                    key=lambda entry: (
-                        entry.recorded_at
-                    ),
+                    key=lambda entry: entry.recorded_at,
                 )
             ),
-            history_schema_version=(
-                schema_version
-            ),
+            history_schema_version=(schema_version),
         )
 
     def add(
@@ -947,18 +780,11 @@ class EvaluationHistory:
         *,
         replace_existing: bool = False,
     ) -> EvaluationHistory:
-        existing = {
-            item.run_reference: item
-            for item in self.entries
-        }
+        existing = {item.run_reference: item for item in self.entries}
 
-        if (
-            entry.run_reference in existing
-            and not replace_existing
-        ):
+        if entry.run_reference in existing and not replace_existing:
             raise DuplicateHistoryEntryError(
-                "Já existe uma entrada para "
-                f"{entry.run_reference}."
+                f"Já existe uma entrada para {entry.run_reference}."
             )
 
         existing[entry.run_reference] = entry
@@ -967,9 +793,7 @@ class EvaluationHistory:
             entries=tuple(
                 sorted(
                     existing.values(),
-                    key=lambda item: (
-                        item.recorded_at
-                    ),
+                    key=lambda item: item.recorded_at,
                 )
             )
         )
@@ -1003,13 +827,8 @@ class EvaluationHistory:
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "history_schema_version": (
-                self.history_schema_version
-            ),
-            "entries": [
-                entry.to_dict()
-                for entry in self.entries
-            ],
+            "history_schema_version": (self.history_schema_version),
+            "entries": [entry.to_dict() for entry in self.entries],
         }
 
 
@@ -1022,13 +841,9 @@ def load_history(
         return EvaluationHistory.empty()
 
     try:
-        payload = json.loads(
-            source.read_text(encoding="utf-8")
-        )
+        payload = json.loads(source.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        raise EvaluationHistorySchemaError(
-            f"Histórico JSON inválido: {exc}"
-        ) from exc
+        raise EvaluationHistorySchemaError(f"Histórico JSON inválido: {exc}") from exc
 
     return EvaluationHistory.from_dict(
         _required_mapping(
@@ -1049,9 +864,7 @@ def write_history(
         exist_ok=True,
     )
 
-    temporary = destination.with_suffix(
-        destination.suffix + ".tmp"
-    )
+    temporary = destination.with_suffix(destination.suffix + ".tmp")
 
     temporary.write_text(
         json.dumps(
@@ -1077,9 +890,7 @@ def append_report_to_history(
     branch: str = "unknown",
     commit_sha: str = "unknown",
     environment: str = "local",
-    evaluation_mode: str = (
-        "deterministic-synthetic"
-    ),
+    evaluation_mode: str = ("deterministic-synthetic"),
     replace_existing: bool = False,
 ) -> EvaluationHistoryEntry:
     report = load_json_object(report_path)

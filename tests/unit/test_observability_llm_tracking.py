@@ -20,10 +20,7 @@ def criar_resposta():
     )
 
 
-@patch(
-    "src.observability.llm_tracking."
-    "registrar_consumo_llm"
-)
+@patch("src.observability.llm_tracking.registrar_consumo_llm")
 def test_executar_llm_observado_sucesso(
     registrar,
 ):
@@ -49,17 +46,12 @@ def test_executar_llm_observado_sucesso(
     assert argumentos["duracao_ms"] >= 0
 
 
-@patch(
-    "src.observability.llm_tracking."
-    "registrar_consumo_llm"
-)
+@patch("src.observability.llm_tracking.registrar_consumo_llm")
 def test_executar_llm_observado_falha(
     registrar,
 ):
     def chamada():
-        raise RuntimeError(
-            "falha simulada"
-        )
+        raise RuntimeError("falha simulada")
 
     with pytest.raises(
         RuntimeError,
@@ -74,50 +66,32 @@ def test_executar_llm_observado_falha(
     argumentos = registrar.call_args.kwargs
 
     assert argumentos["sucesso"] is False
-    assert (
-        argumentos["erro_tipo"]
-        == "RuntimeError"
-    )
-    assert (
-        argumentos["erro_mensagem"]
-        == "falha simulada"
-    )
+    assert argumentos["erro_tipo"] == "RuntimeError"
+    assert argumentos["erro_mensagem"] == "falha simulada"
 
 
-@patch(
-    "src.observability.llm_tracking."
-    "registrar_consumo_llm"
-)
+@patch("src.observability.llm_tracking.registrar_consumo_llm")
 def test_wrapper_generate_content(
     registrar,
 ):
     resposta = criar_resposta()
 
     client = SimpleNamespace(
-        models=SimpleNamespace(
-            generate_content=lambda **kwargs: (
-                resposta
-            )
-        )
+        models=SimpleNamespace(generate_content=lambda **kwargs: resposta)
     )
 
-    resultado = (
-        executar_generate_content_observado(
-            client,
-            modelo="gemini-teste",
-            contents="conteúdo simulado",
-            operacao="rag_answer",
-        )
+    resultado = executar_generate_content_observado(
+        client,
+        modelo="gemini-teste",
+        contents="conteúdo simulado",
+        operacao="rag_answer",
     )
 
     assert resultado is resposta
     registrar.assert_called_once()
 
 
-@patch(
-    "src.observability.llm_tracking."
-    "registrar_consumo_llm"
-)
+@patch("src.observability.llm_tracking.registrar_consumo_llm")
 def test_nao_registra_prompt_ou_resposta(
     registrar,
 ):
@@ -136,6 +110,4 @@ def test_nao_registra_prompt_ou_resposta(
     assert "contents" not in argumentos
     assert "resposta" not in argumentos
 
-    assert argumentos["metadados"][
-        "conteudo_registrado"
-    ] is False
+    assert argumentos["metadados"]["conteudo_registrado"] is False

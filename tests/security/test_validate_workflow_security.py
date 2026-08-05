@@ -90,11 +90,7 @@ def test_gemini_api_key_is_blocked(
 ) -> None:
     workflow = tmp_path / "gemini-key.yml"
 
-    synthetic_api_key = (
-        "AI"
-        + "za"
-        + ("1" * 35)
-    )
+    synthetic_api_key = "AI" + "za" + ("1" * 35)
 
     workflow.write_text(
         f"""

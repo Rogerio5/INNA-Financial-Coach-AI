@@ -41,14 +41,10 @@ def test_health_score_catalogs_have_all_languages():
 
 def test_health_score_catalog_contracts_are_complete():
     for catalog_name, catalog in CATALOGS.items():
-        expected_keys = set(
-            catalog["en_us"]
-        )
+        expected_keys = set(catalog["en_us"])
 
         for language in LANGUAGES:
-            assert set(
-                catalog[language]
-            ) == expected_keys, (
+            assert set(catalog[language]) == expected_keys, (
                 catalog_name,
                 language,
             )
@@ -91,76 +87,27 @@ def test_health_score_titles_follow_selector():
     }
 
     for language, expected in expected_titles.items():
-        assert (
-            HEALTH_PAGE_TEXTS[
-                language
-            ]["title"]
-            == expected
-        )
+        assert HEALTH_PAGE_TEXTS[language]["title"] == expected
 
 
 def test_health_score_final_visible_labels():
-    assert (
-        HEALTH_HISTORY_TEXTS[
-            "pt"
-        ]["snapshots"]
-        == "Registros históricos"
-    )
+    assert HEALTH_HISTORY_TEXTS["pt"]["snapshots"] == "Registros históricos"
 
-    assert (
-        HEALTH_HISTORY_TEXTS[
-            "fr"
-        ]["snapshots"]
-        == "Instantanés historiques"
-    )
+    assert HEALTH_HISTORY_TEXTS["fr"]["snapshots"] == "Instantanés historiques"
 
-    assert (
-        HEALTH_HISTORY_TEXTS[
-            "de"
-        ]["snapshots"]
-        == "Historische Momentaufnahmen"
-    )
+    assert HEALTH_HISTORY_TEXTS["de"]["snapshots"] == "Historische Momentaufnahmen"
 
-    assert (
-        HEALTH_RUNTIME_MESSAGE_TEXTS[
-            "pt"
-        ]["cold_starts"]
-        == "Inicializações a frio"
-    )
+    assert HEALTH_RUNTIME_MESSAGE_TEXTS["pt"]["cold_starts"] == "Inicializações a frio"
 
 
 def test_ch_follows_german_in_health_catalogs():
     for catalog_name, catalog in CATALOGS.items():
-        assert (
-            catalog["ch"]
-            == catalog["de"]
-        ), catalog_name
+        assert catalog["ch"] == catalog["de"], catalog_name
 
 
 def test_health_score_captions_are_localized():
-    assert (
-        HEALTH_PAGE_TEXTS[
-            "pt"
-        ]["caption"]
-        != HEALTH_PAGE_TEXTS[
-            "en_us"
-        ]["caption"]
-    )
+    assert HEALTH_PAGE_TEXTS["pt"]["caption"] != HEALTH_PAGE_TEXTS["en_us"]["caption"]
 
-    assert (
-        HEALTH_PAGE_TEXTS[
-            "ru"
-        ]["caption"]
-        != HEALTH_PAGE_TEXTS[
-            "en_us"
-        ]["caption"]
-    )
+    assert HEALTH_PAGE_TEXTS["ru"]["caption"] != HEALTH_PAGE_TEXTS["en_us"]["caption"]
 
-    assert (
-        HEALTH_PAGE_TEXTS[
-            "sa"
-        ]["caption"]
-        != HEALTH_PAGE_TEXTS[
-            "en_us"
-        ]["caption"]
-    )
+    assert HEALTH_PAGE_TEXTS["sa"]["caption"] != HEALTH_PAGE_TEXTS["en_us"]["caption"]

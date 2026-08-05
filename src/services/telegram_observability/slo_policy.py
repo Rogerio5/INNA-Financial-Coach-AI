@@ -7,9 +7,7 @@ from types import MappingProxyType
 from typing import Mapping
 
 
-class TelegramSloPolicyError(
-    ValueError
-):
+class TelegramSloPolicyError(ValueError):
     pass
 
 
@@ -29,36 +27,21 @@ def _finite_float(
     maximum: float,
 ) -> float:
     try:
-        normalized = float(
-            value
-        )
+        normalized = float(value)
     except (
         TypeError,
         ValueError,
     ) as exc:
-        raise TelegramSloPolicyError(
-            f"{name} deve ser numérico."
-        ) from exc
+        raise TelegramSloPolicyError(f"{name} deve ser numérico.") from exc
 
-    if (
-        math.isnan(normalized)
-        or math.isinf(normalized)
-    ):
-        raise TelegramSloPolicyError(
-            f"{name} deve ser finito."
-        )
+    if math.isnan(normalized) or math.isinf(normalized):
+        raise TelegramSloPolicyError(f"{name} deve ser finito.")
 
     if normalized < minimum:
-        raise TelegramSloPolicyError(
-            f"{name} deve ser maior ou igual a "
-            f"{minimum}."
-        )
+        raise TelegramSloPolicyError(f"{name} deve ser maior ou igual a {minimum}.")
 
     if normalized > maximum:
-        raise TelegramSloPolicyError(
-            f"{name} deve ser menor ou igual a "
-            f"{maximum}."
-        )
+        raise TelegramSloPolicyError(f"{name} deve ser menor ou igual a {maximum}.")
 
     return normalized
 
@@ -73,27 +56,18 @@ def _positive_integer(
         value,
         bool,
     ):
-        raise TelegramSloPolicyError(
-            f"{name} deve ser inteiro."
-        )
+        raise TelegramSloPolicyError(f"{name} deve ser inteiro.")
 
     try:
-        normalized = int(
-            value
-        )
+        normalized = int(value)
     except (
         TypeError,
         ValueError,
     ) as exc:
-        raise TelegramSloPolicyError(
-            f"{name} deve ser inteiro."
-        ) from exc
+        raise TelegramSloPolicyError(f"{name} deve ser inteiro.") from exc
 
     if normalized < minimum:
-        raise TelegramSloPolicyError(
-            f"{name} deve ser maior ou igual a "
-            f"{minimum}."
-        )
+        raise TelegramSloPolicyError(f"{name} deve ser maior ou igual a {minimum}.")
 
     return normalized
 
@@ -137,13 +111,9 @@ class TelegramAvailabilitySlo:
             maximum=1000.0,
         )
 
-        if (
-            critical_burn_rate
-            <= warning_burn_rate
-        ):
+        if critical_burn_rate <= warning_burn_rate:
             raise TelegramSloPolicyError(
-                "critical_burn_rate deve ser maior "
-                "que warning_burn_rate."
+                "critical_burn_rate deve ser maior que warning_burn_rate."
             )
 
         object.__setattr__(
@@ -180,21 +150,13 @@ class TelegramAvailabilitySlo:
     def window_seconds(
         self,
     ) -> int:
-        return (
-            self.window_days
-            * 24
-            * 60
-            * 60
-        )
+        return self.window_days * 24 * 60 * 60
 
     @property
     def allowed_unavailable_seconds(
         self,
     ) -> float:
-        return (
-            self.window_seconds
-            * self.error_budget_ratio
-        )
+        return self.window_seconds * self.error_budget_ratio
 
 
 @dataclass(
@@ -252,8 +214,7 @@ class TelegramLatencySlo:
 
         if p99 < p95:
             raise TelegramSloPolicyError(
-                "p99_seconds deve ser maior ou "
-                "igual a p95_seconds."
+                "p99_seconds deve ser maior ou igual a p95_seconds."
             )
 
         object.__setattr__(
@@ -294,8 +255,7 @@ class TelegramBacklogSlo:
 
         if critical <= warning:
             raise TelegramSloPolicyError(
-                "critical_jobs deve ser maior que "
-                "warning_jobs."
+                "critical_jobs deve ser maior que warning_jobs."
             )
 
         object.__setattr__(
@@ -336,8 +296,7 @@ class TelegramDeadLetterSlo:
 
         if critical <= warning:
             raise TelegramSloPolicyError(
-                "critical_count deve ser maior que "
-                "warning_count."
+                "critical_count deve ser maior que warning_count."
             )
 
         object.__setattr__(
@@ -380,8 +339,7 @@ class TelegramMetricFreshnessSlo:
 
         if critical <= warning:
             raise TelegramSloPolicyError(
-                "critical_seconds deve ser maior "
-                "que warning_seconds."
+                "critical_seconds deve ser maior que warning_seconds."
             )
 
         object.__setattr__(
@@ -424,14 +382,9 @@ class TelegramSloWindows:
             value=self.long_window_seconds,
         )
 
-        if not (
-            short
-            < medium
-            < long
-        ):
+        if not (short < medium < long):
             raise TelegramSloPolicyError(
-                "As janelas devem obedecer "
-                "short < medium < long."
+                "As janelas devem obedecer short < medium < long."
             )
 
         object.__setattr__(
@@ -458,33 +411,19 @@ class TelegramSloWindows:
     slots=True,
 )
 class TelegramOperationalSloPolicy:
-    availability: TelegramAvailabilitySlo = (
-        TelegramAvailabilitySlo()
-    )
+    availability: TelegramAvailabilitySlo = TelegramAvailabilitySlo()
 
-    success_rate: TelegramSuccessRateSlo = (
-        TelegramSuccessRateSlo()
-    )
+    success_rate: TelegramSuccessRateSlo = TelegramSuccessRateSlo()
 
-    latency: TelegramLatencySlo = (
-        TelegramLatencySlo()
-    )
+    latency: TelegramLatencySlo = TelegramLatencySlo()
 
-    backlog: TelegramBacklogSlo = (
-        TelegramBacklogSlo()
-    )
+    backlog: TelegramBacklogSlo = TelegramBacklogSlo()
 
-    dead_letter: TelegramDeadLetterSlo = (
-        TelegramDeadLetterSlo()
-    )
+    dead_letter: TelegramDeadLetterSlo = TelegramDeadLetterSlo()
 
-    freshness: TelegramMetricFreshnessSlo = (
-        TelegramMetricFreshnessSlo()
-    )
+    freshness: TelegramMetricFreshnessSlo = TelegramMetricFreshnessSlo()
 
-    windows: TelegramSloWindows = (
-        TelegramSloWindows()
-    )
+    windows: TelegramSloWindows = TelegramSloWindows()
 
     def to_safe_dict(
         self,
@@ -492,105 +431,39 @@ class TelegramOperationalSloPolicy:
         return MappingProxyType(
             {
                 "availability": {
-                    "objective_ratio": (
-                        self
-                        .availability
-                        .objective_ratio
-                    ),
-                    "error_budget_ratio": (
-                        self
-                        .availability
-                        .error_budget_ratio
-                    ),
-                    "window_days": (
-                        self
-                        .availability
-                        .window_days
-                    ),
+                    "objective_ratio": (self.availability.objective_ratio),
+                    "error_budget_ratio": (self.availability.error_budget_ratio),
+                    "window_days": (self.availability.window_days),
                     "allowed_unavailable_seconds": (
-                        self
-                        .availability
-                        .allowed_unavailable_seconds
+                        self.availability.allowed_unavailable_seconds
                     ),
-                    "warning_burn_rate": (
-                        self
-                        .availability
-                        .warning_burn_rate
-                    ),
-                    "critical_burn_rate": (
-                        self
-                        .availability
-                        .critical_burn_rate
-                    ),
+                    "warning_burn_rate": (self.availability.warning_burn_rate),
+                    "critical_burn_rate": (self.availability.critical_burn_rate),
                 },
                 "success_rate": {
-                    "objective_ratio": (
-                        self
-                        .success_rate
-                        .objective_ratio
-                    ),
-                    "failure_budget_ratio": (
-                        self
-                        .success_rate
-                        .failure_budget_ratio
-                    ),
+                    "objective_ratio": (self.success_rate.objective_ratio),
+                    "failure_budget_ratio": (self.success_rate.failure_budget_ratio),
                 },
                 "latency": {
-                    "p95_seconds": (
-                        self.latency.p95_seconds
-                    ),
-                    "p99_seconds": (
-                        self.latency.p99_seconds
-                    ),
+                    "p95_seconds": (self.latency.p95_seconds),
+                    "p99_seconds": (self.latency.p99_seconds),
                 },
                 "backlog": {
-                    "warning_jobs": (
-                        self.backlog.warning_jobs
-                    ),
-                    "critical_jobs": (
-                        self.backlog.critical_jobs
-                    ),
+                    "warning_jobs": (self.backlog.warning_jobs),
+                    "critical_jobs": (self.backlog.critical_jobs),
                 },
                 "dead_letter": {
-                    "warning_count": (
-                        self
-                        .dead_letter
-                        .warning_count
-                    ),
-                    "critical_count": (
-                        self
-                        .dead_letter
-                        .critical_count
-                    ),
+                    "warning_count": (self.dead_letter.warning_count),
+                    "critical_count": (self.dead_letter.critical_count),
                 },
                 "freshness": {
-                    "warning_seconds": (
-                        self
-                        .freshness
-                        .warning_seconds
-                    ),
-                    "critical_seconds": (
-                        self
-                        .freshness
-                        .critical_seconds
-                    ),
+                    "warning_seconds": (self.freshness.warning_seconds),
+                    "critical_seconds": (self.freshness.critical_seconds),
                 },
                 "windows": {
-                    "short_window_seconds": (
-                        self
-                        .windows
-                        .short_window_seconds
-                    ),
-                    "medium_window_seconds": (
-                        self
-                        .windows
-                        .medium_window_seconds
-                    ),
-                    "long_window_seconds": (
-                        self
-                        .windows
-                        .long_window_seconds
-                    ),
+                    "short_window_seconds": (self.windows.short_window_seconds),
+                    "medium_window_seconds": (self.windows.medium_window_seconds),
+                    "long_window_seconds": (self.windows.long_window_seconds),
                 },
             }
         )
@@ -606,53 +479,40 @@ def classify_threshold(
         name="value",
         value=value,
         minimum=0.0,
-        maximum=float(
-            10**15
-        ),
+        maximum=float(10**15),
     )
 
     warning = _finite_float(
         name="warning_threshold",
         value=warning_threshold,
         minimum=0.0,
-        maximum=float(
-            10**15
-        ),
+        maximum=float(10**15),
     )
 
     critical = _finite_float(
         name="critical_threshold",
         value=critical_threshold,
         minimum=0.0,
-        maximum=float(
-            10**15
-        ),
+        maximum=float(10**15),
     )
 
     if critical <= warning:
         raise TelegramSloPolicyError(
-            "critical_threshold deve ser maior "
-            "que warning_threshold."
+            "critical_threshold deve ser maior que warning_threshold."
         )
 
-    critical_reached = (
-        normalized_value >= critical
-        or math.isclose(
-            normalized_value,
-            critical,
-            rel_tol=1e-12,
-            abs_tol=1e-12,
-        )
+    critical_reached = normalized_value >= critical or math.isclose(
+        normalized_value,
+        critical,
+        rel_tol=1e-12,
+        abs_tol=1e-12,
     )
 
-    warning_reached = (
-        normalized_value >= warning
-        or math.isclose(
-            normalized_value,
-            warning,
-            rel_tol=1e-12,
-            abs_tol=1e-12,
-        )
+    warning_reached = normalized_value >= warning or math.isclose(
+        normalized_value,
+        warning,
+        rel_tol=1e-12,
+        abs_tol=1e-12,
     )
 
     if critical_reached:
@@ -686,9 +546,7 @@ def calculate_burn_rate(
     error_budget = 1.0 - objective
 
     if error_budget <= 0:
-        raise TelegramSloPolicyError(
-            "O error budget deve ser maior que zero."
-        )
+        raise TelegramSloPolicyError("O error budget deve ser maior que zero.")
 
     return observed_error / error_budget
 
@@ -696,24 +554,14 @@ def calculate_burn_rate(
 def classify_burn_rate(
     *,
     burn_rate: float,
-    availability: (
-        TelegramAvailabilitySlo
-        | None
-    ) = None,
+    availability: (TelegramAvailabilitySlo | None) = None,
 ) -> TelegramSloSeverity | None:
-    policy = (
-        availability
-        or TelegramAvailabilitySlo()
-    )
+    policy = availability or TelegramAvailabilitySlo()
 
     return classify_threshold(
         value=burn_rate,
-        warning_threshold=(
-            policy.warning_burn_rate
-        ),
-        critical_threshold=(
-            policy.critical_burn_rate
-        ),
+        warning_threshold=(policy.warning_burn_rate),
+        critical_threshold=(policy.critical_burn_rate),
     )
 
 

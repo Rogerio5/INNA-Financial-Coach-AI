@@ -39,9 +39,7 @@ def _metric_result(
     return MetricRunResult(
         metric_id=metric_id,
         status=MetricRunStatus.PASSED,
-        execution_mode=(
-            MetricExecutionMode.LIVE_OPT_IN
-        ),
+        execution_mode=(MetricExecutionMode.LIVE_OPT_IN),
         score=0.90,
         threshold=0.80,
         passed=True,
@@ -49,9 +47,7 @@ def _metric_result(
         duration_ms=10.0,
         estimated_cost=0.01,
         metadata={
-            "private_detail": (
-                "não exportar externamente"
-            ),
+            "private_detail": ("não exportar externamente"),
         },
     )
 
@@ -59,13 +55,9 @@ def _metric_result(
 def _batch_with_rag_triad():
     batch = EvaluationBatchRunner(
         runner=build_deterministic_runner(),
-        payload_provider=(
-            SyntheticPassingPayloadProvider()
-        ),
+        payload_provider=(SyntheticPassingPayloadProvider()),
     ).run(
-        (
-            build_core_dataset(),
-        ),
+        (build_core_dataset(),),
         runner_settings=(
             EvaluationRunnerSettings(
                 mode=EvaluationRunMode.LOCAL,
@@ -84,9 +76,7 @@ def _batch_with_rag_triad():
         mode=EvaluationRunMode.LIVE,
         status=EvaluationRunStatus.PASSED,
         metric_results=tuple(
-            _metric_result(metric_id)
-            for metric_id
-            in RAG_TRIAD_METRIC_IDS
+            _metric_result(metric_id) for metric_id in RAG_TRIAD_METRIC_IDS
         ),
         total_estimated_cost=0.03,
         deepeval_live_enabled=True,
@@ -107,16 +97,13 @@ def _batch_with_rag_triad():
     )
 
 
-def test_internal_report_contains_complete_triad(
-) -> None:
+def test_internal_report_contains_complete_triad() -> None:
     report = build_batch_report(
         _batch_with_rag_triad(),
         sanitize=False,
     )
 
-    evaluation = report["cases"][0][
-        "evaluation"
-    ]
+    evaluation = report["cases"][0]["evaluation"]
 
     triad = evaluation["rag_triad"]
 
@@ -128,13 +115,10 @@ def test_internal_report_contains_complete_triad(
     assert triad["failing_metric_ids"] == []
     assert len(triad["axes"]) == 3
 
-    assert triad["metadata"]["profile_id"] == (
-        "rag-profile"
-    )
+    assert triad["metadata"]["profile_id"] == ("rag-profile")
 
 
-def test_external_report_contains_safe_triad(
-) -> None:
+def test_external_report_contains_safe_triad() -> None:
     report = build_batch_report(
         _batch_with_rag_triad(),
         sanitize=True,
@@ -158,7 +142,8 @@ def test_external_report_contains_safe_triad(
     assert len(triad["axes"]) == 3
 
     assert all(
-        set(axis) == {
+        set(axis)
+        == {
             "metric_id",
             "status",
             "score",
@@ -174,14 +159,10 @@ def test_external_report_contains_safe_triad(
     serialized = str(triad)
 
     assert "private_detail" not in serialized
-    assert (
-        "não exportar externamente"
-        not in serialized
-    )
+    assert "não exportar externamente" not in serialized
 
 
-def test_non_rag_cases_keep_previous_shape(
-) -> None:
+def test_non_rag_cases_keep_previous_shape() -> None:
     report = build_batch_report(
         _batch_with_rag_triad(),
         sanitize=True,
@@ -201,8 +182,7 @@ def test_non_rag_cases_keep_previous_shape(
     }
 
 
-def test_internal_json_serializes_rag_triad(
-) -> None:
+def test_internal_json_serializes_rag_triad() -> None:
     content = batch_report_to_json(
         _batch_with_rag_triad(),
         sanitize=False,
@@ -212,8 +192,7 @@ def test_internal_json_serializes_rag_triad(
     assert '"aggregate_score": 0.9' in content
 
 
-def test_external_json_does_not_export_reasons(
-) -> None:
+def test_external_json_does_not_export_reasons() -> None:
     content = batch_report_to_json(
         _batch_with_rag_triad(),
         sanitize=True,
@@ -221,7 +200,4 @@ def test_external_json_does_not_export_reasons(
 
     assert '"rag_triad"' in content
     assert '"private_detail"' not in content
-    assert (
-        "não exportar externamente"
-        not in content
-    )
+    assert "não exportar externamente" not in content

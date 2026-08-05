@@ -5,22 +5,26 @@ from datetime import date
 from typing import Any, Mapping
 
 
-ALLOWED_STATUSES = frozenset({
-    "pending",
-    "processing",
-    "approved",
-    "corrected",
-    "rejected",
-    "cancelled",
-    "resume_failed",
-})
+ALLOWED_STATUSES = frozenset(
+    {
+        "pending",
+        "processing",
+        "approved",
+        "corrected",
+        "rejected",
+        "cancelled",
+        "resume_failed",
+    }
+)
 
-ALLOWED_RISK_LEVELS = frozenset({
-    "low",
-    "medium",
-    "high",
-    "critical",
-})
+ALLOWED_RISK_LEVELS = frozenset(
+    {
+        "low",
+        "medium",
+        "high",
+        "critical",
+    }
+)
 
 DEFAULT_PAGE_SIZE = 25
 MAX_PAGE_SIZE = 200
@@ -31,9 +35,7 @@ def _normalized_text(
     *,
     max_length: int,
 ) -> str:
-    normalized = str(
-        value or ""
-    ).strip()
+    normalized = str(value or "").strip()
 
     return normalized[:max_length]
 
@@ -62,17 +64,10 @@ def _normalized_values(
     normalized: list[str] = []
 
     for item in source:
-        value = str(
-            item or ""
-        ).strip().lower()
+        value = str(item or "").strip().lower()
 
-        if (
-            value in allowed
-            and value not in normalized
-        ):
-            normalized.append(
-                value
-            )
+        if value in allowed and value not in normalized:
+            normalized.append(value)
 
     return tuple(normalized)
 
@@ -93,9 +88,7 @@ def _normalized_date(
         return value
 
     try:
-        return date.fromisoformat(
-            str(value)
-        )
+        return date.fromisoformat(str(value))
     except ValueError:
         return None
 
@@ -119,31 +112,23 @@ class HumanReviewDashboardFilters:
     def __post_init__(
         self,
     ) -> None:
-        normalized_statuses = (
-            _normalized_values(
-                self.statuses,
-                allowed=ALLOWED_STATUSES,
-            )
+        normalized_statuses = _normalized_values(
+            self.statuses,
+            allowed=ALLOWED_STATUSES,
         )
 
-        normalized_risks = (
-            _normalized_values(
-                self.risk_levels,
-                allowed=ALLOWED_RISK_LEVELS,
-            )
+        normalized_risks = _normalized_values(
+            self.risk_levels,
+            allowed=ALLOWED_RISK_LEVELS,
         )
 
         try:
-            normalized_limit = int(
-                self.limit
-            )
+            normalized_limit = int(self.limit)
         except (
             TypeError,
             ValueError,
         ):
-            normalized_limit = (
-                DEFAULT_PAGE_SIZE
-            )
+            normalized_limit = DEFAULT_PAGE_SIZE
 
         normalized_limit = min(
             MAX_PAGE_SIZE,
@@ -164,24 +149,11 @@ class HumanReviewDashboardFilters:
         ):
             normalized_offset = 0
 
-        normalized_from = (
-            _normalized_date(
-                self.created_from
-            )
-        )
+        normalized_from = _normalized_date(self.created_from)
 
-        normalized_to = (
-            _normalized_date(
-                self.created_to
-            )
-        )
+        normalized_to = _normalized_date(self.created_to)
 
-        if (
-            normalized_from
-            and normalized_to
-            and normalized_from
-            > normalized_to
-        ):
+        if normalized_from and normalized_to and normalized_from > normalized_to:
             normalized_from, normalized_to = (
                 normalized_to,
                 normalized_from,
@@ -263,36 +235,22 @@ class HumanReviewDashboardFilters:
     def page_number(
         self,
     ) -> int:
-        return (
-            self.offset // self.limit
-        ) + 1
+        return (self.offset // self.limit) + 1
 
     def to_api_kwargs(
         self,
     ) -> dict[str, Any]:
         return {
             "statuses": self.statuses,
-            "risk_levels": (
-                self.risk_levels
-            ),
-            "requested_by": (
-                self.requested_by
-            ),
-            "reviewer_id": (
-                self.reviewer_id
-            ),
+            "risk_levels": (self.risk_levels),
+            "requested_by": (self.requested_by),
+            "reviewer_id": (self.reviewer_id),
             "thread_id": self.thread_id,
             "search": self.search,
             "created_from": (
-                self.created_from.isoformat()
-                if self.created_from
-                else ""
+                self.created_from.isoformat() if self.created_from else ""
             ),
-            "created_to": (
-                self.created_to.isoformat()
-                if self.created_to
-                else ""
-            ),
+            "created_to": (self.created_to.isoformat() if self.created_to else ""),
             "limit": self.limit,
             "offset": self.offset,
         }
@@ -315,10 +273,7 @@ class HumanReviewDashboardFilters:
 
         return replace(
             self,
-            offset=(
-                self.offset
-                + self.limit
-            ),
+            offset=(self.offset + self.limit),
         )
 
     def previous_page(
@@ -328,8 +283,7 @@ class HumanReviewDashboardFilters:
             self,
             offset=max(
                 0,
-                self.offset
-                - self.limit,
+                self.offset - self.limit,
             ),
         )
 
@@ -368,9 +322,7 @@ class HumanReviewDashboardState:
     ) -> "HumanReviewDashboardState":
         return replace(
             self,
-            refresh_token=(
-                self.refresh_token + 1
-            ),
+            refresh_token=(self.refresh_token + 1),
         )
 
     def with_filters(
@@ -386,13 +338,9 @@ class HumanReviewDashboardState:
 def dashboard_state_from_mapping(
     value: Mapping[str, Any] | None,
 ) -> HumanReviewDashboardState:
-    source = dict(
-        value or {}
-    )
+    source = dict(value or {})
 
-    filters_source = source.get(
-        "filters"
-    )
+    filters_source = source.get("filters")
 
     if not isinstance(
         filters_source,
@@ -428,12 +376,8 @@ def dashboard_state_from_mapping(
             "search",
             "",
         ),
-        created_from=filters_source.get(
-            "created_from"
-        ),
-        created_to=filters_source.get(
-            "created_to"
-        ),
+        created_from=filters_source.get("created_from"),
+        created_to=filters_source.get("created_to"),
         limit=filters_source.get(
             "limit",
             DEFAULT_PAGE_SIZE,
@@ -481,25 +425,17 @@ def dashboard_state_to_dict(
         "filters": {
             **state.filters.to_api_kwargs(),
             "created_from": (
-                state.filters.created_from
-                .isoformat()
+                state.filters.created_from.isoformat()
                 if state.filters.created_from
                 else ""
             ),
             "created_to": (
-                state.filters.created_to
-                .isoformat()
-                if state.filters.created_to
-                else ""
+                state.filters.created_to.isoformat() if state.filters.created_to else ""
             ),
         },
-        "selected_review_id": (
-            state.selected_review_id
-        ),
+        "selected_review_id": (state.selected_review_id),
         "active_tab": state.active_tab,
-        "refresh_token": (
-            state.refresh_token
-        ),
+        "refresh_token": (state.refresh_token),
     }
 
 

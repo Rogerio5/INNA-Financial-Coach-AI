@@ -27,11 +27,7 @@ from src.channels.telegram_context import (
 )
 
 
-SECRET = (
-    "0123456789abcdef"
-    "0123456789abcdef"
-    "telegram-polling-test-secret"
-)
+SECRET = "0123456789abcdef0123456789abcdeftelegram-polling-test-secret"
 
 
 def _payload():
@@ -56,50 +52,33 @@ def _body():
             ",",
             ":",
         ),
-    ).encode(
-        "utf-8"
-    )
+    ).encode("utf-8")
 
 
 def _headers(
     body: bytes,
 ):
-    timestamp = int(
-        time.time()
-    )
+    timestamp = int(time.time())
 
-    user_id = (
-        "telegram:123456"
-    )
+    user_id = "telegram:123456"
 
-    request_id = (
-        "telegram-update:9001"
-    )
+    request_id = "telegram-update:9001"
 
-    signature = (
-        assinar_requisicao_interna(
-            method="POST",
-            path=(
-                "/internal/telegram/"
-                "diagnostico"
-            ),
-            user_id=user_id,
-            request_id=request_id,
-            timestamp=timestamp,
-            body=body,
-            secret=SECRET,
-        )
+    signature = assinar_requisicao_interna(
+        method="POST",
+        path=("/internal/telegram/diagnostico"),
+        user_id=user_id,
+        request_id=request_id,
+        timestamp=timestamp,
+        body=body,
+        secret=SECRET,
     )
 
     return {
-        "Content-Type": (
-            "application/json"
-        ),
+        "Content-Type": ("application/json"),
         HEADER_USER_ID: user_id,
         HEADER_REQUEST_ID: request_id,
-        HEADER_TIMESTAMP: str(
-            timestamp
-        ),
+        HEADER_TIMESTAMP: str(timestamp),
         HEADER_SIGNATURE: signature,
     }
 
@@ -117,27 +96,19 @@ def configure_secret(
 
 
 def test_context_factory_derives_channel_identity():
-    context = (
-        construir_contexto_confiavel_telegram(
-            update_id=9001,
-            chat_id=123456,
-            message_id=77,
-        )
+    context = construir_contexto_confiavel_telegram(
+        update_id=9001,
+        chat_id=123456,
+        message_id=77,
     )
 
-    assert context.usuario_id == (
-        "telegram:123456"
-    )
+    assert context.usuario_id == ("telegram:123456")
 
-    assert context.request_id == (
-        "telegram-update:9001"
-    )
+    assert context.request_id == ("telegram-update:9001")
 
 
 def test_internal_route_rejects_unsigned():
-    response = TestClient(
-        main.app
-    ).post(
+    response = TestClient(main.app).post(
         "/internal/telegram/diagnostico",
         json=_payload(),
     )
@@ -148,43 +119,26 @@ def test_internal_route_rejects_unsigned():
 def test_internal_route_rejects_non_telegram_user():
     body = _body()
 
-    timestamp = int(
-        time.time()
+    timestamp = int(time.time())
+
+    signature = assinar_requisicao_interna(
+        method="POST",
+        path=("/internal/telegram/diagnostico"),
+        user_id="web-user",
+        request_id=("telegram-update:9001"),
+        timestamp=timestamp,
+        body=body,
+        secret=SECRET,
     )
 
-    signature = (
-        assinar_requisicao_interna(
-            method="POST",
-            path=(
-                "/internal/telegram/"
-                "diagnostico"
-            ),
-            user_id="web-user",
-            request_id=(
-                "telegram-update:9001"
-            ),
-            timestamp=timestamp,
-            body=body,
-            secret=SECRET,
-        )
-    )
-
-    response = TestClient(
-        main.app
-    ).post(
+    response = TestClient(main.app).post(
         "/internal/telegram/diagnostico",
         content=body,
         headers={
-            "Content-Type": (
-                "application/json"
-            ),
+            "Content-Type": ("application/json"),
             HEADER_USER_ID: "web-user",
-            HEADER_REQUEST_ID: (
-                "telegram-update:9001"
-            ),
-            HEADER_TIMESTAMP: str(
-                timestamp
-            ),
+            HEADER_REQUEST_ID: ("telegram-update:9001"),
+            HEADER_TIMESTAMP: str(timestamp),
             HEADER_SIGNATURE: signature,
         },
     )
@@ -200,22 +154,14 @@ def test_internal_route_uses_telegram_channel(
     def fake_core(
         **kwargs,
     ):
-        captured.update(
-            kwargs
-        )
+        captured.update(kwargs)
 
         return {
             "id": 100,
             "nome": "Usuário Telegram",
             "saldo_estimado": 1200,
-            (
-                "comprometimento_"
-                "renda_percentual"
-            ): 70,
-            (
-                "meses_reserva_"
-                "estimados"
-            ): 0.7,
+            ("comprometimento_renda_percentual"): 70,
+            ("meses_reserva_estimados"): 0.7,
             "score_financeiro": 70,
             "nivel_risco": "Medio",
             "diagnostico": "Diagnóstico.",
@@ -230,29 +176,19 @@ def test_internal_route_uses_telegram_channel(
 
     body = _body()
 
-    response = TestClient(
-        main.app
-    ).post(
+    response = TestClient(main.app).post(
         "/internal/telegram/diagnostico",
         content=body,
-        headers=_headers(
-            body
-        ),
+        headers=_headers(body),
     )
 
     assert response.status_code == 200
 
-    assert captured[
-        "canal"
-    ] == "telegram"
+    assert captured["canal"] == "telegram"
 
-    assert captured[
-        "origem_idempotencia"
-    ] == "telegram"
+    assert captured["origem_idempotencia"] == "telegram"
 
-    assert captured[
-        "origem_evento"
-    ] == "telegram_polling"
+    assert captured["origem_evento"] == "telegram_polling"
 
 
 def test_client_posts_to_dedicated_signed_path(
@@ -262,9 +198,7 @@ def test_client_posts_to_dedicated_signed_path(
 
     response = MagicMock()
 
-    response.raise_for_status.return_value = (
-        None
-    )
+    response.raise_for_status.return_value = None
 
     response.json.return_value = {
         "id": 100,
@@ -276,9 +210,7 @@ def test_client_posts_to_dedicated_signed_path(
     ):
         captured["url"] = url
 
-        captured.update(
-            kwargs
-        )
+        captured.update(kwargs)
 
         return response
 
@@ -288,31 +220,20 @@ def test_client_posts_to_dedicated_signed_path(
         fake_post,
     )
 
-    result = (
-        api_client
-        .gerar_diagnostico_telegram_api(
-            _payload(),
-            usuario_id_confiavel=(
-                "telegram:123456"
-            ),
-            request_id=(
-                "telegram-update:9001"
-            ),
-        )
+    result = api_client.gerar_diagnostico_telegram_api(
+        _payload(),
+        usuario_id_confiavel=("telegram:123456"),
+        request_id=("telegram-update:9001"),
     )
 
     assert result["id"] == 100
 
-    assert captured["url"].endswith(
-        "/internal/telegram/diagnostico"
-    )
+    assert captured["url"].endswith("/internal/telegram/diagnostico")
 
     assert "data" in captured
     assert "json" not in captured
 
-    assert captured["headers"][
-        HEADER_USER_ID
-    ] == "telegram:123456"
+    assert captured["headers"][HEADER_USER_ID] == "telegram:123456"
 
 
 def test_polling_handler_uses_update_identity(
@@ -352,13 +273,9 @@ def test_polling_handler_uses_update_identity(
         usuario_id_confiavel,
         request_id,
     ):
-        captured[
-            "usuario_id_confiavel"
-        ] = usuario_id_confiavel
+        captured["usuario_id_confiavel"] = usuario_id_confiavel
 
-        captured[
-            "request_id"
-        ] = request_id
+        captured["request_id"] = request_id
 
         return {
             "id": 100,
@@ -389,11 +306,7 @@ def test_polling_handler_uses_update_identity(
     monkeypatch.setattr(
         telegram_bot,
         "formatar_resposta",
-        MagicMock(
-            return_value=(
-                "Resposta segura."
-            )
-        ),
+        MagicMock(return_value=("Resposta segura.")),
     )
 
     asyncio.run(
@@ -403,13 +316,9 @@ def test_polling_handler_uses_update_identity(
         )
     )
 
-    assert captured[
-        "usuario_id_confiavel"
-    ] == "telegram:123456"
+    assert captured["usuario_id_confiavel"] == "telegram:123456"
 
-    assert captured[
-        "request_id"
-    ] == "telegram-update:9001"
+    assert captured["request_id"] == "telegram-update:9001"
 
     assert context.user_data == {}
 
@@ -447,9 +356,7 @@ def test_polling_error_is_sanitized(
         *_args,
         **_kwargs,
     ):
-        raise RuntimeError(
-            "super-secret database error"
-        )
+        raise RuntimeError("super-secret database error")
 
     async def fake_to_thread(
         function,
@@ -480,28 +387,15 @@ def test_polling_error_is_sanitized(
         )
     )
 
-    responses = [
-        str(call.args[0])
-        for call in (
-            message.reply_text.await_args_list
-        )
-    ]
+    responses = [str(call.args[0]) for call in (message.reply_text.await_args_list)]
 
-    assert all(
-        "super-secret"
-        not in response
-        for response in responses
-    )
+    assert all("super-secret" not in response for response in responses)
 
 
 def test_polling_source_has_no_unsigned_post():
     source = (
-        __import__(
-            "pathlib"
-        )
-        .Path(
-            "src/channels/telegram_bot.py"
-        )
+        __import__("pathlib")
+        .Path("src/channels/telegram_bot.py")
         .read_text(
             encoding="utf-8",
         )
@@ -511,7 +405,4 @@ def test_polling_source_has_no_unsigned_post():
     assert "json=payload" not in source
     assert 'f"Erro: {error}"' not in source
 
-    assert (
-        "gerar_diagnostico_telegram_api"
-        in source
-    )
+    assert "gerar_diagnostico_telegram_api" in source

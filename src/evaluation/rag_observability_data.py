@@ -43,12 +43,7 @@ def _normalise_boolean_series(
         "on",
     }
 
-    return (
-        series.astype(str)
-        .str.strip()
-        .str.lower()
-        .isin(true_values)
-    )
+    return series.astype(str).str.strip().str.lower().isin(true_values)
 
 
 def _optional_boolean_count(
@@ -58,11 +53,7 @@ def _optional_boolean_count(
     if column not in frame.columns:
         return None
 
-    return int(
-        _normalise_boolean_series(
-            frame[column]
-        ).sum()
-    )
+    return int(_normalise_boolean_series(frame[column]).sum())
 
 
 def _optional_numeric_series(
@@ -86,22 +77,14 @@ def _optional_numeric_series(
 def build_rag_observability_summary(
     rag_df: pd.DataFrame | None,
 ) -> RagObservabilitySummary:
-    frame = (
-        rag_df.copy()
-        if isinstance(rag_df, pd.DataFrame)
-        else pd.DataFrame()
-    )
+    frame = rag_df.copy() if isinstance(rag_df, pd.DataFrame) else pd.DataFrame()
 
     available_columns = tuple(
-        column
-        for column in EXPECTED_RAG_LOG_COLUMNS
-        if column in frame.columns
+        column for column in EXPECTED_RAG_LOG_COLUMNS if column in frame.columns
     )
 
     missing_columns = tuple(
-        column
-        for column in EXPECTED_RAG_LOG_COLUMNS
-        if column not in frame.columns
+        column for column in EXPECTED_RAG_LOG_COLUMNS if column not in frame.columns
     )
 
     latency = _optional_numeric_series(
@@ -123,16 +106,8 @@ def build_rag_observability_summary(
             frame,
             "fallback",
         ),
-        average_latency_ms=(
-            float(latency.mean())
-            if latency is not None
-            else None
-        ),
-        maximum_latency_ms=(
-            float(latency.max())
-            if latency is not None
-            else None
-        ),
+        average_latency_ms=(float(latency.mean()) if latency is not None else None),
+        maximum_latency_ms=(float(latency.max()) if latency is not None else None),
         available_columns=available_columns,
         missing_columns=missing_columns,
         has_data=not frame.empty,
@@ -156,12 +131,7 @@ def build_mode_distribution(
 
     frame = rag_df.copy()
 
-    frame["modo"] = (
-        frame["modo"]
-        .fillna("")
-        .astype(str)
-        .str.strip()
-    )
+    frame["modo"] = frame["modo"].fillna("").astype(str).str.strip()
 
     frame.loc[
         frame["modo"].eq(""),
@@ -174,9 +144,7 @@ def build_mode_distribution(
             dropna=False,
         )
         .size()
-        .reset_index(
-            name="total"
-        )
+        .reset_index(name="total")
         .rename(
             columns={
                 "modo": "mode",
@@ -186,9 +154,7 @@ def build_mode_distribution(
             "total",
             ascending=False,
         )
-        .reset_index(
-            drop=True
-        )
+        .reset_index(drop=True)
     )
 
 
@@ -197,10 +163,7 @@ def build_latest_questions(
     *,
     limit: int = 20,
 ) -> pd.DataFrame:
-    if (
-        not isinstance(rag_df, pd.DataFrame)
-        or rag_df.empty
-    ):
+    if not isinstance(rag_df, pd.DataFrame) or rag_df.empty:
         return pd.DataFrame()
 
     frame = rag_df.copy()
@@ -254,11 +217,7 @@ def export_rag_observability_csv(
 def build_field_coverage(
     rag_df: pd.DataFrame | None,
 ) -> tuple[dict[str, Any], ...]:
-    frame = (
-        rag_df
-        if isinstance(rag_df, pd.DataFrame)
-        else pd.DataFrame()
-    )
+    frame = rag_df if isinstance(rag_df, pd.DataFrame) else pd.DataFrame()
 
     total_rows = len(frame)
     rows = []
@@ -267,31 +226,17 @@ def build_field_coverage(
         if column not in frame.columns:
             available_rows = 0
         else:
-            available_rows = int(
-                frame[column]
-                .notna()
-                .sum()
-            )
+            available_rows = int(frame[column].notna().sum())
 
-        coverage_rate = (
-            available_rows / total_rows
-            if total_rows
-            else 0.0
-        )
+        coverage_rate = available_rows / total_rows if total_rows else 0.0
 
         rows.append(
             {
                 "field": column,
-                "available_rows": (
-                    available_rows
-                ),
+                "available_rows": (available_rows),
                 "total_rows": total_rows,
-                "coverage_rate": (
-                    coverage_rate
-                ),
-                "available": (
-                    column in frame.columns
-                ),
+                "coverage_rate": (coverage_rate),
+                "available": (column in frame.columns),
             }
         )
 

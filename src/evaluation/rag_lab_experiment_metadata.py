@@ -78,9 +78,7 @@ class ExperimentMetadataReadiness:
             "available_runs": self.available_runs,
             "total_runs": self.total_runs,
             "coverage_rate": self.coverage_rate,
-            "distinct_values": list(
-                self.distinct_values
-            ),
+            "distinct_values": list(self.distinct_values),
         }
 
 
@@ -102,153 +100,118 @@ EXPERIMENT_METADATA_FIELDS: tuple[
         key="reranker_enabled",
         category="retrieval",
         label="Reranker",
-        description=(
-            "Indica se a etapa de reranking estava habilitada."
-        ),
+        description=("Indica se a etapa de reranking estava habilitada."),
         value_type="boolean",
     ),
     ExperimentMetadataField(
         key="top_k",
         category="retrieval",
         label="Top K",
-        description=(
-            "Quantidade máxima de chunks recuperados."
-        ),
+        description=("Quantidade máxima de chunks recuperados."),
         value_type="integer",
     ),
     ExperimentMetadataField(
         key="model_name",
         category="generation",
         label="Modelo",
-        description=(
-            "Modelo generativo utilizado na execução."
-        ),
+        description=("Modelo generativo utilizado na execução."),
         value_type="text",
     ),
     ExperimentMetadataField(
         key="prompt_version",
         category="generation",
         label="Versão do prompt",
-        description=(
-            "Versão do prompt RAG aplicada na execução."
-        ),
+        description=("Versão do prompt RAG aplicada na execução."),
         value_type="text",
     ),
     ExperimentMetadataField(
         key="temperature",
         category="generation",
         label="Temperatura",
-        description=(
-            "Temperatura configurada para o modelo."
-        ),
+        description=("Temperatura configurada para o modelo."),
         value_type="number",
     ),
     ExperimentMetadataField(
         key="max_output_tokens",
         category="generation",
         label="Limite de tokens",
-        description=(
-            "Limite máximo de tokens de saída."
-        ),
+        description=("Limite máximo de tokens de saída."),
         value_type="integer",
     ),
     ExperimentMetadataField(
         key="embedding_model",
         category="knowledge",
         label="Modelo de embedding",
-        description=(
-            "Modelo usado para gerar os embeddings."
-        ),
+        description=("Modelo usado para gerar os embeddings."),
         value_type="text",
     ),
     ExperimentMetadataField(
         key="knowledge_base_version",
         category="knowledge",
         label="Versão da base",
-        description=(
-            "Versão da base de conhecimento avaliada."
-        ),
+        description=("Versão da base de conhecimento avaliada."),
         value_type="text",
     ),
     ExperimentMetadataField(
         key="chunk_size",
         category="knowledge",
         label="Tamanho do chunk",
-        description=(
-            "Tamanho configurado para os chunks."
-        ),
+        description=("Tamanho configurado para os chunks."),
         value_type="integer",
     ),
     ExperimentMetadataField(
         key="chunk_overlap",
         category="knowledge",
         label="Sobreposição dos chunks",
-        description=(
-            "Quantidade de sobreposição entre chunks."
-        ),
+        description=("Quantidade de sobreposição entre chunks."),
         value_type="integer",
     ),
     ExperimentMetadataField(
         key="dataset_name",
         category="evaluation",
         label="Dataset",
-        description=(
-            "Dataset utilizado durante a avaliação."
-        ),
+        description=("Dataset utilizado durante a avaliação."),
         value_type="text",
     ),
     ExperimentMetadataField(
         key="language",
         category="evaluation",
         label="Idioma",
-        description=(
-            "Idioma principal da execução avaliada."
-        ),
+        description=("Idioma principal da execução avaliada."),
         value_type="text",
     ),
     ExperimentMetadataField(
         key="latency_ms",
         category="performance",
         label="Latência",
-        description=(
-            "Latência total ou média registrada em milissegundos."
-        ),
+        description=("Latência total ou média registrada em milissegundos."),
         value_type="milliseconds",
     ),
     ExperimentMetadataField(
         key="input_tokens",
         category="performance",
         label="Tokens de entrada",
-        description=(
-            "Quantidade de tokens de entrada consumidos."
-        ),
+        description=("Quantidade de tokens de entrada consumidos."),
         value_type="integer",
     ),
     ExperimentMetadataField(
         key="output_tokens",
         category="performance",
         label="Tokens de saída",
-        description=(
-            "Quantidade de tokens de saída consumidos."
-        ),
+        description=("Quantidade de tokens de saída consumidos."),
         value_type="integer",
     ),
     ExperimentMetadataField(
         key="estimated_cost_usd",
         category="performance",
         label="Custo estimado",
-        description=(
-            "Custo estimado da execução em dólares."
-        ),
+        description=("Custo estimado da execução em dólares."),
         value_type="currency_usd",
     ),
 )
 
 
-_FIELD_BY_KEY = {
-    field.key: field
-    for field in EXPERIMENT_METADATA_FIELDS
-}
+_FIELD_BY_KEY = {field.key: field for field in EXPERIMENT_METADATA_FIELDS}
 
 
 _METADATA_CONTAINER_NAMES = (
@@ -293,9 +256,7 @@ def _collect_metadata_mappings(
 ) -> tuple[Mapping[str, Any], ...]:
     mappings: list[Mapping[str, Any]] = []
 
-    for container_name in (
-        _METADATA_CONTAINER_NAMES
-    ):
+    for container_name in _METADATA_CONTAINER_NAMES:
         container = _mapping_from(
             getattr(
                 entry,
@@ -309,12 +270,8 @@ def _collect_metadata_mappings(
 
         mappings.append(container)
 
-        for nested_name in (
-            _NESTED_METADATA_NAMES
-        ):
-            nested = _mapping_from(
-                container.get(nested_name)
-            )
+        for nested_name in _NESTED_METADATA_NAMES:
+            nested = _mapping_from(container.get(nested_name))
 
             if nested:
                 mappings.append(nested)
@@ -336,9 +293,7 @@ def extract_experiment_metadata(
     5. estruturas internas como rag, experiment ou config.
     """
 
-    mappings = _collect_metadata_mappings(
-        entry
-    )
+    mappings = _collect_metadata_mappings(entry)
 
     extracted: dict[str, Any] = {}
 
@@ -367,9 +322,7 @@ def format_experiment_metadata_value(
     field: ExperimentMetadataField,
     value: Any,
     *,
-    unavailable_label: str = (
-        "Não registrado nesta execução"
-    ),
+    unavailable_label: str = ("Não registrado nesta execução"),
     enabled_label: str = "Habilitado",
     disabled_label: str = "Desabilitado",
 ) -> str:
@@ -377,11 +330,7 @@ def format_experiment_metadata_value(
         return unavailable_label
 
     if field.value_type == "boolean":
-        return (
-            enabled_label
-            if bool(value)
-            else disabled_label
-        )
+        return enabled_label if bool(value) else disabled_label
 
     if field.value_type == "milliseconds":
         try:
@@ -407,15 +356,11 @@ def format_experiment_metadata_value(
 def build_experiment_metadata_snapshot(
     entry: Any,
     *,
-    unavailable_label: str = (
-        "Não registrado nesta execução"
-    ),
+    unavailable_label: str = ("Não registrado nesta execução"),
     enabled_label: str = "Habilitado",
     disabled_label: str = "Desabilitado",
 ) -> tuple[ExperimentMetadataValue, ...]:
-    metadata = extract_experiment_metadata(
-        entry
-    )
+    metadata = extract_experiment_metadata(entry)
 
     return tuple(
         ExperimentMetadataValue(
@@ -423,20 +368,14 @@ def build_experiment_metadata_snapshot(
             label=field.label,
             category=field.category,
             value=metadata.get(field.key),
-            available=_is_available(
-                metadata.get(field.key)
-            ),
+            available=_is_available(metadata.get(field.key)),
             display_value=(
                 format_experiment_metadata_value(
                     field,
                     metadata.get(field.key),
-                    unavailable_label=(
-                        unavailable_label
-                    ),
+                    unavailable_label=(unavailable_label),
                     enabled_label=enabled_label,
-                    disabled_label=(
-                        disabled_label
-                    ),
+                    disabled_label=(disabled_label),
                 )
             ),
         )
@@ -470,48 +409,29 @@ def build_experiment_metadata_readiness(
     )
 
     total_runs = len(entries)
-    readiness: list[
-        ExperimentMetadataReadiness
-    ] = []
+    readiness: list[ExperimentMetadataReadiness] = []
 
     for field in EXPERIMENT_METADATA_FIELDS:
         available_values: list[Any] = []
 
         for entry in entries:
-            metadata = extract_experiment_metadata(
-                entry
-            )
+            metadata = extract_experiment_metadata(entry)
 
             value = metadata.get(field.key)
 
             if _is_available(value):
                 available_values.append(value)
 
-        available_runs = len(
-            available_values
-        )
+        available_runs = len(available_values)
 
-        if (
-            total_runs > 0
-            and available_runs == total_runs
-        ):
-            availability = (
-                MetadataAvailability.AVAILABLE
-            )
+        if total_runs > 0 and available_runs == total_runs:
+            availability = MetadataAvailability.AVAILABLE
         elif available_runs > 0:
-            availability = (
-                MetadataAvailability.PARTIAL
-            )
+            availability = MetadataAvailability.PARTIAL
         else:
-            availability = (
-                MetadataAvailability.UNAVAILABLE
-            )
+            availability = MetadataAvailability.UNAVAILABLE
 
-        coverage_rate = (
-            available_runs / total_runs
-            if total_runs
-            else 0.0
-        )
+        coverage_rate = available_runs / total_runs if total_runs else 0.0
 
         distinct_values = tuple(
             sorted(
@@ -534,9 +454,7 @@ def build_experiment_metadata_readiness(
                 available_runs=available_runs,
                 total_runs=total_runs,
                 coverage_rate=coverage_rate,
-                distinct_values=(
-                    distinct_values
-                ),
+                distinct_values=(distinct_values),
             )
         )
 
@@ -547,15 +465,10 @@ def get_available_metadata_filter_values(
     history: Any,
     field_key: str,
 ) -> tuple[str, ...]:
-    field = _FIELD_BY_KEY.get(
-        field_key
-    )
+    field = _FIELD_BY_KEY.get(field_key)
 
     if field is None:
-        raise KeyError(
-            f"Campo experimental desconhecido: "
-            f"{field_key}"
-        )
+        raise KeyError(f"Campo experimental desconhecido: {field_key}")
 
     values = set()
 
@@ -564,9 +477,7 @@ def get_available_metadata_filter_values(
         "entries",
         (),
     ):
-        metadata = extract_experiment_metadata(
-            entry
-        )
+        metadata = extract_experiment_metadata(entry)
 
         value = metadata.get(field_key)
 
@@ -578,6 +489,4 @@ def get_available_metadata_filter_values(
                 )
             )
 
-    return tuple(
-        sorted(values)
-    )
+    return tuple(sorted(values))

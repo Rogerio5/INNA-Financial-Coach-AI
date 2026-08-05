@@ -47,16 +47,10 @@ def _synthetic_safe_output(
     resposta produzida pela aplicação real.
     """
 
-    expected_terms = tuple(
-        term.strip()
-        for term in case.expected_terms
-        if term.strip()
-    )
+    expected_terms = tuple(term.strip() for term in case.expected_terms if term.strip())
 
     if expected_terms:
-        rendered_terms = ", ".join(
-            expected_terms
-        )
+        rendered_terms = ", ".join(expected_terms)
 
         return (
             "Resposta sintética de avaliação contendo "
@@ -71,10 +65,7 @@ def _synthetic_safe_output(
             "antes da liberação da orientação."
         )
 
-    return (
-        "Resposta sintética segura para validação da "
-        "infraestrutura de avaliação."
-    )
+    return "Resposta sintética segura para validação da infraestrutura de avaliação."
 
 
 def _observed_tools(
@@ -82,21 +73,15 @@ def _observed_tools(
 ) -> list[dict[str, Any]]:
     tools: list[dict[str, Any]] = []
 
-    for index, expected_tool in enumerate(
-        expected_tools
-    ):
+    for index, expected_tool in enumerate(expected_tools):
         call_index = (
-            expected_tool.call_order
-            if expected_tool.call_order is not None
-            else index
+            expected_tool.call_order if expected_tool.call_order is not None else index
         )
 
         tools.append(
             {
                 "name": expected_tool.name,
-                "arguments": dict(
-                    expected_tool.arguments
-                ),
+                "arguments": dict(expected_tool.arguments),
                 "status": "success",
                 "call_index": call_index,
                 "metadata": {
@@ -112,18 +97,14 @@ def _structured_output(
     case: InnaEvaluationCase,
 ) -> dict[str, Any]:
     return {
-        key: f"Valor sintético para {key}."
-        for key in case.expected_structured_keys
+        key: f"Valor sintético para {key}." for key in case.expected_structured_keys
     }
 
 
 def _retrieval_context(
     case: InnaEvaluationCase,
 ) -> tuple[str, ...]:
-    if (
-        case.minimum_retrieved_documents <= 0
-        and not case.expected_retrieval_terms
-    ):
+    if case.minimum_retrieved_documents <= 0 and not case.expected_retrieval_terms:
         return ()
 
     document_count = max(
@@ -131,18 +112,10 @@ def _retrieval_context(
         case.minimum_retrieved_documents,
     )
 
-    terms = (
-        ", ".join(
-            case.expected_retrieval_terms
-        )
-        or "educação financeira"
-    )
+    terms = ", ".join(case.expected_retrieval_terms) or "educação financeira"
 
     return tuple(
-        (
-            "Documento sintético de recuperação "
-            f"{index + 1}: {terms}."
-        )
+        (f"Documento sintético de recuperação {index + 1}: {terms}.")
         for index in range(document_count)
     )
 
@@ -163,27 +136,19 @@ class SyntheticPassingPayloadProvider:
 
     latency_ms: float = 25.0
     estimated_cost: float = 0.0
-    metadata: Mapping[str, Any] = field(
-        default_factory=dict
-    )
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if self.latency_ms < 0:
-            raise ValueError(
-                "latency_ms não pode ser negativo."
-            )
+            raise ValueError("latency_ms não pode ser negativo.")
 
         if self.estimated_cost < 0:
-            raise ValueError(
-                "estimated_cost não pode ser negativo."
-            )
+            raise ValueError("estimated_cost não pode ser negativo.")
 
         object.__setattr__(
             self,
             "metadata",
-            MappingProxyType(
-                dict(self.metadata)
-            ),
+            MappingProxyType(dict(self.metadata)),
         )
 
     def __call__(
@@ -194,50 +159,32 @@ class SyntheticPassingPayloadProvider:
             "actual_agent": case.expected_agent or "",
             "actual_team": case.expected_team or "",
             "actual_intent": case.expected_intent or "",
-            "actual_task_status": (
-                case.expected_task_status
-                or "completed"
-            ),
+            "actual_task_status": (case.expected_task_status or "completed"),
             "task_completion_score": max(
                 1.0,
                 case.minimum_completion_score,
             ),
             "latency_ms": self.latency_ms,
             "estimated_cost": self.estimated_cost,
-            "called_tools": _observed_tools(
-                case.expected_tools
-            ),
-            "structured_output": (
-                _structured_output(case)
-            ),
+            "called_tools": _observed_tools(case.expected_tools),
+            "structured_output": (_structured_output(case)),
             "synthetic_provider": True,
             "production_execution": False,
         }
 
         if case.human_review_expected is not None:
-            observed_metadata[
-                "human_review_requested"
-            ] = case.human_review_expected
+            observed_metadata["human_review_requested"] = case.human_review_expected
 
-            observed_metadata[
-                "human_review_status"
-            ] = (
-                case.expected_task_status
-                or "pending_review"
+            observed_metadata["human_review_status"] = (
+                case.expected_task_status or "pending_review"
             )
 
-        observed_metadata.update(
-            dict(self.metadata)
-        )
+        observed_metadata.update(dict(self.metadata))
 
         return build_deepeval_payload(
             case,
-            actual_output=(
-                _synthetic_safe_output(case)
-            ),
-            retrieval_context=(
-                _retrieval_context(case)
-            ),
+            actual_output=(_synthetic_safe_output(case)),
+            retrieval_context=(_retrieval_context(case)),
             metadata=observed_metadata,
         )
 
@@ -258,18 +205,11 @@ class RecordedPayloadProvider:
 
     def __post_init__(self) -> None:
         normalized = {
-            case_id.strip(): payload
-            for case_id, payload
-            in self.payloads.items()
+            case_id.strip(): payload for case_id, payload in self.payloads.items()
         }
 
-        if any(
-            not case_id
-            for case_id in normalized
-        ):
-            raise ValueError(
-                "case_id gravado não pode ser vazio."
-            )
+        if any(not case_id for case_id in normalized):
+            raise ValueError("case_id gravado não pode ser vazio.")
 
         object.__setattr__(
             self,
@@ -282,20 +222,14 @@ class RecordedPayloadProvider:
         case: InnaEvaluationCase,
     ) -> DeepEvalCasePayload:
         try:
-            payload = self.payloads[
-                case.case_id
-            ]
+            payload = self.payloads[case.case_id]
         except KeyError as exception:
             raise RecordedPayloadNotFoundError(
-                "Payload gravado não encontrado para "
-                f"{case.case_id!r}."
+                f"Payload gravado não encontrado para {case.case_id!r}."
             ) from exception
 
         if payload.case_id != case.case_id:
-            raise PayloadProviderError(
-                "O payload gravado possui case_id "
-                "incompatível."
-            )
+            raise PayloadProviderError("O payload gravado possui case_id incompatível.")
 
         return payload
 

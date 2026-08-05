@@ -19,9 +19,7 @@ class MutableClock:
         self,
         value=0.0,
     ):
-        self.value = float(
-            value
-        )
+        self.value = float(value)
 
     def __call__(
         self,
@@ -32,9 +30,7 @@ class MutableClock:
         self,
         seconds,
     ):
-        self.value += float(
-            seconds
-        )
+        self.value += float(seconds)
 
 
 class CountingService:
@@ -78,9 +74,7 @@ def unready_service():
 
 
 def test_first_evaluation_is_not_cache_hit():
-    runtime = TelegramReadinessRuntime(
-        healthy_service()
-    )
+    runtime = TelegramReadinessRuntime(healthy_service())
 
     result = runtime.evaluate()
 
@@ -93,9 +87,7 @@ def test_first_evaluation_is_not_cache_hit():
 def test_second_evaluation_uses_cache():
     clock = MutableClock()
 
-    service = CountingService(
-        healthy_service()
-    )
+    service = CountingService(healthy_service())
 
     runtime = TelegramReadinessRuntime(
         service,
@@ -109,9 +101,7 @@ def test_second_evaluation_uses_cache():
 
     first = runtime.evaluate()
 
-    clock.advance(
-        1
-    )
+    clock.advance(1)
 
     second = runtime.evaluate()
 
@@ -125,9 +115,7 @@ def test_second_evaluation_uses_cache():
 def test_expired_cache_refreshes():
     clock = MutableClock()
 
-    service = CountingService(
-        healthy_service()
-    )
+    service = CountingService(healthy_service())
 
     runtime = TelegramReadinessRuntime(
         service,
@@ -141,24 +129,18 @@ def test_expired_cache_refreshes():
 
     first = runtime.evaluate()
 
-    clock.advance(
-        2
-    )
+    clock.advance(2)
 
     second = runtime.evaluate()
 
     assert second.cache_hit is False
-    assert second.sequence == (
-        first.sequence + 1
-    )
+    assert second.sequence == (first.sequence + 1)
 
     assert service.calls == 2
 
 
 def test_force_refresh_ignores_cache():
-    service = CountingService(
-        healthy_service()
-    )
+    service = CountingService(healthy_service())
 
     runtime = TelegramReadinessRuntime(
         service,
@@ -171,22 +153,16 @@ def test_force_refresh_ignores_cache():
 
     first = runtime.evaluate()
 
-    second = runtime.evaluate(
-        force_refresh=True
-    )
+    second = runtime.evaluate(force_refresh=True)
 
     assert second.cache_hit is False
-    assert second.sequence == (
-        first.sequence + 1
-    )
+    assert second.sequence == (first.sequence + 1)
 
     assert service.calls == 2
 
 
 def test_invalidate_removes_cache():
-    service = CountingService(
-        healthy_service()
-    )
+    service = CountingService(healthy_service())
 
     runtime = TelegramReadinessRuntime(
         service,
@@ -205,16 +181,11 @@ def test_invalidate_removes_cache():
 
 
 def test_unready_snapshot_remains_unready():
-    runtime = TelegramReadinessRuntime(
-        unready_service()
-    )
+    runtime = TelegramReadinessRuntime(unready_service())
 
     result = runtime.evaluate()
 
-    assert (
-        result.snapshot.status
-        is TelegramOperationalStatus.UNREADY
-    )
+    assert result.snapshot.status is TelegramOperationalStatus.UNREADY
 
     assert result.ready is False
 
@@ -224,31 +195,19 @@ def test_evaluation_exception_fails_closed():
         def evaluate(
             self,
         ):
-            raise RuntimeError(
-                "postgresql://user:password@secret"
-            )
+            raise RuntimeError("postgresql://user:password@secret")
 
-    runtime = TelegramReadinessRuntime(
-        BrokenService()
-    )
+    runtime = TelegramReadinessRuntime(BrokenService())
 
     result = runtime.evaluate()
 
-    rendered = repr(
-        result.to_safe_dict()
-    )
+    rendered = repr(result.to_safe_dict())
 
     assert result.ready is False
 
-    assert (
-        result.snapshot.status
-        is TelegramOperationalStatus.UNREADY
-    )
+    assert result.snapshot.status is TelegramOperationalStatus.UNREADY
 
-    assert (
-        result.reason
-        == "evaluation_exception"
-    )
+    assert result.reason == "evaluation_exception"
 
     assert "password" not in rendered
     assert "postgresql://" not in rendered
@@ -261,14 +220,9 @@ def test_budget_exceeded_becomes_unready():
         def evaluate(
             self,
         ):
-            clock.advance(
-                5
-            )
+            clock.advance(5)
 
-            return (
-                healthy_service()
-                .evaluate()
-            )
+            return healthy_service().evaluate()
 
     runtime = TelegramReadinessRuntime(
         SlowService(),
@@ -284,22 +238,11 @@ def test_budget_exceeded_becomes_unready():
 
     assert result.ready is False
 
-    assert (
-        result.reason
-        == "evaluation_budget_exceeded"
-    )
+    assert result.reason == "evaluation_budget_exceeded"
 
-    names = {
-        check.name
-        for check in (
-            result.snapshot.checks
-        )
-    }
+    names = {check.name for check in (result.snapshot.checks)}
 
-    assert (
-        "readiness_runtime_budget"
-        in names
-    )
+    assert "readiness_runtime_budget" in names
 
 
 def test_safe_dict_contains_runtime_metadata():
@@ -308,33 +251,17 @@ def test_safe_dict_contains_runtime_metadata():
         wall_clock=lambda: 123.0,
     )
 
-    payload = (
-        runtime.evaluate()
-        .to_safe_dict()
-    )
+    payload = runtime.evaluate().to_safe_dict()
 
-    assert payload[
-        "sequence"
-    ] == 1
+    assert payload["sequence"] == 1
 
-    assert payload[
-        "cache_hit"
-    ] is False
+    assert payload["cache_hit"] is False
 
-    assert payload[
-        "generated_at_epoch_seconds"
-    ] == 123.0
+    assert payload["generated_at_epoch_seconds"] == 123.0
 
-    assert payload[
-        "reason"
-    ] == "evaluated"
+    assert payload["reason"] == "evaluated"
 
-    assert (
-        payload["operational"][
-            "status"
-        ]
-        == "healthy"
-    )
+    assert payload["operational"]["status"] == "healthy"
 
 
 @pytest.mark.parametrize(
@@ -373,12 +300,8 @@ def test_policy_rejects_invalid_values(
 
     values[field] = value
 
-    with pytest.raises(
-        ValueError
-    ):
-        TelegramReadinessRuntimePolicy(
-            **values
-        )
+    with pytest.raises(ValueError):
+        TelegramReadinessRuntimePolicy(**values)
 
 
 def test_single_flight_runs_service_once():
@@ -397,14 +320,9 @@ def test_single_flight_runs_service_once():
             self.calls += 1
             started.set()
 
-            assert release.wait(
-                timeout=2
-            )
+            assert release.wait(timeout=2)
 
-            return (
-                healthy_service()
-                .evaluate()
-            )
+            return healthy_service().evaluate()
 
     service = BlockingService()
 
@@ -420,47 +338,28 @@ def test_single_flight_runs_service_once():
 
     results = []
 
-    first_thread = threading.Thread(
-        target=lambda: results.append(
-            runtime.evaluate()
-        )
-    )
+    first_thread = threading.Thread(target=lambda: results.append(runtime.evaluate()))
 
-    second_thread = threading.Thread(
-        target=lambda: results.append(
-            runtime.evaluate()
-        )
-    )
+    second_thread = threading.Thread(target=lambda: results.append(runtime.evaluate()))
 
     first_thread.start()
 
-    assert started.wait(
-        timeout=1
-    )
+    assert started.wait(timeout=1)
 
     second_thread.start()
 
-    time.sleep(
-        0.05
-    )
+    time.sleep(0.05)
 
     release.set()
 
-    first_thread.join(
-        timeout=2
-    )
+    first_thread.join(timeout=2)
 
-    second_thread.join(
-        timeout=2
-    )
+    second_thread.join(timeout=2)
 
     assert len(results) == 2
     assert service.calls == 1
 
-    assert any(
-        result.cache_hit
-        for result in results
-    )
+    assert any(result.cache_hit for result in results)
 
 
 def test_concurrent_wait_timeout_fails_closed():
@@ -473,14 +372,9 @@ def test_concurrent_wait_timeout_fails_closed():
         ):
             started.set()
 
-            assert release.wait(
-                timeout=2
-            )
+            assert release.wait(timeout=2)
 
-            return (
-                healthy_service()
-                .evaluate()
-            )
+            return healthy_service().evaluate()
 
     runtime = TelegramReadinessRuntime(
         BlockingService(),
@@ -495,31 +389,22 @@ def test_concurrent_wait_timeout_fails_closed():
     first_result = []
 
     first_thread = threading.Thread(
-        target=lambda: first_result.append(
-            runtime.evaluate()
-        )
+        target=lambda: first_result.append(runtime.evaluate())
     )
 
     first_thread.start()
 
-    assert started.wait(
-        timeout=1
-    )
+    assert started.wait(timeout=1)
 
     concurrent = runtime.evaluate()
 
     assert concurrent.ready is False
 
-    assert (
-        concurrent.reason
-        == "concurrent_wait_timeout"
-    )
+    assert concurrent.reason == "concurrent_wait_timeout"
 
     release.set()
 
-    first_thread.join(
-        timeout=2
-    )
+    first_thread.join(timeout=2)
 
     assert first_result
 
@@ -539,9 +424,7 @@ def test_cached_result_does_not_mutate_original():
 
     first = runtime.evaluate()
 
-    clock.advance(
-        1
-    )
+    clock.advance(1)
 
     second = runtime.evaluate()
 

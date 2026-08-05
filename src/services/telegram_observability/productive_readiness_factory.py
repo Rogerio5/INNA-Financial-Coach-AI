@@ -26,19 +26,11 @@ def _module_callable_contract_check(
     ],
 ) -> ReadinessCheck:
     normalized_names = tuple(
-        sorted(
-            {
-                str(name).strip()
-                for name in required_names
-                if str(name).strip()
-            }
-        )
+        sorted({str(name).strip() for name in required_names if str(name).strip()})
     )
 
     if not normalized_names:
-        raise ValueError(
-            "Contrato sem funções obrigatórias."
-        )
+        raise ValueError("Contrato sem funções obrigatórias.")
 
     def check() -> Mapping[str, object]:
         module = module_supplier()
@@ -49,9 +41,7 @@ def _module_callable_contract_check(
         ):
             return {
                 "passed": False,
-                "contract_count": len(
-                    normalized_names
-                ),
+                "contract_count": len(normalized_names),
                 "available_count": 0,
             }
 
@@ -68,16 +58,9 @@ def _module_callable_contract_check(
         )
 
         return {
-            "passed": (
-                available_count
-                == len(normalized_names)
-            ),
-            "contract_count": len(
-                normalized_names
-            ),
-            "available_count": (
-                available_count
-            ),
+            "passed": (available_count == len(normalized_names)),
+            "contract_count": len(normalized_names),
+            "available_count": (available_count),
         }
 
     return check
@@ -91,26 +74,18 @@ def _factory_type_check(
     *,
     detail_name: str,
 ) -> ReadinessCheck:
-    normalized_detail_name = str(
-        detail_name
-    ).strip()
+    normalized_detail_name = str(detail_name).strip()
 
     if not normalized_detail_name:
-        raise ValueError(
-            "Nome do detalhe obrigatório."
-        )
+        raise ValueError("Nome do detalhe obrigatório.")
 
     def check() -> Mapping[str, object]:
         value = factory()
 
         return {
-            "passed": (
-                value is not None
-            ),
+            "passed": (value is not None),
             normalized_detail_name: (
-                type(value).__name__
-                if value is not None
-                else "unavailable"
+                type(value).__name__ if value is not None else "unavailable"
             ),
         }
 
@@ -138,27 +113,15 @@ def _keyring_check(
             None,
         )
 
-        active_key_available = (
-            isinstance(
-                active_key_id,
-                str,
-            )
-            and bool(
-                active_key_id.strip()
-            )
-        )
+        active_key_available = isinstance(
+            active_key_id,
+            str,
+        ) and bool(active_key_id.strip())
 
         return {
-            "passed": (
-                active_key_available
-                and callable(get_key)
-            ),
-            "active_key_available": (
-                active_key_available
-            ),
-            "get_key_callable": callable(
-                get_key
-            ),
+            "passed": (active_key_available and callable(get_key)),
+            "active_key_available": (active_key_available),
+            "get_key_callable": callable(get_key),
         }
 
     return check
@@ -174,16 +137,10 @@ def _processor_check(
         processor = factory()
 
         return {
-            "passed": callable(
-                processor
-            ),
-            "callable": callable(
-                processor
-            ),
+            "passed": callable(processor),
+            "callable": callable(processor),
             "implementation": (
-                type(processor).__name__
-                if processor is not None
-                else "unavailable"
+                type(processor).__name__ if processor is not None else "unavailable"
             ),
         }
 
@@ -203,9 +160,7 @@ def _load_keyring() -> object:
         load_telegram_update_keyring_from_env,
     )
 
-    return (
-        load_telegram_update_keyring_from_env()
-    )
+    return load_telegram_update_keyring_from_env()
 
 
 def _load_processor() -> object:
@@ -221,9 +176,7 @@ def _load_metrics_runtime() -> object:
         create_production_telegram_metrics_runtime,
     )
 
-    return (
-        create_production_telegram_metrics_runtime()
-    )
+    return create_production_telegram_metrics_runtime()
 
 
 def _job_repository_module() -> ModuleType:
@@ -287,93 +240,50 @@ def create_productive_telegram_worker_readiness_service(
         | None
     ) = _load_metrics_runtime,
 ) -> TelegramOperationalStatusService:
-    configuration_check = (
-        _factory_type_check(
-            configuration_factory,
-            detail_name="implementation",
-        )
+    configuration_check = _factory_type_check(
+        configuration_factory,
+        detail_name="implementation",
     )
 
-    database_check = (
-        create_context_cursor_select_check(
-            database_cursor_context_factory
-        )
+    database_check = create_context_cursor_select_check(database_cursor_context_factory)
+
+    job_repository_check = _module_callable_contract_check(
+        job_repository_module_supplier,
+        required_names=(
+            ("claim_next_telegram_update_job"),
+            ("renew_telegram_update_job_lease"),
+            ("complete_telegram_update_job"),
+            ("retry_or_dead_letter_telegram_update_job"),
+            ("recover_expired_telegram_update_jobs"),
+        ),
     )
 
-    job_repository_check = (
-        _module_callable_contract_check(
-            job_repository_module_supplier,
-            required_names=(
-                (
-                    "claim_next_"
-                    "telegram_update_job"
-                ),
-                (
-                    "renew_telegram_"
-                    "update_job_lease"
-                ),
-                (
-                    "complete_telegram_"
-                    "update_job"
-                ),
-                (
-                    "retry_or_dead_letter_"
-                    "telegram_update_job"
-                ),
-                (
-                    "recover_expired_"
-                    "telegram_update_jobs"
-                ),
-            ),
-        )
-    )
-
-    receipt_repository_check = (
-        _module_callable_contract_check(
-            receipt_repository_module_supplier,
-            required_names=(
-                "claim_telegram_update",
-                "complete_telegram_update",
-                "fail_telegram_update",
-            ),
-        )
+    receipt_repository_check = _module_callable_contract_check(
+        receipt_repository_module_supplier,
+        required_names=(
+            "claim_telegram_update",
+            "complete_telegram_update",
+            "fail_telegram_update",
+        ),
     )
 
     metrics_check = None
 
     if metrics_runtime_factory is not None:
-        metrics_check = (
-            _factory_type_check(
-                metrics_runtime_factory,
-                detail_name="implementation",
-            )
+        metrics_check = _factory_type_check(
+            metrics_runtime_factory,
+            detail_name="implementation",
         )
 
     return create_worker_readiness_service(
         TelegramWorkerReadinessChecks(
-            configuration=(
-                configuration_check
-            ),
+            configuration=(configuration_check),
             database=database_check,
-            job_repository=(
-                job_repository_check
-            ),
-            receipt_repository=(
-                receipt_repository_check
-            ),
-            keyring=(
-                _keyring_check(
-                    keyring_factory
-                )
-            ),
-            processor=(
-                _processor_check(
-                    processor_factory
-                )
-            ),
-            metrics_runtime=(
-                metrics_check
-            ),
+            job_repository=(job_repository_check),
+            receipt_repository=(receipt_repository_check),
+            keyring=(_keyring_check(keyring_factory)),
+            processor=(_processor_check(processor_factory)),
+            metrics_runtime=(metrics_check),
         )
     )
 

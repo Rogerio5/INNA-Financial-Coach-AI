@@ -103,9 +103,7 @@ def calcular_score_tools(
 
         score -= penalidade
 
-        penalidades.append(
-            f"Taxa de sucesso: -{penalidade:.1f}"
-        )
+        penalidades.append(f"Taxa de sucesso: -{penalidade:.1f}")
 
     if confianca_media < 85:
         penalidade = min(
@@ -115,9 +113,7 @@ def calcular_score_tools(
 
         score -= penalidade
 
-        penalidades.append(
-            f"Confiança do Router: -{penalidade:.1f}"
-        )
+        penalidades.append(f"Confiança do Router: -{penalidade:.1f}")
 
     if percentual_sem_tool > 15:
         penalidade = min(
@@ -127,9 +123,7 @@ def calcular_score_tools(
 
         score -= penalidade
 
-        penalidades.append(
-            f"Eventos sem Tool: -{penalidade:.1f}"
-        )
+        penalidades.append(f"Eventos sem Tool: -{penalidade:.1f}")
 
     if total_anomalias > 0:
         penalidade = min(
@@ -139,9 +133,7 @@ def calcular_score_tools(
 
         score -= penalidade
 
-        penalidades.append(
-            f"Anomalias: -{penalidade:.1f}"
-        )
+        penalidades.append(f"Anomalias: -{penalidade:.1f}")
 
     score = limitar_score(score)
 
@@ -163,10 +155,7 @@ def calcular_score_infraestrutura(
     if total_componentes <= 0:
         score = 0.0
     else:
-        score = (
-            total_operacionais
-            / total_componentes
-        ) * 100
+        score = (total_operacionais / total_componentes) * 100
 
     score = limitar_score(score)
 
@@ -193,15 +182,10 @@ def calcular_score_rag(
 
     if documentos_ativos <= 0:
         score -= 40
-        penalidades.append(
-            "Nenhum documento ativo: -40"
-        )
+        penalidades.append("Nenhum documento ativo: -40")
 
     if documentos_com_embeddings < documentos_ativos:
-        faltantes = (
-            documentos_ativos
-            - documentos_com_embeddings
-        )
+        faltantes = documentos_ativos - documentos_com_embeddings
 
         penalidade = min(
             faltantes * 10,
@@ -210,27 +194,17 @@ def calcular_score_rag(
 
         score -= penalidade
 
-        penalidades.append(
-            f"Documentos sem embeddings: -{penalidade}"
-        )
+        penalidades.append(f"Documentos sem embeddings: -{penalidade}")
 
-    total_embeddings = (
-        embeddings_ativos
-        + embeddings_inativos
-    )
+    total_embeddings = embeddings_ativos + embeddings_inativos
 
     if total_embeddings <= 0:
         score -= 30
 
-        penalidades.append(
-            "Nenhum embedding disponível: -30"
-        )
+        penalidades.append("Nenhum embedding disponível: -30")
 
     elif embeddings_inativos > 0:
-        percentual_inativos = (
-            embeddings_inativos
-            / total_embeddings
-        ) * 100
+        percentual_inativos = (embeddings_inativos / total_embeddings) * 100
 
         penalidade = min(
             percentual_inativos * 0.3,
@@ -239,9 +213,7 @@ def calcular_score_rag(
 
         score -= penalidade
 
-        penalidades.append(
-            f"Embeddings inativos: -{penalidade:.1f}"
-        )
+        penalidades.append(f"Embeddings inativos: -{penalidade:.1f}")
 
     score = limitar_score(score)
 
@@ -266,17 +238,13 @@ def calcular_score_memoria(
 
     if not tabela_disponivel:
         score = 0.0
-        penalidades.append(
-            "Tabela de memória indisponível: -100"
-        )
+        penalidades.append("Tabela de memória indisponível: -100")
 
     else:
         if total_usuarios_com_memoria <= 0:
             score -= 15
 
-            penalidades.append(
-                "Nenhuma memória registrada: -15"
-            )
+            penalidades.append("Nenhuma memória registrada: -15")
 
         if erros_memoria > 0:
             penalidade = min(
@@ -286,9 +254,7 @@ def calcular_score_memoria(
 
             score -= penalidade
 
-            penalidades.append(
-                f"Erros de memória: -{penalidade}"
-            )
+            penalidades.append(f"Erros de memória: -{penalidade}")
 
     score = limitar_score(score)
 
@@ -314,15 +280,10 @@ def calcular_score_timeline(
     if traces_analisados <= 0:
         score -= 20
 
-        penalidades.append(
-            "Nenhum trace analisado: -20"
-        )
+        penalidades.append("Nenhum trace analisado: -20")
 
     if traces_com_falha > 0:
-        percentual_falhas = (
-            traces_com_falha
-            / max(traces_analisados, 1)
-        ) * 100
+        percentual_falhas = (traces_com_falha / max(traces_analisados, 1)) * 100
 
         penalidade = min(
             percentual_falhas * 0.5,
@@ -331,9 +292,7 @@ def calcular_score_timeline(
 
         score -= penalidade
 
-        penalidades.append(
-            f"Traces com falha: -{penalidade:.1f}"
-        )
+        penalidades.append(f"Traces com falha: -{penalidade:.1f}")
 
     if percentual_cold_start > 10:
         penalidade = min(
@@ -343,9 +302,7 @@ def calcular_score_timeline(
 
         score -= penalidade
 
-        penalidades.append(
-            f"Cold starts: -{penalidade:.1f}"
-        )
+        penalidades.append(f"Cold starts: -{penalidade:.1f}")
 
     score = limitar_score(score)
 
@@ -369,35 +326,23 @@ def calcular_score_performance(
 
     if p95_tools_ms > 1000:
         penalidade = min(
-            (
-                p95_tools_ms
-                - 1000
-            )
-            / 200,
+            (p95_tools_ms - 1000) / 200,
             25,
         )
 
         score -= penalidade
 
-        penalidades.append(
-            f"P95 Tools elevado: -{penalidade:.1f}"
-        )
+        penalidades.append(f"P95 Tools elevado: -{penalidade:.1f}")
 
     if p95_trace_ms > 10000:
         penalidade = min(
-            (
-                p95_trace_ms
-                - 10000
-            )
-            / 1000,
+            (p95_trace_ms - 10000) / 1000,
             35,
         )
 
         score -= penalidade
 
-        penalidades.append(
-            f"P95 dos traces elevado: -{penalidade:.1f}"
-        )
+        penalidades.append(f"P95 dos traces elevado: -{penalidade:.1f}")
 
     score = limitar_score(score)
 
@@ -443,21 +388,15 @@ def calcular_health_score_global(
             ),
             "classificacao": componente.get(
                 "classificacao",
-                classificar_score(score)[
-                    "classificacao"
-                ],
+                classificar_score(score)["classificacao"],
             ),
             "status": componente.get(
                 "status",
-                classificar_score(score)[
-                    "status"
-                ],
+                classificar_score(score)["status"],
             ),
             "icone": componente.get(
                 "icone",
-                classificar_score(score)[
-                    "icone"
-                ],
+                classificar_score(score)["icone"],
             ),
             "penalidades": componente.get(
                 "penalidades",
@@ -467,26 +406,18 @@ def calcular_health_score_global(
 
         score_global += contribuicao
 
-    score_global = limitar_score(
-        score_global
-    )
+    score_global = limitar_score(score_global)
 
-    classificacao = classificar_score(
-        score_global
-    )
+    classificacao = classificar_score(score_global)
 
     componente_mais_fraco = min(
         contribuicoes,
-        key=lambda item: (
-            contribuicoes[item]["score"]
-        ),
+        key=lambda item: contribuicoes[item]["score"],
     )
 
     componente_mais_forte = max(
         contribuicoes,
-        key=lambda item: (
-            contribuicoes[item]["score"]
-        ),
+        key=lambda item: contribuicoes[item]["score"],
     )
 
     recomendacoes = []
@@ -509,12 +440,8 @@ def calcular_health_score_global(
         "score_global": score_global,
         **classificacao,
         "componentes": contribuicoes,
-        "componente_mais_fraco": (
-            componente_mais_fraco
-        ),
-        "componente_mais_forte": (
-            componente_mais_forte
-        ),
+        "componente_mais_fraco": (componente_mais_fraco),
+        "componente_mais_forte": (componente_mais_forte),
         "recomendacoes": recomendacoes,
     }
 
