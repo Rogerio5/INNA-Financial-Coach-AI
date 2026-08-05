@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "name": "inna-financial-retrieval-quality-v1",
+  "description": "Casos determinísticos para métricas offline de retrieval.",
+  "cases": [
+    {
+      "case_id": "reserva-financeira-001",
+      "question": "Como montar uma reserva financeira?",
+      "k": 4,
+      "retrieved_document_ids": [
+        "doc_reserva_01",
+        "doc_orcamento_01",
+        "doc_reserva_02",
+        "doc_cartao_01"
+      ],
+      "relevant_document_ids": [
+        "doc_reserva_01",
+        "doc_reserva_02"
+      ],
+      "graded_relevance": {
+        "doc_reserva_01": 3,
+        "doc_reserva_02": 2
+      }
+    },
+    {
+      "case_id": "orcamento-mensal-001",
+      "question": "Como organizar renda e despesas mensais?",
+      "k": 4,
+      "retrieved_document_ids": [
+        "doc_orcamento_01",
+        "doc_orcamento_02",
+        "doc_reserva_01",
+        "doc_dividas_01"
+      ],
+      "relevant_document_ids": [
+        "doc_orcamento_01",
+        "doc_orcamento_02"
+      ],
+      "graded_relevance": {
+        "doc_orcamento_01": 3,
+        "doc_orcamento_02": 2
+      }
+    },
+    {
+      "case_id": "cartao-credito-001",
+      "question": "Como usar cartão de crédito sem me endividar?",
+      "k": 4,
+      "retrieved_document_ids": [
+        "doc_orcamento_02",
+        "doc_cartao_01",
+        "doc_cartao_02",
+        "doc_reserva_02"
+      ],
+      "relevant_document_ids": [
+        "doc_cartao_01",
+        "doc_cartao_02"
+      ],
+      "graded_relevance": {
+        "doc_cartao_01": 3,
+        "doc_cartao_02": 2
+      }
+    },
+    {
+      "case_id": "dividas-priorizacao-001",
+      "question": "Qual dívida devo pagar primeiro?",
+      "k": 4,
+      "retrieved_document_ids": [
+        "doc_dividas_01",
+        "doc_dividas_02",
+        "doc_orcamento_01",
+        "doc_cartao_02"
+      ],
+      "relevant_document_ids": [
+        "doc_dividas_01",
+        "doc_dividas_02"
+      ],
+      "graded_relevance": {
+        "doc_dividas_01": 3,
+        "doc_dividas_02": 2
+      }
+    },
+    {
+      "case_id": "gastos-fixos-variaveis-001",
+      "question": "Qual a diferença entre gastos fixos e variáveis?",
+      "k": 4,
+      "retrieved_document_ids": [
+        "doc_gastos_01",
+        "doc_orcamento_02",
+        "doc_gastos_02",
+        "doc_reserva_01"
+      ],
+      "relevant_document_ids": [
+        "doc_gastos_01",
+        "doc_gastos_02"
+      ],
+      "graded_relevance": {
+        "doc_gastos_01": 3,
+        "doc_gastos_02": 2
+      }
+    }
+  ]
+}
