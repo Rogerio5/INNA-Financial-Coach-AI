@@ -2353,6 +2353,67 @@ A redução de top_k=4 para top_k=2 evitou a inclusão de chunks secundários me
 
 > A Pergunta 4 foi validada oficialmente na comparação entre o RAG híbrido atual e o Sentence-Window com window_size=5 e top_k=2.
 
+---
+
+## Experimento oficial — Pergunta 5 de 5
+### Pergunta avaliada
+
+> Qual dívida devo pagar primeiro?
+
+### Configuração utilizada
+```
+MODELO=gemini-3.5-flash-lite
+TOP_K=2
+WINDOW_SIZE=5
+CHUNK_RADIUS=1
+MAX_CHARACTERS=4000
+```
+
+### Resultado da RAG Triad
+
+| Métrica              | Delta do Sentence-Window |
+| -------------------- | -----------------------: |
+| Answer Relevancy     |                +0.083333 |
+| Faithfulness         |                 0.000000 |
+| Contextual Relevancy |                -0.033333 |
+
+### Resultado do Quality Gate
+```
+COMPLETED=1
+FAILED=0
+CASE_QUALITY_GATE_PASSED=True
+RECOMMENDATION=promote_sentence_window
+```
+### Desempenho e contexto
+```
+MEDIAN_LATENCY_DELTA_MS=-2786
+AVERAGE_CONTEXT_CHARACTER_DELTA=-766
+RAW_OUTPUTS_STORED=False
+RAW_CONTEXTS_STORED=False
+```
+### Análise
+
+O Sentence-Window com window_size=5 e top_k=2:
+
+- melhorou o Answer Relevancy em +0.083333;
+- manteve a Faithfulness sem regressão;
+- teve pequena redução de -0.033333 no Contextual Relevancy, dentro do limite aceito;
+- utilizou 766 caracteres a menos de contexto;
+- apresentou menor latência nesta execução;
+- passou em todos os Quality Gates;
+- recebeu a recomendação técnica promote_sentence_window.
+
+### A Pergunta 5 foi validada oficialmente.
+
+Estado atual:
+```
+Pergunta 1 ✅
+Pergunta 2 ✅
+Pergunta 3 ✅
+Pergunta 4 ✅
+Pergunta 5 ✅
+```
+
 A feature flag permanece desativada em produção enquanto as Perguntas 5 ainda não forem concluídas.
 
 ---
