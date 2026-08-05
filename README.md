@@ -2052,6 +2052,88 @@ EXIT_CODE=0
 
 > O Sentence-Window melhorou a relevância do contexto sem reduzir a fidelidade ou a relevância da resposta nesta segunda pergunta.
 
+---
+
+## Experimento oficial com gemini-3.5-flash-lite
+
+A consolidação oficial utilizará o mesmo modelo para geração e avaliação:
+```env
+GEMINI_MODEL=gemini-3.5-flash-lite
+INNA_DEEPEVAL_GEMINI_MODEL=gemini-3.5-flash-lite
+```
+
+Todas as cinco perguntas oficiais deverão utilizar:
+
+- o mesmo modelo gerador;
+- o mesmo modelo avaliador;
+- o mesmo conjunto de documentos;
+- o mesmo top_k;
+- os mesmos parâmetros de retrieval;
+- os mesmos limites de custo e latência;
+- as mesmas métricas da RAG Triad;
+- o mesmo baseline;
+- a mesma configuração aprovada do Sentence-Window.
+
+### Experimento oficial — Pergunta 1 de 5
+#### Pergunta avaliada
+
+> Como montar uma reserva financeira?
+
+Comparação executada
+```
+VARIANTE_A=RAG híbrido atual da INNA
+VARIANTE_B=RAG híbrido + Sentence-Window
+MODELO=gemini-3.5-flash-lite
+TOP_K=4
+CHUNK_RADIUS=1
+MAX_CHARACTERS=4000
+```
+
+Durante o ajuste, foram testados três tamanhos de janela:
+
+- window_size=2;
+- window_size=4;
+- window_size=5.
+
+### Comparação dos deltas do Sentence-Window
+
+Os valores abaixo representam a diferença do Sentence-Window em relação ao RAG híbrido baseline.
+
+| Configuração | Delta Answer Relevancy | Delta Faithfulness | Delta Contextual Relevancy | Quality Gate |
+|---|---:|---:|---:|---|
+| Window Size 2 | -0.166667 | -0.200000 | -0.500000 | ❌ Reprovado |
+| Window Size 4 | +0.222222 | 0.000000 | -0.333333 | ❌ Reprovado |
+| Window Size 5 | 0.000000 | 0.000000 | +0.181818 | ✅ Aprovado |
+
+### Evolução do ajuste
+
+#### Window Size 2
+
+```text
+ANSWER_RELEVANCY_DELTA=-0.166667
+FAITHFULNESS_DELTA=-0.200000
+CONTEXTUAL_RELEVANCY_DELTA=-0.500000
+QUALITY_GATE_PASSED=False
+RECOMMENDATION=reject_sentence_window
+```
+
+O contexto foi reduzido em aproximadamente 1.488 caracteres, causando regressão nas três métricas da RAG Triad.
+
+> O window_size=2 não apresentou contexto suficiente para manter a qualidade da resposta e, por isso, foi reprovado no Quality Gate.
+
+#### Window Size 4
+
+```text
+ANSWER_RELEVANCY_DELTA=+0.222222
+FAITHFULNESS_DELTA=0.000000
+CONTEXTUAL_RELEVANCY_DELTA=-0.333333
+QUALITY_GATE_PASSED=False
+RECOMMENDATION=reject_sentence_window
+```
+
+O ajuste recuperou a Faithfulness e melhorou o Answer Relevancy, mas a Contextual Relevancy ainda permaneceu abaixo do RAG híbrido baseline.
+
+> O window_size=4 apresentou uma evolução significativa em relação ao window_size=2, porém ainda foi reprovado no Quality Gate devido à regressão em Contextual Relevancy.
 
 
 ---
