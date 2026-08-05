@@ -36,11 +36,11 @@ def test_financial_agent_requests_report_agent():
 def test_financial_handoff_requires_success_path():
     source = _financial_source()
 
-    success_position = source.index('f"success"')
+    ready_guard_position = source.index("if not resolution.ready:")
 
     decision_position = source.index("should_request_report_handoff")
 
-    assert decision_position > success_position
+    assert decision_position > ready_guard_position
 
 
 def test_financial_handoff_prevents_duplicate_active_transfer():

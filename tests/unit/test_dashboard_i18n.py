@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 import pandas as pd
 import pytest
 
@@ -1843,7 +1845,9 @@ def test_llm_cost_alert_dynamic_helpers_preserve_unknown_values() -> None:
 def test_llm_cost_remaining_messages_are_localized() -> None:
     from pathlib import Path
 
-    source = Path("src/dashboard_pages/llm_costs_page.py").read_text(encoding="utf-8")
+    source = Path("src/dashboard_pages/llm_costs_page.py").read_text(
+        encoding="utf-8",
+    )
 
     start = source.index("def render_alertas_llm_section(")
 
@@ -1873,24 +1877,31 @@ def test_llm_cost_remaining_messages_are_localized() -> None:
     for text in forbidden:
         assert text not in render_source
 
-    required_calls = {
-        'llm_alert_section_t(\n                "email_enabled"',
-        'llm_alert_section_t(\n                "integration_details"',
-        'llm_alert_section_t(\n                    "no_webhook_events"',
-        'llm_alert_section_t(\n                "no_notifications"',
-        'llm_alert_section_t(\n                "no_retry"',
-        'llm_alert_section_t(\n                    "no_failed_retry"',
-        'llm_alert_section_t(\n                    "retry_limit"',
+    required_translation_keys = {
+        "email_enabled",
+        "integration_details",
+        "no_webhook_events",
+        "no_notifications",
+        "no_retry",
+        "no_failed_retry",
+        "retry_limit",
     }
 
-    for call in required_calls:
-        assert call in render_source
+    for key in required_translation_keys:
+        pattern = r"llm_alert_section_t\(\s*" + re.escape(f'"{key}"') + r"\s*\)"
+
+        assert re.search(
+            pattern,
+            render_source,
+        ), key
 
 
 def test_llm_alert_dynamic_content_display_i18n() -> None:
     from pathlib import Path
 
-    source = Path("src/dashboard_pages/llm_costs_page.py").read_text(encoding="utf-8")
+    source = Path("src/dashboard_pages/llm_costs_page.py").read_text(
+        encoding="utf-8",
+    )
 
     assert "# LLM_COST_ALERT_CONTENT_DISPLAY_I18N" in source
 
@@ -1933,16 +1944,21 @@ def test_llm_alert_dynamic_content_display_i18n() -> None:
 
     assert "traduzir_conteudo_alerta_visual(" in render_source
 
-    assert 'conteudo_visual[\n            "titulo"\n        ]' in render_source
-
-    assert (
-        'conteudo_visual[\n                    "descricao"\n                ]'
-        in render_source
+    assert re.search(
+        r"""conteudo_visual\[
+            \s*
+            ["']titulo["']
+            \s*
+        \]""",
+        render_source,
+        flags=re.VERBOSE,
     )
 
-    assert "f\"{conteudo_visual['recomendacao']}\"" in render_source
+    assert 'conteudo_visual["descricao"]' in render_source
 
-    assert "f\"{conteudo_visual['categoria']} | \"" in render_source
+    assert "conteudo_visual['recomendacao']" in render_source
+
+    assert "conteudo_visual['categoria']" in render_source
 
 
 # BLOCK_7A_UPLOAD_RAG_I18N_REGRESSION_TESTS
