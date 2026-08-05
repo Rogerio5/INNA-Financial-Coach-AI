@@ -1,0 +1,235 @@
+{
+  "areas": {
+    "educacao_financeira": 8,
+    "seguranca_financeira": 8
+  },
+  "country": "BR",
+  "document_count": 16,
+  "documents": [
+    {
+      "area": "educacao_financeira",
+      "document_id": "inna-edu-orcamento-002",
+      "path": "educadora_financeira/01_orcamento_fluxo_caixa.md",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026",
+        "bcb-orcamento-pessoal-2026"
+      ],
+      "status": "active",
+      "title": "Orçamento pessoal, fluxo de caixa e acompanhamento mensal",
+      "topic": "orcamento_pessoal",
+      "version": "2.0.0"
+    },
+    {
+      "area": "educacao_financeira",
+      "document_id": "inna-edu-gastos-002",
+      "path": "educadora_financeira/02_gastos_fixos_variaveis_eventuais.md",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026",
+        "bcb-orcamento-pessoal-2026"
+      ],
+      "status": "active",
+      "title": "Gastos fixos, variáveis, eventuais e essenciais",
+      "topic": "classificacao_de_gastos",
+      "version": "2.0.0"
+    },
+    {
+      "area": "educacao_financeira",
+      "document_id": "inna-edu-reserva-002",
+      "path": "educadora_financeira/03_reserva_emergencia.md",
+      "source_ids": [
+        "bcb-letramento-reserva",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "status": "active",
+      "title": "Reserva de emergência e resiliência financeira",
+      "topic": "reserva_de_emergencia",
+      "version": "2.0.0"
+    },
+    {
+      "area": "educacao_financeira",
+      "document_id": "inna-edu-cartao-002",
+      "path": "educadora_financeira/04_cartao_credito_responsavel.md",
+      "source_ids": [
+        "bcb-credito-dividas-2026",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "status": "active",
+      "title": "Uso responsável do cartão de crédito",
+      "topic": "cartao_de_credito",
+      "version": "2.0.0"
+    },
+    {
+      "area": "educacao_financeira",
+      "document_id": "inna-edu-dividas-002",
+      "path": "educadora_financeira/05_priorizacao_dividas.md",
+      "source_ids": [
+        "bcb-credito-dividas-2026",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "status": "active",
+      "title": "Mapeamento, priorização e negociação de dívidas",
+      "topic": "priorizacao_de_dividas",
+      "version": "2.0.0"
+    },
+    {
+      "area": "educacao_financeira",
+      "document_id": "inna-edu-credito-002",
+      "path": "educadora_financeira/06_credito_juros_negociacao.md",
+      "source_ids": [
+        "bcb-credito-dividas-2026",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "status": "active",
+      "title": "Crédito, juros, custo total e renegociação",
+      "topic": "credito_e_juros",
+      "version": "2.0.0"
+    },
+    {
+      "area": "educacao_financeira",
+      "document_id": "inna-edu-metas-002",
+      "path": "educadora_financeira/07_metas_consumo_planejado.md",
+      "source_ids": [
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "status": "active",
+      "title": "Metas financeiras e consumo planejado",
+      "topic": "metas_financeiras",
+      "version": "2.0.0"
+    },
+    {
+      "area": "educacao_financeira",
+      "document_id": "inna-edu-investimentos-002",
+      "path": "educadora_financeira/08_investimentos_basicos_limites.md",
+      "source_ids": [
+        "cvm-portal-investidor",
+        "bcb-caderno-financas-pessoais-2026"
+      ],
+      "status": "active",
+      "title": "Princípios básicos de poupança e investimentos",
+      "topic": "investimentos_basicos",
+      "version": "2.0.0"
+    },
+    {
+      "area": "seguranca_financeira",
+      "document_id": "inna-sec-pix-002",
+      "path": "seguranca_financeira/01_pix_suspeito_med.md",
+      "source_ids": [
+        "bcb-pix-seguranca",
+        "bcb-med-faq",
+        "bcb-vitima-pix-golpe"
+      ],
+      "status": "active",
+      "title": "Pix suspeito, golpe e Mecanismo Especial de Devolução",
+      "topic": "seguranca_pix",
+      "version": "2.0.0"
+    },
+    {
+      "area": "seguranca_financeira",
+      "document_id": "inna-sec-phishing-002",
+      "path": "seguranca_financeira/02_phishing_engenharia_social.md",
+      "source_ids": [
+        "cert-cartilha-seguranca",
+        "cert-golpes-prevencao"
+      ],
+      "status": "active",
+      "title": "Phishing e engenharia social",
+      "topic": "phishing_e_engenharia_social",
+      "version": "2.0.0"
+    },
+    {
+      "area": "seguranca_financeira",
+      "document_id": "inna-sec-cartao-002",
+      "path": "seguranca_financeira/03_cartao_compra_nao_reconhecida.md",
+      "source_ids": [
+        "cert-golpes-prevencao",
+        "cert-cartilha-seguranca"
+      ],
+      "status": "active",
+      "title": "Cartão perdido, clonagem e compra não reconhecida",
+      "topic": "fraude_com_cartao",
+      "version": "2.0.0"
+    },
+    {
+      "area": "seguranca_financeira",
+      "document_id": "inna-sec-boleto-002",
+      "path": "seguranca_financeira/04_boleto_pagamento_falso.md",
+      "source_ids": [
+        "cert-golpes-prevencao",
+        "cert-cartilha-seguranca"
+      ],
+      "status": "active",
+      "title": "Boleto falso e alteração de dados de pagamento",
+      "topic": "fraude_em_pagamentos",
+      "version": "2.0.0"
+    },
+    {
+      "area": "seguranca_financeira",
+      "document_id": "inna-sec-conta-002",
+      "path": "seguranca_financeira/05_conta_invadida_falsa_identidade.md",
+      "source_ids": [
+        "cert-autenticacao",
+        "cert-golpes-resposta"
+      ],
+      "status": "active",
+      "title": "Conta invadida, WhatsApp clonado e falsa identidade",
+      "topic": "roubo_de_conta",
+      "version": "2.0.0"
+    },
+    {
+      "area": "seguranca_financeira",
+      "document_id": "inna-sec-celular-002",
+      "path": "seguranca_financeira/06_celular_perdido_roubado.md",
+      "source_ids": [
+        "cert-cartilha-seguranca",
+        "cert-autenticacao"
+      ],
+      "status": "active",
+      "title": "Celular perdido ou roubado com aplicativos financeiros",
+      "topic": "seguranca_do_dispositivo",
+      "version": "2.0.0"
+    },
+    {
+      "area": "seguranca_financeira",
+      "document_id": "inna-sec-dados-002",
+      "path": "seguranca_financeira/07_vazamento_dados_senhas.md",
+      "source_ids": [
+        "anpd-dados-vazaram",
+        "cert-vazamento-dados",
+        "cert-autenticacao"
+      ],
+      "status": "active",
+      "title": "Vazamento de dados, senhas e autenticação",
+      "topic": "vazamento_de_dados",
+      "version": "2.0.0"
+    },
+    {
+      "area": "seguranca_financeira",
+      "document_id": "inna-sec-incidente-002",
+      "path": "seguranca_financeira/08_resposta_incidente_evidencias.md",
+      "source_ids": [
+        "cert-golpes-resposta",
+        "bcb-vitima-pix-golpe",
+        "anpd-dados-vazaram"
+      ],
+      "status": "active",
+      "title": "Resposta a incidentes financeiros e preservação de evidências",
+      "topic": "resposta_a_incidentes",
+      "version": "2.0.0"
+    }
+  ],
+  "knowledge_base_id": "inna-financial-pt-br",
+  "language": "pt-BR",
+  "master_files": [
+    "EDUCADORA_FINANCEIRA_PROFISSIONAL.md",
+    "SEGURANCA_FINANCEIRA_PROFISSIONAL.md"
+  ],
+  "name": "INNA — Educadora Financeira e Segurança Financeira",
+  "prompt_files": [
+    "prompts/prompt_educadora_financeira.md",
+    "prompts/prompt_seguranca_financeira.md"
+  ],
+  "reviewed_at": "2026-08-05",
+  "schema_version": 2,
+  "status": "ready_for_local_review",
+  "version": "2.0.0"
+}
