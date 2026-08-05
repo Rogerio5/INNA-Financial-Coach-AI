@@ -1724,7 +1724,7 @@ Principais entregas:
 ### Fase interna 6 — Produção, integração e entrega
 
 **Status: 🟡 Em evolução**
-
+---
 Já disponível:
 
 - deploy no Render;
@@ -1743,7 +1743,7 @@ Já disponível:
 - PDF;
 - e-mail;
 - webhooks.
-
+---
 Ainda falta:
 
 - Docker da API;
@@ -1762,7 +1762,7 @@ Ainda falta:
 ### Fase adicional — Arquitetura hierárquica e Human-in-the-Loop
 
 **Status: 🟡 Núcleo concluído**
-
+---
 Principais entregas:
 
 - arquitetura hierárquica de equipes;
@@ -1787,7 +1787,7 @@ Principais entregas:
 - testes reais com `MemorySaver`;
 - compatibilidade com o fluxo anterior;
 - Pull Request revisado e mesclado.
-
+---
 Próxima evolução:
 
 - tabela PostgreSQL de revisões humanas;
@@ -1809,7 +1809,7 @@ Próxima evolução:
 ### Semana 1 — Agentes, fundamentos
 
 Status: ✅ Concluída
-
+---
 Conteúdos estudados:
 
 - fundamentos de agentes de IA;
@@ -1821,7 +1821,7 @@ Conteúdos estudados:
 - LlamaIndex;
 - LangGraph;
 - integração com modelos de linguagem.
-
+---
 Conteúdos aplicados na INNA:
 
 - núcleo agentic;
@@ -1838,7 +1838,7 @@ Conteúdos aplicados na INNA:
 ### Semana 2 — Agentes, multiagente e produção
 
 Status: ✅ Concluída
-
+---
 Conteúdos estudados:
 
 - LangGraph;
@@ -1853,7 +1853,7 @@ Conteúdos estudados:
 - observabilidade;
 - Arize Phoenix;
 - DeepEval.
-
+---
 Conteúdos aplicados na INNA:
 
 - supervisor principal;
