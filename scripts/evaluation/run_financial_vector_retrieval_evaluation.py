@@ -36,8 +36,8 @@ JOIN public.documentos_upload_rag d
 CROSS JOIN query_vector
 WHERE c.embedding IS NOT NULL
   AND (
-      d.nome_logico LIKE 'inna-edu-%'
-      OR d.nome_logico LIKE 'inna-sec-%'
+      d.nome_logico LIKE 'inna-edu-%%'
+      OR d.nome_logico LIKE 'inna-sec-%%'
   )
 ORDER BY c.embedding <=> query_vector.embedding
 LIMIT 4

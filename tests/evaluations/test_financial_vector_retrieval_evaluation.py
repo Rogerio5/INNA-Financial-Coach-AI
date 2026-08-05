@@ -96,3 +96,16 @@ def test_dry_run_report_passes() -> None:
     assert report["gemini_call_count"] == 0
     assert report["database_connected"] is False
     assert report["neon_changed"] is False
+
+
+def test_vector_search_sql_escapes_percent_for_psycopg() -> None:
+    from scripts.evaluation.run_financial_vector_retrieval_evaluation import (
+        VECTOR_SEARCH_SQL,
+    )
+
+    assert "LIKE 'inna-edu-%%'" in VECTOR_SEARCH_SQL
+    assert "LIKE 'inna-sec-%%'" in VECTOR_SEARCH_SQL
+    assert "LIKE 'inna-edu-%'" not in VECTOR_SEARCH_SQL.replace(
+        "%%",
+        "",
+    )
