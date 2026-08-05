@@ -2107,6 +2107,8 @@ Os valores abaixo representam a diferença do Sentence-Window em relação ao RA
 
 ### Evolução do ajuste
 
+---
+
 #### Window Size 2
 
 ```text
@@ -2121,6 +2123,8 @@ O contexto foi reduzido em aproximadamente 1.488 caracteres, causando regressão
 
 > O window_size=2 não apresentou contexto suficiente para manter a qualidade da resposta e, por isso, foi reprovado no Quality Gate.
 
+---
+
 #### Window Size 4
 
 ```text
@@ -2134,6 +2138,90 @@ RECOMMENDATION=reject_sentence_window
 O ajuste recuperou a Faithfulness e melhorou o Answer Relevancy, mas a Contextual Relevancy ainda permaneceu abaixo do RAG híbrido baseline.
 
 > O window_size=4 apresentou uma evolução significativa em relação ao window_size=2, porém ainda foi reprovado no Quality Gate devido à regressão em Contextual Relevancy.
+
+---
+
+#### Window Size 5
+
+```text
+ANSWER_RELEVANCY_DELTA=0.000000
+FAITHFULNESS_DELTA=0.000000
+CONTEXTUAL_RELEVANCY_DELTA=+0.181818
+QUALITY_GATE_PASSED=True
+RECOMMENDATION=promote_sentence_window
+```
+
+#### Resultado consolidado da Pergunta 1
+```
+RUN_STATUS=completed
+FAILED=0
+WINDOW_SIZE=5
+CASE_QUALITY_GATE_PASSED=True
+RECOMMENDATION=promote_sentence_window
+MEDIAN_LATENCY_DELTA_MS=-23581
+AVERAGE_CONTEXT_CHARACTER_DELTA=-124
+RAW_OUTPUTS_STORED=False
+RAW_CONTEXTS_STORED=False
+```
+
+#### Análise
+O window_size=5:
+
+- manteve o Answer Relevancy sem regressão;
+- manteve a Faithfulness sem regressão;
+- melhorou a Contextual Relevancy em +0.181818;
+- reduziu o contexto médio em apenas 124 caracteres;
+- apresentou menor latência nesta execução;
+- passou no Quality Gate;
+- recebeu recomendação de promoção para este caso.
+
+
+> A Pergunta 1 foi validada oficialmente na comparação entre o RAG híbrido atual e o Sentence-Window com window_size=5.
+
+#### Configuração selecionada
+```env
+INNA_RAG_SENTENCE_WINDOW_SIZE=5
+INNA_RAG_SENTENCE_WINDOW_CHUNK_RADIUS=1
+INNA_RAG_SENTENCE_WINDOW_MAX_CHARACTERS=4000
+INNA_RAG_SENTENCE_WINDOW_ENABLED=false
+```
+
+A feature flag permanece desativada em produção enquanto as Perguntas 2, 3, 4 e 5 ainda não forem concluídas.
+
+---
+
+#### 📊 Resultado parcial do experimento
+
+| Execução                                 | Modelo avaliador        | Quality Gate | Resultado                                                           | Uso na consolidação  |
+| ---------------------------------------- | ----------------------- | ------------ | ------------------------------------------------------------------- | -------------------- |
+| Pergunta 1 — reserva financeira          | `gemini-2.5-flash`      | ✅ Aprovado   | Melhorou Contextual Relevancy                                       | Smoke test histórico |
+| Pergunta 2 — organização do orçamento    | `gemini-2.5-flash`      | ✅ Aprovado   | Melhorou Contextual Relevancy                                       | Smoke test histórico |
+| Pergunta 1 reexecutada — `window_size=5` | `gemini-3.5-flash-lite` | ✅ Aprovado   | Contextual Relevancy `+0.181818`, sem regressão nas demais métricas | Consolidação oficial |
+| Pergunta 2 reexecutada                   | `gemini-3.5-flash-lite` | ⏳ Pendente   | Ainda não executada                                                 | Consolidação oficial |
+| Pergunta 3                               | `gemini-3.5-flash-lite` | ⏳ Pendente   | Ainda não executada                                                 | Consolidação oficial |
+| Pergunta 4                               | `gemini-3.5-flash-lite` | ⏳ Pendente   | Ainda não executada                                                 | Consolidação oficial |
+| Pergunta 5                               | `gemini-3.5-flash-lite` | ⏳ Pendente   | Ainda não executada                                                 | Consolidação oficial |
+
+Os resultados históricos com gemini-2.5-flash continuam preservados como evidência técnica.
+
+A consolidação oficial considerará somente as cinco execuções realizadas com:
+```env
+gemini-3.5-flash-lite
+```
+
+#### Situação atual
+```
+PERGUNTA_1_OFICIAL=CONCLUIDA
+PERGUNTA_1_QUALITY_GATE=True
+WINDOW_SIZE_SELECIONADO=5
+PERGUNTAS_OFICIAIS_CONCLUIDAS=1_DE_5
+PERGUNTAS_OFICIAIS_PENDENTES=4
+DECISAO_DE_PRODUCAO=PENDENTE
+```
+
+---
+
+### 🔄 Próximos passos
 
 
 ---
