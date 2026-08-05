@@ -12,7 +12,7 @@ campos inesperados.
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Self
 
 from pydantic import (
@@ -23,23 +23,23 @@ from pydantic import (
 )
 
 
-class ResearchComplexity(str, Enum):
+class ResearchComplexity(StrEnum):
     SIMPLE = "simple"
     COMPLEX = "complex"
 
 
-class ResearchSource(str, Enum):
+class ResearchSource(StrEnum):
     KNOWLEDGE_BASE = "knowledge_base"
     FINANCIAL_HISTORY = "financial_history"
 
 
-class PlanGenerationMode(str, Enum):
+class PlanGenerationMode(StrEnum):
     DETERMINISTIC = "deterministic"
     LLM = "llm"
     FALLBACK = "fallback"
 
 
-class EvidenceCollectionStatus(str, Enum):
+class EvidenceCollectionStatus(StrEnum):
     COLLECTED = "collected"
     EMPTY = "empty"
     REJECTED = "rejected"
@@ -322,13 +322,13 @@ class EvidenceCollectionResult(BaseModel):
         return self
 
 
-class SufficiencyDecision(str, Enum):
+class SufficiencyDecision(StrEnum):
     SUFFICIENT = "sufficient"
     NEEDS_MORE_RESEARCH = "needs_more_research"
     INSUFFICIENT = "insufficient"
 
 
-class EvidenceGapType(str, Enum):
+class EvidenceGapType(StrEnum):
     REQUIRED_STEP_MISSING = "required_step_missing"
     SOURCE_MISSING = "source_missing"
     EMPTY_COLLECTION = "empty_collection"

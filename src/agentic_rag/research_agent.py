@@ -19,10 +19,9 @@ import inspect
 import re
 import time
 import uuid
-
 from collections import defaultdict
 from collections.abc import Callable
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import (
@@ -59,17 +58,16 @@ from src.agentic_rag.sufficiency import (
     assessment_to_audit_payload,
 )
 
-
 RESEARCH_AGENT_VERSION = "5.1.0"
 
 
-class ResearchAgentStatus(str, Enum):
+class ResearchAgentStatus(StrEnum):
     SUCCEEDED = "succeeded"
     EXHAUSTED = "exhausted"
     FAILED = "failed"
 
 
-class ResearchStopReason(str, Enum):
+class ResearchStopReason(StrEnum):
     SUFFICIENT = "sufficient"
     MAX_ROUNDS_REACHED = "max_rounds_reached"
     NO_RETRYABLE_GAPS = "no_retryable_gaps"
@@ -89,7 +87,7 @@ class ResearchStopReason(str, Enum):
     INTERNAL_ERROR = "internal_error"
 
 
-class RetryDisposition(str, Enum):
+class RetryDisposition(StrEnum):
     RETRYABLE = "retryable"
     NON_RETRYABLE = "non_retryable"
     FATAL = "fatal"
@@ -202,7 +200,7 @@ class ResearchExecutionPolicy(BaseModel):
     @model_validator(mode="after")
     def validate_policy(
         self,
-    ) -> "ResearchExecutionPolicy":
+    ) -> ResearchExecutionPolicy:
         if self.max_retry_backoff_ms < self.retry_backoff_ms:
             raise ValueError(
                 "max_retry_backoff_ms não pode ser menor que retry_backoff_ms."
@@ -394,7 +392,7 @@ class ResearchAgentResult(BaseModel):
     @model_validator(mode="after")
     def validate_final_state(
         self,
-    ) -> "ResearchAgentResult":
+    ) -> ResearchAgentResult:
         if (
             self.status == ResearchAgentStatus.SUCCEEDED
             and not self.assessment.sufficient
@@ -720,15 +718,7 @@ def _align_routes_to_steps(
         if len(normalized_ids) != len(set(normalized_ids)):
             raise ResearchRoutingContractError("O Router retornou step_ids duplicados.")
 
-        route_by_step_id = {
-            str(
-                getattr(
-                    route,
-                    "step_id",
-                )
-            ): route
-            for route in routes
-        }
+        route_by_step_id = {str(route.step_id): route for route in routes}
 
         missing_step_ids = [
             step.step_id for step in steps if (step.step_id not in route_by_step_id)

@@ -8,7 +8,6 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-
 from pydantic import ValidationError
 
 from src.agent_tools.financial_history_tools import (
@@ -92,11 +91,9 @@ def test_routes_history_without_identity_argument():
 
 def test_routes_complete_research_plan():
     plan = create_research_plan(
-        (
-            "Compare reserva de emergência e "
-            "pagamento de dívidas, explique os "
-            "riscos e crie um plano completo."
-        )
+        "Compare reserva de emergência e "
+        "pagamento de dívidas, explique os "
+        "riscos e crie um plano completo."
     )
 
     routes = route_research_plan(plan)

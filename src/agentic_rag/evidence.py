@@ -10,14 +10,12 @@ import hashlib
 import json
 import re
 import unicodedata
-
 from collections.abc import Mapping
 from typing import Any
 
 from src.agentic_rag.contracts import (
     EvidenceItem,
 )
-
 
 _STOPWORDS = {
     "a",

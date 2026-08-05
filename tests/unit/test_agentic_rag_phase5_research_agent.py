@@ -8,11 +8,9 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
-
 from pydantic import ValidationError
 
 import src.agentic_rag.research_agent as research_module
-
 from src.agentic_rag import (
     IterativeResearchAgent,
     ResearchAgentStatus,
@@ -32,10 +30,8 @@ def _simple_plan():
 
 def _complex_plan():
     return create_research_plan(
-        (
-            "Compare reserva de emergência e dívidas, "
-            "explique os riscos e crie um plano completo."
-        )
+        "Compare reserva de emergência e dívidas, "
+        "explique os riscos e crie um plano completo."
     )
 
 

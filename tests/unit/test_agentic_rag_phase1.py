@@ -6,11 +6,9 @@ contratos e Query Planner.
 from __future__ import annotations
 
 import pytest
-
 from pydantic import ValidationError
 
 import src.agentic_rag.planner as planner_module
-
 from src.agentic_rag import (
     PlanGenerationMode,
     ResearchComplexity,
@@ -34,11 +32,9 @@ def test_simple_question_creates_one_knowledge_step():
 
 def test_complex_question_creates_multiple_steps():
     plan = create_research_plan(
-        (
-            "Compare reserva de emergência e pagamento "
-            "de dívidas, explique os riscos e apresente "
-            "um plano completo de ações seguras."
-        )
+        "Compare reserva de emergência e pagamento "
+        "de dívidas, explique os riscos e apresente "
+        "um plano completo de ações seguras."
     )
 
     assert plan.complexity == ResearchComplexity.COMPLEX

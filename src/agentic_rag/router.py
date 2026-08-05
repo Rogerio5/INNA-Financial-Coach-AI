@@ -19,7 +19,6 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-
 from collections.abc import Callable
 from typing import (
     Any,
@@ -48,7 +47,6 @@ from src.agentic_rag.contracts import (
     ResearchSource,
     ResearchSubquery,
 )
-
 
 ROUTER_VERSION = "2.0.0"
 ROUTER_AGENT_NAME = "research_agent"

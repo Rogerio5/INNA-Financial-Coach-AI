@@ -1,0 +1,14 @@
+{
+  "policy_version": "1.0.0",
+  "minimum_agentic_pass_rate": 1.0,
+  "minimum_agentic_average_score": 1.0,
+  "minimum_score_delta": 0.0,
+  "maximum_regression_count": 0,
+  "maximum_invalid_citation_count": 0,
+  "maximum_agentic_error_count": 0,
+  "maximum_latency_delta_ms": 100.0,
+  "minimum_category_pass_rate": 1.0,
+  "require_all_dataset_cases": true,
+  "require_all_categories": true,
+  "require_offline_execution": true
+}

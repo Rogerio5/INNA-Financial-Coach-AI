@@ -35,12 +35,16 @@ from src.agentic_rag.contracts import (
     ALLOWED_TOOL_BY_SOURCE,
     EvidenceCollectionResult,
     EvidenceCollectionStatus,
+    EvidenceGap,
+    EvidenceGapType,
     EvidenceItem,
     PlanGenerationMode,
     ResearchComplexity,
     ResearchPlan,
     ResearchSource,
     ResearchSubquery,
+    SufficiencyAssessment,
+    SufficiencyDecision,
 )
 from src.agentic_rag.evidence import (
     canonical_output_sha256,
@@ -57,35 +61,6 @@ from src.agentic_rag.planner import (
     assess_query_complexity,
     create_research_plan,
 )
-from src.agentic_rag.router import (
-    MissingTrustedUserContextError,
-    ResearchRoute,
-    ResearchRoutingError,
-    ResearchSourceRouter,
-    build_tool_call,
-    execute_routed_tool,
-    route_research_plan,
-    route_to_audit_payload,
-)
-
-
-from src.agentic_rag.contracts import (
-    EvidenceGap,
-    EvidenceGapType,
-    SufficiencyAssessment,
-    SufficiencyDecision,
-)
-
-
-from src.agentic_rag.sufficiency import (
-    SUFFICIENCY_VERSION,
-    SufficiencyEvaluator,
-    assess_evidence_sufficiency,
-    assessment_to_audit_payload,
-    resolve_sufficiency_threshold,
-)
-
-
 from src.agentic_rag.research_agent import (
     RESEARCH_AGENT_VERSION,
     ClockFunction,
@@ -108,8 +83,23 @@ from src.agentic_rag.research_agent import (
     run_research_agent,
     run_research_agent_with_runtime,
 )
-
-
+from src.agentic_rag.router import (
+    MissingTrustedUserContextError,
+    ResearchRoute,
+    ResearchRoutingError,
+    ResearchSourceRouter,
+    build_tool_call,
+    execute_routed_tool,
+    route_research_plan,
+    route_to_audit_payload,
+)
+from src.agentic_rag.sufficiency import (
+    SUFFICIENCY_VERSION,
+    SufficiencyEvaluator,
+    assess_evidence_sufficiency,
+    assessment_to_audit_payload,
+    resolve_sufficiency_threshold,
+)
 from src.agentic_rag.synthesizer import (
     SYNTHESIS_VERSION,
     GroundedCitation,

@@ -8,7 +8,6 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
-
 from pydantic import ValidationError
 
 from src.agent_tools.financial_history_tools import (

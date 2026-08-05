@@ -24,8 +24,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
-
 from collections.abc import (
     Mapping,
     Sequence,
@@ -45,7 +43,6 @@ from src.agentic_rag.evidence import (
     deduplicate_evidence,
     lexical_relevance,
 )
-
 
 COLLECTOR_VERSION = "3.0.0"
 

@@ -16,7 +16,6 @@ Este módulo não acessa Gemini, banco, rede ou RAG.
 from __future__ import annotations
 
 import os
-
 from collections import defaultdict
 from typing import Any
 
@@ -36,7 +35,6 @@ from src.agentic_rag.contracts import (
 from src.agentic_rag.evidence import (
     deduplicate_evidence,
 )
-
 
 SUFFICIENCY_VERSION = "4.0.0"
 

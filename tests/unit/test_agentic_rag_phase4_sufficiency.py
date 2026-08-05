@@ -15,8 +15,8 @@ from src.agentic_rag import (
     ResearchSource,
     SufficiencyDecision,
     SufficiencyEvaluator,
-    assessment_to_audit_payload,
     assess_evidence_sufficiency,
+    assessment_to_audit_payload,
     content_sha256,
     create_research_plan,
 )
@@ -28,10 +28,8 @@ def _simple_plan():
 
 def _complex_plan():
     return create_research_plan(
-        (
-            "Compare reserva de emergência e dívidas, "
-            "explique os riscos e crie um plano completo."
-        )
+        "Compare reserva de emergência e dívidas, "
+        "explique os riscos e crie um plano completo."
     )
 
 
@@ -86,7 +84,7 @@ def _collection(
         evidence=evidence,
         tool_answer="",
         source_schema="phase4_test",
-        output_sha256=content_sha256((step.step_id + status.value + str(relevance))),
+        output_sha256=content_sha256(step.step_id + status.value + str(relevance)),
         raw_item_count=raw_item_count,
         selected_count=len(evidence),
         discarded_count=0,

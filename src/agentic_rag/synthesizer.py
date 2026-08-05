@@ -22,9 +22,8 @@ import inspect
 import json
 import re
 import uuid
-
 from collections.abc import Callable
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Self
 
 from pydantic import (
@@ -47,17 +46,16 @@ from src.agentic_rag.research_agent import (
     ResearchAgentResult,
 )
 
-
 SYNTHESIS_VERSION = "6.0.0"
 
 
-class SynthesisStatus(str, Enum):
+class SynthesisStatus(StrEnum):
     GROUNDED = "grounded"
     PARTIAL = "partial"
     REJECTED = "rejected"
 
 
-class SynthesisFailureReason(str, Enum):
+class SynthesisFailureReason(StrEnum):
     INSUFFICIENT_RESEARCH = "insufficient_research"
     NO_ELIGIBLE_EVIDENCE = "no_eligible_evidence"
     EMPTY_ANSWER = "empty_answer"
@@ -1399,10 +1397,8 @@ def synthesize_research_result(
 
     if partial:
         limitations.append(
-            (
-                "Resultado parcial: a pesquisa não "
-                "atingiu todos os critérios de suficiência."
-            )
+            "Resultado parcial: a pesquisa não "
+            "atingiu todos os critérios de suficiência."
         )
 
     status = SynthesisStatus.PARTIAL if partial else SynthesisStatus.GROUNDED

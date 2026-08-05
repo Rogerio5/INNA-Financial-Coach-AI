@@ -6,10 +6,7 @@ Grounded Synthesizer profissional.
 from __future__ import annotations
 
 import re
-
 from types import SimpleNamespace
-
-import pytest
 
 from src.agentic_rag import (
     GroundedSynthesisPolicy,
@@ -71,10 +68,8 @@ def _sufficient_result():
 
 def _complex_sufficient_result():
     plan = create_research_plan(
-        (
-            "Compare reserva de emergência e dívidas, "
-            "explique os riscos e crie um plano completo."
-        )
+        "Compare reserva de emergência e dívidas, "
+        "explique os riscos e crie um plano completo."
     )
 
     def executor(
@@ -113,10 +108,8 @@ def _complex_sufficient_result():
 
 def _insufficient_result():
     plan = create_research_plan(
-        (
-            "Compare reserva de emergência e dívidas, "
-            "explique os riscos e crie um plano completo."
-        )
+        "Compare reserva de emergência e dívidas, "
+        "explique os riscos e crie um plano completo."
     )
 
     failed_step = plan.subqueries[1].step_id
