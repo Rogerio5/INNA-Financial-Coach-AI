@@ -1,0 +1,29 @@
+# Frameworks de avaliação da Semana 4
+# Instalados somente em .venv-evaluation
+
+ragas==0.4.3
+trulens==2.10.0
+trulens-apps-langgraph==2.10.0
+trulens-providers-google==2.10.0
+
+# Compatibilidade:
+# DeepEval 4.1.3 exige click>=8.0.0,<8.4.0.
+# O pin impede atualização automática para Click 8.4.x.
+click==8.3.3
+
+# Hugging Face compatível com Click 8.3.3.
+huggingface-hub==1.16.1
+
+# Compatibilidade temporária para o bug de importação do Ragas 0.4.3.
+# Reaplicar após recriar ou reinstalar a .venv-evaluation:
+# .\.venv-evaluation\Scripts\python.exe scripts\compat\patch_ragas_0_4_3_vertexai.py
+
+# Segurança de importação:
+# Execute o Python de avaliação com -P ou PYTHONSAFEPATH=1.
+# Isso evita que o diretório atual seja inserido implicitamente
+# antes dos pacotes da .venv-evaluation.
+
+# LiteLLM necessário pelo provider Google do TruLens.
+# Também prepara o ambiente para avaliação multicloud.
+# Wheel universal compatível com Windows e Python 3.12.
+litellm==1.87.0

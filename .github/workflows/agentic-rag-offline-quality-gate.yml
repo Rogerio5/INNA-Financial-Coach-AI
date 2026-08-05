@@ -1,0 +1,105 @@
+name: Agentic RAG Offline Quality Gate
+
+on:
+  pull_request:
+    paths:
+      - "src/agentic_rag/**"
+      - "src/evaluation/agentic_benchmark/**"
+      - "tests/evaluations/**"
+      - "tests/unit/test_agentic_rag_phase*.py"
+      - "config/evaluation/agentic_rag_quality_gate.json"
+      - "scripts/evaluation/run_agentic_rag_offline_gate.py"
+      - ".github/workflows/agentic-rag-offline-quality-gate.yml"
+  push:
+    branches:
+      - main
+      - "feat/**"
+    paths:
+      - "src/agentic_rag/**"
+      - "src/evaluation/agentic_benchmark/**"
+      - "tests/evaluations/**"
+      - "config/evaluation/agentic_rag_quality_gate.json"
+      - "scripts/evaluation/run_agentic_rag_offline_gate.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agentic-rag-offline-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-quality-gate:
+    name: Offline benchmark and quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+      PYTHONUTF8: "1"
+      INNA_AGENTIC_RAG_MODE: "off"
+      INNA_OFFLINE_EVALUATION: "true"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate Ruff
+        run: |
+          python -m ruff check \
+            src/evaluation/agentic_benchmark \
+            tests/evaluations \
+            scripts/evaluation/run_agentic_rag_offline_gate.py
+
+      - name: Run benchmark evaluation tests
+        run: |
+          python -m pytest -q \
+            tests/evaluations/test_agentic_benchmark_contracts.py \
+            tests/evaluations/test_agentic_benchmark_dataset.py \
+            tests/evaluations/test_agentic_benchmark_adapter.py \
+            tests/evaluations/test_agentic_benchmark_offline_evaluator.py \
+            tests/evaluations/test_agentic_benchmark_framework_payloads.py \
+            tests/evaluations/test_agentic_benchmark_runner.py \
+            tests/evaluations/test_agentic_benchmark_quality_gate.py
+
+      - name: Run Agentic RAG regression tests
+        run: |
+          python -m pytest -q \
+            tests/unit/test_agentic_rag_phase1.py \
+            tests/unit/test_agentic_rag_phase2_router.py \
+            tests/unit/test_agentic_rag_phase2_alignment.py \
+            tests/unit/test_agentic_rag_phase3_collector.py \
+            tests/unit/test_agentic_rag_phase4_sufficiency.py \
+            tests/unit/test_agentic_rag_phase5_research_agent.py \
+            tests/unit/test_agentic_rag_phase6_synthesizer.py \
+            tests/unit/test_agentic_rag_phase7_langgraph_gateway.py
+
+      - name: Execute offline quality gate
+        run: |
+          python scripts/evaluation/run_agentic_rag_offline_gate.py \
+            --dataset tests/evaluations/datasets/agentic_rag_v1.jsonl \
+            --policy config/evaluation/agentic_rag_quality_gate.json \
+            --output-dir artifacts/evaluations/agentic_benchmark \
+            --expected-case-count 24 \
+            --expected-category-count 12
+
+      - name: Upload offline evaluation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-rag-offline-quality-reports
+          path: artifacts/evaluations/agentic_benchmark/
+          if-no-files-found: error
+          retention-days: 14
