@@ -2186,7 +2186,63 @@ INNA_RAG_SENTENCE_WINDOW_MAX_CHARACTERS=4000
 INNA_RAG_SENTENCE_WINDOW_ENABLED=false
 ```
 
-A feature flag permanece desativada em produção enquanto as Perguntas 2, 3, 4 e 5 ainda não forem concluídas.
+---
+
+## Experimento oficial — Pergunta 2 de 5
+
+### Pergunta avaliada
+
+> Tenho renda mensal de R$ 3.000 e gastos de R$ 2.500. Como posso organizar meu orçamento?
+
+### Configuração utilizada
+
+```text
+MODELO=gemini-3.5-flash-lite
+TOP_K=4
+WINDOW_SIZE=5
+CHUNK_RADIUS=1
+MAX_CHARACTERS=4000
+```
+
+### Resultado da RAG Triad
+
+| Métrica              | Delta do Sentence-Window |
+| -------------------- | -----------------------: |
+| Answer Relevancy     |                 0.000000 |
+| Faithfulness         |                 0.000000 |
+| Contextual Relevancy |                 0.000000 |
+
+
+### Resultado do Quality Gate
+```
+COMPLETED=1
+FAILED=0
+CASE_QUALITY_GATE_PASSED=True
+RECOMMENDATION=promote_sentence_window
+```
+### Desempenho e contexto
+```
+MEDIAN_LATENCY_DELTA_MS=-3197
+AVERAGE_CONTEXT_CHARACTER_DELTA=-189
+RAW_OUTPUTS_STORED=False
+RAW_CONTEXTS_STORED=False
+```
+
+### Análise
+
+O Sentence-Window com window_size=5:
+
+- manteve o Answer Relevancy sem regressão;
+- manteve a Faithfulness sem regressão;
+- manteve a Contextual Relevancy sem regressão;
+- reduziu o contexto médio em 189 caracteres;
+- apresentou menor latência nesta execução;
+- passou no Quality Gate;
+- recebeu a recomendação técnica promote_sentence_window.
+
+> A Pergunta 2 foi validada oficialmente na comparação entre o RAG híbrido atual e o Sentence-Window com window_size=5.
+
+A feature flag permanece desativada em produção enquanto as Perguntas 3, 4 e 5 ainda não forem concluídas.
 
 ---
 
