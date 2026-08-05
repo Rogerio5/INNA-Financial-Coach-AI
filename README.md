@@ -1874,77 +1874,93 @@ Conteúdos aplicados na INNA:
 
 ---
 
-## Semana 3 — RAG, fundamentos e retrieval avançado
+## # Semana 3 — RAG, Fundamentos e Retrieval Avançado
 
-Status: 🟡 Em finalização
+> **Status:** 🟡 Em finalização
 
-### Conteúdos estudados
-- chunking;
-- embeddings;
-- busca textual;
-- busca vetorial;
-- busca híbrida;
-- reranking;
-- grounding;
+A Semana 3 foi dedicada ao aprofundamento da arquitetura RAG da INNA, com foco em recuperação avançada de informações, comparação entre estratégias de retrieval, avaliação de qualidade e controle de custos, latência e privacidade.
+
+---
+
+## 📚 Conteúdos estudados
+
+- Chunking;
+- Embeddings;
+- Busca textual;
+- Busca vetorial;
+- Busca híbrida;
+- Reranking;
+- Grounding;
 - Sentence-Window Retrieval;
 - Auto-Merging Retrieval;
 - RAG Triad;
-- Knowledge Graphs para RAG;
+- Knowledge Graphs aplicados a RAG;
 - Neo4j;
 - Cypher;
 - GraphRAG;
-- trade-offs entre qualidade, custo e performance.
+- Trade-offs entre qualidade, custo, latência e performance.
 
-### Conteúdos aplicados na INNA
+---
+
+## 🧠 Conteúdos aplicados na INNA
+
 - RAG híbrido;
-- PostgreSQL e pgvector;
-- recuperação textual e vetorial;
-- reranking;
+- PostgreSQL com `pgvector`;
+- Recuperação textual e vetorial;
+- Reranking;
 - Sentence-Window Retrieval;
-- comparação A/B entre estratégias de retrieval;
-- estrutura de avaliação com RAG Triad;
+- Comparação A/B entre estratégias de retrieval;
+- Estrutura de avaliação com RAG Triad;
 - Answer Relevancy;
 - Faithfulness;
 - Contextual Relevancy;
 - Quality Gate;
-- controle de custo;
-- controle de latência;
-- análise do tamanho do contexto;
-- relatórios JSON e Markdown;
-- histórico de experimentos;
-- proteção de privacidade;
-- controle de cota da Gemini API.
+- Controle de custos;
+- Controle de latência;
+- Análise do tamanho do contexto;
+- Relatórios em JSON e Markdown;
+- Histórico de experimentos;
+- Proteção de privacidade;
+- Controle de cota da Gemini API.
 
-### Implementações concluídas
+---
+
+## ✅ Implementações concluídas
+
 - RAG híbrido operacional;
-- busca textual e vetorial integradas;
-- reranking;
+- Busca textual e vetorial integradas;
+- Reranking;
 - Sentence-Window Retrieval;
-- feature flag para ativação segura;
-- comparação A/B entre baseline e Sentence-Window;
-- integração real com DeepEval;
-- três executores da RAG Triad;
+- Feature flag para ativação segura;
+- Comparação A/B entre baseline e Sentence-Window;
+- Integração real com DeepEval;
+- Três executores da RAG Triad;
 - Gemini como modelo avaliador;
-- recuperação real no Neon/PostgreSQL;
+- Recuperação real no Neon/PostgreSQL;
 - Quality Gate;
-- relatórios de avaliação;
-- histórico de execuções;
-- proteção contra armazenamento de respostas e contextos brutos;
-- limitador compartilhado da Gemini API;
-- tratamento de erros HTTP 429;
-- controle de intervalo entre chamadas;
-- retentativas controladas;
-- testes unitários e de regressão;
-- 109 testes relacionados à Semana 3 aprovados em ambiente offline;
-- smoke test real aprovado com Gemini e Neon;
-- commit técnico da Semana 3 criado.
-- Resultado do Smoke Test real
+- Relatórios de avaliação;
+- Histórico de execuções;
+- Proteção contra armazenamento de respostas e contextos brutos;
+- Limitador compartilhado da Gemini API;
+- Tratamento de erros HTTP `429`;
+- Controle de intervalo entre chamadas;
+- Retentativas controladas;
+- Testes unitários e de regressão;
+- `109` testes relacionados à Semana 3 aprovados em ambiente offline;
+- Smoke test real aprovado com Gemini e Neon;
+- Commit técnico da Semana 3 criado.
 
-### Experimento real — Pergunta 1 de 5
+---
 
-#### Pergunta avaliada
+# 🧪 Experimentos reais
+
+## Experimento real — Pergunta 1 de 5
+
+### Pergunta avaliada
 
 > Como montar uma reserva financeira?
+
+### Comparação da RAG Triad
 
 | Métrica | RAG híbrido atual | Sentence-Window | Delta |
 |---|---:|---:|---:|
@@ -1952,7 +1968,7 @@ Status: 🟡 Em finalização
 | Faithfulness | 1.0000 | 1.0000 | 0.0000 |
 | Contextual Relevancy | 0.3143 | 0.8125 | +0.4982 |
 
-#### Quality Gate
+### Resultado do Quality Gate
 
 ```text
 QUALITY_GATE_COMPLETE=True
@@ -1960,15 +1976,26 @@ QUALITY_GATE_PASSED=True
 RAG_TRIAD_AVERAGE=0.9375
 MAXIMUM_REGRESSION=APROVADA
 ```
-> O Sentence-Window não apresentou regressão em Answer Relevancy ou Faithfulness e melhorou significativamente a Contextual Relevancy neste primeiro caso
+### Análise
 
-### Experimento real — Pergunta 2 de 5
+O Sentence-Window:
 
-#### Pergunta avaliada
+- não apresentou regressão em Answer Relevancy;
+- não apresentou regressão em Faithfulness;
+- aumentou significativamente a Contextual Relevancy;
+- passou no Quality Gate;
+- atingiu média geral de 0.9375 na RAG Triad.
+
+> O Sentence-Window melhorou a relevância do contexto sem reduzir a fidelidade ou a relevância da resposta neste primeiro caso.
+
+
+## Experimento real — Pergunta 2 de 5
+
+### Pergunta avaliada
 
 > Tenho renda mensal de R$ 3.000 e gastos de R$ 2.500. Como posso organizar meu orçamento?
 
-#### Comparação da RAG Triad
+### Comparação da RAG Triad
 
 | Métrica | RAG híbrido atual | Sentence-Window | Delta |
 |---|---:|---:|---:|
@@ -1976,35 +2003,37 @@ MAXIMUM_REGRESSION=APROVADA
 | Faithfulness | 1.0000 | 1.0000 | 0.0000 |
 | Contextual Relevancy | 0.5000 | 0.8750 | +0.3750 |
 
-#### Quality Gate
+### Resultado do Quality Gate
 
 ```text
 COMPLETED=1
 FAILED=0
 QUALITY_GATE_PASSED=True
 RECOMMENDATION=promote_sentence_window
+````
+### Desempenho, contexto e custo
 ```
-#### Desempenho, contexto e custo
-```text
-- MEDIAN_LATENCY_DELTA_MS=-2605
-- AVERAGE_CONTEXT_CHARACTER_DELTA=-1394
-- TOTAL_ESTIMATED_COST=0.0040689
-- RAW_OUTPUTS_STORED=False
-- RAW_CONTEXTS_STORED=False
+MEDIAN_LATENCY_DELTA_MS=-2605
+AVERAGE_CONTEXT_CHARACTER_DELTA=-1394
+TOTAL_ESTIMATED_COST=0.0040689
+RAW_OUTPUTS_STORED=False
+RAW_CONTEXTS_STORED=False
 ```
 
-#### Nesta segunda pergunta, o Sentence-Window:
+### Análise
+```
+Nesta segunda pergunta, o Sentence-Window:
 
-- manteve o **Answer Relevancy** em `1.0000`;
-- manteve a **Faithfulness** em `1.0000`;
-- aumentou a **Contextual Relevancy** de `0.5000` para `0.8750`;
-- obteve melhoria de **`+0.3750`** em Contextual Relevancy;
-- reduziu o tamanho médio do contexto em **`1.394 caracteres`**;
-- apresentou menor latência nesta execução;
-- passou no **Quality Gate**;
-- recebeu a recomendação técnica **`promote_sentence_window`**;
-- não armazenou respostas ou contextos brutos.
-
+manteve o Answer Relevancy em 1.0000;
+manteve a Faithfulness em 1.0000;
+aumentou a Contextual Relevancy de 0.5000 para 0.8750;
+obteve melhoria de +0.3750 em Contextual Relevancy;
+reduziu o tamanho médio do contexto em 1.394 caracteres;
+apresentou menor latência nesta execução;
+passou no Quality Gate;
+recebeu a recomendação técnica promote_sentence_window;
+não armazenou respostas ou contextos brutos.
+````
 A execução terminou com:
 ```
 COMPLETED=1
@@ -2012,67 +2041,111 @@ FAILED=0
 EXIT_CODE=0
 ```
 
-### Resultado parcial do experimento
+## 📊 Resultado parcial do experimento
 
-| Pergunta | Quality Gate | Resultado |
-|---|---|---|
-| Pergunta 1 | ✅ Aprovado | Melhorou Contextual Relevancy |
-| Pergunta 2 | ✅ Aprovado | Melhorou Contextual Relevancy |
-| Pergunta 3 | ⏳ Pendente | Ainda não executada |
-| Pergunta 4 | ⏳ Pendente | Ainda não executada |
-| Pergunta 5 | ⏳ Pendente | Ainda não executada |
+| Execução | Modelo avaliador | Quality Gate | Resultado | Uso na consolidação final |
+|---|---|---|---|---|
+| Pergunta 1 — reserva financeira | `gemini-2.5-flash` | ✅ Aprovado | Melhorou Contextual Relevancy | Smoke test histórico |
+| Pergunta 2 — organização do orçamento | `gemini-2.5-flash` | ✅ Aprovado | Melhorou Contextual Relevancy | Smoke test histórico |
+| Pergunta 1 reexecutada | `gemini-3.5-flash-lite` | ⏳ Pendente | Ainda não executada | Entrará na consolidação oficial |
+| Pergunta 2 reexecutada | `gemini-3.5-flash-lite` | ⏳ Pendente | Ainda não executada | Entrará na consolidação oficial |
+| Pergunta 3 | `gemini-3.5-flash-lite` | ⏳ Pendente | Ainda não executada | Entrará na consolidação oficial |
+| Pergunta 4 | `gemini-3.5-flash-lite` | ⏳ Pendente | Ainda não executada | Entrará na consolidação oficial |
+| Pergunta 5 | `gemini-3.5-flash-lite` | ⏳ Pendente | Ainda não executada | Entrará na consolidação oficial |
 
-Até o momento, o Sentence-Window manteve **Answer Relevancy** e **Faithfulness** nas duas perguntas avaliadas e melhorou a **Contextual Relevancy** em ambos os casos.
+Os resultados das Perguntas 1 e 2 permanecem válidos como evidências históricas e técnicas do smoke test com `gemini-2.5-flash`.
 
-> ⚠️ **Resultado parcial:** a decisão final sobre ativação em produção será tomada somente após a execução e consolidação das cinco perguntas.
+Como o experimento oficial continuará com `gemini-3.5-flash-lite`, as duas primeiras perguntas serão reexecutadas para garantir que todas as cinco perguntas utilizem a mesma configuração de modelo.
 
-### Implementações ainda pendentes
-
-- executar as três perguntas financeiras restantes;
-- consolidar o experimento completo com cinco perguntas;
-- analisar a estabilidade dos resultados entre os cinco casos;
-- calcular as médias da RAG Triad;
-- comparar regressões entre baseline e Sentence-Window;
-- comparar latência;
-- comparar custo estimado;
-- comparar tamanho do contexto;
-- revisar tentativas intermediárias e o uso de `axis_scores_fallback`;
-- tomar a decisão final sobre ativação do Sentence-Window;
-- implementar Auto-Merging Retrieval;
-- comparar Auto-Merging Retrieval com o RAG híbrido atual;
-- finalizar o Quality Gate consolidado da Semana 3;
-- gerar a documentação e as evidências finais;
-- atualizar o README principal;
-- atualizar o relatório técnico;
-- analisar Knowledge Graph e GraphRAG;
-- avaliar Neo4j e Cypher somente caso exista ganho técnico comprovado.
-
-### Decisão atual sobre produção
-
-Apesar dos resultados positivos nas duas primeiras perguntas, o Sentence-Window permanece desativado em produção:
+A consolidação final considerará apenas os resultados produzidos com:
 
 ```env
-INNA_RAG_SENTENCE_WINDOW_ENABLED=false
+GEMINI_MODEL=gemini-3.5-flash-lite
+INNA_DEEPEVAL_GEMINI_MODEL=gemini-3.5-flash-lite
 ```
 
-### Situação atual
+Para garantir uma comparação controlada, todas as cinco perguntas oficiais deverão utilizar:
+
+- o mesmo modelo gerador;
+- o mesmo modelo avaliador;
+- o mesmo conjunto de documentos;
+- o mesmo top-k;
+- os mesmos parâmetros de retrieval;
+- os mesmos limites de custo e latência;
+- as mesmas métricas da RAG Triad;
+- as mesmas configurações de baseline e Sentence-Window.
+
+> A Pergunta 1 será reexecutada com gemini-3.5-flash-lite antes da consolidação final.
+
+#### 🔄 Próximos passos
+
+- [x] Implementar Sentence-Window Retrieval;
+- [x] Criar comparação A/B;
+- [x] Integrar DeepEval;
+- [x] Implementar RAG Triad;
+- [x] Corrigir o mapeamento do Quality Gate;
+- [x] Executar smoke test real;
+- [x] Executar a Pergunta 2 com `gemini-2.5-flash`;
+- [ ] Reexecutar a Pergunta 1 com o modelo atual;
+- [ ] Reexecutar a Pergunta 2 com o modelo atual;
+- [ ] Executar a Pergunta 3;
+- [ ] Executar a Pergunta 4;
+- [ ] Executar a Pergunta 5;
+- [ ] Consolidar os cinco resultados oficiais;
+- [ ] Calcular as médias da RAG Triad;
+- [ ] Comparar regressões entre baseline e Sentence-Window;
+- [ ] Comparar latência;
+- [ ] Comparar custo estimado;
+- [ ] Comparar tamanho do contexto;
+- [ ] Revisar tentativas intermediárias;
+- [ ] Revisar o uso de `axis_scores_fallback`;
+- [ ] Decidir sobre a ativação do Sentence-Window;
+- [ ] Implementar Auto-Merging Retrieval;
+- [ ] Comparar RAG atual, Sentence-Window e Auto-Merging;
+- [ ] Finalizar o Quality Gate consolidado da Semana 3;
+- [ ] Finalizar documentação e evidências;
+- [ ] Atualizar o README principal;
+- [ ] Atualizar o relatório técnico;
+- [ ] Analisar Knowledge Graph e GraphRAG;
+- [ ] Avaliar Neo4j e Cypher somente se houver benefício técnico comprovado.
+
+---
+
+#### 📌 Estado atual
 
 ```text
-✅ PERGUNTAS_CONCLUIDAS=2_DE_5
-⏳ PERGUNTAS_RESTANTES=3
-⏳ EXPERIMENTO_COMPLETO_5_PERGUNTAS=PENDENTE
+RAG_HIBRIDO=OPERACIONAL
+RAG_TRIAD=IMPLEMENTADA
+DEEPEVAL=INTEGRADO
+QUALITY_GATE=APROVADO
 
-✅ PERGUNTA_1_QUALITY_GATE=APROVADO
-✅ PERGUNTA_2_QUALITY_GATE=APROVADO
+SMOKE_TEST_HISTORICO=APROVADO
+SMOKE_TEST_HISTORICO_MODEL=gemini-2.5-flash
 
-🔴 SENTENCE_WINDOW_PRODUCAO=DESATIVADO
-⏳ DECISAO_FINAL_PRODUCAO=PENDENTE
+CURRENT_GEMINI_MODEL=gemini-3.5-flash-lite
+CURRENT_DEEPEVAL_MODEL=gemini-3.5-flash-lite
 
-⏳ AUTO_MERGING=PENDENTE
-⏳ QUALITY_GATE_CONSOLIDADO=PENDENTE
-⏳ DOCUMENTACAO_FINAL=PENDENTE
-🟡 SEMANA_3=EM_FINALIZACAO
+EXECUCOES_HISTORICAS_CONCLUIDAS=2
+PERGUNTAS_OFICIAIS_CONCLUIDAS=0_DE_5
+PERGUNTAS_OFICIAIS_RESTANTES=5
+
+PERGUNTA_1_REEXECUCAO=PENDENTE
+PERGUNTA_2_REEXECUCAO=PENDENTE
+PERGUNTA_3=PENDENTE
+PERGUNTA_4=PENDENTE
+PERGUNTA_5=PENDENTE
+
+SENTENCE_WINDOW_SIGNAL=POSITIVO
+SENTENCE_WINDOW_PRODUCAO=false
+DECISAO_FINAL_PRODUCAO=PENDENTE
+
+AUTO_MERGING=PENDENTE
+QUALITY_GATE_CONSOLIDADO=PENDENTE
+DOCUMENTACAO_FINAL=EM_ANDAMENTO
+SEMANA_3=EM_FINALIZACAO
 ```
+
+
 
 --- 
 
