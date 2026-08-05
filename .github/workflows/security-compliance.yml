@@ -242,7 +242,7 @@ jobs:
 
           mkdir -p artifacts/security-compliance
 
-          gitleaks git \
+          gitleaks git --config=.gitleaks.toml \
             --redact \
             --report-format json \
             --report-path artifacts/security-compliance/gitleaks-report.json \
