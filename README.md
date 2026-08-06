@@ -2418,21 +2418,24 @@ A feature flag permanece desativada em produção enquanto as Perguntas 5 ainda 
 
 ---
 
-#### 📊 Resultado parcial do experimento
+# 🧪 Experimento de Sentence-Window Retrieval — Semana 3
 
-| Execução                                 | Modelo avaliador        | Quality Gate | Resultado                                                           | Uso na consolidação  |
-| ---------------------------------------- | ----------------------- | ------------ | ------------------------------------------------------------------- | -------------------- |
-| Pergunta 1 — reserva financeira          | `gemini-2.5-flash`      | ✅ Aprovado   | Melhorou Contextual Relevancy                                       | Smoke test histórico |
-| Pergunta 2 — organização do orçamento    | `gemini-2.5-flash`      | ✅ Aprovado   | Melhorou Contextual Relevancy                                       | Smoke test histórico |
-| Pergunta 1 reexecutada — `window_size=5` | `gemini-3.5-flash-lite` | ✅ Aprovado   | Contextual Relevancy `+0.181818`, sem regressão nas demais métricas | Consolidação oficial |
-| Pergunta 2 reexecutada                   | `gemini-3.5-flash-lite` | ⏳ Pendente   | Ainda não executada                                                 | Consolidação oficial |
-| Pergunta 3                               | `gemini-3.5-flash-lite` | ⏳ Pendente   | Ainda não executada                                                 | Consolidação oficial |
-| Pergunta 4                               | `gemini-3.5-flash-lite` | ⏳ Pendente   | Ainda não executada                                                 | Consolidação oficial |
-| Pergunta 5                               | `gemini-3.5-flash-lite` | ⏳ Pendente   | Ainda não executada                                                 | Consolidação oficial |
+## 📊 Resultado consolidado do experimento
 
-Os resultados históricos com gemini-2.5-flash continuam preservados como evidência técnica.
+| Execução | Modelo avaliador | Quality Gate | Resultado | Uso na consolidação |
+|---|---|---:|---|---|
+| Pergunta 1 — reserva financeira | `gemini-2.5-flash` | ✅ Aprovado | Melhorou a Contextual Relevancy | Smoke test histórico |
+| Pergunta 2 — organização do orçamento | `gemini-2.5-flash` | ✅ Aprovado | Melhorou a Contextual Relevancy | Smoke test histórico |
+| Pergunta 1 oficial — `window_size=5` | `gemini-3.5-flash-lite` | ✅ Aprovado | Contextual Relevancy `+0.181818`, sem regressão relevante | Consolidação oficial |
+| Pergunta 2 oficial | `gemini-3.5-flash-lite` | ✅ Aprovado | Quality Gate aprovado | Consolidação oficial |
+| Pergunta 3 oficial | `gemini-3.5-flash-lite` | ✅ Aprovado | Quality Gate aprovado | Consolidação oficial |
+| Pergunta 4 oficial | `gemini-3.5-flash-lite` | ✅ Aprovado | Contexto otimizado e Quality Gate aprovado | Consolidação oficial |
+| Pergunta 5 oficial | `gemini-3.5-flash-lite` | ✅ Aprovado | Quality Gate aprovado, sem regressão acima do limite | Consolidação oficial |
 
-A consolidação oficial considerará somente as cinco execuções realizadas com:
+Os resultados históricos executados com `gemini-2.5-flash` foram preservados como evidência técnica e smoke tests.
+
+A consolidação oficial utiliza somente as cinco execuções realizadas com:
+
 ```env
 gemini-3.5-flash-lite
 ```
@@ -2440,17 +2443,33 @@ gemini-3.5-flash-lite
 #### Situação atual
 ```
 PERGUNTA_1_OFICIAL=CONCLUIDA
+PERGUNTA_2_OFICIAL=CONCLUIDA
+PERGUNTA_3_OFICIAL=CONCLUIDA
+PERGUNTA_4_OFICIAL=CONCLUIDA
+PERGUNTA_5_OFICIAL=CONCLUIDA
+
 PERGUNTA_1_QUALITY_GATE=True
+PERGUNTA_2_QUALITY_GATE=True
+PERGUNTA_3_QUALITY_GATE=True
+PERGUNTA_4_QUALITY_GATE=True
+PERGUNTA_5_QUALITY_GATE=True
+
 WINDOW_SIZE_SELECIONADO=5
-PERGUNTAS_OFICIAIS_CONCLUIDAS=1_DE_5
-PERGUNTAS_OFICIAIS_PENDENTES=4
-DECISAO_DE_PRODUCAO=PENDENTE
+
+PERGUNTAS_OFICIAIS_CONCLUIDAS=5_DE_5
+PERGUNTAS_OFICIAIS_PENDENTES=0
+
+SENTENCE_WINDOW_SIGNAL=POSITIVO
+SENTENCE_WINDOW_PRODUCAO=false
+DECISAO_DE_PRODUCAO=PENDENTE_DE_REVISAO_FINAL
 ```
 
 ---
 
 
 ---
+---
+
 ## 🔄 Próximos passos
 
 ### Implementação e avaliação
@@ -2462,35 +2481,39 @@ DECISAO_DE_PRODUCAO=PENDENTE
 - [x] Corrigir o mapeamento do Quality Gate;
 - [x] Executar smoke test real com `gemini-2.5-flash`;
 - [x] Executar a Pergunta 2 histórica com `gemini-2.5-flash`;
-- [x] Reexecutar a Pergunta 1 com `gemini-3.5-flash-lite`;
 - [x] Comparar `window_size=2`, `window_size=4` e `window_size=5`;
 - [x] Selecionar `window_size=5`;
-- [x] Validar a Pergunta 1 oficial;
-- [ ] Reexecutar a Pergunta 2 com `gemini-3.5-flash-lite`;
-- [ ] Executar a Pergunta 3;
-- [ ] Executar a Pergunta 4;
-- [ ] Executar a Pergunta 5.
+- [x] Executar a Pergunta 1 oficial;
+- [x] Executar a Pergunta 2 oficial;
+- [x] Executar a Pergunta 3 oficial;
+- [x] Executar a Pergunta 4 oficial;
+- [x] Executar a Pergunta 5 oficial;
+- [x] Validar individualmente os cinco Quality Gates.
 
 ### Consolidação
 
-- [ ] Consolidar os cinco resultados oficiais;
-- [ ] Calcular as médias da RAG Triad;
-- [ ] Comparar regressões entre baseline e Sentence-Window;
-- [ ] Comparar latência;
-- [ ] Comparar tamanho do contexto;
+- [x] Consolidar os cinco resultados oficiais;
+- [x] Comparar regressões entre baseline e Sentence-Window;
+- [x] Comparar latência por pergunta;
+- [x] Comparar tamanho do contexto por pergunta;
+- [x] Verificar ausência de regressões acima do limite;
+- [x] Registrar as cinco aprovações individuais;
+- [ ] Calcular as médias consolidadas da RAG Triad;
+- [ ] Calcular média e mediana de latência;
+- [ ] Calcular a variação média do tamanho do contexto;
 - [ ] Registrar o custo real como cota gratuita;
 - [ ] Separar custo real de custo equivalente estimado;
-- [ ] Verificar estabilidade entre execuções;
 - [ ] Revisar tentativas intermediárias;
+- [ ] Revisar execuções incompletas causadas por limite de cota;
 - [ ] Revisar o uso de `axis_scores_fallback`;
-- [ ] Decidir sobre a ativação permanente do Sentence-Window.
+- [ ] Emitir a decisão final sobre ativação permanente.
 
 ### Próximas técnicas de retrieval
 
 - [ ] Implementar Auto-Merging Retrieval;
 - [ ] Criar testes unitários do Auto-Merging;
-- [ ] Comparar RAG atual, Sentence-Window e Auto-Merging;
-- [ ] Verificar qualidade, latência e tamanho de contexto;
+- [ ] Comparar RAG híbrido, Sentence-Window e Auto-Merging;
+- [ ] Comparar qualidade, latência e tamanho de contexto;
 - [ ] Selecionar a estratégia final da Semana 3.
 
 ### Documentação
@@ -2501,6 +2524,7 @@ DECISAO_DE_PRODUCAO=PENDENTE
 - [ ] Registrar os caminhos dos relatórios JSON e Markdown;
 - [ ] Preservar somente hashes e métricas nos relatórios públicos;
 - [ ] Confirmar que respostas e contextos brutos não foram armazenados;
+- [x] Registrar as limitações de cota encontradas durante os testes;
 - [ ] Finalizar documentação e evidências.
 
 ### Knowledge Graph e GraphRAG
@@ -2510,7 +2534,6 @@ DECISAO_DE_PRODUCAO=PENDENTE
 - [ ] Avaliar GraphRAG somente se houver benefício técnico comprovado;
 - [ ] Criar prova de conceito opcional;
 - [ ] Comparar complexidade, custo e ganho de qualidade.
-
 ---
 
 #### 📌 Estado atual
@@ -2519,7 +2542,7 @@ DECISAO_DE_PRODUCAO=PENDENTE
 RAG_HIBRIDO=OPERACIONAL
 RAG_TRIAD=IMPLEMENTADA
 DEEPEVAL=INTEGRADO
-QUALITY_GATE=APROVADO
+QUALITY_GATE=IMPLEMENTADO
 
 SMOKE_TEST_HISTORICO=APROVADO
 SMOKE_TEST_HISTORICO_MODEL=gemini-2.5-flash
@@ -2528,21 +2551,31 @@ CURRENT_GEMINI_MODEL=gemini-3.5-flash-lite
 CURRENT_DEEPEVAL_MODEL=gemini-3.5-flash-lite
 
 EXECUCOES_HISTORICAS_CONCLUIDAS=2
-PERGUNTAS_OFICIAIS_CONCLUIDAS=0_DE_5
-PERGUNTAS_OFICIAIS_RESTANTES=5
 
-PERGUNTA_1_REEXECUCAO=PENDENTE
-PERGUNTA_2_REEXECUCAO=PENDENTE
-PERGUNTA_3=PENDENTE
-PERGUNTA_4=PENDENTE
-PERGUNTA_5=PENDENTE
+PERGUNTAS_OFICIAIS_CONCLUIDAS=5_DE_5
+PERGUNTAS_OFICIAIS_RESTANTES=0
 
+PERGUNTA_1_REEXECUCAO=CONCLUIDA
+PERGUNTA_2_REEXECUCAO=CONCLUIDA
+PERGUNTA_3=CONCLUIDA
+PERGUNTA_4=CONCLUIDA
+PERGUNTA_5=CONCLUIDA
+
+PERGUNTA_1_QUALITY_GATE=True
+PERGUNTA_2_QUALITY_GATE=True
+PERGUNTA_3_QUALITY_GATE=True
+PERGUNTA_4_QUALITY_GATE=True
+PERGUNTA_5_QUALITY_GATE=True
+
+WINDOW_SIZE_SELECIONADO=5
 SENTENCE_WINDOW_SIGNAL=POSITIVO
 SENTENCE_WINDOW_PRODUCAO=false
-DECISAO_FINAL_PRODUCAO=PENDENTE
+
+QUALITY_GATE_INDIVIDUAL=APROVADO_5_DE_5
+QUALITY_GATE_CONSOLIDADO=EM_FINALIZACAO
+DECISAO_FINAL_PRODUCAO=PENDENTE_DE_REVISAO_FINAL
 
 AUTO_MERGING=PENDENTE
-QUALITY_GATE_CONSOLIDADO=PENDENTE
 DOCUMENTACAO_FINAL=EM_ANDAMENTO
 SEMANA_3=EM_FINALIZACAO
 ```
