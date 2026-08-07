@@ -2571,7 +2571,7 @@ E logo depois eu acrescentaria um pequeno fechamento:
 - [ ] Separar custo real de custo equivalente estimado;
 - [ ] Revisar tentativas intermediárias;
 - [ ] Revisar execuções incompletas causadas por limite de cota;
-- [ ] Revisar e documentar o uso de `axis_scores_fallback`;
+- [x] Revisar e documentar o uso de `axis_scores_fallback`;
 - [ ] Emitir a decisão final sobre ativação permanente.
 
 ### Próximas técnicas de retrieval
