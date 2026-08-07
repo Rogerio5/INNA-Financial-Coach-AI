@@ -2560,6 +2560,9 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Integrar DeepEval;
 - [x] Implementar RAG Triad;
 - [x] Corrigir o mapeamento do Quality Gate;
+- [x] Corrigir o mapeamento do Quality Gate primário para `rag_triad.axes`, `score` e `aggregate_score`;
+- [x] Validar o Quality Gate primário com teste local isolado;
+- [x] Manter `axis_scores_fallback` somente como mecanismo de contingência;
 - [x] Corrigir os timeouts de rede nas conexões Neon, Gemini e DeepEval;
 - [x] Executar smoke test real com `gemini-2.5-flash`;
 - [x] Executar a Pergunta 2 histórica com `gemini-2.5-flash`;
@@ -2588,12 +2591,16 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Executar validação consolidada ponta a ponta;
 - [x] Confirmar 5/5 perguntas aprovadas;
 - [x] Confirmar ausência de falhas no teste consolidado;
-- [ ] Registrar formalmente o custo real da execução;
-- [ ] Separar custo real de custo equivalente estimado;
+- [x] Revisar e documentar o uso de `axis_scores_fallback`;
+- [x] Confirmar que o Quality Gate primário opera sem depender do fallback;
+- [x] Investigar o registro `TOTAL_ESTIMATED_COST=0.0`;
+- [x] Confirmar que `gemini-3.5-flash-lite` não possui `input_price` e `output_price` disponíveis na integração atual do DeepEval;
+- [x] Separar formalmente custo registrado, custo estimado e custo real cobrado;
+- [x] Registrar que `TOTAL_ESTIMATED_COST=0.0` não representa custo real zero;
+- [ ] Verificar o custo real cobrado diretamente na fonte de faturamento da API, caso necessário;
 - [ ] Revisar tentativas intermediárias;
 - [ ] Revisar execuções incompletas causadas por limite de cota;
-- [x] Revisar e documentar o uso de `axis_scores_fallback`;
-- [ ] Emitir a decisão final sobre ativação permanente.
+- [ ] Emitir a decisão final sobre ativação permanente do Sentence-Window.
 
 ### Próximas técnicas de retrieval
 
@@ -2616,12 +2623,16 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Registrar a otimização de performance antes x depois;
 - [x] Confirmar que respostas e contextos brutos não foram armazenados;
 - [x] Registrar as limitações de cota encontradas durante os testes;
-- [ ] Atualizar o README principal;
+- [x] Revisar e documentar o uso de `axis_scores_fallback`;
+- [x] Documentar a correção do Quality Gate primário;
+- [x] Documentar a validação local do Quality Gate primário;
+- [x] Documentar a limitação atual do cálculo de custo do DeepEval;
+- [x] Registrar que o custo real cobrado não foi verificado;
+- [x] Separar custo técnico registrado, custo equivalente estimado e custo real;
+- [ ] Concluir a atualização do README principal;
 - [ ] Atualizar o relatório técnico;
 - [ ] Registrar os caminhos dos relatórios JSON e Markdown;
 - [ ] Preservar somente hashes e métricas nos relatórios públicos;
-- [ ] Revisar e documentar o uso de `axis_scores_fallback`;
-- [ ] Registrar formalmente o custo real e separar do custo equivalente estimado;
 - [ ] Registrar a decisão final sobre ativação do Sentence-Window;
 - [ ] Finalizar documentação e evidências.
 
@@ -2635,6 +2646,7 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [ ] Comparar RAG tradicional, Sentence-Window e GraphRAG em casos adequados;
 - [ ] Comparar complexidade, custo, latência e ganho de qualidade;
 - [ ] Decidir se Knowledge Graph ou GraphRAG entram no roadmap da INNA.
+
 ---
 
 #### 📌 Estado atual
