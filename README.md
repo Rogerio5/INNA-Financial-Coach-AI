@@ -2433,7 +2433,63 @@ Pergunta 5 ✅
 >
 > **Impacto:** houve redução significativa da latência do pipeline RAG e eliminação dos timeouts observados durante as métricas de avaliação.
 
+---
+
+### Resultado final — Pergunta 4
+
+| Métrica | Resultado |
+|---|---:|
+| Answer Relevancy | 1.0000 |
+| Faithfulness | 1.0000 |
+| Contextual Relevancy | 1.0000 |
+| RAG Triad Average | 1.0000 |
+| Maximum Regression | 0.0000 |
+| Quality Gate | ✅ Aprovado |
+
+```text
+TOP_K=1
+QUALITY_GATE_COMPLETE=True
+QUALITY_GATE_PASSED=True
+RECOMMENDATION=promote_sentence_window
+```
+
+> A Pergunta 4 foi validada oficialmente com nota máxima nas três métricas da RAG Triad e sem regressão entre baseline e Sentence-Window. 
+Isso fecha muito bem essa etapa antes do teste das 5 perguntas juntas. 
+
+---
+
 ## Validação Ponta a Ponta — Suite com 5 Perguntas
+
+## ✅ Validação Ponta a Ponta — 5 Perguntas Oficiais
+
+Foi executada uma validação consolidada com as cinco perguntas oficiais utilizando a configuração final do pipeline RAG.
+
+| Pergunta | Answer Relevancy | Faithfulness | Contextual Relevancy | Quality Gate |
+|---|---:|---:|---:|---|
+| 1 | 1.0000 | 1.0000 | 1.0000 | ✅ Aprovado |
+| 2 | 1.0000 | 1.0000 | 1.0000 | ✅ Aprovado |
+| 3 | 1.0000 | 1.0000 | 1.0000 | ✅ Aprovado |
+| 4 | 1.0000 | 1.0000 | 1.0000 | ✅ Aprovado |
+| 5 | 1.0000 | 1.0000 | 1.0000 | ✅ Aprovado |
+
+### Resultado consolidado
+
+```text
+QUESTION_COUNT=5
+COMPLETED_COUNT=5
+FAILED_COUNT=0
+QUESTIONS_APPROVED=5_DE_5
+END_TO_END_5_QUESTIONS=APPROVED
+
+RECOMMENDATION=promote_sentence_window
+
+MEDIAN_LATENCY_DELTA_MS=-322.0
+AVERAGE_LATENCY_DELTA_MS=-895.6
+AVERAGE_CONTEXT_CHARACTER_DELTA=-89.8
+TOTAL_ESTIMATED_COST=0.0
+```
+
+> O teste ponta a ponta confirmou a estabilidade da configuração final do pipeline RAG nas cinco perguntas oficiais, com nota máxima nas três métricas da RAG Triad e aprovação de todos os Quality Gates.
 
 
 > A feature flag permanece desativada em produção até a conclusão do Quality Gate consolidado e da revisão final do experimento.
