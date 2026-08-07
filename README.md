@@ -2516,11 +2516,13 @@ A consolidação oficial utiliza somente as cinco execuções realizadas com:
 gemini-3.5-flash-lite
 ```
 ### Conclusão da validação
-```markdonw
-A validação ponta a ponta confirmou a estabilidade da configuração final do pipeline RAG nas cinco perguntas oficiais. Todos os casos foram concluídos sem falhas, com aprovação dos Quality Gates e nota 1.0000 em Answer Relevancy, Faithfulness e Contextual Relevancy.
-
-O resultado consolidado recomenda promote_sentence_window. Apesar disso, a feature flag do Sentence-Window permanece desativada em produção até a conclusão da revisão técnica final e da decisão formal de ativação.
-```
+> ✅ **Validação aprovada**
+>
+> A validação ponta a ponta confirmou a estabilidade da configuração final do pipeline RAG nas cinco perguntas oficiais. Todos os casos foram concluídos sem falhas, com aprovação dos Quality Gates e nota `1.0000` em Answer Relevancy, Faithfulness e Contextual Relevancy.
+>
+> ✅ O resultado consolidado recomenda `promote_sentence_window`.
+>
+> ⚠️ Apesar disso, a feature flag do Sentence-Window permanece desativada em produção até a conclusão da revisão técnica final e da decisão formal de ativação.
 ---
 
 ### Controle de custo da avaliação
