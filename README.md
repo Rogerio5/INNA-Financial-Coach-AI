@@ -2574,29 +2574,6 @@ E logo depois eu acrescentaria um pequeno fechamento:
 - [ ] Revisar e documentar o uso de `axis_scores_fallback`;
 - [ ] Emitir a decisão final sobre ativação permanente.
 
-### Resultado consolidado atual
-
-```text
-QUESTION_COUNT=5
-COMPLETED_COUNT=5
-FAILED_COUNT=0
-
-QUESTIONS_APPROVED=5_DE_5
-END_TO_END_5_QUESTIONS=APPROVED
-
-ANSWER_RELEVANCY=1.0000
-FAITHFULNESS=1.0000
-CONTEXTUAL_RELEVANCY=1.0000
-
-MEDIAN_LATENCY_DELTA_MS=-322.0
-AVERAGE_LATENCY_DELTA_MS=-895.6
-AVERAGE_CONTEXT_CHARACTER_DELTA=-89.8
-
-TOTAL_ESTIMATED_COST=0.0
-
-RECOMMENDATION=promote_sentence_window
-```
-
 ### Próximas técnicas de retrieval
 
 - [ ] Implementar Auto-Merging Retrieval;
