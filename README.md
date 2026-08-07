@@ -2491,24 +2491,24 @@ TOTAL_ESTIMATED_COST=0.0
 
 > O teste ponta a ponta confirmou a estabilidade da configuração final do pipeline RAG nas cinco perguntas oficiais, com nota máxima nas três métricas da RAG Triad e aprovação de todos os Quality Gates.
 
-
-> A feature flag permanece desativada em produção até a conclusão do Quality Gate consolidado e da revisão final do experimento.
-
 ---
 
 # 🧪 Experimento de Sentence-Window Retrieval — Semana 3
 
 ## 📊 Resultado consolidado do experimento
 
-| Execução | Modelo avaliador | Quality Gate | Resultado | Uso na consolidação |
-|---|---|---:|---|---|
-| Pergunta 1 — reserva financeira | `gemini-2.5-flash` | ✅ Aprovado | Melhorou a Contextual Relevancy | Smoke test histórico |
-| Pergunta 2 — organização do orçamento | `gemini-2.5-flash` | ✅ Aprovado | Melhorou a Contextual Relevancy | Smoke test histórico |
-| Pergunta 1 oficial — `window_size=5` | `gemini-3.5-flash-lite` | ✅ Aprovado | Contextual Relevancy `+0.181818`, sem regressão relevante | Consolidação oficial |
-| Pergunta 2 oficial | `gemini-3.5-flash-lite` | ✅ Aprovado | Quality Gate aprovado | Consolidação oficial |
-| Pergunta 3 oficial | `gemini-3.5-flash-lite` | ✅ Aprovado | Quality Gate aprovado | Consolidação oficial |
-| Pergunta 4 oficial | `gemini-3.5-flash-lite` | ✅ Aprovado | Contexto otimizado e Quality Gate aprovado | Consolidação oficial |
-| Pergunta 5 oficial | `gemini-3.5-flash-lite` | ✅ Aprovado | Quality Gate aprovado, sem regressão acima do limite | Consolidação oficial |
+| Execução                              | Modelo avaliador        | Quality Gate | Resultado                                                 | Uso na consolidação |
+| ------------------------------------- | ----------------------- | -----------: | --------------------------------------------------------- | ------------------- |
+| Pergunta 1 — reserva financeira       | `gemini-2.5-flash`      |   ✅ Aprovado | Melhorou a Contextual Relevancy                           | Smoke test histórico |
+| Pergunta 2 — organização do orçamento | `gemini-2.5-flash`      |   ✅ Aprovado | Melhorou a Contextual Relevancy                           | Smoke test histórico |
+| Pergunta 1 oficial — `window_size=5`  | `gemini-3.5-flash-lite` |   ✅ Aprovado | Contextual Relevancy `+0.181818`, sem regressão relevante | Consolidação oficial |
+| Pergunta 2 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Quality Gate aprovado                                     | Consolidação oficial |
+| Pergunta 3 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Quality Gate aprovado                                     | Consolidação oficial |
+| Pergunta 4 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Contexto otimizado e Quality Gate aprovado                | Consolidação oficial |
+| Pergunta 5 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Quality Gate aprovado, sem regressão acima do limite      | Consolidação oficial |
+| Teste ponta a ponta — 5 perguntas     | `gemini-3.5-flash-lite` |   ✅ Aprovado | 5/5 perguntas aprovadas, RAG Triad 1.0 nas três métricas  | Validação final consolidada |
+
+
 
 Os resultados históricos executados com `gemini-2.5-flash` foram preservados como evidência técnica e smoke tests.
 
@@ -2518,8 +2518,11 @@ A consolidação oficial utiliza somente as cinco execuções realizadas com:
 gemini-3.5-flash-lite
 ```
 
+> O teste ponta a ponta confirmou a estabilidade da configuração final do pipeline RAG nas cinco perguntas oficiais, com 5/5 casos aprovados, ausência de falhas e nota máxima em Answer Relevancy, Faithfulness e Contextual Relevancy.
+
 #### Situação atual
-```
+
+```text
 PERGUNTA_1_OFICIAL=CONCLUIDA
 PERGUNTA_2_OFICIAL=CONCLUIDA
 PERGUNTA_3_OFICIAL=CONCLUIDA
@@ -2532,20 +2535,44 @@ PERGUNTA_3_QUALITY_GATE=True
 PERGUNTA_4_QUALITY_GATE=True
 PERGUNTA_5_QUALITY_GATE=True
 
-WINDOW_SIZE_SELECIONADO=5
-
 PERGUNTAS_OFICIAIS_CONCLUIDAS=5_DE_5
 PERGUNTAS_OFICIAIS_PENDENTES=0
 
+END_TO_END_QUESTION_COUNT=5
+END_TO_END_COMPLETED_COUNT=5
+END_TO_END_FAILED_COUNT=0
+END_TO_END_QUESTIONS_APPROVED=5_DE_5
+END_TO_END_5_QUESTIONS=APPROVED
+
+END_TO_END_ANSWER_RELEVANCY=1.0000
+END_TO_END_FAITHFULNESS=1.0000
+END_TO_END_CONTEXTUAL_RELEVANCY=1.0000
+
+END_TO_END_MEDIAN_LATENCY_DELTA_MS=-322.0
+END_TO_END_AVERAGE_LATENCY_DELTA_MS=-895.6
+END_TO_END_AVERAGE_CONTEXT_CHARACTER_DELTA=-89.8
+END_TO_END_TOTAL_ESTIMATED_COST=0.0
+
+WINDOW_SIZE_SELECIONADO=5
+TOP_K_VALIDACAO_PONTA_A_PONTA=1
+
 SENTENCE_WINDOW_SIGNAL=POSITIVO
+QUALITY_GATE_INDIVIDUAL=APROVADO_5_DE_5
+QUALITY_GATE_PONTA_A_PONTA=APROVADO_5_DE_5
+
+RECOMMENDATION=promote_sentence_window
+
 SENTENCE_WINDOW_PRODUCAO=false
 DECISAO_DE_PRODUCAO=PENDENTE_DE_REVISAO_FINAL
 ```
 
----
+E logo depois eu acrescentaria um pequeno fechamento:
 
+```markdown
+> A validação ponta a ponta confirmou a estabilidade da configuração final nas cinco perguntas oficiais. Todas as perguntas foram concluídas sem falhas, com aprovação dos Quality Gates e nota máxima nas três métricas da RAG Triad.
 
----
+> Apesar do resultado positivo, a feature flag do Sentence-Window permanece desativada em produção até a conclusão da revisão final técnica e da decisão formal de ativação.
+```
 ---
 
 ## 🔄 Próximos passos
