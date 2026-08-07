@@ -2564,6 +2564,10 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Validar o Quality Gate primário com teste local isolado;
 - [x] Manter `axis_scores_fallback` somente como mecanismo de contingência;
 - [x] Corrigir os timeouts de rede nas conexões Neon, Gemini e DeepEval;
+- [x] Corrigir o transporte IPv4 do gerador final de respostas RAG;
+- [x] Validar a geração final do Gemini após a correção de rede;
+- [x] Confirmar latência de geração de aproximadamente `8.097 s` no teste isolado;
+- [x] Finalizar a revisão técnica de performance do pipeline RAG;
 - [x] Executar smoke test real com `gemini-2.5-flash`;
 - [x] Executar a Pergunta 2 histórica com `gemini-2.5-flash`;
 - [x] Comparar `window_size=2`, `window_size=4` e `window_size=5`;
@@ -2597,6 +2601,7 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Confirmar que `gemini-3.5-flash-lite` não possui `input_price` e `output_price` disponíveis na integração atual do DeepEval;
 - [x] Separar formalmente custo registrado, custo estimado e custo real cobrado;
 - [x] Registrar que `TOTAL_ESTIMATED_COST=0.0` não representa custo real zero;
+- [x] Registrar a limitação atual da telemetria de custo;
 - [ ] Verificar o custo real cobrado diretamente na fonte de faturamento da API, caso necessário;
 - [ ] Revisar tentativas intermediárias;
 - [ ] Revisar execuções incompletas causadas por limite de cota;
@@ -2621,6 +2626,11 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Registrar média e mediana de latência;
 - [x] Registrar a variação média do tamanho do contexto;
 - [x] Registrar a otimização de performance antes x depois;
+- [x] Registrar a correção de transporte IPv4 do Neon/PostgreSQL;
+- [x] Registrar a correção de transporte IPv4 do Gemini Embedding;
+- [x] Registrar a correção de transporte IPv4 do DeepEval;
+- [x] Registrar a correção de transporte IPv4 do gerador final RAG;
+- [x] Registrar o teste isolado de geração com latência de aproximadamente `8.097 s`;
 - [x] Confirmar que respostas e contextos brutos não foram armazenados;
 - [x] Registrar as limitações de cota encontradas durante os testes;
 - [x] Revisar e documentar o uso de `axis_scores_fallback`;
@@ -2646,6 +2656,8 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [ ] Comparar RAG tradicional, Sentence-Window e GraphRAG em casos adequados;
 - [ ] Comparar complexidade, custo, latência e ganho de qualidade;
 - [ ] Decidir se Knowledge Graph ou GraphRAG entram no roadmap da INNA.
+
+---
 
 ---
 
