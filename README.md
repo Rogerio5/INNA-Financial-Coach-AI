@@ -2414,7 +2414,29 @@ Pergunta 4 ✅
 Pergunta 5 ✅
 ```
 
-A feature flag permanece desativada em produção enquanto as Perguntas 5 ainda não forem concluídas.
+## Tabela de Otimização de Performance do Pipeline RAG — Antes x Depois
+
+| Componente              |             Antes |  Depois | Resultado                           |
+| ----------------------- | ----------------: | ------: | ----------------------------------- |
+| Conexão Neon/PostgreSQL |           31–65 s | 1,342 s | ✅ IPv4 eliminou o atraso de conexão |
+| Gemini Embedding        |         169,858 s | 5,050 s | ✅ ~34x mais rápido                  |
+| Busca PGVector          |         240,166 s | 6,132 s | ✅ ~39x mais rápido                  |
+| Busca textual           |          63,389 s | 0,180 s | ✅ grande redução                    |
+| RAG híbrido             |         298,313 s | 1,666 s | ✅ ~179x mais rápido                 |
+| DeepEval Judge          | Timeout em 88,5 s | 2,052 s | ✅ timeout eliminado                 |
+
+### Diagnóstico técnico
+
+> **Problema identificado:** a rede resolvia os endpoints do Neon e da API Google para IPv4 e IPv6, porém a rota IPv6 expirava por timeout.  
+>
+> **Solução:** foi aplicada preferência explícita por IPv4 nas conexões PostgreSQL/Neon e nos clientes HTTPX utilizados pelo Gemini e pelo DeepEval.  
+>
+> **Impacto:** houve redução significativa da latência do pipeline RAG e eliminação dos timeouts observados durante as métricas de avaliação.
+
+## Validação Ponta a Ponta — Suite com 5 Perguntas
+
+
+> A feature flag permanece desativada em produção até a conclusão do Quality Gate consolidado e da revisão final do experimento.
 
 ---
 
