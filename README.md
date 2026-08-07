@@ -2497,18 +2497,16 @@ TOTAL_ESTIMATED_COST=0.0
 
 ## 📊 Resultado consolidado do experimento
 
-| Execução                              | Modelo avaliador        | Quality Gate | Resultado                                                 | Uso na consolidação |
-| ------------------------------------- | ----------------------- | -----------: | --------------------------------------------------------- | ------------------- |
-| Pergunta 1 — reserva financeira       | `gemini-2.5-flash`      |   ✅ Aprovado | Melhorou a Contextual Relevancy                           | Smoke test histórico |
-| Pergunta 2 — organização do orçamento | `gemini-2.5-flash`      |   ✅ Aprovado | Melhorou a Contextual Relevancy                           | Smoke test histórico |
-| Pergunta 1 oficial — `window_size=5`  | `gemini-3.5-flash-lite` |   ✅ Aprovado | Contextual Relevancy `+0.181818`, sem regressão relevante | Consolidação oficial |
-| Pergunta 2 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Quality Gate aprovado                                     | Consolidação oficial |
-| Pergunta 3 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Quality Gate aprovado                                     | Consolidação oficial |
-| Pergunta 4 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Contexto otimizado e Quality Gate aprovado                | Consolidação oficial |
-| Pergunta 5 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Quality Gate aprovado, sem regressão acima do limite      | Consolidação oficial |
+| Execução                              | Modelo avaliador        | Quality Gate | Resultado                                                 | Uso na consolidação         |
+| ------------------------------------- | ----------------------- | -----------: | --------------------------------------------------------- | --------------------------- |
+| Pergunta 1 — reserva financeira       | `gemini-2.5-flash`      |   ✅ Aprovado | Melhorou a Contextual Relevancy                           | Smoke test histórico        |
+| Pergunta 2 — organização do orçamento | `gemini-2.5-flash`      |   ✅ Aprovado | Melhorou a Contextual Relevancy                           | Smoke test histórico        |
+| Pergunta 1 oficial — `window_size=5`  | `gemini-3.5-flash-lite` |   ✅ Aprovado | Contextual Relevancy `+0.181818`, sem regressão relevante | Consolidação oficial        |
+| Pergunta 2 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Quality Gate aprovado                                     | Consolidação oficial        |
+| Pergunta 3 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Quality Gate aprovado                                     | Consolidação oficial        |
+| Pergunta 4 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Contexto otimizado e Quality Gate aprovado                | Consolidação oficial        |
+| Pergunta 5 oficial                    | `gemini-3.5-flash-lite` |   ✅ Aprovado | Quality Gate aprovado, sem regressão acima do limite      | Consolidação oficial        |
 | Teste ponta a ponta — 5 perguntas     | `gemini-3.5-flash-lite` |   ✅ Aprovado | 5/5 perguntas aprovadas, RAG Triad 1.0 nas três métricas  | Validação final consolidada |
-
-
 
 Os resultados históricos executados com `gemini-2.5-flash` foram preservados como evidência técnica e smoke tests.
 
@@ -2517,18 +2515,39 @@ A consolidação oficial utiliza somente as cinco execuções realizadas com:
 ```env
 gemini-3.5-flash-lite
 ```
+### Conclusão da validação
+```markdonw
+A validação ponta a ponta confirmou a estabilidade da configuração final do pipeline RAG nas cinco perguntas oficiais. Todos os casos foram concluídos sem falhas, com aprovação dos Quality Gates e nota 1.0000 em Answer Relevancy, Faithfulness e Contextual Relevancy.
 
-> O teste ponta a ponta confirmou a estabilidade da configuração final do pipeline RAG nas cinco perguntas oficiais, com 5/5 casos aprovados, ausência de falhas e nota máxima em Answer Relevancy, Faithfulness e Contextual Relevancy.
-
-
-
-E logo depois eu acrescentaria um pequeno fechamento:
-
-```markdown
-> A validação ponta a ponta confirmou a estabilidade da configuração final nas cinco perguntas oficiais. Todas as perguntas foram concluídas sem falhas, com aprovação dos Quality Gates e nota máxima nas três métricas da RAG Triad.
-
-> Apesar do resultado positivo, a feature flag do Sentence-Window permanece desativada em produção até a conclusão da revisão final técnica e da decisão formal de ativação.
+O resultado consolidado recomenda promote_sentence_window. Apesar disso, a feature flag do Sentence-Window permanece desativada em produção até a conclusão da revisão técnica final e da decisão formal de ativação.
 ```
+---
+
+### Controle de custo da avaliação
+
+A suíte registrou `TOTAL_ESTIMATED_COST=0.0`, porém esse valor não representa custo real zero.
+
+Durante a inspeção do DeepEval, foi confirmado que o modelo `gemini-3.5-flash-lite` possui:
+
+```text
+MODEL_INPUT_PRICE=None
+MODEL_OUTPUT_PRICE=None
+```
+O método calculate_cost() somente calcula o custo quando os preços de entrada e saída estão disponíveis.
+
+Por isso, o estado correto da telemetria financeira é:
+```text
+TOTAL_ESTIMATED_COST_RECORDED=0.0
+COST_CALCULATION_AVAILABLE=False
+MODEL_INPUT_PRICE=None
+MODEL_OUTPUT_PRICE=None
+REAL_BILLED_COST=NOT_VERIFIED
+EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
+```
+```markdonw
+> O valor 0.0 representa apenas o valor técnico acumulado pela suíte e não deve ser interpretado como custo efetivamente cobrado pela API.
+```
+
 ---
 ## 🔄 Próximos passos
 
