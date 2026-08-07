@@ -2520,51 +2520,7 @@ gemini-3.5-flash-lite
 
 > O teste ponta a ponta confirmou a estabilidade da configuração final do pipeline RAG nas cinco perguntas oficiais, com 5/5 casos aprovados, ausência de falhas e nota máxima em Answer Relevancy, Faithfulness e Contextual Relevancy.
 
-#### Situação atual
 
-```text
-PERGUNTA_1_OFICIAL=CONCLUIDA
-PERGUNTA_2_OFICIAL=CONCLUIDA
-PERGUNTA_3_OFICIAL=CONCLUIDA
-PERGUNTA_4_OFICIAL=CONCLUIDA
-PERGUNTA_5_OFICIAL=CONCLUIDA
-
-PERGUNTA_1_QUALITY_GATE=True
-PERGUNTA_2_QUALITY_GATE=True
-PERGUNTA_3_QUALITY_GATE=True
-PERGUNTA_4_QUALITY_GATE=True
-PERGUNTA_5_QUALITY_GATE=True
-
-PERGUNTAS_OFICIAIS_CONCLUIDAS=5_DE_5
-PERGUNTAS_OFICIAIS_PENDENTES=0
-
-END_TO_END_QUESTION_COUNT=5
-END_TO_END_COMPLETED_COUNT=5
-END_TO_END_FAILED_COUNT=0
-END_TO_END_QUESTIONS_APPROVED=5_DE_5
-END_TO_END_5_QUESTIONS=APPROVED
-
-END_TO_END_ANSWER_RELEVANCY=1.0000
-END_TO_END_FAITHFULNESS=1.0000
-END_TO_END_CONTEXTUAL_RELEVANCY=1.0000
-
-END_TO_END_MEDIAN_LATENCY_DELTA_MS=-322.0
-END_TO_END_AVERAGE_LATENCY_DELTA_MS=-895.6
-END_TO_END_AVERAGE_CONTEXT_CHARACTER_DELTA=-89.8
-END_TO_END_TOTAL_ESTIMATED_COST=0.0
-
-WINDOW_SIZE_SELECIONADO=5
-TOP_K_VALIDACAO_PONTA_A_PONTA=1
-
-SENTENCE_WINDOW_SIGNAL=POSITIVO
-QUALITY_GATE_INDIVIDUAL=APROVADO_5_DE_5
-QUALITY_GATE_PONTA_A_PONTA=APROVADO_5_DE_5
-
-RECOMMENDATION=promote_sentence_window
-
-SENTENCE_WINDOW_PRODUCAO=false
-DECISAO_DE_PRODUCAO=PENDENTE_DE_REVISAO_FINAL
-```
 
 E logo depois eu acrescentaria um pequeno fechamento:
 
@@ -2574,7 +2530,6 @@ E logo depois eu acrescentaria um pequeno fechamento:
 > Apesar do resultado positivo, a feature flag do Sentence-Window permanece desativada em produção até a conclusão da revisão final técnica e da decisão formal de ativação.
 ```
 ---
-
 ## 🔄 Próximos passos
 
 ### Implementação e avaliação
@@ -2584,6 +2539,7 @@ E logo depois eu acrescentaria um pequeno fechamento:
 - [x] Integrar DeepEval;
 - [x] Implementar RAG Triad;
 - [x] Corrigir o mapeamento do Quality Gate;
+- [x] Corrigir os timeouts de rede nas conexões Neon, Gemini e DeepEval;
 - [x] Executar smoke test real com `gemini-2.5-flash`;
 - [x] Executar a Pergunta 2 histórica com `gemini-2.5-flash`;
 - [x] Comparar `window_size=2`, `window_size=4` e `window_size=5`;
@@ -2593,7 +2549,9 @@ E logo depois eu acrescentaria um pequeno fechamento:
 - [x] Executar a Pergunta 3 oficial;
 - [x] Executar a Pergunta 4 oficial;
 - [x] Executar a Pergunta 5 oficial;
-- [x] Validar individualmente os cinco Quality Gates.
+- [x] Validar individualmente os cinco Quality Gates;
+- [x] Executar teste ponta a ponta com as cinco perguntas oficiais;
+- [x] Validar o Quality Gate ponta a ponta com 5/5 perguntas aprovadas.
 
 ### Consolidação
 
@@ -2603,42 +2561,82 @@ E logo depois eu acrescentaria um pequeno fechamento:
 - [x] Comparar tamanho do contexto por pergunta;
 - [x] Verificar ausência de regressões acima do limite;
 - [x] Registrar as cinco aprovações individuais;
-- [ ] Calcular as médias consolidadas da RAG Triad;
-- [ ] Calcular média e mediana de latência;
-- [ ] Calcular a variação média do tamanho do contexto;
-- [ ] Registrar o custo real como cota gratuita;
+- [x] Calcular as médias consolidadas da RAG Triad;
+- [x] Calcular média e mediana de latência;
+- [x] Calcular a variação média do tamanho do contexto;
+- [x] Executar validação consolidada ponta a ponta;
+- [x] Confirmar 5/5 perguntas aprovadas;
+- [x] Confirmar ausência de falhas no teste consolidado;
+- [ ] Registrar formalmente o custo real da execução;
 - [ ] Separar custo real de custo equivalente estimado;
 - [ ] Revisar tentativas intermediárias;
 - [ ] Revisar execuções incompletas causadas por limite de cota;
-- [ ] Revisar o uso de `axis_scores_fallback`;
+- [ ] Revisar e documentar o uso de `axis_scores_fallback`;
 - [ ] Emitir a decisão final sobre ativação permanente.
+
+### Resultado consolidado atual
+
+```text
+QUESTION_COUNT=5
+COMPLETED_COUNT=5
+FAILED_COUNT=0
+
+QUESTIONS_APPROVED=5_DE_5
+END_TO_END_5_QUESTIONS=APPROVED
+
+ANSWER_RELEVANCY=1.0000
+FAITHFULNESS=1.0000
+CONTEXTUAL_RELEVANCY=1.0000
+
+MEDIAN_LATENCY_DELTA_MS=-322.0
+AVERAGE_LATENCY_DELTA_MS=-895.6
+AVERAGE_CONTEXT_CHARACTER_DELTA=-89.8
+
+TOTAL_ESTIMATED_COST=0.0
+
+RECOMMENDATION=promote_sentence_window
+```
 
 ### Próximas técnicas de retrieval
 
 - [ ] Implementar Auto-Merging Retrieval;
 - [ ] Criar testes unitários do Auto-Merging;
+- [ ] Criar experimento A/B para Auto-Merging;
 - [ ] Comparar RAG híbrido, Sentence-Window e Auto-Merging;
-- [ ] Comparar qualidade, latência e tamanho de contexto;
-- [ ] Selecionar a estratégia final da Semana 3.
+- [ ] Comparar RAG Triad entre as estratégias;
+- [ ] Comparar qualidade, latência, tamanho de contexto e custo estimado;
+- [ ] Verificar regressões entre as estratégias;
+- [ ] Selecionar a estratégia final de retrieval da Semana 3.
 
 ### Documentação
 
-- [ ] Finalizar o Quality Gate consolidado da Semana 3;
+- [x] Finalizar o Quality Gate consolidado das cinco perguntas;
+- [x] Registrar a validação ponta a ponta com 5/5 perguntas aprovadas;
+- [x] Registrar as métricas consolidadas da RAG Triad;
+- [x] Registrar média e mediana de latência;
+- [x] Registrar a variação média do tamanho do contexto;
+- [x] Registrar a otimização de performance antes x depois;
+- [x] Confirmar que respostas e contextos brutos não foram armazenados;
+- [x] Registrar as limitações de cota encontradas durante os testes;
 - [ ] Atualizar o README principal;
 - [ ] Atualizar o relatório técnico;
 - [ ] Registrar os caminhos dos relatórios JSON e Markdown;
 - [ ] Preservar somente hashes e métricas nos relatórios públicos;
-- [ ] Confirmar que respostas e contextos brutos não foram armazenados;
-- [x] Registrar as limitações de cota encontradas durante os testes;
+- [ ] Revisar e documentar o uso de `axis_scores_fallback`;
+- [ ] Registrar formalmente o custo real e separar do custo equivalente estimado;
+- [ ] Registrar a decisão final sobre ativação do Sentence-Window;
 - [ ] Finalizar documentação e evidências.
 
 ### Knowledge Graph e GraphRAG
 
 - [ ] Analisar casos de uso para Knowledge Graph;
+- [ ] Identificar quais relações financeiras realmente se beneficiariam de representação em grafo;
 - [ ] Avaliar Neo4j e Cypher;
 - [ ] Avaliar GraphRAG somente se houver benefício técnico comprovado;
 - [ ] Criar prova de conceito opcional;
-- [ ] Comparar complexidade, custo e ganho de qualidade.
+- [ ] Comparar RAG tradicional, Sentence-Window e GraphRAG em casos adequados;
+- [ ] Comparar complexidade, custo, latência e ganho de qualidade;
+- [ ] Decidir se Knowledge Graph ou GraphRAG entram no roadmap da INNA.
 ---
 
 #### 📌 Estado atual
@@ -2660,32 +2658,38 @@ EXECUCOES_HISTORICAS_CONCLUIDAS=2
 PERGUNTAS_OFICIAIS_CONCLUIDAS=5_DE_5
 PERGUNTAS_OFICIAIS_RESTANTES=0
 
-PERGUNTA_1_REEXECUCAO=CONCLUIDA
-PERGUNTA_2_REEXECUCAO=CONCLUIDA
-PERGUNTA_3=CONCLUIDA
-PERGUNTA_4=CONCLUIDA
-PERGUNTA_5=CONCLUIDA
-
 PERGUNTA_1_QUALITY_GATE=True
 PERGUNTA_2_QUALITY_GATE=True
 PERGUNTA_3_QUALITY_GATE=True
 PERGUNTA_4_QUALITY_GATE=True
 PERGUNTA_5_QUALITY_GATE=True
 
+QUALITY_GATE_INDIVIDUAL=APROVADO_5_DE_5
+
+END_TO_END_QUESTION_COUNT=5
+END_TO_END_COMPLETED_COUNT=5
+END_TO_END_FAILED_COUNT=0
+END_TO_END_QUESTIONS_APPROVED=5_DE_5
+END_TO_END_5_QUESTIONS=APPROVED
+
+END_TO_END_ANSWER_RELEVANCY=1.0000
+END_TO_END_FAITHFULNESS=1.0000
+END_TO_END_CONTEXTUAL_RELEVANCY=1.0000
+
+QUALITY_GATE_CONSOLIDADO=APROVADO
+RECOMMENDATION=promote_sentence_window
+
 WINDOW_SIZE_SELECIONADO=5
+TOP_K_VALIDACAO_PONTA_A_PONTA=1
+
 SENTENCE_WINDOW_SIGNAL=POSITIVO
 SENTENCE_WINDOW_PRODUCAO=false
-
-QUALITY_GATE_INDIVIDUAL=APROVADO_5_DE_5
-QUALITY_GATE_CONSOLIDADO=EM_FINALIZACAO
 DECISAO_FINAL_PRODUCAO=PENDENTE_DE_REVISAO_FINAL
 
 AUTO_MERGING=PENDENTE
 DOCUMENTACAO_FINAL=EM_ANDAMENTO
 SEMANA_3=EM_FINALIZACAO
 ```
-
-
 
 --- 
 
