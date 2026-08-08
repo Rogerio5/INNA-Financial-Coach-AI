@@ -5429,6 +5429,7 @@ if app_menu == "💬 Conversar":
                     })
 
                     st.session_state.limpar_chat_input_inna = True
+                    st.session_state.app_menu_selected = "💬 Conversar"
                     st.rerun()
 
                 else:
