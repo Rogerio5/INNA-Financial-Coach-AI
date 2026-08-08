@@ -165,10 +165,24 @@ jobs:
 
           mkdir -p artifacts/security-compliance
 
+          # O componente INNA Relationship Graph e um pacote local.
+          # As dependencias publicas continuam auditadas via requirements.
+          grep -vE '^[[:space:]]*\./components/inna_relationship_graph[[:space:]]*$' \
+            requirements.txt \
+            > artifacts/security-compliance/requirements-pypi-audit.txt
+
           python -m pip_audit \
-            --requirement requirements.txt \
+            --requirement artifacts/security-compliance/requirements-pypi-audit.txt \
             --format json \
             --output artifacts/security-compliance/pip-audit.json \
+            --progress-spinner off \
+            --strict
+
+          # Audita separadamente o projeto Python local.
+          python -m pip_audit \
+            ./components/inna_relationship_graph \
+            --format json \
+            --output artifacts/security-compliance/pip-audit-local-component.json \
             --progress-spinner off \
             --strict
 
@@ -178,10 +192,24 @@ jobs:
         run: |
           set +e
 
+          mkdir -p artifacts/security-compliance
+
+          if [ ! -f artifacts/security-compliance/requirements-pypi-audit.txt ]; then
+            grep -vE '^[[:space:]]*\./components/inna_relationship_graph[[:space:]]*$' \
+              requirements.txt \
+              > artifacts/security-compliance/requirements-pypi-audit.txt
+          fi
+
           python -m pip_audit \
-            --requirement requirements.txt \
+            --requirement artifacts/security-compliance/requirements-pypi-audit.txt \
             --format cyclonedx-json \
             --output artifacts/security-compliance/python-sbom.cdx.json \
+            --progress-spinner off
+
+          python -m pip_audit \
+            ./components/inna_relationship_graph \
+            --format cyclonedx-json \
+            --output artifacts/security-compliance/local-component-sbom.cdx.json \
             --progress-spinner off
 
           exit 0
