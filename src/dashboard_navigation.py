@@ -35,6 +35,15 @@ NAVIGATION_GROUPS: tuple[NavigationGroup, ...] = (
         ),
     ),
     NavigationGroup(
+        group_id="platform_modules",
+        icon="🧩",
+        default_page_id="platform_modules_catalog",
+        page_ids=(
+            "platform_modules_catalog",
+            "relationship_graph",
+        ),
+    ),
+    NavigationGroup(
         group_id="financial_solutions",
         icon="💰",
         default_page_id="diagnostics",

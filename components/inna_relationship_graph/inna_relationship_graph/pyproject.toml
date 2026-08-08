@@ -1,0 +1,7 @@
+[project]
+name = "inna-relationship-graph"
+version = "0.1.0"
+
+[[tool.streamlit.component.components]]
+name = "inna_relationship_graph"
+asset_dir = "frontend/build"

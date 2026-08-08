@@ -3607,18 +3607,91 @@ def render_filters(
             page_widget_key
         ] = selected_page
 
+    def _dashboard_group_label(
+        group_id: str,
+    ) -> str:
+        if group_id == "platform_modules":
+            module_group_labels = {
+                "pt": "🧩 Módulos",
+                "en_us": "🧩 Modules",
+                "en_gb": "🧩 Modules",
+                "es": "🧩 Módulos",
+                "fr": "🧩 Modules",
+                "de": "🧩 Module",
+                "it": "🧩 Moduli",
+                "ro": "🧩 Module",
+                "ru": "🧩 Модули",
+                "sa": "🧩 الوحدات",
+            }
+
+            return module_group_labels.get(
+                current_language,
+                module_group_labels["pt"],
+            )
+
+        return navigation_group_t(
+            group_id,
+            current_language,
+        )
+
+    def _open_platform_module_page(
+        page_id: str,
+    ) -> None:
+        st.session_state[
+            persistent_key
+        ] = page_id
+
+        st.session_state[
+            group_widget_key
+        ] = "platform_modules"
+
+        st.session_state[
+            page_widget_key
+        ] = page_id
+
+    with menu_container.popover(
+        "☰ Módulos",
+    ):
+        st.caption(
+            "Acesse os módulos da plataforma "
+            "e o mapa de relacionamentos."
+        )
+
+        st.button(
+            "🧩 Catálogo de Módulos",
+            key=(
+                "dashboard_open_platform_modules"
+            ),
+            use_container_width=True,
+            on_click=(
+                _open_platform_module_page
+            ),
+            args=(
+                "platform_modules_catalog",
+            ),
+        )
+
+        st.button(
+            "🕸️ Grafo de Relacionamentos",
+            key=(
+                "dashboard_open_relationship_graph"
+            ),
+            use_container_width=True,
+            on_click=(
+                _open_platform_module_page
+            ),
+            args=(
+                "relationship_graph",
+            ),
+        )
+
     menu_container.radio(
         navigation_ui_t(
             "platform_area",
             current_language,
         ),
         options=list(NAVIGATION_GROUP_IDS),
-        format_func=lambda group_id: (
-            navigation_group_t(
-                group_id,
-                current_language,
-            )
-        ),
+        format_func=_dashboard_group_label,
         key=group_widget_key,
         on_change=sync_dashboard_group,
     )
@@ -3651,6 +3724,12 @@ def render_filters(
 
     st.session_state[
         page_widget_key
+    ] = stored_page
+
+    # Mantém a página persistente sincronizada desde
+    # a primeira renderização do Dashboard.
+    st.session_state[
+        persistent_key
     ] = stored_page
 
     def sync_dashboard_page():
@@ -14527,6 +14606,48 @@ def main(
 
     if menu == "overview":
         render_overview(diagnosticos_filtrados, feedbacks_filtrados, eventos_filtrados)
+
+    elif menu == "platform_modules_catalog":
+        interface_language = (
+            st.session_state.get(
+                "dashboard_interface_lang",
+                "pt",
+            )
+        )
+
+        try:
+            from dashboard_pages.platform_modules_overview import (
+                render_platform_modules_overview,
+            )
+        except ImportError:
+            from src.dashboard_pages.platform_modules_overview import (
+                render_platform_modules_overview,
+            )
+
+        render_platform_modules_overview(
+            interface_language
+        )
+
+    elif menu == "relationship_graph":
+        interface_language = (
+            st.session_state.get(
+                "dashboard_interface_lang",
+                "pt",
+            )
+        )
+
+        try:
+            from dashboard_pages.relationship_graph_page import (
+                render_relationship_graph_page,
+            )
+        except ImportError:
+            from src.dashboard_pages.relationship_graph_page import (
+                render_relationship_graph_page,
+            )
+
+        render_relationship_graph_page(
+            interface_language
+        )
 
     elif menu == "multichannel_events":
         render_events(eventos_filtrados, diagnosticos_filtrados, feedbacks_filtrados)

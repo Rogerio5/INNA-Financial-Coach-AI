@@ -2603,3 +2603,97 @@ def translate_origin(
         fallback=raw,
     )
 
+
+# PLATFORM_MODULES_GRAPH_MENU_INTEGRATION
+
+_PLATFORM_MODULE_PAGE_IDS = (
+    "platform_modules_catalog",
+    "relationship_graph",
+)
+
+for _platform_module_page_id in (
+    _PLATFORM_MODULE_PAGE_IDS
+):
+    if (
+        _platform_module_page_id
+        not in MENU_PAGE_IDS
+    ):
+        MENU_PAGE_IDS = (
+            *MENU_PAGE_IDS,
+            _platform_module_page_id,
+        )
+
+MENU_GROUP_PAGE_IDS[
+    "platform_modules"
+] = _PLATFORM_MODULE_PAGE_IDS
+
+
+_PLATFORM_MODULE_MENU_LABELS = {
+    "pt": {
+        "catalog": "🧩 Catálogo de Módulos",
+        "graph": "🕸️ Grafo de Relacionamentos",
+    },
+    "en_us": {
+        "catalog": "🧩 Module Catalog",
+        "graph": "🕸️ Relationship Graph",
+    },
+    "en_gb": {
+        "catalog": "🧩 Module Catalogue",
+        "graph": "🕸️ Relationship Graph",
+    },
+    "es": {
+        "catalog": "🧩 Catálogo de Módulos",
+        "graph": "🕸️ Grafo de Relaciones",
+    },
+    "fr": {
+        "catalog": "🧩 Catalogue des Modules",
+        "graph": "🕸️ Graphe des Relations",
+    },
+    "de": {
+        "catalog": "🧩 Modulkatalog",
+        "graph": "🕸️ Beziehungsgraph",
+    },
+    "it": {
+        "catalog": "🧩 Catalogo dei Moduli",
+        "graph": "🕸️ Grafo delle Relazioni",
+    },
+    "ro": {
+        "catalog": "🧩 Catalogul Modulelor",
+        "graph": "🕸️ Graficul Relațiilor",
+    },
+    "ru": {
+        "catalog": "🧩 Каталог Модулей",
+        "graph": "🕸️ Граф Взаимосвязей",
+    },
+    "sa": {
+        "catalog": "🧩 دليل الوحدات",
+        "graph": "🕸️ مخطط العلاقات",
+    },
+}
+
+for (
+    _platform_language,
+    _platform_language_texts,
+) in MENU_TEXTS.items():
+
+    _platform_labels = (
+        _PLATFORM_MODULE_MENU_LABELS.get(
+            _platform_language,
+            _PLATFORM_MODULE_MENU_LABELS[
+                "pt"
+            ],
+        )
+    )
+
+    _platform_language_texts[
+        "platform_modules_catalog"
+    ] = _platform_labels[
+        "catalog"
+    ]
+
+    _platform_language_texts[
+        "relationship_graph"
+    ] = _platform_labels[
+        "graph"
+    ]
+
