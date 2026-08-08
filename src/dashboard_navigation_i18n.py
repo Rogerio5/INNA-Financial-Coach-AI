@@ -251,6 +251,37 @@ NAVIGATION_GROUP_TEXTS["ch"] = dict(
 )
 
 
+# PLATFORM_MODULES_NAVIGATION_I18N
+
+_PLATFORM_MODULE_GROUP_LABELS = {
+    "pt": "🧩 Módulos",
+    "en_us": "🧩 Modules",
+    "en_gb": "🧩 Modules",
+    "es": "🧩 Módulos",
+    "de": "🧩 Module",
+    "fr": "🧩 Modules",
+    "it": "🧩 Moduli",
+    "ro": "🧩 Module",
+    "ru": "🧩 Модули",
+    "ua": "🧩 Модулі",
+    "sa": "🧩 الوحدات",
+    "ch": "🧩 Module",
+}
+
+for (
+    _platform_language,
+    _platform_language_texts,
+) in NAVIGATION_GROUP_TEXTS.items():
+    _platform_language_texts[
+        "platform_modules"
+    ] = _PLATFORM_MODULE_GROUP_LABELS.get(
+        _platform_language,
+        _PLATFORM_MODULE_GROUP_LABELS[
+            "en_us"
+        ],
+    )
+
+
 def navigation_group_t(
     group_id: str,
     language: str = "pt",

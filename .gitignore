@@ -72,3 +72,8 @@ artifacts/evaluations/*.tmp
 
 # Security and compliance local evidence
 artifacts/security-compliance/
+# Dependencias e artefatos locais do componente Streamlit
+components/**/node_modules/
+components/**/__pycache__/
+components/**/*.egg-info/
+components/inna_relationship_graph/build/

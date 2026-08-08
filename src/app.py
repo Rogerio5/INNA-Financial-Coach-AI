@@ -2905,57 +2905,310 @@ st.sidebar.caption("Educadora Financeira Inteligente")
 if "app_menu_selected" not in st.session_state:
     st.session_state.app_menu_selected = "🏠 Início"
 
+# INNA_ISOLATED_PAGE_NAVIGATION
+
+INNA_NAVIGATION_HUB_PAGE = "🏠 Início"
+
+
+_INNA_BACK_LABELS = {
+    "pt": "⬅️ Voltar",
+    "en_us": "⬅️ Back",
+    "en_gb": "⬅️ Back",
+    "es": "⬅️ Volver",
+    "fr": "⬅️ Retour",
+    "de": "⬅️ Zurück",
+    "it": "⬅️ Indietro",
+    "ro": "⬅️ Înapoi",
+    "uk": "⬅️ Назад",
+    "ru": "⬅️ Назад",
+    "ar": "⬅️ رجوع",
+    "ch": "⬅️ Zurück",
+}
+
+
+_INNA_CURRENT_PAGE_LABELS = {
+    "pt": "Página atual",
+    "en_us": "Current page",
+    "en_gb": "Current page",
+    "es": "Página actual",
+    "fr": "Page actuelle",
+    "de": "Aktuelle Seite",
+    "it": "Pagina attuale",
+    "ro": "Pagina curentă",
+    "uk": "Поточна сторінка",
+    "ru": "Текущая страница",
+    "ar": "الصفحة الحالية",
+    "ch": "Aktuelle Seite",
+}
+
+
+def inna_navigation_is_hub() -> bool:
+    """Indica se a tela principal de seleção está aberta."""
+
+    return bool(
+        st.session_state.get(
+            "inna_show_navigation_hub",
+            True,
+        )
+    )
+
+
+def inna_back_to_hub() -> None:
+    """Volta ao seletor principal sem encerrar a sessão."""
+
+    st.session_state.app_menu_selected = (
+        INNA_NAVIGATION_HUB_PAGE
+    )
+
+    st.session_state.inna_show_navigation_hub = True
+    st.session_state.show_login_page = False
+
+
+def inna_back_label() -> str:
+    language = st.session_state.get(
+        "app_lang",
+        "pt",
+    )
+
+    return _INNA_BACK_LABELS.get(
+        language,
+        _INNA_BACK_LABELS["pt"],
+    )
+
+
+def inna_current_page_prefix() -> str:
+    language = st.session_state.get(
+        "app_lang",
+        "pt",
+    )
+
+    return _INNA_CURRENT_PAGE_LABELS.get(
+        language,
+        _INNA_CURRENT_PAGE_LABELS["pt"],
+    )
+
+
+
+def navigate_to_inna(page: str) -> None:
+    """Abre uma página da INNA de forma isolada."""
+    if page not in APP_MENU_OPTIONS:
+        page = "🏠 Início"
+
+    st.session_state.app_menu_selected = page
+    st.session_state.inna_show_navigation_hub = False
+
+
+def current_page_inna() -> str:
+    """Retorna a página ativa com fallback seguro."""
+    page = st.session_state.get(
+        "app_menu_selected",
+        "🏠 Início",
+    )
+
+    if page not in APP_MENU_OPTIONS:
+        page = "🏠 Início"
+        st.session_state.app_menu_selected = page
+
+    return page
+
+
+
+def _inna_open_login_page() -> None:
+    """Abre o login sem provocar um segundo rerun."""
+    st.session_state.show_login_page = True
+
+
+def _inna_logout_to_home() -> None:
+    """Finaliza a sessão e retorna para a página inicial."""
+    st.session_state.logado = False
+    st.session_state.usuario = None
+    st.session_state.perfil_usuario = None
+    st.session_state.show_login_page = False
+    st.session_state.app_menu_selected = "🏠 Início"
+
+
+def _inna_start_new_diagnosis() -> None:
+    """Limpa o resultado anterior e inicia novo fluxo."""
+    st.session_state.last_response = None
+    st.session_state.last_payload = None
+    st.session_state.app_menu_selected = "🏠 Início"
+
 
 # =============================
 # TOPO PRINCIPAL DA INNA
 # =============================
 
-st.markdown("""
-<div class="inna-top-title">💰 INNA Financial Coach AI</div>
-<div class="inna-top-subtitle">Educadora Financeira Inteligente • Web App • IA • Diagnóstico financeiro</div>
-<div class="inna-top-divider"></div>
+# INNA_HUB_HEADER_ONLY
+if inna_navigation_is_hub():
+
+    st.markdown("""
+💰 INNA Financial Coach AI
+Educadora Financeira Inteligente • Web App • IA • Diagnóstico financeiro
+
 """, unsafe_allow_html=True)
 
-# Linha superior: idioma, tema e login/sair
-top_lang_col, top_theme_col, top_login_col = st.columns([1.4, 1.1, 1])
+    # -----------------------------------------
+    # Idioma | Tema | Sair
+    # Somente na tela principal de seleção.
+    # -----------------------------------------
 
-with top_lang_col:
-    app_lang = st.selectbox(
-        "🌍 Idioma / Language",
-        options=list(APP_LANG_LABELS.keys()),
-        index=list(APP_LANG_LABELS.keys()).index(st.session_state.app_lang),
-        format_func=lambda key: APP_LANG_LABELS[key],
-        key="app_lang_top",
+    (
+        top_lang_col,
+        top_theme_col,
+        top_login_col,
+    ) = st.columns(
+        [1.4, 1.1, 1]
     )
-    
 
-# Atualiza idioma e moeda após mudança no seletor superior
-st.session_state.app_lang = app_lang
-current_currency_info = CURRENCY_BY_LANG.get(app_lang, CURRENCY_BY_LANG["pt"])
+    with top_lang_col:
+        app_lang = st.selectbox(
+            "🌍 Idioma / Language",
+            options=list(
+                APP_LANG_LABELS.keys()
+            ),
+            index=list(
+                APP_LANG_LABELS.keys()
+            ).index(
+                st.session_state.app_lang
+            ),
+            format_func=lambda key: (
+                APP_LANG_LABELS[key]
+            ),
+            key="app_lang_top",
+        )
 
-with top_theme_col:
-    st.session_state.theme_name = st.selectbox(
-        "🎨 Tema",
-        list(THEMES_INNA.keys()),
-        index=list(THEMES_INNA.keys()).index(st.session_state.theme_name),
-        key="theme_selector_top",
+    st.session_state.app_lang = (
+        app_lang
     )
-    theme = THEMES_INNA[st.session_state.theme_name]
 
-with top_login_col:
-    st.write("")
-    if st.session_state.get("logado"):
-        if st.button("🚪 Sair", use_container_width=True, key="btn_top_sair"):
-            st.session_state.logado = False
-            st.session_state.usuario = None
-            st.session_state.perfil_usuario = None
-            st.session_state.app_menu_selected = "🏠 Início"
-            st.session_state.show_login_page = False
-            st.rerun()
-    else:
-        if st.button(ui_t("login_button") if "ui_t" in globals() else "🔑 Entrar", use_container_width=True, key="btn_top_entrar"):
-            st.session_state.show_login_page = True
-            st.rerun()
+    current_currency_info = (
+        CURRENCY_BY_LANG.get(
+            app_lang,
+            CURRENCY_BY_LANG["pt"],
+        )
+    )
+
+    with top_theme_col:
+
+        st.session_state.theme_name = (
+            st.selectbox(
+                "🎨 Tema",
+                list(
+                    THEMES_INNA.keys()
+                ),
+                index=list(
+                    THEMES_INNA.keys()
+                ).index(
+                    st.session_state.theme_name
+                ),
+                key="theme_selector_top",
+            )
+        )
+
+        theme = THEMES_INNA[
+            st.session_state.theme_name
+        ]
+
+    with top_login_col:
+
+        st.write("")
+
+        if st.session_state.get(
+            "logado"
+        ):
+            st.button(
+                "🚪 Sair",
+                use_container_width=True,
+                key="btn_top_sair",
+                on_click=(
+                    _inna_logout_to_home
+                ),
+            )
+
+        else:
+            st.button(
+                (
+                    ui_t("login_button")
+                    if "ui_t" in globals()
+                    else "🔑 Entrar"
+                ),
+                use_container_width=True,
+                key="btn_top_entrar",
+                on_click=(
+                    _inna_open_login_page
+                ),
+            )
+
+else:
+    # -----------------------------------------
+    # Página interna aberta.
+    #
+    # Não mostra:
+    # - Logo
+    # - Idioma
+    # - Tema
+    # - Sair
+    #
+    # Mantém internamente idioma, moeda
+    # e tema selecionados no HUB.
+    # -----------------------------------------
+
+    app_lang = st.session_state.get(
+        "app_lang",
+        "pt",
+    )
+
+    if app_lang not in APP_LANG_LABELS:
+        app_lang = "pt"
+
+        st.session_state.app_lang = (
+            app_lang
+        )
+
+    current_currency_info = (
+        CURRENCY_BY_LANG.get(
+            app_lang,
+            CURRENCY_BY_LANG["pt"],
+        )
+    )
+
+    current_theme_name = (
+        st.session_state.get(
+            "theme_name"
+        )
+    )
+
+    if (
+        current_theme_name
+        not in THEMES_INNA
+    ):
+        current_theme_name = next(
+            iter(THEMES_INNA)
+        )
+
+        st.session_state.theme_name = (
+            current_theme_name
+        )
+
+    theme = THEMES_INNA[
+        current_theme_name
+    ]
+
+    # Botão compacto da página.
+    (
+        page_back_space,
+        page_back_col,
+    ) = st.columns(
+        [6.5, 1.5]
+    )
+
+    with page_back_col:
+        st.button(
+            inna_back_label(),
+            use_container_width=True,
+            key="btn_page_voltar",
+            on_click=inna_back_to_hub,
+        )
 
 
 # Labels curtos para o menu superior
@@ -3125,27 +3378,70 @@ if st.session_state.get("perfil_usuario") == "admin":
     if "🧑‍⚖️ Revisão Humana" not in APP_MENU_OPTIONS:
         APP_MENU_OPTIONS.append("🧑‍⚖️ Revisão Humana")
 
-menu_cols = st.columns(len(menu_options_top))
+# INNA_ISOLATED_MAIN_MENU
+if inna_navigation_is_hub():
+    menu_cols = st.columns(len(menu_options_top))
 
-for index_menu, menu_item in enumerate(menu_options_top):
-    with menu_cols[index_menu]:
-        label_menu = top_menu_t(menu_item)
-        if st.button(label_menu, use_container_width=True, key=f"top_menu_{index_menu}_{menu_item}"):
-            st.session_state.app_menu_selected = menu_item
-            st.rerun()
+    for index_menu, menu_item in enumerate(menu_options_top):
+        with menu_cols[index_menu]:
+            label_menu = top_menu_t(menu_item)
+            st.button(
+                label_menu,
+                use_container_width=True,
+                key=f"top_menu_{index_menu}_{menu_item}",
+                on_click=navigate_to_inna,
+                args=(menu_item,),
+            )
 
 st.markdown("<div class='inna-top-divider'></div>", unsafe_allow_html=True)
-app_menu = st.sidebar.radio(
-    ui_t("menu") if "ui_t" in globals() else "Menu",
-    APP_MENU_OPTIONS,
-    index=APP_MENU_OPTIONS.index(st.session_state.app_menu_selected)
-    if st.session_state.app_menu_selected in APP_MENU_OPTIONS
-    else 0,
-    key="app_menu_radio",
-    format_func=menu_t,
+# =========================================================
+# NAVEGAÇÃO LATERAL — FONTE ÚNICA DE VERDADE
+# =========================================================
+
+# Remove estado antigo do widget radio.
+st.session_state.pop(
+    "app_menu_radio",
+    None,
 )
 
-st.session_state.app_menu_selected = app_menu
+app_menu = current_page_inna()
+
+st.sidebar.markdown(
+    "### "
+    + (
+        ui_t("menu")
+        if "ui_t" in globals()
+        else "Menu"
+    )
+)
+
+for sidebar_index, sidebar_menu_item in enumerate(
+    APP_MENU_OPTIONS
+):
+    sidebar_label = menu_t(
+        sidebar_menu_item
+    )
+
+    if sidebar_menu_item == app_menu:
+        sidebar_label = (
+            f"➤ {sidebar_label}"
+        )
+
+    st.sidebar.button(
+        sidebar_label,
+        use_container_width=True,
+        key=(
+            "sidebar_nav_"
+            f"{sidebar_index}_"
+            f"{sidebar_menu_item}"
+        ),
+        on_click=navigate_to_inna,
+        args=(sidebar_menu_item,),
+    )
+
+# Página usada por todo o restante do app.
+app_menu = current_page_inna()
+
 
 
 st.sidebar.divider()
@@ -3158,9 +3454,13 @@ else:
     st.sidebar.info(ui_t("public_access"))
     st.sidebar.caption(ui_t("login_needed"))
 
-    if st.sidebar.button(ui_t("login_button"), use_container_width=True, key="btn_sidebar_login_publico"):
-        st.session_state.app_menu_selected = "🔑 Entrar"
-        st.rerun()
+    st.sidebar.button(
+        ui_t("login_button"),
+        use_container_width=True,
+        key="btn_sidebar_login_publico",
+        on_click=navigate_to_inna,
+        args=("🔑 Entrar",),
+    )
 
 st.sidebar.divider()
 
@@ -3748,51 +4048,207 @@ def login_t(key: str) -> str:
     )
 
 
-def tela_login_inna_inline(destino_apos_login="📊 Panorama"):
-    st.warning(login_t("caption"))
+def _inna_process_login(
+    email_key: str,
+    password_key: str,
+    user_destination: str,
+    admin_destination: str,
+    status_key: str,
+) -> None:
+    """Autenticação central da interface Streamlit."""
 
-    col_login1, col_login2, col_login3 = st.columns([1, 1.2, 1])
+    email_login = str(
+        st.session_state.get(
+            email_key,
+            "",
+        )
+    ).strip()
+
+    senha_login = str(
+        st.session_state.get(
+            password_key,
+            "",
+        )
+    )
+
+    if (
+        email_login == INNA_USER_EMAIL
+        and senha_login == INNA_USER_PASSWORD
+    ):
+        st.session_state.logado = True
+        st.session_state.show_login_page = False
+        st.session_state.usuario = email_login
+        st.session_state.perfil_usuario = "usuario"
+
+        st.session_state.app_menu_selected = (
+            user_destination
+        )
+
+        st.session_state[status_key] = "usuario"
+        return
+
+    if (
+        email_login == INNA_ADMIN_EMAIL
+        and senha_login == INNA_ADMIN_PASSWORD
+    ):
+        st.session_state.logado = True
+        st.session_state.show_login_page = False
+        st.session_state.usuario = email_login
+        st.session_state.perfil_usuario = "admin"
+
+        st.session_state.app_menu_selected = (
+            admin_destination
+        )
+
+        st.session_state[status_key] = "admin"
+        return
+
+    st.session_state[status_key] = "erro"
+
+
+def _render_login_form_inna(
+    *,
+    form_key: str,
+    user_destination: str,
+    admin_destination: str,
+    show_brand: bool = False,
+    show_warning: bool = True,
+) -> None:
+    """Renderiza o único formulário de autenticação da INNA."""
+
+    if show_warning:
+        st.warning(
+            login_t("caption")
+        )
+
+    col_login1, col_login2, col_login3 = (
+        st.columns(
+            [1, 1.3, 1]
+        )
+    )
 
     with col_login2:
-        st.markdown(f"### {login_t('title')}")
-        st.caption(login_t("caption"))
-
-        email_login = st.text_input(login_t("email"), key=f"login_email_inline_{destino_apos_login}")
-        senha_login = st.text_input(login_t("password"), type="password", key=f"login_senha_inline_{destino_apos_login}")
-
-        with st.expander(login_t("demo")):
-            st.info(
-                f"Usuário comum: {INNA_USER_EMAIL} | Senha: {INNA_USER_PASSWORD}\n\n"
-                f"Administrador: {INNA_ADMIN_EMAIL} | Senha: {INNA_ADMIN_PASSWORD}"
+        if show_brand:
+            st.markdown(
+                f"### {login_t('brand')}"
+            )
+            st.markdown(
+                f"#### {login_t('subtitle')}"
+            )
+        else:
+            st.markdown(
+                f"### {login_t('title')}"
+            )
+            st.caption(
+                login_t("caption")
             )
 
-        if st.button(login_t("button"), use_container_width=True, key=f"btn_login_inline_{destino_apos_login}"):
-            if email_login == INNA_USER_EMAIL and senha_login == INNA_USER_PASSWORD:
-                st.session_state.logado = True
-                st.session_state.show_login_page = False
-                st.session_state.usuario = email_login
-                st.session_state.perfil_usuario = "usuario"
-                st.session_state.app_menu_selected = destino_apos_login
-                st.success(login_t("success_user"))
-                st.rerun()
+        email_key = (
+            f"{form_key}_email"
+        )
 
-            elif email_login == INNA_ADMIN_EMAIL and senha_login == INNA_ADMIN_PASSWORD:
-                st.session_state.logado = True
-                st.session_state.show_login_page = False
-                st.session_state.usuario = email_login
-                st.session_state.perfil_usuario = "admin"
-                st.session_state.app_menu_selected = destino_apos_login
-                st.success(login_t("success_admin"))
-                st.rerun()
+        password_key = (
+            f"{form_key}_password"
+        )
 
+        status_key = (
+            f"{form_key}_status"
+        )
+
+        with st.expander(
+            login_t("demo")
+        ):
+            if show_brand:
+                st.info(
+                    (
+                        f"{login_t('user_demo')}: "
+                        f"{INNA_USER_EMAIL} | "
+                        f"{login_t('password')}: "
+                        f"{INNA_USER_PASSWORD}"
+                        "\n\n"
+                        f"{login_t('admin_demo')}: "
+                        f"{INNA_ADMIN_EMAIL} | "
+                        f"{login_t('password')}: "
+                        f"{INNA_ADMIN_PASSWORD}"
+                    )
+                )
             else:
-                st.error(login_t("error"))
+                st.info(
+                    (
+                        "Usuário comum: "
+                        f"{INNA_USER_EMAIL} | "
+                        "Senha: "
+                        f"{INNA_USER_PASSWORD}"
+                        "\n\n"
+                        "Administrador: "
+                        f"{INNA_ADMIN_EMAIL} | "
+                        "Senha: "
+                        f"{INNA_ADMIN_PASSWORD}"
+                    )
+                )
+
+        with st.form(
+            form_key,
+            clear_on_submit=False,
+        ):
+            st.text_input(
+                login_t("email"),
+                key=email_key,
+            )
+
+            st.text_input(
+                login_t("password"),
+                type="password",
+                key=password_key,
+            )
+
+            st.form_submit_button(
+                login_t("button"),
+                use_container_width=True,
+                on_click=_inna_process_login,
+                args=(
+                    email_key,
+                    password_key,
+                    user_destination,
+                    admin_destination,
+                    status_key,
+                ),
+            )
+
+        if (
+            st.session_state.get(
+                status_key
+            )
+            == "erro"
+        ):
+            st.error(
+                login_t("error")
+            )
+
+
+def tela_login_inna_inline(
+    destino_apos_login="🏠 Início",
+):
+    """Compatibilidade com os guards existentes."""
+
+    _render_login_form_inna(
+        form_key=(
+            "inna_login_inline_"
+            f"{destino_apos_login}"
+        ),
+        user_destination=destino_apos_login,
+        admin_destination=destino_apos_login,
+        show_brand=False,
+        show_warning=True,
+    )
+
+
 PAGINAS_PUBLICAS_INNA = ["🏠 Início", "🔑 Entrar", "ℹ️ Sobre"]
 
 
 # Abre a tela de login quando o botão Entrar do topo for clicado
 if st.session_state.get("show_login_page") and not st.session_state.get("logado"):
-    tela_login_inna_inline(destino_apos_login="📊 Panorama")
+    tela_login_inna_inline(destino_apos_login="🏠 Início")
     st.stop()
 
 
@@ -4965,17 +5421,38 @@ if app_menu == "🏠 Início":
 
     col_start1, col_start2, col_start3 = st.columns(3)
 
-    if col_start1.button(home_t("btn_start"), use_container_width=True):
-        st.session_state.app_menu_selected = "🧾 Diagnóstico" if st.session_state.get("logado") else "🔑 Entrar"
-        st.rerun()
+    destino_inicio = (
+        "🧾 Diagnóstico"
+        if st.session_state.get("logado")
+        else "🔑 Entrar"
+    )
 
-    if col_start2.button(home_t("btn_report"), use_container_width=True):
-        st.session_state.app_menu_selected = "📄 Relatório" if st.session_state.get("logado") else "🔑 Entrar"
-        st.rerun()
+    destino_relatorio = (
+        "📄 Relatório"
+        if st.session_state.get("logado")
+        else "🔑 Entrar"
+    )
 
-    if col_start3.button(home_t("btn_about"), use_container_width=True):
-        st.session_state.app_menu_selected = "ℹ️ Sobre"
-        st.rerun()
+    col_start1.button(
+        home_t("btn_start"),
+        use_container_width=True,
+        on_click=navigate_to_inna,
+        args=(destino_inicio,),
+    )
+
+    col_start2.button(
+        home_t("btn_report"),
+        use_container_width=True,
+        on_click=navigate_to_inna,
+        args=(destino_relatorio,),
+    )
+
+    col_start3.button(
+        home_t("btn_about"),
+        use_container_width=True,
+        on_click=navigate_to_inna,
+        args=("ℹ️ Sobre",),
+    )
 
     st.stop()
 
@@ -5153,33 +5630,85 @@ def chat_t(key: str) -> str:
         key,
         CHAT_TEXTS_INNA["pt"].get(key, key),
     )
-if app_menu == "💬 Conversar":
-    st.title(chat_t("title"))
-    st.caption(chat_t("caption"))
+def _inna_chat_queue_prompt(
+    prompt: str,
+) -> None:
+    """Agenda uma pergunta para processamento no próximo fragment run."""
+    st.session_state[
+        "inna_chat_pending_prompt"
+    ] = prompt
 
-    st.info("Chat educativo conectado ao RAG local da INNA. Faça uma pergunta e continue conversando na mesma página.")
+    st.session_state[
+        "inna_chat_prompt"
+    ] = ""
 
+
+def _inna_chat_clear() -> None:
+    """Limpa somente o estado da conversa da INNA."""
+    st.session_state.inna_chat_history = [
+        {
+            "role": "assistant",
+            "content": (
+                "Olá! Sou a Inna, sua educadora "
+                "financeira inteligente. "
+                "Como posso ajudar?"
+            ),
+            "source": None,
+        }
+    ]
+
+    st.session_state.pop(
+        "inna_chat_pending_prompt",
+        None,
+    )
+
+    st.session_state[
+        "inna_chat_prompt"
+    ] = ""
+
+
+@st.fragment
+def render_chat_inna_fragment():
     if "inna_chat_history" not in st.session_state:
         st.session_state.inna_chat_history = [
             {
                 "role": "assistant",
-                "content": "Olá! Sou a Inna, sua educadora financeira inteligente. Como posso ajudar?",
+                "content": (
+                    "Olá! Sou a Inna, sua educadora "
+                    "financeira inteligente. "
+                    "Como posso ajudar?"
+                ),
                 "source": None,
             }
         ]
 
-    if st.button("🧹 Limpar conversa", use_container_width=True):
-        st.session_state.inna_chat_history = [
-            {
-                "role": "assistant",
-                "content": "Olá! Sou a Inna, sua educadora financeira inteligente. Como posso ajudar?",
-                "source": None,
-            }
-        ]
-        st.rerun()
+    # Remove estados usados pela versão antiga do Chat.
+    st.session_state.pop(
+        "quick_chat_question_inna",
+        None,
+    )
+    st.session_state.pop(
+        "limpar_chat_input_inna",
+        None,
+    )
+    st.session_state.pop(
+        "chat_question_input_inna",
+        None,
+    )
+
+    st.button(
+        "🧹 Limpar conversa",
+        use_container_width=True,
+        key="inna_chat_clear_button",
+        on_click=_inna_chat_clear,
+    )
 
     st.write("### 💡 Perguntas rápidas")
-    st.caption("Escolha uma pergunta para começar a conversa com a INNA de forma mais fácil.")
+
+    st.caption(
+        "Escolha uma pergunta para começar "
+        "a conversa com a INNA de forma mais fácil."
+    )
 
     quick_questions = [
         "Como melhorar minha reserva?",
@@ -5191,268 +5720,297 @@ if app_menu == "💬 Conversar":
 
     quick_cols = st.columns(2)
 
-    for index_question, question in enumerate(quick_questions):
-        with quick_cols[index_question % 2]:
-            if st.button(question, use_container_width=True, key=f"quick_question_{index_question}"):
-                st.session_state.quick_chat_question_inna = question
-                st.rerun()
-
-    st.divider()
-
-    for message in st.session_state.inna_chat_history:
-        with st.chat_message(message["role"]):
-            if message.get("source"):
-                st.markdown(
-                    f"<div class='fonte-inna-top'>{message['source']}</div>",
-                    unsafe_allow_html=True,
-                )
-
-            st.markdown(formatar_mensagem_chat_inna(message["content"]), unsafe_allow_html=True)
-
-    pergunta_rapida_pendente = st.session_state.pop("quick_chat_question_inna", "")
-
-    if st.session_state.pop("limpar_chat_input_inna", False):
-        st.session_state["chat_question_input_inna"] = ""
+    for index_question, question in enumerate(
+        quick_questions
+    ):
+        with quick_cols[
+            index_question % 2
+        ]:
+            st.button(
+                question,
+                use_container_width=True,
+                key=(
+                    "quick_question_"
+                    f"{index_question}"
+                ),
+                on_click=_inna_chat_queue_prompt,
+                args=(question,),
+            )
 
     ultima_msg_inna = ""
-    for msg in reversed(st.session_state.inna_chat_history):
+
+    for msg in reversed(
+        st.session_state.inna_chat_history
+    ):
         if msg.get("role") == "assistant":
-            ultima_msg_inna = msg.get("content", "")
+            ultima_msg_inna = msg.get(
+                "content",
+                "",
+            )
             break
 
     if "Quer que eu" in ultima_msg_inna:
-        col_sim, col_nao, col_cancelar = st.columns(3)
+        col_sim, col_nao, col_cancelar = (
+            st.columns(3)
+        )
 
         with col_sim:
-            if st.button("✅ Sim, me mostre", use_container_width=True):
-                st.session_state.quick_chat_question_inna = "sim"
-                st.rerun()
+            st.button(
+                "✅ Sim, me mostre",
+                use_container_width=True,
+                key="inna_chat_continue_yes",
+                on_click=_inna_chat_queue_prompt,
+                args=("sim",),
+            )
 
         with col_nao:
-            if st.button("❌ Não agora", use_container_width=True):
-                st.session_state.quick_chat_question_inna = "não"
-                st.rerun()
+            st.button(
+                "❌ Não agora",
+                use_container_width=True,
+                key="inna_chat_continue_no",
+                on_click=_inna_chat_queue_prompt,
+                args=("não",),
+            )
 
         with col_cancelar:
-            if st.button("🚫 Cancelar", use_container_width=True):
-                st.session_state.quick_chat_question_inna = "cancelar"
-                st.rerun()
+            st.button(
+                "🚫 Cancelar",
+                use_container_width=True,
+                key="inna_chat_continue_cancel",
+                on_click=_inna_chat_queue_prompt,
+                args=("cancelar",),
+            )
 
-    pergunta_demo = st.text_input(
-        chat_t("input_label"),
-        value=pergunta_rapida_pendente,
-        placeholder=chat_t("placeholder"),
-        key="chat_question_input_inna",
+    st.divider()
+
+    # Mantém o tamanho visual do histórico estável.
+    chat_history_container = st.container(
+        height=360,
+        border=True,
+        key="inna_chat_history_container",
     )
 
-    texto_digitado_chat = str(pergunta_demo or "").lower()
-
-    parece_anotacao_financeira = (
-        any(char.isdigit() for char in texto_digitado_chat)
-        and (
-            "ganho" in texto_digitado_chat
-            or "salario" in texto_digitado_chat
-            or "salário" in texto_digitado_chat
-            or "gasto" in texto_digitado_chat
-            or "guardar" in texto_digitado_chat
-            or "sobra" in texto_digitado_chat
+    pergunta_rapida_pendente = (
+        st.session_state.pop(
+            "inna_chat_pending_prompt",
+            "",
         )
     )
 
-    if parece_anotacao_financeira:
-        texto_botao_chat = "Enviar anotação para a Inna"
-    else:
-        texto_botao_chat = "Enviar pergunta para a Inna"
+    pergunta_digitada = st.chat_input(
+        chat_t("placeholder"),
+        key="inna_chat_prompt",
+    )
 
-    enviar_chat = st.button(texto_botao_chat, use_container_width=True)
+    pergunta_usuario = str(
+        pergunta_rapida_pendente
+        or pergunta_digitada
+        or ""
+    ).strip()
 
-    if enviar_chat or pergunta_rapida_pendente:
-        if pergunta_demo.strip():
-            pergunta_usuario = pergunta_demo.strip()
+    if pergunta_usuario:
+        continuacoes_curtas = {
+            "sim",
+            "s",
+            "quero",
+            "sim quero",
+            "quero sim",
+            "pode",
+            "pode mostrar",
+            "me mostre",
+            "me mostra",
+            "mostre",
+            "como faço isso",
+            "como faco isso",
+            "continue",
+            "pode continuar",
+            "vamos",
+            "ok",
+            "claro",
+        }
 
-            continuacoes_curtas = {
-                "sim",
-                "s",
-                "quero",
-                "sim quero",
-                "quero sim",
-                "pode",
-                "pode mostrar",
-                "me mostre",
-                "me mostra",
-                "mostre",
-                "como faço isso",
-                "como faco isso",
-                "continue",
-                "pode continuar",
-                "vamos",
-                "ok",
-                "claro",
-            }
+        ultima_resposta_inna = ""
 
-            ultima_resposta_inna = ""
+        for msg in reversed(st.session_state.inna_chat_history):
+            if msg.get("role") == "assistant":
+                ultima_resposta_inna = msg.get("content", "")
+                break
 
-            for msg in reversed(st.session_state.inna_chat_history):
-                if msg.get("role") == "assistant":
-                    ultima_resposta_inna = msg.get("content", "")
-                    break
+        pergunta_para_rag = pergunta_usuario
 
-            pergunta_para_rag = pergunta_usuario
+        texto_anotacao = pergunta_usuario.lower()
 
-            texto_anotacao = pergunta_usuario.lower()
+        palavras_anotacao_financeira = [
+            "ganho",
+            "recebo",
+            "salario",
+            "salário",
+            "pagamento",
+            "renda",
+            "entra",
+            "cai",
+            "meu dinheiro",
+            "aposentadoria",
+            "beneficio",
+            "benefício",
+            "pensão",
+            "pensao",
+            "bico",
+            "extra",
 
-            palavras_anotacao_financeira = [
-                "ganho",
-                "recebo",
-                "salario",
-                "salário",
-                "pagamento",
-                "renda",
-                "entra",
-                "cai",
-                "meu dinheiro",
-                "aposentadoria",
-                "beneficio",
-                "benefício",
-                "pensão",
-                "pensao",
-                "bico",
-                "extra",
+            "gasto",
+            "gastos",
+            "conta",
+            "contas",
+            "pago",
+            "pagando",
+            "despesa",
+            "despesas",
+            "mercado",
+            "aluguel",
+            "luz",
+            "agua",
+            "água",
+            "internet",
+            "telefone",
+            "transporte",
+            "remedio",
+            "remédio",
+            "parcela",
+            "parcelas",
+            "divida",
+            "dívida",
 
-                "gasto",
-                "gastos",
-                "conta",
-                "contas",
-                "pago",
-                "pagando",
-                "despesa",
-                "despesas",
-                "mercado",
-                "aluguel",
-                "luz",
-                "agua",
-                "água",
-                "internet",
-                "telefone",
-                "transporte",
-                "remedio",
-                "remédio",
-                "parcela",
-                "parcelas",
-                "divida",
-                "dívida",
+            "guardo",
+            "guardar",
+            "juntar",
+            "junto",
+            "separo",
+            "separar",
+            "sobra",
+            "sobrou",
+            "resta",
+            "fica",
+            "consigo",
+            "posso",
+            "da pra",
+            "dá pra",
+            "da para",
+            "dá para",
+            "livre",
+        ]
 
-                "guardo",
-                "guardar",
-                "juntar",
-                "junto",
-                "separo",
-                "separar",
-                "sobra",
-                "sobrou",
-                "resta",
-                "fica",
-                "consigo",
-                "posso",
-                "da pra",
-                "dá pra",
-                "da para",
-                "dá para",
-                "livre",
-            ]
+        parece_anotacao_financeira = (
+            any(char.isdigit() for char in texto_anotacao)
+            and any(palavra in texto_anotacao for palavra in palavras_anotacao_financeira)
+        )
 
-            parece_anotacao_financeira = (
-                any(char.isdigit() for char in texto_anotacao)
-                and any(palavra in texto_anotacao for palavra in palavras_anotacao_financeira)
+        if parece_anotacao_financeira:
+            pergunta_para_rag = (
+                "ANOTACAO_FINANCEIRA_DO_USUARIO\n"
+                "O usuário informou dados financeiros em texto livre. "
+                "Não trate como pergunta genérica. "
+                "Extraia o valor que ele consegue guardar, se existir, "
+                "e oriente de forma simples, prática e educativa.\n\n"
+                f"Texto do usuário:\n{pergunta_usuario}"
             )
 
-            if parece_anotacao_financeira:
-                pergunta_para_rag = (
-                    "ANOTACAO_FINANCEIRA_DO_USUARIO\n"
-                    "O usuário informou dados financeiros em texto livre. "
-                    "Não trate como pergunta genérica. "
-                    "Extraia o valor que ele consegue guardar, se existir, "
-                    "e oriente de forma simples, prática e educativa.\n\n"
-                    f"Texto do usuário:\n{pergunta_usuario}"
+        elif pergunta_usuario.lower().strip("?!. ") in continuacoes_curtas and ultima_resposta_inna:
+            pergunta_para_rag = (
+                "CONTINUACAO_DA_CONVERSA\n"
+                "O usuário respondeu de forma curta e quer continuar. "
+                "Use a última resposta da INNA para entender exatamente o que ele aceitou. "
+                "Se a última resposta perguntou sobre esta semana, responda só sobre esta semana. "
+                "Se a última resposta perguntou sobre mês inteiro ou 30 dias, responda sobre 4 semanas. "
+                "Não reinicie o assunto.\n\n"
+                f"Última resposta da INNA:\n{ultima_resposta_inna}\n\n"
+                f"Resposta curta do usuário:\n{pergunta_usuario}"
+            )
+
+        st.session_state.inna_chat_history.append({
+            "role": "user",
+            "content": pergunta_usuario,
+            "source": None,
+        })
+
+        try:
+            api_base_url = API_BASE_URL
+
+            rag_payload = {
+                "pergunta": pergunta_para_rag,
+                "idioma": st.session_state.get("app_lang", "pt"),
+                "top_k": 3,
+            }
+
+            with st.spinner("A Inna está analisando..."):
+                rag_response = requests.post(
+                    f"{api_base_url}/rag/ask",
+                    json=rag_payload,
+                    timeout=30,
                 )
 
-            elif pergunta_usuario.lower().strip("?!. ") in continuacoes_curtas and ultima_resposta_inna:
-                pergunta_para_rag = (
-                    "CONTINUACAO_DA_CONVERSA\n"
-                    "O usuário respondeu de forma curta e quer continuar. "
-                    "Use a última resposta da INNA para entender exatamente o que ele aceitou. "
-                    "Se a última resposta perguntou sobre esta semana, responda só sobre esta semana. "
-                    "Se a última resposta perguntou sobre mês inteiro ou 30 dias, responda sobre 4 semanas. "
-                    "Não reinicie o assunto.\n\n"
-                    f"Última resposta da INNA:\n{ultima_resposta_inna}\n\n"
-                    f"Resposta curta do usuário:\n{pergunta_usuario}"
+            if rag_response.status_code == 200:
+                rag_data = rag_response.json()
+
+                resposta_rag = rag_data.get("resposta") or "Não encontrei uma resposta suficiente na base da INNA."
+                fontes_rag = rag_data.get("fontes", [])
+
+                fonte_resumida = None
+
+                if fontes_rag:
+                    fonte_principal = fontes_rag[0]
+                    fonte_resumida = "📚 Fonte usada pela INNA"
+
+                st.session_state.inna_chat_history.append({
+                    "role": "assistant",
+                    "content": resposta_rag,
+                    "source": fonte_resumida,
+                })
+
+            else:
+                st.error(
+                    f"Não foi possível consultar o RAG da INNA. "
+                    f"Status: {rag_response.status_code}"
                 )
 
-            st.session_state.inna_chat_history.append({
-                "role": "user",
-                "content": pergunta_usuario,
-                "source": None,
-            })
+        except requests.exceptions.ConnectionError:
+            st.error("Não foi possível conectar na FastAPI. Confirme se a API está rodando em http://127.0.0.1:8000.")
 
-            try:
-                api_base_url = API_BASE_URL
+        except requests.exceptions.Timeout:
+            st.error("A API demorou muito para responder. Tente novamente.")
 
-                rag_payload = {
-                    "pergunta": pergunta_para_rag,
-                    "idioma": st.session_state.get("app_lang", "pt"),
-                    "top_k": 3,
-                }
+        except Exception as exc:
+            st.error(f"Erro inesperado ao consultar o RAG da INNA: {exc}")
 
-                with st.spinner("A Inna está analisando..."):
-                    rag_response = requests.post(
-                        f"{api_base_url}/rag/ask",
-                        json=rag_payload,
-                        timeout=30,
+
+    # Renderiza o histórico somente depois do processamento.
+    # Assim uma nova resposta aparece sem um segundo rerun.
+    with chat_history_container:
+        for message in (
+            st.session_state.inna_chat_history
+        ):
+            with st.chat_message(
+                message["role"]
+            ):
+                if message.get("source"):
+                    st.markdown(
+                        (
+                            "<div "
+                            "class='fonte-inna-top'>"
+                            f"{message['source']}"
+                            "</div>"
+                        ),
+                        unsafe_allow_html=True,
                     )
 
-                if rag_response.status_code == 200:
-                    rag_data = rag_response.json()
+                st.markdown(
+                    formatar_mensagem_chat_inna(
+                        message["content"]
+                    ),
+                    unsafe_allow_html=True,
+                )
 
-                    resposta_rag = rag_data.get("resposta") or "Não encontrei uma resposta suficiente na base da INNA."
-                    fontes_rag = rag_data.get("fontes", [])
-
-                    fonte_resumida = None
-
-                    if fontes_rag:
-                        fonte_principal = fontes_rag[0]
-                        fonte_resumida = "📚 Fonte usada pela INNA"
-
-                    st.session_state.inna_chat_history.append({
-                        "role": "assistant",
-                        "content": resposta_rag,
-                        "source": fonte_resumida,
-                    })
-
-                    st.session_state.limpar_chat_input_inna = True
-                    st.session_state.app_menu_selected = "💬 Conversar"
-                    st.rerun()
-
-                else:
-                    st.error(
-                        f"Não foi possível consultar o RAG da INNA. "
-                        f"Status: {rag_response.status_code}"
-                    )
-
-            except requests.exceptions.ConnectionError:
-                st.error("Não foi possível conectar na FastAPI. Confirme se a API está rodando em http://127.0.0.1:8000.")
-
-            except requests.exceptions.Timeout:
-                st.error("A API demorou muito para responder. Tente novamente.")
-
-            except Exception as exc:
-                st.error(f"Erro inesperado ao consultar o RAG da INNA: {exc}")
-
-        else:
-            st.warning(chat_t("empty"))
-
-    st.stop()
-
-
+    return
 
 def render_observabilidade_rag_inna():
     st.divider()
@@ -5535,6 +6093,18 @@ def render_observabilidade_rag_inna():
         st.warning(f"Não foi possível carregar métricas RAG: {error}")
 
 
+if app_menu == "💬 Conversar":
+    st.title(chat_t("title"))
+    st.caption(chat_t("caption"))
+
+    st.info(
+        "Chat educativo conectado ao RAG local "
+        "da INNA. Faça uma pergunta e continue "
+        "conversando na mesma página."
+    )
+
+    render_chat_inna_fragment()
+    st.stop()
 
 
 if app_menu == "📊 Observabilidade RAG":
@@ -5585,11 +6155,12 @@ if app_menu in [
 
         render_admin_analytics_fragment()
 
-    except Exception:
+    except Exception as exc:
         st.error(
             "Não foi possível carregar o Dashboard Analytics "
             "integrado."
         )
+        st.exception(exc)
 
     st.stop()
 
@@ -5821,45 +6392,21 @@ def login_t(key: str) -> str:
         LOGIN_TEXTS_INNA["pt"].get(key, key),
     )
 if app_menu == "🔑 Entrar":
-    st.title(login_t("title"))
-    st.caption(login_t("caption"))
+    st.title(
+        login_t("title")
+    )
 
-    col_login1, col_login2, col_login3 = st.columns([1, 1.3, 1])
+    st.caption(
+        login_t("caption")
+    )
 
-    with col_login2:
-        st.markdown(f"### {login_t('brand')}")
-        st.markdown(f"#### {login_t('subtitle')}")
-
-        email_login = st.text_input(login_t("email"), key="login_email")
-        senha_login = st.text_input(login_t("password"), type="password", key="login_senha")
-
-        with st.expander(login_t("demo")):
-            st.info(
-                f"{login_t('user_demo')}: {INNA_USER_EMAIL} | {login_t('password')}: {INNA_USER_PASSWORD}\n\n"
-                f"{login_t('admin_demo')}: {INNA_ADMIN_EMAIL} | {login_t('password')}: {INNA_ADMIN_PASSWORD}"
-            )
-
-        if st.button(login_t("button"), use_container_width=True):
-            if email_login == INNA_USER_EMAIL and senha_login == INNA_USER_PASSWORD:
-                st.session_state.logado = True
-                st.session_state.show_login_page = False
-                st.session_state.usuario = email_login
-                st.session_state.perfil_usuario = "usuario"
-                st.session_state.app_menu_selected = "📊 Panorama"
-                st.success(login_t("success_user"))
-                st.rerun()
-
-            elif email_login == INNA_ADMIN_EMAIL and senha_login == INNA_ADMIN_PASSWORD:
-                st.session_state.logado = True
-                st.session_state.show_login_page = False
-                st.session_state.usuario = email_login
-                st.session_state.perfil_usuario = "admin"
-                st.session_state.app_menu_selected = "🔐 Admin Analytics"
-                st.success(login_t("success_admin"))
-                st.rerun()
-
-            else:
-                st.error(login_t("error"))
+    _render_login_form_inna(
+        form_key="inna_login_page",
+        user_destination="🏠 Início",
+        admin_destination="🏠 Início",
+        show_brand=True,
+        show_warning=False,
+    )
 
     st.stop()
 
@@ -6214,7 +6761,6 @@ def page_t(key: str) -> str:
         key,
         INTERNAL_PAGE_TEXTS_INNA["pt"].get(key, key),
     )
-st.caption(f"{page_t('current_page')}: {menu_t(app_menu) if 'menu_t' in globals() else app_menu}")
 
 
 if app_menu == "📊 Panorama":
@@ -6255,13 +6801,17 @@ if app_menu == "📊 Panorama":
 
     col_nav1, col_nav2 = st.columns(2)
 
-    if col_nav1.button("📄 Abrir relatório PDF e e-mail"):
-        st.session_state.app_menu_selected = "📄 Relatório"
-        st.rerun()
+    col_nav1.button(
+        "📄 Abrir relatório PDF e e-mail",
+        on_click=navigate_to_inna,
+        args=("📄 Relatório",),
+    )
 
-    if col_nav2.button("💬 Enviar feedback"):
-        st.session_state.app_menu_selected = "⭐ Avaliar"
-        st.rerun()
+    col_nav2.button(
+        "💬 Enviar feedback",
+        on_click=navigate_to_inna,
+        args=("⭐ Avaliar",),
+    )
 
     st.stop()
 
@@ -6330,13 +6880,17 @@ if app_menu == "📄 Relatório":
 
     col_rel1, col_rel2 = st.columns(2)
 
-    if col_rel1.button(page_t("back_to_result")):
-        st.session_state.app_menu_selected = "📊 Panorama"
-        st.rerun()
+    col_rel1.button(
+        page_t("back_to_result"),
+        on_click=navigate_to_inna,
+        args=("📊 Panorama",),
+    )
 
-    if col_rel2.button(page_t("send_feedback")):
-        st.session_state.app_menu_selected = "⭐ Avaliar"
-        st.rerun()
+    col_rel2.button(
+        page_t("send_feedback"),
+        on_click=navigate_to_inna,
+        args=("⭐ Avaliar",),
+    )
 
     st.stop()
 
@@ -6392,15 +6946,16 @@ if app_menu == "⭐ Avaliar":
 
     col_fb1, col_fb2 = st.columns(2)
 
-    if col_fb1.button(page_t("new_diagnosis_btn")):
-        st.session_state.last_response = None
-        st.session_state.last_payload = None
-        st.session_state.app_menu_selected = "🏠 Início"
-        st.rerun()
+    col_fb1.button(
+        page_t("new_diagnosis_btn"),
+        on_click=_inna_start_new_diagnosis,
+    )
 
-    if col_fb2.button(page_t("see_history")):
-        st.session_state.app_menu_selected = "📚 Histórico"
-        st.rerun()
+    col_fb2.button(
+        page_t("see_history"),
+        on_click=navigate_to_inna,
+        args=("📚 Histórico",),
+    )
 
     st.stop()
 

@@ -340,6 +340,8 @@ def test_menu_page_ids_are_stable() -> None:
         "document_upload",
         "user_memory",
         "export",
+        "platform_modules_catalog",
+        "relationship_graph",
     )
 
 

@@ -34,6 +34,7 @@ def test_all_menu_pages_are_registered_once():
 def test_navigation_has_expected_groups():
     assert NAVIGATION_GROUP_IDS == (
         "overview",
+        "platform_modules",
         "financial_solutions",
         "enterprise_rag",
         "ai_operations",
