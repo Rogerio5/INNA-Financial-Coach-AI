@@ -884,6 +884,7 @@ def _load_sentence_window_neighbor_chunks(
     *,
     idioma: str,
     chunk_radius: int,
+    connection=None,
 ) -> list[dict]:
     """
     Carrega chunks vizinhos do mesmo documento estruturado.
@@ -939,11 +940,12 @@ def _load_sentence_window_neighbor_chunks(
         else normalized_language + "%"
     )
 
-    connection = None
+    owns_connection = connection is None
     cursor = None
 
     try:
-        connection = get_rag_connection()
+        if connection is None:
+            connection = get_rag_connection()
 
         cursor = connection.cursor()
 
@@ -1048,7 +1050,10 @@ def _load_sentence_window_neighbor_chunks(
             except Exception:
                 pass
 
-        if connection is not None:
+        if (
+            owns_connection
+            and connection is not None
+        ):
             try:
                 connection.close()
             except Exception:
@@ -1135,6 +1140,31 @@ def _apply_sentence_window_to_results(
 
     expanded_results: list[dict] = []
 
+    shared_connection = None
+    shared_connection_attempted = False
+
+    supports_shared_connection = False
+
+    try:
+        import inspect
+
+        loader_signature = inspect.signature(
+            _load_sentence_window_neighbor_chunks
+        )
+
+        supports_shared_connection = (
+            "connection"
+            in loader_signature.parameters
+            or any(
+                parameter.kind
+                is inspect.Parameter.VAR_KEYWORD
+                for parameter
+                in loader_signature.parameters.values()
+            )
+        )
+    except (TypeError, ValueError):
+        supports_shared_connection = False
+
     for item in results:
         original_item = dict(item)
 
@@ -1167,13 +1197,39 @@ def _apply_sentence_window_to_results(
 
             continue
 
-        neighbor_chunks = (
-            _load_sentence_window_neighbor_chunks(
-                original_item,
-                idioma=idioma,
-                chunk_radius=chunk_radius,
+        if (
+            supports_shared_connection
+            and not shared_connection_attempted
+        ):
+            shared_connection_attempted = True
+
+            try:
+                shared_connection = (
+                    get_rag_connection()
+                )
+            except Exception:
+                shared_connection = None
+
+        if (
+            supports_shared_connection
+            and shared_connection is not None
+        ):
+            neighbor_chunks = (
+                _load_sentence_window_neighbor_chunks(
+                    original_item,
+                    idioma=idioma,
+                    chunk_radius=chunk_radius,
+                    connection=shared_connection,
+                )
             )
-        )
+        else:
+            neighbor_chunks = (
+                _load_sentence_window_neighbor_chunks(
+                    original_item,
+                    idioma=idioma,
+                    chunk_radius=chunk_radius,
+                )
+            )
 
         try:
             expanded_item = (
@@ -1215,6 +1271,12 @@ def _apply_sentence_window_to_results(
         expanded_results.append(
             expanded_item
         )
+
+    if shared_connection is not None:
+        try:
+            shared_connection.close()
+        except Exception:
+            pass
 
     return expanded_results
 
