@@ -17,7 +17,7 @@ import re
 from typing import Annotated
 
 from src.audit_logger import record_event
-from fastapi import Depends, FastAPI, HTTPException, Query, Response
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query, Response
 from pydantic import BaseModel
 from api.schemas import DiagnosticoItem, EmailRequest, FeedbackInput, FeedbackItem, FeedbackResponse, FinancialInput, FinancialResponse
 
@@ -1086,7 +1086,10 @@ def rag_search(
 
 
 @app.post("/rag/ask")
-def rag_ask(payload: RagAskRequest):
+def rag_ask(
+    payload: RagAskRequest,
+    background_tasks: BackgroundTasks,
+):
     """
     Responde usando RAG e expõe telemetria de latência
     operacional sem alterar o comportamento funcional.
@@ -1134,22 +1137,19 @@ def rag_ask(payload: RagAskRequest):
                 answer_with_rag_ms - retrieval_trace_ms,
             )
 
-        save_log_started = time.perf_counter()
+        background_schedule_started = (
+            time.perf_counter()
+        )
 
-        save_rag_log(
+        background_tasks.add_task(
+            save_rag_log,
             pergunta=payload.pergunta,
             resultado=result,
             tempo_resposta_ms=answer_with_rag_ms,
         )
 
-        save_rag_log_ms = round(
-            (time.perf_counter() - save_log_started)
-            * 1000
-        )
-
-        event_started = time.perf_counter()
-
-        safe_record_event(
+        background_tasks.add_task(
+            safe_record_event,
             canal="rag",
             usuario="admin",
             idioma=payload.idioma,
@@ -1169,8 +1169,11 @@ def rag_ask(payload: RagAskRequest):
             },
         )
 
-        safe_record_event_ms = round(
-            (time.perf_counter() - event_started)
+        background_telemetry_schedule_ms = round(
+            (
+                time.perf_counter()
+                - background_schedule_started
+            )
             * 1000
         )
 
@@ -1190,11 +1193,14 @@ def rag_ask(payload: RagAskRequest):
                 "post_retrieval_inside_rag_ms": (
                     post_retrieval_inside_rag_ms
                 ),
-                "save_rag_log_ms": (
-                    save_rag_log_ms
+                "save_rag_log_ms": None,
+                "safe_record_event_ms": None,
+                "telemetry_execution_mode": (
+                    "background"
                 ),
-                "safe_record_event_ms": (
-                    safe_record_event_ms
+                "background_telemetry_scheduled": True,
+                "background_telemetry_schedule_ms": (
+                    background_telemetry_schedule_ms
                 ),
                 "endpoint_processing_ms": (
                     endpoint_processing_ms
