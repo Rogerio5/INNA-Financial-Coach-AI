@@ -4,12 +4,9 @@ Rastreabilidade estruturada da recuperação RAG da INNA.
 
 from __future__ import annotations
 
-from dataclasses import asdict
-from dataclasses import dataclass
-from dataclasses import field
-from datetime import datetime
-from datetime import timezone
 import time
+from dataclasses import asdict, dataclass, field
+from datetime import UTC, datetime
 from typing import Any
 from uuid import uuid4
 
@@ -19,12 +16,16 @@ class RagRetrievalResultTrace:
     position: int
     chunk_id: str | int | None
     document_id: str | int | None
+    document_key: str | None
     title: str | None
     source: str | None
     search_origins: tuple[str, ...]
     score: float | None
     hybrid_score: float | None
     rerank_score: float | None
+    sentence_window_applied: bool | None
+    sentence_window_policy: str | None
+    sentence_window_document_key: str | None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -52,7 +53,7 @@ class RagRetrievalTrace:
         results: list[dict] | None,
         *,
         search_mode: str | None = None,
-    ) -> "RagRetrievalTrace":
+    ) -> RagRetrievalTrace:
         if search_mode:
             self.search_mode = str(
                 search_mode
@@ -66,7 +67,7 @@ class RagRetrievalTrace:
 
         self.finished_at = (
             datetime.now(
-                timezone.utc
+                UTC
             ).isoformat()
         )
 
@@ -114,6 +115,48 @@ def _optional_float(
         return None
 
 
+def _optional_text(
+    value: Any,
+) -> str | None:
+    if value is None:
+        return None
+
+    normalized = str(value).strip()
+
+    return normalized or None
+
+
+def _optional_bool(
+    value: Any,
+) -> bool | None:
+    if isinstance(value, bool):
+        return value
+
+    if value in (0, 1):
+        return bool(value)
+
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+
+        if normalized in {
+            "true",
+            "1",
+            "yes",
+            "on",
+        }:
+            return True
+
+        if normalized in {
+            "false",
+            "0",
+            "no",
+            "off",
+        }:
+            return False
+
+    return None
+
+
 def _search_origins(
     item: dict,
 ) -> tuple[str, ...]:
@@ -151,6 +194,10 @@ def build_result_traces(
                     item.get("documento_id")
                     or item.get("document_id")
                 ),
+                document_key=_optional_text(
+                    item.get("documento_key")
+                    or item.get("document_key")
+                ),
                 title=(
                     item.get("titulo")
                     or item.get("title")
@@ -170,6 +217,27 @@ def build_result_traces(
                 ),
                 rerank_score=_optional_float(
                     item.get("score_rerank")
+                ),
+                sentence_window_applied=(
+                    _optional_bool(
+                        item.get(
+                            "sentence_window_applied"
+                        )
+                    )
+                ),
+                sentence_window_policy=(
+                    _optional_text(
+                        item.get(
+                            "sentence_window_policy"
+                        )
+                    )
+                ),
+                sentence_window_document_key=(
+                    _optional_text(
+                        item.get(
+                            "sentence_window_document_key"
+                        )
+                    )
                 ),
             )
         )
@@ -212,7 +280,7 @@ def start_retrieval_trace(
         ),
         top_k=normalized_top_k,
         started_at=datetime.now(
-            timezone.utc
+            UTC
         ).isoformat(),
         started_monotonic=(
             time.monotonic()
