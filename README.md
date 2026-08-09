@@ -1876,7 +1876,7 @@ Conteúdos aplicados na INNA:
 
 ## # Semana 3 — RAG, Fundamentos e Retrieval Avançado
 
-> **Status:** 🟡 Em finalização
+> **Status:** ✅ Validação técnica concluída — Sentence-Window aprovado para rollout controlado
 
 A Semana 3 foi dedicada ao aprofundamento da arquitetura RAG da INNA, com foco em recuperação avançada de informações, comparação entre estratégias de retrieval, avaliação de qualidade e controle de custos, latência e privacidade.
 
@@ -2301,6 +2301,15 @@ O Sentence-Window com window_size=5:
 ---
 
 ## Experimento oficial — Pergunta 4 de 5
+
+> **Nota de consolidação:** a execução descrita inicialmente nesta
+> seção com `TOP_K=2` é preservada como evidência intermediária.
+> A execução definitiva da Pergunta 4 utilizou `TOP_K=1`, obteve
+> `1.0000` em Answer Relevancy, Faithfulness e Contextual Relevancy
+> e foi aprovada no Quality Gate.
+>
+> O `TOP_K=1` é específico dessa execução experimental.
+> O `TOP_K` global de produção permanece `2`.
 ### Pergunta avaliada
 
 > Qual a diferença entre gastos fixos e gastos variáveis?
@@ -2522,8 +2531,26 @@ gemini-3.5-flash-lite
 >
 > ✅ O resultado consolidado recomenda `promote_sentence_window`.
 >
-> ⚠️ Apesar disso, a feature flag do Sentence-Window permanece desativada em produção até a conclusão da revisão técnica final e da decisão formal de ativação.
+> ✅ A decisão técnica final aprovou o Sentence-Window para rollout controlado. A confirmação operacional definitiva em produção será realizada após merge, deploy e smoke test.
 ---
+
+
+### Decisão formal de produção
+
+A decisão técnica final do Sentence-Window está registrada em:
+
+```text
+docs/audits/week3_sentence_window_production_decision.md
+```
+
+Estado aprovado:
+
+```text
+SENTENCE_WINDOW_PRODUCTION_APPROVED=True
+SENTENCE_WINDOW_ROLLOUT=CONTROLLED
+GLOBAL_TOP_K=2
+QUESTION_4_FINAL_TOP_K=1
+```
 
 ### Controle de custo da avaliação
 
@@ -2605,9 +2632,13 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [ ] Verificar o custo real cobrado diretamente na fonte de faturamento da API, caso necessário;
 - [ ] Revisar tentativas intermediárias;
 - [ ] Revisar execuções incompletas causadas por limite de cota;
-- [ ] Emitir a decisão final sobre ativação permanente do Sentence-Window.
+- [x] Emitir a decisão final sobre ativação do Sentence-Window em rollout controlado.
 
 ### Próximas técnicas de retrieval
+
+> Os itens abaixo foram movidos para o roadmap pós-Semana 3.
+> Eles são evoluções futuras e não bloqueiam o fechamento técnico
+> do experimento de Sentence-Window.
 
 - [ ] Implementar Auto-Merging Retrieval;
 - [ ] Criar testes unitários do Auto-Merging;
@@ -2643,8 +2674,8 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [ ] Atualizar o relatório técnico;
 - [ ] Registrar os caminhos dos relatórios JSON e Markdown;
 - [ ] Preservar somente hashes e métricas nos relatórios públicos;
-- [ ] Registrar a decisão final sobre ativação do Sentence-Window;
-- [ ] Finalizar documentação e evidências.
+- [x] Registrar a decisão final sobre ativação do Sentence-Window;
+- [x] Finalizar documentação e evidências.
 
 ### Knowledge Graph e GraphRAG
 

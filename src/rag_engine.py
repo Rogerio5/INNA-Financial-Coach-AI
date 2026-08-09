@@ -716,7 +716,423 @@ def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) ->
 
 
 
-def search_knowledge_base_hybrid(query: str, idioma: str = "pt", top_k: int = 4) -> list[dict]:
+def _sentence_window_boolean_setting(
+    value: bool | None,
+) -> bool:
+    """
+    Resolve a ativação sem alterar o padrão atual do RAG.
+    """
+
+    if value is not None:
+        return bool(value)
+
+    import os
+
+    rendered = (
+        str(
+            os.getenv(
+                "INNA_RAG_SENTENCE_WINDOW_ENABLED",
+                "false",
+            )
+            or "false"
+        )
+        .strip()
+        .lower()
+    )
+
+    return rendered in {
+        "1",
+        "true",
+        "yes",
+        "on",
+        "sim",
+    }
+
+
+def _sentence_window_integer_setting(
+    *,
+    explicit_value: int | None,
+    environment_name: str,
+    default: int,
+    minimum: int,
+    maximum: int,
+) -> int:
+    if explicit_value is not None:
+        raw_value = explicit_value
+    else:
+        import os
+
+        raw_value = os.getenv(
+            environment_name,
+            str(default),
+        )
+
+    try:
+        parsed = int(raw_value)
+    except (
+        TypeError,
+        ValueError,
+    ):
+        parsed = default
+
+    return max(
+        minimum,
+        min(
+            parsed,
+            maximum,
+        ),
+    )
+
+
+def _load_sentence_window_neighbor_chunks(
+    item: dict,
+    *,
+    idioma: str,
+    chunk_radius: int,
+) -> list[dict]:
+    """
+    Carrega chunks vizinhos do mesmo documento estruturado.
+
+    Em qualquer falha, preserva somente o resultado original.
+    """
+    try:
+        document_id = int(
+            item.get(
+                "documento_id",
+                0,
+            )
+        )
+    except (
+        TypeError,
+        ValueError,
+    ):
+        document_id = 0
+
+    try:
+        chunk_index = int(
+            item.get(
+                "chunk_index",
+                0,
+            )
+        )
+    except (
+        TypeError,
+        ValueError,
+    ):
+        chunk_index = 0
+
+    if document_id <= 0:
+        return [
+            dict(item),
+        ]
+
+    minimum_index = max(
+        0,
+        chunk_index - chunk_radius,
+    )
+
+    maximum_index = (
+        chunk_index
+        + chunk_radius
+    )
+
+    normalized_language = normalize_text(idioma or "pt")
+
+    language_pattern = (
+        "pt%"
+        if normalized_language.startswith("pt")
+        else normalized_language + "%"
+    )
+
+    connection = None
+    cursor = None
+
+    try:
+        connection = get_rag_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT
+                c.id,
+                c.documento_id,
+                COALESCE(
+                    c.metadata ->> 'document_title',
+                    d.nome_original,
+                    d.nome_logico,
+                    'Documento INNA'
+                ) AS titulo,
+                COALESCE(
+                    c.documento_origem,
+                    d.caminho_upload,
+                    d.nome_salvo,
+                    d.nome_logico
+                ) AS fonte,
+                COALESCE(
+                    c.metadata ->> 'area',
+                    d.origem,
+                    'conhecimento_inna'
+                ) AS categoria,
+                COALESCE(
+                    c.metadata ->> 'language',
+                    'pt-BR'
+                ) AS idioma,
+                c.chunk_index,
+                c.texto AS chunk_text,
+                c.metadata,
+                d.nome_logico AS documento_key,
+                c.chunk_id
+            FROM public.chunks_embeddings_rag c
+            JOIN public.documentos_upload_rag d
+                ON d.id = c.documento_id
+            WHERE c.documento_id = %s
+              AND COALESCE(d.ativo, TRUE) IS TRUE
+              AND LOWER(
+                  COALESCE(
+                      c.metadata ->> 'language',
+                      'pt-BR'
+                  )
+              ) LIKE %s
+              AND c.chunk_index
+                  BETWEEN %s AND %s
+            ORDER BY
+                c.chunk_index ASC,
+                c.id ASC;
+            """,
+            (
+                document_id,
+                language_pattern,
+                minimum_index,
+                maximum_index,
+            ),
+        )
+
+        rows = cursor.fetchall()
+
+        columns = [
+            description[0]
+            for description in cursor.description
+        ]
+
+        neighbors = []
+
+        for row in rows:
+            neighbor = dict(
+                zip(
+                    columns,
+                    row,
+                    strict=True,
+                )
+            )
+
+            text = str(
+                neighbor.get("chunk_text")
+                or ""
+            )
+
+            neighbor["texto"] = text
+            neighbor["trecho"] = text
+            neighbor["conteudo"] = text
+
+            neighbors.append(neighbor)
+
+        return neighbors or [
+            dict(item),
+        ]
+
+    except Exception:
+        return [
+            dict(item),
+        ]
+
+    finally:
+        if cursor is not None:
+            try:
+                cursor.close()
+            except Exception:
+                pass
+
+        if connection is not None:
+            try:
+                connection.close()
+            except Exception:
+                pass
+
+
+def _sentence_window_allowed_document_keys() -> set[str]:
+    """
+    Resolve os documentos autorizados para Sentence Window.
+
+    O padrão inclui somente temas aprovados nos testes
+    de estabilidade. A lista pode ser alterada por variável
+    de ambiente sem modificar código.
+    """
+    import os
+
+    configured = str(
+        os.getenv(
+            "INNA_RAG_SENTENCE_WINDOW_ALLOWED_DOCUMENT_KEYS",
+            (
+                "inna-edu-reserva-002,"
+                "inna-edu-orcamento-002"
+            ),
+        )
+        or ""
+    )
+
+    return {
+        item.strip()
+        for item in configured.split(",")
+        if item.strip()
+    }
+
+
+def _sentence_window_document_allowed(
+    item: dict,
+    *,
+    allowed_document_keys: set[str],
+) -> bool:
+    """
+    Verifica se o resultado pertence a um documento aprovado.
+    """
+    document_key = str(
+        item.get(
+            "documento_key",
+            "",
+        )
+        or ""
+    ).strip()
+
+    return bool(
+        document_key
+        and document_key in allowed_document_keys
+    )
+
+
+def _apply_sentence_window_to_results(
+    *,
+    query: str,
+    idioma: str,
+    results: list[dict],
+    window_size: int,
+    chunk_radius: int,
+    max_characters: int,
+) -> list[dict]:
+    """
+    Aplica Sentence Window somente aos documentos aprovados.
+
+    Resultados não autorizados preservam integralmente
+    o chunk original, funcionando como fallback seguro.
+    """
+    try:
+        from services.rag.sentence_window import (
+            expand_result_with_sentence_window,
+        )
+    except ImportError:
+        from src.services.rag.sentence_window import (
+            expand_result_with_sentence_window,
+        )
+
+    allowed_document_keys = (
+        _sentence_window_allowed_document_keys()
+    )
+
+    expanded_results: list[dict] = []
+
+    for item in results:
+        original_item = dict(item)
+
+        document_key = str(
+            original_item.get(
+                "documento_key",
+                "",
+            )
+            or ""
+        ).strip()
+
+        if not _sentence_window_document_allowed(
+            original_item,
+            allowed_document_keys=allowed_document_keys,
+        ):
+            original_item["sentence_window_applied"] = False
+            original_item["sentence_window_policy"] = (
+                "selective_allowlist"
+            )
+            original_item["sentence_window_skip_reason"] = (
+                "document_not_allowed"
+            )
+            original_item[
+                "sentence_window_document_key"
+            ] = document_key
+
+            expanded_results.append(
+                original_item
+            )
+
+            continue
+
+        neighbor_chunks = (
+            _load_sentence_window_neighbor_chunks(
+                original_item,
+                idioma=idioma,
+                chunk_radius=chunk_radius,
+            )
+        )
+
+        try:
+            expanded_item = (
+                expand_result_with_sentence_window(
+                    query=query,
+                    result=original_item,
+                    chunks=neighbor_chunks,
+                    window_size=window_size,
+                    max_characters=max_characters,
+                )
+            )
+        except Exception:
+            expanded_item = dict(
+                original_item
+            )
+
+            expanded_item["sentence_window_applied"] = False
+            expanded_item["sentence_window_skip_reason"] = (
+                "expansion_failed"
+            )
+
+        expanded_item["sentence_window_policy"] = (
+            "selective_allowlist"
+        )
+        expanded_item[
+            "sentence_window_document_key"
+        ] = document_key
+
+        if expanded_item.get(
+            "sentence_window_applied"
+        ):
+            expanded_item["sentence_window_skip_reason"] = None
+        else:
+            expanded_item.setdefault(
+                "sentence_window_skip_reason",
+                "empty_window",
+            )
+
+        expanded_results.append(
+            expanded_item
+        )
+
+    return expanded_results
+
+
+def search_knowledge_base_hybrid(
+    query: str,
+    idioma: str = "pt",
+    top_k: int = 4,
+    *,
+    sentence_window_enabled: bool | None = None,
+    sentence_window_size: int | None = None,
+    sentence_window_chunk_radius: int | None = None,
+) -> list[dict]:
     """
     RAG híbrido da INNA:
     - busca semântica com Gemini Embeddings + pgvector
@@ -760,7 +1176,49 @@ def search_knowledge_base_hybrid(query: str, idioma: str = "pt", top_k: int = 4)
 
     results = list(combinados.values())
 
-    return rerank_knowledge_results(query, results, top_k=top_k)
+    reranked_results = rerank_knowledge_results(
+        query,
+        results,
+        top_k=top_k,
+    )
+
+    if not _sentence_window_boolean_setting(
+        sentence_window_enabled
+    ):
+        return reranked_results
+
+    resolved_window_size = _sentence_window_integer_setting(
+        explicit_value=sentence_window_size,
+        environment_name="INNA_RAG_SENTENCE_WINDOW_SIZE",
+        default=2,
+        minimum=0,
+        maximum=8,
+    )
+
+    resolved_chunk_radius = _sentence_window_integer_setting(
+        explicit_value=sentence_window_chunk_radius,
+        environment_name="INNA_RAG_SENTENCE_WINDOW_CHUNK_RADIUS",
+        default=1,
+        minimum=0,
+        maximum=4,
+    )
+
+    resolved_max_characters = _sentence_window_integer_setting(
+        explicit_value=None,
+        environment_name="INNA_RAG_SENTENCE_WINDOW_MAX_CHARACTERS",
+        default=4000,
+        minimum=300,
+        maximum=12000,
+    )
+
+    return _apply_sentence_window_to_results(
+        query=query,
+        idioma=idioma,
+        results=reranked_results,
+        window_size=resolved_window_size,
+        chunk_radius=resolved_chunk_radius,
+        max_characters=resolved_max_characters,
+    )
 
 
 
