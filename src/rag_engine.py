@@ -1180,6 +1180,7 @@ def search_knowledge_base_hybrid(
     sentence_window_enabled: bool | None = None,
     sentence_window_size: int | None = None,
     sentence_window_chunk_radius: int | None = None,
+    profiling: dict[str, float] | None = None,
 ) -> list[dict]:
     """
     Hybrid RAG estruturado 3072 da INNA.
@@ -1188,10 +1189,16 @@ def search_knowledge_base_hybrid(
     Reciprocal Rank Fusion (RRF), evitando comparar
     diretamente scores de escalas diferentes.
     """
+    import time
+
+    retrieval_started = time.perf_counter()
+
     candidate_limit = max(
         int(top_k or 1),
         6,
     )
+
+    vector_started = time.perf_counter()
 
     vector_results = (
         search_knowledge_base_pgvector(
@@ -1201,6 +1208,14 @@ def search_knowledge_base_hybrid(
         )
     )
 
+    vector_retrieval_ms = round(
+        (time.perf_counter() - vector_started)
+        * 1000,
+        2,
+    )
+
+    text_started = time.perf_counter()
+
     text_results = (
         search_knowledge_base_text(
             query,
@@ -1208,6 +1223,14 @@ def search_knowledge_base_hybrid(
             top_k=candidate_limit,
         )
     )
+
+    text_retrieval_ms = round(
+        (time.perf_counter() - text_started)
+        * 1000,
+        2,
+    )
+
+    rrf_started = time.perf_counter()
 
     rrf_constant = 60.0
 
@@ -1354,6 +1377,14 @@ def search_knowledge_base_hybrid(
         reverse=True,
     )
 
+    rrf_ms = round(
+        (time.perf_counter() - rrf_started)
+        * 1000,
+        2,
+    )
+
+    rerank_started = time.perf_counter()
+
     reranked_results = (
         rerank_knowledge_results(
             query,
@@ -1362,9 +1393,46 @@ def search_knowledge_base_hybrid(
         )
     )
 
+    rerank_ms = round(
+        (time.perf_counter() - rerank_started)
+        * 1000,
+        2,
+    )
+
     if not _sentence_window_boolean_setting(
         sentence_window_enabled
     ):
+        sentence_window_ms = 0.0
+
+        retrieval_total_ms = round(
+            (
+                time.perf_counter()
+                - retrieval_started
+            )
+            * 1000,
+            2,
+        )
+
+        if profiling is not None:
+            profiling.update(
+                {
+                    "vector_retrieval_ms": (
+                        vector_retrieval_ms
+                    ),
+                    "text_retrieval_ms": (
+                        text_retrieval_ms
+                    ),
+                    "rrf_ms": rrf_ms,
+                    "rerank_ms": rerank_ms,
+                    "sentence_window_ms": (
+                        sentence_window_ms
+                    ),
+                    "retrieval_total_ms": (
+                        retrieval_total_ms
+                    ),
+                }
+            )
+
         return reranked_results
 
     resolved_window_size = (
@@ -1410,16 +1478,62 @@ def search_knowledge_base_hybrid(
         )
     )
 
-    return _apply_sentence_window_to_results(
-        query=query,
-        idioma=idioma,
-        results=reranked_results,
-        window_size=resolved_window_size,
-        chunk_radius=resolved_chunk_radius,
-        max_characters=(
-            resolved_max_characters
-        ),
+    sentence_window_started = (
+        time.perf_counter()
     )
+
+    final_results = (
+        _apply_sentence_window_to_results(
+            query=query,
+            idioma=idioma,
+            results=reranked_results,
+            window_size=resolved_window_size,
+            chunk_radius=resolved_chunk_radius,
+            max_characters=(
+                resolved_max_characters
+            ),
+        )
+    )
+
+    sentence_window_ms = round(
+        (
+            time.perf_counter()
+            - sentence_window_started
+        )
+        * 1000,
+        2,
+    )
+
+    retrieval_total_ms = round(
+        (
+            time.perf_counter()
+            - retrieval_started
+        )
+        * 1000,
+        2,
+    )
+
+    if profiling is not None:
+        profiling.update(
+            {
+                "vector_retrieval_ms": (
+                    vector_retrieval_ms
+                ),
+                "text_retrieval_ms": (
+                    text_retrieval_ms
+                ),
+                "rrf_ms": rrf_ms,
+                "rerank_ms": rerank_ms,
+                "sentence_window_ms": (
+                    sentence_window_ms
+                ),
+                "retrieval_total_ms": (
+                    retrieval_total_ms
+                ),
+            }
+        )
+
+    return final_results
 
 
 def search_knowledge_base(
@@ -2239,11 +2353,46 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
         top_k=top_k,
     )
 
-    results = search_knowledge_base_hybrid(
-        pergunta,
-        idioma=idioma,
-        top_k=top_k,
-    )
+    retrieval_phase_timings: dict[
+        str,
+        float,
+    ] = {}
+
+    supports_profiling = False
+
+    try:
+        import inspect
+
+        hybrid_signature = inspect.signature(
+            search_knowledge_base_hybrid
+        )
+
+        supports_profiling = (
+            "profiling"
+            in hybrid_signature.parameters
+            or any(
+                parameter.kind
+                is inspect.Parameter.VAR_KEYWORD
+                for parameter
+                in hybrid_signature.parameters.values()
+            )
+        )
+    except (TypeError, ValueError):
+        supports_profiling = False
+
+    if supports_profiling:
+        results = search_knowledge_base_hybrid(
+            pergunta,
+            idioma=idioma,
+            top_k=top_k,
+            profiling=retrieval_phase_timings,
+        )
+    else:
+        results = search_knowledge_base_hybrid(
+            pergunta,
+            idioma=idioma,
+            top_k=top_k,
+        )
 
     # Runtime RAG 3072-only.
     # Não retorna ao armazenamento legado 768
@@ -2288,6 +2437,12 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
 
         payload["retrieval_trace"] = (
             trace_payload
+        )
+
+        payload[
+            "retrieval_phase_timings"
+        ] = dict(
+            retrieval_phase_timings
         )
 
         return payload
