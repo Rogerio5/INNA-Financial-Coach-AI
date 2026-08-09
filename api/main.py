@@ -1088,12 +1088,15 @@ def rag_search(
 @app.post("/rag/ask")
 def rag_ask(payload: RagAskRequest):
     """
-    Responde usando RAG local sem custo, com fontes da base da INNA.
+    Responde usando RAG e expõe telemetria de latência
+    operacional sem alterar o comportamento funcional.
     """
     try:
         import time
 
-        inicio = time.time()
+        endpoint_started = time.perf_counter()
+
+        rag_started = time.perf_counter()
 
         result = answer_with_rag(
             pergunta=payload.pergunta,
@@ -1101,13 +1104,50 @@ def rag_ask(payload: RagAskRequest):
             top_k=payload.top_k,
         )
 
-        tempo_resposta_ms = int((time.time() - inicio) * 1000)
+        answer_with_rag_ms = round(
+            (time.perf_counter() - rag_started) * 1000
+        )
+
+        retrieval_trace = (
+            result.get("retrieval_trace")
+            if isinstance(result, dict)
+            else None
+        ) or {}
+
+        retrieval_trace_ms = retrieval_trace.get(
+            "total_time_ms"
+        )
+
+        if retrieval_trace_ms is not None:
+            try:
+                retrieval_trace_ms = int(
+                    retrieval_trace_ms
+                )
+            except (TypeError, ValueError):
+                retrieval_trace_ms = None
+
+        post_retrieval_inside_rag_ms = None
+
+        if retrieval_trace_ms is not None:
+            post_retrieval_inside_rag_ms = max(
+                0,
+                answer_with_rag_ms - retrieval_trace_ms,
+            )
+
+        save_log_started = time.perf_counter()
 
         save_rag_log(
             pergunta=payload.pergunta,
             resultado=result,
-            tempo_resposta_ms=tempo_resposta_ms,
+            tempo_resposta_ms=answer_with_rag_ms,
         )
+
+        save_rag_log_ms = round(
+            (time.perf_counter() - save_log_started)
+            * 1000
+        )
+
+        event_started = time.perf_counter()
 
         safe_record_event(
             canal="rag",
@@ -1129,6 +1169,38 @@ def rag_ask(payload: RagAskRequest):
             },
         )
 
+        safe_record_event_ms = round(
+            (time.perf_counter() - event_started)
+            * 1000
+        )
+
+        endpoint_processing_ms = round(
+            (time.perf_counter() - endpoint_started)
+            * 1000
+        )
+
+        if isinstance(result, dict):
+            result["api_latency"] = {
+                "retrieval_trace_ms": (
+                    retrieval_trace_ms
+                ),
+                "answer_with_rag_ms": (
+                    answer_with_rag_ms
+                ),
+                "post_retrieval_inside_rag_ms": (
+                    post_retrieval_inside_rag_ms
+                ),
+                "save_rag_log_ms": (
+                    save_rag_log_ms
+                ),
+                "safe_record_event_ms": (
+                    safe_record_event_ms
+                ),
+                "endpoint_processing_ms": (
+                    endpoint_processing_ms
+                ),
+            }
+
         return result
 
     except Exception as exc:
@@ -1147,7 +1219,10 @@ def rag_ask(payload: RagAskRequest):
             },
         )
 
-        raise HTTPException(status_code=500, detail=str(exc))
+        raise HTTPException(
+            status_code=500,
+            detail=str(exc),
+        ) from exc
 
 app.include_router(telegram_operational_router)
 
