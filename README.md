@@ -2534,7 +2534,6 @@ gemini-3.5-flash-lite
 > ✅ A decisão técnica final aprovou o Sentence-Window para rollout controlado. A confirmação operacional definitiva em produção será realizada após merge, deploy e smoke test.
 ---
 
-
 ### Decisão formal de produção
 
 A decisão técnica final do Sentence-Window está registrada em:
@@ -2542,15 +2541,86 @@ A decisão técnica final do Sentence-Window está registrada em:
 ```text
 docs/audits/week3_sentence_window_production_decision.md
 ```
-
 Estado aprovado:
-
-```text
+```
 SENTENCE_WINDOW_PRODUCTION_APPROVED=True
 SENTENCE_WINDOW_ROLLOUT=CONTROLLED
 GLOBAL_TOP_K=2
 QUESTION_4_FINAL_TOP_K=1
 ```
+
+
+E imediatamente abaixo comece:
+
+```markdown
+---
+
+## 🚀 Validação Operacional Pós-Deploy — Produção
+
+Após a conclusão dos experimentos da Semana 3, merge da migração
+para o retrieval estruturado de 3072 dimensões e deploy da API,
+foi executada a validação operacional definitiva em produção.
+
+Diferentemente das cinco perguntas oficiais, esta etapa não teve
+como objetivo recalcular as métricas da RAG Triad.
+
+O objetivo foi confirmar que a arquitetura aprovada experimentalmente
+estava realmente ativa no ambiente de produção.
+
+### Pipeline validado
+
+```text
+Structured Retrieval 3072
+→ Vector Retrieval + Text Retrieval
+→ Reciprocal Rank Fusion (RRF)
+→ Rerank
+→ Document Identity
+→ Controlled Allowlist
+→ Sentence-Window
+→ Retrieval Trace
+→ /rag/ask
+```
+### Runtime confirmado
+```
+SEARCH_MODE=rag_hibrido_estruturado_3072_rrf_rerank_sentence_window
+TOP_K=2
+RESULTS_TOTAL=2
+```
+
+### Identidade documental confirmada
+```
+DOCUMENT_ID=28
+DOCUMENT_KEY=inna-edu-orcamento-002
+```
+### Resultado operacional
+```
+STRUCTURED_IDENTITY_3072=True
+RRF_RERANK_TELEMETRY=True
+SEARCH_MODE_3072_RRF=True
+SENTENCE_WINDOW_PRODUCTION=True
+TOP_K_PRODUCTION_2=True
+```
+Os resultados recuperados confirmaram:
+```
+SEARCH_ORIGINS=textual,vetorial
+SENTENCE_WINDOW_APPLIED=True
+SENTENCE_WINDOW_POLICY=selective_allowlist
+SENTENCE_WINDOW_DOCUMENT_KEY=inna-edu-orcamento-002
+```
+### Decisão operacional
+```
+RAG_3072_PRODUCTION=APPROVED
+WEEK3_PRODUCTION_VALIDATION=APPROVED
+```
+### Métrica operacional observada
+```
+TOTAL_TIME_MS=6261
+```
+Essa latência representa uma execução específica em produção.
+Ela não altera o Quality Gate experimental e deverá ser acompanhada
+separadamente como métrica de performance.
+
+---
 
 ### Controle de custo da avaliação
 
@@ -2634,6 +2704,37 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [ ] Revisar execuções incompletas causadas por limite de cota;
 - [x] Emitir a decisão final sobre ativação do Sentence-Window em rollout controlado.
 
+### Validação operacional em produção
+
+- [x] Migrar o retrieval principal para a base estruturada de embeddings com `3072` dimensões;
+- [x] Validar `documento_id` e `documento_key` nativos no retrieval;
+- [x] Validar retrieval vetorial estruturado em produção;
+- [x] Validar retrieval textual estruturado em produção;
+- [x] Validar Hybrid Retrieval com fontes `textual` e `vetorial`;
+- [x] Validar Reciprocal Rank Fusion (`RRF`);
+- [x] Validar rerank após o RRF;
+- [x] Validar preservação do `search_mode` completo;
+- [x] Validar aplicação do Sentence-Window após o rerank;
+- [x] Validar a allowlist controlada com `inna-edu-orcamento-002`;
+- [x] Validar `TOP_K=2` como configuração global de produção;
+- [x] Confirmar que `QUESTION_4_FINAL_TOP_K=1` pertence somente ao experimento da Pergunta 4;
+- [x] Validar o endpoint `/rag/ask` no ambiente Render;
+- [x] Confirmar o modo de produção `rag_hibrido_estruturado_3072_rrf_rerank_sentence_window`;
+- [x] Confirmar `STRUCTURED_IDENTITY_3072=True`;
+- [x] Confirmar `RRF_RERANK_TELEMETRY=True`;
+- [x] Confirmar `SEARCH_MODE_3072_RRF=True`;
+- [x] Confirmar `SENTENCE_WINDOW_PRODUCTION=True`;
+- [x] Confirmar `TOP_K_PRODUCTION_2=True`;
+- [x] Registrar `RAG_3072_PRODUCTION=APPROVED`;
+- [x] Registrar `WEEK3_PRODUCTION_VALIDATION=APPROVED`;
+- [x] Executar regressão ampliada do RAG com `425 passed`;
+- [x] Executar regressão completa com `4115 passed, 3 skipped`;
+- [x] Confirmar Ruff e compilação no escopo alterado;
+- [x] Registrar a latência observada em produção de `6261 ms`;
+- [ ] Executar múltiplas medições de latência em produção;
+- [ ] Calcular latência mínima, média, mediana/p50, p95 e máxima;
+- [ ] Investigar otimização somente se a latência elevada se repetir de forma consistente.
+
 ### Próximas técnicas de retrieval
 
 > Os itens abaixo foram movidos para o roadmap pós-Semana 3.
@@ -2670,11 +2771,19 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Documentar a limitação atual do cálculo de custo do DeepEval;
 - [x] Registrar que o custo real cobrado não foi verificado;
 - [x] Separar custo técnico registrado, custo equivalente estimado e custo real;
+- [x] Registrar a decisão final sobre ativação do Sentence-Window;
+- [x] Registrar a validação operacional pós-deploy;
+- [x] Registrar a migração do runtime RAG para `3072`;
+- [x] Registrar Hybrid Retrieval + RRF + rerank em produção;
+- [x] Registrar a identidade documental nativa em produção;
+- [x] Registrar a validação real do Sentence-Window no Render;
+- [x] Registrar que o `GLOBAL_TOP_K=2` permanece como configuração de produção;
+- [x] Registrar que `QUESTION_4_FINAL_TOP_K=1` é específico do experimento da Pergunta 4;
+- [x] Registrar a latência observada de `6261 ms` como métrica operacional;
 - [ ] Concluir a atualização do README principal;
 - [ ] Atualizar o relatório técnico;
 - [ ] Registrar os caminhos dos relatórios JSON e Markdown;
 - [ ] Preservar somente hashes e métricas nos relatórios públicos;
-- [x] Registrar a decisão final sobre ativação do Sentence-Window;
 - [x] Finalizar documentação e evidências.
 
 ### Knowledge Graph e GraphRAG
@@ -2690,12 +2799,13 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 
 ---
 
----
-
 #### 📌 Estado atual
 
 ```text
 RAG_HIBRIDO=OPERACIONAL
+RAG_STRUCTURED_3072=OPERACIONAL
+RRF=OPERACIONAL
+RERANK=OPERACIONAL
 RAG_TRIAD=IMPLEMENTADA
 DEEPEVAL=INTEGRADO
 QUALITY_GATE=IMPLEMENTADO
@@ -2733,17 +2843,31 @@ QUALITY_GATE_CONSOLIDADO=APROVADO
 RECOMMENDATION=promote_sentence_window
 
 WINDOW_SIZE_SELECIONADO=5
-TOP_K_VALIDACAO_PONTA_A_PONTA=1
+GLOBAL_TOP_K=2
+QUESTION_4_FINAL_TOP_K=1
+
+STRUCTURED_IDENTITY_3072=True
+RRF_RERANK_TELEMETRY=True
+SEARCH_MODE_3072_RRF=True
 
 SENTENCE_WINDOW_SIGNAL=POSITIVO
-SENTENCE_WINDOW_PRODUCAO=false
-DECISAO_FINAL_PRODUCAO=PENDENTE_DE_REVISAO_FINAL
+SENTENCE_WINDOW_PRODUCAO=True
+SENTENCE_WINDOW_ROLLOUT=CONTROLLED
+SENTENCE_WINDOW_PRODUCTION_VALIDATION=APPROVED
 
-AUTO_MERGING=PENDENTE
-DOCUMENTACAO_FINAL=EM_ANDAMENTO
-SEMANA_3=EM_FINALIZACAO
+RAG_3072_PRODUCTION=APPROVED
+WEEK3_PRODUCTION_VALIDATION=APPROVED
+
+PRODUCTION_SEARCH_MODE=rag_hibrido_estruturado_3072_rrf_rerank_sentence_window
+PRODUCTION_TOP_K=2
+
+PRODUCTION_LATENCY_OBSERVED_MS=6261
+PRODUCTION_LATENCY_STATUS=MONITORAMENTO
+
+AUTO_MERGING=ROADMAP_POS_SEMANA_3
+DOCUMENTACAO_FINAL=CONCLUIDA
+SEMANA_3=CONCLUIDA
 ```
-
 --- 
 
 ## Desenvolvedores
