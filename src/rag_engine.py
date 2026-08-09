@@ -437,6 +437,8 @@ def search_knowledge_base_pgvector(
     query: str,
     idioma: str = "pt",
     top_k: int = 4,
+    *,
+    profiling: dict[str, float] | None = None,
 ) -> list[dict]:
     """
     Retrieval vetorial estruturado da INNA.
@@ -467,16 +469,61 @@ def search_knowledge_base_pgvector(
         1,
     )
 
-    payload = buscar_chunks_semanticos(
-        query,
-        limite=max(
-            limite * 4,
-            10,
-        ),
-        gerar_embedding=gerar_embedding_consulta,
-        classificar_chunk=lambda _: "",
-        dimensoes=3072,
-    )
+    vector_detail_timings: dict[
+        str,
+        float,
+    ] = {}
+
+    supports_deep_profiling = False
+
+    try:
+        import inspect
+
+        semantic_signature = inspect.signature(
+            buscar_chunks_semanticos
+        )
+
+        supports_deep_profiling = (
+            "profiling"
+            in semantic_signature.parameters
+            or any(
+                parameter.kind
+                is inspect.Parameter.VAR_KEYWORD
+                for parameter
+                in semantic_signature.parameters.values()
+            )
+        )
+    except (TypeError, ValueError):
+        supports_deep_profiling = False
+
+    if supports_deep_profiling:
+        payload = buscar_chunks_semanticos(
+            query,
+            limite=max(
+                limite * 4,
+                10,
+            ),
+            gerar_embedding=gerar_embedding_consulta,
+            classificar_chunk=lambda _: "",
+            dimensoes=3072,
+            profiling=vector_detail_timings,
+        )
+    else:
+        payload = buscar_chunks_semanticos(
+            query,
+            limite=max(
+                limite * 4,
+                10,
+            ),
+            gerar_embedding=gerar_embedding_consulta,
+            classificar_chunk=lambda _: "",
+            dimensoes=3072,
+        )
+
+    if profiling is not None:
+        profiling.update(
+            vector_detail_timings
+        )
 
     if not payload.get("ok"):
         return []
@@ -1200,19 +1247,61 @@ def search_knowledge_base_hybrid(
 
     vector_started = time.perf_counter()
 
-    vector_results = (
-        search_knowledge_base_pgvector(
-            query,
-            idioma=idioma,
-            top_k=candidate_limit,
+    vector_detail_timings: dict[
+        str,
+        float,
+    ] = {}
+
+    supports_vector_profiling = False
+
+    try:
+        import inspect
+
+        vector_signature = inspect.signature(
+            search_knowledge_base_pgvector
         )
-    )
+
+        supports_vector_profiling = (
+            "profiling"
+            in vector_signature.parameters
+            or any(
+                parameter.kind
+                is inspect.Parameter.VAR_KEYWORD
+                for parameter
+                in vector_signature.parameters.values()
+            )
+        )
+    except (TypeError, ValueError):
+        supports_vector_profiling = False
+
+    if supports_vector_profiling:
+        vector_results = (
+            search_knowledge_base_pgvector(
+                query,
+                idioma=idioma,
+                top_k=candidate_limit,
+                profiling=vector_detail_timings,
+            )
+        )
+    else:
+        vector_results = (
+            search_knowledge_base_pgvector(
+                query,
+                idioma=idioma,
+                top_k=candidate_limit,
+            )
+        )
 
     vector_retrieval_ms = round(
         (time.perf_counter() - vector_started)
         * 1000,
         2,
     )
+
+    if profiling is not None:
+        profiling.update(
+            vector_detail_timings
+        )
 
     text_started = time.perf_counter()
 
