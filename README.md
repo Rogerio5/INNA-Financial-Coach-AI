@@ -2621,16 +2621,42 @@ WEEK3_PRODUCTION_VALIDATION=APPROVED
 ```
 
 ### Métrica operacional observada
-
 ```text
-TOTAL_TIME_MS=6261
+6261 ms  ← evidência histórica
+   ↓
+4397 ms  ← benchmark intermediário
+   ↓
+3315 ms  ← benchmark final HTTP atual
 ```
+```
+### Benchmark final — 7 amostras em produção
+```
+HTTP_MIN_MS=3264.76
+HTTP_AVG_MS=3339.20
+HTTP_MEDIAN_MS=3315.12
+HTTP_MAX_MS=3521.61
 
-Essa latência representa uma execução específica em produção.
+RETRIEVAL_MIN_MS=3057.19
+RETRIEVAL_AVG_MS=3078.10
+RETRIEVAL_MEDIAN_MS=3071.58
+RETRIEVAL_MAX_MS=3107.48
 
-Ela não altera o Quality Gate experimental e deverá ser acompanhada
-separadamente como métrica de performance.
+PARALLEL_OVERLAP_SAVED_MEDIAN_MS=1071.85
+```
+#### Resultado
 
+O pipeline passou de uma execução operacional observada
+de aproximadamente 6,26 segundos para uma mediana HTTP
+de aproximadamente 3,32 segundos no benchmark final.
+
+O retrieval apresentou mediana de aproximadamente 3,07 segundos.
+
+As otimizações incluíram:
+
+telemetria em background;
+profiling detalhado do retrieval;
+reutilização de conexão no Sentence-Window;
+execução concorrente de Vector Retrieval e Text Retrieval.
 ---
 
 ### Controle de custo da avaliação
