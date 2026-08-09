@@ -1307,79 +1307,127 @@ def search_knowledge_base_hybrid(
         6,
     )
 
-    vector_started = time.perf_counter()
+    from concurrent.futures import (
+        ThreadPoolExecutor,
+    )
 
-    vector_detail_timings: dict[
-        str,
-        float,
-    ] = {}
+    def _run_vector_retrieval():
+        vector_started = time.perf_counter()
 
-    supports_vector_profiling = False
+        vector_detail_timings: dict[
+            str,
+            float,
+        ] = {}
 
-    try:
-        import inspect
-
-        vector_signature = inspect.signature(
-            search_knowledge_base_pgvector
-        )
-
-        supports_vector_profiling = (
-            "profiling"
-            in vector_signature.parameters
-            or any(
-                parameter.kind
-                is inspect.Parameter.VAR_KEYWORD
-                for parameter
-                in vector_signature.parameters.values()
-            )
-        )
-    except (TypeError, ValueError):
         supports_vector_profiling = False
 
-    if supports_vector_profiling:
-        vector_results = (
-            search_knowledge_base_pgvector(
-                query,
-                idioma=idioma,
-                top_k=candidate_limit,
-                profiling=vector_detail_timings,
+        try:
+            import inspect
+
+            vector_signature = inspect.signature(
+                search_knowledge_base_pgvector
             )
+
+            supports_vector_profiling = (
+                "profiling"
+                in vector_signature.parameters
+                or any(
+                    parameter.kind
+                    is inspect.Parameter.VAR_KEYWORD
+                    for parameter
+                    in vector_signature.parameters.values()
+                )
+            )
+        except (TypeError, ValueError):
+            supports_vector_profiling = False
+
+        if supports_vector_profiling:
+            vector_results = (
+                search_knowledge_base_pgvector(
+                    query,
+                    idioma=idioma,
+                    top_k=candidate_limit,
+                    profiling=vector_detail_timings,
+                )
+            )
+        else:
+            vector_results = (
+                search_knowledge_base_pgvector(
+                    query,
+                    idioma=idioma,
+                    top_k=candidate_limit,
+                )
+            )
+
+        vector_retrieval_ms = round(
+            (
+                time.perf_counter()
+                - vector_started
+            )
+            * 1000,
+            2,
         )
-    else:
-        vector_results = (
-            search_knowledge_base_pgvector(
+
+        return (
+            vector_results,
+            vector_retrieval_ms,
+            vector_detail_timings,
+        )
+
+    def _run_text_retrieval():
+        text_started = time.perf_counter()
+
+        text_results = (
+            search_knowledge_base_text(
                 query,
                 idioma=idioma,
                 top_k=candidate_limit,
             )
         )
 
-    vector_retrieval_ms = round(
-        (time.perf_counter() - vector_started)
-        * 1000,
-        2,
-    )
+        text_retrieval_ms = round(
+            (
+                time.perf_counter()
+                - text_started
+            )
+            * 1000,
+            2,
+        )
+
+        return (
+            text_results,
+            text_retrieval_ms,
+        )
+
+    with ThreadPoolExecutor(
+        max_workers=2,
+        thread_name_prefix=(
+            "inna-rag-retrieval"
+        ),
+    ) as executor:
+        vector_future = executor.submit(
+            _run_vector_retrieval
+        )
+
+        text_future = executor.submit(
+            _run_text_retrieval
+        )
+
+        (
+            vector_results,
+            vector_retrieval_ms,
+            vector_detail_timings,
+        ) = vector_future.result()
+
+        (
+            text_results,
+            text_retrieval_ms,
+        ) = text_future.result()
 
     if profiling is not None:
         profiling.update(
             vector_detail_timings
         )
-
-    text_started = time.perf_counter()
-
-    text_results = (
-        search_knowledge_base_text(
-            query,
-            idioma=idioma,
-            top_k=candidate_limit,
-        )
-    )
-
-    text_retrieval_ms = round(
-        (time.perf_counter() - text_started)
-        * 1000,
-        2,
-    )
 
     rrf_started = time.perf_counter()
 
