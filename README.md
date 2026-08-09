@@ -2541,18 +2541,16 @@ A decisão técnica final do Sentence-Window está registrada em:
 ```text
 docs/audits/week3_sentence_window_production_decision.md
 ```
+
 Estado aprovado:
-```
+
+```text
 SENTENCE_WINDOW_PRODUCTION_APPROVED=True
 SENTENCE_WINDOW_ROLLOUT=CONTROLLED
 GLOBAL_TOP_K=2
 QUESTION_4_FINAL_TOP_K=1
 ```
 
-
-E imediatamente abaixo comece:
-
-```markdown
 ---
 
 ## 🚀 Validação Operacional Pós-Deploy — Produção
@@ -2580,43 +2578,56 @@ Structured Retrieval 3072
 → Retrieval Trace
 → /rag/ask
 ```
+
 ### Runtime confirmado
-```
+
+```text
 SEARCH_MODE=rag_hibrido_estruturado_3072_rrf_rerank_sentence_window
 TOP_K=2
 RESULTS_TOTAL=2
 ```
 
 ### Identidade documental confirmada
-```
+
+```text
 DOCUMENT_ID=28
 DOCUMENT_KEY=inna-edu-orcamento-002
 ```
+
 ### Resultado operacional
-```
+
+```text
 STRUCTURED_IDENTITY_3072=True
 RRF_RERANK_TELEMETRY=True
 SEARCH_MODE_3072_RRF=True
 SENTENCE_WINDOW_PRODUCTION=True
 TOP_K_PRODUCTION_2=True
 ```
+
 Os resultados recuperados confirmaram:
-```
+
+```text
 SEARCH_ORIGINS=textual,vetorial
 SENTENCE_WINDOW_APPLIED=True
 SENTENCE_WINDOW_POLICY=selective_allowlist
 SENTENCE_WINDOW_DOCUMENT_KEY=inna-edu-orcamento-002
 ```
+
 ### Decisão operacional
-```
+
+```text
 RAG_3072_PRODUCTION=APPROVED
 WEEK3_PRODUCTION_VALIDATION=APPROVED
 ```
+
 ### Métrica operacional observada
-```
+
+```text
 TOTAL_TIME_MS=6261
 ```
+
 Essa latência representa uma execução específica em produção.
+
 Ela não altera o Quality Gate experimental e deverá ser acompanhada
 separadamente como métrica de performance.
 
