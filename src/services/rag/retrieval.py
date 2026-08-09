@@ -290,6 +290,7 @@ def buscar_chunks_semanticos(
     classificar_chunk: ChunkClassifier,
     dimensoes: int = 3072,
     bonus_categoria: float = 0.08,
+    profiling: dict[str, float] | None = None,
 ) -> dict:
     """
     Executa a recuperação semântica completa.
@@ -328,10 +329,36 @@ def buscar_chunks_semanticos(
     )
 
     try:
+        import time
+
+        semantic_started = time.perf_counter()
+
+        embedding_started = time.perf_counter()
+
         embedding_pergunta = gerar_embedding(pergunta)
+
+        query_embedding_ms = round(
+            (
+                time.perf_counter()
+                - embedding_started
+            )
+            * 1000,
+            2,
+        )
+
+        conversion_started = time.perf_counter()
 
         vetor_pgvector = _converter_embedding_pgvector(
             embedding_pergunta
+        )
+
+        vector_conversion_ms = round(
+            (
+                time.perf_counter()
+                - conversion_started
+            )
+            * 1000,
+            2,
         )
 
         sql = f"""
@@ -388,6 +415,8 @@ def buscar_chunks_semanticos(
             LIMIT %s;
         """
 
+        database_started = time.perf_counter()
+
         with cursor_postgres(
             dict_cursor=True,
             commit_automatico=False,
@@ -402,6 +431,17 @@ def buscar_chunks_semanticos(
             )
 
             registros = cursor.fetchall()
+
+        vector_database_ms = round(
+            (
+                time.perf_counter()
+                - database_started
+            )
+            * 1000,
+            2,
+        )
+
+        postprocess_started = time.perf_counter()
 
         resultados = []
 
@@ -471,6 +511,45 @@ def buscar_chunks_semanticos(
         categorias_texto = ", ".join(
             categorias_prioritarias
         )
+
+        vector_postprocess_ms = round(
+            (
+                time.perf_counter()
+                - postprocess_started
+            )
+            * 1000,
+            2,
+        )
+
+        vector_semantic_total_ms = round(
+            (
+                time.perf_counter()
+                - semantic_started
+            )
+            * 1000,
+            2,
+        )
+
+        if profiling is not None:
+            profiling.update(
+                {
+                    "query_embedding_ms": (
+                        query_embedding_ms
+                    ),
+                    "vector_conversion_ms": (
+                        vector_conversion_ms
+                    ),
+                    "vector_database_ms": (
+                        vector_database_ms
+                    ),
+                    "vector_postprocess_ms": (
+                        vector_postprocess_ms
+                    ),
+                    "vector_semantic_total_ms": (
+                        vector_semantic_total_ms
+                    ),
+                }
+            )
 
         return {
             "ok": True,
