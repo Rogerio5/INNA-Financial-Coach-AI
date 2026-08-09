@@ -120,9 +120,16 @@ def test_hybrid_result_exposes_retrieval_trace(
     )
 
 
-def test_local_fallback_is_traced(
+def test_legacy_local_fallback_is_not_used(
     monkeypatch: pytest.MonkeyPatch,
 ):
+    """
+    O runtime RAG principal é 3072-only.
+
+    Quando o retrieval híbrido estruturado não
+    retorna resultados, a execução não deve voltar
+    para o retrieval legado.
+    """
     _disable_security(monkeypatch)
     _disable_gemini(monkeypatch)
 
@@ -139,18 +146,17 @@ def test_local_fallback_is_traced(
         calls["hybrid"] += 1
         return []
 
-    def local_search(
+    def legacy_local_search(
         pergunta,
         idioma="pt",
         top_k=4,
     ):
         calls["local"] += 1
-        return [
-            _rag_result(
-                chunk_id=20,
-                modo_busca="rag_local_fallback",
-            )
-        ]
+
+        raise AssertionError(
+            "Legacy local RAG must not run "
+            "in the 3072-only runtime."
+        )
 
     monkeypatch.setattr(
         rag_engine,
@@ -161,7 +167,7 @@ def test_local_fallback_is_traced(
     monkeypatch.setattr(
         rag_engine,
         "search_knowledge_base",
-        local_search,
+        legacy_local_search,
     )
 
     resultado = rag_engine.answer_with_rag(
@@ -172,24 +178,17 @@ def test_local_fallback_is_traced(
 
     assert calls == {
         "hybrid": 1,
-        "local": 1,
+        "local": 0,
     }
 
-    assert resultado["modo"] == (
-        "rag_local_fallback"
+    assert resultado["fontes"] == []
+
+    assert (
+        resultado["retrieval_trace"][
+            "search_mode"
+        ]
+        == "sem_resultados"
     )
-
-    trace = resultado["retrieval_trace"]
-
-    assert trace["search_mode"] == (
-        "rag_local_fallback"
-    )
-
-    assert trace["top_k"] == 3
-    assert trace["results_total"] == 1
-    assert trace["results"][0][
-        "chunk_id"
-    ] == 20
 
 
 def test_no_results_response_is_traced(
