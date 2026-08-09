@@ -485,6 +485,7 @@ def criar_definicao_buscar_conhecimento_rag(
         allowed_agents=frozenset({
             "rag_agent",
             "education_agent",
+            "research_agent",
         }),
         timeout_seconds=timeout_seconds,
         idempotent=True,

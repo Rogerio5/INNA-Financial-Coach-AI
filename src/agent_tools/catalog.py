@@ -9,14 +9,18 @@ from __future__ import annotations
 
 import os
 
+from src.agent_tools.communication_tools import (
+    criar_definicao_preparar_email_financeiro,
+    criar_definicao_preparar_mensagem_telegram,
+)
 from src.agent_tools.core import (
     ToolRegistry,
 )
-from src.agent_tools.financial_tools import (
-    criar_definicao_calcular_diagnostico_financeiro,
-)
 from src.agent_tools.financial_history_tools import (
     criar_definicao_consultar_historico_financeiro,
+)
+from src.agent_tools.financial_tools import (
+    criar_definicao_calcular_diagnostico_financeiro,
 )
 from src.agent_tools.rag_tools import (
     criar_definicao_buscar_conhecimento_rag,
@@ -24,7 +28,6 @@ from src.agent_tools.rag_tools import (
 from src.agent_tools.report_tools import (
     criar_definicao_preparar_relatorio_financeiro,
 )
-
 
 DEFAULT_RAG_TOOL_TIMEOUT_SECONDS = 20.0
 DEFAULT_FINANCIAL_TOOL_TIMEOUT_SECONDS = 2.0
@@ -110,6 +113,19 @@ def criar_registro_ferramentas_inna(
             timeout_seconds=(
                 report_preparation_timeout
             ),
+        )
+    )
+
+
+    registry.register(
+        criar_definicao_preparar_email_financeiro(
+            timeout_seconds=2.0,
+        )
+    )
+
+    registry.register(
+        criar_definicao_preparar_mensagem_telegram(
+            timeout_seconds=2.0,
         )
     )
 

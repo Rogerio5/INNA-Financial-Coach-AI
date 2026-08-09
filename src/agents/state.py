@@ -188,6 +188,7 @@ class InnaAgentState(TypedDict, total=False):
     currency: str
 
     thread_id: str
+    trace_id: str
     conversation_history: Annotated[
         list[dict[str, str]],
         merge_conversation_history,
@@ -217,6 +218,9 @@ class InnaAgentState(TypedDict, total=False):
     governance_decision: dict[str, Any]
 
     use_rag: bool
+    agentic_rag_mode: str
+    agentic_rag_execution: dict[str, Any]
+    agentic_rag_fallback_used: bool
     use_database: bool
     generate_report: bool
 

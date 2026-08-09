@@ -27,7 +27,6 @@ from src.services.financial_history.repository import (
     consultar_historico_financeiro_usuario,
 )
 
-
 FINANCIAL_HISTORY_TOOL_NAME = (
     "consultar_historico_financeiro"
 )
@@ -206,6 +205,7 @@ def criar_definicao_consultar_historico_financeiro(
         allowed_agents=frozenset({
             "financial_agent",
             "report_agent",
+            "research_agent",
         }),
         timeout_seconds=timeout_seconds,
         idempotent=True,
