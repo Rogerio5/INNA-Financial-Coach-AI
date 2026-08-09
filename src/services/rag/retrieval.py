@@ -206,6 +206,82 @@ def _calcular_score_rag(
     )
 
 
+def _extrair_termos_busca_textual(
+    pergunta: str,
+    *,
+    limite: int = 10,
+) -> list[str]:
+    """
+    Extrai termos relevantes para o retrieval textual estruturado.
+    """
+    import re
+
+    texto = str(
+        pergunta or ""
+    ).lower()
+
+    candidatos = re.findall(
+        r"[0-9a-zà-ÿ_-]{2,}",
+        texto,
+    )
+
+    ignorados = {
+        "a",
+        "ao",
+        "aos",
+        "as",
+        "com",
+        "como",
+        "da",
+        "das",
+        "de",
+        "do",
+        "dos",
+        "e",
+        "em",
+        "essa",
+        "esse",
+        "eu",
+        "isso",
+        "me",
+        "meu",
+        "minha",
+        "na",
+        "nas",
+        "no",
+        "nos",
+        "o",
+        "os",
+        "para",
+        "por",
+        "posso",
+        "que",
+        "qual",
+        "quais",
+        "se",
+        "sem",
+        "sobre",
+        "um",
+        "uma",
+    }
+
+    termos: list[str] = []
+
+    for candidato in candidatos:
+        if candidato in ignorados:
+            continue
+
+        if candidato in termos:
+            continue
+
+        termos.append(candidato)
+
+        if len(termos) >= limite:
+            break
+
+    return termos
+
+
 def buscar_chunks_semanticos(
     pergunta: str,
     *,
@@ -266,6 +342,29 @@ def buscar_chunks_semanticos(
                 ce.documento_origem,
                 ce.chunk_index,
                 ce.texto,
+                du.nome_logico AS documento_key,
+                COALESCE(
+                    ce.metadata ->> 'document_title',
+                    du.nome_original,
+                    du.nome_logico,
+                    'Documento INNA'
+                ) AS titulo,
+                COALESCE(
+                    ce.documento_origem,
+                    du.caminho_upload,
+                    du.nome_salvo,
+                    du.nome_logico
+                ) AS fonte,
+                COALESCE(
+                    ce.metadata ->> 'area',
+                    du.origem,
+                    'conhecimento_inna'
+                ) AS categoria_documento,
+                COALESCE(
+                    ce.metadata ->> 'language',
+                    'pt-BR'
+                ) AS idioma,
+                ce.metadata,
                 ce.modelo_embedding,
                 ce.embedding::halfvec({int(dimensoes)})
                     <=> %s::halfvec({int(dimensoes)})
@@ -274,6 +373,15 @@ def buscar_chunks_semanticos(
             JOIN documentos_upload_rag du
                 ON du.id = ce.documento_id
             WHERE COALESCE(du.ativo, TRUE) = TRUE
+              AND NULLIF(
+                    BTRIM(
+                        COALESCE(
+                            du.nome_logico,
+                            ''
+                        )
+                    ),
+                    ''
+                  ) IS NOT NULL
             ORDER BY
                 ce.embedding::halfvec({int(dimensoes)})
                 <=> %s::halfvec({int(dimensoes)})
@@ -307,6 +415,9 @@ def buscar_chunks_semanticos(
 
             categoria = (
                 classificar_chunk(texto)
+                or item.get(
+                    "categoria_documento"
+                )
                 or "geral"
             )
 
@@ -319,9 +430,14 @@ def buscar_chunks_semanticos(
             )
 
             item.update({
+                "chunk_text": texto,
                 "distancia": distancia,
                 "similaridade_aproximada": similaridade,
+                "score": similaridade,
                 "categoria": categoria,
+                "modo_busca": (
+                    "rag_estruturado_3072_vetorial"
+                ),
                 "categorias_prioritarias": (
                     categorias_prioritarias
                 ),
@@ -381,7 +497,332 @@ def buscar_chunks_semanticos(
         }
 
 
+def buscar_chunks_textuais(
+    pergunta: str,
+    *,
+    limite: int = 5,
+    classificar_chunk: ChunkClassifier,
+) -> dict:
+    """
+    Busca textual estruturada sobre chunks_embeddings_rag.
+
+    Somente documentos ativos e com nome lógico participam
+    do retrieval de produção.
+    """
+    pergunta = str(
+        pergunta or ""
+    ).strip()
+
+    if not pergunta:
+        return {
+            "ok": False,
+            "message": "Pergunta vazia.",
+            "resultados": [],
+        }
+
+    if not callable(classificar_chunk):
+        return {
+            "ok": False,
+            "message": (
+                "Função de classificação "
+                "de chunks inválida."
+            ),
+            "resultados": [],
+        }
+
+    termos = _extrair_termos_busca_textual(
+        pergunta
+    )
+
+    if not termos:
+        return {
+            "ok": True,
+            "message": (
+                "Nenhum termo textual "
+                "relevante identificado."
+            ),
+            "resultados": [],
+            "limite_utilizado": 0,
+            "total_candidatos": 0,
+        }
+
+    limite_final = _validar_limite(
+        limite
+    )
+
+    limite_busca = max(
+        limite_final * 4,
+        10,
+    )
+
+    score_partes: list[str] = []
+    where_partes: list[str] = []
+
+    score_params: list[str] = []
+    where_params: list[str] = []
+
+    for termo in termos:
+        pattern = f"%{termo}%"
+
+        score_partes.append(
+            """
+            (
+                CASE
+                    WHEN LOWER(ce.texto)
+                         LIKE %s
+                    THEN 1.00
+                    ELSE 0.00
+                END
+                +
+                CASE
+                    WHEN LOWER(
+                        COALESCE(
+                            du.nome_original,
+                            ''
+                        )
+                    ) LIKE %s
+                    THEN 0.35
+                    ELSE 0.00
+                END
+                +
+                CASE
+                    WHEN LOWER(
+                        COALESCE(
+                            du.nome_logico,
+                            ''
+                        )
+                    ) LIKE %s
+                    THEN 0.50
+                    ELSE 0.00
+                END
+            )
+            """
+        )
+
+        score_params.extend(
+            [
+                pattern,
+                pattern,
+                pattern,
+            ]
+        )
+
+        where_partes.append(
+            """
+            (
+                LOWER(ce.texto) LIKE %s
+                OR LOWER(
+                    COALESCE(
+                        du.nome_original,
+                        ''
+                    )
+                ) LIKE %s
+                OR LOWER(
+                    COALESCE(
+                        du.nome_logico,
+                        ''
+                    )
+                ) LIKE %s
+            )
+            """
+        )
+
+        where_params.extend(
+            [
+                pattern,
+                pattern,
+                pattern,
+            ]
+        )
+
+    score_sql = " + ".join(
+        score_partes
+    )
+
+    where_sql = " OR ".join(
+        where_partes
+    )
+
+    sql = f"""
+        SELECT
+            ce.id,
+            ce.documento_id,
+            ce.chunk_id,
+            ce.documento_origem,
+            ce.chunk_index,
+            ce.texto,
+            du.nome_logico AS documento_key,
+            COALESCE(
+                ce.metadata ->> 'document_title',
+                du.nome_original,
+                du.nome_logico,
+                'Documento INNA'
+            ) AS titulo,
+            COALESCE(
+                ce.documento_origem,
+                du.caminho_upload,
+                du.nome_salvo,
+                du.nome_logico
+            ) AS fonte,
+            COALESCE(
+                ce.metadata ->> 'area',
+                du.origem,
+                'conhecimento_inna'
+            ) AS categoria_documento,
+            COALESCE(
+                ce.metadata ->> 'language',
+                'pt-BR'
+            ) AS idioma,
+            ce.metadata,
+            ce.modelo_embedding,
+            ({score_sql}) AS score_textual
+        FROM chunks_embeddings_rag ce
+        JOIN documentos_upload_rag du
+            ON du.id = ce.documento_id
+        WHERE COALESCE(
+            du.ativo,
+            TRUE
+        ) = TRUE
+          AND NULLIF(
+                BTRIM(
+                    COALESCE(
+                        du.nome_logico,
+                        ''
+                    )
+                ),
+                ''
+              ) IS NOT NULL
+          AND ({where_sql})
+        ORDER BY
+            score_textual DESC,
+            ce.documento_id ASC,
+            ce.chunk_index ASC
+        LIMIT %s;
+    """
+
+    parametros = (
+        score_params
+        + where_params
+        + [limite_busca]
+    )
+
+    try:
+        with cursor_postgres(
+            dict_cursor=True,
+            commit_automatico=False,
+        ) as cursor:
+            cursor.execute(
+                sql,
+                tuple(parametros),
+            )
+
+            registros = cursor.fetchall()
+
+        resultados: list[dict] = []
+
+        categorias_prioritarias = (
+            inferir_categorias_pergunta(
+                pergunta
+            )
+        )
+
+        for registro in registros:
+            item = dict(
+                registro
+            )
+
+            texto = (
+                item.get("texto")
+                or ""
+            )
+
+            categoria = (
+                classificar_chunk(texto)
+                or item.get(
+                    "categoria_documento"
+                )
+                or "geral"
+            )
+
+            score_textual = float(
+                item.get(
+                    "score_textual"
+                )
+                or 0
+            )
+
+            prioridade_categoria = int(
+                categoria
+                in categorias_prioritarias
+            )
+
+            item.update({
+                "chunk_text": texto,
+                "categoria": categoria,
+                "score": score_textual,
+                "score_textual": (
+                    score_textual
+                ),
+                "prioridade_categoria": (
+                    prioridade_categoria
+                ),
+                "categorias_prioritarias": (
+                    categorias_prioritarias
+                ),
+                "modo_busca": (
+                    "rag_estruturado_3072_textual"
+                ),
+            })
+
+            resultados.append(
+                item
+            )
+
+        resultados = sorted(
+            resultados,
+            key=lambda item: (
+                float(
+                    item.get(
+                        "score_textual"
+                    )
+                    or 0
+                ),
+                int(
+                    item.get(
+                        "prioridade_categoria"
+                    )
+                    or 0
+                ),
+            ),
+            reverse=True,
+        )[:limite_final]
+
+        return {
+            "ok": True,
+            "message": (
+                f"{len(resultados)} chunks "
+                "textuais encontrados."
+            ),
+            "resultados": resultados,
+            "limite_utilizado": limite_final,
+            "total_candidatos": len(
+                registros
+            ),
+        }
+
+    except Exception as exc:
+        return {
+            "ok": False,
+            "message": (
+                "Erro na busca textual "
+                f"estruturada: {exc}"
+            ),
+            "resultados": [],
+        }
+
+
 __all__ = [
     "inferir_categorias_pergunta",
     "buscar_chunks_semanticos",
+    "buscar_chunks_textuais",
 ]
