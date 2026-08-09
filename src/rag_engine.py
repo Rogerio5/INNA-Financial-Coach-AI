@@ -433,165 +433,201 @@ def load_chunks(idioma: str = "pt") -> list[dict[str, Any]]:
 
 
 
-def search_knowledge_base_pgvector(query: str, idioma: str = "pt", top_k: int = 4) -> list[dict]:
+def search_knowledge_base_pgvector(
+    query: str,
+    idioma: str = "pt",
+    top_k: int = 4,
+) -> list[dict]:
     """
-    Busca principal da INNA:
-    Gemini Embeddings + pgvector no Neon/PostgreSQL.
+    Retrieval vetorial estruturado da INNA.
+
+    Runtime oficial:
+    - Gemini embedding 3072;
+    - chunks_embeddings_rag;
+    - documentos_upload_rag;
+    - identidade documental nativa.
     """
-    query_embedding = generate_gemini_embedding(query)
-
-    if not query_embedding:
-        return []
-
-    query_vector_sql = pgvector_to_sql(query_embedding)
-
-    conn = get_rag_connection()
-    cur = conn.cursor()
-
     try:
-        cur.execute(
-            """
-            SELECT
-                id,
-                titulo,
-                fonte,
-                categoria,
-                idioma,
-                chunk_index,
-                chunk_text,
-                metadata,
-                1 - (embedding_vector <=> %s::vector) AS score
-            FROM inna_knowledge_chunks
-            WHERE idioma = %s
-              AND embedding_vector IS NOT NULL
-            ORDER BY embedding_vector <=> %s::vector
-            LIMIT %s;
-            """,
-            (query_vector_sql, idioma, query_vector_sql, top_k),
+        from services.embeddings.gemini import (
+            gerar_embedding_consulta,
+        )
+        from services.rag.retrieval import (
+            buscar_chunks_semanticos,
+        )
+    except ImportError:
+        from src.services.embeddings.gemini import (
+            gerar_embedding_consulta,
+        )
+        from src.services.rag.retrieval import (
+            buscar_chunks_semanticos,
         )
 
-        rows = cur.fetchall()
-        columns = [desc[0] for desc in cur.description]
+    limite = max(
+        int(top_k or 1),
+        1,
+    )
 
-        results = []
+    payload = buscar_chunks_semanticos(
+        query,
+        limite=max(
+            limite * 4,
+            10,
+        ),
+        gerar_embedding=gerar_embedding_consulta,
+        classificar_chunk=lambda _: "",
+        dimensoes=3072,
+    )
 
-        for row in rows:
-            item = dict(zip(columns, row, strict=True))
-            item["texto"] = item.get("chunk_text", "")
-            item["trecho"] = item.get("chunk_text", "")
-            item["score"] = float(item.get("score") or 0)
-            item["modo_busca"] = "gemini_embeddings_pgvector_neon"
-            results.append(item)
-
-        return results
-
-    finally:
-        cur.close()
-        conn.close()
-
-
-
-def search_knowledge_base_text(query: str, idioma: str = "pt", top_k: int = 4) -> list[dict]:
-    """
-    Busca textual complementar no PostgreSQL.
-    Ajuda quando a pergunta tem palavras específicas como dívida, reserva,
-    cartão, orçamento, gastos fixos e variáveis.
-    """
-    ensure_rag_tables()
-
-    query_norm = normalize_text(query)
-    termos = []
-
-    palavras_ignoradas = {
-        "como", "posso", "comecar", "começar", "uma", "para", "por", "que",
-        "qual", "quais", "sobre", "minha", "meu", "me", "da", "de", "do",
-        "das", "dos", "com", "sem", "isso", "esse", "essa", "estou"
-    }
-
-    for termo in re.findall(r"[a-zA-ZÀ-ÿ0-9]+", query.lower() + " " + query_norm):
-        termo_limpo = normalize_text(termo).strip()
-
-        if len(termo_limpo) < 3:
-            continue
-
-        if termo_limpo in palavras_ignoradas:
-            continue
-
-        if termo_limpo not in termos:
-            termos.append(termo_limpo)
-
-    termos = termos[:8]
-
-    if not termos:
+    if not payload.get("ok"):
         return []
 
-    score_expr = " + ".join(
-        ["(CASE WHEN LOWER(chunk_text) LIKE %s THEN 1 ELSE 0 END)" for _ in termos]
-    )
+    requested_language = str(
+        idioma or "pt"
+    ).lower().split("-")[0]
 
-    where_expr = " OR ".join(
-        [
-            "(LOWER(chunk_text) LIKE %s OR LOWER(titulo) LIKE %s OR LOWER(categoria) LIKE %s)"
-            for _ in termos
-        ]
-    )
+    resultados: list[dict] = []
 
-    sql = f"""
-        SELECT
-            id,
-            titulo,
-            fonte,
-            categoria,
-            idioma,
-            chunk_index,
-            chunk_text,
-            metadata,
-            ({score_expr}) AS score_textual
-        FROM inna_knowledge_chunks
-        WHERE idioma = %s
-          AND ({where_expr})
-        ORDER BY score_textual DESC, fonte, chunk_index
-        LIMIT %s;
+    for raw_item in (
+        payload.get("resultados")
+        or []
+    ):
+        item = dict(raw_item)
+
+        result_language = str(
+            item.get("idioma")
+            or ""
+        ).lower()
+
+        if result_language:
+            result_language = (
+                result_language.split("-")[0]
+            )
+
+            if (
+                result_language
+                != requested_language
+            ):
+                continue
+
+        texto = str(
+            item.get("chunk_text")
+            or item.get("texto")
+            or ""
+        )
+
+        item["trecho"] = texto
+        item["conteudo"] = texto
+
+        item["score"] = float(
+            item.get(
+                "similaridade_aproximada"
+            )
+            or item.get("score")
+            or 0
+        )
+
+        item["modo_busca"] = (
+            "rag_estruturado_3072_vetorial"
+        )
+
+        resultados.append(item)
+
+        if len(resultados) >= limite:
+            break
+
+    return resultados
+
+
+def search_knowledge_base_text(
+    query: str,
+    idioma: str = "pt",
+    top_k: int = 4,
+) -> list[dict]:
     """
+    Retrieval textual estruturado da INNA.
 
-    score_params = [f"%{termo}%" for termo in termos]
-
-    where_params = []
-    for termo in termos:
-        pattern = f"%{termo}%"
-        where_params.extend([pattern, pattern, pattern])
-
-    params = score_params + [idioma] + where_params + [top_k]
-
-    conn = get_rag_connection()
-    cur = conn.cursor()
-
+    Consulta exclusivamente a base documental
+    estruturada de 3072 dimensões.
+    """
     try:
-        cur.execute(sql, params)
+        from services.rag.retrieval import (
+            buscar_chunks_textuais,
+        )
+    except ImportError:
+        from src.services.rag.retrieval import (
+            buscar_chunks_textuais,
+        )
 
-        rows = cur.fetchall()
-        columns = [desc[0] for desc in cur.description]
+    limite = max(
+        int(top_k or 1),
+        1,
+    )
 
-        results = []
+    payload = buscar_chunks_textuais(
+        query,
+        limite=max(
+            limite * 4,
+            10,
+        ),
+        classificar_chunk=lambda _: "",
+    )
 
-        for row in rows:
-            item = dict(zip(columns, row, strict=True))
-            score_textual = float(item.get("score_textual") or 0)
+    if not payload.get("ok"):
+        return []
 
-            item["texto"] = item.get("chunk_text", "")
-            item["trecho"] = item.get("chunk_text", "")
-            item["score"] = min(0.95, 0.55 + (score_textual * 0.08))
-            item["modo_busca"] = "text_search_postgres_neon"
-            item["origem_busca"] = ["textual"]
+    requested_language = str(
+        idioma or "pt"
+    ).lower().split("-")[0]
 
-            results.append(item)
+    resultados: list[dict] = []
 
-        return results
+    for raw_item in (
+        payload.get("resultados")
+        or []
+    ):
+        item = dict(raw_item)
 
-    finally:
-        cur.close()
-        conn.close()
+        result_language = str(
+            item.get("idioma")
+            or ""
+        ).lower()
 
+        if result_language:
+            result_language = (
+                result_language.split("-")[0]
+            )
+
+            if (
+                result_language
+                != requested_language
+            ):
+                continue
+
+        texto = str(
+            item.get("chunk_text")
+            or item.get("texto")
+            or ""
+        )
+
+        item["trecho"] = texto
+        item["conteudo"] = texto
+
+        item["score"] = float(
+            item.get("score_textual")
+            or item.get("score")
+            or 0
+        )
+
+        item["modo_busca"] = (
+            "rag_estruturado_3072_textual"
+        )
+
+        resultados.append(item)
+
+        if len(resultados) >= limite:
+            break
+
+    return resultados
 
 
 def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) -> list[dict]:
@@ -703,7 +739,19 @@ def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) ->
         novo_item["score_rerank"] = round(score_rerank, 6)
         novo_item["termos_encontrados"] = termos_encontrados
         novo_item["temas_pergunta"] = temas_pergunta
-        novo_item["modo_busca"] = "rag_hibrido_pgvector_text_neon_rerank"
+        current_mode = str(
+            novo_item.get("modo_busca")
+            or "rag_hibrido_pgvector_text_neon"
+        )
+
+        if not current_mode.endswith(
+            "_rerank"
+        ):
+            current_mode += "_rerank"
+
+        novo_item["modo_busca"] = (
+            current_mode
+        )
 
         reranked.append(novo_item)
 
@@ -1134,52 +1182,184 @@ def search_knowledge_base_hybrid(
     sentence_window_chunk_radius: int | None = None,
 ) -> list[dict]:
     """
-    RAG híbrido da INNA:
-    - busca semântica com Gemini Embeddings + pgvector
-    - busca textual no PostgreSQL
-    - junta resultados
-    - remove duplicados
-    - ordena os melhores contextos
+    Hybrid RAG estruturado 3072 da INNA.
+
+    Combina retrieval vetorial e textual com
+    Reciprocal Rank Fusion (RRF), evitando comparar
+    diretamente scores de escalas diferentes.
     """
-    vector_results = search_knowledge_base_pgvector(query, idioma=idioma, top_k=max(top_k, 6))
-    text_results = search_knowledge_base_text(query, idioma=idioma, top_k=max(top_k, 6))
+    candidate_limit = max(
+        int(top_k or 1),
+        6,
+    )
 
-    combinados = {}
+    vector_results = (
+        search_knowledge_base_pgvector(
+            query,
+            idioma=idioma,
+            top_k=candidate_limit,
+        )
+    )
 
-    for item in vector_results:
-        item_id = item.get("id")
-        if item_id is None:
-            continue
+    text_results = (
+        search_knowledge_base_text(
+            query,
+            idioma=idioma,
+            top_k=candidate_limit,
+        )
+    )
 
-        item = dict(item)
-        item["origem_busca"] = ["vetorial"]
-        item["score_hibrido"] = float(item.get("score") or 0) + 0.10
-        item["modo_busca"] = "rag_hibrido_pgvector_text_neon"
-        combinados[item_id] = item
+    rrf_constant = 60.0
 
-    for item in text_results:
-        item_id = item.get("id")
-        if item_id is None:
-            continue
+    combinados: dict[
+        tuple,
+        dict,
+    ] = {}
 
-        item = dict(item)
+    def result_key(
+        item: dict,
+    ) -> tuple:
+        document_id = item.get(
+            "documento_id"
+        )
 
-        if item_id in combinados:
-            atual = combinados[item_id]
-            atual["score_hibrido"] = float(atual.get("score_hibrido") or 0) + 0.20
-            atual["origem_busca"] = sorted(set(atual.get("origem_busca", []) + ["textual"]))
-            atual["modo_busca"] = "rag_hibrido_pgvector_text_neon"
-        else:
-            item["score_hibrido"] = float(item.get("score") or 0)
-            item["modo_busca"] = "rag_hibrido_pgvector_text_neon"
-            combinados[item_id] = item
+        chunk_id = item.get(
+            "chunk_id"
+        )
 
-    results = list(combinados.values())
+        if (
+            document_id is not None
+            and chunk_id
+        ):
+            return (
+                "structured",
+                document_id,
+                str(chunk_id),
+            )
 
-    reranked_results = rerank_knowledge_results(
-        query,
-        results,
-        top_k=top_k,
+        return (
+            "legacy-compatible-id",
+            item.get("id"),
+        )
+
+    def register_ranked_results(
+        items: list[dict],
+        origin: str,
+    ) -> None:
+        for rank, raw_item in enumerate(
+            items,
+            start=1,
+        ):
+            item = dict(raw_item)
+            key = result_key(item)
+
+            contribution = (
+                1.0
+                / (
+                    rrf_constant
+                    + float(rank)
+                )
+            )
+
+            if key not in combinados:
+                item["origem_busca"] = []
+                item["score_hibrido"] = 0.0
+
+                combinados[key] = item
+
+            current = combinados[key]
+
+            origins = list(
+                current.get(
+                    "origem_busca"
+                )
+                or []
+            )
+
+            if origin not in origins:
+                origins.append(origin)
+
+            current["origem_busca"] = sorted(
+                origins
+            )
+
+            current["score_hibrido"] = (
+                float(
+                    current.get(
+                        "score_hibrido"
+                    )
+                    or 0
+                )
+                + contribution
+            )
+
+            current[
+                f"rrf_rank_{origin}"
+            ] = rank
+
+            current[
+                f"rrf_contribution_{origin}"
+            ] = round(
+                contribution,
+                8,
+            )
+
+            if (
+                origin == "textual"
+                and item.get(
+                    "score_textual"
+                )
+                is not None
+            ):
+                current["score_textual"] = (
+                    item.get(
+                        "score_textual"
+                    )
+                )
+
+            if (
+                origin == "vetorial"
+                and item.get(
+                    "similaridade_aproximada"
+                )
+                is not None
+            ):
+                current[
+                    "similaridade_aproximada"
+                ] = item.get(
+                    "similaridade_aproximada"
+                )
+
+            current["modo_busca"] = (
+                "rag_hibrido_"
+                "estruturado_3072_rrf"
+            )
+
+    register_ranked_results(
+        vector_results,
+        "vetorial",
+    )
+
+    register_ranked_results(
+        text_results,
+        "textual",
+    )
+
+    results = sorted(
+        combinados.values(),
+        key=lambda item: float(
+            item.get("score_hibrido")
+            or 0
+        ),
+        reverse=True,
+    )
+
+    reranked_results = (
+        rerank_knowledge_results(
+            query,
+            results,
+            top_k=top_k,
+        )
     )
 
     if not _sentence_window_boolean_setting(
@@ -1187,28 +1367,47 @@ def search_knowledge_base_hybrid(
     ):
         return reranked_results
 
-    resolved_window_size = _sentence_window_integer_setting(
-        explicit_value=sentence_window_size,
-        environment_name="INNA_RAG_SENTENCE_WINDOW_SIZE",
-        default=2,
-        minimum=0,
-        maximum=8,
+    resolved_window_size = (
+        _sentence_window_integer_setting(
+            explicit_value=(
+                sentence_window_size
+            ),
+            environment_name=(
+                "INNA_RAG_"
+                "SENTENCE_WINDOW_SIZE"
+            ),
+            default=2,
+            minimum=0,
+            maximum=8,
+        )
     )
 
-    resolved_chunk_radius = _sentence_window_integer_setting(
-        explicit_value=sentence_window_chunk_radius,
-        environment_name="INNA_RAG_SENTENCE_WINDOW_CHUNK_RADIUS",
-        default=1,
-        minimum=0,
-        maximum=4,
+    resolved_chunk_radius = (
+        _sentence_window_integer_setting(
+            explicit_value=(
+                sentence_window_chunk_radius
+            ),
+            environment_name=(
+                "INNA_RAG_SENTENCE_WINDOW_"
+                "CHUNK_RADIUS"
+            ),
+            default=1,
+            minimum=0,
+            maximum=4,
+        )
     )
 
-    resolved_max_characters = _sentence_window_integer_setting(
-        explicit_value=None,
-        environment_name="INNA_RAG_SENTENCE_WINDOW_MAX_CHARACTERS",
-        default=4000,
-        minimum=300,
-        maximum=12000,
+    resolved_max_characters = (
+        _sentence_window_integer_setting(
+            explicit_value=None,
+            environment_name=(
+                "INNA_RAG_SENTENCE_WINDOW_"
+                "MAX_CHARACTERS"
+            ),
+            default=4000,
+            minimum=300,
+            maximum=12000,
+        )
     )
 
     return _apply_sentence_window_to_results(
@@ -1217,9 +1416,10 @@ def search_knowledge_base_hybrid(
         results=reranked_results,
         window_size=resolved_window_size,
         chunk_radius=resolved_chunk_radius,
-        max_characters=resolved_max_characters,
+        max_characters=(
+            resolved_max_characters
+        ),
     )
-
 
 
 def search_knowledge_base(
@@ -2045,12 +2245,10 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
         top_k=top_k,
     )
 
-    if not results:
-        results = search_knowledge_base(
-            pergunta,
-            idioma=idioma,
-            top_k=top_k,
-        )
+    # Runtime RAG 3072-only.
+    # Não retorna ao armazenamento legado 768
+    # quando o retrieval estruturado não encontra
+    # evidência suficiente.
 
     modo_busca = (
         results[0].get(
