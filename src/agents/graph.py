@@ -17,6 +17,9 @@ from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command
 
+from src.agentic_rag.langgraph_integration import (
+    agentic_rag_gateway_node as rag_agent_node,
+)
 from src.agents.conversation_summary_node import (
     conversation_summary_node,
 )
@@ -40,7 +43,6 @@ from src.agents.nodes import (
     education_agent_node,
     fallback_agent_node,
     financial_agent_node,
-    rag_agent_node,
     report_agent_node,
 )
 from src.agents.persistence import (

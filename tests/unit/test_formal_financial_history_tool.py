@@ -122,6 +122,7 @@ def test_catalog_registers_history_tool():
         frozenset({
             "financial_agent",
             "report_agent",
+            "research_agent",
         })
     )
 
