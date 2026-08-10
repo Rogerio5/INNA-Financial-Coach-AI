@@ -16,8 +16,8 @@ from src.agent_tools.core import (
     ToolStatus,
 )
 from src.agent_tools.rag_tools import (
-    BuscarConhecimentoRagInput,
     RAG_TOOL_NAME,
+    BuscarConhecimentoRagInput,
     RagToolResult,
 )
 
@@ -273,3 +273,28 @@ def test_rag_failure_becomes_safe_tool_error():
         "informação interna"
         not in result.error.message
     )
+
+def test_context_extractor_falls_back_to_documents():
+    from src.agent_tools.rag_tools import (
+        _extrair_contexto_recuperado,
+    )
+
+    result = {
+        "contexto_usado": "",
+        "documentos": [
+            {
+                "chunk_text": "Primeiro contexto recuperado.",
+            },
+            {
+                "texto": "Segundo contexto recuperado.",
+            },
+            {
+                "trecho": "Primeiro contexto recuperado.",
+            },
+        ],
+    }
+
+    assert _extrair_contexto_recuperado(result) == [
+        "Primeiro contexto recuperado.",
+        "Segundo contexto recuperado.",
+    ]

@@ -25,3 +25,18 @@ cb66b93684cce4f2a638b26ff723a56b6514758a:docs/audits/week3_sentence_window_produ
 38a3b5a3595b4a1ab6b73f5ce6dee624a2f9c676:docs/audits/week3_sentence_window_production_decision.md:generic-api-key:23
 38a3b5a3595b4a1ab6b73f5ce6dee624a2f9c676:docs/audits/week3_sentence_window_production_decision.md:generic-api-key:90
 38a3b5a3595b4a1ab6b73f5ce6dee624a2f9c676:docs/audits/week3_sentence_window_production_decision.md:generic-api-key:285
+
+# PR #37: false positives for deterministic INNA document_key test identifiers.
+# Each entry is an exact Gitleaks finding fingerprint; no rule or path is broadly disabled.
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_rag_engine_graphrag_integration.py:generic-api-key:13
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_rag_engine_graphrag_integration.py:generic-api-key:71
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_knowledge_graph_rag_candidate_adapter.py:generic-api-key:19
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_knowledge_graph_rag_candidate_adapter.py:generic-api-key:136
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_knowledge_graph_semantic_enricher.py:generic-api-key:24
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_knowledge_graph_semantic_enricher.py:generic-api-key:41
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_knowledge_graph_semantic_enricher.py:generic-api-key:52
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_knowledge_graph_semantic_enricher.py:generic-api-key:142
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_knowledge_graph_repository.py:generic-api-key:93
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_knowledge_graph_builder.py:generic-api-key:24
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_knowledge_graph_domain_model.py:generic-api-key:23
+0af2be10f5de5607c84ad5075d9557ada72cdb02:tests/unit/test_knowledge_graph_domain_model.py:generic-api-key:33

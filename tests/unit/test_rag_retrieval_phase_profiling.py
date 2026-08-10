@@ -67,6 +67,7 @@ def test_hybrid_retrieval_exposes_phase_timings(
     expected_keys = {
         "vector_retrieval_ms",
         "text_retrieval_ms",
+        "graph_retrieval_ms",
         "rrf_ms",
         "rerank_ms",
         "auto_merging_ms",
