@@ -1594,6 +1594,9 @@ def search_knowledge_base_hybrid(
     auto_merging_parent_size: int | None = None,
     auto_merging_min_children: int | None = None,
     auto_merging_max_characters: int | None = None,
+    graph_rag_enabled: bool | None = None,
+    graph_rag_concept_limit: int | None = None,
+    graph_rag_chunk_limit: int | None = None,
     profiling: dict[str, float] | None = None,
 ) -> list[dict]:
     """
@@ -1610,6 +1613,44 @@ def search_knowledge_base_hybrid(
     candidate_limit = max(
         int(top_k or 1),
         6,
+    )
+
+    if graph_rag_enabled is None:
+        graph_enabled = str(
+            os.getenv("INNA_RAG_GRAPH_ENABLED", "false") or "false"
+        ).strip().lower() in {"1", "true", "yes", "on"}
+    else:
+        graph_enabled = bool(graph_rag_enabled)
+
+    def _resolve_graph_limit(
+        explicit_value: int | None,
+        *,
+        environment_name: str,
+        default: int,
+        maximum: int,
+    ) -> int:
+        raw_value = (
+            explicit_value
+            if explicit_value is not None
+            else os.getenv(environment_name, str(default))
+        )
+        try:
+            parsed = int(raw_value)
+        except (TypeError, ValueError):
+            parsed = default
+        return max(1, min(parsed, maximum))
+
+    resolved_graph_concept_limit = _resolve_graph_limit(
+        graph_rag_concept_limit,
+        environment_name="INNA_RAG_GRAPH_CONCEPT_LIMIT",
+        default=3,
+        maximum=12,
+    )
+    resolved_graph_chunk_limit = _resolve_graph_limit(
+        graph_rag_chunk_limit,
+        environment_name="INNA_RAG_GRAPH_CHUNK_LIMIT",
+        default=candidate_limit,
+        maximum=24,
     )
 
     from concurrent.futures import (
@@ -1704,18 +1745,67 @@ def search_knowledge_base_hybrid(
             text_retrieval_ms,
         )
 
+    def _run_graph_retrieval():
+        if not graph_enabled:
+            return ([], 0.0)
+
+        graph_started = time.perf_counter()
+        graph_candidates: list[dict] = []
+
+        try:
+            try:
+                from knowledge_graph.rag_candidate_adapter import (
+                    graph_results_to_rag_candidates,
+                )
+                from knowledge_graph.retriever import (
+                    get_shared_graph_retriever,
+                    reset_shared_graph_retriever,
+                )
+            except ImportError:
+                from src.knowledge_graph.rag_candidate_adapter import (
+                    graph_results_to_rag_candidates,
+                )
+                from src.knowledge_graph.retriever import (
+                    get_shared_graph_retriever,
+                    reset_shared_graph_retriever,
+                )
+
+            graph_retriever = (
+                get_shared_graph_retriever()
+            )
+
+            try:
+                graph_results = graph_retriever.search(
+                    query,
+                    concept_limit=resolved_graph_concept_limit,
+                    chunk_limit=resolved_graph_chunk_limit,
+                )
+            except Exception:
+                reset_shared_graph_retriever()
+                raise
+
+            graph_candidates = graph_results_to_rag_candidates(graph_results)
+        except Exception:
+            graph_candidates = []
+
+        graph_retrieval_ms = round(
+            (time.perf_counter() - graph_started) * 1000,
+            2,
+        )
+        return (graph_candidates, graph_retrieval_ms)
+
     with ThreadPoolExecutor(
-        max_workers=2,
+        max_workers=(3 if graph_enabled else 2),
         thread_name_prefix=(
             "inna-rag-retrieval"
         ),
     ) as executor:
-        vector_future = executor.submit(
-            _run_vector_retrieval
-        )
-
-        text_future = executor.submit(
-            _run_text_retrieval
+        vector_future = executor.submit(_run_vector_retrieval)
+        text_future = executor.submit(_run_text_retrieval)
+        graph_future = (
+            executor.submit(_run_graph_retrieval)
+            if graph_enabled
+            else None
         )
 
         (
@@ -1723,11 +1813,16 @@ def search_knowledge_base_hybrid(
             vector_retrieval_ms,
             vector_detail_timings,
         ) = vector_future.result()
-
         (
             text_results,
             text_retrieval_ms,
         ) = text_future.result()
+
+        if graph_future is not None:
+            graph_results, graph_retrieval_ms = graph_future.result()
+        else:
+            graph_results = []
+            graph_retrieval_ms = 0.0
 
     if profiling is not None:
         profiling.update(
@@ -1857,10 +1952,26 @@ def search_knowledge_base_hybrid(
                     "similaridade_aproximada"
                 )
 
-            current["modo_busca"] = (
-                "rag_hibrido_"
-                "estruturado_3072_rrf"
-            )
+            if origin == "grafo":
+                for graph_field in (
+                    "score_graph",
+                    "graph_concept_key",
+                    "graph_concept_node_id",
+                    "graph_retrieval",
+                ):
+                    if item.get(graph_field) is not None:
+                        current[graph_field] = item.get(graph_field)
+
+            if "grafo" in current["origem_busca"]:
+                current["modo_busca"] = (
+                    "rag_hibrido_grafo_"
+                    "estruturado_3072_rrf"
+                )
+            else:
+                current["modo_busca"] = (
+                    "rag_hibrido_"
+                    "estruturado_3072_rrf"
+                )
 
     register_ranked_results(
         vector_results,
@@ -1871,6 +1982,12 @@ def search_knowledge_base_hybrid(
         text_results,
         "textual",
     )
+
+    if graph_results:
+        register_ranked_results(
+            graph_results,
+            "grafo",
+        )
 
     results = sorted(
         combinados.values(),
@@ -2016,6 +2133,9 @@ def search_knowledge_base_hybrid(
                     "text_retrieval_ms": (
                         text_retrieval_ms
                     ),
+                    "graph_retrieval_ms": (
+                        graph_retrieval_ms
+                    ),
                     "rrf_ms": rrf_ms,
                     "rerank_ms": rerank_ms,
                     "auto_merging_ms": (
@@ -2118,6 +2238,9 @@ def search_knowledge_base_hybrid(
                 ),
                 "text_retrieval_ms": (
                     text_retrieval_ms
+                ),
+                "graph_retrieval_ms": (
+                    graph_retrieval_ms
                 ),
                 "rrf_ms": rrf_ms,
                 "rerank_ms": rerank_ms,
