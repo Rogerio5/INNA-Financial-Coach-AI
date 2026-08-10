@@ -1,0 +1,207 @@
+{
+  "phase": "5.23E",
+  "experiment": "auto_merging_historical_reproduction",
+  "top_k": 3,
+  "sentence_window_enabled": false,
+  "generative_gemini_enabled": false,
+  "queries": [
+    {
+      "dataset_index": 1,
+      "question": "como posso começar uma reserva financeira?",
+      "top_k": 3,
+      "historical": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 2,
+        "auto_merging_applied": true,
+        "child_count": 2
+      },
+      "current": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 2,
+        "auto_merging_observed": true,
+        "auto_merging_applied": true,
+        "merged_result_count": 1,
+        "child_count": 2,
+        "auto_merging_ms": 0.14,
+        "baseline_context_characters": 2969,
+        "candidate_context_characters": 2969,
+        "baseline_context_sha256": "5f66a0a11d09193fdcce446c89ca4b2b8cae9b9f302398ebee0ecc5f474ac9ac",
+        "candidate_context_sha256": "5f66a0a11d09193fdcce446c89ca4b2b8cae9b9f302398ebee0ecc5f474ac9ac",
+        "context_exact_match": true
+      },
+      "reproduction": {
+        "result_counts_match": true,
+        "applied_matches": true,
+        "child_count_matches": true
+      }
+    },
+    {
+      "dataset_index": 2,
+      "question": "ganho 3000 gasto 2500 e guardo 100",
+      "top_k": 3,
+      "historical": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 3,
+        "auto_merging_applied": false,
+        "child_count": 0
+      },
+      "current": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 3,
+        "auto_merging_observed": true,
+        "auto_merging_applied": false,
+        "merged_result_count": 0,
+        "child_count": 0,
+        "auto_merging_ms": 0.1,
+        "baseline_context_characters": 2231,
+        "candidate_context_characters": 2231,
+        "baseline_context_sha256": "16e6f9ad69933bca649ec0bd9efa403093f973637cf687cc34d8149f20edaaca",
+        "candidate_context_sha256": "16e6f9ad69933bca649ec0bd9efa403093f973637cf687cc34d8149f20edaaca",
+        "context_exact_match": true
+      },
+      "reproduction": {
+        "result_counts_match": true,
+        "applied_matches": true,
+        "child_count_matches": true
+      }
+    },
+    {
+      "dataset_index": 3,
+      "question": "cartão de crédito está me apertando",
+      "top_k": 3,
+      "historical": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 2,
+        "auto_merging_applied": true,
+        "child_count": 2
+      },
+      "current": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 2,
+        "auto_merging_observed": true,
+        "auto_merging_applied": true,
+        "merged_result_count": 1,
+        "child_count": 2,
+        "auto_merging_ms": 0.15,
+        "baseline_context_characters": 2819,
+        "candidate_context_characters": 2819,
+        "baseline_context_sha256": "ef52da8c0e6f8a1f9e02974900cac818087fce399402f24f50fac7b3e9182faf",
+        "candidate_context_sha256": "da66f67c6392724bf20dd3f1b14c64151fb5711299188cd66ab559e82d26b7ca",
+        "context_exact_match": false
+      },
+      "reproduction": {
+        "result_counts_match": true,
+        "applied_matches": true,
+        "child_count_matches": true
+      }
+    },
+    {
+      "dataset_index": 4,
+      "question": "como organizar gastos fixos e variáveis?",
+      "top_k": 3,
+      "historical": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 2,
+        "auto_merging_applied": true,
+        "child_count": 2
+      },
+      "current": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 2,
+        "auto_merging_observed": true,
+        "auto_merging_applied": true,
+        "merged_result_count": 1,
+        "child_count": 2,
+        "auto_merging_ms": 0.15,
+        "baseline_context_characters": 2519,
+        "candidate_context_characters": 2519,
+        "baseline_context_sha256": "0435513f1f6c15aec18b9a485e9efb57873bf660b2587ea309b60f46df137b07",
+        "candidate_context_sha256": "0435513f1f6c15aec18b9a485e9efb57873bf660b2587ea309b60f46df137b07",
+        "context_exact_match": true
+      },
+      "reproduction": {
+        "result_counts_match": true,
+        "applied_matches": true,
+        "child_count_matches": true
+      }
+    },
+    {
+      "dataset_index": 5,
+      "question": "como sair das dívidas?",
+      "top_k": 3,
+      "historical": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 2,
+        "auto_merging_applied": true,
+        "child_count": 2
+      },
+      "current": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 2,
+        "auto_merging_observed": true,
+        "auto_merging_applied": true,
+        "merged_result_count": 1,
+        "child_count": 2,
+        "auto_merging_ms": 0.15,
+        "baseline_context_characters": 3163,
+        "candidate_context_characters": 3163,
+        "baseline_context_sha256": "cf83844652c8856d9e4ae04a3ff9b16f7d1a570c660944082e39dad77714bcd1",
+        "candidate_context_sha256": "cf83844652c8856d9e4ae04a3ff9b16f7d1a570c660944082e39dad77714bcd1",
+        "context_exact_match": true
+      },
+      "reproduction": {
+        "result_counts_match": true,
+        "applied_matches": true,
+        "child_count_matches": true
+      }
+    },
+    {
+      "dataset_index": 6,
+      "question": "o que é reserva de emergência?",
+      "top_k": 3,
+      "historical": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 2,
+        "auto_merging_applied": true,
+        "child_count": 2
+      },
+      "current": {
+        "baseline_result_count": 3,
+        "candidate_result_count": 2,
+        "auto_merging_observed": true,
+        "auto_merging_applied": true,
+        "merged_result_count": 1,
+        "child_count": 2,
+        "auto_merging_ms": 0.1,
+        "baseline_context_characters": 2969,
+        "candidate_context_characters": 2969,
+        "baseline_context_sha256": "6130e0c982b31ca3c8d17cc6203866570453fe4ca0d4e6b45966ddcfb9df3a98",
+        "candidate_context_sha256": "5f66a0a11d09193fdcce446c89ca4b2b8cae9b9f302398ebee0ecc5f474ac9ac",
+        "context_exact_match": false
+      },
+      "reproduction": {
+        "result_counts_match": true,
+        "applied_matches": true,
+        "child_count_matches": true
+      }
+    }
+  ],
+  "summary": {
+    "query_count": 6,
+    "result_count_match_count": 6,
+    "applied_match_count": 6,
+    "child_count_match_count": 6,
+    "full_historical_reproduction": true,
+    "applied_query_count": 5,
+    "context_changed_query_count": 2,
+    "context_identical_query_count": 4,
+    "total_child_count": 10,
+    "baseline_results_total": 18,
+    "candidate_results_total": 13,
+    "result_count_total_delta": -5,
+    "baseline_context_characters_total": 16670,
+    "candidate_context_characters_total": 16670,
+    "context_characters_total_delta": 0,
+    "classification": "REPRODUCED_WITH_CONTEXT_CHANGE"
+  }
+}

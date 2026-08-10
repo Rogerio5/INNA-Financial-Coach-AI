@@ -12,6 +12,10 @@ from src.evaluation.deepeval_integration import (
     DeepEvalCasePayload,
     build_deepeval_payload,
 )
+from src.evaluation.gemini_cost_accounting import (
+    calculate_gemini_35_flash_lite_cost,
+    resolve_gemini_billing_mode,
+)
 from src.evaluation.payload_providers import (
     PayloadProviderError,
 )
@@ -199,6 +203,120 @@ def _retrieval_context(
     )
 
 
+def _llm_usage(
+    state: Mapping[str, Any],
+) -> dict[str, int]:
+    raw_usage = _rag_execution(
+        state
+    ).get(
+        "llm_usage",
+        {},
+    )
+
+    usage = {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+    }
+
+    if not isinstance(
+        raw_usage,
+        Mapping,
+    ):
+        return usage
+
+    for key in (
+        "input_tokens",
+        "output_tokens",
+        "total_tokens",
+    ):
+        try:
+            usage[key] = max(
+                0,
+                int(
+                    raw_usage.get(
+                        key,
+                        0,
+                    )
+                    or 0
+                ),
+            )
+        except (
+            TypeError,
+            ValueError,
+        ):
+            usage[key] = 0
+
+    if usage["total_tokens"] <= 0:
+        usage["total_tokens"] = (
+            usage["input_tokens"]
+            + usage["output_tokens"]
+        )
+
+    return usage
+
+
+def _gemini_cost_metadata(
+    state: Mapping[str, Any],
+) -> dict[str, Any]:
+    usage = _llm_usage(
+        state
+    )
+
+    accounting = (
+        calculate_gemini_35_flash_lite_cost(
+            input_tokens=(
+                usage["input_tokens"]
+            ),
+            output_tokens=(
+                usage["output_tokens"]
+            ),
+            billing_mode=(
+                resolve_gemini_billing_mode()
+            ),
+        )
+    )
+
+    return {
+        "input_tokens": (
+            usage["input_tokens"]
+        ),
+        "output_tokens": (
+            usage["output_tokens"]
+        ),
+        "total_tokens": (
+            usage["total_tokens"]
+        ),
+        "generation_model": (
+            accounting.model_name
+        ),
+        "billing_mode": (
+            accounting.billing_mode
+        ),
+        "actual_billed_cost_usd": (
+            accounting.actual_billed_cost_usd
+        ),
+        "paid_equivalent_cost_usd": (
+            accounting.paid_equivalent_cost_usd
+        ),
+        "free_tier_savings_usd": (
+            accounting.free_tier_savings_usd
+        ),
+        "paid_input_rate_per_1m_usd": (
+            accounting.paid_input_rate_per_1m_usd
+        ),
+        "paid_output_rate_per_1m_usd": (
+            accounting.paid_output_rate_per_1m_usd
+        ),
+        "pricing_snapshot_date": (
+            accounting.pricing_snapshot_date
+        ),
+        "token_usage_observed": (
+            usage["total_tokens"] > 0
+        ),
+    }
+
+
 def _retrieved_documents(
     state: Mapping[str, Any],
 ) -> int:
@@ -278,6 +396,96 @@ def _human_review_metadata(
         metadata[
             "human_review_status"
         ] = status
+
+    return metadata
+
+
+def _retrieval_telemetry_metadata(
+    state: Any,
+) -> dict[str, Any]:
+    """
+    Converte a telemetria compacta do RAG em
+    metadata segura para avaliação.
+    """
+    if not isinstance(
+        state,
+        dict,
+    ):
+        return {}
+
+    structured_response = state.get(
+        "structured_response",
+        {},
+    )
+
+    if not isinstance(
+        structured_response,
+        dict,
+    ):
+        return {}
+
+    rag_execution = (
+        structured_response.get(
+            "rag_execution",
+            {},
+        )
+    )
+
+    if not isinstance(
+        rag_execution,
+        dict,
+    ):
+        return {}
+
+    retrieval_telemetry = (
+        rag_execution.get(
+            "retrieval_telemetry",
+            {},
+        )
+    )
+
+    if not isinstance(
+        retrieval_telemetry,
+        dict,
+    ):
+        return {}
+
+    key_mapping = {
+        "observed": (
+            "auto_merging_observed"
+        ),
+        "applied": (
+            "auto_merging_applied"
+        ),
+        "merged_result_count": (
+            "auto_merging_merged_result_count"
+        ),
+        "child_count": (
+            "auto_merging_child_count"
+        ),
+        "duration_ms": (
+            "auto_merging_ms"
+        ),
+    }
+
+    metadata: dict[str, Any] = {}
+
+    for (
+        source_key,
+        target_key,
+    ) in key_mapping.items():
+
+        if (
+            source_key
+            not in retrieval_telemetry
+        ):
+            continue
+
+        metadata[target_key] = (
+            retrieval_telemetry[
+                source_key
+            ]
+        )
 
     return metadata
 
@@ -424,7 +632,19 @@ class LiveInnaPayloadProvider:
         )
 
         observed_metadata.update(
+            _retrieval_telemetry_metadata(
+                state
+            )
+        )
+
+        observed_metadata.update(
             dict(self.metadata)
+        )
+
+        observed_metadata.update(
+            _gemini_cost_metadata(
+                state
+            )
         )
 
         return build_deepeval_payload(

@@ -1,0 +1,87 @@
+{
+  "experiment": "auto_merging_retrieval_ab",
+  "generated_at": "2026-08-09T10:02:17.056342+00:00",
+  "simulation": false,
+  "variants": [
+    {
+      "name": "hybrid_baseline",
+      "sentence_window_enabled": false,
+      "auto_merging_enabled": false
+    },
+    {
+      "name": "hybrid_sentence_window",
+      "sentence_window_enabled": true,
+      "auto_merging_enabled": false
+    },
+    {
+      "name": "hybrid_auto_merging",
+      "sentence_window_enabled": false,
+      "auto_merging_enabled": true
+    }
+  ],
+  "summary": [
+    {
+      "variant": "hybrid_baseline",
+      "queries": 6,
+      "avg_retrieval_total_ms": 2464.7,
+      "avg_outer_elapsed_ms": 2464.88,
+      "avg_vector_retrieval_ms": 2458.6,
+      "avg_text_retrieval_ms": 268.5,
+      "avg_rrf_ms": 0.27,
+      "avg_rerank_ms": 3.78,
+      "avg_auto_merging_ms": 0.0,
+      "avg_sentence_window_ms": 0.0,
+      "avg_result_count": 3.0,
+      "avg_context_characters": 2774.33,
+      "avg_unique_documents": 2.17,
+      "auto_merging_applied_total": 0,
+      "auto_merging_child_count_total": 0,
+      "sentence_window_applied_total": 0,
+      "delta_retrieval_ms_vs_baseline": 0.0,
+      "delta_context_chars_vs_baseline": 0.0,
+      "delta_results_vs_baseline": 0.0
+    },
+    {
+      "variant": "hybrid_sentence_window",
+      "queries": 6,
+      "avg_retrieval_total_ms": 2236.03,
+      "avg_outer_elapsed_ms": 2236.22,
+      "avg_vector_retrieval_ms": 2131.92,
+      "avg_text_retrieval_ms": 274.38,
+      "avg_rrf_ms": 0.29,
+      "avg_rerank_ms": 3.55,
+      "avg_auto_merging_ms": 0.0,
+      "avg_sentence_window_ms": 98.46,
+      "avg_result_count": 3.0,
+      "avg_context_characters": 2708.67,
+      "avg_unique_documents": 2.17,
+      "auto_merging_applied_total": 0,
+      "auto_merging_child_count_total": 0,
+      "sentence_window_applied_total": 3,
+      "delta_retrieval_ms_vs_baseline": -228.67,
+      "delta_context_chars_vs_baseline": -65.66,
+      "delta_results_vs_baseline": 0.0
+    },
+    {
+      "variant": "hybrid_auto_merging",
+      "queries": 6,
+      "avg_retrieval_total_ms": 2234.16,
+      "avg_outer_elapsed_ms": 2234.34,
+      "avg_vector_retrieval_ms": 2225.97,
+      "avg_text_retrieval_ms": 282.38,
+      "avg_rrf_ms": 0.28,
+      "avg_rerank_ms": 3.67,
+      "avg_auto_merging_ms": 0.15,
+      "avg_sentence_window_ms": 0.0,
+      "avg_result_count": 2.17,
+      "avg_context_characters": 2776.0,
+      "avg_unique_documents": 2.17,
+      "auto_merging_applied_total": 5,
+      "auto_merging_child_count_total": 10,
+      "sentence_window_applied_total": 0,
+      "delta_retrieval_ms_vs_baseline": -230.54,
+      "delta_context_chars_vs_baseline": 1.67,
+      "delta_results_vs_baseline": -0.83
+    }
+  ]
+}

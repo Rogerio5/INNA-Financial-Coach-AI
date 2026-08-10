@@ -1,0 +1,156 @@
+{
+  "phase": "5.26-part3-final-live-quality-validation",
+  "part_1_status": "approved",
+  "part_2_status": "approved_technically",
+  "part_3_status": "approved",
+  "configuration": {
+    "top_k": 3,
+    "temperature": 0.0,
+    "seed": 524,
+    "seed_guarantee": "best_effort",
+    "sentence_window_enabled": false,
+    "auto_merging_enabled": true,
+    "deepeval_timeout_override_seconds": 150,
+    "case_count": 3
+  },
+  "thresholds": {
+    "answer-relevancy": 0.8,
+    "faithfulness": 0.8,
+    "contextual-relevancy": 0.75
+  },
+  "aggregate": {
+    "completed_cases": 3,
+    "all_auto_merging_applied": true,
+    "all_case_quality_gates_pass": true,
+    "metric_means": {
+      "answer-relevancy": 1.0,
+      "faithfulness": 0.9444444444444445,
+      "contextual-relevancy": 0.9722222222222222
+    },
+    "rag_triad_mean": 0.9722222222222222,
+    "total_generation_tokens": 3626,
+    "total_paid_equivalent_cost_usd": 0.0025134
+  },
+  "cases": [
+    {
+      "case_id": "rag-auto-merging-part3-reserve-001",
+      "label": "reserva_emergencia",
+      "question_sha256": "7a82c341a3a5ac771565b7bd5ef6d714f69b8a8d54c7c9f716d86dba2aeddd28",
+      "context_sha256": "5f66a0a11d09193fdcce446c89ca4b2b8cae9b9f302398ebee0ecc5f474ac9ac",
+      "answer_sha256": "23f46567bdafb7f21021b599a88c15620934ec42895eca1badc9103d68494cad",
+      "auto_merging_applied": true,
+      "auto_merging_child_count": 2,
+      "results_total": 2,
+      "retrieval_ms": 3122.1657999849413,
+      "generation_ms": 3372.307899990119,
+      "evaluation_ms": 18667.880000022706,
+      "evaluation_attempts_used": 1,
+      "input_tokens": 1053,
+      "output_tokens": 243,
+      "total_tokens": 1296,
+      "actual_billed_cost_usd": 0.0,
+      "paid_equivalent_cost_usd": 0.0009234,
+      "metrics": {
+        "answer-relevancy": {
+          "score": 1.0,
+          "required_threshold": 0.8,
+          "passed": true
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "required_threshold": 0.8,
+          "passed": true
+        },
+        "contextual-relevancy": {
+          "score": 1.0,
+          "required_threshold": 0.75,
+          "passed": true
+        }
+      },
+      "triad_average": 1.0,
+      "quality_gate": true
+    },
+    {
+      "case_id": "rag-auto-merging-part3-expenses-001",
+      "label": "gastos_fixos_variaveis",
+      "question_sha256": "ddbf3947288d2b030caffeaecb6b47fea59c539de90931143b06c7f2b1e84cda",
+      "context_sha256": "0435513f1f6c15aec18b9a485e9efb57873bf660b2587ea309b60f46df137b07",
+      "answer_sha256": "61783ca699a8ab4a7d1831dcb98c72ecf1ab6e14e83ce881f0a1d1da5cfdd487",
+      "auto_merging_applied": true,
+      "auto_merging_child_count": 2,
+      "results_total": 2,
+      "retrieval_ms": 1884.2194000026211,
+      "generation_ms": 2998.660400015069,
+      "evaluation_ms": 17066.15069997497,
+      "evaluation_attempts_used": 1,
+      "input_tokens": 921,
+      "output_tokens": 205,
+      "total_tokens": 1126,
+      "actual_billed_cost_usd": 0.0,
+      "paid_equivalent_cost_usd": 0.0007887999999999999,
+      "metrics": {
+        "answer-relevancy": {
+          "score": 1.0,
+          "required_threshold": 0.8,
+          "passed": true
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "required_threshold": 0.8,
+          "passed": true
+        },
+        "contextual-relevancy": {
+          "score": 1.0,
+          "required_threshold": 0.75,
+          "passed": true
+        }
+      },
+      "triad_average": 1.0,
+      "quality_gate": true
+    },
+    {
+      "case_id": "rag-auto-merging-part3-credit-card-001",
+      "label": "cartao_credito",
+      "question_sha256": "5379df8cbbc3b507ba42d3ca6cf27a9427f87116abaad3dd529a1a9cfec77364",
+      "context_sha256": "da66f67c6392724bf20dd3f1b14c64151fb5711299188cd66ab559e82d26b7ca",
+      "answer_sha256": "e8af8e03bef68d4a3b2c56b9ecc0011973e59a57796760fa5b515e0a049d0cd7",
+      "auto_merging_applied": true,
+      "auto_merging_child_count": 2,
+      "results_total": 2,
+      "retrieval_ms": 1796.612100006314,
+      "generation_ms": 2976.667799986899,
+      "evaluation_ms": 16662.06560001592,
+      "evaluation_attempts_used": 1,
+      "input_tokens": 1004,
+      "output_tokens": 200,
+      "total_tokens": 1204,
+      "actual_billed_cost_usd": 0.0,
+      "paid_equivalent_cost_usd": 0.0008012,
+      "metrics": {
+        "answer-relevancy": {
+          "score": 1.0,
+          "required_threshold": 0.8,
+          "passed": true
+        },
+        "faithfulness": {
+          "score": 0.8333333333333334,
+          "required_threshold": 0.8,
+          "passed": true
+        },
+        "contextual-relevancy": {
+          "score": 0.9166666666666666,
+          "required_threshold": 0.75,
+          "passed": true
+        }
+      },
+      "triad_average": 0.9166666666666666,
+      "quality_gate": true
+    }
+  ],
+  "privacy": {
+    "raw_answers_stored": false,
+    "raw_contexts_stored": false,
+    "db_log_writes": false,
+    "phoenix_enabled": false
+  }
+}

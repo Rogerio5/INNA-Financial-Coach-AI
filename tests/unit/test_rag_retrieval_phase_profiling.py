@@ -69,6 +69,7 @@ def test_hybrid_retrieval_exposes_phase_timings(
         "text_retrieval_ms",
         "rrf_ms",
         "rerank_ms",
+        "auto_merging_ms",
         "sentence_window_ms",
         "retrieval_total_ms",
     }

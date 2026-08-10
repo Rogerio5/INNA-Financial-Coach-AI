@@ -894,7 +894,7 @@ def test_retrieval_contract_passes(
         retrieval_context=(
             "Material sobre gastos fixos, "
             "gastos variáveis e reserva "
-            "financeira para emergências.",
+            "de emergência.",
         ),
     )
 
@@ -1239,7 +1239,7 @@ def test_real_rag_runner_passes(
         retrieval_context=(
             "Conteúdo sobre gastos fixos, "
             "gastos variáveis e reserva "
-            "financeira para emergências.",
+            "de emergência.",
         ),
         metadata={
             "actual_agent": "education_agent",

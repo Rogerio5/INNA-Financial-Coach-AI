@@ -20,6 +20,7 @@ on:
       - "requirements.txt"
       - "pyproject.toml"
       - ".gitleaks.toml"
+      - ".gitleaksignore"
       - "docs/security/**"
 
   push:
@@ -32,6 +33,7 @@ on:
       - "requirements.txt"
       - "pyproject.toml"
       - ".gitleaks.toml"
+      - ".gitleaksignore"
       - "docs/security/**"
 
 permissions:

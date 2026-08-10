@@ -1,0 +1,81 @@
+{
+  "phase": "5.27d-debt-case-live-revalidation",
+  "part_1_status": "approved",
+  "part_2_status": "approved_technically",
+  "part_3_status": "approved_from_phase526",
+  "phase527d_live_revalidation_status": "passed",
+  "configuration": {
+    "top_k": 3,
+    "temperature": 0.0,
+    "seed": 524,
+    "seed_guarantee": "best_effort",
+    "sentence_window_enabled": false,
+    "auto_merging_enabled": true,
+    "deepeval_timeout_override_seconds": 150,
+    "case_count": 1
+  },
+  "thresholds": {
+    "answer-relevancy": 0.8,
+    "faithfulness": 0.8,
+    "contextual-relevancy": 0.75
+  },
+  "aggregate": {
+    "completed_cases": 1,
+    "all_auto_merging_applied": true,
+    "all_case_quality_gates_pass": true,
+    "metric_means": {
+      "answer-relevancy": 1.0,
+      "faithfulness": 1.0,
+      "contextual-relevancy": 0.8
+    },
+    "rag_triad_mean": 0.9333333333333332,
+    "total_generation_tokens": 1058,
+    "total_paid_equivalent_cost_usd": 0.0008014000000000001
+  },
+  "cases": [
+    {
+      "case_id": "rag-auto-merging-phase527d-debt-exit-001",
+      "label": "sair_das_dividas_pos_rerank_fix",
+      "question_sha256": "886da28327bde7e7b5c571f0c25f8d5a6f4a7929983cc47f47f03a41da2c5b15",
+      "context_sha256": "e043c1655b30fa95368f0deb6a0d2be0fb6dc1fc5bb38eef4be7d6789329ed66",
+      "answer_sha256": "54221f4a3f39698105c70842c8d93bf47cb2ac24cad134ba2a4c4f577626a3f9",
+      "auto_merging_applied": true,
+      "auto_merging_child_count": 2,
+      "results_total": 1,
+      "retrieval_ms": 1731.281200016383,
+      "generation_ms": 3377.855599974282,
+      "evaluation_ms": 17518.814600014593,
+      "evaluation_attempts_used": 1,
+      "input_tokens": 838,
+      "output_tokens": 220,
+      "total_tokens": 1058,
+      "actual_billed_cost_usd": 0.0,
+      "paid_equivalent_cost_usd": 0.0008014000000000001,
+      "metrics": {
+        "answer-relevancy": {
+          "score": 1.0,
+          "required_threshold": 0.8,
+          "passed": true
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "required_threshold": 0.8,
+          "passed": true
+        },
+        "contextual-relevancy": {
+          "score": 0.8,
+          "required_threshold": 0.75,
+          "passed": true
+        }
+      },
+      "triad_average": 0.9333333333333332,
+      "quality_gate": true
+    }
+  ],
+  "privacy": {
+    "raw_answers_stored": false,
+    "raw_contexts_stored": false,
+    "db_log_writes": false,
+    "phoenix_enabled": false
+  }
+}

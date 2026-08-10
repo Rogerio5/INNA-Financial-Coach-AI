@@ -1,0 +1,176 @@
+{
+  "phase": "5.24B6",
+  "experiment": "auto_merging_controlled_frozen_context_live_ab",
+  "question": "o que ? reserva de emerg?ncia?",
+  "top_k": 3,
+  "generation_control": {
+    "temperature": 0.0,
+    "seed": 524,
+    "seed_guarantee": "best_effort"
+  },
+  "context_contract": {
+    "same_length": true,
+    "same_paragraph_multiset": true,
+    "same_paragraph_sequence": false,
+    "exact_context_match": false,
+    "baseline_context_sha256": "6130e0c982b31ca3c8d17cc6203866570453fe4ca0d4e6b45966ddcfb9df3a98",
+    "candidate_context_sha256": "5f66a0a11d09193fdcce446c89ca4b2b8cae9b9f302398ebee0ecc5f474ac9ac",
+    "baseline_results_total": 3,
+    "candidate_results_total": 2,
+    "auto_merging": {
+      "observed": true,
+      "applied": true,
+      "merged_result_count": 1,
+      "child_count": 2,
+      "duration_ms": 0.19
+    }
+  },
+  "baseline_off": {
+    "answer_sha256": "9eae26e4ab2b37341eab59e3d31bb41637052e00da95997e5bb4d0c1d9389a97",
+    "answer_length": 738,
+    "context_sha256": "6130e0c982b31ca3c8d17cc6203866570453fe4ca0d4e6b45966ddcfb9df3a98",
+    "generation_ms": 3337.361999991117,
+    "input_tokens": 1053,
+    "output_tokens": 180,
+    "total_tokens": 1233,
+    "actual_billed_cost_usd": 0.0,
+    "paid_equivalent_cost_usd": 0.0007659,
+    "metrics": {
+      "contract-validation": {
+        "status": "passed",
+        "score": 1.0,
+        "threshold": 1.0,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      },
+      "expected-terms": {
+        "status": "passed",
+        "score": 1.0,
+        "threshold": 1.0,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      },
+      "retrieval-contract": {
+        "status": "passed",
+        "score": 1.0,
+        "threshold": 1.0,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      },
+      "answer-relevancy": {
+        "status": "passed",
+        "score": 1.0,
+        "threshold": 0.8,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      },
+      "faithfulness": {
+        "status": "passed",
+        "score": 1.0,
+        "threshold": 0.8,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      },
+      "contextual-relevancy": {
+        "status": "passed",
+        "score": 0.7777777777777778,
+        "threshold": 0.75,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      }
+    },
+    "triad_average": 0.9259259259259259,
+    "evaluation_status": "passed",
+    "evaluation_ms": 18193.83759997436
+  },
+  "candidate_on": {
+    "answer_sha256": "156c06b5615f3aae38fd812cc078c326886d3b45885e5c81ce0f1ee27ac71626",
+    "answer_length": 929,
+    "context_sha256": "5f66a0a11d09193fdcce446c89ca4b2b8cae9b9f302398ebee0ecc5f474ac9ac",
+    "generation_ms": 2819.9845000053756,
+    "input_tokens": 1053,
+    "output_tokens": 226,
+    "total_tokens": 1279,
+    "actual_billed_cost_usd": 0.0,
+    "paid_equivalent_cost_usd": 0.0008809,
+    "metrics": {
+      "contract-validation": {
+        "status": "passed",
+        "score": 1.0,
+        "threshold": 1.0,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      },
+      "expected-terms": {
+        "status": "passed",
+        "score": 1.0,
+        "threshold": 1.0,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      },
+      "retrieval-contract": {
+        "status": "passed",
+        "score": 1.0,
+        "threshold": 1.0,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      },
+      "answer-relevancy": {
+        "status": "passed",
+        "score": 1.0,
+        "threshold": 0.8,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      },
+      "faithfulness": {
+        "status": "passed",
+        "score": 1.0,
+        "threshold": 0.8,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      },
+      "contextual-relevancy": {
+        "status": "passed",
+        "score": 0.8571428571428571,
+        "threshold": 0.75,
+        "passed": true,
+        "estimated_cost": 0.0,
+        "error_type": null
+      }
+    },
+    "triad_average": 0.9523809523809524,
+    "evaluation_status": "passed",
+    "evaluation_ms": 16889.121499989415
+  },
+  "comparison": {
+    "answer_similarity": 0.2555488902219556,
+    "metric_deltas": {
+      "answer-relevancy": 0.0,
+      "faithfulness": 0.0,
+      "contextual-relevancy": 0.0793650793650793
+    },
+    "triad_delta": 0.02645502645502651,
+    "total_token_delta": 46,
+    "paid_equivalent_cost_delta_usd": 0.00011499999999999998
+  },
+  "interpretation_boundary": {
+    "seed_is_best_effort": true,
+    "single_pair_is_not_absolute_causal_proof": true
+  },
+  "content_storage": {
+    "answer_text_stored": false,
+    "retrieval_context_text_stored": false,
+    "hashes_only": true
+  }
+}

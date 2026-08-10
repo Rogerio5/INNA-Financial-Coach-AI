@@ -1,0 +1,148 @@
+{
+  "phase": "5.27A",
+  "question_sha256": "a26bfd144da58f8371e087015679791d890094dd680c9c9d5752f4e16388cb44",
+  "top_k": 3,
+  "gemini_executed": false,
+  "deepeval_live_executed": false,
+  "source_changes": false,
+  "variants": {
+    "baseline_off": {
+      "context_sha256": "00c731a60144093a8f7a67c9ef80a6d89c7badcc20c24cfa45fe06ddc8de0095",
+      "results_total": 3,
+      "retrieval_ms": 5044.270899990806,
+      "auto_merging": {
+        "observed": false,
+        "applied": false,
+        "merged_result_count": 0,
+        "child_count": 0,
+        "duration_ms": 0.0
+      },
+      "flags": {
+        "debt": true,
+        "credit": true,
+        "savings": false,
+        "investment": true,
+        "reserve": false
+      },
+      "paragraphs": [
+        {
+          "sha256": "d1c09f7cce58d9ab14898e8a5f895075e1fa84711417a9b86004dae1b253768b",
+          "length": 1105,
+          "flags": {
+            "debt": true,
+            "credit": false,
+            "savings": false,
+            "investment": false,
+            "reserve": false
+          },
+          "preview": "Mapeamento, priorização e negociação de dívidas. Secao: Resposta direta. A dívida a priorizar não deve ser escolhida apenas pelo menor saldo. Primeiro, preserve necessidades básicas e identifique obrigações cujo atraso pode interromper serv..."
+        },
+        {
+          "sha256": "3de2195ad5db447aea5c0037e55316caa569d2d4ab541cad5e979e72dbedcd01",
+          "length": 888,
+          "flags": {
+            "debt": true,
+            "credit": true,
+            "savings": false,
+            "investment": false,
+            "reserve": false
+          },
+          "preview": "Mapeamento, priorização e negociação de dívidas. Secao: Negociação responsável. Confirme o credor e o canal, solicite proposta formal, compare valor total, parcelas, juros e vencimentos, preserve despesas essenciais e guarde comprovantes. P..."
+        },
+        {
+          "sha256": "0c02eb3202301e15bf55d68212048be214f69bbb6ae819d55d92a40f1211e217",
+          "length": 1031,
+          "flags": {
+            "debt": false,
+            "credit": false,
+            "savings": false,
+            "investment": true,
+            "reserve": false
+          },
+          "preview": "Princípios básicos de poupança e investimentos. Secao: Fontes de referência. - `cvm-portal-investidor` - `bcb-caderno-financas-pessoais-2026` Princípios básicos de poupança e investimentos. Secao: Perguntas antes de investir. - Qual é o obj..."
+        }
+      ],
+      "trace_summary": {
+        "results_total": 3,
+        "auto_merging.observed": false,
+        "auto_merging.applied": false,
+        "auto_merging.merged_result_count": 0,
+        "auto_merging.child_count": 0,
+        "auto_merging.duration_ms": 0.0
+      }
+    },
+    "candidate_on": {
+      "context_sha256": "00c731a60144093a8f7a67c9ef80a6d89c7badcc20c24cfa45fe06ddc8de0095",
+      "results_total": 2,
+      "retrieval_ms": 1577.74789998075,
+      "auto_merging": {
+        "observed": true,
+        "applied": true,
+        "merged_result_count": 1,
+        "child_count": 2,
+        "duration_ms": 0.14
+      },
+      "flags": {
+        "debt": true,
+        "credit": true,
+        "savings": false,
+        "investment": true,
+        "reserve": false
+      },
+      "paragraphs": [
+        {
+          "sha256": "d1c09f7cce58d9ab14898e8a5f895075e1fa84711417a9b86004dae1b253768b",
+          "length": 1105,
+          "flags": {
+            "debt": true,
+            "credit": false,
+            "savings": false,
+            "investment": false,
+            "reserve": false
+          },
+          "preview": "Mapeamento, priorização e negociação de dívidas. Secao: Resposta direta. A dívida a priorizar não deve ser escolhida apenas pelo menor saldo. Primeiro, preserve necessidades básicas e identifique obrigações cujo atraso pode interromper serv..."
+        },
+        {
+          "sha256": "3de2195ad5db447aea5c0037e55316caa569d2d4ab541cad5e979e72dbedcd01",
+          "length": 888,
+          "flags": {
+            "debt": true,
+            "credit": true,
+            "savings": false,
+            "investment": false,
+            "reserve": false
+          },
+          "preview": "Mapeamento, priorização e negociação de dívidas. Secao: Negociação responsável. Confirme o credor e o canal, solicite proposta formal, compare valor total, parcelas, juros e vencimentos, preserve despesas essenciais e guarde comprovantes. P..."
+        },
+        {
+          "sha256": "0c02eb3202301e15bf55d68212048be214f69bbb6ae819d55d92a40f1211e217",
+          "length": 1031,
+          "flags": {
+            "debt": false,
+            "credit": false,
+            "savings": false,
+            "investment": true,
+            "reserve": false
+          },
+          "preview": "Princípios básicos de poupança e investimentos. Secao: Fontes de referência. - `cvm-portal-investidor` - `bcb-caderno-financas-pessoais-2026` Princípios básicos de poupança e investimentos. Secao: Perguntas antes de investir. - Qual é o obj..."
+        }
+      ],
+      "trace_summary": {
+        "results_total": 2,
+        "auto_merging.observed": true,
+        "auto_merging.applied": true,
+        "auto_merging.merged_result_count": 1,
+        "auto_merging.child_count": 2,
+        "auto_merging.duration_ms": 0.14
+      }
+    }
+  },
+  "comparison": {
+    "paragraph_multiset_match": true,
+    "paragraph_sequence_match": true,
+    "exact_context_match": true,
+    "baseline_irrelevant_savings_investment": true,
+    "candidate_irrelevant_savings_investment": true,
+    "primary_diagnosis": "UPSTREAM_RETRIEVAL_OR_RERANK_ALREADY_CONTAINS_IRRELEVANT_CONTENT"
+  }
+}

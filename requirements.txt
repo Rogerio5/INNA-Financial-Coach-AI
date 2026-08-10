@@ -102,3 +102,4 @@ plotly==6.9.0
 
 # Componente Streamlit do Grafo de Relacionamentos da INNA
 ./components/inna_relationship_graph
+mcp==2.0.0

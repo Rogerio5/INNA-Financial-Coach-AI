@@ -825,3 +825,24 @@ def test_external_exports_contain_ten_cases(
         )
 
     assert total_exported == 10
+
+def test_rag_financial_education_retrieval_terms_match_prompt() -> None:
+    case = build_core_dataset().get_case(
+        "rag-financial-education-001"
+    )
+
+    assert case.expected_retrieval_terms == (
+        "gastos fixos",
+        "gastos variáveis",
+        "reserva de emergência",
+    )
+
+    assert (
+        "reserva de emergência"
+        in case.input_text.lower()
+    )
+
+    assert (
+        "reserva financeira"
+        not in case.expected_retrieval_terms
+    )

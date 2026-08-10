@@ -269,8 +269,8 @@ def _live_success_state():
                 "retrieval_context": [
                     (
                         "Gastos fixos, gastos "
-                        "variáveis e reserva "
-                        "financeira."
+                        "variáveis e reserva de "
+                        "emergência."
                     )
                 ],
             }

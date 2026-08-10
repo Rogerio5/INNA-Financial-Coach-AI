@@ -1,0 +1,70 @@
+{
+  "database_connections_executed": false,
+  "gemini_api_called": false,
+  "http_requests_executed": false,
+  "live_mcp_called": false,
+  "live_rag_called": false,
+  "network_server_started": false,
+  "offline": true,
+  "phase": "8B.2F",
+  "scenario_count": 8,
+  "scenarios": {
+    "controlled_error": {
+      "error_code": "tool_execution_error",
+      "status": "error"
+    },
+    "financial": {
+      "error_code": "",
+      "output": {
+        "estimated_balance": 900.0,
+        "risk_level": "low",
+        "session_id": "session-e2e-001",
+        "trace_id": "trace-e2e-financial",
+        "user_id": "user-e2e-001"
+      },
+      "status": "success"
+    },
+    "health": {
+      "error_code": "",
+      "output": {
+        "service": "inna-mcp-simulated",
+        "status": "ok",
+        "trace_id": "trace-e2e-health"
+      },
+      "status": "success"
+    },
+    "invalid_arguments": {
+      "error_code": "tool_input_validation_error",
+      "status": "validation_error"
+    },
+    "permission_denied": {
+      "error_code": "tool_permission_denied",
+      "status": "denied"
+    },
+    "rag": {
+      "error_code": "",
+      "output": {
+        "answer": "Resposta simulada fundamentada para: Como organizar uma reserva financeira?",
+        "evidence_count": 2,
+        "session_id": "session-e2e-001",
+        "sources": [
+          "synthetic-financial-education",
+          "synthetic-budget-guide"
+        ],
+        "trace_id": "trace-e2e-rag",
+        "user_id": "user-e2e-001"
+      },
+      "status": "success"
+    },
+    "timeout": {
+      "error_code": "tool_timeout",
+      "status": "timeout"
+    },
+    "unknown_tool": {
+      "error_code": "tool_not_found",
+      "status": "not_found"
+    }
+  },
+  "session_id": "session-e2e-001",
+  "user_id": "user-e2e-001"
+}

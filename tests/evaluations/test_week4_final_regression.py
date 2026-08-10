@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 from pathlib import Path
 
 from src.evaluation.final_regression import (
@@ -26,6 +27,20 @@ def test_policy_is_offline() -> None:
     assert policy.expected_dataset_case_count == 24
     assert policy.expected_dataset_category_count == 12
     assert policy.minimum_mcp_scenario_count == 8
+
+
+def test_required_report_fixtures_are_checkout_safe() -> None:
+    policy = load_policy(POLICY_PATH)
+
+    assert len(policy.required_reports) == 4
+    assert all(
+        relative_path.startswith("tests/evaluations/fixtures/")
+        for relative_path in policy.required_reports
+    )
+    assert all(
+        (PROJECT_ROOT / relative_path).is_file()
+        for relative_path in policy.required_reports
+    )
 
 
 def test_agentic_rag_tests_are_discovered() -> None:
@@ -87,6 +102,39 @@ def test_offline_environment_uses_local_sqlite() -> None:
     assert "neon" not in environment["DATABASE_URL"].casefold()
 
     assert "@" not in environment["DATABASE_URL"]
+
+
+def test_validate_reports_works_without_artifacts_directory(
+    tmp_path: Path,
+) -> None:
+    policy = load_policy(POLICY_PATH)
+
+    for relative_path in policy.required_reports:
+        source = PROJECT_ROOT / relative_path
+        destination = tmp_path / relative_path
+
+        destination.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        shutil.copy2(
+            source,
+            destination,
+        )
+
+    assert not (tmp_path / "artifacts").exists()
+
+    validations, facts = validate_reports(
+        tmp_path,
+        policy,
+    )
+
+    assert all(validations.values())
+    assert facts["dataset_case_count"] == 24
+    assert facts["dataset_category_count"] == 12
+    assert facts["mcp_scenario_count"] >= 8
+    assert facts["quality_gate_passed"] is True
 
 
 def test_current_reports_pass_policy() -> None:
