@@ -677,16 +677,17 @@ def search_knowledge_base_text(
     return resultados
 
 
-def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) -> list[dict]:
+def rerank_knowledge_results(
+    query: str,
+    results: list[dict],
+    top_k: int = 4,
+) -> list[dict]:
     """
-    Reordena os chunks recuperados pelo RAG híbrido.
+    Reordena os chunks recuperados pelo RAG h??brido e aplica
+    um gate conservador de relev??ncia p??s-rerank.
 
-    Critérios:
-    - score original do pgvector/textual;
-    - bônus se veio de busca vetorial + textual;
-    - bônus por palavras importantes da pergunta;
-    - bônus por tema financeiro identificado;
-    - penalização leve para chunks muito genéricos.
+    O ``top_k`` representa o m??ximo de resultados, n??o uma obriga????o
+    de preencher todas as posi????es com evid??ncia fraca.
     """
     if not results:
         return []
@@ -694,15 +695,46 @@ def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) ->
     query_norm = normalize_text(query)
 
     stopwords = {
-        "como", "posso", "comecar", "começar", "uma", "um", "para", "por",
-        "que", "qual", "quais", "sobre", "minha", "meu", "me", "da", "de",
-        "do", "das", "dos", "com", "sem", "isso", "esse", "essa", "estou",
-        "esta", "aqui", "ali", "voce", "você"
+        "como",
+        "posso",
+        "comecar",
+        "come??ar",
+        "uma",
+        "um",
+        "para",
+        "por",
+        "que",
+        "qual",
+        "quais",
+        "sobre",
+        "minha",
+        "meu",
+        "me",
+        "da",
+        "de",
+        "do",
+        "das",
+        "dos",
+        "com",
+        "sem",
+        "isso",
+        "esse",
+        "essa",
+        "estou",
+        "esta",
+        "aqui",
+        "ali",
+        "voce",
+        "voc??",
+        "sair",
     }
 
-    termos_query = []
+    termos_query: list[str] = []
 
-    for termo in re.findall(r"[a-zA-ZÀ-ÿ0-9]+", query_norm):
+    for termo in re.findall(
+        r"[a-zA-Z??-??0-9]+",
+        query_norm,
+    ):
         termo = normalize_text(termo).strip()
 
         if len(termo) < 3:
@@ -714,29 +746,113 @@ def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) ->
         if termo not in termos_query:
             termos_query.append(termo)
 
+    # RELEVANCE_GATE_PHASE527C2
+    # Inclui flex??es comuns para n??o perder inten????o por singular/plural.
     temas = {
-        "reserva": ["reserva", "emergencia", "guardar", "poupar", "imprevisto"],
-        "divida": ["divida", "dívida", "cartao", "cartão", "credito", "crédito", "parcelas", "juros"],
-        "orcamento": ["orcamento", "orçamento", "gastos", "fixos", "variaveis", "variáveis", "despesas"],
-        "renda": ["renda", "salario", "salário", "ganho", "recebo"],
+        "reserva": [
+            "reserva",
+            "reservas",
+            "emergencia",
+            "emerg??ncia",
+            "guardar",
+            "guardo",
+            "poupar",
+            "poupanca",
+            "poupan??a",
+            "imprevisto",
+            "imprevistos",
+        ],
+        "divida": [
+            "divida",
+            "d??vida",
+            "dividas",
+            "d??vidas",
+            "cartao",
+            "cart??o",
+            "cartoes",
+            "cart??es",
+            "credito",
+            "cr??dito",
+            "parcela",
+            "parcelas",
+            "juros",
+            "endividamento",
+            "endividado",
+            "endividada",
+        ],
+        "orcamento": [
+            "orcamento",
+            "or??amento",
+            "gasto",
+            "gastos",
+            "fixo",
+            "fixos",
+            "variavel",
+            "vari??vel",
+            "variaveis",
+            "vari??veis",
+            "despesa",
+            "despesas",
+        ],
+        "renda": [
+            "renda",
+            "salario",
+            "sal??rio",
+            "ganho",
+            "ganha",
+            "recebo",
+            "recebe",
+        ],
     }
 
-    temas_pergunta = []
+    temas_pergunta: list[str] = []
 
     for tema, palavras in temas.items():
-        if any(normalize_text(palavra) in query_norm for palavra in palavras):
+        palavras_normalizadas = {
+            normalize_text(palavra)
+            for palavra in palavras
+        }
+
+        if any(
+            palavra
+            and palavra in query_norm
+            for palavra in palavras_normalizadas
+        ):
             temas_pergunta.append(tema)
 
-    reranked = []
+    text_scores = [
+        float(item.get("score_textual") or 0.0)
+        for item in results
+        if item.get("score_textual") is not None
+    ]
+    max_text_score = max(text_scores, default=0.0)
+
+    reranked: list[dict] = []
 
     for item in results:
         texto = normalize_text(
-            str(item.get("chunk_text") or item.get("texto") or item.get("trecho") or "")
+            str(
+                item.get("chunk_text")
+                or item.get("texto")
+                or item.get("trecho")
+                or ""
+            )
         )
-        titulo = normalize_text(str(item.get("titulo") or ""))
-        categoria = normalize_text(str(item.get("categoria") or ""))
+        titulo = normalize_text(
+            str(item.get("titulo") or "")
+        )
+        categoria = normalize_text(
+            str(item.get("categoria") or "")
+        )
+        searchable = " ".join(
+            (titulo, categoria, texto)
+        )
 
-        score_base = float(item.get("score_hibrido") or item.get("score") or 0)
+        score_base = float(
+            item.get("score_hibrido")
+            or item.get("score")
+            or 0
+        )
 
         origem = item.get("origem_busca") or []
         if isinstance(origem, str):
@@ -744,72 +860,199 @@ def rerank_knowledge_results(query: str, results: list[dict], top_k: int = 4) ->
 
         bonus_origem = 0.0
 
-        if "vetorial" in origem and "textual" in origem:
-            bonus_origem += 0.25
+        if (
+            "vetorial" in origem
+            and "textual" in origem
+        ):
+            bonus_origem = 0.25
         elif "vetorial" in origem:
-            bonus_origem += 0.10
+            bonus_origem = 0.10
         elif "textual" in origem:
-            bonus_origem += 0.08
+            bonus_origem = 0.08
 
-        termos_encontrados = 0
+        termos_encontrados = sum(
+            1
+            for termo in termos_query
+            if termo in searchable
+        )
+        bonus_termos = min(
+            0.30,
+            termos_encontrados * 0.06,
+        )
 
-        for termo in termos_query:
-            if termo in texto or termo in titulo or termo in categoria:
-                termos_encontrados += 1
-
-        bonus_termos = min(0.30, termos_encontrados * 0.06)
-
-        bonus_tema = 0.0
+        evidencias_tema: set[str] = set()
 
         for tema in temas_pergunta:
-            palavras_tema = temas.get(tema, [])
+            for palavra in temas.get(tema, []):
+                palavra_normalizada = normalize_text(
+                    palavra
+                )
 
-            if any(normalize_text(palavra) in texto for palavra in palavras_tema):
-                bonus_tema += 0.12
+                if (
+                    palavra_normalizada
+                    and palavra_normalizada
+                    in searchable
+                ):
+                    evidencias_tema.add(
+                        palavra_normalizada
+                    )
 
-        bonus_tema = min(0.30, bonus_tema)
+        quantidade_evidencias_tema = len(
+            evidencias_tema
+        )
+        bonus_tema = min(
+            0.24,
+            quantidade_evidencias_tema * 0.04,
+        )
+
+        score_textual = float(
+            item.get("score_textual") or 0.0
+        )
+        forca_textual_relativa = (
+            score_textual / max_text_score
+            if max_text_score > 0.0
+            else 0.0
+        )
+        bonus_forca_textual = min(
+            0.12,
+            max(0.0, forca_textual_relativa)
+            * 0.12,
+        )
 
         penalidade_generico = 0.0
 
         texto_generico = (
-            "organize seus dados financeiros" in texto
-            or "compare renda, gastos, dívidas e reserva" in texto
-            or "ações simples e mensuráveis" in texto
+            "organize seus dados financeiros"
+            in texto
+            or (
+                "compare renda, gastos, dividas"
+                " e reserva"
+            )
+            in texto
+            or "acoes simples e mensuraveis"
+            in texto
         )
 
-        if texto_generico and termos_encontrados <= 1:
+        if (
+            texto_generico
+            and termos_encontrados <= 1
+        ):
             penalidade_generico = 0.20
 
-        score_rerank = score_base + bonus_origem + bonus_termos + bonus_tema - penalidade_generico
+        score_rerank = (
+            score_base
+            + bonus_origem
+            + bonus_termos
+            + bonus_tema
+            + bonus_forca_textual
+            - penalidade_generico
+        )
 
         novo_item = dict(item)
-        novo_item["score_rerank"] = round(score_rerank, 6)
-        novo_item["termos_encontrados"] = termos_encontrados
-        novo_item["temas_pergunta"] = temas_pergunta
+        novo_item["score_rerank"] = round(
+            score_rerank,
+            6,
+        )
+        novo_item["termos_encontrados"] = (
+            termos_encontrados
+        )
+        novo_item["temas_pergunta"] = list(
+            temas_pergunta
+        )
+        novo_item["tema_evidencias"] = (
+            quantidade_evidencias_tema
+        )
+        novo_item["forca_textual_relativa"] = round(
+            forca_textual_relativa,
+            6,
+        )
+
         current_mode = str(
             novo_item.get("modo_busca")
             or "rag_hibrido_pgvector_text_neon"
         )
 
-        if not current_mode.endswith(
-            "_rerank"
-        ):
+        if not current_mode.endswith("_rerank"):
             current_mode += "_rerank"
 
-        novo_item["modo_busca"] = (
-            current_mode
-        )
-
+        novo_item["modo_busca"] = current_mode
         reranked.append(novo_item)
 
     reranked.sort(
-        key=lambda item: float(item.get("score_rerank") or 0),
+        key=lambda item: float(
+            item.get("score_rerank") or 0
+        ),
         reverse=True,
     )
 
-    return reranked[:top_k]
+    resolved_top_k = max(
+        1,
+        int(top_k or 1),
+    )
 
+    # Mant??m compatibilidade para perguntas fora dos temas
+    # financeiros reconhecidos pelo gate.
+    if not temas_pergunta:
+        return reranked[:resolved_top_k]
 
+    if len(reranked) <= 2 or resolved_top_k <= 2:
+        return reranked[:resolved_top_k]
+
+    best_score = float(
+        reranked[0].get("score_rerank") or 0.0
+    )
+
+    minimum_results = min(
+        2,
+        resolved_top_k,
+        len(reranked),
+    )
+    selected = list(
+        reranked[:minimum_results]
+    )
+
+    for item in reranked[
+        minimum_results:resolved_top_k
+    ]:
+        item_score = float(
+            item.get("score_rerank") or 0.0
+        )
+        relative_score = (
+            item_score / best_score
+            if best_score > 0.0
+            else 0.0
+        )
+        theme_evidence = int(
+            item.get("tema_evidencias") or 0
+        )
+        text_strength = float(
+            item.get("forca_textual_relativa")
+            or 0.0
+        )
+
+        strong_additional_evidence = (
+            relative_score >= 0.85
+            and (
+                theme_evidence >= 3
+                or text_strength >= 0.85
+            )
+        )
+
+        very_close_to_best = (
+            relative_score >= 0.92
+        )
+
+        if (
+            strong_additional_evidence
+            or very_close_to_best
+        ):
+            novo_item = dict(item)
+            novo_item[
+                "relevance_gate_ratio_to_best"
+            ] = round(relative_score, 6)
+            selected.append(novo_item)
+
+    return selected
 
 def _sentence_window_boolean_setting(
     value: bool | None,
@@ -1281,6 +1524,64 @@ def _apply_sentence_window_to_results(
     return expanded_results
 
 
+def _auto_merging_boolean_setting(
+    explicit_value: bool | None,
+) -> bool:
+    """
+    Resolve a feature flag experimental do Auto-Merging.
+
+    O runtime permanece desligado por padrão.
+    """
+    if explicit_value is not None:
+        return bool(explicit_value)
+
+    raw_value = str(
+        os.getenv(
+            "INNA_RAG_AUTO_MERGING_ENABLED",
+            "false",
+        )
+        or "false"
+    ).strip().lower()
+
+    return raw_value in {
+        "1",
+        "true",
+        "yes",
+        "on",
+        "sim",
+    }
+
+
+def _auto_merging_integer_setting(
+    *,
+    explicit_value: int | None,
+    environment_name: str,
+    default: int,
+    minimum: int,
+    maximum: int,
+) -> int:
+    if explicit_value is None:
+        raw_value = os.getenv(
+            environment_name,
+            str(default),
+        )
+    else:
+        raw_value = explicit_value
+
+    try:
+        parsed = int(raw_value)
+    except (TypeError, ValueError):
+        parsed = default
+
+    return max(
+        minimum,
+        min(
+            parsed,
+            maximum,
+        ),
+    )
+
+
 def search_knowledge_base_hybrid(
     query: str,
     idioma: str = "pt",
@@ -1289,6 +1590,10 @@ def search_knowledge_base_hybrid(
     sentence_window_enabled: bool | None = None,
     sentence_window_size: int | None = None,
     sentence_window_chunk_radius: int | None = None,
+    auto_merging_enabled: bool | None = None,
+    auto_merging_parent_size: int | None = None,
+    auto_merging_min_children: int | None = None,
+    auto_merging_max_characters: int | None = None,
     profiling: dict[str, float] | None = None,
 ) -> list[dict]:
     """
@@ -1598,6 +1903,96 @@ def search_knowledge_base_hybrid(
         2,
     )
 
+    auto_merging_ms = 0.0
+
+    if _auto_merging_boolean_setting(
+        auto_merging_enabled
+    ):
+        try:
+            from services.rag.auto_merging import (
+                auto_merge_results,
+            )
+        except ImportError:
+            from src.services.rag.auto_merging import (
+                auto_merge_results,
+            )
+
+        resolved_auto_parent_size = (
+            _auto_merging_integer_setting(
+                explicit_value=(
+                    auto_merging_parent_size
+                ),
+                environment_name=(
+                    "INNA_RAG_AUTO_MERGING_PARENT_SIZE"
+                ),
+                default=3,
+                minimum=2,
+                maximum=12,
+            )
+        )
+
+        resolved_auto_min_children = (
+            _auto_merging_integer_setting(
+                explicit_value=(
+                    auto_merging_min_children
+                ),
+                environment_name=(
+                    "INNA_RAG_AUTO_MERGING_MIN_CHILDREN"
+                ),
+                default=2,
+                minimum=2,
+                maximum=(
+                    resolved_auto_parent_size
+                ),
+            )
+        )
+
+        resolved_auto_max_characters = (
+            _auto_merging_integer_setting(
+                explicit_value=(
+                    auto_merging_max_characters
+                ),
+                environment_name=(
+                    "INNA_RAG_AUTO_MERGING_MAX_CHARACTERS"
+                ),
+                default=4000,
+                minimum=300,
+                maximum=12000,
+            )
+        )
+
+        auto_merging_started = (
+            time.perf_counter()
+        )
+
+        try:
+            reranked_results = auto_merge_results(
+                reranked_results,
+                parent_size=(
+                    resolved_auto_parent_size
+                ),
+                min_children=(
+                    resolved_auto_min_children
+                ),
+                max_characters=(
+                    resolved_auto_max_characters
+                ),
+            )
+        except Exception:
+            # Fallback seguro:
+            # qualquer falha experimental preserva
+            # os resultados ja aprovados pelo rerank.
+            pass
+        finally:
+            auto_merging_ms = round(
+                (
+                    time.perf_counter()
+                    - auto_merging_started
+                )
+                * 1000,
+                2,
+            )
+
     if not _sentence_window_boolean_setting(
         sentence_window_enabled
     ):
@@ -1623,6 +2018,9 @@ def search_knowledge_base_hybrid(
                     ),
                     "rrf_ms": rrf_ms,
                     "rerank_ms": rerank_ms,
+                    "auto_merging_ms": (
+                        auto_merging_ms
+                    ),
                     "sentence_window_ms": (
                         sentence_window_ms
                     ),
@@ -1723,6 +2121,9 @@ def search_knowledge_base_hybrid(
                 ),
                 "rrf_ms": rrf_ms,
                 "rerank_ms": rerank_ms,
+                "auto_merging_ms": (
+                    auto_merging_ms
+                ),
                 "sentence_window_ms": (
                     sentence_window_ms
                 ),
@@ -2178,7 +2579,13 @@ def answer_security_financeira(pergunta: str, modo_base: str = "rag_hibrido_pgve
     }
 
 
-def generate_gemini_rag_answer(pergunta: str, contexto: str, idioma: str = "pt") -> str | None:
+def generate_gemini_rag_answer(
+    pergunta: str,
+    contexto: str,
+    idioma: str = "pt",
+    *,
+    usage_out: dict[str, int] | None = None,
+) -> str | None:
     """
     Gera resposta final usando Gemini + contexto recuperado pelo RAG.
     Se falhar, retorna None para manter o fallback local.
@@ -2300,6 +2707,54 @@ A resposta deve:
                 "usa_contexto_recuperado": True,
             },
         )
+
+        if usage_out is not None:
+            try:
+                try:
+                    from observability.llm_costs import (
+                        extrair_tokens_resposta,
+                    )
+                except ImportError:
+                    from src.observability.llm_costs import (
+                        extrair_tokens_resposta,
+                    )
+
+                extracted_usage = (
+                    extrair_tokens_resposta(
+                        response
+                    )
+                )
+
+                usage_out.clear()
+                usage_out.update(
+                    {
+                        "tokens_entrada": int(
+                            extracted_usage.get(
+                                "tokens_entrada",
+                                0,
+                            )
+                            or 0
+                        ),
+                        "tokens_saida": int(
+                            extracted_usage.get(
+                                "tokens_saida",
+                                0,
+                            )
+                            or 0
+                        ),
+                        "tokens_totais": int(
+                            extracted_usage.get(
+                                "tokens_totais",
+                                0,
+                            )
+                            or 0
+                        ),
+                    }
+                )
+            except Exception:
+                # A telemetria nunca pode impedir
+                # a resposta principal do RAG.
+                usage_out.clear()
 
         resposta = getattr(response, "text", "") or ""
 
@@ -2531,6 +2986,99 @@ def save_rag_log(
 
 
 
+def _build_auto_merging_trace_summary(
+    results: list[dict] | None,
+    profiling: dict[str, float] | None,
+) -> dict[str, object]:
+    """
+    Resume apenas telemetria segura do Auto-Merging.
+
+    Não expõe texto de chunks, embeddings, SQL,
+    prompts ou o resultado bruto do retrieval.
+    """
+    result_items = [
+        item
+        for item in (results or [])
+        if isinstance(item, dict)
+    ]
+
+    observed = any(
+        "auto_merging_applied" in item
+        for item in result_items
+    )
+
+    merged_items = [
+        item
+        for item in result_items
+        if (
+            item.get(
+                "auto_merging_applied"
+            )
+            is True
+        )
+    ]
+
+    child_count = 0
+
+    for item in merged_items:
+        try:
+            value = int(
+                item.get(
+                    "auto_merging_child_count",
+                    0,
+                )
+                or 0
+            )
+        except (
+            TypeError,
+            ValueError,
+        ):
+            value = 0
+
+        child_count += max(
+            0,
+            value,
+        )
+
+    duration_ms = 0.0
+
+    if isinstance(
+        profiling,
+        dict,
+    ):
+        try:
+            duration_ms = float(
+                profiling.get(
+                    "auto_merging_ms",
+                    0.0,
+                )
+                or 0.0
+            )
+        except (
+            TypeError,
+            ValueError,
+        ):
+            duration_ms = 0.0
+
+    return {
+        "observed": observed,
+        "applied": bool(
+            merged_items
+        ),
+        "merged_result_count": len(
+            merged_items
+        ),
+        "child_count": child_count,
+        "duration_ms": round(
+            max(
+                0.0,
+                duration_ms,
+            ),
+            6,
+        ),
+    }
+
+
 def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
     resposta_seguranca = answer_security_financeira(pergunta)
     if resposta_seguranca:
@@ -2556,6 +3104,12 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
         str,
         float,
     ] = {}
+
+    gemini_usage: dict[str, int] = {
+        "tokens_entrada": 0,
+        "tokens_saida": 0,
+        "tokens_totais": 0,
+    }
 
     supports_profiling = False
 
@@ -2627,6 +3181,13 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
             retrieval_trace.to_dict()
         )
 
+        trace_payload["auto_merging"] = (
+            _build_auto_merging_trace_summary(
+                results,
+                retrieval_phase_timings,
+            )
+        )
+
         if modo:
             trace_payload["search_mode"] = modo
 
@@ -2643,6 +3204,54 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
         ] = dict(
             retrieval_phase_timings
         )
+
+        total_tokens = int(
+            gemini_usage.get(
+                "tokens_totais",
+                0,
+            )
+            or 0
+        )
+
+        if total_tokens > 0:
+            from src.evaluation.gemini_cost_accounting import (
+                DEFAULT_GEMINI_BILLING_MODE,
+                resolve_gemini_billing_mode,
+            )
+
+            try:
+                billing_mode = (
+                    resolve_gemini_billing_mode()
+                )
+                billing_mode_config_valid = True
+            except ValueError:
+                billing_mode = (
+                    DEFAULT_GEMINI_BILLING_MODE
+                )
+                billing_mode_config_valid = False
+
+            payload["llm_usage"] = {
+                "input_tokens": int(
+                    gemini_usage.get(
+                        "tokens_entrada",
+                        0,
+                    )
+                    or 0
+                ),
+                "output_tokens": int(
+                    gemini_usage.get(
+                        "tokens_saida",
+                        0,
+                    )
+                    or 0
+                ),
+                "total_tokens": total_tokens,
+                "provider": "gemini",
+                "billing_mode": billing_mode,
+                "billing_mode_config_valid": (
+                    billing_mode_config_valid
+                ),
+            }
 
         return payload
 
@@ -2860,7 +3469,12 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
     )
 
     if tema_aberto_para_gemini and not pergunta_tem_calculo:
-        resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
+        resposta_gemini = generate_gemini_rag_answer(
+            pergunta,
+            contexto,
+            idioma=idioma,
+            usage_out=gemini_usage,
+        )
 
         if resposta_gemini:
             return finalizar_resposta_rag(
@@ -2904,7 +3518,12 @@ Depois você pode me dizer quanto conseguiu guardar, e eu te ajudo a ajustar."""
     )
 
     if pergunta_aberta_para_gemini:
-        resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
+        resposta_gemini = generate_gemini_rag_answer(
+            pergunta,
+            contexto,
+            idioma=idioma,
+            usage_out=gemini_usage,
+        )
 
         if resposta_gemini:
             return finalizar_resposta_rag(
@@ -3026,7 +3645,12 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
     )
 
     if pergunta_aberta_para_gemini:
-        resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
+        resposta_gemini = generate_gemini_rag_answer(
+            pergunta,
+            contexto,
+            idioma=idioma,
+            usage_out=gemini_usage,
+        )
 
         if resposta_gemini:
             return finalizar_resposta_rag(
@@ -3078,7 +3702,12 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
     )
 
     if pergunta_explicativa and not pergunta_tem_calculo:
-        resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
+        resposta_gemini = generate_gemini_rag_answer(
+            pergunta,
+            contexto,
+            idioma=idioma,
+            usage_out=gemini_usage,
+        )
 
         if resposta_gemini:
             return finalizar_resposta_rag(
@@ -3116,7 +3745,12 @@ Quer que eu mostre como ficaria essa meta no mês inteiro?"""
     )
 
     if tema_aberto_para_gemini and not pergunta_tem_calculo:
-        resposta_gemini = generate_gemini_rag_answer(pergunta, contexto, idioma=idioma)
+        resposta_gemini = generate_gemini_rag_answer(
+            pergunta,
+            contexto,
+            idioma=idioma,
+            usage_out=gemini_usage,
+        )
 
         if resposta_gemini:
             return finalizar_resposta_rag(

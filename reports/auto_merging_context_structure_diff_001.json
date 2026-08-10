@@ -1,0 +1,195 @@
+{
+  "phase": "5.23F",
+  "top_k": 3,
+  "content_included": false,
+  "queries": [
+    {
+      "case_index": 1,
+      "question": "cartão de crédito está me apertando",
+      "top_k": 3,
+      "baseline": {
+        "results_total": 3,
+        "context_characters": 2819,
+        "context_sha256": "ef52da8c0e6f8a1f9e02974900cac818087fce399402f24f50fac7b3e9182faf",
+        "trace_results": [
+          {
+            "position": 1,
+            "chunk_id": "inna-edu-cartao-002::tuned-002::ae947c04fbf207263d52",
+            "document_id": 22,
+            "document_key": "inna-edu-cartao-002",
+            "hybrid_score": 0.03252247488101534,
+            "rerank_score": 0.522522,
+            "search_origins": [
+              "textual",
+              "vetorial"
+            ]
+          },
+          {
+            "position": 2,
+            "chunk_id": "inna-edu-cartao-002::tuned-001::b5df716e5b28d22c9d5a",
+            "document_id": 22,
+            "document_key": "inna-edu-cartao-002",
+            "hybrid_score": 0.03252247488101534,
+            "rerank_score": 0.522522,
+            "search_origins": [
+              "textual",
+              "vetorial"
+            ]
+          },
+          {
+            "position": 3,
+            "chunk_id": "inna-edu-credito-002::tuned-001::d22bbf862cb5b1c9d8df",
+            "document_id": 23,
+            "document_key": "inna-edu-credito-002",
+            "hybrid_score": 0.03125763125763126,
+            "rerank_score": 0.461258,
+            "search_origins": [
+              "textual",
+              "vetorial"
+            ]
+          }
+        ]
+      },
+      "candidate": {
+        "results_total": 2,
+        "context_characters": 2819,
+        "context_sha256": "da66f67c6392724bf20dd3f1b14c64151fb5711299188cd66ab559e82d26b7ca",
+        "trace_results": [
+          {
+            "position": 1,
+            "chunk_id": "inna-edu-cartao-002::tuned-002::ae947c04fbf207263d52",
+            "document_id": 22,
+            "document_key": "inna-edu-cartao-002",
+            "hybrid_score": 0.03252247488101534,
+            "rerank_score": 0.522522,
+            "search_origins": [
+              "textual",
+              "vetorial"
+            ]
+          },
+          {
+            "position": 2,
+            "chunk_id": "inna-edu-credito-002::tuned-001::d22bbf862cb5b1c9d8df",
+            "document_id": 23,
+            "document_key": "inna-edu-credito-002",
+            "hybrid_score": 0.03125763125763126,
+            "rerank_score": 0.461258,
+            "search_origins": [
+              "textual",
+              "vetorial"
+            ]
+          }
+        ],
+        "auto_merging": {
+          "observed": true,
+          "applied": true,
+          "merged_result_count": 1,
+          "child_count": 2,
+          "duration_ms": 0.07
+        }
+      },
+      "comparison": {
+        "context_exact_match": false,
+        "paragraph_multiset_match": true,
+        "paragraph_sequence_match": false,
+        "line_multiset_match": true,
+        "line_sequence_match": false,
+        "classification": "PARAGRAPH_REORDER_ONLY"
+      }
+    },
+    {
+      "case_index": 2,
+      "question": "o que é reserva de emergência?",
+      "top_k": 3,
+      "baseline": {
+        "results_total": 3,
+        "context_characters": 2969,
+        "context_sha256": "6130e0c982b31ca3c8d17cc6203866570453fe4ca0d4e6b45966ddcfb9df3a98",
+        "trace_results": [
+          {
+            "position": 1,
+            "chunk_id": "inna-edu-reserva-002::tuned-002::316d2b8f9bca37eaf38d",
+            "document_id": 29,
+            "document_key": "inna-edu-reserva-002",
+            "hybrid_score": 0.03252247488101534,
+            "rerank_score": 0.522522,
+            "search_origins": [
+              "textual",
+              "vetorial"
+            ]
+          },
+          {
+            "position": 2,
+            "chunk_id": "inna-edu-reserva-002::tuned-001::34aadfa8695fe145e93c",
+            "document_id": 29,
+            "document_key": "inna-edu-reserva-002",
+            "hybrid_score": 0.03252247488101534,
+            "rerank_score": 0.522522,
+            "search_origins": [
+              "textual",
+              "vetorial"
+            ]
+          },
+          {
+            "position": 3,
+            "chunk_id": "inna-edu-metas-002::tuned-002::882cf497c749b92f6e65",
+            "document_id": 27,
+            "document_key": "inna-edu-metas-002",
+            "hybrid_score": 0.03125763125763126,
+            "rerank_score": 0.521258,
+            "search_origins": [
+              "textual",
+              "vetorial"
+            ]
+          }
+        ]
+      },
+      "candidate": {
+        "results_total": 2,
+        "context_characters": 2969,
+        "context_sha256": "5f66a0a11d09193fdcce446c89ca4b2b8cae9b9f302398ebee0ecc5f474ac9ac",
+        "trace_results": [
+          {
+            "position": 1,
+            "chunk_id": "inna-edu-reserva-002::tuned-002::316d2b8f9bca37eaf38d",
+            "document_id": 29,
+            "document_key": "inna-edu-reserva-002",
+            "hybrid_score": 0.03252247488101534,
+            "rerank_score": 0.522522,
+            "search_origins": [
+              "textual",
+              "vetorial"
+            ]
+          },
+          {
+            "position": 2,
+            "chunk_id": "inna-edu-metas-002::tuned-002::882cf497c749b92f6e65",
+            "document_id": 27,
+            "document_key": "inna-edu-metas-002",
+            "hybrid_score": 0.03125763125763126,
+            "rerank_score": 0.521258,
+            "search_origins": [
+              "textual",
+              "vetorial"
+            ]
+          }
+        ],
+        "auto_merging": {
+          "observed": true,
+          "applied": true,
+          "merged_result_count": 1,
+          "child_count": 2,
+          "duration_ms": 0.12
+        }
+      },
+      "comparison": {
+        "context_exact_match": false,
+        "paragraph_multiset_match": true,
+        "paragraph_sequence_match": false,
+        "line_multiset_match": true,
+        "line_sequence_match": false,
+        "classification": "PARAGRAPH_REORDER_ONLY"
+      }
+    }
+  ]
+}

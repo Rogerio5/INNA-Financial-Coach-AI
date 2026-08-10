@@ -875,6 +875,70 @@ def _execute_rag_for_agent(
         if str(item).strip()
     ]
 
+    raw_retrieval_telemetry = output.get(
+        "retrieval_telemetry",
+        {},
+    )
+
+    retrieval_telemetry = (
+        dict(
+            raw_retrieval_telemetry
+        )
+        if isinstance(
+            raw_retrieval_telemetry,
+            dict,
+        )
+        else {}
+    )
+
+    raw_llm_usage = output.get(
+        "llm_usage",
+        {},
+    )
+
+    llm_usage: dict[str, int] = {}
+
+    if isinstance(
+        raw_llm_usage,
+        dict,
+    ):
+        for key in (
+            "input_tokens",
+            "output_tokens",
+            "total_tokens",
+        ):
+            try:
+                llm_usage[key] = max(
+                    0,
+                    int(
+                        raw_llm_usage.get(
+                            key,
+                            0,
+                        )
+                        or 0
+                    ),
+                )
+            except (
+                TypeError,
+                ValueError,
+            ):
+                llm_usage[key] = 0
+
+        if (
+            llm_usage["total_tokens"]
+            <= 0
+        ):
+            llm_usage[
+                "total_tokens"
+            ] = (
+                llm_usage[
+                    "input_tokens"
+                ]
+                + llm_usage[
+                    "output_tokens"
+                ]
+            )
+
     structured_response[
         "rag_execution"
     ].update({
@@ -888,6 +952,10 @@ def _execute_rag_for_agent(
         "sources": fontes,
         "retrieval_context": (
             contexto_recuperado
+        ),
+        "llm_usage": llm_usage,
+        "retrieval_telemetry": (
+            retrieval_telemetry
         ),
     })
 

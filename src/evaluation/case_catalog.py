@@ -304,7 +304,7 @@ def build_core_cases() -> tuple[InnaEvaluationCase, ...]:
             expected_retrieval_terms=(
                 "gastos fixos",
                 "gastos variáveis",
-                "reserva financeira",
+                "reserva de emergência",
             ),
             minimum_retrieved_documents=1,
             minimum_completion_score=0.80,

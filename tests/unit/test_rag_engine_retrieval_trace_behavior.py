@@ -49,7 +49,7 @@ def _disable_gemini(
     monkeypatch.setattr(
         rag_engine,
         "generate_gemini_rag_answer",
-        lambda pergunta, contexto, idioma="pt": None,
+        lambda pergunta, contexto, idioma="pt", *, usage_out=None: None,
     )
 
 

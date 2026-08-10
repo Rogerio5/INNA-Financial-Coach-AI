@@ -358,6 +358,114 @@ class BuscarConhecimentoRagInput(BaseModel):
     )
 
 
+def _extract_retrieval_telemetry(
+    raw_result: Any,
+) -> dict[str, Any]:
+    """
+    Extrai somente o resumo seguro de retrieval.
+
+    O raw_result completo permanece interno.
+    """
+    if not isinstance(
+        raw_result,
+        dict,
+    ):
+        return {}
+
+    retrieval_trace = raw_result.get(
+        "retrieval_trace",
+        {},
+    )
+
+    if not isinstance(
+        retrieval_trace,
+        dict,
+    ):
+        return {}
+
+    auto_merging = retrieval_trace.get(
+        "auto_merging",
+        {},
+    )
+
+    if not isinstance(
+        auto_merging,
+        dict,
+    ):
+        return {}
+
+    try:
+        merged_result_count = max(
+            0,
+            int(
+                auto_merging.get(
+                    "merged_result_count",
+                    0,
+                )
+                or 0
+            ),
+        )
+    except (
+        TypeError,
+        ValueError,
+    ):
+        merged_result_count = 0
+
+    try:
+        child_count = max(
+            0,
+            int(
+                auto_merging.get(
+                    "child_count",
+                    0,
+                )
+                or 0
+            ),
+        )
+    except (
+        TypeError,
+        ValueError,
+    ):
+        child_count = 0
+
+    try:
+        duration_ms = max(
+            0.0,
+            float(
+                auto_merging.get(
+                    "duration_ms",
+                    0.0,
+                )
+                or 0.0
+            ),
+        )
+    except (
+        TypeError,
+        ValueError,
+    ):
+        duration_ms = 0.0
+
+    return {
+        "observed": bool(
+            auto_merging.get(
+                "observed",
+                False,
+            )
+        ),
+        "applied": bool(
+            auto_merging.get(
+                "applied",
+                False,
+            )
+        ),
+        "merged_result_count": (
+            merged_result_count
+        ),
+        "child_count": child_count,
+        "duration_ms": duration_ms,
+    }
+
+
 class BuscarConhecimentoRagOutput(BaseModel):
     """
     Saída segura disponibilizada ao agente.
@@ -398,6 +506,14 @@ class BuscarConhecimentoRagOutput(BaseModel):
         ge=0,
     )
 
+    llm_usage: dict[str, int] = Field(
+        default_factory=dict,
+    )
+
+    retrieval_telemetry: dict[str, Any] = Field(
+        default_factory=dict,
+    )
+
 
 class RagFormalToolExecutionError(
     RuntimeError
@@ -435,6 +551,65 @@ def executar_busca_conhecimento_rag(
         resultado.answer or ""
     ).strip()
 
+    raw_llm_usage = (
+        resultado.raw_result.get(
+            "llm_usage",
+            {},
+        )
+        if isinstance(
+            resultado.raw_result,
+            dict,
+        )
+        else {}
+    )
+
+    llm_usage: dict[str, int] = {}
+
+    if isinstance(
+        raw_llm_usage,
+        dict,
+    ):
+        for key in (
+            "input_tokens",
+            "output_tokens",
+            "total_tokens",
+        ):
+            try:
+                llm_usage[key] = max(
+                    0,
+                    int(
+                        raw_llm_usage.get(
+                            key,
+                            0,
+                        )
+                        or 0
+                    ),
+                )
+            except (
+                TypeError,
+                ValueError,
+            ):
+                llm_usage[key] = 0
+
+        calculated_total = (
+            llm_usage["input_tokens"]
+            + llm_usage["output_tokens"]
+        )
+
+        if (
+            llm_usage["total_tokens"]
+            <= 0
+        ):
+            llm_usage[
+                "total_tokens"
+            ] = calculated_total
+
+    retrieval_telemetry = (
+        _extract_retrieval_telemetry(
+            resultado.raw_result
+        )
+    )
+
     if not resposta:
         raise RagFormalToolExecutionError(
             "empty_rag_answer"
@@ -454,6 +629,10 @@ def executar_busca_conhecimento_rag(
         ),
         duracao_rag_ms=(
             resultado.duration_ms
+        ),
+        llm_usage=llm_usage,
+        retrieval_telemetry=(
+            retrieval_telemetry
         ),
     )
 
