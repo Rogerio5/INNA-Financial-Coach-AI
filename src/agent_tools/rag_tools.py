@@ -87,15 +87,16 @@ def _normalizar_fontes(
 
 
 def _extrair_contexto_recuperado(
-    resultado: dict[str, Any],
+    resultado: dict,
 ) -> list[str]:
     """
-    Extrai o contexto textual efetivamente usado pelo
-    RAG sem expor embeddings, SQL ou dados técnicos.
+    Extrai o contexto textual efetivamente usado pelo RAG.
 
-    O contexto completo é priorizado porque os trechos
-    individuais das fontes podem estar truncados.
+    Prioriza contexto_usado. Se esse campo vier vazio em
+    algum caminho especializado de answer_with_rag(), usa
+    os documentos/contextos retornados como fallback seguro.
     """
+
     contexto = str(
         resultado.get(
             "contexto_usado",
@@ -105,36 +106,39 @@ def _extrair_contexto_recuperado(
     ).strip()
 
     if contexto:
-        return [
-            contexto[:16000]
-        ]
+        return [contexto]
 
-    trechos: list[str] = []
-
-    fontes = resultado.get(
-        "fontes",
-        [],
+    documentos = (
+        resultado.get("documentos")
+        or resultado.get("contextos")
+        or []
     )
 
-    if isinstance(fontes, (list, tuple)):
-        for fonte in fontes:
-            if not isinstance(fonte, dict):
-                continue
+    if not isinstance(
+        documentos,
+        (list, tuple),
+    ):
+        return []
 
-            trecho = str(
-                fonte.get("trecho")
-                or fonte.get("chunk_text")
-                or fonte.get("texto")
-                or fonte.get("conteudo")
+    contextos: list[str] = []
+
+    for item in documentos:
+        if isinstance(item, str):
+            texto = item.strip()
+        elif isinstance(item, dict):
+            texto = str(
+                item.get("chunk_text")
+                or item.get("texto")
+                or item.get("trecho")
                 or ""
             ).strip()
+        else:
+            texto = ""
 
-            if trecho and trecho not in trechos:
-                trechos.append(
-                    trecho[:2000]
-                )
+        if texto and texto not in contextos:
+            contextos.append(texto)
 
-    return trechos
+    return contextos
 
 
 
