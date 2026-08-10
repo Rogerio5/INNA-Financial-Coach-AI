@@ -700,6 +700,7 @@ def validate_reports(
     all_offline_controls = all(offline_control_values.values())
 
     from src.evaluation.offline_dashboard import (
+        OfflineDashboardPaths,
         build_overview,
         load_offline_dashboard_snapshot,
         security_rows,
@@ -708,6 +709,12 @@ def validate_reports(
     snapshot = load_offline_dashboard_snapshot(
         project_root,
         strict=True,
+        paths=OfflineDashboardPaths(
+            benchmark=report_paths["benchmark"],
+            quality_gate=report_paths["quality_gate"],
+            quality_summary=report_paths["quality_summary"],
+            mcp_e2e=report_paths["mcp_e2e"],
+        ),
     )
 
     overview = build_overview(snapshot)
