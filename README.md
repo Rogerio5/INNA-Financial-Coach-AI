@@ -1805,6 +1805,38 @@ Próxima evolução:
 ---
 
 ## Aplicação do Bootcamp 2026 — Engenharia de IA na INNA
+<!-- BOOTCAMP-2026-EVIDENCE-NAV:START -->
+
+### 🎓 Trilha técnica e evidências do Bootcamp
+
+A aplicação dos conteúdos do **Bootcamp 2026 — Engenharia de IA**
+na INNA possui uma documentação técnica própria, conectando:
+
+**conteúdo estudado → implementação → código → testes → relatórios → evidências**
+
+📚 **[Abrir documentação completa do Bootcamp 2026](docs/bootcamp-2026/README.md)**
+
+| Semana | Tema | Aplicação na INNA | Evidências |
+|---|---|---|---|
+| **Semana 1** | Agentes e fundamentos | ✅ Aplicada | [Ver evidências](docs/bootcamp-2026/semana-01/) |
+| **Semana 2** | Agentes, multiagente e produção | ✅ Aplicada | [Ver evidências](docs/bootcamp-2026/semana-02/) |
+| **Semana 3** | RAG e retrieval avançado | ✅ Aplicada e validada | [Ver evidências](docs/bootcamp-2026/semana-03/) |
+| **Semana 4** | RAG agêntico e avaliação | ✅ Conteúdo principal aplicado | [Ver evidências](docs/bootcamp-2026/semana-04/) |
+| **Semana 5** | Conteúdo oficial | ⏳ Aguardando conteúdo | [Abrir estrutura](docs/bootcamp-2026/semana-05/) |
+
+#### Classificação das evidências
+
+- 📚 **Estudado** — conteúdo abordado durante o Bootcamp;
+- 🧪 **Experimentado** — laboratório, prova de conceito ou compatibilidade;
+- ✅ **Aplicado** — implementação real existente no projeto;
+- 🚀 **Validado** — implementação comprovada por testes, métricas ou Quality Gates;
+- ⏳ **Roadmap** — conteúdo ainda não incorporado ao runtime.
+
+> As evidências não duplicam o código-fonte. Elas apontam diretamente para
+> implementações reais em `src/`, testes em `tests/`, relatórios em `reports/`
+> e auditorias técnicas do projeto.
+
+<!-- BOOTCAMP-2026-EVIDENCE-NAV:END -->
 
 ### Semana 1 — Agentes, fundamentos
 
@@ -1874,7 +1906,7 @@ Conteúdos aplicados na INNA:
 
 ---
 
-## # Semana 3 — RAG, Fundamentos e Retrieval Avançado
+### Semana 3 — RAG, Fundamentos e Retrieval Avançado
 
 > **Status:** ✅ Validação técnica concluída — Sentence-Window aprovado para rollout controlado
 
