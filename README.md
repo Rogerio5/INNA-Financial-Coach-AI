@@ -2066,19 +2066,20 @@ Todos os detalhes técnicos, testes, arquitetura, avaliações e registros da im
 - 🚀 [Aplicação da Semana 3 na INNA](docs/bootcamp-2026/semana-03/evidencias/09-aplicacao-na-inna.md)
 
 ---
-### 🧭 Semana 4 — RAG agêntico e avaliação
+### 🧭 Semana 4 — RAG Agêntico e Avaliação
 
-**Status:** 🚀 Conteúdo principal aplicado e validado
+**Status:** ✅ Conteúdo aplicado, integrado e validado
 
-A Semana 4 conecta agentes, ferramentas e RAG para permitir que a INNA realize **roteamento, pesquisa, recuperação de informações, avaliação da suficiência das evidências e síntese da resposta**.
+A Semana 4 conecta agentes, ferramentas e RAG para permitir que a INNA realize **roteamento, pesquisa, recuperação de informações, avaliação da suficiência das evidências e síntese de respostas fundamentadas**.
 
-#### Conteúdos estudados
+#### 📚 Conteúdos estudados
 
 - Agentic RAG;
 - Router Agents;
 - Tool Calling;
 - Research Agents;
 - pesquisa multi-documento;
+- integração RAG + agentes;
 - RAG Triad;
 - RAGAS;
 - DeepEval;
@@ -2087,7 +2088,7 @@ A Semana 4 conecta agentes, ferramentas e RAG para permitir que a INNA realize *
 - avaliação automatizada;
 - CI/CD aplicado à avaliação de IA.
 
-#### Aplicação na INNA
+#### 🚀 Aplicação na INNA
 
 A INNA possui uma camada própria de Agentic RAG com componentes como:
 
@@ -2100,6 +2101,10 @@ Planner
    ↓
 Research Agent
    ↓
+Formal RAG Tool
+   ↓
+RAG / GraphRAG
+   ↓
 Recuperação de evidências
    ↓
 Avaliação de suficiência
@@ -2109,7 +2114,7 @@ Synthesizer
 Resposta fundamentada
 ```
 
-Também foram implementados:
+Também foram implementados e validados:
 
 - Router;
 - Planner;
@@ -2119,26 +2124,55 @@ Também foram implementados:
 - Formal RAG Tool;
 - Tool Calling;
 - pesquisa multi-documento;
+- Agentic RAG integrado ao GraphRAG;
+- recuperação de evidências;
+- avaliação de suficiência;
 - RAG Triad;
 - DeepEval;
 - Quality Gates;
 - regressão automatizada;
 - pipelines de avaliação no GitHub Actions.
 
-#### Frameworks de avaliação
+### 🧪 Estratégia de validação
 
-| Tecnologia | Situação na INNA |
-|---|---|
-| DeepEval | ✅ Aplicado e validado |
-| RAG Triad | ✅ Aplicado e validado |
-| RAGAS | 📚 Estudado / compatibilidade de benchmark |
-| TruLens | 📚 Estudado / compatibilidade de benchmark |
+Os testes da arquitetura agêntica foram divididos em duas camadas.
 
-RAGAS e TruLens não são apresentados como frameworks ativos do runtime enquanto não existir integração operacional dedicada.
+#### Testes determinísticos
 
-🔎 **[Ver todas as evidências da Semana 4](docs/bootcamp-2026/semana-04/evidencias/README.md)**
+Router, Tool Calling, contratos das ferramentas, retrieval e integração entre agentes foram testados de forma isolada quando uma chamada ao LLM não era necessária.
 
-### 📚 Documentos específicos — Semana 4
+#### Validação LIVE
+
+O pipeline completo também foi validado utilizando:
+
+- RAG real;
+- Graph Retrieval real;
+- Gemini real;
+- DeepEval;
+- RAG Triad;
+-Quality Gates.
+
+O Quality Gate LIVE confirmou a qualidade da integração antes da aprovação técnica.
+
+### 📊 Frameworks de avaliação
+
+| Tecnologia    | Situação na INNA                           |
+| ------------- | ------------------------------------------ |
+| DeepEval      | ✅ Aplicado e validado LIVE                 |
+| RAG Triad     | ✅ Aplicado e validado                      |
+| Quality Gates | ✅ Implementados                            |
+| RAGAS         | 📚 Estudado / compatibilidade de benchmark |
+| TruLens       | 📚 Estudado / compatibilidade de benchmark |
+
+> RAGAS e TruLens não são apresentados como frameworks ativos do runtime enquanto não existir integração operacional dedicada.
+
+## 🔎 Evidências da Semana 4
+
+Todos os detalhes técnicos, testes, arquitetura, avaliações e registros da implementação estão organizados na pasta de evidências.
+
+### 👉 [Acessar todas as evidências da Semana 4](docs/bootcamp-2026/semana-04/evidencias/README.md)
+
+### 📚 Documentos disponíveis
 
 - 🧠 [Agentic RAG](docs/bootcamp-2026/semana-04/evidencias/01-agentic-rag.md)
 - 🧭 [Router Agents e Tool Calling](docs/bootcamp-2026/semana-04/evidencias/02-router-agents-e-tool-calling.md)
@@ -2150,6 +2184,7 @@ RAGAS e TruLens não são apresentados como frameworks ativos do runtime enquant
 - ⚙️ [CI/CD e Avaliação](docs/bootcamp-2026/semana-04/evidencias/08-ci-cd-e-avaliacao.md)
 - 🚀 [Aplicação da Semana 4 na INNA](docs/bootcamp-2026/semana-04/evidencias/09-aplicacao-na-inna.md)
 
+---
 ### ⏳ Semana 5
 
 **Status:** aguardando conteúdo oficial.
