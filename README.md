@@ -1950,9 +1950,10 @@ A Semana 3 aprofundou a arquitetura RAG da INNA, com foco em **precisão de retr
 - Cypher;
 - Graph Retrieval;
 - GraphRAG;
-- Agentic RAG;
 - Quality Gates;
 - benchmarks e avaliação A/B.
+
+> Agentic RAG, Router Agents, Tool Calling, Research Agents e pesquisa multi-documento são aprofundados na Semana 4.
 
 ## 🚀 Aplicação na INNA
 
@@ -1970,7 +1971,6 @@ Durante a Semana 3, a INNA evoluiu para uma arquitetura com:
 - Cypher;
 - Graph Retrieval;
 - GraphRAG integrado ao RAG híbrido;
-- integração com Agentic RAG;
 - DeepEval;
 - RAG Triad;
 - Answer Relevancy;
@@ -2004,23 +2004,20 @@ Gemini
 RAG Triad / DeepEval
 ```
 
-#### 🕸️ Knowledge Graph e GraphRAG
+### 🕸️ Knowledge Graph e GraphRAG
 
-| Tecnologia             | Situação                     |
-| ---------------------- | ---------------------------- |
-| Knowledge Graph        | ✅ Implementado               |
-| Neo4j AuraDB           | ✅ Integrado                  |
-| Cypher                 | ✅ Implementado               |
-| Graph Retrieval        | ✅ Implementado               |
-| GraphRAG               | ✅ Integrado e validado       |
-| Agentic RAG + GraphRAG | ✅ Validado                   |
-| DeepEval / RAG Triad   | ✅ Quality Gate LIVE aprovado |
+| Tecnologia           | Situação                     |
+| -------------------- | ---------------------------- |
+| Knowledge Graph      | ✅ Implementado               |
+| Neo4j AuraDB         | ✅ Integrado                  |
+| Cypher               | ✅ Implementado               |
+| Graph Retrieval      | ✅ Implementado               |
+| GraphRAG             | ✅ Integrado e validado       |
+| DeepEval / RAG Triad | ✅ Quality Gate LIVE aprovado |
 
+> O Neo4j mantém a estrutura de conceitos, tópicos e relacionamentos, enquanto o PostgreSQL/Neon continua sendo a fonte principal dos chunks e conteúdos textuais.
 
-O Neo4j mantém a estrutura de conceitos, tópicos e relacionamentos, enquanto o PostgreSQL/Neon continua sendo a fonte principal dos chunks
-e conteúdos textuais.
-
-#### ✅ Validação
+### ✅ Validação
 
 A implementação passou por:
 
@@ -2035,20 +2032,20 @@ A implementação passou por:
 - RAG Triad;
 - Quality Gates.
 
-#### Resultado da regressão:
+### Resultado da regressão
 ```
 4268 passed
 3 skipped
 ```
 
-#### Resultado do Quality Gate final:
-```text
+### Resultado do Quality Gate final
+```
 Answer Relevancy       = 1.0
 Faithfulness           = 1.0
 Contextual Relevancy   = 1.0
 GraphRAG Final Gate    = PASS
 ```
-> A implementação está tecnicamente concluída e validada.A ativação definitiva em produção permanece controlada por merge,deploy e feature flag.
+> A implementação está tecnicamente concluída e validada. A ativação definitiva em produção permanece controlada por merge, deploy e feature flag.
 
 ## 🔎 Evidências da Semana 3
 
