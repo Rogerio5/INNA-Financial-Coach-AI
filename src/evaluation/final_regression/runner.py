@@ -538,38 +538,56 @@ def validate_reports(
 ]:
     """Valida os relatórios produzidos pela Semana 4."""
 
-    report_paths = {
-        "benchmark": (
-            project_root
-            / "artifacts"
-            / "evaluations"
-            / "agentic_benchmark"
-            / "offline_benchmark_latest.json"
-        ),
-        "quality_gate": (
-            project_root
-            / "artifacts"
-            / "evaluations"
-            / "agentic_benchmark"
-            / "offline_quality_gate_latest.json"
-        ),
-        "quality_summary": (
-            project_root
-            / "artifacts"
-            / "evaluations"
-            / "agentic_benchmark"
-            / "offline_quality_summary_latest.json"
-        ),
-        "mcp_e2e": (
-            project_root
-            / "artifacts"
-            / "evaluations"
-            / "mcp_simulated_e2e"
-            / "mcp_simulated_e2e_latest.json"
-        ),
+    configured_report_paths = tuple(
+        project_root / relative_path
+        for relative_path in policy.required_reports
+    )
+
+    reports_by_name = {
+        path.name: path
+        for path in configured_report_paths
     }
 
-    reports_exist = all(path.exists() for path in report_paths.values())
+    expected_report_names = {
+        "benchmark": "offline_benchmark_latest.json",
+        "quality_gate": "offline_quality_gate_latest.json",
+        "quality_summary": "offline_quality_summary_latest.json",
+        "mcp_e2e": "mcp_simulated_e2e_latest.json",
+    }
+
+    missing_contract_reports = tuple(
+        report_name
+        for report_name in expected_report_names.values()
+        if report_name not in reports_by_name
+    )
+
+    if missing_contract_reports:
+        raise ValueError(
+            "Pol??tica de regress??o sem relat??rios obrigat??rios: "
+            + ", ".join(missing_contract_reports)
+        )
+
+    report_paths = {
+        report_key: reports_by_name[report_name]
+        for report_key, report_name in expected_report_names.items()
+    }
+
+    reports_exist = all(
+        report_path.exists()
+        for report_path in report_paths.values()
+    )
+
+    if not reports_exist:
+        missing_reports = tuple(
+            str(report_path)
+            for report_path in report_paths.values()
+            if not report_path.exists()
+        )
+
+        raise FileNotFoundError(
+            "Relat??rios obrigat??rios da regress??o ausentes: "
+            + ", ".join(missing_reports)
+        )
 
     benchmark = _load_json(report_paths["benchmark"])
 

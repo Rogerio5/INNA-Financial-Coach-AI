@@ -25,9 +25,9 @@
   ],
   "required_reports": [
     "tests/evaluations/fixtures/offline_benchmark_latest.json",
-    "artifacts/evaluations/agentic_benchmark/offline_quality_gate_latest.json",
-    "artifacts/evaluations/agentic_benchmark/offline_quality_summary_latest.json",
-    "artifacts/evaluations/mcp_simulated_e2e/mcp_simulated_e2e_latest.json"
+    "tests/evaluations/fixtures/offline_quality_gate_latest.json",
+    "tests/evaluations/fixtures/offline_quality_summary_latest.json",
+    "tests/evaluations/fixtures/mcp_simulated_e2e_latest.json"
   ],
   "forbidden_environment_usage": [
     "GEMINI_API_KEY",

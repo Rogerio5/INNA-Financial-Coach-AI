@@ -28,6 +28,20 @@ def test_policy_is_offline() -> None:
     assert policy.minimum_mcp_scenario_count == 8
 
 
+def test_required_report_fixtures_are_checkout_safe() -> None:
+    policy = load_policy(POLICY_PATH)
+
+    assert len(policy.required_reports) == 4
+    assert all(
+        relative_path.startswith("tests/evaluations/fixtures/")
+        for relative_path in policy.required_reports
+    )
+    assert all(
+        (PROJECT_ROOT / relative_path).is_file()
+        for relative_path in policy.required_reports
+    )
+
+
 def test_agentic_rag_tests_are_discovered() -> None:
     paths = discover_agentic_rag_tests(PROJECT_ROOT)
 

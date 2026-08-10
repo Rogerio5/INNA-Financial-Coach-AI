@@ -1,0 +1,120 @@
+{
+  "agentic_average_latency_ms": 120.0,
+  "agentic_average_score": 1.0,
+  "agentic_pass_rate": 1.0,
+  "artifacts": {
+    "benchmark_csv": "artifacts\\evaluations\\agentic_benchmark\\offline_benchmark_latest.csv",
+    "benchmark_json": "artifacts\\evaluations\\agentic_benchmark\\offline_benchmark_latest.json",
+    "quality_gate_json": "artifacts\\evaluations\\agentic_benchmark\\offline_quality_gate_latest.json"
+  },
+  "dataset_case_count": 24,
+  "dataset_version": "1.0.0",
+  "live_services_used": false,
+  "offline": true,
+  "quality_gate": {
+    "checks": [
+      {
+        "actual": 1.0,
+        "blocking": true,
+        "code": "agentic_pass_rate",
+        "description": "Taxa de aprovação mínima do perfil Agentic.",
+        "expected": ">=1.0",
+        "passed": true
+      },
+      {
+        "actual": 1.0,
+        "blocking": true,
+        "code": "agentic_average_score",
+        "description": "Score médio mínimo do perfil Agentic.",
+        "expected": ">=1.0",
+        "passed": true
+      },
+      {
+        "actual": 0.610556,
+        "blocking": true,
+        "code": "score_delta",
+        "description": "O Agentic não pode regredir no score médio.",
+        "expected": ">=0.0",
+        "passed": true
+      },
+      {
+        "actual": 0,
+        "blocking": true,
+        "code": "regression_count",
+        "description": "Quantidade máxima de regressões funcionais.",
+        "expected": "<=0",
+        "passed": true
+      },
+      {
+        "actual": 0,
+        "blocking": true,
+        "code": "invalid_citation_count",
+        "description": "Quantidade máxima de citações inválidas.",
+        "expected": "<=0",
+        "passed": true
+      },
+      {
+        "actual": 0,
+        "blocking": true,
+        "code": "agentic_error_count",
+        "description": "Quantidade máxima de erros no perfil Agentic.",
+        "expected": "<=0",
+        "passed": true
+      },
+      {
+        "actual": 65.0,
+        "blocking": true,
+        "code": "latency_delta",
+        "description": "Aumento máximo permitido de latência simulada.",
+        "expected": "<=100.0",
+        "passed": true
+      },
+      {
+        "actual": 1.0,
+        "blocking": true,
+        "code": "category_pass_rate",
+        "description": "Taxa mínima de aprovação em cada categoria.",
+        "expected": ">=1.0",
+        "passed": true
+      },
+      {
+        "actual": 24,
+        "blocking": true,
+        "code": "dataset_case_count",
+        "description": "Todos os casos esperados devem ser executados.",
+        "expected": 24,
+        "passed": true
+      },
+      {
+        "actual": 12,
+        "blocking": true,
+        "code": "dataset_category_count",
+        "description": "Todas as categorias esperadas devem ser executadas.",
+        "expected": 12,
+        "passed": true
+      },
+      {
+        "actual": true,
+        "blocking": true,
+        "code": "offline_execution",
+        "description": "O Quality Gate desta fase deve permanecer offline.",
+        "expected": true,
+        "passed": true
+      }
+    ],
+    "dataset_version": "1.0.0",
+    "failed_blocking_codes": [],
+    "failed_checks": 0,
+    "metadata": {
+      "agentic_total_cases": 24,
+      "agentic_total_categories": 12,
+      "live_services_used": false,
+      "offline": true
+    },
+    "passed": true,
+    "passed_checks": 11,
+    "policy_version": "1.0.0",
+    "total_checks": 11
+  },
+  "regression_count": 0
+}
