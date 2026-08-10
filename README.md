@@ -2628,7 +2628,7 @@ WEEK3_PRODUCTION_VALIDATION=APPROVED
    ↓
 3315 ms  ← benchmark final HTTP atual
 ```
-```
+
 ### Benchmark final — 7 amostras em produção
 ```
 HTTP_MIN_MS=3264.76
@@ -2643,6 +2643,7 @@ RETRIEVAL_MAX_MS=3107.48
 
 PARALLEL_OVERLAP_SAVED_MEDIAN_MS=1071.85
 ```
+---
 #### Resultado
 
 O pipeline passou de uma execução operacional observada
@@ -2685,9 +2686,10 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 ```
 
 ---
-## 🔄 Próximos passos
 
-### Implementação e avaliação
+## 🔄 Próximos passos e status técnico consolidado
+
+### Implementação e avaliação — Sentence-Window Retrieval
 
 - [x] Implementar Sentence-Window Retrieval;
 - [x] Criar comparação A/B;
@@ -2702,8 +2704,8 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Validar a geração final do Gemini após a correção de rede;
 - [x] Confirmar latência de geração de aproximadamente `8.097 s` no teste isolado;
 - [x] Finalizar a revisão técnica de performance do pipeline RAG;
-- [x] Executar smoke test real com `gemini-2.5-flash`;
-- [x] Executar a Pergunta 2 histórica com `gemini-2.5-flash`;
+- [x] Executar smoke test real com Gemini;
+- [x] Executar a Pergunta 2 histórica;
 - [x] Comparar `window_size=2`, `window_size=4` e `window_size=5`;
 - [x] Selecionar `window_size=5`;
 - [x] Executar a Pergunta 1 oficial;
@@ -2713,9 +2715,11 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Executar a Pergunta 5 oficial;
 - [x] Validar individualmente os cinco Quality Gates;
 - [x] Executar teste ponta a ponta com as cinco perguntas oficiais;
-- [x] Validar o Quality Gate ponta a ponta com 5/5 perguntas aprovadas.
+- [x] Validar o Quality Gate ponta a ponta com `5/5` perguntas aprovadas.
 
-### Consolidação
+---
+
+### Consolidação — Sentence-Window
 
 - [x] Consolidar os cinco resultados oficiais;
 - [x] Comparar regressões entre baseline e Sentence-Window;
@@ -2727,21 +2731,23 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Calcular média e mediana de latência;
 - [x] Calcular a variação média do tamanho do contexto;
 - [x] Executar validação consolidada ponta a ponta;
-- [x] Confirmar 5/5 perguntas aprovadas;
+- [x] Confirmar `5/5` perguntas aprovadas;
 - [x] Confirmar ausência de falhas no teste consolidado;
 - [x] Revisar e documentar o uso de `axis_scores_fallback`;
 - [x] Confirmar que o Quality Gate primário opera sem depender do fallback;
 - [x] Investigar o registro `TOTAL_ESTIMATED_COST=0.0`;
-- [x] Confirmar que `gemini-3.5-flash-lite` não possui `input_price` e `output_price` disponíveis na integração atual do DeepEval;
-- [x] Separar formalmente custo registrado, custo estimado e custo real cobrado;
-- [x] Registrar que `TOTAL_ESTIMATED_COST=0.0` não representa custo real zero;
-- [x] Registrar a limitação atual da telemetria de custo;
-- [ ] Verificar o custo real cobrado diretamente na fonte de faturamento da API, caso necessário;
-- [ ] Revisar tentativas intermediárias;
-- [ ] Revisar execuções incompletas causadas por limite de cota;
-- [x] Emitir a decisão final sobre ativação do Sentence-Window em rollout controlado.
+- [x] Confirmar a limitação da integração anterior do DeepEval para obtenção automática de preços do modelo;
+- [x] Separar formalmente custo registrado, custo estimado equivalente e custo real cobrado;
+- [x] Registrar que `TOTAL_ESTIMATED_COST=0.0` não representa necessariamente custo real zero;
+- [x] Registrar a limitação da telemetria de custo;
+- [ ] Verificar o custo real cobrado diretamente na fonte oficial de faturamento da API, caso necessário;
+- [ ] Revisar todas as tentativas intermediárias antigas da etapa Sentence-Window;
+- [ ] Revisar execuções incompletas antigas causadas por limite de cota;
+- [x] Emitir decisão final sobre ativação do Sentence-Window em rollout controlado.
 
-### Validação operacional em produção
+---
+
+## 🚀 Validação operacional do RAG em produção
 
 - [x] Migrar o retrieval principal para a base estruturada de embeddings com `3072` dimensões;
 - [x] Validar `documento_id` e `documento_key` nativos no retrieval;
@@ -2752,9 +2758,9 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Validar rerank após o RRF;
 - [x] Validar preservação do `search_mode` completo;
 - [x] Validar aplicação do Sentence-Window após o rerank;
-- [x] Validar a allowlist controlada com `inna-edu-orcamento-002`;
+- [x] Validar allowlist controlada de documentos;
 - [x] Validar `TOP_K=2` como configuração global de produção;
-- [x] Confirmar que `QUESTION_4_FINAL_TOP_K=1` pertence somente ao experimento da Pergunta 4;
+- [x] Confirmar que `QUESTION_4_FINAL_TOP_K=1` pertence somente ao experimento específico da Pergunta 4;
 - [x] Validar o endpoint `/rag/ask` no ambiente Render;
 - [x] Confirmar o modo de produção `rag_hibrido_estruturado_3072_rrf_rerank_sentence_window`;
 - [x] Confirmar `STRUCTURED_IDENTITY_3072=True`;
@@ -2763,34 +2769,540 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Confirmar `SENTENCE_WINDOW_PRODUCTION=True`;
 - [x] Confirmar `TOP_K_PRODUCTION_2=True`;
 - [x] Registrar `RAG_3072_PRODUCTION=APPROVED`;
-- [x] Registrar `WEEK3_PRODUCTION_VALIDATION=APPROVED`;
-- [x] Executar regressão ampliada do RAG com `425 passed`;
-- [x] Executar regressão completa com `4115 passed, 3 skipped`;
-- [x] Confirmar Ruff e compilação no escopo alterado;
-- [x] Registrar a latência observada em produção de `6261 ms`;
-- [ ] Executar múltiplas medições de latência em produção;
-- [ ] Calcular latência mínima, média, mediana/p50, p95 e máxima;
-- [ ] Investigar otimização somente se a latência elevada se repetir de forma consistente.
+- [x] Registrar `WEEK3_PRODUCTION_VALIDATION=APPROVED`.
 
-### Próximas técnicas de retrieval
+---
 
-> Os itens abaixo foram movidos para o roadmap pós-Semana 3.
-> Eles são evoluções futuras e não bloqueiam o fechamento técnico
-> do experimento de Sentence-Window.
+## ⚡ Performance e observabilidade
 
-- [ ] Implementar Auto-Merging Retrieval;
-- [ ] Criar testes unitários do Auto-Merging;
-- [ ] Criar experimento A/B para Auto-Merging;
-- [ ] Comparar RAG híbrido, Sentence-Window e Auto-Merging;
-- [ ] Comparar RAG Triad entre as estratégias;
-- [ ] Comparar qualidade, latência, tamanho de contexto e custo estimado;
-- [ ] Verificar regressões entre as estratégias;
-- [ ] Selecionar a estratégia final de retrieval da Semana 3.
+- [x] Implementar profiling de latência no endpoint `/rag/ask`;
+- [x] Implementar profiling das fases internas do retrieval;
+- [x] Implementar profiling detalhado do retrieval vetorial;
+- [x] Mover telemetria secundária para execução em background;
+- [x] Reutilizar conexão PostgreSQL no Sentence-Window;
+- [x] Implementar execução concorrente de Vector Retrieval e Text Retrieval;
+- [x] Limitar a concorrência do Hybrid Retrieval a `max_workers=2`;
+- [x] Validar concorrência com teste unitário dedicado;
+- [x] Executar regressão ampliada do RAG;
+- [x] Executar regressão completa da etapa Sentence-Window com `4119 passed, 3 skipped`;
+- [x] Executar regressão completa após Auto-Merging e correções de CI com `4183 passed, 3 skipped`;
+- [x] Confirmar Ruff no escopo alterado;
+- [x] Confirmar compilação no escopo alterado;
+- [x] Preservar `TOP_K`, RRF, rerank, Sentence-Window e modelo de embeddings durante as otimizações;
+- [x] Implementar telemetria estruturada do Auto-Merging;
+- [x] Propagar telemetria do Auto-Merging pelo trace do RAG;
+- [x] Propagar telemetria pelo Formal RAG Tool;
+- [x] Propagar telemetria para o provider de avaliação LIVE;
+- [x] Evitar exposição de query, SQL, chunks brutos e contexto bruto na telemetria formal;
+- [x] Validar o caminho ponta a ponta `algoritmo → trace → formal tool → avaliação LIVE`.
 
-### Documentação
+---
+
+## 📊 Benchmark de produção
+
+- [x] Preservar `6261 ms` como medição operacional histórica;
+- [x] Executar múltiplas medições de latência em produção;
+- [x] Executar benchmark final com 7 amostras;
+- [x] Calcular latência mínima;
+- [x] Calcular latência média;
+- [x] Calcular latência mediana;
+- [x] Calcular latência máxima;
+- [ ] Calcular `p95` formal do benchmark final a partir das 7 amostras individuais;
+- [x] Comparar benchmark antes e depois do paralelismo;
+- [x] Confirmar ganho real do paralelismo Vector + Text em produção.
+
+### Resultado final do benchmark
+
+```text
+HTTP_MIN_MS=3264.76
+HTTP_AVG_MS=3339.20
+HTTP_MEDIAN_MS=3315.12
+HTTP_MAX_MS=3521.61
+
+RETRIEVAL_MIN_MS=3057.19
+RETRIEVAL_AVG_MS=3078.10
+RETRIEVAL_MEDIAN_MS=3071.58
+RETRIEVAL_MAX_MS=3107.48
+
+VECTOR_MEDIAN_MS=2027.46
+EMBEDDING_MEDIAN_MS=654.22
+VECTOR_DATABASE_MEDIAN_MS=1361.10
+TEXT_MEDIAN_MS=1072.32
+SENTENCE_WINDOW_MEDIAN_MS=1053.39
+
+PARALLEL_OVERLAP_SAVED_MEDIAN_MS=1071.85
+```
+
+### Referência antes do paralelismo
+
+```text
+HTTP_MEDIAN_BEFORE_MS=4396.74
+RETRIEVAL_MEDIAN_BEFORE_MS=4122.52
+VECTOR_MEDIAN_BEFORE_MS=2021.61
+TEXT_MEDIAN_BEFORE_MS=1053.13
+SENTENCE_WINDOW_MEDIAN_BEFORE_MS=1052.63
+```
+
+### Resultado observado
+
+```text
+HTTP_MEDIAN_REDUCTION≈24.6%
+RETRIEVAL_MEDIAN_REDUCTION≈25.5%
+PARALLEL_OVERLAP_SAVED_MEDIAN_MS=1071.85
+```
+
+> O paralelismo entre Vector Retrieval e Text Retrieval reduziu a mediana do retrieval de aproximadamente `4.12 s` para `3.07 s`, preservando TOP_K, RRF, rerank, Sentence-Window e o modelo de embeddings.
+
+---
+
+# 🧠 Auto-Merging Retrieval
+
+## Implementação
+
+- [x] Avaliar Auto-Merging Retrieval;
+- [x] Definir arquitetura de Auto-Merging para a INNA;
+- [x] Criar prova de conceito do Auto-Merging;
+- [x] Implementar `src/services/rag/auto_merging.py`;
+- [x] Integrar Auto-Merging ao pipeline principal do RAG;
+- [x] Posicionar Auto-Merging após Hybrid Retrieval + RRF + rerank;
+- [x] Preservar Sentence-Window como etapa posterior quando habilitado;
+- [x] Implementar configuração de parent groups;
+- [x] Implementar `parent_size=3`;
+- [x] Implementar `min_children=2`;
+- [x] Implementar limite de contexto com `max_characters=4000`;
+- [x] Preservar ordenação determinística por `chunk_index`;
+- [x] Preservar o melhor resultado ranqueado como representante do grupo;
+- [x] Evitar duplicação dos siblings após merge;
+- [x] Criar testes unitários do Auto-Merging;
+- [x] Criar testes de integração do Auto-Merging com Hybrid Retrieval;
+- [x] Criar teste do runner A/B;
+- [x] Criar teste da ponte de telemetria;
+- [x] Criar teste de propagação de usage do Gemini;
+- [x] Integrar Auto-Merging à telemetria de retrieval.
+
+---
+
+## Experimentos A/B do Auto-Merging
+
+- [x] Criar experimento A/B específico;
+- [x] Criar `scripts/run_auto_merging_retrieval_ab.py`;
+- [x] Executar benchmark histórico;
+- [x] Executar reprodução histórica com `TOP_K=3`;
+- [x] Reproduzir contagem de resultados histórica;
+- [x] Reproduzir aplicação do Auto-Merging;
+- [x] Reproduzir contagem de children;
+- [x] Confirmar `FULL_HISTORICAL_REPRODUCTION=True`;
+- [x] Comparar baseline e Auto-Merging;
+- [x] Comparar Hybrid RAG e Auto-Merging;
+- [x] Comparar Sentence-Window e Auto-Merging;
+- [x] Comparar quantidade de resultados retornados;
+- [x] Comparar tamanho total de contexto;
+- [x] Comparar latência;
+- [x] Comparar overhead específico do Auto-Merging;
+- [x] Verificar mudanças estruturais no contexto;
+- [x] Confirmar ausência de perda de conteúdo nos casos alterados;
+- [x] Confirmar que mudanças históricas foram apenas reordenação de parágrafos;
+- [x] Confirmar ordenação determinística;
+- [x] Confirmar que a reordenação é intencional e coerente com o algoritmo.
+
+### Resultado histórico do Auto-Merging
+
+```text
+BASELINE_AVG_RETRIEVAL_MS=2464.70
+BASELINE_AVG_RESULT_COUNT=3.00
+BASELINE_AVG_CONTEXT_CHARS=2774.33
+
+SENTENCE_WINDOW_AVG_RETRIEVAL_MS=2236.03
+SENTENCE_WINDOW_AVG_CONTEXT_CHARS=2708.67
+SENTENCE_WINDOW_APPLIED=3/6
+
+AUTO_MERGING_AVG_RETRIEVAL_MS=2234.16
+AUTO_MERGING_OWN_OVERHEAD_MS≈0.15
+AUTO_MERGING_AVG_RESULT_COUNT=2.17
+AUTO_MERGING_AVG_CONTEXT_CHARS=2776.00
+AUTO_MERGING_APPLIED=5/6
+AUTO_MERGING_TOTAL_CHILDREN=10
+```
+
+### Resultado estrutural
+
+```text
+BASELINE_TOTAL_RESULTS=18
+AUTO_MERGING_TOTAL_RESULTS=13
+
+RESULT_COMPRESSION≈27.78%
+
+BASELINE_TOTAL_CONTEXT_CHARS=16670
+AUTO_MERGING_TOTAL_CONTEXT_CHARS=16670
+
+CONTEXT_PRESERVATION=100%
+```
+
+> O Auto-Merging reduziu a quantidade de resultados individuais em aproximadamente `27.8%`, preservando integralmente o volume total de contexto no benchmark histórico reproduzido.
+
+---
+
+## Qualidade do Auto-Merging com Gemini + DeepEval
+
+- [x] Integrar avaliação LIVE com Gemini;
+- [x] Integrar avaliação LIVE com DeepEval;
+- [x] Criar executores DeepEval específicos;
+- [x] Implementar contabilização de custo equivalente do Gemini;
+- [x] Implementar controle explícito de billing mode;
+- [x] Executar validação controlada com frozen context;
+- [x] Executar validação LIVE representativa;
+- [x] Comparar RAG Triad entre estratégias;
+- [x] Comparar Answer Relevancy;
+- [x] Comparar Faithfulness;
+- [x] Comparar Contextual Relevancy;
+- [x] Comparar qualidade, latência, contexto e custo equivalente;
+- [x] Verificar regressões;
+- [x] Confirmar ausência de regressão bloqueante no Auto-Merging;
+- [x] Executar validação LIVE final com três casos representativos;
+- [x] Confirmar `3/3` casos aprovados;
+- [x] Confirmar Auto-Merging aplicado nos três casos;
+- [x] Confirmar todos os Quality Gates aprovados.
+
+### Resultado LIVE consolidado — Auto-Merging
+
+```text
+REPRESENTATIVE_CASES=3
+COMPLETED_CASES=3
+QUALITY_GATES_PASSED=3/3
+
+ANSWER_RELEVANCY_MEAN=1.000000
+FAITHFULNESS_MEAN=0.944444
+CONTEXTUAL_RELEVANCY_MEAN=0.972222
+RAG_TRIAD_MEAN=0.972222
+
+TOTAL_GENERATION_TOKENS=3626
+PAID_EQUIVALENT_COST_USD≈0.0025134
+```
+
+---
+
+# 🎯 Relevance Gate do reranker
+
+## Diagnóstico
+
+- [x] Investigar contexto irrelevante na consulta `como sair das dívidas?`;
+- [x] Confirmar que o conteúdo irrelevante já existia antes do Auto-Merging;
+- [x] Confirmar que Auto-Merging não era a causa da regressão;
+- [x] Auditar Hybrid Retrieval;
+- [x] Auditar RRF;
+- [x] Auditar reranker;
+- [x] Identificar flattening de scores entre candidatos fortes e fracos;
+- [x] Identificar preenchimento forçado do `top_k`;
+- [x] Identificar cobertura insuficiente de aliases de temas financeiros.
+
+## Implementação
+
+- [x] Implementar Relevance Gate no reranker;
+- [x] Expandir aliases financeiros singular/plural;
+- [x] Calcular força textual relativa;
+- [x] Registrar `termos_tema_encontrados`;
+- [x] Registrar `text_strength_ratio`;
+- [x] Preservar a fórmula principal existente de score;
+- [x] Tratar `top_k` como limite máximo de evidências relevantes;
+- [x] Preservar comportamento anterior para consultas sem tema financeiro reconhecido;
+- [x] Criar teste de dívida descartando terceiro resultado fraco;
+- [x] Criar teste de cartão mantendo terceiro resultado forte;
+- [x] Criar teste de tema desconhecido preservando comportamento anterior;
+- [x] Validar com Auto-Merging desligado;
+- [x] Validar com Auto-Merging ligado;
+- [x] Confirmar remoção de conteúdo irrelevante de investimentos no caso de dívida.
+
+### Política implementada para candidatos adicionais
+
+```text
+relative_score >= 0.80
+AND
+(
+    text_strength_ratio >= 0.80
+    OR
+    theme_term_count >= 3
+)
+```
+
+---
+
+## Revalidação LIVE do caso de dívida
+
+- [x] Executar retrieval real após o Relevance Gate;
+- [x] Executar Gemini real;
+- [x] Executar DeepEval real;
+- [x] Confirmar Answer Relevancy;
+- [x] Confirmar Faithfulness;
+- [x] Confirmar Contextual Relevancy;
+- [x] Confirmar RAG Triad;
+- [x] Confirmar melhoria da relevância contextual.
+
+### Resultado
+
+```text
+QUESTION="como sair das dívidas?"
+
+ANSWER_RELEVANCY=1.000000
+FAITHFULNESS=1.000000
+
+CONTEXTUAL_RELEVANCY_BEFORE=0.500000
+CONTEXTUAL_RELEVANCY_AFTER=0.800000
+CONTEXTUAL_RELEVANCY_DELTA=+0.300000
+
+RAG_TRIAD=0.933333
+
+QUALITY_GATE=PASS
+```
+
+> A correção do reranker elevou a Contextual Relevancy de `0.50` para `0.80`, mantendo Answer Relevancy e Faithfulness em `1.00`.
+
+---
+
+# 💰 Controle de custo Gemini / DeepEval
+
+- [x] Implementar accounting explícito de tokens Gemini;
+- [x] Implementar billing mode;
+- [x] Separar custo real cobrado de custo equivalente;
+- [x] Registrar free tier como custo cobrado `0`;
+- [x] Registrar paid-equivalent para comparação técnica;
+- [x] Implementar reservas máximas por avaliação;
+- [x] Limitar orçamento de avaliação;
+- [x] Implementar testes de compatibilidade de custo;
+- [x] Implementar testes de billing mode;
+- [x] Implementar testes de propagação de usage;
+- [x] Validar contabilização de custo no provider LIVE;
+- [ ] Conferir faturamento real da API diretamente no painel/provedor, caso necessário.
+
+### Referência técnica utilizada na avaliação
+
+```text
+MODEL=gemini-3.5-flash-lite
+
+PAID_EQUIVALENT_INPUT_USD_PER_1M=0.30
+PAID_EQUIVALENT_OUTPUT_USD_PER_1M=2.50
+PAID_EQUIVALENT_CACHE_USD_PER_1M=0.03
+PAID_EQUIVALENT_CACHE_STORAGE_USD_PER_1M_PER_HOUR=1.00
+```
+
+> Os valores de paid-equivalent são usados para análise técnica e não devem ser interpretados automaticamente como valor efetivamente faturado.
+
+---
+
+# 🧪 Testes e Quality Gates
+
+- [x] Criar testes unitários do Auto-Merging;
+- [x] Criar testes de integração do Auto-Merging;
+- [x] Criar testes do runner A/B;
+- [x] Criar testes da telemetria;
+- [x] Criar testes do Relevance Gate;
+- [x] Criar testes de accounting Gemini;
+- [x] Criar testes DeepEval executors;
+- [x] Corrigir fixture antiga da avaliação CLI;
+- [x] Executar regressão completa após o Auto-Merging;
+- [x] Confirmar `4183 passed, 3 skipped`;
+- [x] Confirmar testes LIVE desativados por padrão na regressão local;
+- [x] Confirmar Ruff no escopo alterado;
+- [x] Confirmar `git diff --check`;
+- [x] Validar evidências técnicas finais;
+- [x] Validar allowlist de arquivos antes do commit;
+- [x] Evitar inclusão do `.env`;
+- [x] Confirmar working tree limpo ao final.
+
+### Observação sobre Ruff
+
+- [x] Identificar dívida técnica global preexistente fora do escopo do Auto-Merging;
+- [x] Evitar execução de `ruff --fix` global;
+- [x] Validar exclusivamente os arquivos alterados na feature;
+- [x] Confirmar Ruff scoped aprovado;
+- [ ] Tratar a dívida técnica global de lint em uma iniciativa separada.
+
+---
+
+# 🔁 CI/CD e GitHub Actions
+
+## Correção das fixtures offline
+
+- [x] Identificar falha do CI causada por `artifacts/evaluations/...` não versionado;
+- [x] Confirmar `/artifacts/` ignorado pelo Git;
+- [x] Criar fixtures offline versionadas;
+- [x] Criar `tests/evaluations/fixtures/offline_benchmark_latest.json`;
+- [x] Criar `tests/evaluations/fixtures/offline_quality_gate_latest.json`;
+- [x] Criar `tests/evaluations/fixtures/offline_quality_summary_latest.json`;
+- [x] Criar `tests/evaluations/fixtures/mcp_simulated_e2e_latest.json`;
+- [x] Fazer `FinalRegressionPolicy.required_reports` controlar os caminhos oficiais;
+- [x] Fazer `validate_reports()` respeitar `policy.required_reports`;
+- [x] Criar teste de checkout limpo sem `artifacts/`;
+- [x] Fazer o Offline Dashboard reutilizar os caminhos da policy;
+- [x] Preservar o comportamento padrão do dashboard operacional;
+- [x] Validar regressão Week 4;
+- [x] Validar checkout limpo em ambiente semelhante ao GitHub Actions.
+
+---
+
+## Dependência MCP no CI
+
+- [x] Diagnosticar `ModuleNotFoundError: No module named 'mcp'`;
+- [x] Confirmar `mcp 2.0.0` no ambiente local validado;
+- [x] Confirmar import `from mcp.server import MCPServer`;
+- [x] Identificar ausência da dependência em `requirements.txt`;
+- [x] Adicionar `mcp==2.0.0` ao `requirements.txt`;
+- [x] Validar import local;
+- [x] Executar os testes MCP que falhavam no CI;
+- [x] Confirmar `14 passed`;
+- [x] Executar `pip check`;
+- [x] Confirmar `No broken requirements found`.
+
+---
+
+# 🔐 Segurança e Gitleaks
+
+- [x] Executar Repository Secret Detection no GitHub Actions;
+- [x] Identificar 17 findings `generic-api-key`;
+- [x] Auditar os 17 findings individualmente;
+- [x] Confirmar que eram identificadores documentais internos;
+- [x] Confirmar `17/17` como falsos positivos;
+- [x] Confirmar ausência de padrões de credenciais de provedores;
+- [x] Confirmar que valores brutos não foram impressos durante a auditoria;
+- [x] Preservar varredura completa do histórico do Git;
+- [x] Evitar reescrita do histórico;
+- [x] Evitar `force push`;
+- [x] Preservar as regras gerais do Gitleaks;
+- [x] Adicionar somente fingerprints exatos à `.gitleaksignore`;
+- [x] Adicionar 17 fingerprints validados;
+- [x] Preservar os fingerprints antigos já existentes;
+- [x] Adicionar `.gitleaksignore` aos triggers do workflow de segurança;
+- [x] Validar testes da política de segurança;
+- [x] Confirmar Security and Compliance Gate aprovado.
+
+---
+
+# 📁 Evidências técnicas do Auto-Merging
+
+- [x] Registrar reprodução histórica;
+- [x] Registrar diff estrutural de contexto;
+- [x] Registrar benchmark A/B real de 6 queries;
+- [x] Registrar experimento LIVE com frozen context;
+- [x] Registrar validação LIVE final;
+- [x] Registrar diagnóstico de retrieval do caso de dívida;
+- [x] Registrar revalidação LIVE do caso de dívida;
+- [x] Registrar relatório Markdown do benchmark;
+- [x] Registrar CSV do benchmark;
+- [x] Registrar resumo JSON do benchmark.
+
+### Evidências versionadas
+
+```text
+reports/auto_merging_historical_reproduction_001.json
+reports/auto_merging_context_structure_diff_001.json
+reports/auto_merging_real_retrieval_ab_6q_001.json
+reports/auto_merging_controlled_frozen_context_live_ab_001.json
+reports/auto_merging_part3_live_validation_001.json
+reports/auto_merging_phase527a_debt_retrieval_diagnostic_001.json
+reports/auto_merging_phase527d_debt_live_revalidation_001.json
+reports/auto_merging_retrieval_ab_report.md
+reports/auto_merging_retrieval_ab_results.csv
+reports/auto_merging_retrieval_ab_summary.json
+```
+
+---
+
+# 🌿 Git / Pull Request / Main
+
+- [x] Criar branch `feat/week3-auto-merging-retrieval`;
+- [x] Criar commit principal do Auto-Merging;
+- [x] Criar correções adicionais de CI;
+- [x] Criar correção da dependência MCP;
+- [x] Criar correção de segurança Gitleaks;
+- [x] Fazer push da branch;
+- [x] Criar Pull Request;
+- [x] Validar checks do GitHub Actions;
+- [x] Resolver falha das fixtures offline;
+- [x] Resolver falha do Offline Dashboard no checkout limpo;
+- [x] Resolver ausência do MCP SDK no CI;
+- [x] Resolver findings falsos positivos do Gitleaks;
+- [x] Confirmar ausência de conflitos com `main`;
+- [x] Aprovar os Quality Gates;
+- [x] Fazer merge do PR `#35`;
+- [x] Atualizar `main` local;
+- [x] Confirmar `main` sincronizada com `origin/main`;
+- [x] Confirmar working tree limpo;
+- [x] Excluir branch local `feat/week3-auto-merging-retrieval`;
+- [x] Excluir branch remota `feat/week3-auto-merging-retrieval`;
+- [x] Executar `git fetch --prune`.
+
+### Merge final
+
+```text
+MERGE_COMMIT=2f7caea
+PR=#35
+STATUS=MERGED
+MAIN_SYNCED=True
+WORKING_TREE_CLEAN=True
+```
+
+---
+
+# ✅ Decisão técnica — Auto-Merging Retrieval
+
+- [x] Avaliar Auto-Merging Retrieval;
+- [x] Criar prova de conceito;
+- [x] Implementar arquitetura real;
+- [x] Integrar ao Hybrid Retrieval;
+- [x] Integrar com RRF;
+- [x] Integrar após rerank;
+- [x] Integrar com Sentence-Window;
+- [x] Criar telemetria;
+- [x] Criar benchmark A/B;
+- [x] Comparar qualidade;
+- [x] Comparar latência;
+- [x] Comparar tamanho de contexto;
+- [x] Comparar custo equivalente;
+- [x] Verificar regressões;
+- [x] Executar Gemini LIVE;
+- [x] Executar DeepEval LIVE;
+- [x] Executar RAG Triad;
+- [x] Corrigir problema de relevância descoberto durante a avaliação;
+- [x] Implementar Relevance Gate;
+- [x] Executar regressão completa;
+- [x] Validar CI;
+- [x] Validar segurança;
+- [x] Integrar implementação à `main`.
+
+### Status técnico
+
+```text
+AUTO_MERGING_IMPLEMENTED=True
+AUTO_MERGING_HYBRID_INTEGRATION=True
+AUTO_MERGING_TELEMETRY=True
+AUTO_MERGING_AB_VALIDATED=True
+AUTO_MERGING_LIVE_VALIDATED=True
+
+RERANK_RELEVANCE_GATE=True
+
+ANSWER_RELEVANCY=APPROVED
+FAITHFULNESS=APPROVED
+CONTEXTUAL_RELEVANCY=APPROVED
+RAG_TRIAD=APPROVED
+
+FULL_REGRESSION=PASS
+SCOPED_RUFF=PASS
+CI=PASS
+SECURITY_GATE=PASS
+
+PR_35=MERGED
+MAIN_UPDATED=True
+
+AUTO_MERGING_FINAL_TECHNICAL_STATUS=APPROVED
+```
+
+---
+
+# 📚 Documentação
+
+## Concluído
 
 - [x] Finalizar o Quality Gate consolidado das cinco perguntas;
-- [x] Registrar a validação ponta a ponta com 5/5 perguntas aprovadas;
+- [x] Registrar a validação ponta a ponta com `5/5` perguntas aprovadas;
 - [x] Registrar as métricas consolidadas da RAG Triad;
 - [x] Registrar média e mediana de latência;
 - [x] Registrar a variação média do tamanho do contexto;
@@ -2799,42 +3311,164 @@ EQUIVALENT_ESTIMATED_COST=NOT_AVAILABLE
 - [x] Registrar a correção de transporte IPv4 do Gemini Embedding;
 - [x] Registrar a correção de transporte IPv4 do DeepEval;
 - [x] Registrar a correção de transporte IPv4 do gerador final RAG;
-- [x] Registrar o teste isolado de geração com latência de aproximadamente `8.097 s`;
-- [x] Confirmar que respostas e contextos brutos não foram armazenados;
-- [x] Registrar as limitações de cota encontradas durante os testes;
+- [x] Registrar o teste isolado de geração com latência aproximada de `8.097 s`;
+- [x] Confirmar que respostas e contextos brutos não foram armazenados nos relatórios públicos do Auto-Merging;
+- [x] Registrar limitações de cota encontradas durante testes anteriores;
 - [x] Revisar e documentar o uso de `axis_scores_fallback`;
 - [x] Documentar a correção do Quality Gate primário;
 - [x] Documentar a validação local do Quality Gate primário;
-- [x] Documentar a limitação atual do cálculo de custo do DeepEval;
-- [x] Registrar que o custo real cobrado não foi verificado;
+- [x] Documentar a limitação histórica do cálculo de custo via DeepEval;
 - [x] Separar custo técnico registrado, custo equivalente estimado e custo real;
-- [x] Registrar a decisão final sobre ativação do Sentence-Window;
+- [x] Registrar a decisão sobre Sentence-Window;
 - [x] Registrar a validação operacional pós-deploy;
 - [x] Registrar a migração do runtime RAG para `3072`;
-- [x] Registrar Hybrid Retrieval + RRF + rerank em produção;
-- [x] Registrar a identidade documental nativa em produção;
-- [x] Registrar a validação real do Sentence-Window no Render;
-- [x] Registrar que o `GLOBAL_TOP_K=2` permanece como configuração de produção;
-- [x] Registrar que `QUESTION_4_FINAL_TOP_K=1` é específico do experimento da Pergunta 4;
-- [x] Registrar a latência observada de `6261 ms` como métrica operacional;
-- [ ] Concluir a atualização do README principal;
-- [ ] Atualizar o relatório técnico;
-- [ ] Registrar os caminhos dos relatórios JSON e Markdown;
-- [ ] Preservar somente hashes e métricas nos relatórios públicos;
-- [x] Finalizar documentação e evidências.
+- [x] Registrar Hybrid Retrieval + RRF + rerank;
+- [x] Registrar identidade documental nativa;
+- [x] Registrar validação real do Sentence-Window no Render;
+- [x] Registrar `GLOBAL_TOP_K=2` como configuração global de produção;
+- [x] Registrar `QUESTION_4_FINAL_TOP_K=1` como configuração exclusiva do experimento;
+- [x] Preservar a medição histórica de `6261 ms`;
+- [x] Registrar evidências técnicas do Auto-Merging em JSON, CSV e Markdown;
+- [x] Registrar melhoria do Relevance Gate;
+- [x] Registrar avaliação LIVE do Auto-Merging;
+- [x] Versionar evidências aprovadas no Git.
 
-### Knowledge Graph e GraphRAG
+## Pendente de organização documental
 
-- [ ] Analisar casos de uso para Knowledge Graph;
-- [ ] Identificar quais relações financeiras realmente se beneficiariam de representação em grafo;
-- [ ] Avaliar Neo4j e Cypher;
-- [ ] Avaliar GraphRAG somente se houver benefício técnico comprovado;
-- [ ] Criar prova de conceito opcional;
-- [ ] Comparar RAG tradicional, Sentence-Window e GraphRAG em casos adequados;
-- [ ] Comparar complexidade, custo, latência e ganho de qualidade;
-- [ ] Decidir se Knowledge Graph ou GraphRAG entram no roadmap da INNA.
+- [ ] Registrar formalmente o benchmark final de 7 amostras na documentação consolidada da Semana 3;
+- [ ] Registrar formalmente a redução de latência após paralelismo no documento consolidado da Semana 3;
+- [ ] Calcular e registrar `p95` a partir das 7 amostras individuais;
+- [ ] Organizar evidências técnicas em pastas por semana;
+- [ ] Criar estrutura documental `semana-03/evidencias/`;
+- [ ] Avaliar se o Auto-Merging deve possuir uma pasta específica `semana-03/auto-merging/`;
+- [ ] Concluir a atualização do README principal com o estado final pós-Auto-Merging;
+- [ ] Atualizar o relatório técnico consolidado;
+- [ ] Registrar índice dos caminhos dos relatórios JSON, CSV e Markdown;
+- [ ] Revisar quais evidências públicas devem conter somente hashes, métricas e dados sanitizados;
+- [ ] Finalizar a reorganização documental da Semana 3.
 
 ---
+
+# 🕸️ Knowledge Graph e GraphRAG
+
+> Roadmap futuro. Não bloqueia o fechamento técnico do Sentence-Window nem do Auto-Merging Retrieval.
+
+- [ ] Analisar casos de uso reais para Knowledge Graph;
+- [ ] Identificar relações financeiras que realmente se beneficiariam de representação em grafo;
+- [ ] Avaliar modelagem de entidades financeiras;
+- [ ] Avaliar relacionamentos entre usuário, objetivo, despesa, dívida, receita, categoria, documento e conhecimento financeiro;
+- [ ] Avaliar Neo4j;
+- [ ] Avaliar Cypher;
+- [ ] Avaliar alternativas de grafo compatíveis com PostgreSQL, quando aplicável;
+- [ ] Avaliar GraphRAG somente se houver benefício técnico comprovado;
+- [ ] Criar prova de conceito opcional;
+- [ ] Definir conjunto de perguntas que realmente exijam raciocínio relacional;
+- [ ] Comparar Hybrid RAG tradicional e GraphRAG;
+- [ ] Comparar Sentence-Window e GraphRAG;
+- [ ] Comparar Auto-Merging e GraphRAG;
+- [ ] Comparar RAG Triad entre estratégias;
+- [ ] Comparar complexidade operacional;
+- [ ] Comparar latência;
+- [ ] Comparar custo;
+- [ ] Comparar qualidade;
+- [ ] Comparar observabilidade;
+- [ ] Avaliar manutenção do grafo;
+- [ ] Avaliar sincronização entre PostgreSQL/pgvector e Knowledge Graph;
+- [ ] Decidir se Knowledge Graph entra no roadmap da INNA;
+- [ ] Decidir se GraphRAG entra no roadmap da INNA.
+
+---
+
+# 🚀 Próximas técnicas avançadas de Retrieval
+
+> Auto-Merging deixou de ser item futuro e foi concluído.
+> Os itens abaixo representam as próximas possibilidades de evolução.
+
+- [ ] Avaliar Query Transformation;
+- [ ] Avaliar Query Rewriting;
+- [ ] Avaliar Multi-Query Retrieval;
+- [ ] Avaliar HyDE somente quando houver caso de uso comprovado;
+- [ ] Avaliar Parent-Child Retrieval além do Auto-Merging atual;
+- [ ] Avaliar Adaptive Retrieval;
+- [ ] Avaliar Self-RAG;
+- [ ] Avaliar Corrective RAG (`CRAG`);
+- [ ] Avaliar recuperação baseada em intenção;
+- [ ] Avaliar filtros semânticos por metadata;
+- [ ] Avaliar roteamento por domínio financeiro;
+- [ ] Avaliar retrieval específico por tipo de pergunta;
+- [ ] Criar benchmark comum para novas estratégias;
+- [ ] Preservar baseline oficial;
+- [ ] Comparar todas as novas técnicas contra Hybrid + RRF + rerank;
+- [ ] Comparar contra Sentence-Window;
+- [ ] Comparar contra Auto-Merging;
+- [ ] Exigir RAG Triad antes de qualquer ativação;
+- [ ] Exigir avaliação de latência;
+- [ ] Exigir avaliação de custo;
+- [ ] Exigir avaliação de tamanho de contexto;
+- [ ] Exigir ausência de regressões antes de rollout.
+
+---
+
+# 🛠️ Dívida técnica futura
+
+- [ ] Tratar os erros globais de Ruff fora do escopo do Auto-Merging;
+- [ ] Revisar módulos antigos do Telegram afetados pela dívida de lint;
+- [ ] Revisar imports não utilizados;
+- [ ] Revisar modernização de `datetime.UTC`;
+- [ ] Executar modernização sem alteração funcional;
+- [ ] Criar PR separado exclusivamente para lint/modernização;
+- [ ] Evitar misturar essa dívida técnica com novas features de RAG.
+
+---
+
+# 🏁 Status final consolidado
+
+```text
+SENTENCE_WINDOW=APPROVED
+SENTENCE_WINDOW_PRODUCTION=APPROVED
+
+STRUCTURED_RAG_3072=APPROVED
+HYBRID_RETRIEVAL=APPROVED
+VECTOR_TEXT_PARALLELISM=APPROVED
+RRF=APPROVED
+RERANK=APPROVED
+
+AUTO_MERGING=APPROVED
+AUTO_MERGING_AB=APPROVED
+AUTO_MERGING_LIVE=APPROVED
+AUTO_MERGING_TELEMETRY=APPROVED
+
+RERANK_RELEVANCE_GATE=APPROVED
+
+DEEPEVAL=INTEGRATED
+RAG_TRIAD=INTEGRATED
+GEMINI_COST_ACCOUNTING=INTEGRATED
+
+FULL_REGRESSION=PASS
+CI=PASS
+SECURITY_COMPLIANCE=PASS
+GITLEAKS=PASS
+
+PR_35=MERGED
+MAIN_SYNCED=True
+WORKING_TREE_CLEAN=True
+FEATURE_BRANCH_LOCAL_DELETED=True
+FEATURE_BRANCH_REMOTE_DELETED=True
+
+CURRENT_MAIN_MERGE_COMMIT=2f7caea
+
+WEEK3_ADVANCED_RAG_STATUS=TECHNICALLY_COMPLETED
+```
+
+> A INNA possui atualmente um pipeline RAG estruturado com embeddings de 3072 dimensões, Hybrid Retrieval, execução paralela Vector + Text, Reciprocal Rank Fusion, reranking com Relevance Gate, Sentence-Window Retrieval, Auto-Merging Retrieval, telemetria estruturada, avaliação DeepEval, RAG Triad, contabilização de custo equivalente, testes automatizados, CI/CD e controles de segurança.
+>
+> O Auto-Merging Retrieval foi implementado, testado, comparado por A/B, validado com Gemini + DeepEval, integrado à telemetria, submetido aos Quality Gates, validado pelo CI e incorporado à `main` através do Pull Request `#35`.
+>
+> As próximas evoluções de retrieval devem ser tratadas como novas fases experimentais e somente entrar no runtime após demonstrarem ganho mensurável de qualidade, latência, contexto ou custo em relação ao pipeline atual.
+
+---
+
+
 
 #### 📌 Estado atual
 
