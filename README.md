@@ -1925,62 +1925,67 @@ A proposta desta trilha é demonstrar não apenas o que foi estudado, mas també
 
 ---
 
-### 🔎 Semana 3 — RAG, fundamentos e retrieval avançado
+# 🔎 Semana 3 — RAG, Retrieval Avançado e GraphRAG
 
-**Status:** 🚀 Conteúdo principal aplicado e validado
+**Status:** ✅ Conteúdo aplicado, integrado e validado
 
 A Semana 3 aprofundou a arquitetura RAG da INNA, com foco em **precisão de retrieval, qualidade das respostas, redução de contexto desnecessário, avaliação, custo e performance**.
 
-#### Conteúdos estudados
+## 📚 Conteúdos estudados
 
 - RAG;
 - chunking;
 - embeddings;
-- busca textual;
-- busca vetorial;
-- Hybrid Search;
-- grounding;
+- busca textual e vetorial;
+- Hybrid Retrieval;
 - Reciprocal Rank Fusion — RRF;
 - reranking;
+- grounding;
 - Sentence-Window Retrieval;
 - Auto-Merging Retrieval;
 - RAG Triad;
-- Knowledge Graphs;
-- Neo4j;
+- DeepEval;
+- Knowledge Graph;
+- Neo4j AuraDB;
 - Cypher;
+- Graph Retrieval;
 - GraphRAG;
-- trade-offs entre qualidade, custo e performance.
+- Agentic RAG;
+- Quality Gates;
+- benchmarks e avaliação A/B.
 
-#### Aplicação na INNA
+## 🚀 Aplicação na INNA
 
-- RAG híbrido;
+Durante a Semana 3, a INNA evoluiu para uma arquitetura com:
+
 - PostgreSQL + `pgvector`;
 - retrieval textual e vetorial;
-- Hybrid Retrieval;
 - RRF;
 - reranking;
 - Relevance Gate;
-- Sentence-Window Retrieval;
 - Auto-Merging Retrieval;
-- telemetria de retrieval;
-- comparação A/B;
-- RAG Triad;
+- Sentence-Window Retrieval;
+- Knowledge Graph;
+- Neo4j AuraDB;
+- Cypher;
+- Graph Retrieval;
+- GraphRAG integrado ao RAG híbrido;
+- integração com Agentic RAG;
 - DeepEval;
+- RAG Triad;
 - Answer Relevancy;
 - Faithfulness;
 - Contextual Relevancy;
-- Quality Gates;
-- benchmarks;
-- validações LIVE;
-- relatórios técnicos;
-- testes automatizados.
+- testes automatizados;
+- comparação baseline × candidate;
+- Quality Gates LIVE.
 
-#### Pipeline de retrieval
+## 🧠 Pipeline consolidado
 
 ```text
 Consulta
    ↓
-Vector Retrieval + Text Retrieval
+Vector Retrieval + Text Retrieval + Graph Retrieval
    ↓
 Reciprocal Rank Fusion — RRF
    ↓
@@ -1996,43 +2001,62 @@ Contexto
    ↓
 Gemini
    ↓
-Avaliação RAG Triad / DeepEval
+RAG Triad / DeepEval
 ```
 
-#### Avaliação
+#### 🕸️ Knowledge Graph e GraphRAG
 
-A qualidade do RAG é avaliada por métricas como:
-
-- Answer Relevancy
-- Faithfulness
-- Contextual Relevancy
-
-Além de:
-
-- Quality Gates;
-- comparação baseline × candidate;
-- análise de contexto;
-- latência;
-- custo;
-- privacidade;
-- benchmarks de retrieval.
-
-#### Knowledge Graph
-
-Os seguintes conteúdos fazem parte dos estudos e do roadmap:
-| Tecnologia      | Situação                |
-| --------------- | ----------------------- |
-| Knowledge Graph | 📚 Estudado / ⏳ Roadmap |
-| Neo4j           | 📚 Estudado / ⏳ Roadmap |
-| Cypher          | 📚 Estudado / ⏳ Roadmap |
-| GraphRAG        | 📚 Estudado / ⏳ Roadmap |
-
-> Eles não são apresentados como componentes ativos do runtime enquanto não houver implementação específica, testes e validação arquitetural.
+| Tecnologia             | Situação                     |
+| ---------------------- | ---------------------------- |
+| Knowledge Graph        | ✅ Implementado               |
+| Neo4j AuraDB           | ✅ Integrado                  |
+| Cypher                 | ✅ Implementado               |
+| Graph Retrieval        | ✅ Implementado               |
+| GraphRAG               | ✅ Integrado e validado       |
+| Agentic RAG + GraphRAG | ✅ Validado                   |
+| DeepEval / RAG Triad   | ✅ Quality Gate LIVE aprovado |
 
 
-🔎 **[Ver todas as evidências da Semana 3](docs/bootcamp-2026/semana-03/evidencias/README.md)**
+O Neo4j mantém a estrutura de conceitos, tópicos e relacionamentos, enquanto o PostgreSQL/Neon continua sendo a fonte principal dos chunks
+e conteúdos textuais.
 
-### 📚 Documentos específicos — Semana 3
+#### ✅ Validação
+
+A implementação passou por:
+
+- testes unitários e de integração;
+- testes de regressão;
+- validações do Knowledge Graph;
+- testes LIVE com Neo4j AuraDB;
+- avaliação A/B;
+- auditoria de precisão;
+- benchmarks;
+- DeepEval;
+- RAG Triad;
+- Quality Gates.
+
+#### Resultado da regressão:
+```
+4268 passed
+3 skipped
+```
+
+#### Resultado do Quality Gate final:
+```text
+Answer Relevancy       = 1.0
+Faithfulness           = 1.0
+Contextual Relevancy   = 1.0
+GraphRAG Final Gate    = PASS
+```
+> A implementação está tecnicamente concluída e validada.A ativação definitiva em produção permanece controlada por merge,deploy e feature flag.
+
+## 🔎 Evidências da Semana 3
+
+Todos os detalhes técnicos, testes, arquitetura, avaliações e registros da implementação estão organizados na pasta de evidências.
+
+### 👉 [Acessar todas as evidências da Semana 3](docs/bootcamp-2026/semana-03/evidencias/README.md)
+
+### 📚 Documentos disponíveis
 
 - 📘 [Fundamentos de RAG](docs/bootcamp-2026/semana-03/evidencias/01-fundamentos-rag.md)
 - 🧩 [Chunking, Embeddings e Hybrid Search](docs/bootcamp-2026/semana-03/evidencias/02-chunking-embeddings-hybrid-search.md)
@@ -2044,6 +2068,7 @@ Os seguintes conteúdos fazem parte dos estudos e do roadmap:
 - ⚡ [Performance e Benchmarks](docs/bootcamp-2026/semana-03/evidencias/08-performance-e-benchmarks.md)
 - 🚀 [Aplicação da Semana 3 na INNA](docs/bootcamp-2026/semana-03/evidencias/09-aplicacao-na-inna.md)
 
+---
 ### 🧭 Semana 4 — RAG agêntico e avaliação
 
 **Status:** 🚀 Conteúdo principal aplicado e validado
