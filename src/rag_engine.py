@@ -3256,7 +3256,7 @@ def _build_auto_merging_trace_summary(
     }
 
 
-def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 4) -> dict:
+def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 2) -> dict:
     resposta_seguranca = answer_security_financeira(pergunta)
     if resposta_seguranca:
         return resposta_seguranca

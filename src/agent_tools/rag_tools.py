@@ -147,7 +147,7 @@ def consultar_rag_inna(
     pergunta: str,
     *,
     idioma: str = "pt",
-    top_k: int = 4,
+    top_k: int = 2,
 ) -> RagToolResult:
     """
     Executa o RAG híbrido existente da INNA.
@@ -168,7 +168,7 @@ def consultar_rag_inna(
             min(int(top_k), 10),
         )
     except (TypeError, ValueError):
-        top_k = 4
+        top_k = 2
 
     if len(pergunta) < 3:
         return RagToolResult(
@@ -352,7 +352,7 @@ class BuscarConhecimentoRagInput(BaseModel):
     )
 
     top_k: int = Field(
-        default=4,
+        default=2,
         ge=1,
         le=10,
         description=(
