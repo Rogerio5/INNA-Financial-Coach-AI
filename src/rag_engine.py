@@ -2639,6 +2639,60 @@ def answer_security_financeira(pergunta: str, modo_base: str = "rag_hibrido_pgve
     if not any(termo in pergunta_norm for termo in termos_seguranca):
         return None
 
+    termos_educativos_pix = [
+        "como usar",
+        "como funciona",
+        "com seguran??a",
+        "com seguranca",
+        "seguran??a no pix",
+        "seguranca no pix",
+        "seguran??a do pix",
+        "seguranca do pix",
+        "cuidados com pix",
+        "cuidados no pix",
+        "evitar golpe",
+        "prevenir golpe",
+        "evitar fraude",
+        "prevenir fraude",
+    ]
+
+    sinais_incidente_pix = [
+        "pix errado",
+        "pix por engano",
+        "fiz um pix",
+        "enviei um pix",
+        "mandei um pix",
+        "transferi",
+        "n??o reconhe??o",
+        "nao reconheco",
+        "n??o reconheci",
+        "nao reconheci",
+        "ca?? em golpe",
+        "cai em golpe",
+        "fui v??tima",
+        "fui vitima",
+        "fraude aconteceu",
+        "conta invadida",
+        "roubaram",
+        "bloqueado",
+        "bloqueada",
+    ]
+
+    pix_educativo_sem_incidente = (
+        "pix" in pergunta_norm
+        and any(
+            termo in pergunta_norm
+            for termo in termos_educativos_pix
+        )
+        and not any(
+            sinal in pergunta_norm
+            for sinal in sinais_incidente_pix
+        )
+    )
+
+    if pix_educativo_sem_incidente:
+        return None
+
     if "pix" in pergunta_norm:
         resposta = (
             "Se você fez um PIX errado, o primeiro passo é conferir o comprovante, "
