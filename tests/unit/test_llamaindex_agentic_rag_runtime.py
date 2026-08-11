@@ -229,7 +229,7 @@ def test_structured_workflow_payload_preserves_formal_rag_contract(
             root_agent,
             timeout,
         ) -> None:
-            assert root_agent == runtime.ROUTER_AGENT_NAME
+            assert root_agent == runtime.RESEARCH_AGENT_NAME
             assert timeout == 120.0
             self.research_agent = agents[1]
 
@@ -298,6 +298,14 @@ def test_structured_workflow_payload_preserves_formal_rag_contract(
     )
     assert metadata["research_agent"] == (
         runtime.RESEARCH_AGENT_NAME
+    )
+    assert metadata["entry_agent"] == (
+        runtime.RESEARCH_AGENT_NAME
+    )
+    assert metadata["router_executed"] is False
+    assert (
+        metadata["routing_strategy"]
+        == "specialized_rag_direct_research"
     )
     assert metadata["return_direct"] is True
     assert (
