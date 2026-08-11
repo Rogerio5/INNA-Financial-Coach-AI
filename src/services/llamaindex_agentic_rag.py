@@ -315,7 +315,7 @@ async def executar_llamaindex_agent_workflow_payload(
 
     workflow = AgentWorkflow(
         agents=[router_agent, research_agent],
-        root_agent=router_agent.name,
+        root_agent=research_agent.name,
         timeout=120.0,
     )
 
@@ -432,6 +432,9 @@ async def executar_llamaindex_agent_workflow_payload(
         "runtime": "agent_workflow",
         "router_agent": ROUTER_AGENT_NAME,
         "research_agent": RESEARCH_AGENT_NAME,
+        "entry_agent": RESEARCH_AGENT_NAME,
+        "router_executed": False,
+        "routing_strategy": "specialized_rag_direct_research",
         "return_direct": True,
         "response_strategy": "formal_rag_return_direct",
         "timings": {
