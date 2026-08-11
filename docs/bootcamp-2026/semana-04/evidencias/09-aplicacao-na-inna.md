@@ -29,3 +29,35 @@ A Semana 4 esta representada por Agentic RAG, roteamento, ferramentas formais, p
 ---
 
 > Esta pagina diferencia conteudo estudado de implementacao comprovada no repositorio.
+
+<!-- WEEK4-FINAL-INNA-2026-08-11 -->
+## Fechamento validado
+
+A Semana 4 foi aplicada a arquitetura real da INNA, nao apenas documentada como estudo.
+
+Estado final:
+- Agentic RAG utiliza o pipeline real de conhecimento da INNA.
+- O Tool Calling formal `consultar_rag_inna` herda o GraphRAG pelo fluxo existente.
+- Router/decisao agentic e pesquisa multi-documento permanecem integrados a camada agentic existente.
+- RAG Triad orienta a avaliacao entre contexto, grounding e resposta.
+- DeepEval executa quality gates automatizados.
+- RAGAS executa metricas complementares em ambiente isolado.
+- TruLens registra observabilidade OTEL em ambiente isolado.
+- CI/CD testa o bloco de avaliacao no GitHub Actions.
+
+Resultados finais registrados:
+- RAGAS Faithfulness: **1.0**
+- RAGAS Context Precision: **0.9999999999**
+- RAGAS Context Recall: **1.0**
+- TruLens spans: **record_root, retrieval, generation**
+- TruLens network attempts: **0**
+- regressao: **4291 passed, 3 skipped**
+- PR #38: **5 checks verdes**
+- RAGAS, TruLens e correcao de CI confirmados na `main`.
+
+Observacao de arquitetura:
+- DeepEval continua sendo o quality gate principal.
+- RAGAS e complementar para metricas especializadas.
+- TruLens e complementar para observabilidade/experimentacao.
+- Nenhuma dessas integracoes foi colocada desnecessariamente no runtime critico da aplicacao.
+- O fechamento desta fase nao realizou deploy.
