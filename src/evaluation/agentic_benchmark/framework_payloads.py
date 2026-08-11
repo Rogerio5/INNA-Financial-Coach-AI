@@ -48,7 +48,7 @@ def build_ragas_payload(
         "user_input": case.question,
         "response": result.answer,
         "retrieved_contexts": [evidence.content for evidence in result.evidences],
-        "reference": None,
+        "reference": case.reference_answer,
         "rubrics": {
             "required_terms": list(case.expectations.required_terms),
             "forbidden_terms": list(case.expectations.forbidden_terms),

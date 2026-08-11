@@ -152,3 +152,44 @@ def test_dataset_get_unknown_case_raises() -> None:
         match="Caso não encontrado",
     ):
         dataset.get("unknown")
+
+def test_case_accepts_optional_reference_answer() -> None:
+    benchmark_case = AgenticBenchmarkCase(
+        case_id="reference-case",
+        dataset_version="1.0.0",
+        category=BenchmarkCaseCategory.SIMPLE_RETRIEVAL,
+        question="Explique o conceito de reserva financeira.",
+        expectations=BenchmarkExpectations(
+            complexity=ExpectedComplexity.SIMPLE,
+            gateway_decision=ExpectedGatewayDecision.LEGACY,
+            routes=("financial_knowledge",),
+            required_terms=("reserva",),
+            security_outcome=ExpectedSecurityOutcome.ALLOW,
+        ),
+        thresholds=BenchmarkThresholds(),
+        reference_answer=(
+            "Reserva financeira é um valor separado para lidar "
+            "com imprevistos."
+        ),
+    )
+
+    assert benchmark_case.reference_answer is not None
+
+
+def test_case_rejects_empty_reference_answer() -> None:
+    with pytest.raises(
+        ValueError,
+        match="reference_answer não pode ser vazia",
+    ):
+        AgenticBenchmarkCase(
+            case_id="empty-reference-case",
+            dataset_version="1.0.0",
+            category=BenchmarkCaseCategory.SIMPLE_RETRIEVAL,
+            question="Explique o conceito de reserva financeira.",
+            expectations=BenchmarkExpectations(
+                complexity=ExpectedComplexity.SIMPLE,
+                gateway_decision=ExpectedGatewayDecision.LEGACY,
+            ),
+            thresholds=BenchmarkThresholds(),
+            reference_answer="   ",
+        )

@@ -107,6 +107,18 @@ def parse_case(
         {},
     )
 
+    reference_answer_payload = payload.get("reference_answer")
+
+    reference_answer = (
+        None
+        if reference_answer_payload is None
+        else _require_string(
+            reference_answer_payload,
+            field_name="reference_answer",
+            line_number=line_number,
+        )
+    )
+
     if not isinstance(metadata, Mapping):
         raise DatasetValidationError(
             f"Linha {line_number}: metadata deve ser um objeto."
@@ -234,6 +246,7 @@ def parse_case(
             ),
             expectations=expectations,
             thresholds=thresholds,
+            reference_answer=reference_answer,
             synthetic_contexts=(
                 _string_sequence(
                     payload.get(
