@@ -150,3 +150,30 @@ def test_ragas_bridge_accepts_inna_framework_payload() -> None:
     assert evaluated["mode"] == "isolated_non_llm"
     assert "exact_match" not in evaluated["metrics"]
     assert evaluated["metrics"]["string_presence"] == 1.0
+
+
+def test_default_ragas_python_supports_posix_venv(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    import src.evaluation.ragas_bridge as bridge
+
+    python_path = (
+        tmp_path
+        / ".venv-ragas"
+        / "bin"
+        / "python"
+    )
+    python_path.parent.mkdir(parents=True)
+    python_path.touch()
+
+    monkeypatch.setattr(
+        bridge,
+        "_repo_root",
+        lambda: tmp_path,
+    )
+
+    assert (
+        bridge._default_ragas_python()
+        == python_path
+    )

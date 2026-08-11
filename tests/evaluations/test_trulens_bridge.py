@@ -253,3 +253,30 @@ def test_trulens_bridge_surfaces_runner_error(
                 sys.executable
             ),
         )
+
+
+def test_default_trulens_python_supports_posix_venv(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    import src.evaluation.trulens_bridge as bridge
+
+    python_path = (
+        tmp_path
+        / ".venv-trulens"
+        / "bin"
+        / "python"
+    )
+    python_path.parent.mkdir(parents=True)
+    python_path.touch()
+
+    monkeypatch.setattr(
+        bridge,
+        "_repo_root",
+        lambda: tmp_path,
+    )
+
+    assert (
+        bridge._default_trulens_python()
+        == python_path
+    )

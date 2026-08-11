@@ -19,6 +19,19 @@ def _repo_root() -> Path:
 
 
 def _default_trulens_python() -> Path:
+    venv_root = _repo_root() / ".venv-trulens"
+    candidates = (
+        venv_root / "Scripts" / "python.exe",
+        venv_root / "bin" / "python",
+    )
+
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+
+    return candidates[0] if os.name == "nt" else candidates[1]
+
+
     return (
         _repo_root()
         / ".venv-trulens"
