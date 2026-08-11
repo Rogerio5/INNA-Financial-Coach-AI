@@ -1,44 +1,42 @@
-from api.human_review_routes import (
-    router as human_review_router,
-)
+import re
+import time
+from typing import Annotated
+
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query, Response
+from pydantic import BaseModel
+
 from api.human_review_admin_routes import (
     router as human_review_admin_router,
 )
-
-from api.telegram_operational_status import router as telegram_operational_router
-from api.telegram_webhook import router as telegram_router
+from api.human_review_routes import (
+    router as human_review_router,
+)
+from api.resend_webhook import router as resend_router
+from api.schemas import (
+    DiagnosticoItem,
+    EmailRequest,
+    FeedbackInput,
+    FeedbackItem,
+    FeedbackResponse,
+    FinancialInput,
+    FinancialResponse,
+)
 from api.security import (
     TrustedRequestContext,
     require_trusted_request_context,
 )
-from api.resend_webhook import router as resend_router
-import time
-import re
-from typing import Annotated
-
+from api.telegram_operational_status import router as telegram_operational_router
+from api.telegram_webhook import router as telegram_router
 from src.audit_logger import record_event
-from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query, Response
-from pydantic import BaseModel
-from api.schemas import DiagnosticoItem, EmailRequest, FeedbackInput, FeedbackItem, FeedbackResponse, FinancialInput, FinancialResponse
-
+from src.email_sender import send_diagnostico_email
 from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
+from src.pdf_report import gerar_relatorio_pdf
 from src.rag_engine import (
     answer_with_rag,
     ingest_default_knowledge_base,
-    search_knowledge_base,
     save_rag_log,
-)
-from src.pdf_report import gerar_relatorio_pdf
-from src.email_sender import send_diagnostico_email
-from src.interaction_logger import record_interaction
-from src.services.financial_diagnosis import (
-    FinancialDiagnosisIdempotencyConflictError,
-    FinancialDiagnosisServiceError,
-    FinancialDiagnosisValidationError,
-    TrustedDiagnosisIdentityError,
-    gerar_chave_idempotencia,
-    persistir_diagnostico_financeiro,
+    search_knowledge_base,
 )
 from src.repository import (
     get_diagnostico_by_id_db,
@@ -47,8 +45,14 @@ from src.repository import (
     list_feedbacks_db,
     save_feedback_db,
 )
-
-
+from src.services.financial_diagnosis import (
+    FinancialDiagnosisIdempotencyConflictError,
+    FinancialDiagnosisServiceError,
+    FinancialDiagnosisValidationError,
+    TrustedDiagnosisIdentityError,
+    gerar_chave_idempotencia,
+    persistir_diagnostico_financeiro,
+)
 
 
 def format_money_br(value) -> str:
@@ -919,7 +923,7 @@ INNA Financial Coach AI
         raise HTTPException(
             status_code=500,
             detail=f"Erro ao enviar e-mail: {str(exc)}",
-        )
+        ) from exc
 
 
 
@@ -1059,7 +1063,10 @@ def rag_setup():
             },
         )
 
-        raise HTTPException(status_code=500, detail=str(exc))
+        raise HTTPException(
+            status_code=500,
+            detail=str(exc),
+        ) from exc
 
 
 @app.get("/rag/search")
@@ -1082,7 +1089,80 @@ def rag_search(
         }
 
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+        raise HTTPException(
+            status_code=500,
+            detail=str(exc),
+        ) from exc
+
+
+def _load_llamaindex_agentic_rag_runtime():
+    """Lazy-load LlamaIndex while preserving the legacy path."""
+    from src.services import llamaindex_agentic_rag
+
+    return llamaindex_agentic_rag
+
+
+def _execute_rag_ask_runtime(
+    payload: RagAskRequest,
+) -> dict:
+    """Select LlamaIndex or preserve the existing RAG runtime."""
+    runtime = _load_llamaindex_agentic_rag_runtime()
+
+    if not runtime.llamaindex_agentic_rag_enabled():
+        return answer_with_rag(
+            pergunta=payload.pergunta,
+            idioma=payload.idioma,
+            top_k=payload.top_k,
+        )
+
+    normalized_language = (
+        str(payload.idioma or "pt")
+        .strip()
+        .lower()
+        .replace("_", "-")
+    )
+
+    if not normalized_language.startswith("pt"):
+        return answer_with_rag(
+            pergunta=payload.pergunta,
+            idioma=payload.idioma,
+            top_k=payload.top_k,
+        )
+
+    try:
+        import asyncio
+
+        result = asyncio.run(
+            runtime.executar_llamaindex_agent_workflow_payload(
+                payload.pergunta,
+                idioma=payload.idioma,
+                top_k=payload.top_k,
+            )
+        )
+
+        if not isinstance(result, dict):
+            raise RuntimeError("LlamaIndex retornou payload invalido.")
+
+        return result
+
+    except Exception as exc:
+        fallback = answer_with_rag(
+            pergunta=payload.pergunta,
+            idioma=payload.idioma,
+            top_k=payload.top_k,
+        )
+
+        if isinstance(fallback, dict):
+            fallback = dict(fallback)
+            fallback["llamaindex_agentic_rag"] = {
+                "enabled": True,
+                "executed": False,
+                "fallback_used": True,
+                "runtime": "agent_workflow",
+                "error_type": type(exc).__name__,
+            }
+
+        return fallback
 
 
 @app.post("/rag/ask")
@@ -1101,10 +1181,8 @@ def rag_ask(
 
         rag_started = time.perf_counter()
 
-        result = answer_with_rag(
-            pergunta=payload.pergunta,
-            idioma=payload.idioma,
-            top_k=payload.top_k,
+        result = _execute_rag_ask_runtime(
+            payload
         )
 
         answer_with_rag_ms = round(
