@@ -2066,20 +2066,22 @@ Todos os detalhes técnicos, testes, arquitetura, avaliações e registros da im
 - 🚀 [Aplicação da Semana 3 na INNA](docs/bootcamp-2026/semana-03/evidencias/09-aplicacao-na-inna.md)
 
 ---
+
 ### 🧭 Semana 4 — RAG Agêntico e Avaliação
 
-**Status:** ✅ Conteúdo aplicado, integrado e validado
+**Status:** ✅ Conteúdo aplicado, integrado, otimizado e validado em produção
 
-A Semana 4 conecta agentes, ferramentas e RAG para permitir que a INNA realize **roteamento, pesquisa, recuperação de informações, avaliação da suficiência das evidências e síntese de respostas fundamentadas**.
+A Semana 4 conecta agentes, ferramentas, RAG e avaliação para permitir que a INNA realize **roteamento, pesquisa, recuperação de informações, avaliação de evidências e geração de respostas fundamentadas**.
 
 #### 📚 Conteúdos estudados
 
 - Agentic RAG;
 - Router Agents;
-- Tool Calling;
 - Research Agents;
+- Tool Calling;
 - pesquisa multi-documento;
 - integração RAG + agentes;
+- LlamaIndex AgentWorkflow;
 - RAG Triad;
 - RAGAS;
 - DeepEval;
@@ -2090,14 +2092,12 @@ A Semana 4 conecta agentes, ferramentas e RAG para permitir que a INNA realize *
 
 #### 🚀 Aplicação na INNA
 
-A INNA possui uma camada própria de Agentic RAG com componentes como:
+A INNA possui uma arquitetura Agentic RAG integrada ao ecossistema existente:
 
 ```text
 Pergunta
    ↓
-Router
-   ↓
-Planner
+Agentes / Roteamento
    ↓
 Research Agent
    ↓
@@ -2107,98 +2107,79 @@ RAG / GraphRAG
    ↓
 Recuperação de evidências
    ↓
-Avaliação de suficiência
-   ↓
-Synthesizer
+Avaliação
    ↓
 Resposta fundamentada
 ```
 
+Para consultas RAG especializadas, o fluxo de produção foi otimizado:
+```text
+Pergunta
+   ↓
+INNAKnowledgeResearchAgent
+   ↓
+Formal RAG
+   ↓
+return_direct
+   ↓
+Resposta final
+```
+
 Também foram implementados e validados:
 
-- Router;
-- Planner;
-- Research Agent;
-- Synthesizer;
-- integração com LangGraph;
+- Router e Research Agents;
+- Planner e Synthesizer;
+- LangGraph;
+- LlamaIndex AgentWorkflow;
 - Formal RAG Tool;
 - Tool Calling;
+- GraphRAG;
 - pesquisa multi-documento;
-- Agentic RAG integrado ao GraphRAG;
-- recuperação de evidências;
-- avaliação de suficiência;
+- recuperação e avaliação de evidências;
 - RAG Triad;
 - DeepEval;
 - RAGAS;
 - TruLens;
 - Quality Gates;
 - regressão automatizada;
-- pipelines de avaliação no GitHub Actions.
+- CI/CD de avaliação.
 
-### 🧪 Estratégia de validação
+#### 🧪 Estratégia de validação
 
-Os testes da arquitetura agêntica foram divididos em duas camadas.
+A arquitetura foi validada por meio de:
 
-#### Testes determinísticos
-
-Router, Tool Calling, contratos das ferramentas, retrieval e integração entre agentes foram testados de forma isolada quando uma chamada ao LLM não era necessária.
-
-#### Validação LIVE
-
-O pipeline completo também foi validado utilizando:
-
-- RAG real;
-- Graph Retrieval real;
+- testes determinísticos;
+- testes de integração;
+- RAG e Graph Retrieval reais;
 - Gemini real;
-- DeepEval;
-- RAG Triad;
-- RAGAS;
-- Quality Gates.
+- Quality Gates;
+- avaliações LIVE e isoladas;
+- benchmark de latência;
+- testes reais em produção no Render.
 
-O Quality Gate LIVE confirmou a qualidade da integração antes da aprovação técnica.
+#### 📊 Frameworks de avaliação
 
-### 📊 Frameworks de avaliação
+| Tecnologia    | Situação na INNA                      |
+| ------------- | ------------------------------------- |
+| DeepEval      | ✅ Quality Gate principal              |
+| RAG Triad     | ✅ Aplicado e validado                 |
+| RAGAS         | ✅ Validado em ambiente isolado        |
+| TruLens       | ✅ Observabilidade em ambiente isolado |
+| Quality Gates | ✅ Integrados ao CI                    |
 
-| Tecnologia    | Situação na INNA                           |
-| ------------- | ------------------------------------------ |
-| DeepEval      | ✅ Aplicado e validado LIVE                 |
-| RAG Triad     | ✅ Aplicado e validado                      |
-| Quality Gates | ✅ Implementados e integrados ao CI         |
-| RAGAS         | ✅ Integrado e validado em ambiente isolado |
-| TruLens       | ✅ Integrado e validado em ambiente isolado |
 
-> Arquitetura de avaliação: DeepEval permanece como o principal mecanismo de Quality Gate. O RAGAS atua como framework complementar para métricas especializadas de avaliação, enquanto o TruLens é utilizado para observabilidade e experimentação. RAGAS e TruLens permanecem isolados do runtime crítico da aplicação.
-
-#### 📈 Resultados validados
-##### RAGAS
-- Faithfulness: 1.0
-- Context Precision: 0.9999999999
-- Context Recall: 1.0
-- execução real com Gemini;
-- ambiente isolado .venv-ragas;
-- suporte Windows e Linux/POSIX no bridge.
-  
-##### TruLens
-Instrumentação OTEL validada com:
-
-- record_root;
-- retrieval;
-- generation;
-- 3 eventos registrados;
-- force_flush=True;
-- 0 tentativas de rede no teste offline;
-- ambiente isolado .venv-trulens.
-
-#### Regressão e CI/CD
-- 4291 testes aprovados;
+#### ⚡ Resultado técnico
+- 4314 testes aprovados;
 - 3 testes ignorados intencionalmente;
-- Gitleaks sem vazamento de segredos;
-- PR #38 aprovado com 5 checks verdes;
-- RAGAS, TruLens e a correção cross-platform integrados à main.
+- 0 falhas na suíte global final;
+- LlamaIndex executando em produção;
+- fallback seguro preservado;
+- otimizações de Agentic RAG validadas no Render;
+- redução aproximada de 65% na latência quente observada do runtime LlamaIndex.
 
 ## 🔎 Evidências da Semana 4
 
-Todos os detalhes técnicos, testes, arquitetura, avaliações e registros da implementação estão organizados na pasta de evidências.
+Todos os detalhes técnicos, testes, benchmarks, arquiteturas e registros da implementação estão organizados na pasta de evidências.
 
 ### 👉 [Acessar todas as evidências da Semana 4](docs/bootcamp-2026/semana-04/evidencias/README.md)
 
@@ -2213,6 +2194,7 @@ Todos os detalhes técnicos, testes, arquitetura, avaliações e registros da im
 - 🔭 [TruLens e Observabilidade](docs/bootcamp-2026/semana-04/evidencias/07-trulens-e-observabilidade.md)
 - ⚙️ [CI/CD e Avaliação](docs/bootcamp-2026/semana-04/evidencias/08-ci-cd-e-avaliacao.md)
 - 🚀 [Aplicação da Semana 4 na INNA](docs/bootcamp-2026/semana-04/evidencias/09-aplicacao-na-inna.md)
+- ⚡ [LlamaIndex em Produção e Otimização](docs/bootcamp-2026/semana-04/evidencias/10-llamaindex-producao-e-otimizacao.md)
 
 ---
 ### ⏳ Semana 5
