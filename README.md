@@ -2178,7 +2178,7 @@ O Quality Gate LIVE confirmou a qualidade da integração antes da aprovação t
 - ambiente isolado .venv-ragas;
 - suporte Windows e Linux/POSIX no bridge.
   
-###### TruLens
+##### TruLens
 Instrumentação OTEL validada com:
 
 - record_root;
