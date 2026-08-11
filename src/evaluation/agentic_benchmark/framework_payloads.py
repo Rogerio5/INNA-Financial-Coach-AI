@@ -79,6 +79,10 @@ def build_trulens_record(
         "record_id": (result.trace_id or f"offline-{case.case_id}"),
         "main_input": case.question,
         "main_output": result.answer,
+        "retrieved_contexts": [
+            evidence.content
+            for evidence in result.evidences
+        ],
         "meta": {
             "case_id": case.case_id,
             "dataset_version": case.dataset_version,
