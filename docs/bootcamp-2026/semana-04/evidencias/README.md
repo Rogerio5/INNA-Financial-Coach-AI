@@ -13,3 +13,23 @@
 | [Aplicacao na INNA](09-aplicacao-na-inna.md) | VALIDADO |
 
 [Voltar para a Semana 4](../README.md)
+
+<!-- WEEK4-FINAL-VALIDATED-2026-08-11 -->
+## Fechamento tecnico validado
+
+Status da Semana 4: **conteudo aplicado, integrado, testado e versionado**.
+
+Evidencias finais:
+- Agentic RAG e Tool Calling formal integrados ao fluxo da INNA.
+- RAG Triad e DeepEval usados como validacao automatizada e quality gate.
+- RAGAS integrado em ambiente isolado, com execucao real via Gemini.
+- TruLens integrado em ambiente isolado para observabilidade e experimentacao OTEL.
+- CI/CD validado no PR #38 com 5 checks aprovados, 0 falhas e 0 pendencias.
+- Regressao completa final: **4291 passed, 3 skipped**.
+- Merge do PR #38 na `main`: `82fd5f061420ad995450015f61d93cc8a66149ee`.
+- Nenhum deploy foi executado durante este fechamento documental.
+
+Principais commits:
+- RAGAS: `c1ddd300f31309c0bb1f37f38b2d52a5e655a334`
+- TruLens: `0b227182cbef84cb2544120e0fa78d2222657a09`
+- Correcao CI cross-platform: `74a1764a6eaaefc6dd224b0b86674d10c954116c`
