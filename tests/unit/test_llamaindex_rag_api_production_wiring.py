@@ -183,3 +183,12 @@ def test_rag_ask_routes_through_runtime_gateway(monkeypatch) -> None:
     assert result["resposta"] == "gateway"
     assert calls == ["O que e reserva de emergencia?"]
     assert "api_latency" in result
+
+    api_latency = result["api_latency"]
+
+    assert "rag_runtime_ms" in api_latency
+    assert "answer_with_rag_ms" in api_latency
+    assert (
+        api_latency["rag_runtime_ms"]
+        == api_latency["answer_with_rag_ms"]
+    )

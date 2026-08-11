@@ -1189,6 +1189,10 @@ def rag_ask(
             (time.perf_counter() - rag_started) * 1000
         )
 
+        # Nome correto para o gateway atual. Mantemos
+        # answer_with_rag_ms abaixo por compatibilidade.
+        rag_runtime_ms = answer_with_rag_ms
+
         retrieval_trace = (
             result.get("retrieval_trace")
             if isinstance(result, dict)
@@ -1264,6 +1268,9 @@ def rag_ask(
             result["api_latency"] = {
                 "retrieval_trace_ms": (
                     retrieval_trace_ms
+                ),
+                "rag_runtime_ms": (
+                    rag_runtime_ms
                 ),
                 "answer_with_rag_ms": (
                     answer_with_rag_ms

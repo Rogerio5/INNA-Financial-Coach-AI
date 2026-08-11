@@ -297,6 +297,20 @@ def test_structured_workflow_payload_preserves_formal_rag_contract(
         runtime.RESEARCH_AGENT_NAME
     )
 
+    timings = metadata["timings"]
+
+    assert timings["formal_rag_ms"] >= 0
+    assert (
+        timings["workflow_total_ms"]
+        >= timings["formal_rag_ms"]
+    )
+    assert timings["orchestration_llm_ms"] >= 0
+    assert timings["payload_build_ms"] >= 0
+    assert (
+        timings["total_llamaindex_runtime_ms"]
+        >= timings["workflow_total_ms"]
+    )
+
 
 def test_structured_workflow_payload_rejects_missing_formal_rag_payload(
     monkeypatch: pytest.MonkeyPatch,
