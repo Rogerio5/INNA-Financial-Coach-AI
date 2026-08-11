@@ -2129,6 +2129,8 @@ Também foram implementados e validados:
 - avaliação de suficiência;
 - RAG Triad;
 - DeepEval;
+- RAGAS;
+- TruLens;
 - Quality Gates;
 - regressão automatizada;
 - pipelines de avaliação no GitHub Actions.
@@ -2150,7 +2152,8 @@ O pipeline completo também foi validado utilizando:
 - Gemini real;
 - DeepEval;
 - RAG Triad;
--Quality Gates.
+- RAGAS;
+- Quality Gates.
 
 O Quality Gate LIVE confirmou a qualidade da integração antes da aprovação técnica.
 
@@ -2160,11 +2163,38 @@ O Quality Gate LIVE confirmou a qualidade da integração antes da aprovação t
 | ------------- | ------------------------------------------ |
 | DeepEval      | ✅ Aplicado e validado LIVE                 |
 | RAG Triad     | ✅ Aplicado e validado                      |
-| Quality Gates | ✅ Implementados                            |
-| RAGAS         | 📚 Estudado / compatibilidade de benchmark |
-| TruLens       | 📚 Estudado / compatibilidade de benchmark |
+| Quality Gates | ✅ Implementados e integrados ao CI         |
+| RAGAS         | ✅ Integrado e validado em ambiente isolado |
+| TruLens       | ✅ Integrado e validado em ambiente isolado |
 
-> RAGAS e TruLens não são apresentados como frameworks ativos do runtime enquanto não existir integração operacional dedicada.
+> Arquitetura de avaliação: DeepEval permanece como o principal mecanismo de Quality Gate. O RAGAS atua como framework complementar para métricas especializadas de avaliação, enquanto o TruLens é utilizado para observabilidade e experimentação. RAGAS e TruLens permanecem isolados do runtime crítico da aplicação.
+
+#### 📈 Resultados validados
+##### RAGAS
+- Faithfulness: 1.0
+- Context Precision: 0.9999999999
+- Context Recall: 1.0
+- execução real com Gemini;
+- ambiente isolado .venv-ragas;
+- suporte Windows e Linux/POSIX no bridge.
+  
+###### TruLens
+Instrumentação OTEL validada com:
+
+- record_root;
+- retrieval;
+- generation;
+- 3 eventos registrados;
+- force_flush=True;
+- 0 tentativas de rede no teste offline;
+- ambiente isolado .venv-trulens.
+
+#### Regressão e CI/CD
+- 4291 testes aprovados;
+- 3 testes ignorados intencionalmente;
+- Gitleaks sem vazamento de segredos;
+- PR #38 aprovado com 5 checks verdes;
+- RAGAS, TruLens e a correção cross-platform integrados à main.
 
 ## 🔎 Evidências da Semana 4
 
