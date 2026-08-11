@@ -77,3 +77,9 @@ components/**/node_modules/
 components/**/__pycache__/
 components/**/*.egg-info/
 components/inna_relationship_graph/build/
+
+# Isolated evaluation environment for RAGAS
+.venv-ragas/
+
+# Isolated evaluation environment for TruLens
+.venv-trulens/

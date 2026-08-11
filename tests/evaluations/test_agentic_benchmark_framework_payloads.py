@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 from src.evaluation.agentic_benchmark import (
     ActualGatewayDecision,
     ActualSecurityOutcome,
@@ -185,3 +187,29 @@ def test_payload_creation_does_not_import_framework_sdks() -> None:
         or module_name.startswith("trulens.")
         for module_name in newly_loaded
     )
+
+def test_ragas_payload_uses_reference_answer_when_present() -> None:
+    case = replace(
+        make_case(),
+        reference_answer=(
+            "Registrar gastos melhora o controle financeiro."
+        ),
+    )
+
+    payload = build_ragas_payload(
+        case=case,
+        result=make_result(),
+    )
+
+    assert payload["reference"] == (
+        "Registrar gastos melhora o controle financeiro."
+    )
+
+
+def test_ragas_payload_keeps_reference_none_when_absent() -> None:
+    payload = build_ragas_payload(
+        case=make_case(),
+        result=make_result(),
+    )
+
+    assert payload["reference"] is None

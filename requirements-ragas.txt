@@ -1,0 +1,9 @@
+﻿# Isolated evaluation environment for RAGAS.
+# Keep this separate from the main application requirements.txt.
+# Validated on Python 3.12 with the INNA Week 4 evaluation workflow.
+
+ragas==0.4.3
+langchain-community==0.3.31
+google-genai==2.17.0
+litellm==1.96.0
+instructor==1.15.4

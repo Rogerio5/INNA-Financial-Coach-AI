@@ -163,3 +163,87 @@ def test_loader_rejects_duplicate_ids(
         match="case_id duplicado",
     ):
         load_benchmark_dataset(duplicate_path)
+
+def test_loader_accepts_optional_reference_answer(
+    tmp_path: Path,
+) -> None:
+    first = json.loads(
+        DATASET_PATH.read_text(
+            encoding="utf-8"
+        ).splitlines()[0]
+    )
+    first["reference_answer"] = (
+        "Reserva financeira é um valor separado para lidar "
+        "com imprevistos."
+    )
+
+    dataset_path = tmp_path / "with-reference.jsonl"
+    dataset_path.write_text(
+        json.dumps(first, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+
+    dataset = load_benchmark_dataset(dataset_path)
+
+    assert len(dataset.cases) == 1
+    assert dataset.cases[0].reference_answer == (
+        "Reserva financeira é um valor separado para lidar "
+        "com imprevistos."
+    )
+
+
+def test_loader_keeps_old_dataset_compatible(
+    tmp_path: Path,
+) -> None:
+    legacy_lines = []
+
+    for raw_line in DATASET_PATH.read_text(
+        encoding="utf-8"
+    ).splitlines():
+        if not raw_line.strip():
+            continue
+
+        payload = json.loads(raw_line)
+        payload.pop("reference_answer", None)
+        legacy_lines.append(
+            json.dumps(
+                payload,
+                ensure_ascii=False,
+                separators=(",", ":"),
+            )
+        )
+
+    legacy_path = tmp_path / "legacy-agentic-rag-v1.jsonl"
+    legacy_path.write_text(
+        "\n".join(legacy_lines) + "\n",
+        encoding="utf-8",
+    )
+
+    dataset = load_benchmark_dataset(legacy_path)
+
+    assert len(dataset.cases) == 24
+    assert all(
+        case.reference_answer is None
+        for case in dataset.cases
+    )
+
+
+def test_official_dataset_has_reference_answers_for_simple_retrieval_cases() -> None:
+    dataset = load_benchmark_dataset(DATASET_PATH)
+
+    referenced = {
+        case.case_id: case.reference_answer
+        for case in dataset.cases
+        if case.reference_answer is not None
+    }
+
+    assert set(referenced) == {
+        "simple_reserve_definition",
+        "simple_fixed_variable_expenses",
+        "simple_credit_card_interest",
+    }
+
+    assert all(
+        value is not None and value.strip()
+        for value in referenced.values()
+    )

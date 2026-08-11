@@ -48,7 +48,7 @@ def build_ragas_payload(
         "user_input": case.question,
         "response": result.answer,
         "retrieved_contexts": [evidence.content for evidence in result.evidences],
-        "reference": None,
+        "reference": case.reference_answer,
         "rubrics": {
             "required_terms": list(case.expectations.required_terms),
             "forbidden_terms": list(case.expectations.forbidden_terms),
@@ -79,6 +79,10 @@ def build_trulens_record(
         "record_id": (result.trace_id or f"offline-{case.case_id}"),
         "main_input": case.question,
         "main_output": result.answer,
+        "retrieved_contexts": [
+            evidence.content
+            for evidence in result.evidences
+        ],
         "meta": {
             "case_id": case.case_id,
             "dataset_version": case.dataset_version,

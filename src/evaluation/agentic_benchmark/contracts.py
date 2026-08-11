@@ -115,6 +115,7 @@ class AgenticBenchmarkCase:
     question: str
     expectations: BenchmarkExpectations
     thresholds: BenchmarkThresholds
+    reference_answer: str | None = None
     synthetic_contexts: tuple[str, ...] = ()
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
@@ -130,6 +131,9 @@ class AgenticBenchmarkCase:
 
         if len(self.question) < 8:
             raise ValueError("question é curta demais para o benchmark.")
+
+        if self.reference_answer is not None and not self.reference_answer.strip():
+            raise ValueError("reference_answer não pode ser vazia.")
 
 
 @dataclass(frozen=True, slots=True)
