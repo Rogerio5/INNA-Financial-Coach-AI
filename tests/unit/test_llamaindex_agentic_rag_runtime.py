@@ -314,7 +314,9 @@ def test_structured_workflow_payload_preserves_formal_rag_contract(
     assert timings["workflow_setup_ms"] >= 0
     assert timings["pre_workflow_setup_ms"] >= 0
 
+    assert timings["pre_formal_rag_ms"] >= 0
     assert timings["formal_rag_ms"] >= 0
+    assert timings["post_formal_rag_ms"] >= 0
     assert (
         timings["workflow_total_ms"]
         >= timings["formal_rag_ms"]
