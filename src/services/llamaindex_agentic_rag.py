@@ -240,6 +240,7 @@ async def executar_llamaindex_agent_workflow_payload(
             "Consulta a base de conhecimento financeira da INNA usando "
             "o Formal RAG Tool existente, incluindo RAG e GraphRAG."
         ),
+        return_direct=True,
     )
 
     tool_setup_ms = round(
@@ -345,7 +346,15 @@ async def executar_llamaindex_agent_workflow_payload(
                 formal_payload.get("mode") or "rag"
             )
 
-    payload["resposta"] = str(result)
+    formal_response = payload.get("resposta")
+
+    if formal_response is None:
+        formal_response = formal_payload.get("answer")
+
+    if formal_response is None:
+        formal_response = str(result)
+
+    payload["resposta"] = str(formal_response)
 
     payload_build_ms = round(
         (time.perf_counter() - payload_build_started) * 1000,
@@ -373,6 +382,8 @@ async def executar_llamaindex_agent_workflow_payload(
         "runtime": "agent_workflow",
         "router_agent": ROUTER_AGENT_NAME,
         "research_agent": RESEARCH_AGENT_NAME,
+        "return_direct": True,
+        "response_strategy": "formal_rag_return_direct",
         "timings": {
             "llm_setup_ms": llm_setup_ms,
             "tool_setup_ms": tool_setup_ms,
