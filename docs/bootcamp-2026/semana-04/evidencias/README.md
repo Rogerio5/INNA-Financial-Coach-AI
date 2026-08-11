@@ -33,3 +33,5 @@ Principais commits:
 - RAGAS: `c1ddd300f31309c0bb1f37f38b2d52a5e655a334`
 - TruLens: `0b227182cbef84cb2544120e0fa78d2222657a09`
 - Correcao CI cross-platform: `74a1764a6eaaefc6dd224b0b86674d10c954116c`
+
+- ⚡ [LlamaIndex em Produção e Otimização](10-llamaindex-producao-e-otimizacao.md)
