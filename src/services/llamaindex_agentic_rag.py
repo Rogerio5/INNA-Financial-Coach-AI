@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from collections.abc import Mapping
 from typing import Any
 
@@ -190,11 +191,19 @@ async def executar_llamaindex_agent_workflow_payload(
     capture: dict[str, Any] = {}
 
     def _capturing_tool(pergunta: str) -> str:
+        formal_rag_started = time.perf_counter()
+
         formal_result = rag_tools.consultar_rag_inna(
             pergunta,
             idioma=idioma,
             top_k=top_k,
         )
+
+        capture["formal_rag_ms"] = round(
+            (time.perf_counter() - formal_rag_started) * 1000,
+            2,
+        )
+
         serialized = _serialize_tool_result(formal_result)
 
         normalized = formal_result
@@ -252,13 +261,23 @@ async def executar_llamaindex_agent_workflow_payload(
         timeout=120.0,
     )
 
+    workflow_started = time.perf_counter()
+
     result = await workflow.run(user_msg=pergunta)
+
+    workflow_total_ms = round(
+        (time.perf_counter() - workflow_started) * 1000,
+        2,
+    )
+
     formal_payload = capture.get("formal_rag_result")
 
     if not isinstance(formal_payload, dict):
         raise RuntimeError(
             "LlamaIndex AgentWorkflow nao retornou payload Formal RAG."
         )
+
+    payload_build_started = time.perf_counter()
 
     raw_result = formal_payload.get("raw_result")
 
@@ -278,6 +297,26 @@ async def executar_llamaindex_agent_workflow_payload(
             )
 
     payload["resposta"] = str(result)
+
+    payload_build_ms = round(
+        (time.perf_counter() - payload_build_started) * 1000,
+        2,
+    )
+
+    formal_rag_ms = float(
+        capture.get("formal_rag_ms") or 0.0
+    )
+
+    orchestration_llm_ms = round(
+        max(0.0, workflow_total_ms - formal_rag_ms),
+        2,
+    )
+
+    total_llamaindex_runtime_ms = round(
+        workflow_total_ms + payload_build_ms,
+        2,
+    )
+
     payload["llamaindex_agentic_rag"] = {
         "enabled": True,
         "executed": True,
@@ -285,6 +324,15 @@ async def executar_llamaindex_agent_workflow_payload(
         "runtime": "agent_workflow",
         "router_agent": ROUTER_AGENT_NAME,
         "research_agent": RESEARCH_AGENT_NAME,
+        "timings": {
+            "formal_rag_ms": formal_rag_ms,
+            "workflow_total_ms": workflow_total_ms,
+            "orchestration_llm_ms": orchestration_llm_ms,
+            "payload_build_ms": payload_build_ms,
+            "total_llamaindex_runtime_ms": (
+                total_llamaindex_runtime_ms
+            ),
+        },
     }
     return payload
 
