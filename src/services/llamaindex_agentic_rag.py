@@ -201,14 +201,32 @@ async def executar_llamaindex_agent_workflow_payload(
     def _capturing_tool(pergunta: str) -> str:
         formal_rag_started = time.perf_counter()
 
+        capture["pre_formal_rag_ms"] = round(
+            (
+                formal_rag_started
+                - workflow_started
+            )
+            * 1000,
+            2,
+        )
+
         formal_result = rag_tools.consultar_rag_inna(
             pergunta,
             idioma=idioma,
             top_k=top_k,
         )
 
+        formal_rag_finished = time.perf_counter()
+
+        capture["formal_rag_finished_at"] = (
+            formal_rag_finished
+        )
         capture["formal_rag_ms"] = round(
-            (time.perf_counter() - formal_rag_started) * 1000,
+            (
+                formal_rag_finished
+                - formal_rag_started
+            )
+            * 1000,
             2,
         )
 
@@ -315,8 +333,14 @@ async def executar_llamaindex_agent_workflow_payload(
 
     result = await workflow.run(user_msg=pergunta)
 
+    workflow_finished = time.perf_counter()
+
     workflow_total_ms = round(
-        (time.perf_counter() - workflow_started) * 1000,
+        (
+            workflow_finished
+            - workflow_started
+        )
+        * 1000,
         2,
     )
 
@@ -365,6 +389,32 @@ async def executar_llamaindex_agent_workflow_payload(
         capture.get("formal_rag_ms") or 0.0
     )
 
+    pre_formal_rag_ms = float(
+        capture.get("pre_formal_rag_ms") or 0.0
+    )
+
+    formal_rag_finished_at = capture.get(
+        "formal_rag_finished_at"
+    )
+
+    if isinstance(
+        formal_rag_finished_at,
+        (int, float),
+    ):
+        post_formal_rag_ms = round(
+            max(
+                0.0,
+                (
+                    workflow_finished
+                    - float(formal_rag_finished_at)
+                )
+                * 1000,
+            ),
+            2,
+        )
+    else:
+        post_formal_rag_ms = 0.0
+
     orchestration_llm_ms = round(
         max(0.0, workflow_total_ms - formal_rag_ms),
         2,
@@ -397,7 +447,9 @@ async def executar_llamaindex_agent_workflow_payload(
             "pre_workflow_setup_ms": (
                 pre_workflow_setup_ms
             ),
+            "pre_formal_rag_ms": pre_formal_rag_ms,
             "formal_rag_ms": formal_rag_ms,
+            "post_formal_rag_ms": post_formal_rag_ms,
             "workflow_total_ms": workflow_total_ms,
             "orchestration_llm_ms": orchestration_llm_ms,
             "payload_build_ms": payload_build_ms,
