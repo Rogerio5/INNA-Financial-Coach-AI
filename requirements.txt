@@ -104,3 +104,27 @@ plotly==6.9.0
 ./components/inna_relationship_graph
 mcp==2.0.0
 neo4j==6.2.0
+
+# LlamaIndex Agentic RAG runtime
+aiosqlite==0.22.1
+banks==2.5.0
+dataclasses-json==0.6.7
+dirtyjson==1.0.8
+filetype==1.2.0
+fsspec==2026.7.0
+griffe==2.1.0
+griffecli==2.1.0
+griffelib==2.1.0
+joblib==1.5.3
+llama-index-core==0.14.23
+llama-index-instrumentation==0.5.0
+llama-index-llms-google-genai==0.9.6
+llama-index-workflows==2.23.0
+marshmallow==3.26.2
+mypy_extensions==1.1.0
+networkx==3.6.1
+nltk==3.10.2
+regex==2026.7.19
+tiktoken==0.13.0
+tinytag==2.3.0
+typing-inspect==0.9.0
