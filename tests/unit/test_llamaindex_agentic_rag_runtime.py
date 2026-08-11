@@ -204,11 +204,13 @@ def test_structured_workflow_payload_preserves_formal_rag_contract(
             fn,
             name,
             description,
+            return_direct=False,
         ):
             return {
                 "fn": fn,
                 "name": name,
                 "description": description,
+                "return_direct": return_direct,
             }
 
     class FakeFunctionAgent:
@@ -233,6 +235,7 @@ def test_structured_workflow_payload_preserves_formal_rag_contract(
 
         async def run(self, *, user_msg: str):
             tool = self.research_agent.tools[0]
+            assert tool["return_direct"] is True
             serialized = tool["fn"](user_msg)
             assert isinstance(serialized, str)
             return "Resposta sintetizada pelo AgentWorkflow."
@@ -275,7 +278,7 @@ def test_structured_workflow_payload_preserves_formal_rag_contract(
         }
     ]
     assert result["resposta"] == (
-        "Resposta sintetizada pelo AgentWorkflow."
+        "Resposta do Formal RAG."
     )
     assert result["fontes"] == formal_payload["fontes"]
     assert result["modo"] == formal_payload["modo"]
@@ -295,6 +298,11 @@ def test_structured_workflow_payload_preserves_formal_rag_contract(
     )
     assert metadata["research_agent"] == (
         runtime.RESEARCH_AGENT_NAME
+    )
+    assert metadata["return_direct"] is True
+    assert (
+        metadata["response_strategy"]
+        == "formal_rag_return_direct"
     )
 
     timings = metadata["timings"]
@@ -344,11 +352,13 @@ def test_structured_workflow_payload_rejects_missing_formal_rag_payload(
             fn,
             name,
             description,
+            return_direct=False,
         ):
             return {
                 "fn": fn,
                 "name": name,
                 "description": description,
+                "return_direct": return_direct,
             }
 
     class FakeFunctionAgent:
@@ -436,8 +446,20 @@ def test_structured_workflow_payload_uses_raw_result_as_api_contract(
 
     class FakeFunctionTool:
         @classmethod
-        def from_defaults(cls, *, fn, name, description):
-            return {"fn": fn, "name": name, "description": description}
+        def from_defaults(
+            cls,
+            *,
+            fn,
+            name,
+            description,
+            return_direct=False,
+        ):
+            return {
+                "fn": fn,
+                "name": name,
+                "description": description,
+                "return_direct": return_direct,
+            }
 
     class FakeFunctionAgent:
         def __init__(self, **kwargs):
@@ -467,7 +489,7 @@ def test_structured_workflow_payload_uses_raw_result_as_api_contract(
         )
     )
 
-    assert result["resposta"] == "Resposta final do AgentWorkflow."
+    assert result["resposta"] == "Resposta antiga."
     assert result["fontes"] == raw_result["fontes"]
     assert result["modo"] == raw_result["modo"]
     assert result["trace_id"] == "trace-raw"
