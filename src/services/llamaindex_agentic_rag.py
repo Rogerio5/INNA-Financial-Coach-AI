@@ -187,7 +187,15 @@ async def executar_llamaindex_agent_workflow_payload(
             "LlamaIndex Agentic RAG esta desabilitado por feature flag."
         )
 
+    runtime_total_started = time.perf_counter()
+
+    llm_setup_started = time.perf_counter()
     selected_llm = llm if llm is not None else _create_default_llm()
+    llm_setup_ms = round(
+        (time.perf_counter() - llm_setup_started) * 1000,
+        2,
+    )
+
     capture: dict[str, Any] = {}
 
     def _capturing_tool(pergunta: str) -> str:
@@ -223,6 +231,8 @@ async def executar_llamaindex_agent_workflow_payload(
 
         return serialized
 
+    tool_setup_started = time.perf_counter()
+
     tool = FunctionTool.from_defaults(
         fn=_capturing_tool,
         name=TOOL_NAME,
@@ -231,6 +241,13 @@ async def executar_llamaindex_agent_workflow_payload(
             "o Formal RAG Tool existente, incluindo RAG e GraphRAG."
         ),
     )
+
+    tool_setup_ms = round(
+        (time.perf_counter() - tool_setup_started) * 1000,
+        2,
+    )
+
+    research_agent_setup_started = time.perf_counter()
 
     research_agent = FunctionAgent(
         name=RESEARCH_AGENT_NAME,
@@ -251,9 +268,31 @@ async def executar_llamaindex_agent_workflow_payload(
         streaming=False,
     )
 
+    research_agent_setup_ms = round(
+        (
+            time.perf_counter()
+            - research_agent_setup_started
+        )
+        * 1000,
+        2,
+    )
+
+    router_agent_setup_started = time.perf_counter()
+
     router_agent = criar_llamaindex_router_agent(
         llm=selected_llm,
     )
+
+    router_agent_setup_ms = round(
+        (
+            time.perf_counter()
+            - router_agent_setup_started
+        )
+        * 1000,
+        2,
+    )
+
+    workflow_setup_started = time.perf_counter()
 
     workflow = AgentWorkflow(
         agents=[router_agent, research_agent],
@@ -261,7 +300,17 @@ async def executar_llamaindex_agent_workflow_payload(
         timeout=120.0,
     )
 
+    workflow_setup_ms = round(
+        (time.perf_counter() - workflow_setup_started) * 1000,
+        2,
+    )
+
     workflow_started = time.perf_counter()
+
+    pre_workflow_setup_ms = round(
+        (workflow_started - runtime_total_started) * 1000,
+        2,
+    )
 
     result = await workflow.run(user_msg=pergunta)
 
@@ -313,7 +362,7 @@ async def executar_llamaindex_agent_workflow_payload(
     )
 
     total_llamaindex_runtime_ms = round(
-        workflow_total_ms + payload_build_ms,
+        (time.perf_counter() - runtime_total_started) * 1000,
         2,
     )
 
@@ -325,6 +374,18 @@ async def executar_llamaindex_agent_workflow_payload(
         "router_agent": ROUTER_AGENT_NAME,
         "research_agent": RESEARCH_AGENT_NAME,
         "timings": {
+            "llm_setup_ms": llm_setup_ms,
+            "tool_setup_ms": tool_setup_ms,
+            "research_agent_setup_ms": (
+                research_agent_setup_ms
+            ),
+            "router_agent_setup_ms": (
+                router_agent_setup_ms
+            ),
+            "workflow_setup_ms": workflow_setup_ms,
+            "pre_workflow_setup_ms": (
+                pre_workflow_setup_ms
+            ),
             "formal_rag_ms": formal_rag_ms,
             "workflow_total_ms": workflow_total_ms,
             "orchestration_llm_ms": orchestration_llm_ms,

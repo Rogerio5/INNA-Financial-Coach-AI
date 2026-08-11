@@ -299,6 +299,13 @@ def test_structured_workflow_payload_preserves_formal_rag_contract(
 
     timings = metadata["timings"]
 
+    assert timings["llm_setup_ms"] >= 0
+    assert timings["tool_setup_ms"] >= 0
+    assert timings["research_agent_setup_ms"] >= 0
+    assert timings["router_agent_setup_ms"] >= 0
+    assert timings["workflow_setup_ms"] >= 0
+    assert timings["pre_workflow_setup_ms"] >= 0
+
     assert timings["formal_rag_ms"] >= 0
     assert (
         timings["workflow_total_ms"]
@@ -309,6 +316,10 @@ def test_structured_workflow_payload_preserves_formal_rag_contract(
     assert (
         timings["total_llamaindex_runtime_ms"]
         >= timings["workflow_total_ms"]
+    )
+    assert (
+        timings["total_llamaindex_runtime_ms"]
+        >= timings["pre_workflow_setup_ms"]
     )
 
 
