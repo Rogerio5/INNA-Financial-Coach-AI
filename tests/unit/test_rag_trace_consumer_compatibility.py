@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
 import ast
-
+from pathlib import Path
 
 RAG_TOOLS_PATH = Path(
     "src/agent_tools/rag_tools.py"
@@ -139,14 +138,14 @@ def test_rag_tools_trace_is_implicitly_compatible():
     )
 
 
-def test_api_calls_answer_with_rag():
+def test_api_routes_through_rag_runtime_gateway():
     section = _function_source(
         API_PATH,
         "rag_ask",
     )
 
     assert (
-        "result = answer_with_rag("
+        "result = _execute_rag_ask_runtime("
         in section
     )
 

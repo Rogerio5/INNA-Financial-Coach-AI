@@ -173,6 +173,122 @@ def criar_llamaindex_agent_workflow(
         timeout=120.0,
     )
 
+async def executar_llamaindex_agent_workflow_payload(
+    pergunta: str,
+    *,
+    idioma: str = "pt",
+    top_k: int = 2,
+    llm: Any | None = None,
+) -> dict[str, Any]:
+    """Execute AgentWorkflow and preserve the Formal RAG payload."""
+    if not llamaindex_agentic_rag_enabled():
+        raise RuntimeError(
+            "LlamaIndex Agentic RAG esta desabilitado por feature flag."
+        )
+
+    selected_llm = llm if llm is not None else _create_default_llm()
+    capture: dict[str, Any] = {}
+
+    def _capturing_tool(pergunta: str) -> str:
+        formal_result = rag_tools.consultar_rag_inna(
+            pergunta,
+            idioma=idioma,
+            top_k=top_k,
+        )
+        serialized = _serialize_tool_result(formal_result)
+
+        normalized = formal_result
+        if hasattr(normalized, "model_dump"):
+            normalized = normalized.model_dump()
+
+        if isinstance(normalized, Mapping):
+            capture["formal_rag_result"] = dict(normalized)
+        else:
+            try:
+                parsed = json.loads(serialized)
+            except (TypeError, ValueError, json.JSONDecodeError):
+                parsed = None
+
+            if isinstance(parsed, dict):
+                capture["formal_rag_result"] = parsed
+
+        return serialized
+
+    tool = FunctionTool.from_defaults(
+        fn=_capturing_tool,
+        name=TOOL_NAME,
+        description=(
+            "Consulta a base de conhecimento financeira da INNA usando "
+            "o Formal RAG Tool existente, incluindo RAG e GraphRAG."
+        ),
+    )
+
+    research_agent = FunctionAgent(
+        name=RESEARCH_AGENT_NAME,
+        description=(
+            "Agente LlamaIndex especializado em pesquisa fundamentada "
+            "na base de conhecimento da INNA."
+        ),
+        system_prompt=(
+            "Voce e o Research Agent de conhecimento da INNA. "
+            "Para perguntas financeiras educacionais, use a ferramenta "
+            "consultar_rag_inna e baseie a resposta nas evidencias."
+        ),
+        tools=[tool],
+        llm=selected_llm,
+        initial_tool_choice=TOOL_NAME,
+        can_handoff_to=[],
+        allow_parallel_tool_calls=False,
+        streaming=False,
+    )
+
+    router_agent = criar_llamaindex_router_agent(
+        llm=selected_llm,
+    )
+
+    workflow = AgentWorkflow(
+        agents=[router_agent, research_agent],
+        root_agent=router_agent.name,
+        timeout=120.0,
+    )
+
+    result = await workflow.run(user_msg=pergunta)
+    formal_payload = capture.get("formal_rag_result")
+
+    if not isinstance(formal_payload, dict):
+        raise RuntimeError(
+            "LlamaIndex AgentWorkflow nao retornou payload Formal RAG."
+        )
+
+    raw_result = formal_payload.get("raw_result")
+
+    if isinstance(raw_result, Mapping):
+        payload = dict(raw_result)
+    else:
+        payload = dict(formal_payload)
+
+        if "fontes" not in payload and "sources" in formal_payload:
+            payload["fontes"] = list(
+                formal_payload.get("sources") or []
+            )
+
+        if "modo" not in payload and "mode" in formal_payload:
+            payload["modo"] = str(
+                formal_payload.get("mode") or "rag"
+            )
+
+    payload["resposta"] = str(result)
+    payload["llamaindex_agentic_rag"] = {
+        "enabled": True,
+        "executed": True,
+        "fallback_used": False,
+        "runtime": "agent_workflow",
+        "router_agent": ROUTER_AGENT_NAME,
+        "research_agent": RESEARCH_AGENT_NAME,
+    }
+    return payload
+
+
 async def executar_llamaindex_agent_workflow(
     pergunta: str,
     *,
