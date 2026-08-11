@@ -90,3 +90,69 @@ def test_runtime_gateway_blocks_when_feature_flag_is_off(
                 "Pergunta que nao deve executar."
             )
         )
+
+def test_router_agent_builds_with_mock_llm() -> None:
+    llm = MockLLM(max_tokens=32)
+
+    router = runtime.criar_llamaindex_router_agent(
+        llm=llm,
+    )
+
+    assert isinstance(router, FunctionAgent)
+    assert router.name == runtime.ROUTER_AGENT_NAME
+    assert router.can_handoff_to == [
+        runtime.RESEARCH_AGENT_NAME
+    ]
+
+
+def test_research_agent_disables_reverse_handoff() -> None:
+    llm = MockLLM(max_tokens=32)
+
+    research = runtime.criar_llamaindex_rag_agent(
+        llm=llm,
+    )
+
+    assert research.name == runtime.RESEARCH_AGENT_NAME
+    assert research.can_handoff_to == []
+
+
+def test_agent_workflow_wires_router_to_research() -> None:
+    llm = MockLLM(max_tokens=32)
+
+    workflow = runtime.criar_llamaindex_agent_workflow(
+        llm=llm,
+    )
+
+    assert workflow.root_agent == runtime.ROUTER_AGENT_NAME
+    assert set(workflow.agents) == {
+        runtime.ROUTER_AGENT_NAME,
+        runtime.RESEARCH_AGENT_NAME,
+    }
+    assert (
+        workflow.agents[
+            runtime.ROUTER_AGENT_NAME
+        ].can_handoff_to
+        == [runtime.RESEARCH_AGENT_NAME]
+    )
+    assert (
+        workflow.agents[
+            runtime.RESEARCH_AGENT_NAME
+        ].can_handoff_to
+        == []
+    )
+
+def test_multi_agent_gateway_blocks_when_feature_flag_is_off(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv(runtime.FEATURE_FLAG, "false")
+
+    with pytest.raises(
+        RuntimeError,
+        match="desabilitado por feature flag",
+    ):
+        asyncio.run(
+            runtime.executar_llamaindex_agent_workflow(
+                "Pergunta que nao deve executar.",
+                llm=MockLLM(max_tokens=32),
+            )
+        )

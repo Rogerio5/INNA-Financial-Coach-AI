@@ -7,7 +7,7 @@ import os
 from collections.abc import Mapping
 from typing import Any
 
-from llama_index.core.agent.workflow import FunctionAgent
+from llama_index.core.agent.workflow import AgentWorkflow, FunctionAgent
 from llama_index.core.tools import FunctionTool
 from llama_index.llms.google_genai import GoogleGenAI
 
@@ -15,6 +15,8 @@ from src.agent_tools import rag_tools
 
 FEATURE_FLAG = "INNA_LLAMAINDEX_AGENTIC_RAG_ENABLED"
 TOOL_NAME = "consultar_rag_inna"
+ROUTER_AGENT_NAME = "INNARouterAgent"
+RESEARCH_AGENT_NAME = "INNAKnowledgeResearchAgent"
 
 
 def llamaindex_agentic_rag_enabled() -> bool:
@@ -99,7 +101,7 @@ def criar_llamaindex_rag_agent(
     tool = criar_llamaindex_rag_tool()
 
     return FunctionAgent(
-        name="INNAKnowledgeResearchAgent",
+        name=RESEARCH_AGENT_NAME,
         description=(
             "Agente LlamaIndex especializado em pesquisa fundamentada "
             "na base de conhecimento da INNA."
@@ -114,10 +116,77 @@ def criar_llamaindex_rag_agent(
         llm=selected_llm,
         initial_tool_choice=TOOL_NAME,
         allow_parallel_tool_calls=False,
+        can_handoff_to=[],
         streaming=False,
     )
 
 
+
+def criar_llamaindex_router_agent(
+    *,
+    llm: Any | None = None,
+) -> FunctionAgent:
+    """Create the LlamaIndex routing agent for INNA."""
+    selected_llm = llm if llm is not None else _create_default_llm()
+
+    return FunctionAgent(
+        name=ROUTER_AGENT_NAME,
+        description=(
+            "Agente roteador que direciona perguntas de conhecimento "
+            "financeiro para o Research Agent da INNA."
+        ),
+        system_prompt=(
+            "Voce e o Router Agent da INNA. Analise a solicitacao. "
+            "Quando a pergunta exigir conhecimento financeiro educativo "
+            "ou consulta documental, faca handoff para "
+            "INNAKnowledgeResearchAgent. Nao invente resposta factual "
+            "quando a pesquisa for necessaria."
+        ),
+        tools=[],
+        llm=selected_llm,
+        can_handoff_to=[RESEARCH_AGENT_NAME],
+        allow_parallel_tool_calls=False,
+        streaming=False,
+    )
+
+
+def criar_llamaindex_agent_workflow(
+    *,
+    llm: Any | None = None,
+) -> AgentWorkflow:
+    """Create Router -> Research multi-agent workflow."""
+    selected_llm = llm if llm is not None else _create_default_llm()
+
+    router_agent = criar_llamaindex_router_agent(
+        llm=selected_llm,
+    )
+    research_agent = criar_llamaindex_rag_agent(
+        llm=selected_llm,
+    )
+
+    return AgentWorkflow(
+        agents=[
+            router_agent,
+            research_agent,
+        ],
+        root_agent=router_agent.name,
+        timeout=120.0,
+    )
+
+async def executar_llamaindex_agent_workflow(
+    pergunta: str,
+    *,
+    llm: Any | None = None,
+) -> str:
+    """Execute Router -> Research AgentWorkflow when enabled."""
+    if not llamaindex_agentic_rag_enabled():
+        raise RuntimeError(
+            "LlamaIndex Agentic RAG esta desabilitado por feature flag."
+        )
+
+    workflow = criar_llamaindex_agent_workflow(llm=llm)
+    result = await workflow.run(user_msg=pergunta)
+    return str(result)
 async def executar_llamaindex_agentic_rag(
     pergunta: str,
     *,
