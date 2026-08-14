@@ -10,14 +10,16 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Any, Literal
 
+from src.agents.supervisor_mesh_node import (
+    evaluate_supervisor_mesh_visit,
+)
 from src.agents.team_hierarchy import (
-    AgentName,
     DEFAULT_TEAM_REGISTRY,
+    AgentName,
     TeamHierarchyError,
     TeamName,
     TeamSupervisorNode,
 )
-
 
 TeamRouterSource = Literal[
     "supervisor_agent_route",
@@ -201,12 +203,12 @@ def _append_trace(
     ]
 
     trace.append(
-        (
+
             "team_router:"
             f"{decision.selected_team}:"
             f"{decision.team_supervisor_node}:"
             f"{decision.requested_agent}"
-        )
+
     )
 
     return trace
@@ -217,10 +219,21 @@ def team_router_node(
 ) -> dict[str, Any]:
     """
     Prepara o estado para execução do supervisor de equipe.
+
+    Quando o Supervisor Mesh está ativo, a rota também
+    precisa ser autorizada pelo plano governado.
     """
+
     decision = (
         resolve_team_router_decision(
             dict(state)
+        )
+    )
+
+    mesh_visit = (
+        evaluate_supervisor_mesh_visit(
+            state,
+            decision.team_supervisor_node,
         )
     )
 
@@ -234,6 +247,96 @@ def team_router_node(
     structured_response[
         "team_router_decision"
     ] = decision.model_dump()
+
+    structured_response[
+        "supervisor_mesh_visit_decision"
+    ] = {
+        "allowed": mesh_visit[
+            "allowed"
+        ],
+        "supervisor": mesh_visit[
+            "supervisor"
+        ],
+        "visited_count": mesh_visit[
+            "visited_count"
+        ],
+        "reason": mesh_visit[
+            "reason"
+        ],
+    }
+
+    trace = _append_trace(
+        state,
+        decision,
+    )
+
+    if bool(
+        state.get(
+            "supervisor_mesh_active",
+            False,
+        )
+    ):
+        trace.append(
+
+                "supervisor_mesh_visit:"
+                f"{mesh_visit['reason']}:"
+                f"{mesh_visit['supervisor']}:"
+                f"{mesh_visit['visited_count']}"
+
+        )
+
+    if not mesh_visit[
+        "allowed"
+    ]:
+        fallback_team = (
+            DEFAULT_TEAM_REGISTRY
+            .team_for_agent(
+                "fallback_agent"
+            )
+        )
+
+        return {
+            "current_team": (
+                fallback_team.name
+            ),
+            "team_supervisor": (
+                fallback_team.supervisor_node
+            ),
+            "team_requested_agent": (
+                "fallback_agent"
+            ),
+            "team_route": (
+                fallback_team.supervisor_node
+            ),
+            "team_route_source": (
+                "fallback_recovery"
+            ),
+            "team_routing_reason": (
+                mesh_visit["reason"]
+            ),
+            "team_requires_root_supervisor": False,
+            "supervisor_mesh_active": False,
+            "supervisor_mesh_status": "blocked",
+            "supervisor_mesh_visited_supervisors": (
+                mesh_visit[
+                    "visited_supervisors"
+                ]
+            ),
+            "supervisor_mesh_visited_count": (
+                mesh_visit[
+                    "visited_count"
+                ]
+            ),
+            "supervisor_mesh_visit_history": (
+                mesh_visit[
+                    "visit_history"
+                ]
+            ),
+            "structured_response": (
+                structured_response
+            ),
+            "trace": trace,
+        }
 
     return {
         "current_team": (
@@ -255,13 +358,25 @@ def team_router_node(
             decision.reason
         ),
         "team_requires_root_supervisor": False,
+        "supervisor_mesh_visited_supervisors": (
+            mesh_visit[
+                "visited_supervisors"
+            ]
+        ),
+        "supervisor_mesh_visited_count": (
+            mesh_visit[
+                "visited_count"
+            ]
+        ),
+        "supervisor_mesh_visit_history": (
+            mesh_visit[
+                "visit_history"
+            ]
+        ),
         "structured_response": (
             structured_response
         ),
-        "trace": _append_trace(
-            state,
-            decision,
-        ),
+        "trace": trace,
     }
 
 

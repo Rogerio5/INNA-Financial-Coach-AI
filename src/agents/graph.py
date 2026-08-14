@@ -54,6 +54,10 @@ from src.agents.persistence import (
 )
 from src.agents.state import InnaAgentState
 from src.agents.supervisor import supervisor_node
+from src.agents.supervisor_mesh_node import (
+    select_supervisor_mesh_route,
+    supervisor_mesh_node,
+)
 from src.agents.task_completion_node import (
     task_completion_node,
 )
@@ -208,6 +212,26 @@ def _selecionar_rota_apos_handoff(
     return "conversation_summary"
 
 
+def _selecionar_saida_adaptive_gateway(
+    state: InnaAgentState,
+) -> str:
+    """
+    Mantém o fast path simples.
+
+    Rotas complexas passam pelo Supervisor Mesh antes
+    da camada hierárquica de equipes.
+    """
+
+    route = select_adaptive_gateway_route(
+        state
+    )
+
+    if route == "team_router":
+        return "supervisor_mesh"
+
+    return route
+
+
 def _selecionar_saida_supervisor_equipe(
     state: InnaAgentState,
 ) -> str:
@@ -258,6 +282,11 @@ def criar_builder_inna() -> StateGraph:
     )
 
     # Camada hierárquica
+    builder.add_node(
+        "supervisor_mesh",
+        supervisor_mesh_node,
+    )
+
     builder.add_node(
         "team_router",
         team_router_node,
@@ -354,10 +383,20 @@ def criar_builder_inna() -> StateGraph:
 
     builder.add_conditional_edges(
         "adaptive_gateway",
-        select_adaptive_gateway_route,
+        _selecionar_saida_adaptive_gateway,
         {
             "execution_governance": "execution_governance",
+            "supervisor_mesh": "supervisor_mesh",
+        },
+    )
+
+    # Supervisor Mesh → hierarquia ou fallback governado.
+    builder.add_conditional_edges(
+        "supervisor_mesh",
+        select_supervisor_mesh_route,
+        {
             "team_router": "team_router",
+            "execution_governance": "execution_governance",
         },
     )
 
@@ -528,6 +567,19 @@ def _criar_estado_inicial(
         "team_route_history": [],
         "root_supervisor_visits": 0,
         "max_root_supervisor_visits": 3,
+
+        # Supervisor Mesh
+        "supervisor_mesh_active": False,
+        "supervisor_mesh_status": "inactive",
+        "supervisor_mesh_plan": {},
+        "supervisor_mesh_requested_teams": [],
+        "supervisor_mesh_supervisors": [],
+        "supervisor_mesh_supervisor_count": 0,
+        "supervisor_mesh_history": [],
+        "supervisor_mesh_visited_supervisors": [],
+        "supervisor_mesh_visited_count": 0,
+        "supervisor_mesh_visit_history": [],
+
         "human_review_enabled": True,
         "human_review_required": False,
         "human_review_current": {},
