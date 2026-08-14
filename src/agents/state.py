@@ -203,6 +203,20 @@ class InnaAgentState(TypedDict, total=False):
 
     intent: IntentType
     confidence: float
+
+    # Semana 5 - Adaptive Intent & Complexity Gateway
+    adaptive_complexity: Literal["simple", "complex"]
+    adaptive_complexity_reason: str
+    adaptive_complexity_signals: list[str]
+    adaptive_route_type: Literal["simple", "complex", "escalate"]
+    adaptive_domain: str
+    adaptive_target_supervisor: str
+    adaptive_target_agent: str
+    adaptive_risk: Literal["low", "medium", "high", "critical"]
+    adaptive_reason: str
+    adaptive_multi_domain: bool
+    adaptive_budget: dict[str, int]
+
     next_node: str
 
     route_source: str

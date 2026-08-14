@@ -20,6 +20,10 @@ from langgraph.types import Command
 from src.agentic_rag.langgraph_integration import (
     agentic_rag_gateway_node as rag_agent_node,
 )
+from src.agents.adaptive_gateway_node import (
+    adaptive_gateway_node,
+    select_adaptive_gateway_route,
+)
 from src.agents.conversation_summary_node import (
     conversation_summary_node,
 )
@@ -266,6 +270,11 @@ def criar_builder_inna() -> StateGraph:
         supervisor_node,
     )
 
+    builder.add_node(
+        "adaptive_gateway",
+        adaptive_gateway_node,
+    )
+
     # Camada hierárquica
     builder.add_node(
         "team_router",
@@ -358,7 +367,16 @@ def criar_builder_inna() -> StateGraph:
 
     builder.add_edge(
         "supervisor",
-        "team_router",
+        "adaptive_gateway",
+    )
+
+    builder.add_conditional_edges(
+        "adaptive_gateway",
+        select_adaptive_gateway_route,
+        {
+            "execution_governance": "execution_governance",
+            "team_router": "team_router",
+        },
     )
 
     # Team Router → Supervisor de equipe

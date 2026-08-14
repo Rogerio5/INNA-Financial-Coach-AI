@@ -74,20 +74,34 @@ def test_hierarchical_nodes_are_registered():
     )
 
 
-def test_supervisor_routes_to_team_router():
+def test_supervisor_routes_to_adaptive_gateway():
+    builder = criar_builder_inna()
     edges = _edge_pairs(
-        criar_builder_inna()
+        builder
     )
 
     assert (
         "supervisor",
-        "team_router",
+        "adaptive_gateway",
     ) in edges
+
+    assert (
+        "supervisor",
+        "team_router",
+    ) not in edges
 
     assert (
         "supervisor",
         "execution_governance",
     ) not in edges
+
+    assert _branch_ends(
+        builder,
+        "adaptive_gateway",
+    ) == {
+        "execution_governance",
+        "team_router",
+    }
 
 
 def test_team_router_reaches_all_team_supervisors():
