@@ -57,16 +57,22 @@ def registrar_evento_mcp(
     duration_ms: float,
     arguments_hash: str,
     error_code: str | None = None,
+    principal: str | None = None,
+    event_type: str = "tool_call",
+    server_name: str = "inna-mcp-level-2",
+    server_version: str = "unknown",
 ) -> None:
     """Registra somente metadados seguros da execução."""
 
     event = {
         "timestamp": datetime.now(UTC).isoformat(),
-        "server": "inna-mcp-level-2",
-        "server_version": "0.2.0",
+        "server": server_name,
+        "server_version": server_version,
         "call_id": call_id,
         "trace_id": trace_id,
         "tool_name": tool_name,
+        "event_type": event_type,
+        "principal": principal,
         "status": status,
         "duration_ms": round(
             float(duration_ms),

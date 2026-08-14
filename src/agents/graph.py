@@ -20,6 +20,10 @@ from langgraph.types import Command
 from src.agentic_rag.langgraph_integration import (
     agentic_rag_gateway_node as rag_agent_node,
 )
+from src.agents.adaptive_gateway_node import (
+    adaptive_gateway_node,
+    select_adaptive_gateway_route,
+)
 from src.agents.conversation_summary_node import (
     conversation_summary_node,
 )
@@ -216,8 +220,9 @@ def _selecionar_saida_supervisor_equipe(
     Escalonamento entre equipes:
         supervisor
 
-    Proteção contra retorno excessivo:
-        fallback_agent
+    Quando o limite do supervisor raiz é atingido,
+    o nó da equipe prepara fallback_agent e a rota
+    segue por execution_governance.
     """
     requires_root = bool(
         state.get(
@@ -228,25 +233,6 @@ def _selecionar_saida_supervisor_equipe(
 
     if not requires_root:
         return "execution_governance"
-
-    visits = int(
-        state.get(
-            "root_supervisor_visits",
-            0,
-        )
-        or 0
-    )
-
-    maximum = int(
-        state.get(
-            "max_root_supervisor_visits",
-            3,
-        )
-        or 3
-    )
-
-    if visits >= maximum:
-        return "fallback_agent"
 
     return "supervisor"
 
@@ -264,6 +250,11 @@ def criar_builder_inna() -> StateGraph:
     builder.add_node(
         "supervisor",
         supervisor_node,
+    )
+
+    builder.add_node(
+        "adaptive_gateway",
+        adaptive_gateway_node,
     )
 
     # Camada hierárquica
@@ -358,7 +349,16 @@ def criar_builder_inna() -> StateGraph:
 
     builder.add_edge(
         "supervisor",
-        "team_router",
+        "adaptive_gateway",
+    )
+
+    builder.add_conditional_edges(
+        "adaptive_gateway",
+        select_adaptive_gateway_route,
+        {
+            "execution_governance": "execution_governance",
+            "team_router": "team_router",
+        },
     )
 
     # Team Router → Supervisor de equipe
@@ -393,7 +393,6 @@ def criar_builder_inna() -> StateGraph:
                     "execution_governance"
                 ): "execution_governance",
                 "supervisor": "supervisor",
-                "fallback_agent": "fallback_agent",
             },
         )
 
@@ -505,6 +504,9 @@ def _criar_estado_inicial(
                 "content": mensagem,
             }
         ],
+        "a2a_message_count": 0,
+        "max_a2a_messages": 0,
+        "a2a_history": [],
         "handoff_current": None,
         "handoff_history": [],
         "handoff_count": 0,

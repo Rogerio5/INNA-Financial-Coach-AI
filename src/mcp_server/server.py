@@ -8,11 +8,15 @@ As regras de RAG e diagnóstico financeiro não são duplicadas.
 
 from __future__ import annotations
 
+from time import perf_counter
 from typing import Any
 from uuid import uuid4
 
 from mcp.server import MCPServer
 
+from src.agent_tools.catalog import (
+    criar_registro_ferramentas_inna,
+)
 from src.agent_tools.core.contracts import (
     ToolCall,
     ToolExecutionContext,
@@ -20,23 +24,35 @@ from src.agent_tools.core.contracts import (
 from src.agent_tools.runtime import (
     executar_ferramenta_inna,
 )
+from src.agents.agent_catalog import (
+    criar_registro_agentes_inna,
+)
 from src.mcp_server.audit import (
     hash_arguments,
     registrar_evento_mcp,
 )
+from src.mcp_server.manifest import (
+    MCP_MANIFEST_SCHEMA_VERSION,
+    MCP_MANIFEST_URI,
+    build_mcp_manifest,
+)
 from src.mcp_server.security import (
+    MCPAuthenticationError,
     validar_autenticacao_interna,
 )
 
 SERVER_NAME = "inna-mcp-level-2"
 SERVER_VERSION = "0.3.0"
 
-_TOOL_AGENT_MAPPING = {
+_MCP_TOOL_PRINCIPAL_BINDING = {
     "buscar_conhecimento_rag": "rag_agent",
     "calcular_diagnostico_financeiro": "financial_agent",
     "preparar_email_financeiro": "communication_agent",
     "preparar_mensagem_telegram": "communication_agent",
 }
+
+_AGENT_REGISTRY = criar_registro_agentes_inna()
+_TOOL_REGISTRY = criar_registro_ferramentas_inna()
 
 
 class MCPToolExecutionError(RuntimeError):
@@ -47,6 +63,130 @@ def _novo_trace_id() -> str:
     return f"mcp-{uuid4().hex}"
 
 
+def _resolve_mcp_principal(
+    tool_name: str,
+) -> str:
+    """
+    Resolve a identidade operacional do MCP.
+
+    O binding escolhe uma identidade determinística.
+    Agent Registry e Tool Registry continuam sendo
+    as fontes de autorização.
+    """
+    principal = (
+        _MCP_TOOL_PRINCIPAL_BINDING.get(
+            tool_name
+        )
+    )
+
+    if principal is None:
+        raise MCPToolExecutionError(
+            "Ferramenta MCP não autorizada: "
+            f"{tool_name}"
+        )
+
+    if not _TOOL_REGISTRY.contains(tool_name):
+        raise MCPToolExecutionError(
+            "Ferramenta MCP não registrada no "
+            "Tool Registry: "
+            f"{tool_name}"
+        )
+
+    if not _AGENT_REGISTRY.contains(principal):
+        raise MCPToolExecutionError(
+            "Principal MCP não registrado no "
+            "Agent Registry: "
+            f"{principal}"
+        )
+
+    tool_definition = _TOOL_REGISTRY.get(
+        tool_name
+    )
+
+    agent_definition = _AGENT_REGISTRY.get(
+        principal
+    )
+
+    if agent_definition.status != "active":
+        raise MCPToolExecutionError(
+            "Principal MCP inativo: "
+            f"{principal}"
+        )
+
+    if (
+        tool_name
+        not in agent_definition.allowed_tools
+    ):
+        raise MCPToolExecutionError(
+            "Agent Registry não autoriza "
+            f"{principal} para {tool_name}"
+        )
+
+    if (
+        principal
+        not in tool_definition.allowed_agents
+        and "*"
+        not in tool_definition.allowed_agents
+    ):
+        raise MCPToolExecutionError(
+            "Tool Registry não autoriza "
+            f"{principal} para {tool_name}"
+        )
+
+    return principal
+
+
+def _validate_mcp_registry_contract() -> None:
+    """
+    Valida todos os bindings MCP no startup.
+
+    Falha cedo quando MCP, Agent Registry e
+    Tool Registry estiverem inconsistentes.
+    """
+    for tool_name in sorted(
+        _MCP_TOOL_PRINCIPAL_BINDING
+    ):
+        _resolve_mcp_principal(tool_name)
+
+
+def _autenticar_operacao_mcp(
+    *,
+    target_name: str,
+    event_type: str,
+    arguments: dict[str, Any],
+    trace_id: str,
+) -> None:
+    """Autentica e audita recusas sem persistir dados brutos."""
+    started_at = perf_counter()
+
+    try:
+        validar_autenticacao_interna()
+    except MCPAuthenticationError:
+        duration_ms = (
+            perf_counter() - started_at
+        ) * 1000
+
+        registrar_evento_mcp(
+            call_id=f"{trace_id}-auth",
+            trace_id=trace_id,
+            tool_name=target_name,
+            status="denied",
+            duration_ms=duration_ms,
+            arguments_hash=hash_arguments(
+                arguments
+            ),
+            error_code=(
+                "mcp_authentication_failed"
+            ),
+            principal=None,
+            event_type=event_type,
+            server_name=SERVER_NAME,
+            server_version=SERVER_VERSION,
+        )
+
+        raise
+
+
 def _executar_tool_governada(
     *,
     tool_name: str,
@@ -54,14 +194,18 @@ def _executar_tool_governada(
 ) -> dict[str, Any]:
     """Executa ferramenta pelo runtime oficial da INNA."""
 
-    validar_autenticacao_interna()
-
-    requested_by = _TOOL_AGENT_MAPPING.get(tool_name)
-
-    if requested_by is None:
-        raise MCPToolExecutionError(f"Ferramenta MCP não autorizada: {tool_name}")
-
     trace_id = _novo_trace_id()
+
+    _autenticar_operacao_mcp(
+        target_name=tool_name,
+        event_type="tool_call",
+        arguments=arguments,
+        trace_id=trace_id,
+    )
+
+    requested_by = _resolve_mcp_principal(
+        tool_name
+    )
 
     context = ToolExecutionContext(
         requested_by=requested_by,
@@ -95,6 +239,10 @@ def _executar_tool_governada(
             status="success",
             duration_ms=result.duration_ms,
             arguments_hash=arguments_hash,
+            principal=requested_by,
+            event_type="tool_call",
+            server_name=SERVER_NAME,
+            server_version=SERVER_VERSION,
         )
 
         return {
@@ -143,6 +291,10 @@ def _executar_tool_governada(
         duration_ms=result.duration_ms,
         arguments_hash=arguments_hash,
         error_code=error_code,
+        principal=requested_by,
+        event_type="tool_call",
+        server_name=SERVER_NAME,
+        server_version=SERVER_VERSION,
     )
 
     raise MCPToolExecutionError(f"{error_code}: {error_message}")
@@ -236,8 +388,81 @@ def preparar_mensagem_telegram(
     )
 
 
+def obter_manifesto_mcp() -> dict[str, Any]:
+    """Retorna o manifesto governado do MCP."""
+    _validate_mcp_registry_contract()
+
+    return build_mcp_manifest(
+        server_name=SERVER_NAME,
+        server_version=SERVER_VERSION,
+        principal_binding=(
+            _MCP_TOOL_PRINCIPAL_BINDING
+        ),
+        agent_registry=_AGENT_REGISTRY,
+        tool_registry=_TOOL_REGISTRY,
+    )
+
+
+def _obter_manifesto_mcp_resource() -> dict[str, Any]:
+    """Lê o manifesto somente após autenticação MCP."""
+    trace_id = _novo_trace_id()
+
+    _autenticar_operacao_mcp(
+        target_name=MCP_MANIFEST_URI,
+        event_type="resource_read",
+        arguments={},
+        trace_id=trace_id,
+    )
+
+    started_at = perf_counter()
+
+    try:
+        manifest = obter_manifesto_mcp()
+    except Exception:
+        duration_ms = (
+            perf_counter() - started_at
+        ) * 1000
+
+        registrar_evento_mcp(
+            call_id=f"{trace_id}-resource",
+            trace_id=trace_id,
+            tool_name=MCP_MANIFEST_URI,
+            status="error",
+            duration_ms=duration_ms,
+            arguments_hash=hash_arguments({}),
+            error_code="mcp_resource_read_failed",
+            principal=None,
+            event_type="resource_read",
+            server_name=SERVER_NAME,
+            server_version=SERVER_VERSION,
+        )
+
+        raise
+
+    duration_ms = (
+        perf_counter() - started_at
+    ) * 1000
+
+    registrar_evento_mcp(
+        call_id=f"{trace_id}-resource",
+        trace_id=trace_id,
+        tool_name=MCP_MANIFEST_URI,
+        status="success",
+        duration_ms=duration_ms,
+        arguments_hash=hash_arguments({}),
+        principal=None,
+        event_type="resource_read",
+        server_name=SERVER_NAME,
+        server_version=SERVER_VERSION,
+    )
+
+    return manifest
+
+
 def criar_servidor_mcp_inna() -> MCPServer:
     """Cria servidor MCP governado da INNA."""
+
+    _validate_mcp_registry_contract()
 
     mcp_server = MCPServer(
         name=SERVER_NAME,
@@ -254,6 +479,23 @@ def criar_servidor_mcp_inna() -> MCPServer:
         warn_on_duplicate_tools=True,
         log_level="INFO",
     )
+
+    mcp_server.resource(
+        MCP_MANIFEST_URI,
+        name="inna_mcp_manifest",
+        title="INNA MCP Manifest",
+        description=(
+            "Manifesto governado das ferramentas "
+            "expostas pelo servidor MCP da INNA."
+        ),
+        mime_type="application/json",
+        meta={
+            "schema_version": (
+                MCP_MANIFEST_SCHEMA_VERSION
+            ),
+            "transport_scope": "internal",
+        },
+    )(_obter_manifesto_mcp_resource)
 
     mcp_server.add_tool(
         buscar_conhecimento_rag,

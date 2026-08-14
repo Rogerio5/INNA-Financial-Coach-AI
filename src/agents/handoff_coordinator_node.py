@@ -9,6 +9,13 @@ from __future__ import annotations
 
 from typing import Any
 
+from src.agents.a2a_contract import (
+    create_a2a_message,
+    evaluate_a2a_message,
+)
+from src.agents.agent_catalog import (
+    DEFAULT_AGENT_REGISTRY,
+)
 from src.agents.handoff import (
     accept_handoff,
     complete_handoff,
@@ -16,7 +23,6 @@ from src.agents.handoff import (
     fail_handoff,
 )
 from src.agents.state import InnaAgentState
-
 
 SPECIALIZED_AGENTS = {
     "financial_agent",
@@ -248,6 +254,128 @@ def _has_reverse_handoff_cycle(
     return False
 
 
+def _a2a_runtime_enabled(
+    state: InnaAgentState,
+) -> bool:
+    """Indica se a execução usa o contrato A2A governado."""
+
+    return any(
+        key in state
+        for key in (
+            "a2a_message_count",
+            "max_a2a_messages",
+            "a2a_history",
+        )
+    )
+
+
+def _resolve_a2a_capability(
+    state: InnaAgentState,
+    *,
+    target: str,
+) -> str:
+    """Resolve deterministicamente a capability do handoff."""
+
+    intent = _normalize_text(
+        state.get(
+            "intent",
+            "",
+        )
+    )
+
+    if target == "report_agent":
+        return "report_preparation"
+
+    if target == "rag_agent":
+        return "knowledge_retrieval"
+
+    if target == "education_agent":
+        return "financial_education"
+
+    if target == "fallback_agent":
+        return "safe_fallback"
+
+    if target == "financial_agent":
+        if intent == "historico_financeiro":
+            return "financial_history"
+
+        return "financial_diagnosis"
+
+    return ""
+
+
+def _append_a2a_history(
+    state: InnaAgentState,
+    *,
+    record: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Acrescenta registro seguro sem duplicar o payload."""
+
+    current = state.get(
+        "a2a_history",
+        [],
+    )
+
+    history: list[dict[str, Any]] = []
+
+    if isinstance(
+        current,
+        list,
+    ):
+        history = [
+            dict(item)
+            for item in current
+            if isinstance(
+                item,
+                dict,
+            )
+        ]
+
+    history.append(
+        dict(record)
+    )
+
+    return history
+
+
+def _a2a_history_record(
+    *,
+    message: dict[str, Any],
+    allowed: bool,
+    reason: str,
+) -> dict[str, Any]:
+    """Mantém somente metadados seguros no histórico A2A."""
+
+    return {
+        "schema_version": message[
+            "schema_version"
+        ],
+        "kind": message[
+            "kind"
+        ],
+        "message_id": message[
+            "message_id"
+        ],
+        "trace_id": message[
+            "trace_id"
+        ],
+        "source_agent": message[
+            "source_agent"
+        ],
+        "target_agent": message[
+            "target_agent"
+        ],
+        "capability": message[
+            "capability"
+        ],
+        "created_at": message[
+            "created_at"
+        ],
+        "allowed": allowed,
+        "reason": reason,
+    }
+
+
 def _request_handoff(
     state: InnaAgentState,
     *,
@@ -387,21 +515,130 @@ def _request_handoff(
             ),
         }
 
+    handoff_payload = _handoff_payload(
+        state
+    )
+
+    handoff_metadata = _handoff_metadata(
+        state
+    )
+
+    a2a_update: dict[str, Any] = {}
+
+    if _a2a_runtime_enabled(
+        state
+    ):
+        capability = _resolve_a2a_capability(
+            state,
+            target=target,
+        )
+
+        message = create_a2a_message(
+            source_agent=current_agent,
+            target_agent=target,
+            capability=capability,
+            payload=handoff_payload,
+            metadata={
+                **handoff_metadata,
+                "thread_id": state.get(
+                    "thread_id"
+                ),
+            },
+        )
+
+        decision = evaluate_a2a_message(
+            message,
+            agent_registry=(
+                DEFAULT_AGENT_REGISTRY
+            ),
+            a2a_message_count=state.get(
+                "a2a_message_count",
+                0,
+            ),
+            max_a2a_messages=state.get(
+                "max_a2a_messages",
+                0,
+            ),
+            handoff_count=handoff_count,
+            max_handoffs=max_handoffs,
+        )
+
+        history_record = (
+            _a2a_history_record(
+                message=message,
+                allowed=decision.allowed,
+                reason=decision.reason,
+            )
+        )
+
+        a2a_history = (
+            _append_a2a_history(
+                state,
+                record=history_record,
+            )
+        )
+
+        if not decision.allowed:
+            error = (
+                "A comunicação A2A foi bloqueada "
+                "pela governança: "
+                f"{decision.reason}."
+            )
+
+            return {
+                "handoff_required": False,
+                "a2a_message_count": (
+                    decision.next_message_count
+                ),
+                "a2a_history": a2a_history,
+                "errors": _append_error(
+                    state,
+                    error,
+                ),
+                "trace": _append_trace(
+                    state,
+                    (
+                        "a2a:error:"
+                        f"{decision.reason}"
+                    ),
+                ),
+            }
+
+        handoff_metadata = {
+            **handoff_metadata,
+            "source": "a2a",
+            "a2a_schema_version": message[
+                "schema_version"
+            ],
+            "a2a_message_id": message[
+                "message_id"
+            ],
+            "a2a_trace_id": message[
+                "trace_id"
+            ],
+            "a2a_capability": message[
+                "capability"
+            ],
+        }
+
+        a2a_update = {
+            "a2a_message_count": (
+                decision.next_message_count
+            ),
+            "a2a_history": a2a_history,
+        }
+
     handoff = create_handoff(
         from_agent=current_agent,
         to_agent=target,
         reason=reason,
-        payload=_handoff_payload(
-            state
-        ),
-        metadata=_handoff_metadata(
-            state
-        ),
+        payload=handoff_payload,
+        metadata=handoff_metadata,
     )
 
     handoff_count += 1
 
-    return {
+    result: dict[str, Any] = {
         "handoff_current": handoff,
         "handoff_history": [
             handoff,
@@ -414,9 +651,22 @@ def _request_handoff(
                 "handoff:requested:"
                 f"{current_agent}->{target}:"
                 f"{handoff['handoff_id']}"
+                + (
+                    "|a2a:allowed:"
+                    f"{a2a_update['a2a_message_count']}"
+                    if a2a_update
+                    else ""
+                )
             ),
         ),
     }
+
+    result.update(
+        a2a_update
+    )
+
+    return result
+
 
 
 def _accept_requested_handoff(

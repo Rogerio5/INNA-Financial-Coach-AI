@@ -203,6 +203,20 @@ class InnaAgentState(TypedDict, total=False):
 
     intent: IntentType
     confidence: float
+
+    # Semana 5 - Adaptive Intent & Complexity Gateway
+    adaptive_complexity: Literal["simple", "complex"]
+    adaptive_complexity_reason: str
+    adaptive_complexity_signals: list[str]
+    adaptive_route_type: Literal["simple", "complex", "escalate"]
+    adaptive_domain: str
+    adaptive_target_supervisor: str
+    adaptive_target_agent: str
+    adaptive_risk: Literal["low", "medium", "high", "critical"]
+    adaptive_reason: str
+    adaptive_multi_domain: bool
+    adaptive_budget: dict[str, int]
+
     next_node: str
 
     route_source: str
@@ -243,6 +257,11 @@ class InnaAgentState(TypedDict, total=False):
     task_block_reason: str
     task_completion_score: float
     task_completion_evidence: dict[str, Any]
+
+    # Semana 5 - comunicação Agent-to-Agent governada.
+    a2a_message_count: int
+    max_a2a_messages: int
+    a2a_history: list[dict[str, Any]]
 
     # Transferência formal de responsabilidade entre agentes.
     handoff_current: dict[str, Any] | None

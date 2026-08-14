@@ -31,6 +31,7 @@ def _supervisor_stub(
 ) -> dict[str, Any]:
     return {
         "intent": "diagnostico_financeiro",
+        "confidence": 0.97,
         "next_node": "financial_agent",
         "generate_report": True,
         "use_database": True,
@@ -38,18 +39,6 @@ def _supervisor_stub(
         "routing_reason": (
             "Diagnóstico seguido de relatório."
         ),
-        "trace": [
-            *list(
-                state.get(
-                    "trace",
-                    [],
-                )
-            ),
-            (
-                "supervisor:test:"
-                "diagnostico_financeiro"
-            ),
-        ],
         "trace": [
             *list(
                 state.get(
@@ -126,16 +115,6 @@ def _financial_agent_stub(
             ),
             "tool:financial_diagnosis:success",
             "agent:financial_agent",
-        ],
-        "trace": [
-            *list(
-                state.get(
-                    "trace",
-                    [],
-                )
-            ),
-            "tool:financial_diagnosis:success",
-            "agent:financial_agent",
             "e2e:financial_agent",
         ],
     }
@@ -178,16 +157,6 @@ def _report_agent_stub(
         ),
         "handoff_required": False,
         "errors": [],
-        "trace": [
-            *list(
-                state.get(
-                    "trace",
-                    [],
-                )
-            ),
-            "tool:report_preparation:success",
-            "agent:report_agent",
-        ],
         "trace": [
             *list(
                 state.get(
