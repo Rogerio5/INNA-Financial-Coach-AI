@@ -301,6 +301,13 @@ class InnaAgentState(TypedDict, total=False):
     supervisor_mesh_visited_count: int
     supervisor_mesh_visit_history: list[dict[str, Any]]
 
+    # Semana 5 - Shared State / Governed Blackboard.
+    shared_blackboard_entries: list[dict[str, Any]]
+    shared_blackboard_count: int
+    max_shared_blackboard_entries: int
+    shared_blackboard_audit: list[dict[str, Any]]
+    shared_blackboard_last_decision: dict[str, Any]
+
     # Human-in-the-Loop
     human_review_enabled: bool
     human_review_required: bool

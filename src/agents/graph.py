@@ -580,6 +580,13 @@ def _criar_estado_inicial(
         "supervisor_mesh_visited_count": 0,
         "supervisor_mesh_visit_history": [],
 
+        # Governed Shared Blackboard
+        "shared_blackboard_entries": [],
+        "shared_blackboard_count": 0,
+        "max_shared_blackboard_entries": 64,
+        "shared_blackboard_audit": [],
+        "shared_blackboard_last_decision": {},
+
         "human_review_enabled": True,
         "human_review_required": False,
         "human_review_current": {},

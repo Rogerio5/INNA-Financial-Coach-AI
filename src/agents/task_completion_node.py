@@ -14,6 +14,9 @@ from src.agents.state import InnaAgentState
 from src.agents.task_completion import (
     evaluate_task_completion,
 )
+from src.agents.task_completion_blackboard import (
+    publish_task_completion_blackboard,
+)
 
 SPECIALIZED_AGENTS = {
     "financial_agent",
@@ -675,10 +678,22 @@ def task_completion_node(
         f"{result['task_completion_score']}"
     )
 
-    return {
+    completion_update = {
         **result,
         "current_agent": current_agent,
         "trace": trace,
+    }
+
+    blackboard_update = (
+        publish_task_completion_blackboard(
+            state,
+            completion_update,
+        )
+    )
+
+    return {
+        **completion_update,
+        **blackboard_update,
     }
 
 
