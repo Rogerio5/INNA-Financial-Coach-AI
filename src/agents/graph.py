@@ -504,6 +504,9 @@ def _criar_estado_inicial(
                 "content": mensagem,
             }
         ],
+        "a2a_message_count": 0,
+        "max_a2a_messages": 0,
+        "a2a_history": [],
         "handoff_current": None,
         "handoff_history": [],
         "handoff_count": 0,

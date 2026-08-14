@@ -177,6 +177,9 @@ def adaptive_gateway_node(
         "max_execution_steps": (
             decision.budget.max_agents
         ),
+        "max_a2a_messages": (
+            decision.budget.max_a2a_messages
+        ),
         "max_handoffs": (
             decision.budget.max_handoffs
         ),

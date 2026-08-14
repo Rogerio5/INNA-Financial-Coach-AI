@@ -258,6 +258,11 @@ class InnaAgentState(TypedDict, total=False):
     task_completion_score: float
     task_completion_evidence: dict[str, Any]
 
+    # Semana 5 - comunicação Agent-to-Agent governada.
+    a2a_message_count: int
+    max_a2a_messages: int
+    a2a_history: list[dict[str, Any]]
+
     # Transferência formal de responsabilidade entre agentes.
     handoff_current: dict[str, Any] | None
     handoff_history: Annotated[
