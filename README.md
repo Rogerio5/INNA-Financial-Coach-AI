@@ -1,11 +1,14 @@
 # INNA Financial Coach AI
 
-Plataforma de educação financeira com IA Generativa, arquitetura multiagente, RAG híbrido, memória, Human-in-the-Loop, FastAPI, Streamlit, PostgreSQL/Neon e observabilidade.
+Plataforma de Engenharia de IA aplicada à educação financeira, desenvolvida com IA Generativa, arquitetura multiagente, RAG híbrido, memória contextual, Human-in-the-Loop (HITL), FastAPI, Streamlit, PostgreSQL/Neon e observabilidade.
 
-A INNA gera diagnósticos financeiros educativos, planos de ação, histórico, relatórios e respostas contextualizadas, combinando cálculos determinísticos com Google Gemini.
+A INNA combina cálculos determinísticos com modelos Google Gemini para gerar diagnósticos financeiros educativos, planos de ação, histórico, relatórios e respostas contextualizadas.
 
-> Projeto educacional. Não substitui consultoria financeira profissional nem recomenda compra ou venda de ativos.
+A arquitetura incorpora agentes especializados, LangGraph, Agent Registry, Supervisor Mesh, Tool/Function Calling, MCP, comunicação Agent-to-Agent (A2A), Shared State/Blackboard, avaliação contínua, Quality Gates, testes automatizados e CI/CD.
 
+O projeto está sendo preparado para execução em containers Docker e implantação escalável no Google Cloud.
+
+> **Aviso:** projeto educacional. A INNA não substitui consultoria financeira profissional e não recomenda compra ou venda de ativos.
 ---
 
 ## Sumário
