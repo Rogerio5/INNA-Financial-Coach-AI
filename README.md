@@ -340,6 +340,9 @@ Regressões específicas também foram executadas para:
 
 ### Arquitetura de alto nível
 
+
+```markdown
+```mermaid
 flowchart TB
 
     User[Usuário]
