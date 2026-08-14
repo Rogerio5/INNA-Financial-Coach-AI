@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import math
 import unicodedata
+from collections.abc import Mapping
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any, Mapping
+from typing import Any
 
 from src.agents.human_review import (
     HumanReviewRiskLevel,
 )
-
 
 DEFAULT_MINIMUM_CONFIDENCE = 0.60
 
@@ -251,49 +251,19 @@ def _resolve_existing_review_status(
 def _resolve_risk_level(
     state: Mapping[str, Any],
 ) -> HumanReviewRiskLevel:
+    """
+    Resolve a maior severidade conhecida.
+
+    O risco adaptativo da camada de roteamento passa
+    a participar formalmente da política HITL.
+    """
+
     structured = _structured_response(
         state
     )
 
     financial = _financial_data(
         state
-    )
-
-    raw_risk = _first_non_empty(
-        state.get(
-            "human_review_risk_level"
-        ),
-        state.get(
-            "risk_level"
-        ),
-        state.get(
-            "nivel_risco"
-        ),
-        state.get(
-            "risk"
-        ),
-        structured.get(
-            "risk_level"
-        ),
-        structured.get(
-            "nivel_risco"
-        ),
-        structured.get(
-            "risk"
-        ),
-        financial.get(
-            "risk_level"
-        ),
-        financial.get(
-            "nivel_risco"
-        ),
-        financial.get(
-            "risk"
-        ),
-    )
-
-    normalized = _normalize_token(
-        raw_risk
     )
 
     aliases: dict[
@@ -319,9 +289,79 @@ def _resolve_risk_level(
         "grave": "critical",
     }
 
-    return aliases.get(
-        normalized,
-        "low",
+    candidates = (
+        state.get(
+            "human_review_risk_level"
+        ),
+        state.get(
+            "risk_level"
+        ),
+        state.get(
+            "nivel_risco"
+        ),
+        state.get(
+            "risk"
+        ),
+
+        # Semana 5 - Adaptive Gateway.
+        state.get(
+            "adaptive_risk"
+        ),
+
+        structured.get(
+            "risk_level"
+        ),
+        structured.get(
+            "nivel_risco"
+        ),
+        structured.get(
+            "risk"
+        ),
+        financial.get(
+            "risk_level"
+        ),
+        financial.get(
+            "nivel_risco"
+        ),
+        financial.get(
+            "risk"
+        ),
+    )
+
+    severity_order = {
+        "low": 0,
+        "medium": 1,
+        "high": 2,
+        "critical": 3,
+    }
+
+    resolved: list[
+        HumanReviewRiskLevel
+    ] = []
+
+    for candidate in candidates:
+        normalized = _normalize_token(
+            candidate
+        )
+
+        if not normalized:
+            continue
+
+        risk = aliases.get(
+            normalized
+        )
+
+        if risk is not None:
+            resolved.append(
+                risk
+            )
+
+    if not resolved:
+        return "low"
+
+    return max(
+        resolved,
+        key=severity_order.__getitem__,
     )
 
 
@@ -721,7 +761,7 @@ def _decision(
             "policy": (
                 "default_financial_human_review"
             ),
-            "policy_version": "1.0",
+            "policy_version": "1.1",
             **dict(
                 metadata or {}
             ),
@@ -801,24 +841,6 @@ def evaluate_human_review_policy(
             },
         )
 
-    if _review_disabled(
-        state
-    ):
-        return _decision(
-            state=state,
-            requires_review=False,
-            trigger="policy_disabled",
-            reason=(
-                "A política de revisão humana está "
-                "desativada para esta execução."
-            ),
-            risk_level=(
-                _resolve_risk_level(
-                    state
-                )
-            ),
-        )
-
     risk_level = _resolve_risk_level(
         state
     )
@@ -871,6 +893,8 @@ def evaluate_human_review_policy(
             ),
         )
 
+    # Risco crítico é uma barreira de segurança.
+    # Uma flag operacional comum não pode removê-la.
     if risk_level == "critical":
         return _decision(
             state=state,
@@ -881,6 +905,25 @@ def evaluate_human_review_policy(
                 "crítico."
             ),
             risk_level="critical",
+            metadata={
+                "mandatory_review": True,
+            },
+        )
+
+    # A flag continua válida para fluxos que não
+    # representam barreiras obrigatórias.
+    if _review_disabled(
+        state
+    ):
+        return _decision(
+            state=state,
+            requires_review=False,
+            trigger="policy_disabled",
+            reason=(
+                "A política de revisão humana está "
+                "desativada para esta execução."
+            ),
+            risk_level=risk_level,
         )
 
     if risk_level == "high":

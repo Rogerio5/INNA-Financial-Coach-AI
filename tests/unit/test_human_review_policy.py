@@ -378,11 +378,11 @@ def test_invalid_confidence_is_ignored():
     assert decision.trigger == "not_required"
 
 
-def test_policy_can_be_disabled():
+def test_policy_can_be_disabled_for_non_mandatory_risk():
     decision = evaluate_human_review_policy(
         _base_state(
             human_review_enabled=False,
-            nivel_risco="Crítico",
+            nivel_risco="Baixo",
         )
     )
 
@@ -529,7 +529,7 @@ def test_payload_contains_auditable_context():
 
     assert decision.metadata[
         "policy_version"
-    ] == "1.0"
+    ] == "1.1"
 
 
 def test_state_must_be_mapping():
@@ -540,3 +540,89 @@ def test_state_must_be_mapping():
         evaluate_human_review_policy(
             None
         )
+
+
+def test_critical_risk_cannot_be_disabled():
+    decision = evaluate_human_review_policy(
+        _base_state(
+            human_review_enabled=False,
+            nivel_risco="Crítico",
+        )
+    )
+
+    assert decision.requires_review is True
+    assert (
+        decision.trigger
+        == "critical_financial_risk"
+    )
+    assert decision.risk_level == "critical"
+    assert (
+        decision.metadata[
+            "mandatory_review"
+        ]
+        is True
+    )
+
+
+def test_adaptive_critical_risk_overrides_lower_financial_risk():
+    decision = evaluate_human_review_policy(
+        _base_state(
+            nivel_risco="Baixo",
+            adaptive_risk="critical",
+        )
+    )
+
+    assert decision.requires_review is True
+    assert (
+        decision.trigger
+        == "critical_financial_risk"
+    )
+    assert decision.risk_level == "critical"
+
+
+def test_highest_risk_source_wins():
+    decision = evaluate_human_review_policy(
+        _base_state(
+            nivel_risco="Medio",
+            adaptive_risk="high",
+            structured_response={
+                "risk_level": "low",
+            },
+        )
+    )
+
+    assert decision.requires_review is True
+    assert (
+        decision.trigger
+        == "high_financial_risk"
+    )
+    assert decision.risk_level == "high"
+
+
+def test_forced_review_cannot_be_disabled():
+    decision = evaluate_human_review_policy(
+        _base_state(
+            human_review_enabled=False,
+            nivel_risco="Baixo",
+            human_review_force_required=True,
+        )
+    )
+
+    assert decision.requires_review is True
+    assert decision.trigger == "forced_review"
+
+
+def test_external_confirmation_cannot_be_disabled():
+    decision = evaluate_human_review_policy(
+        _base_state(
+            human_review_enabled=False,
+            nivel_risco="Baixo",
+            approval_required=True,
+        )
+    )
+
+    assert decision.requires_review is True
+    assert (
+        decision.trigger
+        == "external_action_confirmation"
+    )

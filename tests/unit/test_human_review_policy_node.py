@@ -322,3 +322,105 @@ def test_route_to_handoff_when_review_not_required():
         })
         == "handoff_coordinator"
     )
+
+
+def test_critical_risk_creates_review_even_when_policy_disabled():
+    result = human_review_policy_node(
+        _base_state(
+            nivel_risco="Crítico",
+            human_review_enabled=False,
+        )
+    )
+
+    assert (
+        result["human_review_required"]
+        is True
+    )
+
+    assert (
+        result["human_review_status"]
+        == "requested"
+    )
+
+    assert (
+        result[
+            "human_review_policy_decision"
+        ]["trigger"]
+        == "critical_financial_risk"
+    )
+
+
+def test_adaptive_critical_risk_creates_review():
+    result = human_review_policy_node(
+        _base_state(
+            nivel_risco="Baixo",
+            adaptive_risk="critical",
+        )
+    )
+
+    assert (
+        result["human_review_required"]
+        is True
+    )
+
+    assert (
+        result[
+            "human_review_current"
+        ]["risk_level"]
+        == "critical"
+    )
+
+
+def test_review_limit_routes_fail_closed():
+    result = human_review_policy_node(
+        _base_state(
+            nivel_risco="Crítico",
+            human_review_count=3,
+            max_human_reviews=3,
+        )
+    )
+
+    assert (
+        result["human_review_limit_exceeded"]
+        is True
+    )
+
+    assert (
+        result["human_review_status"]
+        == "failed"
+    )
+
+    assert (
+        select_route_after_human_review_policy(
+            result
+        )
+        == "conversation_summary"
+    )
+
+
+def test_inconsistent_required_policy_state_routes_fail_closed():
+    route = select_route_after_human_review_policy({
+        "human_review_required": False,
+        "human_review_limit_exceeded": False,
+        "human_review_status": "",
+        "human_review_policy_decision": {
+            "requires_review": True,
+            "trigger": "critical_financial_risk",
+        },
+    })
+
+    assert route == "conversation_summary"
+
+
+def test_normal_non_review_flow_still_routes_to_handoff():
+    route = select_route_after_human_review_policy({
+        "human_review_required": False,
+        "human_review_limit_exceeded": False,
+        "human_review_status": "",
+        "human_review_policy_decision": {
+            "requires_review": False,
+            "trigger": "not_required",
+        },
+    })
+
+    assert route == "handoff_coordinator"
