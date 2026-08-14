@@ -74,8 +74,10 @@ from src.context_engineering.node import (
     context_builder_node,
 )
 from src.observability.langgraph_tracing import (
+    add_langgraph_node_result_attributes,
     add_langgraph_result_attributes,
     traced_langgraph_execution,
+    traced_langgraph_node,
 )
 
 DEFAULT_LANGGRAPH_RECURSION_LIMIT = 25
@@ -260,6 +262,38 @@ def _selecionar_saida_supervisor_equipe(
 
     return "supervisor"
 
+def _observed_control_node(
+    node_name: str,
+    node,
+):
+    """
+    Instrumenta apenas o control plane multiagente.
+
+    Agentes/LLMs continuam usando seus tracers
+    específicos já existentes.
+    """
+
+    def observed(
+        state: InnaAgentState,
+    ):
+        with traced_langgraph_node(
+            node_name=node_name,
+            state=state,
+        ) as span:
+            result = node(
+                state
+            )
+
+            add_langgraph_node_result_attributes(
+                span,
+                result,
+            )
+
+            return result
+
+    return observed
+
+
 def criar_builder_inna() -> StateGraph:
     builder = StateGraph(
         InnaAgentState
@@ -278,39 +312,60 @@ def criar_builder_inna() -> StateGraph:
 
     builder.add_node(
         "adaptive_gateway",
-        adaptive_gateway_node,
+        _observed_control_node(
+            "adaptive_gateway",
+            adaptive_gateway_node,
+        ),
     )
 
     # Camada hierárquica
     builder.add_node(
         "supervisor_mesh",
-        supervisor_mesh_node,
+        _observed_control_node(
+            "supervisor_mesh",
+            supervisor_mesh_node,
+        ),
     )
 
     builder.add_node(
         "team_router",
-        team_router_node,
+        _observed_control_node(
+            "team_router",
+            team_router_node,
+        ),
     )
 
     builder.add_node(
         "financial_team_supervisor",
-        financial_team_supervisor_node,
+        _observed_control_node(
+            "financial_team_supervisor",
+            financial_team_supervisor_node,
+        ),
     )
 
     builder.add_node(
         "knowledge_team_supervisor",
-        knowledge_team_supervisor_node,
+        _observed_control_node(
+            "knowledge_team_supervisor",
+            knowledge_team_supervisor_node,
+        ),
     )
 
     builder.add_node(
         "support_team_supervisor",
-        support_team_supervisor_node,
+        _observed_control_node(
+            "support_team_supervisor",
+            support_team_supervisor_node,
+        ),
     )
 
     # Governança de execução
     builder.add_node(
         "execution_governance",
-        apply_execution_governance,
+        _observed_control_node(
+            "execution_governance",
+            apply_execution_governance,
+        ),
     )
 
     # Agentes especializados
@@ -342,22 +397,34 @@ def criar_builder_inna() -> StateGraph:
     # Finalização e handoffs
     builder.add_node(
         "task_completion",
-        task_completion_node,
+        _observed_control_node(
+            "task_completion",
+            task_completion_node,
+        ),
     )
 
     builder.add_node(
         "human_review_policy",
-        human_review_policy_node,
+        _observed_control_node(
+            "human_review_policy",
+            human_review_policy_node,
+        ),
     )
 
     builder.add_node(
         "human_review_interrupt",
-        human_review_interrupt_node,
+        _observed_control_node(
+            "human_review_interrupt",
+            human_review_interrupt_node,
+        ),
     )
 
     builder.add_node(
         "handoff_coordinator",
-        handoff_coordinator_node,
+        _observed_control_node(
+            "handoff_coordinator",
+            handoff_coordinator_node,
+        ),
     )
 
     builder.add_node(

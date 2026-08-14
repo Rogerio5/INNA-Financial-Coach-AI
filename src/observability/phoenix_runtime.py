@@ -214,7 +214,11 @@ def traced_operation(
         }
     )
 
-    with tracer.start_as_current_span(name) as span:
+    with tracer.start_as_current_span(
+        name,
+        record_exception=False,
+        set_status_on_exception=False,
+    ) as span:
         for key, value in safe_attributes.items():
             span.set_attribute(key, value)
 
@@ -222,7 +226,8 @@ def traced_operation(
             yield span
 
         except Exception as exc:
-            span.record_exception(exc)
+            # Nunca exporta mensagem ou stack trace da exceção.
+            # Somente o tipo técnico é permitido na telemetria.
             span.set_status(
                 Status(
                     StatusCode.ERROR,
