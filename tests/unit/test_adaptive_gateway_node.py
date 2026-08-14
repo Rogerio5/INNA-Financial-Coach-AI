@@ -121,3 +121,24 @@ def test_composite_request_is_detected_as_complex():
         "composite_report_workflow"
         in result["adaptive_complexity_signals"]
     )
+
+def test_adaptive_gateway_node_rejects_service_identity():
+    result = adaptive_gateway_node(
+        {
+            "intent": "relatorio",
+            "next_node": "communication_agent",
+            "confidence": 0.95,
+            "risk": "low",
+        }
+    )
+
+    assert result["adaptive_route_type"] == "escalate"
+    assert result["next_node"] == "fallback_agent"
+    assert (
+        result["adaptive_target_agent"]
+        == "fallback_agent"
+    )
+    assert (
+        result["adaptive_target_supervisor"]
+        == "support_team_supervisor"
+    )

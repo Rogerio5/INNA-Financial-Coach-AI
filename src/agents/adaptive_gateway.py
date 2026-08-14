@@ -10,6 +10,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
+from src.agents.agent_catalog import (
+    DEFAULT_AGENT_REGISTRY,
+)
+
 RouteType = Literal["simple", "complex", "escalate"]
 ComplexityType = Literal["simple", "complex"]
 RiskLevel = Literal["low", "medium", "high", "critical"]
@@ -67,29 +71,6 @@ _ESCALATE_BUDGET = AdaptiveExecutionBudget(
 )
 
 
-_AGENT_DOMAIN = {
-    "financial_agent": (
-        "financial",
-        "financial_team_supervisor",
-    ),
-    "report_agent": (
-        "financial",
-        "financial_team_supervisor",
-    ),
-    "education_agent": (
-        "knowledge",
-        "knowledge_team_supervisor",
-    ),
-    "rag_agent": (
-        "knowledge",
-        "knowledge_team_supervisor",
-    ),
-    "fallback_agent": (
-        "support",
-        "support_team_supervisor",
-    ),
-}
-
 
 def _normalize_confidence(value: float) -> float:
     return max(
@@ -98,17 +79,93 @@ def _normalize_confidence(value: float) -> float:
     )
 
 
+def _registered_execution_target(
+    agent: str,
+) -> tuple[str, str, str] | None:
+    """Resolve somente agentes executáveis no LangGraph principal."""
+
+    agent_id = str(
+        agent or ""
+    ).strip()
+
+    if not DEFAULT_AGENT_REGISTRY.contains(
+        agent_id
+    ):
+        return None
+
+    definition = (
+        DEFAULT_AGENT_REGISTRY.get(
+            agent_id
+        )
+    )
+
+    if definition.status != "active":
+        return None
+
+    if definition.kind != "agent":
+        return None
+
+    if definition.runtime != "langgraph":
+        return None
+
+    if (
+        definition.team is None
+        or definition.supervisor is None
+    ):
+        return None
+
+    domain = (
+        definition.team
+        .removesuffix("_team")
+        .strip()
+    )
+
+    if not domain:
+        return None
+
+    return (
+        definition.agent_id,
+        domain,
+        definition.supervisor,
+    )
+
+
+def _fallback_execution_target(
+) -> tuple[str, str, str]:
+    """Resolve o fallback pelo Agent Registry."""
+
+    result = _registered_execution_target(
+        "fallback_agent"
+    )
+
+    if result is None:
+        raise RuntimeError(
+            "fallback_agent sem registro "
+            "executável válido."
+        )
+
+    return result
+
+
 def _resolve_domain(
     agent: str,
 ) -> tuple[str, str]:
-    return _AGENT_DOMAIN.get(
-        str(agent or "").strip(),
-        (
-            "support",
-            "support_team_supervisor",
-        ),
+    """Mantém compatibilidade para domínio e supervisor."""
+
+    result = _registered_execution_target(
+        agent
     )
 
+    if result is None:
+        _, domain, supervisor = (
+            _fallback_execution_target()
+        )
+
+        return domain, supervisor
+
+    _, domain, supervisor = result
+
+    return domain, supervisor
 
 def decide_adaptive_route(
     *,
@@ -136,24 +193,43 @@ def decide_adaptive_route(
         )
     )
 
-    domain, supervisor = _resolve_domain(
-        normalized_agent
+    registered_target = (
+        _registered_execution_target(
+            normalized_agent
+        )
     )
+
+    target_is_executable = (
+        registered_target is not None
+    )
+
+    if registered_target is None:
+        (
+            resolved_agent,
+            domain,
+            supervisor,
+        ) = _fallback_execution_target()
+    else:
+        (
+            resolved_agent,
+            domain,
+            supervisor,
+        ) = registered_target
 
     if (
         normalized_confidence < 0.60
         or normalized_intent
         in {"", "desconhecido"}
-        or normalized_agent
+        or resolved_agent
         == "fallback_agent"
+        or not target_is_executable
         or risk == "critical"
     ):
-        fallback_agent = "fallback_agent"
-        fallback_domain, fallback_supervisor = (
-            _resolve_domain(
-                fallback_agent
-            )
-        )
+        (
+            fallback_agent,
+            fallback_domain,
+            fallback_supervisor,
+        ) = _fallback_execution_target()
 
         return AdaptiveGatewayDecision(
             intent=(
@@ -186,7 +262,7 @@ def decide_adaptive_route(
             route_type="complex",
             confidence=normalized_confidence,
             risk=risk,
-            target_agent=normalized_agent,
+            target_agent=resolved_agent,
             target_supervisor=supervisor,
             budget=_COMPLEX_BUDGET,
             reason="adaptive_complex_route",
@@ -199,7 +275,7 @@ def decide_adaptive_route(
         route_type="simple",
         confidence=normalized_confidence,
         risk=risk,
-        target_agent=normalized_agent,
+        target_agent=resolved_agent,
         target_supervisor=supervisor,
         budget=_SIMPLE_BUDGET,
         reason="adaptive_direct_route",

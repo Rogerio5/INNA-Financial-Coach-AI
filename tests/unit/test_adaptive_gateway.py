@@ -123,3 +123,57 @@ def test_explicit_complexity_hint_routes_complex():
 
     assert decision.route_type == "complex"
     assert decision.complexity == "complex"
+
+def test_service_identity_cannot_be_execution_target():
+    decision = decide_adaptive_route(
+        intent="relatorio",
+        next_node="communication_agent",
+        confidence=0.95,
+    )
+
+    assert decision.route_type == "escalate"
+    assert decision.target_agent == "fallback_agent"
+    assert decision.domain == "support"
+    assert (
+        decision.target_supervisor
+        == "support_team_supervisor"
+    )
+
+
+def test_agent_from_other_runtime_cannot_be_direct_target():
+    decision = decide_adaptive_route(
+        intent="educacao",
+        next_node="research_agent",
+        confidence=0.95,
+    )
+
+    assert decision.route_type == "escalate"
+    assert decision.target_agent == "fallback_agent"
+    assert decision.domain == "support"
+
+
+def test_unregistered_agent_cannot_be_execution_target():
+    decision = decide_adaptive_route(
+        intent="relatorio",
+        next_node="ghost_agent",
+        confidence=0.95,
+    )
+
+    assert decision.route_type == "escalate"
+    assert decision.target_agent == "fallback_agent"
+
+
+def test_registered_langgraph_target_uses_registry_hierarchy():
+    decision = decide_adaptive_route(
+        intent="diagnostico",
+        next_node="financial_agent",
+        confidence=0.95,
+    )
+
+    assert decision.route_type == "simple"
+    assert decision.target_agent == "financial_agent"
+    assert decision.domain == "financial"
+    assert (
+        decision.target_supervisor
+        == "financial_team_supervisor"
+    )

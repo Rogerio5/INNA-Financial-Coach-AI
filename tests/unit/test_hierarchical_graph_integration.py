@@ -136,7 +136,7 @@ def test_team_supervisors_can_reach_governance():
         )
 
 
-def test_team_supervisors_can_escalate_to_root():
+def test_team_supervisors_use_governance_or_root():
     builder = criar_builder_inna()
 
     for supervisor in (
@@ -150,7 +150,8 @@ def test_team_supervisors_can_escalate_to_root():
         )
 
         assert "supervisor" in ends
-        assert "fallback_agent" in ends
+        assert "execution_governance" in ends
+        assert "fallback_agent" not in ends
 
 
 def test_handoff_requested_returns_to_hierarchy():
@@ -205,17 +206,18 @@ def test_cross_team_decision_returns_to_root():
     assert result == "supervisor"
 
 
-def test_root_visit_limit_uses_fallback():
+def test_root_limit_fallback_goes_through_governance():
     result = (
         _selecionar_saida_supervisor_equipe({
-            "team_requires_root_supervisor": True,
+            "team_requires_root_supervisor": False,
+            "next_node": "fallback_agent",
             "root_supervisor_visits": 3,
             "max_root_supervisor_visits": 3,
         })
     )
 
     assert result == (
-        "fallback_agent"
+        "execution_governance"
     )
 
 

@@ -403,3 +403,46 @@ def test_all_team_supervisor_mapping_values_are_callable():
         for node
         in TEAM_SUPERVISOR_NODES.values()
     )
+
+def test_root_limit_prepares_fallback_for_governance():
+    state = _base_state()
+
+    state["next_node"] = "education_agent"
+    state["team_requested_agent"] = (
+        "education_agent"
+    )
+    state["root_supervisor_visits"] = 2
+    state["max_root_supervisor_visits"] = 3
+
+    result = (
+        financial_team_supervisor_node(
+            state
+        )
+    )
+
+    assert (
+        result["root_supervisor_visits"]
+        == 3
+    )
+
+    assert result["next_node"] == (
+        "fallback_agent"
+    )
+
+    assert result["team_route"] == (
+        "fallback_agent"
+    )
+
+    assert (
+        result[
+            "team_requires_root_supervisor"
+        ]
+        is False
+    )
+
+    assert (
+        "fallback"
+        in result[
+            "team_routing_reason"
+        ].lower()
+    )

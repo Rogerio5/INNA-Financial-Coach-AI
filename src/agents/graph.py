@@ -220,8 +220,9 @@ def _selecionar_saida_supervisor_equipe(
     Escalonamento entre equipes:
         supervisor
 
-    Proteção contra retorno excessivo:
-        fallback_agent
+    Quando o limite do supervisor raiz é atingido,
+    o nó da equipe prepara fallback_agent e a rota
+    segue por execution_governance.
     """
     requires_root = bool(
         state.get(
@@ -232,25 +233,6 @@ def _selecionar_saida_supervisor_equipe(
 
     if not requires_root:
         return "execution_governance"
-
-    visits = int(
-        state.get(
-            "root_supervisor_visits",
-            0,
-        )
-        or 0
-    )
-
-    maximum = int(
-        state.get(
-            "max_root_supervisor_visits",
-            3,
-        )
-        or 3
-    )
-
-    if visits >= maximum:
-        return "fallback_agent"
 
     return "supervisor"
 
@@ -411,7 +393,6 @@ def criar_builder_inna() -> StateGraph:
                     "execution_governance"
                 ): "execution_governance",
                 "supervisor": "supervisor",
-                "fallback_agent": "fallback_agent",
             },
         )
 

@@ -12,13 +12,12 @@ from dataclasses import asdict, dataclass
 from typing import Any, Literal
 
 from src.agents.team_hierarchy import (
-    AgentName,
     DEFAULT_TEAM_REGISTRY,
+    AgentName,
     TeamHierarchyError,
     TeamName,
     TeamSupervisorNode,
 )
-
 
 TeamRouteSource = Literal[
     "requested_agent",
@@ -302,12 +301,12 @@ def _append_trace(
     ]
 
     trace.append(
-        (
+
             "team_supervisor:"
             f"{decision.team_name}:"
             f"{decision.status}:"
             f"{decision.next_node}"
-        )
+
     )
 
     return trace
@@ -364,21 +363,67 @@ def team_supervisor_node(
         else current_root_visits
     )
 
+    max_root_supervisor_visits = int(
+        state.get(
+            "max_root_supervisor_visits",
+            3,
+        )
+        or 3
+    )
+
+    root_limit_reached = (
+        decision.requires_root_supervisor
+        and root_supervisor_visits
+        >= max_root_supervisor_visits
+    )
+
+    effective_next_node = (
+        "fallback_agent"
+        if root_limit_reached
+        else decision.next_node
+    )
+
+    effective_requires_root = (
+        decision.requires_root_supervisor
+        and not root_limit_reached
+    )
+
+    effective_reason = (
+        "O limite de retornos ao supervisor "
+        "principal foi atingido; a execução "
+        "seguirá para o fallback pela "
+        "governança."
+        if root_limit_reached
+        else decision.reason
+    )
+
+    trace = _append_trace(
+        state,
+        decision,
+    )
+
+    if root_limit_reached:
+        trace.append(
+            "team_supervisor:"
+            "root_limit:"
+            "fallback_agent"
+        )
+
     return {
         "current_team": decision.team_name,
         "team_supervisor": (
             decision.supervisor_node
         ),
-        "team_route": decision.next_node,
-        "next_node": decision.next_node,
+        "team_route": effective_next_node,
+        "next_node": effective_next_node,
         "team_route_source": (
             decision.route_source
         ),
         "team_routing_reason": (
-            decision.reason
+            effective_reason
         ),
         "team_requires_root_supervisor": (
-            decision.requires_root_supervisor
+            effective_requires_root
         ),
         "root_supervisor_visits": (
             root_supervisor_visits
@@ -392,10 +437,7 @@ def team_supervisor_node(
         "structured_response": (
             structured_response
         ),
-        "trace": _append_trace(
-            state,
-            decision,
-        ),
+        "trace": trace,
     }
 
 
