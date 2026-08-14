@@ -135,7 +135,29 @@ async def test_manifest_resource_is_registered():
 
 
 @pytest.mark.anyio
-async def test_manifest_resource_is_readable_json():
+async def test_manifest_resource_is_readable_json(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+):
+    test_token = "week5-4c-manifest-test-token"
+
+    monkeypatch.setenv(
+        "INNA_INTERNAL_OPERATIONS_TOKEN",
+        test_token,
+    )
+    monkeypatch.setenv(
+        "INNA_MCP_CLIENT_TOKEN",
+        test_token,
+    )
+    monkeypatch.setenv(
+        "INNA_MCP_AUDIT_PATH",
+        str(tmp_path / "manifest-audit.jsonl"),
+    )
+    monkeypatch.setenv(
+        "INNA_MCP_DB_AUDIT_ENABLED",
+        "false",
+    )
+
     server = criar_servidor_mcp_inna()
 
     contents = await server.read_resource(
