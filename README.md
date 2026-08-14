@@ -340,9 +340,8 @@ Regressões específicas também foram executadas para:
 
 ### Arquitetura de alto nível
 
-
-
 ```mermaid
+flowchart TB
 
     User[Usuário]
 
@@ -362,7 +361,7 @@ Regressões específicas também foram executadas para:
         Gateway[Adaptive Gateway]
         Registry[Agent Registry]
         Mesh[Supervisor Mesh]
-        
+
         Financial[Financial Team]
         Knowledge[Knowledge Team]
         Support[Support Team]
@@ -397,14 +396,22 @@ Regressões específicas também foram executadas para:
         CI[GitHub Actions]
     end
 
-    User --> Channels
-    Channels --> FastAPI
+    User --> Streamlit
+    User --> Telegram
+    User --> APIClient
+
+    Streamlit --> FastAPI
+    Telegram --> FastAPI
+    APIClient --> FastAPI
+
     FastAPI --> Context
     Context --> Director
     Director --> Gateway
 
     Gateway --> Registry
     Gateway --> Mesh
+
+    Registry --> Specialized
 
     Mesh --> Financial
     Mesh --> Knowledge
@@ -432,13 +439,13 @@ Regressões específicas também foram executadas para:
     Memory --> Postgres
     FinancialEngine --> Postgres
 
-    FastAPI -. telemetry .-> OTEL
-    Specialized -. telemetry .-> OTEL
-    RAG -. telemetry .-> OTEL
+    FastAPI -. telemetria .-> OTEL
+    Specialized -. telemetria .-> OTEL
+    RAG -. telemetria .-> OTEL
 
     OTEL --> Phoenix
 
-    Specialized -. evaluation .-> Evaluation
+    Specialized -. avaliação .-> Evaluation
     Evaluation --> Gates
     Gates --> CI
 ```
