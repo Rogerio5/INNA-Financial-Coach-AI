@@ -27,6 +27,7 @@ from api.security import (
 )
 from api.telegram_operational_status import router as telegram_operational_router
 from api.telegram_webhook import router as telegram_router
+from src.a2a_server.server import mount_a2a_app
 from src.audit_logger import record_event
 from src.email_sender import send_diagnostico_email
 from src.financial_engine import build_financial_diagnosis
@@ -1323,4 +1324,8 @@ app.include_router(
 
 app.include_router(
     human_review_admin_router
+)
+
+mount_a2a_app(
+    app
 )

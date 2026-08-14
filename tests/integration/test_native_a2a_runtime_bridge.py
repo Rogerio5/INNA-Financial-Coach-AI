@@ -88,7 +88,8 @@ def test_native_a2a_calls_existing_inna_runtime():
     )
 
     app = create_app(
-        executor=executor
+        executor=executor,
+        require_auth=False,
     )
 
     user_input = (
@@ -156,7 +157,8 @@ def test_runtime_failure_does_not_leak_internal_error(
     app = create_app(
         executor=InnaA2AExecutor(
             adapter=adapter
-        )
+        ),
+        require_auth=False,
     )
 
     with TestClient(app) as client:

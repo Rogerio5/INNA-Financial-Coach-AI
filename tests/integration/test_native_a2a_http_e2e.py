@@ -132,6 +132,7 @@ executor = InnaA2AExecutor(
 app = create_app(
     base_url="http://127.0.0.1:{port}",
     executor=executor,
+    require_auth=False,
 )
 
 uvicorn.run(

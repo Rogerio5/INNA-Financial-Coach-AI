@@ -53,7 +53,8 @@ def _client() -> TestClient:
 
     return TestClient(
         create_app(
-            executor=executor
+            executor=executor,
+            require_auth=False,
         )
     )
 

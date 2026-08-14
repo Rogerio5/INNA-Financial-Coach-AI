@@ -6,6 +6,10 @@ A integração com o runtime agentic interno permanece separada.
 
 from __future__ import annotations
 
+import asyncio
+import os
+from urllib.parse import urlparse
+
 from a2a.helpers import (
     get_message_text,
     new_text_message,
@@ -35,9 +39,20 @@ from starlette.applications import Starlette
 from src.a2a_server.adapter import (
     InnaNativeA2AAdapter,
 )
+from src.a2a_server.security import (
+    A2AAuthenticationMiddleware,
+)
 
 INNA_A2A_SERVER_VERSION = "1.0.0"
 INNA_A2A_PROTOCOL_VERSION = "1.0"
+
+INNA_A2A_PUBLIC_BASE_URL_ENV = (
+    "INNA_A2A_PUBLIC_BASE_URL"
+)
+
+DEFAULT_A2A_BASE_URL = (
+    "http://127.0.0.1:8123"
+)
 
 A2A_JSONRPC_PATH = "/a2a/jsonrpc/"
 
@@ -68,8 +83,9 @@ class InnaA2AExecutor(AgentExecutor):
                 message
             ).strip()
 
-        response_text = self._adapter.execute(
-            user_text
+        response_text = await asyncio.to_thread(
+            self._adapter.execute,
+            user_text,
         )
 
         response = new_text_message(
@@ -94,13 +110,51 @@ class InnaA2AExecutor(AgentExecutor):
         return None
 
 
+def resolve_a2a_public_base_url(
+    base_url: str | None = None,
+) -> str:
+    """Resolve e valida a URL pública anunciada pelo A2A."""
+
+    candidate = (
+        base_url
+        or os.getenv(
+            INNA_A2A_PUBLIC_BASE_URL_ENV,
+            "",
+        )
+        or DEFAULT_A2A_BASE_URL
+    )
+
+    normalized = (
+        candidate.strip().rstrip("/")
+    )
+
+    parsed = urlparse(
+        normalized
+    )
+
+    if (
+        parsed.scheme
+        not in {"http", "https"}
+        or not parsed.netloc
+    ):
+        raise ValueError(
+            "Invalid A2A public base URL."
+        )
+
+    return normalized
+
+
 def build_agent_card(
     *,
-    base_url: str = "http://127.0.0.1:8123",
+    base_url: str | None = None,
 ) -> AgentCard:
     """Cria o Agent Card público da INNA."""
 
-    normalized_base = base_url.rstrip("/")
+    normalized_base = (
+        resolve_a2a_public_base_url(
+            base_url
+        )
+    )
 
     interface = AgentInterface(
         url=(
@@ -165,8 +219,9 @@ def build_agent_card(
 
 def create_app(
     *,
-    base_url: str = "http://127.0.0.1:8123",
+    base_url: str | None = None,
     executor: AgentExecutor | None = None,
+    require_auth: bool = True,
 ) -> Starlette:
     """Monta aplicação A2A usando as rotas oficiais."""
 
@@ -198,8 +253,40 @@ def create_app(
         )
     )
 
-    return Starlette(
+    a2a_app = Starlette(
         routes=routes
+    )
+
+    if require_auth:
+        a2a_app.add_middleware(
+            A2AAuthenticationMiddleware,
+            protected_path=(
+                A2A_JSONRPC_PATH
+            ),
+        )
+
+    return a2a_app
+
+
+def mount_a2a_app(
+    host_app: Starlette,
+    *,
+    base_url: str | None = None,
+    executor: AgentExecutor | None = None,
+    require_auth: bool = True,
+) -> None:
+    """Monta o gateway A2A no app ASGI principal."""
+
+    a2a_app = create_app(
+        base_url=base_url,
+        executor=executor,
+        require_auth=require_auth,
+    )
+
+    host_app.mount(
+        "/",
+        a2a_app,
+        name="inna-a2a",
     )
 
 
@@ -208,10 +295,14 @@ app = create_app()
 
 __all__ = [
     "A2A_JSONRPC_PATH",
+    "DEFAULT_A2A_BASE_URL",
     "INNA_A2A_PROTOCOL_VERSION",
+    "INNA_A2A_PUBLIC_BASE_URL_ENV",
     "INNA_A2A_SERVER_VERSION",
     "InnaA2AExecutor",
     "app",
     "build_agent_card",
     "create_app",
+    "mount_a2a_app",
+    "resolve_a2a_public_base_url",
 ]
