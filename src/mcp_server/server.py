@@ -30,6 +30,11 @@ from src.mcp_server.audit import (
     hash_arguments,
     registrar_evento_mcp,
 )
+from src.mcp_server.manifest import (
+    MCP_MANIFEST_SCHEMA_VERSION,
+    MCP_MANIFEST_URI,
+    build_mcp_manifest,
+)
 from src.mcp_server.security import (
     validar_autenticacao_interna,
 )
@@ -330,6 +335,21 @@ def preparar_mensagem_telegram(
     )
 
 
+def obter_manifesto_mcp() -> dict[str, Any]:
+    """Retorna o manifesto governado do MCP."""
+    _validate_mcp_registry_contract()
+
+    return build_mcp_manifest(
+        server_name=SERVER_NAME,
+        server_version=SERVER_VERSION,
+        principal_binding=(
+            _MCP_TOOL_PRINCIPAL_BINDING
+        ),
+        agent_registry=_AGENT_REGISTRY,
+        tool_registry=_TOOL_REGISTRY,
+    )
+
+
 def criar_servidor_mcp_inna() -> MCPServer:
     """Cria servidor MCP governado da INNA."""
 
@@ -350,6 +370,23 @@ def criar_servidor_mcp_inna() -> MCPServer:
         warn_on_duplicate_tools=True,
         log_level="INFO",
     )
+
+    mcp_server.resource(
+        MCP_MANIFEST_URI,
+        name="inna_mcp_manifest",
+        title="INNA MCP Manifest",
+        description=(
+            "Manifesto governado das ferramentas "
+            "expostas pelo servidor MCP da INNA."
+        ),
+        mime_type="application/json",
+        meta={
+            "schema_version": (
+                MCP_MANIFEST_SCHEMA_VERSION
+            ),
+            "transport_scope": "internal",
+        },
+    )(obter_manifesto_mcp)
 
     mcp_server.add_tool(
         buscar_conhecimento_rag,
