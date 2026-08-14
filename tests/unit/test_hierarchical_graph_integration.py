@@ -100,6 +100,14 @@ def test_supervisor_routes_to_adaptive_gateway():
         "adaptive_gateway",
     ) == {
         "execution_governance",
+        "supervisor_mesh",
+    }
+
+    assert _branch_ends(
+        builder,
+        "supervisor_mesh",
+    ) == {
+        "execution_governance",
         "team_router",
     }
 

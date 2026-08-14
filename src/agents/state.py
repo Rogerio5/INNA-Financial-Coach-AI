@@ -289,6 +289,18 @@ class InnaAgentState(TypedDict, total=False):
     root_supervisor_visits: int
     max_root_supervisor_visits: int
 
+    # Semana 5 - Supervisor Mesh governado.
+    supervisor_mesh_active: bool
+    supervisor_mesh_status: str
+    supervisor_mesh_plan: dict[str, Any]
+    supervisor_mesh_requested_teams: list[str]
+    supervisor_mesh_supervisors: list[str]
+    supervisor_mesh_supervisor_count: int
+    supervisor_mesh_history: list[dict[str, Any]]
+    supervisor_mesh_visited_supervisors: list[str]
+    supervisor_mesh_visited_count: int
+    supervisor_mesh_visit_history: list[dict[str, Any]]
+
     # Human-in-the-Loop
     human_review_enabled: bool
     human_review_required: bool
