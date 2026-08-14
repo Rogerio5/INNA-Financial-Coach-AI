@@ -103,6 +103,7 @@ plotly==6.9.0
 # Componente Streamlit do Grafo de Relacionamentos da INNA
 ./components/inna_relationship_graph
 mcp==2.0.0
+a2a-sdk[http-server]==1.1.2
 neo4j==6.2.0
 
 # LlamaIndex Agentic RAG runtime
