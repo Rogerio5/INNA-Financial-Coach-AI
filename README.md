@@ -340,69 +340,106 @@ Regressões específicas também foram executadas para:
 
 ### Arquitetura de alto nível
 
-```mermaid
-flowchart TD
-    U[Usuário] --> Channels[Streamlit / Telegram / API]
-    Channels --> API[FastAPI]
+flowchart TB
 
-    API --> Context[Context Engineering]
-    Context --> Supervisor[Supervisor principal]
-    Supervisor --> Router[Team Router]
+    User[Usuário]
 
-    Router --> FinancialTeam[Equipe financeira]
-    Router --> KnowledgeTeam[Equipe de conhecimento]
-    Router --> SupportTeam[Equipe de suporte]
+    subgraph Channels["Canais e Interfaces"]
+        Streamlit[Streamlit]
+        Telegram[Telegram]
+        APIClient[Clientes / APIs]
+    end
 
-    FinancialTeam --> FinancialSupervisor[Supervisor financeiro]
-    KnowledgeTeam --> KnowledgeSupervisor[Supervisor de conhecimento]
-    SupportTeam --> SupportSupervisor[Supervisor de suporte]
+    subgraph Platform["Camada de Aplicação"]
+        FastAPI[FastAPI]
+        Context[Context Engineering]
+    end
 
-    FinancialSupervisor --> Governance[Governança de execução]
-    KnowledgeSupervisor --> Governance
-    SupportSupervisor --> Governance
+    subgraph Orchestration["Orquestração Multiagente"]
+        Director[INNA Director / Supervisor]
+        Gateway[Adaptive Gateway]
+        Registry[Agent Registry]
+        Mesh[Supervisor Mesh]
+        
+        Financial[Financial Team]
+        Knowledge[Knowledge Team]
+        Support[Support Team]
+    end
 
-    Governance --> Agent[Agente especializado]
+    subgraph Agents["Agentes e Protocolos"]
+        Specialized[Agentes Especializados]
+        Tools[Tool / Function Calling]
+        MCP[MCP]
+        A2A[A2A]
+        Blackboard[Shared State / Blackboard]
+        HITL[Governance + HITL]
+    end
 
-    Agent --> Tools[Tool Calling formal]
-    Tools --> FinancialEngine[Motor financeiro]
-    Tools --> RAG[RAG híbrido]
-    Tools --> Memory[Memória e histórico]
-    Tools --> Reports[Relatórios e integrações]
+    subgraph AI["IA e Conhecimento"]
+        Gemini[Google Gemini]
+        RAG[RAG Híbrido]
+        Memory[Memória]
+        FinancialEngine[Motor Financeiro]
+    end
 
-    RAG --> Database[(PostgreSQL / Neon + pgvector)]
-    Memory --> Database
-    FinancialEngine --> Database
-    Reports --> Database
+    subgraph Data["Dados"]
+        Postgres[(PostgreSQL / Neon)]
+        Vector[(pgvector)]
+    end
 
-    RAG --> Gemini[Google Gemini]
-    Agent --> Gemini
+    subgraph Ops["Qualidade e Observabilidade"]
+        OTEL[OpenTelemetry]
+        Phoenix[Phoenix]
+        Evaluation[Continuous Evaluation]
+        Gates[Quality Gates]
+        CI[GitHub Actions]
+    end
 
-    Agent --> Completion[Task Completion]
-    Completion --> ReviewPolicy[Human Review Policy]
+    User --> Channels
+    Channels --> FastAPI
+    FastAPI --> Context
+    Context --> Director
+    Director --> Gateway
 
-    ReviewPolicy -->|Sem revisão| Handoff[Handoff Coordinator]
-    ReviewPolicy -->|Revisão necessária| Interrupt[Human Review Interrupt]
+    Gateway --> Registry
+    Gateway --> Mesh
 
-    Interrupt -->|Approve| Handoff
-    Interrupt -->|Correct| Router
-    Interrupt -->|Reject ou Cancel| Summary[Resumo conversacional]
+    Mesh --> Financial
+    Mesh --> Knowledge
+    Mesh --> Support
 
-    Handoff --> Summary
-    Summary --> Checkpoint[Checkpoint e persistência por thread_id]
-    Checkpoint --> Database
-    Summary --> Response[Resposta ao usuário]
-    Response --> API
+    Financial --> Specialized
+    Knowledge --> Specialized
+    Support --> Specialized
 
-    API --> PDF[Relatório PDF]
-    API --> Email[E-mail / Resend]
-    API --> Dashboard[Dashboard analítico]
+    Specialized --> Tools
+    Specialized --> MCP
+    Specialized --> A2A
+    Specialized <--> Blackboard
+    Specialized --> HITL
 
-    API -. telemetria .-> Metrics[Prometheus / OpenMetrics]
-    Agent -. telemetria .-> Metrics
-    Tools -. telemetria .-> Metrics
-    Database -. saúde .-> Metrics
-    Metrics --> Grafana[Grafana]
-```
+    Tools --> FinancialEngine
+    Tools --> RAG
+    Tools --> Memory
+
+    Specialized --> Gemini
+    RAG --> Gemini
+
+    RAG --> Vector
+    Vector --> Postgres
+    Memory --> Postgres
+    FinancialEngine --> Postgres
+
+    FastAPI -. telemetry .-> OTEL
+    Specialized -. telemetry .-> OTEL
+    RAG -. telemetry .-> OTEL
+
+    OTEL --> Phoenix
+
+    Specialized -. evaluation .-> Evaluation
+    Evaluation --> Gates
+    Gates --> CI
+
 
 ---
 
