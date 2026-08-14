@@ -14,7 +14,6 @@ from src.agents.state import (
     InnaAgentState,
 )
 
-
 DEFAULT_MAX_HUMAN_REVIEWS = 3
 
 
@@ -365,12 +364,58 @@ def select_route_after_human_review_policy(
     A rota human_review_interrupt será conectada
     em etapa posterior.
     """
-    if bool(
+    review_required = bool(
         state.get(
             "human_review_required",
             False,
         )
+    )
+
+    limit_exceeded = bool(
+        state.get(
+            "human_review_limit_exceeded",
+            False,
+        )
+    )
+
+    review_status = _normalize_text(
+        state.get(
+            "human_review_status"
+        )
+    ).lower()
+
+    policy_decision = state.get(
+        "human_review_policy_decision",
+        {},
+    )
+
+    policy_requires_review = False
+
+    if isinstance(
+        policy_decision,
+        dict,
     ):
+        policy_requires_review = bool(
+            policy_decision.get(
+                "requires_review",
+                False,
+            )
+        )
+
+    # Fail closed:
+    # uma revisão exigida que não pôde ser criada
+    # jamais continua silenciosamente para handoff.
+    if (
+        limit_exceeded
+        or review_status == "failed"
+        or (
+            policy_requires_review
+            and not review_required
+        )
+    ):
+        return "conversation_summary"
+
+    if review_required:
         return "human_review_interrupt"
 
     return "handoff_coordinator"
