@@ -514,16 +514,25 @@ def _build_llm_plan(
     user_id: str | None,
     trace_id: str | None,
 ) -> ResearchPlan:
+    from google import genai
     from google.genai import types
 
-    from src.agents.gemini_client import (
-        get_supervisor_client,
-    )
     from src.agents.supervisor_config import (
+        get_gemini_api_key,
         get_supervisor_runtime_config,
     )
     from src.observability.llm_tracking import (
         executar_generate_content_observado,
+    )
+    from src.observability.resilience_tracing import (
+        get_shared_resilience_runtime,
+        traced_resilience_operation,
+    )
+    from src.resilience.deadline import (
+        DeadlineBudget,
+    )
+    from src.resilience.policies import (
+        AGENTIC_RAG_PLANNER_POLICY,
     )
 
     runtime_config = get_supervisor_runtime_config()
@@ -534,6 +543,31 @@ def _build_llm_plan(
         )
         or runtime_config.model
     ).strip()
+
+    planner_timeout_ms = _read_int_environment(
+        "INNA_AGENTIC_RAG_PLANNER_TIMEOUT_MS",
+        12000,
+        minimum=1000,
+        maximum=120000,
+    )
+
+    planner_total_deadline_ms = (
+        _read_int_environment(
+            "INNA_AGENTIC_RAG_PLANNER_TOTAL_DEADLINE_MS",
+            20000,
+            minimum=1000,
+            maximum=180000,
+        )
+    )
+
+    deadline_budget = DeadlineBudget(
+        planner_total_deadline_ms / 1000.0,
+        reserve_seconds=0.25,
+    )
+
+    resilience_runtime = (
+        get_shared_resilience_runtime()
+    )
 
     prompt = f"""
 Você é o Query Planner da INNA.
@@ -561,24 +595,82 @@ Pergunta:
 {question}
 """.strip()
 
-    response = executar_generate_content_observado(
-        get_supervisor_client(),
-        modelo=model,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            temperature=0.0,
-            max_output_tokens=700,
-            response_mime_type="application/json",
-            response_schema=_LLMPlanResponse,
-        ),
-        operacao="agentic_rag_query_planner",
-        origem="agentic_rag.planner",
-        trace_id=trace_id,
-        metadados={
-            "structured_output": True,
-            "question_content_logged": False,
-        },
-    )
+    def generate_plan_attempt():
+        attempt_timeout_seconds = (
+            deadline_budget.clamp_timeout(
+                planner_timeout_ms
+                / 1000.0
+            )
+        )
+
+        attempt_timeout_ms = max(
+            1,
+            int(
+                attempt_timeout_seconds
+                * 1000
+            ),
+        )
+
+        http_options = types.HttpOptions(
+            timeout=attempt_timeout_ms,
+            retry_options=None,
+        )
+
+        client = genai.Client(
+            api_key=get_gemini_api_key(),
+            http_options=http_options,
+        )
+
+        return (
+            executar_generate_content_observado(
+                client,
+                modelo=model,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0.0,
+                    max_output_tokens=700,
+                    response_mime_type=(
+                        "application/json"
+                    ),
+                    response_schema=(
+                        _LLMPlanResponse
+                    ),
+                ),
+                operacao=(
+                    "agentic_rag_query_planner"
+                ),
+                origem=(
+                    "agentic_rag.planner"
+                ),
+                trace_id=trace_id,
+                metadados={
+                    "structured_output": True,
+                    "question_content_logged": (
+                        False
+                    ),
+                },
+            )
+        )
+
+    with traced_resilience_operation(
+        AGENTIC_RAG_PLANNER_POLICY
+    ):
+        response = (
+            resilience_runtime.execute(
+                policy=(
+                    AGENTIC_RAG_PLANNER_POLICY
+                ),
+                operation=(
+                    generate_plan_attempt
+                ),
+                deadline_budget=(
+                    deadline_budget
+                ),
+                minimum_retry_attempt_seconds=(
+                    0.50
+                ),
+            )
+        )
 
     parsed = getattr(
         response,

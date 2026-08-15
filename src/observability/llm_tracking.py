@@ -239,7 +239,9 @@ def executar_llm_observado(
                     duracao_ms=duracao_ms,
                     sucesso=False,
                     erro_tipo=type(exc).__name__,
-                    erro_mensagem=str(exc),
+                    erro_mensagem=(
+                        "LLM provider call failed."
+                    ),
                     metadados={
                         **(metadados or {}),
                         "telemetria_automatica": True,

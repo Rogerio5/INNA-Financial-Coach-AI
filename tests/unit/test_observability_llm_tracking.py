@@ -80,7 +80,12 @@ def test_executar_llm_observado_falha(
     )
     assert (
         argumentos["erro_mensagem"]
-        == "falha simulada"
+        == "LLM provider call failed."
+    )
+
+    assert (
+        "falha simulada"
+        not in argumentos["erro_mensagem"]
     )
 
 

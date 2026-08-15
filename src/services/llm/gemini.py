@@ -17,6 +17,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 from typing import Any
+
 try:
     from observability.llm_tracking import (
         executar_generate_content_observado,
@@ -27,6 +28,14 @@ except ImportError:
     )
 
 
+from src.observability.resilience_tracing import (
+    get_shared_resilience_runtime,
+    traced_resilience_operation,
+)
+from src.resilience.deadline import DeadlineBudget
+from src.resilience.policies import (
+    GEMINI_TEXT_GENERATION_POLICY,
+)
 from src.services.llm.model_registry import (
     DEFAULT_TEXT_MODEL,
     LLMRole,
@@ -34,6 +43,66 @@ from src.services.llm.model_registry import (
 )
 
 MODELO_TEXTO_PADRAO = DEFAULT_TEXT_MODEL
+
+DEFAULT_TEXT_GENERATION_TIMEOUT_MS = 15000
+DEFAULT_TEXT_GENERATION_TOTAL_DEADLINE_MS = 25000
+TEXT_GENERATION_DEADLINE_RESERVE_SECONDS = 0.25
+
+
+def _ler_inteiro_ambiente(
+    name: str,
+    default: int,
+    *,
+    minimum: int,
+    maximum: int,
+) -> int:
+    carregar_variaveis_ambiente()
+
+    raw_value = os.getenv(name)
+
+    if raw_value is None:
+        return default
+
+    try:
+        value = int(
+            str(raw_value).strip()
+        )
+    except (
+        TypeError,
+        ValueError,
+    ) as exc:
+        raise GeminiTextConfigurationError(
+            f"{name} possui valor inválido."
+        ) from exc
+
+    if (
+        value < minimum
+        or value > maximum
+    ):
+        raise GeminiTextConfigurationError(
+            f"{name} deve estar entre "
+            f"{minimum} e {maximum}."
+        )
+
+    return value
+
+
+def _obter_timeout_geracao_ms() -> int:
+    return _ler_inteiro_ambiente(
+        "INNA_TEXT_GENERATION_TIMEOUT_MS",
+        DEFAULT_TEXT_GENERATION_TIMEOUT_MS,
+        minimum=1000,
+        maximum=120000,
+    )
+
+
+def _obter_deadline_total_geracao_ms() -> int:
+    return _ler_inteiro_ambiente(
+        "INNA_TEXT_GENERATION_TOTAL_DEADLINE_MS",
+        DEFAULT_TEXT_GENERATION_TOTAL_DEADLINE_MS,
+        minimum=1000,
+        maximum=180000,
+    )
 
 
 class GeminiTextConfigurationError(RuntimeError):
@@ -81,20 +150,44 @@ def obter_api_key_gemini() -> str:
     return api_key.strip()
 
 
-def criar_cliente_gemini():
+def criar_cliente_gemini(
+    *,
+    timeout_ms: int | None = None,
+):
     """
-    Cria um cliente utilizando google-genai.
+    Cria cliente google-genai com timeout explícito.
+
+    O SDK não recebe política própria de retry:
+    a INNA é a autoridade de retentativa.
     """
     try:
         from google import genai
+        from google.genai import types
     except ImportError as exc:
         raise GeminiTextConfigurationError(
             "Pacote google-genai não instalado. "
             "Execute: pip install -U google-genai"
         ) from exc
 
+    resolved_timeout_ms = int(
+        timeout_ms
+        if timeout_ms is not None
+        else _obter_timeout_geracao_ms()
+    )
+
+    if resolved_timeout_ms <= 0:
+        raise GeminiTextConfigurationError(
+            "Timeout Gemini deve ser positivo."
+        )
+
+    http_options = types.HttpOptions(
+        timeout=resolved_timeout_ms,
+        retry_options=None,
+    )
+
     return genai.Client(
-        api_key=obter_api_key_gemini()
+        api_key=obter_api_key_gemini(),
+        http_options=http_options,
     )
 
 
@@ -150,70 +243,144 @@ def gerar_texto_gemini(
     max_tokens: int = 2048,
 ) -> str:
     """
-    Gera uma resposta textual utilizando Gemini.
+    Gera texto Gemini com resiliência controlada pela INNA.
 
-    Args:
-        prompt:
-            Prompt final construído pela INNA.
-
-        modelo:
-            Modelo Gemini utilizado.
-
-        temperatura:
-            Controla variação da resposta.
-
-        max_tokens:
-            Limite aproximado da saída.
+    O serviço possui:
+    - timeout HTTP por tentativa;
+    - deadline total;
+    - retry controlado;
+    - circuit breaker dedicado;
+    - observabilidade segura.
     """
-    prompt_normalizado = _normalizar_prompt(prompt)
+    prompt_normalizado = _normalizar_prompt(
+        prompt
+    )
 
     temperatura = max(
         0.0,
-        min(float(temperatura), 2.0),
+        min(
+            float(temperatura),
+            2.0,
+        ),
     )
 
     max_tokens = max(
         128,
-        min(int(max_tokens), 8192),
+        min(
+            int(max_tokens),
+            8192,
+        ),
+    )
+
+    timeout_ms = (
+        _obter_timeout_geracao_ms()
+    )
+
+    total_deadline_ms = (
+        _obter_deadline_total_geracao_ms()
+    )
+
+    deadline_budget = DeadlineBudget(
+        total_deadline_ms / 1000.0,
+        reserve_seconds=(
+            TEXT_GENERATION_DEADLINE_RESERVE_SECONDS
+        ),
     )
 
     try:
         from google.genai import types
 
         modelo_resolvido = (
-            str(modelo or "").strip()
+            str(
+                modelo
+                or ""
+            ).strip()
             or get_model_for_role(role)
         )
-
-        client = criar_cliente_gemini()
 
         config = types.GenerateContentConfig(
             temperature=temperatura,
             max_output_tokens=max_tokens,
-            thinking_config=types.ThinkingConfig(
-                thinking_budget=0
+            thinking_config=(
+                types.ThinkingConfig(
+                    thinking_budget=0
+                )
             ),
         )
 
-        response = executar_generate_content_observado(
-            client,
-            modelo=modelo_resolvido,
-            contents=prompt_normalizado,
-            config=config,
-            operacao="llm_service_generate",
-            origem="services.llm.gemini",
-            metadados={
-                "temperatura": temperatura,
-                "max_output_tokens": max_tokens,
-                "thinking_budget": 0,
-            },
+        resilience_runtime = (
+            get_shared_resilience_runtime()
         )
 
-        resposta = _extrair_texto_resposta(response)
+        def generate_attempt():
+            attempt_timeout_seconds = (
+                deadline_budget.clamp_timeout(
+                    timeout_ms / 1000.0
+                )
+            )
 
+            attempt_timeout_ms = max(
+                1,
+                int(
+                    attempt_timeout_seconds
+                    * 1000
+                ),
+            )
+
+            client = criar_cliente_gemini(
+                timeout_ms=attempt_timeout_ms
+            )
+
+            return (
+                executar_generate_content_observado(
+                    client,
+                    modelo=modelo_resolvido,
+                    contents=prompt_normalizado,
+                    config=config,
+                    operacao=(
+                        "llm_service_generate"
+                    ),
+                    origem=(
+                        "services.llm.gemini"
+                    ),
+                    metadados={
+                        "temperatura": temperatura,
+                        "max_output_tokens": (
+                            max_tokens
+                        ),
+                        "thinking_budget": 0,
+                    },
+                )
+            )
+
+        with traced_resilience_operation(
+            GEMINI_TEXT_GENERATION_POLICY
+        ):
+            response = (
+                resilience_runtime.execute(
+                    policy=(
+                        GEMINI_TEXT_GENERATION_POLICY
+                    ),
+                    operation=generate_attempt,
+                    deadline_budget=(
+                        deadline_budget
+                    ),
+                    minimum_retry_attempt_seconds=(
+                        0.50
+                    ),
+                )
+            )
+
+        resposta = _extrair_texto_resposta(
+            response
+        )
+
+        # Resposta inválida não é falha transitória.
+        # Por isso a validação acontece após o runtime.
         if not resposta:
             raise GeminiTextGenerationError(
-                "O Gemini não retornou uma resposta textual."
+                "O Gemini não retornou "
+                "uma resposta textual."
             )
 
         return resposta
@@ -227,8 +394,9 @@ def gerar_texto_gemini(
 
     except Exception as exc:
         raise GeminiTextGenerationError(
-            "Não foi possível gerar a resposta Gemini: "
-            f"{type(exc).__name__}: {exc}"
+            "Não foi possível gerar a "
+            "resposta Gemini "
+            f"({type(exc).__name__})."
         ) from exc
 
 
@@ -256,7 +424,10 @@ def testar_servico_gemini() -> dict:
     except Exception as exc:
         return {
             "ok": False,
-            "message": str(exc),
+            "message": (
+                "Falha no serviço textual Gemini "
+                f"({type(exc).__name__})."
+            ),
             "response": "",
             "model": get_model_for_role(
                 LLMRole.DEFAULT
