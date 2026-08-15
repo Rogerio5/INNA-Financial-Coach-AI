@@ -16,6 +16,12 @@ from src.reliability.production_tracker import (
     get_production_reliability_tracker,
     observe_production_reliability_event,
 )
+from src.reliability.shared_provider import (
+    ReliabilityDataSource,
+    SharedReliabilityProvider,
+    SharedReliabilitySnapshot,
+    get_shared_reliability_provider,
+)
 
 __all__ = [
     "PRODUCTION_RELIABILITY_POLICIES",
@@ -26,8 +32,12 @@ __all__ = [
     "ProductionReliabilitySnapshot",
     "ProductionReliabilityTracker",
     "ProductionReliabilityWriterSnapshot",
+    "ReliabilityDataSource",
+    "SharedReliabilityProvider",
+    "SharedReliabilitySnapshot",
     "get_production_reliability_tracker",
     "get_production_reliability_writer",
+    "get_shared_reliability_provider",
     "observe_production_reliability_event",
     "observe_production_reliability_persistence_event",
 ]
