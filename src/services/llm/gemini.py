@@ -234,6 +234,7 @@ def _extrair_texto_resposta(response: Any) -> str:
     return ""
 
 
+
 def gerar_texto_gemini(
     prompt: Any,
     *,
@@ -241,6 +242,7 @@ def gerar_texto_gemini(
     role: LLMRole | str = LLMRole.DEFAULT,
     temperatura: float = 0.3,
     max_tokens: int = 2048,
+    usage_out: dict[str, int] | None = None,
 ) -> str:
     """
     Gera texto Gemini com resiliência controlada pela INNA.
@@ -250,8 +252,12 @@ def gerar_texto_gemini(
     - deadline total;
     - retry controlado;
     - circuit breaker dedicado;
-    - observabilidade segura.
+    - observabilidade segura;
+    - propagação opcional de usage/tokens.
     """
+    if usage_out is not None:
+        usage_out.clear()
+
     prompt_normalizado = _normalizar_prompt(
         prompt
     )
@@ -371,12 +377,54 @@ def gerar_texto_gemini(
                 )
             )
 
+        if usage_out is not None:
+            try:
+                from src.observability.llm_costs import (
+                    extrair_tokens_resposta,
+                )
+
+                extracted_usage = (
+                    extrair_tokens_resposta(
+                        response
+                    )
+                )
+
+                usage_out.update(
+                    {
+                        "tokens_entrada": int(
+                            extracted_usage.get(
+                                "tokens_entrada",
+                                0,
+                            )
+                            or 0
+                        ),
+                        "tokens_saida": int(
+                            extracted_usage.get(
+                                "tokens_saida",
+                                0,
+                            )
+                            or 0
+                        ),
+                        "tokens_totais": int(
+                            extracted_usage.get(
+                                "tokens_totais",
+                                0,
+                            )
+                            or 0
+                        ),
+                    }
+                )
+
+            except Exception:
+                # Telemetria de custo nunca pode
+                # afetar a resposta funcional.
+                usage_out.clear()
+
         resposta = _extrair_texto_resposta(
             response
         )
 
         # Resposta inválida não é falha transitória.
-        # Por isso a validação acontece após o runtime.
         if not resposta:
             raise GeminiTextGenerationError(
                 "O Gemini não retornou "
@@ -398,6 +446,7 @@ def gerar_texto_gemini(
             "resposta Gemini "
             f"({type(exc).__name__})."
         ) from exc
+
 
 
 def testar_servico_gemini() -> dict:
