@@ -306,6 +306,190 @@ class ProductionReliabilitySnapshot:
         )
 
 
+
+def _validate_reliability_count(
+    name: str,
+    value: int,
+) -> int:
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, int)
+        or value < 0
+    ):
+        raise ValueError(
+            f"{name} must be an integer >= 0."
+        )
+
+    return value
+
+
+def evaluate_production_reliability_counts(
+    *,
+    policy: ProductionReliabilityPolicy,
+    total_operations: int,
+    successful_operations: int,
+    failed_operations: int,
+    circuit_rejections: int,
+) -> ProductionReliabilitySnapshot:
+    """
+    Avalia contadores agregados usando a mesma
+    semântica operacional do tracker da INNA.
+
+    Esta função é deliberadamente independente
+    da origem dos contadores. Ela pode avaliar:
+    - eventos process-local do tracker;
+    - agregados compartilhados do PostgreSQL.
+
+    Nenhum acesso ao banco ocorre aqui.
+    """
+    if not isinstance(
+        policy,
+        ProductionReliabilityPolicy,
+    ):
+        raise TypeError(
+            "policy must be a "
+            "ProductionReliabilityPolicy."
+        )
+
+    total = _validate_reliability_count(
+        "total_operations",
+        total_operations,
+    )
+
+    successes = _validate_reliability_count(
+        "successful_operations",
+        successful_operations,
+    )
+
+    failures = _validate_reliability_count(
+        "failed_operations",
+        failed_operations,
+    )
+
+    rejected = _validate_reliability_count(
+        "circuit_rejections",
+        circuit_rejections,
+    )
+
+    if total != successes + failures:
+        raise ValueError(
+            "total_operations must equal "
+            "successful_operations + "
+            "failed_operations."
+        )
+
+    if rejected > failures:
+        raise ValueError(
+            "circuit_rejections cannot exceed "
+            "failed_operations."
+        )
+
+    if total == 0:
+        observed_failure_ratio = None
+        burn_rate = None
+        burn_severity = None
+
+    else:
+        observed_failure_ratio = (
+            failures
+            / total
+        )
+
+        burn_rate = (
+            observed_failure_ratio
+            / policy.error_budget_ratio
+        )
+
+        if _threshold_reached(
+            burn_rate,
+            policy.critical_burn_rate,
+        ):
+            burn_severity = (
+                OperationalBurnSeverity
+                .CRITICAL
+            )
+
+        elif _threshold_reached(
+            burn_rate,
+            policy.warning_burn_rate,
+        ):
+            burn_severity = (
+                OperationalBurnSeverity
+                .WARNING
+            )
+
+        else:
+            burn_severity = (
+                OperationalBurnSeverity
+                .NORMAL
+            )
+
+    if (
+        total
+        < policy.minimum_operations
+    ):
+        state = (
+            OperationalReliabilityState
+            .INSUFFICIENT_DATA
+        )
+
+    elif (
+        burn_rate is not None
+        and _threshold_reached(
+            burn_rate,
+            policy.critical_burn_rate,
+        )
+    ):
+        state = (
+            OperationalReliabilityState
+            .CRITICAL
+        )
+
+    elif (
+        burn_rate is not None
+        and _threshold_reached(
+            burn_rate,
+            1.0,
+        )
+    ):
+        state = (
+            OperationalReliabilityState
+            .DEGRADED
+        )
+
+    else:
+        state = (
+            OperationalReliabilityState
+            .HEALTHY
+        )
+
+    return ProductionReliabilitySnapshot(
+        operation=policy.operation,
+        state=state,
+        burn_severity=burn_severity,
+        objective_ratio=(
+            policy.objective_ratio
+        ),
+        error_budget_ratio=(
+            policy.error_budget_ratio
+        ),
+        window_seconds=(
+            policy.window_seconds
+        ),
+        minimum_operations=(
+            policy.minimum_operations
+        ),
+        total_operations=total,
+        successful_operations=successes,
+        failed_operations=failures,
+        circuit_rejections=rejected,
+        observed_failure_ratio=(
+            observed_failure_ratio
+        ),
+        burn_rate=burn_rate,
+    )
+
+
 class ProductionReliabilityTracker:
     """
     Tracker process-local dos quatro serviços reais.
@@ -492,115 +676,14 @@ class ProductionReliabilityTracker:
             if item.circuit_rejected
         )
 
-        if total == 0:
-            observed_failure_ratio = None
-            burn_rate = None
-            burn_severity = None
-
-        else:
-            observed_failure_ratio = (
-                failures
-                / total
-            )
-
-            burn_rate = (
-                observed_failure_ratio
-                / policy.error_budget_ratio
-            )
-
-            if (
-                _threshold_reached(
-                    burn_rate,
-                    policy.critical_burn_rate,
-                )
-            ):
-                burn_severity = (
-                    OperationalBurnSeverity
-                    .CRITICAL
-                )
-
-            elif (
-                _threshold_reached(
-                    burn_rate,
-                    policy.warning_burn_rate,
-                )
-            ):
-                burn_severity = (
-                    OperationalBurnSeverity
-                    .WARNING
-                )
-
-            else:
-                burn_severity = (
-                    OperationalBurnSeverity
-                    .NORMAL
-                )
-
-        if (
-            total
-            < policy.minimum_operations
-        ):
-            state = (
-                OperationalReliabilityState
-                .INSUFFICIENT_DATA
-            )
-
-        elif (
-            burn_rate is not None
-            and _threshold_reached(
-                burn_rate,
-                policy.critical_burn_rate,
-            )
-        ):
-            state = (
-                OperationalReliabilityState
-                .CRITICAL
-            )
-
-        elif (
-            burn_rate is not None
-            and _threshold_reached(
-                burn_rate,
-                1.0,
-            )
-        ):
-            state = (
-                OperationalReliabilityState
-                .DEGRADED
-            )
-
-        else:
-            state = (
-                OperationalReliabilityState
-                .HEALTHY
-            )
-
-        return ProductionReliabilitySnapshot(
-            operation=operation,
-            state=state,
-            burn_severity=burn_severity,
-            objective_ratio=(
-                policy.objective_ratio
-            ),
-            error_budget_ratio=(
-                policy.error_budget_ratio
-            ),
-            window_seconds=(
-                policy.window_seconds
-            ),
-            minimum_operations=(
-                policy.minimum_operations
-            ),
+        return evaluate_production_reliability_counts(
+            policy=policy,
             total_operations=total,
             successful_operations=successes,
             failed_operations=failures,
             circuit_rejections=(
                 circuit_rejections
             ),
-            observed_failure_ratio=(
-                observed_failure_ratio
-            ),
-            burn_rate=burn_rate,
         )
 
     def snapshot_all(
@@ -674,6 +757,7 @@ __all__ = [
     "ProductionReliabilityPolicy",
     "ProductionReliabilitySnapshot",
     "ProductionReliabilityTracker",
+    "evaluate_production_reliability_counts",
     "get_production_reliability_tracker",
     "observe_production_reliability_event",
 ]

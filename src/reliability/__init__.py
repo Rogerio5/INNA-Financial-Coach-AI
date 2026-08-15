@@ -13,6 +13,7 @@ from src.reliability.production_tracker import (
     ProductionReliabilityPolicy,
     ProductionReliabilitySnapshot,
     ProductionReliabilityTracker,
+    evaluate_production_reliability_counts,
     get_production_reliability_tracker,
     observe_production_reliability_event,
 )
@@ -35,6 +36,7 @@ __all__ = [
     "ReliabilityDataSource",
     "SharedReliabilityProvider",
     "SharedReliabilitySnapshot",
+    "evaluate_production_reliability_counts",
     "get_production_reliability_tracker",
     "get_production_reliability_writer",
     "get_shared_reliability_provider",
