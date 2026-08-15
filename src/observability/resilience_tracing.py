@@ -6,6 +6,9 @@ from typing import Any
 
 from opentelemetry import trace
 
+from src.reliability import (
+    observe_production_reliability_event,
+)
 from src.resilience.contracts import (
     OperationKind,
     ResiliencePolicy,
@@ -245,6 +248,28 @@ def traced_resilience_operation(
         yield span
 
 
+def observe_runtime_resilience_event(
+    event: ResilienceEvent,
+) -> None:
+    """
+    Observer real do runtime de produção.
+
+    Reliability e OTEL são independentes:
+    uma falha em qualquer observer nunca altera
+    o caminho funcional da aplicação.
+    """
+    try:
+        observe_production_reliability_event(
+            event
+        )
+    except Exception:
+        pass
+
+    observe_resilience_event(
+        event
+    )
+
+
 def create_observed_resilience_runtime(
     **runtime_kwargs: Any,
 ) -> ResilienceRuntime:
@@ -261,7 +286,7 @@ def create_observed_resilience_runtime(
         )
 
     return ResilienceRuntime(
-        observer=observe_resilience_event,
+        observer=observe_runtime_resilience_event,
         **runtime_kwargs,
     )
 
@@ -289,5 +314,6 @@ __all__ = [
     "create_observed_resilience_runtime",
     "get_shared_resilience_runtime",
     "observe_resilience_event",
+    "observe_runtime_resilience_event",
     "traced_resilience_operation",
 ]
