@@ -18,10 +18,8 @@ from src.agents.schemas import (
 )
 from src.agents.state import InnaAgentState
 from src.agents.supervisor_deadline import (
-    classificar_com_gemini_com_deadline
-    as classificar_com_gemini,
+    classificar_com_gemini_com_deadline as classificar_com_gemini,
 )
-
 
 MIN_RULE_CONFIDENCE = 0.75
 MIN_LLM_CONFIDENCE = 0.60
@@ -472,8 +470,7 @@ def classificar_intencao_hibrida(
             gemini_called=True,
             fallback_used=True,
             classification_error=(
-                f"{type(exc).__name__}: "
-                f"{str(exc)[:300]}"
+                type(exc).__name__
             ),
         )
 

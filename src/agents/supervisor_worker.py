@@ -13,6 +13,7 @@ from typing import Any
 from src.agents.supervisor_llm import (
     classificar_com_gemini,
 )
+from src.resilience import classify_failure
 
 
 def _write_result(
@@ -69,13 +70,19 @@ def main() -> int:
         return 0
 
     except Exception as exc:
+        failure_kind = classify_failure(
+            exc
+        )
+
         _write_result(
             {
                 "ok": False,
                 "error_type": (
                     type(exc).__name__
                 ),
-                "error": str(exc)[:300],
+                "failure_kind": (
+                    failure_kind.value
+                ),
             }
         )
 

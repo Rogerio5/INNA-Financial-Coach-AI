@@ -29,6 +29,18 @@ GEMINI_GENERATION_POLICY = ResiliencePolicy(
 )
 
 
+SUPERVISOR_GENERATION_POLICY = ResiliencePolicy(
+    name="gemini.generate.supervisor",
+    operation_kind=OperationKind.READ_ONLY,
+    max_attempts=2,
+    base_delay_seconds=0.50,
+    max_delay_seconds=2.0,
+    jitter_ratio=0.20,
+    circuit_failure_threshold=5,
+    circuit_recovery_seconds=30.0,
+)
+
+
 RAG_QUERY_POLICY = ResiliencePolicy(
     name="rag.query",
     operation_kind=OperationKind.READ_ONLY,
@@ -56,6 +68,7 @@ LLAMAINDEX_AGENTIC_RAG_POLICY = ResiliencePolicy(
 __all__ = [
     "GEMINI_EMBEDDING_POLICY",
     "GEMINI_GENERATION_POLICY",
+    "SUPERVISOR_GENERATION_POLICY",
     "LLAMAINDEX_AGENTIC_RAG_POLICY",
     "RAG_QUERY_POLICY",
 ]

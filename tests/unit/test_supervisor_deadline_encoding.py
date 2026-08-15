@@ -22,5 +22,15 @@ def test_supervisor_deadline_keeps_hard_timeout():
     )
 
     assert "subprocess.run(" in source
-    assert "runtime.total_deadline_ms" in source
+    assert (
+        "runtime_config.total_deadline_ms"
+        in source
+    )
+
+    assert "DeadlineBudget" in source
+
+    assert (
+        "deadline_budget.clamp_timeout"
+        in source
+    )
     assert "subprocess.TimeoutExpired" in source
