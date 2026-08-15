@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import math
 import random
 import time
 from collections.abc import (
@@ -22,6 +23,10 @@ from .classification import (
 )
 from .contracts import (
     ResiliencePolicy,
+)
+from .deadline import (
+    DeadlineBudget,
+    DeadlineBudgetExhaustedError,
 )
 from .events import (
     ResilienceEvent,
@@ -71,12 +76,94 @@ class ResilienceRuntime:
     ) -> CircuitBreakerRegistry:
         return self._registry
 
+    @staticmethod
+    def _validate_minimum_retry_attempt_seconds(
+        value: float,
+    ) -> float:
+        parsed = float(value)
+
+        if (
+            not math.isfinite(parsed)
+            or parsed < 0
+        ):
+            raise ValueError(
+                "minimum_retry_attempt_seconds "
+                "must be finite and >= 0."
+            )
+
+        return parsed
+
+    @staticmethod
+    def _ensure_initial_deadline_budget(
+        *,
+        deadline_budget: DeadlineBudget | None,
+        minimum_attempt_seconds: float,
+    ) -> None:
+        if deadline_budget is None:
+            return
+
+        if deadline_budget.expired():
+            raise DeadlineBudgetExhaustedError(
+                "Insufficient deadline budget "
+                "for initial attempt."
+            )
+
+        if deadline_budget.can_start_attempt(
+            minimum_attempt_seconds=(
+                minimum_attempt_seconds
+            ),
+        ):
+            return
+
+        raise DeadlineBudgetExhaustedError(
+            "Insufficient deadline budget "
+            "for initial attempt."
+        )
+
+    @staticmethod
+    def _ensure_retry_deadline_budget(
+        *,
+        deadline_budget: DeadlineBudget | None,
+        delay_seconds: float,
+        minimum_attempt_seconds: float,
+    ) -> None:
+        if deadline_budget is None:
+            return
+
+        if deadline_budget.can_retry(
+            delay_seconds=delay_seconds,
+            minimum_attempt_seconds=(
+                minimum_attempt_seconds
+            ),
+        ):
+            return
+
+        raise DeadlineBudgetExhaustedError(
+            "Insufficient deadline budget "
+            "for retry."
+        )
+
     def execute(
         self,
         *,
         policy: ResiliencePolicy,
         operation: Callable[[], T],
+        deadline_budget: DeadlineBudget | None = None,
+        minimum_retry_attempt_seconds: float = 0.0,
     ) -> T:
+        minimum_retry_attempt_seconds = (
+            self._validate_minimum_retry_attempt_seconds(
+                minimum_retry_attempt_seconds
+            )
+        )
+
+        self._ensure_initial_deadline_budget(
+            deadline_budget=deadline_budget,
+            minimum_attempt_seconds=(
+                minimum_retry_attempt_seconds
+            ),
+        )
+
         breaker = (
             self._registry.get_or_create(
                 policy
@@ -237,6 +324,14 @@ class ResilienceRuntime:
                     )
                 )
 
+                self._ensure_retry_deadline_budget(
+                    deadline_budget=deadline_budget,
+                    delay_seconds=delay,
+                    minimum_attempt_seconds=(
+                        minimum_retry_attempt_seconds
+                    ),
+                )
+
                 self._emit(
                     ResilienceEvent(
                         operation=policy.name,
@@ -318,7 +413,22 @@ class ResilienceRuntime:
             [float],
             Awaitable[None],
         ] = asyncio.sleep,
+        deadline_budget: DeadlineBudget | None = None,
+        minimum_retry_attempt_seconds: float = 0.0,
     ) -> T:
+        minimum_retry_attempt_seconds = (
+            self._validate_minimum_retry_attempt_seconds(
+                minimum_retry_attempt_seconds
+            )
+        )
+
+        self._ensure_initial_deadline_budget(
+            deadline_budget=deadline_budget,
+            minimum_attempt_seconds=(
+                minimum_retry_attempt_seconds
+            ),
+        )
+
         breaker = (
             self._registry.get_or_create(
                 policy
@@ -481,6 +591,14 @@ class ResilienceRuntime:
                             self._random_source
                         ),
                     )
+                )
+
+                self._ensure_retry_deadline_budget(
+                    deadline_budget=deadline_budget,
+                    delay_seconds=delay,
+                    minimum_attempt_seconds=(
+                        minimum_retry_attempt_seconds
+                    ),
                 )
 
                 self._emit(

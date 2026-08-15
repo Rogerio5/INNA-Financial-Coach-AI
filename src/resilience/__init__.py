@@ -15,6 +15,11 @@ from .contracts import (
     OperationKind,
     ResiliencePolicy,
 )
+from .deadline import (
+    DeadlineBudget,
+    DeadlineBudgetExhaustedError,
+    DeadlineSnapshot,
+)
 from .events import (
     ResilienceEvent,
     ResilienceEventType,
@@ -25,6 +30,9 @@ from .runtime import (
 )
 
 __all__ = [
+    "DeadlineSnapshot",
+    "DeadlineBudgetExhaustedError",
+    "DeadlineBudget",
     "CircuitBreaker",
     "CircuitBreakerRegistry",
     "CircuitBreakerSnapshot",

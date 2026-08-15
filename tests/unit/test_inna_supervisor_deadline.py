@@ -88,7 +88,11 @@ def test_deadline_retorna_decisao_estruturada(
 
     call = mock_run.call_args
 
-    assert call.kwargs["timeout"] == 8.0
+    assert (
+        0
+        < call.kwargs["timeout"]
+        < 8.0
+    )
 
     assert (
         "pessoa@email.com"

@@ -70,6 +70,7 @@ def _extract_status_code(
     candidates: list[Any] = [
         getattr(exc, "status_code", None),
         getattr(exc, "code", None),
+        getattr(exc, "status", None),
         getattr(exc, "http_status", None),
     ]
 
@@ -113,6 +114,18 @@ def _extract_status_code(
 def _classify_single(
     exc: BaseException,
 ) -> FailureKind:
+    declared_failure_kind = getattr(
+        exc,
+        "failure_kind",
+        None,
+    )
+
+    if isinstance(
+        declared_failure_kind,
+        FailureKind,
+    ):
+        return declared_failure_kind
+
     if isinstance(
         exc,
         asyncio.CancelledError,
