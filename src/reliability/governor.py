@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import StrEnum
 from types import MappingProxyType
 
 from src.resilience.contracts import (
+    OperationKind,
     ResiliencePolicy,
 )
 from src.resilience.policies import (
@@ -315,6 +316,193 @@ def advise_reliability_governor(
     )
 
 
+
+def derive_effective_resilience_policy(
+    *,
+    policy: ResiliencePolicy,
+    decision: ReliabilityGovernorDecision,
+) -> ResiliencePolicy:
+    """
+    Deriva uma policy imutável a partir de uma
+    decisão advisory já validada.
+
+    Esta função não:
+    - muta a policy original;
+    - altera o ResilienceRuntime;
+    - executa fallback;
+    - consulta banco;
+    - aumenta retries.
+    """
+    if not isinstance(
+        policy,
+        ResiliencePolicy,
+    ):
+        raise TypeError(
+            "policy must be a ResiliencePolicy."
+        )
+
+    if not isinstance(
+        decision,
+        ReliabilityGovernorDecision,
+    ):
+        raise TypeError(
+            "decision must be a "
+            "ReliabilityGovernorDecision."
+        )
+
+    governed_policy = (
+        GOVERNED_RESILIENCE_POLICIES
+        .get(policy.name)
+    )
+
+    if governed_policy is None:
+        raise ValueError(
+            "Operation is not governed by "
+            "production Reliability."
+        )
+
+    # A derivação deve partir da policy real
+    # registrada, não de uma configuração
+    # arbitrária que reutilize o mesmo nome.
+    if policy != governed_policy:
+        raise ValueError(
+            "Policy does not match the governed "
+            "production policy."
+        )
+
+    if decision.operation != policy.name:
+        raise ValueError(
+            "Policy and Governor decision "
+            "operation mismatch."
+        )
+
+    current_attempts = int(
+        policy.max_attempts
+    )
+
+    if (
+        decision.current_max_attempts
+        != current_attempts
+    ):
+        raise ValueError(
+            "Governor decision current attempts "
+            "do not match the base policy."
+        )
+
+    recommended = int(
+        decision.recommended_max_attempts
+    )
+
+    if recommended < 1:
+        raise ValueError(
+            "Recommended max_attempts must be "
+            "at least 1."
+        )
+
+    if recommended > current_attempts:
+        raise ValueError(
+            "Governor cannot expand retry "
+            "attempts."
+        )
+
+    if (
+        decision.action
+        is ReliabilityGovernorAction
+        .KEEP_CURRENT
+    ):
+        if recommended != current_attempts:
+            raise ValueError(
+                "KEEP_CURRENT must preserve "
+                "max_attempts."
+            )
+
+        return policy
+
+    # Qualquer redução exige dados compartilhados.
+    if (
+        not decision.shared_data_used
+        or decision.source
+        is not ReliabilityDataSource
+        .SHARED_CACHE
+    ):
+        raise ValueError(
+            "Retry reduction requires shared "
+            "Reliability data."
+        )
+
+    # Nunca reduzimos/alteramos automaticamente
+    # policies side-effecting.
+    if (
+        policy.operation_kind
+        is OperationKind.SIDE_EFFECT
+    ):
+        raise ValueError(
+            "Governor cannot derive retry "
+            "changes for side-effect operations."
+        )
+
+    if (
+        decision.state
+        is OperationalReliabilityState
+        .INSUFFICIENT_DATA
+    ):
+        raise ValueError(
+            "Insufficient data cannot derive "
+            "a reduced retry policy."
+        )
+
+    if (
+        decision.state
+        is OperationalReliabilityState
+        .HEALTHY
+    ):
+        raise ValueError(
+            "Healthy state cannot derive "
+            "a reduced retry policy."
+        )
+
+    if (
+        decision.action
+        is ReliabilityGovernorAction
+        .REDUCE_RETRIES
+    ):
+        expected = max(
+            1,
+            current_attempts - 1,
+        )
+
+        if recommended != expected:
+            raise ValueError(
+                "REDUCE_RETRIES recommendation "
+                "does not match Governor rules."
+            )
+
+    elif (
+        decision.action
+        is ReliabilityGovernorAction
+        .CONSERVATIVE_MODE
+    ):
+        if recommended != 1:
+            raise ValueError(
+                "CONSERVATIVE_MODE must derive "
+                "max_attempts=1."
+            )
+
+    else:
+        raise ValueError(
+            "Unsupported Governor action."
+        )
+
+    if recommended == current_attempts:
+        return policy
+
+    return replace(
+        policy,
+        max_attempts=recommended,
+    )
+
+
+
 def get_reliability_governor_decision(
     operation: str,
     *,
@@ -363,5 +551,6 @@ __all__ = [
     "ReliabilityGovernorAction",
     "ReliabilityGovernorDecision",
     "advise_reliability_governor",
+    "derive_effective_resilience_policy",
     "get_reliability_governor_decision",
 ]
