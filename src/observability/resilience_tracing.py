@@ -325,3 +325,224 @@ __all__ = [
     "observe_runtime_resilience_event",
     "traced_resilience_operation",
 ]
+
+
+def _governor_attribute_value(
+    value: object,
+) -> object:
+    """
+    Normaliza enums para valores OTEL simples.
+    """
+    return getattr(
+        value,
+        "value",
+        value,
+    )
+
+
+def build_reliability_governor_attributes(
+    decision,
+) -> dict[str, object]:
+    """
+    Gera somente atributos agregados e privacy-safe.
+
+    Nunca inclui prompt, resposta, usuário,
+    conteúdo RAG, credenciais ou mensagens
+    de exceção.
+    """
+    attributes: dict[str, object] = {
+        "reliability.governor.operation": (
+            str(decision.operation)
+        ),
+        "reliability.governor.action": (
+            str(
+                _governor_attribute_value(
+                    decision.action
+                )
+            )
+        ),
+        "reliability.governor.reason_code": (
+            str(decision.reason_code)
+        ),
+        "reliability.governor.advisory_only": (
+            bool(decision.advisory_only)
+        ),
+        "reliability.governor.shared_data_used": (
+            bool(decision.shared_data_used)
+        ),
+        "reliability.governor.cache_stale": (
+            bool(decision.cache_stale)
+        ),
+        (
+            "reliability.governor."
+            "database_unavailable"
+        ): bool(
+            decision.database_unavailable
+        ),
+        (
+            "reliability.governor."
+            "current_max_attempts"
+        ): int(
+            decision.current_max_attempts
+        ),
+        (
+            "reliability.governor."
+            "recommended_max_attempts"
+        ): int(
+            decision.recommended_max_attempts
+        ),
+        "reliability.governor.prefer_fallback": (
+            bool(decision.prefer_fallback)
+        ),
+        "reliability.governor.fail_open": False,
+    }
+
+    source = getattr(
+        decision,
+        "source",
+        None,
+    )
+
+    if source is not None:
+        attributes[
+            "reliability.governor.source"
+        ] = str(
+            _governor_attribute_value(
+                source
+            )
+        )
+
+    state = getattr(
+        decision,
+        "state",
+        None,
+    )
+
+    if state is not None:
+        attributes[
+            "reliability.governor.state"
+        ] = str(
+            _governor_attribute_value(
+                state
+            )
+        )
+
+    burn_rate = getattr(
+        decision,
+        "burn_rate",
+        None,
+    )
+
+    if burn_rate is not None:
+        attributes[
+            "reliability.governor.burn_rate"
+        ] = float(
+            burn_rate
+        )
+
+    return attributes
+
+
+def observe_reliability_governor_decision(
+    decision,
+) -> None:
+    """
+    Registra a decisão do Reliability Governor
+    no pipeline OTEL/Phoenix já existente.
+
+    Falhas de telemetria nunca interferem
+    no comportamento funcional.
+    """
+    try:
+        attributes = (
+            build_reliability_governor_attributes(
+                decision
+            )
+        )
+
+        with traced_operation(
+            "inna.reliability.governor",
+            attributes=attributes,
+            instrumentation_name=(
+                INSTRUMENTATION_NAME
+            ),
+        ) as span:
+            if span is None:
+                return
+
+            span.add_event(
+                (
+                    "inna.reliability."
+                    "governor.decision"
+                ),
+                attributes=attributes,
+            )
+
+    except Exception:
+        return
+
+
+def observe_reliability_governor_fail_open(
+    *,
+    operation: str,
+    current_max_attempts: int,
+    error_type: str,
+) -> None:
+    """
+    Registra fail-open de forma privacy-safe.
+
+    Apenas o tipo da exceção é observado;
+    a mensagem da exceção nunca é enviada.
+    """
+    try:
+        attributes: dict[str, object] = {
+            "reliability.governor.operation": (
+                str(operation)
+            ),
+            "reliability.governor.action": (
+                "fail_open"
+            ),
+            "reliability.governor.fail_open": (
+                True
+            ),
+            (
+                "reliability.governor."
+                "fallback_to_base_policy"
+            ): True,
+            (
+                "reliability.governor."
+                "current_max_attempts"
+            ): int(
+                current_max_attempts
+            ),
+            (
+                "reliability.governor."
+                "error_type"
+            ): str(
+                error_type
+            ),
+        }
+
+        with traced_operation(
+            (
+                "inna.reliability."
+                "governor.fail_open"
+            ),
+            attributes=attributes,
+            instrumentation_name=(
+                INSTRUMENTATION_NAME
+            ),
+        ) as span:
+            if span is None:
+                return
+
+            span.add_event(
+                (
+                    "inna.reliability."
+                    "governor.fail_open"
+                ),
+                attributes=attributes,
+            )
+
+    except Exception:
+        return
