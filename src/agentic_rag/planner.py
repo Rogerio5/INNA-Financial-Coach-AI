@@ -507,6 +507,74 @@ class _LLMPlanResponse(BaseModel):
     requires_iteration: bool = False
 
 
+
+def _planner_governor_enforcement_enabled() -> bool:
+    """
+    Enforcement exige os dois gates:
+
+    - kill-switch global;
+    - gate específico do Query Planner.
+    """
+    from src.config import get_bool_env
+
+    return (
+        get_bool_env(
+            (
+                "INNA_RELIABILITY_GOVERNOR_"
+                "ENFORCEMENT_ENABLED"
+            ),
+            False,
+        )
+        and get_bool_env(
+            (
+                "INNA_RELIABILITY_GOVERNOR_"
+                "PLANNER_ENFORCEMENT_ENABLED"
+            ),
+            False,
+        )
+    )
+
+
+def _resolve_planner_resilience_policy(
+    base_policy,
+):
+    """
+    Resolve a policy efetiva do Planner.
+
+    Fail-open:
+    qualquer falha da governança mantém
+    a policy original e nunca derruba
+    o caminho funcional do Planner.
+    """
+    if not _planner_governor_enforcement_enabled():
+        return base_policy
+
+    try:
+        from src.reliability.governor import (
+            derive_effective_resilience_policy,
+            get_reliability_governor_decision,
+        )
+
+        decision = (
+            get_reliability_governor_decision(
+                base_policy.name
+            )
+        )
+
+        return (
+            derive_effective_resilience_policy(
+                policy=base_policy,
+                decision=decision,
+            )
+        )
+
+    except Exception:
+        # Reliability governance nunca deve
+        # derrubar o caminho funcional.
+        return base_policy
+
+
+
 def _build_llm_plan(
     *,
     question: str,
@@ -533,6 +601,12 @@ def _build_llm_plan(
     )
     from src.resilience.policies import (
         AGENTIC_RAG_PLANNER_POLICY,
+    )
+
+    planner_resilience_policy = (
+        _resolve_planner_resilience_policy(
+            AGENTIC_RAG_PLANNER_POLICY
+        )
     )
 
     runtime_config = get_supervisor_runtime_config()
@@ -653,12 +727,12 @@ Pergunta:
         )
 
     with traced_resilience_operation(
-        AGENTIC_RAG_PLANNER_POLICY
+        planner_resilience_policy
     ):
         response = (
             resilience_runtime.execute(
                 policy=(
-                    AGENTIC_RAG_PLANNER_POLICY
+                    planner_resilience_policy
                 ),
                 operation=(
                     generate_plan_attempt
