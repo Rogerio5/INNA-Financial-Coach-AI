@@ -545,11 +545,17 @@ def _resolve_planner_resilience_policy(
     qualquer falha da governança mantém
     a policy original e nunca derruba
     o caminho funcional do Planner.
+
+    Decisões e fail-open são observados
+    de forma privacy-safe via OTEL/Phoenix.
     """
     if not _planner_governor_enforcement_enabled():
         return base_policy
 
     try:
+        from src.observability.resilience_tracing import (
+            observe_reliability_governor_decision,
+        )
         from src.reliability.governor import (
             derive_effective_resilience_policy,
             get_reliability_governor_decision,
@@ -561,6 +567,15 @@ def _resolve_planner_resilience_policy(
             )
         )
 
+        # Telemetria nunca pode modificar
+        # a decisão funcional do Governor.
+        try:
+            observe_reliability_governor_decision(
+                decision
+            )
+        except Exception:
+            pass
+
         return (
             derive_effective_resilience_policy(
                 policy=base_policy,
@@ -568,12 +583,27 @@ def _resolve_planner_resilience_policy(
             )
         )
 
-    except Exception:
-        # Reliability governance nunca deve
-        # derrubar o caminho funcional.
+    except Exception as exc:
+        # O fail-open continua funcional mesmo
+        # se a própria telemetria falhar.
+        try:
+            from src.observability.resilience_tracing import (
+                observe_reliability_governor_fail_open,
+            )
+
+            observe_reliability_governor_fail_open(
+                operation=base_policy.name,
+                current_max_attempts=(
+                    base_policy.max_attempts
+                ),
+                error_type=(
+                    type(exc).__name__
+                ),
+            )
+        except Exception:
+            pass
+
         return base_policy
-
-
 
 def _build_llm_plan(
     *,
