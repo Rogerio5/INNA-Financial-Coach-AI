@@ -267,3 +267,93 @@ def test_retry_is_not_counted_as_multiple_logical_operations(
         is ResilienceEventType
         .OPERATION_SUCCEEDED
     )
+
+
+
+def test_composite_observer_forwards_to_async_ledger(
+    monkeypatch,
+):
+    local_events = []
+    ledger_events = []
+
+    monkeypatch.setattr(
+        resilience_tracing,
+        "observe_production_reliability_event",
+        local_events.append,
+    )
+
+    monkeypatch.setattr(
+        resilience_tracing,
+        (
+            "observe_production_reliability_"
+            "persistence_event"
+        ),
+        ledger_events.append,
+    )
+
+    monkeypatch.setattr(
+        resilience_tracing.trace,
+        "get_current_span",
+        lambda: None,
+    )
+
+    event = _event(
+        ResilienceEventType
+        .OPERATION_SUCCEEDED
+    )
+
+    (
+        resilience_tracing
+        .observe_runtime_resilience_event(
+            event
+        )
+    )
+
+    assert local_events == [event]
+    assert ledger_events == [event]
+
+
+def test_async_ledger_observer_failure_is_isolated(
+    monkeypatch,
+):
+    local_events = []
+
+    monkeypatch.setattr(
+        resilience_tracing,
+        "observe_production_reliability_event",
+        local_events.append,
+    )
+
+    def fail(_):
+        raise RuntimeError(
+            "ledger unavailable"
+        )
+
+    monkeypatch.setattr(
+        resilience_tracing,
+        (
+            "observe_production_reliability_"
+            "persistence_event"
+        ),
+        fail,
+    )
+
+    monkeypatch.setattr(
+        resilience_tracing.trace,
+        "get_current_span",
+        lambda: None,
+    )
+
+    event = _event(
+        ResilienceEventType
+        .OPERATION_SUCCEEDED
+    )
+
+    (
+        resilience_tracing
+        .observe_runtime_resilience_event(
+            event
+        )
+    )
+
+    assert local_events == [event]

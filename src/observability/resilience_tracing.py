@@ -8,6 +8,7 @@ from opentelemetry import trace
 
 from src.reliability import (
     observe_production_reliability_event,
+    observe_production_reliability_persistence_event,
 )
 from src.resilience.contracts import (
     OperationKind,
@@ -260,6 +261,13 @@ def observe_runtime_resilience_event(
     """
     try:
         observe_production_reliability_event(
+            event
+        )
+    except Exception:
+        pass
+
+    try:
+        observe_production_reliability_persistence_event(
             event
         )
     except Exception:
