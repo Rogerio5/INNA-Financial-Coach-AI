@@ -304,15 +304,36 @@ def gerar_texto_gemini(
             or get_model_for_role(role)
         )
 
-        config = types.GenerateContentConfig(
-            temperature=temperatura,
-            max_output_tokens=max_tokens,
-            thinking_config=(
-                types.ThinkingConfig(
-                    thinking_budget=0
-                )
-            ),
+        # Gemini 3.x possui contrato de geração diferente.
+        #
+        # Não enviamos parâmetros de amostragem legados
+        # (temperature/top_p/top_k) nem thinking_budget.
+        # O modelo usa seu thinking_level padrão.
+        #
+        # Para Gemini 2.5 e anteriores preservamos o
+        # contrato histórico da INNA.
+        modelo_normalizado = (
+            modelo_resolvido
+            .strip()
+            .lower()
         )
+
+        if modelo_normalizado.startswith(
+            "gemini-3"
+        ):
+            config = types.GenerateContentConfig(
+                max_output_tokens=max_tokens,
+            )
+        else:
+            config = types.GenerateContentConfig(
+                temperature=temperatura,
+                max_output_tokens=max_tokens,
+                thinking_config=(
+                    types.ThinkingConfig(
+                        thinking_budget=0
+                    )
+                ),
+            )
 
         resilience_runtime = (
             get_shared_resilience_runtime()

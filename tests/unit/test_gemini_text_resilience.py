@@ -505,3 +505,165 @@ def test_llm_tracking_does_not_persist_raw_provider_message(
         captured["erro_mensagem"]
         == "LLM provider call failed."
     )
+
+
+def test_gemini_3_generation_config_avoids_deprecated_fields(
+    monkeypatch,
+):
+    from contextlib import contextmanager
+    from types import SimpleNamespace
+
+    from google.genai import types
+
+    import src.services.llm.gemini as gemini_service
+
+    captured = {}
+
+    original_config = types.GenerateContentConfig
+
+    def capture_config(**kwargs):
+        captured.update(kwargs)
+        return original_config(**kwargs)
+
+    monkeypatch.setattr(
+        types,
+        "GenerateContentConfig",
+        capture_config,
+    )
+
+    class FakeRuntime:
+        def execute(
+            self,
+            *,
+            policy,
+            operation,
+            deadline_budget,
+            minimum_retry_attempt_seconds,
+        ):
+            return operation()
+
+    monkeypatch.setattr(
+        gemini_service,
+        "get_shared_resilience_runtime",
+        lambda: FakeRuntime(),
+    )
+
+    monkeypatch.setattr(
+        gemini_service,
+        "criar_cliente_gemini",
+        lambda *,
+        timeout_ms: object(),
+    )
+
+    monkeypatch.setattr(
+        gemini_service,
+        "executar_generate_content_observado",
+        lambda *args, **kwargs: SimpleNamespace(
+            text="OK"
+        ),
+    )
+
+    @contextmanager
+    def fake_trace(policy):
+        yield object()
+
+    monkeypatch.setattr(
+        gemini_service,
+        "traced_resilience_operation",
+        fake_trace,
+    )
+
+    result = gemini_service.gerar_texto_gemini(
+        "Teste",
+        modelo="gemini-3.5-flash-lite",
+        temperatura=0.3,
+        max_tokens=128,
+    )
+
+    assert result == "OK"
+    assert captured["max_output_tokens"] == 128
+
+    assert "temperature" not in captured
+    assert "top_p" not in captured
+    assert "top_k" not in captured
+    assert "thinking_config" not in captured
+
+
+def test_gemini_25_preserves_legacy_generation_config(
+    monkeypatch,
+):
+    from contextlib import contextmanager
+    from types import SimpleNamespace
+
+    from google.genai import types
+
+    import src.services.llm.gemini as gemini_service
+
+    captured = {}
+
+    original_config = types.GenerateContentConfig
+
+    def capture_config(**kwargs):
+        captured.update(kwargs)
+        return original_config(**kwargs)
+
+    monkeypatch.setattr(
+        types,
+        "GenerateContentConfig",
+        capture_config,
+    )
+
+    class FakeRuntime:
+        def execute(
+            self,
+            *,
+            policy,
+            operation,
+            deadline_budget,
+            minimum_retry_attempt_seconds,
+        ):
+            return operation()
+
+    monkeypatch.setattr(
+        gemini_service,
+        "get_shared_resilience_runtime",
+        lambda: FakeRuntime(),
+    )
+
+    monkeypatch.setattr(
+        gemini_service,
+        "criar_cliente_gemini",
+        lambda *,
+        timeout_ms: object(),
+    )
+
+    monkeypatch.setattr(
+        gemini_service,
+        "executar_generate_content_observado",
+        lambda *args, **kwargs: SimpleNamespace(
+            text="OK"
+        ),
+    )
+
+    @contextmanager
+    def fake_trace(policy):
+        yield object()
+
+    monkeypatch.setattr(
+        gemini_service,
+        "traced_resilience_operation",
+        fake_trace,
+    )
+
+    result = gemini_service.gerar_texto_gemini(
+        "Teste",
+        modelo="gemini-2.5-flash-lite",
+        temperatura=0.3,
+        max_tokens=128,
+    )
+
+    assert result == "OK"
+
+    assert captured["temperature"] == 0.3
+    assert captured["max_output_tokens"] == 128
+    assert captured["thinking_config"] is not None
