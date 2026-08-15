@@ -70,6 +70,7 @@ def _extract_status_code(
     candidates: list[Any] = [
         getattr(exc, "status_code", None),
         getattr(exc, "code", None),
+        getattr(exc, "status", None),
         getattr(exc, "http_status", None),
     ]
 
