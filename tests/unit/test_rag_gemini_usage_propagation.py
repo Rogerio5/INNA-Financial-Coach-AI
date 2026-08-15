@@ -24,21 +24,13 @@ def _fake_gemini_response(
     )
 
 
+
 def test_generate_gemini_rag_answer_captures_tokens(
     monkeypatch,
 ) -> None:
-    monkeypatch.setenv(
-        "GEMINI_API_KEY",
-        "fake-key-unit-test",
-    )
+    import src.services.llm.gemini as gemini_service
 
-    from google import genai
-
-    monkeypatch.setattr(
-        genai,
-        "Client",
-        lambda **kwargs: object(),
-    )
+    captured = {}
 
     monkeypatch.setattr(
         rag_engine,
@@ -46,36 +38,49 @@ def test_generate_gemini_rag_answer_captures_tokens(
         lambda role: "gemini-3.5-flash-lite",
     )
 
-    response = _fake_gemini_response(
-        input_tokens=120,
-        output_tokens=30,
-    )
+    def fake_generate(
+        prompt,
+        *,
+        modelo=None,
+        role=None,
+        temperatura=0.3,
+        max_tokens=2048,
+        usage_out=None,
+    ):
+        captured["prompt"] = prompt
+        captured["modelo"] = modelo
+        captured["role"] = role
+
+        assert usage_out is not None
+
+        usage_out.update(
+            {
+                "tokens_entrada": 120,
+                "tokens_saida": 30,
+                "tokens_totais": 150,
+            }
+        )
+
+        return "Resposta resiliente com usage."
 
     monkeypatch.setattr(
-        rag_engine,
-        "executar_generate_content_observado",
-        lambda *args, **kwargs: response,
+        gemini_service,
+        "gerar_texto_gemini",
+        fake_generate,
     )
 
-    usage: dict[str, int] = {}
+    usage = {}
 
     result = (
         rag_engine.generate_gemini_rag_answer(
-            pergunta=(
-                "Como organizar meu orçamento?"
-            ),
-            contexto=(
-                "Planejamento financeiro ajuda "
-                "a organizar receitas e despesas."
-            ),
-            idioma="pt",
+            "Como organizar minha reserva?",
+            "Contexto financeiro.",
             usage_out=usage,
         )
     )
 
-    assert (
-        result
-        == "Resposta Gemini simulada."
+    assert result == (
+        "Resposta resiliente com usage."
     )
 
     assert usage == {
@@ -84,22 +89,23 @@ def test_generate_gemini_rag_answer_captures_tokens(
         "tokens_totais": 150,
     }
 
+    assert (
+        captured["modelo"]
+        == "gemini-3.5-flash-lite"
+    )
+
+    assert (
+        captured["role"]
+        == rag_engine.LLMRole.RAG
+    )
+
+
+
 
 def test_generate_gemini_rag_answer_keeps_old_return_contract(
     monkeypatch,
 ) -> None:
-    monkeypatch.setenv(
-        "GEMINI_API_KEY",
-        "fake-key-unit-test",
-    )
-
-    from google import genai
-
-    monkeypatch.setattr(
-        genai,
-        "Client",
-        lambda **kwargs: object(),
-    )
+    import src.services.llm.gemini as gemini_service
 
     monkeypatch.setattr(
         rag_engine,
@@ -107,24 +113,45 @@ def test_generate_gemini_rag_answer_keeps_old_return_contract(
         lambda role: "gemini-3.5-flash-lite",
     )
 
-    response = _fake_gemini_response(
-        text="Contrato antigo preservado.",
-        input_tokens=50,
-        output_tokens=10,
-    )
+    def fake_generate(
+        prompt,
+        *,
+        modelo=None,
+        role=None,
+        temperatura=0.3,
+        max_tokens=2048,
+        usage_out=None,
+    ):
+        if usage_out is not None:
+            usage_out.update(
+                {
+                    "tokens_entrada": 50,
+                    "tokens_saida": 10,
+                    "tokens_totais": 60,
+                }
+            )
+
+        return "Contrato antigo preservado."
 
     monkeypatch.setattr(
-        rag_engine,
-        "executar_generate_content_observado",
-        lambda *args, **kwargs: response,
+        gemini_service,
+        "gerar_texto_gemini",
+        fake_generate,
     )
+
+    usage = {}
 
     result = (
         rag_engine.generate_gemini_rag_answer(
-            pergunta="Pergunta simulada.",
-            contexto="Contexto simulado.",
-            idioma="pt",
+            "Como organizar gastos?",
+            "Contexto.",
+            usage_out=usage,
         )
+    )
+
+    assert isinstance(
+        result,
+        str,
     )
 
     assert (
@@ -132,24 +159,19 @@ def test_generate_gemini_rag_answer_keeps_old_return_contract(
         == "Contrato antigo preservado."
     )
 
-    assert isinstance(result, str)
+    assert usage == {
+        "tokens_entrada": 50,
+        "tokens_saida": 10,
+        "tokens_totais": 60,
+    }
+
+
 
 
 def test_generate_gemini_rag_answer_survives_missing_usage(
     monkeypatch,
 ) -> None:
-    monkeypatch.setenv(
-        "GEMINI_API_KEY",
-        "fake-key-unit-test",
-    )
-
-    from google import genai
-
-    monkeypatch.setattr(
-        genai,
-        "Client",
-        lambda **kwargs: object(),
-    )
+    import src.services.llm.gemini as gemini_service
 
     monkeypatch.setattr(
         rag_engine,
@@ -157,25 +179,38 @@ def test_generate_gemini_rag_answer_survives_missing_usage(
         lambda role: "gemini-3.5-flash-lite",
     )
 
-    response = SimpleNamespace(
-        text="Resposta sem usage metadata.",
-    )
+    def fake_generate(
+        prompt,
+        *,
+        modelo=None,
+        role=None,
+        temperatura=0.3,
+        max_tokens=2048,
+        usage_out=None,
+    ):
+        if usage_out is not None:
+            usage_out.update(
+                {
+                    "tokens_entrada": 0,
+                    "tokens_saida": 0,
+                    "tokens_totais": 0,
+                }
+            )
+
+        return "Resposta sem usage metadata."
 
     monkeypatch.setattr(
-        rag_engine,
-        "executar_generate_content_observado",
-        lambda *args, **kwargs: response,
+        gemini_service,
+        "gerar_texto_gemini",
+        fake_generate,
     )
 
-    usage: dict[str, int] = {
-        "tokens_entrada": 999,
-    }
+    usage = {}
 
     result = (
         rag_engine.generate_gemini_rag_answer(
-            pergunta="Pergunta simulada.",
-            contexto="Contexto simulado.",
-            idioma="pt",
+            "Como criar uma reserva?",
+            "Contexto.",
             usage_out=usage,
         )
     )
@@ -190,6 +225,7 @@ def test_generate_gemini_rag_answer_survives_missing_usage(
         "tokens_saida": 0,
         "tokens_totais": 0,
     }
+
 
 
 def test_answer_with_rag_token_contract_is_connected() -> None:

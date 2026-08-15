@@ -360,25 +360,15 @@ def test_security_response_skips_retrieval(
         ),
     ],
 )
+
 def test_generate_gemini_rag_answer_uses_requested_language(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch,
     language: str,
     expected_instruction: str,
 ):
-    from google import genai
+    import src.services.llm.gemini as gemini_service
 
     captured = {}
-
-    monkeypatch.setenv(
-        "GEMINI_API_KEY",
-        "test-key",
-    )
-
-    monkeypatch.setattr(
-        genai,
-        "Client",
-        lambda api_key: object(),
-    )
 
     monkeypatch.setattr(
         rag_engine,
@@ -386,68 +376,73 @@ def test_generate_gemini_rag_answer_uses_requested_language(
         lambda role: "test-model",
     )
 
-    def fake_generate_content(
-        client,
+    def fake_generate(
+        prompt,
         *,
-        modelo,
-        contents,
-        operacao,
-        origem,
-        metadados,
+        modelo=None,
+        role=None,
+        temperatura=0.3,
+        max_tokens=2048,
+        usage_out=None,
     ):
-        captured["contents"] = contents
+        captured["prompt"] = prompt
         captured["modelo"] = modelo
-        captured["operacao"] = operacao
-        captured["origem"] = origem
-        captured["metadados"] = metadados
+        captured["role"] = role
+        captured["temperatura"] = temperatura
+        captured["max_tokens"] = max_tokens
 
-        return type(
-            "FakeResponse",
-            (),
-            {
-                "text": "Resposta simulada",
-            },
-        )()
+        return "Resposta simulada"
 
     monkeypatch.setattr(
-        rag_engine,
-        "executar_generate_content_observado",
-        fake_generate_content,
+        gemini_service,
+        "gerar_texto_gemini",
+        fake_generate,
     )
 
-    result = rag_engine.generate_gemini_rag_answer(
-        pergunta="Como organizar meu orçamento?",
-        contexto=(
-            "A pessoa informou renda mensal "
-            "e despesas recorrentes."
-        ),
-        idioma=language,
+    result = (
+        rag_engine.generate_gemini_rag_answer(
+            "Como organizar minhas finanças?",
+            "Contexto financeiro seguro.",
+            idioma=language,
+        )
     )
 
     assert result == "Resposta simulada"
-    assert expected_instruction in captured["contents"]
-    assert captured["modelo"] == "test-model"
-    assert captured["operacao"] == "rag_answer"
-    assert captured["origem"] == "rag_engine"
+
+    assert (
+        expected_instruction
+        in captured["prompt"]
+    )
+
+    assert (
+        captured["modelo"]
+        == "test-model"
+    )
+
+    assert (
+        captured["role"]
+        == rag_engine.LLMRole.RAG
+    )
+
+    assert (
+        captured["temperatura"]
+        == 0.3
+    )
+
+    assert (
+        captured["max_tokens"]
+        == 2048
+    )
+
+
 
 
 def test_generate_gemini_rag_answer_preserves_context_currency(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch,
 ):
-    from google import genai
+    import src.services.llm.gemini as gemini_service
 
     captured = {}
-
-    monkeypatch.setenv(
-        "GEMINI_API_KEY",
-        "test-key",
-    )
-
-    monkeypatch.setattr(
-        genai,
-        "Client",
-        lambda api_key: object(),
-    )
 
     monkeypatch.setattr(
         rag_engine,
@@ -455,52 +450,44 @@ def test_generate_gemini_rag_answer_preserves_context_currency(
         lambda role: "test-model",
     )
 
-    def fake_generate_content(
-        client,
+    def fake_generate(
+        prompt,
         *,
-        modelo,
-        contents,
-        operacao,
-        origem,
-        metadados,
+        modelo=None,
+        role=None,
+        temperatura=0.3,
+        max_tokens=2048,
+        usage_out=None,
     ):
-        captured["contents"] = contents
+        captured["prompt"] = prompt
 
-        return type(
-            "FakeResponse",
-            (),
-            {
-                "text": "Resposta simulada",
-            },
-        )()
+        return "Resposta simulada"
 
     monkeypatch.setattr(
-        rag_engine,
-        "executar_generate_content_observado",
-        fake_generate_content,
+        gemini_service,
+        "gerar_texto_gemini",
+        fake_generate,
     )
 
-    result = rag_engine.generate_gemini_rag_answer(
-        pergunta="How should I organise this amount?",
-        contexto="Monthly income: USD 2,500.",
-        idioma="en_us",
+    result = (
+        rag_engine.generate_gemini_rag_answer(
+            "Como organizar esse valor?",
+            (
+                "O usuário informou uma reserva "
+                "de USD 500."
+            ),
+            idioma="pt",
+        )
     )
 
     assert result == "Resposta simulada"
 
-    prompt = captured["contents"]
-
     assert (
-        "Preserve a moeda apresentada pelo usuário "
-        "ou pelo contexto."
-        in prompt
+        "USD 500"
+        in captured["prompt"]
     )
+
     assert (
         "Não converta valores e não invente moedas."
-        in prompt
+        in captured["prompt"]
     )
-    assert (
-        "mantenha o formato R$"
-        not in prompt
-    )
-

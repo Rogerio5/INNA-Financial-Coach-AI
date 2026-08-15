@@ -9,16 +9,6 @@ import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extras import Json
 
-try:
-    from observability.llm_tracking import (
-        executar_generate_content_observado,
-    )
-except ImportError:
-    from src.observability.llm_tracking import (
-        executar_generate_content_observado,
-    )
-
-
 from src.services.llm.model_registry import (
     LLMRole,
     get_model_for_role,
@@ -2756,6 +2746,7 @@ def answer_security_financeira(pergunta: str, modo_base: str = "rag_hibrido_pgve
     }
 
 
+
 def generate_gemini_rag_answer(
     pergunta: str,
     contexto: str,
@@ -2764,20 +2755,18 @@ def generate_gemini_rag_answer(
     usage_out: dict[str, int] | None = None,
 ) -> str | None:
     """
-    Gera resposta final usando Gemini + contexto recuperado pelo RAG.
-    Se falhar, retorna None para manter o fallback local.
+    Gera a resposta RAG pelo Gemini Text Service resiliente.
+
+    O caminho usa a infraestrutura compartilhada da INNA:
+    timeout, deadline, retry controlado, circuit breaker,
+    observabilidade e ReliabilityEvent.
+
+    Em falha, retorna None para preservar o fallback local.
     """
     try:
-        import os
-
-        from google import genai
-
-        api_key = os.getenv("GEMINI_API_KEY")
-
-        if not api_key:
-            return None
-
-        client = genai.Client(api_key=api_key)
+        from src.services.llm.gemini import (
+            gerar_texto_gemini,
+        )
 
         idioma_normalizado = str(
             idioma or "pt"
@@ -2873,74 +2862,22 @@ A resposta deve:
             LLMRole.RAG
         )
 
-        response = executar_generate_content_observado(
-            client,
+        resposta = gerar_texto_gemini(
+            prompt,
             modelo=modelo_gemini,
-            contents=prompt,
-            operacao="rag_answer",
-            origem="rag_engine",
-            metadados={
-                "fluxo": "rag_hibrido",
-                "usa_contexto_recuperado": True,
-            },
+            role=LLMRole.RAG,
+            temperatura=0.3,
+            max_tokens=2048,
+            usage_out=usage_out,
         )
 
-        if usage_out is not None:
-            try:
-                try:
-                    from observability.llm_costs import (
-                        extrair_tokens_resposta,
-                    )
-                except ImportError:
-                    from src.observability.llm_costs import (
-                        extrair_tokens_resposta,
-                    )
-
-                extracted_usage = (
-                    extrair_tokens_resposta(
-                        response
-                    )
-                )
-
-                usage_out.clear()
-                usage_out.update(
-                    {
-                        "tokens_entrada": int(
-                            extracted_usage.get(
-                                "tokens_entrada",
-                                0,
-                            )
-                            or 0
-                        ),
-                        "tokens_saida": int(
-                            extracted_usage.get(
-                                "tokens_saida",
-                                0,
-                            )
-                            or 0
-                        ),
-                        "tokens_totais": int(
-                            extracted_usage.get(
-                                "tokens_totais",
-                                0,
-                            )
-                            or 0
-                        ),
-                    }
-                )
-            except Exception:
-                # A telemetria nunca pode impedir
-                # a resposta principal do RAG.
-                usage_out.clear()
-
-        resposta = getattr(response, "text", "") or ""
-
-        resposta = resposta.strip()
+        resposta = str(
+            resposta or ""
+        ).strip()
 
         if not resposta:
             return None
 
-        # Pequenas correções de espaçamento em respostas geradas.
         correcoes_espaco = {
             "aquelesimprevistos": "aqueles imprevistos",
             "tododia": "todo dia",
@@ -2953,12 +2890,19 @@ A resposta deve:
         }
 
         for errado, certo in correcoes_espaco.items():
-            resposta = resposta.replace(errado, certo)
+            resposta = resposta.replace(
+                errado,
+                certo,
+            )
 
         return resposta
 
     except Exception:
+        if usage_out is not None:
+            usage_out.clear()
+
         return None
+
 
 
 
