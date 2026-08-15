@@ -18,7 +18,6 @@ import os
 from pathlib import Path
 from typing import Any
 
-
 MODELO_EMBEDDING = "gemini-embedding-001"
 MODELO_EMBEDDING_BANCO = "models/gemini-embedding-001"
 DIMENSOES_EMBEDDING = 3072
@@ -79,20 +78,68 @@ def obter_api_key_gemini() -> str:
     return api_key.strip()
 
 
+_DEFAULT_EMBEDDING_TIMEOUT_MS = 10_000
+_MIN_EMBEDDING_TIMEOUT_MS = 1_000
+_MAX_EMBEDDING_TIMEOUT_MS = 60_000
+
+
+def _obter_timeout_embedding_ms() -> int:
+    """
+    Retorna o timeout HTTP por tentativa do serviço
+    Gemini Embeddings.
+
+    O retry é responsabilidade da camada de resiliência
+    da INNA, e não do SDK Google GenAI.
+    """
+    raw_value = os.getenv(
+        "INNA_EMBEDDING_TIMEOUT_MS",
+        str(_DEFAULT_EMBEDDING_TIMEOUT_MS),
+    ).strip()
+
+    try:
+        timeout_ms = int(raw_value)
+    except ValueError as exc:
+        raise GeminiEmbeddingConfigurationError(
+            "INNA_EMBEDDING_TIMEOUT_MS deve ser inteiro."
+        ) from exc
+
+    if not (
+        _MIN_EMBEDDING_TIMEOUT_MS
+        <= timeout_ms
+        <= _MAX_EMBEDDING_TIMEOUT_MS
+    ):
+        raise GeminiEmbeddingConfigurationError(
+            "INNA_EMBEDDING_TIMEOUT_MS deve estar "
+            "entre 1000 e 60000 ms."
+        )
+
+    return timeout_ms
+
+
 def criar_cliente_gemini():
     """
-    Cria um cliente utilizando o SDK google-genai.
+    Cria cliente Gemini com timeout HTTP explícito.
+
+    retry_options é deliberadamente omitido:
+    a política de retry/circuit breaker pertence
+    ao ResilienceRuntime da INNA.
     """
     try:
         from google import genai
+        from google.genai import types
     except ImportError as exc:
         raise GeminiEmbeddingConfigurationError(
             "Pacote google-genai não instalado. "
             "Execute: pip install -U google-genai"
         ) from exc
 
+    http_options = types.HttpOptions(
+        timeout=_obter_timeout_embedding_ms(),
+    )
+
     return genai.Client(
-        api_key=obter_api_key_gemini()
+        api_key=obter_api_key_gemini(),
+        http_options=http_options,
     )
 
 
@@ -160,16 +207,35 @@ def gerar_embedding_gemini(
     try:
         from google.genai import types
 
+        from src.observability.resilience_tracing import (
+            get_shared_resilience_runtime,
+            traced_resilience_operation,
+        )
+        from src.resilience.policies import (
+            GEMINI_EMBEDDING_POLICY,
+        )
+
         client = criar_cliente_gemini()
 
-        resultado = client.models.embed_content(
-            model=modelo,
-            contents=texto_normalizado,
-            config=types.EmbedContentConfig(
-                task_type=task_type,
-                output_dimensionality=dimensoes,
-            ),
-        )
+        def _executar_provider():
+            return client.models.embed_content(
+                model=modelo,
+                contents=texto_normalizado,
+                config=types.EmbedContentConfig(
+                    task_type=task_type,
+                    output_dimensionality=dimensoes,
+                ),
+            )
+
+        runtime = get_shared_resilience_runtime()
+
+        with traced_resilience_operation(
+            GEMINI_EMBEDDING_POLICY
+        ):
+            resultado = runtime.execute(
+                policy=GEMINI_EMBEDDING_POLICY,
+                operation=_executar_provider,
+            )
 
         embeddings = getattr(
             resultado,
@@ -215,8 +281,8 @@ def gerar_embedding_gemini(
 
     except Exception as exc:
         raise GeminiEmbeddingGenerationError(
-            "Não foi possível gerar o embedding Gemini: "
-            f"{type(exc).__name__}: {exc}"
+            "Não foi possível gerar o embedding Gemini. "
+            f"Tipo técnico: {type(exc).__name__}."
         ) from exc
 
 
