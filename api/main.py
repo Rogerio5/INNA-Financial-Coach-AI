@@ -11,6 +11,7 @@ from api.human_review_admin_routes import (
 from api.human_review_routes import (
     router as human_review_router,
 )
+from api.reliability_diagnostic_routes import router as reliability_diagnostic_router
 from api.resend_webhook import router as resend_router
 from api.schemas import (
     DiagnosticoItem,
@@ -1317,6 +1318,8 @@ def rag_ask(
         ) from exc
 
 app.include_router(telegram_operational_router)
+
+app.include_router(reliability_diagnostic_router)
 
 app.include_router(
     human_review_router
