@@ -27,6 +27,12 @@ from src.agentic_rag.contracts import (
     ResearchSource,
     ResearchSubquery,
 )
+from src.agentic_rag.planner_cache import (
+    is_planner_cache_enabled,
+    mark_planner_cache_miss,
+    read_planner_cache,
+    write_planner_cache,
+)
 
 
 def _normalize_text(value: str) -> str:
@@ -887,11 +893,46 @@ def create_research_plan(
         )
 
     try:
-        return _build_llm_plan(
+        cache_enabled = (
+            is_planner_cache_enabled()
+        )
+
+        if cache_enabled:
+            cached_plan = (
+                read_planner_cache(
+                    question=(
+                        normalized_question
+                    ),
+                    language=(
+                        normalized_language
+                    ),
+                    user_id=user_id,
+                )
+            )
+
+            if cached_plan is not None:
+                return cached_plan
+
+        llm_plan = _build_llm_plan(
             question=normalized_question,
             language=normalized_language,
             user_id=user_id,
             trace_id=trace_id,
+        )
+
+        if not cache_enabled:
+            return llm_plan
+
+        stored = write_planner_cache(
+            plan=llm_plan,
+            question=normalized_question,
+            language=normalized_language,
+            user_id=user_id,
+        )
+
+        return mark_planner_cache_miss(
+            llm_plan,
+            stored=stored,
         )
 
     except Exception as exc:
