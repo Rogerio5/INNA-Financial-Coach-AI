@@ -30,6 +30,10 @@ from api.telegram_operational_status import router as telegram_operational_route
 from api.telegram_webhook import router as telegram_router
 from src.a2a_server.server import mount_a2a_app
 from src.audit_logger import record_event
+from src.cache import (
+    is_redis_configured,
+    ping_redis,
+)
 from src.email_sender import send_diagnostico_email
 from src.financial_engine import build_financial_diagnosis
 from src.gemini_client import generate_ai_plan
@@ -665,6 +669,34 @@ def gerar_diagnostico(
         origem_idempotencia="web-app",
         evento="diagnostico_web_app",
     )
+
+
+@app.get(
+    "/internal/redis/health",
+    tags=["Operational Status"],
+    summary="Saúde interna do Redis/Valkey",
+)
+def internal_redis_health(
+    trusted_context: Annotated[
+        TrustedRequestContext,
+        Depends(
+            require_trusted_request_context
+        ),
+    ],
+):
+    del trusted_context
+
+    configured = is_redis_configured()
+    reachable = (
+        ping_redis()
+        if configured
+        else False
+    )
+
+    return {
+        "configured": configured,
+        "reachable": reachable,
+    }
 
 
 @app.post(
