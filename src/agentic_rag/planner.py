@@ -36,6 +36,149 @@ from src.agentic_rag.planner_cache import (
 from src.observability.phoenix_runtime import traced_operation
 
 
+class PlannerValidationResult(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        frozen=True,
+    )
+
+    valid: bool
+    reason: str
+
+
+def _normalize_validation_text(
+    value: str,
+) -> str:
+    return " ".join(
+        str(value)
+        .strip()
+        .lower()
+        .split()
+    )
+
+
+def validate_llm_research_plan(
+    plan: ResearchPlan,
+    *,
+    question: str,
+    language: str,
+    user_id: str | None,
+) -> PlannerValidationResult:
+    """
+    Valida invariantes semânticas e operacionais
+    antes de aceitar um plano LLM.
+
+    O schema Pydantic continua responsável pelas
+    invariantes estruturais do ResearchPlan.
+    """
+
+    if (
+        plan.generation_mode
+        != PlanGenerationMode.LLM
+    ):
+        return PlannerValidationResult(
+            valid=False,
+            reason="generation_mode_not_llm",
+        )
+
+    if (
+        plan.original_question.strip()
+        != str(question).strip()
+    ):
+        return PlannerValidationResult(
+            valid=False,
+            reason="question_mismatch",
+        )
+
+    if (
+        plan.language.strip().lower()
+        != str(language).strip().lower()
+    ):
+        return PlannerValidationResult(
+            valid=False,
+            reason="language_mismatch",
+        )
+
+    normalized_subqueries: set[str] = set()
+
+    for subquery in plan.subqueries:
+        normalized_question = (
+            _normalize_validation_text(
+                subquery.question
+            )
+        )
+
+        if normalized_question in normalized_subqueries:
+            return PlannerValidationResult(
+                valid=False,
+                reason="duplicate_subquery",
+            )
+
+        normalized_subqueries.add(
+            normalized_question
+        )
+
+        if (
+            subquery.source
+            == ResearchSource.FINANCIAL_HISTORY
+            and not str(user_id or "").strip()
+        ):
+            return PlannerValidationResult(
+                valid=False,
+                reason="untrusted_history_step",
+            )
+
+    if (
+        plan.complexity
+        == ResearchComplexity.SIMPLE
+        and len(plan.subqueries) > 1
+    ):
+        return PlannerValidationResult(
+            valid=False,
+            reason="simple_plan_has_multiple_steps",
+        )
+
+    return PlannerValidationResult(
+        valid=True,
+        reason="valid",
+    )
+
+
+def _set_planner_validation_trace(
+    *,
+    status: str,
+    reason: str,
+    fallback_used: bool,
+) -> None:
+    """
+    Exporta somente metadados seguros da
+    validação do plano.
+    """
+
+    try:
+        with traced_operation(
+            "inna.agentic_rag.planner.validation",
+            attributes={
+                "planner.validation.status": str(
+                    status
+                ),
+                "planner.validation.reason": str(
+                    reason
+                ),
+                "planner.fallback.used": bool(
+                    fallback_used
+                ),
+            },
+            instrumentation_name=(
+                "inna.agentic_rag.planner"
+            ),
+        ):
+            pass
+
+    except Exception:
+        return
+
+
 def _set_planner_trace_attributes(
     *,
     generation_mode: str,
@@ -983,6 +1126,31 @@ def create_research_plan(
             language=normalized_language,
             user_id=user_id,
             trace_id=trace_id,
+        )
+
+        validation = validate_llm_research_plan(
+            llm_plan,
+            question=normalized_question,
+            language=normalized_language,
+            user_id=user_id,
+        )
+
+        if not validation.valid:
+            _set_planner_validation_trace(
+                status="rejected",
+                reason=validation.reason,
+                fallback_used=True,
+            )
+
+            raise ValueError(
+                "invalid_llm_plan:"
+                + validation.reason
+            )
+
+        _set_planner_validation_trace(
+            status="valid",
+            reason="valid",
+            fallback_used=False,
         )
 
         if not cache_enabled:
