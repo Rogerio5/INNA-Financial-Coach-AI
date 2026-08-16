@@ -462,7 +462,6 @@ def _build_deterministic_plan(
 
 class _LLMPlanStep(BaseModel):
     model_config = ConfigDict(
-        extra="forbid",
         str_strip_whitespace=True,
     )
 
@@ -491,7 +490,6 @@ class _LLMPlanStep(BaseModel):
 
 class _LLMPlanResponse(BaseModel):
     model_config = ConfigDict(
-        extra="forbid",
         str_strip_whitespace=True,
     )
 
