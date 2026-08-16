@@ -36,6 +36,57 @@ from src.agentic_rag.planner_cache import (
 from src.observability.phoenix_runtime import traced_operation
 
 
+def _set_planner_route_trace(
+    *,
+    planner_mode: str,
+    query_complexity: str,
+    planner_route: str,
+    cache_hit: bool,
+    plan_source: str,
+    plan_valid: bool,
+    fallback_used: bool,
+) -> None:
+    """
+    Exporta somente metadados operacionais
+    seguros da rota do Planner.
+    """
+    try:
+        with traced_operation(
+            "inna.agentic_rag.planner.route",
+            attributes={
+                "planner.mode": str(
+                    planner_mode
+                ),
+                "planner.query_complexity": str(
+                    query_complexity
+                ),
+                "planner.route": str(
+                    planner_route
+                ),
+                "planner.cache_hit": bool(
+                    cache_hit
+                ),
+                "planner.plan_source": str(
+                    plan_source
+                ),
+                "planner.plan_valid": bool(
+                    plan_valid
+                ),
+                "planner.fallback_used": bool(
+                    fallback_used
+                ),
+                "privacy.content_exported": False,
+            },
+            instrumentation_name=(
+                "inna.agentic_rag.planner"
+            ),
+        ):
+            pass
+
+    except Exception:
+        return
+
+
 class PlannerValidationResult(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -1053,6 +1104,7 @@ def create_research_plan(
     *,
     language: str = "pt",
     user_id: str | None = None,
+    intent: str = "unknown",
     planner_mode: str | None = None,
     trace_id: str | None = None,
 ) -> ResearchPlan:
@@ -1075,7 +1127,25 @@ def create_research_plan(
         .lower()
     )
 
-    if mode != "llm":
+    effective_mode = mode
+
+    if mode == "adaptive":
+        adaptive_assessment = (
+            assess_query_complexity(
+                normalized_question
+            )
+        )
+
+        effective_mode = (
+            "llm"
+            if (
+                adaptive_assessment.complexity
+                == ResearchComplexity.COMPLEX
+            )
+            else "deterministic"
+        )
+
+    if effective_mode != "llm":
         deterministic_plan = (
             _build_deterministic_plan(
                 question=normalized_question,
@@ -1089,6 +1159,19 @@ def create_research_plan(
             cache_enabled=False,
             cache_status="not_applicable",
         )
+
+        if mode == "adaptive":
+            _set_planner_route_trace(
+                planner_mode=mode,
+                query_complexity=(
+                    adaptive_assessment.complexity.value
+                ),
+                planner_route="deterministic",
+                cache_hit=False,
+                plan_source="deterministic",
+                plan_valid=True,
+                fallback_used=False,
+            )
 
         return deterministic_plan
 
@@ -1107,19 +1190,63 @@ def create_research_plan(
                         normalized_language
                     ),
                     user_id=user_id,
+                    intent=intent,
                 )
             )
 
             if cached_plan is not None:
+                cached_validation = (
+                    validate_llm_research_plan(
+                        cached_plan,
+                        question=normalized_question,
+                        language=normalized_language,
+                        user_id=user_id,
+                    )
+                )
+
+                if cached_validation.valid:
+                    _set_planner_validation_trace(
+                        status="valid_cached",
+                        reason="valid",
+                        fallback_used=False,
+                    )
+
+                    _set_planner_trace_attributes(
+                        generation_mode="llm",
+                        cache_enabled=True,
+                        cache_status="hit",
+                        cache_backend="redis",
+                        cache_stored=True,
+                    )
+
+                    if mode == "adaptive":
+                        _set_planner_route_trace(
+                            planner_mode=mode,
+                            query_complexity=(
+                                adaptive_assessment.complexity.value
+                            ),
+                            planner_route="redis_hit",
+                            cache_hit=True,
+                            plan_source="cache",
+                            plan_valid=True,
+                            fallback_used=False,
+                        )
+
+                    return cached_plan
+
+                _set_planner_validation_trace(
+                    status="rejected_cached",
+                    reason=cached_validation.reason,
+                    fallback_used=False,
+                )
+
                 _set_planner_trace_attributes(
                     generation_mode="llm",
                     cache_enabled=True,
-                    cache_status="hit",
+                    cache_status="invalid_hit",
                     cache_backend="redis",
                     cache_stored=True,
                 )
-
-                return cached_plan
 
         llm_plan = _build_llm_plan(
             question=normalized_question,
@@ -1160,6 +1287,19 @@ def create_research_plan(
                 cache_status="disabled",
             )
 
+            if mode == "adaptive":
+                _set_planner_route_trace(
+                    planner_mode=mode,
+                    query_complexity=(
+                        adaptive_assessment.complexity.value
+                    ),
+                    planner_route="gemini",
+                    cache_hit=False,
+                    plan_source="gemini",
+                    plan_valid=True,
+                    fallback_used=False,
+                )
+
             return llm_plan
 
         stored = write_planner_cache(
@@ -1167,6 +1307,7 @@ def create_research_plan(
             question=normalized_question,
             language=normalized_language,
             user_id=user_id,
+            intent=intent,
         )
 
         miss_plan = mark_planner_cache_miss(
@@ -1181,6 +1322,19 @@ def create_research_plan(
             cache_backend="redis",
             cache_stored=stored,
         )
+
+        if mode == "adaptive":
+            _set_planner_route_trace(
+                planner_mode=mode,
+                query_complexity=(
+                    adaptive_assessment.complexity.value
+                ),
+                planner_route="gemini",
+                cache_hit=False,
+                plan_source="gemini",
+                plan_valid=True,
+                fallback_used=False,
+            )
 
         return miss_plan
 
@@ -1199,7 +1353,24 @@ def create_research_plan(
             "llm_error_type": (type(exc).__name__),
         }
 
-        return ResearchPlan.model_validate(fallback_data)
+        fallback_plan = ResearchPlan.model_validate(
+            fallback_data
+        )
+
+        if mode == "adaptive":
+            _set_planner_route_trace(
+                planner_mode=mode,
+                query_complexity=(
+                    adaptive_assessment.complexity.value
+                ),
+                planner_route="fallback",
+                cache_hit=False,
+                plan_source="deterministic",
+                plan_valid=True,
+                fallback_used=True,
+            )
+
+        return fallback_plan
 
 
 class QueryPlanner:
@@ -1213,6 +1384,7 @@ class QueryPlanner:
         *,
         language: str = "pt",
         user_id: str | None = None,
+        intent: str = "unknown",
         planner_mode: str | None = None,
         trace_id: str | None = None,
     ) -> ResearchPlan:
@@ -1220,6 +1392,7 @@ class QueryPlanner:
             question,
             language=language,
             user_id=user_id,
+            intent=intent,
             planner_mode=planner_mode,
             trace_id=trace_id,
         )

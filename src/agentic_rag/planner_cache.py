@@ -6,10 +6,12 @@ import hashlib
 import json
 import logging
 import os
+import unicodedata
 
 from redis.exceptions import RedisError
 
 from src.agentic_rag.contracts import (
+    ALLOWED_TOOL_BY_SOURCE,
     PlanGenerationMode,
     ResearchPlan,
 )
@@ -17,7 +19,8 @@ from src.cache import get_redis_client
 
 log = logging.getLogger(__name__)
 
-PLANNER_CACHE_NAMESPACE = "inna:planner:v1"
+PLANNER_CACHE_NAMESPACE = "inna:planner:v2"
+PLANNER_CACHE_PLANNER_VERSION = "gemini_structured_v1"
 
 
 def _read_bool_environment(
@@ -86,23 +89,101 @@ def get_planner_cache_ttl_seconds() -> int:
     )
 
 
+def _normalize_cache_text(
+    value: str,
+) -> str:
+    normalized = unicodedata.normalize(
+        "NFKC",
+        str(value or ""),
+    )
+
+    return " ".join(
+        normalized
+        .strip()
+        .lower()
+        .split()
+    )
+
+
+def _build_tools_fingerprint() -> str:
+    tools = sorted(
+        (
+            str(
+                getattr(
+                    source,
+                    "value",
+                    source,
+                )
+            ),
+            str(tool_name),
+        )
+        for source, tool_name
+        in ALLOWED_TOOL_BY_SOURCE.items()
+    )
+
+    canonical_tools = json.dumps(
+        tools,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+
+    return hashlib.sha256(
+        canonical_tools.encode("utf-8")
+    ).hexdigest()
+
+
 def build_planner_cache_key(
     *,
     question: str,
     language: str,
     trusted_user_context_available: bool,
+    intent: str = "unknown",
 ) -> str:
     """
-    Gera chave privacy-safer.
+    Gera chave V2 privacy-safer e versionada.
 
-    A pergunta não aparece diretamente na chave Redis.
+    A pergunta, intent e demais valores
+    contextuais não aparecem diretamente
+    na chave Redis.
     """
+
+    normalized_query = (
+        _normalize_cache_text(
+            question
+        )
+    )
+
+    normalized_language = (
+        _normalize_cache_text(
+            language
+        )
+        or "pt"
+    )
+
+    normalized_intent = (
+        _normalize_cache_text(
+            intent
+        )
+        or "unknown"
+    )
+
     canonical = json.dumps(
         {
-            "version": 1,
-            "planner": "gemini_structured_v1",
-            "question": str(question).strip(),
-            "language": str(language).strip().lower(),
+            "version": 2,
+            "planner_version": (
+                PLANNER_CACHE_PLANNER_VERSION
+            ),
+            "tools_fingerprint": (
+                _build_tools_fingerprint()
+            ),
+            "intent": normalized_intent,
+            "normalized_query": (
+                normalized_query
+            ),
+            "language": (
+                normalized_language
+            ),
             "trusted_user_context_available": bool(
                 trusted_user_context_available
             ),
@@ -155,6 +236,7 @@ def read_planner_cache(
     question: str,
     language: str,
     user_id: str | None,
+    intent: str = "unknown",
 ) -> ResearchPlan | None:
     """
     Consulta o cache.
@@ -175,6 +257,7 @@ def read_planner_cache(
         trusted_user_context_available=bool(
             user_id
         ),
+        intent=intent,
     )
 
     try:
@@ -235,6 +318,7 @@ def write_planner_cache(
     question: str,
     language: str,
     user_id: str | None,
+    intent: str = "unknown",
 ) -> bool:
     """
     Persiste somente planos realmente gerados pelo LLM.
@@ -261,6 +345,7 @@ def write_planner_cache(
         trusted_user_context_available=bool(
             user_id
         ),
+        intent=intent,
     )
 
     try:

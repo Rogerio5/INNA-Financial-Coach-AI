@@ -1265,7 +1265,18 @@ def run_agentic_rag_gateway(
         or "pt"
     ).strip()
 
-    user_id = _optional_text(state.get("user_id") or state.get("usuario_id"))
+    user_id = _optional_text(
+        state.get("user_id")
+        or state.get("usuario_id")
+    )
+
+    intent = str(
+        state.get(
+            "intent",
+            "consulta_rag",
+        )
+        or "consulta_rag"
+    ).strip()
 
     try:
         plan = _invoke_supported(
@@ -1273,6 +1284,7 @@ def run_agentic_rag_gateway(
             question,
             language=language,
             user_id=user_id,
+            intent=intent,
             trace_id=trace_id,
         )
 
