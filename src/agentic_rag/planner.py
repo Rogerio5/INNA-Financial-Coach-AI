@@ -13,6 +13,7 @@ import re
 import unicodedata
 from typing import Any
 
+from opentelemetry import trace
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -33,6 +34,56 @@ from src.agentic_rag.planner_cache import (
     read_planner_cache,
     write_planner_cache,
 )
+
+
+def _set_planner_trace_attributes(
+    *,
+    generation_mode: str,
+    cache_enabled: bool,
+    cache_status: str,
+    cache_backend: str = "none",
+    cache_stored: bool = False,
+) -> None:
+    """
+    Exporta somente metadados operacionais seguros.
+
+    Nunca exporta pergunta, resposta, user_id,
+    prompt ou conteudo do ResearchPlan.
+    """
+    try:
+        span = trace.get_current_span()
+
+        if span is None:
+            return
+
+        if not span.is_recording():
+            return
+
+        span.set_attribute(
+            "planner.generation_mode",
+            str(generation_mode),
+        )
+        span.set_attribute(
+            "planner.cache.enabled",
+            bool(cache_enabled),
+        )
+        span.set_attribute(
+            "planner.cache.status",
+            str(cache_status),
+        )
+        span.set_attribute(
+            "planner.cache.backend",
+            str(cache_backend),
+        )
+        span.set_attribute(
+            "planner.cache.stored",
+            bool(cache_stored),
+        )
+
+    except Exception:
+        # Telemetria nunca pode alterar
+        # o caminho funcional do Planner.
+        return
 
 
 def _normalize_text(value: str) -> str:
@@ -886,11 +937,21 @@ def create_research_plan(
     )
 
     if mode != "llm":
-        return _build_deterministic_plan(
-            question=normalized_question,
-            language=normalized_language,
-            user_id=user_id,
+        deterministic_plan = (
+            _build_deterministic_plan(
+                question=normalized_question,
+                language=normalized_language,
+                user_id=user_id,
+            )
         )
+
+        _set_planner_trace_attributes(
+            generation_mode="deterministic",
+            cache_enabled=False,
+            cache_status="not_applicable",
+        )
+
+        return deterministic_plan
 
     try:
         cache_enabled = (
@@ -911,6 +972,14 @@ def create_research_plan(
             )
 
             if cached_plan is not None:
+                _set_planner_trace_attributes(
+                    generation_mode="llm",
+                    cache_enabled=True,
+                    cache_status="hit",
+                    cache_backend="redis",
+                    cache_stored=True,
+                )
+
                 return cached_plan
 
         llm_plan = _build_llm_plan(
@@ -921,6 +990,12 @@ def create_research_plan(
         )
 
         if not cache_enabled:
+            _set_planner_trace_attributes(
+                generation_mode="llm",
+                cache_enabled=False,
+                cache_status="disabled",
+            )
+
             return llm_plan
 
         stored = write_planner_cache(
@@ -930,10 +1005,20 @@ def create_research_plan(
             user_id=user_id,
         )
 
-        return mark_planner_cache_miss(
+        miss_plan = mark_planner_cache_miss(
             llm_plan,
             stored=stored,
         )
+
+        _set_planner_trace_attributes(
+            generation_mode="llm",
+            cache_enabled=True,
+            cache_status="miss",
+            cache_backend="redis",
+            cache_stored=stored,
+        )
+
+        return miss_plan
 
     except Exception as exc:
         fallback = _build_deterministic_plan(
