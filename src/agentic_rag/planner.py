@@ -51,34 +51,33 @@ def _set_planner_trace_attributes(
     prompt ou conteudo do ResearchPlan.
     """
     try:
-        span = trace.get_current_span()
+        tracer = trace.get_tracer(
+            "inna.agentic_rag.planner"
+        )
 
-        if span is None:
-            return
-
-        if not span.is_recording():
-            return
-
-        span.set_attribute(
-            "planner.generation_mode",
-            str(generation_mode),
-        )
-        span.set_attribute(
-            "planner.cache.enabled",
-            bool(cache_enabled),
-        )
-        span.set_attribute(
-            "planner.cache.status",
-            str(cache_status),
-        )
-        span.set_attribute(
-            "planner.cache.backend",
-            str(cache_backend),
-        )
-        span.set_attribute(
-            "planner.cache.stored",
-            bool(cache_stored),
-        )
+        with tracer.start_as_current_span(
+            "inna.agentic_rag.planner.cache"
+        ) as span:
+            span.set_attribute(
+                "planner.generation_mode",
+                str(generation_mode),
+            )
+            span.set_attribute(
+                "planner.cache.enabled",
+                bool(cache_enabled),
+            )
+            span.set_attribute(
+                "planner.cache.status",
+                str(cache_status),
+            )
+            span.set_attribute(
+                "planner.cache.backend",
+                str(cache_backend),
+            )
+            span.set_attribute(
+                "planner.cache.stored",
+                bool(cache_stored),
+            )
 
     except Exception:
         # Telemetria nunca pode alterar
