@@ -13,7 +13,6 @@ import re
 import unicodedata
 from typing import Any
 
-from opentelemetry import trace
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -34,6 +33,7 @@ from src.agentic_rag.planner_cache import (
     read_planner_cache,
     write_planner_cache,
 )
+from src.observability.phoenix_runtime import traced_operation
 
 
 def _set_planner_trace_attributes(
@@ -51,33 +51,30 @@ def _set_planner_trace_attributes(
     prompt ou conteudo do ResearchPlan.
     """
     try:
-        tracer = trace.get_tracer(
-            "inna.agentic_rag.planner"
-        )
-
-        with tracer.start_as_current_span(
-            "inna.agentic_rag.planner.cache"
-        ) as span:
-            span.set_attribute(
-                "planner.generation_mode",
-                str(generation_mode),
-            )
-            span.set_attribute(
-                "planner.cache.enabled",
-                bool(cache_enabled),
-            )
-            span.set_attribute(
-                "planner.cache.status",
-                str(cache_status),
-            )
-            span.set_attribute(
-                "planner.cache.backend",
-                str(cache_backend),
-            )
-            span.set_attribute(
-                "planner.cache.stored",
-                bool(cache_stored),
-            )
+        with traced_operation(
+            "inna.agentic_rag.planner.cache",
+            attributes={
+                "planner.generation_mode": str(
+                    generation_mode
+                ),
+                "planner.cache.enabled": bool(
+                    cache_enabled
+                ),
+                "planner.cache.status": str(
+                    cache_status
+                ),
+                "planner.cache.backend": str(
+                    cache_backend
+                ),
+                "planner.cache.stored": bool(
+                    cache_stored
+                ),
+            },
+            instrumentation_name=(
+                "inna.agentic_rag.planner"
+            ),
+        ):
+            pass
 
     except Exception:
         # Telemetria nunca pode alterar
