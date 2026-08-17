@@ -11,6 +11,7 @@ from __future__ import annotations
 import os
 import re
 import unicodedata
+from time import perf_counter
 from typing import Any
 
 from pydantic import (
@@ -34,6 +35,10 @@ from src.agentic_rag.planner_cache import (
     write_planner_cache,
 )
 from src.observability.phoenix_runtime import traced_operation
+from src.observability.planner_metrics import (
+    PlannerMetricEvent,
+    record_planner_metric_event,
+)
 
 
 def _set_planner_route_trace(
@@ -1099,6 +1104,63 @@ Pergunta:
     )
 
 
+def _record_adaptive_planner_metric(
+    *,
+    started_at: float,
+    planner_mode: str,
+    query_complexity: str,
+    planner_route: str,
+    cache_hit: bool,
+    plan_source: str,
+    plan_valid: bool,
+    fallback_used: bool,
+    planner_outcome: str,
+) -> bool:
+    """
+    Registra exatamente o resultado final do
+    Adaptive Planner sem conteúdo do usuário.
+
+    A falha desta observabilidade nunca altera
+    o resultado do planejamento.
+    """
+
+    if planner_mode != "adaptive":
+        return False
+
+    try:
+        duration_ms = max(
+            (
+                perf_counter()
+                - started_at
+            )
+            * 1000.0,
+            0.0,
+        )
+
+        event = PlannerMetricEvent(
+            planner_mode=planner_mode,
+            query_complexity=(
+                query_complexity
+            ),
+            planner_route=planner_route,
+            cache_hit=cache_hit,
+            plan_source=plan_source,
+            plan_valid=plan_valid,
+            fallback_used=fallback_used,
+            duration_ms=duration_ms,
+            planner_outcome=planner_outcome,
+        )
+
+        return bool(
+            record_planner_metric_event(
+                event
+            )
+        )
+
+    except Exception:
+        return False
+
+
 def create_research_plan(
     question: str,
     *,
@@ -1108,6 +1170,8 @@ def create_research_plan(
     planner_mode: str | None = None,
     trace_id: str | None = None,
 ) -> ResearchPlan:
+    planning_started_at = perf_counter()
+
     normalized_question = str(question or "").strip()
     normalized_language = str(language or "pt").strip().lower()
 
@@ -1173,6 +1237,21 @@ def create_research_plan(
                 fallback_used=False,
             )
 
+        if mode == "adaptive":
+            _record_adaptive_planner_metric(
+                started_at=planning_started_at,
+                planner_mode=mode,
+                query_complexity=(
+                    adaptive_assessment.complexity.value
+                ),
+                planner_route="deterministic",
+                cache_hit=False,
+                plan_source="deterministic",
+                plan_valid=True,
+                fallback_used=False,
+                planner_outcome="success",
+            )
+
         return deterministic_plan
 
     try:
@@ -1230,6 +1309,21 @@ def create_research_plan(
                             plan_source="cache",
                             plan_valid=True,
                             fallback_used=False,
+                        )
+
+                    if mode == "adaptive":
+                        _record_adaptive_planner_metric(
+                            started_at=planning_started_at,
+                            planner_mode=mode,
+                            query_complexity=(
+                                adaptive_assessment.complexity.value
+                            ),
+                            planner_route="redis_hit",
+                            cache_hit=True,
+                            plan_source="cache",
+                            plan_valid=True,
+                            fallback_used=False,
+                            planner_outcome="success",
                         )
 
                     return cached_plan
@@ -1300,6 +1394,21 @@ def create_research_plan(
                     fallback_used=False,
                 )
 
+            if mode == "adaptive":
+                _record_adaptive_planner_metric(
+                    started_at=planning_started_at,
+                    planner_mode=mode,
+                    query_complexity=(
+                        adaptive_assessment.complexity.value
+                    ),
+                    planner_route="gemini",
+                    cache_hit=False,
+                    plan_source="gemini",
+                    plan_valid=True,
+                    fallback_used=False,
+                    planner_outcome="success",
+                )
+
             return llm_plan
 
         stored = write_planner_cache(
@@ -1336,6 +1445,21 @@ def create_research_plan(
                 fallback_used=False,
             )
 
+        if mode == "adaptive":
+            _record_adaptive_planner_metric(
+                started_at=planning_started_at,
+                planner_mode=mode,
+                query_complexity=(
+                    adaptive_assessment.complexity.value
+                ),
+                planner_route="gemini",
+                cache_hit=False,
+                plan_source="gemini",
+                plan_valid=True,
+                fallback_used=False,
+                planner_outcome="success",
+            )
+
         return miss_plan
 
     except Exception as exc:
@@ -1370,6 +1494,21 @@ def create_research_plan(
                 fallback_used=True,
             )
 
+        if mode == "adaptive":
+            _record_adaptive_planner_metric(
+                started_at=planning_started_at,
+                planner_mode=mode,
+                query_complexity=(
+                    adaptive_assessment.complexity.value
+                ),
+                planner_route="fallback",
+                cache_hit=False,
+                plan_source="deterministic",
+                plan_valid=True,
+                fallback_used=True,
+                planner_outcome="fallback",
+            )
+
         return fallback_plan
 
 
@@ -1388,14 +1527,45 @@ class QueryPlanner:
         planner_mode: str | None = None,
         trace_id: str | None = None,
     ) -> ResearchPlan:
-        return create_research_plan(
-            question,
-            language=language,
-            user_id=user_id,
-            intent=intent,
-            planner_mode=planner_mode,
-            trace_id=trace_id,
+        planning_started_at = perf_counter()
+
+        effective_mode = (
+            str(
+                planner_mode
+                or os.getenv(
+                    "INNA_AGENTIC_RAG_PLANNER_MODE",
+                    "deterministic",
+                )
+                or "deterministic"
+            )
+            .strip()
+            .lower()
         )
+
+        try:
+            return create_research_plan(
+                question,
+                language=language,
+                user_id=user_id,
+                intent=intent,
+                planner_mode=planner_mode,
+                trace_id=trace_id,
+            )
+
+        except Exception:
+            _record_adaptive_planner_metric(
+                started_at=planning_started_at,
+                planner_mode=effective_mode,
+                query_complexity="unknown",
+                planner_route="error",
+                cache_hit=False,
+                plan_source="none",
+                plan_valid=False,
+                fallback_used=False,
+                planner_outcome="error",
+            )
+
+            raise
 
 
 __all__ = [
