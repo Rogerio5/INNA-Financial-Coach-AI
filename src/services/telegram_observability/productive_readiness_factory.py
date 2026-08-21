@@ -235,7 +235,7 @@ def _job_repository_module() -> ModuleType:
 
 
 def _receipt_repository_module() -> ModuleType:
-    from src.services.telegram_update_receipts import (
+    from src.integracoes.telegram.update_receipts import (
         repository,
     )
 

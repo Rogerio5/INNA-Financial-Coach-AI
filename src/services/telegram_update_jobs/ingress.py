@@ -10,11 +10,11 @@ from src.database.connection import (
     cursor_postgres,
 )
 
-from src.services.telegram_update_receipts import (
+from src.integracoes.telegram.update_receipts import (
     repository as receipt_repository,
 )
 
-from src.services.telegram_update_receipts import (
+from src.integracoes.telegram.update_receipts import (
     service as receipt_service,
 )
 

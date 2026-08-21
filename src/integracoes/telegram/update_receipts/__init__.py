@@ -1,0 +1,61 @@
+"""Controle idempotente do ciclo de updates recebidos do Telegram."""
+
+from . import (
+    repository,
+    service,
+)
+from .repository import (
+    TelegramUpdateClaimOwnershipError,
+    TelegramUpdateClaimResult,
+    TelegramUpdateFingerprintConflictError,
+    TelegramUpdateLifecycleResult,
+    TelegramUpdateReceiptRepositoryError,
+    claim_telegram_update,
+    complete_telegram_update,
+    fail_telegram_update,
+)
+from .service import (
+    ALLOWED_FAILURE_CODES,
+    MAX_CANONICAL_UPDATE_BYTES,
+    TelegramUpdateClaimDecision,
+    TelegramUpdateProcessingLease,
+    TelegramUpdateReceiptConflictError,
+    TelegramUpdateReceiptOwnershipError,
+    TelegramUpdateReceiptServiceError,
+    TelegramUpdateReceiptUnavailableError,
+    TelegramUpdateReceiptValidationError,
+    TelegramUpdateTransitionOutcome,
+    claim_authenticated_telegram_update,
+    complete_authenticated_telegram_update,
+    fail_authenticated_telegram_update,
+    fingerprint_telegram_update,
+    serialize_telegram_update_canonical,
+)
+
+__all__ = [
+    "repository",
+    "service",
+    "ALLOWED_FAILURE_CODES",
+    "MAX_CANONICAL_UPDATE_BYTES",
+    "TelegramUpdateClaimDecision",
+    "TelegramUpdateClaimOwnershipError",
+    "TelegramUpdateClaimResult",
+    "TelegramUpdateFingerprintConflictError",
+    "TelegramUpdateLifecycleResult",
+    "TelegramUpdateProcessingLease",
+    "TelegramUpdateReceiptConflictError",
+    "TelegramUpdateReceiptOwnershipError",
+    "TelegramUpdateReceiptRepositoryError",
+    "TelegramUpdateReceiptServiceError",
+    "TelegramUpdateReceiptUnavailableError",
+    "TelegramUpdateReceiptValidationError",
+    "TelegramUpdateTransitionOutcome",
+    "claim_authenticated_telegram_update",
+    "claim_telegram_update",
+    "complete_authenticated_telegram_update",
+    "complete_telegram_update",
+    "fail_authenticated_telegram_update",
+    "fail_telegram_update",
+    "fingerprint_telegram_update",
+    "serialize_telegram_update_canonical",
+]
