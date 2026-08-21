@@ -24,7 +24,7 @@ from src.plataforma.gateway.adaptive_gateway_node import (
     adaptive_gateway_node,
     select_adaptive_gateway_route,
 )
-from src.agents.conversation_summary_node import (
+from src.compartilhado.memoria.conversation_summary_node import (
     conversation_summary_node,
 )
 from src.plataforma.governanca.execution_governance import (
