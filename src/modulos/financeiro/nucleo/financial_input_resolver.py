@@ -26,7 +26,7 @@ from pydantic import (
 from src.channels.message_parser import (
     parse_financial_message,
 )
-from src.services.memory.extractor import (
+from src.compartilhado.memoria.extractor import (
     extrair_memoria_da_mensagem_inna,
 )
 

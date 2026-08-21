@@ -13310,7 +13310,7 @@ def buscar_memoria_inna(usuario_id):
             buscar_memoria_usuario
         )
     except ImportError:
-        from src.services.memory.repository import (
+        from src.compartilhado.memoria.repository import (
             buscar_memoria_usuario
         )
 

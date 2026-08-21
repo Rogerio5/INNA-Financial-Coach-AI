@@ -18,12 +18,12 @@ try:
         calcular_evolucao_memoria,
     )
 except ImportError:
-    from src.services.memory.extractor import (
+    from src.compartilhado.memoria.extractor import (
         normalizar_valor_financeiro,
         extrair_memoria_da_mensagem_inna,
         mesclar_memoria_existente,
     )
-    from src.services.memory.evolution import (
+    from src.compartilhado.memoria.evolution import (
         copiar_memoria,
         calcular_evolucao_memoria,
     )

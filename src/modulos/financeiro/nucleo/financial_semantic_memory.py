@@ -17,7 +17,7 @@ import re
 import unicodedata
 from typing import Any, Mapping, Sequence
 
-from src.services.memory.extractor import (
+from src.compartilhado.memoria.extractor import (
     extrair_memoria_da_mensagem_inna,
 )
 
