@@ -62,7 +62,7 @@ from src.plataforma.supervisao.supervisor_mesh_node import (
     select_supervisor_mesh_route,
     supervisor_mesh_node,
 )
-from src.agents.task_completion_node import (
+from src.plataforma.supervisao.task_completion.node import (
     task_completion_node,
 )
 from src.plataforma.roteamento.team_router import (
