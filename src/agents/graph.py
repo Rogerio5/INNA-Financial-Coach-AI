@@ -32,7 +32,7 @@ from src.plataforma.governanca.execution_governance import (
     DEFAULT_MAX_SAME_AGENT_VISITS,
     apply_execution_governance,
 )
-from src.agents.handoff_coordinator_node import (
+from src.plataforma.supervisao.handoff_coordinator_node import (
     handoff_coordinator_node,
 )
 from src.plataforma.governanca.human_review.interrupt_node import (
