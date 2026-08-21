@@ -6,7 +6,7 @@ from dataclasses import asdict, dataclass
 from time import perf_counter
 from typing import Any
 
-from src.agents.persistence import obter_pool_postgres
+from src.compartilhado.memoria.checkpoint import obter_pool_postgres
 
 
 @dataclass(frozen=True, slots=True)

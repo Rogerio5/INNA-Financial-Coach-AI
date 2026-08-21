@@ -53,7 +53,7 @@ from src.agents.nodes import (
     fallback_agent_node,
     report_agent_node,
 )
-from src.agents.persistence import (
+from src.compartilhado.memoria.checkpoint import (
     abrir_checkpointer_postgres,
 )
 from src.plataforma.orquestracao.state import InnaAgentState
