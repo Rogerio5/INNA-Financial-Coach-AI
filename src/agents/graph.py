@@ -17,7 +17,7 @@ from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command
 
-from src.agentic_rag.langgraph_integration import (
+from src.plataforma.gateway.agentic_rag import (
     agentic_rag_gateway_node as rag_agent_node,
 )
 from src.plataforma.gateway.adaptive_gateway_node import (
