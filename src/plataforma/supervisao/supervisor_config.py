@@ -11,7 +11,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from src.services.llm.model_registry import (
+from src.compartilhado.llm.model_registry import (
     DEFAULT_TEXT_MODEL,
     LLMRole,
     get_model_for_role,
