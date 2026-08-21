@@ -8,7 +8,7 @@ from typing import Any
 from src.plataforma.registro.agent_catalog import (
     DEFAULT_AGENT_REGISTRY,
 )
-from src.agents.shared_blackboard_runtime import (
+from src.plataforma.governanca.blackboard.runtime import (
     publish_shared_blackboard,
 )
 
