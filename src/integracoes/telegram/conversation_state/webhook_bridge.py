@@ -19,13 +19,19 @@ from typing import (
     runtime_checkable,
 )
 
-from src.services.telegram_observability import (
-    NoOpTelegramConversationMetrics,
-    NoOpTelegramOperationalEventSink,
+from src.integracoes.telegram.observabilidade.contracts import (
     TelegramConversationMetricRecord,
     TelegramConversationMetrics,
     TelegramOperationalEvent,
     TelegramOperationalEventSink,
+)
+from src.integracoes.telegram.observabilidade.events import (
+    NoOpTelegramOperationalEventSink,
+)
+from src.integracoes.telegram.observabilidade.metrics import (
+    NoOpTelegramConversationMetrics,
+)
+from src.integracoes.telegram.observabilidade.sanitization import (
     sanitize_event_fields,
 )
 
