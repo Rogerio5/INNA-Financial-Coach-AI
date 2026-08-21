@@ -20,14 +20,14 @@ from langgraph.types import Command
 from src.agentic_rag.langgraph_integration import (
     agentic_rag_gateway_node as rag_agent_node,
 )
-from src.agents.adaptive_gateway_node import (
+from src.plataforma.gateway.adaptive_gateway_node import (
     adaptive_gateway_node,
     select_adaptive_gateway_route,
 )
 from src.agents.conversation_summary_node import (
     conversation_summary_node,
 )
-from src.agents.execution_governance import (
+from src.plataforma.governanca.execution_governance import (
     DEFAULT_MAX_EXECUTION_STEPS,
     DEFAULT_MAX_SAME_AGENT_VISITS,
     apply_execution_governance,
@@ -43,29 +43,33 @@ from src.agents.human_review_policy_node import (
     human_review_policy_node,
     select_route_after_human_review_policy,
 )
-from src.agents.nodes import (
-    education_agent_node,
-    fallback_agent_node,
+from src.modulos.financeiro.nucleo.financial_agent import (
     financial_agent_node,
+)
+from src.modulos.financeiro.educadora_financeira.education_agent import (
+    education_agent_node,
+)
+from src.agents.nodes import (
+    fallback_agent_node,
     report_agent_node,
 )
 from src.agents.persistence import (
     abrir_checkpointer_postgres,
 )
 from src.agents.state import InnaAgentState
-from src.agents.supervisor import supervisor_node
-from src.agents.supervisor_mesh_node import (
+from src.plataforma.supervisao.supervisor import supervisor_node
+from src.plataforma.supervisao.supervisor_mesh_node import (
     select_supervisor_mesh_route,
     supervisor_mesh_node,
 )
 from src.agents.task_completion_node import (
     task_completion_node,
 )
-from src.agents.team_router import (
+from src.plataforma.roteamento.team_router import (
     select_team_supervisor_route,
     team_router_node,
 )
-from src.agents.team_supervisor import (
+from src.plataforma.roteamento.team_supervisor import (
     financial_team_supervisor_node,
     knowledge_team_supervisor_node,
     support_team_supervisor_node,
