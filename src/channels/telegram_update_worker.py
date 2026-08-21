@@ -32,7 +32,7 @@ from src.services.telegram_observability import (
     TelegramProductiveOperationsRecorder,
 )
 
-from src.services.telegram_update_jobs import (
+from src.integracoes.telegram.update_jobs import (
     TelegramUpdateJobConfigurationError,
     TelegramUpdateRunnerConfigurationError,
     TelegramUpdateRunnerResult,

@@ -199,7 +199,7 @@ def _load_configuration() -> object:
 
 
 def _load_keyring() -> object:
-    from src.services.telegram_update_jobs.service import (
+    from src.integracoes.telegram.update_jobs.service import (
         load_telegram_update_keyring_from_env,
     )
 
@@ -227,7 +227,7 @@ def _load_metrics_runtime() -> object:
 
 
 def _job_repository_module() -> ModuleType:
-    from src.services.telegram_update_jobs import (
+    from src.integracoes.telegram.update_jobs import (
         repository,
     )
 
