@@ -35,11 +35,11 @@ from src.plataforma.governanca.execution_governance import (
 from src.agents.handoff_coordinator_node import (
     handoff_coordinator_node,
 )
-from src.agents.human_review_interrupt_node import (
+from src.plataforma.governanca.human_review.interrupt_node import (
     human_review_interrupt_node,
     select_route_after_human_review_interrupt,
 )
-from src.agents.human_review_policy_node import (
+from src.plataforma.governanca.human_review.policy_node import (
     human_review_policy_node,
     select_route_after_human_review_policy,
 )
