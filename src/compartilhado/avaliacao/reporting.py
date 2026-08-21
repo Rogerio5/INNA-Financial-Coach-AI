@@ -16,7 +16,7 @@ from src.compartilhado.avaliacao.batch_runner import (
 from src.compartilhado.avaliacao.datasets import (
     safe_artifact_name,
 )
-from src.evaluation.privacy import (
+from src.compartilhado.avaliacao.privacy import (
     assert_safe_for_external_export,
 )
 

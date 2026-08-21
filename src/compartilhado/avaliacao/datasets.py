@@ -16,7 +16,7 @@ from src.compartilhado.avaliacao.contracts import (
     InnaEvaluationCase,
     PrivacyLevel,
 )
-from src.evaluation.privacy import (
+from src.compartilhado.avaliacao.privacy import (
     assert_safe_for_external_export,
     content_hash,
     prepare_external_payload,
