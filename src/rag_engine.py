@@ -3335,7 +3335,7 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 2) -> dict:
         )
 
         if total_tokens > 0:
-            from src.evaluation.gemini_cost_accounting import (
+            from src.compartilhado.avaliacao.gemini_cost_accounting import (
                 DEFAULT_GEMINI_BILLING_MODE,
                 resolve_gemini_billing_mode,
             )

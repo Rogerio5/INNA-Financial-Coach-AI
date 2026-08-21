@@ -26,7 +26,7 @@ from src.compartilhado.avaliacao.deepeval_runner import (
     MetricExecutionOutput,
     MetricExecutor,
 )
-from src.evaluation.deterministic_executors import (
+from src.compartilhado.avaliacao.deterministic_executors import (
     build_default_deterministic_executors,
 )
 from src.services.llm.gemini import obter_api_key_gemini

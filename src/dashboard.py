@@ -14736,7 +14736,7 @@ def main(
                 render_llmops_dashboard
             )
         except ImportError:
-            from src.evaluation.dashboard import (
+            from src.interfaces.avaliacao.dashboard import (
                 render_llmops_dashboard
             )
 
