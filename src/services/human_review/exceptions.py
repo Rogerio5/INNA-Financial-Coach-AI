@@ -1,63 +1,9 @@
-from __future__ import annotations
+"""Compatibilidade temporária para human_review.exceptions."""
 
+import sys
 
-class HumanReviewServiceError(
-    RuntimeError
-):
-    """
-    Erro sanitizado da camada de aplicação
-    responsável pelas revisões humanas.
-    """
+from src.plataforma.governanca.human_review import (
+    exceptions as _implementation,
+)
 
-
-class HumanReviewValidationError(
-    HumanReviewServiceError
-):
-    """
-    Os dados recebidos para a revisão humana
-    são inválidos.
-    """
-
-
-class HumanReviewNotFoundError(
-    HumanReviewServiceError
-):
-    """
-    A revisão humana solicitada não foi encontrada.
-    """
-
-
-class HumanReviewConflictError(
-    HumanReviewServiceError
-):
-    """
-    A revisão já foi processada ou sofreu uma
-    alteração concorrente.
-    """
-
-
-class HumanReviewRepositoryError(
-    HumanReviewServiceError
-):
-    """
-    Erro sanitizado durante acesso ao PostgreSQL.
-    """
-
-
-class HumanReviewResumeError(
-    HumanReviewServiceError
-):
-    """
-    Não foi possível retomar a execução interrompida
-    no LangGraph.
-    """
-
-
-__all__ = [
-    "HumanReviewConflictError",
-    "HumanReviewNotFoundError",
-    "HumanReviewRepositoryError",
-    "HumanReviewResumeError",
-    "HumanReviewServiceError",
-    "HumanReviewValidationError",
-]
+sys.modules[__name__] = _implementation

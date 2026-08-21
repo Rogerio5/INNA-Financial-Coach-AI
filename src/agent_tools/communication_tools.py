@@ -192,7 +192,7 @@ def registrar_revisao_pendente(
     catalog -> communication_tools -> human_review
     -> graph -> nodes -> runtime -> catalog.
     """
-    from src.services.human_review.service import (
+    from src.plataforma.governanca.human_review.service import (
         registrar_revisao_pendente as persistir,
     )
 
