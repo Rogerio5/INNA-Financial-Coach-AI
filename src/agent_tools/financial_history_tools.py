@@ -19,7 +19,7 @@ from src.agent_tools.core import (
     ToolDefinition,
     ToolExecutionContext,
 )
-from src.services.financial_history.repository import (
+from src.modulos.financeiro.nucleo.historico.repository import (
     DEFAULT_HISTORY_LIMIT,
     MAX_HISTORY_LIMIT,
     FinancialHistoryQueryError,
