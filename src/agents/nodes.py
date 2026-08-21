@@ -24,7 +24,7 @@ from src.agents.financial_history_flow import (
 from src.agents.financial_input_resolver import (
     resolver_entrada_financeira,
 )
-from src.agents.report_flow import (
+from src.modulos.financeiro.nucleo.report_flow import (
     executar_fluxo_relatorio,
 )
 from src.plataforma.orquestracao.contracts import AgentResponse
