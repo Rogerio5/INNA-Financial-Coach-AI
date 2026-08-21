@@ -22,7 +22,7 @@ from src.plataforma.supervisao.handoff import (
     create_handoff,
     fail_handoff,
 )
-from src.agents.state import InnaAgentState
+from src.plataforma.orquestracao.state import InnaAgentState
 
 SPECIALIZED_AGENTS = {
     "financial_agent",

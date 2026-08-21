@@ -35,8 +35,8 @@ from src.compartilhado.agent_tools.runtime import (
 from src.agents.risk_reviewer import (
     apply_risk_review_to_report,
 )
-from src.agents.schemas import AgentResponse
-from src.agents.state import InnaAgentState
+from src.plataforma.orquestracao.contracts import AgentResponse
+from src.plataforma.orquestracao.state import InnaAgentState
 
 
 DEFAULT_REPORT_HISTORY_LIMIT = 5

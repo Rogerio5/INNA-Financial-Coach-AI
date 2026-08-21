@@ -12,7 +12,7 @@ from src.plataforma.gateway.adaptive_gateway import (
 from src.plataforma.gateway.complexity_detector import (
     assess_request_complexity,
 )
-from src.agents.state import InnaAgentState
+from src.plataforma.orquestracao.state import InnaAgentState
 
 _VALID_RISK_LEVELS = {
     "low",

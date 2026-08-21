@@ -12,7 +12,7 @@ from src.plataforma.governanca.human_review.lifecycle import (
     correct_human_review,
     reject_human_review,
 )
-from src.agents.state import (
+from src.plataforma.orquestracao.state import (
     InnaAgentState,
 )
 

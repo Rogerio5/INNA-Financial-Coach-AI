@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from src.agents.state import InnaAgentState
+from src.plataforma.orquestracao.state import InnaAgentState
 from src.plataforma.supervisao.task_completion.contracts import (
     evaluate_task_completion,
 )

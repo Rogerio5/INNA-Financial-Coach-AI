@@ -24,10 +24,10 @@ from src.compartilhado.agent_tools.financial_history_tools import (
 from src.compartilhado.agent_tools.runtime import (
     executar_ferramenta_inna,
 )
-from src.agents.schemas import (
+from src.plataforma.orquestracao.contracts import (
     AgentResponse,
 )
-from src.agents.state import (
+from src.plataforma.orquestracao.state import (
     InnaAgentState,
 )
 

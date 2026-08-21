@@ -23,7 +23,7 @@ from src.plataforma.supervisao.supervisor_config import (
     get_supervisor_runtime_config,
 )
 
-from src.agents.schemas import (
+from src.plataforma.orquestracao.contracts import (
     SupervisorDecision,
     SupervisorLLMDecision,
 )

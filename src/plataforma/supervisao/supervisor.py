@@ -13,10 +13,10 @@ import time
 import unicodedata
 from typing import Any
 
-from src.agents.schemas import (
+from src.plataforma.orquestracao.contracts import (
     SupervisorDecision,
 )
-from src.agents.state import InnaAgentState
+from src.plataforma.orquestracao.state import InnaAgentState
 from src.plataforma.supervisao.supervisor_deadline import (
     classificar_com_gemini_com_deadline as classificar_com_gemini,
 )

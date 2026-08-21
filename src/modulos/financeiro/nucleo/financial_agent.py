@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.agents.state import InnaAgentState
+    from src.plataforma.orquestracao.state import InnaAgentState
 
 
 def financial_agent_node(

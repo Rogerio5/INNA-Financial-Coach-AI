@@ -10,7 +10,7 @@ from src.plataforma.governanca.human_review.policy import (
     HumanReviewPolicyDecision,
     evaluate_human_review_policy,
 )
-from src.agents.state import (
+from src.plataforma.orquestracao.state import (
     InnaAgentState,
 )
 

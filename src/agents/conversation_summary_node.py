@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-from src.agents.state import InnaAgentState
+from src.plataforma.orquestracao.state import InnaAgentState
 from src.compartilhado.memoria.conversation_summary import (
     update_conversation_summary_state,
 )

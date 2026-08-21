@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from src.agents.schemas import (
+from src.plataforma.orquestracao.contracts import (
     SupervisorDecision,
 )
 from src.plataforma.supervisao.supervisor_config import (

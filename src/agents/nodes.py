@@ -27,8 +27,8 @@ from src.agents.financial_input_resolver import (
 from src.agents.report_flow import (
     executar_fluxo_relatorio,
 )
-from src.agents.schemas import AgentResponse
-from src.agents.state import InnaAgentState
+from src.plataforma.orquestracao.contracts import AgentResponse
+from src.plataforma.orquestracao.state import InnaAgentState
 
 
 def _finalizar(

@@ -56,7 +56,7 @@ from src.agents.nodes import (
 from src.agents.persistence import (
     abrir_checkpointer_postgres,
 )
-from src.agents.state import InnaAgentState
+from src.plataforma.orquestracao.state import InnaAgentState
 from src.plataforma.supervisao.supervisor import supervisor_node
 from src.plataforma.supervisao.supervisor_mesh_node import (
     select_supervisor_mesh_route,

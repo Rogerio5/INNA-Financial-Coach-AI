@@ -23,8 +23,8 @@ from src.compartilhado.rag.agentic.synthesizer import (
 from src.agents.nodes import (
     rag_agent_node as legacy_rag_agent_node,
 )
-from src.agents.schemas import AgentResponse
-from src.agents.state import InnaAgentState
+from src.plataforma.orquestracao.contracts import AgentResponse
+from src.plataforma.orquestracao.state import InnaAgentState
 
 AGENTIC_RAG_GATEWAY_VERSION = "7.0.0"
 

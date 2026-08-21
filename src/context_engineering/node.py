@@ -4,7 +4,7 @@ Nó LangGraph responsável por construir contexto.
 
 from __future__ import annotations
 
-from src.agents.state import InnaAgentState
+from src.plataforma.orquestracao.state import InnaAgentState
 from src.context_engineering.context_builder import (
     build_agent_context,
     render_context_for_llm,
