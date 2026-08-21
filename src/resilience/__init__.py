@@ -1,49 +1,35 @@
-from .backoff import (
-    calculate_backoff_seconds,
-)
-from .circuit_breaker import (
-    CircuitBreaker,
-    CircuitBreakerRegistry,
-    CircuitBreakerSnapshot,
-    CircuitState,
-)
-from .classification import (
-    classify_failure,
-)
-from .contracts import (
-    FailureKind,
-    OperationKind,
-    ResiliencePolicy,
-)
-from .deadline import (
-    DeadlineBudget,
-    DeadlineBudgetExhaustedError,
-    DeadlineSnapshot,
-)
-from .events import (
-    ResilienceEvent,
-    ResilienceEventType,
-)
-from .runtime import (
-    CircuitOpenError,
-    ResilienceRuntime,
+"""Compatibilidade temporária para src.resilience."""
+
+import importlib
+import sys
+
+_CANONICAL = "src.compartilhado.resilience"
+_LEGACY = "src.resilience"
+
+_SUBMODULES = (
+    "backoff",
+    "circuit_breaker",
+    "classification",
+    "contracts",
+    "deadline",
+    "events",
+    "policies",
+    "runtime",
+    "tracing",
 )
 
-__all__ = [
-    "DeadlineSnapshot",
-    "DeadlineBudgetExhaustedError",
-    "DeadlineBudget",
-    "CircuitBreaker",
-    "CircuitBreakerRegistry",
-    "CircuitBreakerSnapshot",
-    "CircuitOpenError",
-    "CircuitState",
-    "FailureKind",
-    "OperationKind",
-    "ResilienceEvent",
-    "ResilienceEventType",
-    "ResiliencePolicy",
-    "ResilienceRuntime",
-    "calculate_backoff_seconds",
-    "classify_failure",
-]
+_implementation = importlib.import_module(
+    _CANONICAL
+)
+
+for _name in _SUBMODULES:
+
+    _module = importlib.import_module(
+        f"{_CANONICAL}.{_name}"
+    )
+
+    sys.modules[
+        f"{_LEGACY}.{_name}"
+    ] = _module
+
+sys.modules[__name__] = _implementation

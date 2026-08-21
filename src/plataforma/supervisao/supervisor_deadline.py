@@ -27,9 +27,9 @@ from src.observability.resilience_tracing import (
     get_shared_resilience_runtime,
     traced_resilience_operation,
 )
-from src.resilience import FailureKind
-from src.resilience.deadline import DeadlineBudget
-from src.resilience.policies import (
+from src.compartilhado.resilience import FailureKind
+from src.compartilhado.resilience.deadline import DeadlineBudget
+from src.compartilhado.resilience.policies import (
     SUPERVISOR_GENERATION_POLICY,
 )
 

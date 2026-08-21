@@ -211,7 +211,7 @@ def gerar_embedding_gemini(
             get_shared_resilience_runtime,
             traced_resilience_operation,
         )
-        from src.resilience.policies import (
+        from src.compartilhado.resilience.policies import (
             GEMINI_EMBEDDING_POLICY,
         )
 

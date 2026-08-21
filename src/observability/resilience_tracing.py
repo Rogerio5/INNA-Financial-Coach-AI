@@ -2,11 +2,11 @@
 Compatibilidade temporaria.
 
 Implementacao oficial:
-src.resilience.tracing
+src.compartilhado.resilience.tracing
 """
 
 import sys
 
-from src.resilience import tracing as _implementation
+from src.compartilhado.resilience import tracing as _implementation
 
 sys.modules[__name__] = _implementation

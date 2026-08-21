@@ -32,8 +32,8 @@ from src.observability.resilience_tracing import (
     get_shared_resilience_runtime,
     traced_resilience_operation,
 )
-from src.resilience.deadline import DeadlineBudget
-from src.resilience.policies import (
+from src.compartilhado.resilience.deadline import DeadlineBudget
+from src.compartilhado.resilience.policies import (
     GEMINI_TEXT_GENERATION_POLICY,
 )
 from src.compartilhado.llm.model_registry import (

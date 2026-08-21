@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from types import MappingProxyType
 
-from src.resilience.events import (
+from src.compartilhado.resilience.events import (
     ResilienceEvent,
     ResilienceEventType,
 )

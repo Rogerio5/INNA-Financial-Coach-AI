@@ -803,7 +803,7 @@ def _resolve_planner_resilience_policy(
         return base_policy
 
     try:
-        from src.resilience.tracing import (
+        from src.compartilhado.resilience.tracing import (
             observe_reliability_governor_decision,
         )
         from src.reliability.governor import (
@@ -837,7 +837,7 @@ def _resolve_planner_resilience_policy(
         # O fail-open continua funcional mesmo
         # se a própria telemetria falhar.
         try:
-            from src.resilience.tracing import (
+            from src.compartilhado.resilience.tracing import (
                 observe_reliability_governor_fail_open,
             )
 
@@ -872,14 +872,14 @@ def _build_llm_plan(
     from src.compartilhado.observabilidade.llm.tracking import (
         executar_generate_content_observado,
     )
-    from src.resilience.tracing import (
+    from src.compartilhado.resilience.tracing import (
         get_shared_resilience_runtime,
         traced_resilience_operation,
     )
-    from src.resilience.deadline import (
+    from src.compartilhado.resilience.deadline import (
         DeadlineBudget,
     )
-    from src.resilience.policies import (
+    from src.compartilhado.resilience.policies import (
         AGENTIC_RAG_PLANNER_POLICY,
     )
 

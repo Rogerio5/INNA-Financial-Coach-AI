@@ -11,7 +11,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
 
-from src.resilience.events import (
+from src.compartilhado.resilience.events import (
     ResilienceEvent,
     ResilienceEventType,
 )

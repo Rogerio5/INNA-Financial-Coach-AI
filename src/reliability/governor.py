@@ -7,11 +7,11 @@ from dataclasses import dataclass, replace
 from enum import StrEnum
 from types import MappingProxyType
 
-from src.resilience.contracts import (
+from src.compartilhado.resilience.contracts import (
     OperationKind,
     ResiliencePolicy,
 )
-from src.resilience.policies import (
+from src.compartilhado.resilience.policies import (
     AGENTIC_RAG_PLANNER_POLICY,
     GEMINI_EMBEDDING_POLICY,
     GEMINI_TEXT_GENERATION_POLICY,

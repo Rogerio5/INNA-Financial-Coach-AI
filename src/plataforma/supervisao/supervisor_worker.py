@@ -13,7 +13,7 @@ from typing import Any
 from src.plataforma.supervisao.supervisor_llm import (
     classificar_com_gemini,
 )
-from src.resilience import classify_failure
+from src.compartilhado.resilience import classify_failure
 
 
 def _write_result(
