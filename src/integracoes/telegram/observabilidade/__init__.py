@@ -1,0 +1,1 @@
+"""Observabilidade da integração Telegram."""
