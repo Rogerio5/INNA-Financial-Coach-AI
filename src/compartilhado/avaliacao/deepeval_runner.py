@@ -276,7 +276,7 @@ class EvaluationRunResult:
         métrica pertencente à tríade.
         """
 
-        from src.evaluation.rag_triad import (
+        from src.compartilhado.avaliacao.rag_triad import (
             RAG_TRIAD_METRIC_IDS,
             aggregate_rag_triad,
         )
