@@ -1,4 +1,4 @@
-from .llm_finops import (
+from src.compartilhado.observabilidade.llm.finops import (
     analisar_finops_llm,
     calcular_projecao_mensal,
     carregar_configuracao_finops,
@@ -6,12 +6,12 @@ from .llm_finops import (
     converter_usd_para_brl,
 )
 
-from .llm_tracking import (
+from src.compartilhado.observabilidade.llm.tracking import (
     executar_generate_content_observado,
     executar_llm_observado,
 )
 
-from .llm_costs import (
+from src.compartilhado.observabilidade.llm.costs import (
     calcular_custo_estimado,
     carregar_consumo_llm,
     carregar_precos_modelo,
@@ -21,7 +21,7 @@ from .llm_costs import (
     registrar_consumo_llm,
 )
 
-from .health_history import (
+from src.plataforma.observabilidade.health_history import (
     NOME_TABELA,
     calcular_tendencia_health,
     carregar_health_history,
@@ -30,11 +30,11 @@ from .health_history import (
     salvar_health_snapshot,
 )
 
-from .health_runtime import (
+from src.plataforma.observabilidade.health_runtime import (
     coletar_health_score_real,
 )
 
-from .health import (
+from src.plataforma.observabilidade.health import (
     PESOS_COMPONENTES,
     calcular_health_score_global,
     calcular_score_infraestrutura,
@@ -47,20 +47,20 @@ from .health import (
     limitar_score,
 )
 
-from .anomalies import (
+from src.plataforma.observabilidade.anomalies import (
     SEVERIDADE_ORDEM,
     calcular_mad,
     detectar_anomalias_operacionais,
     detectar_outliers_mad,
 )
 
-from .narrative import (
+from src.plataforma.observabilidade.narrative import (
     classificar_saude_operacional,
     gerar_insights_operacionais,
     gerar_texto_narrativa,
 )
 
-from .analytics import (
+from src.plataforma.observabilidade.analytics import (
     calcular_distribuicao_coluna,
     calcular_execucoes_sem_tool,
     calcular_percentis,
@@ -74,7 +74,7 @@ from .analytics import (
 Camada de observabilidade inteligente da INNA.
 """
 
-from .timeline import (
+from src.plataforma.observabilidade.timeline import (
     ETAPAS_TIMELINE,
     LABELS_ETAPAS,
     carregar_timeline_trace,
@@ -85,7 +85,7 @@ from .timeline import (
     registrar_evento_timeline,
 )
 
-from .metrics import (
+from src.plataforma.observabilidade.metrics import (
     calcular_metricas_executivas,
     calcular_percentil_95,
     calcular_taxa_sucesso,
