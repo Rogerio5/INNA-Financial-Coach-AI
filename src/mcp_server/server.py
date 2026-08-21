@@ -14,14 +14,14 @@ from uuid import uuid4
 
 from mcp.server import MCPServer
 
-from src.agent_tools.catalog import (
+from src.compartilhado.agent_tools.catalog import (
     criar_registro_ferramentas_inna,
 )
-from src.agent_tools.core.contracts import (
+from src.compartilhado.agent_tools.core.contracts import (
     ToolCall,
     ToolExecutionContext,
 )
-from src.agent_tools.runtime import (
+from src.compartilhado.agent_tools.runtime import (
     executar_ferramenta_inna,
 )
 from src.agents.agent_catalog import (

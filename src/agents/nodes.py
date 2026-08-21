@@ -4,18 +4,18 @@ Nós especializados do primeiro grafo da INNA.
 
 from __future__ import annotations
 
-from src.agent_tools.core import (
+from src.compartilhado.agent_tools.core import (
     ToolCall,
     ToolExecutionContext,
     ToolStatus,
 )
-from src.agent_tools.financial_tools import (
+from src.compartilhado.agent_tools.financial_tools import (
     FINANCIAL_DIAGNOSIS_TOOL_NAME,
 )
-from src.agent_tools.rag_tools import (
+from src.compartilhado.agent_tools.rag_tools import (
     RAG_TOOL_NAME,
 )
-from src.agent_tools.runtime import (
+from src.compartilhado.agent_tools.runtime import (
     executar_ferramenta_inna,
 )
 from src.agents.financial_history_flow import (

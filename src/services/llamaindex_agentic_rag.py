@@ -12,7 +12,7 @@ from llama_index.core.agent.workflow import AgentWorkflow, FunctionAgent
 from llama_index.core.tools import FunctionTool
 from llama_index.llms.google_genai import GoogleGenAI
 
-from src.agent_tools import rag_tools
+from src.compartilhado.agent_tools import rag_tools
 
 FEATURE_FLAG = "INNA_LLAMAINDEX_AGENTIC_RAG_ENABLED"
 TOOL_NAME = "consultar_rag_inna"

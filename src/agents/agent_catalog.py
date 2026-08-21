@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.agent_tools.catalog import (
+from src.compartilhado.agent_tools.catalog import (
     criar_registro_ferramentas_inna,
 )
 from src.agents.agent_registry import (

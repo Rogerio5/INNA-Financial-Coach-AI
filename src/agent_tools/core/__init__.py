@@ -1,40 +1,30 @@
-"""
-Núcleo formal de Tool Calling da INNA.
-"""
+"""Compatibilidade temporária para src.agent_tools.core."""
 
-from src.agent_tools.core.contracts import (
-    ToolCall,
-    ToolError,
-    ToolExecutionContext,
-    ToolResult,
-    ToolStatus,
-)
-from src.agent_tools.core.executor import (
-    ToolExecutor,
-)
-from src.agent_tools.core.permissions import (
-    ToolPermissionDecision,
-    ToolPermissionPolicy,
-)
-from src.agent_tools.core.registry import (
-    ToolDefinition,
-    ToolNotFoundError,
-    ToolRegistrationError,
-    ToolRegistry,
+import importlib
+import sys
+
+_CANONICAL = "src.compartilhado.agent_tools.core"
+_LEGACY = "src.agent_tools.core"
+
+_SUBMODULES = (
+    "contracts",
+    "registry",
+    "permissions",
+    "executor",
 )
 
+_implementation = importlib.import_module(
+    _CANONICAL
+)
 
-__all__ = [
-    "ToolCall",
-    "ToolDefinition",
-    "ToolError",
-    "ToolExecutionContext",
-    "ToolExecutor",
-    "ToolNotFoundError",
-    "ToolPermissionDecision",
-    "ToolPermissionPolicy",
-    "ToolRegistrationError",
-    "ToolRegistry",
-    "ToolResult",
-    "ToolStatus",
-]
+for _name in _SUBMODULES:
+
+    _module = importlib.import_module(
+        f"{_CANONICAL}.{_name}"
+    )
+
+    sys.modules[
+        f"{_LEGACY}.{_name}"
+    ] = _module
+
+sys.modules[__name__] = _implementation

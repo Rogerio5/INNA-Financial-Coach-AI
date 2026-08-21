@@ -33,12 +33,12 @@ from pydantic import (
     model_validator,
 )
 
-from src.agent_tools.core import (
+from src.compartilhado.agent_tools.core import (
     ToolCall,
     ToolExecutionContext,
     ToolResult,
 )
-from src.agent_tools.runtime import (
+from src.compartilhado.agent_tools.runtime import (
     executar_ferramenta_inna,
 )
 from src.compartilhado.rag.agentic.contracts import (

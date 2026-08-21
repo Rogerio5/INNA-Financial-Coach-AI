@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from src.agent_tools.rag_tools import (
+from src.compartilhado.agent_tools.rag_tools import (
     RAG_TOOL_NAME,
 )
 from src.compartilhado.avaliacao.contracts import (

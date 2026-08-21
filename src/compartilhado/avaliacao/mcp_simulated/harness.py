@@ -12,14 +12,14 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.agent_tools.core.contracts import (
+from src.compartilhado.agent_tools.core.contracts import (
     ToolCall,
     ToolExecutionContext,
     ToolResult,
 )
-from src.agent_tools.core.executor import ToolExecutor
-from src.agent_tools.core.permissions import ToolPermissionPolicy
-from src.agent_tools.core.registry import (
+from src.compartilhado.agent_tools.core.executor import ToolExecutor
+from src.compartilhado.agent_tools.core.permissions import ToolPermissionPolicy
+from src.compartilhado.agent_tools.core.registry import (
     ToolDefinition,
     ToolRegistry,
 )

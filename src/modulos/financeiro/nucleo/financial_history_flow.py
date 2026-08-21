@@ -13,15 +13,15 @@ import re
 import unicodedata
 from typing import Any
 
-from src.agent_tools.core import (
+from src.compartilhado.agent_tools.core import (
     ToolCall,
     ToolExecutionContext,
     ToolStatus,
 )
-from src.agent_tools.financial_history_tools import (
+from src.compartilhado.agent_tools.financial_history_tools import (
     FINANCIAL_HISTORY_TOOL_NAME,
 )
-from src.agent_tools.runtime import (
+from src.compartilhado.agent_tools.runtime import (
     executar_ferramenta_inna,
 )
 from src.agents.schemas import (

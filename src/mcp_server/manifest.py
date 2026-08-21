@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from src.agent_tools.core.registry import ToolRegistry
+from src.compartilhado.agent_tools.core.registry import ToolRegistry
 from src.agents.agent_registry import AgentRegistry
 
 MCP_MANIFEST_SCHEMA_VERSION = "1.0.0"
