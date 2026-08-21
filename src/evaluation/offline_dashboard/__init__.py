@@ -1,29 +1,23 @@
-"""Dashboard offline das avaliações da INNA."""
+"""Compatibilidade temporária para src.evaluation.offline_dashboard."""
 
-from .data import (
-    OfflineDashboardDataError,
-    OfflineDashboardPaths,
-    OfflineDashboardSnapshot,
-    benchmark_profile_rows,
-    build_overview,
-    default_dashboard_paths,
-    load_offline_dashboard_snapshot,
-    mcp_scenario_rows,
-    quality_gate_rows,
-    report_status_rows,
-    security_rows,
+import sys
+
+from src.interfaces.avaliacao import (
+    offline_dashboard as _implementation,
+)
+from src.interfaces.avaliacao.offline_dashboard import (
+    app as _app,
+)
+from src.interfaces.avaliacao.offline_dashboard import (
+    data as _data,
 )
 
-__all__ = [
-    "OfflineDashboardDataError",
-    "OfflineDashboardPaths",
-    "OfflineDashboardSnapshot",
-    "benchmark_profile_rows",
-    "build_overview",
-    "default_dashboard_paths",
-    "load_offline_dashboard_snapshot",
-    "mcp_scenario_rows",
-    "quality_gate_rows",
-    "report_status_rows",
-    "security_rows",
-]
+sys.modules[
+    "src.evaluation.offline_dashboard.app"
+] = _app
+
+sys.modules[
+    "src.evaluation.offline_dashboard.data"
+] = _data
+
+sys.modules[__name__] = _implementation
