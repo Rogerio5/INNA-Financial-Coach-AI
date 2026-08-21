@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from src.agents.agent_catalog import (
+from src.plataforma.registro.agent_catalog import (
     DEFAULT_AGENT_REGISTRY,
 )
 from src.agents.shared_blackboard_runtime import (

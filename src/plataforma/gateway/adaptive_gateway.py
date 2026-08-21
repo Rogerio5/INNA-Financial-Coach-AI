@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-from src.agents.agent_catalog import (
+from src.plataforma.registro.agent_catalog import (
     DEFAULT_AGENT_REGISTRY,
 )
 

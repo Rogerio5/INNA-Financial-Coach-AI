@@ -8,7 +8,7 @@ from src.plataforma.supervisao.supervisor_mesh import (
     SupervisorMeshPlan,
     plan_supervisor_mesh,
 )
-from src.agents.team_hierarchy import (
+from src.plataforma.roteamento.team_hierarchy import (
     DEFAULT_TEAM_REGISTRY,
     AgentName,
     TeamHierarchyError,

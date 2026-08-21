@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-from src.agents.agent_catalog import (
+from src.plataforma.registro.agent_catalog import (
     DEFAULT_AGENT_REGISTRY,
 )
 from src.agents.agent_registry import (
@@ -18,7 +18,7 @@ from src.agents.shared_blackboard import (
     BlackboardVisibility,
     can_read_blackboard_entry,
 )
-from src.agents.team_hierarchy import (
+from src.plataforma.roteamento.team_hierarchy import (
     DEFAULT_TEAM_REGISTRY,
 )
 

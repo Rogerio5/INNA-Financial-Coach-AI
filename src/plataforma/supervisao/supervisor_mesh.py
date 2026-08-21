@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from typing import Literal
 
-from src.agents.team_hierarchy import (
+from src.plataforma.roteamento.team_hierarchy import (
     DEFAULT_TEAM_REGISTRY,
     TeamHierarchyError,
     TeamName,

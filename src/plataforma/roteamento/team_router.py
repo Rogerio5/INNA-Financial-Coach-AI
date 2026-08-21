@@ -13,7 +13,7 @@ from typing import Any, Literal
 from src.plataforma.supervisao.supervisor_mesh_node import (
     evaluate_supervisor_mesh_visit,
 )
-from src.agents.team_hierarchy import (
+from src.plataforma.roteamento.team_hierarchy import (
     DEFAULT_TEAM_REGISTRY,
     AgentName,
     TeamHierarchyError,

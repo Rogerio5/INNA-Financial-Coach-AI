@@ -24,7 +24,7 @@ from src.compartilhado.agent_tools.core.contracts import (
 from src.compartilhado.agent_tools.runtime import (
     executar_ferramenta_inna,
 )
-from src.agents.agent_catalog import (
+from src.plataforma.registro.agent_catalog import (
     criar_registro_agentes_inna,
 )
 from src.mcp_server.audit import (

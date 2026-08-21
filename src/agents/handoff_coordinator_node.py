@@ -13,7 +13,7 @@ from src.agents.a2a_contract import (
     create_a2a_message,
     evaluate_a2a_message,
 )
-from src.agents.agent_catalog import (
+from src.plataforma.registro.agent_catalog import (
     DEFAULT_AGENT_REGISTRY,
 )
 from src.agents.handoff import (
