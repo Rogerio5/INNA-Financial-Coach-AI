@@ -9,7 +9,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from src.agents.graph import (
+from src.plataforma.orquestracao.graph import (
     retomar_revisao_humana_persistente,
 )
 

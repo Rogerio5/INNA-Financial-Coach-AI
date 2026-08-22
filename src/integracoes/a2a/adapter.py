@@ -24,7 +24,7 @@ def _default_runtime_executor(
 ) -> Mapping[str, Any]:
     # Import tardio evita acoplar a inicialização
     # do servidor A2A ao grafo completo.
-    from src.agents.graph import (
+    from src.plataforma.orquestracao.graph import (
         executar_nucleo_inna,
     )
 

@@ -55,7 +55,7 @@ def _default_graph_executor(
     O import é tardio para evitar inicialização do
     grafo durante a importação do módulo de avaliação.
     """
-    from src.agents.graph import (
+    from src.plataforma.orquestracao.graph import (
         executar_nucleo_inna,
     )
 
