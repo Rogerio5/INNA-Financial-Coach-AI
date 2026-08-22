@@ -703,7 +703,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_telegram_operational_deploy_contract.py",
+        "path": "tests/unit/contratos/test_telegram_operational_deploy_contract.py",
         "matches": [
           {
             "line": 207,

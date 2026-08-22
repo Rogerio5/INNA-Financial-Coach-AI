@@ -34,7 +34,7 @@
     "history_repository": true
   },
   "telegram_test_files": [
-    "tests/unit/test_telegram_conversation_state_contracts.py",
+    "tests/unit/contratos/test_telegram_conversation_state_contracts.py",
     "tests/unit/test_telegram_conversation_state_migration.py",
     "tests/unit/simulacao/test_telegram_conversation_state_repository.py",
     "tests/unit/simulacao/test_telegram_conversation_state_runtime.py",

@@ -4,7 +4,7 @@ import ast
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 
 EXCLUDED_DIRECTORIES = {
     ".git",
@@ -234,9 +234,9 @@ def test_tests_do_not_call_main_processor_without_bridge_except_negative_contrac
     violations = []
 
     allowed_negative_test = (
-        "tests/unit/"
-        "test_telegram_webhook_required_durable_bridge.py"
-    )
+            "tests/unit/simulacao/"
+            "test_telegram_webhook_required_durable_bridge.py"
+        )
 
     for path in (
         ROOT
@@ -319,4 +319,3 @@ def test_tests_do_not_call_main_processor_without_bridge_except_negative_contrac
             )
 
     assert violations == []
-

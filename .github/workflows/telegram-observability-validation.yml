@@ -69,11 +69,11 @@ jobs:
       - name: Validate Telegram observability contracts
         run: |
           pytest \
-            tests/unit/test_telegram_error_category_contract_alignment.py \
+            tests/unit/contratos/test_telegram_error_category_contract_alignment.py \
             tests/unit/test_telegram_operational_slo_policy.py \
-            tests/unit/test_telegram_prometheus_rules_contract.py \
+            tests/unit/contratos/test_telegram_prometheus_rules_contract.py \
             tests/unit/test_telegram_prometheus_semantic_bindings.py \
-            tests/unit/test_telegram_grafana_dashboard_contract.py \
+            tests/unit/contratos/test_telegram_grafana_dashboard_contract.py \
             -q
 
   prometheus-rules:
