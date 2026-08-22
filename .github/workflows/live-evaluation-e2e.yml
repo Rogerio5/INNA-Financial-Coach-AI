@@ -82,7 +82,7 @@ jobs:
           python -m compileall \
             -q \
             src/evaluation \
-            tests/integration/test_live_evaluation_e2e.py
+            tests/production/runtime/test_live_evaluation_e2e.py
       - name: Validate live evaluation with Ruff
         shell: bash
         run: |
@@ -90,7 +90,7 @@ jobs:
 
           python -m ruff check \
             src/evaluation \
-            tests/integration/test_live_evaluation_e2e.py
+            tests/production/runtime/test_live_evaluation_e2e.py
       - name: Run real LLMOps evaluation E2E
         shell: bash
         run: |
@@ -99,7 +99,7 @@ jobs:
           mkdir -p artifacts/live-evaluation-e2e
 
           python -m pytest \
-            tests/integration/test_live_evaluation_e2e.py \
+            tests/production/runtime/test_live_evaluation_e2e.py \
             -q \
             -s \
             2>&1 |
