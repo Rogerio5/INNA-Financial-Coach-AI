@@ -537,7 +537,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_telegram_readiness_runtime.py",
+        "path": "tests/unit/simulacao/test_telegram_readiness_runtime.py",
         "matches": [
           {
             "line": 401,
