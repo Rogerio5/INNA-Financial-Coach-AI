@@ -13,7 +13,7 @@ from src.services.telegram_observability import (
 )
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 
 WEBHOOK_FILE = (
     ROOT
