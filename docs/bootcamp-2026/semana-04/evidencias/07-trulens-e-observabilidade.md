@@ -15,7 +15,7 @@ A auditoria encontrou referencias a TruLens em payloads de benchmark, mas nao um
 ## Testes
 
 - [tests/evaluations/test_agentic_benchmark_framework_payloads.py](../../../../tests/evaluations/test_agentic_benchmark_framework_payloads.py)
-- [tests/unit/test_phoenix_langgraph_tracing.py](../../../../tests/unit/test_phoenix_langgraph_tracing.py)
+- [tests/unit/simulacao/test_phoenix_langgraph_tracing.py](../../../../tests/unit/simulacao/test_phoenix_langgraph_tracing.py)
 
 ## Observacao
 

@@ -194,9 +194,9 @@ src/services/embeddings/gemini.py
 tests/unit/test_sentence_window.py
 tests/unit/test_rag_engine_sentence_window_integration.py
 tests/unit/test_retrieval_trace_sentence_window.py
-tests/unit/test_structured_retrieval_3072.py
+tests/unit/simulacao/test_structured_retrieval_3072.py
 tests/unit/test_rag_engine_hybrid_3072.py
-tests/unit/test_rag_engine_retrieval_trace_behavior.py
+tests/unit/simulacao/test_rag_engine_retrieval_trace_behavior.py
 ```
 
 A implementação possui telemetria para registrar:

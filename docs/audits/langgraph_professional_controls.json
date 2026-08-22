@@ -463,7 +463,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_financial_history_timeout_budget.py",
+        "path": "tests/unit/simulacao/test_financial_history_timeout_budget.py",
         "matches": [
           {
             "line": 41,
@@ -497,7 +497,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_inna_supervisor_deadline.py",
+        "path": "tests/unit/simulacao/test_inna_supervisor_deadline.py",
         "matches": [
           {
             "line": 91,
@@ -510,7 +510,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_inna_supervisor_runtime.py",
+        "path": "tests/unit/simulacao/test_inna_supervisor_runtime.py",
         "matches": [
           {
             "line": 195,
@@ -665,7 +665,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_inna_supervisor_hybrid.py",
+        "path": "tests/unit/simulacao/test_inna_supervisor_hybrid.py",
         "matches": [
           {
             "line": 249,
@@ -694,7 +694,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_inna_supervisor_runtime.py",
+        "path": "tests/unit/simulacao/test_inna_supervisor_runtime.py",
         "matches": [
           {
             "line": 74,

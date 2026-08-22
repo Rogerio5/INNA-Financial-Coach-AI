@@ -25,7 +25,7 @@
       "tests/unit/test_financial_semantic_memory_graph_integration.py",
       "tests/unit/test_financial_history_context_integration.py",
       "tests/unit/test_supervisor_deadline_encoding.py",
-      "tests/unit/test_financial_input_resolver.py",
+      "tests/unit/simulacao/test_financial_input_resolver.py",
       "tests/unit/test_inna_agent_memory.py",
       "tests/unit/test_memory_extractor.py",
       "tests/unit/test_memory_evolution.py"

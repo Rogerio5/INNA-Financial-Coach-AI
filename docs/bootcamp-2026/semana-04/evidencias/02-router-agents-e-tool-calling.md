@@ -18,7 +18,7 @@ O projeto possui roteador no Agentic RAG e ferramentas formais para acesso ao RA
 ## Testes
 
 - [tests/unit/test_agentic_rag_phase2_router.py](../../../../tests/unit/test_agentic_rag_phase2_router.py)
-- [tests/unit/test_formal_rag_tool.py](../../../../tests/unit/test_formal_rag_tool.py)
+- [tests/unit/simulacao/test_formal_rag_tool.py](../../../../tests/unit/simulacao/test_formal_rag_tool.py)
 
 ## Relatorios, auditorias e evidencias
 
