@@ -50,13 +50,16 @@ from src.modulos.financeiro.educadora_financeira.education_agent import (
     education_agent_node,
 )
 from src.agents.nodes import (
-    fallback_agent_node,
     report_agent_node,
 )
 from src.compartilhado.memoria.checkpoint import (
     abrir_checkpointer_postgres,
 )
 from src.plataforma.orquestracao.state import InnaAgentState
+
+from src.plataforma.orquestracao.fallback_node import (
+    fallback_agent_node,
+)
 from src.plataforma.supervisao.supervisor import supervisor_node
 from src.plataforma.supervisao.supervisor_mesh_node import (
     select_supervisor_mesh_route,

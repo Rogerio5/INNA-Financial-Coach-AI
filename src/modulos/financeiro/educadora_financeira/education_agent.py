@@ -24,7 +24,7 @@ def education_agent_node(
 
     # Import tardio para evitar dependencia circular durante
     # a migracao gradual da arquitetura.
-    from src.plataforma.gateway.rag_agent import _execute_rag_for_agent
+    from src.agents.nodes import _execute_rag_for_agent
 
     return _execute_rag_for_agent(
         state,
