@@ -7990,7 +7990,7 @@ def gerar_embedding_gemini_rag(texto):
             gerar_embedding_documento
         )
     except ImportError:
-        from src.services.embeddings.gemini import (
+        from src.compartilhado.rag.embeddings.gemini import (
             gerar_embedding_documento
         )
 
@@ -8006,7 +8006,7 @@ def gerar_embedding_consulta_gemini_rag(texto):
             gerar_embedding_consulta
         )
     except ImportError:
-        from src.services.embeddings.gemini import (
+        from src.compartilhado.rag.embeddings.gemini import (
             gerar_embedding_consulta
         )
 

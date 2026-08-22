@@ -447,7 +447,7 @@ def search_knowledge_base_pgvector(
             buscar_chunks_semanticos,
         )
     except ImportError:
-        from src.services.embeddings.gemini import (
+        from src.compartilhado.rag.embeddings.gemini import (
             gerar_embedding_consulta,
         )
         from src.services.rag.retrieval import (
