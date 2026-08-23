@@ -1,0 +1,16 @@
+MODULE=mcp
+TEST_FILE_COUNT=7
+
+[TYPES]
+e2e=1
+unit_contract=1
+unit_simulation=5
+
+[FILES]
+tests/e2e/mcp/test_mcp_stdio_e2e.py
+tests/unit/contratos/test_mcp_security_audit_contract.py
+tests/unit/simulacao/test_mcp_advanced_security.py
+tests/unit/simulacao/test_mcp_communication_tools.py
+tests/unit/simulacao/test_mcp_manifest.py
+tests/unit/simulacao/test_mcp_registry_binding.py
+tests/unit/simulacao/test_mcp_server.py
