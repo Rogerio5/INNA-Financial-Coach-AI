@@ -712,7 +712,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_telegram_operational_fastapi.py",
+        "path": "tests/unit/simulacao/test_telegram_operational_fastapi.py",
         "matches": [
           {
             "line": 398,
