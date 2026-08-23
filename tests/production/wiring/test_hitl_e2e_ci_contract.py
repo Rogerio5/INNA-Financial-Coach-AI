@@ -17,7 +17,8 @@ WORKFLOW_PATH = (
 LIVE_TEST_PATH = (
     PROJECT_ROOT
     / "tests"
-    / "integration"
+    / "production"
+    / "runtime"
     / "test_human_review_e2e_live.py"
 )
 
