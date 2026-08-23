@@ -137,12 +137,12 @@ def discover_mcp_existing_tests(
     """Retorna os testes MCP existentes da regressão."""
 
     relative_paths = (
-        "tests/unit/test_mcp_server.py",
-        "tests/unit/test_mcp_advanced_security.py",
-        "tests/unit/test_mcp_communication_tools.py",
+        "tests/unit/simulacao/test_mcp_server.py",
+        "tests/unit/simulacao/test_mcp_advanced_security.py",
+        "tests/unit/simulacao/test_mcp_communication_tools.py",
         "tests/unit/test_tool_calling_core.py",
-        "tests/unit/test_formal_rag_tool.py",
-        "tests/unit/test_formal_financial_tool.py",
+        "tests/unit/simulacao/test_formal_rag_tool.py",
+        "tests/unit/simulacao/test_formal_financial_tool.py",
         "tests/unit/test_formal_report_preparation_tool.py",
     )
 
@@ -170,7 +170,7 @@ def discover_week4_ruff_paths(
         project_root / "scripts" / "evaluation" / "validate_offline_dashboard.py",
         project_root / "scripts" / "evaluation" / "run_week4_final_regression.py",
         project_root / "tests" / "evaluations",
-        project_root / "tests" / "unit" / "test_mcp_server.py",
+        project_root / "tests" / "unit" / "simulacao" / "test_mcp_server.py",
     ]
 
     return tuple(path for path in paths if path.exists())
