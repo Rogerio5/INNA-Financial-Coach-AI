@@ -1,0 +1,272 @@
+name: Modular Test Evidence
+
+on:
+  workflow_dispatch:
+
+  pull_request:
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "evidencias/**"
+      - ".github/workflows/test-evidence-ci.yml"
+
+  push:
+    branches:
+      - main
+      - refactor/arquitetura-modular-inna
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "evidencias/**"
+      - ".github/workflows/test-evidence-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  modular-evidence:
+    name: Modular test evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      PYTHONUNBUFFERED: "1"
+      RUN_HITL_E2E_TESTS: "0"
+      RUN_LIVE_EVALUATION_TESTS: "0"
+      RUN_LIVE_GEMINI_TESTS: "0"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+
+          if [ -f requirements.txt ]; then
+            python -m pip install -r requirements.txt
+          elif [ -f pyproject.toml ]; then
+            python -m pip install .
+          fi
+
+          python -m pip install pytest
+
+      - name: Validate Python compilation
+        shell: bash
+        run: |
+          python -m compileall src -q
+
+      - name: Run full regression
+        shell: bash
+        run: |
+          mkdir -p artifacts/full-regression
+
+          set -o pipefail
+
+          python -m pytest \
+            tests \
+            -q \
+            --junitxml=artifacts/full-regression/junit.xml \
+            2>&1 \
+            | tee artifacts/full-regression/pytest.txt
+
+      - name: Validate modular evidence manifests
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          root = Path("evidencias/testes")
+
+          modules = [
+              "a2a",
+              "admin_ui",
+              "avaliacao_llmops",
+              "financeiro",
+              "infra_compartilhada",
+              "mcp",
+              "observabilidade",
+              "plataforma",
+              "rag",
+              "resiliencia",
+              "seguranca",
+              "telegram",
+          ]
+
+          total = 0
+
+          for module in modules:
+              manifest = root / module / "manifest.txt"
+
+              if not manifest.exists():
+                  raise SystemExit(
+                      f"Manifest ausente: {manifest}"
+                  )
+
+              files = [
+                  line.strip()
+                  for line in manifest.read_text(
+                      encoding="utf-8"
+                  ).splitlines()
+                  if line.startswith("tests/")
+              ]
+
+              total += len(files)
+
+              for test_file in files:
+                  path = Path(test_file)
+
+                  if not path.exists():
+                      raise SystemExit(
+                          f"Teste ausente no manifesto "
+                          f"{module}: {test_file}"
+                      )
+
+              print(
+                  f"MODULE={module}"
+                  f"|TEST_FILE_COUNT={len(files)}"
+              )
+
+          print(
+              f"TOTAL_CLASSIFIED_FILES={total}"
+          )
+
+          if total != 402:
+              raise SystemExit(
+                  f"Expected 402 files, got {total}"
+              )
+
+          print(
+              "ALL_402_FILES_MAPPED=True"
+          )
+          PY
+
+      - name: Generate modular evidence
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          import sys
+
+          root = Path("evidencias/testes")
+
+          modules = [
+              "a2a",
+              "admin_ui",
+              "avaliacao_llmops",
+              "financeiro",
+              "infra_compartilhada",
+              "mcp",
+              "observabilidade",
+              "plataforma",
+              "rag",
+              "resiliencia",
+              "seguranca",
+              "telegram",
+          ]
+
+          failed = []
+
+          for module in modules:
+              module_dir = root / module
+              manifest = module_dir / "manifest.txt"
+
+              tests = [
+                  line.strip()
+                  for line in manifest.read_text(
+                      encoding="utf-8"
+                  ).splitlines()
+                  if line.startswith("tests/")
+              ]
+
+              pytest_log = module_dir / "pytest-ci.txt"
+              junit_file = module_dir / "junit-ci.xml"
+
+              command = [
+                  sys.executable,
+                  "-m",
+                  "pytest",
+                  *tests,
+                  "-q",
+                  f"--junitxml={junit_file}",
+              ]
+
+              print("")
+              print(
+                  "=================================="
+              )
+              print(
+                  f"MODULE={module}"
+              )
+              print(
+                  f"TEST_FILE_COUNT={len(tests)}"
+              )
+              print(
+                  "=================================="
+              )
+
+              result = subprocess.run(
+                  command,
+                  text=True,
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.STDOUT,
+              )
+
+              pytest_log.write_text(
+                  result.stdout,
+                  encoding="utf-8",
+              )
+
+              print(
+                  result.stdout
+              )
+
+              print(
+                  f"{module.upper()}_EXIT_CODE="
+                  f"{result.returncode}"
+              )
+
+              if result.returncode != 0:
+                  failed.append(module)
+
+          if failed:
+              raise SystemExit(
+                  "Falha nos modulos: "
+                  + ", ".join(failed)
+              )
+
+          print(
+              "ALL_MODULE_EXECUTIONS_GREEN=True"
+          )
+          PY
+
+      - name: Upload full regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inna-full-regression
+          path: artifacts/full-regression/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload modular evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inna-modular-test-evidence
+          path: |
+            evidencias/testes/**/manifest.txt
+            evidencias/testes/**/resumo.md
+            evidencias/testes/**/pytest-ci.txt
+            evidencias/testes/**/junit-ci.xml
+            evidencias/testes/resumo-geral.md
+          if-no-files-found: error
+          retention-days: 14
