@@ -14,8 +14,8 @@ A INNA possui um pipeline RAG real, documentado e testado, com retrieval, contex
 
 ## Testes
 
-- [tests/unit/test_inna_rag_agent.py](../../../../tests/unit/test_inna_rag_agent.py)
-- [tests/unit/test_education_agent_rag.py](../../../../tests/unit/test_education_agent_rag.py)
+- [tests/unit/simulacao/test_inna_rag_agent.py](../../../../tests/unit/simulacao/test_inna_rag_agent.py)
+- [tests/unit/simulacao/test_education_agent_rag.py](../../../../tests/unit/simulacao/test_education_agent_rag.py)
 
 ## Relatorios, auditorias e evidencias
 

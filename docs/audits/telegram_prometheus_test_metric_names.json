@@ -36,17 +36,17 @@
       "value": "inna_unknown_metric_total"
     },
     {
-      "file": "tests/unit/test_telegram_productive_metrics_counting_matrix.py",
+      "file": "tests/unit/simulacao/test_telegram_productive_metrics_counting_matrix.py",
       "line": 235,
       "value": "inna_telegram_worker_updates_total"
     },
     {
-      "file": "tests/unit/test_telegram_productive_metrics_counting_matrix.py",
+      "file": "tests/unit/simulacao/test_telegram_productive_metrics_counting_matrix.py",
       "line": 240,
       "value": "inna_telegram_receipts_total"
     },
     {
-      "file": "tests/unit/test_telegram_productive_metrics_counting_matrix.py",
+      "file": "tests/unit/simulacao/test_telegram_productive_metrics_counting_matrix.py",
       "line": 245,
       "value": "inna_telegram_queue_operations_total"
     },

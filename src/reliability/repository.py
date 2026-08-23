@@ -10,7 +10,7 @@ from typing import Final
 from src.database.connection import (
     cursor_postgres,
 )
-from src.resilience import (
+from src.compartilhado.resilience import (
     ResilienceEvent,
     ResilienceEventType,
 )

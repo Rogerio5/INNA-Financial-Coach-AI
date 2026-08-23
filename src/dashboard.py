@@ -7990,7 +7990,7 @@ def gerar_embedding_gemini_rag(texto):
             gerar_embedding_documento
         )
     except ImportError:
-        from src.services.embeddings.gemini import (
+        from src.compartilhado.rag.embeddings.gemini import (
             gerar_embedding_documento
         )
 
@@ -8006,7 +8006,7 @@ def gerar_embedding_consulta_gemini_rag(texto):
             gerar_embedding_consulta
         )
     except ImportError:
-        from src.services.embeddings.gemini import (
+        from src.compartilhado.rag.embeddings.gemini import (
             gerar_embedding_consulta
         )
 
@@ -13310,7 +13310,7 @@ def buscar_memoria_inna(usuario_id):
             buscar_memoria_usuario
         )
     except ImportError:
-        from src.services.memory.repository import (
+        from src.compartilhado.memoria.repository import (
             buscar_memoria_usuario
         )
 
@@ -14736,7 +14736,7 @@ def main(
                 render_llmops_dashboard
             )
         except ImportError:
-            from src.evaluation.dashboard import (
+            from src.interfaces.avaliacao.dashboard import (
                 render_llmops_dashboard
             )
 

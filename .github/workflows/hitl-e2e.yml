@@ -87,7 +87,7 @@ jobs:
           mkdir -p artifacts/hitl-e2e
 
           python -m pytest \
-            tests/integration/test_human_review_e2e_live.py \
+            tests/production/runtime/test_human_review_e2e_live.py \
             -q \
             2>&1 |
             tee artifacts/hitl-e2e/pytest-output.txt

@@ -9,7 +9,7 @@ src/services/prompts/builder.py
 try:
     from services.prompts.builder import montar_prompt_inna
 except ImportError:
-    from src.services.prompts.builder import montar_prompt_inna
+    from src.compartilhado.llm.prompts.builder import montar_prompt_inna
 
 
 __all__ = [

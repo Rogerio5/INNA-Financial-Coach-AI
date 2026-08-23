@@ -16,14 +16,14 @@ from src.dashboard_pages.rag_evaluation_lab_i18n import (
 from src.dashboard_pages.technical_labels_i18n import (
     technical_label,
 )
-from src.evaluation.dashboard import (
+from src.interfaces.avaliacao.dashboard import (
     DEFAULT_HISTORY_PATH,
     aplicar_tema_llmops_chart,
 )
-from src.evaluation.dashboard_data import (
+from src.compartilhado.avaliacao.dashboard_data import (
     load_dashboard_history,
 )
-from src.evaluation.rag_lab_advanced import (
+from src.compartilhado.avaliacao.rag_lab_advanced import (
     QualityGateThresholds,
     RagLabCapabilityStatus,
     build_rag_lab_capabilities,
@@ -33,10 +33,10 @@ from src.evaluation.rag_lab_advanced import (
     export_rag_lab_report_json,
     rank_rag_lab_runs,
 )
-from src.evaluation.rag_lab_comparison import (
+from src.compartilhado.avaliacao.rag_lab_comparison import (
     RagLabComparisonStatus,
 )
-from src.evaluation.rag_lab_dashboard_data import (
+from src.compartilhado.avaliacao.rag_lab_dashboard_data import (
     build_rag_lab_comparison_rows,
     build_rag_lab_run_options,
     build_rag_lab_summary,
@@ -45,7 +45,7 @@ from src.evaluation.rag_lab_dashboard_data import (
     get_rag_lab_entries,
     select_default_comparison,
 )
-from src.evaluation.rag_lab_experiment_metadata import (
+from src.compartilhado.avaliacao.rag_lab_experiment_metadata import (
     build_experiment_metadata_readiness,
     build_experiment_metadata_snapshot,
 )

@@ -17,7 +17,7 @@ A INNA usa LangGraph para organizar estado, nos, transicoes e controles de execu
 ## Testes
 
 - [tests/unit/test_langgraph_topology.py](../../../../tests/unit/test_langgraph_topology.py)
-- [tests/unit/test_langgraph_execution_control.py](../../../../tests/unit/test_langgraph_execution_control.py)
+- [tests/unit/simulacao/test_langgraph_execution_control.py](../../../../tests/unit/simulacao/test_langgraph_execution_control.py)
 
 ## Relatorios, auditorias e evidencias
 

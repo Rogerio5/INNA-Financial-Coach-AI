@@ -1,0 +1,27 @@
+...................................................ss................... [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 30%]
+........................................................................ [ 41%]
+........................................................................ [ 51%]
+........................................................................ [ 61%]
+........................................................................ [ 72%]
+........................................................................ [ 82%]
+........................................................................ [ 92%]
+....................................................                     [100%]Running teardown with pytest sessionfinish...
+
+Test 
+tests/production/runtime/test_human_review_e2e_live.py::test_human_review_e2e_l
+ive was skipped. Reason: 
+('C:\\Users\\roger\\inna-financial-coach-ai\\tests\\production\\runtime\\test_h
+uman_review_e2e_live.py', 193, 'Skipped: Teste HITL E2E real desativado. Defina
+RUN_HITL_E2E_TESTS=1.')
+Test 
+tests/production/runtime/test_supervisor_gemini_live.py::test_supervisor_gemini
+_live_retorna_schema_valido was skipped. Reason: 
+('C:\\Users\\roger\\inna-financial-coach-ai\\tests\\production\\runtime\\test_s
+upervisor_gemini_live.py', 43, 'Skipped: Teste real desativado. Defina 
+RUN_LIVE_GEMINI_TESTS=1 para executar.')
+=========================== short test summary info ===========================
+SKIPPED [1] tests\production\runtime\test_human_review_e2e_live.py:193: Teste HITL E2E real desativado. Defina RUN_HITL_E2E_TESTS=1.
+SKIPPED [1] tests\production\runtime\test_supervisor_gemini_live.py:43: Teste real desativado. Defina RUN_LIVE_GEMINI_TESTS=1 para executar.
+698 passed, 2 skipped in 15.76s

@@ -19,7 +19,7 @@ try:
         formatar_comparacao_monetaria,
     )
 except ImportError:
-    from src.services.formatters.financial import (
+    from src.modulos.financeiro.nucleo.formatters import (
         formatar_numero,
         formatar_moeda,
         formatar_percentual,

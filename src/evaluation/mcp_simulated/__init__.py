@@ -1,19 +1,16 @@
-"""Componentes da avaliação MCP simulada."""
+"""Compatibilidade temporária para src.evaluation.mcp_simulated."""
 
-from .harness import (
-    SimulatedMCPClient,
-    SimulatedMCPHarness,
-    build_simulated_mcp_harness,
-    error_code,
-    output_mapping,
-    status_value,
+import sys
+
+from src.compartilhado.avaliacao import (
+    mcp_simulated as _implementation,
+)
+from src.compartilhado.avaliacao.mcp_simulated import (
+    harness as _harness,
 )
 
-__all__ = [
-    "SimulatedMCPClient",
-    "SimulatedMCPHarness",
-    "build_simulated_mcp_harness",
-    "error_code",
-    "output_mapping",
-    "status_value",
-]
+sys.modules[
+    "src.evaluation.mcp_simulated.harness"
+] = _harness
+
+sys.modules[__name__] = _implementation

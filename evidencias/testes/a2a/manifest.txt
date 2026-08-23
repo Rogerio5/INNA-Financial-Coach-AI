@@ -1,0 +1,13 @@
+MODULE=a2a
+TEST_FILE_COUNT=5
+
+[TYPES]
+e2e=1
+integration=4
+
+[FILES]
+tests/e2e/a2a/test_native_a2a_http_e2e.py
+tests/integration/componentes/test_native_a2a_authentication.py
+tests/integration/componentes/test_native_a2a_fastapi_mount.py
+tests/integration/componentes/test_native_a2a_runtime_bridge.py
+tests/integration/componentes/test_native_a2a_server.py

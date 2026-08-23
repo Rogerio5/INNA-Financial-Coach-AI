@@ -11,8 +11,8 @@ A arquitetura agentic possui testes automatizados e auditorias que comprovam top
 ## Testes
 
 - [tests/unit/test_langgraph_topology.py](../../../../tests/unit/test_langgraph_topology.py)
-- [tests/unit/test_langgraph_execution_control.py](../../../../tests/unit/test_langgraph_execution_control.py)
-- [tests/unit/test_langgraph_routing_audit.py](../../../../tests/unit/test_langgraph_routing_audit.py)
+- [tests/unit/simulacao/test_langgraph_execution_control.py](../../../../tests/unit/simulacao/test_langgraph_execution_control.py)
+- [tests/unit/simulacao/test_langgraph_routing_audit.py](../../../../tests/unit/simulacao/test_langgraph_routing_audit.py)
 
 ## Relatorios, auditorias e evidencias
 

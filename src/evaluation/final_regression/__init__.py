@@ -1,29 +1,16 @@
-"""Regressão final offline da Semana 4."""
+"""Compatibilidade temporária para src.evaluation.final_regression."""
 
-from .runner import (
-    FinalRegressionPolicy,
-    FinalRegressionReport,
-    RegressionSuiteResult,
-    RegressionSuiteSpec,
-    build_offline_environment,
-    build_suite_specs,
-    discover_agentic_rag_tests,
-    discover_mcp_existing_tests,
-    load_policy,
-    run_final_regression,
-    validate_reports,
+import sys
+
+from src.compartilhado.avaliacao import (
+    final_regression as _implementation,
+)
+from src.compartilhado.avaliacao.final_regression import (
+    runner as _runner,
 )
 
-__all__ = [
-    "FinalRegressionPolicy",
-    "FinalRegressionReport",
-    "RegressionSuiteResult",
-    "RegressionSuiteSpec",
-    "build_offline_environment",
-    "build_suite_specs",
-    "discover_agentic_rag_tests",
-    "discover_mcp_existing_tests",
-    "load_policy",
-    "run_final_regression",
-    "validate_reports",
-]
+sys.modules[
+    "src.evaluation.final_regression.runner"
+] = _runner
+
+sys.modules[__name__] = _implementation

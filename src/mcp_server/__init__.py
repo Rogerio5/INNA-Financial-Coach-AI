@@ -1,10 +1,10 @@
-"""Servidor MCP oficial da INNA."""
+"""Compatibilidade temporaria para src.mcp_server."""
 
-from src.mcp_server.server import (
+from src.integracoes.mcp import (
     criar_servidor_mcp_inna,
 )
-from src.mcp_server.server import (
-    server as mcp_server,
+from src.integracoes.mcp import (
+    mcp_server,
 )
 
 __all__ = [

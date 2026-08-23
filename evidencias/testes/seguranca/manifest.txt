@@ -1,0 +1,8 @@
+MODULE=seguranca
+TEST_FILE_COUNT=1
+
+[TYPES]
+security=1
+
+[FILES]
+tests/security/test_validate_workflow_security.py

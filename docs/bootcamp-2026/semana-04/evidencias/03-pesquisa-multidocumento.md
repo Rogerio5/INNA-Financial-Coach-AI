@@ -17,7 +17,7 @@ O fluxo Agentic RAG possui componentes de planejamento, coleta/pesquisa, avaliac
 
 ## Testes
 
-- [tests/unit/test_agentic_rag_phase5_research_agent.py](../../../../tests/unit/test_agentic_rag_phase5_research_agent.py)
+- [tests/unit/simulacao/test_agentic_rag_phase5_research_agent.py](../../../../tests/unit/simulacao/test_agentic_rag_phase5_research_agent.py)
 - [tests/unit/test_agentic_rag_phase6_synthesizer.py](../../../../tests/unit/test_agentic_rag_phase6_synthesizer.py)
 
 ## Relatorios, auditorias e evidencias

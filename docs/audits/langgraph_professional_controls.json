@@ -62,7 +62,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_telegram_update_job_runner.py",
+        "path": "tests/unit/simulacao/test_telegram_update_job_runner.py",
         "matches": [
           {
             "line": 482,
@@ -91,7 +91,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_telegram_update_worker_entrypoint.py",
+        "path": "tests/unit/simulacao/test_telegram_update_worker_entrypoint.py",
         "matches": [
           {
             "line": 402,
@@ -463,7 +463,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_financial_history_timeout_budget.py",
+        "path": "tests/unit/simulacao/test_financial_history_timeout_budget.py",
         "matches": [
           {
             "line": 41,
@@ -497,7 +497,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_inna_supervisor_deadline.py",
+        "path": "tests/unit/simulacao/test_inna_supervisor_deadline.py",
         "matches": [
           {
             "line": 91,
@@ -510,7 +510,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_inna_supervisor_runtime.py",
+        "path": "tests/unit/simulacao/test_inna_supervisor_runtime.py",
         "matches": [
           {
             "line": 195,
@@ -519,7 +519,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_signed_internal_api_client.py",
+        "path": "tests/unit/simulacao/test_signed_internal_api_client.py",
         "matches": [
           {
             "line": 206,
@@ -537,7 +537,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_telegram_readiness_runtime.py",
+        "path": "tests/unit/simulacao/test_telegram_readiness_runtime.py",
         "matches": [
           {
             "line": 401,
@@ -570,7 +570,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_telegram_update_job_runner.py",
+        "path": "tests/unit/simulacao/test_telegram_update_job_runner.py",
         "matches": [
           {
             "line": 78,
@@ -665,7 +665,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_inna_supervisor_hybrid.py",
+        "path": "tests/unit/simulacao/test_inna_supervisor_hybrid.py",
         "matches": [
           {
             "line": 249,
@@ -694,7 +694,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_inna_supervisor_runtime.py",
+        "path": "tests/unit/simulacao/test_inna_supervisor_runtime.py",
         "matches": [
           {
             "line": 74,
@@ -703,7 +703,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_telegram_operational_deploy_contract.py",
+        "path": "tests/unit/contratos/test_telegram_operational_deploy_contract.py",
         "matches": [
           {
             "line": 207,
@@ -712,7 +712,7 @@
         ]
       },
       {
-        "path": "tests/unit/test_telegram_operational_fastapi.py",
+        "path": "tests/unit/simulacao/test_telegram_operational_fastapi.py",
         "matches": [
           {
             "line": 398,

@@ -14,7 +14,7 @@ Tracing, observabilidade e avaliacao automatizada aparecem em componentes, teste
 
 ## Testes
 
-- [tests/unit/test_phoenix_langgraph_tracing.py](../../../../tests/unit/test_phoenix_langgraph_tracing.py)
+- [tests/unit/simulacao/test_phoenix_langgraph_tracing.py](../../../../tests/unit/simulacao/test_phoenix_langgraph_tracing.py)
 - [tests/evaluations/test_deepeval_metrics.py](../../../../tests/evaluations/test_deepeval_metrics.py)
 
 ## Relatorios, auditorias e evidencias

@@ -1,0 +1,44 @@
+........................................................................ [ 13%]
+........................................................................ [ 27%]
+........................................................................ [ 41%]
+........................................................................ [ 55%]
+........................................................................ [ 69%]
+........................................................................ [ 82%]
+........................................................................ [ 96%]
+.................                                                        [100%]Running teardown with pytest sessionfinish...
+
+============================== warnings summary ===============================
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_function_agent_builds_with_offline_mock_llm
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_router_agent_builds_with_mock_llm
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_research_agent_disables_reverse_handoff
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_agent_workflow_wires_router_to_research
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_agent_workflow_wires_router_to_research
+  C:\Users\roger\AppData\Local\Programs\Python\Python312\Lib\inspect.py:585: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    value = getter(object, key)
+
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_function_agent_builds_with_offline_mock_llm
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_router_agent_builds_with_mock_llm
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_research_agent_disables_reverse_handoff
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_agent_workflow_wires_router_to_research
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_agent_workflow_wires_router_to_research
+  C:\Users\roger\AppData\Local\Programs\Python\Python312\Lib\inspect.py:585: PydanticDeprecatedSince20: The `__fields_set__` attribute is deprecated, use `model_fields_set` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    value = getter(object, key)
+
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_function_agent_builds_with_offline_mock_llm
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_router_agent_builds_with_mock_llm
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_research_agent_disables_reverse_handoff
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_agent_workflow_wires_router_to_research
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_agent_workflow_wires_router_to_research
+  C:\Users\roger\AppData\Local\Programs\Python\Python312\Lib\inspect.py:585: PydanticDeprecatedSince211: Accessing the 'model_computed_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+    value = getter(object, key)
+
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_function_agent_builds_with_offline_mock_llm
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_router_agent_builds_with_mock_llm
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_research_agent_disables_reverse_handoff
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_agent_workflow_wires_router_to_research
+tests/unit/simulacao/test_llamaindex_agentic_rag_runtime.py::test_agent_workflow_wires_router_to_research
+  C:\Users\roger\AppData\Local\Programs\Python\Python312\Lib\inspect.py:585: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+    value = getter(object, key)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+521 passed, 20 warnings in 15.37s

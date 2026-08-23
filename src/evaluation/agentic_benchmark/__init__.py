@@ -1,129 +1,39 @@
-"""Benchmark offline do Agentic RAG da INNA."""
+"""Compatibilidade temporária para src.evaluation.agentic_benchmark."""
 
-from .adapter import adapt_gateway_output
-from .benchmark_runner import (
-    BenchmarkCaseExecution,
-    BenchmarkComparison,
-    BenchmarkProfile,
-    BenchmarkProfileSummary,
-    OfflineBenchmarkResult,
-    benchmark_to_dict,
-    group_failures_by_code,
-    run_offline_benchmark,
-    simulate_agentic_execution,
-    simulate_legacy_execution,
-    write_benchmark_csv,
-    write_benchmark_json,
-)
-from .contracts import (
-    AgenticBenchmarkCase,
-    BenchmarkCaseCategory,
-    BenchmarkDataset,
-    BenchmarkExpectations,
-    BenchmarkThresholds,
-    ExpectedComplexity,
-    ExpectedGatewayDecision,
-    ExpectedSecurityOutcome,
-)
-from .dataset_loader import (
-    DEFAULT_DATASET_VERSION,
-    DatasetValidationError,
-    load_benchmark_dataset,
-)
-from .framework_payloads import (
-    build_deepeval_payload,
-    build_framework_payload_bundle,
-    build_ragas_payload,
-    build_trulens_record,
-)
-from .offline_evaluator import (
-    OfflineEvaluationReport,
-    OfflineFinding,
-    OfflineFindingSeverity,
-    OfflineMetricResult,
-    calculate_answer_relevance,
-    calculate_citation_coverage,
-    calculate_context_relevance,
-    calculate_groundedness,
-    calculate_sufficiency,
-    evaluate_offline,
-    normalize_text,
-    tokenize,
-)
-from .quality_gate import (
-    QualityGateCheck,
-    QualityGatePolicy,
-    QualityGateResult,
-    evaluate_benchmark_quality_gate,
-    load_quality_gate_policy,
-    quality_gate_to_dict,
-    write_quality_gate_report,
-)
-from .result_contracts import (
-    ActualGatewayDecision,
-    ActualSecurityOutcome,
-    AgenticEvaluationResult,
-    AgenticExecutionMode,
-    AgenticMetricSnapshot,
-    CitationRecord,
-    EvidenceRecord,
-    ExecutionStatus,
+import importlib
+import sys
+
+_CANONICAL_PACKAGE = (
+    "src.compartilhado.avaliacao.agentic_benchmark"
 )
 
-__all__ = [
-    "write_quality_gate_report",
-    "quality_gate_to_dict",
-    "load_quality_gate_policy",
-    "evaluate_benchmark_quality_gate",
-    "QualityGateResult",
-    "QualityGatePolicy",
-    "QualityGateCheck",
-    "write_benchmark_json",
-    "write_benchmark_csv",
-    "simulate_legacy_execution",
-    "simulate_agentic_execution",
-    "run_offline_benchmark",
-    "group_failures_by_code",
-    "benchmark_to_dict",
-    "OfflineBenchmarkResult",
-    "BenchmarkProfileSummary",
-    "BenchmarkProfile",
-    "BenchmarkComparison",
-    "BenchmarkCaseExecution",
-    "tokenize",
-    "normalize_text",
-    "evaluate_offline",
-    "calculate_sufficiency",
-    "calculate_groundedness",
-    "calculate_context_relevance",
-    "calculate_citation_coverage",
-    "calculate_answer_relevance",
-    "build_trulens_record",
-    "build_ragas_payload",
-    "build_framework_payload_bundle",
-    "build_deepeval_payload",
-    "OfflineMetricResult",
-    "OfflineFindingSeverity",
-    "OfflineFinding",
-    "OfflineEvaluationReport",
-    "adapt_gateway_output",
-    "ExecutionStatus",
-    "EvidenceRecord",
-    "CitationRecord",
-    "AgenticMetricSnapshot",
-    "AgenticExecutionMode",
-    "AgenticEvaluationResult",
-    "ActualSecurityOutcome",
-    "ActualGatewayDecision",
-    "AgenticBenchmarkCase",
-    "BenchmarkCaseCategory",
-    "BenchmarkDataset",
-    "BenchmarkExpectations",
-    "BenchmarkThresholds",
-    "DEFAULT_DATASET_VERSION",
-    "DatasetValidationError",
-    "ExpectedComplexity",
-    "ExpectedGatewayDecision",
-    "ExpectedSecurityOutcome",
-    "load_benchmark_dataset",
-]
+_LEGACY_PACKAGE = (
+    "src.evaluation.agentic_benchmark"
+)
+
+_SUBMODULES = (
+    "adapter",
+    "benchmark_runner",
+    "contracts",
+    "dataset_loader",
+    "framework_payloads",
+    "offline_evaluator",
+    "quality_gate",
+    "result_contracts",
+)
+
+_implementation = importlib.import_module(
+    _CANONICAL_PACKAGE
+)
+
+for _name in _SUBMODULES:
+
+    _module = importlib.import_module(
+        f"{_CANONICAL_PACKAGE}.{_name}"
+    )
+
+    sys.modules[
+        f"{_LEGACY_PACKAGE}.{_name}"
+    ] = _module
+
+sys.modules[__name__] = _implementation

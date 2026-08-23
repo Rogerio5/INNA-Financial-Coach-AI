@@ -18,7 +18,7 @@ A Semana 4 esta representada por Agentic RAG, roteamento, ferramentas formais, p
 ## Testes
 
 - [tests/unit/test_agentic_rag_phase2_router.py](../../../../tests/unit/test_agentic_rag_phase2_router.py)
-- [tests/unit/test_agentic_rag_phase5_research_agent.py](../../../../tests/unit/test_agentic_rag_phase5_research_agent.py)
+- [tests/unit/simulacao/test_agentic_rag_phase5_research_agent.py](../../../../tests/unit/simulacao/test_agentic_rag_phase5_research_agent.py)
 - [tests/evaluations/test_deepeval_executors.py](../../../../tests/evaluations/test_deepeval_executors.py)
 
 ## Relatorios, auditorias e evidencias

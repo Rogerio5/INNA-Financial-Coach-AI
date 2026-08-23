@@ -18,8 +18,8 @@ A INNA possui uma camada dedicada de Agentic RAG com planejamento, roteamento, p
 
 ## Testes
 
-- [tests/unit/test_agentic_rag_phase1.py](../../../../tests/unit/test_agentic_rag_phase1.py)
-- [tests/unit/test_agentic_rag_phase7_langgraph_gateway.py](../../../../tests/unit/test_agentic_rag_phase7_langgraph_gateway.py)
+- [tests/unit/simulacao/test_agentic_rag_phase1.py](../../../../tests/unit/simulacao/test_agentic_rag_phase1.py)
+- [tests/unit/simulacao/test_agentic_rag_phase7_langgraph_gateway.py](../../../../tests/unit/simulacao/test_agentic_rag_phase7_langgraph_gateway.py)
 
 ## Relatorios, auditorias e evidencias
 

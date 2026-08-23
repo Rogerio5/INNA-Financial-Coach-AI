@@ -13,7 +13,7 @@ from src.dashboard_pages.rag_observability_i18n import (
 from src.dashboard_pages.technical_labels_i18n import (
     technical_label,
 )
-from src.evaluation.rag_observability_data import (
+from src.compartilhado.avaliacao.rag_observability_data import (
     build_field_coverage,
     build_latest_questions,
     build_mode_distribution,

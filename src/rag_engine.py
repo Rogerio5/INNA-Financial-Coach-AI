@@ -447,7 +447,7 @@ def search_knowledge_base_pgvector(
             buscar_chunks_semanticos,
         )
     except ImportError:
-        from src.services.embeddings.gemini import (
+        from src.compartilhado.rag.embeddings.gemini import (
             gerar_embedding_consulta,
         )
         from src.services.rag.retrieval import (
@@ -3335,7 +3335,7 @@ def answer_with_rag(pergunta: str, idioma: str = "pt", top_k: int = 2) -> dict:
         )
 
         if total_tokens > 0:
-            from src.evaluation.gemini_cost_accounting import (
+            from src.compartilhado.avaliacao.gemini_cost_accounting import (
                 DEFAULT_GEMINI_BILLING_MODE,
                 resolve_gemini_billing_mode,
             )

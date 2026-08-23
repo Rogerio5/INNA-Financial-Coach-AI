@@ -32,7 +32,7 @@ from src.services.telegram_observability import (
     TelegramProductiveOperationsRecorder,
 )
 
-from src.services.telegram_update_jobs import (
+from src.integracoes.telegram.update_jobs import (
     TelegramUpdateJobConfigurationError,
     TelegramUpdateRunnerConfigurationError,
     TelegramUpdateRunnerResult,
@@ -532,7 +532,7 @@ def load_telegram_processor(
     from api.telegram_webhook import (
         process_telegram_update,
     )
-    from src.services.telegram_conversation_state import (
+    from src.integracoes.telegram.conversation_state import (
         create_postgres_telegram_webhook_conversation_bridge,
     )
 
