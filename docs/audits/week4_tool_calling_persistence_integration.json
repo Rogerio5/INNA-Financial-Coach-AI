@@ -42,10 +42,10 @@
     "tests/unit/simulacao/test_telegram_conversation_state_webhook_bridge.py",
     "tests/unit/test_telegram_health_readiness.py",
     "tests/unit/simulacao/test_telegram_productive_metrics_worker_composition.py",
-    "tests/unit/test_telegram_productive_readiness_factory.py",
+    "tests/unit/simulacao/test_telegram_productive_readiness_factory.py",
     "tests/unit/test_telegram_productive_receipt_queue_results.py",
     "tests/unit/simulacao/test_telegram_productive_worker_results.py",
-    "tests/unit/test_telegram_readiness_probes.py",
+    "tests/unit/simulacao/test_telegram_readiness_probes.py",
     "tests/unit/simulacao/test_telegram_readiness_runtime.py",
     "tests/unit/simulacao/test_telegram_structured_logging_worker_composition.py",
     "tests/unit/simulacao/test_telegram_update_job_atomic_ingress.py",
@@ -54,7 +54,7 @@
     "tests/unit/simulacao/test_telegram_update_job_atomic_worker_failure.py",
     "tests/unit/simulacao/test_telegram_update_job_atomic_worker_recovery.py",
     "tests/unit/simulacao/test_telegram_update_job_repository.py",
-    "tests/unit/test_telegram_update_job_runner.py",
+    "tests/unit/simulacao/test_telegram_update_job_runner.py",
     "tests/unit/simulacao/test_telegram_update_job_service.py",
     "tests/unit/simulacao/test_telegram_update_job_worker_decryption.py",
     "tests/unit/contratos/test_telegram_update_jobs_migration.py",
@@ -65,7 +65,7 @@
     "tests/unit/simulacao/test_telegram_update_worker_entrypoint.py",
     "tests/unit/simulacao/test_telegram_webhook_durable_receipts.py",
     "tests/unit/simulacao/test_telegram_worker_observability_composition.py",
-    "tests/unit/test_telegram_worker_readiness.py"
+    "tests/unit/simulacao/test_telegram_worker_readiness.py"
   ],
   "summary": {
     "controls_total": 19,
