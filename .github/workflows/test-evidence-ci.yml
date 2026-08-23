@@ -29,11 +29,30 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: inna_test
+          POSTGRES_USER: inna_test
+          POSTGRES_PASSWORD: inna_test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U inna_test -d inna_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
     env:
       PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
       RUN_HITL_E2E_TESTS: "0"
       RUN_LIVE_EVALUATION_TESTS: "0"
       RUN_LIVE_GEMINI_TESTS: "0"
+      DATABASE_URL: postgresql://inna_test:inna_test_password@localhost:5432/inna_test
+      INNA_POSTGRES_CONNECT_TIMEOUT_SECONDS: "10"
+      INNA_POSTGRES_NETWORK_FAMILY: "system"
 
     steps:
       - name: Checkout
@@ -57,6 +76,88 @@ jobs:
           fi
 
           python -m pip install pytest
+
+      - name: Validate temporary PostgreSQL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python - <<'PY'
+          import os
+          import time
+
+          import psycopg
+
+
+          database_url = os.environ["DATABASE_URL"]
+          last_error = None
+
+          for attempt in range(1, 11):
+              try:
+                  with psycopg.connect(
+                      database_url,
+                      connect_timeout=5,
+                  ) as connection:
+                      with connection.cursor() as cursor:
+                          cursor.execute("SELECT 1")
+                          result = cursor.fetchone()
+
+                  assert result == (1,)
+
+                  print(
+                      "TEMPORARY_POSTGRES_READY "
+                      f"attempt={attempt}"
+                  )
+                  break
+
+              except Exception as error:
+                  last_error = error
+
+                  print(
+                      "PostgreSQL ainda indisponivel: "
+                      f"attempt={attempt}"
+                  )
+
+                  time.sleep(2)
+
+          else:
+              raise SystemExit(
+                  "PostgreSQL temporario nao ficou disponivel: "
+                  f"{last_error}"
+              )
+          PY
+
+      - name: Initialize LangGraph checkpoint schema
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python - <<'PY'
+          from src.agents.persistence import (
+              abrir_checkpointer_postgres,
+          )
+
+
+          with abrir_checkpointer_postgres() as checkpointer:
+              checkpointer.setup()
+
+          print(
+              "LANGGRAPH_CHECKPOINT_SCHEMA_READY"
+          )
+          PY
+
+      - name: Provision isolated RAGAS evaluation environment
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m venv .venv-ragas
+
+          .venv-ragas/bin/python             -m pip install             --upgrade pip
+
+          .venv-ragas/bin/python             -m pip install             -r requirements-ragas.txt
+
+          .venv-ragas/bin/python             -c "import ragas; print('RAGAS_ENV_READY=True')"
 
       - name: Validate Python compilation
         shell: bash
