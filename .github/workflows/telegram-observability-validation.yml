@@ -18,6 +18,8 @@ on:
       - "grafana/**"
       - "src/services/telegram_observability/**"
       - "tests/unit/test_telegram_*"
+      - "tests/unit/simulacao/test_telegram_*"
+      - "tests/unit/contratos/test_telegram_*"
       - "requirements.txt"
       - ".github/workflows/telegram-observability-validation.yml"
 
@@ -30,6 +32,8 @@ on:
       - "grafana/**"
       - "src/services/telegram_observability/**"
       - "tests/unit/test_telegram_*"
+      - "tests/unit/simulacao/test_telegram_*"
+      - "tests/unit/contratos/test_telegram_*"
       - "requirements.txt"
       - ".github/workflows/telegram-observability-validation.yml"
 
