@@ -8,11 +8,11 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-
-import src.evaluation.trulens_bridge as trulens_bridge
 from src.evaluation.agentic_benchmark.framework_payloads import (
     build_trulens_record,
 )
+
+import src.evaluation.trulens_bridge as trulens_bridge
 from src.evaluation.trulens_bridge import (
     TruLensBridgeError,
     run_trulens_record,
