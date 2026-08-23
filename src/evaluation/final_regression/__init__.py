@@ -5,7 +5,6 @@ import sys
 from src.compartilhado.avaliacao import (
     final_regression as _implementation,
 )
-
 from src.compartilhado.avaliacao.final_regression import (
     runner as _runner,
 )

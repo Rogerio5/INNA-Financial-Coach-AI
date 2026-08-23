@@ -5,7 +5,6 @@ import sys
 from src.compartilhado.avaliacao import (
     mcp_simulated as _implementation,
 )
-
 from src.compartilhado.avaliacao.mcp_simulated import (
     harness as _harness,
 )
