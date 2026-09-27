@@ -1,5 +1,15 @@
 # INNA Financial Coach AI
 
+> ## Versão pública focada em Engenharia de IA
+>
+> Uma versão mais recente, organizada e voltada para portfólio técnico está disponível em:
+>
+> **[INNA-AI-Engineering-Portfolio](https://github.com/Rogerio5/INNA-AI-Engineering-Portfolio)**
+>
+> Foco em LangGraph, Agentic RAG, Multiagentes, Tool Calling, HITL, GraphRAG, LlamaIndex, avaliação, observabilidade e CI/CD.
+
+---
+
 Plataforma de Engenharia de IA aplicada à educação financeira, desenvolvida com IA Generativa, arquitetura multiagente, RAG híbrido, memória contextual, Human-in-the-Loop (HITL), FastAPI, Streamlit, PostgreSQL/Neon e observabilidade.
 
 A INNA combina cálculos determinísticos com modelos Google Gemini para gerar diagnósticos financeiros educativos, planos de ação, histórico, relatórios e respostas contextualizadas.
