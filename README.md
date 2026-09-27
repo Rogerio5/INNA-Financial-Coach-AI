@@ -2,7 +2,7 @@
 
 > ## Versão pública focada em Engenharia de IA
 >
-> Uma versão mais recente, organizada e voltada para portfólio técnico está disponível em:
+> Uma versão pública dedicada ao portfólio de Engenharia de IA está disponível em:
 >
 > **[INNA-AI-Engineering-Portfolio](https://github.com/Rogerio5/INNA-AI-Engineering-Portfolio)**
 >
