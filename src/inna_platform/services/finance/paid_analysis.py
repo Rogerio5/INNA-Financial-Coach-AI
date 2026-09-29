@@ -2,6 +2,7 @@
 import asyncio
 import hashlib
 import json
+import logging
 import os
 from pathlib import Path
 from uuid import uuid4
@@ -11,6 +12,7 @@ import httpx
 from src.inna_platform.services.finance import credit_wallet as wallet
 
 CONFIG = Path(__file__).resolve().parents[4] / 'config/inna-analysis.json'
+logger = logging.getLogger(__name__)
 
 
 def configuration():
@@ -129,7 +131,11 @@ async def execute(user_id, quote_id, payload, worker=None):
         return row
     try:
         result = await (worker or backend)(payload)
-    except (httpx.ConnectError, httpx.ConnectTimeout, httpx.HTTPStatusError, ValueError):
+    except (httpx.ConnectError, httpx.ConnectTimeout, httpx.HTTPStatusError, ValueError) as exc:
+        # Do not log URLs, payloads or exception messages: they may contain secrets.
+        logger.warning('INNA backend failed; refunding: error=%s status=%s',
+                       type(exc).__name__,
+                       exc.response.status_code if isinstance(exc, httpx.HTTPStatusError) else None)
         return finalize(user_id, quote_id)
     except (Exception, asyncio.CancelledError):
         # A timeout or interrupted connection cannot prove whether work finished.
