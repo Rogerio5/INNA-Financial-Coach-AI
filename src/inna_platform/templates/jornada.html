@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Início da Jornada | Sabino.AI
+    </title>
+
+    <meta
+        name="description"
+        content="Acompanhe a ativação e implantação da sua solução Sabino.AI."
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/css/platform.css') }}"
+    >
+
+    <script
+        src="{{ url_for('static', path='/js/journey.js') }}?v=2"
+        defer
+    ></script>
+
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand.css?v=1"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="/static/images/sabino-s-logo.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand-v2.css?v=2"
+    >
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+     ====================================================== -->
+
+<header class="topbar">
+
+    <a
+        class="brand brand-header"
+        href="/"
+    >
+
+        <img
+            class="brand-logo"
+            src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+            alt="Sabino.AI"
+        >
+
+        <span>
+            Sabino.AI
+        </span>
+
+    </a>
+
+
+    <nav class="nav">
+
+        <a href="/">
+            Início
+        </a>
+
+        <a href="/#solucoes">
+            Soluções
+        </a>
+
+        <a href="/modulos">
+            Módulos
+        </a>
+
+        <a href="/#inna">
+            INNA Assistant
+        </a>
+
+        <a href="/#recursos">
+            Recursos
+        </a>
+
+        <a href="/#empresa">
+            Empresa
+        </a>
+
+        <a href="/#contato">
+            Contato
+        </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+        <div class="language-selector">
+
+            <span class="language-globe">
+                ◎
+            </span>
+
+            <select aria-label="Selecionar idioma">
+
+                <option>BR Português Brasil</option>
+                <option>US English US</option>
+                <option>GB English UK</option>
+                <option>ES Español</option>
+                <option>FR Français</option>
+                <option>DE Deutsch</option>
+                <option>IT Italiano</option>
+                <option>RO Română</option>
+                <option>UA Українська</option>
+                <option>RU Русский</option>
+                <option>SA العربية</option>
+                <option>CH Schweiz</option>
+
+            </select>
+
+        </div>
+
+
+        <button class="btn-secondary">
+            Entrar
+        </button>
+
+
+        <a
+            class="btn-primary"
+            href="/#contato"
+        >
+            Falar com um especialista
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<main class="journey-page">
+
+
+<!-- ======================================================
+     PROGRESSO GLOBAL
+     ====================================================== -->
+
+<section class="journey-global-progress container">
+
+    <div class="journey-global-step completed">
+        <span>✓</span>
+        <strong>Conheça a Sabino.AI</strong>
+    </div>
+
+    <div class="journey-global-line"></div>
+
+    <div class="journey-global-step completed">
+        <span>✓</span>
+        <strong>Escolha seus módulos</strong>
+    </div>
+
+    <div class="journey-global-line"></div>
+
+    <div class="journey-global-step completed">
+        <span>✓</span>
+        <strong>Configure sua solução</strong>
+    </div>
+
+    <div class="journey-global-line"></div>
+
+    <div class="journey-global-step completed">
+        <span>✓</span>
+        <strong>Proposta confirmada</strong>
+    </div>
+
+    <div class="journey-global-line"></div>
+
+    <div class="journey-global-step active">
+        <span>5</span>
+        <strong>Início da jornada</strong>
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     HERO
+     ====================================================== -->
+
+<section class="journey-hero container">
+
+    <div class="journey-hero-copy">
+
+        <span class="journey-success-icon">
+            ✓
+        </span>
+
+        <span class="eyebrow">
+            JORNADA INICIADA
+        </span>
+
+        <h1>
+            Tudo pronto para
+            <span>começar.</span>
+        </h1>
+
+        <p>
+            Sua proposta foi confirmada. A partir de agora,
+            iniciaremos a preparação, validação e ativação
+            da sua solução na plataforma Sabino.AI.
+        </p>
+
+    </div>
+
+
+    <aside class="journey-solution-id">
+
+        <span class="eyebrow">
+            IDENTIFICAÇÃO DA SOLUÇÃO
+        </span>
+
+        <strong id="journey-solution-id">
+            SOL-000000
+        </strong>
+
+        <div>
+
+            <span>
+                Data de criação
+            </span>
+
+            <b id="journey-created-at">
+                -
+            </b>
+
+        </div>
+
+    </aside>
+
+</section>
+
+
+
+<!-- ======================================================
+     GRID PRINCIPAL
+     ====================================================== -->
+
+<section class="journey-layout container">
+
+
+<!-- COLUNA PRINCIPAL -->
+
+<div class="journey-main">
+
+
+<!-- RESUMO -->
+
+<section class="journey-card">
+
+    <div class="journey-section-heading">
+
+        <span class="eyebrow">
+            SUA SOLUÇÃO
+        </span>
+
+        <h2>
+            Resumo da configuração
+        </h2>
+
+    </div>
+
+
+    <div class="journey-summary-grid">
+
+        <article>
+
+            <span class="journey-summary-icon">
+                ◇
+            </span>
+
+            <div>
+                <small>Plano recomendado</small>
+                <strong id="journey-plan">-</strong>
+            </div>
+
+        </article>
+
+
+        <article>
+
+            <span class="journey-summary-icon">
+                ▦
+            </span>
+
+            <div>
+                <small>Módulos</small>
+                <strong id="journey-modules">-</strong>
+            </div>
+
+        </article>
+
+
+        <article>
+
+            <span class="journey-summary-icon">
+                ◎
+            </span>
+
+            <div>
+                <small>Usuários</small>
+                <strong id="journey-users">-</strong>
+            </div>
+
+        </article>
+
+
+        <article>
+
+            <span class="journey-summary-icon">
+                RAG
+            </span>
+
+            <div>
+                <small>Base de conhecimento</small>
+                <strong id="journey-rag">-</strong>
+            </div>
+
+        </article>
+
+
+        <article>
+
+            <span class="journey-summary-icon">
+                API
+            </span>
+
+            <div>
+                <small>Integrações</small>
+                <strong id="journey-integrations">-</strong>
+            </div>
+
+        </article>
+
+
+        <article>
+
+            <span class="journey-summary-icon">
+                ◉
+            </span>
+
+            <div>
+                <small>Canais ativos</small>
+                <strong id="journey-channels">-</strong>
+            </div>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     PROXIMOS PASSOS
+     ====================================================== -->
+
+<section class="journey-card">
+
+    <div class="journey-section-heading">
+
+        <span class="eyebrow">
+            IMPLANTAÇÃO
+        </span>
+
+        <h2>
+            Próximos passos
+        </h2>
+
+        <p>
+            Acompanhe as etapas necessárias até a ativação completa da solução.
+        </p>
+
+    </div>
+
+
+    <div class="journey-steps">
+
+
+        <article class="journey-step done">
+
+            <span class="journey-step-number">
+                1
+            </span>
+
+            <strong>
+                Proposta confirmada
+            </strong>
+
+            <p>
+                Configuração e estimativa registradas.
+            </p>
+
+            <small>
+                ✓ Concluído
+            </small>
+
+        </article>
+
+
+        <article class="journey-step current">
+
+            <span class="journey-step-number">
+                2
+            </span>
+
+            <strong>
+                Validação da solução
+            </strong>
+
+            <p>
+                Revisão técnica e comercial da configuração.
+            </p>
+
+            <small>
+                Etapa atual
+            </small>
+
+        </article>
+
+
+        <article class="journey-step">
+
+            <span class="journey-step-number">
+                3
+            </span>
+
+            <strong>
+                Preparação do ambiente
+            </strong>
+
+            <p>
+                Provisionamento, segurança e configuração inicial.
+            </p>
+
+            <small>
+                Próxima etapa
+            </small>
+
+        </article>
+
+
+        <article class="journey-step">
+
+            <span class="journey-step-number">
+                4
+            </span>
+
+            <strong>
+                Onboarding e dados
+            </strong>
+
+            <p>
+                Integrações, bases de conhecimento e dados necessários.
+            </p>
+
+            <small>
+                Planejado
+            </small>
+
+        </article>
+
+
+        <article class="journey-step">
+
+            <span class="journey-step-number">
+                5
+            </span>
+
+            <strong>
+                Go Live
+            </strong>
+
+            <p>
+                Solução liberada para utilização em produção.
+            </p>
+
+            <small>
+                Ativação final
+            </small>
+
+        </article>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- CONTROLE DA IMPLANTACAO -->
+
+<section class="journey-stage-control">
+
+    <div>
+
+        <span class="eyebrow">
+            ETAPA ATUAL
+        </span>
+
+        <h2 id="journey-stage-title">
+            Validação da solução
+        </h2>
+
+        <p id="journey-stage-description">
+            Revise a configuração antes da preparação do ambiente.
+        </p>
+
+    </div>
+
+    <button
+        class="btn-primary journey-stage-action"
+        id="journey-stage-action"
+        type="button"
+    >
+        Concluir validação →
+    </button>
+
+</section>
+
+
+<!-- ======================================================
+     INNA
+     ====================================================== -->
+
+<section class="journey-inna-card">
+
+    <div>
+
+        <span class="eyebrow">
+            INNA ASSISTANT
+        </span>
+
+        <h2>
+            Precisa de ajuda durante a implantação?
+        </h2>
+
+        <p>
+            A INNA pode orientar sobre módulos, integrações,
+            configuração e próximos passos da sua jornada.
+        </p>
+
+    </div>
+
+
+    <a
+        class="btn-secondary journey-inna-button"
+        href="/#inna"
+    >
+        Abrir INNA Assistant →
+    </a>
+
+</section>
+
+
+</div>
+
+
+
+<!-- ======================================================
+     COLUNA LATERAL
+     ====================================================== -->
+
+<aside class="journey-sidebar">
+
+
+<!-- DOCUMENTOS -->
+
+<section class="journey-sidebar-card">
+
+    <span class="eyebrow">
+        DOCUMENTOS E INFORMAÇÕES
+    </span>
+
+    <h3>
+        Sua jornada em um só lugar
+    </h3>
+
+
+    <div class="journey-documents">
+
+        <div>
+            <span>▤</span>
+
+            <div>
+                <strong>
+                    Resumo da configuração
+                </strong>
+
+                <small>
+                    Disponível na plataforma
+                </small>
+            </div>
+        </div>
+
+
+        <div>
+            <span>◇</span>
+
+            <div>
+                <strong>
+                    Proposta comercial
+                </strong>
+
+                <small>
+                    Registrada digitalmente
+                </small>
+            </div>
+        </div>
+
+
+        <div>
+            <span>↗</span>
+
+            <div>
+                <strong>
+                    Cronograma de implantação
+                </strong>
+
+                <small>
+                    Será definido após validação
+                </small>
+            </div>
+        </div>
+
+
+        <div>
+            <span>✓</span>
+
+            <div>
+                <strong>
+                    Termos e condições
+                </strong>
+
+                <small>
+                    Etapa de formalização
+                </small>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- SUPORTE -->
+
+<section class="journey-sidebar-card">
+
+    <span class="eyebrow">
+        SUPORTE
+    </span>
+
+    <h3>
+        Canais disponíveis
+    </h3>
+
+
+    <div class="journey-support-list">
+
+        <span>
+            ◎ Chat online
+        </span>
+
+        <span>
+            ➤ Telegram
+        </span>
+
+        <span>
+            ✉ E-mail
+        </span>
+
+        <span>
+            ◌ INNA Assistant
+        </span>
+
+    </div>
+
+</section>
+
+
+
+<!-- PROGRESSO -->
+
+<section class="journey-sidebar-card journey-progress-card">
+
+    <span class="eyebrow">
+        ACOMPANHAMENTO
+    </span>
+
+    <h3>
+        Progresso da implantação
+    </h3>
+
+
+    <div class="journey-progress-body">
+
+        <div class="journey-progress-ring">
+
+            <strong>
+                20%
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Etapa atual
+            </span>
+
+            <strong>
+                Validação da solução
+            </strong>
+
+            <small>
+                Próxima: preparação do ambiente
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="btn-secondary journey-dashboard-button"
+        id="journey-dashboard-button"
+        type="button"
+    >
+        Painel de acompanhamento →
+    </button>
+
+</section>
+
+
+</aside>
+
+
+</section>
+
+
+
+<!-- ======================================================
+     FOOTER
+     ====================================================== -->
+
+<footer class="footer">
+
+    <div class="container footer-grid">
+
+        <div>
+
+            <a
+                class="brand"
+                href="/"
+            >
+
+                <img
+                    class="brand-logo"
+                    src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+                    alt="Sabino.AI"
+                >
+
+                <span>
+                    Sabino.AI
+                </span>
+
+            </a>
+
+            <p>
+                Tecnologia e inteligência para conectar
+                pessoas, negócios e soluções.
+            </p>
+
+        </div>
+
+
+        <div>
+            <strong>Plataforma</strong>
+            <a href="/">Início</a>
+            <a href="/modulos">Módulos</a>
+            <a href="/#inna">INNA Assistant</a>
+        </div>
+
+
+        <div>
+            <strong>Empresa</strong>
+            <a href="#">Sobre</a>
+            <a href="#">Privacidade</a>
+            <a href="#">Termos</a>
+        </div>
+
+
+        <div>
+            <strong>Recursos</strong>
+            <a href="#">Documentação</a>
+            <a href="#">API</a>
+            <a href="#">Status</a>
+        </div>
+
+
+        <div>
+            <strong>Segurança</strong>
+            <span class="security-badge">
+                🔒 Plataforma segura
+            </span>
+            <span class="security-badge">
+                🛡 LGPD
+            </span>
+        </div>
+
+    </div>
+
+</footer>
+
+
+</main>
+
+
+    <script
+        src="/static/js/sabino-global-brand.js?v=1"
+        defer
+    ></script>
+
+    <script
+        src="/static/js/sabino-global-brand-v2.js?v=2"
+        defer
+    ></script>
+</body>
+</html>
+
+
+

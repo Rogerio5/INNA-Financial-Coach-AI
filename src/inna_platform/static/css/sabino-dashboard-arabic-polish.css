@@ -1,0 +1,83 @@
+/* SABINO_DASHBOARD_ARABIC_POLISH_V1 */
+
+/*
+ * No árabe:
+ * - estrutura da aplicação continua LTR
+ * - sidebar permanece à esquerda
+ * - cards permanecem na ordem original
+ * - header permanece idioma -> usuário
+ *
+ * Apenas o conteúdo textual árabe usa RTL.
+ */
+
+html.sabino-dashboard-arabic,
+html.sabino-dashboard-arabic body {
+
+    direction: ltr !important;
+}
+
+
+/*
+ * Não inverter grids, cards, navegação ou cabeçalho.
+ */
+
+html.sabino-dashboard-arabic
+#sabinoDashboardHeaderFinal {
+
+    direction: ltr !important;
+}
+
+
+html.sabino-dashboard-arabic
+#sabinoDashboardHeaderFinal
+#sabinoLanguageSwitcher {
+
+    order: 1 !important;
+}
+
+
+html.sabino-dashboard-arabic
+#sabinoDashboardHeaderFinal
+[data-sabino-dashboard-user-final="true"] {
+
+    order: 2 !important;
+}
+
+
+/*
+ * Textos que o JS identificar como árabes.
+ */
+
+html.sabino-dashboard-arabic
+[data-sabino-arabic-text="true"] {
+
+    direction: rtl !important;
+
+    unicode-bidi: plaintext !important;
+
+    text-align: right !important;
+}
+
+
+/*
+ * O nome Sabino.AI continua normal.
+ */
+
+html.sabino-dashboard-arabic
+[data-sabino-arabic-brand="true"] {
+
+    direction: ltr !important;
+
+    unicode-bidi: isolate !important;
+}
+
+
+/*
+ * Impedir overflow horizontal provocado por RTL.
+ */
+
+html.sabino-dashboard-arabic,
+html.sabino-dashboard-arabic body {
+
+    overflow-x: hidden !important;
+}

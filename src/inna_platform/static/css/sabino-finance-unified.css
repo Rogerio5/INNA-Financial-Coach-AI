@@ -1,0 +1,635 @@
+/* ============================================================
+   SABINO FINANCE UNIFIED V1
+   Estrutura única para toda a plataforma Financeiro
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   Estrutura física sempre igual ao Português
+   ------------------------------------------------------------ */
+
+html,
+body {
+    direction: ltr;
+}
+
+
+/* ------------------------------------------------------------
+   HEADER GLOBAL
+   ------------------------------------------------------------ */
+
+#sabinoFinanceUnifiedHeader {
+
+    position: fixed !important;
+
+    top: 18px !important;
+    right: 28px !important;
+
+    z-index: 2147483000 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 18px !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: transparent !important;
+
+    direction: ltr !important;
+}
+
+
+/* Idioma sempre à esquerda */
+
+#sabinoFinanceUnifiedHeader
+#sabinoLanguageSwitcher {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 1 !important;
+
+    flex: 0 0 auto !important;
+}
+
+
+/* Usuário sempre à direita */
+
+#sabinoFinanceUnifiedHeader
+[data-sabino-finance-unified-user="true"] {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 2 !important;
+
+    min-width: 155px !important;
+    max-width: 205px !important;
+
+    overflow: hidden !important;
+
+    flex: 0 0 auto !important;
+}
+
+
+/* Nome */
+
+#sabinoFinanceUnifiedHeader
+[data-sabino-finance-user-name="true"] {
+
+    max-width: 130px !important;
+
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+
+/* Segunda linha */
+
+#sabinoFinanceUnifiedHeader
+[data-sabino-finance-user-subtitle="true"] {
+
+    max-width: 145px !important;
+
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+
+/* ------------------------------------------------------------
+   ÁRABE
+   Estrutura continua LTR.
+   Somente o conteúdo textual é RTL.
+   ------------------------------------------------------------ */
+
+html.sabino-finance-arabic,
+html.sabino-finance-arabic body {
+
+    direction: ltr !important;
+}
+
+
+html.sabino-finance-arabic
+[data-sabino-finance-arabic-text="true"] {
+
+    direction: rtl !important;
+
+    unicode-bidi: plaintext !important;
+
+    text-align: right !important;
+}
+
+
+/* Marcas e termos técnicos não são espelhados */
+
+html.sabino-finance-arabic
+[data-sabino-finance-ltr-brand="true"] {
+
+    direction: ltr !important;
+
+    unicode-bidi: isolate !important;
+}
+
+
+/* Evita scroll lateral provocado pelo RTL */
+
+html.sabino-finance-arabic,
+html.sabino-finance-arabic body {
+
+    overflow-x: hidden !important;
+}
+
+
+/* ------------------------------------------------------------
+   RESPONSIVO
+   ------------------------------------------------------------ */
+
+@media (max-width: 1000px) {
+
+    #sabinoFinanceUnifiedHeader {
+
+        right: 12px !important;
+
+        gap: 10px !important;
+    }
+
+
+    #sabinoFinanceUnifiedHeader
+    [data-sabino-finance-unified-user="true"] {
+
+        min-width: 140px !important;
+        max-width: 175px !important;
+    }
+
+}
+
+/* ============================================================
+   SABINO_FINANCE_LANGUAGE_PORTAL_V2
+   ============================================================ */
+
+html > #sabinoFinanceLanguagePortal {
+
+    position: fixed !important;
+
+    /*
+     * Preso ao viewport.
+     */
+
+    top: 18px !important;
+
+    /*
+     * Direito, mas mais próximo do centro.
+     */
+
+    right: 250px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+
+    z-index: 2147483646 !important;
+
+    pointer-events: none !important;
+
+    isolation: isolate !important;
+}
+
+
+html > #sabinoFinanceLanguagePortal
+> #sabinoLanguageSwitcher {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+
+    pointer-events: auto !important;
+}
+
+
+/* Tablet */
+
+@media (max-width: 1100px) {
+
+    html > #sabinoFinanceLanguagePortal {
+
+        right: 120px !important;
+    }
+
+}
+
+
+/* Celular */
+
+@media (max-width: 700px) {
+
+    html > #sabinoFinanceLanguagePortal {
+
+        top: 12px !important;
+        right: 16px !important;
+    }
+
+}
+
+
+/* ============================================================
+   SABINO_FINANCE_LANGUAGE_POSITION_FINAL_V3
+
+   DEMO:
+       canto superior direito
+
+   REAL:
+       idioma à esquerda do usuário
+   ============================================================ */
+
+
+/* DEMO / página sem usuário */
+
+html > #sabinoFinanceLanguagePortal {
+
+    position: fixed !important;
+
+    top: 10px !important;
+    right: 32px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+
+    z-index: 2147483646 !important;
+}
+
+
+/* REAL autenticado:
+   deixa espaço para o usuário à direita */
+
+html:has(
+    #sabinoFinanceUnifiedHeader
+    [data-sabino-finance-unified-user="true"]
+)
+>
+#sabinoFinanceLanguagePortal {
+
+    top: 10px !important;
+    right: 235px !important;
+}
+
+
+/* Garantir que o botão não herde posição da página */
+
+html
+>
+#sabinoFinanceLanguagePortal
+>
+#sabinoLanguageSwitcher {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+}
+
+
+/* telas menores */
+
+@media (max-width: 900px) {
+
+    html > #sabinoFinanceLanguagePortal {
+
+        top: 8px !important;
+        right: 16px !important;
+    }
+}
+
+
+/* SABINO_FINANCE_LANGUAGE_LOCK_V6 */
+html > #sabinoFinanceLanguagePortal {
+  position: fixed !important;
+  top: 8px !important;
+  right: 24px !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  z-index: 2147483647 !important;
+  pointer-events: none !important;
+}
+
+html > #sabinoFinanceLanguagePortal > #sabinoLanguageSwitcher {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  pointer-events: auto !important;
+}
+
+
+/* ============================================================
+   SABINO_FINANCE_LANGUAGE_POSITION_V7
+   Ajuste visual final
+   ============================================================ */
+
+html > #sabinoFinanceLanguagePortal {
+
+    position: fixed !important;
+
+    top: 8px !important;
+
+    /* Mais para a esquerda */
+    right: 70px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+
+    z-index: 2147483647 !important;
+}
+
+
+/* O botão continua dentro do portal fixo */
+
+html
+>
+#sabinoFinanceLanguagePortal
+>
+#sabinoLanguageSwitcher {
+
+    position: static !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+}
+
+
+/* ============================================================
+   SABINO_FINANCE_LANGUAGE_POSITION_V8
+   Idioma fixo + espaço para usuário
+   ============================================================ */
+
+html > #sabinoFinanceLanguagePortal {
+
+    position: fixed !important;
+
+    top: 12px !important;
+
+    /* abre espaço para usuário no lado direito */
+    right: 260px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+
+    z-index: 2147483647 !important;
+}
+
+html
+>
+#sabinoFinanceLanguagePortal
+>
+#sabinoLanguageSwitcher {
+
+    position: static !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+    transform: none !important;
+}
+
+
+/* ============================================================
+   SABINO_FINANCE_LANGUAGE_TOP_V9
+   Posição definitiva no topo
+   ============================================================ */
+
+html > #sabinoFinanceLanguagePortal {
+
+    position: fixed !important;
+
+    top: 4px !important;
+    right: 260px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+    transform: none !important;
+
+    z-index: 2147483647 !important;
+}
+
+html > #sabinoFinanceLanguagePortal > #sabinoLanguageSwitcher {
+
+    position: static !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+    transform: none !important;
+}
+
+
+/* ============================================================
+   SABINO_FINANCE_LANGUAGE_FINAL_V10
+   Tamanho e posição definitiva
+   ============================================================ */
+
+html > #sabinoFinanceLanguagePortal {
+
+    position: fixed !important;
+
+    top: 10px !important;
+    right: 300px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    width: 220px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+    translate: none !important;
+
+    z-index: 2147483647 !important;
+
+    pointer-events: none !important;
+}
+
+
+html
+>
+#sabinoFinanceLanguagePortal
+>
+#sabinoLanguageSwitcher {
+
+    position: static !important;
+
+    width: 220px !important;
+    min-width: 220px !important;
+
+    margin: 0 !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+    translate: none !important;
+
+    pointer-events: auto !important;
+}
+
+
+/* botão interno */
+
+html
+>
+#sabinoFinanceLanguagePortal
+>
+#sabinoLanguageSwitcher
+button {
+
+    min-height: 48px !important;
+
+    box-sizing: border-box !important;
+}
+
+/* ============================================================
+   SABINO_FINANCE_LANGUAGE_PAGE_TOP_V12
+
+   IMPORTANTE:
+   - fica no topo do DOCUMENTO
+   - NÃO acompanha o scroll
+   - ao rolar para baixo, sai da tela normalmente
+   ============================================================ */
+
+html > #sabinoFinanceLanguagePortal {
+
+    position: absolute !important;
+
+    top: 10px !important;
+    right: 300px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    width: 220px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+    translate: none !important;
+
+    z-index: 2147483647 !important;
+
+    pointer-events: none !important;
+}
+
+
+html
+>
+#sabinoFinanceLanguagePortal
+>
+#sabinoLanguageSwitcher {
+
+    position: static !important;
+
+    width: 220px !important;
+    min-width: 220px !important;
+
+    margin: 0 !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    pointer-events: auto !important;
+}
+
+
+html
+>
+#sabinoFinanceLanguagePortal
+>
+#sabinoLanguageSwitcher
+button {
+
+    min-height: 48px !important;
+
+    box-sizing: border-box !important;
+}
+

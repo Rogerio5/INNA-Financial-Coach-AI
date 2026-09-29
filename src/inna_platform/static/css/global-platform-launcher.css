@@ -1,0 +1,698 @@
+
+/* =========================================================
+   SABINO.AI - GLOBAL PLATFORM LAUNCHER V1
+   ========================================================= */
+
+
+.sabino-platform-launcher-host {
+    position: relative;
+
+    z-index: 900;
+}
+
+
+.sabino-platform-launcher-button {
+    min-height: 38px;
+
+    padding:
+        0 13px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #a2adb3;
+
+    background:
+        #07121a;
+
+    border:
+        1px solid rgba(255,255,255,.085);
+
+    border-radius: 6px;
+
+    font-size: 11px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease;
+}
+
+
+.sabino-platform-launcher-button:hover,
+.sabino-platform-launcher-button[aria-expanded="true"] {
+    color: #eef2f3;
+
+    background:
+        #0a1720;
+
+    border-color:
+        rgba(230,184,74,.28);
+}
+
+
+.sabino-platform-launcher-button .launcher-grid-icon {
+    width: 18px;
+    height: 18px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 2px;
+}
+
+
+.sabino-platform-launcher-button
+.launcher-grid-icon span {
+    background:
+        #e6b84a;
+
+    border-radius: 2px;
+}
+
+
+.sabino-platform-launcher-current {
+    color: #e6b84a;
+
+    font-size: 9px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   POPOVER
+   ========================================================= */
+
+.sabino-platform-launcher-panel {
+    width:
+        min(
+            470px,
+            calc(100vw - 30px)
+        );
+
+    max-height:
+        min(
+            700px,
+            calc(100vh - 100px)
+        );
+
+    position: absolute;
+
+    top:
+        calc(100% + 10px);
+
+    right: 0;
+
+    overflow-y: auto;
+
+    color: #edf1f3;
+
+    background:
+        linear-gradient(
+            145deg,
+            #08131c,
+            #03090e
+        );
+
+    border:
+        1px solid rgba(230,184,74,.18);
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 30px 90px rgba(0,0,0,.55);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+        translateY(-5px);
+
+    pointer-events: none;
+
+    transition:
+        opacity .16s ease,
+        transform .16s ease,
+        visibility .16s ease;
+}
+
+
+.sabino-platform-launcher-panel.open {
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+        translateY(0);
+
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   HEADER DO LAUNCHER
+   ========================================================= */
+
+.sabino-platform-launcher-header {
+    padding:
+        18px;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.06);
+}
+
+
+.sabino-platform-launcher-header small {
+    display: block;
+
+    color: #e6b84a;
+
+    font-size: 9px;
+
+    font-weight: 850;
+
+    letter-spacing: .08em;
+}
+
+
+.sabino-platform-launcher-header h3 {
+    margin:
+        5px 0 0;
+
+    font-size: 18px;
+}
+
+
+.sabino-platform-launcher-header p {
+    margin:
+        5px 0 0;
+
+    color: #69767e;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+.sabino-platform-launcher-close {
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+
+    place-items: center;
+
+    flex-shrink: 0;
+
+    color: #87949b;
+
+    background:
+        rgba(255,255,255,.02);
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+    border-radius: 5px;
+
+    font-size: 18px;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.sabino-platform-search {
+    padding:
+        13px 18px 4px;
+}
+
+
+.sabino-platform-search input {
+    width: 100%;
+
+    min-height: 40px;
+
+    padding:
+        0 12px;
+
+    color: #d7dee1;
+
+    background:
+        #050e15;
+
+    border:
+        1px solid rgba(255,255,255,.075);
+
+    border-radius: 6px;
+
+    outline: none;
+
+    font-size: 11px;
+}
+
+
+.sabino-platform-search input:focus {
+    border-color:
+        rgba(230,184,74,.3);
+}
+
+
+.sabino-platform-search input::placeholder {
+    color: #526069;
+}
+
+
+/* =========================================================
+   SECOES
+   ========================================================= */
+
+.sabino-platform-launcher-section {
+    padding:
+        15px 18px 3px;
+}
+
+
+.sabino-platform-launcher-section > header {
+    margin-bottom: 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+.sabino-platform-launcher-section > header strong {
+    color: #89969d;
+
+    font-size: 9px;
+
+    letter-spacing: .07em;
+
+    text-transform: uppercase;
+}
+
+
+.sabino-platform-launcher-section > header span {
+    color: #59666f;
+
+    font-size: 8px;
+}
+
+
+/* =========================================================
+   PLATFORM ITEM
+   ========================================================= */
+
+.sabino-platform-list {
+    display: grid;
+
+    gap: 6px;
+}
+
+
+.sabino-platform-item {
+    min-height: 69px;
+
+    padding:
+        10px;
+
+    display: grid;
+
+    grid-template-columns:
+        40px
+        minmax(0,1fr)
+        auto;
+
+    gap: 10px;
+
+    align-items: center;
+
+    position: relative;
+
+    background:
+        rgba(255,255,255,.012);
+
+    border:
+        1px solid rgba(255,255,255,.055);
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    transition:
+        transform .14s ease,
+        background .14s ease,
+        border-color .14s ease;
+}
+
+
+.sabino-platform-item:hover {
+    transform:
+        translateY(-1px);
+
+    background:
+        rgba(255,255,255,.022);
+
+    border-color:
+        rgba(230,184,74,.16);
+}
+
+
+.sabino-platform-item.current {
+    background:
+        radial-gradient(
+            circle at 0% 50%,
+            rgba(230,184,74,.06),
+            transparent 40%
+        ),
+        rgba(255,255,255,.012);
+
+    border-color:
+        rgba(230,184,74,.2);
+}
+
+
+.sabino-platform-item.disabled {
+    opacity: .62;
+
+    cursor: default;
+}
+
+
+.sabino-platform-item.disabled:hover {
+    transform: none;
+
+    border-color:
+        rgba(255,255,255,.055);
+}
+
+
+.sabino-platform-icon {
+    width: 38px;
+    height: 38px;
+
+    display: grid;
+
+    place-items: center;
+
+    color: #e6b84a;
+
+    background:
+        rgba(230,184,74,.055);
+
+    border:
+        1px solid rgba(230,184,74,.14);
+
+    border-radius: 6px;
+
+    font-size: 9px;
+
+    font-weight: 900;
+}
+
+
+.sabino-platform-item strong,
+.sabino-platform-item small {
+    display: block;
+}
+
+
+.sabino-platform-item strong {
+    color: #c8d0d4;
+
+    font-size: 11px;
+}
+
+
+.sabino-platform-item small {
+    margin-top: 4px;
+
+    color: #617079;
+
+    font-size: 9px;
+}
+
+
+.sabino-platform-item-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+.sabino-platform-state {
+    padding:
+        4px 6px;
+
+    border-radius: 999px;
+
+    font-size: 8px;
+
+    white-space: nowrap;
+}
+
+
+.sabino-platform-state.active {
+    color: #53cf76;
+
+    background:
+        rgba(83,207,118,.06);
+}
+
+
+.sabino-platform-state.preparation {
+    color: #89969d;
+
+    background:
+        rgba(255,255,255,.025);
+}
+
+
+.sabino-platform-favorite {
+    width: 28px;
+    height: 28px;
+
+    display: grid;
+
+    place-items: center;
+
+    color: #5f6d76;
+
+    background: none;
+
+    border:
+        1px solid transparent;
+
+    border-radius: 5px;
+
+    font-size: 15px;
+
+    cursor: pointer;
+}
+
+
+.sabino-platform-favorite:hover {
+    color: #e6b84a;
+
+    border-color:
+        rgba(230,184,74,.15);
+}
+
+
+.sabino-platform-favorite.active {
+    color: #e6b84a;
+}
+
+
+/* =========================================================
+   RECENTES
+   ========================================================= */
+
+.sabino-platform-recent-empty {
+    padding:
+        12px;
+
+    color: #5f6c75;
+
+    text-align: center;
+
+    border:
+        1px dashed rgba(255,255,255,.055);
+
+    border-radius: 6px;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.sabino-platform-launcher-footer {
+    margin-top: 13px;
+
+    padding:
+        14px 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-top:
+        1px solid rgba(255,255,255,.06);
+}
+
+
+.sabino-platform-launcher-footer small {
+    color: #56636c;
+
+    font-size: 8px;
+}
+
+
+.sabino-platform-launcher-footer a {
+    color: #e6b84a;
+
+    font-size: 10px;
+
+    font-weight: 750;
+
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+.sabino-platform-toast {
+    position: fixed;
+
+    right: 22px;
+    bottom: 22px;
+
+    z-index: 3000;
+
+    max-width: 390px;
+
+    padding:
+        12px 15px;
+
+    color: #d4dbdf;
+
+    background:
+        #07121a;
+
+    border:
+        1px solid rgba(230,184,74,.22);
+
+    border-radius: 7px;
+
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.4);
+
+    opacity: 0;
+
+    transform:
+        translateY(10px);
+
+    pointer-events: none;
+
+    transition:
+        .2s ease;
+
+    font-size: 10px;
+}
+
+
+.sabino-platform-toast.show {
+    opacity: 1;
+
+    transform:
+        translateY(0);
+}
+
+
+/* =========================================================
+   FALLBACK
+   ========================================================= */
+
+.sabino-platform-launcher-floating {
+    position: fixed;
+
+    top: 18px;
+    right: 18px;
+
+    z-index: 950;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .sabino-platform-launcher-button
+    .launcher-button-label {
+        display: none;
+    }
+
+
+    .sabino-platform-launcher-button {
+        padding:
+            0 10px;
+    }
+
+
+    .sabino-platform-launcher-current {
+        display: none;
+    }
+
+
+    .sabino-platform-launcher-panel {
+        position: fixed;
+
+        top: 75px;
+        right: 15px;
+        left: 15px;
+
+        width: auto;
+
+        max-height:
+            calc(100vh - 95px);
+    }
+
+}

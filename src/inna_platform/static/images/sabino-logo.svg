@@ -1,0 +1,47 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 100 100"
+    role="img"
+    aria-label="Sabino.AI"
+>
+    <defs>
+        <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FFD05A"/>
+            <stop offset="45%" stop-color="#F5B000"/>
+            <stop offset="100%" stop-color="#D88D00"/>
+        </linearGradient>
+    </defs>
+
+    <!-- moldura hexagonal -->
+    <path
+        d="M50 6
+           L88 28
+           L88 72
+           L50 94
+           L12 72
+           L12 28
+           Z"
+        fill="none"
+        stroke="url(#gold)"
+        stroke-width="8"
+        stroke-linejoin="round"
+    />
+
+    <!-- S central claramente reconhecivel -->
+    <path
+        d="M70 27
+           L41 27
+           L27 39
+           L41 50
+           L59 50
+           L73 61
+           L59 74
+           L30 74"
+        fill="none"
+        stroke="url(#gold)"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    />
+
+</svg>

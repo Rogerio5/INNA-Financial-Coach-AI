@@ -1,0 +1,27 @@
+/* O botão ocupa espaço antes dos indicadores, sem sobreposição. */
+main.main > .page-header {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+main.main > .page-header > .inna-top {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    translate: none !important;
+    margin: 0 0 0 auto !important;
+    flex: 0 0 auto;
+    min-height: 46px;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+@media (max-width: 700px) {
+    main.main > .page-header > .inna-top {
+        margin-left: 0 !important;
+    }
+}
+

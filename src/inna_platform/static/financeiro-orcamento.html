@@ -1,0 +1,3286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Orçamento Financeiro | Sabino.AI</title>
+
+<style>
+
+:root {
+    --bg: #06090b;
+    --sidebar: #080c0f;
+    --card: #0e1418;
+    --card2: #11191d;
+    --border: #263137;
+    --text: #f4f6f7;
+    --muted: #8f9ba3;
+    --yellow: #ffd21c;
+    --yellow-dark: #8b7200;
+    --green: #19d99a;
+    --red: #ff535d;
+    --blue: #388cff;
+    --orange: #ff9d32;
+    --purple: #9d67e5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background:
+        radial-gradient(
+            circle at 52% 0%,
+            rgba(14, 48, 62, 0.22),
+            transparent 32%
+        ),
+        var(--bg);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    font-family: inherit;
+}
+
+/* ==========================================================
+   ESTRUTURA
+========================================================== */
+
+.app {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+}
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 18px 14px;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 5px 7px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.logo-mark {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #685700;
+    border-radius: 10px;
+    color: var(--yellow);
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.logo strong {
+    display: block;
+    font-size: 17px;
+}
+
+.logo small {
+    display: block;
+    color: var(--muted);
+    font-size: 7px;
+    letter-spacing: 1px;
+    margin-top: 3px;
+}
+
+.nav {
+    margin-top: 20px;
+}
+
+.nav-title {
+    margin: 0 8px 9px;
+    color: #71808a;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.nav-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 17px 0;
+}
+
+.nav-item {
+    width: 100%;
+    min-height: 43px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: #bac4ca;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: left;
+}
+
+.nav-item:hover {
+    color: white;
+    background: #11171b;
+}
+
+.nav-item.active {
+    color: var(--yellow);
+    border-color: var(--yellow-dark);
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 210, 28, 0.15),
+            rgba(255, 210, 28, 0.03)
+        );
+}
+
+.nav-icon {
+    width: 20px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.modules-button .arrow {
+    margin-left: auto;
+    transition: transform 0.2s ease;
+}
+
+.modules-button.open {
+    color: var(--yellow);
+    border-color: var(--yellow-dark);
+    background: rgba(255, 210, 28, 0.07);
+}
+
+.modules-button.open .arrow {
+    transform: rotate(90deg);
+}
+
+/* ==========================================================
+   MODULOS ESCONDIDOS POR PADRAO
+========================================================== */
+
+.modules-list {
+    margin-left: 29px;
+    padding-left: 13px;
+    border-left: 1px solid #344047;
+
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+
+    transition:
+        max-height 0.3s ease,
+        opacity 0.2s ease;
+}
+
+.modules-list.open {
+    max-height: 400px;
+    opacity: 1;
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
+
+.module-link {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #b9c4ca;
+    font-size: 12px;
+}
+
+.module-link:hover {
+    color: var(--yellow);
+}
+
+.module-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #69767e;
+}
+
+.module-link:hover .module-dot {
+    background: var(--yellow);
+}
+
+.inna-section {
+    margin-top: 16px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
+}
+
+.logout {
+    margin-top: auto;
+}
+
+/* ==========================================================
+   MAIN
+========================================================== */
+
+.main {
+    min-width: 0;
+    padding: 0 28px 22px;
+}
+
+.topbar {
+    height: 62px;
+    border-bottom: 1px solid #172025;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    color: #b8c2c8;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+}
+
+.account {
+    margin-left: 24px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.account-avatar {
+    width: 37px;
+    height: 37px;
+    border-radius: 50%;
+    background: var(--yellow);
+    color: #111;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    font-size: 11px;
+}
+
+.account strong {
+    display: block;
+    font-size: 11px;
+}
+
+.account small {
+    display: block;
+    color: var(--muted);
+    font-size: 8px;
+    margin-top: 2px;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.page-header {
+    padding: 27px 0 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.eyebrow {
+    color: var(--yellow);
+    font-size: 9px;
+    letter-spacing: 1.8px;
+    font-weight: 900;
+    margin: 0 0 7px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 36px;
+    letter-spacing: -1.3px;
+}
+
+.page-header h1 span {
+    color: var(--yellow);
+}
+
+.subtitle {
+    margin: 7px 0 0;
+    color: #98a5ad;
+    font-size: 12px;
+}
+
+.inna-top {
+    height: 43px;
+    padding: 0 17px;
+    border: 1px solid var(--yellow-dark);
+    border-radius: 9px;
+    color: var(--yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* ==========================================================
+   KPIS
+========================================================== */
+
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.kpi {
+    min-height: 122px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background:
+        linear-gradient(
+            145deg,
+            #10171b,
+            #0b1013
+        );
+}
+
+.kpi.saldo {
+    border-color: rgba(25, 217, 154, 0.3);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 82, 58, 0.35),
+            #0b1013
+        );
+}
+
+.kpi.gastos {
+    border-color: rgba(255, 83, 93, 0.32);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(91, 19, 25, 0.38),
+            #0b1013
+        );
+}
+
+.kpi.reserva {
+    border-color: rgba(255, 210, 28, 0.25);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(86, 69, 0, 0.28),
+            #0b1013
+        );
+}
+
+.kpi-title {
+    font-size: 11px;
+    color: #d3d9dc;
+    margin-bottom: 10px;
+}
+
+.kpi-value {
+    display: block;
+    font-size: 21px;
+    margin-bottom: 11px;
+}
+
+.kpi-change {
+    font-size: 9px;
+    color: var(--muted);
+}
+
+.green {
+    color: var(--green);
+}
+
+.red {
+    color: var(--red);
+}
+
+/* ==========================================================
+   DASHBOARD
+========================================================== */
+
+.dashboard {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.25fr)
+        minmax(340px, 0.85fr)
+        290px;
+
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.panel {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--card),
+            #0b1013
+        );
+}
+
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 17px;
+}
+
+.panel h2 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.panel p {
+    color: var(--muted);
+}
+
+.panel-head p {
+    margin: 5px 0 0;
+    font-size: 9px;
+}
+
+.period {
+    height: 31px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #344048;
+    border-radius: 7px;
+    font-size: 9px;
+    color: #c4cdd2;
+}
+
+/* ==========================================================
+   GRAFICO MENSAL
+========================================================== */
+
+.chart-wrap {
+    display: grid;
+    grid-template-columns: 55px minmax(0, 1fr);
+    height: 290px;
+    padding-bottom: 25px;
+}
+
+.y-axis {
+    height: 245px;
+    padding-right: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    color: #8b989f;
+    font-size: 8px;
+}
+
+.bars {
+    height: 245px;
+    border-left: 1px solid #263139;
+    border-bottom: 1px solid #263139;
+    padding: 0 8px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 7px;
+
+    background:
+        repeating-linear-gradient(
+            to top,
+            transparent 0,
+            transparent 48px,
+            rgba(255,255,255,0.045) 49px,
+            rgba(255,255,255,0.045) 50px
+        );
+}
+
+.bar-item {
+    height: 100%;
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.bar-value {
+    margin-bottom: 6px;
+    color: #f5f6f6;
+    font-size: 8px;
+    white-space: nowrap;
+}
+
+.bar {
+    width: min(42px, 68%);
+    border-radius: 5px 5px 1px 1px;
+    background:
+        linear-gradient(
+            to top,
+            #d8a00a,
+            #ffe13b
+        );
+}
+
+.bar-label {
+    position: absolute;
+    bottom: -23px;
+    font-size: 8px;
+    color: #aeb8bd;
+}
+
+/* ==========================================================
+   DONUT
+========================================================== */
+
+.category-layout {
+    display: grid;
+    grid-template-columns: 175px minmax(130px, 1fr);
+    gap: 14px;
+    align-items: center;
+}
+
+.donut {
+    width: 165px;
+    height: 165px;
+    border-radius: 50%;
+    margin: auto;
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+
+.donut::after {
+    content: "";
+    position: absolute;
+    width: 91px;
+    height: 91px;
+    border-radius: 50%;
+    background: #0c1216;
+}
+
+.donut-center {
+    z-index: 2;
+    position: relative;
+    text-align: center;
+}
+
+.donut-center small {
+    display: block;
+    font-size: 8px;
+    color: #8e9ba2;
+}
+
+.donut-center strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.legend-row {
+    display: grid;
+    grid-template-columns: 9px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+}
+
+.legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.biggest {
+    margin-top: 17px;
+    border: 1px solid var(--yellow-dark);
+    border-radius: 8px;
+    padding: 12px;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 210, 28, 0.08),
+            transparent
+        );
+}
+
+.biggest small {
+    display: block;
+    color: #8f9ba2;
+    font-size: 8px;
+}
+
+.biggest strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--yellow);
+    font-size: 14px;
+}
+
+.biggest p {
+    margin: 5px 0 0;
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+/* ==========================================================
+   PROXIMOS PASSOS
+========================================================== */
+
+.steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.steps li {
+    min-height: 66px;
+    display: grid;
+    grid-template-columns: 31px minmax(0, 1fr) 12px;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid #222c31;
+}
+
+.steps li:last-child {
+    border-bottom: 0;
+}
+
+.step-number {
+    width: 31px;
+    height: 31px;
+    border-radius: 50%;
+    background: var(--yellow);
+    color: #111;
+    font-size: 11px;
+    font-weight: 900;
+    display: grid;
+    place-items: center;
+}
+
+.steps strong {
+    display: block;
+    font-size: 9px;
+}
+
+.steps small {
+    display: block;
+    color: #8e9aa1;
+    font-size: 8px;
+    line-height: 1.4;
+    margin-top: 4px;
+}
+
+.step-arrow {
+    color: var(--yellow);
+    font-size: 18px;
+}
+
+/* ==========================================================
+   INNA
+========================================================== */
+
+.inna-card {
+    margin-top: 14px;
+}
+
+.inna-text {
+    margin: 10px 0 15px;
+    padding-left: 10px;
+    border-left: 2px solid var(--yellow);
+    font-size: 9px;
+    line-height: 1.6;
+}
+
+.inna-button {
+    height: 44px;
+    border-radius: 8px;
+    background: var(--yellow);
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.footer {
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid #1b2429;
+    display: flex;
+    justify-content: space-between;
+    color: #68757c;
+    font-size: 8px;
+}
+
+/* ==========================================================
+   RESPONSIVO
+========================================================== */
+
+@media (max-width: 1250px) {
+
+    .dashboard {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(320px, 0.85fr);
+    }
+
+    .right-column {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .inna-card {
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 950px) {
+
+    .app {
+        grid-template-columns: 205px minmax(0, 1fr);
+    }
+
+    .main {
+        padding-left: 17px;
+        padding-right: 17px;
+    }
+
+    .kpis {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .right-column {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 720px) {
+
+    .app {
+        display: block;
+    }
+
+    .sidebar {
+        position: relative;
+        height: auto;
+    }
+
+    .kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        flex-direction: column;
+    }
+
+    .category-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .right-column {
+        display: block;
+    }
+
+    .inna-card {
+        margin-top: 14px;
+    }
+}
+
+</style>
+
+
+<style id="SABINO_FINANCE_MODE_STYLE_V1">
+
+.finance-mode-badge {
+    display: inline-flex;
+    align-items: center;
+
+    margin-top: 8px;
+    padding: 5px 10px;
+
+    border: 1px solid rgba(255, 210, 28, .35);
+    border-radius: 999px;
+
+    background: rgba(255, 210, 28, .06);
+
+    color: #ffd21c;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.finance-mode-badge.real {
+    border-color: rgba(25, 217, 154, .35);
+    background: rgba(25, 217, 154, .06);
+    color: #19d99a;
+}
+
+</style>
+
+
+<style id="SABINO_LOGO_STANDARD_V1">
+
+.logo {
+    gap: 12px !important;
+    padding: 0 8px 23px !important;
+}
+
+.logo-mark {
+    width: 45px !important;
+    height: 45px !important;
+    flex: 0 0 45px;
+
+    border-radius: 9px !important;
+
+    font-size: 22px !important;
+    font-weight: 900 !important;
+}
+
+.logo strong {
+    display: block;
+
+    color: #ffffff !important;
+
+    font-size: 19px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+
+    white-space: nowrap;
+}
+
+.logo small {
+    display: block;
+
+    margin-top: 5px !important;
+
+    color: rgba(255,255,255,.62) !important;
+
+    font-size: 8px !important;
+    font-weight: 700 !important;
+    line-height: 1.25;
+
+    letter-spacing: 1px !important;
+    white-space: nowrap;
+}
+
+</style>
+
+
+<style id="SABINO_FINANCE_SIDEBAR_STANDARD_V1">
+
+@media (min-width: 1100px) {
+
+    .app {
+        grid-template-columns:
+            235px minmax(0, 1fr) !important;
+    }
+
+    .sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        width: 235px !important;
+        height: auto !important;
+
+        padding: 23px 16px !important;
+
+        overflow-y: auto;
+        z-index: 50;
+    }
+
+    .main {
+        grid-column: 2;
+
+        padding:
+            0
+            clamp(30px, 4vw, 64px)
+            45px !important;
+    }
+
+    .topbar {
+        height: 80px !important;
+    }
+
+}
+
+</style>
+
+<style id="SABINO_BUDGET_COMPACT_V1">
+.budget-kpis {
+    margin: 22px 0 18px;
+}
+
+.budget-actions {
+    margin-bottom: 18px;
+}
+
+.budget-grid {
+    align-items: start;
+}
+
+.budget-grid .budget-panel {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 18px 20px;
+}
+
+.budget-grid .budget-panel h2 {
+    margin: 0 0 16px;
+}
+
+#budgetCategoryList p {
+    margin: 8px 0;
+    line-height: 1.35;
+}
+
+.budget-inna {
+    margin-top: 14px;
+    padding: 18px 20px;
+}
+</style>
+<style id="SABINO_BUDGET_SIDEBAR_INNA_V1">
+
+/* Sidebar: módulos sempre visíveis nesta página */
+.modules-list {
+    max-height: none !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    margin-top: 5px !important;
+    margin-bottom: 8px !important;
+}
+
+.modules-button {
+    color: var(--yellow) !important;
+}
+
+.modules-button .arrow {
+    transform: rotate(90deg);
+}
+
+.module-link.active {
+    background: rgba(255,210,28,.08);
+    border-radius: 8px;
+    padding-left: 10px;
+}
+
+/* Compactação do conteúdo */
+.budget-page {
+    padding-top: 26px !important;
+    padding-bottom: 24px !important;
+}
+
+.budget-kpis {
+    gap: 14px !important;
+    margin: 18px 0 16px !important;
+}
+
+.budget-card {
+    padding: 16px 18px !important;
+}
+
+.budget-actions {
+    margin-bottom: 14px !important;
+}
+
+/* Categorias em duas colunas */
+#budgetCategoryList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+    row-gap: 4px;
+}
+
+#budgetCategoryList p {
+    margin: 4px 0 !important;
+}
+
+/* INNA mais próxima e visível */
+.budget-inna {
+    margin-top: 12px !important;
+    padding: 16px 20px !important;
+}
+
+@media(max-width: 900px) {
+    #budgetCategoryList {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+<style id="SABINO_BUDGET_CARDS_POLISH_V1">
+/* ==========================================
+   MELHORIA VISUAL DOS CARDS - ORÇAMENTO
+========================================== */
+
+.budget-kpis {
+    gap: 18px !important;
+    align-items: stretch !important;
+}
+
+.budget-card,
+.budget-panel {
+    border-radius: 18px !important;
+    padding: 24px !important;
+    background: linear-gradient(
+        180deg,
+        rgba(8, 22, 34, 0.96),
+        rgba(7, 18, 28, 0.98)
+    ) !important;
+    border: 1px solid rgba(120, 170, 210, 0.18) !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
+}
+
+.budget-card span,
+.budget-panel span {
+    line-height: 1.35 !important;
+}
+
+.budget-card strong {
+    display: block !important;
+    margin-top: 10px !important;
+    font-size: 22px !important;
+    line-height: 1.15 !important;
+}
+
+.budget-panel h2 {
+    margin: 0 0 18px 0 !important;
+    font-size: 26px !important;
+    line-height: 1.2 !important;
+}
+
+.budget-panel p {
+    line-height: 1.55 !important;
+}
+
+/* botões */
+button,
+.btn,
+.budget-actions button {
+    border-radius: 12px !important;
+}
+
+/* card de categorias */
+.budget-categories,
+.budget-category-grid,
+#budgetCategories,
+#budgetCategoryList {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    align-items: stretch !important;
+}
+
+.budget-category-item,
+.budget-categories > div,
+.budget-category-grid > div,
+#budgetCategories > div,
+#budgetCategoryList > div {
+    background: rgba(255, 255, 255, 0.025) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 14px !important;
+    padding: 16px 18px !important;
+    min-height: 132px !important;
+}
+
+.budget-category-item strong,
+.budget-categories > div strong,
+.budget-category-grid > div strong,
+#budgetCategories > div strong,
+#budgetCategoryList > div strong {
+    display: block !important;
+    margin-bottom: 10px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+}
+
+.budget-category-item p,
+.budget-category-item small,
+.budget-category-item span,
+.budget-categories > div p,
+.budget-categories > div small,
+.budget-categories > div span,
+.budget-category-grid > div p,
+.budget-category-grid > div small,
+.budget-category-grid > div span,
+#budgetCategories > div p,
+#budgetCategories > div small,
+#budgetCategories > div span,
+#budgetCategoryList > div p,
+#budgetCategoryList > div small,
+#budgetCategoryList > div span {
+    display: block !important;
+    margin: 4px 0 !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    color: #b9c4ca !important;
+}
+
+/* próximos compromissos */
+.budget-commitments,
+#budgetCommitments,
+#budgetUpcoming {
+    min-height: 220px !important;
+}
+
+/* INNA mais discreta */
+.budget-inna {
+    margin-top: 14px !important;
+    padding: 18px 20px !important;
+}
+
+.budget-inna h2,
+.budget-inna h3 {
+    font-size: 18px !important;
+    margin-bottom: 8px !important;
+}
+
+.budget-inna p {
+    font-size: 14px !important;
+    color: #b9c4ca !important;
+}
+
+/* barra lateral */
+.sidebar {
+    padding-bottom: 24px !important;
+}
+
+.sidebar .nav-item,
+.sidebar .module-link {
+    min-height: 40px !important;
+    border-radius: 10px !important;
+}
+
+.modules-list {
+    gap: 8px !important;
+}
+
+/* responsivo */
+@media (max-width: 1100px) {
+    .budget-categories,
+    .budget-category-grid,
+    #budgetCategories,
+    #budgetCategoryList {
+        grid-template-columns: 1fr !important;
+    }
+}
+</style>
+<style id="SABINO_CATEGORY_CARDS_V2">
+
+#budgetCategoryList {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+    gap: 12px !important;
+}
+
+#budgetCategoryList > p {
+    margin: 0 !important;
+    padding: 14px 16px !important;
+    min-height: 105px !important;
+
+    background: rgba(255,255,255,0.025) !important;
+    border: 1px solid rgba(255,255,255,0.07) !important;
+    border-radius: 12px !important;
+}
+
+#budgetCategoryList > p > strong {
+    display: block !important;
+    margin-bottom: 8px !important;
+
+    color: #ffffff !important;
+    font-size: 16px !important;
+}
+
+#budgetCategoryList > p > span {
+    display: block !important;
+
+    font-size: 12px !important;
+    line-height: 1.65 !important;
+    color: #9fb0ba !important;
+}
+
+@media(max-width:900px) {
+    #budgetCategoryList {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+</style>
+<style id="SABINO_BUDGET_100_ZOOM_V1">
+
+/* Cabeçalho mais compacto */
+.budget-page h1 {
+    margin-bottom: 8px !important;
+}
+
+.budget-kpis {
+    gap: 14px !important;
+    margin-top: 14px !important;
+    margin-bottom: 12px !important;
+}
+
+.budget-card {
+    min-height: 88px !important;
+    padding: 16px 20px !important;
+}
+
+.budget-card strong {
+    margin-top: 6px !important;
+    font-size: 24px !important;
+}
+
+/* Ações */
+.budget-actions {
+    margin: 10px 0 14px !important;
+    gap: 10px !important;
+}
+
+.budget-actions button {
+    min-height: 42px !important;
+}
+
+/* Nesta página não precisamos mostrar compromissos ainda */
+.budget-commitments {
+    display: none !important;
+}
+
+/* Limites passam a usar toda a largura */
+article.budget-panel:has(#budgetCategoryList) {
+    grid-column: 1 / -1 !important;
+    padding: 18px 20px !important;
+}
+
+article.budget-panel:has(#budgetCategoryList) h2 {
+    font-size: 22px !important;
+    margin-bottom: 14px !important;
+}
+
+/* 6 categorias em 3 colunas */
+#budgetCategoryList {
+    grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+    gap: 10px !important;
+}
+
+#budgetCategoryList > p {
+    min-height: 78px !important;
+    padding: 11px 14px !important;
+}
+
+#budgetCategoryList > p > strong {
+    margin-bottom: 5px !important;
+    font-size: 14px !important;
+}
+
+#budgetCategoryList > p > span {
+    font-size: 11px !important;
+    line-height: 1.45 !important;
+}
+
+/* INNA compacta */
+.budget-inna {
+    margin-top: 10px !important;
+    padding: 13px 18px !important;
+}
+
+.budget-inna h2 {
+    font-size: 17px !important;
+    margin-bottom: 5px !important;
+}
+
+.budget-inna p,
+#budgetInnaMessage {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+}
+
+/* Responsivo */
+@media(max-width:1100px) {
+    #budgetCategoryList {
+        grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+    }
+}
+
+</style>
+<style id="SABINO_BLACK_YELLOW_PREMIUM_V1">
+
+/* SABINO.AI - BLACK + YELLOW PREMIUM */
+
+.budget-card,
+.budget-panel,
+#budgetCategoryList > p,
+.budget-inna {
+    background:
+        linear-gradient(
+            145deg,
+            #080808 0%,
+            #0d0d0d 72%,
+            #171306 100%
+        ) !important;
+
+    border: 1px solid rgba(255, 210, 35, .20) !important;
+
+    box-shadow:
+        0 10px 28px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.025) !important;
+
+    color: #f7f7f7 !important;
+}
+
+/* KPIs */
+.budget-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.budget-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 18%;
+    bottom: 18%;
+    width: 2px;
+    background: #ffd21f;
+    opacity: .75;
+}
+
+.budget-card span {
+    color: #aaa !important;
+}
+
+.budget-card strong {
+    color: #fff !important;
+}
+
+/* Categorias */
+#budgetCategoryList > p {
+    transition:
+        border-color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease !important;
+}
+
+#budgetCategoryList > p:hover {
+    border-color: rgba(255,210,35,.50) !important;
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 24px rgba(0,0,0,.35),
+        0 0 18px rgba(255,210,35,.06) !important;
+}
+
+#budgetCategoryList > p > strong {
+    color: #fff !important;
+}
+
+#budgetCategoryList > p > span {
+    color: #b6b6b6 !important;
+}
+
+/* Painel principal */
+.budget-panel {
+    border-color: rgba(255,210,35,.16) !important;
+}
+
+.budget-panel h2 {
+    color: #fff !important;
+}
+
+/* INNA */
+.budget-inna {
+    border-left: 3px solid #ffd21f !important;
+
+    background:
+        linear-gradient(
+            110deg,
+            #080808 0%,
+            #0c0c0c 70%,
+            #1b1606 100%
+        ) !important;
+}
+
+.budget-inna h2 {
+    color: #ffd21f !important;
+}
+
+#budgetInnaMessage {
+    color: #d1d1d1 !important;
+}
+
+/* Botão secundário */
+.budget-secondary {
+    background:
+        linear-gradient(
+            180deg,
+            #1a1a1a,
+            #101010
+        ) !important;
+
+    border: 1px solid rgba(255,210,35,.22) !important;
+    color: #fff !important;
+}
+
+.budget-secondary:hover {
+    border-color: rgba(255,210,35,.55) !important;
+}
+
+/* Fundo geral continua preto */
+body,
+.main-content,
+.budget-page {
+    background: #050708 !important;
+}
+
+</style>
+<style id="SABINO_PREMIUM_REFINEMENT_V2">
+
+/* Sabino.AI - refinamento premium final */
+
+/* Bordas mais sofisticadas */
+.budget-card,
+.budget-panel,
+#budgetCategoryList > p {
+    border-color: rgba(255,255,255,.09) !important;
+}
+
+/* KPIs */
+.budget-card::before {
+    width: 2px !important;
+    opacity: .42 !important;
+}
+
+.budget-card:hover {
+    border-color: rgba(255,210,31,.28) !important;
+}
+
+/* Categorias */
+#budgetCategoryList > p {
+    background:
+        linear-gradient(
+            145deg,
+            #0a0a0a 0%,
+            #101010 100%
+        ) !important;
+}
+
+#budgetCategoryList > p:hover {
+    border-color: rgba(255,210,31,.42) !important;
+    box-shadow:
+        0 10px 22px rgba(0,0,0,.38),
+        0 0 14px rgba(255,210,31,.05) !important;
+}
+
+/* Painel de limites */
+article.budget-panel:has(#budgetCategoryList) {
+    border-color: rgba(255,255,255,.10) !important;
+}
+
+/* INNA mantém identidade amarela */
+.budget-inna {
+    border: 1px solid rgba(255,255,255,.09) !important;
+    border-left: 3px solid #ffd21f !important;
+}
+
+.budget-inna h2 {
+    color: #ffd21f !important;
+}
+
+/* Botão secundário mais discreto */
+.budget-secondary {
+    border-color: rgba(255,255,255,.12) !important;
+    background:
+        linear-gradient(
+            180deg,
+            #181818,
+            #101010
+        ) !important;
+}
+
+.budget-secondary:hover {
+    border-color: rgba(255,210,31,.38) !important;
+}
+
+/* Amarelo permanece nos pontos importantes */
+.modules-button,
+.module-link.active {
+    color: #ffd21f !important;
+}
+
+</style>
+<style id="SABINO_REMOVE_MENU_LETTERS_V1">
+.nav-icon,
+.nav-badge,
+.menu-icon,
+.menu-badge,
+.sidebar-icon,
+.sidebar-badge {
+    display: none !important;
+}
+
+.nav-link,
+.sidebar-link,
+.menu-link {
+    gap: 0 !important;
+    padding-left: 14px !important;
+}
+</style>
+<style id="SABINO_FINANCE_SEMANTIC_THEME_V1">
+:root{
+    --sab-brand:#d9b441;
+    --sab-success:#49c986;
+    --sab-warning:#f59e0b;
+    --sab-danger:#e66b6b;
+    --sab-info:#62a9e8;
+    --sab-investment:#62c9b0;
+    --sab-neutral:#ffffff;
+    --sab-muted:#929ca2;
+}
+
+.sab-good{
+    color:var(--sab-success)!important;
+}
+
+.sab-warning{
+    color:var(--sab-warning)!important;
+}
+
+.sab-critical{
+    color:var(--sab-danger)!important;
+}
+
+.sab-info{
+    color:var(--sab-info)!important;
+}
+
+.sab-income{
+    color:var(--sab-success)!important;
+}
+
+.sab-expense{
+    color:var(--sab-danger)!important;
+}
+
+.sab-investment{
+    color:var(--sab-investment)!important;
+}
+
+.sab-brand{
+    color:var(--sab-brand)!important;
+}
+
+.sab-status-dot.good{
+    background:var(--sab-success);
+}
+
+.sab-status-dot.warning{
+    background:var(--sab-warning);
+}
+
+.sab-status-dot.critical{
+    background:var(--sab-danger);
+}
+</style><style id="SABINO_BUDGET_SEMANTIC_V1">
+
+#budgetIncomeValue{
+    color:var(--sab-success)!important;
+}
+
+#budgetExpensesValue{
+    color:var(--sab-danger)!important;
+}
+
+#budgetBalanceValue,
+#budgetUsedValue{
+    transition:color .18s ease;
+}
+
+</style><style id="SABINO_BUDGET_SEMANTIC_FIX_V2">
+
+#budgetBalanceValue.sab-good,
+#budgetUsedValue.sab-good{
+    color:var(--sab-success)!important;
+}
+
+#budgetBalanceValue.sab-warning,
+#budgetUsedValue.sab-warning{
+    color:var(--sab-warning)!important;
+}
+
+#budgetBalanceValue.sab-critical,
+#budgetUsedValue.sab-critical{
+    color:var(--sab-danger)!important;
+}
+
+</style><style id="SABINO_BUDGET_SEMANTIC_STATE_STYLE_V1">
+
+.sab-semantic-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:7px;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.03em;
+}
+
+.sab-semantic-badge.good{
+    color:var(--sab-success);
+    background:rgba(73,201,134,.10);
+    border:1px solid rgba(73,201,134,.28);
+}
+
+.sab-semantic-badge.warning{
+    color:var(--sab-warning);
+    background:rgba(245,158,11,.10);
+    border:1px solid rgba(245,158,11,.28);
+}
+
+.sab-semantic-badge.critical{
+    color:var(--sab-danger);
+    background:rgba(230,107,107,.10);
+    border:1px solid rgba(230,107,107,.28);
+}
+
+#budgetSemanticSummary{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid rgba(255,255,255,.08);
+    font-size:11px;
+    color:#aeb7bc;
+}
+
+</style><style id="SABINO_KPI_STATUS_CLEAN_V1">
+
+/*
+REGRA UX SABINO.AI
+Cards usam cor semântica.
+Palavras Bom/Atenção/Crítico ficam para INNA e alertas.
+*/
+
+.budget-card .sab-semantic-badge{
+    display:none !important;
+}
+
+</style><link rel="stylesheet" href="/static/css/sabino-locale-core.css?v=browserany_manual3_20260917_134732" data-sabino-global-locale="v1">
+<link rel="stylesheet" href="/static/css/sabino-currency-core.css" data-sabino-global-currency="v1">
+
+<link rel="stylesheet" href="/static/css/sabino-language-button.css?v=20260917_140515">
+<script defer src="/static/js/sabino-language-button.js?v=20260917_140515"></script>
+
+<link rel="stylesheet"
+      href="/static/css/=20260917_181514">
+
+<script defer
+        src="/static/js/=20260917_181514">
+</script>
+
+
+
+<link
+    rel="stylesheet"
+    href="/static/css/sabino-finance-unified.css?v=20260917_222806"
+>
+
+<script
+    defer
+    src="/static/js/sabino-finance-unified.js?v=20260917_222806">
+</script>
+
+    <link rel="stylesheet" href="/static/css/sabino-finance-back-dashboard-v2.css?v=20260918_144545">
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+
+    <a href="/dashboard" class="logo">
+
+        <img src="/static/images/sabino-s-logo.png" alt="Sabino.AI" class="logo-mark" style="object-fit:contain;">
+
+        <div>
+            <strong>Sabino.AI</strong>
+            <small>PLATAFORMA INTELIGENTE</small>
+        </div>
+
+    </a>
+
+    <nav class="nav">
+
+        <p class="nav-title">NAVEGACAO</p>
+
+        <a href="/dashboard" class="nav-item">
+            
+            Inicio
+        </a>
+
+        <a href="/dashboard" class="nav-item">
+            
+            Minhas plataformas
+        </a>
+
+        <a href="/conta" class="nav-item">
+            
+            Minha conta
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <p class="nav-title">FINANCEIRO</p>
+
+        <a href="/financeiro" class="nav-item">
+            
+            Visao geral
+        </a>
+
+        <button
+            id="modulesButton"
+            type="button"
+            class="nav-item modules-button"
+            aria-expanded="false"
+        >
+            
+            Modulos
+            <span class="arrow">&gt;</span>
+        </button>
+
+        <div
+            id="modulesList"
+            class="modules-list"
+        >
+
+            <a
+                class="module-link active" href="/financeiro/orcamento">
+                <span class="module-dot"></span>
+                Orcamento
+            </a>
+
+            <a
+                class="module-link"
+                href="/financeiro/gastos"
+            >
+                <span class="module-dot"></span>
+                Gastos
+            </a>
+
+            <a
+    class="module-link"
+    href="/financeiro/contas"
+    onclick="window.location.href='/financeiro/contas'; return false;"
+>
+    <span class="module-dot"></span>
+    <span>Contas &amp; Assinaturas</span>
+</a>
+<a
+                class="module-link"
+                href="/financeiro/planejamento"
+            >
+                <span class="module-dot"></span>
+                Planejamento
+            </a>
+
+            <a
+                class="module-link"
+                href="/financeiro/metas"
+            >
+                <span class="module-dot"></span>
+                Metas
+            </a>
+
+            <a
+                class="module-link"
+                href="/financeiro/reserva" onclick="window.location.href='/financeiro/reserva'; return false;"
+            >
+                <span class="module-dot"></span>
+                Investimentos &amp; Reserva
+            </a>
+
+            <a
+    class="module-link"
+    href="/financeiro/credito"
+    onclick="window.location.href='/financeiro/credito'; return false;"
+>
+    <span class="module-dot"></span>
+    <span>Crédito &amp; Endividamento</span>
+</a>
+<a
+                class="module-link"
+                href="/financeiro/seguranca" onclick="window.location.href='/financeiro/seguranca'; return false;"
+            >
+                <span class="module-dot"></span>
+                Seguranca financeira
+            </a>
+
+            <a
+    class="module-link"
+    href="/financeiro/patrimonio"
+    onclick="window.location.href='/financeiro/patrimonio'; return false;"
+>
+    <span class="module-dot"></span>
+    Patrimônio &amp; Saúde
+</a>
+            <a
+                class="module-link"
+                href="/financeiro/protecao"
+                onclick="window.location.href='/financeiro/protecao'; return false;"
+            >
+                <span class="module-dot"></span>
+                Proteção Financeira &amp; Seguros
+            </a>
+
+<a
+    class="module-link"
+    href="/financeiro/impostos"
+    onclick="window.location.href='/financeiro/impostos'; return false;"
+>
+    Impostos & Obrigações
+</a>
+<a class="module-link" href="/financeiro/relatorios"><span class="module-dot"></span>Relatórios Financeiros</a>
+<a
+                class="module-link"
+                href="/modulos?plataforma=financeiro&modulo=temas-especiais"
+            >
+                <span class="module-dot"></span>
+                Temas especiais
+            </a>
+
+        </div>
+
+        <div class="inna-section">
+
+            <p class="nav-title">INNA</p>
+
+            <a href="/inna" class="nav-item">
+                
+                INNA
+            </a>
+
+        </div>
+
+    </nav>
+
+    <a href="/logout" class="nav-item logout">
+        
+        Sair
+    </a>
+
+</aside>
+
+<style id="sabino-budget-v1-css">
+.module-link.active {
+    color: var(--yellow);
+    font-weight: 700;
+}
+.module-link.active .module-dot {
+    background: var(--yellow);
+}
+.budget-page {
+    padding: 36px;
+}
+.budget-header h1 {
+    margin: 6px 0;
+    font-size: 32px;
+}
+.budget-header p {
+    color: #8f9da5;
+}
+.budget-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 28px 0;
+}
+.budget-card,
+.budget-panel {
+    background: #111a1f;
+    border: 1px solid #26343b;
+    border-radius: 16px;
+    padding: 20px;
+}
+.budget-card span,
+.budget-panel p {
+    color: #8f9da5;
+}
+.budget-card strong {
+    display: block;
+    margin-top: 10px;
+    font-size: 25px;
+}
+.budget-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.budget-actions button {
+    border: 0;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.budget-primary {
+    background: var(--yellow);
+    color: #101417;
+}
+.budget-secondary {
+    background: #1b272d;
+    color: white;
+}
+.budget-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.budget-inna {
+    margin-top: 16px;
+}
+@media(max-width:900px) {
+    .budget-kpis,
+    .budget-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<main class="main">
+    <div class="budget-page">
+
+        <header class="budget-header">
+            <p>SABINO.AI | FINANCEIRO</p>
+            <h1>Orçamento Financeiro</h1>
+            <p>Organize seu mês e acompanhe seus limites em um só lugar.</p>
+        </header>
+
+        <section class="budget-kpis">
+            <article class="budget-card">
+                <span>Receitas do mês</span>
+                <strong id="budgetIncomeValue" data-sabino-money="0">R$ 0,00</strong>
+            </article>
+
+            <article class="budget-card">
+                <span>Despesas previstas</span>
+                <strong id="budgetExpensesValue" data-sabino-money="0">R$ 0,00</strong>
+            </article>
+
+            <article class="budget-card">
+                <span>Saldo previsto</span>
+                <strong id="budgetBalanceValue" data-sabino-money="0">R$ 0,00</strong>
+            </article>
+
+            <article class="budget-card">
+                <span>Orçamento utilizado</span>
+                <strong id="budgetUsedValue">0%</strong>
+            </article>
+        </section>
+
+        <div class="budget-actions">
+            <button
+    id="openBudgetSetup"
+    type="button"
+    class="budget-primary"
+>
+    Configurar orçamento
+</button>
+
+            <button
+    id="openExpenseModal"
+    type="button"
+    class="budget-secondary"
+>
+    Adicionar despesa
+</button>
+            <!-- SABINO_CLIENT_HISTORY_BUDGET_V1 -->
+            <button
+                type="button"
+                id="openFinanceHistory"
+                class="finance-history-button"
+            >
+                Histórico
+            </button>
+        </div>
+
+        <section class="budget-grid">
+            <article class="budget-panel">
+                <h2>Limites por categoria</h2>
+                <div id="budgetCategoryList"><p>Nenhuma categoria configurada.</p></div>
+            </article>
+
+            <article class="budget-panel budget-commitments"><h2>Próximos compromissos</h2>
+                <p>Nenhum vencimento cadastrado.</p>
+            </article>
+        </section>
+
+        <article class="budget-panel budget-inna">
+            <h2>INNA</h2>
+            <p><span id="budgetInnaMessage">Configure seu orçamento para receber alertas, análises e orientações financeiras.</span></p>
+        </article>
+
+    </div>
+</main>
+
+<!-- SABINO_BUDGET_SETUP_MODAL_V1 -->
+<style>
+.budget-modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:9999}
+.budget-modal.open{display:flex}
+.budget-modal-box{width:min(560px,92vw);max-height:88vh;overflow:auto;background:#111a1f;border:1px solid #33434b;border-radius:18px;padding:24px}
+.budget-modal-box h2{margin:0 0 6px}
+.budget-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.budget-field{display:flex;flex-direction:column;gap:6px}
+.budget-field.full{grid-column:1/-1}
+.budget-field label{font-size:13px;color:#aebbc2}
+.budget-field input{background:#0a1115;color:#fff;border:1px solid #34434a;border-radius:9px;padding:11px}
+.budget-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+.budget-modal-actions button{border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer}
+#saveBudgetSetup{background:var(--yellow);color:#111}
+#cancelBudgetSetup{background:#26343b;color:#fff}
+</style>
+
+<div id="budgetSetupModal" class="budget-modal">
+    <form id="budgetSetupForm" class="budget-modal-box">
+        <h2>Configurar orçamento</h2>
+        <p>Defina sua receita e os limites mensais principais.</p>
+
+        <div class="budget-form-grid">
+            <div class="budget-field full">
+                <label>Mês de referência</label>
+                <input id="budgetMonth" type="month" required>
+            </div>
+
+            <div class="budget-field full">
+                <label>Receita mensal</label>
+                <input name="receita" type="number" min="0" step="0.01" placeholder="0,00">
+            </div>
+
+            <div class="budget-field"><label>Moradia</label><input name="moradia" type="number" min="0" step="0.01"></div>
+            <div class="budget-field"><label>Alimentação</label><input name="alimentacao" type="number" min="0" step="0.01"></div>
+            <div class="budget-field"><label>Transporte</label><input name="transporte" type="number" min="0" step="0.01"></div>
+            <div class="budget-field"><label>Saúde</label><input name="saude" type="number" min="0" step="0.01"></div>
+            <div class="budget-field"><label>Lazer</label><input name="lazer" type="number" min="0" step="0.01"></div>
+            <div class="budget-field"><label>Outros</label><input name="outros" type="number" min="0" step="0.01"></div>
+        </div>
+
+        <div id="budgetSetupStatus"></div>
+
+        <div class="budget-modal-actions">
+            <button id="cancelBudgetSetup" type="button">Cancelar</button>
+            <button id="saveBudgetSetup" type="submit">Salvar orçamento</button>
+        </div>
+    </form>
+</div>
+
+<script>
+(function(){
+    const modal=document.getElementById("budgetSetupModal");
+    const open=document.getElementById("openBudgetSetup");
+    const cancel=document.getElementById("cancelBudgetSetup");
+    const form=document.getElementById("budgetSetupForm");
+    const month=document.getElementById("budgetMonth");
+    month.value=new Date().toISOString().slice(0,7);
+
+    open.addEventListener("click",()=>modal.classList.add("open"));
+    cancel.addEventListener("click",()=>modal.classList.remove("open"));
+
+    // SABINO_BUDGET_FRONTEND_API_V1
+
+    const status=document.getElementById("budgetSetupStatus");
+
+    const categoryMap={
+        Moradia:"moradia",
+        Alimentacao:"alimentacao",
+        Transporte:"transporte",
+        Saude:"saude",
+        Lazer:"lazer",
+        Outros:"outros"
+    };
+
+    /* SABINO_GLOBAL_MONEY_BRIDGE_V2 */
+    const brl = value => {
+
+        const numeric =
+            Number(value || 0);
+
+        if (
+            window.SabinoCurrency &&
+            typeof window.SabinoCurrency.format ===
+                "function"
+        ) {
+
+            return window.SabinoCurrency.format(
+                numeric,
+                {
+                    currency: "BRL"
+                }
+            );
+
+        }
+
+        return new Intl.NumberFormat(
+            "pt-BR",
+            {
+                style: "currency",
+                currency: "BRL"
+            }
+        ).format(numeric);
+
+    };
+
+    function renderBudget(data){
+        const income=Number(data.period?.monthly_income || 0);
+        const limits=data.limits || [];
+
+        const total=limits.reduce(
+            (sum,item)=>sum+Number(item.monthly_limit || 0),
+            0
+        );
+
+        document.getElementById("budgetIncomeValue").textContent=brl(income);
+        document.getElementById("budgetExpensesValue").textContent=brl(total);
+        document.getElementById("budgetBalanceValue").textContent=brl(income-total);
+
+        const list=document.getElementById("budgetCategoryList");
+
+        if(!limits.length){
+            list.innerHTML="<p>Nenhuma categoria configurada.</p>";
+            return;
+        }
+
+        list.innerHTML=limits.map(item=>
+            `<p><strong>${item.category}</strong> — ${brl(item.monthly_limit)}</p>`
+        ).join("");
+    }
+
+    async function loadBudget(fillForm=false){
+        const response=await fetch(
+            `/api/finance/budget/${encodeURIComponent(month.value)}`,
+            {credentials:"same-origin"}
+        );
+
+        if(!response.ok) throw new Error("Falha ao carregar orçamento");
+
+        const data=await response.json();
+
+        renderBudget(data);
+
+        if(fillForm){
+            form.elements.receita.value=data.period?.monthly_income || "";
+
+            for(const item of data.limits || []){
+                const field=categoryMap[item.category];
+                if(field) form.elements[field].value=item.monthly_limit;
+            }
+        }
+    }
+
+    open.addEventListener("click",async()=>{
+        modal.classList.add("open");
+        status.textContent="";
+
+        try{
+            await loadBudget(true);
+        }catch(error){
+            status.textContent="Não foi possível carregar o orçamento.";
+        }
+    });
+
+    form.addEventListener("submit",async(event)=>{
+        event.preventDefault();
+        status.textContent="Salvando...";
+
+        const payload={
+            reference_month:month.value,
+            monthly_income:form.elements.receita.value || 0,
+            limits:{
+                Moradia:form.elements.moradia.value || 0,
+                Alimentacao:form.elements.alimentacao.value || 0,
+                Transporte:form.elements.transporte.value || 0,
+                Saude:form.elements.saude.value || 0,
+                Lazer:form.elements.lazer.value || 0,
+                Outros:form.elements.outros.value || 0
+            }
+        };
+
+        try{
+            const response=await fetch(
+                "/api/finance/budget",
+                {
+                    method:"POST",
+                    credentials:"same-origin",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify(payload)
+                }
+            );
+
+            if(!response.ok){
+                throw new Error("Falha ao salvar");
+            }
+
+            status.textContent="Orçamento salvo com sucesso.";
+            await loadBudget(false);
+
+            setTimeout(()=>{
+                modal.classList.remove("open");
+            },600);
+
+        }catch(error){
+            status.textContent="Não foi possível salvar o orçamento.";
+        }
+    });
+
+    loadBudget(false).catch(()=>{});
+})();
+</script>
+<!-- SABINO_EXPENSE_MODAL_V1 -->
+
+<div id="expenseModal" class="budget-modal">
+    <form id="expenseForm" class="budget-modal-box">
+
+        <h2>Adicionar despesa</h2>
+        <p>Registre um gasto realizado no seu orçamento.</p>
+
+        <div class="budget-form-grid">
+
+            <div class="budget-field full">
+                <label>Descrição</label>
+                <input
+                    name="description"
+                    type="text"
+                    placeholder="Ex.: Supermercado"
+                    required
+                >
+            </div>
+
+            <div class="budget-field">
+                <label>Valor</label>
+                <input
+                    name="amount"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="0,00"
+                    required
+                >
+            </div>
+
+            <div class="budget-field">
+                <label>Data</label>
+                <input
+                    id="expenseDate"
+                    name="transaction_date"
+                    type="date"
+                    required
+                >
+            </div>
+
+            <div class="budget-field full">
+                <label>Categoria</label>
+
+                <select
+                    name="category"
+                    required
+                    style="
+                        background:#0a1115;
+                        color:#fff;
+                        border:1px solid #34434a;
+                        border-radius:9px;
+                        padding:11px;
+                    "
+                >
+                    <option value="">Selecione</option>
+                    <option>Alimentação</option>
+                    <option>Assinaturas</option>
+                    <option>Compras</option>
+                    <option>Contas</option>
+                    <option>Dívidas</option>
+                    <option>Educação</option>
+                    <option>Impostos</option>
+                    <option>Lazer</option>
+                    <option>Moradia</option>
+                    <option>Outras despesas</option>
+                    <option>Pets</option>
+                    <option>Saúde</option>
+                    <option>Seguros</option>
+                    <option>Transporte</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div
+            id="expenseStatus"
+            style="margin-top:14px;color:#b9c4ca"
+        ></div>
+
+        <div class="budget-modal-actions">
+            <button
+                id="cancelExpense"
+                type="button"
+            >
+                Cancelar
+            </button>
+
+            <button
+                id="saveExpense"
+                type="submit"
+            >
+                Salvar despesa
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+(function(){
+
+    const modal =
+        document.getElementById("expenseModal");
+
+    const open =
+        document.getElementById("openExpenseModal");
+
+    const cancel =
+        document.getElementById("cancelExpense");
+
+    const form =
+        document.getElementById("expenseForm");
+
+    const status =
+        document.getElementById("expenseStatus");
+
+    const date =
+        document.getElementById("expenseDate");
+
+    date.value =
+        new Date().toISOString().slice(0,10);
+
+    open.addEventListener("click",()=>{
+        status.textContent="";
+        modal.classList.add("open");
+    });
+
+    cancel.addEventListener("click",()=>{
+        modal.classList.remove("open");
+    });
+
+    form.addEventListener("submit",async(event)=>{
+
+        event.preventDefault();
+
+        status.textContent="Salvando...";
+
+        const payload={
+            description:
+                form.elements.description.value.trim(),
+
+            amount:
+                form.elements.amount.value,
+
+            category:
+                form.elements.category.value,
+
+            transaction_date:
+                form.elements.transaction_date.value
+        };
+
+        try{
+
+            const response=await fetch(
+                "/api/finance/expenses",
+                {
+                    method:"POST",
+                    credentials:"same-origin",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify(payload)
+                }
+            );
+
+            const data=await response.json();
+
+            if(!response.ok){
+                throw new Error(
+                    data.detail || "Falha ao salvar"
+                );
+            }
+
+            status.textContent=
+                "Despesa salva com sucesso.";
+
+            if(window.refreshBudgetUsage){
+                await window.refreshBudgetUsage();
+            }
+
+            form.reset();
+
+            date.value=
+                new Date().toISOString().slice(0,10);
+
+            setTimeout(()=>{
+                modal.classList.remove("open");
+            },600);
+
+        }catch(error){
+
+            status.textContent=
+                error.message ||
+                "Não foi possível salvar a despesa.";
+
+        }
+
+    });
+
+})();
+</script>
+<!-- SABINO_BUDGET_REAL_USAGE_V1 -->
+<script>
+(function(){
+
+    /* SABINO_GLOBAL_MONEY_BRIDGE_V2 */
+    const brlUsage = value => {
+
+        const numeric =
+            Number(value || 0);
+
+        if (
+            window.SabinoCurrency &&
+            typeof window.SabinoCurrency.format ===
+                "function"
+        ) {
+
+            return window.SabinoCurrency.format(
+                numeric,
+                {
+                    currency: "BRL"
+                }
+            );
+
+        }
+
+        return new Intl.NumberFormat(
+            "pt-BR",
+            {
+                style: "currency",
+                currency: "BRL"
+            }
+        ).format(numeric);
+
+    };
+
+    const expenseCategory = {
+        "Moradia":"Moradia",
+        "Alimentacao":"Alimentação",
+        "Transporte":"Transporte",
+        "Saude":"Saúde",
+        "Lazer":"Lazer",
+        "Outros":"Outras despesas"
+    };
+
+    function currentMonth(){
+        const field = document.getElementById("budgetMonth");
+
+        if(field && field.value){
+            return field.value;
+        }
+
+        const now = new Date();
+
+        return (
+            now.getFullYear() +
+            "-" +
+            String(now.getMonth()+1).padStart(2,"0")
+        );
+    }
+
+    async function refreshBudgetUsage(){
+
+        const month = currentMonth();
+
+        const [budgetResponse, expenseResponse] =
+            await Promise.all([
+                fetch(
+                    `/api/finance/budget/${encodeURIComponent(month)}`,
+                    {credentials:"same-origin"}
+                ),
+                fetch(
+                    `/api/finance/expenses/summary/${encodeURIComponent(month)}`,
+                    {credentials:"same-origin"}
+                )
+            ]);
+
+        if(!budgetResponse.ok || !expenseResponse.ok){
+            return;
+        }
+
+        const budget = await budgetResponse.json();
+        const expenses = await expenseResponse.json();
+
+        const limits = budget.limits || [];
+        const expenseRows = expenses.categories || [];
+
+        const totalLimit = limits.reduce(
+            (sum,item) =>
+                sum + Number(item.monthly_limit || 0),
+            0
+        );
+
+        const totalSpent =
+            Number(expenses.total_spent || 0);
+
+        const used =
+            totalLimit > 0
+                ? (totalSpent / totalLimit) * 100
+                : 0;
+
+        const usedElement =
+            document.getElementById("budgetUsedValue");
+
+        if(usedElement){
+            usedElement.textContent =
+                used.toLocaleString(
+                    "pt-BR",
+                    {maximumFractionDigits:1}
+                ) + "%";
+        }
+
+        const spentMap = {};
+
+        for(const item of expenseRows){
+            spentMap[item.category] =
+                Number(item.total_spent || 0);
+        }
+
+        const list =
+            document.getElementById("budgetCategoryList");
+
+        if(list && limits.length){
+
+            list.innerHTML =
+                limits.map(item=>{
+
+                    const limit =
+                        Number(item.monthly_limit || 0);
+
+                    const realCategory =
+                        expenseCategory[item.category]
+                        || item.category;
+
+                    const spent =
+                        Number(spentMap[realCategory] || 0);
+
+                    const remaining =
+                        limit - spent;
+
+                    const percent =
+                        limit > 0
+                            ? (spent / limit) * 100
+                            : 0;
+
+                    return `
+                        <p>
+                            <strong>${realCategory}</strong><br>
+                            <span style="font-size:11px;color:#94a2a9">
+                                Limite ${brlUsage(limit)}
+                                · Gasto ${brlUsage(spent)}
+                                · Resta ${brlUsage(remaining)}
+                                · ${percent.toLocaleString(
+                                    "pt-BR",
+                                    {maximumFractionDigits:1}
+                                )}%
+                            </span>
+                        </p>
+                    `;
+                }).join("");
+        }
+
+        const inna =
+            document.getElementById("budgetInnaMessage");
+
+        if(inna){
+
+            const remaining =
+                totalLimit - totalSpent;
+
+            if(totalLimit <= 0){
+
+                inna.textContent =
+                    "Defina seus limites mensais para iniciar o acompanhamento do orçamento.";
+
+            }else if(totalSpent <= 0){
+
+                inna.textContent =
+                    "Seu orçamento está configurado. Registre suas despesas para acompanhar a utilização.";
+
+            }else if(used < 80){
+
+                inna.textContent =
+                    `Você utilizou ${used.toFixed(1)}% do orçamento. ` +
+                    `Ainda restam ${brlUsage(remaining)} dos limites planejados.`;
+
+            }else if(used <= 100){
+
+                inna.textContent =
+                    `Atenção: você já utilizou ${used.toFixed(1)}% do orçamento. ` +
+                    `Restam ${brlUsage(remaining)}.`;
+
+            }else{
+
+                inna.textContent =
+                    `Seu orçamento foi ultrapassado em ` +
+                    `${brlUsage(Math.abs(remaining))}. Revise os gastos e limites.`;
+            }
+        }
+    }
+
+    window.refreshBudgetUsage =
+        refreshBudgetUsage;
+
+    refreshBudgetUsage().catch(()=>{});
+
+})();
+</script>
+<style id="SABINO_SIDEBAR_COLLAPSE_V1">
+
+.modules-list {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    transition:
+        max-height .28s ease,
+        opacity .20s ease !important;
+}
+
+.modules-list.open {
+    max-height: 500px !important;
+    opacity: 1 !important;
+}
+
+.modules-button {
+    cursor: pointer !important;
+}
+
+</style>
+
+<script>
+(function(){
+
+    const button = document.getElementById("modulesButton");
+    const list = document.getElementById("modulesList");
+
+    if(!button || !list){
+        return;
+    }
+
+    // Como Orçamento está ativo, começa aberto.
+    list.classList.add("open");
+    button.setAttribute("aria-expanded", "true");
+
+    button.addEventListener("click", function(event){
+
+        event.preventDefault();
+
+        const opened =
+            list.classList.toggle("open");
+
+        button.setAttribute(
+            "aria-expanded",
+            opened ? "true" : "false"
+        );
+    });
+
+})();
+</script>
+
+<!-- SABINO_CLIENT_HISTORY_BUDGET_MODAL_V1 -->
+
+<style>
+.finance-history-button{
+    min-height:34px;
+    padding:7px 14px;
+    border-radius:8px;
+    border:1px solid #ffd21f;
+    background:transparent;
+    color:#ffd21f;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.finance-history-button:hover{
+    background:#ffd21f;
+    color:#111;
+}
+
+.finance-history-modal{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.72);
+}
+
+.finance-history-modal.open{
+    display:flex;
+}
+
+.finance-history-box{
+    width:min(720px,100%);
+    max-height:78vh;
+    overflow:auto;
+    padding:22px;
+    border:1px solid #ffd21f;
+    border-radius:14px;
+    background:#111;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+
+.finance-history-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:20px;
+}
+
+.finance-history-header h2{
+    margin:0;
+    color:#fff;
+}
+
+.finance-history-close{
+    min-height:32px;
+    padding:6px 12px;
+    border-radius:8px;
+    border:1px solid #555;
+    background:#1c1c1c;
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.finance-history-empty{
+    padding:22px;
+    border:1px dashed #444;
+    border-radius:10px;
+    color:#aeb6bb;
+    text-align:center;
+}
+</style>
+
+<div
+    id="financeHistoryModal"
+    class="finance-history-modal"
+>
+    <div class="finance-history-box">
+
+        <div class="finance-history-header">
+
+            <h2>
+                Histórico — Orçamento Financeiro
+            </h2>
+
+            <button
+                type="button"
+                id="closeFinanceHistory"
+                class="finance-history-close"
+            >
+                Fechar
+            </button>
+
+        </div>
+
+        <div
+            id="financeHistoryList"
+            class="finance-history-empty"
+        >
+            Nenhum histórico disponível ainda.
+        </div>
+
+    </div>
+</div>
+
+<script>
+(function(){
+
+    const openButton =
+        document.getElementById(
+            "openFinanceHistory"
+        );
+
+    const closeButton =
+        document.getElementById(
+            "closeFinanceHistory"
+        );
+
+    const modal =
+        document.getElementById(
+            "financeHistoryModal"
+        );
+
+    if(openButton && modal){
+
+        openButton.addEventListener(
+            "click",
+            () => {
+                modal.classList.add("open");
+            }
+        );
+    }
+
+    if(closeButton && modal){
+
+        closeButton.addEventListener(
+            "click",
+            () => {
+                modal.classList.remove("open");
+            }
+        );
+    }
+
+    if(modal){
+
+        modal.addEventListener(
+            "click",
+            event => {
+
+                if(event.target === modal){
+                    modal.classList.remove("open");
+                }
+            }
+        );
+    }
+
+})();
+</script>
+
+<!-- SABINO_HISTORY_STANDARD_STYLE_V1 -->
+<style>
+.budget-actions .finance-history-button{
+    min-height:34px !important;
+    padding:7px 14px !important;
+    border:1px solid #ffd21f !important;
+    border-radius:8px !important;
+    background:transparent !important;
+    color:#ffd21f !important;
+    font-weight:800 !important;
+    cursor:pointer !important;
+    width:auto !important;
+}
+
+.budget-actions .finance-history-button:hover{
+    background:#ffd21f !important;
+    color:#111 !important;
+}
+</style>
+<script id="SABINO_BUDGET_SEMANTIC_JS_V1">
+(function(){
+
+    function moneyNumber(text){
+        var value = String(text || "")
+            .replace(/[^\d,.-]/g,"")
+            .replace(/\./g,"")
+            .replace(",",".");
+        return Number(value || 0);
+    }
+
+    function percentNumber(text){
+        return Number(
+            String(text || "")
+                .replace(/[^\d,.-]/g,"")
+                .replace(",",".") || 0
+        );
+    }
+
+    function setState(element,state){
+        if(!element) return;
+
+        element.classList.remove(
+            "sab-good",
+            "sab-warning",
+            "sab-critical"
+        );
+
+        element.classList.add(state);
+    }
+
+    function updateBudgetColors(){
+
+        var balance =
+            document.getElementById("budgetBalanceValue");
+
+        var used =
+            document.getElementById("budgetUsedValue");
+
+        if(balance){
+            var balanceValue =
+                moneyNumber(balance.textContent);
+
+            setState(
+                balance,
+                balanceValue > 0
+                    ? "sab-good"
+                    : balanceValue < 0
+                        ? "sab-critical"
+                        : "sab-warning"
+            );
+        }
+
+        if(used){
+            var usedValue =
+                percentNumber(used.textContent);
+
+            setState(
+                used,
+                usedValue > 100
+                    ? "sab-critical"
+                    : usedValue >= 80
+                        ? "sab-warning"
+                        : "sab-good"
+            );
+        }
+    }
+
+    window.addEventListener(
+        "load",
+        updateBudgetColors
+    );
+
+    var observer = new MutationObserver(
+        updateBudgetColors
+    );
+
+    [
+        "budgetBalanceValue",
+        "budgetUsedValue"
+    ].forEach(function(id){
+
+        var element =
+            document.getElementById(id);
+
+        if(element){
+            observer.observe(
+                element,
+                {
+                    childList:true,
+                    subtree:true,
+                    characterData:true
+                }
+            );
+        }
+    });
+
+})();
+</script><script id="SABINO_BUDGET_SEMANTIC_STATE_V1">
+(function(){
+
+    function parseMoney(text){
+        return Number(
+            String(text || "")
+                .replace(/[^\d,.-]/g,"")
+                .replace(/\./g,"")
+                .replace(",",".") || 0
+        );
+    }
+
+    function parsePercent(text){
+        return Number(
+            String(text || "")
+                .replace(/[^\d,.-]/g,"")
+                .replace(",",".") || 0
+        );
+    }
+
+    function statusLabel(status){
+        if(status === "critical") return "Crítico";
+        if(status === "warning") return "Atenção";
+        return "Bom";
+    }
+
+    function ensureBadge(element,id){
+        if(!element) return null;
+
+        var badge = document.getElementById(id);
+
+        if(!badge){
+            badge = document.createElement("div");
+            badge.id = id;
+            badge.className = "sab-semantic-badge";
+            element.parentElement.appendChild(badge);
+        }
+
+        return badge;
+    }
+
+    function updateSemanticState(){
+
+        var balanceEl =
+            document.getElementById("budgetBalanceValue");
+
+        var usedEl =
+            document.getElementById("budgetUsedValue");
+
+        if(!balanceEl || !usedEl) return;
+
+        var balance =
+            parseMoney(balanceEl.textContent);
+
+        var used =
+            parsePercent(usedEl.textContent);
+
+        var balanceStatus =
+            balance < 0
+                ? "critical"
+                : balance === 0
+                    ? "warning"
+                    : "good";
+
+        var usageStatus =
+            used > 100
+                ? "critical"
+                : used >= 80
+                    ? "warning"
+                    : "good";
+
+        var overallStatus = "good";
+
+        if(
+            balanceStatus === "critical" ||
+            usageStatus === "critical"
+        ){
+            overallStatus = "critical";
+        }
+        else if(
+            balanceStatus === "warning" ||
+            usageStatus === "warning"
+        ){
+            overallStatus = "warning";
+        }
+
+        var state = {
+            module: "orcamento",
+            balance: {
+                value: balance,
+                status: balanceStatus,
+                meaning:
+                    balanceStatus === "good"
+                        ? "saldo_previsto_positivo"
+                        : balanceStatus === "warning"
+                            ? "saldo_previsto_zerado"
+                            : "saldo_previsto_negativo"
+            },
+            budget_usage: {
+                value_percent: used,
+                status: usageStatus,
+                meaning:
+                    usageStatus === "good"
+                        ? "uso_dentro_do_limite"
+                        : usageStatus === "warning"
+                            ? "uso_proximo_do_limite"
+                            : "orcamento_ultrapassado"
+            },
+            overall_status: overallStatus
+        };
+
+        window.sabinoBudgetSemanticState = state;
+
+        var balanceBadge =
+            ensureBadge(
+                balanceEl,
+                "budgetBalanceSemanticBadge"
+            );
+
+        var usedBadge =
+            ensureBadge(
+                usedEl,
+                "budgetUsedSemanticBadge"
+            );
+
+        if(balanceBadge){
+            balanceBadge.className =
+                "sab-semantic-badge " + balanceStatus;
+
+            balanceBadge.textContent =
+                statusLabel(balanceStatus);
+        }
+
+        if(usedBadge){
+            usedBadge.className =
+                "sab-semantic-badge " + usageStatus;
+
+            usedBadge.textContent =
+                statusLabel(usageStatus);
+        }
+
+        var innaBox =
+            document.querySelector(".budget-inna");
+
+        if(innaBox){
+
+            var summary =
+                document.getElementById(
+                    "budgetSemanticSummary"
+                );
+
+            if(!summary){
+                summary =
+                    document.createElement("div");
+
+                summary.id =
+                    "budgetSemanticSummary";
+
+                innaBox.appendChild(summary);
+            }
+
+            var text = "";
+
+            if(overallStatus === "critical"){
+                text =
+                    "Situação geral: CRÍTICA. " +
+                    "A INNA identificou um indicador financeiro que exige ação.";
+            }
+            else if(overallStatus === "warning"){
+                text =
+                    "Situação geral: ATENÇÃO. " +
+                    "A INNA recomenda acompanhar os limites antes de novos gastos.";
+            }
+            else{
+                text =
+                    "Situação geral: BOA. " +
+                    "Saldo e utilização do orçamento estão dentro de uma condição saudável.";
+            }
+
+            summary.textContent = text;
+            summary.dataset.semanticStatus =
+                overallStatus;
+        }
+
+        window.dispatchEvent(
+            new CustomEvent(
+                "sabinoBudgetSemanticUpdated",
+                {detail:state}
+            )
+        );
+    }
+
+    window.addEventListener(
+        "load",
+        updateSemanticState
+    );
+
+    var observer =
+        new MutationObserver(
+            updateSemanticState
+        );
+
+    [
+        "budgetBalanceValue",
+        "budgetUsedValue"
+    ].forEach(function(id){
+
+        var el =
+            document.getElementById(id);
+
+        if(el){
+            observer.observe(
+                el,
+                {
+                    childList:true,
+                    subtree:true,
+                    characterData:true
+                }
+            );
+        }
+    });
+
+})();
+</script>
+<script
+    id="SABINO_SHARED_FINANCE_SIDEBAR_V1_LOADER"
+    src="/static/finance-sidebar.js"
+></script>
+<script src="/static/js/sabino-locale-core.js?v=internal12_20260917_140006" data-sabino-global-locale="v1"></script>
+<script src="/static/js/sabino-global-i18n-runtime.js" data-sabino-global-i18n="v1"></script>
+<script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
+<script src="/static/js/sabino-money-locale-runtime.js"></script>
+
+    <script defer src="/static/js/sabino-finance-back-dashboard-v2.js?v=20260918_144545"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

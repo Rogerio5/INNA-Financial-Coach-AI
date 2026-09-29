@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bancos e conexões | Sabino.AI</title><link rel="stylesheet" href="/static/css/sabino-commerce.css"><script defer src="/static/js/sabino-bancos-demo.js"></script></head>
+<body>
+<header class="top"><a class="brand" href="/dashboard"><img src="/static/images/sabino-s-logo.png" alt="">Sabino<span>.AI</span></a><nav aria-label="Navegação principal"><a href="/financeiro">Financeiro</a><a href="/financeiro/meu-plano">Meu plano</a><a href="/financeiro/planos">Planos</a></nav><a class="inna-link" href="/inna">✦ Falar com a INNA</a></header>
+<main><div class="demo-banner"><span class="dot"></span><strong>Conexão demonstrativa</strong><span>Nenhum banco será acessado. Nenhum dado financeiro será importado.</span></div>
+<div class="hero"><div><p class="eyebrow">CONTA SABINO.AI / BANCOS E CONEXÕES</p><h1>Mais contexto.<br><span>Sempre com sua permissão.</span></h1><p class="lead">Explore como poderá conectar sua instituição ao Financeiro. Você escolhe as permissões e pode revogar o acesso.</p></div><aside class="hero-aside"><span class="spark">◇</span><h2>Conectar não é pagar.</h2><p>A leitura de dados e a autorização de pagamentos são etapas distintas. A INNA não movimenta seu dinheiro nesta experiência.</p></aside></div>
+<section class="panel"><h2>Escolha uma instituição</h2><p>Exemplos para visualizar a experiência. Esta lista não comprova parceria ou disponibilidade de integração.</p>
+<div class="banks"><button class="bank" data-bank="Banco do Brasil">Banco do Brasil<span>Demonstração</span></button><button class="bank" data-bank="Caixa">Caixa<span>Demonstração</span></button><button class="bank" data-bank="Itaú">Itaú<span>Demonstração</span></button><button class="bank" data-bank="Bradesco">Bradesco<span>Demonstração</span></button><button class="bank" data-bank="Santander">Santander<span>Demonstração</span></button><button class="bank" data-bank="Nubank">Nubank<span>Demonstração</span></button><button class="bank" data-bank="Inter">Inter<span>Demonstração</span></button><button class="bank" data-bank="Outra instituição">Outra instituição<span>Disponibilidade a confirmar</span></button></div>
+<p class="notice">Na versão real, a autorização deverá ocorrer no ambiente da instituição ou do parceiro autorizado. Não informe sua senha bancária à Sabino.AI.</p></section>
+<section style="margin-top:32px"><h2>Suas conexões nesta demonstração</h2><div id="connections" class="connections" aria-live="polite">Nenhuma conexão simulada. Escolha uma instituição para conhecer o fluxo.</div><p class="small">As conexões simuladas existem apenas nesta página e são apagadas ao recarregar.</p></section>
+<section class="payment-strip"><div><h2>Quer apenas pagar seu plano?</h2><p>Você não precisa conectar sua conta para explorar Pix ou Bitcoin.</p></div><a class="button secondary" href="/financeiro/planos">Conhecer os planos →</a></section>
+<footer><span>Sabino.AI · Conexões sob seu controle.</span><a href="/inna">Ajuda da INNA</a></footer></main>
+<dialog id="bank-dialog" aria-labelledby="bank-title"><button class="close" aria-label="Fechar">×</button><p class="eyebrow">REVISAR PERMISSÕES · DEMONSTRAÇÃO</p><h2 id="bank-title"></h2><p>Na integração real, você revisará o escopo e o prazo de compartilhamento antes de autorizar no banco.</p>
+<label class="consent"><input type="checkbox" id="balances"> Simular permissão para consultar saldos</label>
+<label class="consent"><input type="checkbox" id="transactions"> Simular permissão para consultar transações</label>
+<p class="notice">Estas permissões não autorizam transferências, cobranças ou pagamentos. Nenhuma autorização real será registrada.</p>
+<p id="bank-error" role="alert"></p><button id="connect-demo" class="button primary wide">Simular conexão</button></dialog>
+</body></html>

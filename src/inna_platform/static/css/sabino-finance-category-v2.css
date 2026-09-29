@@ -1,0 +1,871 @@
+/* ============================================================
+   SABINO.AI - GASTOS POR CATEGORIA V2
+   Demo + Real
+   ============================================================ */
+
+.sabino-category-host {
+    overflow: visible !important;
+}
+
+.sabino-cat-v2 {
+    width: 100%;
+}
+
+.sabino-cat-v2-head {
+    margin-bottom: 18px;
+}
+
+.sabino-cat-v2-head h2 {
+    margin: 0 0 6px;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.sabino-cat-v2-head p {
+    margin: 0;
+    color: #93a9c2;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+
+/* ============================================================
+   GRAFICO + LEGENDA
+   ============================================================ */
+
+.sabino-cat-v2-main {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 18px;
+    align-items: center;
+    margin-top: 12px;
+}
+
+
+/* ============================================================
+   DONUT
+   ============================================================ */
+
+.sabino-cat-v2-donut {
+    position: relative;
+
+    width: 190px;
+    height: 190px;
+
+    border-radius: 50%;
+
+    flex: 0 0 auto;
+
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,.03),
+        0 12px 30px rgba(0,0,0,.20);
+}
+
+.sabino-cat-v2-hole {
+    position: absolute;
+
+    inset: 46px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #081018;
+
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04);
+
+    text-align: center;
+}
+
+.sabino-cat-v2-total-label {
+    margin-bottom: 5px;
+
+    color: #87a0ba;
+
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.sabino-cat-v2-total {
+    color: #ffffff;
+
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+
+/* ============================================================
+   LEGENDA
+   ============================================================ */
+
+.sabino-cat-v2-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.sabino-cat-v2-row {
+    display: grid;
+
+    grid-template-columns:
+        12px
+        minmax(76px, 1fr)
+        auto
+        40px;
+
+    gap: 8px;
+
+    align-items: center;
+
+    min-height: 31px;
+
+    padding: 5px 7px;
+
+    border-radius: 9px;
+
+    transition:
+        background .18s ease,
+        transform .18s ease;
+}
+
+.sabino-cat-v2-row:hover {
+    background: rgba(255,255,255,.045);
+    transform: translateX(2px);
+}
+
+.sabino-cat-v2-row.is-top {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(214,170,0,.12),
+            rgba(214,170,0,.025)
+        );
+
+    box-shadow:
+        inset 2px 0 0 #d6aa00;
+}
+
+.sabino-cat-v2-dot {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+}
+
+.sabino-cat-v2-name {
+    overflow: hidden;
+
+    color: #f4f7fb;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.sabino-cat-v2-row.is-top
+.sabino-cat-v2-name {
+    color: #f6d35d;
+}
+
+.sabino-cat-v2-value {
+    color: #aabbd0;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.sabino-cat-v2-percent {
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-align: right;
+}
+
+
+/* ============================================================
+   MAIOR GASTO
+   ============================================================ */
+
+.sabino-cat-v2-highlight {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+
+    gap: 16px;
+
+    align-items: center;
+
+    margin-top: 20px;
+
+    padding: 14px 16px;
+
+    border:
+        1px solid
+        rgba(214,170,0,.58);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(214,170,0,.085),
+            rgba(214,170,0,.025)
+        );
+}
+
+.sabino-cat-v2-highlight-label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #8298b2;
+
+    font-size: 10px;
+}
+
+.sabino-cat-v2-highlight-title {
+    margin: 0;
+
+    color: #ffd51f;
+
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.sabino-cat-v2-highlight-value {
+    margin-top: 3px;
+
+    color: #9db0c7;
+
+    font-size: 10px;
+}
+
+.sabino-cat-v2-highlight-right {
+    text-align: right;
+}
+
+.sabino-cat-v2-highlight-money {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.sabino-cat-v2-highlight-percent {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #f5cc2c;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+
+@media (max-width: 1250px) {
+
+    .sabino-cat-v2-main {
+        grid-template-columns: 165px minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .sabino-cat-v2-donut {
+        width: 165px;
+        height: 165px;
+    }
+
+    .sabino-cat-v2-hole {
+        inset: 40px;
+    }
+
+    .sabino-cat-v2-row {
+        grid-template-columns:
+            10px
+            minmax(60px, 1fr)
+            auto
+            34px;
+
+        gap: 5px;
+    }
+
+    .sabino-cat-v2-value {
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 850px) {
+
+    .sabino-cat-v2-main {
+        grid-template-columns: 1fr;
+    }
+
+    .sabino-cat-v2-donut {
+        margin: 0 auto;
+    }
+}
+
+/* ============================================================
+   SABINO FINANCE CATEGORY - 100% POLISH V3
+   ============================================================ */
+
+.sabino-cat-v2-main {
+    grid-template-columns: 180px minmax(0, 1fr) !important;
+    gap: 16px !important;
+    align-items: center !important;
+}
+
+
+/* Pizza um pouco mais compacta */
+
+.sabino-cat-v2-donut {
+    width: 176px !important;
+    height: 176px !important;
+}
+
+.sabino-cat-v2-hole {
+    inset: 43px !important;
+}
+
+.sabino-cat-v2-total-label {
+    font-size: 9px !important;
+}
+
+.sabino-cat-v2-total {
+    font-size: 16px !important;
+}
+
+
+/* ============================================================
+   LEGENDA COM VALOR EM SEGUNDA LINHA
+   ============================================================ */
+
+.sabino-cat-v2-row {
+
+    display: grid !important;
+
+    grid-template-columns:
+        11px
+        minmax(0, 1fr)
+        38px !important;
+
+    grid-template-areas:
+        "dot name percent"
+        "dot value percent";
+
+    column-gap: 8px !important;
+    row-gap: 1px !important;
+
+    min-height: 36px !important;
+
+    padding: 5px 7px !important;
+
+    overflow: hidden !important;
+}
+
+
+.sabino-cat-v2-dot {
+    grid-area: dot;
+
+    align-self: center;
+
+    width: 10px !important;
+    height: 10px !important;
+}
+
+
+.sabino-cat-v2-name {
+    grid-area: name;
+
+    min-width: 0;
+
+    font-size: 10px !important;
+    line-height: 1.25 !important;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.sabino-cat-v2-value {
+    grid-area: value;
+
+    min-width: 0;
+
+    font-size: 9px !important;
+    line-height: 1.2 !important;
+
+    color: #91a6bd !important;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.sabino-cat-v2-percent {
+    grid-area: percent;
+
+    align-self: center;
+
+    min-width: 34px !important;
+
+    text-align: right !important;
+
+    font-size: 10px !important;
+    font-weight: 800 !important;
+}
+
+
+/* Maior categoria */
+
+.sabino-cat-v2-row.is-top {
+
+    padding-left: 8px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(214,170,0,.12),
+            rgba(214,170,0,.02)
+        ) !important;
+}
+
+
+/* ============================================================
+   CARD INFERIOR MAIS COMPACTO
+   ============================================================ */
+
+.sabino-cat-v2-highlight {
+
+    margin-top: 16px !important;
+
+    padding: 12px 14px !important;
+
+    gap: 10px !important;
+}
+
+
+.sabino-cat-v2-highlight-title {
+    font-size: 16px !important;
+}
+
+
+.sabino-cat-v2-highlight-money {
+    font-size: 13px !important;
+}
+
+
+.sabino-cat-v2-highlight-percent {
+    font-size: 10px !important;
+}
+
+
+/* ============================================================
+   GARANTIR QUE NADA INVADA PROXIMOS PASSOS
+   ============================================================ */
+
+.sabino-cat-v2,
+.sabino-cat-v2-main,
+.sabino-cat-v2-legend {
+
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+
+.sabino-category-host {
+
+    overflow: hidden !important;
+}
+
+
+/* ============================================================
+   SABINO_FINANCE_CATEGORY_POLISH_V4
+   Otimizado para visualização 100%
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   LAYOUT PRINCIPAL
+   Pizza menor + mais espaço para legenda
+   ------------------------------------------------------------ */
+
+.sabino-cat-v2-main {
+
+    display: grid !important;
+
+    grid-template-columns:
+        160px
+        minmax(0, 1fr) !important;
+
+    gap: 14px !important;
+
+    align-items: center !important;
+
+    width: 100% !important;
+
+    min-width: 0 !important;
+}
+
+
+/* ------------------------------------------------------------
+   DONUT
+   ------------------------------------------------------------ */
+
+.sabino-cat-v2-donut {
+
+    width: 160px !important;
+    height: 160px !important;
+
+    margin: 0 auto !important;
+
+    flex: 0 0 160px !important;
+}
+
+
+.sabino-cat-v2-hole {
+
+    inset: 39px !important;
+}
+
+
+.sabino-cat-v2-total-label {
+
+    margin-bottom: 3px !important;
+
+    font-size: 9px !important;
+}
+
+
+.sabino-cat-v2-total {
+
+    font-size: 15px !important;
+
+    line-height: 1.1 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* ------------------------------------------------------------
+   LEGENDA
+   Nome em cima
+   Valor abaixo
+   Percentual à direita
+   ------------------------------------------------------------ */
+
+.sabino-cat-v2-legend {
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    gap: 3px !important;
+
+    width: 100% !important;
+
+    min-width: 0 !important;
+
+    overflow: visible !important;
+}
+
+
+.sabino-cat-v2-row {
+
+    display: grid !important;
+
+    grid-template-columns:
+        11px
+        minmax(0, 1fr)
+        38px !important;
+
+    grid-template-areas:
+        "dot name percent"
+        "dot value percent";
+
+    column-gap: 8px !important;
+
+    row-gap: 2px !important;
+
+    align-items: center !important;
+
+    min-height: 38px !important;
+
+    width: 100% !important;
+
+    padding: 5px 7px !important;
+
+    box-sizing: border-box !important;
+
+    overflow: visible !important;
+}
+
+
+/* bolinha */
+
+.sabino-cat-v2-dot {
+
+    grid-area: dot !important;
+
+    align-self: center !important;
+
+    width: 10px !important;
+    height: 10px !important;
+
+    flex: 0 0 auto !important;
+}
+
+
+/* nome completo */
+
+.sabino-cat-v2-name {
+
+    grid-area: name !important;
+
+    min-width: 0 !important;
+
+    color: #f4f7fb !important;
+
+    font-size: 10px !important;
+
+    font-weight: 700 !important;
+
+    line-height: 1.2 !important;
+
+    white-space: nowrap !important;
+
+    overflow: visible !important;
+
+    text-overflow: clip !important;
+}
+
+
+/* valor abaixo do nome */
+
+.sabino-cat-v2-value {
+
+    grid-area: value !important;
+
+    min-width: 0 !important;
+
+    color: #91a6bd !important;
+
+    font-size: 9px !important;
+
+    font-weight: 600 !important;
+
+    line-height: 1.2 !important;
+
+    white-space: nowrap !important;
+
+    overflow: visible !important;
+
+    text-overflow: clip !important;
+}
+
+
+/* percentual */
+
+.sabino-cat-v2-percent {
+
+    grid-area: percent !important;
+
+    align-self: center !important;
+
+    min-width: 36px !important;
+
+    color: #ffffff !important;
+
+    font-size: 10px !important;
+
+    font-weight: 800 !important;
+
+    text-align: right !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* ------------------------------------------------------------
+   MAIOR CATEGORIA
+   ------------------------------------------------------------ */
+
+.sabino-cat-v2-row.is-top {
+
+    padding-left: 8px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(214,170,0,.12),
+            rgba(214,170,0,.025)
+        ) !important;
+
+    box-shadow:
+        inset 2px 0 0 #d6aa00 !important;
+}
+
+
+.sabino-cat-v2-row.is-top
+.sabino-cat-v2-name {
+
+    color: #f6d35d !important;
+}
+
+
+/* ------------------------------------------------------------
+   CARD MAIOR GASTO
+   ------------------------------------------------------------ */
+
+.sabino-cat-v2-highlight {
+
+    margin-top: 16px !important;
+
+    padding: 12px 14px !important;
+
+    gap: 10px !important;
+
+    border-radius: 14px !important;
+}
+
+
+.sabino-cat-v2-highlight-title {
+
+    font-size: 16px !important;
+
+    line-height: 1.15 !important;
+}
+
+
+.sabino-cat-v2-highlight-value {
+
+    font-size: 9px !important;
+}
+
+
+.sabino-cat-v2-highlight-money {
+
+    font-size: 13px !important;
+}
+
+
+.sabino-cat-v2-highlight-percent {
+
+    font-size: 10px !important;
+}
+
+
+/* ------------------------------------------------------------
+   NÃO INVADIR PRÓXIMOS PASSOS
+   ------------------------------------------------------------ */
+
+.sabino-category-host,
+.sabino-cat-v2 {
+
+    min-width: 0 !important;
+
+    max-width: 100% !important;
+
+    overflow: hidden !important;
+}
+
+
+.sabino-cat-v2-main,
+.sabino-cat-v2-legend {
+
+    min-width: 0 !important;
+
+    max-width: 100% !important;
+}
+
+
+/* ------------------------------------------------------------
+   TELAS MAIS ESTREITAS
+   ------------------------------------------------------------ */
+
+@media (max-width: 1250px) {
+
+    .sabino-cat-v2-main {
+
+        grid-template-columns:
+            145px
+            minmax(0, 1fr) !important;
+
+        gap: 10px !important;
+    }
+
+
+    .sabino-cat-v2-donut {
+
+        width: 145px !important;
+        height: 145px !important;
+    }
+
+
+    .sabino-cat-v2-hole {
+
+        inset: 36px !important;
+    }
+
+
+    .sabino-cat-v2-total {
+
+        font-size: 14px !important;
+    }
+}
+
+
+/* mobile */
+
+@media (max-width: 850px) {
+
+    .sabino-cat-v2-main {
+
+        grid-template-columns: 1fr !important;
+
+        gap: 18px !important;
+    }
+
+
+    .sabino-cat-v2-donut {
+
+        width: 160px !important;
+        height: 160px !important;
+
+        margin: 0 auto !important;
+    }
+
+
+    .sabino-cat-v2-legend {
+
+        width: 100% !important;
+    }
+}
+

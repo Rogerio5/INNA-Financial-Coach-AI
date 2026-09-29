@@ -1,0 +1,364 @@
+/* ============================================================
+   SABINO_DASHBOARD_TOPBAR_V1
+
+   CENTRO  = seletor de idiomas
+   DIREITA = usuário autenticado
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   IDIOMA CENTRALIZADO
+   ------------------------------------------------------------ */
+
+#sabinoLanguageSwitcher {
+
+    position: fixed !important;
+
+    top: 18px !important;
+
+    left: 50% !important;
+
+    right: auto !important;
+
+    transform: translateX(-50%) !important;
+
+    margin: 0 !important;
+
+    z-index: 2147482000 !important;
+}
+
+
+/*
+ * Mantém o painel de idiomas ligado ao botão central.
+ */
+
+#sabinoLanguageSwitcher #sabinoLanguagePanel {
+
+    top: calc(100% + 10px) !important;
+}
+
+
+/* ------------------------------------------------------------
+   CONTA DO USUÁRIO
+   ------------------------------------------------------------ */
+
+#sabinoDashboardUserAccount {
+
+    position: fixed;
+
+    top: 14px;
+
+    right: 22px;
+
+    z-index: 2147482100;
+
+    min-width: 205px;
+
+    height: 58px;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 8px 13px;
+
+    border:
+        1px solid
+        rgba(211, 168, 45, .42);
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(18, 19, 18, .98),
+            rgba(9, 10, 10, .98)
+        );
+
+    box-shadow:
+        0 12px 34px
+        rgba(0, 0, 0, .28);
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    cursor: pointer;
+
+    transition:
+        border-color .18s ease,
+        background .18s ease,
+        transform .18s ease;
+}
+
+
+#sabinoDashboardUserAccount:hover {
+
+    border-color:
+        rgba(240, 190, 55, .85);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(28, 27, 20, .99),
+            rgba(12, 12, 10, .99)
+        );
+
+    transform:
+        translateY(-1px);
+}
+
+
+.sabino-dashboard-user-avatar {
+
+    width: 38px;
+
+    height: 38px;
+
+    flex:
+        0 0
+        38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f5c542,
+            #c99212
+        );
+
+    color: #0b0c0d;
+
+    font-size: 13px;
+
+    font-weight: 900;
+
+    letter-spacing: .03em;
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(255, 255, 255, .2);
+}
+
+
+.sabino-dashboard-user-content {
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    line-height: 1.2;
+}
+
+
+.sabino-dashboard-user-name {
+
+    max-width: 155px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.sabino-dashboard-user-meta {
+
+    margin-top: 4px;
+
+    max-width: 155px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    color: #a9adb3;
+
+    font-size: 10px;
+
+    font-weight: 600;
+}
+
+
+.sabino-dashboard-user-chevron {
+
+    margin-left: auto;
+
+    color: #d8ad35;
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+/* ------------------------------------------------------------
+   RESPONSIVO
+   ------------------------------------------------------------ */
+
+@media (
+    max-width: 1100px
+) {
+
+    #sabinoDashboardUserAccount {
+
+        min-width: auto;
+
+        padding:
+            8px
+            10px;
+    }
+
+
+    .sabino-dashboard-user-content {
+
+        display: none;
+    }
+
+
+    .sabino-dashboard-user-chevron {
+
+        display: none;
+    }
+
+
+    #sabinoLanguageSwitcher {
+
+        left: 57% !important;
+    }
+}
+
+
+@media (
+    max-width: 760px
+) {
+
+    #sabinoDashboardUserAccount {
+
+        right: 10px;
+
+        top: 10px;
+
+        height: 48px;
+    }
+
+
+    .sabino-dashboard-user-avatar {
+
+        width: 32px;
+
+        height: 32px;
+
+        flex-basis: 32px;
+    }
+
+
+    #sabinoLanguageSwitcher {
+
+        top: 66px !important;
+
+        left: 50% !important;
+    }
+}
+
+/* ============================================================
+   SABINO_LANGUAGE_POSITION_NEAR_USER_V2
+   Idioma no topo, imediatamente antes da conta do usuário.
+   ============================================================ */
+
+@media (min-width: 1201px) {
+
+    #sabinoLanguageSwitcher {
+
+        position: fixed !important;
+
+        top: 20px !important;
+
+        left: auto !important;
+
+        right: 220px !important;
+
+        transform: none !important;
+
+        margin: 0 !important;
+
+        z-index: 2147482000 !important;
+    }
+
+}
+
+
+/*
+ * Em telas menores preservamos espaço entre os dois controles.
+ */
+
+@media (min-width: 761px) and (max-width: 1200px) {
+
+    #sabinoLanguageSwitcher {
+
+        position: fixed !important;
+
+        top: 18px !important;
+
+        left: auto !important;
+
+        right: 92px !important;
+
+        transform: none !important;
+    }
+
+}
+
+
+/*
+ * Mobile continua abaixo do topo.
+ */
+
+@media (max-width: 760px) {
+
+    #sabinoLanguageSwitcher {
+
+        top: 66px !important;
+
+        left: 50% !important;
+
+        right: auto !important;
+
+        transform: translateX(-50%) !important;
+    }
+
+}
+
+

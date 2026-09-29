@@ -1,0 +1,95 @@
+
+/* ============================================================
+   SABINO.AI - DASHBOARD TOP ANCHOR V4
+
+   Sem scroll listener.
+   Sem MutationObserver.
+   Sem loop.
+   ============================================================ */
+
+html body .main {
+    position: relative !important;
+}
+
+
+html body .main > .topbar,
+html body header.topbar[data-sabino-dashboard-anchor-v4="true"] {
+
+    position: absolute !important;
+
+    top: 18px !important;
+    right: 30px !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 18px !important;
+
+    transform: none !important;
+    translate: none !important;
+
+    z-index: 1000 !important;
+}
+
+
+html body
+header.topbar[data-sabino-dashboard-anchor-v4="true"]
+#sabinoLanguageSwitcher,
+
+html body
+header.topbar[data-sabino-dashboard-anchor-v4="true"]
+#languageButton {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+    translate: none !important;
+}
+
+
+html body
+header.topbar[data-sabino-dashboard-anchor-v4="true"]
+.profile {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+    translate: none !important;
+}
+
+
+@media (max-width: 1350px) {
+
+    html body .main > .topbar,
+    html body header.topbar[data-sabino-dashboard-anchor-v4="true"] {
+
+        top: 16px !important;
+        right: 22px !important;
+        gap: 14px !important;
+    }
+}

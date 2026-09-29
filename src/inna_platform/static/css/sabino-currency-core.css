@@ -1,0 +1,378 @@
+
+/* =========================================================
+   SABINO.AI - GLOBAL CURRENCY SELECTOR
+   ========================================================= */
+
+.sabino-global-currency {
+    position: fixed;
+
+    top: 20px;
+    right: 132px;
+
+    z-index: 2147482999;
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+
+.sabino-global-currency-button {
+    height: 36px;
+    min-width: 112px;
+
+    padding: 0 12px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #F6E7B0;
+
+    background:
+        rgba(
+            12,
+            12,
+            15,
+            .96
+        );
+
+    border:
+        1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .56
+        );
+
+    border-radius: 9px;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: .025em;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 28px
+        rgba(
+            0,
+            0,
+            0,
+            .22
+        );
+}
+
+
+.sabino-global-currency-button:hover {
+    border-color:
+        #D4AF37;
+
+    background:
+        #151515;
+}
+
+
+.sabino-global-currency-panel {
+    position: absolute;
+
+    top: 44px;
+    right: 0;
+
+    width:
+        min(
+            340px,
+            calc(
+                100vw - 24px
+            )
+        );
+
+    max-height:
+        min(
+            620px,
+            calc(
+                100vh - 80px
+            )
+        );
+
+    padding: 12px;
+
+    overflow: hidden;
+
+    color: #F4F4F5;
+
+    background:
+        rgba(
+            10,
+            10,
+            12,
+            .99
+        );
+
+    border:
+        1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .42
+        );
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 24px 70px
+        rgba(
+            0,
+            0,
+            0,
+            .58
+        );
+}
+
+
+.sabino-global-currency-heading {
+    margin:
+        2px 4px 10px;
+
+    color:
+        #D4AF37;
+
+    font-size: 12px;
+    font-weight: 850;
+
+    letter-spacing: .11em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.sabino-global-currency-auto {
+    width: 100%;
+
+    margin-bottom: 9px;
+
+    padding:
+        9px 10px;
+
+    text-align: left;
+
+    color:
+        #F6E7B0;
+
+    background:
+        rgba(
+            212,
+            175,
+            55,
+            .08
+        );
+
+    border:
+        1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .20
+        );
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    line-height: 1.35;
+}
+
+
+.sabino-global-currency-search {
+    width: 100%;
+    height: 40px;
+
+    padding:
+        0 10px;
+
+    color:
+        #FFFFFF;
+
+    background:
+        #111216;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .12
+        );
+
+    border-radius: 9px;
+
+    outline: none;
+}
+
+
+.sabino-global-currency-search:focus {
+    border-color:
+        rgba(
+            212,
+            175,
+            55,
+            .70
+        );
+}
+
+
+.sabino-global-currency-list {
+    max-height: 455px;
+
+    margin-top: 8px;
+
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+}
+
+
+.sabino-global-currency-option {
+    width: 100%;
+
+    min-height: 48px;
+
+    padding:
+        7px 8px;
+
+    display: grid;
+
+    grid-template-columns:
+        22px 1fr;
+
+    align-items: center;
+
+    text-align: left;
+
+    color:
+        #F2F2F2;
+
+    background:
+        transparent;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+}
+
+
+.sabino-global-currency-option:hover {
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .055
+        );
+}
+
+
+.sabino-global-currency-option.active {
+    background:
+        rgba(
+            212,
+            175,
+            55,
+            .11
+        );
+}
+
+
+.sabino-currency-check {
+    color:
+        #D4AF37;
+
+    font-weight:
+        900;
+}
+
+
+.sabino-currency-copy {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.sabino-currency-copy strong {
+    color:
+        #FAFAFA;
+
+    font-size: 12.5px;
+
+    font-weight: 700;
+}
+
+
+.sabino-currency-copy small {
+    color:
+        #9398A4;
+
+    font-size: 10.5px;
+}
+
+
+html[dir="rtl"]
+.sabino-global-currency {
+    right: auto;
+    left: 132px;
+}
+
+
+html[dir="rtl"]
+.sabino-global-currency-panel {
+    right: auto;
+    left: 0;
+}
+
+
+@media (
+    max-width: 700px
+) {
+
+    .sabino-global-currency {
+        top: 56px;
+        right: 12px;
+    }
+
+    html[dir="rtl"]
+    .sabino-global-currency {
+        right: auto;
+        left: 12px;
+    }
+
+}
+
+
+/* ==========================================================
+   SABINO_LANGUAGE_DRIVEN_CURRENCY_UI_V1
+
+   O idioma/localidade controla a moeda.
+   Não mostramos um segundo seletor independente de moeda.
+   ========================================================== */
+
+#sabinoGlobalCurrencyButton,
+#sabinoGlobalCurrencyPanel {
+    display: none !important;
+}
+

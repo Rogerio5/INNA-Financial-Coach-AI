@@ -1,0 +1,109 @@
+/* =========================================================
+   SABINO.AI - GLOBAL BRAND
+   Logo oficial compartilhada entre todas as páginas
+   ========================================================= */
+
+.sabino-official-logo {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    display:
+        block;
+
+    object-fit:
+        contain;
+
+    border-radius:
+        inherit;
+
+}
+
+
+.sabino-global-logo-container {
+
+    display:
+        grid !important;
+
+    place-items:
+        center !important;
+
+    overflow:
+        hidden !important;
+
+    padding:
+        0 !important;
+
+    background:
+        transparent !important;
+
+}
+
+
+/* Financeiro */
+
+.finance-brand-symbol {
+
+    overflow:
+        hidden;
+
+    padding:
+        0;
+
+    background:
+        transparent;
+
+}
+
+
+.finance-brand-symbol
+.sabino-official-logo {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+}
+
+
+/* Classes comuns utilizadas pela Sabino.AI */
+
+.brand-symbol,
+.brand-mark,
+.logo-symbol,
+.logo-mark,
+.sabino-brand-symbol,
+.sabino-brand-mark,
+.sabino-logo-symbol,
+.sabino-logo-mark,
+.platform-brand-symbol,
+.platform-logo-symbol,
+.inna-brand-symbol {
+
+    overflow:
+        hidden;
+
+}
+
+
+/* Não altera o texto Sabino.AI ao lado da imagem */
+
+.sabino-official-logo {
+
+    user-select:
+        none;
+
+    -webkit-user-drag:
+        none;
+
+}
+
+
+/* =========================================================
+   FIM GLOBAL BRAND
+   ========================================================= */

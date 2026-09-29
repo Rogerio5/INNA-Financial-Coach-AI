@@ -1,0 +1,163 @@
+/* ============================================================
+   SABINO_FINANCE_HEADER_DASHBOARD_V1
+
+   Mesmo padrão do dashboard principal:
+
+   [ idioma ]   [ avatar + usuário ]
+   ============================================================ */
+
+
+#sabinoFinanceDashboardHeader {
+
+    position: fixed !important;
+
+    top: 18px !important;
+    right: 30px !important;
+
+    z-index: 2147483000 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: flex-end !important;
+
+    gap: 18px !important;
+
+    height: 58px !important;
+
+    width: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: transparent !important;
+
+    border: 0 !important;
+
+    box-shadow: none !important;
+}
+
+
+/* ============================================================
+   IDIOMA = PRIMEIRO
+   ============================================================ */
+
+#sabinoFinanceDashboardHeader
+#sabinoLanguageSwitcher {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 1 !important;
+
+    flex:
+        0 0
+        auto !important;
+}
+
+
+/*
+ * Mantém o painel do seletor ancorado corretamente.
+ */
+
+#sabinoFinanceDashboardHeader
+#sabinoLanguagePanel {
+
+    right: 0 !important;
+    left: auto !important;
+
+    top: calc(100% + 10px) !important;
+}
+
+
+/* ============================================================
+   USUÁRIO = SEGUNDO
+   ============================================================ */
+
+#sabinoFinanceDashboardHeader
+[data-sabino-finance-dashboard-user="true"] {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 2 !important;
+
+    flex:
+        0 0
+        auto !important;
+}
+
+
+/*
+ * Não transformar o usuário em um card grande.
+ * Mantém o mesmo aspecto simples da página de cards.
+ */
+
+#sabinoFinanceDashboardHeader
+[data-sabino-finance-dashboard-user="true"] {
+
+    background: transparent !important;
+
+    box-shadow: none !important;
+}
+
+
+/* ============================================================
+   INNA NÃO PERTENCE AO HEADER DE CONTA
+   ============================================================ */
+
+#sabinoFinanceDashboardHeader
+a[href*="inna"],
+
+#sabinoFinanceDashboardHeader
+button[data-inna] {
+
+    display: none !important;
+}
+
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+
+@media (max-width: 1100px) {
+
+    #sabinoFinanceDashboardHeader {
+
+        right: 16px !important;
+
+        gap: 12px !important;
+    }
+
+}
+
+
+@media (max-width: 760px) {
+
+    #sabinoFinanceDashboardHeader {
+
+        top: 12px !important;
+
+        right: 10px !important;
+
+        gap: 8px !important;
+    }
+
+}

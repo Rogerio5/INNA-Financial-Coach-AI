@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Contrato e Aceite | Sabino.AI
+    </title>
+
+    <meta
+        name="description"
+        content="Revise as condições comerciais e confirme a contratação da sua solução Sabino.AI."
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/css/platform.css') }}?v=2"
+    >
+
+    <script
+        src="{{ url_for('static', path='/js/contract.js') }}?v=3"
+        defer
+    ></script>
+
+
+    <script
+        src="{{ url_for('static', path='/js/contract-documents.js') }}?v=51"
+        defer
+    ></script>
+
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand.css?v=1"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="/static/images/sabino-s-logo.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand-v2.css?v=2"
+    >
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+     ====================================================== -->
+
+<header class="topbar">
+
+    <a
+        class="brand brand-header"
+        href="/"
+    >
+
+        <img
+            class="brand-logo"
+            src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+            alt="Sabino.AI"
+        >
+
+        <span>
+            Sabino.AI
+        </span>
+
+    </a>
+
+
+    <nav class="nav">
+
+        <a href="/">Início</a>
+
+        <a href="/#solucoes">
+            Soluções
+        </a>
+
+        <a href="/modulos">
+            Módulos
+        </a>
+
+        <a href="/#inna">
+            INNA Assistant
+        </a>
+
+        <a href="/#recursos">
+            Recursos
+        </a>
+
+        <a href="/#empresa">
+            Empresa
+        </a>
+
+        <a href="/#contato">
+            Contato
+        </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+        <button class="btn-secondary">
+            Entrar
+        </button>
+
+        <a
+            class="btn-primary"
+            href="/#contato"
+        >
+            Falar com um especialista
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<main class="contract-page">
+
+
+<!-- ======================================================
+     PROGRESSO
+     ====================================================== -->
+
+<section class="contract-progress container">
+
+    <div class="contract-progress-item completed">
+        <span>✓</span>
+        <strong>Conheça</strong>
+    </div>
+
+    <div class="contract-progress-line"></div>
+
+    <div class="contract-progress-item completed">
+        <span>✓</span>
+        <strong>Módulos</strong>
+    </div>
+
+    <div class="contract-progress-line"></div>
+
+    <div class="contract-progress-item completed">
+        <span>✓</span>
+        <strong>Configuração</strong>
+    </div>
+
+    <div class="contract-progress-line"></div>
+
+    <div class="contract-progress-item completed">
+        <span>✓</span>
+        <strong>Proposta</strong>
+    </div>
+
+    <div class="contract-progress-line"></div>
+
+    <div class="contract-progress-item active">
+        <span>5</span>
+        <strong>Contrato e aceite</strong>
+    </div>
+
+    <div class="contract-progress-line"></div>
+
+    <div class="contract-progress-item">
+        <span>6</span>
+        <strong>Implantação</strong>
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     HERO
+     ====================================================== -->
+
+<section class="contract-hero container">
+
+    <div>
+
+        <span class="eyebrow">
+            CONTRATAÇÃO
+        </span>
+
+        <h1>
+            Revise e confirme
+            <span>sua contratação.</span>
+        </h1>
+
+        <p>
+            Defina o período contratual, revise as condições
+            comerciais e confirme o aceite antes do início
+            da implantação da sua solução Sabino.AI.
+        </p>
+
+    </div>
+
+
+    <aside class="contract-identification">
+
+        <span class="eyebrow">
+            SOLUÇÃO
+        </span>
+
+        <strong id="contract-solution-id">
+            -
+        </strong>
+
+        <div>
+
+            <span>
+                Plano recomendado
+            </span>
+
+            <b id="contract-plan">
+                -
+            </b>
+
+        </div>
+
+    </aside>
+
+</section>
+
+
+
+<!-- ======================================================
+     LAYOUT
+     ====================================================== -->
+
+
+<section
+    class="contract-legal-banner container"
+    id="contract-legal-status"
+>
+
+    <div class="contract-legal-icon">
+        §
+    </div>
+
+    <div>
+
+        <span class="eyebrow">
+            STATUS JURÍDICO
+        </span>
+
+        <h3>
+            Pendente de validação jurídica
+        </h3>
+
+        <p>
+            Este contrato e seus anexos são modelos demonstrativos
+            da plataforma Sabino.AI. Antes de qualquer utilização
+            comercial real, a redação final deverá ser revisada
+            e aprovada por assessoria jurídica competente.
+        </p>
+
+    </div>
+
+    <div class="contract-legal-meta">
+
+        <span>
+            Versão contratual
+        </span>
+
+        <strong>
+            1.0-demo
+        </strong>
+
+        <small>
+            NÃO LIBERADO PARA PRODUÇÃO
+        </small>
+
+    </div>
+
+</section>
+
+<section class="contract-layout container">
+
+
+<div class="contract-main">
+
+
+<!-- ======================================================
+     1 PRAZO
+     ====================================================== -->
+
+<section class="contract-card">
+
+    <div class="contract-card-heading">
+
+        <span class="contract-number">
+            1
+        </span>
+
+        <div>
+
+            <h2>
+                Período de contratação
+            </h2>
+
+            <p>
+                Escolha o prazo previsto para utilização da solução.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="contract-term-grid">
+
+
+        <label class="contract-choice selected">
+
+            <input
+                type="radio"
+                name="contract-term"
+                value="1"
+                checked
+            >
+
+            <strong>
+                Mensal
+            </strong>
+
+            <span>
+                1 mês
+            </span>
+
+            <small>
+                Maior flexibilidade
+            </small>
+
+        </label>
+
+
+        <label class="contract-choice">
+
+            <input
+                type="radio"
+                name="contract-term"
+                value="12"
+            >
+
+            <strong>
+                12 meses
+            </strong>
+
+            <span>
+                Contrato anual
+            </span>
+
+            <small>
+                Planejamento de médio prazo
+            </small>
+
+        </label>
+
+
+        <label class="contract-choice">
+
+            <input
+                type="radio"
+                name="contract-term"
+                value="24"
+            >
+
+            <strong>
+                24 meses
+            </strong>
+
+            <span>
+                Contrato de 2 anos
+            </span>
+
+            <small>
+                Continuidade operacional
+            </small>
+
+        </label>
+
+
+        <label class="contract-choice">
+
+            <input
+                type="radio"
+                name="contract-term"
+                value="36"
+            >
+
+            <strong>
+                36 meses
+            </strong>
+
+            <span>
+                Contrato de 3 anos
+            </span>
+
+            <small>
+                Estratégia de longo prazo
+            </small>
+
+        </label>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     2 FATURAMENTO
+     ====================================================== -->
+
+<section class="contract-card">
+
+    <div class="contract-card-heading">
+
+        <span class="contract-number">
+            2
+        </span>
+
+        <div>
+
+            <h2>
+                Forma de faturamento
+            </h2>
+
+            <p>
+                Defina como o contrato deverá ser faturado.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="contract-billing-grid">
+
+
+        <label class="contract-billing-option selected">
+
+            <input
+                type="radio"
+                name="billing"
+                value="monthly"
+                checked
+            >
+
+            <div>
+
+                <strong>
+                    Faturamento mensal
+                </strong>
+
+                <span>
+                    Cobrança recorrente mensal.
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <label class="contract-billing-option">
+
+            <input
+                type="radio"
+                name="billing"
+                value="annual"
+            >
+
+            <div>
+
+                <strong>
+                    Faturamento anual
+                </strong>
+
+                <span>
+                    Consolidação dos valores por período anual.
+                </span>
+
+            </div>
+
+        </label>
+
+
+    </div>
+
+
+    <p class="contract-pricing-note">
+        Nenhum desconto por período está sendo aplicado nesta
+        versão demonstrativa. Políticas comerciais poderão ser
+        configuradas posteriormente.
+    </p>
+
+</section>
+
+
+
+<!-- ======================================================
+     3 EMPRESA
+     ====================================================== -->
+
+<section class="contract-card">
+
+    <div class="contract-card-heading">
+
+        <span class="contract-number">
+            3
+        </span>
+
+        <div>
+
+            <h2>
+                Empresa e representante
+            </h2>
+
+            <p>
+                Informe os dados de quem está autorizando a contratação.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="contract-fields">
+
+
+        <label>
+
+            <span>
+                Razão social
+            </span>
+
+            <input
+                id="contract-company"
+                type="text"
+                placeholder="Nome da empresa"
+            >
+
+        </label>
+
+
+        <label>
+
+            <span>
+                CNPJ
+            </span>
+
+            <input
+                id="contract-company-document"
+                type="text"
+                placeholder="00.000.000/0000-00"
+            >
+
+        </label>
+
+
+        <label>
+
+            <span>
+                Representante autorizado
+            </span>
+
+            <input
+                id="contract-representative"
+                type="text"
+                placeholder="Nome completo"
+            >
+
+        </label>
+
+
+        <label>
+
+            <span>
+                Cargo
+            </span>
+
+            <input
+                id="contract-role"
+                type="text"
+                placeholder="Diretor, gestor, responsável..."
+            >
+
+        </label>
+
+
+        <label class="contract-field-wide">
+
+            <span>
+                E-mail corporativo
+            </span>
+
+            <input
+                id="contract-email"
+                type="email"
+                placeholder="responsavel@empresa.com"
+            >
+
+        </label>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     4 DOCUMENTOS CONTRATUAIS
+     ====================================================== -->
+
+<section class="contract-card contract-documents-card">
+
+    <div class="contract-card-heading">
+
+        <span class="contract-number">
+            4
+        </span>
+
+        <div>
+
+            <h2>
+                Condições e documentos
+            </h2>
+
+            <p>
+                Consulte os documentos que integram a contratação
+                antes de confirmar o aceite digital.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="contract-documents-intro">
+
+        <div>
+
+            <span class="eyebrow">
+                PACOTE CONTRATUAL
+            </span>
+
+            <strong>
+                Documentação da solução Sabino.AI
+            </strong>
+
+            <p>
+                O contrato principal possui 20 páginas e é
+                complementado pelos documentos técnicos,
+                comerciais, de privacidade, segurança e suporte.
+            </p>
+
+        </div>
+
+
+        <div class="contract-read-progress">
+
+            <span>
+                DOCUMENTOS LIDOS
+            </span>
+
+            <strong id="contract-docs-read-count">
+                0 / 7
+            </strong>
+
+            <div class="contract-read-progress-bar">
+
+                <span id="contract-docs-progress-bar"></span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="contract-document-grid">
+
+
+        <article class="contract-doc-card featured">
+
+            <div class="contract-doc-icon">
+                CTR
+            </div>
+
+            <div class="contract-doc-content">
+
+                <div class="contract-doc-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            DOCUMENTO PRINCIPAL
+                        </span>
+
+                        <h3>
+                            Contrato da solução Sabino.AI
+                        </h3>
+                    </div>
+
+                    <span
+                        class="contract-doc-status"
+                        data-doc-status="contract"
+                    >
+                        Não lido
+                    </span>
+
+                </div>
+
+
+                <p>
+                    Instrumento principal da contratação,
+                    com objeto, escopo, preço, prazo,
+                    responsabilidades, segurança, IA,
+                    encerramento e aceite.
+                </p>
+
+
+                <div class="contract-doc-meta">
+
+                    <span>
+                        14 páginas
+                    </span>
+
+                    <span>
+                        Versão 1.0
+                    </span>
+
+                    <span>
+                        Obrigatório
+                    </span>
+
+                </div>
+
+
+                <button
+                    class="btn-secondary contract-open-document"
+                    type="button"
+                    data-document="contract"
+                >
+                    Ler contrato →
+                </button>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="contract-doc-card">
+
+            <div class="contract-doc-icon">
+                PROP
+            </div>
+
+            <div class="contract-doc-content">
+
+                <div class="contract-doc-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            ANEXO I
+                        </span>
+
+                        <h3>
+                            Proposta comercial
+                        </h3>
+                    </div>
+
+                    <span
+                        class="contract-doc-status"
+                        data-doc-status="proposal"
+                    >
+                        Não lido
+                    </span>
+
+                </div>
+
+                <p>
+                    Plano, módulos, capacidades, prazo,
+                    faturamento e valores da solução.
+                </p>
+
+                <div class="contract-doc-meta">
+                    <span>20 páginas</span>
+                    <span>Versão dinâmica</span>
+                    <span>Obrigatório</span>
+                </div>
+
+                <button
+                    class="btn-secondary contract-open-document"
+                    type="button"
+                    data-document="proposal"
+                >
+                    Ler proposta →
+                </button>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="contract-doc-card">
+
+            <div class="contract-doc-icon">
+                TOS
+            </div>
+
+            <div class="contract-doc-content">
+
+                <div class="contract-doc-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            ANEXO II
+                        </span>
+
+                        <h3>
+                            Termos de Serviço
+                        </h3>
+                    </div>
+
+                    <span
+                        class="contract-doc-status"
+                        data-doc-status="terms"
+                    >
+                        Não lido
+                    </span>
+
+                </div>
+
+                <p>
+                    Regras de acesso, utilização,
+                    responsabilidades e uso aceitável.
+                </p>
+
+                <div class="contract-doc-meta">
+                    <span>4 páginas</span>
+                    <span>Versão 1.0</span>
+                    <span>Obrigatório</span>
+                </div>
+
+                <button
+                    class="btn-secondary contract-open-document"
+                    type="button"
+                    data-document="terms"
+                >
+                    Ler termos →
+                </button>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="contract-doc-card">
+
+            <div class="contract-doc-icon">
+                SLA
+            </div>
+
+            <div class="contract-doc-content">
+
+                <div class="contract-doc-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            ANEXO III
+                        </span>
+
+                        <h3>
+                            SLA e suporte
+                        </h3>
+                    </div>
+
+                    <span
+                        class="contract-doc-status"
+                        data-doc-status="sla"
+                    >
+                        Não lido
+                    </span>
+
+                </div>
+
+                <p>
+                    Disponibilidade, suporte, classificação
+                    de incidentes e comunicação operacional.
+                </p>
+
+                <div class="contract-doc-meta">
+                    <span>3 páginas</span>
+                    <span>Versão 1.0</span>
+                    <span>Obrigatório</span>
+                </div>
+
+                <button
+                    class="btn-secondary contract-open-document"
+                    type="button"
+                    data-document="sla"
+                >
+                    Ler SLA →
+                </button>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="contract-doc-card">
+
+            <div class="contract-doc-icon">
+                LGPD
+            </div>
+
+            <div class="contract-doc-content">
+
+                <div class="contract-doc-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            ANEXO IV
+                        </span>
+
+                        <h3>
+                            Privacidade e LGPD
+                        </h3>
+                    </div>
+
+                    <span
+                        class="contract-doc-status"
+                        data-doc-status="privacy"
+                    >
+                        Não lido
+                    </span>
+
+                </div>
+
+                <p>
+                    Tratamento de dados pessoais,
+                    responsabilidades, retenção e direitos.
+                </p>
+
+                <div class="contract-doc-meta">
+                    <span>4 páginas</span>
+                    <span>Versão 1.0</span>
+                    <span>Obrigatório</span>
+                </div>
+
+                <button
+                    class="btn-secondary contract-open-document"
+                    type="button"
+                    data-document="privacy"
+                >
+                    Ler LGPD →
+                </button>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="contract-doc-card">
+
+            <div class="contract-doc-icon">
+                SEC
+            </div>
+
+            <div class="contract-doc-content">
+
+                <div class="contract-doc-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            ANEXO V
+                        </span>
+
+                        <h3>
+                            Segurança da informação
+                        </h3>
+                    </div>
+
+                    <span
+                        class="contract-doc-status"
+                        data-doc-status="security"
+                    >
+                        Não lido
+                    </span>
+
+                </div>
+
+                <p>
+                    Controles de acesso, proteção de dados,
+                    monitoramento e responsabilidades.
+                </p>
+
+                <div class="contract-doc-meta">
+                    <span>3 páginas</span>
+                    <span>Versão 1.0</span>
+                    <span>Obrigatório</span>
+                </div>
+
+                <button
+                    class="btn-secondary contract-open-document"
+                    type="button"
+                    data-document="security"
+                >
+                    Ler segurança →
+                </button>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="contract-doc-card">
+
+            <div class="contract-doc-icon">
+                COM
+            </div>
+
+            <div class="contract-doc-content">
+
+                <div class="contract-doc-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            ANEXO VI
+                        </span>
+
+                        <h3>
+                            Condições comerciais
+                        </h3>
+                    </div>
+
+                    <span
+                        class="contract-doc-status"
+                        data-doc-status="commercial"
+                    >
+                        Não lido
+                    </span>
+
+                </div>
+
+                <p>
+                    Prazo, faturamento, renovação,
+                    reajustes e encerramento comercial.
+                </p>
+
+                <div class="contract-doc-meta">
+                    <span>3 páginas</span>
+                    <span>Versão 1.0</span>
+                    <span>Obrigatório</span>
+                </div>
+
+                <button
+                    class="btn-secondary contract-open-document"
+                    type="button"
+                    data-document="commercial"
+                >
+                    Ler condições →
+                </button>
+
+            </div>
+
+        </article>
+
+
+    </div>
+
+
+    <div class="contract-document-warning">
+
+        <span>!</span>
+
+        <p>
+            Os documentos apresentados nesta versão constituem
+            modelos demonstrativos da plataforma. Antes de uso
+            comercial real, a redação contratual deve ser revisada
+            e aprovada por assessoria jurídica competente.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- ======================================================
+     5 ACEITE
+     ====================================================== -->
+
+<section class="contract-card contract-acceptance-card">
+
+    <div class="contract-card-heading">
+
+        <span class="contract-number">
+            5
+        </span>
+
+        <div>
+
+            <h2>
+                Aceite digital
+            </h2>
+
+            <p>
+                Confirme que possui autorização e concorda
+                com as condições apresentadas.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="contract-checks">
+
+        <label>
+
+            <input
+                id="accept-terms"
+                type="checkbox"
+            >
+
+            <span>
+                Li e aceito os Termos de Serviço.
+            </span>
+
+        </label>
+
+
+        <label>
+
+            <input
+                id="accept-commercial"
+                type="checkbox"
+            >
+
+            <span>
+                Estou de acordo com as condições comerciais
+                apresentadas nesta contratação.
+            </span>
+
+        </label>
+
+
+        <label>
+
+            <input
+                id="accept-authorized"
+                type="checkbox"
+            >
+
+            <span>
+                Declaro possuir autorização para confirmar
+                a contratação em nome da empresa.
+            </span>
+
+        </label>
+
+    </div>
+
+
+    <label class="contract-accept-text">
+
+        <span>
+            Para confirmar, digite
+            <strong>ACEITO</strong>
+        </span>
+
+        <input
+            id="contract-accept-text"
+            type="text"
+            autocomplete="off"
+            placeholder="Digite ACEITO"
+        >
+
+    </label>
+
+
+    <div
+        class="contract-validation"
+        id="contract-validation"
+        hidden
+    ></div>
+
+</section>
+
+
+
+<!-- AÇÕES -->
+
+<div class="contract-actions">
+
+    <a
+        class="btn-secondary"
+        href="/proposta"
+    >
+        ← Voltar à proposta
+    </a>
+
+
+    <div>
+
+        <span>
+            Ambiente demonstrativo
+        </span>
+
+        <small>
+            O aceite real exigirá backend e trilha de auditoria.
+        </small>
+
+    </div>
+
+
+    <button
+        class="btn-primary contract-confirm-button"
+        id="contract-confirm"
+        type="button"
+    >
+        Confirmar contratação →
+    </button>
+
+</div>
+
+
+</div>
+
+
+
+<!-- ======================================================
+     RESUMO LATERAL
+     ====================================================== -->
+
+<aside class="contract-sidebar">
+
+<div class="contract-summary">
+
+    <span class="eyebrow">
+        RESUMO COMERCIAL
+    </span>
+
+    <h2>
+        Sua contratação
+    </h2>
+
+
+    <div class="contract-summary-block">
+
+        <span>
+            Plano
+        </span>
+
+        <strong id="contract-summary-plan">
+            -
+        </strong>
+
+    </div>
+
+
+    <div class="contract-summary-block">
+
+        <span>
+            Configuração mensal
+        </span>
+
+        <strong id="contract-monthly-price">
+            -
+        </strong>
+
+    </div>
+
+
+    <div class="contract-summary-block">
+
+        <span>
+            Prazo
+        </span>
+
+        <strong id="contract-summary-term">
+            1 mês
+        </strong>
+
+    </div>
+
+
+    <div class="contract-summary-block">
+
+        <span>
+            Faturamento
+        </span>
+
+        <strong id="contract-summary-billing">
+            Mensal
+        </strong>
+
+    </div>
+
+
+    <div class="contract-summary-period">
+
+        <span>
+            VALOR ESTIMADO DO PERÍODO
+        </span>
+
+        <strong id="contract-period-total">
+            -
+        </strong>
+
+        <small>
+            Valor demonstrativo calculado a partir
+            da configuração selecionada.
+        </small>
+
+    </div>
+
+
+    <div class="contract-summary-details">
+
+        <div>
+            <span>Módulos</span>
+            <strong id="contract-count-modules">0</strong>
+        </div>
+
+        <div>
+            <span>Canais</span>
+            <strong id="contract-count-channels">0</strong>
+        </div>
+
+        <div>
+            <span>Integrações</span>
+            <strong id="contract-count-integrations">0</strong>
+        </div>
+
+        <div>
+            <span>Recursos</span>
+            <strong id="contract-count-resources">0</strong>
+        </div>
+
+    </div>
+
+
+    <div class="contract-next-step">
+
+        <span>
+            PRÓXIMA ETAPA
+        </span>
+
+        <strong>
+            Implantação
+        </strong>
+
+        <p>
+            Após o aceite, iniciaremos a validação,
+            preparação do ambiente, onboarding e Go Live.
+        </p>
+
+    </div>
+
+</div>
+
+</aside>
+
+
+</section>
+
+
+
+<footer class="footer">
+
+    <div class="container footer-grid">
+
+        <div>
+
+            <a class="brand" href="/">
+
+                <img
+                    class="brand-logo"
+                    src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+                    alt="Sabino.AI"
+                >
+
+                <span>Sabino.AI</span>
+
+            </a>
+
+            <p>
+                Tecnologia e inteligência para conectar
+                pessoas, negócios e soluções.
+            </p>
+
+        </div>
+
+
+        <div>
+            <strong>Plataforma</strong>
+            <a href="/">Início</a>
+            <a href="/modulos">Módulos</a>
+        </div>
+
+
+        <div>
+            <strong>Empresa</strong>
+            <a href="#">Sobre</a>
+            <a href="#">Privacidade</a>
+            <a href="#">Termos</a>
+        </div>
+
+
+        <div>
+            <strong>Recursos</strong>
+            <a href="#">Documentação</a>
+            <a href="#">API</a>
+        </div>
+
+
+        <div>
+            <strong>Segurança</strong>
+            <span class="security-badge">
+                🔒 Plataforma segura
+            </span>
+            <span class="security-badge">
+                🛡 LGPD
+            </span>
+        </div>
+
+    </div>
+
+</footer>
+
+
+</main>
+
+
+<!-- ======================================================
+     VISUALIZADOR DE DOCUMENTOS
+     ====================================================== -->
+
+<div
+    class="contract-document-modal"
+    id="contract-document-modal"
+    hidden
+>
+
+    <div
+        class="contract-document-backdrop"
+        id="contract-document-backdrop"
+    ></div>
+
+
+    <section
+        class="contract-document-viewer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="document-viewer-title"
+    >
+
+        <header class="contract-viewer-header">
+
+            <div>
+
+                <span
+                    class="eyebrow"
+                    id="document-viewer-type"
+                >
+                    DOCUMENTO
+                </span>
+
+                <h2 id="document-viewer-title">
+                    Documento
+                </h2>
+
+                <div class="contract-viewer-meta">
+
+                    <span id="document-viewer-version">
+                        Versão 1.0
+                    </span>
+
+                    <span id="document-viewer-pages">
+                        Página 1
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="contract-viewer-close"
+                id="contract-viewer-close"
+                type="button"
+                aria-label="Fechar documento"
+            >
+                ×
+            </button>
+
+        </header>
+
+
+        <div class="contract-viewer-progress">
+
+            <span id="document-page-progress"></span>
+
+        </div>
+
+
+        <div class="contract-viewer-paper">
+
+            <header class="contract-paper-header">
+
+                <div class="contract-paper-brand">
+
+                    <img
+                        src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+                        alt="Sabino.AI"
+                    >
+
+                    <strong>
+                        Sabino.AI
+                    </strong>
+
+                </div>
+
+                <span id="document-paper-reference">
+                    Documento contratual
+                </span>
+
+            </header>
+
+
+            <article
+                class="contract-paper-content"
+                id="document-page-content"
+            ></article>
+
+
+            <footer class="contract-paper-footer">
+
+                <span>
+                    Sabino.AI · Documento demonstrativo
+                </span>
+
+                <span id="document-paper-page">
+                    Página 1
+                </span>
+
+            </footer>
+
+        </div>
+
+
+        <footer class="contract-viewer-actions">
+
+            <button
+                class="btn-secondary"
+                id="document-print"
+                type="button"
+            >
+                Imprimir / salvar PDF
+            </button>
+
+
+            <div class="contract-viewer-navigation">
+
+                <button
+                    class="btn-secondary"
+                    id="document-prev"
+                    type="button"
+                >
+                    ← Anterior
+                </button>
+
+                <button
+                    class="btn-primary"
+                    id="document-next"
+                    type="button"
+                >
+                    Próxima página →
+                </button>
+
+            </div>
+
+
+            <button
+                class="btn-primary contract-confirm-read"
+                id="document-confirm-read"
+                type="button"
+                disabled
+            >
+                Confirmar leitura ✓
+            </button>
+
+        </footer>
+
+    </section>
+
+</div>
+
+
+    <script
+        src="/static/js/sabino-global-brand.js?v=1"
+        defer
+    ></script>
+
+    <script
+        src="/static/js/sabino-global-brand-v2.js?v=2"
+        defer
+    ></script>
+</body>
+</html>
+
+
+
+
+
+

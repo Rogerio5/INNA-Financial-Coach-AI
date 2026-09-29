@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Educação Financeira | Sabino.AI</title>
+
+<style id="SABINO_FINANCE_EDUCATION_V1_STYLE">
+
+:root{
+    --bg:#080b0d;
+    --panel:#111619;
+    --panel2:#0a0e10;
+    --border:#272e32;
+    --text:#ffffff;
+    --muted:#919ba1;
+    --gold:#d9b441;
+    --green:#49c986;
+    --orange:#f59e0b;
+    --blue:#62a9e8;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Segoe UI,Arial,sans-serif;
+}
+
+.layout{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:245px 1fr;
+}
+
+.side{
+    background:#090d0f;
+    border-right:1px solid #252b2f;
+    padding:22px 15px;
+    overflow:auto;
+}
+
+.brand{
+    font-size:21px;
+    font-weight:900;
+    margin-bottom:22px;
+}
+
+.brand b{
+    color:var(--gold);
+}
+
+.side h4{
+    color:var(--gold);
+    font-size:10px;
+    letter-spacing:.12em;
+    margin:18px 8px 8px;
+}
+
+.side a{
+    display:block;
+    color:#d9dde0;
+    text-decoration:none;
+    font-size:12px;
+    padding:9px 10px;
+    margin:2px 0;
+    border-radius:8px;
+}
+
+.side a:hover{
+    background:#151a17;
+}
+
+.side a.active{
+    background:#211f12;
+    color:#f4cf57;
+    font-weight:800;
+}
+
+.main{
+    padding:30px;
+    max-width:1450px;
+    width:100%;
+    margin:auto;
+}
+
+.eyebrow{
+    color:var(--gold);
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.1em;
+}
+
+h1{
+    font-size:34px;
+    margin:5px 0;
+}
+
+h1 span{
+    color:var(--gold);
+}
+
+.subtitle{
+    color:#969fa5;
+    font-size:14px;
+    max-width:780px;
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-top:24px;
+}
+
+.card,
+.panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:17px;
+}
+
+.card span{
+    display:block;
+    color:#929ca2;
+    font-size:10px;
+    text-transform:uppercase;
+    font-weight:800;
+}
+
+.card strong{
+    display:block;
+    font-size:24px;
+    margin-top:7px;
+}
+
+.good{
+    color:var(--green);
+}
+
+.info{
+    color:var(--blue);
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1.35fr .65fr;
+    gap:14px;
+    margin-top:14px;
+}
+
+.panel h2{
+    margin:0 0 6px;
+    font-size:17px;
+}
+
+.muted{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.tracks{
+    display:grid;
+    gap:10px;
+    margin-top:15px;
+}
+
+.track{
+    background:var(--panel2);
+    border:1px solid #252c30;
+    border-radius:11px;
+    padding:15px;
+}
+
+.track-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.track h3{
+    margin:0;
+    font-size:15px;
+}
+
+.level{
+    font-size:10px;
+    padding:5px 8px;
+    border-radius:99px;
+    background:#172127;
+    color:var(--blue);
+}
+
+.track p{
+    font-size:12px;
+    line-height:1.5;
+    color:#aab2b7;
+    margin:8px 0 12px;
+}
+
+.progress{
+    height:7px;
+    background:#20272b;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.progress > div{
+    height:100%;
+    background:var(--gold);
+    width:0%;
+}
+
+.track-actions{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:10px;
+}
+
+.track-actions small{
+    color:#899399;
+}
+
+button{
+    border:0;
+    border-radius:8px;
+    background:var(--gold);
+    color:#111;
+    padding:9px 12px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+button:hover{
+    filter:brightness(1.07);
+}
+
+.lesson{
+    display:none;
+    margin-top:14px;
+    padding:15px;
+    background:#0b1012;
+    border:1px solid #283136;
+    border-radius:10px;
+}
+
+.lesson.open{
+    display:block;
+}
+
+.lesson h4{
+    margin:0 0 7px;
+    color:#f4cf57;
+}
+
+.lesson p{
+    font-size:13px;
+    color:#c3c9cc;
+    line-height:1.6;
+}
+
+.quiz-option{
+    display:block;
+    width:100%;
+    text-align:left;
+    margin-top:7px;
+    background:#151b1e;
+    color:#fff;
+    border:1px solid #2a3337;
+}
+
+.quiz-option.correct{
+    border-color:var(--green);
+    color:var(--green);
+}
+
+.quiz-option.wrong{
+    border-color:#e66b6b;
+    color:#e66b6b;
+}
+
+.inna{
+    border-color:#5d4e1b;
+}
+
+.inna small{
+    color:var(--gold);
+    font-weight:900;
+}
+
+.inna p{
+    color:#d6dadd;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.next{
+    margin-top:13px;
+}
+
+.next-item{
+    padding:10px 0;
+    border-bottom:1px solid #242b2f;
+    font-size:12px;
+}
+
+@media(max-width:1000px){
+    .summary{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:720px){
+    .layout{
+        grid-template-columns:1fr;
+    }
+
+    .summary{
+        grid-template-columns:1fr;
+    }
+}
+
+</style>
+<link rel="stylesheet" href="/static/css/sabino-locale-core.css?v=browserany_manual3_20260917_134732" data-sabino-global-locale="v1">
+<link rel="stylesheet" href="/static/css/sabino-currency-core.css" data-sabino-global-currency="v1">
+
+<link rel="stylesheet" href="/static/css/sabino-language-button.css?v=20260917_140515">
+<script defer src="/static/js/sabino-language-button.js?v=20260917_140515"></script>
+
+<link rel="stylesheet"
+      href="/static/css/=20260917_181514">
+
+<script defer
+        src="/static/js/=20260917_181514">
+</script>
+
+
+
+<link
+    rel="stylesheet"
+    href="/static/css/sabino-finance-unified.css?v=20260917_222806"
+>
+
+<script
+    defer
+    src="/static/js/sabino-finance-unified.js?v=20260917_222806">
+</script>
+
+    <link rel="stylesheet" href="/static/css/sabino-finance-back-dashboard-v2.css?v=20260918_144545">
+</head>
+
+<body>
+
+<div class="layout">
+
+<aside class="side">
+
+    <div class="brand">
+        Sabino<b>.AI</b>
+    </div>
+
+    <h4>FINANCEIRO</h4>
+
+    <a href="/financeiro">Visão Geral</a>
+    <a class="active" href="/financeiro/educacao">Educação Financeira</a>
+    <a href="/financeiro/orcamento">Orçamento</a>
+    <a href="/financeiro/gastos">Gastos</a>
+    <a href="/financeiro/central-contas">Central de Contas</a>
+    <a href="/financeiro/contas">Contas e Vencimentos</a>
+    <a href="/financeiro/planejamento">Planejamento</a>
+    <a href="/financeiro/metas">Metas</a>
+    <a href="/financeiro/credito">Crédito e Endividamento</a>
+    <a href="/financeiro/seguranca">Segurança Financeira</a>
+    <a href="/financeiro/patrimonio">Patrimônio</a>
+    <a href="/financeiro/protecao">Proteção e Seguros</a>
+    <a href="/financeiro/impostos">Impostos e Obrigações</a>
+    <a href="/financeiro/reserva">Investimentos & Reserva</a>
+    <a href="/financeiro/reembolso">Reembolso Inteligente</a>
+    <a href="/financeiro/relatorios">Relatórios Financeiros</a>
+    <a href="/financeiro/familia">Finanças Familiares</a>
+
+    <h4>INNA</h4>
+
+    <a href="/inna">INNA</a>
+    <a href="/logout">Sair</a>
+
+</aside>
+
+<main class="main">
+
+    <div class="eyebrow">
+        SABINO.AI | EDUCAÇÃO FINANCEIRA
+    </div>
+
+    <h1>
+        Aprenda a cuidar melhor do seu
+        <span>dinheiro</span>
+    </h1>
+
+    <div class="subtitle">
+        Trilhas curtas e práticas para orçamento, dívidas,
+        reserva, investimentos e segurança financeira.
+    </div>
+
+    <section class="summary">
+
+        <div class="card">
+            <span>Trilhas disponíveis</span>
+            <strong class="info">5</strong>
+        </div>
+
+        <div class="card">
+            <span>Trilhas concluídas</span>
+            <strong id="educationCompleted" class="good">0</strong>
+        </div>
+
+        <div class="card">
+            <span>Progresso geral</span>
+            <strong id="educationProgress" class="info">0%</strong>
+        </div>
+
+        <div class="card">
+            <span>Nível atual</span>
+            <strong id="educationLevel" class="info">Iniciante</strong>
+        </div>
+
+    </section>
+
+    <div class="grid">
+
+        <section class="panel">
+
+            <h2>Trilhas de aprendizado</h2>
+
+            <div class="muted">
+                Escolha uma trilha e avance no seu ritmo.
+            </div>
+
+            <div id="educationTracks" class="tracks"></div>
+
+        </section>
+
+        <aside>
+
+            <section class="panel inna">
+
+                <small>INNA · ORIENTAÇÃO FINANCEIRA</small>
+
+                <h2>Orientação</h2>
+
+                <p id="educationInnaMessage">
+                    Comece pelos fundamentos de orçamento
+                    e depois avance para reserva e investimentos.
+                </p>
+
+            </section>
+
+            <section class="panel next">
+
+                <h2>Próximos passos</h2>
+
+                <div class="next-item">
+                    1. Entender receitas e despesas
+                </div>
+
+                <div class="next-item">
+                    2. Criar uma reserva financeira
+                </div>
+
+                <div class="next-item">
+                    3. Organizar dívidas e crédito
+                </div>
+
+                <div class="next-item">
+                    4. Conhecer investimentos
+                </div>
+
+            </section>
+
+        </aside>
+
+    </div>
+
+</main>
+
+</div>
+
+<script id="SABINO_FINANCE_EDUCATION_V1">
+
+(function(){
+
+    const tracks = [
+
+        {
+            id:"orcamento",
+            title:"Orçamento sem complicação",
+            level:"Básico",
+            text:"Aprenda a organizar receitas, despesas e saldo mensal.",
+            lesson:"Um orçamento mostra quanto entra, quanto sai e quanto sobra. O primeiro objetivo é conhecer seus gastos antes de tentar cortá-los.",
+            question:"Qual é a base de um orçamento saudável?",
+            options:[
+                "Conhecer receitas e despesas",
+                "Investir todo o salário",
+                "Usar apenas cartão de crédito"
+            ],
+            answer:0
+        },
+
+        {
+            id:"reserva",
+            title:"Reserva de emergência",
+            level:"Básico",
+            text:"Entenda por que separar dinheiro para imprevistos reduz riscos.",
+            lesson:"A reserva de emergência serve para despesas inesperadas e ajuda a evitar novas dívidas quando ocorre um imprevisto.",
+            question:"Para que serve principalmente a reserva?",
+            options:[
+                "Comprar itens de lazer",
+                "Cobrir imprevistos financeiros",
+                "Aumentar o limite do cartão"
+            ],
+            answer:1
+        },
+
+        {
+            id:"credito",
+            title:"Crédito e dívidas",
+            level:"Intermediário",
+            text:"Use crédito com consciência e acompanhe seu comprometimento financeiro.",
+            lesson:"Crédito é uma ferramenta. Parcelas e juros precisam caber no orçamento sem comprometer despesas essenciais e objetivos financeiros.",
+            question:"O que deve ser considerado antes de assumir uma dívida?",
+            options:[
+                "Somente o valor da parcela",
+                "Capacidade de pagamento e custo total",
+                "Apenas o limite disponível"
+            ],
+            answer:1
+        },
+
+        {
+            id:"investimentos",
+            title:"Primeiros investimentos",
+            level:"Intermediário",
+            text:"Conheça risco, liquidez, rentabilidade e diversificação.",
+            lesson:"Antes de buscar maior retorno, é importante entender prazo, risco e liquidez. Produtos diferentes servem a objetivos diferentes.",
+            question:"Qual fator deve ser analisado em um investimento?",
+            options:[
+                "Somente rentabilidade",
+                "Risco, prazo e liquidez",
+                "Somente o nome da instituição"
+            ],
+            answer:1
+        },
+
+        {
+            id:"seguranca",
+            title:"Segurança financeira",
+            level:"Avançado",
+            text:"Proteja contas, dados, patrimônio e decisões financeiras.",
+            lesson:"Segurança financeira inclui proteção de acesso, prevenção a golpes, seguros adequados e revisão periódica dos seus riscos.",
+            question:"Segurança financeira envolve:",
+            options:[
+                "Apenas senha forte",
+                "Somente seguros",
+                "Proteção digital e financeira"
+            ],
+            answer:2
+        }
+
+    ];
+
+    const completed = new Set();
+
+    const box =
+        document.getElementById(
+            "educationTracks"
+        );
+
+    function render(){
+
+        box.innerHTML = "";
+
+        tracks.forEach(function(track,index){
+
+            const item =
+                document.createElement("div");
+
+            item.className = "track";
+
+            item.innerHTML = `
+                <div class="track-top">
+                    <h3>${index + 1}. ${track.title}</h3>
+                    <span class="level">${track.level}</span>
+                </div>
+
+                <p>${track.text}</p>
+
+                <div class="progress">
+                    <div style="width:${
+                        completed.has(track.id)
+                            ? "100"
+                            : "0"
+                    }%"></div>
+                </div>
+
+                <div class="track-actions">
+                    <small>
+                        ${
+                            completed.has(track.id)
+                                ? "Concluída"
+                                : "Não iniciada"
+                        }
+                    </small>
+
+                    <button
+                        type="button"
+                        data-open="${track.id}"
+                    >
+                        Estudar
+                    </button>
+                </div>
+
+                <div
+                    class="lesson"
+                    id="lesson-${track.id}"
+                >
+                    <h4>${track.title}</h4>
+
+                    <p>${track.lesson}</p>
+
+                    <strong>Quiz rápido</strong>
+
+                    <div id="quiz-${track.id}"></div>
+                </div>
+            `;
+
+            box.appendChild(item);
+
+            const quiz =
+                item.querySelector(
+                    "#quiz-" + track.id
+                );
+
+            track.options.forEach(
+                function(option,optionIndex){
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+                    button.type = "button";
+                    button.className =
+                        "quiz-option";
+
+                    button.textContent =
+                        option;
+
+                    button.onclick = async function(){
+
+                        const buttons =
+                            quiz.querySelectorAll(
+                                ".quiz-option"
+                            );
+
+                        buttons.forEach(function(x){
+                            x.disabled = true;
+                        });
+
+                        if(
+                            optionIndex ===
+                            track.answer
+                        ){
+
+                            button.classList.add(
+                                "correct"
+                            );
+
+                            try{
+
+                                await saveEducationProgress(
+                                    track.id,
+                                    100
+                                );
+
+                                completed.add(
+                                    track.id
+                                );
+
+                                updateSummary();
+
+                                setTimeout(
+                                    render,
+                                    600
+                                );
+
+                            }
+                            catch(error){
+
+                                console.error(
+                                    "EDUCATION_PROGRESS_SAVE_ERROR",
+                                    error
+                                );
+
+                                button.classList.remove(
+                                    "correct"
+                                );
+
+                                buttons.forEach(function(x){
+                                    x.disabled = false;
+                                });
+
+                                document.getElementById(
+                                    "educationInnaMessage"
+                                ).textContent =
+                                    "Resposta correta, mas não foi possível salvar o progresso. Tente novamente.";
+                            }
+
+                        }
+                        else{
+
+                            button.classList.add(
+                                "wrong"
+                            );
+
+                            buttons[
+                                track.answer
+                            ].classList.add(
+                                "correct"
+                            );
+                        }
+                    };
+
+                    quiz.appendChild(button);
+                }
+            );
+        });
+
+        document
+            .querySelectorAll(
+                "[data-open]"
+            )
+            .forEach(function(button){
+
+                button.onclick = function(){
+
+                    const id =
+                        button.getAttribute(
+                            "data-open"
+                        );
+
+                    const lesson =
+                        document.getElementById(
+                            "lesson-" + id
+                        );
+
+                    lesson.classList.toggle(
+                        "open"
+                    );
+                };
+            });
+    }
+
+    function updateSummary(){
+
+        const count =
+            completed.size;
+
+        const progress =
+            Math.round(
+                (
+                    count /
+                    tracks.length
+                ) * 100
+            );
+
+        document.getElementById(
+            "educationCompleted"
+        ).textContent = count;
+
+        document.getElementById(
+            "educationProgress"
+        ).textContent =
+            progress + "%";
+
+        let level = "Iniciante";
+
+        if(progress >= 80){
+            level = "Avançado";
+        }
+        else if(progress >= 40){
+            level = "Intermediário";
+        }
+
+        document.getElementById(
+            "educationLevel"
+        ).textContent =
+            level;
+
+        const inna =
+            document.getElementById(
+                "educationInnaMessage"
+            );
+
+        if(progress === 100){
+
+            inna.textContent =
+                "Você concluiu todas as trilhas disponíveis. O próximo passo é aplicar o conhecimento nos seus módulos financeiros.";
+
+        }
+        else if(progress >= 40){
+
+            inna.textContent =
+                "Você está avançando bem. Continue pelas trilhas ainda não concluídas e aplique os conceitos no seu planejamento.";
+
+        }
+        else{
+
+            inna.textContent =
+                "Comece pelos fundamentos de orçamento e reserva. Essas duas bases ajudam nas decisões dos demais módulos.";
+        }
+
+        window.sabinoEducationSemanticState = {
+            module:"educacao_financeira",
+            completed_tracks:count,
+            total_tracks:tracks.length,
+            progress_percent:progress,
+            level:level
+        };
+    }
+
+
+    /* SABINO_FINANCE_EDUCATION_PERSISTENCE_V1 */
+
+    async function saveEducationProgress(
+        trackId,
+        quizScore
+    ){
+
+        const response = await fetch(
+            "/api/finance/education/progress/" +
+            encodeURIComponent(trackId),
+            {
+                method:"PUT",
+                credentials:"same-origin",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    quiz_score:quizScore
+                })
+            }
+        );
+
+        if(!response.ok){
+
+            throw new Error(
+                "Falha ao salvar progresso: " +
+                response.status
+            );
+        }
+
+        return await response.json();
+    }
+
+
+    async function loadEducationProgress(){
+
+        try{
+
+            const response = await fetch(
+                "/api/finance/education/progress",
+                {
+                    method:"GET",
+                    credentials:"same-origin",
+                    cache:"no-store"
+                }
+            );
+
+            if(!response.ok){
+
+                throw new Error(
+                    "Falha ao carregar progresso: " +
+                    response.status
+                );
+            }
+
+            const data =
+                await response.json();
+
+            completed.clear();
+
+            (
+                Array.isArray(data.items)
+                    ? data.items
+                    : []
+            ).forEach(function(item){
+
+                if(item.completed === true){
+
+                    completed.add(
+                        String(item.track_id)
+                    );
+                }
+            });
+
+            render();
+            updateSummary();
+
+        }
+        catch(error){
+
+            console.error(
+                "EDUCATION_PROGRESS_LOAD_ERROR",
+                error
+            );
+
+            render();
+            updateSummary();
+        }
+    }
+
+
+    loadEducationProgress();
+
+})();
+
+</script>
+
+
+<script
+    id="SABINO_SHARED_FINANCE_SIDEBAR_V1_LOADER"
+    src="/static/finance-sidebar.js"
+></script>
+<script src="/static/js/sabino-locale-core.js?v=internal12_20260917_140006" data-sabino-global-locale="v1"></script>
+<script src="/static/js/sabino-global-i18n-runtime.js" data-sabino-global-i18n="v1"></script>
+<script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
+<script src="/static/js/sabino-money-locale-runtime.js"></script>
+
+    <script defer src="/static/js/sabino-finance-back-dashboard-v2.js?v=20260918_144545"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

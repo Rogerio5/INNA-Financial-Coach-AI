@@ -1,0 +1,21 @@
+{
+  "version": "proposal-20260924",
+  "status": "draft",
+  "billing_enabled": false,
+  "currency": "BRL",
+  "plans": {
+    "essencial": {"monthly_price_cents": 2990, "included_credits": 100},
+    "evolucao": {"monthly_price_cents": 5990, "included_credits": 300},
+    "completo": {"monthly_price_cents": 9990, "included_credits": 600}
+  },
+  "topups": {
+    "credits_100": {"price_cents": 1990, "credits": 100},
+    "credits_300": {"price_cents": 4990, "credits": 300},
+    "credits_1000": {"price_cents": 14990, "credits": 1000}
+  },
+  "proposed_operation_costs": {"short_answer": 1, "analysis": 5, "report": 10},
+  "document_cost": null,
+  "purchased_credit_expiration": null,
+  "automatic_topup": false,
+  "notes": "Proposta, não oferta publicada. Custos dependem de limites de contexto, páginas, modelos e ferramentas. Não usar para emitir cobranças antes da aprovação e aferição de margem. Validade e política de renovação ainda pendentes."
+}

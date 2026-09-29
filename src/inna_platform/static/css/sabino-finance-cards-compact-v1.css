@@ -1,0 +1,92 @@
+/* ============================================================
+   SABINO.AI - FINANCE CARDS COMPACT V1
+
+   Remove somente a altura vazia dos cards.
+   ============================================================ */
+
+
+/* GASTOS POR MES */
+
+[data-sabino-month-card-compact-v1="true"] {
+
+    align-self: start !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    padding-bottom: 22px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* GASTOS POR CATEGORIA */
+
+[data-sabino-category-card-compact-v1="true"] {
+
+    align-self: start !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    padding-bottom: 24px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* wrappers internos da categoria não forçam altura */
+
+[data-sabino-category-card-compact-v1="true"]
+.sabino-category-host,
+
+[data-sabino-category-card-compact-v1="true"]
+.sabino-cat-v2 {
+
+    height: auto !important;
+
+    min-height: 0 !important;
+
+    max-height: none !important;
+}
+
+
+/* gráfico mensal mantém tamanho atual */
+
+[data-sabino-month-card-compact-v1="true"]
+canvas,
+
+[data-sabino-month-card-compact-v1="true"]
+svg {
+
+    max-width: 100% !important;
+}
+
+
+/* destaque inferior da categoria */
+
+[data-sabino-category-card-compact-v1="true"]
+.sabino-cat-v2-highlight {
+
+    margin-bottom: 0 !important;
+}
+
+
+/* telas menores */
+
+@media (max-width: 900px) {
+
+    [data-sabino-month-card-compact-v1="true"],
+    [data-sabino-category-card-compact-v1="true"] {
+
+        width: 100% !important;
+
+        height: auto !important;
+
+        min-height: 0 !important;
+
+        max-height: none !important;
+    }
+}

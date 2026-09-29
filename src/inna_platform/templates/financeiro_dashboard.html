@@ -1,0 +1,2173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Plataforma Financeira Sabino.AI"
+    >
+
+    <title>
+        Plataforma Financeira | Sabino.AI
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/static/css/financial-platform.css?v=4-premium"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/css/global-platform-launcher.css?v=1"
+    >
+
+    <script
+        src="/static/js/financial-platform.js?v=4-premium"
+        defer
+    ></script>
+
+    <script
+        src="/static/js/global-platform-launcher.js?v=1"
+        defer
+    ></script>
+
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand.css?v=1"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="/static/images/sabino-s-logo.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand-v2.css?v=2"
+    >
+</head>
+
+
+<body>
+
+
+<header class="finance-topbar">
+
+    <a
+        href="/plataforma"
+        class="finance-brand"
+    >
+
+        <span class="finance-brand-symbol">
+            S
+        </span>
+
+        <div>
+
+            <strong>
+                Sabino.AI
+            </strong>
+
+            <small>
+                Intelligence Platform
+            </small>
+
+        </div>
+
+    </a>
+
+
+    <nav class="finance-nav">
+
+        <a href="/plataforma">
+            INNA Central
+        </a>
+
+        <a
+            href="/plataforma/financeiro"
+            class="active"
+        >
+            Financeiro
+        </a>
+
+        <a href="#finance-modules">
+            Módulos
+        </a>
+
+        <a href="#finance-inna">
+            INNA
+        </a>
+
+    </nav>
+
+
+    <div class="finance-top-actions">
+
+        <!-- seletor global entra aqui -->
+
+        <span class="finance-online">
+            <i></i>
+            Online
+        </span>
+
+        <button
+            type="button"
+            id="finance-open-inna"
+        >
+            Abrir INNA ↗
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<main class="finance-main">
+
+
+    <!-- ====================================================
+         BREADCRUMB
+         ==================================================== -->
+
+    <div class="finance-breadcrumb">
+
+        <a href="/plataforma">
+            Sabino.AI
+        </a>
+
+        <span>›</span>
+
+        <a href="/plataforma">
+            Plataformas
+        </a>
+
+        <span>›</span>
+
+        <strong>
+            Financeira
+        </strong>
+
+    </div>
+
+
+
+    <!-- ====================================================
+         HERO
+         ==================================================== -->
+
+    <section class="finance-hero">
+
+
+        <div class="finance-hero-left">
+
+            <div class="finance-hero-icon">
+                FI
+            </div>
+
+
+            <div>
+
+                <span class="finance-eyebrow">
+                    PLATAFORMA FINANCEIRA · VISÃO CONSOLIDADA
+                </span>
+
+                <h1>
+                    Plataforma
+                    <span>
+                        Financeira
+                    </span>
+                </h1>
+
+                <p>
+                    Visão consolidada dos módulos financeiros
+                    coordenados pela INNA e pelo Gerente Financeiro.
+                </p>
+
+
+                <div class="finance-tags">
+
+                    <span>
+                        Educação Financeira
+                    </span>
+
+                    <span>
+                        Segurança Financeira
+                    </span>
+
+                    <span>
+                        Reembolso Inteligente
+                    </span>
+
+                    <span>
+                        Planejamento Financeiro
+                    </span>
+
+                    <span>
+                        RAG
+                    </span>
+
+                    <span>
+                        HITL
+                    </span>
+
+                    <span>
+                        Observabilidade
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <aside class="finance-manager-card">
+
+            <span class="finance-manager-icon">
+                GF
+            </span>
+
+
+            <div>
+
+                <small>
+                    GERENTE FINANCEIRO
+                </small>
+
+                <h2>
+                    Gerente Financeiro
+                </h2>
+
+                <p>
+                    Coordenação executiva da Plataforma Financeira
+                </p>
+
+            </div>
+
+
+            <span class="finance-manager-online">
+                ● Online
+            </span>
+
+        </aside>
+
+    </section>
+
+
+
+    <!-- ====================================================
+         KPIS
+         ==================================================== -->
+
+    <section class="finance-kpis">
+
+
+        <article>
+
+            <small>
+                Saúde da plataforma
+            </small>
+
+            <strong
+                id="kpi-health"
+                class="green"
+            >
+                96%
+            </strong>
+
+            <span>
+                Excelente
+            </span>
+
+        </article>
+
+
+
+        <article>
+
+            <small>
+                Módulos ativos
+            </small>
+
+            <strong id="kpi-modules">
+                2
+            </strong>
+
+            <span>
+                de 4 módulos
+            </span>
+
+        </article>
+
+
+
+        <article>
+
+            <small>
+                Usuários ativos
+            </small>
+
+            <strong id="kpi-users">
+                2.840
+            </strong>
+
+            <span class="green">
+                +12% vs. período anterior
+            </span>
+
+        </article>
+
+
+
+        <article>
+
+            <small>
+                Alertas
+            </small>
+
+            <strong
+                id="kpi-alerts"
+                class="yellow"
+            >
+                34
+            </strong>
+
+            <span>
+                requer atenção
+            </span>
+
+        </article>
+
+
+
+        <article>
+
+            <small>
+                Casos HITL
+            </small>
+
+            <strong
+                id="kpi-hitl"
+                class="yellow"
+            >
+                7
+            </strong>
+
+            <span>
+                revisão humana
+            </span>
+
+        </article>
+
+
+
+        <article>
+
+            <small>
+                Consultas RAG
+            </small>
+
+            <strong id="kpi-rag">
+                18.420
+            </strong>
+
+            <span>
+                no período
+            </span>
+
+        </article>
+
+
+    </section>
+
+
+
+    <!-- ====================================================
+         CONTROLE
+         ==================================================== -->
+
+    <section class="finance-control-bar">
+
+        <div>
+
+            <span class="finance-status-dot">
+                ●
+            </span>
+
+            <span>
+                Fonte:
+            </span>
+
+            <strong id="finance-source">
+                API demonstrativa
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Última sincronização:
+            </span>
+
+            <strong id="finance-sync">
+                agora
+            </strong>
+
+            <button
+                type="button"
+                id="finance-refresh"
+            >
+                ↻ Atualizar
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ====================================================
+         VISUALIZACAO
+         ==================================================== -->
+
+    <nav class="finance-view-tabs">
+
+        <button
+            class="active"
+            type="button"
+            data-finance-view="overview"
+        >
+            Visão Geral
+        </button>
+
+        <button
+            type="button"
+            data-finance-view="operational"
+        >
+            Operacional
+        </button>
+
+        <button
+            type="button"
+            data-finance-view="analytics"
+        >
+            Analítica
+        </button>
+
+        <button
+            type="button"
+            data-finance-view="intelligence"
+        >
+            Inteligência INNA
+        </button>
+
+    </nav>
+
+
+
+    <!-- ====================================================
+         VISAO GERAL
+         ==================================================== -->
+
+    <section
+        class="finance-view active"
+        data-finance-panel="overview"
+    >
+
+
+        <!-- RESUMO CONSOLIDADO -->
+
+        <section class="finance-section">
+
+            <header class="finance-section-header">
+
+                <div>
+
+                    <span class="finance-eyebrow">
+                        RESUMO CONSOLIDADO
+                    </span>
+
+                    <h2>
+                        Visão executiva do domínio financeiro
+                    </h2>
+
+                </div>
+
+            </header>
+
+
+
+            <div class="finance-summary-grid">
+
+
+                <!-- USO POR MODULO -->
+
+                <article class="finance-panel">
+
+                    <header>
+
+                        <div>
+
+                            <h3>
+                                Uso por módulo
+                            </h3>
+
+                            <span>
+                                % de utilização no período
+                            </span>
+
+                        </div>
+
+                    </header>
+
+
+                    <div
+                        class="finance-module-chart"
+                        id="finance-module-chart"
+                    >
+
+                        <div class="finance-bar-item">
+
+                            <strong>
+                                96%
+                            </strong>
+
+                            <div
+                                class="finance-bar"
+                                style="height:96%"
+                            ></div>
+
+                            <span>
+                                Educação<br>Financeira
+                            </span>
+
+                        </div>
+
+
+                        <div class="finance-bar-item">
+
+                            <strong>
+                                93%
+                            </strong>
+
+                            <div
+                                class="finance-bar"
+                                style="height:93%"
+                            ></div>
+
+                            <span>
+                                Segurança<br>Financeira
+                            </span>
+
+                        </div>
+
+
+                        <div class="finance-bar-item">
+
+                            <strong>
+                                61%
+                            </strong>
+
+                            <div
+                                class="finance-bar"
+                                style="height:61%"
+                            ></div>
+
+                            <span>
+                                Reembolso<br>Inteligente
+                            </span>
+
+                        </div>
+
+
+                        <div class="finance-bar-item">
+
+                            <strong>
+                                34%
+                            </strong>
+
+                            <div
+                                class="finance-bar"
+                                style="height:34%"
+                            ></div>
+
+                            <span>
+                                Planejamento<br>Financeiro
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <small class="finance-panel-note">
+                        Baseado em interações, usuários e operações por módulo.
+                    </small>
+
+                </article>
+
+
+
+                <!-- RISCO -->
+
+                <article class="finance-panel">
+
+                    <header>
+
+                        <div>
+
+                            <h3>
+                                Distribuição de risco
+                            </h3>
+
+                            <span>
+                                Classificação consolidada dos usuários
+                            </span>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="finance-risk-layout">
+
+                        <div class="finance-risk-donut">
+
+                            <div class="finance-risk-center">
+
+                                <strong>
+                                    2.840
+                                </strong>
+
+                                <span>
+                                    usuários
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="finance-risk-legend">
+
+                            <div>
+
+                                <i class="low"></i>
+
+                                <span>
+                                    Baixo
+                                </span>
+
+                                <strong>
+                                    68%
+                                </strong>
+
+                                <small>
+                                    1.931
+                                </small>
+
+                            </div>
+
+
+                            <div>
+
+                                <i class="medium"></i>
+
+                                <span>
+                                    Médio
+                                </span>
+
+                                <strong>
+                                    24%
+                                </strong>
+
+                                <small>
+                                    682
+                                </small>
+
+                            </div>
+
+
+                            <div>
+
+                                <i class="high"></i>
+
+                                <span>
+                                    Alto
+                                </span>
+
+                                <strong>
+                                    8%
+                                </strong>
+
+                                <small>
+                                    227
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- RECOMENDACOES -->
+
+                <article class="finance-panel">
+
+                    <header>
+
+                        <div>
+
+                            <h3>
+                                Recomendações da INNA
+                            </h3>
+
+                            <span>
+                                Insights para otimizar a plataforma
+                            </span>
+
+                        </div>
+
+                    </header>
+
+
+                    <div
+                        class="finance-recommendations"
+                        id="finance-recommendations"
+                    >
+
+
+                        <button type="button">
+
+                            <div>
+
+                                <strong>
+                                    Priorizar usuários com alto risco
+                                </strong>
+
+                                <span>
+                                    Ação recomendada para reduzir exposição.
+                                </span>
+
+                            </div>
+
+                            <i>
+                                ›
+                            </i>
+
+                        </button>
+
+
+                        <button type="button">
+
+                            <div>
+
+                                <strong>
+                                    Revisar metas em atraso
+                                </strong>
+
+                                <span>
+                                    Metas financeiras precisam de atenção.
+                                </span>
+
+                            </div>
+
+                            <i>
+                                ›
+                            </i>
+
+                        </button>
+
+
+                        <button type="button">
+
+                            <div>
+
+                                <strong>
+                                    Acompanhar alertas críticos
+                                </strong>
+
+                                <span>
+                                    34 alertas ativos requerem análise.
+                                </span>
+
+                            </div>
+
+                            <i>
+                                ›
+                            </i>
+
+                        </button>
+
+
+                        <button type="button">
+
+                            <div>
+
+                                <strong>
+                                    Consolidar dados entre módulos
+                                </strong>
+
+                                <span>
+                                    Melhorar integridade e consistência.
+                                </span>
+
+                            </div>
+
+                            <i>
+                                ›
+                            </i>
+
+                        </button>
+
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MODULOS
+             ================================================= -->
+
+        <section
+            class="finance-section"
+            id="finance-modules"
+        >
+
+            <header class="finance-section-header">
+
+                <div>
+
+                    <span class="finance-eyebrow">
+                        MÓDULOS DA PLATAFORMA
+                    </span>
+
+                    <h2>
+                        Ecossistema Financeiro
+                    </h2>
+
+                </div>
+
+            </header>
+
+
+
+            <div class="finance-modules-grid">
+
+
+                <!-- EDUCACAO -->
+
+                <article class="finance-module-card active">
+
+                    <div class="finance-module-main">
+
+                        <span class="finance-module-icon">
+                            EF
+                        </span>
+
+
+                        <div>
+
+                            <h3>
+                                Educação Financeira
+                            </h3>
+
+                            <p>
+                                Educação personalizada,
+                                diagnósticos financeiros
+                                e jornada do usuário.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="finance-module-state">
+
+                        <span class="green">
+                            ● Ativo
+                        </span>
+
+                        <strong>
+                            Saúde
+                            <em class="green">
+                                96%
+                            </em>
+                        </strong>
+
+                    </div>
+
+
+                    <a
+                        href="/plataforma/financeiro/modulos/educacao-financeira"
+                        class="finance-primary-action"
+                    >
+                        Abrir módulo ↗
+                    </a>
+
+                </article>
+
+
+
+                <!-- SEGURANCA -->
+
+                <article class="finance-module-card active">
+
+                    <div class="finance-module-main">
+
+                        <span class="finance-module-icon">
+                            SF
+                        </span>
+
+
+                        <div>
+
+                            <h3>
+                                Segurança Financeira
+                            </h3>
+
+                            <p>
+                                Monitoramento, prevenção
+                                e proteção de dados
+                                e transações financeiras.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="finance-module-state">
+
+                        <span class="green">
+                            ● Ativo
+                        </span>
+
+                        <strong>
+                            Saúde
+                            <em class="yellow">
+                                93%
+                            </em>
+                        </strong>
+
+                    </div>
+
+
+                    <a
+                        href="/plataforma/financeiro/modulos/seguranca-financeira"
+                        class="finance-primary-action"
+                    >
+                        Abrir módulo ↗
+                    </a>
+
+                </article>
+
+
+
+                <!-- REEMBOLSO -->
+
+                <article class="finance-module-card">
+
+                    <div class="finance-module-main">
+
+                        <span class="finance-module-icon">
+                            RI
+                        </span>
+
+
+                        <div>
+
+                            <h3>
+                                Reembolso Inteligente
+                            </h3>
+
+                            <p>
+                                Análise automática de reembolsos,
+                                evidências e validação com IA.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="finance-module-state">
+
+                        <span class="orange">
+                            ● Em implantação
+                        </span>
+
+                        <strong>
+                            Saúde
+                            <em>
+                                —
+                            </em>
+                        </strong>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="finance-secondary-action"
+                        data-finance-toast="Reembolso Inteligente está em implantação."
+                    >
+                        Ver implantação ↗
+                    </button>
+
+                </article>
+
+
+
+                <!-- PLANEJAMENTO -->
+
+                <article class="finance-module-card">
+
+                    <div class="finance-module-main">
+
+                        <span class="finance-module-icon">
+                            PF
+                        </span>
+
+
+                        <div>
+
+                            <h3>
+                                Planejamento Financeiro
+                            </h3>
+
+                            <p>
+                                Planejamento, metas,
+                                orçamento e projeções
+                                financeiras inteligentes.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="finance-module-state">
+
+                        <span class="blue">
+                            ● Planejado
+                        </span>
+
+                        <strong>
+                            Saúde
+                            <em>
+                                —
+                            </em>
+                        </strong>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="finance-secondary-action"
+                        data-finance-toast="Planejamento Financeiro está registrado no roadmap."
+                    >
+                        Ver roadmap ↗
+                    </button>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             INNA + ACOES
+             ================================================= -->
+
+        <section
+            class="finance-bottom-grid"
+            id="finance-inna"
+        >
+
+
+            <article class="finance-section">
+
+                <header class="finance-section-header">
+
+                    <div>
+
+                        <span class="finance-eyebrow">
+                            INTEGRAÇÃO COM A INNA
+                        </span>
+
+                        <h2>
+                            Orquestração da Plataforma Financeira
+                        </h2>
+
+                        <p>
+                            A INNA coordena a plataforma
+                            sem executar diretamente cada função.
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+                <div class="finance-inna-flow">
+
+
+                    <article>
+
+                        <span>
+                            IN
+                        </span>
+
+                        <strong>
+                            INNA
+                        </strong>
+
+                        <small>
+                            Diretora Geral
+                        </small>
+
+                        <em>
+                            Direção e governança
+                        </em>
+
+                    </article>
+
+
+                    <i>→</i>
+
+
+                    <article>
+
+                        <span>
+                            GF
+                        </span>
+
+                        <strong>
+                            Gerente Financeiro
+                        </strong>
+
+                        <small>
+                            Coordenação Executiva
+                        </small>
+
+                        <em>
+                            Gestão e alinhamento
+                        </em>
+
+                    </article>
+
+
+                    <i>→</i>
+
+
+                    <article>
+
+                        <span>
+                            CO
+                        </span>
+
+                        <strong>
+                            Coordenadores
+                        </strong>
+
+                        <small>
+                            Especialistas
+                        </small>
+
+                        <em>
+                            Execução e controle
+                        </em>
+
+                    </article>
+
+
+                    <i>→</i>
+
+
+                    <article>
+
+                        <span>
+                            MO
+                        </span>
+
+                        <strong>
+                            Módulos Financeiros
+                        </strong>
+
+                        <small>
+                            Agentes e ferramentas
+                        </small>
+
+                        <em>
+                            Entrega de valor
+                        </em>
+
+                    </article>
+
+
+                </div>
+
+            </article>
+
+
+
+            <article class="finance-section">
+
+                <header class="finance-section-header">
+
+                    <div>
+
+                        <span class="finance-eyebrow">
+                            PRÓXIMAS AÇÕES
+                        </span>
+
+                        <h2>
+                            Recomendações operacionais
+                        </h2>
+
+                    </div>
+
+                </header>
+
+
+                <div class="finance-actions-grid">
+
+
+                    <button
+                        type="button"
+                        data-finance-view-target="intelligence"
+                    >
+
+                        <strong>
+                            Revisar alertas críticos
+                        </strong>
+
+                        <span>
+                            34 alertas ativos
+                        </span>
+
+                        <i>
+                            →
+                        </i>
+
+                    </button>
+
+
+                    <a
+                        href="/plataforma/financeiro/modulos/seguranca-financeira"
+                    >
+
+                        <strong>
+                            Abrir Segurança Financeira
+                        </strong>
+
+                        <span>
+                            Acompanhar indicadores
+                        </span>
+
+                        <i>
+                            →
+                        </i>
+
+                    </a>
+
+
+                    <button
+                        type="button"
+                        data-finance-view-target="operational"
+                    >
+
+                        <strong>
+                            Validar integrações
+                        </strong>
+
+                        <span>
+                            Conectores e dados
+                        </span>
+
+                        <i>
+                            →
+                        </i>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        data-finance-toast="O onboarding do Reembolso Inteligente será conectado posteriormente."
+                    >
+
+                        <strong>
+                            Acompanhar Reembolso
+                        </strong>
+
+                        <span>
+                            Em fase de implantação
+                        </span>
+
+                        <i>
+                            →
+                        </i>
+
+                    </button>
+
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+
+    </section>
+
+
+
+    <!-- ====================================================
+         OPERACIONAL
+         ==================================================== -->
+
+    <section
+        class="finance-view"
+        data-finance-panel="operational"
+    >
+
+        <section class="finance-section">
+
+            <header class="finance-section-header">
+
+                <div>
+
+                    <span class="finance-eyebrow">
+                        OPERAÇÃO
+                    </span>
+
+                    <h2>
+                        Estado operacional da plataforma
+                    </h2>
+
+                    <p>
+                        Serviços, APIs, banco, RAG,
+                        HITL, auditoria e observabilidade.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+
+            <div class="finance-operational-kpis">
+
+                <article>
+
+                    <small>
+                        Latência média
+                    </small>
+
+                    <strong>
+                        1,2s
+                    </strong>
+
+                    <span class="green">
+                        dentro do esperado
+                    </span>
+
+                </article>
+
+
+                <article>
+
+                    <small>
+                        Taxa de erro
+                    </small>
+
+                    <strong class="green">
+                        0,7%
+                    </strong>
+
+                    <span>
+                        últimas requisições
+                    </span>
+
+                </article>
+
+
+                <article>
+
+                    <small>
+                        Disponibilidade
+                    </small>
+
+                    <strong class="green">
+                        99,4%
+                    </strong>
+
+                    <span>
+                        serviços financeiros
+                    </span>
+
+                </article>
+
+
+                <article>
+
+                    <small>
+                        Auditoria
+                    </small>
+
+                    <strong class="green">
+                        100%
+                    </strong>
+
+                    <span>
+                        cobertura demonstrativa
+                    </span>
+
+                </article>
+
+            </div>
+
+
+
+            <div class="finance-service-table">
+
+                <div class="finance-service-head">
+
+                    <span>
+                        Serviço
+                    </span>
+
+                    <span>
+                        Estado
+                    </span>
+
+                    <span>
+                        Latência
+                    </span>
+
+                    <span>
+                        Erros
+                    </span>
+
+                    <span>
+                        Atualização
+                    </span>
+
+                </div>
+
+
+                <div class="finance-service-row">
+
+                    <strong>
+                        Educação Financeira
+                    </strong>
+
+                    <span class="green">
+                        ● Saudável
+                    </span>
+
+                    <span>
+                        840ms
+                    </span>
+
+                    <span>
+                        0,3%
+                    </span>
+
+                    <span>
+                        agora
+                    </span>
+
+                </div>
+
+
+                <div class="finance-service-row">
+
+                    <strong>
+                        Segurança Financeira
+                    </strong>
+
+                    <span class="yellow">
+                        ● Atenção
+                    </span>
+
+                    <span>
+                        1,4s
+                    </span>
+
+                    <span>
+                        1,1%
+                    </span>
+
+                    <span>
+                        agora
+                    </span>
+
+                </div>
+
+
+                <div class="finance-service-row">
+
+                    <strong>
+                        RAG Financeiro
+                    </strong>
+
+                    <span class="green">
+                        ● Saudável
+                    </span>
+
+                    <span>
+                        920ms
+                    </span>
+
+                    <span>
+                        0,4%
+                    </span>
+
+                    <span>
+                        agora
+                    </span>
+
+                </div>
+
+
+                <div class="finance-service-row">
+
+                    <strong>
+                        HITL
+                    </strong>
+
+                    <span class="green">
+                        ● Saudável
+                    </span>
+
+                    <span>
+                        310ms
+                    </span>
+
+                    <span>
+                        0,0%
+                    </span>
+
+                    <span>
+                        agora
+                    </span>
+
+                </div>
+
+
+                <div class="finance-service-row">
+
+                    <strong>
+                        Auditoria
+                    </strong>
+
+                    <span class="green">
+                        ● Saudável
+                    </span>
+
+                    <span>
+                        180ms
+                    </span>
+
+                    <span>
+                        0,0%
+                    </span>
+
+                    <span>
+                        agora
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </section>
+
+
+
+    <!-- ====================================================
+         ANALITICA
+         ==================================================== -->
+
+    <section
+        class="finance-view"
+        data-finance-panel="analytics"
+    >
+
+        <section class="finance-section">
+
+            <header class="finance-section-header">
+
+                <div>
+
+                    <span class="finance-eyebrow">
+                        ANALÍTICA
+                    </span>
+
+                    <h2>
+                        Indicadores e tendências
+                    </h2>
+
+                    <p>
+                        Comparação entre módulos
+                        e evolução consolidada do domínio financeiro.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+
+            <div class="finance-analytics-grid">
+
+
+                <article class="finance-panel">
+
+                    <h3>
+                        Evolução da saúde
+                    </h3>
+
+
+                    <div class="finance-trend-chart">
+
+                        <div style="height:61%">
+                            <span>Mar</span>
+                        </div>
+
+                        <div style="height:70%">
+                            <span>Abr</span>
+                        </div>
+
+                        <div style="height:76%">
+                            <span>Mai</span>
+                        </div>
+
+                        <div style="height:83%">
+                            <span>Jun</span>
+                        </div>
+
+                        <div style="height:91%">
+                            <span>Jul</span>
+                        </div>
+
+                        <div style="height:96%">
+                            <span>Ago</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+
+                <article class="finance-panel">
+
+                    <h3>
+                        Utilização da INNA
+                    </h3>
+
+
+                    <div class="finance-trend-chart secondary">
+
+                        <div style="height:58%">
+                            <span>Seg</span>
+                        </div>
+
+                        <div style="height:72%">
+                            <span>Ter</span>
+                        </div>
+
+                        <div style="height:67%">
+                            <span>Qua</span>
+                        </div>
+
+                        <div style="height:81%">
+                            <span>Qui</span>
+                        </div>
+
+                        <div style="height:91%">
+                            <span>Sex</span>
+                        </div>
+
+                        <div style="height:53%">
+                            <span>Sáb</span>
+                        </div>
+
+                        <div style="height:41%">
+                            <span>Dom</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+
+
+            <article class="finance-panel finance-comparison">
+
+                <h3>
+                    Comparação dos módulos
+                </h3>
+
+
+                <div class="finance-comparison-head">
+
+                    <span>Módulo</span>
+                    <span>Saúde</span>
+                    <span>Usuários</span>
+                    <span>Alertas</span>
+                    <span>HITL</span>
+                    <span>RAG</span>
+
+                </div>
+
+
+                <div class="finance-comparison-row">
+
+                    <strong>
+                        Educação Financeira
+                    </strong>
+
+                    <span class="green">
+                        96%
+                    </span>
+
+                    <span>
+                        2.840
+                    </span>
+
+                    <span>
+                        7
+                    </span>
+
+                    <span>
+                        3
+                    </span>
+
+                    <span>
+                        10.240
+                    </span>
+
+                </div>
+
+
+                <div class="finance-comparison-row">
+
+                    <strong>
+                        Segurança Financeira
+                    </strong>
+
+                    <span class="yellow">
+                        93%
+                    </span>
+
+                    <span>
+                        2.170
+                    </span>
+
+                    <span class="yellow">
+                        27
+                    </span>
+
+                    <span>
+                        4
+                    </span>
+
+                    <span>
+                        8.180
+                    </span>
+
+                </div>
+
+            </article>
+
+        </section>
+
+    </section>
+
+
+
+    <!-- ====================================================
+         INTELIGENCIA
+         ==================================================== -->
+
+    <section
+        class="finance-view"
+        data-finance-panel="intelligence"
+    >
+
+        <section class="finance-section">
+
+            <header class="finance-section-header">
+
+                <div>
+
+                    <span class="finance-eyebrow">
+                        INTELIGÊNCIA INNA
+                    </span>
+
+                    <h2>
+                        Inteligência financeira consolidada
+                    </h2>
+
+                    <p>
+                        Diagnóstico, previsão, recomendação,
+                        evidências e suporte à decisão humana.
+                    </p>
+
+                </div>
+
+
+                <div class="finance-confidence">
+
+                    <small>
+                        CONFIANÇA
+                    </small>
+
+                    <strong>
+                        88%
+                    </strong>
+
+                </div>
+
+            </header>
+
+
+
+            <div class="finance-intelligence-grid">
+
+
+                <article>
+
+                    <span>
+                        01
+                    </span>
+
+                    <small>
+                        DIAGNÓSTICA
+                    </small>
+
+                    <h3>
+                        Principal atenção
+                    </h3>
+
+                    <p>
+                        Segurança Financeira concentra
+                        a maior quantidade de alertas
+                        e os incidentes de maior criticidade.
+                    </p>
+
+                </article>
+
+
+
+                <article>
+
+                    <span>
+                        02
+                    </span>
+
+                    <small>
+                        PREDITIVA
+                    </small>
+
+                    <h3>
+                        Tendência
+                    </h3>
+
+                    <p>
+                        Mantido o comportamento atual,
+                        os casos de revisão humana
+                        podem crescer antes da normalização dos alertas.
+                    </p>
+
+                </article>
+
+
+
+                <article>
+
+                    <span>
+                        03
+                    </span>
+
+                    <small>
+                        PRESCRITIVA
+                    </small>
+
+                    <h3>
+                        Recomendação
+                    </h3>
+
+                    <p>
+                        Priorizar incidentes críticos,
+                        revisar casos HITL e posteriormente
+                        os diagnósticos pendentes da Educação Financeira.
+                    </p>
+
+                </article>
+
+
+            </div>
+
+
+
+            <article class="finance-panel finance-evidence">
+
+                <h3>
+                    Evidências utilizadas pela INNA
+                </h3>
+
+
+                <div class="finance-evidence-head">
+
+                    <span>
+                        Fonte
+                    </span>
+
+                    <span>
+                        Evidência
+                    </span>
+
+                    <span>
+                        Impacto
+                    </span>
+
+                    <span>
+                        Confiança
+                    </span>
+
+                </div>
+
+
+                <div class="finance-evidence-row">
+
+                    <strong>
+                        Segurança Financeira
+                    </strong>
+
+                    <span>
+                        3 alertas críticos ativos
+                    </span>
+
+                    <span class="red">
+                        Alto
+                    </span>
+
+                    <span>
+                        94%
+                    </span>
+
+                </div>
+
+
+                <div class="finance-evidence-row">
+
+                    <strong>
+                        Segurança Financeira
+                    </strong>
+
+                    <span>
+                        4 casos aguardando HITL
+                    </span>
+
+                    <span class="yellow">
+                        Médio
+                    </span>
+
+                    <span>
+                        91%
+                    </span>
+
+                </div>
+
+
+                <div class="finance-evidence-row">
+
+                    <strong>
+                        Educação Financeira
+                    </strong>
+
+                    <span>
+                        3 diagnósticos aguardando revisão
+                    </span>
+
+                    <span>
+                        Médio
+                    </span>
+
+                    <span>
+                        86%
+                    </span>
+
+                </div>
+
+
+                <div class="finance-evidence-row">
+
+                    <strong>
+                        RAG Financeiro
+                    </strong>
+
+                    <span>
+                        18.420 consultas consolidadas
+                    </span>
+
+                    <span>
+                        Contexto
+                    </span>
+
+                    <span>
+                        89%
+                    </span>
+
+                </div>
+
+            </article>
+
+        </section>
+
+    </section>
+
+
+</main>
+
+
+
+<footer class="finance-footer">
+
+    <div class="finance-footer-brand">
+
+        <a
+            href="/plataforma"
+            class="sabino-global-brand-v2"
+        >
+
+            <span class="sabino-global-brand-v2__logo">
+
+                <img
+                    src="/static/images/sabino-s-logo.png"
+                    alt="Sabino.AI"
+                >
+
+            </span>
+
+
+            <span class="sabino-global-brand-v2__text">
+
+                <strong class="sabino-global-brand-v2__name">
+                    Sabino.AI
+                </strong>
+
+                <small class="sabino-global-brand-v2__subtitle">
+                    Intelligence Platform
+                </small>
+
+            </span>
+
+        </a>
+
+
+        <span class="finance-footer-divider">
+            |
+        </span>
+
+
+        <span class="finance-footer-platform">
+            Plataforma Financeira
+        </span>
+
+    </div>
+
+
+    <div class="finance-footer-links">
+
+        <span>
+            Governança
+        </span>
+
+        <span>
+            Segurança
+        </span>
+
+        <span>
+            Auditoria
+        </span>
+
+        <span>
+            LGPD
+        </span>
+
+        <span>
+            HITL
+        </span>
+
+    </div>
+
+</footer>
+
+
+
+<div
+    class="finance-toast"
+    id="finance-toast"
+    role="status"
+></div>
+
+
+
+    <script
+        src="/static/js/sabino-global-brand.js?v=1"
+        defer
+    ></script>
+
+    <script
+        src="/static/js/sabino-global-brand-v2.js?v=2"
+        defer
+    ></script>
+</body>
+
+</html>
+
+
+

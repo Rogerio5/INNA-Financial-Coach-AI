@@ -1,0 +1,38 @@
+
+
+
+
+
+
+/* =========================================================
+   SABINO_MANUAL3_VISIBLE_V3
+   Botão interno visível.
+   Somente 3 idiomas no seletor manual.
+   ========================================================= */
+
+.sabino-global-language {
+    display: block !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+.sabino-global-language-button {
+    display: flex !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+.sabino-global-language-panel {
+    visibility: visible;
+}
+
+/* 3 idiomas não precisam de campo de busca */
+.sabino-global-language-search {
+    display: none !important;
+}
+
+/* esconder país/código */
+.sabino-global-language-option small {
+    display: none !important;
+}
+

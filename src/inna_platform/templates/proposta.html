@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Proposta personalizada | Sabino.AI
+    </title>
+
+    <meta
+        name="description"
+        content="Proposta personalizada da plataforma Sabino.AI."
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/css/platform.css') }}"
+    >
+
+    <script
+        src="{{ url_for('static', path='/js/proposal.js') }}?v=6"
+        defer
+    ></script>
+
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand.css?v=1"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="/static/images/sabino-s-logo.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand-v2.css?v=2"
+    >
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+     ====================================================== -->
+
+<header class="topbar">
+
+    <a
+        class="brand brand-header"
+        href="/"
+    >
+
+        <img
+            class="brand-logo"
+            src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+            alt="Sabino.AI"
+        >
+
+        <span>
+            Sabino.AI
+        </span>
+
+    </a>
+
+
+    <nav class="nav">
+
+        <a href="/">
+            Início
+        </a>
+
+        <a href="/#solucoes">
+            Soluções
+        </a>
+
+        <a
+            class="active"
+            href="/modulos"
+        >
+            Módulos
+        </a>
+
+        <a href="/#inna">
+            INNA Assistant
+        </a>
+
+        <a href="/#recursos">
+            Recursos
+        </a>
+
+        <a href="/#empresa">
+            Empresa
+        </a>
+
+        <a href="/#contato">
+            Contato
+        </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+        <div class="language-selector">
+
+            <span class="language-globe">
+                ◎
+            </span>
+
+            <select
+                id="platform-language"
+                aria-label="Selecionar idioma"
+            >
+                <option value="pt-BR">BR Português Brasil</option>
+                <option value="en-US">US English US</option>
+                <option value="en-GB">GB English UK</option>
+                <option value="es">ES Español</option>
+                <option value="fr">FR Français</option>
+                <option value="de">DE Deutsch</option>
+                <option value="it">IT Italiano</option>
+                <option value="ro">RO Română</option>
+                <option value="uk">UA Українська</option>
+                <option value="ru">RU Русский</option>
+                <option value="ar">SA العربية</option>
+                <option value="de-CH">CH Schweiz</option>
+            </select>
+
+        </div>
+
+
+        <button class="btn-secondary">
+            Entrar
+        </button>
+
+
+        <a
+            class="btn-primary"
+            href="/#contato"
+        >
+            Falar com um especialista
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<main class="proposal-page">
+
+
+<!-- ======================================================
+     PROGRESSO
+     ====================================================== -->
+
+<section class="proposal-progress container">
+
+    <div class="proposal-step completed">
+
+        <span>✓</span>
+
+        <strong>
+            Conheça a Sabino.AI
+        </strong>
+
+    </div>
+
+
+    <div class="proposal-progress-line"></div>
+
+
+    <div class="proposal-step completed">
+
+        <span>✓</span>
+
+        <strong>
+            Escolha seus módulos
+        </strong>
+
+    </div>
+
+
+    <div class="proposal-progress-line"></div>
+
+
+    <div class="proposal-step completed">
+
+        <span>✓</span>
+
+        <strong>
+            Configure sua solução
+        </strong>
+
+    </div>
+
+
+    <div class="proposal-progress-line"></div>
+
+
+    <div class="proposal-step active">
+
+        <span>4</span>
+
+        <strong>
+            Receba sua proposta
+        </strong>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     TITULO
+     ====================================================== -->
+
+<section class="proposal-heading container">
+
+    <div>
+
+        <span class="eyebrow">
+            PROPOSTA PERSONALIZADA
+        </span>
+
+        <h1>
+            Sua proposta
+            <span>personalizada</span>
+        </h1>
+
+        <p>
+            Com base na configuração selecionada, apresentamos
+            opções de planos para estruturar sua solução com
+            tecnologia, inteligência e capacidade para evoluir.
+        </p>
+
+    </div>
+
+
+    <aside class="proposal-validity">
+
+        <span class="proposal-validity-icon">
+            ◉
+        </span>
+
+        <div>
+
+            <strong>
+                Proposta válida por 7 dias
+            </strong>
+
+            <span id="proposal-validity-date">
+                Calculando validade...
+            </span>
+
+            <small>
+                Atendimento especializado disponível.
+            </small>
+
+        </div>
+
+    </aside>
+
+</section>
+
+
+
+<!-- ======================================================
+     LAYOUT
+     ====================================================== -->
+
+<section class="proposal-layout container">
+
+
+<!-- COLUNA PRINCIPAL -->
+
+<div class="proposal-main">
+
+
+<!-- PLANOS -->
+
+<div class="proposal-section-heading">
+
+    <span class="eyebrow">
+        PLANOS
+    </span>
+
+    <h2>
+        Escolha a estrutura ideal
+        para sua operação
+    </h2>
+
+</div>
+
+
+<div class="proposal-plans">
+
+
+<!-- STARTER -->
+
+<article
+    class="proposal-plan"
+    data-plan="starter"
+    data-price="1490"
+>
+
+    <span class="proposal-plan-type">
+        STARTER
+    </span>
+
+    <h3>
+        Starter
+    </h3>
+
+    <p class="proposal-plan-description">
+        Para operações que estão começando
+        a estruturar processos com inteligência.
+    </p>
+
+
+    <div class="proposal-price">
+
+        <strong>
+            R$ 1.490
+        </strong>
+
+        <span>
+            /mês
+        </span>
+
+    </div>
+
+
+    <small class="proposal-billing">
+        Valor de referência para demonstração
+    </small>
+
+
+    <ul class="proposal-benefits">
+
+        <li>Até 3 módulos</li>
+        <li>Até 10 usuários</li>
+        <li>Dashboard básico</li>
+        <li>10 GB de armazenamento</li>
+        <li>Suporte padrão</li>
+
+    </ul>
+
+
+    <button
+        class="proposal-select-plan"
+        type="button"
+    >
+        Selecionar Starter
+    </button>
+
+</article>
+
+
+
+<!-- BUSINESS -->
+
+<article
+    class="proposal-plan recommended selected"
+    data-plan="business"
+    data-price="3490"
+>
+
+    <span class="proposal-recommended">
+        MAIS ESCOLHIDO
+    </span>
+
+    <span class="proposal-plan-type">
+        BUSINESS
+    </span>
+
+    <h3>
+        Business
+    </h3>
+
+    <p class="proposal-plan-description">
+        Para empresas que precisam integrar
+        módulos, dados e automações em escala.
+    </p>
+
+
+    <div class="proposal-price">
+
+        <strong>
+            R$ 3.490
+        </strong>
+
+        <span>
+            /mês
+        </span>
+
+    </div>
+
+
+    <small class="proposal-billing">
+        Valor de referência para demonstração
+    </small>
+
+
+    <ul class="proposal-benefits">
+
+        <li>Todos os módulos contratados</li>
+        <li>Até 50 usuários</li>
+        <li>Dashboards analíticos</li>
+        <li>100 GB de armazenamento</li>
+        <li>Integrações e APIs</li>
+        <li>Suporte prioritário</li>
+
+    </ul>
+
+
+    <button
+        class="proposal-select-plan"
+        type="button"
+    >
+        Plano selecionado
+    </button>
+
+</article>
+
+
+
+<!-- ENTERPRISE -->
+
+<article
+    class="proposal-plan enterprise"
+    data-plan="enterprise"
+    data-price="0"
+>
+
+    <span class="proposal-plan-type">
+        ENTERPRISE
+    </span>
+
+    <h3>
+        Enterprise
+    </h3>
+
+    <p class="proposal-plan-description">
+        Para operações que exigem escala,
+        personalização e arquitetura dedicada.
+    </p>
+
+
+    <div class="proposal-price custom">
+
+        <strong>
+            Sob consulta
+        </strong>
+
+    </div>
+
+
+    <small class="proposal-billing">
+        Solução personalizada
+    </small>
+
+
+    <ul class="proposal-benefits">
+
+        <li>Plano personalizado</li>
+        <li>Usuários ampliados</li>
+        <li>Dashboards avançados</li>
+        <li>Armazenamento dimensionado</li>
+        <li>Integrações avançadas</li>
+        <li>SLA personalizado</li>
+        <li>Suporte dedicado</li>
+
+    </ul>
+
+
+    <a
+        class="proposal-select-plan"
+        href="/#contato"
+    >
+        Falar com especialista
+    </a>
+
+</article>
+
+
+</div>
+
+
+
+<!-- ======================================================
+     EXTRAS
+     ====================================================== -->
+
+<section class="proposal-extras">
+
+    <div class="proposal-section-heading compact">
+
+        <span class="eyebrow">
+            RECURSOS OPCIONAIS
+        </span>
+
+        <h2>
+            Personalize ainda mais sua solução
+        </h2>
+
+    </div>
+
+
+    <div class="proposal-extra-grid">
+
+
+        <label class="proposal-extra">
+
+            <input
+                type="checkbox"
+                data-extra-name="Implantação assistida"
+                data-extra-price="1200"
+            >
+
+            <span class="proposal-extra-icon">
+                ◎
+            </span>
+
+            <div>
+
+                <strong>
+                    Implantação assistida
+                </strong>
+
+                <span>
+                    Configuração e orientação inicial.
+                </span>
+
+                <b>
+                    R$ 1.200
+                </b>
+
+            </div>
+
+        </label>
+
+
+        <label class="proposal-extra">
+
+            <input
+                type="checkbox"
+                data-extra-name="Armazenamento extra"
+                data-extra-price="300"
+            >
+
+            <span class="proposal-extra-icon">
+                DB
+            </span>
+
+            <div>
+
+                <strong>
+                    Armazenamento extra
+                </strong>
+
+                <span>
+                    Capacidade adicional de dados.
+                </span>
+
+                <b>
+                    R$ 300/mês
+                </b>
+
+            </div>
+
+        </label>
+
+
+        <label class="proposal-extra">
+
+            <input
+                type="checkbox"
+                data-extra-name="Backup e recuperação"
+                data-extra-price="200"
+            >
+
+            <span class="proposal-extra-icon">
+                ◈
+            </span>
+
+            <div>
+
+                <strong>
+                    Backup e recuperação
+                </strong>
+
+                <span>
+                    Camada adicional de proteção.
+                </span>
+
+                <b>
+                    R$ 200/mês
+                </b>
+
+            </div>
+
+        </label>
+
+
+        <label class="proposal-extra">
+
+            <input
+                type="checkbox"
+                data-extra-name="Analytics avançado"
+                data-extra-price="600"
+            >
+
+            <span class="proposal-extra-icon">
+                ↗
+            </span>
+
+            <div>
+
+                <strong>
+                    Analytics avançado
+                </strong>
+
+                <span>
+                    Relatórios e insights ampliados.
+                </span>
+
+                <b>
+                    R$ 600/mês
+                </b>
+
+            </div>
+
+        </label>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ACOES -->
+
+<div class="proposal-actions">
+
+    <a
+        class="btn-secondary"
+        href="/configurar"
+    >
+        ← Voltar à configuração
+    </a>
+
+
+    <div class="proposal-security-note">
+        ◇ Ambiente preparado com segurança e governança.
+    </div>
+
+
+    <button
+        class="btn-primary proposal-finalize"
+        id="proposal-finalize"
+        type="button"
+    >
+        Finalizar proposta →
+    </button>
+
+</div>
+
+
+<p class="proposal-disclaimer">
+    Valores exibidos nesta página são referências de demonstração
+    da experiência da plataforma e não constituem oferta comercial.
+</p>
+
+
+</div>
+
+
+
+<!-- ======================================================
+     RESUMO
+     ====================================================== -->
+
+<aside class="proposal-summary">
+
+<div class="proposal-summary-sticky">
+
+    <span class="eyebrow">
+        RESUMO DA SOLUÇÃO
+    </span>
+
+    <h2>
+        Sua configuração
+    </h2>
+
+    <p>
+        Confira os principais itens definidos
+        antes de finalizar.
+    </p>
+
+
+    <div class="proposal-summary-block">
+
+        <div class="proposal-summary-title">
+
+            <strong>
+                Módulos selecionados
+            </strong>
+
+            <span id="proposal-module-count">
+                3 módulos
+            </span>
+
+        </div>
+
+        <ul id="proposal-summary-modules"></ul>
+
+    </div>
+
+
+    <div class="proposal-summary-block">
+
+        <strong>
+            Canais
+        </strong>
+
+        <div
+            class="proposal-summary-tags"
+            id="proposal-summary-channels"
+        ></div>
+
+    </div>
+
+
+    <div class="proposal-summary-block">
+
+        <strong>
+            Integrações
+        </strong>
+
+        <div
+            class="proposal-summary-tags"
+            id="proposal-summary-integrations"
+        ></div>
+
+    </div>
+
+
+    <div class="proposal-summary-block">
+
+        <strong>
+            Configuração
+        </strong>
+
+        <dl class="proposal-summary-config">
+
+            <div>
+                <dt>Usuários</dt>
+                <dd id="proposal-summary-users"></dd>
+            </div>
+
+            <div>
+                <dt>Dados</dt>
+                <dd id="proposal-summary-data"></dd>
+            </div>
+
+            <div>
+                <dt>Base RAG</dt>
+                <dd id="proposal-summary-rag"></dd>
+            </div>
+
+<div>
+    <dt>Atualização RAG</dt>
+    <dd id="proposal-summary-rag-update"></dd>
+</div>
+
+        </dl>
+
+    </div>
+
+
+    <div class="proposal-summary-block">
+
+        <strong>
+            Recursos
+        </strong>
+
+        <ul id="proposal-summary-resources"></ul>
+
+    </div>
+
+
+    <div class="proposal-summary-block proposal-dimensioning">
+
+    <strong>
+        Dimensionamento
+    </strong>
+
+    <div class="proposal-dimensioning-grid">
+
+        <div>
+            <span>Módulos</span>
+            <strong id="proposal-count-modules">0</strong>
+        </div>
+
+        <div>
+            <span>Canais</span>
+            <strong id="proposal-count-channels">0</strong>
+        </div>
+
+        <div>
+            <span>Integrações</span>
+            <strong id="proposal-count-integrations">0</strong>
+        </div>
+
+        <div>
+            <span>Recursos</span>
+            <strong id="proposal-count-resources">0</strong>
+        </div>
+
+    </div>
+
+    <div class="proposal-complexity-line">
+
+        <span>
+            Complexidade
+        </span>
+
+        <strong id="proposal-complexity-level">
+            -
+        </strong>
+
+    </div>
+
+</div>
+
+
+<div class="proposal-summary-block proposal-selected-plan">
+
+        <span>
+            Plano selecionado
+        </span>
+
+        <strong id="proposal-selected-plan">
+            Business
+        </strong>
+
+    </div>
+
+
+    <div
+    class="proposal-price-breakdown"
+    id="proposal-price-breakdown"
+>
+
+    <span class="proposal-breakdown-title">
+        COMPOSIÇÃO DA ESTIMATIVA
+    </span>
+
+    <div>
+        <span>Base do plano</span>
+        <strong id="proposal-price-base">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Módulos adicionais</span>
+        <strong id="proposal-price-modules">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Canais adicionais</span>
+        <strong id="proposal-price-channels">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Integrações adicionais</span>
+        <strong id="proposal-price-integrations">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Recursos adicionais</span>
+        <strong id="proposal-price-resources">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Capacidade de usuários</span>
+        <strong id="proposal-price-users">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Volume de dados</span>
+        <strong id="proposal-price-data">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Base RAG</span>
+        <strong id="proposal-price-rag">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Atualização RAG</span>
+        <strong id="proposal-price-rag-update">R$ 0</strong>
+    </div>
+
+</div>
+
+
+<div class="proposal-estimate">
+
+        <span>
+            Estimativa mensal
+        </span>
+
+        <strong id="proposal-estimated-total">
+            R$ 3.490
+        </strong>
+
+        <small>
+            referência demonstrativa
+        </small>
+
+    </div>
+
+
+    <div class="proposal-help">
+
+        <span class="proposal-help-icon">
+            ◌
+        </span>
+
+        <div>
+
+            <strong>
+                Precisa de ajuda?
+            </strong>
+
+            <p>
+                Converse com um especialista para
+                avaliar a melhor configuração.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <a
+        class="btn-secondary proposal-specialist"
+        href="/#contato"
+    >
+        Falar com especialista
+    </a>
+
+</div>
+
+</aside>
+
+
+</section>
+
+
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+    <div class="container footer-grid">
+
+        <div>
+
+            <a class="brand" href="/">
+
+                <img
+                    class="brand-logo"
+                    src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+                    alt="Sabino.AI"
+                >
+
+                <span>
+                    Sabino.AI
+                </span>
+
+            </a>
+
+            <p>
+                Tecnologia e inteligência para conectar
+                pessoas, negócios e soluções.
+            </p>
+
+        </div>
+
+
+        <div>
+            <strong>Plataforma</strong>
+            <a href="/">Início</a>
+            <a href="/modulos">Módulos</a>
+            <a href="/#inna">INNA Assistant</a>
+        </div>
+
+
+        <div>
+            <strong>Empresa</strong>
+            <a href="#">Sobre</a>
+            <a href="#">Privacidade</a>
+            <a href="#">Termos</a>
+        </div>
+
+
+        <div>
+            <strong>Recursos</strong>
+            <a href="#">Documentação</a>
+            <a href="#">API</a>
+            <a href="#">Status</a>
+        </div>
+
+
+        <div>
+            <strong>Segurança</strong>
+            <span class="security-badge">🔒 Plataforma segura</span>
+            <span class="security-badge">🛡 LGPD</span>
+        </div>
+
+    </div>
+
+</footer>
+
+
+</main>
+
+
+    <script
+        src="/static/js/sabino-global-brand.js?v=1"
+        defer
+    ></script>
+
+    <script
+        src="/static/js/sabino-global-brand-v2.js?v=2"
+        defer
+    ></script>
+</body>
+</html>
+
+
+
+
+

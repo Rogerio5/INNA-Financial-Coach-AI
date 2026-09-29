@@ -1,0 +1,15 @@
+/* SABINO_FINANCE_LANGUAGE_FIXED_V1 */
+.sabino-finance-language-fixed {
+    position: fixed !important;
+    top: 20px !important;
+    right: 24px !important;
+    left: auto !important;
+    bottom: auto !important;
+    z-index: 99999 !important;
+    margin: 0 !important;
+    transform: none !important;
+}
+
+.sabino-finance-language-fixed * {
+    box-sizing: border-box;
+}

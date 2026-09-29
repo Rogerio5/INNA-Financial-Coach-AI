@@ -1,0 +1,5142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script>
+if (new URLSearchParams(location.search).get("demo") !== "1") {
+    document.documentElement.dataset.financeHeader = "flow";
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Financeiro | Sabino.AI</title>
+
+<style>
+
+:root {
+    --bg: #06090b;
+    --sidebar: #080c0f;
+    --card: #0e1418;
+    --card2: #11191d;
+    --border: #263137;
+    --text: #f4f6f7;
+    --muted: #8f9ba3;
+    --yellow: #ffd21c;
+    --yellow-dark: #8b7200;
+    --green: #19d99a;
+    --red: #ff535d;
+    --blue: #388cff;
+    --orange: #ff9d32;
+    --purple: #9d67e5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background:
+        radial-gradient(
+            circle at 52% 0%,
+            rgba(14, 48, 62, 0.22),
+            transparent 32%
+        ),
+        var(--bg);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    font-family: inherit;
+}
+
+/* ==========================================================
+   ESTRUTURA
+========================================================== */
+
+.app {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+}
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 18px 14px;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 5px 7px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.logo-mark {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #685700;
+    border-radius: 10px;
+    color: var(--yellow);
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.logo strong {
+    display: block;
+    font-size: 17px;
+}
+
+.logo small {
+    display: block;
+    color: var(--muted);
+    font-size: 7px;
+    letter-spacing: 1px;
+    margin-top: 3px;
+}
+
+.nav {
+    margin-top: 20px;
+}
+
+.nav-title {
+    margin: 0 8px 9px;
+    color: #71808a;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.nav-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 17px 0;
+}
+
+.nav-item {
+    width: 100%;
+    min-height: 43px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: #bac4ca;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: left;
+}
+
+.nav-item:hover {
+    color: white;
+    background: #11171b;
+}
+
+.nav-item.active {
+    color: var(--yellow);
+    border-color: var(--yellow-dark);
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 210, 28, 0.15),
+            rgba(255, 210, 28, 0.03)
+        );
+}
+
+.nav-icon {
+    width: 20px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.modules-button .arrow {
+    margin-left: auto;
+    transition: transform 0.2s ease;
+}
+
+.modules-button.open {
+    color: var(--yellow);
+    border-color: var(--yellow-dark);
+    background: rgba(255, 210, 28, 0.07);
+}
+
+.modules-button.open .arrow {
+    transform: rotate(90deg);
+}
+
+/* ==========================================================
+   MODULOS ESCONDIDOS POR PADRAO
+========================================================== */
+
+.modules-list {
+    margin-left: 29px;
+    padding-left: 13px;
+    border-left: 1px solid #344047;
+
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+
+    transition:
+        max-height 0.3s ease,
+        opacity 0.2s ease;
+}
+
+.modules-list.open {
+    max-height: 400px;
+    opacity: 1;
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
+
+.module-link {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #b9c4ca;
+    font-size: 12px;
+}
+
+.module-link:hover {
+    color: var(--yellow);
+}
+
+.module-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #69767e;
+}
+
+.module-link:hover .module-dot {
+    background: var(--yellow);
+}
+
+.inna-section {
+    margin-top: 16px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
+}
+
+.logout {
+    margin-top: auto;
+}
+
+/* ==========================================================
+   MAIN
+========================================================== */
+
+.main {
+    min-width: 0;
+    padding: 0 28px 22px;
+}
+
+.topbar {
+    height: 62px;
+    border-bottom: 1px solid #172025;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    color: #b8c2c8;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+}
+
+.account {
+    margin-left: 24px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.account-avatar {
+    width: 37px;
+    height: 37px;
+    border-radius: 50%;
+    background: var(--yellow);
+    color: #111;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    font-size: 11px;
+}
+
+.account strong {
+    display: block;
+    font-size: 11px;
+}
+
+.account small {
+    display: block;
+    color: var(--muted);
+    font-size: 8px;
+    margin-top: 2px;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.page-header {
+    padding: 27px 0 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.eyebrow {
+    color: var(--yellow);
+    font-size: 9px;
+    letter-spacing: 1.8px;
+    font-weight: 900;
+    margin: 0 0 7px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 36px;
+    letter-spacing: -1.3px;
+}
+
+.page-header h1 span {
+    color: var(--yellow);
+}
+
+.subtitle {
+    margin: 7px 0 0;
+    color: #98a5ad;
+    font-size: 12px;
+}
+
+.inna-top {
+    height: 43px;
+    padding: 0 17px;
+    border: 1px solid var(--yellow-dark);
+    border-radius: 9px;
+    color: var(--yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* ==========================================================
+   KPIS
+========================================================== */
+
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.kpi {
+    min-height: 122px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background:
+        linear-gradient(
+            145deg,
+            #10171b,
+            #0b1013
+        );
+}
+
+.kpi.saldo {
+    border-color: rgba(25, 217, 154, 0.3);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 82, 58, 0.35),
+            #0b1013
+        );
+}
+
+.kpi.gastos {
+    border-color: rgba(255, 83, 93, 0.32);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(91, 19, 25, 0.38),
+            #0b1013
+        );
+}
+
+.kpi.reserva {
+    border-color: rgba(255, 210, 28, 0.25);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(86, 69, 0, 0.28),
+            #0b1013
+        );
+}
+
+.kpi-title {
+    font-size: 11px;
+    color: #d3d9dc;
+    margin-bottom: 10px;
+}
+
+.kpi-value {
+    display: block;
+    font-size: 21px;
+    margin-bottom: 11px;
+}
+
+.kpi-change {
+    font-size: 9px;
+    color: var(--muted);
+}
+
+.green {
+    color: var(--green);
+}
+
+.red {
+    color: var(--red);
+}
+
+/* ==========================================================
+   DASHBOARD
+========================================================== */
+
+.dashboard {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.25fr)
+        minmax(340px, 0.85fr)
+        290px;
+
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.panel {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--card),
+            #0b1013
+        );
+}
+
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 17px;
+}
+
+.panel h2 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.panel p {
+    color: var(--muted);
+}
+
+.panel-head p {
+    margin: 5px 0 0;
+    font-size: 9px;
+}
+
+.period {
+    height: 31px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #344048;
+    border-radius: 7px;
+    font-size: 9px;
+    color: #c4cdd2;
+}
+
+/* ==========================================================
+   GRAFICO MENSAL
+========================================================== */
+
+.chart-wrap {
+    display: grid;
+    grid-template-columns: 55px minmax(0, 1fr);
+    height: 290px;
+    padding-bottom: 25px;
+}
+
+.y-axis {
+    height: 245px;
+    padding-right: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    color: #8b989f;
+    font-size: 8px;
+}
+
+.bars {
+    height: 245px;
+    border-left: 1px solid #263139;
+    border-bottom: 1px solid #263139;
+    padding: 0 8px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 7px;
+
+    background:
+        repeating-linear-gradient(
+            to top,
+            transparent 0,
+            transparent 48px,
+            rgba(255,255,255,0.045) 49px,
+            rgba(255,255,255,0.045) 50px
+        );
+}
+
+.bar-item {
+    height: 100%;
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.bar-value {
+    margin-bottom: 6px;
+    color: #f5f6f6;
+    font-size: 8px;
+    white-space: nowrap;
+}
+
+.bar {
+    width: min(42px, 68%);
+    border-radius: 5px 5px 1px 1px;
+    background:
+        linear-gradient(
+            to top,
+            #d8a00a,
+            #ffe13b
+        );
+}
+
+.bar-label {
+    position: absolute;
+    bottom: -23px;
+    font-size: 8px;
+    color: #aeb8bd;
+}
+
+/* ==========================================================
+   DONUT
+========================================================== */
+
+.category-layout {
+    display: grid;
+    grid-template-columns: 175px minmax(130px, 1fr);
+    gap: 14px;
+    align-items: center;
+}
+
+.donut {
+    width: 165px;
+    height: 165px;
+    border-radius: 50%;
+    margin: auto;
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+
+.donut::after {
+    content: "";
+    position: absolute;
+    width: 91px;
+    height: 91px;
+    border-radius: 50%;
+    background: #0c1216;
+}
+
+.donut-center {
+    z-index: 2;
+    position: relative;
+    text-align: center;
+}
+
+.donut-center small {
+    display: block;
+    font-size: 8px;
+    color: #8e9ba2;
+}
+
+.donut-center strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.legend-row {
+    display: grid;
+    grid-template-columns: 9px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+}
+
+.legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.biggest {
+    margin-top: 17px;
+    border: 1px solid var(--yellow-dark);
+    border-radius: 8px;
+    padding: 12px;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 210, 28, 0.08),
+            transparent
+        );
+}
+
+.biggest small {
+    display: block;
+    color: #8f9ba2;
+    font-size: 8px;
+}
+
+.biggest strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--yellow);
+    font-size: 14px;
+}
+
+.biggest p {
+    margin: 5px 0 0;
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+/* ==========================================================
+   PROXIMOS PASSOS
+========================================================== */
+
+.steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.steps li {
+    min-height: 66px;
+    display: grid;
+    grid-template-columns: 31px minmax(0, 1fr) 12px;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid #222c31;
+}
+
+.steps li:last-child {
+    border-bottom: 0;
+}
+
+.step-number {
+    width: 31px;
+    height: 31px;
+    border-radius: 50%;
+    background: var(--yellow);
+    color: #111;
+    font-size: 11px;
+    font-weight: 900;
+    display: grid;
+    place-items: center;
+}
+
+.steps strong {
+    display: block;
+    font-size: 9px;
+}
+
+.steps small {
+    display: block;
+    color: #8e9aa1;
+    font-size: 8px;
+    line-height: 1.4;
+    margin-top: 4px;
+}
+
+.step-arrow {
+    color: var(--yellow);
+    font-size: 18px;
+}
+
+/* ==========================================================
+   INNA
+========================================================== */
+
+.inna-card {
+    margin-top: 14px;
+}
+
+.inna-text {
+    margin: 10px 0 15px;
+    padding-left: 10px;
+    border-left: 2px solid var(--yellow);
+    font-size: 9px;
+    line-height: 1.6;
+}
+
+.inna-button {
+    height: 44px;
+    border-radius: 8px;
+    background: var(--yellow);
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.footer {
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid #1b2429;
+    display: flex;
+    justify-content: space-between;
+    color: #68757c;
+    font-size: 8px;
+}
+
+/* ==========================================================
+   RESPONSIVO
+========================================================== */
+
+@media (max-width: 1250px) {
+
+    .dashboard {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(320px, 0.85fr);
+    }
+
+    .right-column {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .inna-card {
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 950px) {
+
+    .app {
+        grid-template-columns: 205px minmax(0, 1fr);
+    }
+
+    .main {
+        padding-left: 17px;
+        padding-right: 17px;
+    }
+
+    .kpis {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .right-column {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 720px) {
+
+    .app {
+        display: block;
+    }
+
+    .sidebar {
+        position: relative;
+        height: auto;
+    }
+
+    .kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        flex-direction: column;
+    }
+
+    .category-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .right-column {
+        display: block;
+    }
+
+    .inna-card {
+        margin-top: 14px;
+    }
+}
+
+</style>
+
+
+<style id="SABINO_FINANCE_MODE_STYLE_V1">
+
+.finance-mode-badge {
+    display: inline-flex;
+    align-items: center;
+
+    margin-top: 8px;
+    padding: 5px 10px;
+
+    border: 1px solid rgba(255, 210, 28, .35);
+    border-radius: 999px;
+
+    background: rgba(255, 210, 28, .06);
+
+    color: #ffd21c;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.finance-mode-badge.real {
+    border-color: rgba(25, 217, 154, .35);
+    background: rgba(25, 217, 154, .06);
+    color: #19d99a;
+}
+
+</style>
+
+
+<style id="SABINO_LOGO_STANDARD_V1">
+
+.logo {
+    gap: 12px !important;
+    padding: 0 8px 23px !important;
+}
+
+.logo-mark {
+    width: 45px !important;
+    height: 45px !important;
+    flex: 0 0 45px;
+
+    border-radius: 9px !important;
+
+    font-size: 22px !important;
+    font-weight: 900 !important;
+}
+
+.logo strong {
+    display: block;
+
+    color: #ffffff !important;
+
+    font-size: 19px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+
+    white-space: nowrap;
+}
+
+.logo small {
+    display: block;
+
+    margin-top: 5px !important;
+
+    color: rgba(255,255,255,.62) !important;
+
+    font-size: 8px !important;
+    font-weight: 700 !important;
+    line-height: 1.25;
+
+    letter-spacing: 1px !important;
+    white-space: nowrap;
+}
+
+</style>
+
+
+<style id="SABINO_FINANCE_SIDEBAR_STANDARD_V1">
+
+@media (min-width: 1100px) {
+
+    .app {
+        grid-template-columns:
+            235px minmax(0, 1fr) !important;
+    }
+
+    .sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        width: 235px !important;
+        height: auto !important;
+
+        padding: 23px 16px !important;
+
+        overflow-y: auto;
+        z-index: 50;
+    }
+
+    .main {
+        grid-column: 2;
+
+        padding:
+            0
+            clamp(30px, 4vw, 64px)
+            45px !important;
+    }
+
+    .topbar {
+        height: 80px !important;
+    }
+
+}
+
+</style>
+
+<style id="SABINO_REMOVE_MENU_LETTERS_V1">
+.nav-icon,
+.nav-badge,
+.menu-icon,
+.menu-badge,
+.sidebar-icon,
+.sidebar-badge {
+    display: none !important;
+}
+
+.nav-link,
+.sidebar-link,
+.menu-link {
+    gap: 0 !important;
+    padding-left: 14px !important;
+}
+</style>
+
+<style id="SABINO_FINANCE_GROUPED_SIDEBAR_STYLE_V1">
+
+.finance-module-group{
+    margin:6px 0;
+}
+
+.finance-module-group > summary{
+    list-style:none;
+    cursor:pointer;
+    padding:9px 10px;
+    border-radius:8px;
+    color:#d7d7d7;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.02em;
+    transition:.18s ease;
+}
+
+.finance-module-group > summary::-webkit-details-marker{
+    display:none;
+}
+
+.finance-module-group > summary::after{
+    content:"›";
+    float:right;
+    color:#d9b441;
+    transition:transform .18s ease;
+}
+
+.finance-module-group[open] > summary::after{
+    transform:rotate(90deg);
+}
+
+.finance-module-group > summary:hover{
+    background:rgba(217,180,65,.08);
+    color:#ffffff;
+}
+
+.finance-module-group .module-link{
+    margin-left:8px;
+    padding-left:14px !important;
+}
+
+.module-link-future{
+    display:flex !important;
+    justify-content:space-between;
+    align-items:center;
+    cursor:default !important;
+    opacity:.55;
+}
+
+.module-link-future small{
+    margin-left:8px;
+    color:#d9b441;
+    font-size:9px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+
+</style>
+<style id="SABINO_FINANCE_SEMANTIC_THEME_V1">
+:root{
+    --sab-brand:#d9b441;
+    --sab-success:#49c986;
+    --sab-warning:#f59e0b;
+    --sab-danger:#e66b6b;
+    --sab-info:#62a9e8;
+    --sab-investment:#62c9b0;
+    --sab-neutral:#ffffff;
+    --sab-muted:#929ca2;
+}
+
+.sab-good{
+    color:var(--sab-success)!important;
+}
+
+.sab-warning{
+    color:var(--sab-warning)!important;
+}
+
+.sab-critical{
+    color:var(--sab-danger)!important;
+}
+
+.sab-info{
+    color:var(--sab-info)!important;
+}
+
+.sab-income{
+    color:var(--sab-success)!important;
+}
+
+.sab-expense{
+    color:var(--sab-danger)!important;
+}
+
+.sab-investment{
+    color:var(--sab-investment)!important;
+}
+
+.sab-brand{
+    color:var(--sab-brand)!important;
+}
+
+.sab-status-dot.good{
+    background:var(--sab-success);
+}
+
+.sab-status-dot.warning{
+    background:var(--sab-warning);
+}
+
+.sab-status-dot.critical{
+    background:var(--sab-danger);
+}
+</style><style id="SABINO_OVERVIEW_SEMANTIC_STYLE_V1">
+
+#entradas{
+    color:var(--sab-success,#49c986)!important;
+}
+
+#gastos{
+    color:var(--sab-danger,#e66b6b)!important;
+}
+
+#reserva{
+    color:var(--sab-investment,#62c9b0)!important;
+}
+
+#saldo.sab-good{
+    color:var(--sab-success,#49c986)!important;
+}
+
+#saldo.sab-warning{
+    color:var(--sab-warning,#f59e0b)!important;
+}
+
+#saldo.sab-critical{
+    color:var(--sab-danger,#e66b6b)!important;
+}
+
+#saldo.sab-info{
+    color:var(--sab-info,#62a9e8)!important;
+}
+
+</style><link rel="stylesheet" href="/static/css/sabino-locale-core.css?v=browserany_manual3_20260917_134732" data-sabino-global-locale="v1">
+<link rel="stylesheet" href="/static/css/sabino-currency-core.css" data-sabino-global-currency="v1">
+
+<link rel="stylesheet" href="/static/css/sabino-language-button.css?v=20260917_140515">
+<script defer src="/static/js/sabino-language-button.js?v=20260917_140515"></script>
+
+
+<link rel="stylesheet"
+      href="/static/css/=20260917_181514">
+
+<script defer
+        src="/static/js/=20260917_181514">
+</script>
+
+
+<link
+    rel="stylesheet"
+    href="/static/css/sabino-finance-unified.css?v=20260917_222806"
+>
+
+<script
+    defer
+    src="/static/js/sabino-finance-unified.js?v=20260919_header_flow">
+</script>
+    <link rel="stylesheet" href="/static/css/sabino-finance-category-v2.css?v=20260917_224434">
+    <link rel="stylesheet" href="/static/css/sabino-demo-badge-fixed.css?v=20260917_232834">
+    <link rel="stylesheet" href="/static/css/sabino-inna-top-position-v1.css?v=20260919_header_flow">
+    <link rel="stylesheet" href="/static/css/sabino-month-chart-legend-v1.css?v=20260917_233415">
+    <link rel="stylesheet" href="/static/css/sabino-finance-cards-compact-v1.css?v=20260917_233948">
+    <link rel="stylesheet" href="/static/css/sabino-finance-back-dashboard-v2.css?v=20260918_144545">
+<style id="sabino-finance-real-header-flow">
+html[data-finance-header="flow"] main.main > .topbar {
+    display: flex !important;
+    position: relative !important;
+    top: auto;
+    z-index: 1000;
+    min-height: 80px;
+    height: auto !important;
+    padding: 12px 0;
+    box-sizing: border-box;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    background: #090f12;
+    border-bottom: 1px solid #172025;
+}
+html[data-finance-header="flow"] .topbar > .status,
+html[data-finance-header="flow"] #financeAccountAvatar {
+    display: none !important;
+}
+html[data-finance-header="flow"] main.main > .topbar > .account {
+    display: flex !important;
+    position: static !important;
+    margin: 0 !important;
+    width: 245px;
+    max-width: 100%;
+    min-height: 52px;
+    padding: 9px 16px;
+    box-sizing: border-box;
+    border: 1px solid #8e7618;
+    border-radius: 15px;
+    background: #090b0b;
+}
+html[data-finance-header="flow"] .account > div:last-child {
+    min-width: 0;
+    width: 100%;
+}
+html[data-finance-header="flow"] #financeAccountName {
+    display: block;
+    font-size: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+html[data-finance-header="flow"] #financeAccountPlan {
+    font-size: 10px;
+}
+html[data-finance-header="flow"] main.main > .topbar > #sabinoLanguageSwitcher {
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    translate: none !important;
+    margin: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    flex: 0 0 auto;
+}
+html[data-finance-header="flow"] main.main > .page-header {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 27px 0 18px;
+}
+@media (max-width: 700px) {
+    html[data-finance-header="flow"] main.main > .topbar {
+        gap: 12px;
+    }
+    html[data-finance-header="flow"] main.main > .topbar > .account {
+        width: min(245px, 100%);
+    }
+}
+</style>
+<script>
+window.addEventListener("load", function () {
+    if (document.documentElement.dataset.financeHeader !== "flow") return;
+    const header = document.querySelector("main.main > .topbar");
+    const language = document.getElementById("sabinoLanguageSwitcher");
+    const account = header && header.querySelector(".account");
+    if (header && language && account) header.insertBefore(language, account);
+}, { once: true });
+</script>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+
+    <a href="/dashboard" class="logo">
+
+        <img src="/static/images/sabino-s-logo.png" alt="Sabino.AI" class="logo-mark" style="object-fit:contain;">
+
+        <div>
+            <strong>Sabino.AI</strong>
+            <small>PLATAFORMA INTELIGENTE</small>
+        </div>
+
+    </a>
+
+    <nav class="nav">
+
+        <p class="nav-title">NAVEGACAO</p>
+
+        <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">H</span>
+            Inicio
+        </a>
+
+        <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">P</span>
+            Minhas plataformas
+        </a>
+
+        <a href="/conta" class="nav-item">
+            <span class="nav-icon">C</span>
+            Minha conta
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <p class="nav-title">FINANCEIRO</p>
+
+        <a href="/financeiro" class="nav-item active">
+            <span class="nav-icon">V</span>
+            Visao geral
+        </a>
+
+        <button
+            id="modulesButton"
+            type="button"
+            class="nav-item modules-button"
+            aria-expanded="false"
+        >
+            <span class="nav-icon">M</span>
+            Modulos
+            <span class="arrow">&gt;</span>
+        </button>
+
+        <div
+    id="modulesList"
+    class="modules-list"
+>
+    <!-- SABINO_FINANCE_GROUPED_SIDEBAR_V1 -->
+
+    <details class="finance-module-group" open>
+        <summary>Organização Financeira</summary>
+
+        <a class="module-link" href="/financeiro/orcamento">
+            Orçamento
+        </a>
+
+        <a class="module-link" href="/financeiro/gastos">
+            Gastos
+        </a>
+
+        <a class="module-link" href="/financeiro/planejamento">
+            Planejamento
+        </a>
+
+        <a class="module-link" href="/financeiro/metas">
+            Metas
+        </a>
+    </details>
+
+    <details class="finance-module-group">
+        <summary>Contas e Compromissos</summary>
+
+        <span class="module-link module-link-future">
+            Central de Contas
+            <small>Em breve</small>
+        </span>
+
+        <a class="module-link" href="/financeiro/contas">
+            Contas e Vencimentos
+        </a>
+
+        <a class="module-link" href="/financeiro/credito">
+            Crédito e Endividamento
+        </a>
+
+        <a class="module-link" href="/financeiro/impostos">
+            Impostos e Obrigações
+        </a>
+    </details>
+
+    <details class="finance-module-group">
+        <summary>Patrimônio e Proteção</summary>
+
+        <a class="module-link" href="/financeiro/patrimonio">
+            Patrimônio
+        </a>
+
+        <a class="module-link" href="/financeiro/reserva">
+            Investimentos &amp; Reserva
+        </a>
+
+        <a class="module-link" href="/financeiro/protecao">
+            Seguros
+        </a>
+
+        <a class="module-link" href="/financeiro/seguranca">
+            Segurança Financeira
+        </a>
+    </details>
+
+    <details class="finance-module-group">
+        <summary>Inteligência e Apoio</summary>
+
+        <span class="module-link module-link-future">
+            Educação Financeira
+            <small>Em breve</small>
+        </span>
+
+        <span class="module-link module-link-future">
+            Reembolso Inteligente
+            <small>Em breve</small>
+        </span>
+
+        <span class="module-link module-link-future">
+            Relatórios Financeiros
+            <small>Em breve</small>
+        </span>
+
+        <span class="module-link module-link-future">
+            Finanças Familiares
+            <small>Em breve</small>
+        </span>
+    </details>
+
+</div>
+<div class="inna-section">
+
+            <p class="nav-title">INNA</p>
+
+            <a href="/inna" class="nav-item">
+                <span class="nav-icon">I</span>
+                INNA
+            </a>
+
+        </div>
+
+    </nav>
+
+    <a href="/logout" class="nav-item logout">
+        <span class="nav-icon">S</span>
+        Sair
+    </a>
+
+</aside>
+
+<main class="main">
+
+    <div class="topbar">
+
+        <div class="status">
+            <span class="status-dot"></span>
+            Sabino.AI online
+        </div>
+
+        <div class="account">
+
+            <div class="account-avatar" id="financeAccountAvatar">
+                SA
+            </div>
+
+            <div>
+                <strong id="financeAccountName">Carregando...</strong>
+                <small id="financeAccountPlan">Conta Sabino.AI</small>
+            </div>
+
+        </div>
+
+    </div>
+
+    <header class="page-header">
+
+        <div>
+
+            <p class="eyebrow">
+                SABINO.AI | FINANCEIRO
+            </p>
+
+            <h1>
+                Visao geral
+                <span>financeira</span>
+            </h1>
+
+            <p class="subtitle">
+                Veja seus resultados, acompanhe seus gastos e organize sua vida financeira.
+            </p>
+
+        </div>
+
+        <a href="/inna" class="inna-top">
+            Perguntar a INNA &nbsp; &gt;
+        </a>
+
+    </header>
+
+    <section class="kpis">
+
+        <article class="kpi saldo">
+
+            <div class="kpi-title">
+                Saldo atual
+            </div>
+
+            <strong
+                id="saldo"
+                class="kpi-value green"
+            >
+                <span data-sabino-money="1130" data-sabino-source-currency="BRL" data-sabino-fx-static-v1="1">R$ 1.130,00</span>
+            </strong>
+
+            <span class="kpi-change green">
+                +12% em relacao ao mes anterior
+            </span>
+
+        </article>
+
+        <article class="kpi">
+
+            <div class="kpi-title">
+                Entradas
+            </div>
+
+            <strong
+                id="entradas"
+                class="kpi-value"
+            >
+                <span data-sabino-money="4250" data-sabino-source-currency="BRL" data-sabino-fx-static-v1="1">R$ 4.250,00</span>
+            </strong>
+
+            <span class="kpi-change green">
+                +8% em relacao ao mes anterior
+            </span>
+
+        </article>
+
+        <article class="kpi gastos">
+
+            <div class="kpi-title">
+                Gastos
+            </div>
+
+            <strong
+                id="gastos"
+                class="kpi-value"
+            >
+                <span data-sabino-money="3120" data-sabino-source-currency="BRL" data-sabino-fx-static-v1="1">R$ 3.120,00</span>
+            </strong>
+
+            <span class="kpi-change red">
+                -5% em relacao ao mes anterior
+            </span>
+
+        </article>
+
+        <article class="kpi reserva">
+
+            <div class="kpi-title">
+                Reserva
+            </div>
+
+            <strong
+                id="reserva"
+                class="kpi-value"
+            >
+                <span data-sabino-money="28500" data-sabino-source-currency="BRL" data-sabino-fx-static-v1="1">R$ 28.500,00</span>
+            </strong>
+
+            <span class="kpi-change green">
+                +3% em relacao ao mes anterior
+            </span>
+
+        </article>
+
+    </section>
+
+    <section class="dashboard">
+
+        <article class="panel">
+
+            <div class="panel-head">
+
+                <div>
+                    <h2>Gastos por mes</h2>
+                    <p>
+                        Acompanhe quanto voce gastou nos ultimos meses.
+                    </p>
+                </div>
+
+                <div class="period">
+                    Ultimos 6 meses
+                </div>
+
+            </div>
+
+            <div class="chart-wrap">
+
+                <div class="y-axis">
+                    <span data-sabino-money="5000" data-sabino-source-currency="BRL" data-sabino-fx-static-v1="1">R$ 5.000</span>
+                    <span data-sabino-money="4000" data-sabino-source-currency="BRL" data-sabino-fx-static-v1="1">R$ 4.000</span>
+                    <span data-sabino-money="3000" data-sabino-source-currency="BRL" data-sabino-fx-static-v1="1">R$ 3.000</span>
+                    <span data-sabino-money="2000" data-sabino-source-currency="BRL" data-sabino-fx-static-v1="1">R$ 2.000</span>
+                    <span data-sabino-money="1000" data-sabino-source-currency="BRL" data-sabino-fx-static-v1="1">R$ 1.000</span>
+                    <span data-sabino-money="0">R$ 0,00</span>
+                </div>
+
+                <div
+                    id="monthlyChart"
+                    class="bars"
+                ></div>
+
+            </div>
+
+        </article>
+
+        <article class="panel">
+
+            <div class="panel-head">
+
+                <div>
+                    <h2>Gastos por categoria</h2>
+                    <p>
+                        Veja onde seu dinheiro esta sendo mais usado.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="category-layout">
+
+                <div
+                    id="donut"
+                    class="donut"
+                >
+
+                    <div class="donut-center">
+                        <small>Total</small>
+                        <strong id="categoryTotal">
+                            <span data-sabino-money="3120" data-sabino-source-currency="BRL" data-sabino-fx-static-v1="1">R$ 3.120,00</span>
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div
+                    id="legend"
+                    class="legend"
+                ></div>
+
+            </div>
+
+            <div class="biggest">
+
+                <small>
+                    Maior gasto do mes
+                </small>
+
+                <strong id="biggestCategory">
+                    Transporte
+                </strong>
+
+                <p id="biggestDescription">
+                    Transporte representa a maior parte dos seus gastos.
+                </p>
+
+            </div>
+
+        </article>
+
+        <div class="right-column">
+
+            <article class="panel">
+
+                <div class="panel-head">
+
+                    <div>
+                        <h2>Proximos passos</h2>
+                        <p>
+                            Acoes simples para melhorar sua organizacao.
+                        </p>
+                    </div>
+
+                </div>
+
+                <ol class="steps">
+
+                    <li>
+
+                        <span class="step-number">
+                            1
+                        </span>
+
+                        <div>
+                            <strong>
+                                Registrar gastos da semana
+                            </strong>
+                            <small>
+                                Mantenha seus dados atualizados.
+                            </small>
+                        </div>
+
+                        <span class="step-arrow">
+                            &gt;
+                        </span>
+
+                    </li>
+
+                    <li>
+
+                        <span class="step-number">
+                            2
+                        </span>
+
+                        <div>
+                            <strong>
+                                Revisar meta do mes
+                            </strong>
+                            <small>
+                                Confira se voce esta no caminho certo.
+                            </small>
+                        </div>
+
+                        <span class="step-arrow">
+                            &gt;
+                        </span>
+
+                    </li>
+
+                    <li>
+
+                        <span class="step-number">
+                            3
+                        </span>
+
+                        <div>
+                            <strong>
+                                Conferir sua reserva
+                            </strong>
+                            <small>
+                                Acompanhe o crescimento da sua reserva.
+                            </small>
+                        </div>
+
+                        <span class="step-arrow">
+                            &gt;
+                        </span>
+
+                    </li>
+
+                    <li>
+
+                        <span class="step-number">
+                            4
+                        </span>
+
+                        <div>
+                            <strong>
+                                Organizar categorias
+                            </strong>
+                            <small>
+                                Veja onde pode reduzir gastos.
+                            </small>
+                        </div>
+
+                        <span class="step-arrow">
+                            &gt;
+                        </span>
+
+                    </li>
+
+                </ol>
+
+            </article>
+
+            <article class="panel inna-card">
+
+                <div class="panel-head">
+
+                    <div>
+                        <h2>Dica da INNA</h2>
+                        <p>
+                            Sua assistente financeira.
+                        </p>
+                    </div>
+
+                </div>
+
+                <p class="inna-text">
+                    Posso explicar seus numeros de forma simples,
+                    mostrar onde voce esta gastando mais
+                    e ajudar no seu proximo passo.
+                </p>
+
+                <a
+                    href="/inna"
+                    class="inna-button"
+                >
+                    Conversar com a INNA
+                </a>
+
+            </article>
+
+        </div>
+
+    </section>
+
+    <footer class="footer">
+
+        <span>
+            Sabino.AI disponivel
+        </span>
+
+        <span>
+            2026 Sabino.AI
+        </span>
+
+    </footer>
+
+</main>
+
+</div>
+
+<script>
+
+(function () {
+
+    "use strict";
+
+    /* SABINO_GLOBAL_MONEY_BRIDGE_V2 */
+    const brl = {
+        format(value) {
+
+            const numeric =
+                Number(value || 0);
+
+            if (
+                window.SabinoCurrency &&
+                typeof window.SabinoCurrency.format ===
+                    "function"
+            ) {
+
+                return window.SabinoCurrency.format(
+                    numeric,
+                    {
+                        currency: "BRL"
+                    }
+                );
+
+            }
+
+            return new Intl.NumberFormat(
+                "pt-BR",
+                {
+                    style: "currency",
+                    currency: "BRL"
+                }
+            ).format(numeric);
+
+        }
+    };
+
+    const demoFinanceData = {
+
+        saldo: 1130,
+        entradas: 4250,
+        gastos: 3120,
+        reserva: 28500,
+
+        meses: [
+
+            {
+                mes: "Abr/26",
+                valor: 2450
+            },
+
+            {
+                mes: "Mai/26",
+                valor: 2980
+            },
+
+            {
+                mes: "Jun/26",
+                valor: 3220
+            },
+
+            {
+                mes: "Jul/26",
+                valor: 2850
+            },
+
+            {
+                mes: "Ago/26",
+                valor: 3290
+            },
+
+            {
+                mes: "Set/26",
+                valor: 3120
+            }
+
+        ],
+
+        categorias: [
+
+            {
+                nome: "Transporte",
+                valor: 1092,
+                cor: "#388cff"
+            },
+
+            {
+                nome: "Alimentacao",
+                valor: 624,
+                cor: "#ff9d32"
+            },
+
+            {
+                nome: "Moradia",
+                valor: 468,
+                cor: "#19d99a"
+            },
+
+            {
+                nome: "Lazer",
+                valor: 374.40,
+                cor: "#9d67e5"
+            },
+
+            {
+                nome: "Saude",
+                valor: 312,
+                cor: "#ff535d"
+            },
+
+            {
+                nome: "Outros",
+                valor: 249.60,
+                cor: "#ffd21c"
+            }
+
+        ]
+
+    };
+
+
+
+    const isDemoMode =
+        new URLSearchParams(
+            window.location.search
+        ).get("demo") === "1";
+
+
+    const realFinanceData = {
+
+        saldo: 0,
+        entradas: 0,
+        gastos: 0,
+        reserva: 0,
+
+        meses: [
+            { mes: "Abr/26", valor: 0 },
+            { mes: "Mai/26", valor: 0 },
+            { mes: "Jun/26", valor: 0 },
+            { mes: "Jul/26", valor: 0 },
+            { mes: "Ago/26", valor: 0 },
+            { mes: "Set/26", valor: 0 }
+        ],
+
+        categorias: []
+
+    };
+
+
+    const financeData =
+        isDemoMode
+            ? demoFinanceData
+            : realFinanceData;
+
+
+    document.documentElement.dataset.financeMode =
+        isDemoMode
+            ? "demo"
+            : "real";
+
+    /* ======================================================
+       ABRIR E FECHAR MODULOS
+    ====================================================== */
+
+    const modulesButton =
+        document.getElementById("modulesButton");
+
+    const modulesList =
+        document.getElementById("modulesList");
+
+    modulesButton.addEventListener(
+        "click",
+        function () {
+
+            const opened =
+                modulesList.classList.toggle("open");
+
+            modulesButton.classList.toggle(
+                "open",
+                opened
+            );
+
+            modulesButton.setAttribute(
+                "aria-expanded",
+                String(opened)
+            );
+
+        }
+    );
+
+    /* ======================================================
+       KPIS
+    ====================================================== */
+
+    document.getElementById("saldo").textContent =
+        brl.format(financeData.saldo);
+
+    document.getElementById("entradas").textContent =
+        brl.format(financeData.entradas);
+
+    document.getElementById("gastos").textContent =
+        brl.format(financeData.gastos);
+
+    document.getElementById("reserva").textContent =
+        brl.format(financeData.reserva);
+
+    /* ======================================================
+       GRAFICO MENSAL
+    ====================================================== */
+
+    const monthlyChart =
+        document.getElementById("monthlyChart");
+
+    const chartMax =
+        Math.max(
+            5000,
+            ...financeData.meses.map(
+                item => item.valor
+            )
+        );
+
+    financeData.meses.forEach(
+        function (item) {
+
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.className =
+                "bar-item";
+
+            const value =
+                document.createElement("span");
+
+            value.className =
+                "bar-value";
+
+            value.textContent =
+                brl
+                    .format(item.valor)
+                    .replace(",00", "");
+
+            const bar =
+                document.createElement("div");
+
+            bar.className =
+                "bar";
+
+            bar.style.height =
+                Math.max(
+                    5,
+                    item.valor / chartMax * 100
+                ) + "%";
+
+            bar.title =
+                item.mes +
+                " - " +
+                brl.format(item.valor);
+
+            const label =
+                document.createElement("span");
+
+            label.className =
+                "bar-label";
+
+            label.textContent =
+                item.mes;
+
+            wrapper.appendChild(value);
+            wrapper.appendChild(bar);
+            wrapper.appendChild(label);
+
+            monthlyChart.appendChild(wrapper);
+
+        }
+    );
+
+    /* ======================================================
+       GRAFICO POR CATEGORIA
+    ====================================================== */
+
+    const total =
+        financeData.categorias.reduce(
+            function (sum, item) {
+                return sum + item.valor;
+            },
+            0
+        );
+
+    document
+        .getElementById("categoryTotal")
+        .textContent =
+        brl.format(total);
+
+    let cursor = 0;
+
+    const gradient = [];
+
+    financeData.categorias.forEach(
+        function (item) {
+
+            const percent =
+                item.valor / total * 100;
+
+            const start =
+                cursor;
+
+            const end =
+                cursor + percent;
+
+            gradient.push(
+                item.cor +
+                " " +
+                start.toFixed(2) +
+                "% " +
+                end.toFixed(2) +
+                "%"
+            );
+
+            cursor =
+                end;
+
+        }
+    );
+
+    document
+        .getElementById("donut")
+        .style
+        .background =
+        "conic-gradient(" +
+        gradient.join(",") +
+        ")";
+
+    /* ======================================================
+       LEGENDA
+    ====================================================== */
+
+    const legend =
+        document.getElementById("legend");
+
+    financeData.categorias.forEach(
+        function (item) {
+
+            const percent =
+                Math.round(
+                    item.valor /
+                    total *
+                    100
+                );
+
+            const row =
+                document.createElement("div");
+
+            row.className =
+                "legend-row";
+
+            const dot =
+                document.createElement("span");
+
+            dot.className =
+                "legend-dot";
+
+            dot.style.background =
+                item.cor;
+
+            const name =
+                document.createElement("span");
+
+            name.textContent =
+                item.nome;
+
+            const percentage =
+                document.createElement("strong");
+
+            percentage.textContent =
+                percent + "%";
+
+            row.appendChild(dot);
+            row.appendChild(name);
+            row.appendChild(percentage);
+
+            legend.appendChild(row);
+
+        }
+    );
+
+    /* ======================================================
+       MAIOR GASTO
+    ====================================================== */
+
+    /* ======================================================
+       ESTADO REAL SEM DADOS
+       ====================================================== */
+
+    if (!isDemoMode) {
+
+        document
+            .querySelectorAll(".kpi-change")
+            .forEach(
+                function (item) {
+
+                    item.textContent =
+                        "Sem histórico ainda";
+
+                    item.style.color =
+                        "#8b949e";
+
+                }
+            );
+
+    }
+
+
+    /* ======================================================
+       MAIOR GASTO
+       ====================================================== */
+
+    if (
+        financeData.categorias.length === 0 ||
+        total <= 0
+    ) {
+
+        document
+            .getElementById("biggestCategory")
+            .textContent =
+            "Sem dados ainda";
+
+        document
+            .getElementById("biggestDescription")
+            .textContent =
+            "Registre uma despesa para identificar sua maior categoria.";
+
+        if (legend) {
+
+            legend.textContent =
+                "Nenhuma despesa registrada.";
+
+        }
+
+    }
+    else {
+
+        const biggest =
+            financeData.categorias.reduce(
+                function (current, item) {
+
+                    return item.valor > current.valor
+                        ? item
+                        : current;
+
+                }
+            );
+
+        const biggestPercent =
+            Math.round(
+                biggest.valor /
+                total *
+                100
+            );
+
+        document
+            .getElementById("biggestCategory")
+            .textContent =
+            biggest.nome;
+
+        document
+            .getElementById("biggestDescription")
+            .textContent =
+            biggest.nome +
+            " representa " +
+            biggestPercent +
+            "% dos seus gastos neste mes, totalizando " +
+            brl.format(biggest.valor) +
+            ".";
+
+    }
+
+
+})();
+
+</script>
+
+
+<!-- SABINO_FINANCEIRO_LAUNCHER_V27_START -->
+
+<style id="sabino-financeiro-launcher-v27-css">
+
+/* ==========================================================
+   BOTAO VER DEMONSTRACAO
+========================================================== */
+
+.sabino-fin-demo-button {
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        7px;
+
+    min-height:
+        34px;
+
+    padding:
+        7px
+        12px;
+
+    border:
+        1px solid
+        rgba(255,208,68,.65);
+
+    border-radius:
+        7px;
+
+    background:
+        rgba(255,208,68,.045);
+
+    color:
+        #ffd044;
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+
+    text-decoration:
+        none;
+
+    cursor:
+        pointer;
+
+    transition:
+        .18s ease;
+}
+
+.sabino-fin-demo-button:hover {
+    background:
+        rgba(255,208,68,.11);
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* ==========================================================
+   MODAL
+========================================================== */
+
+.sabino-fin-demo-overlay {
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    z-index:
+        99999;
+
+    display:
+        none;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        20px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        rgba(0,0,0,.76);
+
+    backdrop-filter:
+        blur(6px);
+}
+
+.sabino-fin-demo-overlay.active {
+    display:
+        flex;
+}
+
+.sabino-fin-demo-modal {
+    width:
+        min(
+            680px,
+            96vw
+        );
+
+    max-height:
+        92vh;
+
+    overflow-y:
+        auto;
+
+    padding:
+        22px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        #303a40;
+
+    border-radius:
+        14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #11181c,
+            #090e11
+        );
+
+    box-shadow:
+        0
+        24px
+        90px
+        rgba(0,0,0,.55);
+}
+
+.sabino-fin-demo-header {
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        space-between;
+
+    gap:
+        16px;
+
+    margin-bottom:
+        17px;
+}
+
+.sabino-fin-demo-title {
+    margin:
+        0;
+
+    color:
+        #ffffff;
+
+    font-size:
+        22px;
+}
+
+.sabino-fin-demo-subtitle {
+    margin:
+        5px
+        0
+        0;
+
+    color:
+        #9caab1;
+
+    font-size:
+        11px;
+
+    line-height:
+        1.45;
+}
+
+.sabino-fin-demo-close {
+    width:
+        34px;
+
+    height:
+        34px;
+
+    flex:
+        0
+        0
+        34px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border:
+        1px solid
+        #303940;
+
+    border-radius:
+        8px;
+
+    background:
+        #0d1316;
+
+    color:
+        #d6dde1;
+
+    font-size:
+        18px;
+
+    cursor:
+        pointer;
+}
+
+
+/* ==========================================================
+   AREA DE APRESENTACAO
+========================================================== */
+
+.sabino-fin-demo-preview {
+    min-height:
+        230px;
+
+    padding:
+        22px;
+
+    box-sizing:
+        border-box;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    text-align:
+        center;
+
+    border:
+        1px solid
+        #293238;
+
+    border-radius:
+        11px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #0d1316,
+            #090d0f
+        );
+}
+
+.sabino-fin-demo-play {
+    width:
+        62px;
+
+    height:
+        62px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    margin-bottom:
+        14px;
+
+    border:
+        1px solid
+        rgba(255,208,68,.40);
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(255,208,68,.08);
+
+    color:
+        #ffd044;
+
+    font-size:
+        24px;
+}
+
+.sabino-fin-demo-preview strong {
+    color:
+        #ffffff;
+
+    font-size:
+        15px;
+}
+
+.sabino-fin-demo-preview p {
+    max-width:
+        470px;
+
+    margin:
+        8px
+        auto
+        0;
+
+    color:
+        #92a1a8;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.5;
+}
+
+
+/* ==========================================================
+   RECURSOS
+========================================================== */
+
+.sabino-fin-demo-features {
+    margin:
+        16px
+        0;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+
+    gap:
+        8px;
+}
+
+.sabino-fin-demo-feature {
+    padding:
+        10px;
+
+    border:
+        1px solid
+        #283137;
+
+    border-radius:
+        8px;
+
+    background:
+        #0c1215;
+
+    color:
+        #aeb9bf;
+
+    font-size:
+        9px;
+
+    line-height:
+        1.4;
+}
+
+.sabino-fin-demo-feature strong {
+    display:
+        block;
+
+    margin-bottom:
+        4px;
+
+    color:
+        #ffd044;
+
+    font-size:
+        10px;
+}
+
+
+/* ==========================================================
+   ACOES
+========================================================== */
+
+.sabino-fin-demo-actions {
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap:
+        9px;
+
+    margin-top:
+        15px;
+}
+
+.sabino-fin-demo-primary,
+.sabino-fin-demo-secondary {
+    min-height:
+        43px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        9px
+        12px;
+
+    box-sizing:
+        border-box;
+
+    border-radius:
+        8px;
+
+    font-size:
+        11px;
+
+    font-weight:
+        900;
+
+    text-decoration:
+        none;
+
+    cursor:
+        pointer;
+}
+
+.sabino-fin-demo-primary {
+    border:
+        1px solid
+        #ffd044;
+
+    background:
+        #ffd044;
+
+    color:
+        #090d0f;
+}
+
+.sabino-fin-demo-secondary {
+    border:
+        1px solid
+        #354047;
+
+    background:
+        #0c1215;
+
+    color:
+        #e2e7ea;
+}
+
+
+/* ==========================================================
+   CELULAR
+========================================================== */
+
+@media (max-width: 650px) {
+
+    .sabino-fin-demo-features,
+    .sabino-fin-demo-actions {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+</style>
+
+
+<script id="sabino-financeiro-launcher-v27-js">
+
+(function () {
+
+    "use strict";
+
+
+    function normalize(value) {
+
+        return String(value || "")
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .toLowerCase()
+            .replace(
+                /\s+/g,
+                " "
+            )
+            .trim();
+
+    }
+
+
+    /* ======================================================
+       LOCALIZAR CARD FINANCEIRO
+    ====================================================== */
+
+    function findFinanceCard() {
+
+        var elements =
+            Array.from(
+                document.querySelectorAll(
+                    "h1,h2,h3,h4,h5,strong"
+                )
+            );
+
+
+        var heading =
+            elements.find(
+                function (element) {
+
+                    var text =
+                        normalize(
+                            element.textContent
+                        );
+
+
+                    return (
+                        text === "financeiro" ||
+                        text === "financeiro sabino.ai"
+                    );
+
+                }
+            );
+
+
+        if (!heading) {
+            return null;
+        }
+
+
+        var current =
+            heading;
+
+
+        for (
+            var i = 0;
+            i < 9 && current;
+            i++
+        ) {
+
+            var cls =
+                typeof current.className === "string"
+                    ? current.className
+                    : "";
+
+
+            var tag =
+                current.tagName
+                    ? current.tagName.toLowerCase()
+                    : "";
+
+
+            if (
+                tag === "article" ||
+                cls.includes("card") ||
+                cls.includes("platform")
+            ) {
+
+                return current;
+
+            }
+
+
+            current =
+                current.parentElement;
+
+        }
+
+
+        return heading.parentElement;
+
+    }
+
+
+    /* ======================================================
+       MODAL
+    ====================================================== */
+
+    function createModal() {
+
+        if (
+            document.querySelector(
+                ".sabino-fin-demo-overlay"
+            )
+        ) {
+            return;
+        }
+
+
+        var overlay =
+            document.createElement(
+                "div"
+            );
+
+
+        overlay.className =
+            "sabino-fin-demo-overlay";
+
+
+        overlay.innerHTML =
+
+            '<div class="sabino-fin-demo-modal">' +
+
+                '<div class="sabino-fin-demo-header">' +
+
+                    '<div>' +
+
+                        '<h2 class="sabino-fin-demo-title">' +
+                            'Conheça o Financeiro Sabino.AI' +
+                        '</h2>' +
+
+                        '<p class="sabino-fin-demo-subtitle">' +
+                            'Veja como organizar entradas, gastos, reserva e acompanhar sua evolução financeira.' +
+                        '</p>' +
+
+                    '</div>' +
+
+                    '<button type="button" class="sabino-fin-demo-close">' +
+                        '×' +
+                    '</button>' +
+
+                '</div>' +
+
+
+                '<div class="sabino-fin-demo-preview">' +
+
+                    '<div class="sabino-fin-demo-play">' +
+                        '▶' +
+                    '</div>' +
+
+                    '<strong>' +
+                        'Financeiro Sabino.AI em aproximadamente 1 minuto' +
+                    '</strong>' +
+
+                    '<p>' +
+                        'Esta área já está preparada para receber o vídeo oficial. ' +
+                        'Enquanto isso, você pode experimentar a plataforma com dados demonstrativos.' +
+                    '</p>' +
+
+                '</div>' +
+
+
+                '<div class="sabino-fin-demo-features">' +
+
+                    '<div class="sabino-fin-demo-feature">' +
+                        '<strong>Visão geral</strong>' +
+                        'Saldo, entradas, gastos e reserva em um único lugar.' +
+                    '</div>' +
+
+                    '<div class="sabino-fin-demo-feature">' +
+                        '<strong>Gráficos</strong>' +
+                        'Acompanhe a evolução mensal e a distribuição dos gastos.' +
+                    '</div>' +
+
+                    '<div class="sabino-fin-demo-feature">' +
+                        '<strong>Módulos + INNA</strong>' +
+                        'Planeje, crie metas e peça ajuda quando precisar.' +
+                    '</div>' +
+
+                '</div>' +
+
+
+                '<div class="sabino-fin-demo-actions">' +
+
+                    '<a href="/financeiro?demo=1" class="sabino-fin-demo-primary">' +
+                        'Experimentar com dados de exemplo →' +
+                    '</a>' +
+
+                    '<a href="/financeiro" class="sabino-fin-demo-secondary">' +
+                        'Começar com meus dados' +
+                    '</a>' +
+
+                '</div>' +
+
+            '</div>';
+
+
+        document.body.appendChild(
+            overlay
+        );
+
+
+        var close =
+            overlay.querySelector(
+                ".sabino-fin-demo-close"
+            );
+
+
+        close.addEventListener(
+            "click",
+            function () {
+
+                overlay.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+        overlay.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target === overlay
+                ) {
+
+                    overlay.classList.remove(
+                        "active"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       CONFIGURAR CARD
+    ====================================================== */
+
+    function setupFinanceCard() {
+
+        var card =
+            findFinanceCard();
+
+
+        if (!card) {
+            return false;
+        }
+
+
+        if (
+            card.dataset.sabinoFinanceV27 ===
+            "true"
+        ) {
+            return true;
+        }
+
+
+        card.dataset.sabinoFinanceV27 =
+            "true";
+
+
+        /* ==================================================
+           BOTAO PRINCIPAL -> /financeiro
+        ================================================== */
+
+        var links =
+            Array.from(
+                card.querySelectorAll(
+                    "a"
+                )
+            );
+
+
+        var primary =
+            links.find(
+                function (link) {
+
+                    var text =
+                        normalize(
+                            link.textContent
+                        );
+
+
+                    return (
+                        text.includes("acessar") ||
+                        text.includes("entrar")
+                    );
+
+                }
+            );
+
+
+        if (primary) {
+
+            primary.setAttribute(
+                "href",
+                "/financeiro"
+            );
+
+        }
+
+
+        /* ==================================================
+           BOTAO DEMONSTRACAO
+        ================================================== */
+
+        if (
+            !card.querySelector(
+                ".sabino-fin-demo-button"
+            )
+        ) {
+
+            var button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.type =
+                "button";
+
+
+            button.className =
+                "sabino-fin-demo-button";
+
+
+            button.innerHTML =
+                "▶ Ver demonstração";
+
+
+            button.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+
+                    createModal();
+
+
+                    var overlay =
+                        document.querySelector(
+                            ".sabino-fin-demo-overlay"
+                        );
+
+
+                    if (overlay) {
+
+                        overlay.classList.add(
+                            "active"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            if (primary) {
+
+                primary.insertAdjacentElement(
+                    "afterend",
+                    button
+                );
+
+            }
+            else {
+
+                card.appendChild(
+                    button
+                );
+
+            }
+
+        }
+
+
+        return true;
+
+    }
+
+
+    /* ======================================================
+       INICIAR
+    ====================================================== */
+
+    function start() {
+
+        createModal();
+
+
+        var attempts =
+            0;
+
+
+        var timer =
+            setInterval(
+                function () {
+
+                    attempts++;
+
+
+                    if (
+                        setupFinanceCard() ||
+                        attempts >= 25
+                    ) {
+
+                        clearInterval(
+                            timer
+                        );
+
+                    }
+
+                },
+                150
+            );
+
+    }
+
+
+    if (
+        document.readyState ===
+        "complete"
+    ) {
+
+        start();
+
+    }
+    else {
+
+        window.addEventListener(
+            "load",
+            start
+        );
+
+    }
+
+})();
+
+</script>
+
+<!-- SABINO_FINANCEIRO_LAUNCHER_V27_END -->
+
+
+<!-- SABINO_FINANCEIRO_CARD_V28_START -->
+
+<style id="sabino-financeiro-card-v28-css">
+
+/* ==========================================================
+   AREA DE ACOES
+========================================================== */
+
+.sabino-fin-actions-v28 {
+    width: 100%;
+
+    margin-top: 18px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+
+/* ==========================================================
+   BOTAO PRINCIPAL
+========================================================== */
+
+.sabino-fin-access-v28 {
+    width: 100% !important;
+    min-height: 40px !important;
+
+    box-sizing: border-box !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 9px 14px !important;
+
+    border: 1px solid #ffd044 !important;
+    border-radius: 8px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffd044,
+            #f4bb26
+        ) !important;
+
+    color: #090d0f !important;
+
+    font-size: 11px !important;
+    font-weight: 900 !important;
+
+    text-decoration: none !important;
+
+    cursor: pointer !important;
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        filter .18s ease !important;
+}
+
+.sabino-fin-access-v28:hover {
+    transform: translateY(-1px) !important;
+
+    filter: brightness(1.04) !important;
+
+    box-shadow:
+        0
+        8px
+        22px
+        rgba(255,208,68,.16) !important;
+}
+
+
+/* ==========================================================
+   DEMONSTRACAO SECUNDARIA
+========================================================== */
+
+.sabino-fin-actions-v28
+.sabino-fin-demo-button {
+    width: 100% !important;
+    min-height: 38px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 0 !important;
+
+    border:
+        1px solid
+        rgba(255,208,68,.48) !important;
+
+    border-radius:
+        8px !important;
+
+    background:
+        rgba(255,208,68,.035) !important;
+
+    color:
+        #ffd044 !important;
+
+    font-size:
+        10px !important;
+
+    font-weight:
+        800 !important;
+}
+
+.sabino-fin-actions-v28
+.sabino-fin-demo-button:hover {
+    background:
+        rgba(255,208,68,.09) !important;
+}
+
+
+/* ==========================================================
+   LIMPAR ESTILO ANTIGO DO LINK ACESSAR
+========================================================== */
+
+.sabino-fin-access-v28::after {
+    content: none !important;
+}
+
+
+/* ==========================================================
+   AJUSTE DO CARD
+========================================================== */
+
+.sabino-fin-card-v28 {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.sabino-fin-card-v28
+.sabino-fin-actions-v28 {
+    margin-top: 18px !important;
+}
+
+
+/* ==========================================================
+   CELULAR
+========================================================== */
+
+@media (max-width: 650px) {
+
+    .sabino-fin-access-v28,
+    .sabino-fin-actions-v28
+    .sabino-fin-demo-button {
+        min-height: 44px !important;
+        font-size: 11px !important;
+    }
+
+}
+
+</style>
+
+
+<script id="sabino-financeiro-card-v28-js">
+
+(function () {
+
+    "use strict";
+
+
+    function normalize(value) {
+
+        return String(value || "")
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .toLowerCase()
+            .replace(
+                /\s+/g,
+                " "
+            )
+            .trim();
+
+    }
+
+
+    /* ======================================================
+       LOCALIZAR CARD FINANCEIRO
+    ====================================================== */
+
+    function findFinanceCard() {
+
+        var headings =
+            Array.from(
+                document.querySelectorAll(
+                    "h1,h2,h3,h4,h5,strong"
+                )
+            );
+
+
+        var title =
+            headings.find(
+                function (element) {
+
+                    var text =
+                        normalize(
+                            element.textContent
+                        );
+
+
+                    return (
+                        text === "financeiro" ||
+                        text === "financeiro sabino.ai"
+                    );
+
+                }
+            );
+
+
+        if (!title) {
+            return null;
+        }
+
+
+        var current =
+            title;
+
+
+        for (
+            var i = 0;
+            i < 10 && current;
+            i++
+        ) {
+
+            var cls =
+                typeof current.className === "string"
+                    ? current.className
+                    : "";
+
+
+            var tag =
+                current.tagName
+                    ? current.tagName.toLowerCase()
+                    : "";
+
+
+            if (
+                tag === "article" ||
+                cls.includes("card") ||
+                cls.includes("platform")
+            ) {
+
+                return current;
+
+            }
+
+
+            current =
+                current.parentElement;
+
+        }
+
+
+        return title.parentElement;
+
+    }
+
+
+    /* ======================================================
+       CONFIGURAR
+    ====================================================== */
+
+    function applyV28() {
+
+        var card =
+            findFinanceCard();
+
+
+        if (!card) {
+            return false;
+        }
+
+
+        card.classList.add(
+            "sabino-fin-card-v28"
+        );
+
+
+        /* ==================================================
+           ACHAR LINK ACESSAR
+        ================================================== */
+
+        var access =
+            Array.from(
+                card.querySelectorAll(
+                    "a"
+                )
+            )
+            .find(
+                function (link) {
+
+                    var text =
+                        normalize(
+                            link.textContent
+                        );
+
+
+                    return (
+                        text.includes("acessar") ||
+                        text.includes("entrar")
+                    );
+
+                }
+            );
+
+
+        if (!access) {
+
+            access =
+                document.createElement(
+                    "a"
+                );
+
+
+            card.appendChild(
+                access
+            );
+
+        }
+
+
+        access.setAttribute(
+            "href",
+            "/financeiro"
+        );
+
+
+        access.textContent =
+            "Acessar Financeiro →";
+
+
+        access.classList.add(
+            "sabino-fin-access-v28"
+        );
+
+
+        /* ==================================================
+           ACHAR BOTAO DEMO
+        ================================================== */
+
+        var demo =
+            card.querySelector(
+                ".sabino-fin-demo-button"
+            );
+
+
+        if (!demo) {
+            return false;
+        }
+
+
+        demo.innerHTML =
+            "▶ Ver demonstração";
+
+
+        /* ==================================================
+           WRAPPER
+        ================================================== */
+
+        var actions =
+            card.querySelector(
+                ".sabino-fin-actions-v28"
+            );
+
+
+        if (!actions) {
+
+            actions =
+                document.createElement(
+                    "div"
+                );
+
+
+            actions.className =
+                "sabino-fin-actions-v28";
+
+
+            /*
+             * Inserir no local onde já estava
+             * a área de ações.
+             */
+
+            access.parentElement.insertBefore(
+                actions,
+                access
+            );
+
+        }
+
+
+        /* ==================================================
+           ORDEM DEFINITIVA
+
+           1 - ACESSAR
+           2 - VER DEMONSTRACAO
+        ================================================== */
+
+        actions.appendChild(
+            access
+        );
+
+
+        actions.appendChild(
+            demo
+        );
+
+
+        console.log(
+            "SABINO_FINANCE_CARD_V28=True"
+        );
+
+
+        console.log(
+            "ACCESS_PRIMARY=True"
+        );
+
+
+        console.log(
+            "DEMO_SECONDARY=True"
+        );
+
+
+        console.log(
+            "FINANCE_ROUTE=/financeiro"
+        );
+
+
+        return true;
+
+    }
+
+
+    /* ======================================================
+       INICIAR
+    ====================================================== */
+
+    function start() {
+
+        var attempts =
+            0;
+
+
+        var timer =
+            setInterval(
+                function () {
+
+                    attempts++;
+
+
+                    if (
+                        applyV28() ||
+                        attempts >= 30
+                    ) {
+
+                        clearInterval(
+                            timer
+                        );
+
+                    }
+
+                },
+                150
+            );
+
+    }
+
+
+    if (
+        document.readyState ===
+        "complete"
+    ) {
+
+        start();
+
+    }
+    else {
+
+        window.addEventListener(
+            "load",
+            start
+        );
+
+    }
+
+})();
+
+</script>
+
+<!-- SABINO_FINANCEIRO_CARD_V28_END -->
+
+
+<!-- SABINO_TC3D_V2_START -->
+
+<style>
+#innaTransactionIntelligence {
+    width: 100%;
+    margin: 28px 0 34px;
+    box-sizing: border-box;
+}
+
+.inna-ai-card {
+    background: #111111;
+    border: 1px solid rgba(218, 180, 65, 0.35);
+    border-radius: 20px;
+    padding: 24px;
+    box-sizing: border-box;
+    color: #ffffff;
+}
+
+.inna-ai-eyebrow {
+    color: #d9b441;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.inna-ai-title {
+    margin: 0 0 8px;
+    font-size: 26px;
+    color: #ffffff;
+}
+
+.inna-ai-description {
+    margin: 0 0 22px;
+    color: rgba(255,255,255,0.70);
+    line-height: 1.55;
+}
+
+.inna-ai-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 14px;
+}
+
+.inna-ai-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.inna-ai-field label {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.78);
+}
+
+.inna-ai-field input,
+.inna-ai-field select {
+    width: 100%;
+    min-height: 46px;
+    border-radius: 11px;
+    border: 1px solid rgba(255,255,255,0.16);
+    padding: 0 13px;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0.07);
+    color: #ffffff;
+    outline: none;
+}
+
+.inna-ai-field select option {
+    background: #ffffff;
+    color: #111111;
+}
+
+.inna-ai-field input:focus,
+.inna-ai-field select:focus {
+    border-color: #d9b441;
+}
+
+.inna-ai-analyze {
+    margin-top: 16px;
+    min-height: 46px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 11px;
+    background: #d9b441;
+    color: #111111;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.inna-ai-analyze:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+.inna-ai-result {
+    display: none;
+    margin-top: 22px;
+    padding: 18px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 15px;
+    background: rgba(255,255,255,0.045);
+}
+
+.inna-ai-result.show {
+    display: block;
+}
+
+.inna-ai-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.inna-ai-metric {
+    padding: 14px;
+    border-radius: 11px;
+    background: rgba(255,255,255,0.05);
+}
+
+.inna-ai-metric span {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.50);
+}
+
+.inna-ai-metric strong {
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.inna-ai-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.inna-ai-confirm,
+.inna-ai-correct {
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.inna-ai-confirm {
+    border: 0;
+    background: #d9b441;
+    color: #111111;
+}
+
+.inna-ai-correct {
+    border: 1px solid rgba(255,255,255,0.22);
+    background: transparent;
+    color: #ffffff;
+}
+
+.inna-ai-correct:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.inna-ai-status {
+    min-height: 22px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.72);
+}
+
+.inna-ai-status.success {
+    color: #8fe1a5;
+}
+
+.inna-ai-status.error {
+    color: #ff9999;
+}
+
+.inna-ai-privacy {
+    margin-top: 15px;
+    padding-top: 13px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.48);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+    .inna-ai-grid,
+    .inna-ai-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .inna-ai-card {
+        padding: 18px;
+    }
+}
+</style>
+
+
+
+
+
+
+
+<script>
+(function () {
+
+    "use strict";
+
+    var description =
+        document.getElementById("innaAiDescription");
+
+    var merchant =
+        document.getElementById("innaAiMerchant");
+
+    var analyzeButton =
+        document.getElementById("innaAiAnalyze");
+
+    var result =
+        document.getElementById("innaAiResult");
+
+    var categoryText =
+        document.getElementById("innaAiCategory");
+
+    var confidenceText =
+        document.getElementById("innaAiConfidence");
+
+    var strategyText =
+        document.getElementById("innaAiStrategy");
+
+    var finalCategory =
+        document.getElementById("innaAiFinalCategory");
+
+    var confirmButton =
+        document.getElementById("innaAiConfirm");
+
+    var correctButton =
+        document.getElementById("innaAiCorrect");
+
+    var status =
+        document.getElementById("innaAiStatus");
+
+    var panel =
+        document.getElementById("innaTransactionIntelligence");
+
+    var lastClassification = null;
+    var suggestedCategory = "";
+
+
+    function setStatus(message, kind) {
+
+        status.textContent = message || "";
+        status.className = "inna-ai-status";
+
+        if (kind) {
+            status.classList.add(kind);
+        }
+    }
+
+
+    function percent(value) {
+
+        var number = Number(value);
+
+        if (!Number.isFinite(number)) {
+            return "—";
+        }
+
+        return (
+            number * 100
+        ).toLocaleString(
+            "pt-BR",
+            {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 2
+            }
+        ) + "%";
+    }
+
+
+    function strategyLabel(value) {
+
+        var labels = {
+            deterministic_rule: "Regra de alta confiança",
+            context_rule: "Regra contextual",
+            gemini_semantic_embedding: "Gemini semântico",
+            semantic_low_confidence: "Sugestão semântica",
+            fallback: "Revisão necessária"
+        };
+
+        return labels[value] || value || "—";
+    }
+
+
+    function updateCorrectionButton() {
+
+        correctButton.disabled =
+            !lastClassification ||
+            finalCategory.value === suggestedCategory;
+    }
+
+
+    async function analyzeTransaction() {
+
+        var text = description.value.trim();
+
+        if (text.length < 3) {
+
+            setStatus(
+                "Descreva o gasto antes de analisar.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        analyzeButton.disabled = true;
+
+        setStatus(
+            "A INNA está analisando..."
+        );
+
+
+        try {
+
+            var response = await fetch(
+                "/api/platform/finance/transactions/classify-intelligent",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        description: text,
+                        transaction_type: "Despesa",
+                        merchant: merchant.value.trim(),
+                        amount: null
+                    })
+                }
+            );
+
+
+            if (!response.ok) {
+                throw new Error(
+                    "HTTP " + response.status
+                );
+            }
+
+
+            var payload =
+                await response.json();
+
+            lastClassification =
+                payload.classification;
+
+
+            if (!lastClassification) {
+                throw new Error(
+                    "Classificação ausente"
+                );
+            }
+
+
+            suggestedCategory =
+                lastClassification.suggested_category ||
+                lastClassification.category ||
+                "Outras despesas";
+
+
+            var validOptions =
+                Array.from(
+                    finalCategory.options
+                ).map(function (option) {
+                    return option.value;
+                });
+
+
+            if (
+                !validOptions.includes(
+                    suggestedCategory
+                )
+            ) {
+                suggestedCategory =
+                    "Outras despesas";
+            }
+
+
+            categoryText.textContent =
+                suggestedCategory;
+
+            confidenceText.textContent =
+                percent(
+                    lastClassification.confidence
+                );
+
+            strategyText.textContent =
+                strategyLabel(
+                    lastClassification.strategy
+                );
+
+            finalCategory.value =
+                suggestedCategory;
+
+
+            result.classList.add(
+                "show"
+            );
+
+
+            updateCorrectionButton();
+
+
+            if (
+                lastClassification.semantic_similarity !== null &&
+                lastClassification.semantic_similarity !== undefined
+            ) {
+
+                setStatus(
+                    "Similaridade semântica: " +
+                    percent(
+                        lastClassification.semantic_similarity
+                    ) +
+                    ". Revise e confirme a categoria."
+                );
+
+            }
+            else {
+
+                setStatus(
+                    "Classificação concluída. Revise e confirme a categoria."
+                );
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "INNA classification error:",
+                error
+            );
+
+            setStatus(
+                "Não foi possível analisar o gasto.",
+                "error"
+            );
+
+        }
+        finally {
+
+            analyzeButton.disabled = false;
+        }
+    }
+
+
+    async function sendFeedback(finalValue) {
+
+        if (!lastClassification) {
+
+            setStatus(
+                "Analise um gasto antes de confirmar.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        confirmButton.disabled = true;
+        correctButton.disabled = true;
+
+
+        setStatus(
+            "Registrando feedback..."
+        );
+
+
+        try {
+
+            var response = await fetch(
+                "/api/platform/finance/transactions/classification-feedback",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        description:
+                            description.value.trim(),
+
+                        final_category:
+                            finalValue,
+
+                        transaction_type:
+                            "Despesa",
+
+                        merchant:
+                            merchant.value.trim(),
+
+                        amount:
+                            null
+                    })
+                }
+            );
+
+
+            if (!response.ok) {
+                throw new Error(
+                    "HTTP " + response.status
+                );
+            }
+
+
+            var payload =
+                await response.json();
+
+            var type =
+                payload.feedback.feedback_type;
+
+
+            suggestedCategory =
+                finalValue;
+
+            categoryText.textContent =
+                finalValue;
+
+            finalCategory.value =
+                finalValue;
+
+
+            if (type === "accepted") {
+
+                setStatus(
+                    "✓ Categoria confirmada.",
+                    "success"
+                );
+
+            }
+            else {
+
+                setStatus(
+                    "✓ Correção registrada.",
+                    "success"
+                );
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "INNA feedback error:",
+                error
+            );
+
+            setStatus(
+                "Não foi possível registrar o feedback.",
+                "error"
+            );
+
+        }
+        finally {
+
+            confirmButton.disabled = false;
+            updateCorrectionButton();
+        }
+    }
+
+
+    analyzeButton.addEventListener(
+        "click",
+        analyzeTransaction
+    );
+
+
+    description.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                analyzeTransaction();
+            }
+        }
+    );
+
+
+    finalCategory.addEventListener(
+        "change",
+        updateCorrectionButton
+    );
+
+
+    confirmButton.addEventListener(
+        "click",
+        function () {
+
+            sendFeedback(
+                suggestedCategory
+            );
+        }
+    );
+
+
+    correctButton.addEventListener(
+        "click",
+        function () {
+
+            sendFeedback(
+                finalCategory.value
+            );
+        }
+    );
+
+
+    var main =
+        document.querySelector("main");
+
+
+    if (
+        main &&
+        panel &&
+        panel.parentElement !== main
+    ) {
+
+        main.appendChild(panel);
+    }
+
+})();
+</script>
+
+<!-- SABINO_TC3D_V2_END -->
+
+
+<script id="SABINO_FINANCE_ACCOUNT_MODE_V1">
+
+document.addEventListener("DOMContentLoaded", async function () {
+
+    const demo =
+        new URLSearchParams(
+            window.location.search
+        ).get("demo") === "1";
+
+    const avatar =
+        document.getElementById(
+            "financeAccountAvatar"
+        );
+
+    const name =
+        document.getElementById(
+            "financeAccountName"
+        );
+
+    const plan =
+        document.getElementById(
+            "financeAccountPlan"
+        );
+
+    const badge =
+        document.getElementById(
+            "financeModeBadge"
+        );
+
+
+    if (demo) {
+
+        if (avatar) {
+            avatar.textContent = "DE";
+        }
+
+        if (name) {
+            name.textContent =
+                "Modo demonstração";
+        }
+
+        if (plan) {
+            plan.textContent =
+                "Dados fictícios para exploração";
+        }
+
+        if (badge) {
+            badge.textContent =
+                "Demonstração";
+        }
+
+        return;
+    }
+
+
+    if (badge) {
+
+        badge.textContent =
+            "Ambiente real";
+
+        badge.classList.add(
+            "real"
+        );
+
+    }
+
+
+    try {
+
+        const authResponse =
+            await fetch(
+                "/auth/me",
+                {
+                    credentials: "same-origin",
+                    cache: "no-store"
+                }
+            );
+
+        if (!authResponse.ok) {
+            return;
+        }
+
+        const auth =
+            await authResponse.json();
+
+        const email =
+            auth?.user?.email || "Conta autenticada";
+
+        if (name) {
+            name.textContent = email;
+        }
+
+        if (avatar) {
+
+            const local =
+                email.split("@")[0]
+                    .replace(/[^a-zA-Z0-9]/g, "");
+
+            avatar.textContent =
+                (local.substring(0, 2) || "SA")
+                    .toUpperCase();
+
+        }
+
+
+        const accessResponse =
+            await fetch(
+                "/api/platform/finance/access-status",
+                {
+                    credentials: "same-origin",
+                    cache: "no-store"
+                }
+            );
+
+        if (accessResponse.ok) {
+
+            const access =
+                await accessResponse.json();
+
+            const planCode =
+                access.plan_code || "Plano não informado";
+
+            const planLabel =
+                planCode.charAt(0).toUpperCase() +
+                planCode.slice(1);
+
+            if (plan) {
+
+                plan.textContent =
+                    access.entitled
+                        ? planLabel + " · Ativo"
+                        : "Sem plano ativo";
+
+            }
+
+        }
+
+    }
+    catch (error) {
+
+        if (name) {
+            name.textContent =
+                "Conta autenticada";
+        }
+
+    }
+
+});
+
+</script>
+
+
+<!-- SABINO_OVERVIEW_REAL_CARDS_V1 -->
+<style>
+html[data-finance-mode="real"] #financeOverviewStatus { color: #aeb8bd; font-size: 12px; }
+html[data-finance-mode="real"] .bar-item { min-width: 0; }
+html[data-finance-mode="real"] .bar-value { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+html[data-finance-mode="real"] .bar { flex-shrink: 0; }
+html[data-finance-mode="real"] .category-panel .panel-head h2 { font-size: 22px; }
+html[data-finance-mode="real"] .category-panel .panel-head p { font-size: 12px; line-height: 1.5; }
+html[data-finance-mode="real"] .category-layout { grid-template-columns: minmax(140px, 1fr) minmax(130px, 1fr); gap: 16px; margin-top: 24px; }
+html[data-finance-mode="real"] .donut { width: 100%; max-width: 190px; height: auto; aspect-ratio: 1; }
+html[data-finance-mode="real"] .donut::after { width: 54%; height: 54%; }
+html[data-finance-mode="real"] .donut-center strong { font-size: 16px; }
+html[data-finance-mode="real"] .donut-center small { font-size: 10px; }
+html[data-finance-mode="real"] .legend-row { grid-template-columns: 11px minmax(0, 1fr) auto; gap: 9px; padding: 7px 6px; font-size: 12px; border-left: 2px solid transparent; border-radius: 9px; }
+html[data-finance-mode="real"] .legend-row:first-child { border-left-color: var(--yellow); background: rgba(255,210,28,.045); }
+html[data-finance-mode="real"] .legend-dot { width: 11px; height: 11px; }
+html[data-finance-mode="real"] .category-name { display: block; font-weight: 700; overflow-wrap: anywhere; }
+html[data-finance-mode="real"] .category-amount { display: block; margin-top: 4px; color: #93a9c2; font-size: 11px; }
+html[data-finance-mode="real"] .biggest { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; padding: 16px; margin-top: 24px; border-radius: 14px; }
+html[data-finance-mode="real"] .biggest > small { font-size: 11px; }
+html[data-finance-mode="real"] #biggestCategory { grid-column: 1; font-size: 19px; overflow-wrap: anywhere; }
+html[data-finance-mode="real"] #biggestDescription { grid-column: 1; font-size: 11px; }
+html[data-finance-mode="real"] .category-highlight-value { grid-column: 2; grid-row: 1 / 4; align-self: center; text-align: right; }
+html[data-finance-mode="real"] .category-highlight-value strong { color: #fff; font-size: 17px; }
+html[data-finance-mode="real"] .category-highlight-value span { display: block; margin-top: 5px; color: var(--yellow); font-size: 12px; font-weight: 700; }
+@media (max-width: 450px) {
+    html[data-finance-mode="real"] .category-layout { grid-template-columns: minmax(0, 1fr); }
+    html[data-finance-mode="real"] .biggest { grid-template-columns: minmax(0, 1fr); }
+    html[data-finance-mode="real"] .category-highlight-value { grid-column: 1; grid-row: auto; text-align: left; }
+}
+@media (max-width: 1450px) {
+    html[data-finance-mode="real"] .dashboard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    html[data-finance-mode="real"] .right-column { grid-column: 1 / -1; }
+}
+@media (max-width: 950px) {
+    html[data-finance-mode="real"] .dashboard { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+<script id="sabino-overview-integrated">
+(function () {
+    "use strict";
+    if (new URLSearchParams(location.search).get("demo") === "1") return;
+    const el = id => document.getElementById(id);
+    el("donut").closest(".panel").classList.add("category-panel");
+    const destinations = ["gastos", "metas", "reserva", "orcamento"];
+    document.querySelectorAll(".steps li strong").forEach((title, index) => {
+        const link = document.createElement("a");
+        link.href = "/financeiro/" + destinations[index];
+        link.textContent = title.textContent.trim();
+        link.style.color = "inherit";
+        title.replaceChildren(link);
+    });
+    const money = value => window.SabinoCurrency?.format
+        ? window.SabinoCurrency.format(Number(value), {currency: "BRL"})
+        : new Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"}).format(Number(value));
+    const text = (id, value) => { if (el(id)) el(id).textContent = value; };
+    function node(tag, className, value) {
+        const item = document.createElement(tag);
+        item.className = className;
+        if (value !== undefined) item.textContent = value;
+        return item;
+    }
+    function months(now = new Date()) {
+        return Array.from({length: 6}, (_, i) => {
+            const date = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
+            return {
+                key: date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0"),
+                label: new Intl.DateTimeFormat("pt-BR", {month: "short", year: "2-digit"}).format(date)
+            };
+        });
+    }
+    async function read(url) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
+        try {
+            const response = await fetch(url, {
+                credentials: "same-origin", cache: "no-store", signal: controller.signal
+            });
+            if (!response.ok) throw new Error("HTTP " + response.status);
+            return await response.json();
+        } finally { clearTimeout(timeout); }
+    }
+    function renderCategories(summary) {
+        const colors = ["#397ef5", "#ff9d32", "#19d99a", "#9d67e5", "#ff535d", "#ffd21c"];
+        const categories = (summary.categories || [])
+            .map(item => ({name: item.category || "Sem categoria", value: Number(item.total_spent)}))
+            .filter(item => Number.isFinite(item.value) && item.value > 0)
+            .sort((a, b) => b.value - a.value);
+        const total = categories.reduce((sum, item) => sum + item.value, 0);
+        text("categoryTotal", money(total));
+        el("legend").replaceChildren();
+        let cursor = 0;
+        const gradient = categories.map((item, i) => {
+            const percent = item.value / total * 100;
+            const color = colors[i % colors.length];
+            const segment = color + " " + cursor + "% " + (cursor + percent) + "%";
+            cursor += percent;
+            const row = node("div", "legend-row");
+            const dot = node("span", "legend-dot");
+            dot.style.background = color;
+            const details = node("span", "category-details");
+            details.append(node("span", "category-name", item.name), node("small", "category-amount", money(item.value)));
+            row.append(dot, details,
+                node("strong", "", Math.round(percent) + "%"));
+            el("legend").append(row);
+            return segment;
+        });
+        el("donut").style.background = total ? "conic-gradient(" + gradient.join(",") + ")" : "#26343b";
+        text("biggestCategory", total ? categories[0].name : "Sem dados ainda");
+        text("biggestDescription", total
+            ? "Categoria com maior participação nas despesas."
+            : "Registre uma despesa para identificar sua maior categoria.");
+        if (!total) text("legend", "Nenhuma despesa registrada neste mês.");
+        const highlight = el("biggestCategory").closest(".biggest");
+        highlight.querySelector(".category-highlight-value")?.remove();
+        if (total) {
+            const value = node("div", "category-highlight-value");
+            value.append(node("strong", "", money(categories[0].value)),
+                node("span", "", Math.round(categories[0].value / total * 100) + "% do total"));
+            highlight.append(value);
+        }
+    }
+    function renderHistory(periods, results) {
+        const values = results.map(result => result.status === "fulfilled" ? Number(result.value.total_spent) : null);
+        const maximum = Math.max(5000, ...values.filter(value => value !== null));
+        el("monthlyChart").replaceChildren();
+        periods.forEach((period, i) => {
+            const value = values[i];
+            const wrapper = node("div", "bar-item");
+            const bar = node("div", "bar");
+            // Zero deve ter altura zero; ausência de resposta não é um lançamento.
+            bar.style.height = (value === null ? 0 : value / maximum * 100) + "%";
+            bar.title = period.label + ": " + (value === null ? "Indisponível" : money(value));
+            wrapper.append(node("span", "bar-value", value === null ? "—" : money(value)),
+                bar, node("span", "bar-label", period.label));
+            el("monthlyChart").append(wrapper);
+        });
+        document.querySelectorAll(".y-axis span").forEach((item, i, all) => {
+            const value = maximum * (all.length - 1 - i) / (all.length - 1);
+            item.dataset.sabinoMoney = String(value);
+            item.textContent = money(value);
+        });
+    }
+    let running = false;
+    let lastLoaded = 0;
+    const status = node("p", "", "Carregando dados dos módulos…");
+    status.id = "financeOverviewStatus";
+    status.setAttribute("role", "status");
+    const retry = node("button", "", "Tentar novamente");
+    retry.type = "button";
+    retry.hidden = true;
+    document.querySelector(".page-header").after(status, retry);
+    async function refresh() {
+        if (running) return;
+        running = true;
+        retry.hidden = true;
+        status.textContent = "Carregando dados dos módulos…";
+        ["saldo", "entradas", "gastos", "reserva", "categoryTotal"].forEach(id => text(id, "—"));
+        const periods = months();
+        const month = periods[5].key;
+        try {
+            const results = await Promise.allSettled([
+                read("/api/finance/budget/" + month),
+                read("/api/finance/reserve"),
+                ...periods.map(period => read("/api/finance/expenses/summary/" + period.key))
+            ]);
+            const budget = results[0], reserve = results[1], expenses = results[7];
+            if (budget.status === "fulfilled") text("entradas", money(budget.value.period?.monthly_income || 0));
+            if (reserve.status === "fulfilled") text("reserva", money(reserve.value.reserve?.current_amount || 0));
+            if (expenses.status === "fulfilled") {
+                text("gastos", money(expenses.value.total_spent));
+                renderCategories(expenses.value);
+                if (budget.status === "fulfilled") {
+                    text("saldo", money(Number(budget.value.period?.monthly_income || 0) - Number(expenses.value.total_spent)));
+                }
+            } else {
+                el("legend").replaceChildren(node("span", "", "Não foi possível consultar os gastos."));
+                el("donut").style.background = "#26343b";
+                text("biggestCategory", "Indisponível");
+                el("biggestCategory").closest(".biggest").querySelector(".category-highlight-value")?.remove();
+                text("biggestDescription", "Tente carregar os dados novamente.");
+            }
+            renderHistory(periods, results.slice(2));
+            const failed = results.some(result => result.status === "rejected");
+            status.textContent = failed
+                ? "Parte dos dados não pôde ser carregada. Os campos indisponíveis estão marcados com —."
+                : "Dados dos módulos atualizados. Entradas e saldo usam a renda informada no Orçamento.";
+            retry.hidden = !failed;
+            document.querySelectorAll(".kpi-change").forEach(item => { item.textContent = "Referência: " + month; });
+            lastLoaded = Date.now();
+        } catch (error) {
+            status.textContent = "Não foi possível atualizar a visão geral.";
+            retry.hidden = false;
+            console.error("SABINO_OVERVIEW_ERROR", error);
+        } finally { running = false; }
+    }
+    retry.addEventListener("click", refresh);
+    window.addEventListener("pageshow", event => { if (event.persisted) refresh(); });
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && Date.now() - lastLoaded > 30000) refresh();
+    });
+    refresh();
+})();
+</script>
+
+<script id="SABINO_OVERVIEW_SEMANTIC_JS_V1">
+(function(){
+
+    var timer = null;
+
+    function money(text){
+
+        return Number(
+            String(text || "")
+                .replace(/[^\d,.-]/g,"")
+                .replace(/\./g,"")
+                .replace(",",".") || 0
+        );
+    }
+
+    function setState(el,status){
+
+        if(!el) return;
+
+        el.classList.remove(
+            "sab-good",
+            "sab-warning",
+            "sab-critical",
+            "sab-info"
+        );
+
+        el.classList.add(
+            "sab-" + status
+        );
+    }
+
+    function updateOverviewSemantic(){
+
+        var incomeEl =
+            document.getElementById("entradas");
+
+        var spentEl =
+            document.getElementById("gastos");
+
+        var reserveEl =
+            document.getElementById("reserva");
+
+        var balanceEl =
+            document.getElementById("saldo");
+
+        if(
+            !incomeEl ||
+            !spentEl ||
+            !reserveEl ||
+            !balanceEl
+        ){
+            return;
+        }
+
+        var income =
+            money(incomeEl.textContent);
+
+        var spent =
+            money(spentEl.textContent);
+
+        var reserve =
+            money(reserveEl.textContent);
+
+        var balance =
+            money(balanceEl.textContent);
+
+        var balanceStatus = "info";
+        var overall = "info";
+        var meaning = "dados_incompletos";
+
+        if(income > 0){
+
+            if(balance < 0){
+
+                balanceStatus = "critical";
+                overall = "critical";
+                meaning = "despesas_acima_da_receita";
+
+            }
+            else if(balance === 0){
+
+                balanceStatus = "warning";
+                overall = "warning";
+                meaning = "receita_totalmente_comprometida";
+
+            }
+            else{
+
+                balanceStatus = "good";
+                overall = "good";
+                meaning = "saldo_positivo";
+            }
+        }
+
+        setState(
+            balanceEl,
+            balanceStatus
+        );
+
+        window.sabinoOverviewSemanticState = {
+
+            module:"visao_geral",
+
+            income:income,
+            expenses:spent,
+            reserve:reserve,
+            balance:balance,
+
+            balance_status:
+                balanceStatus,
+
+            status:
+                overall,
+
+            meaning:
+                meaning
+        };
+
+        window.dispatchEvent(
+            new CustomEvent(
+                "sabinoOverviewSemanticUpdated",
+                {
+                    detail:
+                        window.sabinoOverviewSemanticState
+                }
+            )
+        );
+    }
+
+    function schedule(){
+
+        clearTimeout(timer);
+
+        timer = setTimeout(
+            updateOverviewSemantic,
+            250
+        );
+    }
+
+    [
+        "entradas",
+        "gastos",
+        "reserva",
+        "saldo"
+    ].forEach(function(id){
+
+        var el =
+            document.getElementById(id);
+
+        if(el){
+
+            new MutationObserver(
+                schedule
+            ).observe(
+                el,
+                {
+                    childList:true,
+                    subtree:true,
+                    characterData:true
+                }
+            );
+        }
+    });
+
+    window.addEventListener(
+        "load",
+        schedule
+    );
+
+})();
+</script>
+<script
+    id="SABINO_SHARED_FINANCE_SIDEBAR_V1_LOADER"
+    src="/static/finance-sidebar.js"
+></script>
+<script src="/static/js/sabino-locale-core.js?v=internal12_20260917_140006" data-sabino-global-locale="v1"></script>
+<script src="/static/js/sabino-global-i18n-runtime.js?v=20260919_header_flow" data-sabino-global-i18n="v1"></script>
+<script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
+<script src="/static/js/sabino-money-locale-runtime.js"></script>
+
+
+<!-- SABINO_CLIENT_REMOVE_ONLINE_STATUS_V1 -->
+<script>
+(function () {
+
+    "use strict";
+
+    function removeOnlineStatus() {
+
+        const targets =
+            document.querySelectorAll(
+                "span, div, p, small, strong"
+            );
+
+        targets.forEach(
+            function (element) {
+
+                const text =
+                    String(
+                        element.textContent || ""
+                    )
+                    .replace(/\s+/g, " ")
+                    .trim();
+
+                if (
+                    text === "Sabino.AI online"
+                ) {
+
+                    element.style.setProperty(
+                        "display",
+                        "none",
+                        "important"
+                    );
+
+                    element.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            removeOnlineStatus,
+            { once: true }
+        );
+
+    }
+    else {
+
+        removeOnlineStatus();
+
+    }
+
+    window.setTimeout(
+        removeOnlineStatus,
+        300
+    );
+
+})();
+</script>
+<!-- /SABINO_CLIENT_REMOVE_ONLINE_STATUS_V1 -->
+    <script>
+    // O painel real é alimentado exclusivamente pelo carregador integrado.
+    if (new URLSearchParams(location.search).get("demo") === "1") {
+        const demoCategories = document.createElement("script");
+        demoCategories.src = "/static/js/sabino-finance-category-v2.js?v=20260917_223643";
+        document.head.appendChild(demoCategories);
+    }
+    </script>
+    <script defer src="/static/js/sabino-demo-badge-fixed.js?v=20260918_145528"></script>
+    <script defer src="/static/js/sabino-finance-month-bars-v1.js?v=20260917_232229"></script>
+    <script defer src="/static/js/sabino-inna-top-position-v1.js?v=20260919_header_flow"></script>
+    <script>
+    if (new URLSearchParams(location.search).get("demo") === "1") {
+        const demoLegend = document.createElement("script");
+        demoLegend.src = "/static/js/sabino-month-chart-legend-v1.js?v=20260917_233415";
+        document.head.appendChild(demoLegend);
+    }
+    </script>
+    <script defer src="/static/js/sabino-finance-cards-compact-v1.js?v=20260917_233948"></script>
+    <script defer src="/static/js/sabino-finance-i18n-completion-v1.js?v=20260918_000628"></script>
+    <script defer src="/static/js/sabino-finance-back-dashboard-v2.js?v=20260918_144545"></script>
+
+<!-- =========================================================
+     SABINO_FINANCEIRO_REAL_DONUT_V1
+========================================================= -->
+
+
+
+
+
+<!-- =========================================================
+     SABINO_FINANCE_REAL_USER_CARD_V1
+========================================================= -->
+
+
+
+
+
+<!-- =========================================================
+     SABINO_FINANCE_USER_DEMO_STYLE_V2
+========================================================= -->
+
+
+
+
+
+<!-- SABINO_FINANCE_USER_BUTTON_V3 -->
+
+
+
+
+
+<!-- SABINO_FINANCE_USER_BUTTON_V4 -->
+
+
+
+
+
+<!-- =========================================================
+     SABINO_FINANCE_USER_BUTTON_V5
+     Preserva o bloco real usado pela API.
+========================================================= -->
+
+
+
+
+
+<!-- =========================================================
+     SABINO_FINANCE_USER_BUTTON_V6
+     Busca apenas elementos VISIVEIS.
+========================================================= -->
+
+
+
+
+
+<!-- SABINO_FINANCE_TOP_RIGHT_ALIGN_V1 -->
+
+
+
+
+
+<!-- SABINO_FINANCE_TOP_RIGHT_SPACING_V2 -->
+
+
+
+<!-- SABINO_FINANCE_HEADER_DEMO_EXACT_V4 -->
+
+
+
+<!-- SABINO_FINANCE_HEADER_V8_FINAL -->
+
+
+
+
+
+<!-- SABINO_FINANCE_HEADER_V9_FIX -->
+
+
+
+<!-- SABINO_FINANCE_HEADER_ALIGN_V10 -->
+
+
+
+<!-- SABINO_FINANCE_HEADER_V11_CLEANUP -->
+
+
+
+
+
+<!-- SABINO_FINANCE_HEADER_V12_SPACING -->
+
+
+
+<!-- SABINO_FINANCE_HEADER_V13_POSITION -->
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

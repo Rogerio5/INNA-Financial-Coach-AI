@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+Cadastro | Financeiro Sabino.AI
+</title>
+
+<style>
+
+:root {
+    --bg: #070b0d;
+    --panel: #0d1417;
+    --panel2: #0a1013;
+
+    --border: #2b363c;
+    --border-soft: rgba(255,255,255,.07);
+
+    --yellow: #ffd044;
+    --green: #19d99a;
+    --red: #ff5f67;
+
+    --text: #ffffff;
+    --muted: #9aa8ae;
+}
+
+
+/* ==========================================================
+   RESET
+========================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 45% -15%,
+            rgba(255,208,68,.055),
+            transparent 38%
+        ),
+        var(--bg);
+
+    color: var(--text);
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.topbar {
+    height: 70px;
+
+    padding:
+        0
+        34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom:
+        1px solid var(--border);
+
+    background:
+        rgba(7,11,13,.97);
+}
+
+
+.brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    color: #fff;
+
+    text-decoration: none;
+
+    font-size: 18px;
+
+    font-weight: 900;
+}
+
+
+.brand-mark {
+    width: 38px;
+    height: 38px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 10px;
+
+    background: var(--yellow);
+
+    color: #080c0e;
+
+    font-size: 17px;
+
+    font-weight: 1000;
+}
+
+
+.back-button {
+    min-height: 41px;
+
+    padding:
+        8px
+        14px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    border:
+        1px solid #344047;
+
+    border-radius:
+        9px;
+
+    color:
+        #e3e8ea;
+
+    text-decoration:
+        none;
+
+    font-size:
+        11px;
+
+    font-weight:
+        750;
+}
+
+
+/* ==========================================================
+   PAGE
+========================================================== */
+
+.page {
+    width:
+        min(
+            1240px,
+            calc(100% - 36px)
+        );
+
+    margin:
+        0
+        auto;
+
+    padding:
+        66px
+        0
+        90px;
+}
+
+
+.badge {
+    display:
+        inline-flex;
+
+    padding:
+        6px
+        10px;
+
+    border:
+        1px solid
+        rgba(255,208,68,.38);
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(255,208,68,.055);
+
+    color:
+        var(--yellow);
+
+    font-size:
+        9px;
+
+    font-weight:
+        950;
+}
+
+
+h1 {
+    margin:
+        17px
+        0
+        9px;
+
+    font-size:
+        clamp(
+            39px,
+            5vw,
+            58px
+        );
+
+    line-height:
+        1.04;
+
+    letter-spacing:
+        -1px;
+}
+
+
+.subtitle {
+    max-width:
+        760px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        14px;
+
+    line-height:
+        1.6;
+}
+
+
+/* ==========================================================
+   GRID
+========================================================== */
+
+.content {
+    margin-top:
+        38px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0,1.2fr)
+        minmax(320px,.8fr);
+
+    gap:
+        20px;
+}
+
+
+/* ==========================================================
+   CARD
+========================================================== */
+
+.card {
+    padding:
+        27px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #10181c,
+            #0a1013
+        );
+}
+
+
+.card h2 {
+    margin:
+        0
+        0
+        6px;
+
+    font-size:
+        21px;
+}
+
+
+.card-intro {
+    margin-bottom:
+        24px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        11px;
+
+    line-height:
+        1.5;
+}
+
+
+/* ==========================================================
+   FORM
+========================================================== */
+
+.form-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+
+    gap:
+        16px;
+}
+
+
+.field {
+    min-width: 0;
+}
+
+
+.field.full {
+    grid-column:
+        1 / -1;
+}
+
+
+.field label {
+    display:
+        block;
+
+    margin-bottom:
+        7px;
+
+    color:
+        #dce3e6;
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+}
+
+
+.required {
+    color:
+        var(--yellow);
+}
+
+
+.input {
+    width: 100%;
+
+    min-height:
+        46px;
+
+    padding:
+        11px
+        13px;
+
+    border:
+        1px solid
+        #344047;
+
+    border-radius:
+        9px;
+
+    outline:
+        none;
+
+    background:
+        #090f12;
+
+    color:
+        #ffffff;
+
+    font-size:
+        12px;
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease;
+}
+
+
+.input:focus {
+    border-color:
+        var(--yellow);
+
+    box-shadow:
+        0
+        0
+        0
+        3px
+        rgba(255,208,68,.07);
+}
+
+
+.input::placeholder {
+    color:
+        #5f6c72;
+}
+
+
+/* ==========================================================
+   TERMOS
+========================================================== */
+
+.terms {
+    margin-top:
+        22px;
+
+    padding:
+        14px;
+
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    gap:
+        10px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        9px;
+
+    background:
+        rgba(255,255,255,.015);
+}
+
+
+.terms input {
+    margin-top:
+        2px;
+
+    accent-color:
+        var(--yellow);
+}
+
+
+.terms label {
+    color:
+        #b9c4c8;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.55;
+}
+
+
+.terms strong {
+    color:
+        #ffffff;
+}
+
+
+/* ==========================================================
+   ERRO
+========================================================== */
+
+.form-error {
+    display:
+        none;
+
+    margin-top:
+        14px;
+
+    padding:
+        10px
+        12px;
+
+    border:
+        1px solid
+        rgba(255,95,103,.35);
+
+    border-radius:
+        8px;
+
+    background:
+        rgba(255,95,103,.06);
+
+    color:
+        #ff9ba0;
+
+    font-size:
+        10px;
+}
+
+
+.form-error.active {
+    display:
+        block;
+}
+
+
+/* ==========================================================
+   BOTAO
+========================================================== */
+
+.form-actions {
+    margin-top:
+        20px;
+
+    display:
+        flex;
+
+    align-items: center;
+
+    justify-content:
+        flex-end;
+
+    gap:
+        9px;
+}
+
+
+.primary {
+    min-height:
+        48px;
+
+    padding:
+        10px
+        21px;
+
+    border:
+        1px solid
+        var(--yellow);
+
+    border-radius:
+        9px;
+
+    background:
+        var(--yellow);
+
+    color:
+        #070b0d;
+
+    font-size:
+        11px;
+
+    font-weight:
+        950;
+
+    cursor:
+        pointer;
+}
+
+
+/* ==========================================================
+   RESUMO LATERAL
+========================================================== */
+
+.summary-card {
+    position:
+        sticky;
+
+    top:
+        92px;
+
+    align-self:
+        start;
+
+    border-color:
+        rgba(255,208,68,.40);
+}
+
+
+.summary-label {
+    margin-bottom:
+        8px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        9px;
+
+    font-weight:
+        850;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .8px;
+}
+
+
+.summary-plan {
+    color:
+        var(--yellow);
+
+    font-size:
+        25px;
+
+    font-weight:
+        950;
+}
+
+
+.summary-divider {
+    height:
+        1px;
+
+    margin:
+        20px
+        0;
+
+    background:
+        var(--border-soft);
+}
+
+
+.summary-title {
+    margin-bottom:
+        11px;
+
+    font-size:
+        13px;
+
+    font-weight:
+        900;
+}
+
+
+.addons {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        8px;
+}
+
+
+.addon {
+    padding:
+        10px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    border:
+        1px solid
+        #2c373c;
+
+    border-radius:
+        8px;
+
+    background:
+        #090f12;
+
+    color:
+        #d6dee1;
+
+    font-size:
+        10px;
+}
+
+
+.addon-check {
+    width: 19px;
+    height: 19px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(25,217,154,.10);
+
+    color:
+        var(--green);
+
+    font-size:
+        8px;
+
+    font-weight:
+        950;
+}
+
+
+.no-addon {
+    color:
+        var(--muted);
+
+    font-size:
+        10px;
+
+    line-height:
+        1.5;
+}
+
+
+.secure {
+    margin-top:
+        20px;
+
+    padding:
+        12px;
+
+    border:
+        1px solid
+        rgba(25,217,154,.18);
+
+    border-radius:
+        9px;
+
+    background:
+        rgba(25,217,154,.035);
+
+    color:
+        #a9b8bd;
+
+    font-size:
+        9px;
+
+    line-height:
+        1.55;
+}
+
+
+.secure strong {
+    color:
+        var(--green);
+}
+
+
+/* ==========================================================
+   ETAPAS
+========================================================== */
+
+.progress {
+    margin-top:
+        34px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0,1fr)
+        );
+
+    gap:
+        8px;
+}
+
+
+.progress-item {
+    padding-top:
+        9px;
+
+    border-top:
+        2px solid
+        #283339;
+
+    color:
+        #65747b;
+
+    font-size:
+        9px;
+
+    font-weight:
+        750;
+}
+
+
+.progress-item.done {
+    border-color:
+        var(--green);
+
+    color:
+        var(--green);
+}
+
+
+.progress-item.current {
+    border-color:
+        var(--yellow);
+
+    color:
+        var(--yellow);
+}
+
+
+/* ==========================================================
+   RESPONSIVO
+========================================================== */
+
+@media (max-width: 850px) {
+
+    .content {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .summary-card {
+        position:
+            static;
+    }
+
+}
+
+
+@media (max-width: 620px) {
+
+    .page {
+        padding-top:
+            38px;
+    }
+
+
+    .topbar {
+        padding:
+            0
+            13px;
+    }
+
+
+    .form-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .field.full {
+        grid-column:
+            auto;
+    }
+
+
+    .progress {
+        grid-template-columns:
+            1fr
+            1fr;
+    }
+
+}
+
+</style>
+
+<style id="SABINO_REMOVE_MENU_LETTERS_V1">
+.nav-icon,
+.nav-badge,
+.menu-icon,
+.menu-badge,
+.sidebar-icon,
+.sidebar-badge {
+    display: none !important;
+}
+
+.nav-link,
+.sidebar-link,
+.menu-link {
+    gap: 0 !important;
+    padding-left: 14px !important;
+}
+</style>
+<link rel="stylesheet" href="/static/css/sabino-locale-core.css?v=browserany_manual3_20260917_134732" data-sabino-global-locale="v1">
+<link rel="stylesheet" href="/static/css/sabino-currency-core.css" data-sabino-global-currency="v1">
+
+<link rel="stylesheet" href="/static/css/sabino-language-button.css?v=20260917_140515">
+<script defer src="/static/js/sabino-language-button.js?v=20260917_140515"></script>
+
+<link rel="stylesheet"
+      href="/static/css/=20260917_181514">
+
+<script defer
+        src="/static/js/=20260917_181514">
+</script>
+
+
+<link
+    rel="stylesheet"
+    href="/static/css/sabino-finance-unified.css?v=20260917_222806"
+>
+
+<script
+    defer
+    src="/static/js/sabino-finance-unified.js?v=20260917_222806">
+</script>
+</head>
+
+
+<body>
+
+
+<header class="topbar">
+
+    <a
+        href="/"
+        class="brand"
+    >
+
+        <span class="brand-mark">
+            S
+        </span>
+
+        Sabino.AI
+
+    </a>
+
+
+    <a
+        id="backButton"
+        href="#"
+        class="back-button"
+    >
+        ← Voltar para revisão
+    </a>
+
+</header>
+
+
+<main class="page">
+
+
+    <span class="badge">
+        ETAPA 3
+    </span>
+
+
+    <h1>
+        Vamos preparar sua conta.
+    </h1>
+
+
+    <div class="subtitle">
+
+        Informe os dados básicos para continuar sua contratação.
+        Seu plano e os Temas Especiais escolhidos já estão preservados.
+
+    </div>
+
+
+    <div class="progress">
+
+        <div class="progress-item done">
+            1. Plano
+        </div>
+
+        <div class="progress-item done">
+            2. Revisão
+        </div>
+
+        <div class="progress-item current">
+            3. Cadastro
+        </div>
+
+        <div class="progress-item">
+            4. Contratação
+        </div>
+
+    </div>
+
+
+    <div class="content">
+
+
+        <!-- =================================================
+             FORMULARIO
+        ================================================== -->
+
+        <section class="card">
+
+            <h2>
+                Seus dados
+            </h2>
+
+            <div class="card-intro">
+
+                Vamos usar estas informações para preparar a próxima etapa
+                da sua contratação.
+
+            </div>
+
+
+            <form id="signupForm">
+
+                <div class="form-grid">
+
+
+                    <div class="field full">
+
+                        <label for="fullName">
+                            Nome completo
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            id="fullName"
+                            class="input"
+                            type="text"
+                            autocomplete="name"
+                            placeholder="Digite seu nome completo"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="email">
+                            E-mail
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            id="email"
+                            class="input"
+                            type="email"
+                            autocomplete="email"
+                            placeholder="seuemail@exemplo.com"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="phone">
+                            Telefone
+                        </label>
+
+                        <input
+                            id="phone"
+                            class="input"
+                            type="tel"
+                            autocomplete="tel"
+                            placeholder="(00) 00000-0000"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="terms">
+
+                    <input
+                        id="terms"
+                        type="checkbox"
+                        required
+                    >
+
+                    <label for="terms">
+
+                        Confirmo que li as informações desta etapa e desejo
+                        continuar com a contratação do
+                        <strong>
+                            Financeiro Sabino.AI
+                        </strong>.
+
+                    </label>
+
+                </div>
+
+
+                <div
+                    id="formError"
+                    class="form-error"
+                >
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary"
+                    >
+                        Continuar →
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             RESUMO
+        ================================================== -->
+
+        <aside class="card summary-card">
+
+            <div class="summary-label">
+                Sua escolha
+            </div>
+
+            <div
+                id="summaryPlan"
+                class="summary-plan"
+            >
+                -
+            </div>
+
+
+            <div class="summary-divider"></div>
+
+
+            <div class="summary-title">
+                Temas Especiais
+            </div>
+
+
+            <div
+                id="summaryAddons"
+                class="addons"
+            >
+            </div>
+
+
+            <div class="secure">
+
+                <strong>
+                    ✓ Escolha preservada
+                </strong>
+
+                <br>
+
+                Alterar seus dados nesta etapa não modifica
+                o plano nem os Temas Especiais escolhidos.
+
+            </div>
+
+        </aside>
+
+
+    </div>
+
+
+</main>
+
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    var params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    var plan =
+        params.get("plano") ||
+        "Evolução";
+
+
+    var addonsValue =
+        params.get("addons") ||
+        "";
+
+
+    var origin =
+        params.get("origem") ||
+        "demo";
+
+
+    var addons =
+        addonsValue
+            ? addonsValue
+                .split("|")
+                .map(
+                    function (item) {
+                        return item.trim();
+                    }
+                )
+                .filter(Boolean)
+            : [];
+
+
+    /* ======================================================
+       RESUMO
+    ====================================================== */
+
+    document.getElementById(
+        "summaryPlan"
+    ).textContent =
+        plan;
+
+
+    var addonsElement =
+        document.getElementById(
+            "summaryAddons"
+        );
+
+
+    if (
+        addons.length === 0
+    ) {
+
+        addonsElement.innerHTML =
+
+            '<div class="no-addon">' +
+                'Nenhum Tema Especial selecionado.' +
+            '</div>';
+
+    }
+    else {
+
+        addons.forEach(
+            function (name) {
+
+                var row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "addon";
+
+
+                row.innerHTML =
+
+                    '<span class="addon-check">✓</span>' +
+
+                    '<span></span>';
+
+
+                row.lastElementChild.textContent =
+                    name;
+
+
+                addonsElement.appendChild(
+                    row
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       VOLTAR
+    ====================================================== */
+
+    var reviewParams =
+        new URLSearchParams();
+
+
+    reviewParams.set(
+        "plano",
+        plan
+    );
+
+
+    reviewParams.set(
+        "origem",
+        origin
+    );
+
+
+    if (
+        addons.length
+    ) {
+
+        reviewParams.set(
+            "addons",
+            addons.join("|")
+        );
+
+    }
+
+
+    document.getElementById(
+        "backButton"
+    ).href =
+        "/financeiro/contratacao?" +
+        reviewParams.toString();
+
+
+    /* ======================================================
+       TELEFONE
+    ====================================================== */
+
+    var phone =
+        document.getElementById(
+            "phone"
+        );
+
+
+    phone.addEventListener(
+        "input",
+        function () {
+
+            var value =
+                phone.value
+                    .replace(
+                        /\D/g,
+                        ""
+                    )
+                    .slice(
+                        0,
+                        11
+                    );
+
+
+            if (
+                value.length > 10
+            ) {
+
+                phone.value =
+                    value.replace(
+                        /(\d{2})(\d{5})(\d{4})/,
+                        "($1) $2-$3"
+                    );
+
+            }
+            else if (
+                value.length > 6
+            ) {
+
+                phone.value =
+                    value.replace(
+                        /(\d{2})(\d{4})(\d{0,4})/,
+                        "($1) $2-$3"
+                    );
+
+            }
+            else if (
+                value.length > 2
+            ) {
+
+                phone.value =
+                    value.replace(
+                        /(\d{2})(\d+)/,
+                        "($1) $2"
+                    );
+
+            }
+
+        }
+    );
+
+
+    /* ======================================================
+       FORM
+    ====================================================== */
+
+    document.getElementById(
+        "signupForm"
+    ).addEventListener(
+        "submit",
+        function (event) {
+
+            event.preventDefault();
+
+
+            var fullName =
+                document
+                    .getElementById(
+                        "fullName"
+                    )
+                    .value
+                    .trim();
+
+
+            var email =
+                document
+                    .getElementById(
+                        "email"
+                    )
+                    .value
+                    .trim();
+
+
+            var phoneValue =
+                document
+                    .getElementById(
+                        "phone"
+                    )
+                    .value
+                    .trim();
+
+
+            var terms =
+                document
+                    .getElementById(
+                        "terms"
+                    )
+                    .checked;
+
+
+            var error =
+                document.getElementById(
+                    "formError"
+                );
+
+
+            error.classList.remove(
+                "active"
+            );
+
+
+            if (
+                fullName.length < 3
+            ) {
+
+                error.textContent =
+                    "Informe seu nome completo.";
+
+
+                error.classList.add(
+                    "active"
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !email ||
+                !email.includes("@")
+            ) {
+
+                error.textContent =
+                    "Informe um e-mail válido.";
+
+
+                error.classList.add(
+                    "active"
+                );
+
+                return;
+
+            }
+
+
+            if (!terms) {
+
+                error.textContent =
+                    "Confirme o aceite para continuar.";
+
+
+                error.classList.add(
+                    "active"
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * Neste momento guardamos temporariamente
+             * somente no navegador.
+             *
+             * A persistência real será ligada ao backend
+             * na etapa de contratação.
+             */
+
+            var draft = {
+
+                nome:
+                    fullName,
+
+                email:
+                    email,
+
+                telefone:
+                    phoneValue,
+
+                plano:
+                    plan,
+
+                addons:
+                    addons,
+
+                origem:
+                    origin
+
+            };
+
+
+            sessionStorage.setItem(
+                "sabinoFinanceiroContratacao",
+                JSON.stringify(
+                    draft
+                )
+            );
+
+
+            var next =
+                new URLSearchParams();
+
+
+            next.set(
+                "plano",
+                plan
+            );
+
+
+            next.set(
+                "origem",
+                origin
+            );
+
+
+            if (
+                addons.length
+            ) {
+
+                next.set(
+                    "addons",
+                    addons.join("|")
+                );
+
+            }
+
+
+            /*
+             * Por enquanto a próxima etapa será criada
+             * depois. Mantemos o usuário aqui e confirmamos
+             * que o cadastro foi preparado.
+             */
+
+            alert(
+                "Cadastro preparado com sucesso.\n\n" +
+                "Plano: " +
+                plan +
+                "\n\n" +
+                (
+                    addons.length
+                        ? "Temas Especiais: " +
+                          addons.join(", ")
+                        : "Sem Temas Especiais."
+                ) +
+                "\n\n" +
+                "A próxima etapa será a contratação."
+            );
+
+        }
+    );
+
+})();
+
+</script>
+
+
+
+<!-- SABINO_SIGNUP_TO_FINAL_V47_START -->
+
+<script id="sabino-signup-to-final-v47">
+
+(function () {
+
+    "use strict";
+
+
+    function installV47() {
+
+        var oldForm =
+            document.getElementById(
+                "signupForm"
+            );
+
+
+        if (!oldForm) {
+            return false;
+        }
+
+
+        /*
+         * Clone do formulário remove o listener V46
+         * que mostrava apenas o alert.
+         */
+
+        var form =
+            oldForm.cloneNode(
+                true
+            );
+
+
+        oldForm.parentNode.replaceChild(
+            form,
+            oldForm
+        );
+
+
+        var phone =
+            form.querySelector(
+                "#phone"
+            );
+
+
+        if (phone) {
+
+            phone.addEventListener(
+                "input",
+                function () {
+
+                    var value =
+                        phone.value
+                            .replace(
+                                /\D/g,
+                                ""
+                            )
+                            .slice(
+                                0,
+                                11
+                            );
+
+
+                    if (
+                        value.length > 10
+                    ) {
+
+                        phone.value =
+                            value.replace(
+                                /(\d{2})(\d{5})(\d{4})/,
+                                "($1) $2-$3"
+                            );
+
+                    }
+                    else if (
+                        value.length > 6
+                    ) {
+
+                        phone.value =
+                            value.replace(
+                                /(\d{2})(\d{4})(\d{0,4})/,
+                                "($1) $2-$3"
+                            );
+
+                    }
+                    else if (
+                        value.length > 2
+                    ) {
+
+                        phone.value =
+                            value.replace(
+                                /(\d{2})(\d+)/,
+                                "($1) $2"
+                            );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+
+                var name =
+                    form.querySelector(
+                        "#fullName"
+                    ).value.trim();
+
+
+                var email =
+                    form.querySelector(
+                        "#email"
+                    ).value.trim();
+
+
+                var phoneValue =
+                    form.querySelector(
+                        "#phone"
+                    ).value.trim();
+
+
+                var terms =
+                    form.querySelector(
+                        "#terms"
+                    ).checked;
+
+
+                var error =
+                    form.querySelector(
+                        "#formError"
+                    );
+
+
+                error.classList.remove(
+                    "active"
+                );
+
+
+                if (
+                    name.length < 3
+                ) {
+
+                    error.textContent =
+                        "Informe seu nome completo.";
+
+                    error.classList.add(
+                        "active"
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    !email ||
+                    !email.includes("@")
+                ) {
+
+                    error.textContent =
+                        "Informe um e-mail válido.";
+
+                    error.classList.add(
+                        "active"
+                    );
+
+                    return;
+                }
+
+
+                if (!terms) {
+
+                    error.textContent =
+                        "Confirme o aceite para continuar.";
+
+                    error.classList.add(
+                        "active"
+                    );
+
+                    return;
+                }
+
+
+                var params =
+                    new URLSearchParams(
+                        window.location.search
+                    );
+
+
+                var plan =
+                    params.get("plano") ||
+                    "Evolução";
+
+
+                var origin =
+                    params.get("origem") ||
+                    "demo";
+
+
+                var addonsValue =
+                    params.get("addons") ||
+                    "";
+
+
+                var addons =
+                    addonsValue
+                        ? addonsValue
+                            .split("|")
+                            .filter(Boolean)
+                        : [];
+
+
+                var draft = {
+
+                    nome:
+                        name,
+
+                    email:
+                        email,
+
+                    telefone:
+                        phoneValue,
+
+                    plano:
+                        plan,
+
+                    addons:
+                        addons,
+
+                    origem:
+                        origin,
+
+                    status:
+                        "cadastro_preenchido"
+
+                };
+
+
+                sessionStorage.setItem(
+                    "sabinoFinanceiroContratacao",
+                    JSON.stringify(
+                        draft
+                    )
+                );
+
+
+                var next =
+                    new URLSearchParams();
+
+
+                next.set(
+                    "plano",
+                    plan
+                );
+
+
+                next.set(
+                    "origem",
+                    origin
+                );
+
+
+                if (
+                    addons.length
+                ) {
+
+                    next.set(
+                        "addons",
+                        addons.join("|")
+                    );
+
+                }
+
+
+                window.location.href =
+                    "/financeiro/contratacao/finalizar?" +
+                    next.toString();
+
+            }
+        );
+
+
+        console.log(
+            "SABINO_V47_SIGNUP_TO_FINAL=True"
+        );
+
+
+        return true;
+
+    }
+
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            installV47
+        );
+
+    }
+    else {
+
+        installV47();
+
+    }
+
+})();
+
+</script>
+
+<!-- SABINO_SIGNUP_TO_FINAL_V47_END -->
+
+
+<!-- SABINO_SIGNUP_FLOW_V49_START -->
+
+<script id="sabino-signup-flow-v49">
+
+(function () {
+
+    "use strict";
+
+
+    function install() {
+
+        var oldForm =
+            document.getElementById(
+                "signupForm"
+            );
+
+
+        if (!oldForm) {
+            return false;
+        }
+
+
+        /*
+         * Remove listeners antigos do formulário.
+         */
+
+        var form =
+            oldForm.cloneNode(
+                true
+            );
+
+
+        oldForm.parentNode.replaceChild(
+            form,
+            oldForm
+        );
+
+
+        /*
+         * Máscara telefone novamente após clone.
+         */
+
+        var phone =
+            form.querySelector(
+                "#phone"
+            );
+
+
+        if (phone) {
+
+            phone.addEventListener(
+                "input",
+                function () {
+
+                    var value =
+                        phone.value
+                            .replace(
+                                /\D/g,
+                                ""
+                            )
+                            .slice(
+                                0,
+                                11
+                            );
+
+
+                    if (
+                        value.length > 10
+                    ) {
+
+                        phone.value =
+                            value.replace(
+                                /(\d{2})(\d{5})(\d{4})/,
+                                "($1) $2-$3"
+                            );
+
+                    }
+                    else if (
+                        value.length > 6
+                    ) {
+
+                        phone.value =
+                            value.replace(
+                                /(\d{2})(\d{4})(\d{0,4})/,
+                                "($1) $2-$3"
+                            );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+
+                var name =
+                    form.querySelector(
+                        "#fullName"
+                    ).value.trim();
+
+
+                var email =
+                    form.querySelector(
+                        "#email"
+                    ).value.trim();
+
+
+                var phoneValue =
+                    form.querySelector(
+                        "#phone"
+                    ).value.trim();
+
+
+                var terms =
+                    form.querySelector(
+                        "#terms"
+                    ).checked;
+
+
+                var error =
+                    form.querySelector(
+                        "#formError"
+                    );
+
+
+                error.classList.remove(
+                    "active"
+                );
+
+
+                if (
+                    name.length < 3
+                ) {
+
+                    error.textContent =
+                        "Informe seu nome completo.";
+
+                    error.classList.add(
+                        "active"
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    !email ||
+                    !email.includes("@")
+                ) {
+
+                    error.textContent =
+                        "Informe um e-mail válido.";
+
+                    error.classList.add(
+                        "active"
+                    );
+
+                    return;
+                }
+
+
+                if (!terms) {
+
+                    error.textContent =
+                        "Confirme o aceite para continuar.";
+
+                    error.classList.add(
+                        "active"
+                    );
+
+                    return;
+                }
+
+
+                var params =
+                    new URLSearchParams(
+                        window.location.search
+                    );
+
+
+                var plan =
+                    params.get("plano") ||
+                    "Evolução";
+
+
+                var origin =
+                    params.get("origem") ||
+                    "demo";
+
+
+                var addonValue =
+                    params.get("addons") ||
+                    "";
+
+
+                var addons =
+                    addonValue
+                        ? addonValue
+                            .split("|")
+                            .filter(Boolean)
+                        : [];
+
+
+                var draft = {
+
+                    nome:
+                        name,
+
+                    email:
+                        email,
+
+                    telefone:
+                        phoneValue,
+
+                    plano:
+                        plan,
+
+                    addons:
+                        addons,
+
+                    origem:
+                        origin,
+
+                    status:
+                        "cadastro_concluido"
+
+                };
+
+
+                sessionStorage.setItem(
+                    "sabinoFinanceiroContratacao",
+                    JSON.stringify(
+                        draft
+                    )
+                );
+
+
+                var next =
+                    new URLSearchParams();
+
+
+                next.set(
+                    "plano",
+                    plan
+                );
+
+
+                next.set(
+                    "origem",
+                    origin
+                );
+
+
+                if (
+                    addons.length
+                ) {
+
+                    next.set(
+                        "addons",
+                        addons.join("|")
+                    );
+
+                }
+
+
+                window.location.href =
+                    "/financeiro/contratacao/finalizar?" +
+                    next.toString();
+
+            }
+        );
+
+
+        console.log(
+            "SABINO_V49_SIGNUP_FLOW=True"
+        );
+
+
+        return true;
+
+    }
+
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            install
+        );
+
+    }
+    else {
+
+        install();
+
+    }
+
+})();
+
+</script>
+
+<!-- SABINO_SIGNUP_FLOW_V49_END -->
+
+<script src="/static/js/sabino-locale-core.js?v=internal12_20260917_140006" data-sabino-global-locale="v1"></script>
+<script src="/static/js/sabino-global-i18n-runtime.js" data-sabino-global-i18n="v1"></script>
+<script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
+<script src="/static/js/sabino-money-locale-runtime.js"></script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,158 @@
+/* ============================================================
+   SABINO_FINANCE_FIXED_HEADER_GLOBAL_V1
+
+   Todas as páginas Financeiro:
+
+   [ 🌐 Idioma ] [ TC Usuário ]
+   permanentemente fixos no topo.
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   IDIOMA
+   ------------------------------------------------------------ */
+
+#sabinoLanguageSwitcher[
+    data-sabino-finance-fixed-language="true"
+] {
+
+    position: fixed !important;
+
+    top: 18px !important;
+    right: 250px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    z-index: 2147483000 !important;
+}
+
+
+/*
+ * Caso não exista usuário naquela página.
+ */
+
+#sabinoLanguageSwitcher[
+    data-sabino-finance-fixed-solo="true"
+] {
+
+    right: 28px !important;
+}
+
+
+/* ------------------------------------------------------------
+   USUÁRIO
+   ------------------------------------------------------------ */
+
+[data-sabino-finance-fixed-user="true"] {
+
+    position: fixed !important;
+
+    top: 18px !important;
+    right: 28px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    z-index: 2147483001 !important;
+
+    width: auto !important;
+
+    min-width: 160px !important;
+    max-width: 205px !important;
+
+    overflow: hidden !important;
+}
+
+
+/* Nome compacto */
+
+[data-sabino-finance-fixed-user="true"]
+[data-sabino-finance-user-name="true"] {
+
+    display: block !important;
+
+    max-width: 125px !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* ------------------------------------------------------------
+   MENU DE IDIOMAS
+   ------------------------------------------------------------ */
+
+#sabinoLanguageSwitcher
+#sabinoLanguagePanel {
+
+    z-index: 2147483640 !important;
+}
+
+
+/* ------------------------------------------------------------
+   TABLET
+   ------------------------------------------------------------ */
+
+@media (max-width: 1000px) {
+
+    #sabinoLanguageSwitcher[
+        data-sabino-finance-fixed-language="true"
+    ] {
+
+        top: 14px !important;
+        right: 190px !important;
+    }
+
+
+    [data-sabino-finance-fixed-user="true"] {
+
+        top: 14px !important;
+        right: 12px !important;
+
+        min-width: 145px !important;
+        max-width: 165px !important;
+    }
+
+}
+
+
+/* ------------------------------------------------------------
+   MOBILE
+   ------------------------------------------------------------ */
+
+@media (max-width: 700px) {
+
+    [data-sabino-finance-fixed-user="true"] {
+
+        top: 10px !important;
+        right: 10px !important;
+    }
+
+
+    #sabinoLanguageSwitcher[
+        data-sabino-finance-fixed-language="true"
+    ] {
+
+        top: 72px !important;
+
+        right: auto !important;
+        left: 50% !important;
+
+        transform:
+            translateX(-50%)
+            !important;
+    }
+
+}

@@ -1,0 +1,196 @@
+/* ============================================================
+   SABINO.AI
+   DASHBOARD TOP ANCHOR V3
+
+   Idioma + usuário:
+   - topo direito
+   - presos ao topo da PÁGINA
+   - NÃO acompanham o scroll
+   ============================================================ */
+
+
+/*
+ * A main vira a referência da posição absoluta.
+ */
+
+html body .main {
+
+    position: relative !important;
+}
+
+
+/*
+ * HEADER:
+ *
+ * posição absoluta = acompanha o documento,
+ * não acompanha a viewport durante scroll.
+ */
+
+html body .main > .topbar,
+html body header.topbar[data-sabino-dashboard-top-anchor-v3="true"] {
+
+    position: absolute !important;
+
+    top: 18px !important;
+    right: 30px !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 80px) !important;
+
+    height: auto !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 18px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+    translate: none !important;
+
+    float: none !important;
+
+    z-index: 2147483000 !important;
+
+    pointer-events: auto !important;
+
+    will-change: auto !important;
+}
+
+
+/* ============================================================
+   IDIOMA
+   ============================================================ */
+
+html body
+header.topbar[data-sabino-dashboard-top-anchor-v3="true"]
+#sabinoLanguageSwitcher {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+    translate: none !important;
+
+    float: none !important;
+}
+
+
+html body
+header.topbar[data-sabino-dashboard-top-anchor-v3="true"]
+#languageButton,
+
+html body
+header.topbar[data-sabino-dashboard-top-anchor-v3="true"]
+.language {
+
+    position: static !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+    translate: none !important;
+
+    float: none !important;
+}
+
+
+/* ============================================================
+   USUÁRIO
+   ============================================================ */
+
+html body
+header.topbar[data-sabino-dashboard-top-anchor-v3="true"]
+.profile {
+
+    position: static !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+    translate: none !important;
+
+    float: none !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+}
+
+
+/*
+ * Evita que alguma largura herdada empurre o grupo.
+ */
+
+html body
+header.topbar[data-sabino-dashboard-top-anchor-v3="true"]
+.profile-copy {
+
+    width: auto !important;
+
+    min-width: 110px !important;
+}
+
+
+/* ============================================================
+   DESKTOP MENOR
+   ============================================================ */
+
+@media (max-width: 1350px) {
+
+    html body
+    .main > .topbar,
+
+    html body
+    header.topbar[data-sabino-dashboard-top-anchor-v3="true"] {
+
+        top: 16px !important;
+        right: 22px !important;
+
+        gap: 14px !important;
+    }
+}
+
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 900px) {
+
+    html body
+    .main > .topbar,
+
+    html body
+    header.topbar[data-sabino-dashboard-top-anchor-v3="true"] {
+
+        top: 12px !important;
+        right: 16px !important;
+
+        max-width: calc(100% - 32px) !important;
+    }
+}

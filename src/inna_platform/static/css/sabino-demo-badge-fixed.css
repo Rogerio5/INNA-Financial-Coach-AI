@@ -1,0 +1,79 @@
+/* ============================================================
+   SABINO DEMO TOP FINAL V3
+   ============================================================ */
+
+html > #sabinoDemoFixedBadge {
+
+    position: absolute !important;
+
+    top: 10px !important;
+    right: 24px !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    width: 245px !important;
+    min-width: 245px !important;
+    height: auto !important;
+
+    padding: 10px 16px !important;
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+
+    transform: none !important;
+    translate: none !important;
+
+    border:
+        1px solid
+        rgba(214,170,0,.50) !important;
+
+    border-radius: 16px !important;
+
+    background:
+        rgba(8,13,18,.97) !important;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,.28) !important;
+
+    z-index: 2147483646 !important;
+}
+
+
+html > #sabinoDemoFixedBadge
+.sabino-demo-title {
+
+    color: #ffffff !important;
+
+    font-size: 15px !important;
+    font-weight: 800 !important;
+
+    line-height: 1.15 !important;
+
+    white-space: nowrap !important;
+}
+
+
+html > #sabinoDemoFixedBadge
+.sabino-demo-subtitle {
+
+    margin-top: 2px !important;
+
+    color: #90a3b8 !important;
+
+    font-size: 10px !important;
+
+    line-height: 1.15 !important;
+}
+
+
+/* original da página nunca deve duplicar */
+
+.sabino-demo-original-hidden {
+
+    display: none !important;
+}
+
+

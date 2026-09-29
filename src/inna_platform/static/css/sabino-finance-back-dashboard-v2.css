@@ -1,0 +1,182 @@
+
+/* ============================================================
+   SABINO.AI
+   FINANCE BACK DASHBOARD V2
+   ============================================================ */
+
+#sabinoFinanceBackDashboardV2 {
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+
+    gap: 8px !important;
+
+    width: calc(100% - 28px) !important;
+
+    min-height: 40px !important;
+
+    margin:
+        12px
+        14px
+        18px
+        14px !important;
+
+    padding:
+        9px
+        12px !important;
+
+    box-sizing: border-box !important;
+
+    border:
+        1px solid
+        rgba(213, 172, 19, .48) !important;
+
+    border-radius:
+        10px !important;
+
+    background:
+        rgba(213, 172, 19, .06) !important;
+
+    color:
+        #f1ce54 !important;
+
+    text-decoration:
+        none !important;
+
+    font-family:
+        inherit !important;
+
+    font-size:
+        12px !important;
+
+    font-weight:
+        800 !important;
+
+    line-height:
+        1 !important;
+
+    position:
+        relative !important;
+
+    z-index:
+        30 !important;
+
+    cursor:
+        pointer !important;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease !important;
+}
+
+
+#sabinoFinanceBackDashboardV2:hover {
+
+    background:
+        rgba(213, 172, 19, .14) !important;
+
+    border-color:
+        rgba(255, 211, 55, .80) !important;
+
+    color:
+        #ffd84a !important;
+
+    transform:
+        translateX(-2px) !important;
+}
+
+
+#sabinoFinanceBackDashboardV2:focus-visible {
+
+    outline:
+        2px solid
+        rgba(255, 216, 74, .75) !important;
+
+    outline-offset:
+        2px !important;
+}
+
+
+#sabinoFinanceBackDashboardV2
+.sabino-back-arrow {
+
+    width: 18px !important;
+
+    flex:
+        0 0 18px !important;
+
+    display:
+        inline-flex !important;
+
+    justify-content:
+        center !important;
+
+    align-items:
+        center !important;
+
+    color:
+        #f5c928 !important;
+
+    font-size:
+        18px !important;
+
+    font-weight:
+        900 !important;
+}
+
+
+#sabinoFinanceBackDashboardV2
+.sabino-back-label {
+
+    overflow:
+        hidden !important;
+
+    text-overflow:
+        ellipsis !important;
+
+    white-space:
+        nowrap !important;
+}
+
+
+/*
+ * No arabe mantemos a estrutura fisica
+ * igual ao portugues.
+ */
+
+html[lang^="ar"]
+#sabinoFinanceBackDashboardV2 {
+
+    direction:
+        ltr !important;
+}
+
+
+html[lang^="ar"]
+#sabinoFinanceBackDashboardV2
+.sabino-back-label {
+
+    direction:
+        rtl !important;
+
+    text-align:
+        right !important;
+}
+
+
+@media (max-width: 900px) {
+
+    #sabinoFinanceBackDashboardV2 {
+
+        width:
+            calc(100% - 20px) !important;
+
+        margin:
+            10px
+            10px
+            15px
+            10px !important;
+    }
+}

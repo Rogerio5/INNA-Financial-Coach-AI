@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Contratação concluída | Sabino.AI</title>
+
+<style>
+
+:root {
+    --bg: #070b0d;
+    --panel: #0d1417;
+    --border: #2b363c;
+
+    --yellow: #ffd044;
+    --green: #19d99a;
+
+    --muted: #99a8ae;
+    --text: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+
+    min-height: 100vh;
+
+    display: grid;
+
+    place-items: center;
+
+    padding: 30px;
+
+    background:
+        radial-gradient(
+            circle at 50% 5%,
+            rgba(25,217,154,.08),
+            transparent 42%
+        ),
+        var(--bg);
+
+    color:
+        var(--text);
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+.card {
+    width:
+        min(
+            790px,
+            100%
+        );
+
+    padding:
+        42px;
+
+    border:
+        1px solid
+        rgba(25,217,154,.35);
+
+    border-radius:
+        18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #10181c,
+            #090f12
+        );
+
+    box-shadow:
+        0
+        30px
+        90px
+        rgba(0,0,0,.35);
+}
+
+.icon {
+    width: 62px;
+    height: 62px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background:
+        rgba(25,217,154,.11);
+
+    color:
+        var(--green);
+
+    font-size:
+        29px;
+
+    font-weight:
+        1000;
+}
+
+.badge {
+    margin-top:
+        23px;
+
+    display: inline-flex;
+
+    padding:
+        6px 10px;
+
+    border:
+        1px solid
+        rgba(25,217,154,.28);
+
+    border-radius:
+        999px;
+
+    color:
+        var(--green);
+
+    font-size:
+        9px;
+
+    font-weight:
+        950;
+}
+
+h1 {
+    margin:
+        14px
+        0
+        10px;
+
+    font-size:
+        clamp(
+            39px,
+            5vw,
+            54px
+        );
+
+    line-height:
+        1.04;
+}
+
+.subtitle {
+    max-width:
+        650px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+    line-height:
+        1.6;
+}
+
+.summary {
+    margin-top:
+        28px;
+
+    padding:
+        21px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        12px;
+
+    background:
+        #090f12;
+}
+
+.row {
+    min-height:
+        45px;
+
+    display:
+        flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap:
+        20px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.055);
+}
+
+.row:last-child {
+    border-bottom: 0;
+}
+
+.label {
+    color:
+        var(--muted);
+
+    font-size:
+        10px;
+}
+
+.value {
+    color:
+        #ffffff;
+
+    font-size:
+        11px;
+
+    font-weight:
+        850;
+
+    text-align:
+        right;
+}
+
+.plan {
+    color:
+        var(--yellow);
+}
+
+.notice {
+    margin-top:
+        19px;
+
+    padding:
+        14px;
+
+    border:
+        1px solid
+        rgba(255,208,68,.23);
+
+    border-radius:
+        9px;
+
+    background:
+        rgba(255,208,68,.035);
+
+    color:
+        #bdc7ca;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.6;
+}
+
+.notice strong {
+    color:
+        var(--yellow);
+}
+
+.actions {
+    margin-top:
+        23px;
+
+    display:
+        flex;
+
+    justify-content:
+        flex-end;
+
+    gap:
+        9px;
+}
+
+.button {
+    min-height:
+        47px;
+
+    padding:
+        10px 18px;
+
+    display:
+        inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius:
+        9px;
+
+    text-decoration:
+        none;
+
+    font-size:
+        10px;
+
+    font-weight:
+        900;
+}
+
+.secondary {
+    border:
+        1px solid #354148;
+
+    color:
+        #e4eaec;
+}
+
+.primary {
+    border:
+        1px solid
+        var(--yellow);
+
+    background:
+        var(--yellow);
+
+    color:
+        #080c0e;
+}
+
+@media (max-width: 600px) {
+
+    .card {
+        padding:
+            26px;
+    }
+
+    .row {
+        padding:
+            10px
+            0;
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            4px;
+    }
+
+    .value {
+        text-align:
+            left;
+    }
+
+    .actions {
+        flex-direction:
+            column;
+    }
+
+    .button {
+        width:
+            100%;
+    }
+
+}
+
+</style>
+
+<style id="SABINO_REMOVE_MENU_LETTERS_V1">
+.nav-icon,
+.nav-badge,
+.menu-icon,
+.menu-badge,
+.sidebar-icon,
+.sidebar-badge {
+    display: none !important;
+}
+
+.nav-link,
+.sidebar-link,
+.menu-link {
+    gap: 0 !important;
+    padding-left: 14px !important;
+}
+</style>
+<link rel="stylesheet" href="/static/css/sabino-locale-core.css?v=browserany_manual3_20260917_134732" data-sabino-global-locale="v1">
+<link rel="stylesheet" href="/static/css/sabino-currency-core.css" data-sabino-global-currency="v1">
+
+<link rel="stylesheet" href="/static/css/sabino-language-button.css?v=20260917_140515">
+<script defer src="/static/js/sabino-language-button.js?v=20260917_140515"></script>
+
+<link rel="stylesheet"
+      href="/static/css/=20260917_181514">
+
+<script defer
+        src="/static/js/=20260917_181514">
+</script>
+
+
+<link
+    rel="stylesheet"
+    href="/static/css/sabino-finance-unified.css?v=20260917_222806"
+>
+
+<script
+    defer
+    src="/static/js/sabino-finance-unified.js?v=20260917_222806">
+</script>
+</head>
+
+<body>
+
+
+<main class="card">
+
+    <div class="icon">
+        ✓
+    </div>
+
+
+    <div class="badge">
+        JORNADA CONCLUÍDA
+    </div>
+
+
+    <h1>
+        Tudo certo.
+    </h1>
+
+
+    <div class="subtitle">
+
+        Você concluiu a simulação de contratação do Financeiro Sabino.AI.
+        Confira abaixo o resumo da escolha.
+
+    </div>
+
+
+    <div class="summary">
+
+
+        <div class="row">
+
+            <span class="label">
+                Plano
+            </span>
+
+            <span
+                id="plan"
+                class="value plan"
+            >
+                -
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="label">
+                Temas Especiais
+            </span>
+
+            <span
+                id="addons"
+                class="value"
+            >
+                -
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="label">
+                Nome
+            </span>
+
+            <span
+                id="customer"
+                class="value"
+            >
+                -
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="label">
+                Status
+            </span>
+
+            <span class="value">
+                Simulação concluída
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="notice">
+
+        <strong>
+            Nenhum pagamento foi realizado e nenhum plano foi ativado.
+        </strong>
+
+        <br><br>
+
+        Agora que toda a jornada está pronta, a próxima fase será
+        integrar banco de dados, conta do cliente, assinatura,
+        pagamento e liberação automática dos módulos.
+
+    </div>
+
+
+    <div class="actions">
+
+        <a
+            href="/financeiro/planos"
+            class="button secondary"
+        >
+            Ver planos
+        </a>
+
+
+        <a
+            href="/financeiro"
+            class="button primary"
+        >
+            Voltar ao Financeiro →
+        </a>
+
+    </div>
+
+</main>
+
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    var data = {};
+
+
+    try {
+
+        data =
+            JSON.parse(
+                sessionStorage.getItem(
+                    "sabinoFinanceiroContratacaoFinal"
+                ) || "{}"
+            );
+
+    }
+    catch (error) {
+
+        data = {};
+
+    }
+
+
+    document.getElementById(
+        "plan"
+    ).textContent =
+        data.plano ||
+        "Não informado";
+
+
+    document.getElementById(
+        "addons"
+    ).textContent =
+        Array.isArray(data.addons) &&
+        data.addons.length
+
+            ? data.addons.join(", ")
+
+            : "Nenhum";
+
+
+    document.getElementById(
+        "customer"
+    ).textContent =
+        data.nome ||
+        "Não informado";
+
+})();
+
+</script>
+
+
+
+<!-- SABINO_ACCOUNT_ACCESS_V50_START -->
+
+<style id="sabino-account-access-v50-css">
+
+.sabino-v50-account-status {
+    margin-top: 18px;
+
+    padding: 14px;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    border:
+        1px solid
+        rgba(25,217,154,.24);
+
+    border-radius:
+        9px;
+
+    background:
+        rgba(25,217,154,.04);
+}
+
+
+.sabino-v50-account-icon {
+    width: 28px;
+    height: 28px;
+
+    flex:
+        0 0 28px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background:
+        rgba(25,217,154,.10);
+
+    color:
+        #19d99a;
+
+    font-weight: 950;
+}
+
+
+.sabino-v50-account-title {
+    color:
+        #19d99a;
+
+    font-size:
+        11px;
+
+    font-weight:
+        900;
+}
+
+
+.sabino-v50-account-copy {
+    margin-top:
+        3px;
+
+    color:
+        #aab8bd;
+
+    font-size:
+        9px;
+
+    line-height:
+        1.55;
+}
+
+
+.sabino-v50-session-note {
+    margin-top: 8px;
+
+    color:
+        #728087;
+
+    font-size:
+        8px;
+}
+
+</style>
+
+
+<script id="sabino-account-access-v50-js">
+
+(function () {
+
+    "use strict";
+
+
+    var finalData = {};
+
+
+    try {
+
+        finalData =
+            JSON.parse(
+                sessionStorage.getItem(
+                    "sabinoFinanceiroContratacaoFinal"
+                ) || "{}"
+            );
+
+    }
+    catch (error) {
+
+        finalData = {};
+
+    }
+
+
+    /*
+     * Nesta fase visual, consideramos que a conta
+     * foi preparada quando temos nome + e-mail
+     * provenientes da jornada de cadastro.
+     *
+     * Quando integrarmos autenticação real,
+     * esta validação passará para o backend.
+     */
+
+    var hasCreatedAccount =
+        !!(
+            finalData.nome &&
+            finalData.email
+        );
+
+
+    if (
+        hasCreatedAccount
+    ) {
+
+        var temporarySession = {
+
+            nome:
+                finalData.nome,
+
+            email:
+                finalData.email,
+
+            created_at:
+                new Date().toISOString(),
+
+            source:
+                "financeiro_contratacao",
+
+            authenticated:
+                true
+
+        };
+
+
+        sessionStorage.setItem(
+            "sabinoFinanceiroSessaoAtiva",
+            JSON.stringify(
+                temporarySession
+            )
+        );
+
+    }
+
+
+    /* ======================================================
+       BOTÕES
+    ====================================================== */
+
+    var actions =
+        document.querySelector(
+            ".actions"
+        );
+
+
+    if (!actions) {
+        return;
+    }
+
+
+    var buttons =
+        Array.from(
+            actions.querySelectorAll(
+                "a"
+            )
+        );
+
+
+    var primary =
+        buttons.find(
+            function (button) {
+
+                return button.classList.contains(
+                    "primary"
+                );
+
+            }
+        );
+
+
+    var secondary =
+        buttons.find(
+            function (button) {
+
+                return button.classList.contains(
+                    "secondary"
+                );
+
+            }
+        );
+
+
+    if (
+        hasCreatedAccount &&
+        primary
+    ) {
+
+        primary.textContent =
+            "Acessar meu Financeiro →";
+
+
+        primary.href =
+            "/financeiro";
+
+
+        primary.setAttribute(
+            "aria-label",
+            "Acessar meu Financeiro"
+        );
+
+    }
+
+
+    if (
+        secondary
+    ) {
+
+        secondary.textContent =
+            "Ir para Sabino.AI";
+
+
+        secondary.href =
+            "/";
+
+    }
+
+
+    /* ======================================================
+       AVISO DE CONTA
+    ====================================================== */
+
+    var notice =
+        document.querySelector(
+            ".notice"
+        );
+
+
+    if (
+        notice &&
+        hasCreatedAccount
+    ) {
+
+        var status =
+            document.createElement(
+                "div"
+            );
+
+
+        status.className =
+            "sabino-v50-account-status";
+
+
+        status.innerHTML =
+
+            '<div class="sabino-v50-account-icon">' +
+                '✓' +
+            '</div>' +
+
+            '<div>' +
+
+                '<div class="sabino-v50-account-title">' +
+                    'Sua conta está pronta para continuar' +
+                '</div>' +
+
+                '<div class="sabino-v50-account-copy">' +
+                    'Você já informou seus dados nesta jornada. ' +
+                    'Por isso, não precisa entrar novamente agora. ' +
+                    'Use o botão “Acessar meu Financeiro”.' +
+                '</div>' +
+
+                '<div class="sabino-v50-session-note">' +
+                    'Nesta versão, essa sessão é temporária. ' +
+                    'Na integração final, a autenticação será validada pelo backend da Sabino.AI.' +
+                '</div>' +
+
+            '</div>';
+
+
+        notice.parentElement.insertBefore(
+            status,
+            notice.nextSibling
+        );
+
+    }
+
+
+    console.log(
+        "SABINO_V50_ACCOUNT_CREATED=" +
+        hasCreatedAccount
+    );
+
+
+    console.log(
+        "SABINO_V50_DIRECT_FINANCE_ACCESS=" +
+        hasCreatedAccount
+    );
+
+})();
+
+</script>
+
+<!-- SABINO_ACCOUNT_ACCESS_V50_END -->
+
+<script src="/static/js/sabino-locale-core.js?v=internal12_20260917_140006" data-sabino-global-locale="v1"></script>
+<script src="/static/js/sabino-global-i18n-runtime.js" data-sabino-global-i18n="v1"></script>
+<script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
+<script src="/static/js/sabino-money-locale-runtime.js"></script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

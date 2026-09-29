@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Configurar solução | Sabino.AI</title>
+
+    <meta
+        name="description"
+        content="Configure canais, integrações e recursos da sua solução Sabino.AI."
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/css/platform.css') }}"
+    >
+
+    <script
+        src="{{ url_for('static', path='/js/configure.js') }}?v=9"
+        defer
+    ></script>
+
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand.css?v=1"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="/static/images/sabino-s-logo.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand-v2.css?v=2"
+    >
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="topbar">
+
+    <a class="brand brand-header" href="/">
+        <img
+            class="brand-logo"
+            src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+            alt="Sabino.AI"
+        >
+        <span>Sabino.AI</span>
+    </a>
+
+
+    <nav class="nav">
+
+        <a href="/">Início</a>
+
+        <a href="/#solucoes">Soluções</a>
+
+        <a href="/modulos">Módulos</a>
+
+        <a href="/#inna">INNA Assistant</a>
+
+        <a href="/#recursos">Recursos</a>
+
+        <a href="/#empresa">Empresa</a>
+
+        <a href="/#contato">Contato</a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+        <div class="language-selector">
+
+            <span class="language-globe">◎</span>
+
+            <select
+                id="platform-language"
+                aria-label="Selecionar idioma"
+            >
+                <option value="pt-BR">BR Português Brasil</option>
+                <option value="en-US">US English US</option>
+                <option value="en-GB">GB English UK</option>
+                <option value="es">ES Español</option>
+                <option value="fr">FR Français</option>
+                <option value="de">DE Deutsch</option>
+                <option value="it">IT Italiano</option>
+                <option value="ro">RO Română</option>
+                <option value="uk">UA Українська</option>
+                <option value="ru">RU Русский</option>
+                <option value="ar">SA العربية</option>
+                <option value="de-CH">CH Schweiz</option>
+            </select>
+
+        </div>
+
+        <button class="btn-secondary">
+            Entrar
+        </button>
+
+        <a class="btn-primary" href="/#contato">
+            Falar com um especialista
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<main class="configure-page">
+
+
+<!-- PROGRESSO -->
+
+<section class="config-progress container">
+
+    <div class="config-step completed">
+        <span>1</span>
+        <strong>Conheça a Sabino.AI</strong>
+    </div>
+
+    <div class="config-line"></div>
+
+    <div class="config-step completed">
+        <span>2</span>
+        <strong>Escolha seus módulos</strong>
+    </div>
+
+    <div class="config-line"></div>
+
+    <div class="config-step active">
+        <span>3</span>
+        <strong>Configure sua solução</strong>
+    </div>
+
+    <div class="config-line"></div>
+
+    <div class="config-step">
+        <span>4</span>
+        <strong>Revise sua configuração</strong>
+    </div>
+
+</section>
+
+
+
+<!-- TITULO -->
+
+<section class="config-heading container">
+
+    <span class="eyebrow">
+        CONFIGURAÇÃO
+    </span>
+
+    <h1>
+        Configure sua
+        <span>solução</span>
+    </h1>
+
+    <p>
+        Personalize canais, integrações, capacidade operacional
+        e recursos da plataforma. A INNA centraliza a configuração
+        e prepara a experiência para os módulos selecionados.
+    </p>
+
+</section>
+
+
+
+<section class="config-layout container">
+
+
+<!-- ======================================================
+     COLUNA PRINCIPAL
+     ====================================================== -->
+
+<div class="config-main">
+
+
+<!-- 1. CANAIS -->
+
+<section class="config-section">
+
+    <div class="config-section-title">
+
+        <span class="config-section-number">1</span>
+
+        <div>
+            <h2>Canais de atendimento</h2>
+            <p>
+                Selecione onde pessoas e equipes poderão interagir com a plataforma.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="config-option-grid config-five">
+
+        <button
+            class="config-option selected"
+            type="button"
+            data-group="channel"
+            data-value="Web App"
+        >
+            <span class="config-icon">◎</span>
+            <strong>Web App</strong>
+            <small>Plataforma web</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option"
+            type="button"
+            data-group="channel"
+            data-value="WhatsApp"
+        >
+            <span class="config-icon">WA</span>
+            <strong>WhatsApp</strong>
+            <small>Canal integrado</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option selected"
+            type="button"
+            data-group="channel"
+            data-value="Telegram"
+        >
+            <span class="config-icon">➤</span>
+            <strong>Telegram</strong>
+            <small>Mensageria</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option selected"
+            type="button"
+            data-group="channel"
+            data-value="E-mail"
+        >
+            <span class="config-icon">✉</span>
+            <strong>E-mail</strong>
+            <small>Comunicação</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option"
+            type="button"
+            data-group="channel"
+            data-value="Chat online"
+        >
+            <span class="config-icon">◌</span>
+            <strong>Chat online</strong>
+            <small>INNA Assistant</small>
+            <span class="config-check">✓</span>
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- 2. INTEGRACOES -->
+
+<section class="config-section">
+
+    <div class="config-section-title">
+
+        <span class="config-section-number">2</span>
+
+        <div>
+            <h2>Integrações</h2>
+            <p>
+                Conecte a Sabino.AI aos sistemas e fontes de dados da operação.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="config-option-grid config-six">
+
+        <button
+            class="config-option selected"
+            type="button"
+            data-group="integration"
+            data-value="API REST"
+        >
+            <span class="config-icon">API</span>
+            <strong>API REST</strong>
+            <small>Integrações externas</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option"
+            type="button"
+            data-group="integration"
+            data-value="ERP"
+        >
+            <span class="config-icon">ERP</span>
+            <strong>ERP</strong>
+            <small>Sistema corporativo</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option"
+            type="button"
+            data-group="integration"
+            data-value="CRM"
+        >
+            <span class="config-icon">CRM</span>
+            <strong>CRM</strong>
+            <small>Relacionamento</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option"
+            type="button"
+            data-group="integration"
+            data-value="SSO / Login"
+        >
+            <span class="config-icon">ID</span>
+            <strong>SSO / Login</strong>
+            <small>Identidade</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option selected"
+            type="button"
+            data-group="integration"
+            data-value="Banco de Dados"
+        >
+            <span class="config-icon">DB</span>
+            <strong>Banco de Dados</strong>
+            <small>Dados corporativos</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option"
+            type="button"
+            data-group="integration"
+            data-value="MCP / Webhooks"
+        >
+            <span class="config-icon">•••</span>
+            <strong>MCP / Webhooks</strong>
+            <small>Ferramentas e eventos</small>
+            <span class="config-check">✓</span>
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- 3. CONFIGURACOES -->
+
+<section class="config-section">
+
+    <div class="config-section-title">
+
+        <span class="config-section-number">3</span>
+
+        <div>
+            <h2>Configurações da operação</h2>
+            <p>
+                Defina capacidade e características iniciais da solução.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="config-fields">
+
+        <label class="config-field">
+
+            <span>Usuários ativos estimados</span>
+
+            <select id="users-config">
+
+    <option value="1-10">
+        1 a 10 usuários
+    </option>
+
+    <option value="11-50">
+        11 a 50 usuários
+    </option>
+
+    <option value="51-100" selected>
+        51 a 100 usuários
+    </option>
+
+    <option value="101-500">
+        101 a 500 usuários
+    </option>
+
+    <option value="501-1000">
+        501 a 1.000 usuários
+    </option>
+
+    <option value="1001-5000">
+        1.001 a 5.000 usuários
+    </option>
+
+    <option value="5000+">
+        Mais de 5.000 usuários
+    </option>
+
+</select>
+
+        </label>
+
+
+        <label class="config-field">
+
+            <span>Volume de dados operacional</span>
+
+            <select id="data-config">
+
+    <option value="0-10">
+        Até 10 GB/mês
+    </option>
+
+    <option value="11-100" selected>
+        11 a 100 GB/mês
+    </option>
+
+    <option value="101-500">
+        101 a 500 GB/mês
+    </option>
+
+    <option value="501-1000">
+        501 GB a 1 TB/mês
+    </option>
+
+    <option value="1-5tb">
+        1 TB a 5 TB/mês
+    </option>
+
+    <option value="5tb+">
+        Mais de 5 TB/mês
+    </option>
+
+</select>
+
+        </label>
+
+
+        <label class="config-field">
+
+            <span>Base de conhecimento (RAG)</span>
+
+            <select id="rag-config">
+
+    <option value="0-5000">
+        Até 5.000 documentos
+    </option>
+
+    <option value="5001-50000" selected>
+        5.001 a 50.000 documentos
+    </option>
+
+    <option value="50001-250000">
+        50.001 a 250.000 documentos
+    </option>
+
+    <option value="250001-1000000">
+        250.001 a 1 milhão de documentos
+    </option>
+
+    <option value="1000000+">
+        Mais de 1 milhão / escala personalizada
+    </option>
+
+</select>
+
+        </label>
+<label class="config-field">
+
+    <span>
+        Atualização da base RAG
+    </span>
+
+    <select id="rag-update-config">
+
+        <option value="on-demand" selected>
+            Sob demanda
+        </option>
+
+        <option value="weekly">
+            Atualização semanal
+        </option>
+
+        <option value="daily">
+            Atualização diária
+        </option>
+
+        <option value="continuous">
+            Atualização contínua
+        </option>
+
+    </select>
+
+</label>
+
+    </div>
+
+</section>
+
+
+
+<!-- 4. RECURSOS -->
+
+<section class="config-section">
+
+    <div class="config-section-title">
+
+        <span class="config-section-number">4</span>
+
+        <div>
+            <h2>Recursos e preferências</h2>
+            <p>
+                Ative capacidades adicionais de governança, análise e automação.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="config-option-grid config-five">
+
+        <button
+            class="config-option selected"
+            type="button"
+            data-group="resource"
+            data-value="Observabilidade"
+        >
+            <span class="config-icon">OBS</span>
+            <strong>Observabilidade</strong>
+            <small>Métricas e tracing</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option selected"
+            type="button"
+            data-group="resource"
+            data-value="Governança & LGPD"
+        >
+            <span class="config-icon">GOV</span>
+            <strong>Governança & LGPD</strong>
+            <small>Políticas e auditoria</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option selected"
+            type="button"
+            data-group="resource"
+            data-value="Dashboards"
+        >
+            <span class="config-icon">BI</span>
+            <strong>Dashboards</strong>
+            <small>Indicadores analíticos</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option"
+            type="button"
+            data-group="resource"
+            data-value="Automação"
+        >
+            <span class="config-icon">⚡</span>
+            <strong>Automação</strong>
+            <small>Processos inteligentes</small>
+            <span class="config-check">✓</span>
+        </button>
+
+
+        <button
+            class="config-option selected"
+            type="button"
+            data-group="resource"
+            data-value="Alertas"
+        >
+            <span class="config-icon">!</span>
+            <strong>Alertas</strong>
+            <small>Eventos e notificações</small>
+            <span class="config-check">✓</span>
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- BOTOES -->
+
+<div
+    id="config-validation-message"
+    class="config-validation-message"
+    hidden
+></div>
+
+<div class="config-actions">
+
+    <a
+        class="btn-secondary config-back"
+        href="/modulos"
+    >
+        ← Voltar
+    </a>
+
+
+    <div class="config-security">
+        ◇ Configuração protegida e preparada para revisão.
+    </div>
+
+
+    <button
+        class="btn-primary config-next"
+        id="review-config"
+        type="button"
+    >
+        Revisar e gerar proposta →
+    </button>
+
+</div>
+
+
+</div>
+
+
+
+<!-- ======================================================
+     RESUMO LATERAL
+     ====================================================== -->
+
+<aside class="config-summary">
+
+    <div class="config-summary-sticky">
+
+        <span class="eyebrow">
+            RESUMO
+        </span>
+
+        <h2>
+            Sua solução
+        </h2>
+
+        <p class="config-summary-intro">
+            Confira os principais itens da configuração atual.
+        </p>
+
+
+        <div class="summary-block">
+
+            <div class="summary-title">
+                <strong>Módulos selecionados</strong>
+                <span>3 módulos</span>
+            </div>
+
+            <ul class="summary-modules">
+                <li>Educação Financeira</li>
+                <li>Segurança Financeira</li>
+                <li>Reembolso Inteligente</li>
+            </ul>
+
+        </div>
+
+
+        <div class="summary-block">
+
+            <strong>Canais</strong>
+
+            <div
+                class="summary-tags"
+                id="summary-channels"
+            ></div>
+
+        </div>
+
+
+        <div class="summary-block">
+
+            <strong>Integrações</strong>
+
+            <div
+                class="summary-tags"
+                id="summary-integrations"
+            ></div>
+
+        </div>
+
+
+        <div class="summary-block summary-configurations">
+
+            <strong>Configurações</strong>
+
+            <dl>
+
+                <div>
+                    <dt>Usuários</dt>
+                    <dd id="summary-users"></dd>
+                </div>
+
+                <div>
+                    <dt>Dados</dt>
+                    <dd id="summary-data"></dd>
+                </div>
+
+                <div>
+                    <dt>RAG</dt>
+                    <dd id="summary-rag"></dd>
+                </div>
+<div>
+    <dt>Atualização RAG</dt>
+    <dd id="summary-rag-update"></dd>
+</div>
+
+            </dl>
+
+        </div>
+
+
+        <div class="summary-block">
+
+            <strong>Recursos ativados</strong>
+
+            <ul
+                class="summary-resources"
+                id="summary-resources"
+            ></ul>
+
+        </div>
+
+
+        <div class="summary-complexity">
+
+    <span class="summary-complexity-label">
+        DIMENSIONAMENTO
+    </span>
+
+    <div class="summary-complexity-grid">
+
+        <div>
+            <span>Módulos</span>
+            <strong id="summary-count-modules">3</strong>
+        </div>
+
+        <div>
+            <span>Canais</span>
+            <strong id="summary-count-channels">0</strong>
+        </div>
+
+        <div>
+            <span>Integrações</span>
+            <strong id="summary-count-integrations">0</strong>
+        </div>
+
+        <div>
+            <span>Recursos</span>
+            <strong id="summary-count-resources">0</strong>
+        </div>
+
+    </div>
+
+
+    <div class="summary-complexity-result">
+
+        <div>
+            <span>
+                Complexidade da solução
+            </span>
+
+            <strong id="summary-complexity-level">
+                Média
+            </strong>
+        </div>
+
+        <span
+            class="summary-complexity-badge"
+            id="summary-complexity-badge"
+        >
+            MÉDIA
+        </span>
+
+    </div>
+
+</div>
+
+
+<div class="summary-estimate">
+
+    <span class="summary-estimate-label">
+        ESTIMATIVA ATUAL
+    </span>
+
+    <div class="summary-estimate-plan">
+
+        <span>
+            Plano sugerido
+        </span>
+
+        <strong id="summary-plan">
+            Business
+        </strong>
+
+    </div>
+
+    <div
+    class="summary-pricing-breakdown"
+    id="summary-pricing-breakdown"
+>
+
+    <div>
+        <span>Base do plano</span>
+        <strong id="summary-price-base">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Módulos adicionais</span>
+        <strong id="summary-price-modules">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Canais adicionais</span>
+        <strong id="summary-price-channels">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Integrações adicionais</span>
+        <strong id="summary-price-integrations">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Recursos adicionais</span>
+        <strong id="summary-price-resources">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Capacidade de usuários</span>
+        <strong id="summary-price-users">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Volume de dados</span>
+        <strong id="summary-price-data">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Base de conhecimento RAG</span>
+        <strong id="summary-price-rag">R$ 0</strong>
+    </div>
+
+    <div>
+        <span>Atualização da base RAG</span>
+        <strong id="summary-price-rag-update">R$ 0</strong>
+    </div>
+
+</div>
+
+
+<div class="summary-estimate-price">
+
+        <strong id="summary-estimated-price">
+            A partir de R$ 3.490/mês
+        </strong>
+
+    </div>
+
+    <p>
+        Estimativa demonstrativa baseada na configuração atual.
+        O valor final será detalhado na proposta.
+    </p>
+
+</div>
+
+
+<div class="summary-next">
+
+            <span class="summary-next-icon">⚡</span>
+
+            <div>
+                <strong>Próximo passo</strong>
+
+                <p>
+                    Revise a configuração antes de confirmar sua solução.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+</section>
+
+
+
+<footer class="footer">
+
+    <div class="container footer-grid">
+
+        <div>
+
+            <a class="brand" href="/">
+
+                <img
+                    class="brand-logo"
+                    src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+                    alt="Sabino.AI"
+                >
+
+                <span>Sabino.AI</span>
+
+            </a>
+
+            <p>
+                Tecnologia e inteligência para conectar
+                pessoas, negócios e soluções.
+            </p>
+
+        </div>
+
+
+        <div>
+            <strong>Plataforma</strong>
+            <a href="/">Início</a>
+            <a href="/modulos">Módulos</a>
+            <a href="/#inna">INNA Assistant</a>
+        </div>
+
+
+        <div>
+            <strong>Empresa</strong>
+            <a href="#">Sobre</a>
+            <a href="#">Privacidade</a>
+            <a href="#">Termos</a>
+        </div>
+
+
+        <div>
+            <strong>Recursos</strong>
+            <a href="#">Documentação</a>
+            <a href="#">API</a>
+            <a href="#">Status</a>
+        </div>
+
+
+        <div>
+            <strong>Segurança</strong>
+            <span class="security-badge">🔒 Plataforma segura</span>
+            <span class="security-badge">🛡 LGPD</span>
+        </div>
+
+    </div>
+
+</footer>
+
+
+</main>
+
+
+    <script
+        src="/static/js/sabino-global-brand.js?v=1"
+        defer
+    ></script>
+
+    <script
+        src="/static/js/sabino-global-brand-v2.js?v=2"
+        defer
+    ></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

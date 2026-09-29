@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Finalizar contratação | Sabino.AI</title>
+
+<style>
+
+:root {
+    --bg: #070b0d;
+    --panel: #0d1417;
+    --panel2: #090f12;
+    --border: #2b363c;
+    --border-soft: rgba(255,255,255,.07);
+
+    --yellow: #ffd044;
+    --green: #19d99a;
+    --muted: #99a8ae;
+    --text: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(255,208,68,.055),
+            transparent 40%
+        ),
+        var(--bg);
+
+    color: var(--text);
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.topbar {
+    height: 70px;
+
+    padding:
+        0 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom:
+        1px solid var(--border);
+
+    background:
+        rgba(7,11,13,.97);
+}
+
+.brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    color: #fff;
+
+    text-decoration: none;
+
+    font-size: 18px;
+
+    font-weight: 900;
+}
+
+.brand-mark {
+    width: 38px;
+    height: 38px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 10px;
+
+    background:
+        var(--yellow);
+
+    color:
+        #080c0e;
+
+    font-size: 17px;
+
+    font-weight: 1000;
+}
+
+.back {
+    min-height: 41px;
+
+    padding:
+        8px 14px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    border:
+        1px solid #344047;
+
+    border-radius: 9px;
+
+    color:
+        #e3e8ea;
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+/* ==========================================================
+   PAGE
+========================================================== */
+
+.page {
+    width:
+        min(
+            1240px,
+            calc(100% - 36px)
+        );
+
+    margin:
+        0 auto;
+
+    padding:
+        62px
+        0
+        90px;
+}
+
+.badge {
+    display: inline-flex;
+
+    padding:
+        6px 10px;
+
+    border:
+        1px solid
+        rgba(255,208,68,.38);
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(255,208,68,.055);
+
+    color:
+        var(--yellow);
+
+    font-size:
+        9px;
+
+    font-weight:
+        950;
+}
+
+h1 {
+    margin:
+        17px
+        0
+        9px;
+
+    font-size:
+        clamp(
+            39px,
+            5vw,
+            58px
+        );
+
+    line-height:
+        1.04;
+
+    letter-spacing:
+        -1px;
+}
+
+.subtitle {
+    max-width:
+        760px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        14px;
+
+    line-height:
+        1.6;
+}
+
+/* ==========================================================
+   PROGRESSO
+========================================================== */
+
+.progress {
+    margin-top:
+        34px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0,1fr)
+        );
+
+    gap:
+        8px;
+}
+
+.progress-item {
+    padding-top:
+        9px;
+
+    border-top:
+        2px solid #283339;
+
+    color:
+        #65747b;
+
+    font-size:
+        9px;
+
+    font-weight:
+        800;
+}
+
+.progress-item.done {
+    border-color:
+        var(--green);
+
+    color:
+        var(--green);
+}
+
+.progress-item.current {
+    border-color:
+        var(--yellow);
+
+    color:
+        var(--yellow);
+}
+
+/* ==========================================================
+   LAYOUT
+========================================================== */
+
+.content {
+    margin-top:
+        38px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0,1.15fr)
+        minmax(340px,.85fr);
+
+    gap:
+        20px;
+}
+
+.card {
+    padding:
+        27px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #10181c,
+            #0a1013
+        );
+}
+
+.card h2 {
+    margin:
+        0
+        0
+        6px;
+
+    font-size:
+        22px;
+}
+
+.card-copy {
+    color:
+        var(--muted);
+
+    font-size:
+        11px;
+
+    line-height:
+        1.55;
+}
+
+/* ==========================================================
+   BLOCOS
+========================================================== */
+
+.block {
+    margin-top:
+        23px;
+
+    padding-top:
+        21px;
+
+    border-top:
+        1px solid
+        var(--border-soft);
+}
+
+.block-label {
+    margin-bottom:
+        11px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        9px;
+
+    font-weight:
+        900;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .8px;
+}
+
+.plan-name {
+    color:
+        var(--yellow);
+
+    font-size:
+        29px;
+
+    font-weight:
+        950;
+}
+
+/* ==========================================================
+   LINHAS
+========================================================== */
+
+.rows {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        8px;
+}
+
+.row {
+    min-height:
+        43px;
+
+    padding:
+        10px 12px;
+
+    display:
+        flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap:
+        15px;
+
+    border:
+        1px solid #2b363c;
+
+    border-radius:
+        8px;
+
+    background:
+        var(--panel2);
+}
+
+.row-label {
+    color:
+        var(--muted);
+
+    font-size:
+        10px;
+}
+
+.row-value {
+    color:
+        #ffffff;
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+
+    text-align:
+        right;
+}
+
+/* ==========================================================
+   ADDONS
+========================================================== */
+
+.addon-row {
+    justify-content:
+        flex-start;
+}
+
+.check {
+    width: 20px;
+    height: 20px;
+
+    flex:
+        0 0 20px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(25,217,154,.10);
+
+    color:
+        var(--green);
+
+    font-size:
+        8px;
+
+    font-weight:
+        950;
+}
+
+.no-addon {
+    color:
+        var(--muted);
+
+    font-size:
+        10px;
+
+    line-height:
+        1.5;
+}
+
+/* ==========================================================
+   PAINEL VALORES
+========================================================== */
+
+.price-card {
+    border-color:
+        rgba(255,208,68,.42);
+}
+
+.price {
+    color:
+        var(--yellow);
+
+    font-weight:
+        900;
+}
+
+.total {
+    margin-top:
+        14px;
+
+    padding-top:
+        16px;
+
+    display:
+        flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    border-top:
+        1px solid
+        var(--border-soft);
+}
+
+.total-label {
+    font-size:
+        14px;
+
+    font-weight:
+        900;
+}
+
+.total-value {
+    color:
+        var(--yellow);
+
+    font-size:
+        20px;
+
+    font-weight:
+        950;
+}
+
+/* ==========================================================
+   AVISO
+========================================================== */
+
+.notice {
+    margin-top:
+        19px;
+
+    padding:
+        13px;
+
+    border:
+        1px solid
+        rgba(255,208,68,.26);
+
+    border-radius:
+        9px;
+
+    background:
+        rgba(255,208,68,.035);
+
+    color:
+        #bbc6ca;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.6;
+}
+
+.notice strong {
+    color:
+        var(--yellow);
+}
+
+/* ==========================================================
+   CONFIRMAÇÃO
+========================================================== */
+
+.confirm {
+    margin-top:
+        20px;
+
+    padding:
+        14px;
+
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    gap:
+        10px;
+
+    border:
+        1px solid #303b41;
+
+    border-radius:
+        9px;
+
+    background:
+        rgba(255,255,255,.015);
+}
+
+.confirm input {
+    margin-top:
+        2px;
+
+    accent-color:
+        var(--yellow);
+}
+
+.confirm label {
+    color:
+        #bdc8cb;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.55;
+}
+
+.error {
+    display: none;
+
+    margin-top:
+        12px;
+
+    padding:
+        10px;
+
+    border:
+        1px solid
+        rgba(255,90,99,.30);
+
+    border-radius:
+        8px;
+
+    background:
+        rgba(255,90,99,.05);
+
+    color:
+        #ff9da2;
+
+    font-size:
+        10px;
+}
+
+.error.active {
+    display:
+        block;
+}
+
+/* ==========================================================
+   AÇÕES
+========================================================== */
+
+.actions {
+    margin-top:
+        20px;
+
+    display:
+        flex;
+
+    gap:
+        9px;
+}
+
+.button {
+    min-height:
+        48px;
+
+    padding:
+        10px 18px;
+
+    display:
+        inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius:
+        9px;
+
+    font-size:
+        11px;
+
+    font-weight:
+        950;
+
+    text-decoration:
+        none;
+
+    cursor:
+        pointer;
+}
+
+.secondary {
+    border:
+        1px solid #354148;
+
+    background:
+        #0b1114;
+
+    color:
+        #e4eaec;
+}
+
+.primary {
+    flex: 1;
+
+    border:
+        1px solid var(--yellow);
+
+    background:
+        var(--yellow);
+
+    color:
+        #070b0d;
+}
+
+/* ==========================================================
+   RESPONSIVO
+========================================================== */
+
+@media (max-width: 850px) {
+
+    .content {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+@media (max-width: 620px) {
+
+    .topbar {
+        padding:
+            0 13px;
+    }
+
+    .page {
+        padding-top:
+            38px;
+    }
+
+    .progress {
+        grid-template-columns:
+            1fr
+            1fr;
+    }
+
+    .actions {
+        flex-direction:
+            column;
+    }
+
+    .button {
+        width:
+            100%;
+    }
+
+}
+
+</style>
+
+<style id="SABINO_REMOVE_MENU_LETTERS_V1">
+.nav-icon,
+.nav-badge,
+.menu-icon,
+.menu-badge,
+.sidebar-icon,
+.sidebar-badge {
+    display: none !important;
+}
+
+.nav-link,
+.sidebar-link,
+.menu-link {
+    gap: 0 !important;
+    padding-left: 14px !important;
+}
+</style>
+<link rel="stylesheet" href="/static/css/sabino-locale-core.css?v=browserany_manual3_20260917_134732" data-sabino-global-locale="v1">
+<link rel="stylesheet" href="/static/css/sabino-currency-core.css" data-sabino-global-currency="v1">
+
+<link rel="stylesheet" href="/static/css/sabino-language-button.css?v=20260917_140515">
+<script defer src="/static/js/sabino-language-button.js?v=20260917_140515"></script>
+
+<link rel="stylesheet"
+      href="/static/css/=20260917_181514">
+
+<script defer
+        src="/static/js/=20260917_181514">
+</script>
+
+
+<link
+    rel="stylesheet"
+    href="/static/css/sabino-finance-unified.css?v=20260917_222806"
+>
+
+<script
+    defer
+    src="/static/js/sabino-finance-unified.js?v=20260917_222806">
+</script>
+</head>
+
+<body>
+
+
+<header class="topbar">
+
+    <a
+        href="/"
+        class="brand"
+    >
+
+        <span class="brand-mark">
+            S
+        </span>
+
+        Sabino.AI
+
+    </a>
+
+
+    <a
+        id="backButton"
+        href="#"
+        class="back"
+    >
+        ← Voltar ao cadastro
+    </a>
+
+</header>
+
+
+<main class="page">
+
+
+    <span class="badge">
+        ETAPA 4
+    </span>
+
+
+    <h1>
+        Finalize sua contratação.
+    </h1>
+
+
+    <div class="subtitle">
+
+        Faça uma última conferência.
+        Nenhuma cobrança será realizada nesta versão da plataforma.
+
+    </div>
+
+
+    <div class="progress">
+
+        <div class="progress-item done">
+            1. Plano
+        </div>
+
+        <div class="progress-item done">
+            2. Revisão
+        </div>
+
+        <div class="progress-item done">
+            3. Cadastro
+        </div>
+
+        <div class="progress-item current">
+            4. Contratação
+        </div>
+
+    </div>
+
+
+    <div class="content">
+
+
+        <!-- ===============================================
+             RESUMO PRINCIPAL
+        ================================================ -->
+
+        <section class="card">
+
+            <h2>
+                Confira sua contratação
+            </h2>
+
+            <div class="card-copy">
+
+                Estes são os dados que serão usados quando conectarmos
+                o fluxo ao backend e ao banco de dados.
+
+            </div>
+
+
+            <div class="block">
+
+                <div class="block-label">
+                    Plano selecionado
+                </div>
+
+                <div
+                    id="planName"
+                    class="plan-name"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="block">
+
+                <div class="block-label">
+                    Temas Especiais
+                </div>
+
+                <div
+                    id="addons"
+                    class="rows"
+                >
+                </div>
+
+            </div>
+
+
+            <div class="block">
+
+                <div class="block-label">
+                    Dados da conta
+                </div>
+
+
+                <div class="rows">
+
+                    <div class="row">
+
+                        <span class="row-label">
+                            Nome
+                        </span>
+
+                        <span
+                            id="customerName"
+                            class="row-value"
+                        >
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <span class="row-label">
+                            E-mail
+                        </span>
+
+                        <span
+                            id="customerEmail"
+                            class="row-value"
+                        >
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <span class="row-label">
+                            Telefone
+                        </span>
+
+                        <span
+                            id="customerPhone"
+                            class="row-value"
+                        >
+                            Não informado
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="confirm">
+
+                <input
+                    id="contractConfirm"
+                    type="checkbox"
+                >
+
+                <label for="contractConfirm">
+
+                    Confirmo que revisei meus dados, meu plano e
+                    os Temas Especiais selecionados e desejo
+                    finalizar esta simulação de contratação.
+
+                </label>
+
+            </div>
+
+
+            <div
+                id="error"
+                class="error"
+            >
+            </div>
+
+
+            <div class="actions">
+
+                <a
+                    id="editButton"
+                    href="#"
+                    class="button secondary"
+                >
+                    ← Voltar
+                </a>
+
+
+                <button
+                    id="finishButton"
+                    type="button"
+                    class="button primary"
+                >
+                    Finalizar contratação →
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ===============================================
+             VALORES
+        ================================================ -->
+
+        <aside class="card price-card">
+
+            <h2>
+                Resumo de valores
+            </h2>
+
+            <div class="card-copy">
+
+                Os valores serão definidos antes da integração
+                com pagamento.
+
+            </div>
+
+
+            <div class="block">
+
+                <div class="rows">
+
+                    <div class="row">
+
+                        <span
+                            id="pricePlanName"
+                            class="row-label"
+                        >
+                            Plano
+                        </span>
+
+                        <span class="row-value price">
+                            A definir
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="addonPrices"
+                        class="rows"
+                    >
+                    </div>
+
+                </div>
+
+
+                <div class="total">
+
+                    <span class="total-label">
+                        Total
+                    </span>
+
+                    <span class="total-value">
+                        A definir
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="notice">
+
+                <strong>
+                    Sem cobrança nesta etapa.
+                </strong>
+
+                <br><br>
+
+                Esta tela conclui apenas o fluxo visual.
+                Depois integraremos PostgreSQL/Neon,
+                assinatura, pagamento e permissões.
+
+            </div>
+
+        </aside>
+
+
+    </div>
+
+</main>
+
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    var query =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    var draft = {};
+
+
+    try {
+
+        draft =
+            JSON.parse(
+                sessionStorage.getItem(
+                    "sabinoFinanceiroContratacao"
+                ) || "{}"
+            );
+
+    }
+    catch (error) {
+
+        draft = {};
+
+    }
+
+
+    var plan =
+        draft.plano ||
+        query.get("plano") ||
+        "Evolução";
+
+
+    var origin =
+        draft.origem ||
+        query.get("origem") ||
+        "demo";
+
+
+    var addons =
+        Array.isArray(
+            draft.addons
+        )
+            ? draft.addons
+            : [];
+
+
+    if (
+        addons.length === 0 &&
+        query.get("addons")
+    ) {
+
+        addons =
+            query
+                .get("addons")
+                .split("|")
+                .filter(Boolean);
+
+    }
+
+
+    /* ================================================
+       PREENCHER
+    ================================================= */
+
+    document.getElementById(
+        "planName"
+    ).textContent =
+        plan;
+
+
+    document.getElementById(
+        "pricePlanName"
+    ).textContent =
+        "Plano " +
+        plan;
+
+
+    document.getElementById(
+        "customerName"
+    ).textContent =
+        draft.nome ||
+        "Não informado";
+
+
+    document.getElementById(
+        "customerEmail"
+    ).textContent =
+        draft.email ||
+        "Não informado";
+
+
+    document.getElementById(
+        "customerPhone"
+    ).textContent =
+        draft.telefone ||
+        "Não informado";
+
+
+    /* ================================================
+       ADDONS
+    ================================================= */
+
+    var addonsBox =
+        document.getElementById(
+            "addons"
+        );
+
+
+    var addonPrices =
+        document.getElementById(
+            "addonPrices"
+        );
+
+
+    if (
+        addons.length === 0
+    ) {
+
+        addonsBox.innerHTML =
+            '<div class="no-addon">' +
+                'Nenhum Tema Especial selecionado.' +
+            '</div>';
+
+    }
+    else {
+
+        addons.forEach(
+            function (addon) {
+
+                var row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "row addon-row";
+
+
+                row.innerHTML =
+                    '<span class="check">✓</span>' +
+                    '<span class="row-value"></span>';
+
+
+                row.lastElementChild.textContent =
+                    addon;
+
+
+                addonsBox.appendChild(
+                    row
+                );
+
+
+                var priceRow =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                priceRow.className =
+                    "row";
+
+
+                var name =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                name.className =
+                    "row-label";
+
+
+                name.textContent =
+                    addon;
+
+
+                var value =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                value.className =
+                    "row-value price";
+
+
+                value.textContent =
+                    "A definir";
+
+
+                priceRow.appendChild(
+                    name
+                );
+
+
+                priceRow.appendChild(
+                    value
+                );
+
+
+                addonPrices.appendChild(
+                    priceRow
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ================================================
+       VOLTAR
+    ================================================= */
+
+    var back =
+        new URLSearchParams();
+
+
+    back.set(
+        "plano",
+        plan
+    );
+
+
+    back.set(
+        "origem",
+        origin
+    );
+
+
+    if (
+        addons.length
+    ) {
+
+        back.set(
+            "addons",
+            addons.join("|")
+        );
+
+    }
+
+
+    var backUrl =
+        "/financeiro/contratacao/cadastro?" +
+        back.toString();
+
+
+    document.getElementById(
+        "backButton"
+    ).href =
+        backUrl;
+
+
+    document.getElementById(
+        "editButton"
+    ).href =
+        backUrl;
+
+
+    /* ================================================
+       FINALIZAR VISUAL
+    ================================================= */
+
+    document.getElementById(
+        "finishButton"
+    ).addEventListener(
+        "click",
+        function () {
+
+            var confirm =
+                document.getElementById(
+                    "contractConfirm"
+                );
+
+
+            var error =
+                document.getElementById(
+                    "error"
+                );
+
+
+            error.classList.remove(
+                "active"
+            );
+
+
+            if (
+                !confirm.checked
+            ) {
+
+                error.textContent =
+                    "Confirme a revisão das informações antes de finalizar.";
+
+
+                error.classList.add(
+                    "active"
+                );
+
+                return;
+
+            }
+
+
+            var finalData = {
+
+                nome:
+                    draft.nome || "",
+
+                email:
+                    draft.email || "",
+
+                telefone:
+                    draft.telefone || "",
+
+                plano:
+                    plan,
+
+                addons:
+                    addons,
+
+                origem:
+                    origin,
+
+                status:
+                    "simulacao_concluida"
+
+            };
+
+
+            sessionStorage.setItem(
+                "sabinoFinanceiroContratacaoFinal",
+                JSON.stringify(
+                    finalData
+                )
+            );
+
+
+            window.location.href =
+                "/financeiro/contratacao/concluida";
+
+        }
+    );
+
+})();
+
+</script>
+
+<script src="/static/js/sabino-locale-core.js?v=internal12_20260917_140006" data-sabino-global-locale="v1"></script>
+<script src="/static/js/sabino-global-i18n-runtime.js" data-sabino-global-i18n="v1"></script>
+<script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
+<script src="/static/js/sabino-money-locale-runtime.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

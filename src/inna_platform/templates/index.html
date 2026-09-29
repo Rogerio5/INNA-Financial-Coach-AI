@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ platform_name }} | Plataforma Inteligente
+    </title>
+
+    <meta
+        name="description"
+        content="Plataforma inteligente de IA com módulos especializados coordenados pela INNA."
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/css/platform.css') }}"
+    >
+
+    <script
+        src="https://unpkg.com/htmx.org@2.0.6"
+        defer
+    ></script>
+
+    <script
+        src="{{ url_for('static', path='/js/platform.js') }}"
+        defer
+    ></script>
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand.css?v=1"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="/static/images/sabino-s-logo.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand-v2.css?v=2"
+    >
+
+<link
+    rel="stylesheet"
+    href="/static/css/home-responsive-v6.css?v=6"
+>
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <a class="brand brand-header" href="/">
+    <img
+        class="sabino-symbol"
+        src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+        alt="Sabino.AI"
+    >
+    <span class="sabino-wordmark">Sabino.AI</span>
+</a>
+
+    <nav class="nav">
+        <a class="active" href="#inicio">Início</a>
+        <a href="#solucoes">Soluções</a>
+        <a href="#modulos">Módulos</a>
+        <a href="#inna">INNA Assistant</a>
+        <a href="#recursos">Recursos</a>
+        <a href="#empresa">Empresa</a>
+        <a href="#contato">Contato</a>
+    </nav>
+
+    <div class="header-actions">
+
+        <div class="language-selector">
+
+            <span class="language-globe">◎</span>
+
+            <select
+    id="platform-language"
+    aria-label="Selecionar idioma"
+>
+    <option value="pt-BR">BR Português Brasil</option>
+    <option value="en-US">US English US</option>
+    <option value="en-GB">GB English UK</option>
+    <option value="es">ES Español</option>
+    <option value="fr">FR Français</option>
+    <option value="de">DE Deutsch</option>
+    <option value="it">IT Italiano</option>
+    <option value="ro">RO Română</option>
+    <option value="uk">UA Українська</option>
+    <option value="ru">RU Русский</option>
+    <option value="ar">SA العربية</option>
+    <option value="de-CH">CH Schweiz</option>
+</select>
+
+        </div>
+
+        <button class="btn-secondary">
+            Entrar
+        </button>
+
+        <a class="btn-primary" href="#contato">
+            Falar com um especialista
+        </a>
+    </div>
+
+</header>
+
+
+<main>
+
+<section
+    class="hero container"
+    id="inicio"
+>
+
+    <div class="hero-content">
+
+        <div class="eyebrow">
+            ✦ PLATAFORMA INTELIGENTE PARA EMPRESAS
+        </div>
+
+        <h1>
+            Sabino.AI:
+            <span>Plataforma Inteligente</span>
+            para Empresas e Pessoas
+        </h1>
+
+        <p class="hero-description">
+            Conecte dados, automações e inteligência artificial
+            em uma plataforma modular, segura e escalável.
+            A INNA orquestra agentes, informações e soluções para
+            transformar necessidades em decisões inteligentes,
+            ações coordenadas e resultados reais.
+        </p>
+
+        <div class="hero-actions">
+
+            <a class="btn-primary large" href="#modulos">
+                Ver módulos
+            </a>
+
+            <a class="btn-link" href="#como-funciona">
+                Como funciona →
+            </a>
+
+        </div>
+
+
+        <div class="hero-metrics">
+
+            <div>
+                <strong>IA</strong>
+                <span>Orquestração inteligente</span>
+            </div>
+
+            <div>
+                <strong>24/7</strong>
+                <span>Plataforma disponível</span>
+            </div>
+
+            <div>
+                <strong>RAG</strong>
+                <span>Conhecimento contextual</span>
+            </div>
+
+            <div>
+                <strong>HITL</strong>
+                <span>Supervisão humana</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <article
+    class="inna-card inna-showcase"
+    id="inna"
+>
+
+    <!-- ESQUERDA -->
+    <div class="inna-showcase-info">
+
+        <span class="mini-label">
+            ● INNA
+        </span>
+
+        <h2>INNA</h2>
+
+        <p class="inna-subtitle">
+            Sua diretora de IA
+        </p>
+
+        <p class="inna-description">
+            A A INNA orquestra informações, agentes,
+            automações e módulos inteligentes da plataforma.
+        </p>
+
+        <ul class="inna-capabilities">
+            <li>Orquestração de módulos inteligentes</li>
+            <li>Roteamento entre agentes especializados</li>
+            <li>Memória e contexto compartilhado</li>
+            <li>RAG e recuperação de conhecimento</li>
+            <li>Segurança, políticas e governança</li>
+            <li>Human-in-the-Loop</li>
+        </ul>
+
+        <div class="inna-status">
+            <span></span>
+            INNA online e pronta para ajudar
+        </div>
+
+    </div>
+
+
+    <!-- CENTRO -->
+    <div class="inna-showcase-center">
+
+        <div class="inna-image-glow"></div>
+
+        <img
+            class="inna-showcase-photo"
+            src="{{ url_for('static', path='/images/inna_hero.png') }}"
+            alt="INNA - Diretora de Inteligência Artificial"
+        >
+
+    </div>
+
+
+    <!-- DIREITA -->
+    <div class="inna-showcase-channels">
+
+        <h3>Canais da plataforma</h3>
+
+        <div class="channel-item">
+            <span class="channel-icon">◉</span>
+
+            <div>
+                <strong>Web App</strong>
+                <small>Acesse a plataforma</small>
+            </div>
+        </div>
+
+
+        <div class="channel-item">
+            <span class="channel-icon">➤</span>
+
+            <div>
+                <strong>Telegram</strong>
+                <small>Atendimento integrado</small>
+            </div>
+        </div>
+
+
+        <div class="channel-item">
+            <span class="channel-icon">✉</span>
+
+            <div>
+                <strong>E-mail</strong>
+                <small>Comunicação inteligente</small>
+            </div>
+        </div>
+
+
+        <div class="channel-item">
+            <span class="channel-icon">API</span>
+
+            <div>
+                <strong>API REST</strong>
+                <small>Integração com sistemas</small>
+            </div>
+        </div>
+
+
+        <div class="channel-item">
+            <span class="channel-icon">◌</span>
+
+            <div>
+                <strong>Chat online</strong>
+                <small>INNA Assistant</small>
+            </div>
+        </div>
+
+    </div>
+
+</article>
+
+</section>
+
+
+
+<section
+    class="workflow container"
+    id="como-funciona"
+>
+
+    <div class="section-title">
+        <span>Como funciona</span>
+    </div>
+
+
+    <div class="workflow-grid">
+
+        <article class="workflow-item">
+            <span class="number">1</span>
+            <div class="workflow-icon">▦</div>
+
+            <div>
+                <h3>Escolha os módulos</h3>
+                <p>
+                    Selecione as soluções mais adequadas
+                    às necessidades do seu negócio.
+                </p>
+            </div>
+        </article>
+
+
+        <article class="workflow-item">
+            <span class="number">2</span>
+            <div class="workflow-icon">⚡</div>
+
+            <div>
+                <h3>Conecte e integre</h3>
+                <p>
+                    Integre APIs, dados, sistemas,
+                    canais e ferramentas em um único ambiente.
+                </p>
+            </div>
+        </article>
+
+
+        <article class="workflow-item">
+            <span class="number">3</span>
+            <div class="workflow-icon">◈</div>
+
+            <div>
+                <h3>A INNA orquestra</h3>
+                <p>
+                    A INNA direciona cada tarefa para
+                    o módulo, agente ou fluxo mais adequado.
+                </p>
+            </div>
+        </article>
+
+
+        <article class="workflow-item">
+            <span class="number">4</span>
+            <div class="workflow-icon">✓</div>
+
+            <div>
+                <h3>Acompanhe resultados</h3>
+                <p>
+                    Monitore métricas, decisões, auditoria,
+                    desempenho e evolução da operação.
+                </p>
+            </div>
+        </article>
+
+    </div>
+
+</section>
+
+
+
+<section
+    class="solutions container"
+    id="solucoes"
+>
+
+    <div class="section-heading">
+
+        <div>
+            <span class="eyebrow">
+                SOLUÇÕES CORPORATIVAS
+            </span>
+
+            <h2>
+                Inteligência aplicada à operação, decisão e crescimento
+            </h2>
+        </div>
+
+    </div>
+
+
+    <div class="solutions-grid">
+
+        <article class="solution-card">
+            <div class="solution-icon">◎</div>
+            <h3>Automação e eficiência operacional</h3>
+
+            <p>
+                Automatize fluxos, reduza tarefas manuais e
+                aumente a produtividade com processos inteligentes e rastreáveis.
+            </p>
+        </article>
+
+
+        <article class="solution-card">
+            <div class="solution-icon">▥</div>
+            <h3>Decisões orientadas por dados</h3>
+
+            <p>
+                Consolide informações, indicadores e análises para
+                apoiar decisões mais rápidas, consistentes e mensuráveis.
+            </p>
+        </article>
+
+
+        <article class="solution-card">
+            <div class="solution-icon">⌘</div>
+            <h3>Integração e arquitetura escalável</h3>
+
+            <p>
+                Conecte APIs, dados, sistemas e agentes em uma
+                arquitetura modular preparada para crescer com a operação.
+            </p>
+        </article>
+
+
+        <article class="solution-card">
+            <div class="solution-icon">◇</div>
+            <h3>Segurança, governança e confiança</h3>
+
+            <p>
+                Aplique guardrails, auditoria, HITL, políticas e
+                monitoramento contínuo para operar IA com controle e transparência.
+            </p>
+        </article>
+
+    </div>
+
+</section>
+
+
+
+<section
+    class="modules container"
+    id="modulos"
+>
+
+    <div class="section-heading modules-heading">
+
+        <div>
+            <span class="eyebrow">
+                MÓDULOS INTELIGENTES
+            </span>
+
+            <h2>
+                Soluções especializadas,
+                orquestradas pela INNA
+            </h2>
+
+            <p class="modules-intro">
+                Cada módulo concentra inteligência, regras e recursos
+                específicos para uma área de negócio, enquanto a INNA
+                coordena a experiência de forma integrada.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="module-preview-grid module-featured-grid">
+
+        <article class="module-preview">
+
+            <span class="module-number">01</span>
+
+            <h3>Educação Financeira</h3>
+
+            <p>
+                Orientação financeira, diagnóstico, orçamento,
+                metas, relatórios e recomendações personalizadas.
+            </p>
+
+            <a class="module-link" href="#">
+                Conhecer módulo →
+            </a>
+
+        </article>
+
+
+        <article class="module-preview">
+
+            <span class="module-number">02</span>
+
+            <h3>Segurança Financeira</h3>
+
+            <p>
+                Análise de riscos, comportamento, alertas,
+                prevenção de fraudes e inteligência de segurança.
+            </p>
+
+            <a class="module-link" href="#">
+                Conhecer módulo →
+            </a>
+
+        </article>
+
+
+        <article class="module-preview">
+
+            <span class="module-number">03</span>
+
+            <h3>Reembolso Inteligente</h3>
+
+            <p>
+                Análise documental, regras de negócio, RAG,
+                validações, guardrails e automação de solicitações.
+            </p>
+
+            <a class="module-link" href="#">
+                Conhecer módulo →
+            </a>
+
+        </article>
+
+    </div>
+
+
+    <div class="modules-cta">
+
+        <a
+            class="btn-primary large"
+            href="/modulos"
+        >
+            Explorar todos os módulos →
+        </a>
+
+    </div>
+
+</section>
+
+
+
+<section
+    class="newsletter container"
+    id="contato"
+>
+
+    <div>
+        <span class="eyebrow">
+            SABINO.AI
+        </span>
+
+        <h2>
+            Receba novidades e insights
+        </h2>
+
+        <p>
+            Acompanhe a evolução da plataforma
+            e novos módulos de inteligência artificial.
+        </p>
+    </div>
+
+
+    <form
+        class="newsletter-form"
+        onsubmit="return false;"
+    >
+
+        <input
+            type="email"
+            placeholder="Seu melhor e-mail"
+            aria-label="Seu e-mail"
+        >
+
+        <button
+            class="btn-primary"
+            type="submit"
+        >
+            Inscrever-se
+        </button>
+
+    </form>
+
+</section>
+
+</main>
+
+
+
+<footer class="footer">
+
+    <div class="container footer-grid">
+
+        <div>
+            <a class="brand brand-header" href="/">
+    <img
+        class="sabino-symbol"
+        src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+        alt="Sabino.AI"
+    >
+    <span class="sabino-wordmark">Sabino.AI</span>
+</a>
+
+            <p>
+                Tecnologia e inteligência para transformar
+                dados em decisões e soluções extraordinárias.
+            </p>
+        </div>
+
+
+        <div>
+            <strong>Plataforma</strong>
+            <a href="#solucoes">Soluções</a>
+            <a href="#modulos">Módulos</a>
+            <a href="#inna">INNA Assistant</a>
+        </div>
+
+
+        <div id="empresa">
+            <strong>Empresa</strong>
+            <a href="#">Sobre</a>
+            <a href="#">Carreiras</a>
+            <a href="#">Privacidade</a>
+        </div>
+
+
+        <div id="recursos">
+            <strong>Recursos</strong>
+            <a href="#">Documentação</a>
+            <a href="#">API</a>
+            <a href="#">Status</a>
+        </div>
+
+
+        <div>
+            <strong>Segurança</strong>
+
+            <span class="security-badge">
+                🔒 Plataforma segura
+            </span>
+
+            <span class="security-badge">
+                🛡 LGPD
+            </span>
+        </div>
+
+    </div>
+
+</footer>
+
+
+    <script
+        src="/static/js/sabino-global-brand.js?v=1"
+        defer
+    ></script>
+
+    <script
+        src="/static/js/sabino-global-brand-v2.js?v=2"
+        defer
+    ></script>
+
+<script
+    src="/static/js/home-responsive-v6.js?v=6"
+    defer
+></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

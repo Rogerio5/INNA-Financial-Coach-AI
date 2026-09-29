@@ -1,0 +1,6857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Finanças Familiares | Sabino.AI</title>
+
+<style id="SABINO_FINANCE_FAMILY_V1_STYLE">
+
+:root{
+    --bg:#080b0d;
+    --panel:#111619;
+    --border:#293136;
+    --text:#ffffff;
+    --muted:#96a0a6;
+    --gold:#d9b441;
+    --green:#49c986;
+    --blue:#62a9e8;
+    --red:#e66b6b;
+}
+
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Segoe UI,Arial,sans-serif;
+}
+
+.layout{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:280px 1fr;
+}
+
+.side{
+    background:#090d0f;
+    border-right:1px solid #252c30;
+}
+
+.main{
+    width:100%;
+    max-width:1450px;
+    margin:auto;
+    padding:32px;
+}
+
+.eyebrow{
+    color:var(--gold);
+    font-size:12px;
+    font-weight:900;
+}
+
+h1{
+    margin:7px 0;
+    font-size:36px;
+}
+
+h1 span{
+    color:var(--gold);
+}
+
+.subtitle{
+    color:var(--muted);
+    margin-bottom:24px;
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+}
+
+.card,
+.panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+}
+
+.card span{
+    display:block;
+    color:var(--muted);
+    font-size:11px;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.card strong{
+    display:block;
+    margin-top:7px;
+    font-size:26px;
+}
+
+.blue{color:var(--blue)}
+.green{color:var(--green)}
+.red{color:var(--red)}
+
+.content{
+    display:grid;
+    grid-template-columns:1fr 380px;
+    gap:14px;
+    margin-top:14px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+    color:var(--muted);
+    font-size:12px;
+}
+
+input,
+select{
+    width:100%;
+    padding:11px;
+    border:1px solid #30383d;
+    border-radius:8px;
+    background:#090d0f;
+    color:#fff;
+}
+
+button{
+    margin-top:14px;
+    padding:11px 17px;
+    border:0;
+    border-radius:8px;
+    background:var(--gold);
+    color:#111;
+    font-weight:900;
+}
+
+button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.empty{
+    color:var(--muted);
+    padding:18px 0;
+}
+
+.inna{
+    border-color:#66571d;
+}
+
+.inna small{
+    color:var(--gold);
+    font-weight:900;
+}
+
+.inna p{
+    line-height:1.6;
+}
+
+.notice{
+    margin-top:14px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.5;
+}
+
+@media(max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .summary{grid-template-columns:1fr}
+    .content{grid-template-columns:1fr}
+    .form-grid{grid-template-columns:1fr}
+}
+
+</style>
+
+<style id="SABINO_FINANCE_FAMILY_MODULES_FINAL_V1">
+
+/* ============================================================
+   SABINO.AI
+   FINANCAS FAMILIARES
+
+   CSS CONSOLIDADO
+   - Despesas
+   - Posicionamento central
+   - Acoes
+   - Metas
+   - Resumo
+   - Identidade azul
+   - KPI polish
+
+   O CSS-base original permanece separado.
+   ============================================================ */
+
+
+/* =========================================================
+   SOURCE: SABINO_FINANCE_FAMILY_EXPENSES_STYLE_V2
+   ========================================================= */
+
+/* =========================================================
+   FAMILY EXPENSES - PADRAO SABINO.AI
+   ========================================================= */
+
+#familyExpensesSection{
+    margin-top:22px;
+    background:#11171b;
+    border:1px solid #293239;
+    border-radius:16px;
+    padding:24px;
+    color:#f8fafc;
+}
+
+#familyExpensesSection h2,
+#familyExpensesSection h3{
+    margin:0;
+    color:#ffffff;
+}
+
+.family-section-heading{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:22px;
+}
+
+.family-section-heading p{
+    margin:7px 0 0;
+    color:#91a7b8;
+    font-size:15px;
+    line-height:1.45;
+}
+
+.family-expense-form-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    gap:16px;
+}
+
+.family-field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.family-field label{
+    color:#9db3c3;
+    font-size:14px;
+    font-weight:500;
+}
+
+#familyExpensesSection input,
+#familyExpensesSection select,
+#familyExpensesSection textarea{
+    width:100%;
+    box-sizing:border-box;
+    background:#080d10;
+    border:1px solid #34414a;
+    border-radius:8px;
+    color:#ffffff;
+    min-height:42px;
+    padding:10px 12px;
+    font-family:inherit;
+    font-size:14px;
+    outline:none;
+}
+
+#familyExpensesSection textarea{
+    min-height:82px;
+    resize:vertical;
+}
+
+#familyExpensesSection input:focus,
+#familyExpensesSection select:focus,
+#familyExpensesSection textarea:focus{
+    border-color:#e0b62f;
+    box-shadow:
+        0 0 0 2px
+        rgba(224,182,47,.12);
+}
+
+.family-expense-notes{
+    margin-top:16px;
+}
+
+.family-expense-actions{
+    margin-top:16px;
+}
+
+.family-primary-button{
+    appearance:none;
+    border:none;
+    border-radius:8px;
+    background:#e2ba37;
+    color:#071013;
+    min-height:44px;
+    padding:0 20px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+}
+
+.family-primary-button:hover{
+    filter:brightness(1.05);
+}
+
+.family-primary-button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.family-expense-list-title{
+    margin-top:28px;
+    margin-bottom:14px;
+    padding-top:20px;
+    border-top:1px solid #293239;
+}
+
+#familyExpensesList{
+    color:#9db3c3;
+    display:grid;
+    gap:12px;
+}
+
+
+/* cards criados pelo JS */
+
+#familyExpensesList > div{
+    background:#0b1115 !important;
+    border:1px solid #293239 !important;
+    border-radius:12px !important;
+    padding:16px !important;
+    color:#ffffff !important;
+}
+
+#familyExpensesList strong{
+    color:#ffffff;
+}
+
+#familyExpensesList select{
+    width:auto;
+    min-width:130px;
+}
+
+#familyExpensesList button{
+    border:1px solid #394650;
+    border-radius:7px;
+    background:#151d22;
+    color:#ffffff;
+    min-height:36px;
+    padding:0 12px;
+    cursor:pointer;
+}
+
+#familyExpensesList button:hover{
+    border-color:#e2ba37;
+    color:#e2ba37;
+}
+
+
+/* Responsivo */
+
+@media (max-width:900px){
+
+    .family-expense-form-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+
+/* =========================================================
+   SOURCE: SABINO_FAMILY_EXPENSES_CENTER_FIX_V3
+   ========================================================= */
+
+/* =========================================================
+   FINANCAS FAMILIARES - DESPESAS NO CONTEUDO CENTRAL
+   ========================================================= */
+
+#familyExpensesSection{
+    width:100% !important;
+    max-width:none !important;
+
+    margin:
+        22px
+        0
+        0
+        0 !important;
+
+    padding:24px !important;
+
+    box-sizing:border-box !important;
+
+    background:#11171b !important;
+
+    border:
+        1px
+        solid
+        #293239 !important;
+
+    border-radius:
+        16px !important;
+
+    color:#ffffff !important;
+}
+
+
+/* titulo */
+
+#familyExpensesSection h2{
+    margin:
+        0
+        0
+        6px
+        0 !important;
+
+    font-size:
+        26px !important;
+
+    line-height:
+        1.2 !important;
+
+    color:#ffffff !important;
+}
+
+
+#familyExpensesSection h3{
+    color:#ffffff !important;
+}
+
+
+/* descricao */
+
+#familyExpensesSection .family-section-heading{
+    display:block !important;
+
+    margin-bottom:
+        22px !important;
+}
+
+
+#familyExpensesSection .family-section-heading p{
+    margin:
+        6px
+        0
+        0
+        0 !important;
+
+    color:#91a7b8 !important;
+
+    font-size:
+        15px !important;
+}
+
+
+/* formulario */
+
+#familyExpensesSection .family-expense-form-grid{
+    display:grid !important;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        ) !important;
+
+    gap:
+        16px
+        18px !important;
+}
+
+
+#familyExpensesSection .family-field{
+    display:flex !important;
+
+    flex-direction:
+        column !important;
+
+    gap:
+        7px !important;
+
+    min-width:
+        0 !important;
+}
+
+
+#familyExpensesSection label{
+    color:#9db3c3 !important;
+
+    font-size:
+        14px !important;
+
+    font-weight:
+        500 !important;
+}
+
+
+#familyExpensesSection input,
+#familyExpensesSection select,
+#familyExpensesSection textarea{
+
+    width:
+        100% !important;
+
+    min-width:
+        0 !important;
+
+    box-sizing:
+        border-box !important;
+
+    background:
+        #080d10 !important;
+
+    color:
+        #ffffff !important;
+
+    border:
+        1px
+        solid
+        #34414a !important;
+
+    border-radius:
+        8px !important;
+
+    padding:
+        10px
+        12px !important;
+
+    font-family:
+        inherit !important;
+
+    font-size:
+        14px !important;
+}
+
+
+#familyExpensesSection input,
+#familyExpensesSection select{
+    height:
+        43px !important;
+}
+
+
+#familyExpensesSection textarea{
+    min-height:
+        82px !important;
+
+    resize:
+        vertical !important;
+}
+
+
+#familyExpensesSection input:focus,
+#familyExpensesSection select:focus,
+#familyExpensesSection textarea:focus{
+
+    outline:
+        none !important;
+
+    border-color:
+        #e0b62f !important;
+
+    box-shadow:
+        0
+        0
+        0
+        2px
+        rgba(
+            224,
+            182,
+            47,
+            .10
+        ) !important;
+}
+
+
+/* observacao */
+
+#familyExpensesSection .family-expense-notes{
+    margin-top:
+        16px !important;
+}
+
+
+/* botao */
+
+#familyExpensesSection .family-expense-actions{
+    margin-top:
+        16px !important;
+}
+
+
+#familyExpensesSection .family-primary-button{
+
+    width:
+        auto !important;
+
+    min-width:
+        170px !important;
+
+    height:
+        44px !important;
+
+    padding:
+        0
+        20px !important;
+
+    border:
+        none !important;
+
+    border-radius:
+        8px !important;
+
+    background:
+        #e2ba37 !important;
+
+    color:
+        #071013 !important;
+
+    font-weight:
+        700 !important;
+
+    cursor:
+        pointer !important;
+}
+
+
+/* separador */
+
+#familyExpensesSection .family-expense-list-title{
+
+    margin-top:
+        28px !important;
+
+    padding-top:
+        20px !important;
+
+    border-top:
+        1px
+        solid
+        #293239 !important;
+}
+
+
+/* lista */
+
+#familyExpensesList{
+
+    display:
+        grid !important;
+
+    gap:
+        12px !important;
+
+    color:
+        #9db3c3 !important;
+}
+
+
+#familyExpensesList > div{
+
+    background:
+        #0b1115 !important;
+
+    border:
+        1px
+        solid
+        #293239 !important;
+
+    border-radius:
+        12px !important;
+
+    padding:
+        16px !important;
+
+    color:
+        #ffffff !important;
+}
+
+
+#familyExpensesList button{
+
+    width:
+        auto !important;
+
+    min-width:
+        80px !important;
+
+    height:
+        36px !important;
+
+    padding:
+        0
+        12px !important;
+
+    background:
+        #151d22 !important;
+
+    color:
+        #ffffff !important;
+
+    border:
+        1px
+        solid
+        #394650 !important;
+
+    border-radius:
+        7px !important;
+}
+
+
+#familyExpensesList select{
+
+    width:
+        auto !important;
+
+    min-width:
+        130px !important;
+}
+
+
+/* mobile */
+
+@media (max-width:900px){
+
+    #familyExpensesSection
+    .family-expense-form-grid{
+
+        grid-template-columns:
+            1fr !important;
+    }
+}
+
+
+/* =========================================================
+   SOURCE: SABINO_FAMILY_EXPENSE_ACTION_COLORS_V1
+   ========================================================= */
+
+/* EDITAR */
+#familyExpensesList
+.family-expense-edit-button{
+
+    background:#e2ba37 !important;
+    border-color:#e2ba37 !important;
+    color:#071013 !important;
+
+    font-weight:700 !important;
+}
+
+#familyExpensesList
+.family-expense-edit-button:hover{
+
+    background:#f0c841 !important;
+    border-color:#f0c841 !important;
+    color:#071013 !important;
+}
+
+
+/* EXCLUIR */
+#familyExpensesList
+.family-expense-delete-button{
+
+    background:#d94b55 !important;
+    border-color:#d94b55 !important;
+    color:#ffffff !important;
+
+    font-weight:700 !important;
+}
+
+#familyExpensesList
+.family-expense-delete-button:hover{
+
+    background:#ed5964 !important;
+    border-color:#ed5964 !important;
+    color:#ffffff !important;
+}
+
+
+/* STATUS continua neutro */
+#familyExpensesList select{
+
+    background:#080d10 !important;
+    border-color:#394650 !important;
+    color:#ffffff !important;
+}
+
+
+/* =========================================================
+   SOURCE: SABINO_FINANCE_FAMILY_GOALS_STYLE_V1
+   ========================================================= */
+
+#familyGoalsSection{
+    width:100%;
+    box-sizing:border-box;
+
+    margin-top:22px;
+    padding:24px;
+
+    background:#11171b;
+    border:1px solid #293239;
+    border-radius:16px;
+
+    color:#ffffff;
+}
+
+
+.family-goals-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    flex-wrap:wrap;
+}
+
+
+.family-goals-header h2{
+    margin:0;
+    font-size:26px;
+}
+
+
+.family-goals-header p{
+    margin:6px 0 0;
+    color:#91a7b8;
+    font-size:15px;
+}
+
+
+.family-goal-new-button{
+    min-height:42px;
+    padding:0 18px;
+
+    border:0;
+    border-radius:8px;
+
+    background:#e2ba37;
+    color:#071013;
+
+    font-weight:700;
+    cursor:pointer;
+}
+
+
+.family-goals-summary{
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0,1fr)
+        );
+
+    gap:12px;
+
+    margin-top:20px;
+}
+
+
+.family-goals-summary-card{
+    background:#0b1115;
+    border:1px solid #293239;
+    border-radius:11px;
+    padding:14px;
+}
+
+
+.family-goals-summary-card span{
+    display:block;
+    color:#91a7b8;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+
+
+.family-goals-summary-card strong{
+    display:block;
+    margin-top:6px;
+
+    color:#ffffff;
+    font-size:18px;
+}
+
+
+#familyGoalFormArea{
+    display:none;
+
+    margin-top:20px;
+    padding:18px;
+
+    background:#0b1115;
+    border:1px solid #293239;
+    border-radius:12px;
+}
+
+
+#familyGoalFormArea.open{
+    display:block;
+}
+
+
+.family-goal-form-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+
+    gap:16px;
+}
+
+
+.family-goal-field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+
+.family-goal-field.full{
+    grid-column:1 / -1;
+}
+
+
+.family-goal-field label{
+    color:#9db3c3;
+    font-size:14px;
+}
+
+
+#familyGoalFormArea input,
+#familyGoalFormArea select{
+    width:100%;
+    height:43px;
+
+    box-sizing:border-box;
+
+    padding:0 12px;
+
+    background:#080d10;
+    border:1px solid #34414a;
+    border-radius:8px;
+
+    color:#ffffff;
+    font-family:inherit;
+}
+
+
+#familyGoalFormArea input:focus,
+#familyGoalFormArea select:focus{
+    outline:none;
+    border-color:#e2ba37;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(226,186,55,.10);
+}
+
+
+.family-goal-form-actions{
+    display:flex;
+    gap:10px;
+
+    margin-top:16px;
+}
+
+
+.family-goal-save{
+    min-height:42px;
+    padding:0 18px;
+
+    border:0;
+    border-radius:8px;
+
+    background:#e2ba37;
+    color:#071013;
+
+    font-weight:700;
+    cursor:pointer;
+}
+
+
+.family-goal-cancel{
+    min-height:42px;
+    padding:0 18px;
+
+    border:1px solid #394650;
+    border-radius:8px;
+
+    background:#151d22;
+    color:#ffffff;
+
+    cursor:pointer;
+}
+
+
+.family-goals-list-title{
+    margin-top:26px;
+    padding-top:20px;
+
+    border-top:1px solid #293239;
+}
+
+
+.family-goals-list-title h3{
+    margin:0;
+}
+
+
+#familyGoalsList{
+    display:grid;
+    gap:12px;
+
+    margin-top:14px;
+}
+
+
+.family-goal-card{
+    padding:16px;
+
+    background:#0b1115;
+    border:1px solid #293239;
+    border-radius:12px;
+}
+
+
+.family-goal-card-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+
+    gap:14px;
+}
+
+
+.family-goal-name{
+    color:#ffffff;
+    font-weight:700;
+}
+
+
+.family-goal-meta{
+    margin-top:5px;
+    color:#91a7b8;
+    font-size:13px;
+}
+
+
+.family-goal-percent{
+    color:#e2ba37;
+    font-weight:800;
+}
+
+
+.family-goal-values{
+    display:flex;
+    justify-content:space-between;
+
+    margin-top:14px;
+
+    color:#b8c5cd;
+    font-size:14px;
+}
+
+
+.family-goal-progress{
+    width:100%;
+    height:9px;
+
+    margin-top:8px;
+
+    background:#20282d;
+    border-radius:99px;
+
+    overflow:hidden;
+}
+
+
+.family-goal-progress > div{
+    height:100%;
+    background:#e2ba37;
+    border-radius:99px;
+}
+
+
+.family-goal-actions{
+    display:flex;
+    gap:8px;
+
+    margin-top:14px;
+}
+
+
+.family-goal-add-value{
+    min-height:36px;
+    padding:0 13px;
+
+    border:1px solid #e2ba37;
+    border-radius:7px;
+
+    background:#151d22;
+    color:#e2ba37;
+
+    font-weight:700;
+    cursor:pointer;
+}
+
+
+.family-goals-empty{
+    color:#91a7b8;
+}
+
+
+@media (max-width:900px){
+
+    .family-goals-summary{
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0,1fr)
+            );
+    }
+
+
+    .family-goal-form-grid{
+        grid-template-columns:1fr;
+    }
+
+
+    .family-goal-field.full{
+        grid-column:auto;
+    }
+}
+
+
+/* =========================================================
+   SOURCE: SABINO_FINANCE_FAMILY_SUMMARY_STYLE_V1
+   ========================================================= */
+
+#familySummarySection{
+    width:100%;
+    box-sizing:border-box;
+
+    margin-top:22px;
+    padding:24px;
+
+    background:#11171b;
+    border:1px solid #293239;
+    border-radius:16px;
+
+    color:#ffffff;
+}
+
+
+.family-summary-header h2{
+    margin:0;
+    font-size:26px;
+}
+
+
+.family-summary-header p{
+    margin:6px 0 0;
+    color:#91a7b8;
+    font-size:14px;
+}
+
+
+.family-summary-kpis{
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap:12px;
+
+    margin-top:20px;
+}
+
+
+.family-summary-kpi{
+    padding:15px;
+
+    background:#0b1115;
+    border:1px solid #293239;
+    border-radius:11px;
+}
+
+
+.family-summary-kpi span{
+    display:block;
+
+    color:#91a7b8;
+    font-size:11px;
+    text-transform:uppercase;
+}
+
+
+.family-summary-kpi strong{
+    display:block;
+
+    margin-top:7px;
+
+    font-size:18px;
+    color:#ffffff;
+}
+
+
+.family-summary-kpi strong.good{
+    color:#54d89b;
+}
+
+
+.family-summary-kpi strong.warning{
+    color:#38bdf8;
+}
+
+
+.family-summary-kpi strong.critical{
+    color:#ef626c;
+}
+
+
+.family-summary-grid{
+    display:grid;
+
+    grid-template-columns:
+        minmax(0,1.25fr)
+        minmax(280px,.75fr);
+
+    gap:16px;
+
+    margin-top:18px;
+}
+
+
+.family-summary-panel{
+    background:#0b1115;
+    border:1px solid #293239;
+    border-radius:12px;
+
+    padding:18px;
+}
+
+
+.family-summary-panel h3{
+    margin:0 0 4px;
+}
+
+
+.family-summary-panel-subtitle{
+    color:#91a7b8;
+    font-size:13px;
+
+    margin-bottom:18px;
+}
+
+
+#familyCategoryBars{
+    display:grid;
+    gap:14px;
+}
+
+
+.family-category-row{
+    display:grid;
+    gap:6px;
+}
+
+
+.family-category-top{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+
+    font-size:13px;
+}
+
+
+.family-category-top span{
+    color:#d6e0e6;
+}
+
+
+.family-category-top strong{
+    color:#ffffff;
+}
+
+
+.family-category-track{
+    height:9px;
+
+    background:#20282d;
+    border-radius:99px;
+
+    overflow:hidden;
+}
+
+
+.family-category-track div{
+    height:100%;
+
+    background:#38bdf8;
+    border-radius:99px;
+}
+
+
+.family-category-percent{
+    color:#91a7b8;
+    font-size:11px;
+}
+
+
+.family-donut-wrap{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:6px 0 18px;
+}
+
+
+#familyCategoryDonut{
+    position:relative;
+
+    width:180px;
+    height:180px;
+
+    border-radius:50%;
+
+    background:#20282d;
+}
+
+
+#familyCategoryDonut::after{
+    content:"";
+
+    position:absolute;
+    inset:36px;
+
+    background:#0b1115;
+
+    border-radius:50%;
+}
+
+
+.family-donut-center{
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    z-index:2;
+
+    pointer-events:none;
+}
+
+
+.family-donut-center small{
+    color:#91a7b8;
+}
+
+
+.family-donut-center strong{
+    margin-top:4px;
+
+    font-size:17px;
+}
+
+
+#familyCategoryLegend{
+    display:grid;
+    gap:8px;
+}
+
+
+.family-legend-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    gap:10px;
+
+    font-size:12px;
+}
+
+
+.family-legend-name{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    color:#b7c5ce;
+}
+
+
+.family-legend-dot{
+    width:9px;
+    height:9px;
+
+    border-radius:50%;
+}
+
+
+.family-summary-reading{
+    margin-top:16px;
+    padding:18px;
+
+    background:#0b1115;
+
+    border:1px solid #23566b;
+    border-radius:12px;
+}
+
+
+.family-summary-reading small{
+    color:#38bdf8;
+
+    font-weight:700;
+    text-transform:uppercase;
+}
+
+
+.family-summary-reading h3{
+    margin:8px 0;
+}
+
+
+.family-summary-reading p{
+    margin:0;
+
+    color:#d4dfe5;
+
+    line-height:1.55;
+}
+
+
+.family-summary-empty{
+    color:#91a7b8;
+    font-size:13px;
+}
+
+
+@media(max-width:900px){
+
+    .family-summary-kpis{
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
+
+
+    .family-summary-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+
+@media(max-width:560px){
+
+    .family-summary-kpis{
+        grid-template-columns:1fr;
+    }
+}
+
+
+/* =========================================================
+   SOURCE: SABINO_FAMILY_SUMMARY_BLUE_IDENTITY_V1
+   ========================================================= */
+
+/* =========================================================
+   RESUMO FAMILIAR
+   Identidade visual própria: Azul Ciano
+   Preto + Dourado ficam reservados para Sabino.AI / INNA
+   ========================================================= */
+
+
+/* Indicador principal */
+#familySummarySection
+.family-summary-kpi strong.warning{
+
+    color:#38bdf8 !important;
+}
+
+
+/* Barra das categorias */
+#familySummarySection
+.family-category-track div{
+
+    background:
+        linear-gradient(
+            90deg,
+            #1489b8,
+            #38bdf8
+        ) !important;
+}
+
+
+/* Área de leitura financeira */
+#familySummarySection
+.family-summary-reading{
+
+    border-color:#23566b !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0b1115 0%,
+            #0c171d 100%
+        ) !important;
+}
+
+
+/* Título pequeno da leitura */
+#familySummarySection
+.family-summary-reading small{
+
+    color:#38bdf8 !important;
+}
+
+
+/* Cards ao passar o mouse */
+#familySummarySection
+.family-summary-kpi{
+
+    transition:
+        border-color .18s ease,
+        transform .18s ease;
+}
+
+
+#familySummarySection
+.family-summary-kpi:hover{
+
+    border-color:#23566b;
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* Painéis dos gráficos */
+#familySummarySection
+.family-summary-panel{
+
+    transition:
+        border-color .18s ease;
+}
+
+
+#familySummarySection
+.family-summary-panel:hover{
+
+    border-color:#23566b;
+}
+
+
+/* =========================================================
+   SOURCE: SABINO_FAMILY_SUMMARY_CARDS_POLISH_V1
+   ========================================================= */
+
+/* =========================================================
+   RESUMO FAMILIAR - REFINAMENTO DOS KPIs
+   ========================================================= */
+
+
+#familySummarySection
+.family-summary-kpi{
+
+    position:relative;
+
+    min-height:112px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #0b1115 0%,
+            #0d1419 100%
+        );
+
+    border:
+        1px solid
+        #293239;
+
+    transition:
+        transform .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease,
+        background .18s ease;
+}
+
+
+/* HOVER DISCRETO */
+#familySummarySection
+.family-summary-kpi:hover{
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        #2d7897;
+
+    box-shadow:
+        0 8px 22px
+        rgba(0,0,0,.18);
+}
+
+
+/* LABELS */
+#familySummarySection
+.family-summary-kpi span{
+
+    color:#8fc2d9;
+
+    font-size:12px;
+
+    font-weight:500;
+
+    letter-spacing:.035em;
+
+    line-height:1.35;
+}
+
+
+/* VALORES */
+#familySummarySection
+.family-summary-kpi strong{
+
+    margin-top:10px;
+
+    font-size:22px;
+
+    line-height:1.1;
+
+    font-weight:800;
+}
+
+
+/* ---------------------------------------------------------
+   1. COMPROMETIMENTO DA RENDA
+   Situação saudável = verde
+   --------------------------------------------------------- */
+
+#familySummaryCommitment{
+
+    color:#54d89b !important;
+}
+
+
+/* ---------------------------------------------------------
+   2. PROGRESSO DAS METAS
+   Analytics = azul ciano
+   --------------------------------------------------------- */
+
+#familySummaryGoalProgress{
+
+    color:#38bdf8 !important;
+}
+
+
+/* ---------------------------------------------------------
+   3. FALTA PARA AS METAS
+   Informação, não alerta
+   --------------------------------------------------------- */
+
+#familySummaryGoalRemaining{
+
+    color:#9edcff !important;
+}
+
+
+/* ---------------------------------------------------------
+   4. MEMBROS ATIVOS
+   Informação neutra
+   --------------------------------------------------------- */
+
+#familySummaryMembers{
+
+    color:#ffffff !important;
+}
+
+
+/* Pequeno detalhe superior nos cards */
+#familySummarySection
+.family-summary-kpi::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:14px;
+    right:14px;
+    top:0;
+
+    height:2px;
+
+    border-radius:
+        0 0 4px 4px;
+
+    background:
+        transparent;
+
+    transition:
+        background .18s ease;
+}
+
+
+/* Destaque sutil no hover */
+#familySummarySection
+.family-summary-kpi:hover::before{
+
+    background:
+        #38bdf8;
+}
+
+
+/* Primeiro card mantém identidade verde */
+#familySummarySection
+.family-summary-kpi:first-child:hover::before{
+
+    background:
+        #54d89b;
+}
+
+
+/* Responsividade */
+@media(max-width:900px){
+
+    #familySummarySection
+    .family-summary-kpi{
+
+        min-height:100px;
+    }
+
+}
+
+
+
+/* =========================================================
+   SABINO_FAMILY_EXPENSE_FILTERS_V1
+   ========================================================= */
+
+#familyExpensesSection
+.family-expense-list-toolbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+#familyExpensesSection
+.family-expense-filter-toggle{
+    min-height:38px;
+    padding:8px 14px;
+    border-radius:10px;
+    border:1px solid #2b6078;
+    background:#101820;
+    color:#dcebf2;
+    font-weight:700;
+    cursor:pointer;
+    transition:
+        border-color .18s ease,
+        background .18s ease,
+        color .18s ease,
+        transform .18s ease;
+}
+
+#familyExpensesSection
+.family-expense-filter-toggle:hover,
+#familyExpensesSection
+.family-expense-filter-toggle.active{
+    border-color:#38bdf8;
+    color:#38bdf8;
+    background:#0c171d;
+}
+
+#familyExpensesSection
+.family-expense-filter-toggle:hover{
+    transform:translateY(-1px);
+}
+
+#familyExpensesSection
+.family-expense-filters-panel{
+    margin:12px 0 16px;
+    padding:16px;
+    border:1px solid #263843;
+    border-radius:14px;
+    background:#0b1217;
+}
+
+#familyExpensesSection
+.family-expense-filters-panel[hidden]{
+    display:none !important;
+}
+
+#familyExpensesSection
+.family-expense-filter-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap:12px;
+}
+
+#familyExpensesSection
+.family-expense-filter-field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+#familyExpensesSection
+.family-expense-filter-field label{
+    color:#94b6c5;
+    font-size:12px;
+    font-weight:700;
+}
+
+#familyExpensesSection
+.family-expense-filter-field select{
+    width:100%;
+    min-height:42px;
+    padding:0 11px;
+    border:1px solid #31434d;
+    border-radius:10px;
+    background:#0e171c;
+    color:#f4f7f8;
+    outline:none;
+}
+
+#familyExpensesSection
+.family-expense-filter-field select:focus{
+    border-color:#38bdf8;
+}
+
+#familyExpensesSection
+.family-expense-filter-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid #202f37;
+}
+
+#familyExpensesSection
+#familyExpenseFilterResult{
+    color:#8098a4;
+    font-size:12px;
+}
+
+#familyExpensesSection
+.family-expense-filter-clear{
+    border:0;
+    background:transparent;
+    color:#7dd3fc;
+    font-weight:700;
+    cursor:pointer;
+}
+
+#familyExpensesSection
+.family-expense-filter-clear:hover{
+    color:#bae6fd;
+    text-decoration:underline;
+}
+
+@media(max-width:720px){
+
+    #familyExpensesSection
+    .family-expense-filter-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<link rel="stylesheet" href="/static/css/sabino-locale-core.css?v=browserany_manual3_20260917_134732" data-sabino-global-locale="v1">
+<link rel="stylesheet" href="/static/css/sabino-currency-core.css" data-sabino-global-currency="v1">
+
+<link rel="stylesheet" href="/static/css/sabino-language-button.css?v=20260917_140515">
+<script defer src="/static/js/sabino-language-button.js?v=20260917_140515"></script>
+
+<link rel="stylesheet"
+      href="/static/css/=20260917_181514">
+
+<script defer
+        src="/static/js/=20260917_181514">
+</script>
+
+
+
+<link
+    rel="stylesheet"
+    href="/static/css/sabino-finance-unified.css?v=20260917_222806"
+>
+
+<script
+    defer
+    src="/static/js/sabino-finance-unified.js?v=20260917_222806">
+</script>
+
+    <link rel="stylesheet" href="/static/css/sabino-finance-back-dashboard-v2.css?v=20260918_144545">
+</head>
+
+<body>
+
+<div class="layout">
+
+<aside class="side"></aside>
+
+<main class="main">
+
+<div class="eyebrow">
+SABINO.AI | FINANÇAS FAMILIARES
+</div>
+
+<h1>
+Finanças <span>Familiares</span>
+</h1>
+
+<p class="subtitle">
+Organize contribuições, despesas e objetivos financeiros da família em um único lugar.
+</p>
+
+<section class="summary">
+
+<div class="card">
+<span>Membros</span>
+<strong id="familyMembersCount" class="blue">0</strong>
+</div>
+
+<div class="card">
+<span>Contribuição mensal</span>
+<strong id="familyIncome" class="green" data-sabino-money="0">R$ 0,00</strong>
+</div>
+
+<div class="card">
+<span>Despesas familiares</span>
+<strong id="familyExpenses" class="red" data-sabino-money="0">R$ 0,00</strong>
+</div>
+
+<div class="card">
+<span>Saldo familiar</span>
+<strong id="familyBalance" class="blue" data-sabino-money="0">R$ 0,00</strong>
+</div>
+
+</section>
+
+<div class="content">
+
+<section>
+
+<div class="panel">
+
+<h2>Adicionar membro</h2>
+
+<div class="form-grid">
+
+<div>
+<label>Nome</label>
+<input
+    id="familyMemberName"
+    placeholder="Ex.: João"
+>
+</div>
+
+<div>
+<label>Vínculo</label>
+
+<select id="familyMemberRelation">
+<option>Cônjuge</option>
+<option>Filho(a)</option>
+<option>Pai</option>
+<option>Mãe</option>
+<option>Irmão(ã)</option>
+<option>Outro</option>
+</select>
+
+</div>
+
+<div>
+<label>Contribuição mensal</label>
+
+<input
+    id="familyMemberContribution"
+    type="number"
+    step="0.01"
+    placeholder="0,00"
+>
+</div>
+
+<div>
+<label>Participação nas despesas</label>
+
+<input
+    id="familyMemberShare"
+    type="number"
+    step="0.01"
+    min="0"
+    max="100"
+    placeholder="Ex.: 50"
+>
+</div>
+
+</div>
+
+<button
+    id="familyMemberSave"
+    type="button"
+>
+Adicionar membro
+</button>
+
+</div>
+
+<div
+    class="panel"
+    style="margin-top:14px"
+>
+
+<h2>Membros da família</h2>
+
+<div
+    id="familyMembersList"
+    class="empty"
+>
+Nenhum membro cadastrado.
+</div>
+
+</div>
+
+
+<section
+    id="familyExpensesSection"
+    class="family-panel family-expenses-panel"
+>
+
+    <div class="family-section-heading">
+
+        <div>
+            <h2>Despesas familiares</h2>
+
+            <p>
+                Cadastre e acompanhe as despesas
+                compartilhadas da família.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="family-expense-form-grid">
+
+        <div class="family-field">
+
+            <label for="familyExpenseDescription">
+                Descrição
+            </label>
+
+            <input
+                id="familyExpenseDescription"
+                type="text"
+                placeholder="Ex.: Energia elétrica"
+            >
+
+        </div>
+
+
+        <div class="family-field">
+
+            <label for="familyExpenseCategory">
+                Categoria
+            </label>
+
+            <select id="familyExpenseCategory">
+                <option value="Moradia">Moradia</option>
+                <option value="Alimentação">Alimentação</option>
+                <option value="Energia">Energia</option>
+                <option value="Água">Água</option>
+                <option value="Internet">Internet</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Educação">Educação</option>
+                <option value="Saúde">Saúde</option>
+                <option value="Lazer">Lazer</option>
+                <option value="Outros">Outros</option>
+            </select>
+
+        </div>
+
+
+        <div class="family-field">
+
+            <label for="familyExpenseAmount">
+                Valor
+            </label>
+
+            <input
+                id="familyExpenseAmount"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+            >
+
+        </div>
+
+
+        <div class="family-field">
+
+            <label for="familyExpenseDueDate">
+                Vencimento
+            </label>
+
+            <input
+                id="familyExpenseDueDate"
+                type="date"
+            >
+
+        </div>
+
+
+        <div class="family-field">
+
+            <label for="familyExpenseResponsible">
+                Responsável
+            </label>
+
+            <select id="familyExpenseResponsible">
+
+                <option value="">
+                    Sem responsável específico
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="family-field">
+
+            <label for="familyExpenseRecurrence">
+                Recorrência
+            </label>
+
+            <select id="familyExpenseRecurrence">
+                <option value="once">Única</option>
+                <option value="weekly">Semanal</option>
+                <option value="monthly">Mensal</option>
+                <option value="yearly">Anual</option>
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <div class="family-field family-expense-notes">
+
+        <label for="familyExpenseNotes">
+            Observação
+        </label>
+
+        <textarea
+            id="familyExpenseNotes"
+            rows="3"
+            placeholder="Observação opcional"
+        ></textarea>
+
+    </div>
+
+
+    <div class="family-expense-actions">
+
+        <button
+            id="familyExpenseSave"
+            type="button"
+            class="family-primary-button"
+        >
+            Adicionar despesa
+        </button>
+
+    </div>
+
+
+    <div class="family-expense-list-title family-expense-list-toolbar">
+
+        <h3>Despesas cadastradas</h3>
+
+        <button
+            id="familyExpenseFiltersToggle"
+            type="button"
+            class="family-expense-filter-toggle"
+            aria-expanded="false"
+            aria-controls="familyExpenseFiltersPanel"
+        >
+            ⚙ Filtros
+        </button>
+
+    </div>
+
+
+    <div
+        id="familyExpenseFiltersPanel"
+        class="family-expense-filters-panel"
+        hidden
+    >
+
+        <div class="family-expense-filter-grid">
+
+            <div class="family-expense-filter-field">
+
+                <label for="familyExpenseFilterMonth">
+                    Mês
+                </label>
+
+                <select id="familyExpenseFilterMonth">
+
+                    <option value="all">
+                        Todos
+                    </option>
+
+                    <option value="current">
+                        Este mês
+                    </option>
+
+                    <option value="previous">
+                        Mês anterior
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="family-expense-filter-field">
+
+                <label for="familyExpenseFilterStatus">
+                    Status
+                </label>
+
+                <select id="familyExpenseFilterStatus">
+
+                    <option value="all">
+                        Todos
+                    </option>
+
+                    <option value="pending">
+                        Pendente
+                    </option>
+
+                    <option value="paid">
+                        Pago
+                    </option>
+
+                    <option value="overdue">
+                        Vencido
+                    </option>
+
+                    <option value="cancelled">
+                        Cancelado
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="family-expense-filter-field">
+
+                <label for="familyExpenseFilterCategory">
+                    Categoria
+                </label>
+
+                <select id="familyExpenseFilterCategory">
+
+                    <option value="all">
+                        Todas
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="family-expense-filter-field">
+
+                <label for="familyExpenseFilterResponsible">
+                    Responsável
+                </label>
+
+                <select id="familyExpenseFilterResponsible">
+
+                    <option value="all">
+                        Todos
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="family-expense-filter-footer">
+
+            <span id="familyExpenseFilterResult">
+                Mostrando todas as despesas.
+            </span>
+
+            <button
+                id="familyExpenseFiltersClear"
+                type="button"
+                class="family-expense-filter-clear"
+            >
+                Limpar filtros
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div id="familyExpensesList">
+        Nenhuma despesa familiar cadastrada.
+    </div>
+
+</section>
+
+
+<section id="familyGoalsSection">
+
+    <div class="family-goals-header">
+
+        <div>
+            <h2>Metas familiares</h2>
+
+            <p>
+                Organize objetivos compartilhados
+                e acompanhe o progresso da família.
+            </p>
+        </div>
+
+        <button
+            id="familyGoalOpen"
+            type="button"
+            class="family-goal-new-button"
+        >
+            + Nova meta
+        </button>
+
+    </div>
+
+
+    <div class="family-goals-summary">
+
+        <div class="family-goals-summary-card">
+            <span>Metas ativas</span>
+            <strong id="familyGoalsCount">0</strong>
+        </div>
+
+        <div class="family-goals-summary-card">
+            <span>Valor objetivo</span>
+            <strong id="familyGoalsTarget" data-sabino-money="0">R$ 0,00</strong>
+        </div>
+
+        <div class="family-goals-summary-card">
+            <span>Acumulado</span>
+            <strong id="familyGoalsCurrent" data-sabino-money="0">R$ 0,00</strong>
+        </div>
+
+        <div class="family-goals-summary-card">
+            <span>Progresso</span>
+            <strong id="familyGoalsProgress">0%</strong>
+        </div>
+
+    </div>
+
+
+    <div id="familyGoalFormArea">
+
+        <div class="family-goal-form-grid">
+
+            <div class="family-goal-field full">
+
+                <label for="familyGoalName">
+                    Nome da meta
+                </label>
+
+                <input
+                    id="familyGoalName"
+                    type="text"
+                    placeholder="Ex.: Viagem da família"
+                >
+
+            </div>
+
+
+            <div class="family-goal-field">
+
+                <label for="familyGoalTarget">
+                    Valor objetivo
+                </label>
+
+                <input
+                    id="familyGoalTarget"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="10000,00"
+                >
+
+            </div>
+
+
+            <div class="family-goal-field">
+
+                <label for="familyGoalDate">
+                    Prazo
+                </label>
+
+                <input
+                    id="familyGoalDate"
+                    type="date"
+                >
+
+            </div>
+
+
+            <div class="family-goal-field full">
+
+                <label for="familyGoalResponsible">
+                    Responsável
+                </label>
+
+                <select id="familyGoalResponsible">
+
+                    <option value="">
+                        Sem responsável específico
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="family-goal-form-actions">
+
+            <button
+                id="familyGoalSave"
+                type="button"
+                class="family-goal-save"
+            >
+                Criar meta
+            </button>
+
+            <button
+                id="familyGoalCancel"
+                type="button"
+                class="family-goal-cancel"
+            >
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="family-goals-list-title">
+        <h3>Metas cadastradas</h3>
+    </div>
+
+
+    <div id="familyGoalsList">
+        <div class="family-goals-empty">
+            Nenhuma meta familiar cadastrada.
+        </div>
+    </div>
+
+</section>
+
+
+
+<section id="familySummarySection">
+
+    <div class="family-summary-header">
+
+        <h2>Resumo familiar</h2>
+
+        <p>
+            Visão consolidada das contribuições,
+            despesas e objetivos financeiros da família.
+        </p>
+
+    </div>
+
+
+    <div class="family-summary-kpis">
+
+        <div class="family-summary-kpi">
+
+            <span>
+                Comprometimento da renda
+            </span>
+
+            <strong id="familySummaryCommitment">
+                0%
+            </strong>
+
+        </div>
+
+
+        <div class="family-summary-kpi">
+
+            <span>
+                Progresso das metas
+            </span>
+
+            <strong id="familySummaryGoalProgress">
+                0%
+            </strong>
+
+        </div>
+
+
+        <div class="family-summary-kpi">
+
+            <span>
+                Falta para as metas
+            </span>
+
+            <strong id="familySummaryGoalRemaining" data-sabino-money="0">
+                R$ 0,00
+            </strong>
+
+        </div>
+
+
+        <div class="family-summary-kpi">
+
+            <span>
+                Membros ativos
+            </span>
+
+            <strong id="familySummaryMembers">
+                0
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="family-summary-grid">
+
+        <div class="family-summary-panel">
+
+            <h3>
+                Gastos por categoria
+            </h3>
+
+            <div class="family-summary-panel-subtitle">
+                Distribuição das despesas familiares cadastradas.
+            </div>
+
+            <div id="familyCategoryBars">
+
+                <div class="family-summary-empty">
+                    Nenhuma despesa cadastrada.
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="family-summary-panel">
+
+            <h3>
+                Distribuição dos gastos
+            </h3>
+
+            <div class="family-summary-panel-subtitle">
+                Participação de cada categoria.
+            </div>
+
+
+            <div class="family-donut-wrap">
+
+                <div id="familyCategoryDonut">
+
+                    <div class="family-donut-center">
+
+                        <small>Total</small>
+
+                        <strong id="familyDonutTotal" data-sabino-money="0">
+                            R$ 0,00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="familyCategoryLegend"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="family-summary-reading">
+
+        <small>
+            Leitura financeira familiar
+        </small>
+
+        <h3>
+            Situação atual
+        </h3>
+
+        <p id="familySummaryReading">
+            Carregando os dados da família...
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+</section>
+
+<aside>
+
+<section class="panel inna">
+
+<small>
+INNA · ORIENTAÇÃO FINANCEIRA
+</small>
+
+<h2>Orientação</h2>
+
+<p id="familyInnaMessage">
+Organizar as contribuições e despesas compartilhadas ajuda a visualizar responsabilidades e objetivos financeiros da família.
+</p>
+
+</section>
+
+<div class="notice">
+Nesta primeira etapa, o módulo será administrado pelo titular da conta. Convites e acesso individual de outros familiares podem ser adicionados posteriormente.
+</div>
+
+</aside>
+
+</div>
+
+</main>
+
+
+<!-- ====================================================== -->
+<!-- SABINO_FINANCE_FAMILY_EXPENSES_UI_V2 -->
+<!-- ====================================================== -->
+
+
+
+</div>
+
+
+
+
+
+<!-- ====================================================== -->
+<!-- SABINO_FINANCE_FAMILY_GOALS_UI_V1 -->
+<!-- ====================================================== -->
+
+
+
+<script id="SABINO_FINANCE_FAMILY_V1">
+
+(function(){
+
+    /* SABINO_FINANCE_FAMILY_API_UI_V1 */
+
+    /* SABINO_GLOBAL_MONEY_BRIDGE_V2 */
+    const money = {
+        format(value) {
+
+            const numeric =
+                Number(value || 0);
+
+            if (
+                window.SabinoCurrency &&
+                typeof window.SabinoCurrency.format ===
+                    "function"
+            ) {
+
+                return window.SabinoCurrency.format(
+                    numeric,
+                    {
+                        currency: "BRL"
+                    }
+                );
+
+            }
+
+            return new Intl.NumberFormat(
+                "pt-BR",
+                {
+                    style: "currency",
+                    currency: "BRL"
+                }
+            ).format(numeric);
+
+        }
+    };
+
+    let members = [];
+
+
+    function updateSummary(){
+
+        const activeMembers =
+            members.filter(function(item){
+                return item.is_active === true;
+            });
+
+        const contribution =
+            activeMembers.reduce(
+                function(sum,item){
+                    return sum +
+                        Number(
+                            item.monthly_contribution || 0
+                        );
+                },
+                0
+            );
+
+        const previousState =
+            window.sabinoFamilySemanticState ||
+            {};
+
+        const knownExpenses =
+            Number(
+                previousState.family_expenses ||
+                0
+            );
+
+        document.getElementById(
+            "familyMembersCount"
+        ).textContent =
+            String(members.length);
+
+        document.getElementById(
+            "familyIncome"
+        ).textContent =
+            money.format(contribution);
+
+
+        /*
+         * Membros não escreve mais nos cards
+         * familyExpenses e familyBalance.
+         *
+         * A origem oficial desses dois valores
+         * passa a ser syncFamilyExpenseSummary().
+         */
+        window.sabinoFamilySemanticState = {
+            ...previousState,
+            module:"familia",
+            members_count:members.length,
+            active_members:activeMembers.length,
+            monthly_contribution:contribution,
+            family_expenses:knownExpenses,
+            family_balance:
+                contribution -
+                knownExpenses
+        };
+
+
+        /*
+         * Se o módulo de despesas já estiver
+         * disponível, recalcula o cabeçalho usando
+         * os dados reais.
+         */
+        if(
+            typeof window.sabinoSyncFamilyExpenseSummary ===
+            "function"
+        ){
+
+            window
+                .sabinoSyncFamilyExpenseSummary()
+                .catch(
+                    function(error){
+
+                        console.error(
+                            "FAMILY_HEADER_SYNC_ERROR",
+                            error
+                        );
+                    }
+                );
+        }
+    }
+
+
+    function renderMembers(){
+
+        const list =
+            document.getElementById(
+                "familyMembersList"
+            );
+
+        list.innerHTML = "";
+
+        if(members.length === 0){
+
+            list.className = "empty";
+
+            list.textContent =
+                "Nenhum membro cadastrado.";
+
+            updateSummary();
+
+            return;
+        }
+
+        list.className = "";
+
+        members.forEach(function(member){
+
+            const card =
+                document.createElement("div");
+
+            card.style.cssText =
+                "background:#0b1012;" +
+                "border:1px solid #293136;" +
+                "border-radius:10px;" +
+                "padding:14px;" +
+                "margin-top:10px;";
+
+            const top =
+                document.createElement("div");
+
+            top.style.cssText =
+                "display:flex;" +
+                "justify-content:space-between;" +
+                "gap:12px;";
+
+            const info =
+                document.createElement("div");
+
+            const name =
+                document.createElement("strong");
+
+            name.textContent =
+                member.member_name || "Membro";
+
+            const relation =
+                document.createElement("div");
+
+            relation.style.cssText =
+                "color:#96a0a6;" +
+                "font-size:12px;" +
+                "margin-top:5px;";
+
+            relation.textContent =
+                member.relation || "";
+
+            info.appendChild(name);
+            info.appendChild(relation);
+
+            const contribution =
+                document.createElement("strong");
+
+            contribution.style.color =
+                "#49c986";
+
+            contribution.textContent =
+                money.format(
+                    Number(
+                        member.monthly_contribution || 0
+                    )
+                );
+
+            top.appendChild(info);
+            top.appendChild(contribution);
+
+            const share =
+                document.createElement("div");
+
+            share.style.cssText =
+                "color:#96a0a6;" +
+                "font-size:11px;" +
+                "margin-top:10px;";
+
+            share.textContent =
+                "Participação nas despesas: " +
+                Number(
+                    member.expense_share_percent || 0
+                ).toLocaleString(
+                    "pt-BR",
+                    {
+                        maximumFractionDigits:2
+                    }
+                ) +
+                "%";
+
+            card.appendChild(top);
+            card.appendChild(share);
+
+            const actions =
+                document.createElement("div");
+
+            actions.setAttribute(
+                "data-family-edit-ui",
+                "SABINO_FAMILY_MEMBER_EDIT_UI_V2"
+            );
+
+            actions.style.cssText =
+                "margin-top:10px;" +
+                "display:flex;" +
+                "gap:7px;";
+
+            const editButton =
+                document.createElement("button");
+
+            editButton.type = "button";
+            editButton.textContent = "Editar";
+
+            editButton.style.cssText =
+                "margin-top:0;" +
+                "padding:7px 11px;" +
+                "font-size:11px;";
+
+            editButton.onclick = async function(){
+
+                const name = prompt(
+                    "Nome:",
+                    member.member_name || ""
+                );
+
+                if(name === null){
+                    return;
+                }
+
+                const relation = prompt(
+                    "Vínculo:",
+                    member.relation || ""
+                );
+
+                if(relation === null){
+                    return;
+                }
+
+                const contributionText = prompt(
+                    "Contribuição mensal:",
+                    String(
+                        member.monthly_contribution || 0
+                    )
+                );
+
+                if(contributionText === null){
+                    return;
+                }
+
+                const shareText = prompt(
+                    "Participação nas despesas (%):",
+                    String(
+                        member.expense_share_percent || 0
+                    )
+                );
+
+                if(shareText === null){
+                    return;
+                }
+
+                const contribution = Number(
+                    contributionText.replace(",", ".")
+                );
+
+                const shareValue = Number(
+                    shareText.replace(",", ".")
+                );
+
+                if(
+                    !Number.isFinite(contribution) ||
+                    contribution < 0
+                ){
+                    alert("Contribuição inválida.");
+                    return;
+                }
+
+                if(
+                    !Number.isFinite(shareValue) ||
+                    shareValue < 0 ||
+                    shareValue > 100
+                ){
+                    alert(
+                        "Participação deve ficar entre 0 e 100%."
+                    );
+                    return;
+                }
+
+                try{
+
+                    const response = await fetch(
+                        "/api/finance/family/members/" +
+                        encodeURIComponent(member.id),
+                        {
+                            method:"PUT",
+                            credentials:"same-origin",
+                            headers:{
+                                "Content-Type":"application/json"
+                            },
+                            body:JSON.stringify({
+                                member_name:name,
+                                relation:relation,
+                                monthly_contribution:contribution,
+                                expense_share_percent:shareValue
+                            })
+                        }
+                    );
+
+                    const data =
+                        await response.json();
+
+                    if(!response.ok){
+                        throw new Error(
+                            data.detail ||
+                            "Não foi possível editar o membro."
+                        );
+                    }
+
+                    await loadMembers();
+
+                    if(
+                        typeof window.sabinoRefreshFamilyExpenseResponsibles ===
+                        "function"
+                    ){
+                        await window.sabinoRefreshFamilyExpenseResponsibles();
+                    }
+
+                    document.getElementById(
+                        "familyInnaMessage"
+                    ).textContent =
+                        "Dados do membro atualizados. As contribuições familiares foram recalculadas.";
+
+                }
+                catch(error){
+
+                    console.error(
+                        "FAMILY_MEMBER_UPDATE_ERROR",
+                        error
+                    );
+
+                    alert(
+                        error.message ||
+                        "Não foi possível editar o membro."
+                    );
+                }
+            };
+
+            actions.appendChild(editButton);
+
+            // SABINO_FAMILY_MEMBER_ACTIVE_UI_V2
+
+            const activeButton =
+                document.createElement("button");
+
+            activeButton.type = "button";
+
+            activeButton.textContent =
+                member.is_active
+                    ? "Desativar"
+                    : "Ativar";
+
+            activeButton.style.cssText =
+                "margin-top:0;" +
+                "padding:7px 11px;" +
+                "font-size:11px;" +
+                (
+                    member.is_active
+                        ? "background:#f59e0b;"
+                        : "background:#49c986;"
+                );
+
+            activeButton.onclick = async function(){
+
+                const newState =
+                    !member.is_active;
+
+                try{
+
+                    const response = await fetch(
+                        "/api/finance/family/members/" +
+                        encodeURIComponent(member.id) +
+                        "/active",
+                        {
+                            method:"PATCH",
+                            credentials:"same-origin",
+                            headers:{
+                                "Content-Type":"application/json"
+                            },
+                            body:JSON.stringify({
+                                is_active:newState
+                            })
+                        }
+                    );
+
+                    const data =
+                        await response.json();
+
+                    if(!response.ok){
+                        throw new Error(
+                            data.detail ||
+                            "Não foi possível alterar o status do membro."
+                        );
+                    }
+
+                    await loadMembers();
+
+                    if(
+                        typeof window.sabinoRefreshFamilyExpenseResponsibles ===
+                        "function"
+                    ){
+                        await window.sabinoRefreshFamilyExpenseResponsibles();
+                    }
+
+                    document.getElementById(
+                        "familyInnaMessage"
+                    ).textContent =
+                        newState
+                            ? "Membro ativado novamente. Sua contribuição voltou a participar do cálculo familiar."
+                            : "Membro desativado. Ele continua cadastrado, mas sua contribuição não entra no total enquanto estiver inativo.";
+
+                }
+                catch(error){
+
+                    console.error(
+                        "FAMILY_MEMBER_ACTIVE_ERROR",
+                        error
+                    );
+
+                    alert(
+                        error.message ||
+                        "Não foi possível alterar o status do membro."
+                    );
+                }
+            };
+
+            actions.appendChild(activeButton);
+
+            // SABINO_FAMILY_MEMBER_DELETE_UI_V2
+
+            const deleteButton =
+                document.createElement("button");
+
+            deleteButton.type = "button";
+            deleteButton.textContent = "Excluir";
+
+            deleteButton.style.cssText =
+                "margin-top:0;" +
+                "padding:7px 11px;" +
+                "font-size:11px;" +
+                "background:#e66b6b;" +
+                "color:#111;";
+
+            deleteButton.onclick = async function(){
+
+                const confirmed = confirm(
+                    "Excluir o membro " +
+                    (member.member_name || "") +
+                    "? Esta ação não pode ser desfeita."
+                );
+
+                if(!confirmed){
+                    return;
+                }
+
+                try{
+
+                    const response = await fetch(
+                        "/api/finance/family/members/" +
+                        encodeURIComponent(member.id),
+                        {
+                            method:"DELETE",
+                            credentials:"same-origin"
+                        }
+                    );
+
+                    const data =
+                        await response.json();
+
+                    if(!response.ok){
+                        throw new Error(
+                            data.detail ||
+                            "Não foi possível excluir o membro."
+                        );
+                    }
+
+                    await loadMembers();
+
+                    if(
+                        typeof window.sabinoRefreshFamilyExpenseResponsibles ===
+                        "function"
+                    ){
+                        await window.sabinoRefreshFamilyExpenseResponsibles();
+                    }
+
+                    document.getElementById(
+                        "familyInnaMessage"
+                    ).textContent =
+                        "Membro removido das Finanças Familiares.";
+
+                }
+                catch(error){
+
+                    console.error(
+                        "FAMILY_MEMBER_DELETE_ERROR",
+                        error
+                    );
+
+                    alert(
+                        error.message ||
+                        "Não foi possível excluir o membro."
+                    );
+                }
+            };
+
+            actions.appendChild(deleteButton);
+            card.appendChild(actions);
+
+            list.appendChild(card);
+        });
+
+        updateSummary();
+    }
+
+
+    async function loadMembers(){
+
+        const response = await fetch(
+            "/api/finance/family/members",
+            {
+                credentials:"same-origin",
+                cache:"no-store"
+            }
+        );
+
+        if(!response.ok){
+            throw new Error(
+                "HTTP " + response.status
+            );
+        }
+
+        const data =
+            await response.json();
+
+        members =
+            Array.isArray(data.items)
+                ? data.items
+                : [];
+
+        renderMembers();
+    }
+
+
+    async function createMember(){
+
+        const name =
+            document.getElementById(
+                "familyMemberName"
+            ).value.trim();
+
+        const relation =
+            document.getElementById(
+                "familyMemberRelation"
+            ).value;
+
+        const contribution =
+            Number(
+                document.getElementById(
+                    "familyMemberContribution"
+                ).value || 0
+            );
+
+        const share =
+            Number(
+                document.getElementById(
+                    "familyMemberShare"
+                ).value || 0
+            );
+
+        if(!name){
+
+            alert(
+                "Informe o nome do membro."
+            );
+
+            return;
+        }
+
+        if(
+            !Number.isFinite(contribution) ||
+            contribution < 0
+        ){
+
+            alert(
+                "Contribuição inválida."
+            );
+
+            return;
+        }
+
+        if(
+            !Number.isFinite(share) ||
+            share < 0 ||
+            share > 100
+        ){
+
+            alert(
+                "A participação deve ficar entre 0 e 100%."
+            );
+
+            return;
+        }
+
+        const button =
+            document.getElementById(
+                "familyMemberSave"
+            );
+
+        button.disabled = true;
+        button.textContent = "Salvando...";
+
+        try{
+
+            const response = await fetch(
+                "/api/finance/family/members",
+                {
+                    method:"POST",
+                    credentials:"same-origin",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        member_name:name,
+                        relation:relation,
+                        monthly_contribution:contribution,
+                        expense_share_percent:share
+                    })
+                }
+            );
+
+            const data =
+                await response.json();
+
+            if(!response.ok){
+
+                throw new Error(
+                    data.detail ||
+                    "Não foi possível adicionar o membro."
+                );
+            }
+
+            document.getElementById(
+                "familyMemberName"
+            ).value = "";
+
+            document.getElementById(
+                "familyMemberContribution"
+            ).value = "";
+
+            document.getElementById(
+                "familyMemberShare"
+            ).value = "";
+
+            await loadMembers();
+
+                    if(
+                        typeof window.sabinoRefreshFamilyExpenseResponsibles ===
+                        "function"
+                    ){
+                        await window.sabinoRefreshFamilyExpenseResponsibles();
+                    }
+
+            document.getElementById(
+                "familyInnaMessage"
+            ).textContent =
+                "Membro cadastrado. Acompanhar as contribuições ajuda a tornar a organização financeira familiar mais transparente.";
+
+        }
+        catch(error){
+
+            console.error(
+                "FAMILY_MEMBER_SAVE_ERROR",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Não foi possível adicionar o membro."
+            );
+
+        }
+        finally{
+
+            button.disabled = false;
+            button.textContent =
+                "Adicionar membro";
+        }
+    }
+
+
+    document.getElementById(
+        "familyMemberSave"
+    ).addEventListener(
+        "click",
+        createMember
+    );
+
+
+    loadMembers().catch(function(error){
+
+        console.error(
+            "FAMILY_MEMBERS_LOAD_ERROR",
+            error
+        );
+
+        document.getElementById(
+            "familyMembersList"
+        ).textContent =
+            "Não foi possível carregar os membros.";
+    });
+
+})();
+
+</script>
+
+
+<script id="SABINO_FINANCE_FAMILY_EXPENSES_JS_V1">
+
+(function(){
+
+    "use strict";
+
+    let familyExpenses = [];
+
+
+    const familyExpenseFilters = {
+
+        month:"all",
+        status:"all",
+        category:"all",
+        responsible:"all"
+    };
+
+
+    function familyExpenseMonthKey(offset){
+
+        const now =
+            new Date();
+
+        const date =
+            new Date(
+                now.getFullYear(),
+                now.getMonth() + offset,
+                1
+            );
+
+        const year =
+            String(
+                date.getFullYear()
+            );
+
+        const month =
+            String(
+                date.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
+        return year + "-" + month;
+    }
+
+
+    function familyExpenseResponsibleKey(expense){
+
+        if(
+            expense.responsible_member_id
+        ){
+
+            return (
+                "id:" +
+                String(
+                    expense.responsible_member_id
+                )
+            );
+        }
+
+
+        if(
+            expense.responsible_member_name
+        ){
+
+            return (
+                "name:" +
+                String(
+                    expense.responsible_member_name
+                )
+            );
+        }
+
+
+        return "none";
+    }
+
+
+    function getFilteredFamilyExpenses(){
+
+        return familyExpenses.filter(
+            function(expense){
+
+                if(
+                    familyExpenseFilters.month !==
+                    "all"
+                ){
+
+                    const dueMonth =
+                        String(
+                            expense.due_date || ""
+                        ).slice(
+                            0,
+                            7
+                        );
+
+
+                    const expectedMonth =
+                        familyExpenseFilters.month ===
+                        "current"
+                            ? familyExpenseMonthKey(0)
+                            : familyExpenseMonthKey(-1);
+
+
+                    if(
+                        dueMonth !==
+                        expectedMonth
+                    ){
+
+                        return false;
+                    }
+                }
+
+
+                if(
+                    familyExpenseFilters.status !==
+                    "all" &&
+                    String(
+                        expense.status || "pending"
+                    ) !==
+                    familyExpenseFilters.status
+                ){
+
+                    return false;
+                }
+
+
+                if(
+                    familyExpenseFilters.category !==
+                    "all" &&
+                    String(
+                        expense.category || "Outros"
+                    ) !==
+                    familyExpenseFilters.category
+                ){
+
+                    return false;
+                }
+
+
+                if(
+                    familyExpenseFilters.responsible !==
+                    "all" &&
+                    familyExpenseResponsibleKey(
+                        expense
+                    ) !==
+                    familyExpenseFilters.responsible
+                ){
+
+                    return false;
+                }
+
+
+                return true;
+            }
+        );
+    }
+
+
+    function appendFamilyExpenseFilterOption(
+        select,
+        value,
+        label
+    ){
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            value;
+
+        option.textContent =
+            label;
+
+        select.appendChild(
+            option
+        );
+    }
+
+
+    function refreshFamilyExpenseFilterOptions(){
+
+        const categorySelect =
+            document.getElementById(
+                "familyExpenseFilterCategory"
+            );
+
+        const responsibleSelect =
+            document.getElementById(
+                "familyExpenseFilterResponsible"
+            );
+
+
+        if(categorySelect){
+
+            categorySelect.innerHTML =
+                "";
+
+            appendFamilyExpenseFilterOption(
+                categorySelect,
+                "all",
+                "Todas"
+            );
+
+
+            const categories =
+                Array.from(
+                    new Set(
+                        familyExpenses.map(
+                            function(expense){
+
+                                return String(
+                                    expense.category ||
+                                    "Outros"
+                                );
+                            }
+                        )
+                    )
+                ).sort(
+                    function(a,b){
+
+                        return a.localeCompare(
+                            b,
+                            "pt-BR"
+                        );
+                    }
+                );
+
+
+            categories.forEach(
+                function(category){
+
+                    appendFamilyExpenseFilterOption(
+                        categorySelect,
+                        category,
+                        category
+                    );
+                }
+            );
+
+
+            const hasCategory =
+                Array.from(
+                    categorySelect.options
+                ).some(
+                    function(option){
+
+                        return (
+                            option.value ===
+                            familyExpenseFilters.category
+                        );
+                    }
+                );
+
+
+            if(!hasCategory){
+
+                familyExpenseFilters.category =
+                    "all";
+            }
+
+
+            categorySelect.value =
+                familyExpenseFilters.category;
+        }
+
+
+        if(responsibleSelect){
+
+            responsibleSelect.innerHTML =
+                "";
+
+            appendFamilyExpenseFilterOption(
+                responsibleSelect,
+                "all",
+                "Todos"
+            );
+
+
+            const responsibleMap =
+                new Map();
+
+
+            familyExpenses.forEach(
+                function(expense){
+
+                    const key =
+                        familyExpenseResponsibleKey(
+                            expense
+                        );
+
+                    const label =
+                        expense.responsible_member_name
+                            ? String(
+                                expense.responsible_member_name
+                            )
+                            : "Sem responsável";
+
+
+                    responsibleMap.set(
+                        key,
+                        label
+                    );
+                }
+            );
+
+
+            Array.from(
+                responsibleMap.entries()
+            )
+            .sort(
+                function(a,b){
+
+                    return a[1].localeCompare(
+                        b[1],
+                        "pt-BR"
+                    );
+                }
+            )
+            .forEach(
+                function(pair){
+
+                    appendFamilyExpenseFilterOption(
+                        responsibleSelect,
+                        pair[0],
+                        pair[1]
+                    );
+                }
+            );
+
+
+            const hasResponsible =
+                Array.from(
+                    responsibleSelect.options
+                ).some(
+                    function(option){
+
+                        return (
+                            option.value ===
+                            familyExpenseFilters.responsible
+                        );
+                    }
+                );
+
+
+            if(!hasResponsible){
+
+                familyExpenseFilters.responsible =
+                    "all";
+            }
+
+
+            responsibleSelect.value =
+                familyExpenseFilters.responsible;
+        }
+
+
+        updateFamilyExpenseFilterIndicator();
+    }
+
+
+    function updateFamilyExpenseFilterIndicator(){
+
+        const button =
+            document.getElementById(
+                "familyExpenseFiltersToggle"
+            );
+
+
+        if(!button){
+            return;
+        }
+
+
+        const activeCount =
+            Object.values(
+                familyExpenseFilters
+            ).filter(
+                function(value){
+
+                    return value !== "all";
+                }
+            ).length;
+
+
+        button.textContent =
+            activeCount > 0
+                ? "⚙ Filtros (" +
+                    activeCount +
+                    ")"
+                : "⚙ Filtros";
+
+
+        button.classList.toggle(
+            "active",
+            activeCount > 0
+        );
+    }
+
+
+    function updateFamilyExpenseFilterResult(
+        visibleCount
+    ){
+
+        const element =
+            document.getElementById(
+                "familyExpenseFilterResult"
+            );
+
+
+        if(!element){
+            return;
+        }
+
+
+        if(
+            visibleCount ===
+            familyExpenses.length
+        ){
+
+            element.textContent =
+                "Mostrando todas as " +
+                familyExpenses.length +
+                " despesas.";
+
+            return;
+        }
+
+
+        element.textContent =
+            "Mostrando " +
+            visibleCount +
+            " de " +
+            familyExpenses.length +
+            " despesas.";
+    }
+
+
+    function setupFamilyExpenseFilters(){
+
+        const toggle =
+            document.getElementById(
+                "familyExpenseFiltersToggle"
+            );
+
+        const panel =
+            document.getElementById(
+                "familyExpenseFiltersPanel"
+            );
+
+
+        if(
+            !toggle ||
+            !panel
+        ){
+
+            return;
+        }
+
+
+        if(
+            toggle.dataset.bound ===
+            "true"
+        ){
+
+            return;
+        }
+
+
+        toggle.dataset.bound =
+            "true";
+
+
+        toggle.addEventListener(
+            "click",
+            function(){
+
+                const willOpen =
+                    panel.hidden;
+
+                panel.hidden =
+                    !willOpen;
+
+                toggle.setAttribute(
+                    "aria-expanded",
+                    String(
+                        willOpen
+                    )
+                );
+            }
+        );
+
+
+        [
+            [
+                "familyExpenseFilterMonth",
+                "month"
+            ],
+            [
+                "familyExpenseFilterStatus",
+                "status"
+            ],
+            [
+                "familyExpenseFilterCategory",
+                "category"
+            ],
+            [
+                "familyExpenseFilterResponsible",
+                "responsible"
+            ]
+        ].forEach(
+            function(pair){
+
+                const element =
+                    document.getElementById(
+                        pair[0]
+                    );
+
+
+                if(!element){
+                    return;
+                }
+
+
+                element.addEventListener(
+                    "change",
+                    function(){
+
+                        familyExpenseFilters[
+                            pair[1]
+                        ] =
+                            element.value;
+
+
+                        updateFamilyExpenseFilterIndicator();
+
+                        renderFamilyExpenses();
+                    }
+                );
+            }
+        );
+
+
+        const clear =
+            document.getElementById(
+                "familyExpenseFiltersClear"
+            );
+
+
+        if(clear){
+
+            clear.addEventListener(
+                "click",
+                function(){
+
+                    familyExpenseFilters.month =
+                        "all";
+
+                    familyExpenseFilters.status =
+                        "all";
+
+                    familyExpenseFilters.category =
+                        "all";
+
+                    familyExpenseFilters.responsible =
+                        "all";
+
+
+                    const month =
+                        document.getElementById(
+                            "familyExpenseFilterMonth"
+                        );
+
+                    const status =
+                        document.getElementById(
+                            "familyExpenseFilterStatus"
+                        );
+
+                    const category =
+                        document.getElementById(
+                            "familyExpenseFilterCategory"
+                        );
+
+                    const responsible =
+                        document.getElementById(
+                            "familyExpenseFilterResponsible"
+                        );
+
+
+                    if(month){
+                        month.value = "all";
+                    }
+
+                    if(status){
+                        status.value = "all";
+                    }
+
+                    if(category){
+                        category.value = "all";
+                    }
+
+                    if(responsible){
+                        responsible.value = "all";
+                    }
+
+
+                    updateFamilyExpenseFilterIndicator();
+
+                    renderFamilyExpenses();
+                }
+            );
+        }
+
+
+        updateFamilyExpenseFilterIndicator();
+    }
+
+
+    function brl(value){
+
+        return Number(
+            value || 0
+        ).toLocaleString(
+            "pt-BR",
+            {
+                style:"currency",
+                currency:"BRL"
+            }
+        );
+    }
+
+
+    function expenseStatusLabel(status){
+
+        const labels = {
+            pending:"Pendente",
+            paid:"Pago",
+            overdue:"Vencido",
+            cancelled:"Cancelado"
+        };
+
+        return labels[status] || status;
+    }
+
+
+    function recurrenceLabel(value){
+
+        const labels = {
+            once:"Única",
+            weekly:"Semanal",
+            monthly:"Mensal",
+            yearly:"Anual"
+        };
+
+        return labels[value] || value;
+    }
+
+
+    async function populateExpenseResponsibleMembers(){
+
+        const select =
+            document.getElementById(
+                "familyExpenseResponsible"
+            );
+
+        if(!select){
+            return;
+        }
+
+        const currentValue =
+            select.value;
+
+        try{
+
+            const response =
+                await fetch(
+                    "/api/finance/family/members",
+                    {
+                        credentials:"same-origin",
+                        cache:"no-store"
+                    }
+                );
+
+            if(!response.ok){
+
+                throw new Error(
+                    "HTTP " +
+                    response.status
+                );
+            }
+
+            const data =
+                await response.json();
+
+            const familyMembers =
+                Array.isArray(data.items)
+                    ? data.items
+                    : [];
+
+
+            select.innerHTML =
+                '<option value="">' +
+                'Sem responsável específico' +
+                '</option>';
+
+
+            familyMembers
+                .filter(function(member){
+
+                    return (
+                        member &&
+                        member.is_active !== false
+                    );
+
+                })
+                .forEach(function(member){
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+                    option.value =
+                        member.id;
+
+                    option.textContent =
+                        member.member_name ||
+                        "Membro";
+
+                    select.appendChild(
+                        option
+                    );
+                });
+
+
+            /*
+             * Preservar o responsável selecionado
+             * quando ele ainda existir.
+             */
+
+            if(
+                currentValue &&
+                familyMembers.some(
+                    function(member){
+
+                        return (
+                            String(member.id) ===
+                            String(currentValue)
+                        );
+                    }
+                )
+            ){
+                select.value =
+                    currentValue;
+            }
+
+
+            console.log(
+                "FAMILY_EXPENSE_RESPONSIBLES_LOADED=" +
+                familyMembers.length
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                "FAMILY_EXPENSE_RESPONSIBLES_LOAD_ERROR",
+                error
+            );
+        }
+    }
+
+
+    window.sabinoRefreshFamilyExpenseResponsibles =
+        populateExpenseResponsibleMembers;
+
+
+    function calculateFamilyExpenses(){
+
+        return familyExpenses
+            .filter(function(item){
+                return item.status !== "cancelled";
+            })
+            .reduce(function(total,item){
+
+                return total +
+                    Number(
+                        item.amount || 0
+                    );
+
+            },0);
+    }
+
+
+    async function syncFamilyExpenseSummary(){
+
+        const expenses =
+            calculateFamilyExpenses();
+
+
+        const expenseElement =
+            document.getElementById(
+                "familyExpenses"
+            );
+
+        if(expenseElement){
+
+            expenseElement.textContent =
+                brl(expenses);
+        }
+
+
+        let contribution = 0;
+
+
+        try{
+
+            const response =
+                await fetch(
+                    "/api/finance/family/members",
+                    {
+                        credentials:"same-origin",
+                        cache:"no-store"
+                    }
+                );
+
+
+            if(response.ok){
+
+                const data =
+                    await response.json();
+
+
+                if(
+                    data &&
+                    data.summary
+                ){
+
+                    contribution =
+                        Number(
+                            data.summary.monthly_contribution ||
+                            0
+                        );
+                }
+            }
+
+        }
+        catch(error){
+
+            console.error(
+                "FAMILY_BALANCE_MEMBER_SUMMARY_ERROR",
+                error
+            );
+        }
+
+
+        const incomeElement =
+            document.getElementById(
+                "familyIncome"
+            );
+
+        if(incomeElement){
+
+            incomeElement.textContent =
+                brl(contribution);
+        }
+
+
+        const balance =
+            contribution -
+            expenses;
+
+
+        const balanceElement =
+            document.getElementById(
+                "familyBalance"
+            );
+
+        if(balanceElement){
+
+            balanceElement.textContent =
+                brl(balance);
+        }
+
+
+        const currentSemanticState =
+            window.sabinoFamilySemanticState ||
+            {};
+
+        window.sabinoFamilySemanticState = {
+            ...currentSemanticState,
+            module:"familia",
+            monthly_contribution:contribution,
+            family_expenses:expenses,
+            family_balance:balance
+        };
+
+
+        console.log(
+            "FAMILY_BALANCE_UPDATED",
+            {
+                contribution:
+                    contribution,
+                expenses:
+                    expenses,
+                balance:
+                    balance
+            }
+        );
+    }
+
+
+    function renderFamilyExpenses(){
+
+        const list =
+            document.getElementById(
+                "familyExpensesList"
+            );
+
+        if(!list){
+            return;
+        }
+
+        list.innerHTML = "";
+
+        const visibleExpenses =
+            getFilteredFamilyExpenses();
+
+        updateFamilyExpenseFilterResult(
+            visibleExpenses.length
+        );
+
+        if(familyExpenses.length === 0){
+
+            list.textContent =
+                "Nenhuma despesa familiar cadastrada.";
+
+            syncFamilyExpenseSummary();
+
+            return;
+        }
+
+        if(visibleExpenses.length === 0){
+
+            list.textContent =
+                "Nenhuma despesa encontrada com os filtros atuais.";
+
+            syncFamilyExpenseSummary();
+
+            return;
+        }
+
+
+        visibleExpenses.forEach(function(expense){
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.style.cssText =
+                "border:1px solid #e5e7eb;" +
+                "border-radius:14px;" +
+                "padding:16px;" +
+                "background:#f8fafc;";
+
+            const header =
+                document.createElement(
+                    "div"
+                );
+
+            header.style.cssText =
+                "display:flex;" +
+                "justify-content:space-between;" +
+                "gap:12px;" +
+                "align-items:flex-start;" +
+                "flex-wrap:wrap;";
+
+            const info =
+                document.createElement(
+                    "div"
+                );
+
+            const title =
+                document.createElement(
+                    "strong"
+                );
+
+            title.textContent =
+                expense.description ||
+                "Despesa";
+
+            const meta =
+                document.createElement(
+                    "div"
+                );
+
+            meta.style.cssText =
+                "color:#64748b;" +
+                "margin-top:5px;" +
+                "font-size:14px;";
+
+            let metaText =
+                (expense.category || "Outros") +
+                " • " +
+                recurrenceLabel(
+                    expense.recurrence
+                );
+
+            if(expense.due_date){
+
+                metaText +=
+                    " • vence " +
+                    String(
+                        expense.due_date
+                    );
+            }
+
+            if(expense.responsible_member_name){
+
+                metaText +=
+                    " • responsável: " +
+                    expense.responsible_member_name;
+            }
+
+            meta.textContent =
+                metaText;
+
+            info.appendChild(title);
+            info.appendChild(meta);
+
+
+            const value =
+                document.createElement(
+                    "strong"
+                );
+
+            value.textContent =
+                brl(
+                    expense.amount
+                );
+
+            header.appendChild(info);
+            header.appendChild(value);
+
+            card.appendChild(header);
+
+
+            const footer =
+                document.createElement(
+                    "div"
+                );
+
+            footer.style.cssText =
+                "display:flex;" +
+                "gap:8px;" +
+                "align-items:center;" +
+                "flex-wrap:wrap;" +
+                "margin-top:14px;";
+
+
+            const status =
+                document.createElement(
+                    "select"
+                );
+
+            [
+                ["pending","Pendente"],
+                ["paid","Pago"],
+                ["overdue","Vencido"],
+                ["cancelled","Cancelado"]
+            ].forEach(function(pair){
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    pair[0];
+
+                option.textContent =
+                    pair[1];
+
+                status.appendChild(
+                    option
+                );
+            });
+
+            status.value =
+                expense.status ||
+                "pending";
+
+            status.addEventListener(
+                "change",
+                async function(){
+
+                    const response =
+                        await fetch(
+                            "/api/finance/family/expenses/" +
+                            encodeURIComponent(
+                                expense.id
+                            ) +
+                            "/status",
+                            {
+                                method:"PATCH",
+                                credentials:"same-origin",
+                                headers:{
+                                    "Content-Type":
+                                        "application/json"
+                                },
+                                body:JSON.stringify({
+                                    status:status.value
+                                })
+                            }
+                        );
+
+                    const data =
+                        await response.json();
+
+                    if(!response.ok){
+
+                        alert(
+                            data.detail ||
+                            "Não foi possível alterar o status."
+                        );
+
+                        return;
+                    }
+
+                    await loadFamilyExpenses();
+                }
+            );
+
+
+            const editButton =
+                document.createElement(
+                    "button"
+                );
+
+            editButton.type =
+                "button";
+
+            editButton.textContent =
+                "Editar";
+
+            editButton.classList.add(
+                "family-expense-edit-button"
+            );
+
+            editButton.addEventListener(
+                "click",
+                async function(){
+
+                    const description =
+                        prompt(
+                            "Descrição:",
+                            expense.description || ""
+                        );
+
+                    if(description === null){
+                        return;
+                    }
+
+                    const amount =
+                        prompt(
+                            "Valor:",
+                            expense.amount || 0
+                        );
+
+                    if(amount === null){
+                        return;
+                    }
+
+                    const category =
+                        prompt(
+                            "Categoria:",
+                            expense.category || "Outros"
+                        );
+
+                    if(category === null){
+                        return;
+                    }
+
+                    const response =
+                        await fetch(
+                            "/api/finance/family/expenses/" +
+                            encodeURIComponent(
+                                expense.id
+                            ),
+                            {
+                                method:"PUT",
+                                credentials:"same-origin",
+                                headers:{
+                                    "Content-Type":
+                                        "application/json"
+                                },
+                                body:JSON.stringify({
+                                    description:
+                                        description,
+                                    category:
+                                        category,
+                                    amount:
+                                        Number(amount),
+                                    due_date:
+                                        expense.due_date || null,
+                                    responsible_member_id:
+                                        expense.responsible_member_id || null,
+                                    recurrence:
+                                        expense.recurrence || "once",
+                                    status:
+                                        expense.status || "pending",
+                                    notes:
+                                        expense.notes || null
+                                })
+                            }
+                        );
+
+                    const data =
+                        await response.json();
+
+                    if(!response.ok){
+
+                        alert(
+                            data.detail ||
+                            "Não foi possível editar a despesa."
+                        );
+
+                        return;
+                    }
+
+                    await loadFamilyExpenses();
+                }
+            );
+
+
+            const deleteButton =
+                document.createElement(
+                    "button"
+                );
+
+            deleteButton.type =
+                "button";
+
+            deleteButton.textContent =
+                "Excluir";
+
+            deleteButton.classList.add(
+                "family-expense-delete-button"
+            );
+
+            deleteButton.addEventListener(
+                "click",
+                async function(){
+
+                    if(
+                        !confirm(
+                            "Excluir a despesa " +
+                            (expense.description || "") +
+                            "?"
+                        )
+                    ){
+                        return;
+                    }
+
+                    const response =
+                        await fetch(
+                            "/api/finance/family/expenses/" +
+                            encodeURIComponent(
+                                expense.id
+                            ),
+                            {
+                                method:"DELETE",
+                                credentials:"same-origin"
+                            }
+                        );
+
+                    const data =
+                        await response.json();
+
+                    if(!response.ok){
+
+                        alert(
+                            data.detail ||
+                            "Não foi possível excluir a despesa."
+                        );
+
+                        return;
+                    }
+
+                    await loadFamilyExpenses();
+                }
+            );
+
+
+            footer.appendChild(status);
+            footer.appendChild(editButton);
+            footer.appendChild(deleteButton);
+
+            card.appendChild(footer);
+
+            list.appendChild(card);
+        });
+
+        syncFamilyExpenseSummary();
+    }
+
+
+    async function loadFamilyExpenses(){
+
+        setupFamilyExpenseFilters();
+
+        populateExpenseResponsibleMembers();
+
+        const response =
+            await fetch(
+                "/api/finance/family/expenses",
+                {
+                    credentials:"same-origin",
+                    cache:"no-store"
+                }
+            );
+
+        if(!response.ok){
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+        }
+
+        const data =
+            await response.json();
+
+        familyExpenses =
+            Array.isArray(data.items)
+                ? data.items
+                : [];
+
+        refreshFamilyExpenseFilterOptions();
+
+        renderFamilyExpenses();
+    }
+
+
+    async function createFamilyExpense(){
+
+        const description =
+            document.getElementById(
+                "familyExpenseDescription"
+            ).value.trim();
+
+        const category =
+            document.getElementById(
+                "familyExpenseCategory"
+            ).value;
+
+        const amount =
+            Number(
+                document.getElementById(
+                    "familyExpenseAmount"
+                ).value || 0
+            );
+
+        const dueDate =
+            document.getElementById(
+                "familyExpenseDueDate"
+            ).value || null;
+
+        const responsible =
+            document.getElementById(
+                "familyExpenseResponsible"
+            ).value || null;
+
+        const recurrence =
+            document.getElementById(
+                "familyExpenseRecurrence"
+            ).value;
+
+        const notes =
+            document.getElementById(
+                "familyExpenseNotes"
+            ).value.trim() || null;
+
+
+        if(!description){
+
+            alert(
+                "Informe a descrição da despesa."
+            );
+
+            return;
+        }
+
+
+        if(
+            !Number.isFinite(amount) ||
+            amount < 0
+        ){
+
+            alert(
+                "Informe um valor válido."
+            );
+
+            return;
+        }
+
+
+        const button =
+            document.getElementById(
+                "familyExpenseSave"
+            );
+
+        button.disabled = true;
+        button.textContent =
+            "Salvando...";
+
+
+        try{
+
+            const response =
+                await fetch(
+                    "/api/finance/family/expenses",
+                    {
+                        method:"POST",
+                        credentials:"same-origin",
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body:JSON.stringify({
+                            description:
+                                description,
+                            category:
+                                category,
+                            amount:
+                                amount,
+                            due_date:
+                                dueDate,
+                            responsible_member_id:
+                                responsible,
+                            recurrence:
+                                recurrence,
+                            status:
+                                "pending",
+                            notes:
+                                notes
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if(!response.ok){
+
+                throw new Error(
+                    data.detail ||
+                    "Não foi possível adicionar a despesa."
+                );
+            }
+
+
+            document.getElementById(
+                "familyExpenseDescription"
+            ).value = "";
+
+            document.getElementById(
+                "familyExpenseAmount"
+            ).value = "";
+
+            document.getElementById(
+                "familyExpenseDueDate"
+            ).value = "";
+
+            document.getElementById(
+                "familyExpenseNotes"
+            ).value = "";
+
+
+            await loadFamilyExpenses();
+
+
+            const message =
+                document.getElementById(
+                    "familyInnaMessage"
+                );
+
+            if(message){
+
+                message.textContent =
+                    "Despesa familiar cadastrada. O saldo familiar foi recalculado.";
+            }
+
+        }
+        catch(error){
+
+            console.error(
+                "FAMILY_EXPENSE_SAVE_ERROR",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Não foi possível adicionar a despesa."
+            );
+
+        }
+        finally{
+
+            button.disabled = false;
+
+            button.textContent =
+                "Adicionar despesa";
+        }
+    }
+
+
+    document.getElementById(
+        "familyExpenseSave"
+    ).addEventListener(
+        "click",
+        createFamilyExpense
+    );
+
+
+    setTimeout(
+        function(){
+
+            populateExpenseResponsibleMembers();
+
+            loadFamilyExpenses()
+                .catch(function(error){
+
+                    console.error(
+                        "FAMILY_EXPENSES_LOAD_ERROR",
+                        error
+                    );
+
+                    const list =
+                        document.getElementById(
+                            "familyExpensesList"
+                        );
+
+                    if(list){
+
+                        list.textContent =
+                            "Não foi possível carregar as despesas familiares.";
+                    }
+                });
+
+        },
+        250
+    );
+
+
+    window.sabinoLoadFamilyExpenses =
+        loadFamilyExpenses;
+
+    window.sabinoSyncFamilyExpenseSummary =
+        syncFamilyExpenseSummary;
+
+})();
+
+</script>
+
+<script
+    id="SABINO_SHARED_FINANCE_SIDEBAR_V1_LOADER"
+    src="/static/finance-sidebar.js">
+</script>
+
+
+
+
+
+<script id="SABINO_FINANCE_FAMILY_GOALS_JS_V1">
+
+(function(){
+
+    "use strict";
+
+    let familyGoals = [];
+
+
+    function brlGoal(value){
+
+        return Number(
+            value || 0
+        ).toLocaleString(
+            "pt-BR",
+            {
+                style:"currency",
+                currency:"BRL"
+            }
+        );
+    }
+
+
+    function dateBR(value){
+
+        if(!value){
+            return "Sem prazo";
+        }
+
+        const parts =
+            String(value)
+                .slice(0,10)
+                .split("-");
+
+        if(parts.length !== 3){
+            return value;
+        }
+
+        return (
+            parts[2] +
+            "/" +
+            parts[1] +
+            "/" +
+            parts[0]
+        );
+    }
+
+
+    async function loadFamilyGoalResponsibles(){
+
+        const select =
+            document.getElementById(
+                "familyGoalResponsible"
+            );
+
+        if(!select){
+            return;
+        }
+
+
+        const response =
+            await fetch(
+                "/api/finance/family/members",
+                {
+                    credentials:"same-origin",
+                    cache:"no-store"
+                }
+            );
+
+
+        if(!response.ok){
+            return;
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const items =
+            Array.isArray(data.items)
+                ? data.items
+                : [];
+
+
+        select.innerHTML =
+            '<option value="">' +
+            'Sem responsável específico' +
+            '</option>';
+
+
+        items
+            .filter(function(item){
+
+                return (
+                    item &&
+                    item.is_active !== false
+                );
+
+            })
+            .forEach(function(item){
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    item.id;
+
+                option.textContent =
+                    item.member_name ||
+                    "Membro";
+
+                select.appendChild(
+                    option
+                );
+            });
+    }
+
+
+    function calculateGoalSummary(){
+
+        const target =
+            familyGoals.reduce(
+                function(total,item){
+
+                    return total +
+                        Number(
+                            item.target_amount ||
+                            0
+                        );
+
+                },
+                0
+            );
+
+
+        const current =
+            familyGoals.reduce(
+                function(total,item){
+
+                    return total +
+                        Number(
+                            item.current_amount ||
+                            0
+                        );
+
+                },
+                0
+            );
+
+
+        const progress =
+            target > 0
+                ? Math.min(
+                    100,
+                    (
+                        current /
+                        target
+                    ) * 100
+                )
+                : 0;
+
+
+        document.getElementById(
+            "familyGoalsCount"
+        ).textContent =
+            String(
+                familyGoals.length
+            );
+
+
+        document.getElementById(
+            "familyGoalsTarget"
+        ).textContent =
+            brlGoal(target);
+
+
+        document.getElementById(
+            "familyGoalsCurrent"
+        ).textContent =
+            brlGoal(current);
+
+
+        document.getElementById(
+            "familyGoalsProgress"
+        ).textContent =
+            progress.toLocaleString(
+                "pt-BR",
+                {
+                    maximumFractionDigits:1
+                }
+            ) +
+            "%";
+
+
+        window.sabinoFamilyGoalsSemanticState = {
+
+            scope:"family",
+
+            goals_count:
+                familyGoals.length,
+
+            target_amount:
+                target,
+
+            current_amount:
+                current,
+
+            progress_percent:
+                progress
+        };
+    }
+
+
+    function renderFamilyGoals(){
+
+        const list =
+            document.getElementById(
+                "familyGoalsList"
+            );
+
+
+        list.innerHTML = "";
+
+
+        calculateGoalSummary();
+
+
+        if(
+            familyGoals.length === 0
+        ){
+
+            list.innerHTML =
+                '<div class="family-goals-empty">' +
+                'Nenhuma meta familiar cadastrada.' +
+                '</div>';
+
+            return;
+        }
+
+
+        familyGoals.forEach(
+            function(goal){
+
+                const target =
+                    Number(
+                        goal.target_amount ||
+                        0
+                    );
+
+                const current =
+                    Number(
+                        goal.current_amount ||
+                        0
+                    );
+
+                const percent =
+                    target > 0
+                        ? Math.min(
+                            100,
+                            (
+                                current /
+                                target
+                            ) * 100
+                        )
+                        : 0;
+
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+                card.className =
+                    "family-goal-card";
+
+
+                const top =
+                    document.createElement(
+                        "div"
+                    );
+
+                top.className =
+                    "family-goal-card-top";
+
+
+                const left =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                const name =
+                    document.createElement(
+                        "div"
+                    );
+
+                name.className =
+                    "family-goal-name";
+
+                name.textContent =
+                    goal.name ||
+                    "Meta familiar";
+
+
+                const meta =
+                    document.createElement(
+                        "div"
+                    );
+
+                meta.className =
+                    "family-goal-meta";
+
+
+                let metaText =
+                    "Prazo: " +
+                    dateBR(
+                        goal.target_date
+                    );
+
+
+                if(
+                    goal.responsible_member_id
+                ){
+
+                    const responsibleSelect =
+                        document.getElementById(
+                            "familyGoalResponsible"
+                        );
+
+
+                    const option =
+                        responsibleSelect
+                            ? Array.from(
+                                responsibleSelect.options
+                            ).find(
+                                function(item){
+
+                                    return (
+                                        String(
+                                            item.value
+                                        ) ===
+                                        String(
+                                            goal.responsible_member_id
+                                        )
+                                    );
+                                }
+                            )
+                            : null;
+
+
+                    if(option){
+
+                        metaText +=
+                            " • Responsável: " +
+                            option.textContent;
+                    }
+                }
+
+
+                meta.textContent =
+                    metaText;
+
+
+                left.appendChild(
+                    name
+                );
+
+                left.appendChild(
+                    meta
+                );
+
+
+                const percentEl =
+                    document.createElement(
+                        "div"
+                    );
+
+                percentEl.className =
+                    "family-goal-percent";
+
+                percentEl.textContent =
+                    percent.toLocaleString(
+                        "pt-BR",
+                        {
+                            maximumFractionDigits:1
+                        }
+                    ) +
+                    "%";
+
+
+                top.appendChild(
+                    left
+                );
+
+                top.appendChild(
+                    percentEl
+                );
+
+
+                const values =
+                    document.createElement(
+                        "div"
+                    );
+
+                values.className =
+                    "family-goal-values";
+
+                values.innerHTML =
+                    "<span>" +
+                    brlGoal(current) +
+                    "</span>" +
+                    "<span>de " +
+                    brlGoal(target) +
+                    "</span>";
+
+
+                const progress =
+                    document.createElement(
+                        "div"
+                    );
+
+                progress.className =
+                    "family-goal-progress";
+
+
+                const progressBar =
+                    document.createElement(
+                        "div"
+                    );
+
+                progressBar.style.width =
+                    Math.max(
+                        0,
+                        percent
+                    ) +
+                    "%";
+
+
+                progress.appendChild(
+                    progressBar
+                );
+
+
+                const actions =
+                    document.createElement(
+                        "div"
+                    );
+
+                actions.className =
+                    "family-goal-actions";
+
+
+                const addButton =
+                    document.createElement(
+                        "button"
+                    );
+
+                addButton.type =
+                    "button";
+
+                addButton.className =
+                    "family-goal-add-value";
+
+                addButton.textContent =
+                    "Adicionar valor";
+
+
+                addButton.addEventListener(
+                    "click",
+                    async function(){
+
+                        const entered =
+                            prompt(
+                                "Qual valor deseja adicionar à meta?"
+                            );
+
+
+                        if(
+                            entered === null ||
+                            !String(
+                                entered
+                            ).trim()
+                        ){
+                            return;
+                        }
+
+
+                        const amount =
+                            String(
+                                entered
+                            )
+                            .replace(
+                                ",",
+                                "."
+                            );
+
+
+                        const response =
+                            await fetch(
+                                "/api/finance/goals/" +
+                                encodeURIComponent(
+                                    goal.goal_id
+                                ) +
+                                "/contributions",
+                                {
+                                    method:"POST",
+                                    credentials:
+                                        "same-origin",
+
+                                    headers:{
+                                        "Content-Type":
+                                            "application/json"
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+                                            amount:amount
+                                        })
+                                }
+                            );
+
+
+                        const data =
+                            await response.json();
+
+
+                        if(!response.ok){
+
+                            alert(
+                                data.detail ||
+                                "Não foi possível adicionar o valor."
+                            );
+
+                            return;
+                        }
+
+
+                        await loadFamilyGoals();
+                    }
+                );
+
+
+                actions.appendChild(
+                    addButton
+                );
+
+
+                card.appendChild(
+                    top
+                );
+
+                card.appendChild(
+                    values
+                );
+
+                card.appendChild(
+                    progress
+                );
+
+                card.appendChild(
+                    actions
+                );
+
+
+                list.appendChild(
+                    card
+                );
+            }
+        );
+    }
+
+
+    async function loadFamilyGoals(){
+
+        const response =
+            await fetch(
+                "/api/finance/goals?scope=family",
+                {
+                    credentials:"same-origin",
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.detail ||
+                "Não foi possível carregar as metas familiares."
+            );
+        }
+
+
+        familyGoals =
+            Array.isArray(data.items)
+                ? data.items
+                : [];
+
+
+        renderFamilyGoals();
+    }
+
+
+    async function createFamilyGoal(){
+
+        const name =
+            document.getElementById(
+                "familyGoalName"
+            ).value.trim();
+
+
+        const target =
+            Number(
+                document.getElementById(
+                    "familyGoalTarget"
+                ).value
+            );
+
+
+        const date =
+            document.getElementById(
+                "familyGoalDate"
+            ).value ||
+            null;
+
+
+        const responsible =
+            document.getElementById(
+                "familyGoalResponsible"
+            ).value ||
+            null;
+
+
+        if(!name){
+
+            alert(
+                "Informe o nome da meta."
+            );
+
+            return;
+        }
+
+
+        if(
+            !Number.isFinite(target) ||
+            target <= 0
+        ){
+
+            alert(
+                "Informe um valor objetivo maior que zero."
+            );
+
+            return;
+        }
+
+
+        const button =
+            document.getElementById(
+                "familyGoalSave"
+            );
+
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "Salvando...";
+
+
+        try{
+
+            const response =
+                await fetch(
+                    "/api/finance/goals",
+                    {
+                        method:"POST",
+
+                        credentials:
+                            "same-origin",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                name:
+                                    name,
+
+                                target_amount:
+                                    target,
+
+                                target_date:
+                                    date,
+
+                                scope:
+                                    "family",
+
+                                responsible_member_id:
+                                    responsible
+                            })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if(!response.ok){
+
+                throw new Error(
+                    data.detail ||
+                    "Não foi possível criar a meta."
+                );
+            }
+
+
+            document.getElementById(
+                "familyGoalName"
+            ).value = "";
+
+
+            document.getElementById(
+                "familyGoalTarget"
+            ).value = "";
+
+
+            document.getElementById(
+                "familyGoalDate"
+            ).value = "";
+
+
+            document.getElementById(
+                "familyGoalResponsible"
+            ).value = "";
+
+
+            document.getElementById(
+                "familyGoalFormArea"
+            ).classList.remove(
+                "open"
+            );
+
+
+            await loadFamilyGoals();
+
+
+            const message =
+                document.getElementById(
+                    "familyInnaMessage"
+                );
+
+
+            if(message){
+
+                message.textContent =
+                    "Meta familiar criada. Acompanhe os aportes e o progresso até o objetivo.";
+            }
+
+        }
+        catch(error){
+
+            alert(
+                error.message ||
+                "Não foi possível criar a meta."
+            );
+
+        }
+        finally{
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "Criar meta";
+        }
+    }
+
+
+    document.getElementById(
+        "familyGoalOpen"
+    ).addEventListener(
+        "click",
+        function(){
+
+            document.getElementById(
+                "familyGoalFormArea"
+            ).classList.toggle(
+                "open"
+            );
+        }
+    );
+
+
+    document.getElementById(
+        "familyGoalCancel"
+    ).addEventListener(
+        "click",
+        function(){
+
+            document.getElementById(
+                "familyGoalFormArea"
+            ).classList.remove(
+                "open"
+            );
+        }
+    );
+
+
+    document.getElementById(
+        "familyGoalSave"
+    ).addEventListener(
+        "click",
+        createFamilyGoal
+    );
+
+
+    async function bootFamilyGoals(){
+
+
+        await loadFamilyGoalResponsibles();
+
+        await loadFamilyGoals();
+    }
+
+
+    if(
+        document.readyState ===
+        "loading"
+    ){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function(){
+
+                bootFamilyGoals()
+                    .catch(
+                        console.error
+                    );
+            }
+        );
+
+    }
+    else{
+
+        bootFamilyGoals()
+            .catch(
+                console.error
+            );
+    }
+
+
+
+    window.sabinoLoadFamilyGoals =
+        loadFamilyGoals;
+
+})();
+
+</script>
+
+
+<!-- SABINO_FINANCE_FAMILY_SUMMARY_V1 -->
+
+
+
+
+<script id="SABINO_FINANCE_FAMILY_SUMMARY_JS_V1">
+
+(function(){
+
+    "use strict";
+
+
+    const palette = [
+        "#38bdf8",
+        "#54d89b",
+        "#65a9ff",
+        "#ef7878",
+        "#b487ef",
+        "#4bc6ce",
+        "#ec9f4b",
+        "#d46aa8"
+    ];
+
+
+    function brlSummary(value){
+
+        return Number(
+            value || 0
+        ).toLocaleString(
+            "pt-BR",
+            {
+                style:"currency",
+                currency:"BRL"
+            }
+        );
+    }
+
+
+    function percentSummary(value){
+
+        return Number(
+            value || 0
+        ).toLocaleString(
+            "pt-BR",
+            {
+                maximumFractionDigits:1
+            }
+        ) + "%";
+    }
+
+
+    async function apiSummary(url){
+
+        const response =
+            await fetch(
+                url,
+                {
+                    credentials:"same-origin",
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.detail ||
+                "Falha ao carregar resumo familiar."
+            );
+        }
+
+
+        return data;
+    }
+
+
+    function setSemanticClass(
+        element,
+        value,
+        goodLimit,
+        warningLimit
+    ){
+
+        element.classList.remove(
+            "good",
+            "warning",
+            "critical"
+        );
+
+
+        if(value <= goodLimit){
+
+            element.classList.add(
+                "good"
+            );
+
+        }
+        else if(
+            value <= warningLimit
+        ){
+
+            element.classList.add(
+                "warning"
+            );
+
+        }
+        else{
+
+            element.classList.add(
+                "critical"
+            );
+        }
+    }
+
+
+    function renderCategories(
+        categories,
+        total
+    ){
+
+        const bars =
+            document.getElementById(
+                "familyCategoryBars"
+            );
+
+        const legend =
+            document.getElementById(
+                "familyCategoryLegend"
+            );
+
+        const donut =
+            document.getElementById(
+                "familyCategoryDonut"
+            );
+
+
+        bars.innerHTML = "";
+        legend.innerHTML = "";
+
+
+        document.getElementById(
+            "familyDonutTotal"
+        ).textContent =
+            brlSummary(total);
+
+
+        const entries =
+            Object.entries(
+                categories
+            )
+            .sort(
+                function(a,b){
+
+                    return b[1] - a[1];
+                }
+            );
+
+
+        if(
+            !entries.length ||
+            total <= 0
+        ){
+
+            bars.innerHTML =
+                '<div class="family-summary-empty">' +
+                'Nenhuma despesa cadastrada.' +
+                '</div>';
+
+
+            donut.style.background =
+                "#20282d";
+
+            return;
+        }
+
+
+        entries.forEach(
+            function(entry,index){
+
+                const category =
+                    entry[0];
+
+                const value =
+                    entry[1];
+
+                const pct =
+                    (
+                        value /
+                        total
+                    ) * 100;
+
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+                row.className =
+                    "family-category-row";
+
+
+                row.innerHTML =
+                    '<div class="family-category-top">' +
+                        '<span></span>' +
+                        '<strong></strong>' +
+                    '</div>' +
+                    '<div class="family-category-track">' +
+                        '<div></div>' +
+                    '</div>' +
+                    '<div class="family-category-percent"></div>';
+
+
+                row.querySelector(
+                    ".family-category-top span"
+                ).textContent =
+                    category;
+
+
+                row.querySelector(
+                    ".family-category-top strong"
+                ).textContent =
+                    brlSummary(value);
+
+
+                row.querySelector(
+                    ".family-category-track div"
+                ).style.width =
+                    Math.min(
+                        100,
+                        pct
+                    ) +
+                    "%";
+
+
+                row.querySelector(
+                    ".family-category-percent"
+                ).textContent =
+                    percentSummary(pct) +
+                    " das despesas";
+
+
+                bars.appendChild(
+                    row
+                );
+
+
+                const legendRow =
+                    document.createElement(
+                        "div"
+                    );
+
+                legendRow.className =
+                    "family-legend-row";
+
+
+                const legendName =
+                    document.createElement(
+                        "div"
+                    );
+
+                legendName.className =
+                    "family-legend-name";
+
+
+                const dot =
+                    document.createElement(
+                        "span"
+                    );
+
+                dot.className =
+                    "family-legend-dot";
+
+                dot.style.background =
+                    palette[
+                        index %
+                        palette.length
+                    ];
+
+
+                const text =
+                    document.createElement(
+                        "span"
+                    );
+
+                text.textContent =
+                    category;
+
+
+                legendName.appendChild(
+                    dot
+                );
+
+                legendName.appendChild(
+                    text
+                );
+
+
+                const pctText =
+                    document.createElement(
+                        "strong"
+                    );
+
+                pctText.textContent =
+                    percentSummary(pct);
+
+
+                legendRow.appendChild(
+                    legendName
+                );
+
+                legendRow.appendChild(
+                    pctText
+                );
+
+
+                legend.appendChild(
+                    legendRow
+                );
+            }
+        );
+
+
+        let cursor = 0;
+
+        const gradientParts =
+            entries.map(
+                function(entry,index){
+
+                    const value =
+                        entry[1];
+
+                    const pct =
+                        (
+                            value /
+                            total
+                        ) * 100;
+
+                    const start =
+                        cursor;
+
+                    cursor += pct;
+
+                    return (
+                        palette[
+                            index %
+                            palette.length
+                        ] +
+                        " " +
+                        start +
+                        "% " +
+                        cursor +
+                        "%"
+                    );
+                }
+            );
+
+
+        donut.style.background =
+            "conic-gradient(" +
+            gradientParts.join(",") +
+            ")";
+    }
+
+
+    function buildReading(
+        contribution,
+        expenses,
+        balance,
+        commitment,
+        goalsTarget,
+        goalsCurrent,
+        membersCount
+    ){
+
+        if(
+            membersCount === 0
+        ){
+
+            return (
+                "Cadastre membros da família para iniciar " +
+                "uma análise financeira compartilhada."
+            );
+        }
+
+
+        if(
+            contribution <= 0
+        ){
+
+            return (
+                "Existem membros cadastrados, mas ainda não há " +
+                "contribuição mensal registrada. Informe as " +
+                "contribuições para obter uma leitura mais completa."
+            );
+        }
+
+
+        if(balance < 0){
+
+            return (
+                "As despesas familiares estão acima das contribuições " +
+                "mensais. O saldo atual é " +
+                brlSummary(balance) +
+                ". A prioridade deve ser reduzir o déficit e revisar " +
+                "as categorias de maior gasto."
+            );
+        }
+
+
+        if(commitment >= 80){
+
+            return (
+                "As despesas comprometem " +
+                percentSummary(commitment) +
+                " das contribuições familiares. O saldo ainda é " +
+                "positivo, mas existe pouca margem para imprevistos " +
+                "e novos objetivos."
+            );
+        }
+
+
+        if(
+            goalsTarget > 0 &&
+            goalsCurrent < goalsTarget
+        ){
+
+            const missing =
+                Math.max(
+                    0,
+                    goalsTarget -
+                    goalsCurrent
+                );
+
+
+            return (
+                "A família mantém saldo mensal positivo de " +
+                brlSummary(balance) +
+                ". As despesas representam " +
+                percentSummary(commitment) +
+                " das contribuições. Ainda faltam " +
+                brlSummary(missing) +
+                " para concluir as metas familiares atuais."
+            );
+        }
+
+
+        if(
+            goalsTarget > 0 &&
+            goalsCurrent >= goalsTarget
+        ){
+
+            return (
+                "O orçamento familiar apresenta saldo positivo " +
+                "e as metas cadastradas atingiram o valor objetivo. " +
+                "O próximo passo é definir novos objetivos ou " +
+                "fortalecer a reserva familiar."
+            );
+        }
+
+
+        return (
+            "A família possui saldo mensal positivo de " +
+            brlSummary(balance) +
+            ". As despesas representam " +
+            percentSummary(commitment) +
+            " das contribuições. Considere criar uma meta familiar " +
+            "para direcionar parte do saldo disponível."
+        );
+    }
+
+
+    async function loadFamilySummary(){
+
+        try{
+
+            const result =
+                await Promise.all([
+                    apiSummary(
+                        "/api/finance/family/members"
+                    ),
+
+                    apiSummary(
+                        "/api/finance/family/expenses"
+                    ),
+
+                    apiSummary(
+                        "/api/finance/goals?scope=family"
+                    )
+                ]);
+
+
+            const memberData =
+                result[0] || {};
+
+            const expenseData =
+                result[1] || {};
+
+            const goalData =
+                result[2] || {};
+
+
+            const members =
+                Array.isArray(
+                    memberData.items
+                )
+                    ? memberData.items
+                    : [];
+
+
+            const expenses =
+                Array.isArray(
+                    expenseData.items
+                )
+                    ? expenseData.items
+                    : [];
+
+
+            const goals =
+                Array.isArray(
+                    goalData.items
+                )
+                    ? goalData.items
+                    : [];
+
+
+            let contribution =
+                Number(
+                    memberData.summary &&
+                    memberData.summary.monthly_contribution
+                        ? memberData.summary.monthly_contribution
+                        : 0
+                );
+
+
+            if(
+                contribution === 0
+            ){
+
+                contribution =
+                    members
+                        .filter(
+                            function(item){
+
+                                return (
+                                    item.is_active !== false
+                                );
+                            }
+                        )
+                        .reduce(
+                            function(total,item){
+
+                                return total +
+                                    Number(
+                                        item.monthly_contribution ||
+                                        item.contribution ||
+                                        0
+                                    );
+                            },
+                            0
+                        );
+            }
+
+
+            const activeExpenses =
+                expenses.filter(
+                    function(item){
+
+                        return (
+                            String(
+                                item.status ||
+                                ""
+                            ).toLowerCase() !==
+                            "cancelled"
+                        );
+                    }
+                );
+
+
+            const expenseTotal =
+                activeExpenses.reduce(
+                    function(total,item){
+
+                        return total +
+                            Number(
+                                item.amount ||
+                                0
+                            );
+                    },
+                    0
+                );
+
+
+            const balance =
+                contribution -
+                expenseTotal;
+
+
+            const commitment =
+                contribution > 0
+                    ? (
+                        expenseTotal /
+                        contribution
+                    ) * 100
+                    : 0;
+
+
+            const goalsTarget =
+                goals.reduce(
+                    function(total,item){
+
+                        return total +
+                            Number(
+                                item.target_amount ||
+                                0
+                            );
+                    },
+                    0
+                );
+
+
+            const goalsCurrent =
+                goals.reduce(
+                    function(total,item){
+
+                        return total +
+                            Number(
+                                item.current_amount ||
+                                0
+                            );
+                    },
+                    0
+                );
+
+
+            const goalProgress =
+                goalsTarget > 0
+                    ? (
+                        goalsCurrent /
+                        goalsTarget
+                    ) * 100
+                    : 0;
+
+
+            const goalRemaining =
+                Math.max(
+                    0,
+                    goalsTarget -
+                    goalsCurrent
+                );
+
+
+            const activeMembers =
+                members.filter(
+                    function(item){
+
+                        return (
+                            item.is_active !== false
+                        );
+                    }
+                ).length;
+
+
+            const commitmentEl =
+                document.getElementById(
+                    "familySummaryCommitment"
+                );
+
+
+            commitmentEl.textContent =
+                percentSummary(
+                    commitment
+                );
+
+
+            setSemanticClass(
+                commitmentEl,
+                commitment,
+                50,
+                80
+            );
+
+
+            document.getElementById(
+                "familySummaryGoalProgress"
+            ).textContent =
+                percentSummary(
+                    goalProgress
+                );
+
+
+            document.getElementById(
+                "familySummaryGoalRemaining"
+            ).textContent =
+                brlSummary(
+                    goalRemaining
+                );
+
+
+            document.getElementById(
+                "familySummaryMembers"
+            ).textContent =
+                String(
+                    activeMembers
+                );
+
+
+            const categories = {};
+
+
+            activeExpenses.forEach(
+                function(item){
+
+                    const category =
+                        String(
+                            item.category ||
+                            "Outras despesas"
+                        ).trim() ||
+                        "Outras despesas";
+
+
+                    categories[category] =
+                        (
+                            categories[category] ||
+                            0
+                        ) +
+                        Number(
+                            item.amount ||
+                            0
+                        );
+                }
+            );
+
+
+            renderCategories(
+                categories,
+                expenseTotal
+            );
+
+
+            document.getElementById(
+                "familySummaryReading"
+            ).textContent =
+                buildReading(
+                    contribution,
+                    expenseTotal,
+                    balance,
+                    commitment,
+                    goalsTarget,
+                    goalsCurrent,
+                    activeMembers
+                );
+
+
+            window.sabinoFamilySummaryState = {
+
+                module:
+                    "family_finance",
+
+                members_active:
+                    activeMembers,
+
+                monthly_contribution:
+                    contribution,
+
+                family_expenses:
+                    expenseTotal,
+
+                family_balance:
+                    balance,
+
+                income_commitment_percent:
+                    commitment,
+
+                goals_target:
+                    goalsTarget,
+
+                goals_current:
+                    goalsCurrent,
+
+                goals_remaining:
+                    goalRemaining,
+
+                goals_progress_percent:
+                    goalProgress,
+
+                categories:
+                    categories
+            };
+
+
+            window.dispatchEvent(
+                new CustomEvent(
+                    "sabinoFamilySummaryUpdated",
+                    {
+                        detail:
+                            window.sabinoFamilySummaryState
+                    }
+                )
+            );
+
+
+            console.log(
+                "FAMILY_SUMMARY_UPDATED",
+                window.sabinoFamilySummaryState
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                "FAMILY_SUMMARY_ERROR",
+                error
+            );
+
+
+            const reading =
+                document.getElementById(
+                    "familySummaryReading"
+                );
+
+
+            if(reading){
+
+                reading.textContent =
+                    "Não foi possível atualizar o resumo familiar.";
+            }
+        }
+    }
+
+
+    function observeFamilyChanges(){
+
+        const ids = [
+            "familyMembersList",
+            "familyExpensesList",
+            "familyGoalsList"
+        ];
+
+
+        let timer = null;
+
+
+        const observer =
+            new MutationObserver(
+                function(){
+
+                    clearTimeout(
+                        timer
+                    );
+
+
+                    timer =
+                        setTimeout(
+                            loadFamilySummary,
+                            250
+                        );
+                }
+            );
+
+
+        ids.forEach(
+            function(id){
+
+                const element =
+                    document.getElementById(
+                        id
+                    );
+
+
+                if(element){
+
+                    observer.observe(
+                        element,
+                        {
+                            childList:true,
+                            subtree:true
+                        }
+                    );
+                }
+            }
+        );
+    }
+
+
+    async function bootFamilySummary(){
+
+
+        await loadFamilySummary();
+
+        observeFamilyChanges();
+    }
+
+
+    if(
+        document.readyState ===
+        "loading"
+    ){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function(){
+
+                bootFamilySummary()
+                    .catch(
+                        console.error
+                    );
+            }
+        );
+
+    }
+    else{
+
+        bootFamilySummary()
+            .catch(
+                console.error
+            );
+    }
+
+
+
+    window.sabinoRefreshFamilySummary =
+        loadFamilySummary;
+
+})();
+
+</script>
+
+<script src="/static/js/sabino-locale-core.js?v=internal12_20260917_140006" data-sabino-global-locale="v1"></script>
+<script src="/static/js/sabino-global-i18n-runtime.js" data-sabino-global-i18n="v1"></script>
+<script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
+<script src="/static/js/sabino-money-locale-runtime.js"></script>
+
+    <script defer src="/static/js/sabino-finance-back-dashboard-v2.js?v=20260918_144545"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

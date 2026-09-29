@@ -1,0 +1,3689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+    name="theme-color"
+    content="#080909"
+>
+
+<title>
+Sabino.AI | INNA
+</title>
+
+<style>
+
+:root {
+
+    --bg:
+        #080909;
+
+    --surface:
+        #0d0f0f;
+
+    --surface-2:
+        #111414;
+
+    --line:
+        rgba(255,255,255,.09);
+
+    --gold:
+        #f0bd32;
+
+    --gold-soft:
+        rgba(240,189,50,.13);
+
+    --text:
+        #f7f7f7;
+
+    --muted:
+        #969b9b;
+
+    --success:
+        #30d87b;
+}
+
+
+* {
+    box-sizing:
+        border-box;
+}
+
+
+html,
+body {
+
+    margin:
+        0;
+
+    width:
+        100%;
+
+    min-height:
+        100%;
+
+    background:
+        var(--bg);
+
+    color:
+        var(--text);
+
+    font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+
+body {
+
+    min-height:
+        100vh;
+
+    display:
+        flex;
+}
+
+
+/* ==========================================================
+   SIDEBAR
+   ========================================================== */
+
+.sidebar {
+
+    width:
+        262px;
+
+    min-width:
+        262px;
+
+    min-height:
+        100vh;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    padding:
+        25px 18px 24px;
+
+    border-right:
+        1px solid var(--line);
+
+    background:
+        #080909;
+}
+
+
+.brand {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        14px;
+
+    padding:
+        0 8px 26px;
+
+    border-bottom:
+        1px solid var(--line);
+}
+
+
+.brand-logo {
+
+    width:
+        50px;
+
+    height:
+        50px;
+
+    border-radius:
+        9px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    background:
+        #020303;
+
+    color:
+        var(--gold);
+
+    font-size:
+        28px;
+
+    font-weight:
+        900;
+}
+
+
+.brand-name {
+
+    font-size:
+        21px;
+
+    font-weight:
+        800;
+}
+
+
+.brand-sub {
+
+    margin-top:
+        2px;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        1.8px;
+
+    color:
+        #9b9e9e;
+
+    font-weight:
+        800;
+}
+
+
+.nav-label {
+
+    margin:
+        27px 14px 10px;
+
+    color:
+        #747878;
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        2px;
+}
+
+
+.menu {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        7px;
+}
+
+
+.menu-item {
+
+    min-height:
+        49px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        13px;
+
+    padding:
+        0 14px;
+
+    border:
+        1px solid transparent;
+
+    border-radius:
+        9px;
+
+    color:
+        #9da1a1;
+
+    text-decoration:
+        none;
+
+    font-size:
+        14px;
+
+    font-weight:
+        650;
+
+    position:
+        relative;
+}
+
+
+.menu-item:hover {
+
+    color:
+        #fff;
+
+    background:
+        rgba(255,255,255,.025);
+}
+
+
+.menu-item.active {
+
+    color:
+        #f7cc59;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(225,168,45,.13),
+            rgba(225,168,45,.035)
+        );
+
+    border-color:
+        rgba(225,168,45,.16);
+
+    box-shadow:
+        inset 2px 0 #e3a72e;
+}
+
+
+.menu-icon {
+
+    width:
+        22px;
+
+    height:
+        22px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+}
+
+
+.menu-icon svg {
+
+    width:
+        19px;
+
+    height:
+        19px;
+
+    fill:
+        none;
+
+    stroke:
+        currentColor;
+
+    stroke-width:
+        1.7;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
+}
+
+
+.sidebar-bottom {
+
+    margin-top:
+        auto;
+
+    padding-top:
+        18px;
+
+    border-top:
+        1px solid var(--line);
+}
+
+
+.logout {
+
+    color:
+        #8d9292;
+
+    text-decoration:
+        none;
+
+    padding:
+        12px 14px;
+
+    display:
+        flex;
+
+    gap:
+        12px;
+
+    align-items:
+        center;
+}
+
+
+/* ==========================================================
+   MAIN
+   ========================================================== */
+
+.main {
+
+    flex:
+        1;
+
+    min-width:
+        0;
+
+    min-height:
+        100vh;
+
+    padding:
+        24px 42px 32px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+}
+
+
+.topbar {
+
+    min-height:
+        74px;
+
+    display:
+        flex;
+
+    justify-content:
+        flex-end;
+
+    align-items:
+        center;
+
+    gap:
+        22px;
+
+    border-bottom:
+        1px solid var(--line);
+}
+
+
+.status {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        7px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+}
+
+
+.status-dot {
+
+    width:
+        9px;
+
+    height:
+        9px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--success);
+
+    box-shadow:
+        0 0 12px rgba(48,216,123,.4);
+}
+
+
+.page-header {
+
+    padding:
+        36px 0 25px;
+}
+
+
+.eyebrow {
+
+    color:
+        var(--gold);
+
+    font-size:
+        11px;
+
+    letter-spacing:
+        1.7px;
+
+    font-weight:
+        900;
+
+    text-transform:
+        uppercase;
+}
+
+
+h1 {
+
+    margin:
+        9px 0 7px;
+
+    font-size:
+        clamp(
+            32px,
+            4vw,
+            48px
+        );
+
+    line-height:
+        1.05;
+}
+
+
+.page-header p {
+
+    margin:
+        0;
+
+    color:
+        var(--muted);
+
+    line-height:
+        1.6;
+}
+
+
+/* ==========================================================
+   WORKSPACE
+   ========================================================== */
+
+.workspace {
+
+    flex:
+        1;
+
+    min-height:
+        560px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0, 1.6fr)
+        minmax(300px, .72fr);
+
+    gap:
+        18px;
+}
+
+
+.chat-shell,
+.sources-shell {
+
+    border:
+        1px solid var(--line);
+
+    border-radius:
+        15px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #0d0f0f,
+            #090b0b
+        );
+
+    overflow:
+        hidden;
+}
+
+
+.chat-shell {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+}
+
+
+.chat-header,
+.sources-header {
+
+    min-height:
+        68px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    padding:
+        0 20px;
+
+    border-bottom:
+        1px solid var(--line);
+}
+
+
+.inna-avatar {
+
+    width:
+        40px;
+
+    height:
+        40px;
+
+    border:
+        1px solid var(--gold);
+
+    border-radius:
+        50%;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    color:
+        var(--gold);
+
+    font-weight:
+        900;
+
+    margin-right:
+        12px;
+}
+
+
+.chat-title {
+
+    font-weight:
+        800;
+}
+
+
+.chat-subtitle {
+
+    color:
+        var(--muted);
+
+    font-size:
+        11px;
+
+    margin-top:
+        3px;
+}
+
+
+.messages {
+
+    flex:
+        1;
+
+    min-height:
+        360px;
+
+    max-height:
+        calc(100vh - 360px);
+
+    overflow-y:
+        auto;
+
+    padding:
+        22px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        14px;
+}
+
+
+.message {
+
+    max-width:
+        82%;
+
+    padding:
+        13px 15px;
+
+    border-radius:
+        12px;
+
+    line-height:
+        1.55;
+
+    font-size:
+        14px;
+
+    white-space:
+        pre-wrap;
+}
+
+
+.message.inna {
+
+    align-self:
+        flex-start;
+
+    background:
+        #121515;
+
+    border:
+        1px solid var(--line);
+}
+
+
+.message.user {
+
+    align-self:
+        flex-end;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f4c83d,
+            #e4aa21
+        );
+
+    color:
+        #0a0a0a;
+
+    font-weight:
+        600;
+}
+
+
+.composer {
+
+    padding:
+        16px;
+
+    border-top:
+        1px solid var(--line);
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr auto;
+
+    gap:
+        10px;
+}
+
+
+.composer textarea {
+
+    min-height:
+        50px;
+
+    max-height:
+        130px;
+
+    resize:
+        vertical;
+
+    border:
+        1px solid rgba(240,189,50,.55);
+
+    border-radius:
+        11px;
+
+    background:
+        #090b0b;
+
+    color:
+        #fff;
+
+    padding:
+        14px;
+
+    outline:
+        none;
+
+    font:
+        inherit;
+}
+
+
+.composer button {
+
+    min-width:
+        110px;
+
+    border:
+        0;
+
+    border-radius:
+        11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5cf48,
+            #e5ad25
+        );
+
+    color:
+        #090909;
+
+    font-weight:
+        850;
+
+    cursor:
+        pointer;
+}
+
+
+.composer button:disabled {
+
+    opacity:
+        .55;
+
+    cursor:
+        wait;
+}
+
+
+/* ==========================================================
+   SOURCES
+   ========================================================== */
+
+.sources-header {
+
+    justify-content:
+        space-between;
+
+    font-weight:
+        800;
+}
+
+
+.source-count {
+
+    color:
+        var(--gold);
+
+    font-size:
+        12px;
+}
+
+
+.sources {
+
+    padding:
+        16px;
+
+    overflow-y:
+        auto;
+
+    max-height:
+        calc(100vh - 285px);
+}
+
+
+.empty-sources {
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+    line-height:
+        1.55;
+}
+
+
+.source-card {
+
+    padding:
+        14px 0;
+
+    border-bottom:
+        1px solid var(--line);
+}
+
+
+.source-card:last-child {
+
+    border-bottom:
+        0;
+}
+
+
+.source-title {
+
+    color:
+        #f0c54b;
+
+    font-weight:
+        800;
+
+    font-size:
+        13px;
+}
+
+
+.source-excerpt {
+
+    margin-top:
+        8px;
+
+    color:
+        #b8bcbc;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.55;
+}
+
+
+.source-file {
+
+    margin-top:
+        8px;
+
+    color:
+        #727777;
+
+    font-size:
+        10px;
+
+    word-break:
+        break-all;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (
+    max-width: 1000px
+) {
+
+    .workspace {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .sources {
+
+        max-height:
+            none;
+    }
+}
+
+
+@media (
+    max-width: 760px
+) {
+
+    body {
+
+        display:
+            block;
+    }
+
+
+    .sidebar {
+
+        width:
+            100%;
+
+        min-height:
+            auto;
+
+        min-width:
+            0;
+    }
+
+
+    .main {
+
+        padding:
+            20px;
+    }
+
+
+    .composer {
+
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+
+/* ==========================================================
+   SABINO_INNA_FULL_PAGE_VISUAL_V2
+   ========================================================== */
+
+.brand-logo {
+
+    overflow:
+        hidden;
+
+    padding:
+        0 !important;
+
+    background:
+        #020303;
+}
+
+
+.brand-logo img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        contain;
+
+    display:
+        block;
+}
+
+
+.inna-avatar {
+
+    width:
+        48px !important;
+
+    height:
+        48px !important;
+
+    min-width:
+        48px;
+
+    padding:
+        0 !important;
+
+    overflow:
+        hidden;
+
+    background:
+        #060707;
+}
+
+
+.inna-avatar img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+    display:
+        block;
+}
+
+
+.main {
+
+    padding-top:
+        14px;
+}
+
+
+.topbar {
+
+    min-height:
+        62px;
+}
+
+
+.page-header {
+
+    padding:
+        22px 0 20px;
+}
+
+
+.page-header h1 {
+
+    margin:
+        7px 0 8px;
+
+    font-size:
+        clamp(
+            30px,
+            3.2vw,
+            42px
+        );
+
+    line-height:
+        1.08;
+}
+
+
+.page-header p {
+
+    max-width:
+        900px;
+}
+
+
+.workspace {
+
+    min-height:
+        calc(100vh - 230px);
+}
+
+
+.chat-header,
+.sources-header {
+
+    min-height:
+        72px;
+}
+
+
+.messages {
+
+    min-height:
+        400px;
+
+    max-height:
+        calc(100vh - 335px);
+}
+
+
+.chat-shell,
+.sources-shell {
+
+    box-shadow:
+        0 18px 60px
+        rgba(0,0,0,.18);
+}
+
+
+.source-card {
+
+    padding:
+        16px 0;
+}
+
+
+@media (
+    max-width: 1000px
+) {
+
+    .workspace {
+
+        min-height:
+            auto;
+    }
+
+
+    .messages {
+
+        max-height:
+            520px;
+    }
+
+}
+
+
+
+
+/* ==========================================================
+   SABINO_INNA_COMPOSER_POSITION_V3
+   Sobe moderadamente a área de digitação.
+   ========================================================== */
+
+.workspace {
+
+    min-height:
+        calc(100vh - 305px) !important;
+}
+
+
+.messages {
+
+    min-height:
+        310px !important;
+
+    max-height:
+        calc(100vh - 410px) !important;
+}
+
+
+.sources {
+
+    max-height:
+        calc(100vh - 355px) !important;
+}
+
+
+
+
+/* ==========================================================
+   SABINO_INNA_SIDE_AREAS_V4
+   ========================================================== */
+
+
+/* ----------------------------------------------------------
+   INSTITUCIONAL / SIDEBAR
+   ---------------------------------------------------------- */
+
+.institutional-section {
+
+    margin-top:
+        auto;
+
+    padding:
+        0 7px 17px;
+}
+
+
+.sidebar-bottom {
+
+    margin-top:
+        0 !important;
+}
+
+
+.institutional-label {
+
+    margin:
+        0 9px 10px;
+
+    color:
+        #666b6b;
+
+    font-size:
+        9px;
+
+    font-weight:
+        850;
+
+    letter-spacing:
+        1.8px;
+}
+
+
+.institutional-item {
+
+    width:
+        100%;
+
+    min-height:
+        37px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    padding:
+        0 10px;
+
+    border:
+        1px solid transparent;
+
+    border-radius:
+        8px;
+
+    background:
+        transparent;
+
+    color:
+        #818686;
+
+    font-family:
+        inherit;
+
+    font-size:
+        11px;
+
+    text-align:
+        left;
+
+    cursor:
+        pointer;
+
+    transition:
+        .18s ease;
+}
+
+
+.institutional-item:hover {
+
+    color:
+        #f0c34a;
+
+    background:
+        rgba(240,189,50,.045);
+
+    border-color:
+        rgba(240,189,50,.10);
+}
+
+
+.institutional-item.active {
+
+    color:
+        #f3c84d;
+
+    background:
+        rgba(240,189,50,.07);
+}
+
+
+.institutional-dot {
+
+    width:
+        5px;
+
+    height:
+        5px;
+
+    min-width:
+        5px;
+
+    border-radius:
+        50%;
+
+    background:
+        #696e6e;
+}
+
+
+.institutional-item:hover
+.institutional-dot,
+.institutional-item.active
+.institutional-dot {
+
+    background:
+        var(--gold);
+
+    box-shadow:
+        0 0 8px
+        rgba(240,189,50,.45);
+}
+
+
+/* ----------------------------------------------------------
+   COLUNA DE FONTES
+   ---------------------------------------------------------- */
+
+.sources-shell {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+}
+
+
+.sources {
+
+    flex:
+        1;
+
+    min-height:
+        215px;
+
+    max-height:
+        none !important;
+}
+
+
+/* ----------------------------------------------------------
+   CARD CONHEÇA A INNA
+   ---------------------------------------------------------- */
+
+.inna-about-card {
+
+    margin:
+        4px 16px 16px;
+
+    padding:
+        18px;
+
+    border:
+        1px solid
+        rgba(240,189,50,.16);
+
+    border-radius:
+        12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(240,189,50,.06),
+            rgba(255,255,255,.012)
+        );
+}
+
+
+.inna-about-eyebrow {
+
+    color:
+        var(--gold);
+
+    font-size:
+        9px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        1.5px;
+}
+
+
+.inna-about-card h3 {
+
+    margin:
+        7px 0 8px;
+
+    color:
+        #f5f5f5;
+
+    font-size:
+        17px;
+}
+
+
+.inna-about-card p {
+
+    margin:
+        0;
+
+    color:
+        #969b9b;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.55;
+}
+
+
+.inna-about-list {
+
+    margin:
+        13px 0 0;
+
+    padding-left:
+        18px;
+
+    color:
+        #b7bbbb;
+
+    font-size:
+        11px;
+
+    line-height:
+        1.8;
+}
+
+
+.inna-about-list li::marker {
+
+    color:
+        var(--gold);
+}
+
+
+.inna-about-reset {
+
+    margin-top:
+        12px;
+
+    padding:
+        0;
+
+    border:
+        0;
+
+    background:
+        transparent;
+
+    color:
+        var(--gold);
+
+    font-family:
+        inherit;
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+}
+
+
+.inna-about-reset:hover {
+
+    text-decoration:
+        underline;
+}
+
+
+@media (
+    max-height: 760px
+) {
+
+    .institutional-section {
+
+        padding-bottom:
+            10px;
+    }
+
+
+    .institutional-item {
+
+        min-height:
+            32px;
+    }
+
+
+    .inna-about-card {
+
+        padding:
+            14px;
+    }
+
+}
+
+
+
+
+/* ==========================================================
+   SABINO_INNA_LAYOUT_FINISH_V5
+   ========================================================== */
+
+
+/* ----------------------------------------------------------
+   TELA DESKTOP SEM ROLAGEM GLOBAL
+   ---------------------------------------------------------- */
+
+html,
+body {
+
+    height:
+        100%;
+
+    overflow:
+        hidden;
+}
+
+
+body {
+
+    min-height:
+        0 !important;
+}
+
+
+.sidebar {
+
+    height:
+        100vh;
+
+    min-height:
+        0 !important;
+
+    overflow:
+        hidden;
+}
+
+
+.main {
+
+    height:
+        100vh;
+
+    min-height:
+        0 !important;
+
+    overflow:
+        hidden;
+}
+
+
+/* ----------------------------------------------------------
+   CABEÇALHO + WORKSPACE
+   ---------------------------------------------------------- */
+
+.page-header {
+
+    flex:
+        0 0 auto;
+}
+
+
+.workspace {
+
+    flex:
+        1 1 auto;
+
+    min-height:
+        0 !important;
+
+    height:
+        auto !important;
+
+    overflow:
+        hidden;
+}
+
+
+.chat-shell,
+.sources-shell {
+
+    min-height:
+        0;
+
+    height:
+        100%;
+}
+
+
+/* ----------------------------------------------------------
+   CHAT
+   ---------------------------------------------------------- */
+
+.chat-shell {
+
+    overflow:
+        hidden;
+}
+
+
+.messages {
+
+    flex:
+        1 1 auto;
+
+    min-height:
+        0 !important;
+
+    max-height:
+        none !important;
+
+    overflow-y:
+        auto;
+
+    scrollbar-gutter:
+        stable;
+}
+
+
+.composer {
+
+    flex:
+        0 0 auto;
+}
+
+
+/* ----------------------------------------------------------
+   INSTITUCIONAL MAIS ACIMA
+   ---------------------------------------------------------- */
+
+.institutional-section {
+
+    margin-top:
+        36px !important;
+
+    padding-bottom:
+        15px !important;
+}
+
+
+.sidebar-bottom {
+
+    margin-top:
+        auto !important;
+
+    flex:
+        0 0 auto;
+
+    padding-bottom:
+        2px;
+}
+
+
+.logout {
+
+    min-height:
+        42px;
+}
+
+
+/* ----------------------------------------------------------
+   FONTES À DIREITA
+   ---------------------------------------------------------- */
+
+.sources-shell {
+
+    overflow:
+        hidden;
+}
+
+
+.sources-header {
+
+    flex:
+        0 0 auto;
+}
+
+
+/*
+   Sem fontes:
+   a área de fontes fica compacta
+   e o card da INNA sobe.
+*/
+
+.sources {
+
+    flex:
+        0 0 215px !important;
+
+    min-height:
+        0 !important;
+
+    max-height:
+        215px !important;
+
+    overflow-y:
+        auto;
+}
+
+
+.empty-sources {
+
+    padding-bottom:
+        8px;
+}
+
+
+/* ----------------------------------------------------------
+   CONHEÇA A INNA MAIS ACIMA
+   ---------------------------------------------------------- */
+
+.inna-about-card {
+
+    flex:
+        0 0 auto;
+
+    margin:
+        14px 16px 16px !important;
+}
+
+
+/* ----------------------------------------------------------
+   QUANDO EXISTIREM FONTES
+   Fontes passam a ter prioridade.
+   ---------------------------------------------------------- */
+
+.sources-shell:has(
+    .source-card
+)
+.sources {
+
+    flex:
+        1 1 auto !important;
+
+    min-height:
+        0 !important;
+
+    max-height:
+        none !important;
+}
+
+
+.sources-shell:has(
+    .source-card
+)
+.inna-about-card {
+
+    padding:
+        14px 16px;
+
+    margin-top:
+        10px !important;
+}
+
+
+.sources-shell:has(
+    .source-card
+)
+.inna-about-card p {
+
+    display:
+        -webkit-box;
+
+    -webkit-line-clamp:
+        2;
+
+    -webkit-box-orient:
+        vertical;
+
+    overflow:
+        hidden;
+}
+
+
+.sources-shell:has(
+    .source-card
+)
+.inna-about-list {
+
+    display:
+        none;
+}
+
+
+/* ----------------------------------------------------------
+   SCROLLBARS INTERNAS
+   ---------------------------------------------------------- */
+
+.messages::-webkit-scrollbar,
+.sources::-webkit-scrollbar {
+
+    width:
+        7px;
+}
+
+
+.messages::-webkit-scrollbar-thumb,
+.sources::-webkit-scrollbar-thumb {
+
+    background:
+        rgba(240,189,50,.22);
+
+    border-radius:
+        20px;
+}
+
+
+/* ----------------------------------------------------------
+   TELAS MENORES
+   ---------------------------------------------------------- */
+
+@media (
+    max-width: 1000px
+) {
+
+    html,
+    body {
+
+        height:
+            auto;
+
+        overflow:
+            auto;
+    }
+
+
+    body {
+
+        min-height:
+            100vh !important;
+    }
+
+
+    .sidebar,
+    .main {
+
+        height:
+            auto;
+
+        min-height:
+            100vh !important;
+
+        overflow:
+            visible;
+    }
+
+
+    .workspace {
+
+        height:
+            auto !important;
+
+        overflow:
+            visible;
+    }
+
+
+    .chat-shell,
+    .sources-shell {
+
+        height:
+            auto;
+    }
+
+
+    .messages {
+
+        min-height:
+            420px !important;
+
+        max-height:
+            560px !important;
+    }
+
+
+    .sources {
+
+        flex:
+            0 1 auto !important;
+
+        max-height:
+            420px !important;
+    }
+
+}
+
+
+
+
+/* ==========================================================
+   SABINO_INNA_RIGHT_COLUMN_FINISH_V6
+   ========================================================== */
+
+/* Menos espaço vazio quando ainda não existem fontes */
+
+.sources {
+
+    flex:
+        0 0 145px !important;
+
+    max-height:
+        145px !important;
+}
+
+
+/* Card Conheça a INNA sobe */
+
+.inna-about-card {
+
+    margin:
+        10px 16px 14px !important;
+
+    padding:
+        16px 18px !important;
+}
+
+
+/* Quando existirem fontes, elas voltam a ocupar o espaço */
+
+.sources-shell:has(
+    .source-card
+)
+.sources {
+
+    flex:
+        1 1 auto !important;
+
+    max-height:
+        none !important;
+}
+
+
+/* Mantém o card menor quando houver citações */
+
+.sources-shell:has(
+    .source-card
+)
+.inna-about-card {
+
+    flex:
+        0 0 auto;
+
+    padding:
+        12px 16px !important;
+}
+
+
+
+
+/* ==========================================================
+   SABINO_INNA_EXPERIENCE_V7
+   ========================================================== */
+
+
+/* NOVA CONVERSA */
+
+.inna-new-chat {
+
+    margin-left:
+        auto;
+
+    min-height:
+        35px;
+
+    padding:
+        0 13px;
+
+    border:
+        1px solid rgba(240,189,50,.25);
+
+    border-radius:
+        8px;
+
+    background:
+        rgba(240,189,50,.055);
+
+    color:
+        #e9bd43;
+
+    font-family:
+        inherit;
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
+    transition:
+        .18s ease;
+}
+
+
+.inna-new-chat:hover {
+
+    background:
+        rgba(240,189,50,.11);
+
+    border-color:
+        rgba(240,189,50,.44);
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* SUGESTÕES RÁPIDAS */
+
+.inna-quick-actions {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        8px;
+
+    max-width:
+        82%;
+
+    margin-top:
+        -3px;
+}
+
+
+.inna-quick-action {
+
+    min-height:
+        36px;
+
+    padding:
+        0 13px;
+
+    border:
+        1px solid rgba(240,189,50,.17);
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(240,189,50,.035);
+
+    color:
+        #c5c9c9;
+
+    font-family:
+        inherit;
+
+    font-size:
+        11px;
+
+    cursor:
+        pointer;
+
+    transition:
+        .18s ease;
+}
+
+
+.inna-quick-action:hover {
+
+    color:
+        #f1c64e;
+
+    border-color:
+        rgba(240,189,50,.42);
+
+    background:
+        rgba(240,189,50,.08);
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* PROCESSAMENTO */
+
+.inna-loading {
+
+    color:
+        #c6caca !important;
+
+    border-color:
+        rgba(240,189,50,.16) !important;
+
+    animation:
+        innaThinkingPulse
+        1.25s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes innaThinkingPulse {
+
+    0%,
+    100% {
+
+        opacity:
+            .55;
+
+        box-shadow:
+            none;
+    }
+
+    50% {
+
+        opacity:
+            1;
+
+        box-shadow:
+            0 0 22px
+            rgba(240,189,50,.055);
+    }
+
+}
+
+
+/* FONTES RECOLHÍVEIS */
+
+.source-card {
+
+    padding:
+        0 !important;
+
+    border-bottom:
+        1px solid var(--line);
+}
+
+
+.source-card summary {
+
+    list-style:
+        none;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    padding:
+        14px 0;
+
+    cursor:
+        pointer;
+
+    user-select:
+        none;
+}
+
+
+.source-card summary::-webkit-details-marker {
+
+    display:
+        none;
+}
+
+
+.source-card summary::before {
+
+    content:
+        "›";
+
+    color:
+        var(--gold);
+
+    font-size:
+        18px;
+
+    line-height:
+        1;
+
+    transition:
+        transform .18s ease;
+}
+
+
+.source-card[open]
+summary::before {
+
+    transform:
+        rotate(90deg);
+}
+
+
+.source-card[open]
+summary {
+
+    padding-bottom:
+        8px;
+}
+
+
+.source-card-body {
+
+    padding:
+        0 0 15px 27px;
+}
+
+
+.source-card .source-title {
+
+    flex:
+        1;
+}
+
+
+.source-number {
+
+    color:
+        #686e6e;
+
+    font-size:
+        9px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        .7px;
+}
+
+
+/* ACESSIBILIDADE */
+
+.inna-new-chat:focus-visible,
+.inna-quick-action:focus-visible,
+.source-card summary:focus-visible {
+
+    outline:
+        2px solid var(--gold);
+
+    outline-offset:
+        3px;
+}
+
+
+
+
+/* ==========================================================
+   SABINO_INNA_RIGHT_CARD_UP_V7_1
+   ========================================================== */
+
+/*
+   Quando não existem fontes,
+   remove a altura fixa e sobe o card Conheça a INNA.
+*/
+
+.sources {
+
+    flex:
+        0 0 auto !important;
+
+    min-height:
+        0 !important;
+
+    max-height:
+        none !important;
+}
+
+
+.empty-sources {
+
+    padding:
+        4px 0 8px !important;
+}
+
+
+.inna-about-card {
+
+    margin:
+        8px 16px 14px !important;
+}
+
+
+/*
+   Quando surgirem fontes reais,
+   elas continuam tendo prioridade e rolagem.
+*/
+
+.sources-shell:has(
+    .source-card
+)
+.sources {
+
+    flex:
+        1 1 auto !important;
+
+    min-height:
+        0 !important;
+
+    max-height:
+        none !important;
+
+    overflow-y:
+        auto;
+}
+
+
+</style>
+
+<link rel="stylesheet" href="/static/css/sabino-locale-core.css?v=browserany_manual3_20260917_134732" data-sabino-global-locale="v1">
+<link rel="stylesheet" href="/static/css/sabino-currency-core.css" data-sabino-global-currency="v1">
+
+<link rel="stylesheet" href="/static/css/sabino-language-button.css?v=20260917_140515">
+<script defer src="/static/js/sabino-language-button.js?v=20260917_140515"></script>
+</head>
+
+
+<body>
+
+
+<aside class="sidebar">
+
+<div class="brand">
+
+    <div class="brand-logo">
+        <img
+            src="/static/images/sabino-s-logo.png"
+            alt="Sabino.AI"
+        >
+    </div>
+
+    <div>
+
+        <div class="brand-name">
+            Sabino.AI
+        </div>
+
+        <div class="brand-sub">
+            PLATAFORMA INTELIGENTE
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="nav-label">
+NAVEGAÇÃO
+</div>
+
+
+<nav class="menu">
+
+<a
+    class="menu-item"
+    href="/dashboard"
+>
+
+<span class="menu-icon">
+
+<svg viewBox="0 0 24 24">
+<path d="M3 11 12 4l9 7"/>
+<path d="M5 10v10h14V10"/>
+<path d="M9 20v-6h6v6"/>
+</svg>
+
+</span>
+
+<span>
+Início
+</span>
+
+</a>
+
+
+<a
+    class="menu-item"
+    href="/modulos"
+>
+
+<span class="menu-icon">
+
+<svg viewBox="0 0 24 24">
+<rect x="3" y="3" width="7" height="7"/>
+<rect x="14" y="3" width="7" height="7"/>
+<rect x="3" y="14" width="7" height="7"/>
+<rect x="14" y="14" width="7" height="7"/>
+</svg>
+
+</span>
+
+<span>
+Minhas plataformas
+</span>
+
+</a>
+
+
+<a
+    class="menu-item"
+    href="/dashboard#account"
+>
+
+<span class="menu-icon">
+
+<svg viewBox="0 0 24 24">
+<circle cx="12" cy="8" r="4"/>
+<path d="M4 21c0-4.3 3.6-7 8-7s8 2.7 8 7"/>
+</svg>
+
+</span>
+
+<span>
+Minha conta
+</span>
+
+</a>
+
+
+<a
+    class="menu-item active"
+    href="/inna"
+>
+
+<span class="menu-icon">
+
+<svg viewBox="0 0 24 24">
+<path d="M12 3a7 7 0 0 0-7 7c0 2.5 1.3 4.7 3.3 6L8 21l4-2 4 2-.3-5A7 7 0 0 0 19 10a7 7 0 0 0-7-7Z"/>
+<path d="M9 10h.01"/>
+<path d="M15 10h.01"/>
+<path d="M9.5 13.5c1.5 1 3.5 1 5 0"/>
+</svg>
+
+</span>
+
+<span>
+INNA
+</span>
+
+</a>
+
+</nav>
+
+
+
+
+<!-- SABINO_INNA_SIDE_AREAS_V4 -->
+
+<section
+    class="institutional-section"
+    aria-label="Informações institucionais"
+>
+
+<div class="institutional-label">
+INSTITUCIONAL
+</div>
+
+<button
+    class="institutional-item"
+    type="button"
+    data-inna-side-info="about"
+>
+
+<span class="institutional-dot"></span>
+
+<span>
+Sobre a Sabino.AI
+</span>
+
+</button>
+
+
+<button
+    class="institutional-item"
+    type="button"
+    data-inna-side-info="channels"
+>
+
+<span class="institutional-dot"></span>
+
+<span>
+Canais oficiais
+</span>
+
+</button>
+
+
+<button
+    class="institutional-item"
+    type="button"
+    data-inna-side-info="security"
+>
+
+<span class="institutional-dot"></span>
+
+<span>
+Segurança e Privacidade
+</span>
+
+</button>
+
+</section>
+
+
+<div class="sidebar-bottom">
+
+<a
+    class="logout"
+    href="/logout"
+>
+Sair
+</a>
+
+</div>
+
+</aside>
+
+
+<main class="main">
+
+
+<header class="topbar">
+
+<div class="status">
+
+<span class="status-dot"></span>
+
+<span>
+INNA online
+</span>
+
+</div>
+
+</header>
+
+
+<section class="page-header">
+
+<div class="eyebrow">
+INNA · INTELIGÊNCIA FINANCEIRA
+</div>
+
+<h1>
+Converse com a INNA
+</h1>
+
+<p>
+Sua assistente inteligente da Sabino.AI para orientação contextual,
+educação financeira e apoio às suas decisões.
+</p>
+
+</section>
+
+
+<section class="workspace">
+
+
+<div class="chat-shell">
+
+<div class="chat-header">
+
+<div class="inna-avatar">
+<img
+    src="/static/images/inna-floating-avatar.png"
+    alt="INNA"
+>
+</div>
+
+<div>
+
+<div class="chat-title">
+INNA
+</div>
+
+<div class="chat-subtitle">
+Assistente inteligente · Online
+</div>
+
+</div>
+
+</div>
+
+
+<div
+    id="innaMessages"
+    class="messages"
+>
+
+<div class="message inna">
+Olá! Eu sou a INNA. Como posso ajudar você hoje?
+</div>
+
+</div>
+
+
+<div class="composer">
+
+<textarea
+    id="innaInput"
+    placeholder="Digite sua dúvida..."
+></textarea>
+
+<button
+    id="innaSend"
+    type="button"
+>
+Enviar
+</button>
+
+</div>
+
+</div>
+
+
+<aside class="sources-shell">
+
+<div class="sources-header">
+
+<span>
+Fontes consultadas
+</span>
+
+<span
+    id="innaSourceCount"
+    class="source-count"
+>
+0
+</span>
+
+</div>
+
+
+<div
+    id="innaSources"
+    class="sources"
+>
+
+<div class="empty-sources">
+As fontes utilizadas pela INNA aparecerão aqui após cada resposta.
+</div>
+
+</div>
+
+
+<section
+    class="inna-about-card"
+    id="innaAboutCard"
+>
+
+<div class="inna-about-eyebrow">
+SABINO.AI
+</div>
+
+<h3 id="innaAboutTitle">
+Conheça a INNA
+</h3>
+
+<p id="innaAboutText">
+A INNA é a assistente inteligente da Sabino.AI,
+desenvolvida para oferecer orientação contextual
+de forma simples, segura e responsável.
+</p>
+
+<ul
+    id="innaAboutList"
+    class="inna-about-list"
+>
+
+<li>
+Educação financeira
+</li>
+
+<li>
+Segurança financeira
+</li>
+
+<li>
+Orçamento e planejamento
+</li>
+
+</ul>
+
+<button
+    id="innaAboutReset"
+    class="inna-about-reset"
+    type="button"
+>
+Sobre a INNA →
+</button>
+
+</section>
+
+</aside>
+
+
+</section>
+
+
+</main>
+
+
+<script src="/static/js/sabino-i18n.js"></script>
+<script src="/static/js/inna-global.js?v=paid-20260927"></script>
+<script type="module" src="/static/js/sabino-paid-analysis.js"></script>
+
+
+<script>
+
+(() => {
+
+    const input =
+        document.getElementById(
+            "innaInput"
+        );
+
+
+    const send =
+        document.getElementById(
+            "innaSend"
+        );
+
+
+    const messages =
+        document.getElementById(
+            "innaMessages"
+        );
+
+
+    const sources =
+        document.getElementById(
+            "innaSources"
+        );
+
+
+    const sourceCount =
+        document.getElementById(
+            "innaSourceCount"
+        );
+
+
+    function addMessage(
+        text,
+        type
+    ) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.className =
+            "message " + type;
+
+
+        div.textContent =
+            String(
+                text || ""
+            );
+
+
+        messages.appendChild(
+            div
+        );
+
+
+        messages.scrollTop =
+            messages.scrollHeight;
+
+    }
+
+
+
+    function renderSources(
+        items
+    ) {
+
+        const list =
+            Array.isArray(
+                items
+            )
+                ? items
+                : [];
+
+
+        sources.textContent =
+            "";
+
+
+        sourceCount.textContent =
+            String(
+                list.length
+            );
+
+
+        if (!list.length) {
+
+            const empty =
+                document.createElement(
+                    "div"
+                );
+
+
+            empty.className =
+                "empty-sources";
+
+
+            empty.textContent =
+                "As fontes utilizadas pela INNA aparecerão aqui após cada resposta.";
+
+
+            sources.appendChild(
+                empty
+            );
+
+
+            return;
+
+        }
+
+
+        list.forEach(
+            (
+                source,
+                index
+            ) => {
+
+                if (
+                    !source ||
+                    typeof source
+                        !==
+                        "object"
+                ) {
+                    return;
+                }
+
+
+                const details =
+                    document.createElement(
+                        "details"
+                    );
+
+
+                details.className =
+                    "source-card";
+
+
+                const summary =
+                    document.createElement(
+                        "summary"
+                    );
+
+
+                const title =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                title.className =
+                    "source-title";
+
+
+                title.textContent =
+                    String(
+                        source
+                            .titulo_localizado
+                        ||
+                        source.titulo
+                        ||
+                        "Fonte"
+                    );
+
+
+                const number =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                number.className =
+                    "source-number";
+
+
+                number.textContent =
+                    String(
+                        index + 1
+                    ).padStart(
+                        2,
+                        "0"
+                    );
+
+
+                summary.appendChild(
+                    title
+                );
+
+
+                summary.appendChild(
+                    number
+                );
+
+
+                details.appendChild(
+                    summary
+                );
+
+
+                const body =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                body.className =
+                    "source-card-body";
+
+
+                const trecho =
+                    String(
+                        source
+                            .trecho_localizado
+                        ||
+                        source.trecho
+                        ||
+                        ""
+                    ).trim();
+
+
+                if (trecho) {
+
+                    const excerpt =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    excerpt.className =
+                        "source-excerpt";
+
+
+                    excerpt.textContent =
+                        trecho;
+
+
+                    body.appendChild(
+                        excerpt
+                    );
+
+                }
+
+
+                const fonte =
+                    String(
+                        source.fonte
+                        ||
+                        ""
+                    ).trim();
+
+
+                if (fonte) {
+
+                    const file =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    file.className =
+                        "source-file";
+
+
+                    file.textContent =
+                        fonte;
+
+
+                    body.appendChild(
+                        file
+                    );
+
+                }
+
+
+                details.appendChild(
+                    body
+                );
+
+
+                sources.appendChild(
+                    details
+                );
+
+            }
+        );
+
+    }
+
+
+    async function ask() {
+
+        const question =
+            input.value.trim();
+
+
+        if (!question) {
+            return;
+        }
+
+
+        document
+            .getElementById(
+                "innaQuickActions"
+            )
+            ?.remove();
+
+
+        addMessage(
+            question,
+            "user"
+        );
+
+
+        input.value =
+            "";
+
+
+        send.disabled =
+            true;
+
+
+        input.disabled =
+            true;
+
+
+        const loading =
+            document.createElement(
+                "div"
+            );
+
+
+        loading.className =
+            "message inna inna-loading";
+
+
+        loading.textContent =
+            "INNA está analisando sua pergunta...";
+
+
+        messages.appendChild(
+            loading
+        );
+
+
+        try {
+
+            if (
+                !window.SabinoINNA ||
+                typeof window.SabinoINNA.ask
+                    !==
+                    "function"
+            ) {
+
+                throw new Error(
+                    "INNA_CLIENT_UNAVAILABLE"
+                );
+
+            }
+
+
+            const data =
+                await window
+                    .SabinoINNA
+                    .ask(
+                        question
+                    );
+
+
+            loading.remove();
+
+
+            addMessage(
+                data.resposta,
+                "inna"
+            );
+
+
+            renderSources(
+                data.fontes
+            );
+
+        }
+        catch (error) {
+
+            loading.textContent =
+                error.message || "Não foi possível obter uma resposta da INNA agora.";
+
+
+            console.error(
+                "[INNA PAGE]",
+                error
+            );
+
+        }
+        finally {
+
+            send.disabled =
+                false;
+
+
+            input.disabled =
+                false;
+
+
+            input.focus();
+
+        }
+
+    }
+
+
+
+    /* ======================================================
+       SABINO_INNA_EXPERIENCE_V7
+       ====================================================== */
+
+    messages.setAttribute(
+        "aria-live",
+        "polite"
+    );
+
+
+    const chatHeader =
+        document.querySelector(
+            ".chat-header"
+        );
+
+
+    const newChatButton =
+        document.createElement(
+            "button"
+        );
+
+
+    newChatButton.type =
+        "button";
+
+
+    newChatButton.className =
+        "inna-new-chat";
+
+
+    newChatButton.textContent =
+        "+ Nova conversa";
+
+
+    newChatButton.setAttribute(
+        "aria-label",
+        "Iniciar nova conversa com a INNA"
+    );
+
+
+    if (chatHeader) {
+
+        chatHeader.appendChild(
+            newChatButton
+        );
+
+    }
+
+
+    const quickPrompts = [
+
+        {
+            label:
+                "Organizar orçamento",
+
+            prompt:
+                "Quero organizar meu orçamento mensal. Por onde começo?"
+        },
+
+        {
+            label:
+                "Reserva de emergência",
+
+            prompt:
+                "Como posso começar a montar uma reserva de emergência?"
+        },
+
+        {
+            label:
+                "Segurança financeira",
+
+            prompt:
+                "Como posso reconhecer golpes e mensagens financeiras suspeitas?"
+        },
+
+        {
+            label:
+                "Planejar uma meta",
+
+            prompt:
+                "Quero definir uma meta financeira realista. Como posso começar?"
+        }
+
+    ];
+
+
+    function createQuickActions() {
+
+        document
+            .getElementById(
+                "innaQuickActions"
+            )
+            ?.remove();
+
+
+        const container =
+            document.createElement(
+                "div"
+            );
+
+
+        container.id =
+            "innaQuickActions";
+
+
+        container.className =
+            "inna-quick-actions";
+
+
+        quickPrompts.forEach(
+            item => {
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.type =
+                    "button";
+
+
+                button.className =
+                    "inna-quick-action";
+
+
+                button.textContent =
+                    item.label;
+
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        input.value =
+                            item.prompt;
+
+
+                        ask();
+
+                    }
+                );
+
+
+                container.appendChild(
+                    button
+                );
+
+            }
+        );
+
+
+        messages.appendChild(
+            container
+        );
+
+    }
+
+
+    function resetConversation() {
+
+        messages.textContent =
+            "";
+
+
+        addMessage(
+            "Olá! Eu sou a INNA. Como posso ajudar você hoje?",
+            "inna"
+        );
+
+
+        renderSources(
+            []
+        );
+
+
+        createQuickActions();
+
+
+        input.value =
+            "";
+
+
+        input.disabled =
+            false;
+
+
+        send.disabled =
+            false;
+
+
+        input.focus();
+
+    }
+
+
+    newChatButton.addEventListener(
+        "click",
+        resetConversation
+    );
+
+
+    createQuickActions();
+
+
+    send.addEventListener(
+        "click",
+        ask
+    );
+
+
+    input.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter"
+                &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                ask();
+
+            }
+
+        }
+    );
+
+
+    input.focus();
+
+})();
+
+</script>
+
+
+
+
+<script>
+
+/* SABINO_INNA_PAGE_SCROLL_TOP_V1 */
+
+window.addEventListener(
+    "load",
+    () => {
+        window.scrollTo(
+            0,
+            0
+        );
+    }
+);
+
+</script>
+
+
+
+
+<script>
+
+/* SABINO_INNA_SIDE_INFO_RUNTIME_V1 */
+
+(() => {
+
+    const title =
+        document.getElementById(
+            "innaAboutTitle"
+        );
+
+
+    const text =
+        document.getElementById(
+            "innaAboutText"
+        );
+
+
+    const list =
+        document.getElementById(
+            "innaAboutList"
+        );
+
+
+    const reset =
+        document.getElementById(
+            "innaAboutReset"
+        );
+
+
+    const buttons =
+        Array.from(
+            document.querySelectorAll(
+                "[data-inna-side-info]"
+            )
+        );
+
+
+    if (
+        !title ||
+        !text ||
+        !list
+    ) {
+        return;
+    }
+
+
+    const content = {
+
+        inna: {
+
+            title:
+                "Conheça a INNA",
+
+            text:
+                (
+                    "A INNA é a assistente inteligente "
+                    +
+                    "da Sabino.AI, desenvolvida para "
+                    +
+                    "oferecer orientação contextual "
+                    +
+                    "de forma simples, segura e responsável."
+                ),
+
+            items: [
+                "Educação financeira",
+                "Segurança financeira",
+                "Orçamento e planejamento"
+            ]
+        },
+
+
+        about: {
+
+            title:
+                "Sobre a Sabino.AI",
+
+            text:
+                (
+                    "A Sabino.AI desenvolve soluções "
+                    +
+                    "inteligentes baseadas em IA, dados "
+                    +
+                    "e automação para apoiar pessoas, "
+                    +
+                    "processos e decisões."
+                ),
+
+            items: [
+                "Inteligência Artificial",
+                "Dados e automação",
+                "Produtos digitais integrados"
+            ]
+        },
+
+
+        channels: {
+
+            title:
+                "Canais oficiais",
+
+            text:
+                (
+                    "Use os canais oficiais da Sabino.AI "
+                    +
+                    "para acompanhar produtos, novidades, "
+                    +
+                    "suporte e informações institucionais."
+                ),
+
+            items: [
+                "Site oficial",
+                "LinkedIn",
+                "GitHub",
+                "E-mail e atendimento oficial"
+            ]
+        },
+
+
+        security: {
+
+            title:
+                "Segurança e Privacidade",
+
+            text:
+                (
+                    "Proteja suas informações e utilize "
+                    +
+                    "somente canais reconhecidos como "
+                    +
+                    "oficiais pela Sabino.AI."
+                ),
+
+            items: [
+                "Nunca compartilhe senhas ou códigos",
+                "Não informe CVV ou tokens de autenticação",
+                "Confirme solicitações por canais oficiais"
+            ]
+        }
+
+    };
+
+
+    function render(
+        key
+    ) {
+
+        const item =
+            content[key]
+            ||
+            content.inna;
+
+
+        title.textContent =
+            item.title;
+
+
+        text.textContent =
+            item.text;
+
+
+        list.textContent =
+            "";
+
+
+        item.items.forEach(
+            value => {
+
+                const li =
+                    document.createElement(
+                        "li"
+                    );
+
+
+                li.textContent =
+                    value;
+
+
+                list.appendChild(
+                    li
+                );
+
+            }
+        );
+
+
+        buttons.forEach(
+            button => {
+
+                button.classList.toggle(
+                    "active",
+                    button.dataset
+                        .innaSideInfo
+                        ===
+                        key
+                );
+
+            }
+        );
+
+    }
+
+
+    buttons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    render(
+                        button.dataset
+                            .innaSideInfo
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    if (reset) {
+
+        reset.addEventListener(
+            "click",
+            () => {
+                render(
+                    "inna"
+                );
+            }
+        );
+
+    }
+
+})();
+
+</script>
+
+
+<script src="/static/js/sabino-locale-core.js?v=internal12_20260917_140006" data-sabino-global-locale="v1"></script>
+<script src="/static/js/sabino-global-i18n-runtime.js" data-sabino-global-i18n="v1"></script>
+<script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
+<script src="/static/js/sabino-money-locale-runtime.js"></script>
+
+</body>
+
+</html>

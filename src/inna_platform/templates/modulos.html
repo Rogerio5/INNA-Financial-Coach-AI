@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Módulos | Sabino.AI
+    </title>
+
+    <meta
+        name="description"
+        content="Explore os módulos inteligentes da plataforma Sabino.AI coordenados pela INNA."
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/css/platform.css') }}"
+    >
+
+    <script
+        src="{{ url_for('static', path='/js/modules.js') }}"
+        defer
+    ></script>
+
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand.css?v=1"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="/static/images/sabino-s-logo.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand-v2.css?v=2"
+    >
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+     ====================================================== -->
+
+<header class="topbar">
+
+    <a class="brand brand-header" href="/">
+    <img
+        class="sabino-symbol"
+        src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+        alt="Sabino.AI"
+    >
+    <span class="sabino-wordmark">Sabino.AI</span>
+</a>
+
+
+    <nav class="nav">
+
+        <a href="/">
+            Início
+        </a>
+
+        <a href="/#solucoes">
+            Soluções
+        </a>
+
+        <a
+            class="active"
+            href="/modulos"
+        >
+            Módulos
+        </a>
+
+        <a href="/#inna">
+            INNA Assistant
+        </a>
+
+        <a href="/#recursos">
+            Recursos
+        </a>
+
+        <a href="/#empresa">
+            Empresa
+        </a>
+
+        <a href="/#contato">
+            Contato
+        </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+        <div class="language-selector">
+
+            <span class="language-globe">
+                ◎
+            </span>
+
+            <select
+                id="platform-language"
+                aria-label="Selecionar idioma"
+            >
+                <option value="pt-BR">BR Português Brasil</option>
+                <option value="en-US">US English US</option>
+                <option value="en-GB">GB English UK</option>
+                <option value="es">ES Español</option>
+                <option value="fr">FR Français</option>
+                <option value="de">DE Deutsch</option>
+                <option value="it">IT Italiano</option>
+                <option value="ro">RO Română</option>
+                <option value="uk">UA Українська</option>
+                <option value="ru">RU Русский</option>
+                <option value="ar">SA العربية</option>
+                <option value="de-CH">CH Schweiz</option>
+            </select>
+
+        </div>
+
+
+        <button class="btn-secondary">
+            Entrar
+        </button>
+
+
+        <a
+            class="btn-primary"
+            href="/#contato"
+        >
+            Falar com um especialista
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<main class="modules-page">
+
+
+<!-- ======================================================
+     HERO
+     ====================================================== -->
+
+<section class="modules-catalog-hero container">
+
+    <div class="modules-catalog-copy">
+
+        <span class="eyebrow">
+            ECOSSISTEMA DE MÓDULOS
+        </span>
+
+        <h1>
+            Escolha os módulos ideais
+            <span>
+                para sua operação
+            </span>
+        </h1>
+
+        <p>
+            Combine soluções especializadas e construa uma plataforma
+            alinhada às necessidades da sua operação. Cada módulo
+            concentra inteligência, automação e recursos próprios,
+            com integração e orquestração central pela INNA.
+        </p>
+
+    </div>
+
+
+    <aside class="modules-catalog-highlight">
+
+    <div class="catalog-brand-symbol">
+        <img
+            class="catalog-brand-image"
+            src="{{ url_for('static', path='/images/sabino-logo-card.png') }}"
+            alt="Sabino.AI"
+        >
+    </div>
+
+    <div>
+
+        <h2>
+            Plataforma modular,
+            integrada e escalável
+        </h2>
+
+        <ul>
+            <li>Inteligência especializada por domínio</li>
+            <li>Integração entre dados, módulos e sistemas</li>
+            <li>Arquitetura preparada para evolução contínua</li>
+            <li>Orquestração, contexto e governança pela INNA</li>
+        </ul>
+
+    </div>
+
+</aside>
+
+</section>
+
+
+
+<!-- ======================================================
+     FILTROS
+     ====================================================== -->
+
+<section class="catalog-controls container">
+
+    <div class="catalog-categories">
+
+        <button
+            class="category-chip active"
+            data-category="todos"
+        >
+            Todos
+        </button>
+
+        <button
+            class="category-chip"
+            data-category="financeiro"
+        >
+            Financeiro
+        </button>
+
+        <button
+            class="category-chip"
+            data-category="seguranca"
+        >
+            Segurança
+        </button>
+
+        <button
+            class="category-chip"
+            data-category="dados"
+        >
+            Dados & IA
+        </button>
+
+        <button
+            class="category-chip"
+            data-category="automacao"
+        >
+            Automação
+        </button>
+
+        <button
+            class="category-chip"
+            data-category="documentos"
+        >
+            Documentos
+        </button>
+
+        <button
+            class="category-chip"
+            data-category="carreira"
+        >
+            Pessoas & Carreira
+        </button>
+
+    </div>
+
+
+    <div class="catalog-search-row">
+
+        <div>
+
+            <strong id="module-count">
+                12 módulos
+            </strong>
+
+            <span>
+                disponíveis na plataforma
+            </span>
+
+        </div>
+
+
+        <div class="catalog-tools">
+
+            <select id="status-filter">
+
+                <option value="todos">
+                    Todos os status
+                </option>
+
+                <option value="disponivel">
+                    Disponível
+                </option>
+
+                <option value="integracao">
+                    Em integração
+                </option>
+
+                <option value="planejado">
+                    Planejado
+                </option>
+
+            </select>
+
+
+            <input
+                id="module-search"
+                type="search"
+                placeholder="Buscar módulo..."
+                aria-label="Buscar módulo"
+            >
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     GRID DE MODULOS
+     ====================================================== -->
+
+<div class="modules-configure-action container">
+
+    <div>
+        <strong>Pronto para avançar?</strong>
+
+        <span>
+            Configure canais, integrações e recursos da sua solução.
+        </span>
+    </div>
+
+    <a
+        class="btn-primary modules-configure-button"
+        href="/configurar"
+    >
+        Configurar minha solução →
+    </a>
+
+</div>
+
+
+<section class="catalog-grid container">
+
+
+    <!-- 01 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="financeiro"
+        data-status="disponivel"
+    >
+
+        <div class="catalog-card-icon">
+            $
+        </div>
+
+        <h3>
+            Educação Financeira
+        </h3>
+
+        <p>
+            Diagnóstico financeiro, orçamento, metas,
+            educação, recomendações e acompanhamento inteligente.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status available">
+                ● Disponível
+            </span>
+
+            <a
+    class="module-details module-details-link"
+    href="/modulos/educacao-financeira"
+>
+    Ver detalhes
+</a>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 02 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="seguranca"
+        data-status="integracao"
+    >
+
+        <div class="catalog-card-icon">
+            ◈
+        </div>
+
+        <h3>
+            Segurança Financeira
+        </h3>
+
+        <p>
+            Análise de riscos, comportamento,
+            alertas, prevenção de fraudes e inteligência de segurança.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status integration">
+                ● Em integração
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 03 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="financeiro documentos"
+        data-status="integracao"
+    >
+
+        <div class="catalog-card-icon">
+            ✓
+        </div>
+
+        <h3>
+            Reembolso Inteligente
+        </h3>
+
+        <p>
+            Análise documental, regras de negócio,
+            RAG, guardrails e automação de solicitações.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status integration">
+                ● Em integração
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 04 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="carreira"
+        data-status="integracao"
+    >
+
+        <div class="catalog-card-icon">
+            ◎
+        </div>
+
+        <h3>
+            Carreira Inteligente
+        </h3>
+
+        <p>
+            Currículo, oportunidades, entrevistas,
+            aplicações, portfólio e evolução profissional.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status integration">
+                ● Em integração
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 05 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="dados"
+        data-status="planejado"
+    >
+
+        <div class="catalog-card-icon">
+            ▥
+        </div>
+
+        <h3>
+            Dados & Business Intelligence
+        </h3>
+
+        <p>
+            Indicadores, relatórios, dashboards,
+            análise operacional e inteligência orientada por dados.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status planned">
+                ● Planejado
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 06 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="documentos dados"
+        data-status="planejado"
+    >
+
+        <div class="catalog-card-icon">
+            ▤
+        </div>
+
+        <h3>
+            Inteligência Documental
+        </h3>
+
+        <p>
+            Extração, classificação, validação,
+            OCR e análise inteligente de documentos.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status planned">
+                ● Planejado
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 07 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="automacao"
+        data-status="planejado"
+    >
+
+        <div class="catalog-card-icon">
+            ⚡
+        </div>
+
+        <h3>
+            Automação Inteligente
+        </h3>
+
+        <p>
+            Workflows, integrações, APIs,
+            eventos e automações assistidas por inteligência artificial.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status planned">
+                ● Planejado
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 08 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="dados"
+        data-status="planejado"
+    >
+
+        <div class="catalog-card-icon">
+            RAG
+        </div>
+
+        <h3>
+            Conhecimento & RAG
+        </h3>
+
+        <p>
+            Busca híbrida, recuperação contextual,
+            conhecimento corporativo e respostas fundamentadas.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status planned">
+                ● Planejado
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 09 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="seguranca dados"
+        data-status="planejado"
+    >
+
+        <div class="catalog-card-icon">
+            ◇
+        </div>
+
+        <h3>
+            Governança de IA
+        </h3>
+
+        <p>
+            Políticas, auditoria, HITL,
+            guardrails, rastreabilidade e governança operacional.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status planned">
+                ● Planejado
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 10 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="dados seguranca"
+        data-status="planejado"
+    >
+
+        <div class="catalog-card-icon">
+            DB
+        </div>
+
+        <h3>
+            Gestão de Dados
+        </h3>
+
+        <p>
+            Integração de fontes, qualidade,
+            governança, conectividade e gestão do ciclo de dados.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status planned">
+                ● Planejado
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 11 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="automacao"
+        data-status="planejado"
+    >
+
+        <div class="catalog-card-icon">
+            API
+        </div>
+
+        <h3>
+            Integrações Inteligentes
+        </h3>
+
+        <p>
+            APIs REST, MCP, webhooks,
+            sistemas corporativos e comunicação entre serviços.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status planned">
+                ● Planejado
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 12 -->
+
+    <article
+        class="catalog-module-card"
+        data-category="dados"
+        data-status="planejado"
+    >
+
+        <div class="catalog-card-icon">
+            ↑
+        </div>
+
+        <h3>
+            Relatórios & Insights
+        </h3>
+
+        <p>
+            Relatórios inteligentes, tendências,
+            indicadores e insights para apoiar decisões estratégicas.
+        </p>
+
+        <div class="catalog-card-footer">
+
+            <span class="module-status planned">
+                ● Planejado
+            </span>
+
+            <button class="module-details">
+                Ver detalhes
+            </button>
+
+        </div>
+
+    </article>
+
+
+</section>
+
+
+
+<!-- ======================================================
+     FOOTER
+     ====================================================== -->
+
+<footer class="footer catalog-footer">
+
+    <div class="container footer-grid">
+
+        <div>
+
+            <a class="brand brand-header" href="/">
+    <img
+        class="sabino-symbol"
+        src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+        alt="Sabino.AI"
+    >
+    <span class="sabino-wordmark">Sabino.AI</span>
+</a>
+
+            <p>
+                Tecnologia e inteligência para conectar
+                pessoas, negócios e soluções.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                Plataforma
+            </strong>
+
+            <a href="/">
+                Início
+            </a>
+
+            <a href="/modulos">
+                Módulos
+            </a>
+
+            <a href="/#inna">
+                INNA Assistant
+            </a>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                Recursos
+            </strong>
+
+            <a href="#">
+                Documentação
+            </a>
+
+            <a href="#">
+                API
+            </a>
+
+            <a href="#">
+                Status
+            </a>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                Segurança
+            </strong>
+
+            <span class="security-badge">
+                🔒 Plataforma segura
+            </span>
+
+            <span class="security-badge">
+                🛡 LGPD
+            </span>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+</main>
+
+
+    <script
+        src="/static/js/sabino-global-brand.js?v=1"
+        defer
+    ></script>
+
+    <script
+        src="/static/js/sabino-global-brand-v2.js?v=2"
+        defer
+    ></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Educação Financeira | Sabino.AI</title>
+
+    <meta
+        name="description"
+        content="Conheça o módulo de Educação Financeira da plataforma Sabino.AI."
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/css/platform.css') }}"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand.css?v=1"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="/static/images/sabino-s-logo.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/css/sabino-global-brand-v2.css?v=2"
+    >
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+     ====================================================== -->
+
+<header class="topbar">
+
+    <a class="brand brand-header" href="/">
+
+        <img
+            class="brand-logo module-detail-brand-logo"
+            src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+            alt="Sabino.AI">
+
+        <span>Sabino.AI</span>
+
+    </a>
+
+
+    <nav class="nav">
+
+        <a href="/">Início</a>
+
+        <a href="/#solucoes">Soluções</a>
+
+        <a
+            class="active"
+            href="/modulos"
+        >
+            Módulos
+        </a>
+
+        <a href="/#inna">INNA Assistant</a>
+
+        <a href="/#recursos">Recursos</a>
+
+        <a href="/#empresa">Empresa</a>
+
+        <a href="/#contato">Contato</a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+        <div class="language-selector">
+
+            <span class="language-globe">
+                ◎
+            </span>
+
+            <select
+                id="platform-language"
+                aria-label="Selecionar idioma"
+            >
+                <option value="pt-BR">BR Português Brasil</option>
+                <option value="en-US">US English US</option>
+                <option value="en-GB">GB English UK</option>
+                <option value="es">ES Español</option>
+                <option value="fr">FR Français</option>
+                <option value="de">DE Deutsch</option>
+                <option value="it">IT Italiano</option>
+                <option value="ro">RO Română</option>
+                <option value="uk">UA Українська</option>
+                <option value="ru">RU Русский</option>
+                <option value="ar">SA العربية</option>
+                <option value="de-CH">CH Schweiz</option>
+            </select>
+
+        </div>
+
+
+        <button class="btn-secondary">
+            Entrar
+        </button>
+
+
+        <a
+            class="btn-primary"
+            href="/#contato"
+        >
+            Falar com um especialista
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<main class="module-detail-page">
+
+
+<!-- ======================================================
+     BREADCRUMB
+     ====================================================== -->
+
+<div class="module-detail-breadcrumb container">
+
+    <a href="/">
+        Início
+    </a>
+
+    <span>›</span>
+
+    <a href="/modulos">
+        Módulos
+    </a>
+
+    <span>›</span>
+
+    <strong>
+        Educação Financeira
+    </strong>
+
+</div>
+
+
+
+<!-- ======================================================
+     HERO DO MODULO
+     ====================================================== -->
+
+<section class="module-detail-hero container">
+
+    <div class="module-detail-hero-content">
+
+        <div class="module-detail-status">
+
+            <span class="module-status available">
+                ● Disponível
+            </span>
+
+            <span class="module-category">
+                Financeiro
+            </span>
+
+        </div>
+
+
+        <h1>
+            Educação
+            <span>Financeira</span>
+        </h1>
+
+
+        <p class="module-detail-lead">
+            Inteligência financeira aplicada ao dia a dia.
+            O módulo reúne diagnóstico, organização financeira,
+            orçamento, metas, acompanhamento e recomendações em
+            uma experiência coordenada pela INNA.
+        </p>
+
+
+        <div class="module-detail-actions">
+
+            <a
+                class="btn-primary module-primary-action"
+                href="/configurar"
+            >
+                + Adicionar à minha solução
+            </a>
+
+            <a
+                class="btn-secondary module-secondary-action"
+                href="/modulos"
+            >
+                ← Voltar aos módulos
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <aside class="module-detail-highlight">
+
+        <span class="eyebrow">
+            EDUCAÇÃO FINANCEIRA
+        </span>
+
+        <h2>
+            Mais clareza para decisões financeiras
+        </h2>
+
+
+        <div class="module-highlight-grid">
+
+            <div>
+                <strong>01</strong>
+                <span>Diagnóstico</span>
+            </div>
+
+            <div>
+                <strong>02</strong>
+                <span>Planejamento</span>
+            </div>
+
+            <div>
+                <strong>03</strong>
+                <span>Acompanhamento</span>
+            </div>
+
+            <div>
+                <strong>04</strong>
+                <span>Insights</span>
+            </div>
+
+        </div>
+
+
+        <div class="module-highlight-inna">
+            <span>INNA</span>
+
+            Orquestra informações, contexto e recursos
+            para apoiar a experiência financeira.
+        </div>
+
+    </aside>
+
+</section>
+
+
+
+<!-- ======================================================
+     O QUE O MODULO FAZ
+     ====================================================== -->
+
+<section class="module-detail-section container">
+
+    <div class="module-detail-section-heading">
+
+        <span class="eyebrow">
+            VISÃO GERAL
+        </span>
+
+        <h2>
+            O que este módulo faz
+        </h2>
+
+        <p>
+            Uma experiência financeira estruturada para apoiar
+            pessoas na compreensão, organização e evolução de
+            suas decisões financeiras.
+        </p>
+
+    </div>
+
+
+    <div class="module-capabilities-grid">
+
+        <article class="module-capability">
+
+            <span class="module-capability-icon">
+                ◎
+            </span>
+
+            <h3>
+                Diagnóstico financeiro
+            </h3>
+
+            <p>
+                Organiza informações financeiras para oferecer
+                uma visão consolidada da situação atual.
+            </p>
+
+        </article>
+
+
+        <article class="module-capability">
+
+            <span class="module-capability-icon">
+                $
+            </span>
+
+            <h3>
+                Orçamento inteligente
+            </h3>
+
+            <p>
+                Apoia a organização de receitas, despesas,
+                prioridades e capacidade financeira.
+            </p>
+
+        </article>
+
+
+        <article class="module-capability">
+
+            <span class="module-capability-icon">
+                ✓
+            </span>
+
+            <h3>
+                Metas e planejamento
+            </h3>
+
+            <p>
+                Estrutura objetivos financeiros e acompanha
+                a evolução das metas definidas.
+            </p>
+
+        </article>
+
+
+        <article class="module-capability">
+
+            <span class="module-capability-icon">
+                IA
+            </span>
+
+            <h3>
+                Recomendações contextualizadas
+            </h3>
+
+            <p>
+                Utiliza contexto e conhecimento financeiro
+                para produzir orientações mais relevantes.
+            </p>
+
+        </article>
+
+
+        <article class="module-capability">
+
+            <span class="module-capability-icon">
+                RAG
+            </span>
+
+            <h3>
+                Conhecimento financeiro
+            </h3>
+
+            <p>
+                Recupera informações relevantes da base de
+                conhecimento para apoiar respostas fundamentadas.
+            </p>
+
+        </article>
+
+
+        <article class="module-capability">
+
+            <span class="module-capability-icon">
+                ↗
+            </span>
+
+            <h3>
+                Relatórios e acompanhamento
+            </h3>
+
+            <p>
+                Consolida indicadores e evolução financeira
+                para facilitar acompanhamento e aprendizado.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     COMO FUNCIONA
+     ====================================================== -->
+
+<section class="module-detail-section module-flow-section">
+
+    <div class="container">
+
+        <div class="module-detail-section-heading">
+
+            <span class="eyebrow">
+                COMO FUNCIONA
+            </span>
+
+            <h2>
+                Da informação ao insight
+            </h2>
+
+        </div>
+
+
+        <div class="module-flow">
+
+            <div class="module-flow-item">
+
+                <span>1</span>
+
+                <strong>
+                    Usuário compartilha informações
+                </strong>
+
+                <p>
+                    Dados e contexto financeiro entram na experiência.
+                </p>
+
+            </div>
+
+
+            <div class="module-flow-arrow">
+                →
+            </div>
+
+
+            <div class="module-flow-item">
+
+                <span>2</span>
+
+                <strong>
+                    INNA organiza o contexto
+                </strong>
+
+                <p>
+                    A plataforma identifica intenção, contexto e necessidade.
+                </p>
+
+            </div>
+
+
+            <div class="module-flow-arrow">
+                →
+            </div>
+
+
+            <div class="module-flow-item">
+
+                <span>3</span>
+
+                <strong>
+                    Recursos especializados atuam
+                </strong>
+
+                <p>
+                    Regras, conhecimento e inteligência apoiam a resposta.
+                </p>
+
+            </div>
+
+
+            <div class="module-flow-arrow">
+                →
+            </div>
+
+
+            <div class="module-flow-item">
+
+                <span>4</span>
+
+                <strong>
+                    Usuário recebe orientação
+                </strong>
+
+                <p>
+                    Insights e informações são apresentados de forma clara.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     PARA QUEM SERVE
+     ====================================================== -->
+
+<section class="module-detail-section container">
+
+    <div class="module-detail-two-columns">
+
+        <div>
+
+            <span class="eyebrow">
+                PARA QUEM É
+            </span>
+
+            <h2>
+                Uma experiência financeira mais acessível
+            </h2>
+
+            <p>
+                O módulo pode apoiar pessoas que desejam organizar
+                melhor sua vida financeira, compreender hábitos,
+                acompanhar metas e tomar decisões com mais informação.
+            </p>
+
+
+            <ul class="module-detail-list">
+                <li>Organização financeira pessoal</li>
+                <li>Planejamento e orçamento</li>
+                <li>Acompanhamento de metas</li>
+                <li>Educação e compreensão financeira</li>
+                <li>Relatórios e histórico</li>
+            </ul>
+
+        </div>
+
+
+        <div class="module-detail-info-card">
+
+            <span class="eyebrow">
+                EXPERIÊNCIA
+            </span>
+
+            <h3>
+                Inteligência com contexto
+            </h3>
+
+            <p>
+                A INNA conecta informações, histórico,
+                conhecimento e recursos especializados para
+                manter uma experiência contínua e contextualizada.
+            </p>
+
+            <div class="module-tech-tags">
+
+                <span>IA Generativa</span>
+                <span>RAG</span>
+                <span>Memória</span>
+                <span>Relatórios</span>
+                <span>APIs</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     SEGURANCA
+     ====================================================== -->
+
+<section class="module-detail-section container">
+
+    <div class="module-security-card">
+
+        <div>
+
+            <span class="eyebrow">
+                SEGURANÇA E GOVERNANÇA
+            </span>
+
+            <h2>
+                Inteligência com controle e responsabilidade
+            </h2>
+
+            <p>
+                A experiência é preparada para incorporar
+                políticas, auditoria, rastreabilidade, proteção
+                de dados e supervisão humana quando necessária.
+            </p>
+
+        </div>
+
+
+        <div class="module-security-items">
+
+            <span>◇ Guardrails</span>
+            <span>✓ Auditoria</span>
+            <span>◎ HITL</span>
+            <span>◈ Governança</span>
+            <span>🔒 Privacidade</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     CTA FINAL
+     ====================================================== -->
+
+<section class="module-detail-cta container">
+
+    <div>
+
+        <span class="eyebrow">
+            PRÓXIMO PASSO
+        </span>
+
+        <h2>
+            Adicione Educação Financeira à sua solução
+        </h2>
+
+        <p>
+            Depois você poderá definir canais, integrações,
+            capacidade e recursos da plataforma.
+        </p>
+
+    </div>
+
+
+    <a
+        class="btn-primary module-final-action"
+        href="/configurar"
+    >
+        Adicionar e configurar →
+    </a>
+
+</section>
+
+
+
+<!-- ======================================================
+     FOOTER
+     ====================================================== -->
+
+<footer class="footer">
+
+    <div class="container footer-grid">
+
+        <div>
+
+            <a class="brand" href="/">
+
+                <img
+                    class="brand-logo"
+                    src="{{ url_for('static', path='/images/sabino-s-logo.png') }}"
+                    alt="Sabino.AI"
+                >
+
+                <span>Sabino.AI</span>
+
+            </a>
+
+            <p>
+                Tecnologia e inteligência para conectar
+                pessoas, negócios e soluções.
+            </p>
+
+        </div>
+
+
+        <div>
+            <strong>Plataforma</strong>
+            <a href="/">Início</a>
+            <a href="/modulos">Módulos</a>
+            <a href="/#inna">INNA Assistant</a>
+        </div>
+
+
+        <div>
+            <strong>Empresa</strong>
+            <a href="#">Sobre</a>
+            <a href="#">Privacidade</a>
+            <a href="#">Termos</a>
+        </div>
+
+
+        <div>
+            <strong>Recursos</strong>
+            <a href="#">Documentação</a>
+            <a href="#">API</a>
+            <a href="#">Status</a>
+        </div>
+
+
+        <div>
+            <strong>Segurança</strong>
+            <span class="security-badge">🔒 Plataforma segura</span>
+            <span class="security-badge">🛡 LGPD</span>
+        </div>
+
+    </div>
+
+</footer>
+
+
+</main>
+
+
+    <script
+        src="/static/js/sabino-global-brand.js?v=1"
+        defer
+    ></script>
+
+    <script
+        src="/static/js/sabino-global-brand-v2.js?v=2"
+        defer
+    ></script>
+</body>
+</html>
+
+
+
+

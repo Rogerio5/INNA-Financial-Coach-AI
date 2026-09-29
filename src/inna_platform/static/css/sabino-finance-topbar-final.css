@@ -1,0 +1,553 @@
+/* SABINO_FINANCE_TOPBAR_FINAL_V1 */
+
+#sabinoFinanceTopbarFinal {
+    position: fixed !important;
+
+    top: 18px !important;
+    right: 28px !important;
+
+    z-index: 2147483000 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 18px !important;
+
+    width: auto !important;
+    height: 58px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: transparent !important;
+}
+
+
+/* IDIOMA = ESQUERDA */
+
+#sabinoFinanceTopbarFinal #sabinoLanguageSwitcher {
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 1 !important;
+}
+
+
+/* USUÁRIO = DIREITA */
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"] {
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 2 !important;
+}
+
+
+/* Painel do idioma continua funcionando */
+
+#sabinoFinanceTopbarFinal #sabinoLanguagePanel {
+    top: calc(100% + 10px) !important;
+    right: 0 !important;
+    left: auto !important;
+}
+
+
+@media (max-width: 900px) {
+
+    #sabinoFinanceTopbarFinal {
+        right: 12px !important;
+        gap: 10px !important;
+    }
+
+}
+
+/* ============================================================
+   SABINO_FINANCE_USER_COMPACT_V1
+   Usuário mais curto no cabeçalho.
+   ============================================================ */
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"] {
+
+    width: auto !important;
+
+    min-width: 165px !important;
+    max-width: 205px !important;
+
+    height: 52px !important;
+
+    box-sizing: border-box !important;
+
+    overflow: hidden !important;
+}
+
+
+/*
+ * Texto principal do usuário.
+ */
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"]
+[data-sabino-user-name],
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"]
+.user-name,
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"]
+.profile-name,
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"]
+.account-name {
+
+    display: block !important;
+
+    max-width: 125px !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    white-space: nowrap !important;
+}
+
+
+/*
+ * Linha Premium · Ativo.
+ */
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"]
+.user-meta,
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"]
+.profile-meta,
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"]
+.account-meta {
+
+    max-width: 125px !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    white-space: nowrap !important;
+}
+
+
+/*
+ * Evitar que e-mail técnico estique o header.
+ */
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"]
+[data-sabino-technical-email="true"] {
+
+    display: none !important;
+}
+
+
+/* ============================================================
+   SABINO_FINANCE_TOPBAR_FIXED_V2
+   Idioma + usuário permanecem fixos no topo.
+   ============================================================ */
+
+#sabinoFinanceTopbarFinal {
+
+    position: fixed !important;
+
+    top: 18px !important;
+    right: 28px !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    z-index: 2147483000 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 18px !important;
+
+    width: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: transparent !important;
+}
+
+
+/* idioma continua à esquerda */
+
+#sabinoFinanceTopbarFinal
+#sabinoLanguageSwitcher {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 1 !important;
+}
+
+
+/* usuário continua à direita */
+
+#sabinoFinanceTopbarFinal
+[data-sabino-finance-user-final="true"] {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 2 !important;
+
+    min-width: 160px !important;
+    max-width: 205px !important;
+}
+
+
+/* celular/tablet */
+
+@media (max-width: 900px) {
+
+    #sabinoFinanceTopbarFinal {
+
+        top: 12px !important;
+        right: 12px !important;
+
+        gap: 10px !important;
+    }
+
+}
+
+
+/* ============================================================
+   SABINO_FINANCE_HEADER_ORDER_FINAL_V4
+
+   Ordem definitiva:
+   ESQUERDA = idioma
+   DIREITA  = usuário
+   ============================================================ */
+
+#sabinoFinanceTopbarFinal {
+
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    align-items: center !important;
+
+    justify-content: flex-end !important;
+
+    gap: 18px !important;
+}
+
+
+/*
+ * Por padrão qualquer filho fica depois.
+ */
+
+#sabinoFinanceTopbarFinal > * {
+
+    order: 2 !important;
+}
+
+
+/*
+ * O seletor de idioma SEMPRE vem primeiro.
+ */
+
+#sabinoFinanceTopbarFinal > #sabinoLanguageSwitcher {
+
+    order: 1 !important;
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    flex: 0 0 auto !important;
+}
+
+
+/*
+ * Tudo que for conta/usuário fica depois do idioma.
+ */
+
+#sabinoFinanceTopbarFinal >
+[data-sabino-finance-user-final="true"],
+
+#sabinoFinanceTopbarFinal >
+[data-sabino-finance-fixed-user="true"] {
+
+    order: 2 !important;
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    flex: 0 0 auto !important;
+}
+
+
+/* ============================================================
+   SABINO_FINANCE_HEADER_POSITION_FINAL_V5
+
+   IDIOMA = esquerda
+   USUÁRIO = direita
+   ambos fixos no topo
+   ============================================================ */
+
+body #sabinoLanguageSwitcher {
+
+    position: fixed !important;
+
+    top: 18px !important;
+    right: 250px !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    z-index: 2147483000 !important;
+}
+
+
+body [data-sabino-finance-user-final="true"] {
+
+    position: fixed !important;
+
+    top: 18px !important;
+    right: 28px !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    min-width: 160px !important;
+    max-width: 205px !important;
+
+    z-index: 2147483001 !important;
+}
+
+
+/* Tablet */
+
+@media (max-width: 1000px) {
+
+    body #sabinoLanguageSwitcher {
+
+        right: 205px !important;
+    }
+
+    body [data-sabino-finance-user-final="true"] {
+
+        right: 12px !important;
+    }
+
+}
+
+
+/* ============================================================
+   SABINO_FINANCE_HEADER_PRIORITY_FIX_V6
+
+   CORREÇÃO DE ESPECIFICIDADE CSS
+
+   ESQUERDA = idioma
+   DIREITA  = usuário
+   ============================================================ */
+
+
+/*
+ * IMPORTANTE:
+ * este seletor é propositalmente mais específico
+ * que:
+ *
+ * #sabinoFinanceTopbarFinal > #sabinoLanguageSwitcher
+ */
+
+html body
+#sabinoFinanceTopbarFinal
+>
+#sabinoLanguageSwitcher {
+
+    position: fixed !important;
+
+    top: 18px !important;
+
+    /*
+     * Distância da direita:
+     *
+     * 28px margem
+     * + aproximadamente 200px usuário
+     * + espaço entre eles
+     */
+
+    right: 255px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 1 !important;
+
+    z-index: 2147483000 !important;
+}
+
+
+/* ============================================================
+   USUÁRIO NO EXTREMO DIREITO
+   ============================================================ */
+
+html body
+#sabinoFinanceTopbarFinal
+>
+[data-sabino-finance-user-final="true"] {
+
+    position: fixed !important;
+
+    top: 18px !important;
+    right: 28px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 2 !important;
+
+    min-width: 160px !important;
+    max-width: 205px !important;
+
+    z-index: 2147483001 !important;
+}
+
+
+/*
+ * Compatibilidade caso alguma página esteja usando
+ * o atributo do header global.
+ */
+
+html body
+#sabinoFinanceTopbarFinal
+>
+[data-sabino-finance-fixed-user="true"] {
+
+    position: fixed !important;
+
+    top: 18px !important;
+    right: 28px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 2 !important;
+
+    min-width: 160px !important;
+    max-width: 205px !important;
+
+    z-index: 2147483001 !important;
+}
+
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+
+@media (max-width: 1000px) {
+
+    html body
+    #sabinoFinanceTopbarFinal
+    >
+    #sabinoLanguageSwitcher {
+
+        right: 215px !important;
+    }
+
+
+    html body
+    #sabinoFinanceTopbarFinal
+    >
+    [data-sabino-finance-user-final="true"],
+
+    html body
+    #sabinoFinanceTopbarFinal
+    >
+    [data-sabino-finance-fixed-user="true"] {
+
+        right: 12px !important;
+
+        min-width: 145px !important;
+        max-width: 175px !important;
+    }
+
+}
+

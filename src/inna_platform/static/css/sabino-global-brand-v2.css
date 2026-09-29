@@ -1,0 +1,269 @@
+/* =========================================================
+   SABINO.AI - GLOBAL BRAND V2
+   Identidade oficial em todas as paginas
+   ========================================================= */
+
+:root {
+    --sabino-brand-gold: #e6b84a;
+    --sabino-brand-bg: #02070b;
+    --sabino-brand-text: #f5f7f8;
+    --sabino-brand-muted: #728089;
+}
+
+
+/* Container principal */
+
+.sabino-global-brand-v2 {
+
+    display:
+        inline-flex !important;
+
+    align-items:
+        center !important;
+
+    gap:
+        12px !important;
+
+    min-width:
+        max-content;
+
+    color:
+        var(--sabino-brand-text) !important;
+
+    text-decoration:
+        none !important;
+
+}
+
+
+/* Logo oficial */
+
+.sabino-global-brand-v2__logo {
+
+    width:
+        48px;
+
+    height:
+        48px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    flex:
+        0 0 48px;
+
+    overflow:
+        hidden;
+
+    background:
+        #010406;
+
+    border:
+        1px solid rgba(230,184,74,.07);
+
+    border-radius:
+        9px;
+
+    box-shadow:
+        0 6px 24px rgba(0,0,0,.25);
+
+}
+
+
+.sabino-global-brand-v2__logo img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    display:
+        block;
+
+    object-fit:
+        contain;
+
+    user-select:
+        none;
+
+    -webkit-user-drag:
+        none;
+
+}
+
+
+/* Texto */
+
+.sabino-global-brand-v2__text {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+
+    line-height:
+        1.05;
+
+}
+
+
+.sabino-global-brand-v2__name {
+
+    color:
+        #f5f7f8;
+
+    font-size:
+        21px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        -.035em;
+
+    white-space:
+        nowrap;
+
+}
+
+
+.sabino-global-brand-v2__subtitle {
+
+    margin-top:
+        5px;
+
+    color:
+        #68757d;
+
+    font-size:
+        9px;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        .01em;
+
+    white-space:
+        nowrap;
+
+}
+
+
+/* =========================================================
+   Compatibilidade com headers existentes
+   ========================================================= */
+
+.finance-brand,
+.sabino-brand,
+.inna-brand,
+.platform-brand,
+.navbar-brand,
+.topbar-brand,
+.header-brand,
+.brand {
+
+    text-decoration:
+        none !important;
+
+}
+
+
+/* Remove simbolos antigos quando o JS os substitui */
+
+.sabino-brand-replaced {
+
+    display:
+        none !important;
+
+}
+
+
+/* Garantir alinhamento em headers */
+
+header .sabino-global-brand-v2,
+nav .sabino-global-brand-v2,
+.finance-topbar .sabino-global-brand-v2 {
+
+    align-self:
+        center;
+
+}
+
+
+/* Hover leve */
+
+.sabino-global-brand-v2 {
+
+    transition:
+        opacity .18s ease,
+        transform .18s ease;
+
+}
+
+
+.sabino-global-brand-v2:hover {
+
+    opacity:
+        .96;
+
+}
+
+
+/* =========================================================
+   Responsivo
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .sabino-global-brand-v2 {
+
+        gap:
+            9px !important;
+
+    }
+
+
+    .sabino-global-brand-v2__logo {
+
+        width:
+            42px;
+
+        height:
+            42px;
+
+        flex-basis:
+            42px;
+
+    }
+
+
+    .sabino-global-brand-v2__name {
+
+        font-size:
+            18px;
+
+    }
+
+
+    .sabino-global-brand-v2__subtitle {
+
+        font-size:
+            8px;
+
+    }
+
+}
+
+
+/* =========================================================
+   FIM GLOBAL BRAND V2
+   ========================================================= */

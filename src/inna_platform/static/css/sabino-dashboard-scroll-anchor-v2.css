@@ -1,0 +1,23 @@
+
+.main > .topbar,
+header.topbar[data-sabino-scroll-anchor-v2="true"]{
+position:absolute!important;
+bottom:auto!important;
+transform:none!important;
+translate:none!important;
+will-change:auto!important;
+}
+
+header.topbar[data-sabino-scroll-anchor-v2="true"] #sabinoLanguageSwitcher,
+header.topbar[data-sabino-scroll-anchor-v2="true"] #languageButton,
+header.topbar[data-sabino-scroll-anchor-v2="true"] .language,
+header.topbar[data-sabino-scroll-anchor-v2="true"] .profile{
+position:static!important;
+top:auto!important;
+right:auto!important;
+bottom:auto!important;
+left:auto!important;
+transform:none!important;
+translate:none!important;
+}
+

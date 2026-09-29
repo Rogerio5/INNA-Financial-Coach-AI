@@ -1,0 +1,67 @@
+/* ============================================================
+   SABINO.AI - MONTH CHART LEGEND V1
+   ============================================================ */
+
+.sabino-month-legend-v1 {
+    position: absolute !important;
+
+    top: 64px !important;
+    right: 20px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+
+    gap: 7px !important;
+
+    padding: 6px 9px !important;
+
+    border-radius: 9px !important;
+
+    background: rgba(8, 13, 18, .72) !important;
+
+    color: #aebdce !important;
+
+    font-size: 10px !important;
+    font-weight: 600 !important;
+
+    line-height: 1 !important;
+
+    white-space: nowrap !important;
+
+    pointer-events: none !important;
+
+    z-index: 5 !important;
+}
+
+
+.sabino-month-legend-v1-dot {
+    width: 9px !important;
+    height: 9px !important;
+
+    border-radius: 50% !important;
+
+    background: #F59E0B !important;
+
+    box-shadow:
+        0 0 8px
+        rgba(245, 158, 11, .30) !important;
+
+    flex: 0 0 auto !important;
+}
+
+
+/* O card precisa ser referência para a legenda */
+[data-sabino-month-chart-card-v1="true"] {
+    position: relative !important;
+}
+
+
+@media (max-width: 900px) {
+
+    .sabino-month-legend-v1 {
+        top: 62px !important;
+        right: 14px !important;
+
+        font-size: 9px !important;
+    }
+}

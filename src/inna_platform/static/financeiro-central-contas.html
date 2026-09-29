@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Central de Contas | Sabino.AI</title>
+
+<style id="SABINO_FINANCE_CENTRAL_ACCOUNTS_V1_STYLE">
+:root{
+    --bg:#080b0d;
+    --panel:#111619;
+    --border:#293136;
+    --text:#ffffff;
+    --muted:#96a0a6;
+    --gold:#d9b441;
+    --green:#49c986;
+    --blue:#62a9e8;
+}
+
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Segoe UI,Arial,sans-serif;
+}
+
+.layout{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:280px 1fr;
+}
+
+.side{
+    background:#090d0f;
+    border-right:1px solid #252c30;
+    min-height:100vh;
+}
+
+.main{
+    width:100%;
+    max-width:1450px;
+    margin:auto;
+    padding:32px;
+}
+
+.eyebrow{
+    color:var(--gold);
+    font-size:12px;
+    font-weight:900;
+}
+
+h1{
+    margin:7px 0;
+    font-size:36px;
+}
+
+h1 span{
+    color:var(--gold);
+}
+
+.subtitle{
+    color:var(--muted);
+    margin-bottom:24px;
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+}
+
+.card,
+.panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+}
+
+.card span{
+    display:block;
+    color:var(--muted);
+    font-size:11px;
+    text-transform:uppercase;
+    font-weight:800;
+}
+
+.card strong{
+    display:block;
+    margin-top:7px;
+    font-size:27px;
+}
+
+.green{color:var(--green)}
+.blue{color:var(--blue)}
+
+.content{
+    display:grid;
+    grid-template-columns:1fr 380px;
+    gap:14px;
+    margin-top:14px;
+}
+
+.panel h2{
+    margin:0 0 15px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+label{
+    display:block;
+    color:var(--muted);
+    font-size:12px;
+    margin-bottom:5px;
+}
+
+input,
+select{
+    width:100%;
+    background:#090d0f;
+    color:#fff;
+    border:1px solid #30383d;
+    border-radius:8px;
+    padding:11px;
+}
+
+button{
+    margin-top:14px;
+    background:var(--gold);
+    color:#111;
+    border:0;
+    border-radius:8px;
+    padding:11px 17px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.empty{
+    color:var(--muted);
+    padding:20px 0;
+}
+
+.inna{
+    border-color:#66571d;
+}
+
+.inna small{
+    color:var(--gold);
+    font-weight:900;
+}
+
+.inna p{
+    color:#d7dcdf;
+    line-height:1.6;
+}
+
+.notice{
+    margin-top:14px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.5;
+}
+
+@media(max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .summary{grid-template-columns:1fr}
+    .content{grid-template-columns:1fr}
+    .form-grid{grid-template-columns:1fr}
+}
+</style>
+<link rel="stylesheet" href="/static/css/sabino-locale-core.css?v=browserany_manual3_20260917_134732" data-sabino-global-locale="v1">
+<link rel="stylesheet" href="/static/css/sabino-currency-core.css" data-sabino-global-currency="v1">
+
+<link rel="stylesheet" href="/static/css/sabino-language-button.css?v=20260917_140515">
+<script defer src="/static/js/sabino-language-button.js?v=20260917_140515"></script>
+
+<link rel="stylesheet"
+      href="/static/css/=20260917_181514">
+
+<script defer
+        src="/static/js/=20260917_181514">
+</script>
+
+
+
+<link
+    rel="stylesheet"
+    href="/static/css/sabino-finance-unified.css?v=20260917_222806"
+>
+
+<script
+    defer
+    src="/static/js/sabino-finance-unified.js?v=20260917_222806">
+</script>
+
+    <link rel="stylesheet" href="/static/css/sabino-finance-back-dashboard-v2.css?v=20260918_144545">
+</head>
+
+<body>
+
+<div class="layout">
+
+<aside class="side"></aside>
+
+<main class="main">
+
+    <div class="eyebrow">
+        SABINO.AI | CENTRAL DE CONTAS
+    </div>
+
+    <h1>
+        Central de <span>Contas</span>
+    </h1>
+
+    <p class="subtitle">
+        Organize suas contas financeiras e visualize seus saldos em um único lugar.
+    </p>
+
+    <section class="summary">
+
+        <div class="card">
+            <span>Total em contas</span>
+            <strong id="centralAccountsBalance" class="green" data-sabino-money="0">
+                R$ 0,00
+            </strong>
+        </div>
+
+        <div class="card">
+            <span>Contas cadastradas</span>
+            <strong id="centralAccountsCount" class="blue">
+                0
+            </strong>
+        </div>
+
+        <div class="card">
+            <span>Contas ativas</span>
+            <strong id="centralAccountsActive" class="blue">
+                0
+            </strong>
+        </div>
+
+    </section>
+
+    <div class="content">
+
+        <section>
+
+            <div class="panel">
+
+                <h2>Cadastrar conta</h2>
+
+                <div class="form-grid">
+
+                    <div>
+                        <label>Instituição</label>
+                        <input
+                            id="accountInstitution"
+                            placeholder="Ex.: Banco do Brasil"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Nome da conta</label>
+                        <input
+                            id="accountName"
+                            placeholder="Ex.: Conta principal"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Tipo</label>
+
+                        <select id="accountType">
+                            <option>Conta corrente</option>
+                            <option>Conta poupança</option>
+                            <option>Conta digital</option>
+                            <option>Carteira digital</option>
+                            <option>Dinheiro</option>
+                            <option>Outra</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Saldo atual</label>
+                        <input
+                            id="accountBalance"
+                            type="number"
+                            step="0.01"
+                            placeholder="0,00"
+                        >
+                    </div>
+
+                </div>
+
+                <button
+                    id="accountSave"
+                    type="button"
+                >
+                    Adicionar conta
+                </button>
+
+            </div>
+
+            <div class="panel" style="margin-top:14px">
+
+                <h2>Minhas contas</h2>
+
+                <div id="centralAccountsList" class="empty">
+                    Nenhuma conta cadastrada.
+                </div>
+
+            </div>
+
+        </section>
+
+        <aside>
+
+            <section class="panel inna">
+
+                <small>
+                    INNA · ORIENTAÇÃO FINANCEIRA
+                </small>
+
+                <h2>Orientação</h2>
+
+                <p id="centralAccountsInnaMessage">
+                    Centralizar suas contas ajuda a entender onde seu dinheiro está distribuído e facilita o acompanhamento dos saldos.
+                </p>
+
+            </section>
+
+            <div class="notice">
+                Nesta etapa, o cadastro será manual.
+                A integração com Open Finance ainda não está ativa.
+            </div>
+
+        </aside>
+
+    </div>
+
+</main>
+</div>
+
+<script id="SABINO_FINANCE_CENTRAL_ACCOUNTS_V1">
+
+(function(){
+
+    /* SABINO_FINANCE_CENTRAL_ACCOUNTS_API_INTEGRATION_V1 */
+    /* SABINO_CENTRAL_ACCOUNT_EDIT_UI_V2 */
+
+    /* SABINO_GLOBAL_MONEY_BRIDGE_V2 */
+    const money = {
+        format(value) {
+
+            const numeric =
+                Number(value || 0);
+
+            if (
+                window.SabinoCurrency &&
+                typeof window.SabinoCurrency.format ===
+                    "function"
+            ) {
+
+                return window.SabinoCurrency.format(
+                    numeric,
+                    {
+                        currency: "BRL"
+                    }
+                );
+
+            }
+
+            return new Intl.NumberFormat(
+                "pt-BR",
+                {
+                    style: "currency",
+                    currency: "BRL"
+                }
+            ).format(numeric);
+
+        }
+    };
+
+    let accounts = [];
+
+
+    function updateSummary(){
+
+        const active =
+            accounts.filter(function(item){
+                return item.is_active === true;
+            });
+
+        const total =
+            active.reduce(function(sum,item){
+                return sum +
+                    Number(
+                        item.current_balance || 0
+                    );
+            },0);
+
+        document.getElementById(
+            "centralAccountsBalance"
+        ).textContent =
+            money.format(total);
+
+        document.getElementById(
+            "centralAccountsCount"
+        ).textContent =
+            String(accounts.length);
+
+        document.getElementById(
+            "centralAccountsActive"
+        ).textContent =
+            String(active.length);
+
+        window.sabinoCentralAccountsSemanticState = {
+            module:"central_contas",
+            accounts_count:accounts.length,
+            active_accounts:active.length,
+            total_balance:total
+        };
+    }
+
+
+    function renderAccounts(){
+
+        const list =
+            document.getElementById(
+                "centralAccountsList"
+            );
+
+        list.innerHTML = "";
+
+        if(accounts.length === 0){
+
+            list.className = "empty";
+
+            list.textContent =
+                "Nenhuma conta cadastrada.";
+
+            updateSummary();
+
+            return;
+        }
+
+        list.className = "";
+
+        accounts.forEach(function(account){
+
+            const card =
+                document.createElement("div");
+
+            card.style.cssText =
+                "background:#0b1012;" +
+                "border:1px solid #293136;" +
+                "border-radius:10px;" +
+                "padding:14px;" +
+                "margin-top:10px;" +
+                "display:flex;" +
+                "justify-content:space-between;" +
+                "gap:16px;" +
+                "align-items:center;";
+
+            const info =
+                document.createElement("div");
+
+            const name =
+                document.createElement("strong");
+
+            name.textContent =
+                account.account_name || "Conta";
+
+            const detail =
+                document.createElement("div");
+
+            detail.style.cssText =
+                "color:#96a0a6;" +
+                "font-size:12px;" +
+                "margin-top:5px;";
+
+            detail.textContent =
+                String(account.institution || "") +
+                " · " +
+                String(account.account_type || "");
+
+            info.appendChild(name);
+            info.appendChild(detail);
+
+            const balance =
+                document.createElement("strong");
+
+            balance.style.color = "#49c986";
+
+            balance.textContent =
+                money.format(
+                    Number(
+                        account.current_balance || 0
+                    )
+                );
+
+            const right =
+                document.createElement("div");
+
+            right.style.cssText =
+                "text-align:right;";
+
+            right.appendChild(balance);
+
+            const editButton =
+                document.createElement("button");
+
+            editButton.type = "button";
+            editButton.textContent = "Editar";
+
+            editButton.style.cssText =
+                "margin-top:8px;" +
+                "padding:7px 11px;" +
+                "font-size:11px;";
+
+            editButton.onclick = async function(){
+
+                const institution = prompt(
+                    "Instituição:",
+                    account.institution || ""
+                );
+
+                if(institution === null){
+                    return;
+                }
+
+                const name = prompt(
+                    "Nome da conta:",
+                    account.account_name || ""
+                );
+
+                if(name === null){
+                    return;
+                }
+
+                const type = prompt(
+                    "Tipo da conta:",
+                    account.account_type || ""
+                );
+
+                if(type === null){
+                    return;
+                }
+
+                const balanceText = prompt(
+                    "Saldo atual:",
+                    String(
+                        account.current_balance || 0
+                    )
+                );
+
+                if(balanceText === null){
+                    return;
+                }
+
+                const newBalance = Number(
+                    String(balanceText).replace(",", ".")
+                );
+
+                if(!Number.isFinite(newBalance)){
+                    alert("Saldo inválido.");
+                    return;
+                }
+
+                try{
+
+                    const response = await fetch(
+                        "/api/finance/central-accounts/" +
+                        encodeURIComponent(account.id),
+                        {
+                            method:"PUT",
+                            credentials:"same-origin",
+                            headers:{
+                                "Content-Type":"application/json"
+                            },
+                            body:JSON.stringify({
+                                institution:institution,
+                                account_name:name,
+                                account_type:type,
+                                current_balance:newBalance
+                            })
+                        }
+                    );
+
+                    const data =
+                        await response.json();
+
+                    if(!response.ok){
+                        throw new Error(
+                            data.detail ||
+                            "Não foi possível editar a conta."
+                        );
+                    }
+
+                    await loadAccounts();
+
+                    document.getElementById(
+                        "centralAccountsInnaMessage"
+                    ).textContent =
+                        "Dados da conta atualizados. Mantenha os saldos atualizados para acompanhar sua situação financeira.";
+
+                }
+                catch(error){
+
+                    console.error(
+                        "CENTRAL_ACCOUNT_UPDATE_ERROR",
+                        error
+                    );
+
+                    alert(
+                        error.message ||
+                        "Não foi possível editar a conta."
+                    );
+                }
+            };
+
+            right.appendChild(editButton);
+
+            // SABINO_CENTRAL_ACCOUNT_ACTIVE_UI_V2
+
+            const activeButton =
+                document.createElement("button");
+
+            activeButton.type = "button";
+
+            activeButton.textContent =
+                account.is_active
+                    ? "Desativar"
+                    : "Ativar";
+
+            activeButton.style.cssText =
+                "margin-top:8px;" +
+                "margin-left:6px;" +
+                "padding:7px 11px;" +
+                "font-size:11px;" +
+                (
+                    account.is_active
+                        ? "background:#f59e0b;"
+                        : "background:#49c986;"
+                );
+
+            activeButton.onclick = async function(){
+
+                const newState =
+                    !account.is_active;
+
+                try{
+
+                    const response = await fetch(
+                        "/api/finance/central-accounts/" +
+                        encodeURIComponent(account.id) +
+                        "/active",
+                        {
+                            method:"PATCH",
+                            credentials:"same-origin",
+                            headers:{
+                                "Content-Type":"application/json"
+                            },
+                            body:JSON.stringify({
+                                is_active:newState
+                            })
+                        }
+                    );
+
+                    const data =
+                        await response.json();
+
+                    if(!response.ok){
+                        throw new Error(
+                            data.detail ||
+                            "Não foi possível alterar o status da conta."
+                        );
+                    }
+
+                    await loadAccounts();
+
+                    document.getElementById(
+                        "centralAccountsInnaMessage"
+                    ).textContent =
+                        newState
+                            ? "Conta ativada novamente e incluída no saldo total."
+                            : "Conta desativada. Ela continua cadastrada, mas não entra no saldo total enquanto estiver inativa.";
+
+                }
+                catch(error){
+
+                    console.error(
+                        "CENTRAL_ACCOUNT_ACTIVE_ERROR",
+                        error
+                    );
+
+                    alert(
+                        error.message ||
+                        "Não foi possível alterar o status da conta."
+                    );
+                }
+            };
+
+            right.appendChild(activeButton);
+
+            // SABINO_CENTRAL_ACCOUNT_DELETE_UI_V2
+
+            const deleteButton =
+                document.createElement("button");
+
+            deleteButton.type = "button";
+            deleteButton.textContent = "Excluir";
+
+            deleteButton.style.cssText =
+                "margin-top:8px;" +
+                "margin-left:6px;" +
+                "padding:7px 11px;" +
+                "font-size:11px;" +
+                "background:#e66b6b;" +
+                "color:#111;";
+
+            deleteButton.onclick = async function(){
+
+                const confirmed = confirm(
+                    "Excluir a conta " +
+                    (account.account_name || "") +
+                    "? Esta ação não pode ser desfeita."
+                );
+
+                if(!confirmed){
+                    return;
+                }
+
+                try{
+
+                    const response = await fetch(
+                        "/api/finance/central-accounts/" +
+                        encodeURIComponent(account.id),
+                        {
+                            method:"DELETE",
+                            credentials:"same-origin"
+                        }
+                    );
+
+                    const data =
+                        await response.json();
+
+                    if(!response.ok){
+                        throw new Error(
+                            data.detail ||
+                            "Não foi possível excluir a conta."
+                        );
+                    }
+
+                    await loadAccounts();
+
+                    document.getElementById(
+                        "centralAccountsInnaMessage"
+                    ).textContent =
+                        "Conta excluída da Central de Contas.";
+
+                }
+                catch(error){
+
+                    console.error(
+                        "CENTRAL_ACCOUNT_DELETE_ERROR",
+                        error
+                    );
+
+                    alert(
+                        error.message ||
+                        "Não foi possível excluir a conta."
+                    );
+                }
+            };
+
+            right.appendChild(deleteButton);
+
+            card.appendChild(info);
+            card.appendChild(right);
+
+            list.appendChild(card);
+        });
+
+        updateSummary();
+    }
+
+
+    async function loadAccounts(){
+
+        const response = await fetch(
+            "/api/finance/central-accounts",
+            {
+                credentials:"same-origin",
+                cache:"no-store"
+            }
+        );
+
+        if(!response.ok){
+            throw new Error(
+                "HTTP " + response.status
+            );
+        }
+
+        const data =
+            await response.json();
+
+        accounts =
+            Array.isArray(data.items)
+                ? data.items
+                : [];
+
+        renderAccounts();
+    }
+
+
+    async function createAccount(){
+
+        const institution =
+            document.getElementById(
+                "accountInstitution"
+            ).value.trim();
+
+        const accountName =
+            document.getElementById(
+                "accountName"
+            ).value.trim();
+
+        const accountType =
+            document.getElementById(
+                "accountType"
+            ).value;
+
+        const currentBalance =
+            Number(
+                document.getElementById(
+                    "accountBalance"
+                ).value || 0
+            );
+
+        if(!institution || !accountName){
+
+            alert(
+                "Informe instituição e nome da conta."
+            );
+
+            return;
+        }
+
+        const button =
+            document.getElementById(
+                "accountSave"
+            );
+
+        button.disabled = true;
+        button.textContent = "Salvando...";
+
+        try{
+
+            const response = await fetch(
+                "/api/finance/central-accounts",
+                {
+                    method:"POST",
+                    credentials:"same-origin",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        institution:institution,
+                        account_name:accountName,
+                        account_type:accountType,
+                        current_balance:currentBalance
+                    })
+                }
+            );
+
+            const data =
+                await response.json();
+
+            if(!response.ok){
+
+                throw new Error(
+                    data.detail ||
+                    "Não foi possível cadastrar a conta."
+                );
+            }
+
+            document.getElementById(
+                "accountInstitution"
+            ).value = "";
+
+            document.getElementById(
+                "accountName"
+            ).value = "";
+
+            document.getElementById(
+                "accountBalance"
+            ).value = "";
+
+            await loadAccounts();
+
+            document.getElementById(
+                "centralAccountsInnaMessage"
+            ).textContent =
+                "Conta cadastrada. Manter os saldos atualizados ajuda a visualizar melhor a distribuição do seu dinheiro.";
+
+        }
+        catch(error){
+
+            console.error(
+                "CENTRAL_ACCOUNT_SAVE_ERROR",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Não foi possível salvar a conta."
+            );
+
+        }
+        finally{
+
+            button.disabled = false;
+            button.textContent =
+                "Adicionar conta";
+        }
+    }
+
+
+    document.getElementById(
+        "accountSave"
+    ).addEventListener(
+        "click",
+        createAccount
+    );
+
+
+    loadAccounts().catch(function(error){
+
+        console.error(
+            "CENTRAL_ACCOUNTS_LOAD_ERROR",
+            error
+        );
+
+        document.getElementById(
+            "centralAccountsList"
+        ).textContent =
+            "Não foi possível carregar suas contas.";
+    });
+
+})();
+
+</script>
+
+<script
+    id="SABINO_SHARED_FINANCE_SIDEBAR_V1_LOADER"
+    src="/static/finance-sidebar.js"
+></script>
+
+<script src="/static/js/sabino-locale-core.js?v=internal12_20260917_140006" data-sabino-global-locale="v1"></script>
+<script src="/static/js/sabino-global-i18n-runtime.js" data-sabino-global-i18n="v1"></script>
+<script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
+<script src="/static/js/sabino-money-locale-runtime.js"></script>
+
+    <script defer src="/static/js/sabino-finance-back-dashboard-v2.js?v=20260918_144545"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

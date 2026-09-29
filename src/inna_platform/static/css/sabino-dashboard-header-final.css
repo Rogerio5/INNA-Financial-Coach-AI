@@ -1,0 +1,118 @@
+/* SABINO_DASHBOARD_HEADER_FINAL_V2 */
+
+#sabinoDashboardHeaderFinal {
+
+    position: fixed !important;
+
+    top: 22px !important;
+    right: 28px !important;
+
+    z-index: 2147483000 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 18px !important;
+
+    width: auto !important;
+    height: 58px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: transparent !important;
+}
+
+
+/* Idioma à esquerda */
+
+#sabinoDashboardHeaderFinal
+#sabinoLanguageSwitcher {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 1 !important;
+
+    flex: 0 0 auto !important;
+}
+
+
+/* Usuário à direita */
+
+#sabinoDashboardHeaderFinal
+[data-sabino-dashboard-user-final="true"] {
+
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    transform: none !important;
+
+    margin: 0 !important;
+
+    order: 2 !important;
+
+    min-width: 145px !important;
+    max-width: 190px !important;
+
+    overflow: hidden !important;
+}
+
+
+/* Nome */
+
+#sabinoDashboardHeaderFinal
+[data-sabino-dashboard-user-name="true"] {
+
+    display: block !important;
+
+    max-width: 120px !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* Segunda linha */
+
+#sabinoDashboardHeaderFinal
+[data-sabino-dashboard-account-label="true"] {
+
+    display: block !important;
+
+    max-width: 135px !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    white-space: nowrap !important;
+}
+
+
+@media (max-width: 1000px) {
+
+    #sabinoDashboardHeaderFinal {
+
+        right: 12px !important;
+        gap: 10px !important;
+    }
+
+}

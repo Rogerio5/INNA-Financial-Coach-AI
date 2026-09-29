@@ -1,0 +1,679 @@
+/* =========================================================
+   SABINO.AI HOME V6
+   RESPONSIVE PREMIUM SCALE
+   ========================================================= */
+
+:root {
+
+    --sab-home-max:
+        1580px;
+
+    --sab-home-gold:
+        #e6b84a;
+
+    --sab-home-bg:
+        #02070b;
+
+    --sab-home-panel:
+        #07131d;
+
+    --sab-home-border:
+        rgba(255,255,255,.075);
+
+    --sab-home-text:
+        #f3f6f7;
+
+    --sab-home-muted:
+        #7e8b93;
+}
+
+
+/* =========================================================
+   ESCALA GLOBAL DA HOME
+   ========================================================= */
+
+body.sab-home-v6-root {
+
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(230,184,74,.045),
+            transparent 28%
+        ),
+        #02070b;
+
+}
+
+
+.sab-home-v6-main {
+
+    width:
+        min(
+            var(--sab-home-max),
+            96%
+        ) !important;
+
+    max-width:
+        var(--sab-home-max) !important;
+
+    margin-left:
+        auto !important;
+
+    margin-right:
+        auto !important;
+
+}
+
+
+/* Remove containers muito estreitos da Home */
+
+.sab-home-v6-root
+.sab-home-v6-main
+section {
+
+    width:
+        100% !important;
+
+    max-width:
+        none !important;
+
+}
+
+
+.sab-home-v6-root
+.sab-home-v6-main
+[class*="container"],
+.sab-home-v6-root
+.sab-home-v6-main
+[class*="wrapper"],
+.sab-home-v6-root
+.sab-home-v6-main
+[class*="shell"] {
+
+    max-width:
+        var(--sab-home-max);
+
+}
+
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.sab-home-v6-hero {
+
+    width:
+        100% !important;
+
+    max-width:
+        none !important;
+
+    min-height:
+        540px !important;
+
+    padding-top:
+        45px !important;
+
+    padding-bottom:
+        45px !important;
+
+    display:
+        grid !important;
+
+    grid-template-columns:
+        minmax(0,1.05fr)
+        minmax(440px,.95fr) !important;
+
+    gap:
+        clamp(
+            42px,
+            5vw,
+            85px
+        ) !important;
+
+    align-items:
+        center !important;
+
+}
+
+
+.sab-home-v6-hero h1 {
+
+    max-width:
+        760px;
+
+    font-size:
+        clamp(
+            56px,
+            5vw,
+            82px
+        ) !important;
+
+    line-height:
+        .98 !important;
+
+    letter-spacing:
+        -.055em !important;
+
+}
+
+
+.sab-home-v6-hero p {
+
+    max-width:
+        760px;
+
+    font-size:
+        15px !important;
+
+    line-height:
+        1.7 !important;
+
+}
+
+
+.sab-home-v6-hero img.sab-home-v6-inna {
+
+    width:
+        min(
+            100%,
+            570px
+        ) !important;
+
+    max-width:
+        570px !important;
+
+    height:
+        auto !important;
+
+    max-height:
+        520px !important;
+
+    display:
+        block !important;
+
+    margin:
+        0 auto !important;
+
+    object-fit:
+        contain !important;
+
+    object-position:
+        center bottom !important;
+
+}
+
+
+/* Se a imagem estiver dentro de wrapper pequeno */
+
+.sab-home-v6-inna-wrap {
+
+    width:
+        100% !important;
+
+    max-width:
+        620px !important;
+
+    min-width:
+        0 !important;
+
+    justify-self:
+        center !important;
+
+}
+
+
+
+/* =========================================================
+   SECOES
+   ========================================================= */
+
+.sab-home-v6-section {
+
+    width:
+        100% !important;
+
+    max-width:
+        none !important;
+
+    padding-top:
+        70px !important;
+
+    padding-bottom:
+        70px !important;
+
+}
+
+
+.sab-home-v6-section > h2,
+.sab-home-v6-section header h2 {
+
+    max-width:
+        900px;
+
+    font-size:
+        clamp(
+            35px,
+            3.2vw,
+            52px
+        ) !important;
+
+    line-height:
+        1.05 !important;
+
+    letter-spacing:
+        -.045em !important;
+
+}
+
+
+.sab-home-v6-section > p,
+.sab-home-v6-section header p {
+
+    max-width:
+        850px;
+
+    font-size:
+        14px !important;
+
+    line-height:
+        1.65 !important;
+
+}
+
+
+
+/* =========================================================
+   GRIDS
+   ========================================================= */
+
+.sab-home-v6-grid {
+
+    width:
+        100% !important;
+
+    margin-top:
+        28px !important;
+
+    display:
+        grid !important;
+
+    gap:
+        18px !important;
+
+}
+
+
+.sab-home-v6-grid[data-sab-count="4"] {
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0,1fr)
+        ) !important;
+
+}
+
+
+.sab-home-v6-grid[data-sab-count="3"] {
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        ) !important;
+
+}
+
+
+.sab-home-v6-grid[data-sab-count="2"] {
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        ) !important;
+
+}
+
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.sab-home-v6-card {
+
+    min-width:
+        0 !important;
+
+    min-height:
+        220px !important;
+
+    padding:
+        25px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #081620,
+            #050d13
+        ) !important;
+
+    border:
+        1px solid rgba(255,255,255,.075) !important;
+
+    border-radius:
+        10px !important;
+
+    transition:
+        transform .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease;
+
+}
+
+
+.sab-home-v6-card:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(230,184,74,.22) !important;
+
+    box-shadow:
+        0 24px 65px rgba(0,0,0,.20);
+
+}
+
+
+.sab-home-v6-card h3,
+.sab-home-v6-card h4 {
+
+    font-size:
+        18px !important;
+
+    line-height:
+        1.25 !important;
+
+}
+
+
+.sab-home-v6-card p {
+
+    margin-top:
+        12px !important;
+
+    color:
+        var(--sab-home-muted) !important;
+
+    font-size:
+        12px !important;
+
+    line-height:
+        1.65 !important;
+
+}
+
+
+
+/* =========================================================
+   COMO FUNCIONA
+   ========================================================= */
+
+.sab-home-v6-how
+.sab-home-v6-card {
+
+    min-height:
+        175px !important;
+
+}
+
+
+
+/* =========================================================
+   MODULOS
+   ========================================================= */
+
+.sab-home-v6-modules
+.sab-home-v6-card {
+
+    min-height:
+        245px !important;
+
+}
+
+
+.sab-home-v6-modules
+.sab-home-v6-card h3 {
+
+    font-size:
+        19px !important;
+
+}
+
+
+
+/* =========================================================
+   NEWSLETTER
+   ========================================================= */
+
+.sab-home-v6-newsletter {
+
+    width:
+        100% !important;
+
+    max-width:
+        none !important;
+
+    min-height:
+        135px !important;
+
+    margin-top:
+        55px !important;
+
+    padding:
+        28px 32px !important;
+
+    border-radius:
+        10px !important;
+
+}
+
+
+
+/* =========================================================
+   BOTOES
+   ========================================================= */
+
+.sab-home-v6-root
+button,
+.sab-home-v6-root
+a[class*="btn"],
+.sab-home-v6-root
+a[class*="button"] {
+
+    min-height:
+        43px;
+
+}
+
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.sab-home-v6-root footer {
+
+    width:
+        100% !important;
+
+    max-width:
+        none !important;
+
+}
+
+
+
+/* =========================================================
+   TELAS GRANDES
+   ========================================================= */
+
+@media (min-width: 1900px) {
+
+    :root {
+
+        --sab-home-max:
+            1660px;
+
+    }
+
+
+    .sab-home-v6-hero {
+
+        min-height:
+            590px !important;
+
+    }
+
+
+    .sab-home-v6-hero img.sab-home-v6-inna {
+
+        max-width:
+            620px !important;
+
+        max-height:
+            560px !important;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   NOTEBOOK
+   ========================================================= */
+
+@media (max-width: 1280px) {
+
+    .sab-home-v6-hero {
+
+        grid-template-columns:
+            minmax(0,1fr)
+            minmax(360px,.85fr) !important;
+
+    }
+
+
+    .sab-home-v6-grid[data-sab-count="4"] {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0,1fr)
+            ) !important;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .sab-home-v6-main {
+
+        width:
+            94% !important;
+
+    }
+
+
+    .sab-home-v6-hero {
+
+        min-height:
+            auto !important;
+
+        grid-template-columns:
+            1fr !important;
+
+    }
+
+
+    .sab-home-v6-hero img.sab-home-v6-inna {
+
+        max-width:
+            480px !important;
+
+    }
+
+
+    .sab-home-v6-grid[data-sab-count="3"],
+    .sab-home-v6-grid[data-sab-count="4"] {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0,1fr)
+            ) !important;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    .sab-home-v6-hero h1 {
+
+        font-size:
+            44px !important;
+
+    }
+
+
+    .sab-home-v6-grid {
+
+        grid-template-columns:
+            1fr !important;
+
+    }
+
+
+    .sab-home-v6-section {
+
+        padding-top:
+            45px !important;
+
+        padding-bottom:
+            45px !important;
+
+    }
+
+
+    .sab-home-v6-card {
+
+        min-height:
+            auto !important;
+
+    }
+
+}
+
+
+/* =========================================================
+   FIM HOME V6
+   ========================================================= */

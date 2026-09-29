@@ -1,0 +1,4783 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+    name="theme-color"
+    content="#050505"
+>
+
+<title>
+Sabino.AI | Acesse sua conta
+</title>
+
+
+<style>
+
+:root {
+
+    --black: #050505;
+    --black-soft: #0b0a08;
+
+    --gold: #e2a32c;
+    --gold-light: #f3c85e;
+
+    --white: #ffffff;
+
+    --navy: #111827;
+    --muted: #6f7787;
+
+    --border: #d9dde4;
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+
+    margin: 0;
+
+    width: 100%;
+    min-height: 100%;
+}
+
+
+body {
+
+    min-height: 100vh;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background: #fff;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   ESTRUTURA PRINCIPAL
+   ========================================================= */
+
+.page {
+
+    min-height: 100vh;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 66%)
+        minmax(430px, 34%);
+}
+
+
+/* =========================================================
+   LADO ESQUERDO
+   ========================================================= */
+
+.visual {
+
+    position: relative;
+
+    min-height: 100vh;
+
+    overflow: hidden;
+
+    color: white;
+
+    background-image:
+
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.92) 0%,
+            rgba(0,0,0,.82) 27%,
+            rgba(0,0,0,.46) 47%,
+            rgba(0,0,0,.10) 72%,
+            rgba(0,0,0,.02) 100%
+        ),
+
+        linear-gradient(
+            0deg,
+            rgba(0,0,0,.47) 0%,
+            rgba(0,0,0,.04) 44%,
+            transparent 68%
+        ),
+
+        url("/static/images/sabino-login-scene.png");
+
+    background-size:
+        cover;
+
+    background-position:
+        60% center;
+
+    background-repeat:
+        no-repeat;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.header {
+
+    position: relative;
+
+    z-index: 10;
+
+    height: 105px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        20px
+        clamp(38px, 4vw, 72px);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.08);
+}
+
+
+.brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+
+.brand-logo {
+
+    width: 58px;
+    height: 58px;
+
+    object-fit: contain;
+
+    border-radius: 8px;
+
+    filter:
+        drop-shadow(
+            0 0 12px
+            rgba(231,171,43,.18)
+        );
+}
+
+
+.brand-name {
+
+    display: block;
+
+    color: white;
+
+    font-size: 27px;
+
+    font-weight: 800;
+
+    line-height: 1;
+}
+
+
+.brand-subtitle {
+
+    display: block;
+
+    margin-top: 7px;
+
+    color:
+        rgba(255,255,255,.70);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing:
+        .22em;
+}
+
+
+/* =========================================================
+   IDIOMA
+   ========================================================= */
+
+.language {
+
+    position: relative;
+}
+
+
+.language-button {
+
+    min-height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+        0 10px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 13px;
+}
+
+
+.language-menu {
+
+    position: absolute;
+
+    z-index: 100;
+
+    top: 44px;
+    right: 0;
+
+    width: 165px;
+
+    display: none;
+
+    padding: 6px;
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    border-radius: 9px;
+
+    background:
+        rgba(8,8,7,.97);
+
+    box-shadow:
+        0 18px 44px rgba(0,0,0,.35);
+}
+
+
+.language-menu.open {
+    display: block;
+}
+
+
+.language-option {
+
+    width: 100%;
+
+    min-height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0 11px;
+
+    border: 0;
+
+    border-radius: 6px;
+
+    background: transparent;
+
+    color:
+        rgba(255,255,255,.88);
+
+    cursor: pointer;
+
+    font-size: 12px;
+}
+
+
+.language-option:hover {
+
+    background:
+        rgba(255,255,255,.07);
+
+    color:
+        var(--gold-light);
+}
+
+
+/* =========================================================
+   TEXTO PRINCIPAL
+   ========================================================= */
+
+.hero {
+
+    position: absolute;
+
+    z-index: 8;
+
+    left:
+        clamp(38px, 4vw, 72px);
+
+    top: 50%;
+
+    width:
+        min(
+            500px,
+            43%
+        );
+
+    transform:
+        translateY(-47%);
+}
+
+
+.eyebrow {
+
+    margin-bottom: 20px;
+
+    color:
+        var(--gold-light);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing:
+        .14em;
+}
+
+
+.hero h1 {
+
+    margin: 0;
+
+    color: white;
+
+    font-size:
+        clamp(
+            45px,
+            4vw,
+            64px
+        );
+
+    line-height: 1;
+
+    letter-spacing:
+        -.045em;
+}
+
+
+.hero h1 span {
+
+    display: block;
+
+    margin-top: 8px;
+
+    color:
+        var(--gold-light);
+}
+
+
+.gold-rule {
+
+    width: 64px;
+    height: 4px;
+
+    margin-top: 28px;
+
+    border-radius: 20px;
+
+    background:
+        var(--gold-light);
+}
+
+
+.description {
+
+    max-width: 455px;
+
+    margin:
+        27px 0 0;
+
+    color:
+        rgba(255,255,255,.91);
+
+    font-size: 15px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   BENEFÍCIOS
+   ========================================================= */
+
+.benefits {
+
+    display: grid;
+
+    gap: 13px;
+
+    margin-top: 30px;
+}
+
+
+.benefit {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.benefit-icon {
+
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+
+    place-items: center;
+
+    flex: 0 0 auto;
+
+    border:
+        1px solid
+        rgba(238,182,58,.76);
+
+    border-radius: 9px;
+
+    color:
+        var(--gold-light);
+
+    background:
+        rgba(0,0,0,.18);
+
+    backdrop-filter:
+        blur(5px);
+}
+
+
+.benefit-icon svg {
+
+    width: 21px;
+    height: 21px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+}
+
+
+/* =========================================================
+   RODAPÉ ESQUERDO
+   ========================================================= */
+
+.visual-footer {
+
+    position: absolute;
+
+    z-index: 10;
+
+    left:
+        clamp(38px, 4vw, 72px);
+
+    bottom: 29px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    color:
+        rgba(255,255,255,.70);
+
+    font-size: 11px;
+}
+
+
+.visual-footer a {
+
+    color: inherit;
+
+    text-decoration: none;
+}
+
+
+.visual-footer a:hover {
+    color: var(--gold-light);
+}
+
+
+.separator {
+
+    width: 1px;
+    height: 14px;
+
+    background:
+        rgba(255,255,255,.28);
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+.login-side {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding:
+        50px
+        clamp(40px, 4.5vw, 80px);
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #f8f8f6
+        );
+}
+
+
+.login-card {
+
+    width:
+        min(
+            100%,
+            445px
+        );
+}
+
+
+.login-title {
+
+    margin: 0;
+
+    color:
+        #111827;
+
+    font-size:
+        clamp(
+            38px,
+            3vw,
+            49px
+        );
+
+    line-height: 1.05;
+
+    letter-spacing:
+        -.04em;
+}
+
+
+.login-copy {
+
+    margin:
+        15px 0 32px;
+
+    color:
+        var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   CAMPOS
+   ========================================================= */
+
+.field {
+
+    margin-bottom: 16px;
+}
+
+
+.field label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color:
+        #202838;
+
+    font-size: 11px;
+
+    font-weight: 750;
+}
+
+
+.input-wrap {
+
+    position: relative;
+}
+
+
+.input-wrap input {
+
+    width: 100%;
+
+    height: 57px;
+
+    padding:
+        0 47px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 9px;
+
+    outline: none;
+
+    background: white;
+
+    color:
+        #182033;
+
+    font-size: 14px;
+}
+
+
+.input-wrap input:focus {
+
+    border-color:
+        #d5a12e;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(213,161,46,.10);
+}
+
+
+.input-icon {
+
+    position: absolute;
+
+    left: 15px;
+    top: 50%;
+
+    width: 20px;
+    height: 20px;
+
+    transform:
+        translateY(-50%);
+
+    fill: none;
+
+    stroke:
+        #68758d;
+
+    stroke-width: 1.7;
+}
+
+
+.eye-button {
+
+    position: absolute;
+
+    top: 50%;
+    right: 8px;
+
+    width: 40px;
+    height: 40px;
+
+    display: grid;
+
+    place-items: center;
+
+    transform:
+        translateY(-50%);
+
+    border: 0;
+
+    background: transparent;
+
+    color:
+        #68758d;
+
+    cursor: pointer;
+}
+
+
+.eye-button svg {
+
+    width: 19px;
+    height: 19px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.7;
+}
+
+
+/* =========================================================
+   OPÇÕES
+   ========================================================= */
+
+.options {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 18px;
+
+    margin:
+        19px 0 24px;
+
+    font-size: 12px;
+}
+
+
+.remember {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color:
+        #293247;
+}
+
+
+.remember input {
+
+    width: 17px;
+    height: 17px;
+
+    accent-color:
+        #d59f28;
+}
+
+
+.forgot {
+
+    padding: 0;
+
+    border: 0;
+
+    background:
+        transparent;
+
+    color:
+        #a86905;
+
+    cursor: pointer;
+
+    text-decoration:
+        underline;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   BOTÕES
+   ========================================================= */
+
+.primary {
+
+    width: 100%;
+
+    height: 57px;
+
+    border:
+        1px solid #dda52c;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f7cf62,
+            #e7ad31
+        );
+
+    color:
+        #15110a;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 9px 23px
+        rgba(190,129,14,.14);
+
+    transition:
+        transform .14s ease,
+        box-shadow .14s ease;
+}
+
+
+.primary:hover {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 12px 28px
+        rgba(190,129,14,.20);
+}
+
+
+.divider {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin:
+        26px 0;
+
+    color:
+        #959ca8;
+
+    font-size: 12px;
+}
+
+
+.divider::before,
+.divider::after {
+
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background:
+        #dde1e5;
+}
+
+
+.secondary {
+
+    width: 100%;
+
+    height: 54px;
+
+    border:
+        1px solid #da9b1c;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    background:
+        white;
+
+    color:
+        #a66805;
+
+    font-size: 14px;
+
+    font-weight: 750;
+}
+
+
+.secondary:hover {
+
+    background:
+        #fff9ed;
+}
+
+
+/* =========================================================
+   SEGURANÇA
+   ========================================================= */
+
+.security-note {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    margin-top: 31px;
+
+    padding-top: 23px;
+
+    border-top:
+        1px solid #e2e5e8;
+
+    color:
+        #6b7486;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+
+.security-note svg {
+
+    width: 39px;
+    height: 39px;
+
+    flex: 0 0 auto;
+
+    fill: none;
+
+    stroke:
+        #d18a0b;
+
+    stroke-width: 1.7;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .page {
+
+        grid-template-columns:
+            61% 39%;
+    }
+
+
+    .hero {
+
+        width:
+            min(
+                480px,
+                53%
+            );
+    }
+
+
+    .login-side {
+
+        padding:
+            45px 38px;
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .page {
+        display: block;
+    }
+
+
+    .visual {
+
+        min-height: 760px;
+
+        background-position:
+            60% center;
+    }
+
+
+    .login-side {
+
+        min-height: auto;
+
+        padding:
+            70px 25px;
+    }
+
+}
+
+
+@media (max-width: 620px) {
+
+    .header {
+
+        height: 86px;
+
+        padding:
+            14px 22px;
+    }
+
+
+    .brand-logo {
+
+        width: 48px;
+        height: 48px;
+    }
+
+
+    .brand-name {
+
+        font-size: 22px;
+    }
+
+
+    .brand-subtitle {
+        display: none;
+    }
+
+
+    .visual {
+
+        min-height: 720px;
+
+        background-position:
+            64% center;
+    }
+
+
+    .hero {
+
+        left: 22px;
+        right: 22px;
+
+        width: auto;
+    }
+
+
+    .hero h1 {
+
+        font-size: 42px;
+    }
+
+
+    .description {
+
+        font-size: 14px;
+    }
+
+
+    .visual-footer {
+
+        left: 22px;
+    }
+
+
+    .options {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+}
+
+
+/* SABINO_INNA_SIMPLE_V2_BEGIN */
+
+.inna-visitor-actions {
+    grid-template-columns:
+        repeat(2, minmax(0,1fr)) !important;
+
+    gap:
+        9px !important;
+
+    margin-bottom:
+        14px !important;
+}
+
+.inna-quick {
+    min-height:
+        46px !important;
+
+    text-align:
+        center !important;
+
+    font-size:
+        11px !important;
+
+    font-weight:
+        700 !important;
+}
+
+/* SABINO_INNA_SIMPLE_V2_END */
+
+</style>
+
+
+<!-- SABINO_TYPOGRAPHY_REFINEMENT_V5 -->
+
+<style>
+
+/* Título principal esquerdo */
+
+.hero h1 {
+
+    font-size:
+        clamp(
+            30px,
+            2.25vw,
+            39px
+        );
+
+    line-height:
+        1.05;
+
+    letter-spacing:
+        -.028em;
+}
+
+
+.hero h1 span {
+
+    margin-top:
+        4px;
+}
+
+
+/* Título do painel de login */
+
+.login-title {
+
+    font-size:
+        clamp(
+            29px,
+            1.9vw,
+            34px
+        );
+
+    line-height:
+        1.07;
+
+    letter-spacing:
+        -.025em;
+}
+
+
+/* Desktop grande */
+
+@media (min-width: 1500px) {
+
+    .hero h1 {
+        font-size: 39px;
+    }
+
+    .login-title {
+        font-size: 34px;
+    }
+
+}
+
+
+/* Tablet */
+
+@media (max-width: 1200px) {
+
+    .hero h1 {
+
+        font-size:
+            clamp(
+                30px,
+                2.55vw,
+                37px
+            );
+    }
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 620px) {
+
+    .hero h1 {
+
+        font-size:
+            28px;
+
+        line-height:
+            1.07;
+    }
+
+
+    .login-title {
+
+        font-size:
+            28px;
+    }
+
+}
+
+
+/* SABINO_INNA_SIMPLE_V2_BEGIN */
+
+.inna-visitor-actions {
+    grid-template-columns:
+        repeat(2, minmax(0,1fr)) !important;
+
+    gap:
+        9px !important;
+
+    margin-bottom:
+        14px !important;
+}
+
+.inna-quick {
+    min-height:
+        46px !important;
+
+    text-align:
+        center !important;
+
+    font-size:
+        11px !important;
+
+    font-weight:
+        700 !important;
+}
+
+/* SABINO_INNA_SIMPLE_V2_END */
+
+</style>
+
+<!-- /SABINO_TYPOGRAPHY_REFINEMENT_V5 -->
+
+
+<!-- SABINO_FOOTER_POSITION_V1 -->
+
+<style>
+
+/* Sobe Segurança | Privacidade | Ajuda */
+
+.visual-footer {
+    bottom: 58px !important;
+}
+
+@media (max-width: 620px) {
+
+    .visual-footer {
+        bottom: 45px !important;
+    }
+
+}
+
+
+/* SABINO_INNA_SIMPLE_V2_BEGIN */
+
+.inna-visitor-actions {
+    grid-template-columns:
+        repeat(2, minmax(0,1fr)) !important;
+
+    gap:
+        9px !important;
+
+    margin-bottom:
+        14px !important;
+}
+
+.inna-quick {
+    min-height:
+        46px !important;
+
+    text-align:
+        center !important;
+
+    font-size:
+        11px !important;
+
+    font-weight:
+        700 !important;
+}
+
+/* SABINO_INNA_SIMPLE_V2_END */
+
+</style>
+
+<!-- /SABINO_FOOTER_POSITION_V1 -->
+
+
+<!-- SABINO_PHOTO_POSITION_V3 -->
+
+<style>
+
+/* Move somente INNA + senhora mais para a DIREITA */
+
+.visual {
+    background-position: 43% center !important;
+}
+
+
+/* Tablet */
+
+@media (max-width: 900px) {
+
+    .visual {
+        background-position: 46% center !important;
+    }
+
+}
+
+
+/* Celular */
+
+@media (max-width: 620px) {
+
+    .visual {
+        background-position: 50% center !important;
+    }
+
+}
+
+
+/* SABINO_INNA_SIMPLE_V2_BEGIN */
+
+.inna-visitor-actions {
+    grid-template-columns:
+        repeat(2, minmax(0,1fr)) !important;
+
+    gap:
+        9px !important;
+
+    margin-bottom:
+        14px !important;
+}
+
+.inna-quick {
+    min-height:
+        46px !important;
+
+    text-align:
+        center !important;
+
+    font-size:
+        11px !important;
+
+    font-weight:
+        700 !important;
+}
+
+/* SABINO_INNA_SIMPLE_V2_END */
+
+</style>
+
+<!-- /SABINO_PHOTO_POSITION_V3 -->
+
+
+<!-- SABINO_LAYOUT_REFINEMENT_V6 -->
+
+<style>
+
+/* =========================================================
+   SABINO.AI
+   LOGO / NOME / SUBTÍTULO DO TOPO NÃO SÃO ALTERADOS
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. FOTO
+   Move INNA + cliente um pouco mais para a direita.
+   Não aumenta a imagem.
+   --------------------------------------------------------- */
+
+.visual {
+    background-position:
+        40% center !important;
+}
+
+
+/* ---------------------------------------------------------
+   2. BLOCO PRINCIPAL
+   Mais compacto e com melhor respiro.
+   --------------------------------------------------------- */
+
+.hero {
+    left:
+        clamp(44px, 4vw, 76px) !important;
+
+    width:
+        min(
+            455px,
+            40%
+        ) !important;
+
+    top:
+        51% !important;
+
+    transform:
+        translateY(-50%) !important;
+}
+
+
+/* ---------------------------------------------------------
+   3. FRASE SUPERIOR
+   --------------------------------------------------------- */
+
+.eyebrow {
+    margin-bottom:
+        17px !important;
+
+    font-size:
+        10px !important;
+
+    letter-spacing:
+        .15em !important;
+}
+
+
+/* ---------------------------------------------------------
+   4. TÍTULO
+   Mantém tamanho reduzido que aprovamos.
+   --------------------------------------------------------- */
+
+.hero h1 {
+    font-size:
+        clamp(
+            30px,
+            2.25vw,
+            39px
+        ) !important;
+
+    line-height:
+        1.05 !important;
+}
+
+
+/* ---------------------------------------------------------
+   5. LINHA DOURADA
+   --------------------------------------------------------- */
+
+.gold-rule {
+    width:
+        55px !important;
+
+    margin-top:
+        22px !important;
+}
+
+
+/* ---------------------------------------------------------
+   6. DESCRIÇÃO
+   --------------------------------------------------------- */
+
+.description {
+    max-width:
+        430px !important;
+
+    margin-top:
+        20px !important;
+
+    font-size:
+        14px !important;
+
+    line-height:
+        1.55 !important;
+}
+
+
+/* ---------------------------------------------------------
+   7. BENEFÍCIOS
+   Um pouco mais compactos.
+   --------------------------------------------------------- */
+
+.benefits {
+    margin-top:
+        24px !important;
+
+    gap:
+        10px !important;
+}
+
+
+.benefit {
+    gap:
+        11px !important;
+
+    font-size:
+        12px !important;
+}
+
+
+.benefit-icon {
+    width:
+        38px !important;
+
+    height:
+        38px !important;
+}
+
+
+/* ---------------------------------------------------------
+   8. SEGURANÇA | PRIVACIDADE | AJUDA
+   Sobe as três palavras.
+   --------------------------------------------------------- */
+
+.visual-footer {
+    bottom:
+        54px !important;
+
+    gap:
+        17px !important;
+}
+
+
+/* ---------------------------------------------------------
+   9. NÃO ALTERAR ÁREA DA MARCA
+   --------------------------------------------------------- */
+
+.brand,
+.brand-logo,
+.brand-name,
+.brand-subtitle,
+.header {
+    /* intencionalmente sem alterações visuais */
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVO
+   --------------------------------------------------------- */
+
+@media (max-width: 1200px) {
+
+    .visual {
+        background-position:
+            43% center !important;
+    }
+
+    .hero {
+        width:
+            min(
+                440px,
+                48%
+            ) !important;
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .visual {
+        background-position:
+            47% center !important;
+    }
+
+}
+
+
+@media (max-width: 620px) {
+
+    .visual {
+        background-position:
+            52% center !important;
+    }
+
+    .hero {
+        left:
+            22px !important;
+
+        right:
+            22px !important;
+
+        width:
+            auto !important;
+    }
+
+    .visual-footer {
+        bottom:
+            42px !important;
+    }
+
+}
+
+
+/* SABINO_INNA_SIMPLE_V2_BEGIN */
+
+.inna-visitor-actions {
+    grid-template-columns:
+        repeat(2, minmax(0,1fr)) !important;
+
+    gap:
+        9px !important;
+
+    margin-bottom:
+        14px !important;
+}
+
+.inna-quick {
+    min-height:
+        46px !important;
+
+    text-align:
+        center !important;
+
+    font-size:
+        11px !important;
+
+    font-weight:
+        700 !important;
+}
+
+/* SABINO_INNA_SIMPLE_V2_END */
+
+</style>
+
+<!-- /SABINO_LAYOUT_REFINEMENT_V6 -->
+
+
+<!-- SABINO_REMOVE_BENEFITS_V1 -->
+
+<style>
+
+/* =========================================================
+   Remove SOMENTE os três benefícios e seus SVGs
+   Não altera cabeçalho, logo, marca ou fotografia
+   ========================================================= */
+
+.benefits {
+    display: none !important;
+}
+
+
+/* Mantém a descrição com bom espaço visual */
+
+.description {
+    margin-bottom: 0 !important;
+}
+
+
+/* SABINO_INNA_SIMPLE_V2_BEGIN */
+
+.inna-visitor-actions {
+    grid-template-columns:
+        repeat(2, minmax(0,1fr)) !important;
+
+    gap:
+        9px !important;
+
+    margin-bottom:
+        14px !important;
+}
+
+.inna-quick {
+    min-height:
+        46px !important;
+
+    text-align:
+        center !important;
+
+    font-size:
+        11px !important;
+
+    font-weight:
+        700 !important;
+}
+
+/* SABINO_INNA_SIMPLE_V2_END */
+
+</style>
+
+<!-- /SABINO_REMOVE_BENEFITS_V1 -->
+
+<link rel="stylesheet" href="/static/css/sabino-locale-core.css?v=browserany_manual3_20260917_134732" data-sabino-global-locale="v1">
+<link rel="stylesheet" href="/static/css/sabino-currency-core.css" data-sabino-global-currency="v1">
+
+<!-- SABINO_LOGIN_BROWSER_AUTO_ONLY_V1 -->
+<script>
+    window.SABINO_FORCE_BROWSER_LOCALE = true;
+</script>
+
+<style id="sabinoLoginHideLanguageUi">
+
+    /*
+     * Login sem seletor visual.
+     * Idioma vem automaticamente do navegador.
+     */
+
+    .language,
+    #sabinoGlobalLanguage,
+    #sabinoLanguageSwitcher {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+</style>
+
+</head>
+
+
+<body>
+<style id="sabino-entry-language-hidden">
+/* O seletor de idioma fica disponível somente dentro da plataforma. */
+#sabinoLanguageMount,
+#sabinoGlobalLanguage,
+#sabinoLanguageSwitcher {
+    display: none !important;
+}
+</style>
+
+
+<div class="page">
+
+
+<!-- =======================================================
+     LADO VISUAL
+     ======================================================= -->
+
+<section class="visual">
+
+
+<header class="header">
+
+
+<div class="brand">
+
+<img
+    class="brand-logo"
+    src="/static/images/sabino-s-logo.png"
+    alt="Sabino.AI"
+>
+
+<div>
+
+<span class="brand-name">
+Sabino.AI
+</span>
+
+<span
+    class="brand-subtitle"
+    data-i18n="platform"
+>
+PLATAFORMA INTELIGENTE
+</span>
+
+</div>
+
+</div>
+
+
+<div class="language" id="sabinoLanguageMount">
+
+
+<button
+    id="languageButton"
+    class="language-button"
+    type="button"
+>
+
+<span>◎</span>
+
+<strong id="languageCode">
+PT
+</strong>
+
+<span>⌄</span>
+
+</button>
+
+
+<div
+    id="languageMenu"
+    class="language-menu"
+>
+
+
+<button
+    class="language-option"
+    type="button"
+    data-language="pt"
+>
+Português
+<span>PT</span>
+</button>
+
+
+<button
+    class="language-option"
+    type="button"
+    data-language="es"
+>
+Español
+<span>ES</span>
+</button>
+
+
+<button
+    class="language-option"
+    type="button"
+    data-language="en"
+>
+English
+<span>EN</span>
+</button>
+
+
+</div>
+
+
+</div>
+
+
+</header>
+
+
+<div class="hero">
+
+
+<div
+    class="eyebrow"
+    data-i18n="eyebrow"
+>
+MAIS CLAREZA. GRANDES DECISÕES
+</div>
+
+
+<h1 data-i18n-html="heroTitle">
+
+Acesse sua conta
+
+<span>
+com clareza e confiança.
+</span>
+
+</h1>
+
+
+<div class="gold-rule"></div>
+
+
+<p
+    class="description"
+    data-i18n="description"
+>
+Centralize suas informações,
+acompanhe resultados e conte com a INNA
+para orientar decisões de forma simples
+e inteligente.
+</p>
+
+
+<div class="benefits">
+
+
+<div class="benefit">
+
+<div class="benefit-icon">
+
+<svg viewBox="0 0 24 24">
+
+<rect x="3" y="3" width="7" height="7"/>
+<rect x="14" y="3" width="7" height="7"/>
+<rect x="3" y="14" width="7" height="7"/>
+<rect x="14" y="14" width="7" height="7"/>
+
+</svg>
+
+</div>
+
+<span data-i18n="benefit1">
+Tudo em um só lugar
+</span>
+
+</div>
+
+
+<div class="benefit">
+
+<div class="benefit-icon">
+
+<svg viewBox="0 0 24 24">
+
+<path d="M4 20V12"/>
+<path d="M9 20V8"/>
+<path d="M14 20V5"/>
+<path d="M19 20V9"/>
+
+</svg>
+
+</div>
+
+<span data-i18n="benefit2">
+Acompanhe seus resultados
+</span>
+
+</div>
+
+
+<div class="benefit">
+
+<div class="benefit-icon">
+
+<svg viewBox="0 0 24 24">
+
+<circle cx="12" cy="8" r="4"/>
+
+<path
+    d="
+    M4 21
+    c0-4.3 3.6-7.5 8-7.5
+    s8 3.2 8 7.5
+    "
+/>
+
+</svg>
+
+</div>
+
+<span data-i18n="benefit3">
+Apoio da INNA
+</span>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<footer class="visual-footer">
+
+<a
+    href="#security"
+    data-i18n="security"
+>
+Segurança
+</a>
+
+<span class="separator"></span>
+
+<a
+    href="#privacy"
+    data-i18n="privacy"
+>
+Privacidade
+</a>
+
+<span class="separator"></span>
+
+<a
+    href="#help"
+    data-i18n="help"
+>
+Ajuda
+</a>
+
+</footer>
+
+
+</section>
+
+
+<!-- =======================================================
+     LOGIN
+     ======================================================= -->
+
+<section class="login-side">
+
+
+<div class="login-card">
+
+
+<h2
+    class="login-title"
+    data-i18n="loginTitle"
+>
+Acesse sua conta
+</h2>
+
+
+<p
+    class="login-copy"
+    data-i18n="loginCopy"
+>
+Entre para acessar suas plataformas
+e contar com o apoio inteligente da INNA.
+</p>
+
+
+<form id="loginForm">
+
+
+<div class="field">
+
+<label
+    for="username"
+    data-i18n="email"
+>
+E-mail ou CPF
+</label>
+
+
+<div class="input-wrap">
+
+<svg
+    class="input-icon"
+    viewBox="0 0 24 24"
+>
+
+<rect
+    x="3"
+    y="5"
+    width="18"
+    height="14"
+    rx="2"
+/>
+
+<path
+    d="m3 7 9 6 9-6"
+/>
+
+</svg>
+
+
+<input
+    id="username"
+    type="text"
+    autocomplete="username"
+    placeholder="E-mail ou CPF"
+>
+
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label
+    for="password"
+    data-i18n="password"
+>
+Senha
+</label>
+
+
+<div class="input-wrap">
+
+
+<svg
+    class="input-icon"
+    viewBox="0 0 24 24"
+>
+
+<rect
+    x="5"
+    y="10"
+    width="14"
+    height="11"
+    rx="2"
+/>
+
+<path
+    d="
+    M8 10
+    V7
+    a4 4 0 0 1 8 0
+    v3
+    "
+/>
+
+</svg>
+
+
+<input
+    id="password"
+    type="password"
+    autocomplete="current-password"
+    placeholder="Senha"
+>
+
+
+<button
+    id="eyeButton"
+    class="eye-button"
+    type="button"
+    aria-label="Mostrar senha"
+>
+
+
+<svg viewBox="0 0 24 24">
+
+<path
+    d="
+    M2 12
+    s3.5-6 10-6
+    10 6 10 6
+    -3.5 6-10 6
+    S2 12 2 12Z
+    "
+/>
+
+<circle
+    cx="12"
+    cy="12"
+    r="3"
+/>
+
+</svg>
+
+
+</button>
+
+
+</div>
+
+</div>
+
+
+<div class="options">
+
+
+<label class="remember">
+
+<input
+    type="checkbox"
+    id="remember"
+>
+
+<span data-i18n="remember">
+Lembrar acesso
+</span>
+
+</label>
+
+
+<button
+    id="forgotButton"
+    class="forgot"
+    type="button"
+    data-i18n="forgot"
+>
+Esqueceu sua senha?
+</button>
+
+
+</div>
+
+
+<button
+    class="primary"
+    type="submit"
+    data-i18n="enter"
+>
+Entrar →
+</button>
+
+
+</form>
+
+
+<div class="divider">
+
+<span data-i18n="or">
+ou
+</span>
+
+</div>
+
+
+<button
+    id="createButton"
+    class="secondary"
+    type="button"
+    data-i18n="create"
+>
+Criar conta
+</button>
+
+
+<div class="security-note">
+
+
+<svg viewBox="0 0 24 24">
+
+<path
+    d="
+    M12 3
+    20 6
+    v6
+    c0 5-3.4 8-8 10
+    -4.6-2-8-5-8-10
+    V6
+    l8-3Z
+    "
+/>
+
+<path
+    d="
+    m9 12
+    2 2
+    4-5
+    "
+/>
+
+</svg>
+
+
+<span data-i18n="securityText">
+
+Seus dados são protegidos
+com tecnologia, segurança e privacidade.
+
+</span>
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+</div>
+
+
+<script>
+
+
+const LOGIN_TARGET = "/dashboard";
+
+const SIGNUP_TARGET =
+    "";
+
+const FORGOT_TARGET =
+    "";
+
+
+const TEXTS = {
+
+
+pt: {
+
+    platform:
+        "PLATAFORMA INTELIGENTE",
+
+    eyebrow:
+        "MAIS CLAREZA. GRANDES DECISÕES",
+
+    heroTitle:
+        'Acesse sua conta <span>com clareza e confiança.</span>',
+
+    description:
+        "Centralize suas informações, acompanhe resultados e conte com a INNA para orientar decisões de forma simples e inteligente.",
+
+    benefit1:
+        "Tudo em um só lugar",
+
+    benefit2:
+        "Acompanhe seus resultados",
+
+    benefit3:
+        "Apoio da INNA",
+
+    security:
+        "Segurança",
+
+    privacy:
+        "Privacidade",
+
+    help:
+        "Ajuda",
+
+    loginTitle:
+        "Acesse sua conta",
+
+    loginCopy:
+        "Entre para acessar suas plataformas e contar com o apoio inteligente da INNA.",
+
+    email:
+        "E-mail ou CPF",
+
+    password:
+        "Senha",
+
+    remember:
+        "Lembrar acesso",
+
+    forgot:
+        "Esqueceu sua senha?",
+
+    enter:
+        "Entrar →",
+
+    or:
+        "ou",
+
+    create:
+        "Criar conta",
+
+    securityText:
+        "Seus dados são protegidos com tecnologia, segurança e privacidade."
+
+},
+
+
+es: {
+
+    platform:
+        "PLATAFORMA INTELIGENTE",
+
+    eyebrow:
+        "TECNOLOGÍA AL SERVICIO DE GRANDES DECISIONES",
+
+    heroTitle:
+        'Accede a tu cuenta <span>con claridad y confianza.</span>',
+
+    description:
+        "Centraliza tu información, sigue tus resultados y cuenta con INNA para orientar decisiones de forma simple e inteligente.",
+
+    benefit1:
+        "Todo en un solo lugar",
+
+    benefit2:
+        "Sigue tus resultados",
+
+    benefit3:
+        "Apoyo de INNA",
+
+    security:
+        "Seguridad",
+
+    privacy:
+        "Privacidad",
+
+    help:
+        "Ayuda",
+
+    loginTitle:
+        "Accede a tu cuenta",
+
+    loginCopy:
+        "Entra para acceder a tus plataformas y contar con el apoyo inteligente de INNA.",
+
+    email:
+        "Correo electrónico",
+
+    password:
+        "Contraseña",
+
+    remember:
+        "Recordar acceso",
+
+    forgot:
+        "¿Olvidaste tu contraseña?",
+
+    enter:
+        "Entrar →",
+
+    or:
+        "o",
+
+    create:
+        "Crear cuenta",
+
+    securityText:
+        "Tus datos están protegidos con tecnología, seguridad y privacidad."
+
+},
+
+
+en: {
+
+    platform:
+        "INTELLIGENT PLATFORM",
+
+    eyebrow:
+        "TECHNOLOGY FOR BETTER DECISIONS",
+
+    heroTitle:
+        'Access your account <span>with clarity and confidence.</span>',
+
+    description:
+        "Centralize your information, track results and rely on INNA to guide decisions simply and intelligently.",
+
+    benefit1:
+        "Everything in one place",
+
+    benefit2:
+        "Track your results",
+
+    benefit3:
+        "INNA support",
+
+    security:
+        "Security",
+
+    privacy:
+        "Privacy",
+
+    help:
+        "Help",
+
+    loginTitle:
+        "Access your account",
+
+    loginCopy:
+        "Sign in to access your platforms and get intelligent support from INNA.",
+
+    email:
+        "Email",
+
+    password:
+        "Password",
+
+    remember:
+        "Remember me",
+
+    forgot:
+        "Forgot your password?",
+
+    enter:
+        "Sign in →",
+
+    or:
+        "or",
+
+    create:
+        "Create account",
+
+    securityText:
+        "Your data is protected with technology, security and privacy."
+
+}
+
+};
+
+
+/* =========================================================
+   IDIOMA
+   ========================================================= */
+
+function detectLanguage() {
+
+    /*
+     * SABINO_LOGIN_BROWSER_DETECT_V2
+     *
+     * Esta tela ignora preferências manuais salvas.
+     * Não apaga essas preferências.
+     */
+
+    const browser =
+        (
+            navigator.language ||
+            navigator.userLanguage ||
+            "pt-BR"
+        )
+        .toLowerCase();
+
+
+    if (
+        browser.startsWith("es")
+    ) {
+        return "es";
+    }
+
+
+    if (
+        browser.startsWith("en")
+    ) {
+        return "en";
+    }
+
+
+    /*
+     * O dicionário legado desta página tem pt/en/es.
+     * O runtime global poderá complementar outros locales.
+     */
+
+    return "pt";
+
+}
+
+
+let currentLanguage =
+    detectLanguage();
+
+
+function applyLanguage(
+    language
+) {
+
+    const dictionary =
+        TEXTS[language] ||
+        TEXTS.pt;
+
+
+    currentLanguage =
+        language;
+
+
+    if (
+        !window.SABINO_FORCE_BROWSER_LOCALE
+    ) {
+
+        localStorage.setItem(
+            "sabino_language",
+            language
+        );
+
+    }
+
+
+    document
+        .querySelectorAll(
+            "[data-i18n]"
+        )
+        .forEach(
+            element => {
+
+                const key =
+                    element.dataset.i18n;
+
+                if (
+                    dictionary[key]
+                ) {
+
+                    element.textContent =
+                        dictionary[key];
+                }
+
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            "[data-i18n-html]"
+        )
+        .forEach(
+            element => {
+
+                const key =
+                    element.dataset.i18nHtml;
+
+                if (
+                    dictionary[key]
+                ) {
+
+                    element.innerHTML =
+                        dictionary[key];
+                }
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "languageCode"
+        )
+        .textContent =
+            language.toUpperCase();
+
+}
+
+
+applyLanguage(
+    currentLanguage
+);
+
+
+/* =========================================================
+   MENU DE IDIOMA
+   ========================================================= */
+
+const languageButton =
+    document.getElementById(
+        "languageButton"
+    );
+
+
+const languageMenu =
+    document.getElementById(
+        "languageMenu"
+    );
+
+
+languageButton.addEventListener(
+    "click",
+    () => {
+
+        languageMenu
+            .classList
+            .toggle(
+                "open"
+            );
+
+    }
+);
+
+
+document
+    .querySelectorAll(
+        ".language-option"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    applyLanguage(
+                        button.dataset.language
+                    );
+
+                    languageMenu
+                        .classList
+                        .remove(
+                            "open"
+                        );
+
+                }
+            );
+
+        }
+    );
+
+
+document.addEventListener(
+    "click",
+    event => {
+
+        if (
+            !languageButton.contains(
+                event.target
+            )
+            &&
+            !languageMenu.contains(
+                event.target
+            )
+        ) {
+
+            languageMenu
+                .classList
+                .remove(
+                    "open"
+                );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   SENHA
+   ========================================================= */
+
+const password =
+    document.getElementById(
+        "password"
+    );
+
+
+document
+    .getElementById(
+        "eyeButton"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            password.type =
+                password.type === "password"
+                    ?
+                    "text"
+                    :
+                    "password";
+
+        }
+    );
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+document
+    .getElementById(
+        "loginForm"
+    )
+    .addEventListener(
+        "submit",
+        event => {
+
+            event.preventDefault();
+
+
+            if (
+                LOGIN_TARGET
+            ) {
+
+                window.location.href =
+                    LOGIN_TARGET;
+
+                return;
+            }
+
+
+            alert(
+                currentLanguage === "es"
+                    ?
+                    "El inicio de sesión central todavía debe conectarse al backend."
+                    :
+                currentLanguage === "en"
+                    ?
+                    "Central authentication still needs to be connected to the backend."
+                    :
+                    "O login central ainda precisa ser conectado ao backend."
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   CADASTRO
+   ========================================================= */
+
+document
+    .getElementById(
+        "createButton"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            if (
+                SIGNUP_TARGET
+            ) {
+
+                window.location.href =
+                    SIGNUP_TARGET;
+
+                return;
+            }
+
+
+            alert(
+                currentLanguage === "es"
+                    ?
+                    "El registro central todavía debe conectarse al backend."
+                    :
+                currentLanguage === "en"
+                    ?
+                    "Central registration still needs to be connected to the backend."
+                    :
+                    "O cadastro central ainda precisa ser conectado ao backend."
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   ESQUECI A SENHA
+   ========================================================= */
+
+document
+    .getElementById(
+        "forgotButton"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            if (
+                FORGOT_TARGET
+            ) {
+
+                window.location.href =
+                    FORGOT_TARGET;
+
+                return;
+            }
+
+
+            alert(
+                currentLanguage === "es"
+                    ?
+                    "La recuperación de contraseña todavía debe conectarse al backend."
+                    :
+                currentLanguage === "en"
+                    ?
+                    "Password recovery still needs to be connected to the backend."
+                    :
+                    "A recuperação de senha ainda precisa ser conectada ao backend."
+            );
+
+        }
+    );
+
+
+</script>
+
+
+
+<!-- SABINO_LOGIN_REQUIRED_DASHBOARD_V1 -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const username =
+            document.getElementById(
+                "username"
+            );
+
+        const password =
+            document.getElementById(
+                "password"
+            );
+
+
+        if (username) {
+            username.required = true;
+        }
+
+        if (password) {
+            password.required = true;
+        }
+
+    }
+);
+
+</script>
+
+<!-- /SABINO_LOGIN_REQUIRED_DASHBOARD_V1 -->
+
+
+<!-- SABINO_INNA_VISITOR_V2_BEGIN -->
+
+<style>
+
+/* =========================================================
+   INNA VISITANTE - COMPACTA
+   ========================================================= */
+
+#innaVisitorV2Root {
+
+    position: fixed;
+
+    left: calc(66% - 82px);
+    bottom: 22px;
+
+    z-index: 999999;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+
+/* =========================================================
+   BOLINHA
+   ========================================================= */
+
+#innaVisitorV2Launcher {
+
+    position: relative;
+
+    width: 66px;
+    height: 66px;
+
+    padding: 3px;
+
+    border:
+        2px solid #e3a72e;
+
+    border-radius: 50%;
+
+    background: #080909;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 32px
+        rgba(0,0,0,.45);
+}
+
+
+#innaVisitorV2Launcher img {
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+    object-position: center top;
+
+    border-radius: 50%;
+}
+
+
+.inna-v2-dot {
+
+    position: absolute;
+
+    right: -1px;
+    bottom: 2px;
+
+    width: 15px;
+    height: 15px;
+
+    border:
+        3px solid #080909;
+
+    border-radius: 50%;
+
+    background: #23d26c;
+}
+
+
+/* =========================================================
+   PAINEL
+   ========================================================= */
+
+#innaVisitorV2Panel {
+
+    position: absolute;
+
+    right: 0;
+    bottom: 76px;
+
+    width: 350px;
+
+    display: none;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(227,167,46,.65);
+
+    border-radius: 13px;
+
+    color: #f4f5f2;
+
+    background: #080a0a;
+
+    box-shadow:
+        0 22px 55px
+        rgba(0,0,0,.55);
+}
+
+
+#innaVisitorV2Panel.open {
+    display: block;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.inna-v2-header {
+
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 8px 10px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.07);
+}
+
+
+.inna-v2-avatar {
+
+    width: 39px;
+    height: 39px;
+
+    object-fit: cover;
+    object-position: center top;
+
+    border:
+        1px solid #e3a72e;
+
+    border-radius: 50%;
+}
+
+
+.inna-v2-heading {
+
+    flex: 1;
+}
+
+
+.inna-v2-heading strong {
+
+    display: block;
+
+    margin: 0;
+
+    color: white;
+
+    font-size: 14px;
+
+    line-height: 1.05;
+}
+
+
+.inna-v2-heading span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #29d66b;
+
+    font-size: 9px;
+}
+
+
+.inna-v2-close {
+
+    width: 27px;
+    height: 27px;
+
+    padding: 0;
+
+    border: 0;
+
+    color: #949a96;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-size: 19px;
+}
+
+
+/* =========================================================
+   CORPO
+   ========================================================= */
+
+.inna-v2-body {
+
+    padding: 10px;
+}
+
+
+.inna-v2-welcome {
+
+    margin: 0 0 8px;
+
+    color: #b9bebb;
+
+    font-size: 11px;
+
+    line-height: 1.35;
+}
+
+
+.inna-v2-welcome strong {
+    color: white;
+}
+
+
+/* =========================================================
+   MENSAGENS
+   ========================================================= */
+
+#innaVisitorV2Messages {
+
+    max-height: 145px;
+
+    display: grid;
+
+    gap: 5px;
+
+    overflow-y: auto;
+
+    margin-bottom: 8px;
+}
+
+
+.inna-v2-message {
+
+    max-width: 90%;
+
+    padding: 7px 9px;
+
+    border-radius: 8px;
+
+    font-size: 10px;
+
+    line-height: 1.35;
+}
+
+
+.inna-v2-message.assistant {
+
+    justify-self: start;
+
+    color: #c9ceca;
+
+    border:
+        1px solid
+        rgba(255,255,255,.06);
+
+    background: #111313;
+}
+
+
+.inna-v2-message.user {
+
+    justify-self: end;
+
+    color: #171208;
+
+    background: #e3a72e;
+}
+
+
+/* =========================================================
+   DUAS AÇÕES
+   ========================================================= */
+
+.inna-v2-actions {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 6px;
+
+    margin: 0 0 7px;
+}
+
+
+.inna-v2-action {
+
+    height: 35px;
+
+    padding: 0 8px;
+
+    border:
+        1px solid
+        rgba(227,167,46,.38);
+
+    border-radius: 7px;
+
+    color: #e5e7e4;
+
+    background: #0d0f0f;
+
+    cursor: pointer;
+
+    font-size: 10px;
+
+    font-weight: 650;
+}
+
+
+.inna-v2-action:hover {
+
+    color: white;
+
+    border-color:
+        rgba(227,167,46,.75);
+
+    background:
+        rgba(227,167,46,.07);
+}
+
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+.inna-v2-input-row {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 42px;
+
+    gap: 6px;
+}
+
+
+#innaVisitorV2Input {
+
+    width: 100%;
+    height: 39px;
+
+    padding: 0 10px;
+
+    outline: 0;
+
+    border:
+        1px solid
+        rgba(227,167,46,.5);
+
+    border-radius: 7px;
+
+    color: white;
+
+    background: #0b0d0d;
+
+    font-size: 10px;
+}
+
+
+#innaVisitorV2Input::placeholder {
+    color: #666c68;
+}
+
+
+#innaVisitorV2Input:focus {
+
+    border-color: #e3a72e;
+}
+
+
+#innaVisitorV2Send {
+
+    width: 42px;
+    height: 39px;
+
+    padding: 0;
+
+    border: 0;
+
+    border-radius: 7px;
+
+    color: #151006;
+
+    background: #e3a72e;
+
+    cursor: pointer;
+
+    font-size: 17px;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   PRIVACIDADE
+   ========================================================= */
+
+.inna-v2-privacy {
+
+    margin:
+        6px 0 0;
+
+    color: #676d69;
+
+    font-size: 8px;
+
+    line-height: 1.25;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    #innaVisitorV2Root {
+
+        left: auto;
+        right: 15px;
+        bottom: 15px;
+    }
+
+
+    #innaVisitorV2Panel {
+
+        position: fixed;
+
+        left: 12px;
+        right: 12px;
+        bottom: 90px;
+
+        width: auto;
+    }
+
+}
+
+</style>
+
+
+<div id="innaVisitorV2Root">
+
+
+<div
+    id="innaVisitorV2Panel"
+    role="dialog"
+    aria-label="Assistente INNA"
+>
+
+
+<div class="inna-v2-header">
+
+
+<img
+    src="/static/images/inna-floating-avatar.png"
+    class="inna-v2-avatar"
+    alt="INNA"
+>
+
+
+<div class="inna-v2-heading">
+
+<strong>
+INNA
+</strong>
+
+<span>
+● Online · visitante
+</span>
+
+</div>
+
+
+<button
+    id="innaVisitorV2Close"
+    class="inna-v2-close"
+    type="button"
+    aria-label="Fechar"
+>
+×
+</button>
+
+
+</div>
+
+
+<div class="inna-v2-body">
+
+
+<p class="inna-v2-welcome">
+
+<strong>Olá! Sou a INNA.</strong>
+Como posso ajudar?
+
+</p>
+
+
+<div id="innaVisitorV2Messages"></div>
+
+
+<div class="inna-v2-actions">
+
+
+<button
+    id="innaVisitorV2Question"
+    class="inna-v2-action"
+    type="button"
+>
+Tenho uma dúvida
+</button>
+
+
+<button
+    id="innaVisitorV2Human"
+    class="inna-v2-action"
+    type="button"
+>
+Falar com alguém
+</button>
+
+
+</div>
+
+
+<div class="inna-v2-input-row">
+
+
+<input
+    id="innaVisitorV2Input"
+    type="text"
+    autocomplete="off"
+    placeholder="Digite sua dúvida..."
+>
+
+
+<button
+    id="innaVisitorV2Send"
+    type="button"
+    aria-label="Enviar"
+>
+→
+</button>
+
+
+</div>
+
+
+<p class="inna-v2-privacy">
+Sem login, não acesso dados pessoais.
+</p>
+
+
+</div>
+
+
+</div>
+
+
+<button
+    id="innaVisitorV2Launcher"
+    type="button"
+    aria-label="Falar com a INNA"
+>
+
+
+<img
+    src="/static/images/inna-floating-avatar.png"
+    alt="INNA"
+>
+
+
+<span class="inna-v2-dot"></span>
+
+
+</button>
+
+
+</div>
+
+
+<script>
+
+(function () {
+
+"use strict";
+
+
+/* =========================================================
+   CONFIG
+   ========================================================= */
+
+const WHATSAPP_NUMBER =
+    "5514996013670";
+
+
+const ROUTES = {
+
+    educacao:
+        "/plataforma/modulos/educacao-financeira?view=overview",
+
+    orcamento:
+        "http://127.0.0.1:8510/?view=workspace",
+
+    planejamento:
+        "http://127.0.0.1:8513/",
+
+    seguranca:
+        "http://127.0.0.1:8507/?view=workspace",
+
+    financeiro:
+        "/modulos?plataforma=financeiro",
+
+    plataformas:
+        "/modulos"
+
+};
+
+
+/* =========================================================
+   ELEMENTOS
+   ========================================================= */
+
+const panel =
+    document.getElementById(
+        "innaVisitorV2Panel"
+    );
+
+const launcher =
+    document.getElementById(
+        "innaVisitorV2Launcher"
+    );
+
+const closeButton =
+    document.getElementById(
+        "innaVisitorV2Close"
+    );
+
+const questionButton =
+    document.getElementById(
+        "innaVisitorV2Question"
+    );
+
+const humanButton =
+    document.getElementById(
+        "innaVisitorV2Human"
+    );
+
+const input =
+    document.getElementById(
+        "innaVisitorV2Input"
+    );
+
+const send =
+    document.getElementById(
+        "innaVisitorV2Send"
+    );
+
+const messages =
+    document.getElementById(
+        "innaVisitorV2Messages"
+    );
+
+
+/* =========================================================
+   PAINEL
+   ========================================================= */
+
+function openPanel() {
+
+    panel.classList.add(
+        "open"
+    );
+
+}
+
+
+function closePanel() {
+
+    panel.classList.remove(
+        "open"
+    );
+
+}
+
+
+launcher.addEventListener(
+    "click",
+    function () {
+
+        panel.classList.toggle(
+            "open"
+        );
+
+    }
+);
+
+
+closeButton.addEventListener(
+    "click",
+    closePanel
+);
+
+
+/* =========================================================
+   MENSAGEM
+   ========================================================= */
+
+function addMessage(
+    text,
+    owner
+) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.className =
+        "inna-v2-message " +
+        (
+            owner === "user"
+                ? "user"
+                : "assistant"
+        );
+
+    div.textContent =
+        text;
+
+    messages.appendChild(
+        div
+    );
+
+    messages.scrollTop =
+        messages.scrollHeight;
+
+}
+
+
+/* =========================================================
+   NORMALIZAÇÃO
+   ========================================================= */
+
+function normalize(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .toLowerCase()
+        .trim();
+
+}
+
+
+/* =========================================================
+   WHATSAPP DIRETO
+   ========================================================= */
+
+function openWhatsApp() {
+
+    const message =
+        "Olá! Vim pelo atendimento da INNA na Sabino.AI e gostaria de falar com uma pessoa.";
+
+    const url =
+        "https://wa.me/" +
+        WHATSAPP_NUMBER +
+        "?text=" +
+        encodeURIComponent(message);
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
+
+}
+
+
+humanButton.addEventListener(
+    "click",
+    openWhatsApp
+);
+
+
+/* =========================================================
+   TENHO UMA DÚVIDA
+   ========================================================= */
+
+questionButton.addEventListener(
+    "click",
+    function () {
+
+        openPanel();
+
+        input.focus();
+
+    }
+);
+
+
+/* =========================================================
+   DETECÇÃO LOCAL
+   ========================================================= */
+
+function detectIntent(
+    original
+) {
+
+    const text =
+        normalize(
+            original
+        );
+
+
+    if (
+        /atendente|humano|pessoa|whatsapp|falar com alguem/.test(
+            text
+        )
+    ) {
+        return "humano";
+    }
+
+
+    if (
+        /golpe|fraude|seguranca financeira|risco financeiro|protecao/.test(
+            text
+        )
+    ) {
+        return "seguranca";
+    }
+
+
+    if (
+        /orcamento|gasto|gastos|despesa|despesas|conta do mes|contas do mes|saldo negativo/.test(
+            text
+        )
+    ) {
+        return "orcamento";
+    }
+
+
+    if (
+        /planejamento|meta|metas|objetivo|comprar carro|comprar casa|reserva/.test(
+            text
+        )
+    ) {
+        return "planejamento";
+    }
+
+
+    if (
+        /educacao financeira|aprender financas|aprender sobre dinheiro/.test(
+            text
+        )
+    ) {
+        return "educacao";
+    }
+
+
+    if (
+        /divida|dividas|endividamento|credito|investimento|seguro|open finance/.test(
+            text
+        )
+    ) {
+        return "financeiro";
+    }
+
+
+    return "duvida";
+
+}
+
+
+/* =========================================================
+   EXPLICAÇÃO
+   ========================================================= */
+
+function explanation(
+    intent
+) {
+
+    const texts = {
+
+        orcamento:
+            "Orçamento ajuda a organizar receitas e despesas e entender para onde seu dinheiro está indo.",
+
+        planejamento:
+            "Planejamento Financeiro ajuda a transformar objetivos em metas, prioridades e etapas.",
+
+        seguranca:
+            "Segurança Financeira ajuda a identificar riscos, alertas e situações que podem comprometer suas finanças.",
+
+        educacao:
+            "Educação Financeira ajuda a compreender melhor dinheiro, consumo e decisões financeiras.",
+
+        financeiro:
+            "A plataforma Financeira reúne os recursos relacionados à organização e proteção das suas finanças."
+
+    };
+
+
+    return (
+        texts[intent] ||
+        "Pode escrever sua dúvida. Vou tentar orientar você."
+    );
+
+}
+
+
+/* =========================================================
+   EXPLICAÇÃO OU ROTA
+   ========================================================= */
+
+function wantsOnlyExplanation(
+    original
+) {
+
+    const text =
+        normalize(
+            original
+        );
+
+
+    return /o que e|como funciona|explique|me explica|quero entender/.test(
+        text
+    );
+
+}
+
+
+/* =========================================================
+   GUARDA DESTINO PARA APÓS LOGIN
+   ========================================================= */
+
+function savePendingRoute(
+    intent
+) {
+
+    const route =
+        ROUTES[
+            intent
+        ];
+
+
+    if (!route) {
+        return;
+    }
+
+
+    sessionStorage.setItem(
+        "sabino_pending_route",
+        route
+    );
+
+
+    const labels = {
+
+        educacao:
+            "Educação Financeira",
+
+        orcamento:
+            "Orçamento Financeiro",
+
+        planejamento:
+            "Planejamento Financeiro",
+
+        seguranca:
+            "Segurança Financeira",
+
+        financeiro:
+            "Plataforma Financeira"
+
+    };
+
+
+    sessionStorage.setItem(
+        "sabino_pending_label",
+        labels[intent] ||
+        "recurso solicitado"
+    );
+
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+function focusLogin() {
+
+    const field =
+        document.querySelector(
+            [
+                'input[type="email"]',
+                'input[name*="email" i]',
+                'input[id*="email" i]',
+                'input[name*="cpf" i]',
+                'input[id*="cpf" i]'
+            ].join(",")
+        );
+
+
+    if (field) {
+
+        field.focus();
+
+        field.scrollIntoView({
+            behavior:
+                "smooth",
+
+            block:
+                "center"
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   PROCESSAMENTO
+   ========================================================= */
+
+function processQuestion() {
+
+    const value =
+        input.value.trim();
+
+
+    if (!value) {
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    input.value =
+        "";
+
+
+    addMessage(
+        value,
+        "user"
+    );
+
+
+    const intent =
+        detectIntent(
+            value
+        );
+
+
+    if (
+        intent ===
+        "humano"
+    ) {
+
+        openWhatsApp();
+
+        return;
+
+    }
+
+
+    if (
+        intent ===
+        "duvida"
+    ) {
+
+        addMessage(
+            "Pode me contar um pouco mais sobre sua dúvida.",
+            "assistant"
+        );
+
+        return;
+
+    }
+
+
+    addMessage(
+        explanation(
+            intent
+        ),
+        "assistant"
+    );
+
+
+    if (
+        wantsOnlyExplanation(
+            value
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    savePendingRoute(
+        intent
+    );
+
+
+    addMessage(
+        "Se quiser continuar nesse recurso, entre na sua conta e eu sigo com você.",
+        "assistant"
+    );
+
+
+    focusLogin();
+
+}
+
+
+/* =========================================================
+   EVENTOS
+   ========================================================= */
+
+send.addEventListener(
+    "click",
+    processQuestion
+);
+
+
+input.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key ===
+            "Enter"
+        ) {
+
+            event.preventDefault();
+
+            processQuestion();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            closePanel();
+
+        }
+
+    }
+);
+
+})();
+
+</script>
+
+<!-- SABINO_INNA_VISITOR_V2_END -->
+
+
+<!-- SABINO_INNA_FLOW_V3_BEGIN -->
+
+<style>
+
+/* Campo começa escondido */
+
+.inna-v2-input-row {
+    display: none !important;
+    margin-top: 7px;
+}
+
+
+/* Aparece somente quando usuário escolhe dúvida */
+
+.inna-v2-input-row.inna-input-open {
+    display: grid !important;
+}
+
+
+/* respostas ficam abaixo do campo */
+
+#innaVisitorV2Messages {
+    margin-top: 7px !important;
+    margin-bottom: 0 !important;
+}
+
+
+#innaVisitorV2Messages:empty {
+    display: none;
+}
+
+
+#innaVisitorV2Messages:not(:empty) {
+    display: grid;
+}
+
+
+/* mantém painel compacto */
+
+.inna-v2-body {
+    padding: 10px !important;
+}
+
+
+.inna-v2-actions {
+    margin-bottom: 0 !important;
+}
+
+
+/* SABINO_REMOVE_TOP_LINE_V1_BEGIN */
+
+/*
+   Remove apenas linhas/bordas decorativas
+   da faixa superior da tela de login.
+*/
+
+header,
+.topbar,
+.top-bar,
+.hero-header,
+.login-header,
+.login-top,
+.login-topbar,
+.left-header,
+.left-top,
+.hero-top,
+.brand-header,
+.brand-row,
+.cover-header {
+    border-top: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
+
+/* Linhas criadas por pseudo-elementos */
+
+header::before,
+header::after,
+.topbar::before,
+.topbar::after,
+.top-bar::before,
+.top-bar::after,
+.hero-header::before,
+.hero-header::after,
+.login-header::before,
+.login-header::after,
+.login-top::before,
+.login-top::after,
+.left-header::before,
+.left-header::after,
+.hero-top::before,
+.hero-top::after,
+.brand-header::before,
+.brand-header::after,
+.brand-row::before,
+.brand-row::after,
+.cover-header::before,
+.cover-header::after {
+    border: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+    background-image: none !important;
+}
+
+
+/* Caso exista um HR apenas no topo */
+
+header hr,
+.topbar hr,
+.hero-header hr,
+.login-header hr,
+.left-header hr,
+.brand-header hr {
+    display: none !important;
+}
+
+/* SABINO_REMOVE_TOP_LINE_V1_END */
+</style>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const questionButton =
+            document.getElementById(
+                "innaVisitorV2Question"
+            );
+
+        const humanButton =
+            document.getElementById(
+                "innaVisitorV2Human"
+            );
+
+        const input =
+            document.getElementById(
+                "innaVisitorV2Input"
+            );
+
+        const sendButton =
+            document.getElementById(
+                "innaVisitorV2Send"
+            );
+
+        const messages =
+            document.getElementById(
+                "innaVisitorV2Messages"
+            );
+
+        const inputRow =
+            document.querySelector(
+                ".inna-v2-input-row"
+            );
+
+
+        if (
+            !questionButton ||
+            !humanButton ||
+            !input ||
+            !inputRow ||
+            !messages
+        ) {
+            return;
+        }
+
+
+        /* --------------------------------------------------
+           MOVE RESPOSTAS PARA DEBAIXO DO CAMPO
+           -------------------------------------------------- */
+
+        inputRow.insertAdjacentElement(
+            "afterend",
+            messages
+        );
+
+
+        /* --------------------------------------------------
+           COMEÇA FECHADO
+           -------------------------------------------------- */
+
+        inputRow.classList.remove(
+            "inna-input-open"
+        );
+
+
+        /* --------------------------------------------------
+           TENHO UMA DÚVIDA
+           -------------------------------------------------- */
+
+        questionButton.addEventListener(
+            "click",
+            function () {
+
+                inputRow.classList.add(
+                    "inna-input-open"
+                );
+
+                setTimeout(
+                    function () {
+                        input.focus();
+                    },
+                    50
+                );
+
+            },
+            true
+        );
+
+
+        /* --------------------------------------------------
+           FALAR COM ALGUÉM
+           Mantém o comportamento já configurado:
+           WhatsApp direto.
+           -------------------------------------------------- */
+
+        humanButton.addEventListener(
+            "click",
+            function () {
+
+                /*
+                 * O listener existente da INNA V2
+                 * continuará abrindo o WhatsApp.
+                 */
+
+            },
+            true
+        );
+
+
+        /* --------------------------------------------------
+           QUANDO HOUVER ENVIO,
+           GARANTE QUE A ÁREA CONTINUE ABERTA
+           -------------------------------------------------- */
+
+        if (sendButton) {
+
+            sendButton.addEventListener(
+                "click",
+                function () {
+
+                    inputRow.classList.add(
+                        "inna-input-open"
+                    );
+
+                },
+                true
+            );
+
+        }
+
+
+        input.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Enter") {
+
+                    inputRow.classList.add(
+                        "inna-input-open"
+                    );
+
+                }
+
+            },
+            true
+        );
+
+    }
+);
+
+</script>
+
+<!-- SABINO_INNA_FLOW_V3_END -->
+<script src="/static/js/inna-global.js"></script>
+
+
+<!-- SABINO_TC4_D1_AUTH_LOGIN_START -->
+<style>
+#sabinoAuthStatus {
+    margin-top: 12px;
+    min-height: 20px;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+#sabinoAuthStatus[data-kind="error"] {
+    color: #ff8a8a;
+}
+
+#sabinoAuthStatus[data-kind="success"] {
+    color: #d9b441;
+}
+</style>
+
+<script>
+(function () {
+
+    "use strict";
+
+    function authStatusElement() {
+
+        var existing =
+            document.getElementById(
+                "sabinoAuthStatus"
+            );
+
+        if (existing) {
+            return existing;
+        }
+
+        var form =
+            document.getElementById(
+                "loginForm"
+            );
+
+        if (!form) {
+            return null;
+        }
+
+        var status =
+            document.createElement(
+                "div"
+            );
+
+        status.id =
+            "sabinoAuthStatus";
+
+        status.setAttribute(
+            "role",
+            "status"
+        );
+
+        status.setAttribute(
+            "aria-live",
+            "polite"
+        );
+
+        form.appendChild(
+            status
+        );
+
+        return status;
+    }
+
+
+    function setAuthStatus(
+        message,
+        kind
+    ) {
+
+        var status =
+            authStatusElement();
+
+        if (!status) {
+            return;
+        }
+
+        status.textContent =
+            message || "";
+
+        status.dataset.kind =
+            kind || "";
+    }
+
+
+    async function checkExistingSession() {
+
+        try {
+
+            var response =
+                await fetch(
+                    "/auth/me",
+                    {
+                        method: "GET",
+                        credentials: "same-origin",
+                        cache: "no-store"
+                    }
+                );
+
+            if (response.ok) {
+
+                window.location.replace(
+                    "/dashboard"
+                );
+
+            }
+
+        }
+        catch (error) {
+
+            console.debug(
+                "Sabino.AI auth check:",
+                error
+            );
+
+        }
+
+    }
+
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            var form =
+                document.getElementById(
+                    "loginForm"
+                );
+
+            var username =
+                document.getElementById(
+                    "username"
+                );
+
+            var password =
+                document.getElementById(
+                    "password"
+                );
+
+            if (
+                !form ||
+                !username ||
+                !password
+            ) {
+
+                console.error(
+                    "SABINO_TC4_D1_LOGIN_FIELDS_NOT_FOUND"
+                );
+
+                return;
+            }
+
+
+            /*
+             * O backend TC4-B3 autentica por e-mail.
+             * CPF poderá ser conectado futuramente.
+             */
+            username.setAttribute(
+                "autocomplete",
+                "email"
+            );
+
+
+            form.addEventListener(
+                "submit",
+                async function (event) {
+
+                    /*
+                     * Capture + stopImmediatePropagation
+                     * impede o handler demonstrativo antigo
+                     * de assumir o login.
+                     */
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
+                    var email =
+                        String(
+                            username.value || ""
+                        )
+                        .trim()
+                        .toLowerCase();
+
+                    var passwordValue =
+                        String(
+                            password.value || ""
+                        );
+
+
+                    if (
+                        !email ||
+                        !email.includes("@")
+                    ) {
+
+                        setAuthStatus(
+                            "Informe o e-mail da sua conta Sabino.AI.",
+                            "error"
+                        );
+
+                        username.focus();
+
+                        return;
+                    }
+
+
+                    if (!passwordValue) {
+
+                        setAuthStatus(
+                            "Informe sua senha.",
+                            "error"
+                        );
+
+                        password.focus();
+
+                        return;
+                    }
+
+
+                    var submitButton =
+                        form.querySelector(
+                            'button[type="submit"], input[type="submit"]'
+                        );
+
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                    }
+
+
+                    setAuthStatus(
+                        "Entrando com segurança...",
+                        ""
+                    );
+
+
+                    try {
+
+                        var response =
+                            await fetch(
+                                "/auth/login",
+                                {
+                                    method: "POST",
+
+                                    credentials:
+                                        "same-origin",
+
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json"
+                                    },
+
+                                    body:
+                                        JSON.stringify(
+                                            {
+                                                email:
+                                                    email,
+
+                                                password:
+                                                    passwordValue
+                                            }
+                                        )
+                                }
+                            );
+
+
+                        if (
+                            response.status === 401
+                        ) {
+
+                            setAuthStatus(
+                                "E-mail ou senha inválidos.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+
+                        if (!response.ok) {
+
+                            setAuthStatus(
+                                "Não foi possível entrar agora.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+
+                        var payload =
+                            await response.json();
+
+
+                        if (
+                            !payload ||
+                            payload.authenticated !== true
+                        ) {
+
+                            setAuthStatus(
+                                "Não foi possível validar sua sessão.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+
+                        /*
+                         * NÃO salvamos token, senha nem user_id
+                         * em localStorage/sessionStorage.
+                         *
+                         * A sessão real está no cookie HttpOnly.
+                         */
+                        password.value =
+                            "";
+
+
+                        setAuthStatus(
+                            "Login realizado. Abrindo sua conta...",
+                            "success"
+                        );
+
+
+                        window.location.replace(
+                            "/dashboard"
+                        );
+
+                    }
+                    catch (error) {
+
+                        console.error(
+                            "SABINO_TC4_D1_LOGIN_ERROR",
+                            error
+                        );
+
+                        setAuthStatus(
+                            "Falha de conexão com o servidor.",
+                            "error"
+                        );
+
+                    }
+                    finally {
+
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                        }
+
+                    }
+
+                },
+                true
+            );
+
+
+            checkExistingSession();
+
+        }
+    );
+
+})();
+</script>
+<!-- SABINO_TC4_D1_AUTH_LOGIN_END -->
+
+<script src="/static/js/sabino-locale-core.js?v=internal12_20260917_140006" data-sabino-global-locale="v1"></script>
+<script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
+<script src="/static/js/sabino-money-locale-runtime.js"></script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
