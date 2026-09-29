@@ -35,3 +35,21 @@ não significa que todos os módulos estejam prontos para uso por clientes.
 
 Somente recursos Free. Não criar discos, jobs ou planos pagos. Os serviços web
 Free compartilham a franquia mensal do Render e podem dormir ou ser suspensos.
+
+## Recebedor por variáveis do Render
+
+O gateway agora aceita um conjunto completo de variáveis, que substitui os dados
+locais quando qualquer uma estiver presente:
+
+- SABINO_PIX_ENABLED=false durante configuração. Somente true habilita emissão.
+- SABINO_PIX_KEY: chave Pix de telefone já cadastrada no banco, no formato +55DDDNUMERO,
+  com 11 dígitos depois de +55 (celular com DDD). CPF, e-mail e chave aleatória ainda
+  não são suportados por este gerador.
+- SABINO_PIX_RECEIVER: nome do recebedor, maiúsculas sem acentos, até 25 caracteres.
+- SABINO_PIX_CITY: cidade, maiúsculas sem acentos, até 15 caracteres.
+
+Não publicar os valores pessoais no repositório. Configuração incompleta ou
+inválida mantém a emissão desativada. Alterar o recebedor não modifica os pedidos
+antigos: cada pedido conserva seus dados de pagamento. A aprovação continua manual.
+Depois de configurar, validar QR e destinatário no aplicativo bancário antes de
+abrir compras a clientes. A alteração não ativa análises da INNA.

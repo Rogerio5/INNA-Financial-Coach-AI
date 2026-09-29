@@ -3,6 +3,7 @@
 import binascii
 import io
 import json
+import os
 import re
 from pathlib import Path
 from uuid import uuid4
@@ -13,9 +14,25 @@ ROOT = Path(__file__).resolve().parents[4]
 
 
 def configuration():
-    return json.loads(
+    config = json.loads(
         (ROOT / "config/pix-receiver.json").read_text(encoding="utf-8-sig")
     )
+    names = {
+        "key": "SABINO_PIX_KEY",
+        "receiver": "SABINO_PIX_RECEIVER",
+        "city": "SABINO_PIX_CITY",
+    }
+    # Environment configuration is a complete set, never mixed with local data.
+    if any(name in os.environ for name in (*names.values(), "SABINO_PIX_ENABLED")):
+        config = {field: os.getenv(name, "").strip() for field, name in names.items()}
+        config["enabled"] = os.getenv("SABINO_PIX_ENABLED", "false").strip().lower() == "true"
+        if config["enabled"]:
+            try:
+                payload(config["key"], config["receiver"], config["city"], 1, "CONFIGCHECK")
+            except ValueError:
+                # Invalid or incomplete receiver settings must not expose checkout.
+                config["enabled"] = False
+    return config
 
 
 def products():

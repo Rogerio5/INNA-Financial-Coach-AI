@@ -26,3 +26,34 @@ def test_disabled_pix_never_creates_order():
         with pytest.raises(RuntimeError):
             manual_pix.create_order("test-user", "credits_100")
         db.assert_not_called()
+
+
+@pytest.fixture
+def receiver_environment(monkeypatch):
+    for name in ("SABINO_PIX_ENABLED", "SABINO_PIX_KEY", "SABINO_PIX_RECEIVER", "SABINO_PIX_CITY"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("SABINO_PIX_KEY", "+5511999999999")
+    monkeypatch.setenv("SABINO_PIX_RECEIVER", "TEST RECEIVER")
+    monkeypatch.setenv("SABINO_PIX_CITY", "SAO PAULO")
+    return monkeypatch
+
+
+def test_environment_receiver_requires_explicit_enable(receiver_environment):
+    assert manual_pix.configuration()["enabled"] is False
+
+
+def test_valid_environment_receiver(receiver_environment):
+    receiver_environment.setenv("SABINO_PIX_ENABLED", "true")
+    config = manual_pix.configuration()
+    assert config == {"enabled": True, "key": "+5511999999999", "receiver": "TEST RECEIVER", "city": "SAO PAULO"}
+
+
+@pytest.mark.parametrize("name,value", [
+    ("SABINO_PIX_KEY", ""), ("SABINO_PIX_KEY", "invalid"),
+    ("SABINO_PIX_RECEIVER", ""), ("SABINO_PIX_CITY", ""),
+    ("SABINO_PIX_ENABLED", "yes"),
+])
+def test_invalid_environment_disables_emission(receiver_environment, name, value):
+    receiver_environment.setenv("SABINO_PIX_ENABLED", "true")
+    receiver_environment.setenv(name, value)
+    assert manual_pix.configuration()["enabled"] is False
