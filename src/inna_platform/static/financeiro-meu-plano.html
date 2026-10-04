@@ -20,7 +20,7 @@ dt{color:#b8c4cb;margin-top:18px}dd{margin:6px 0;font-size:20px}
 .notice{padding:18px;border-left:3px solid #f4ca56;background:#141d23}
 #error{color:#ffb4a9}footer{margin-top:38px;border-top:1px solid #293339;padding-top:20px;color:#b8c4cb}
 </style>
-</head>
+<style>[hidden]{display:none!important}</style></head>
 <body><main>
 <nav aria-label="Navegação"><a href="/dashboard">Sabino.AI</a><a href="/financeiro">Voltar ao Financeiro</a><a href="/static/sabino-bancos.html">Bancos e conexões</a><a href="/inna">Conversar com a INNA</a><a href="/logout">Sair</a></nav>
 <div class="eyebrow">FINANCEIRO · MINHA CONTA</div>
@@ -34,9 +34,9 @@ dt{color:#b8c4cb;margin-top:18px}dd{margin:6px 0;font-size:20px}
 <div class="actions"><a id="access" class="button primary" href="/financeiro" hidden>Acessar Financeiro</a><a class="button" href="/financeiro/planos">Conhecer planos</a></div>
 </article>
 <article><h2>Contratação e pagamento</h2>
-<p>Os planos disponíveis são Essencial, Evolução e Completo. Os valores e a cobrança estão em preparação.</p>
-<p class="notice">A jornada de contratação atual é uma simulação. Nenhum pagamento é realizado e a simulação não ativa nem altera seu acesso.</p>
-<p>O acesso informado nesta página é consultado no backend. “Ativo” não é um comprovante de pagamento.</p>
+<p>Os planos disponíveis são Essencial, Evolução e Completo. Consulte os valores e os créditos incluídos na página de planos.</p>
+<p class="notice">Pagamento por Pix com conferência manual. Após confirmar o recebimento, o plano libera acesso ao Financeiro por um mês e adiciona os créditos incluídos.</p>
+<p>Renovação manual, sem cobrança automática. Renovar o mesmo plano acrescenta um mês à validade vigente; se o acesso venceu, a validade começa na nova aprovação. Pacotes de créditos avulsos não ativam assinatura.</p>
 </article></section>
 <p>O Reembolso Inteligente permanece em construção e não é oferecido aqui como um produto já disponível.</p>
 <footer>Sabino.AI · Seu acesso é controlado pela sua conta autenticada.</footer>
@@ -52,7 +52,8 @@ dt{color:#b8c4cb;margin-top:18px}dd{margin:6px 0;font-size:20px}
   const names={essencial:"Essencial",evolucao:"Evolução",completo:"Completo",premium:"Premium (plano anterior)"};
   const statuses={active:"Ativo",pending:"Pendente",cancelled:"Cancelado",expired:"Expirado"};
   document.getElementById("plan").textContent=names[data.plan_code]||data.plan_code||"Nenhum plano registrado";
-  document.getElementById("status").textContent=data.entitled?"Ativo":statuses[data.status]||"Sem acesso ativo";
+  const isExpired=data.expires_at && new Date(data.expires_at)<=new Date();
+  document.getElementById("status").textContent=data.entitled?"Ativo":data.status==="active"&&isExpired?"Expirado":data.status==="active"?"Sem acesso ativo":statuses[data.status]||"Sem acesso ativo";
   const expiry=data.expires_at?new Date(data.expires_at):null;
   document.getElementById("expiry").textContent=expiry&&!isNaN(expiry) ? expiry.toLocaleDateString("pt-BR") : "Sem data informada";
   document.getElementById("access").hidden=!data.entitled;
