@@ -1140,6 +1140,12 @@ def _execute_rag_ask_runtime(
     payload: RagAskRequest,
 ) -> dict:
     """Select LlamaIndex or preserve the existing RAG runtime."""
+    from src.services.financial_scenario import answer_financial_scenario
+
+    calculation = answer_financial_scenario(payload.pergunta, payload.idioma)
+    if calculation is not None:
+        return calculation
+
     runtime = _load_llamaindex_agentic_rag_runtime()
 
     if not runtime.llamaindex_agentic_rag_enabled():
