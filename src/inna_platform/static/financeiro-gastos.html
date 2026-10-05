@@ -2155,6 +2155,15 @@ article.budget-panel:has(#gastosLista) h2 {
 
 <!-- SABINO_EXPENSE_MODAL_V1 -->
 
+<style id="expense-modal-layout-fix">
+#expenseModal { position: fixed; inset: 0; background: #000b; display: none; align-items: center; justify-content: center; z-index: 9999; }
+#expenseModal.open { display: flex; }
+#expenseModal .budget-modal-box { width: min(560px, 92vw); max-height: 88vh; overflow: auto; background: #111a1f; border: 1px solid #33434b; border-radius: 18px; padding: 24px; }
+#expenseModal label { display: block; margin-top: 12px; }
+#expenseModal input, #expenseModal select { width: 100%; box-sizing: border-box; padding: 10px; background: #081014; color: #fff; border: 1px solid #33434b; border-radius: 8px; }
+#expenseModal .budget-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+#expenseModal button { padding: 11px 16px; border-radius: 9px; cursor: pointer; }
+</style>
 <div id="expenseModal" class="budget-modal">
     <form id="expenseForm" class="budget-modal-box">
 
