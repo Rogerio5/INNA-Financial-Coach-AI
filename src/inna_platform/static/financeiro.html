@@ -4609,7 +4609,7 @@ html[data-finance-mode="real"] .category-highlight-value span { display: block; 
     }
     async function read(url) {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 15000);
+        const timeout = setTimeout(() => controller.abort(), 60000);
         try {
             const response = await fetch(url, {
                 credentials: "same-origin", cache: "no-store", signal: controller.signal
