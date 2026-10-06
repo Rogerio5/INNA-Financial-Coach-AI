@@ -197,6 +197,7 @@ async def executar_llamaindex_agent_workflow_payload(
     )
 
     capture: dict[str, Any] = {}
+    original_question = pergunta
 
     def _capturing_tool(pergunta: str) -> str:
         formal_rag_started = time.perf_counter()
@@ -211,7 +212,7 @@ async def executar_llamaindex_agent_workflow_payload(
         )
 
         formal_result = rag_tools.consultar_rag_inna(
-            pergunta,
+            original_question,
             idioma=idioma,
             top_k=top_k,
         )
