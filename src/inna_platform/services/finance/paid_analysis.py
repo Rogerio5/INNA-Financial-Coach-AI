@@ -108,6 +108,13 @@ def finalize(user_id, quote_id, *, result=None, uncertain=False, review=None):
 
 
 async def backend(payload):
+    from src.services.financial_scenario import answer_financial_scenario
+
+    calculation = answer_financial_scenario(payload['pergunta'], payload['idioma'])
+    if calculation is not None:
+        calculation['sabino_global_locale'] = payload['idioma']
+        return calculation
+
     base = os.getenv('INNA_API_BASE_URL', 'http://127.0.0.1:8000').rstrip('/')
     url = os.getenv('SABINO_INNA_RAG_URL') or base + '/rag/ask'
     # The existing agent workflow has a 120-second ceiling. Allow its terminal
