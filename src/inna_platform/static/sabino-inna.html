@@ -3103,12 +3103,15 @@ Sobre a INNA →
 
 
         loading.textContent =
-            "INNA está analisando sua pergunta...";
+            "Consultando o custo da análise...";
 
 
         messages.appendChild(
             loading
         );
+        renderSources([]);
+        messages.scrollTop = messages.scrollHeight;
+
 
 
         try {
@@ -3151,6 +3154,8 @@ Sobre a INNA →
         }
         catch (error) {
 
+            loading.classList.remove("inna-loading");
+            input.value = question;
             loading.textContent =
                 error.message || "Não foi possível obter uma resposta da INNA agora.";
 
@@ -3229,39 +3234,18 @@ Sobre a INNA →
 
 
     const quickPrompts = [
-
         {
-            label:
-                "Organizar orçamento",
-
-            prompt:
-                "Quero organizar meu orçamento mensal. Por onde começo?"
+            label: "Minhas finanças",
+            prompt: "Quero organizar minhas finanças e planejar uma meta. Ajude-me a informar renda mensal, orçamento de despesas, gastos realizados, saldo da conta, reserva acumulada, valor da meta e prazo em meses. Faça uma pergunta de cada vez e não invente valores."
         },
-
         {
-            label:
-                "Reserva de emergência",
-
-            prompt:
-                "Como posso começar a montar uma reserva de emergência?"
+            label: "Atender um cliente",
+            prompt: "Quero preparar um atendimento de educação financeira para um cliente. Ajude-me a montar um roteiro simples de diagnóstico, objetivo, próximos passos e acompanhamento. Vou usar dados anônimos, sem nome, documentos ou informações bancárias. Comece perguntando qual é o objetivo do atendimento."
         },
-
         {
-            label:
-                "Segurança financeira",
-
-            prompt:
-                "Como posso reconhecer golpes e mensagens financeiras suspeitas?"
-        },
-
-        {
-            label:
-                "Planejar uma meta",
-
-            prompt:
-                "Quero definir uma meta financeira realista. Como posso começar?"
+            label: "Planejar minha empresa",
+            prompt: "Quero organizar o planejamento financeiro da minha empresa. Ajude-me a separar entradas previstas, receitas recebidas, despesas previstas, pagamentos realizados e caixa disponível. Depois, monte um roteiro de acompanhamento com responsável e prazo. Comece perguntando o período e meu objetivo; não presuma acesso a contas ou dados da equipe."
         }
-
     ];
 
 
@@ -3286,6 +3270,11 @@ Sobre a INNA →
 
         container.className =
             "inna-quick-actions";
+        const hint = document.createElement("p");
+        hint.textContent = "Escolha um ponto de partida. Você pode editar a mensagem antes de enviar; escolher uma opção não consome créditos.";
+        hint.style.cssText = "flex-basis:100%;margin:0 0 8px;line-height:1.5;font-size:13px;color:#c6d2d0";
+        container.appendChild(hint);
+
 
 
         quickPrompts.forEach(
@@ -3317,7 +3306,8 @@ Sobre a INNA →
                             item.prompt;
 
 
-                        ask();
+                        input.focus();
+                        input.dispatchEvent(new Event("input", {bubbles:true}));
 
                     }
                 );
