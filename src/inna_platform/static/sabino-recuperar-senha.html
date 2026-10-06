@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Recuperar acesso | Sabino.AI</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#080e20;color:#eff3ff;font:16px/1.6 system-ui,sans-serif}
+    main{width:100%;max-width:480px;padding:36px;border:1px solid #293455;border-radius:24px;background:#101a31;box-shadow:0 24px 80px #0004}
+    .brand{font-weight:750;font-size:23px;letter-spacing:-.7px;color:#a8b9ff}h1{font-size:29px;line-height:1.2;margin:30px 0 14px}p{color:#b9c6df}label{display:block;margin:18px 0 7px;font-weight:600}
+    input{width:100%;padding:14px;border:1px solid #506083;border-radius:10px;background:#080f21;color:#fff;font:inherit}input:focus{outline:2px solid #a8b9ff;outline-offset:2px}
+    button{width:100%;margin-top:24px;padding:14px;border:0;border-radius:10px;background:#a8b9ff;color:#0b1228;font:700 16px system-ui;cursor:pointer}button:disabled{opacity:.65;cursor:wait}
+    a{color:#bccaff;text-underline-offset:4px}.back{display:block;text-align:center;margin-top:24px}.hint{font-size:14px;margin:8px 0}#message{margin-top:20px;overflow-wrap:anywhere}#message.error{color:#ffbcbc}#message.success{color:#a5ecc9}[hidden]{display:none!important}
+    @media(max-width:480px){main{padding:26px}h1{font-size:26px}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand">Sabino.AI</div>
+  <h1 id="title">Recupere seu acesso</h1>
+  <p id="description">Informe o e-mail cadastrado para receber um link de redefinição de senha.</p>
+  <form id="forgot-form">
+    <label for="email">E-mail cadastrado</label>
+    <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required>
+    <button type="submit">Enviar link de recuperação</button>
+  </form>
+  <form id="reset-form" hidden>
+    <label for="password">Nova senha</label>
+    <input id="password" name="password" type="password" autocomplete="new-password" minlength="10" maxlength="128" aria-describedby="password-hint" required>
+    <p id="password-hint" class="hint">Use de 10 a 128 caracteres.</p>
+    <label for="confirmation">Confirme a nova senha</label>
+    <input id="confirmation" name="confirmation" type="password" autocomplete="new-password" minlength="10" maxlength="128" required>
+    <button type="submit">Salvar nova senha</button>
+  </form>
+  <p id="message" role="status" aria-live="polite"></p>
+  <a id="new-link" href="/recuperar-senha" hidden>Solicitar outro link</a>
+  <a class="back" href="/">Voltar para entrar</a>
+</main>
+<script>
+'use strict';
+const byId = id => document.getElementById(id);
+let token = new URLSearchParams(location.hash.slice(1)).get('token');
+// Keep the bearer token only in memory, never in storage or later referrers.
+const hadFragment = Boolean(location.hash);
+history.replaceState(null, '', location.pathname);
+const forgotForm = byId('forgot-form');
+const resetForm = byId('reset-form');
+const message = byId('message');
+function show(text, error = false) { message.textContent = text; message.className = error ? 'error' : 'success'; }
+if (hadFragment) {
+  forgotForm.hidden = true;
+  if (token && /^[A-Za-z0-9_-]{43}$/.test(token)) {
+    resetForm.hidden = false;
+    byId('title').textContent = 'Crie sua nova senha';
+    byId('description').textContent = 'Sua conta, seu plano e seus créditos serão mantidos. Depois da alteração, entre novamente.';
+  } else {
+    token = null;
+    show('Link inválido. Solicite outro link de recuperação.', true);
+    byId('new-link').hidden = false;
+  }
+}
+async function submit(form, endpoint, body) {
+  const button = form.querySelector('button');
+  if (button.disabled) return false;
+  button.disabled = true;
+  show('Processando…');
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 30000);
+  try {
+    const response = await fetch(endpoint, {method:'POST', credentials:'same-origin', cache:'no-store',
+      headers:{'Content-Type':'application/json','X-Sabino-Recovery':'1'}, body:JSON.stringify(body), signal:controller.signal});
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      if (endpoint.endsWith('/reset') && response.status === 400) byId('new-link').hidden = false;
+      throw new Error(typeof data.detail === 'string' ? data.detail : 'Não foi possível concluir. Verifique os dados e tente novamente.');
+    }
+    show(data.message || 'Solicitação concluída.');
+    return true;
+  } catch(error) {
+    show(error.name === 'AbortError' ? 'A resposta demorou. Confira seu e-mail antes de tentar novamente. Se estava alterando a senha, tente entrar com a nova senha.' : (error instanceof TypeError ? 'Não foi possível conectar. Tente novamente em instantes.' : error.message), true);
+    return false;
+  } finally { clearTimeout(timer); button.disabled = false; }
+}
+forgotForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (await submit(forgotForm, '/auth/password/forgot', {email:byId('email').value.trim()})) forgotForm.hidden = true;
+});
+resetForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (byId('password').value !== byId('confirmation').value) { show('As senhas não coincidem.', true); byId('confirmation').focus(); return; }
+  if (await submit(resetForm, '/auth/password/reset', {token, password:byId('password').value})) {
+    resetForm.reset(); resetForm.hidden = true; token = null;
+    byId('title').textContent = 'Senha atualizada';
+    byId('description').textContent = 'Você já pode entrar com sua nova senha.';
+  }
+});
+</script>
+</body>
+</html>
