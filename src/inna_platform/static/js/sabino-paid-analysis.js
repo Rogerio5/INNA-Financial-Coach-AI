@@ -1,6 +1,27 @@
 const headers = {'Content-Type': 'application/json', 'X-Sabino-Analysis': 'confirmed'};
 let busy = false;
 
+function progress(message) {
+  const status = document.querySelector('.inna-loading');
+  if (status) { status.textContent = message; status.setAttribute('role', 'status'); }
+}
+
+async function requestJSON(url, init = {}, timeout = 60000) {
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  if (init.signal?.aborted) abort();
+  else init.signal?.addEventListener('abort', abort, {once:true});
+  const timer = setTimeout(abort, timeout);
+  try {
+    const response = await fetch(url, {...init, signal:controller.signal});
+    const data = await response.clone().json();
+    return {response, data};
+  } finally {
+    clearTimeout(timer);
+    init.signal?.removeEventListener('abort', abort);
+  }
+}
+
 function confirmCost(cost, balance) {
   return new Promise(resolve => {
     const dialog = document.createElement('dialog');
@@ -27,23 +48,32 @@ export async function askPaid(payload, options = {}) {
     const key = 'sabino.analysis.request.' + Array.from(new Uint8Array(bytes), n => n.toString(16).padStart(2, '0')).join('');
     let requestId = sessionStorage.getItem(key);
     if (!requestId) { requestId = crypto.randomUUID(); sessionStorage.setItem(key, requestId); }
-    const quoteResponse = await fetch('/api/inna/quote', {method: 'POST', headers, credentials:'same-origin', body:JSON.stringify({...payload, request_id:requestId})});
-    const quote = await quoteResponse.json();
+    progress('Consultando o custo da análise...');
+    let quoteResponse, quote;
+    try {
+      ({response:quoteResponse, data:quote} = await requestJSON('/api/inna/quote', {method:'POST', headers, credentials:'same-origin', body:JSON.stringify({...payload, request_id:requestId}), signal:options.signal}));
+    } catch (_) {
+      throw new Error('Não foi possível consultar o custo agora. A análise não foi iniciada nesta tentativa. Tente novamente em instantes.');
+    }
     if (!quoteResponse.ok) throw new Error(quoteResponse.status === 401 ? 'Entre na sua conta para analisar com a INNA.' : quote.detail || 'Não foi possível consultar o custo.');
     if (quote.state === 'quoted') {
-      const walletResponse = await fetch('/api/platform/credits/wallet', {cache:'no-store', credentials:'same-origin'});
+      progress('Conferindo seu saldo de créditos...');
+      let walletResponse, wallet;
+      try {
+        ({response:walletResponse, data:wallet} = await requestJSON('/api/platform/credits/wallet', {cache:'no-store', credentials:'same-origin', signal:options.signal}));
+      } catch (_) { throw new Error('Não foi possível consultar seu saldo agora. A análise não foi iniciada nesta tentativa.'); }
       if (!walletResponse.ok) throw new Error('Não foi possível consultar seu saldo.');
-      const wallet = await walletResponse.json();
       if (wallet.balance < quote.cost) throw new Error(`Saldo insuficiente: esta análise custa ${quote.cost} créditos. Acesse Minha carteira para recarregar.`);
+      progress('Aguardando sua confirmação de créditos.');
       if (!await confirmCost(quote.cost, wallet.balance)) throw new Error('Análise cancelada. Nenhum crédito foi consumido.');
     }
-    let response;
+    progress('INNA está preparando sua resposta. Você pode conferir a análise na carteira se a conexão cair.');
+    let response, result;
     try {
-      response = await fetch('/api/inna/ask', {method:'POST', headers, credentials:'same-origin', body:JSON.stringify({...payload, quote_id:quote.quote_id}), signal:options.signal});
+      ({response, data:result} = await requestJSON('/api/inna/ask', {method:'POST', headers, credentials:'same-origin', body:JSON.stringify({...payload, quote_id:quote.quote_id}), signal:options.signal}, 180000));
     } catch (_) {
       throw new Error('Conexão interrompida. Consulte o histórico de análises na carteira antes de tentar novamente.');
     }
-    const result = await response.clone().json();
     if (result.billing?.state === 'completed' || result.billing?.state === 'refunded' || response.status === 409) sessionStorage.removeItem(key);
     if (response.status === 202) throw new Error(result.detail + ' Consulte Minha carteira.');
     window.dispatchEvent(new CustomEvent('sabino:credits:updated'));
@@ -60,8 +90,7 @@ async function showPrice() {
   const target = document.querySelector('.chat-header');
   (target || input.parentElement).insertAdjacentElement('afterend', note);
   try {
-    const response = await fetch('/api/inna/pricing', {cache:'no-store'});
-    const price = await response.json();
+    const {response, data:price} = await requestJSON('/api/inna/pricing', {cache:'no-store'});
     note.textContent = response.status === 401 ? 'Entre na sua conta para consultar o custo e usar a INNA. '
       : response.ok && price.enabled ? `Análise: ${price.cost} créditos, com confirmação antes de iniciar. `
       : 'Análises com créditos temporariamente indisponíveis. Seu saldo está preservado. ';
