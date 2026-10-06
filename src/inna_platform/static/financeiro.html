@@ -1476,7 +1476,7 @@ window.addEventListener("load", function () {
         <article class="kpi saldo">
 
             <div class="kpi-title">
-                Saldo atual
+                Resultado do período
             </div>
 
             <strong
@@ -1495,7 +1495,7 @@ window.addEventListener("load", function () {
         <article class="kpi">
 
             <div class="kpi-title">
-                Entradas
+                Renda informada
             </div>
 
             <strong
@@ -4700,9 +4700,9 @@ html[data-finance-mode="real"] .category-highlight-value span { display: block; 
             const results = await Promise.allSettled([
                 read("/api/finance/budget/" + month),
                 read("/api/finance/reserve"),
-                ...periods.map(period => read("/api/finance/expenses/summary/" + period.key))
+                read("/api/finance/expenses/summary/" + month)
             ]);
-            const budget = results[0], reserve = results[1], expenses = results[7];
+            const budget = results[0], reserve = results[1], expenses = results[2];
             if (budget.status === "fulfilled") text("entradas", money(budget.value.period?.monthly_income || 0));
             if (reserve.status === "fulfilled") text("reserva", money(reserve.value.reserve?.current_amount || 0));
             if (expenses.status === "fulfilled") {
@@ -4718,11 +4718,14 @@ html[data-finance-mode="real"] .category-highlight-value span { display: block; 
                 el("biggestCategory").closest(".biggest").querySelector(".category-highlight-value")?.remove();
                 text("biggestDescription", "Tente carregar os dados novamente.");
             }
-            renderHistory(periods, results.slice(2));
-            const failed = results.some(result => result.status === "rejected");
+            status.textContent = "Dados atuais consultados. Carregando o histórico dos meses anteriores…";
+            const history = await Promise.allSettled(periods.slice(0, 5).map(period =>
+                read("/api/finance/expenses/summary/" + period.key)));
+            renderHistory(periods, [...history, expenses]);
+            const failed = [...results, ...history].some(result => result.status === "rejected");
             status.textContent = failed
                 ? "Parte dos dados não pôde ser carregada. Os campos indisponíveis estão marcados com —."
-                : "Dados dos módulos atualizados. Entradas e saldo usam a renda informada no Orçamento.";
+                : "Dados atualizados. Resultado do período = renda informada no Orçamento menos gastos registrados. Não é o saldo bancário.";
             retry.hidden = !failed;
             document.querySelectorAll(".kpi-change").forEach(item => { item.textContent = "Referência: " + month; });
             lastLoaded = Date.now();
