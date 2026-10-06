@@ -231,3 +231,9 @@ def sabino_central_logout_redirect(
     )
 
     return response
+
+
+# Password recovery shares the existing identity and session tables.
+from src.inna_platform.services.finance.password_recovery import router as password_recovery_router
+
+router.include_router(password_recovery_router)
