@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Minha conta | Sabino.AI</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#090c0b;color:#f5f5f1}
+*{box-sizing:border-box}body{margin:0}a{color:#e8c25f;text-underline-offset:4px}
+header{max-width:1040px;margin:auto;padding:28px 24px;display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid #252a24}
+.brand{font-size:23px;font-weight:750;text-decoration:none;color:#fff}.brand span{color:#e8c25f}
+main{max-width:1040px;margin:64px auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:64px}
+.eyebrow{color:#e8c25f;font-size:12px;letter-spacing:2px;font-weight:700}h1{font-size:clamp(30px,5vw,46px);line-height:1.15;margin:18px 0}
+p{color:#b7bdb7;line-height:1.7}.panel{padding:28px;border:1px solid #30362c;border-radius:18px;background:#111610}
+label{display:block;margin:0 0 8px;font-size:14px;font-weight:600}input{width:100%;border:1px solid #42493d;background:#080d08;color:#fff;border-radius:9px;padding:13px;font:inherit;margin-bottom:20px}
+input:focus,button:focus-visible,a:focus-visible{outline:2px solid #e8c25f;outline-offset:3px}input[readonly]{color:#afb7ac}
+button{border:0;border-radius:9px;padding:14px 18px;font:inherit;font-weight:700;background:#e8c25f;color:#171b12;cursor:pointer;width:100%}button:disabled{opacity:.55;cursor:wait}
+.hint{font-size:13px;margin:-10px 0 20px}.status{margin:18px 0 0;min-height:26px;overflow-wrap:anywhere}.error{color:#ffb5a9}.success{color:#a5dfb0}
+.links{display:flex;flex-wrap:wrap;gap:18px;margin-top:22px;font-size:14px}[hidden]{display:none!important}
+@media(max-width:700px){header{padding:22px 20px}main{grid-template-columns:1fr;margin:30px auto;gap:20px;padding:0 20px}.panel{padding:22px}h1{font-size:32px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="/dashboard">Sabino<span>.AI</span></a><a id="back" href="/dashboard">Voltar ao início</a></header>
+<main><section><div class="eyebrow">SUA CONTA SABINO.AI</div><h1 id="title">Minha conta</h1><p id="intro">Mantenha seu nome atualizado para uma experiência mais pessoal.</p><p id="accountNote">Seu e-mail identifica o acesso às plataformas. Para trocar a senha, use a recuperação na tela de entrada.</p></section>
+<section class="panel" aria-labelledby="title">
+<form id="accountForm" hidden>
+<label for="name">Como você quer ser chamado?</label><input id="name" name="name" autocomplete="name" required minlength="2" maxlength="100">
+<label for="email">E-mail</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="254">
+<div id="passwordFields" hidden><label for="password">Senha</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="10" maxlength="128"><p class="hint">Use de 10 a 128 caracteres.</p><label for="confirm">Confirme a senha</label><input id="confirm" name="confirm" type="password" autocomplete="new-password" minlength="10" maxlength="128"></div>
+<button id="submit" type="submit">Salvar nome</button>
+</form>
+<p id="status" class="status" role="status" aria-live="polite">Carregando sua conta…</p>
+<div class="links"><a id="loginLink" href="/">Voltar para entrar</a><a id="plansLink" href="/financeiro/meu-plano">Minha assinatura</a><button id="retry" type="button" hidden>Tentar novamente</button></div>
+</section></main>
+<script>
+(() => {
+ 'use strict';
+ const byId = id => document.getElementById(id);
+ const registering = location.pathname === '/cadastro';
+ const form = byId('accountForm'), status = byId('status'), submit = byId('submit');
+ function message(text, error=false) { status.textContent=text; status.className='status '+(error?'error':'success'); }
+ async function call(url, options={}) {
+   const response = await fetch(url, {credentials:'same-origin',cache:'no-store',...options});
+   const data = await response.json().catch(()=>({}));
+   if (!response.ok) {
+     let text = typeof data.detail==='string'?data.detail:'Confira os campos e tente novamente.';
+     if(response.status===401) text='Sua sessão expirou. Entre novamente para acessar sua conta.';
+     if(response.status>=500) text='Serviço temporariamente indisponível. Tente novamente.';
+     throw new Error(text);
+   }
+   return data;
+ }
+ async function loadProfile() {
+   byId('retry').hidden=true;
+   message('Carregando sua conta…');
+   try {
+     const data=await call('/auth/profile');
+     byId('name').value=data.user.name||''; byId('email').value=data.user.email;
+     byId('email').readOnly=true; form.hidden=false; message('');
+   } catch(error) {message(error.message,true);byId('retry').hidden=false;}
+ }
+ if(registering) {
+   document.title='Criar conta | Sabino.AI';byId('title').textContent='Crie sua conta';
+   byId('intro').textContent='Seu ponto de partida para organizar informações e conhecer as plataformas da Sabino.AI.';
+   byId('accountNote').textContent='Criar uma conta não contrata um plano nem gera cobrança. Depois, você escolhe como quer começar.';
+   byId('back').href='/';byId('back').textContent='Já tenho conta';
+   byId('passwordFields').hidden=false;byId('password').required=true;byId('confirm').required=true;
+   byId('plansLink').hidden=true;submit.textContent='Criar conta';form.hidden=false;message('');
+ } else {loadProfile();}
+ byId('retry').addEventListener('click',loadProfile);
+ form.addEventListener('submit',async event=>{
+   event.preventDefault();
+   if(registering&&byId('password').value!==byId('confirm').value){message('As senhas não coincidem.',true);byId('confirm').focus();return;}
+   const body={name:byId('name').value.trim()};
+   if(registering){body.email=byId('email').value.trim();body.password=byId('password').value;}
+   submit.disabled=true;message(registering?'Criando sua conta…':'Salvando…');
+   try {
+     const data=await call(registering?'/auth/register':'/auth/profile',{method:registering?'POST':'PATCH',headers:{'Content-Type':'application/json','X-Sabino-Account':'1'},body:JSON.stringify(body)});
+     message(data.message);
+     if(registering){form.reset();form.hidden=true;byId('loginLink').textContent='Entrar na minha conta →';byId('loginLink').focus();}
+   } catch(error){message(error.message||'Não foi possível conectar. Tente novamente.',true);}
+   finally{submit.disabled=false;}
+ });
+})();
+</script>
+</body></html>

@@ -1444,7 +1444,7 @@ Minhas plataformas
 
 
 <a
-    href="#conta"
+    href="/minha-conta"
     class="menu-item"
 >
 
@@ -5133,6 +5133,20 @@ console.log(
 </script>
 <!-- /SABINO_REMOVE_LEGACY_PT_SELECTOR_V1 -->
 
+<script>
+fetch('/auth/profile', {credentials: 'same-origin', cache: 'no-store'})
+    .then(response => response.ok ? response.json() : null)
+    .then(data => {
+        const name = document.querySelector('.profile strong');
+        if (name && data && data.user) {
+            name.textContent = data.user.name || data.user.email;
+            name.setAttribute('translate', 'no');
+            name.title = name.textContent;
+            name.style.cssText = 'display:block;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+        }
+    })
+    .catch(() => {});
+</script>
 </body>
 
 </html>
