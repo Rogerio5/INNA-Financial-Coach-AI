@@ -2,7 +2,8 @@
 
 #sabinoDashboardHeaderFinal {
 
-    position: fixed !important;
+    /* Anchor to the document so the controls scroll away with the header. */
+    position: absolute !important;
 
     top: 22px !important;
     right: 28px !important;
