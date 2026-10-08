@@ -87,10 +87,13 @@ def finance_auth_login(
     response: Response,
 ):
 
-    user = authenticate_user(
-        email=payload.email,
-        password=payload.password,
-    )
+    try:
+        user = authenticate_user(
+            email=payload.email,
+            password=payload.password,
+        )
+    except ValueError:
+        user = None
 
     if user is None:
 
@@ -184,7 +187,8 @@ def finance_auth_capabilities():
         "login": True,
         "logout": True,
         "me": True,
-        "registration": False,
+        "registration": True,
+        "profile": True,
         "session_storage": "postgresql",
         "cookie_name": AUTH_COOKIE_NAME,
         "cookie_http_only": True,
@@ -237,3 +241,7 @@ def sabino_central_logout_redirect(
 from src.inna_platform.services.finance.password_recovery import router as password_recovery_router
 
 router.include_router(password_recovery_router)
+
+from src.inna_platform.services.finance.account_management import router as account_router
+
+router.include_router(account_router)
