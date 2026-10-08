@@ -2,6 +2,15 @@
 
     "use strict";
 
+    let accountName = "";
+    fetch("/auth/profile", {credentials: "same-origin", cache: "no-store"})
+        .then(response => response.ok ? response.json() : null)
+        .then(data => {
+            accountName = data && data.user ? data.user.name || data.user.email : "";
+            refresh();
+        })
+        .catch(() => {});
+
 
     if (
         window.SabinoDashboardHeaderFinalV2
@@ -549,7 +558,14 @@
 
 
             name.textContent =
-                dict[0];
+                accountName || dict[0];
+
+            name.setAttribute("translate", "no");
+            name.style.maxWidth = "170px";
+            name.style.overflow = "hidden";
+            name.style.textOverflow = "ellipsis";
+            name.style.whiteSpace = "nowrap";
+            name.title = accountName || dict[0];
 
 
             name.setAttribute(
