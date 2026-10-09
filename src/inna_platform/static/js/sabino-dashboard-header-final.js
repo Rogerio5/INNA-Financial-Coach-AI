@@ -662,6 +662,10 @@
             user
         );
 
+        // The legacy anchor also runs on load; keep this child in the flex row.
+        user.style.setProperty("position", "relative", "important");
+        user.style.setProperty("inset", "auto", "important");
+
 
         language.style.setProperty(
             "order",
@@ -741,6 +745,8 @@
         "sabino:locale-change",
         refresh
     );
+
+    window.addEventListener("load", refresh, { once: true });
 
 
     window.addEventListener(
