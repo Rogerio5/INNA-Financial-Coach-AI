@@ -29,6 +29,24 @@
 
 /* Idioma à esquerda */
 
+@media (max-width: 820px) {
+    #sabinoDashboardHeaderFinal {
+        top: 70px !important;
+        left: 18px !important;
+        right: 18px !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+    }
+
+    .sidebar .brand {
+        margin-bottom: 64px !important;
+    }
+
+    #sabinoDashboardHeaderFinal .profile-copy {
+        display: block !important;
+    }
+}
+
 #sabinoDashboardHeaderFinal
 #sabinoLanguageSwitcher {
 
