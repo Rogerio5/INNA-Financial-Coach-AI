@@ -161,6 +161,7 @@ def update_profile(body: ProfileRequest, request: Request, response: Response):
 
 @router.get("/cadastro", include_in_schema=False)
 @router.get("/minha-conta", include_in_schema=False)
+@router.get("/conta", include_in_schema=False)
 def account_page():
     return FileResponse(
         STATIC / "sabino-conta.html",
