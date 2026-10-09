@@ -2503,7 +2503,7 @@ article.budget-panel:has(#gastosLista) h2 {
                 ? brl(total / items.length)
                 : brl(0);
 
-        const categorias = {};
+        const categorias = Object.create(null);
 
         items.forEach(item=>{
             const nome = item.category || "Sem categoria";
@@ -2549,37 +2549,25 @@ article.budget-panel:has(#gastosLista) h2 {
             return;
         }
 
-        lista.innerHTML = items.map(item=>`
-            <div style="
-                display:grid;
-                grid-template-columns:1fr auto;
-                gap:14px;
-                padding:14px 4px;
-                border-bottom:1px solid rgba(255,255,255,.08);
-            ">
-                <div>
-                    <strong style="color:#fff">
-                        ${item.description || "Despesa"}
-                    </strong>
-
-                    <div style="
-                        margin-top:5px;
-                        font-size:12px;
-                        color:#9da7ad;
-                    ">
-                        ${item.category || "Sem categoria"}
-                        · ${dataBR(item.transaction_date)}
-                    </div>
-                </div>
-
-                <strong style="
-                    color:#ffd21f;
-                    white-space:nowrap;
-                ">
-                    ${brl(item.amount)}
-                </strong>
-            </div>
-        `).join("");
+        lista.replaceChildren();
+        items.forEach(item => {
+            const row = document.createElement("div");
+            row.style.cssText = "display:grid;grid-template-columns:1fr auto;gap:14px;padding:14px 4px;border-bottom:1px solid rgba(255,255,255,.08)";
+            const details = document.createElement("div");
+            details.style.minWidth = "0";
+            const description = document.createElement("strong");
+            description.style.cssText = "color:#fff;overflow-wrap:anywhere";
+            description.textContent = item.description || "Despesa";
+            const metadata = document.createElement("div");
+            metadata.style.cssText = "margin-top:5px;font-size:12px;color:#9da7ad;overflow-wrap:anywhere";
+            metadata.textContent = `${item.category || "Sem categoria"} · ${dataBR(item.transaction_date)}`;
+            const amount = document.createElement("strong");
+            amount.style.cssText = "color:#ffd21f;white-space:nowrap";
+            amount.textContent = brl(item.amount);
+            details.append(description, metadata);
+            row.append(details, amount);
+            lista.append(row);
+        });
     }
 
     function atualizarCategorias(items){
@@ -2594,11 +2582,8 @@ article.budget-panel:has(#gastosLista) h2 {
             )
         ].sort((a,b)=>a.localeCompare(b,"pt-BR"));
 
-        categoria.innerHTML =
-            '<option value="">Todas as categorias</option>' +
-            nomes.map(nome=>
-                `<option value="${nome}">${nome}</option>`
-            ).join("");
+        categoria.replaceChildren(new Option("Todas as categorias", ""));
+        nomes.forEach(nome => categoria.add(new Option(nome, nome)));
 
         if(nomes.includes(atual)){
             categoria.value = atual;
@@ -2640,8 +2625,10 @@ article.budget-panel:has(#gastosLista) h2 {
 
         }catch(error){
 
-            lista.innerHTML =
-                `<p style="color:#e0a0a0">${error.message}</p>`;
+            const message = document.createElement("p");
+            message.style.color = "#e0a0a0";
+            message.textContent = error.message;
+            lista.replaceChildren(message);
         }
     }
 

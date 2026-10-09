@@ -4455,7 +4455,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const authResponse =
             await fetch(
-                "/auth/me",
+                "/auth/profile",
                 {
                     credentials: "same-origin",
                     cache: "no-store"
@@ -4470,7 +4470,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             await authResponse.json();
 
         const email =
-            auth?.user?.email || "Conta autenticada";
+            auth?.name || auth?.email || "Conta autenticada";
 
         if (name) {
             name.textContent = email;
