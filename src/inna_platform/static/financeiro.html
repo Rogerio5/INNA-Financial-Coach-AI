@@ -4470,7 +4470,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             await authResponse.json();
 
         const email =
-            auth?.name || auth?.email || "Conta autenticada";
+            auth?.user?.name || auth?.user?.email || "Conta autenticada";
 
         if (name) {
             name.textContent = email;
