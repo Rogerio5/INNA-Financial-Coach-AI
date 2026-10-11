@@ -19,7 +19,7 @@
 <form id="confirmForm"><label for="code">Código de 6 dígitos</label><input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required><button id="activate" type="submit">Confirmar e ativar proteção</button></form></div></section>
 <section class="panel" id="enabledPanel" hidden><h2>Autenticador ativado</h2><p id="remaining"></p><p>Se trocar de aparelho, use sua senha e um código válido para remover o autenticador atual. Em seguida, configure o novo aparelho.</p>
 <form id="disableForm"><label for="disablePassword">Senha atual</label><input id="disablePassword" type="password" autocomplete="current-password" required maxlength="128"><label for="disableCode">Código do autenticador ou de recuperação</label><input id="disableCode" autocomplete="one-time-code" required maxlength="64"><button class="danger" id="disable" type="submit">Desativar autenticador e encerrar sessões</button></form></section>
-<section class="panel" id="recoveryPanel" hidden><h2>Guarde seus códigos de recuperação</h2><p>Eles aparecem somente agora. Cada código funciona uma única vez, junto com sua senha. Guarde-os em um local seguro, separado do aplicativo autenticador.</p><pre id="recoveryCodes"></pre><p>As sessões anteriores foram encerradas. No próximo login, use um novo código do aplicativo ou um destes códigos de recuperação.</p><a href="/">Já guardei os códigos — entrar novamente</a></section>
+<section class="panel" id="recoveryPanel" hidden><h2>Guarde seus códigos de recuperação</h2><p>Eles aparecem somente agora. Cada código funciona uma única vez, junto com sua senha. Guarde-os em um local seguro, separado do aplicativo autenticador.</p><pre id="recoveryCodes"></pre><button id="downloadRecovery" type="button">Baixar códigos de recuperação (.txt)</button><p>O arquivo contém códigos de acesso de uso único. Salve em um local privado. O download fica disponível somente nesta tela, logo após a ativação.</p><p>As sessões anteriores foram encerradas. No próximo login, use um novo código do aplicativo ou um destes códigos de recuperação.</p><a href="/">Já guardei os códigos — entrar novamente</a></section>
 <p><a href="/">Voltar à entrada</a></p></main>
 <script>
 (()=>{'use strict';const $=id=>document.getElementById(id);let setupPassword='';
@@ -30,6 +30,13 @@ api('status').then(data=>{if(data.enabled){$('enabledPanel').hidden=false;$('rem
 $('setupForm').addEventListener('submit',event=>{event.preventDefault();busy($('start'),async()=>{setupPassword=$('password').value;const data=await api('setup',{password:setupPassword});$('secret').textContent=data.secret;$('qrCode').src=data.qr_data_uri;$('enrollment').hidden=false;$('password').value='';message('Escaneie o QR code ou digite a chave no aplicativo e confirme um código para ativar.');$('code').focus();});});
 $('confirmForm').addEventListener('submit',event=>{event.preventDefault();busy($('activate'),async()=>{const data=await api('confirm',{password:setupPassword,code:$('code').value});setupPassword='';$('secret').textContent='';$('qrCode').removeAttribute('src');$('code').value='';$('setupPanel').hidden=true;$('recoveryCodes').textContent=data.recovery_codes.join('\n');$('recoveryPanel').hidden=false;message(data.message);});});
 $('disableForm').addEventListener('submit',event=>{event.preventDefault();if(!confirm('Desativar a proteção em duas etapas e encerrar todas as sessões?'))return;busy($('disable'),async()=>{const data=await api('disable',{password:$('disablePassword').value,code:$('disableCode').value});$('disableForm').reset();$('enabledPanel').hidden=true;message(data.message);});});
+$('downloadRecovery').addEventListener('click',()=>{
+const codes=$('recoveryCodes').textContent.trim();
+if($('recoveryPanel').hidden||!codes)return;
+const text='Sabino.AI — Códigos de recuperação\r\n\r\n'+codes.replace(/\n/g,'\r\n')+'\r\n\r\nCada código funciona uma única vez, junto com sua senha.\r\nGuarde este arquivo em um local privado e não o compartilhe.\r\n';
+const url=URL.createObjectURL(new Blob(['\uFEFF',text],{type:'text/plain;charset=utf-8'}));
+const link=document.createElement('a');link.href=url;link.download='Sabino.AI-codigos-de-recuperacao.txt';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);
+});
 window.addEventListener('pagehide',()=>{setupPassword='';$('secret').textContent='';$('qrCode').removeAttribute('src');$('recoveryCodes').textContent='';});
 })();
 </script></body></html>
