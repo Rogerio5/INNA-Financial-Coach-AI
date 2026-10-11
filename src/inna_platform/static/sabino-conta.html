@@ -30,7 +30,7 @@ button{border:0;border-radius:9px;padding:14px 18px;font:inherit;font-weight:700
 <button id="submit" type="submit">Salvar nome</button>
 </form>
 <p id="status" class="status" role="status" aria-live="polite">Carregando sua conta…</p>
-<div class="links"><a id="loginLink" href="/">Voltar para entrar</a><a id="plansLink" href="/financeiro/meu-plano">Minha assinatura</a><button id="retry" type="button" hidden>Tentar novamente</button></div>
+<div class="links"><a id="loginLink" href="/">Voltar para entrar</a><a id="securityLink" href="/seguranca-conta">Segurança e autenticador</a><a id="plansLink" href="/financeiro/meu-plano">Minha assinatura</a><button id="retry" type="button" hidden>Tentar novamente</button></div>
 </section></main>
 <script>
 (() => {
@@ -65,7 +65,7 @@ button{border:0;border-radius:9px;padding:14px 18px;font:inherit;font-weight:700
    byId('accountNote').textContent='Criar uma conta não contrata um plano nem gera cobrança. Depois, você escolhe como quer começar.';
    byId('back').href='/';byId('back').textContent='Já tenho conta';
    byId('passwordFields').hidden=false;byId('password').required=true;byId('confirm').required=true;
-   byId('plansLink').hidden=true;submit.textContent='Criar conta';form.hidden=false;message('');
+   byId('securityLink').hidden=true;byId('plansLink').hidden=true;submit.textContent='Criar conta';form.hidden=false;message('');
  } else {loadProfile();}
  byId('retry').addEventListener('click',loadProfile);
  form.addEventListener('submit',async event=>{

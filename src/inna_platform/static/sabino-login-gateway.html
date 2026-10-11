@@ -4642,7 +4642,8 @@ document.addEventListener(
                                                     email,
 
                                                 password:
-                                                    passwordValue
+                                                    passwordValue,
+                                                mfa_code: document.getElementById("sabinoMfaCode")?.value || ""
                                             }
                                         )
                                 }
@@ -4654,7 +4655,7 @@ document.addEventListener(
                         ) {
 
                             setAuthStatus(
-                                "E-mail ou senha inválidos.",
+                                document.getElementById("sabinoMfaCode") ? "Credenciais ou código inválidos. Aguarde um novo código e tente novamente." : "E-mail ou senha inválidos.",
                                 "error"
                             );
 
@@ -4676,6 +4677,27 @@ document.addEventListener(
                         var payload =
                             await response.json();
 
+
+                        if (payload && payload.mfa_required) {
+                            let code = document.getElementById("sabinoMfaCode");
+                            if (!code) {
+                                const label = document.createElement("label");
+                                label.htmlFor = "sabinoMfaCode";
+                                label.textContent = "Código do autenticador ou de recuperação";
+                                code = document.createElement("input");
+                                code.id = "sabinoMfaCode";
+                                code.type = "text";
+                                code.autocomplete = "one-time-code";
+                                code.maxLength = 64;
+                                code.style.cssText = "width:100%;padding:14px;margin:10px 0;color:#fff;background:#101510;border:1px solid #bda34b;border-radius:9px";
+                                const block = document.createElement("div");
+                                block.append(label, code);
+                                form.appendChild(block);
+                            }
+                            setAuthStatus("Senha conferida. Informe o código para liberar o acesso.", "");
+                            code.focus();
+                            return;
+                        }
 
                         if (
                             !payload ||
