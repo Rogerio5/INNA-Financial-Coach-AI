@@ -14,6 +14,7 @@ HEADERS = {"Origin": ORIGIN, "X-Sabino-Account": "1"}
 
 @pytest.fixture
 def client(monkeypatch):
+    monkeypatch.setattr(auth.mfa, "login_limit", lambda email: None)
     monkeypatch.setenv("SABINO_PUBLIC_URL", ORIGIN)
     monkeypatch.setattr(accounts, "ensure_schema", lambda: None)
     monkeypatch.setattr(accounts.recovery, "allow", lambda *args: True)
@@ -210,7 +211,7 @@ def test_existing_login_and_logout_still_work(client, monkeypatch):
         lambda **kwargs: {"user_id": "owner", "email": "ana@example.com"},
     )
     monkeypatch.setattr(
-        auth, "create_session", lambda **kwargs: {"session_token": "test-token"}
+        auth.mfa, "login_session", lambda *args: {"session_token": "test-token"}
     )
     monkeypatch.setattr(
         auth,
