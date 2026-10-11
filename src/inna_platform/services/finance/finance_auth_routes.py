@@ -10,11 +10,12 @@ from fastapi import (
     status,
 )
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from . import mfa
 
 from src.inna_platform.services.finance.finance_identity import (
     authenticate_user,
-    create_session,
     resolve_session_user,
     revoke_session,
 )
@@ -46,8 +47,9 @@ AUTH_SESSION_MAX_AGE = 12 * 60 * 60
 
 
 class LoginRequest(BaseModel):
-    email: str
-    password: str
+    email: str = Field(max_length=254)
+    password: str = Field(max_length=128)
+    mfa_code: str = Field(default="", max_length=64)
 
 
 def get_authenticated_user(
@@ -88,6 +90,7 @@ def finance_auth_login(
 ):
 
     try:
+        mfa.login_limit(payload.email)
         user = authenticate_user(
             email=payload.email,
             password=payload.password,
@@ -102,10 +105,15 @@ def finance_auth_login(
             detail="Credenciais inválidas",
         )
 
-    session = create_session(
-        user_id=user["user_id"],
-    )
-
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        session = mfa.login_session(user, payload.password, payload.mfa_code)
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(503, "Não foi possível validar o acesso. Tente novamente.") from None
+    if session is None:
+        return {"authenticated": False, "mfa_required": True}
     response.set_cookie(
         key=AUTH_COOKIE_NAME,
         value=session["session_token"],
@@ -245,3 +253,4 @@ router.include_router(password_recovery_router)
 from src.inna_platform.services.finance.account_management import router as account_router
 
 router.include_router(account_router)
+router.include_router(mfa.router)
