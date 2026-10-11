@@ -12,6 +12,9 @@ app = FastAPI(
     version="1.0.0",
 )
 
+from src.inna_platform.services.finance.mfa import account_page_gate
+app.middleware("http")(account_page_gate)
+
 app.mount(
     "/static",
     StaticFiles(directory=BASE_DIR / "static"),
