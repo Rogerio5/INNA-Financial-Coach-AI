@@ -63,8 +63,12 @@ def render(row):
     info = service.public(row)
     if row['state'] == 'completed':
         return JSONResponse({**row['result'], 'billing': info}, headers={'Cache-Control': 'no-store'})
-    message = ('A análise falhou e os créditos foram devolvidos.' if row['state'] == 'refunded'
-               else 'Análise em processamento ou aguardando conferência. Não será cobrada novamente ao consultar.')
+    messages = {
+        'refunded': 'A análise falhou e os créditos foram devolvidos.',
+        'needs_review': 'A entrega da resposta não pôde ser confirmada. Os créditos continuam reservados enquanto a análise aguarda conferência. Consulte Minha carteira; consultar não cobra novamente.',
+        'running': 'A INNA ainda está analisando. Consultar o resultado não cobra novamente.',
+    }
+    message = messages.get(row['state'], 'A análise ainda não foi iniciada. Nenhum crédito foi consumido.')
     return JSONResponse({'billing': info, 'detail': message}, status_code=422 if row['state'] == 'refunded' else 202,
                         headers={'Cache-Control': 'no-store'})
 

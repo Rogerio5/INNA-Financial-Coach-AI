@@ -107,6 +107,14 @@ def finalize(user_id, quote_id, *, result=None, uncertain=False, review=None):
         return row
 
 
+def validate_result(data):
+    if (not isinstance(data, dict) or not isinstance(data.get('resposta'), str)
+            or not data['resposta'].strip() or data.get('ok') is False
+            or data.get('fallback') is True or data.get('error')):
+        raise ValueError('Resposta válida não entregue')
+    return data
+
+
 async def backend(payload):
     from src.services.financial_scenario import answer_financial_scenario
 
@@ -124,10 +132,7 @@ async def backend(payload):
         response = await client.post(url, json=payload)
         response.raise_for_status()
         data = response.json()
-    if (not isinstance(data, dict) or not isinstance(data.get('resposta'), str)
-            or not data['resposta'].strip() or data.get('ok') is False
-            or data.get('fallback') is True or data.get('error')):
-        raise ValueError('Resposta válida não entregue')
+    validate_result(data)
     data['sabino_global_locale'] = payload['idioma']
     return data
 
@@ -137,18 +142,19 @@ async def execute(user_id, quote_id, payload, worker=None):
     if not started:
         return row
     try:
-        result = await (worker or backend)(payload)
+        result = validate_result(await (worker or backend)(payload))
     except (httpx.ConnectError, httpx.ConnectTimeout, httpx.HTTPStatusError, ValueError) as exc:
         # Do not log URLs, payloads or exception messages: they may contain secrets.
         logger.warning('INNA backend failed; refunding: error=%s status=%s',
                        type(exc).__name__,
                        exc.response.status_code if isinstance(exc, httpx.HTTPStatusError) else None)
         return finalize(user_id, quote_id)
-    except (Exception, asyncio.CancelledError):
-        # A timeout or interrupted connection cannot prove whether work finished.
-        # Never re-execute a running/uncertain quote, even after process restart.
+    except asyncio.CancelledError:
         finalize(user_id, quote_id, uncertain=True)
         raise
+    except Exception:
+        # Preserve the reservation when delivery is uncertain; never rerun it.
+        return finalize(user_id, quote_id, uncertain=True)
     return finalize(user_id, quote_id, result=result)
 
 
