@@ -62,7 +62,7 @@ def test_confirmed_failure_refunds_once(paid, error):
 def test_timeout_never_reruns_or_silently_refunds(paid):
     quote_id = make_quote(); calls = []
     async def worker(payload): calls.append(1); raise httpx.ReadTimeout('uncertain')
-    with pytest.raises(httpx.ReadTimeout): asyncio.run(service.execute('alice', quote_id, PAYLOAD, worker))
+    assert asyncio.run(service.execute('alice', quote_id, PAYLOAD, worker))['state'] == 'needs_review'
     assert asyncio.run(service.execute('alice', quote_id, PAYLOAD, worker))['state'] == 'needs_review'
     assert calls == [1]
     assert wallet.snapshot('alice')['balance'] == 95
@@ -181,3 +181,30 @@ def test_live_paid_analysis_isolated_wallet(paid):
     cached = client().get('/api/inna/analyses/'+q)
     assert cached.json()['resposta'] == result.json()['resposta']
     assert wallet.snapshot('alice')['balance'] == 95
+
+
+@pytest.mark.parametrize('result', [None, {}, {'resposta':' '}, {'resposta':'não disponível','fallback':True}])
+def test_every_worker_must_deliver_valid_answer(paid, result):
+    q = make_quote()
+    async def worker(payload): return result
+    assert asyncio.run(service.execute('alice',q,PAYLOAD,worker))['state']=='refunded'
+    assert wallet.snapshot('alice')['balance']==100
+
+
+def test_worker_receives_exact_question_locale_and_options(paid):
+    q=make_quote()
+    async def worker(payload):
+        assert payload==PAYLOAD
+        return {'resposta':'Resposta correspondente à pergunta'}
+    assert asyncio.run(service.execute('alice',q,PAYLOAD,worker))['state']=='completed'
+
+
+def test_uncertain_response_has_explicit_202_state(paid, monkeypatch):
+    q=make_quote()
+    async def worker(payload): raise httpx.ReadTimeout('uncertain')
+    monkeypatch.setattr(service,'backend',worker)
+    response=client().post('/api/inna/ask',json={**PAYLOAD,'quote_id':q},headers=HEADERS)
+    assert response.status_code==202
+    assert response.json()['billing']['state']=='needs_review'
+    assert 'reservados' in response.json()['detail']
+    assert wallet.snapshot('alice')['balance']==95
