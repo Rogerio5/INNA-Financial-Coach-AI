@@ -100,16 +100,11 @@ def _normalize_amount(
             "amount inválido"
         ) from exc
 
-    amount = amount.quantize(
-        Decimal("0.01"),
-        rounding=ROUND_HALF_UP,
-    )
-
-    if amount <= Decimal("0.00"):
-
-        raise ValueError(
-            "amount deve ser maior que zero"
-        )
+    if not amount.is_finite() or amount <= 0 or amount >= Decimal("1000000000000"):
+        raise ValueError("Valor deve ser positivo e menor que 1 trilhão")
+    amount = amount.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    if amount <= 0 or amount >= Decimal("1000000000000"):
+        raise ValueError("Valor fora do intervalo permitido")
 
     return amount
 
@@ -1089,3 +1084,27 @@ def create_financial_transaction_idempotent(
         result["already_existed"] = True
 
         return result
+
+
+def update_financial_transaction(*, owner_id, transaction_id, amount, description, category, transaction_date):
+    """Edit a BRL expense using server-resolved ownership in the same statement."""
+    if not str(transaction_id).strip():
+        raise ValueError("transaction_id é obrigatório")
+    data = build_financial_transaction(
+        owner_id=owner_id, amount=amount, description=description,
+        category=category, transaction_date=transaction_date,
+    )
+    sql = f"""
+        UPDATE {TRANSACTION_TABLE}
+        SET amount = %s, description = %s, category = %s, transaction_date = %s,
+            classification_strategy = 'manual', classification_confirmed = TRUE,
+            classification_confidence = NULL, semantic_similarity = NULL,
+            semantic_margin = NULL, subcategory = NULL, updated_at = CURRENT_TIMESTAMP
+        WHERE owner_id = %s AND transaction_id = %s
+          AND transaction_type = 'Despesa' AND currency = 'BRL'
+        RETURNING {', '.join(_RETURNING_COLUMNS)}
+    """
+    with cursor_postgres(dict_cursor=False, commit_automatico=True) as cursor:
+        cursor.execute(sql, (data['amount'], data['description'], data['category'],
+                            data['transaction_date'], data['owner_id'], str(transaction_id).strip()))
+        return _row_to_dict(cursor.fetchone())
