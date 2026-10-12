@@ -2283,10 +2283,26 @@ article.budget-panel:has(#gastosLista) h2 {
     const date =
         document.getElementById("expenseDate");
 
-    date.value =
-        new Date().toISOString().slice(0,10);
+    let editingId = null;
+    const save = document.getElementById("saveExpense");
+    const localDate = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+    date.value = localDate();
+    window.editExpense = item => {
+        editingId = item.transaction_id;
+        form.elements.description.value = item.description;
+        form.elements.amount.value = item.amount;
+        form.elements.category.value = item.category;
+        date.value = String(item.transaction_date).slice(0,10);
+        form.querySelector('h2').textContent = 'Editar despesa';
+        status.textContent = '';
+        modal.classList.add('open');
+        form.elements.description.focus();
+    };
 
     open.addEventListener("click",()=>{
+        editingId = null;
+        form.reset(); date.value = localDate();
+        form.querySelector('h2').textContent = 'Adicionar despesa';
         status.textContent="";
         modal.classList.add("open");
     });
@@ -2299,6 +2315,8 @@ article.budget-panel:has(#gastosLista) h2 {
 
         event.preventDefault();
 
+        if(save.disabled) return;
+        save.disabled = true; cancel.disabled = true;
         status.textContent="Salvando...";
 
         const payload={
@@ -2318,9 +2336,9 @@ article.budget-panel:has(#gastosLista) h2 {
         try{
 
             const response=await fetch(
-                "/api/finance/expenses",
+                editingId ? '/api/platform/finance/transactions/' + encodeURIComponent(editingId) : "/api/finance/expenses",
                 {
-                    method:"POST",
+                    method:editingId ? "PUT" : "POST",
                     credentials:"same-origin",
                     headers:{
                         "Content-Type":"application/json"
@@ -2333,7 +2351,7 @@ article.budget-panel:has(#gastosLista) h2 {
 
             if(!response.ok){
                 throw new Error(
-                    data.detail || "Falha ao salvar"
+                    typeof data.detail === "string" ? data.detail : "Confira os campos e tente novamente."
                 );
             }
 
@@ -2351,11 +2369,10 @@ article.budget-panel:has(#gastosLista) h2 {
             form.reset();
 
             date.value=
-                new Date().toISOString().slice(0,10);
+                localDate();
 
-            setTimeout(()=>{
-                modal.classList.remove("open");
-            },600);
+            editingId = null;
+            modal.classList.remove("open");
 
         }catch(error){
 
@@ -2363,7 +2380,7 @@ article.budget-panel:has(#gastosLista) h2 {
                 error.message ||
                 "Não foi possível salvar a despesa.";
 
-        }
+        } finally { save.disabled = false; cancel.disabled = false; }
 
     });
 
@@ -2491,16 +2508,16 @@ article.budget-panel:has(#gastosLista) h2 {
     function atualizarKPIs(items){
 
         const total = items.reduce(
-            (s,item) => s + Number(item.amount || 0),
+            (s,item) => s + Math.round(Number(item.amount || 0) * 100),
             0
         );
 
-        totalEl.textContent = brl(total);
+        totalEl.textContent = brl(total / 100);
         qtdEl.textContent = items.length;
 
         mediaEl.textContent =
             items.length
-                ? brl(total / items.length)
+                ? brl(total / 100 / items.length)
                 : brl(0);
 
         const categorias = Object.create(null);
@@ -2565,6 +2582,24 @@ article.budget-panel:has(#gastosLista) h2 {
             amount.style.cssText = "color:#ffd21f;white-space:nowrap";
             amount.textContent = brl(item.amount);
             details.append(description, metadata);
+            const actions = document.createElement('div');
+            actions.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px';
+            const edit = document.createElement('button'); edit.type = 'button'; edit.textContent = 'Editar';
+            const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Excluir';
+            [edit, remove].forEach(button => { button.style.cssText = 'padding:8px 12px;border:1px solid #52616a;border-radius:8px;background:#111a1f;color:#fff;cursor:pointer'; });
+            edit.addEventListener('click', () => window.editExpense(item));
+            remove.addEventListener('click', async () => {
+                if(!window.confirm(`Excluir a despesa “${item.description}” de ${brl(item.amount)}? Esta ação não pode ser desfeita.`)) return;
+                remove.disabled = true; edit.disabled = true;
+                try {
+                    const response = await fetch('/api/platform/finance/transactions/' + encodeURIComponent(item.transaction_id), {method:'DELETE',credentials:'same-origin'});
+                    if(!response.ok) throw new Error('Não foi possível excluir. Atualize a lista e tente novamente.');
+                    await carregarGastos();
+                    if(window.refreshBudgetUsage) await window.refreshBudgetUsage();
+                } catch(error) { window.alert(error.message); }
+                finally { remove.disabled = false; edit.disabled = false; }
+            });
+            actions.append(edit, remove); details.append(actions);
             row.append(details, amount);
             lista.append(row);
         });
