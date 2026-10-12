@@ -4,6 +4,14 @@ let busy = false;
 function progress(message) {
   const status = document.querySelector('.inna-loading');
   if (status) { status.textContent = message; status.setAttribute('role', 'status'); }
+  let summary = document.getElementById('inna-analysis-status');
+  const note = document.getElementById('inna-credit-price');
+  if (!summary && note) {
+    summary = document.createElement('p'); summary.id = 'inna-analysis-status';
+    summary.setAttribute('role', 'status'); summary.style.cssText = 'font:14px system-ui;color:#cad3d6;margin:4px 0 12px';
+    note.insertAdjacentElement('afterend', summary);
+  }
+  if (summary) summary.textContent = message;
 }
 
 async function requestJSON(url, init = {}, timeout = 60000) {
@@ -67,17 +75,39 @@ export async function askPaid(payload, options = {}) {
       progress('Aguardando sua confirmação de créditos.');
       if (!await confirmCost(quote.cost, wallet.balance)) throw new Error('Análise cancelada. Nenhum crédito foi consumido.');
     }
-    progress('INNA está preparando sua resposta. Você pode conferir a análise na carteira se a conexão cair.');
+    const resultURL = '/api/inna/analyses/' + encodeURIComponent(quote.quote_id);
+    progress(quote.state === 'completed' ? 'Recuperando a resposta concluída, sem nova cobrança...' : 'Iniciando a análise… Aguardando confirmação da reserva de créditos.');
     let response, result;
     try {
-      ({response, data:result} = await requestJSON('/api/inna/ask', {method:'POST', headers, credentials:'same-origin', body:JSON.stringify({...payload, quote_id:quote.quote_id}), signal:options.signal}, 180000));
+      if (quote.state === 'quoted') {
+        ({response, data:result} = await requestJSON('/api/inna/ask', {method:'POST', headers, credentials:'same-origin', body:JSON.stringify({...payload, quote_id:quote.quote_id}), signal:options.signal}, 180000));
+      } else {
+        ({response, data:result} = await requestJSON(resultURL, {cache:'no-store', credentials:'same-origin', signal:options.signal}));
+      }
     } catch (_) {
-      throw new Error('Conexão interrompida. Consulte o histórico de análises na carteira antes de tentar novamente.');
+      // A lost response is not proof of failure: read the same operation, never start another.
+      try {
+        ({response, data:result} = await requestJSON(resultURL, {cache:'no-store', credentials:'same-origin', signal:options.signal}, 15000));
+      } catch (_) {
+        throw new Error('Não foi possível confirmar o resultado. Consulte Minha carteira. Reenviar esta mesma pergunta nesta aba consultará a análise existente, sem iniciar outra cobrança.');
+      }
     }
-    if (result.billing?.state === 'completed' || result.billing?.state === 'refunded' || response.status === 409) sessionStorage.removeItem(key);
-    if (response.status === 202) throw new Error(result.detail + ' Consulte Minha carteira.');
+    for (let attempt = 0; response.status === 202 && result.billing?.state === 'running' && attempt < 5; attempt++) {
+      progress('Analisando… Consultando o andamento sem nova cobrança.');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      ({response, data:result} = await requestJSON(resultURL, {cache:'no-store', credentials:'same-origin', signal:options.signal}, 15000));
+    }
+    // Keep completed requests reusable in this tab. Only a refunded or expired quote can be replaced.
+    if (result.billing?.state === 'refunded' || (response.status === 409 && quote.state === 'quoted')) sessionStorage.removeItem(key);
     window.dispatchEvent(new CustomEvent('sabino:credits:updated'));
+    if (response.status === 202) throw new Error(result.detail || 'Análise em andamento. Consulte Minha carteira sem nova cobrança.');
+    if (result.billing?.state === 'completed') progress('Concluído. Resposta disponível; reenviar esta mesma pergunta nesta aba não cobra novamente.');
+    else if (result.billing?.state === 'refunded') progress('Falhou — os créditos foram devolvidos.');
+    else if (!response.ok) progress(typeof result.detail === 'string' ? result.detail : 'Não foi possível iniciar a análise. Consulte Minha carteira.');
     return response;
+  } catch (error) {
+    progress(error.message || 'Não foi possível confirmar a análise. Consulte Minha carteira.');
+    throw error;
   } finally { busy = false; }
 }
 
