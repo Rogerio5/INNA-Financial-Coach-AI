@@ -5270,3 +5270,6 @@ app.include_router(credit_router)
 
 from src.inna_platform.services.finance.manual_pix_routes import router as manual_pix_router
 app.include_router(manual_pix_router)
+
+from src.inna_platform.services.finance.finance_pilot import router as finance_pilot_router
+app.include_router(finance_pilot_router)
