@@ -93,14 +93,16 @@ def approve(order_id, *, reviewer_id, bank_reference, received_cents, reason):
             raise PixConflict("Benefício inválido")
         if kind == "plan":
             cur.execute(
-                """SELECT plan_code FROM inna_user_platform_entitlements
+                """SELECT plan_code,expires_at FROM inna_user_platform_entitlements
                            WHERE user_id=%s AND platform_code='financeiro' AND status='active'
                            AND (expires_at IS NULL OR expires_at > NOW()) FOR UPDATE""",
                 (user_id,),
             )
             active = cur.fetchone()
-            if active and active["plan_code"] != order["product_code"]:
+            if active and active["plan_code"] not in {order["product_code"], "piloto_30_dias"}:
                 raise PixConflict("Troca de plano ativo requer revisão específica")
+            if active and active["expires_at"] is None:
+                raise PixConflict("Acesso sem vencimento será preservado; requer revisão específica")
             cur.execute(
                 """INSERT INTO inna_user_platform_entitlements
                 (entitlement_id,user_id,platform_code,plan_code,status,activated_at,expires_at)
