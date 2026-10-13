@@ -36,7 +36,7 @@ dt{color:#b8c4cb;margin-top:18px}dd{margin:6px 0;font-size:20px}
 <article><h2>Contratação e pagamento</h2>
 <p>Os planos disponíveis são Essencial, Evolução e Completo. Consulte os valores e os créditos incluídos na página de planos.</p>
 <p class="notice">Pagamento por Pix com conferência manual. Após confirmar o recebimento, o plano libera acesso ao Financeiro por um mês e adiciona os créditos incluídos.</p>
-<p>Renovação manual, sem cobrança automática. Renovar o mesmo plano acrescenta um mês à validade vigente; se o acesso venceu, a validade começa na nova aprovação. Pacotes de créditos avulsos não ativam assinatura.</p>
+<p>Renovação manual, sem cobrança automática. Durante o piloto, contratar um plano acrescenta um mês ao prazo restante. Renovar o mesmo plano acrescenta um mês à validade vigente; se o acesso venceu, a validade começa na nova aprovação. Pacotes de créditos avulsos não ativam assinatura.</p>
 </article></section>
 <p>O Reembolso Inteligente permanece em construção e não é oferecido aqui como um produto já disponível.</p>
 <footer>Sabino.AI · Seu acesso é controlado pela sua conta autenticada.</footer>
@@ -49,7 +49,7 @@ dt{color:#b8c4cb;margin-top:18px}dd{margin:6px 0;font-size:20px}
   if(response.status===401){error.textContent="Sua sessão expirou. Entre novamente para consultar seu plano.";error.hidden=false;return;}
   if(!response.ok)throw new Error("access_unavailable");
   const data=await response.json();
-  const names={essencial:"Essencial",evolucao:"Evolução",completo:"Completo",premium:"Premium (plano anterior)"};
+  const names={piloto_30_dias:"Piloto gratuito · 30 dias",essencial:"Essencial",evolucao:"Evolução",completo:"Completo",premium:"Premium (plano anterior)"};
   const statuses={active:"Ativo",pending:"Pendente",cancelled:"Cancelado",expired:"Expirado"};
   document.getElementById("plan").textContent=names[data.plan_code]||data.plan_code||"Nenhum plano registrado";
   const isExpired=data.expires_at && new Date(data.expires_at)<=new Date();
