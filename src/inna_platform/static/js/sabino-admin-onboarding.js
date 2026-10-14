@@ -51,13 +51,23 @@
    byId('page').textContent=total?`${offset+1}–${Math.min(offset+50,total)} de ${total} encontrados`:'Nenhum participante';byId('previous').disabled=offset===0;byId('next').disabled=offset+50>=total;
  }
  async function load(){
-   const version=++generation;status.textContent='Carregando participantes…';list.replaceChildren();byId('overview').hidden=true;byId('previous').disabled=true;byId('next').disabled=true;
+   const version=++generation;status.textContent='Carregando participantes…';byId('page').textContent='';list.replaceChildren();byId('overview').hidden=true;byId('previous').disabled=true;byId('next').disabled=true;
    try{const query=new URLSearchParams({offset:String(offset),limit:'50',situation:appliedSituation,search:appliedSearch});const response=await fetch(`/api/sabino/admin/onboarding?${query}`,{credentials:'same-origin',cache:'no-store'});
      if(!response.ok)throw new Error(response.status===403?'Acesso restrito à administração da Sabino.AI.':response.status===401?'Sua sessão expirou. Entre novamente.':'Não foi possível consultar o acompanhamento. Tente novamente.');
-     const data=await response.json();if(version!==generation)return;total=data.total;renderSummary(data.summary);renderRows(data.participants);status.textContent=data.pilot_available?'Lista de participantes':'O registro de participantes do piloto ainda não está disponível.';
+     const data=await response.json();if(version!==generation)return;if(!data.pilot_available){
+       total=0;byId('page').textContent='';
+       status.textContent='Acompanhamento do piloto ainda não disponível';
+       const notice=document.createElement('article');notice.className='sb-participant';
+       notice.append(text('h2','Prepare a entrada dos participantes'),text('p','O registro do piloto ainda não foi inicializado. Por isso, os totais e os gráficos não são exibidos.'),text('p','Isso não significa que a Sabino.AI não tenha contas cadastradas. Este painel acompanha somente quem ativou o piloto.'),text('p','Próxima etapa: configurar a entrada no piloto. Depois, use Atualizar para consultar os participantes.'));
+       list.replaceChildren(notice);return;
+     }
+     total=data.total;renderSummary(data.summary);renderRows(data.participants);
+     if(data.summary.total===0){
+       status.textContent='Nenhuma ativação do piloto registrada';
+       list.replaceChildren(text('p','Os participantes aparecerão aqui após ativarem o piloto. Os gráficos serão preenchidos com os dados reais de acompanhamento.'));
+     }else{status.textContent=total===1?'1 participante encontrado':total+' participantes encontrados';}
    }catch(error){if(version!==generation)return;total=0;list.replaceChildren();byId('overview').hidden=true;byId('page').textContent='';status.textContent=error.message;}
  }
  function apply(){appliedSearch=byId('search').value;appliedSituation=byId('filter').value;offset=0;load();}
  byId('filters').addEventListener('submit',event=>{event.preventDefault();apply();});byId('reload').addEventListener('click',load);byId('previous').addEventListener('click',()=>{offset=Math.max(0,offset-50);load();});byId('next').addEventListener('click',()=>{offset+=50;load();});load();
 })();
-
