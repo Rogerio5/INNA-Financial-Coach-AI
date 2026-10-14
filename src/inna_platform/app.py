@@ -5273,3 +5273,7 @@ app.include_router(manual_pix_router)
 
 from src.inna_platform.services.finance.finance_pilot import router as finance_pilot_router
 app.include_router(finance_pilot_router)
+
+
+from src.inna_platform.services.sabino_onboarding import router as sabino_onboarding_router
+app.include_router(sabino_onboarding_router)
