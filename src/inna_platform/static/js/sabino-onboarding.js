@@ -13,7 +13,24 @@
     if (!response.ok) throw new Error(response.status === 401 ? 'Entre novamente para ver seus primeiros passos.' : 'Não foi possível carregar ou salvar seu progresso.');
     return response.json();
   }
+  function updateAdminMenu(allowed) {
+    document.getElementById('sabino-admin-nav')?.remove();
+    if (!allowed) return;
+    const account = document.querySelector('nav.menu a[href="/minha-conta"]');
+    if (!account) return;
+    const admin = node('a');
+    admin.id = 'sabino-admin-nav';
+    admin.className = 'menu-item';
+    admin.href = '/admin/primeiros-passos';
+    admin.setAttribute('aria-label', 'Administração');
+    const icon = node('span', '⚙');
+    icon.className = 'menu-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    admin.append(icon, node('span', 'Administração'));
+    account.after(admin);
+  }
   async function load() {
+    updateAdminMenu(false);
     root.replaceChildren(node('p', 'Carregando seus primeiros passos…'));
     try { render(await request()); }
     catch (error) {
@@ -46,7 +63,7 @@
     });
     root.replaceChildren(title,summary,meter,steps,feedback);
     const refresh=node('button','Atualizar progresso');refresh.type='button';refresh.addEventListener('click',load);root.append(refresh);
-    if(data.is_admin){const admin=node('a','Acompanhar participantes →');admin.href='/admin/primeiros-passos';const actions=node('div');actions.className='sb-actions';actions.append(admin);root.append(actions);}
+    updateAdminMenu(data.is_admin === true);
   }
   load();
 })();
