@@ -5277,3 +5277,6 @@ app.include_router(finance_pilot_router)
 
 from src.inna_platform.services.sabino_onboarding import router as sabino_onboarding_router
 app.include_router(sabino_onboarding_router)
+
+from src.inna_platform.services.sabino_support import router as sabino_support_router
+app.include_router(sabino_support_router)
