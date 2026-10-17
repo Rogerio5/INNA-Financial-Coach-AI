@@ -2389,6 +2389,12 @@ document.addEventListener(
         }
 
 
+        // Financeiro já possui sua própria aplicação e controle de acesso.
+        if (key === "financeiro") {
+            window.location.replace("/financeiro");
+            return;
+        }
+
         const platform =
             SABINO_PLATFORMS[key];
 
@@ -2475,14 +2481,14 @@ document.addEventListener(
 
         if (sectionTitle) {
             sectionTitle.textContent =
-                "Módulos disponíveis";
+                "Módulos em desenvolvimento";
         }
 
 
         if (sectionCount) {
             sectionCount.textContent =
                 platform.modules.length +
-                " módulos";
+                " módulos previstos";
         }
 
 
@@ -2531,8 +2537,10 @@ document.addEventListener(
                                     type="button"
                                     class="platform-button sabino-module-open"
                                     data-module="${module[1]}"
+                                    disabled
+                                    aria-label="${module[1]}: em desenvolvimento"
                                 >
-                                    Acessar →
+                                    Em desenvolvimento
                                 </button>
 
                             </div>
@@ -2549,29 +2557,6 @@ document.addEventListener(
            BOTÕES DOS MÓDULOS
            Ainda sem inventar rotas.
            ------------------------------------------------- */
-
-        document
-            .querySelectorAll(
-                ".sabino-module-open"
-            )
-            .forEach(
-                function (button) {
-
-                    button.addEventListener(
-                        "click",
-                        function () {
-
-                            alert(
-                                button.dataset.module +
-                                "\n\nEste módulo será conectado à rota real."
-                            );
-
-                        }
-                    );
-
-                }
-            );
-
 
         /* -------------------------------------------------
            INNA CONTEXTUAL
@@ -5150,6 +5135,7 @@ fetch('/auth/profile', {credentials: 'same-origin', cache: 'no-store'})
 </body>
 
 </html>
+
 
 
 
