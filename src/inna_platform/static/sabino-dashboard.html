@@ -1881,6 +1881,14 @@ a {
 </script>
 
     <link rel="stylesheet" href="/static/css/sabino-dashboard-top-anchor-v4.css">
+<style id="sabino-session-exit-style">
+.sabino-session-exit { flex: 0 0 auto; }
+.sabino-session-exit .logout { width: 100%; font: inherit; cursor: pointer; text-align: left; }
+.sabino-session-exit .logout:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.sabino-session-exit .logout:disabled { opacity: .65; cursor: wait; }
+#logoutStatus { margin: 4px 10px; max-width: 240px; font-size: 12px; color: #f4ca64; white-space: normal; }
+#logoutStatus:empty { display: none; }
+</style>
 </head>
 
 
@@ -2018,14 +2026,13 @@ INNA
 
 </a>
 
-</nav>
-
-
-<div class="sidebar-bottom">
+<div class="sabino-session-exit">
 
 <button
     id="logoutButton"
-    class="logout"
+    class="menu-item logout"
+    aria-label="Sair da conta"
+    aria-describedby="logoutStatus"
     type="button"
 >
 
@@ -2040,12 +2047,17 @@ INNA
 </span>
 
 <span data-i18n="logout">
-Sair
+Sair da conta
 </span>
 
 </button>
+<p id="logoutStatus" role="status" aria-live="polite"></p>
 
 </div>
+</nav>
+
+
+
 
 
 </aside>
@@ -2420,8 +2432,7 @@ pt: {
     account:
         "Minha conta",
 
-    logout:
-        "Sair",
+    logout: "Sair da conta",
 
     user:
         "Usuário",
@@ -5110,47 +5121,38 @@ document.addEventListener(
     }
 
 
-    async function secureLogout(
-        event
-    ) {
-
+    async function secureLogout(event) {
         if (event) {
-
             event.preventDefault();
             event.stopImmediatePropagation();
-
         }
-
-
+        const button = document.getElementById("logoutButton");
+        const status = document.getElementById("logoutStatus");
+        if (button.disabled) return;
+        button.disabled = true;
+        button.setAttribute("aria-busy", "true");
+        status.textContent = "Encerrando sua sessão…";
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 15000);
         try {
-
-            await fetch(
-                "/auth/logout",
-                {
-                    method: "POST",
-                    credentials: "same-origin"
-                }
-            );
-
+            const response = await fetch("/auth/logout", {
+                method: "POST",
+                credentials: "same-origin",
+                cache: "no-store",
+                signal: controller.signal
+            });
+            if (!response.ok) throw new Error("Logout failed");
+            const result = await response.json();
+            if (result.logged_out !== true) throw new Error("Logout not confirmed");
+            window.location.replace("/");
+        } catch (_) {
+            status.textContent = "Não foi possível confirmar a saída. Tente novamente.";
+        } finally {
+            window.clearTimeout(timeout);
+            button.disabled = false;
+            button.removeAttribute("aria-busy");
         }
-        catch (error) {
-
-            console.error(
-                "SABINO_TC4_D1_LOGOUT_ERROR",
-                error
-            );
-
-        }
-        finally {
-
-            window.location.replace(
-                "/"
-            );
-
-        }
-
     }
-
 
     document.addEventListener(
         "DOMContentLoaded",
@@ -5768,3 +5770,4 @@ document.addEventListener("DOMContentLoaded", function () {
     <script defer src="/static/js/sabino-dashboard-top-anchor-v4.js"></script>
 </body>
 </html>
+
