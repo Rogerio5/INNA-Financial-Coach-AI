@@ -2146,9 +2146,33 @@ para apoiar suas decisões em um só lugar.
      ======================================================= -->
 
 <section id="platforms">
-<section id="sabino-onboarding" aria-label="Primeiros passos na Sabino.AI"></section>
-<link rel="stylesheet" href="/static/css/sabino-onboarding.css?v=20261014">
-<script defer src="/static/js/sabino-onboarding.js?v=20261014_admin_nav"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const response = await fetch("/api/sabino/onboarding", {credentials:"same-origin", cache:"no-store"});
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data.is_admin !== true) return;
+        const account = document.querySelector('nav.menu a[href="/minha-conta"]');
+        if (!account || document.getElementById("sabino-admin-nav")) return;
+        const link = document.createElement("a");
+        link.id = "sabino-admin-nav";
+        link.className = "menu-item";
+        link.href = "/admin/primeiros-passos";
+        link.setAttribute("aria-label", "Administração");
+        const icon = document.createElement("span");
+        icon.className = "menu-icon";
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = "⚙";
+        const label = document.createElement("span");
+        label.textContent = "Administração";
+        link.append(icon, label);
+        account.after(link);
+    } catch (_) {
+        // O servidor continua responsável por autorizar a área administrativa.
+    }
+});
+</script>
 
 
 
@@ -5770,4 +5794,5 @@ document.addEventListener("DOMContentLoaded", function () {
     <script defer src="/static/js/sabino-dashboard-top-anchor-v4.js"></script>
 </body>
 </html>
+
 
