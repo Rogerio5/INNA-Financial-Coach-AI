@@ -30,6 +30,7 @@ button{border:0;border-radius:9px;padding:14px 18px;font:inherit;font-weight:700
 <button id="submit" type="submit">Salvar nome</button>
 </form>
 <p id="status" class="status" role="status" aria-live="polite">Carregando sua conta…</p>
+<section id="emailConfirmation" hidden aria-labelledby="emailConfirmationTitle"><h2 id="emailConfirmationTitle">Confirmação do e-mail</h2><p id="emailStatus" role="status" aria-live="polite"></p><button id="resendEmail" type="button" hidden>Enviar confirmação de e-mail</button></section>
 <div class="links"><a id="loginLink" href="/">Voltar para entrar</a><a id="securityLink" href="/seguranca-conta">Segurança e autenticador</a><a id="plansLink" href="/financeiro/meu-plano">Minha assinatura</a><button id="retry" type="button" hidden>Tentar novamente</button></div>
 </section></main>
 <script>
@@ -56,9 +57,24 @@ button{border:0;border-radius:9px;padding:14px 18px;font:inherit;font-weight:700
    try {
      const data=await call('/auth/profile');
      byId('name').value=data.user.name||''; byId('email').value=data.user.email;
-     byId('email').readOnly=true; form.hidden=false; message('');
+     byId('email').readOnly=true; form.hidden=false; message('');loadEmailStatus();
    } catch(error) {message(error.message,true);byId('retry').hidden=false;}
  }
+ async function loadEmailStatus() {
+   byId('emailConfirmation').hidden=false;
+   byId('resendEmail').hidden=true;
+   try {
+     const data=await call('/auth/email/status');
+     byId('emailStatus').textContent=data.verified?'Seu e-mail está confirmado.':data.sending_enabled?'Confirme seu endereço pelo link recebido por e-mail. O link vale por 24 horas.':'O envio de confirmação ainda não está disponível. Você pode continuar usando sua conta.';
+     byId('resendEmail').hidden=data.verified||!data.sending_enabled;
+   } catch(error){byId('emailStatus').textContent='Não foi possível consultar a confirmação do e-mail. Atualize a página para tentar novamente.';}
+ }
+ byId('resendEmail').addEventListener('click',async()=>{
+   const button=byId('resendEmail');button.disabled=true;
+   try{const data=await call('/auth/email/resend',{method:'POST',headers:{'X-Sabino-Account':'1'}});byId('emailStatus').textContent=data.message;}
+   catch(error){byId('emailStatus').textContent=error.message;}
+   finally{button.disabled=false;}
+ });
  if(registering) {
    document.title='Criar conta | Sabino.AI';byId('title').textContent='Crie sua conta';
    byId('intro').textContent='Seu ponto de partida para organizar informações e conhecer as plataformas da Sabino.AI.';
@@ -84,3 +100,4 @@ button{border:0;border-radius:9px;padding:14px 18px;font:inherit;font-weight:700
 })();
 </script>
 </body></html>
+
