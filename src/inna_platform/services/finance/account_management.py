@@ -4,14 +4,16 @@ import re
 from pathlib import Path
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, Response
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
 from . import password_recovery as recovery
+from . import email_verification
 from .finance_identity import cursor_postgres, hash_password, normalize_email
 
 router = APIRouter()
+router.include_router(email_verification.router)
 STATIC = Path(__file__).resolve().parents[2] / "static"
 
 
@@ -79,7 +81,7 @@ def current_user(request):
 
 
 @router.post("/auth/register", status_code=201)
-def register(body: RegistrationRequest, request: Request, response: Response):
+def register(body: RegistrationRequest, request: Request, response: Response, background: BackgroundTasks):
     response.headers["Cache-Control"] = "no-store"
     try:
         protect(request)
@@ -101,7 +103,10 @@ def register(body: RegistrationRequest, request: Request, response: Response):
                 "Não foi possível criar a conta com esse e-mail. Tente entrar ou recuperar sua senha.",
             )
         # No automatic session, credits or paid subscription are granted here.
-        return {"message": "Conta criada. Entre com seu e-mail e senha."}
+        if email_verification.enabled():
+            background.add_task(email_verification.deliver, email)
+            return {"message": "Conta criada! Vamos enviar uma mensagem de boas-vindas com um link para confirmar seu e-mail. Confira também o spam. Você já pode entrar com seu e-mail e senha."}
+        return {"message": "Conta criada! Você já pode entrar com seu e-mail e senha. O envio de confirmação por e-mail ainda não está disponível."}
     except HTTPException:
         raise
     except ValueError:
@@ -171,3 +176,4 @@ def account_page():
             "Referrer-Policy": "same-origin",
         },
     )
+
