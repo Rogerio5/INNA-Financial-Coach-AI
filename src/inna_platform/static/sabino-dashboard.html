@@ -5157,7 +5157,10 @@ document.addEventListener(
         button.setAttribute("aria-busy", "true");
         status.textContent = "Encerrando sua sessão…";
         const controller = new AbortController();
-        const timeout = window.setTimeout(() => controller.abort(), 15000);
+        const slowNotice = window.setTimeout(() => {
+            status.textContent = "O servidor está demorando para responder. Aguarde, estamos encerrando sua sessão…";
+        }, 10000);
+        const timeout = window.setTimeout(() => controller.abort(), 90000);
         try {
             const response = await fetch("/auth/logout", {
                 method: "POST",
@@ -5170,9 +5173,10 @@ document.addEventListener(
             if (result.logged_out !== true) throw new Error("Logout not confirmed");
             window.location.replace("/");
         } catch (_) {
-            status.textContent = "Não foi possível confirmar a saída. Tente novamente.";
+            status.textContent = "Não foi possível confirmar a saída. Tente novamente. Sua sessão pode continuar ativa até a confirmação.";
         } finally {
             window.clearTimeout(timeout);
+            window.clearTimeout(slowNotice);
             button.disabled = false;
             button.removeAttribute("aria-busy");
         }
@@ -5794,5 +5798,6 @@ document.addEventListener("DOMContentLoaded", function () {
     <script defer src="/static/js/sabino-dashboard-top-anchor-v4.js"></script>
 </body>
 </html>
+
 
 
