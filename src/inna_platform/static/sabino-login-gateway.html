@@ -1819,6 +1819,22 @@ body:has(#accountDialog[open]) { overflow: hidden; }
 }
 </style>
 
+<style id="sabino-copy-beside-inna">
+.visual { display: grid; grid-template-columns: 42% 58%; grid-template-rows: auto 1fr auto; min-height: 100svh; background: linear-gradient(100deg, #514d48 0%, #807a72 43%, #e5e1dc 100%); }
+.visual .header { grid-column: 1 / -1; }
+.visual .mobile-welcome-photo { display: block; grid-column: 2; grid-row: 2; align-self: center; width: 100%; height: auto; max-height: 75svh; object-fit: contain; }
+.visual .hero { grid-column: 1; grid-row: 2; align-self: center; position: relative; left: auto !important; right: auto !important; top: auto !important; transform: none !important; width: auto !important; margin: 0; padding: 32px 12px 32px clamp(22px, 4vw, 76px); }
+.visual .visual-footer { grid-column: 1 / -1; position: relative; left: auto; bottom: auto !important; margin: 24px 90px 28px clamp(22px, 4vw, 76px); }
+@media (max-width: 620px) {
+ .visual { min-height: max(520px, 100svh); grid-template-columns: 44% 56%; }
+ .visual .hero { padding: 24px 6px 24px 16px; }
+ .visual .hero h1 { font-size: clamp(20px, 4.5vw, 28px) !important; line-height: 1.12 !important; }
+ .visual .eyebrow { font-size: 9px !important; line-height: 1.5; }
+ .visual .description { font-size: 12px !important; line-height: 1.5 !important; }
+ .visual .mobile-welcome-photo { max-height: none; }
+ .visual .visual-footer { margin-left: 16px; }
+}
+</style>
 </head>
 
 
