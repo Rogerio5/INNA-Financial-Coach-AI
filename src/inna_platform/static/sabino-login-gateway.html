@@ -1790,6 +1790,35 @@ html { scroll-behavior: smooth; }
 }
 </style>
 
+
+<style id="sabino-account-dialog">
+.page { display: block; }
+.account-open { margin-left: auto; flex-shrink: 0; border: 1px solid #dda52c; border-radius: 9px; padding: 13px 20px; min-height: 46px; background: linear-gradient(#f7cf62,#e7ad31); color: #15110a; font: inherit; font-size: 14px; font-weight: 750; cursor: pointer; }
+.account-open:focus-visible, .account-close:focus-visible { outline: 3px solid #b77b10; outline-offset: 3px; }
+.header { gap: 16px; }
+#accountDialog { width: min(480px, calc(100% - 24px)); max-height: calc(100svh - 32px); padding: 0; border: 0; border-radius: 18px; color: #111827; background: #fff; overflow: auto; box-shadow: 0 20px 80px #0006; }
+#accountDialog::backdrop { background: rgba(12,15,19,.65); }
+#accountDialog .login-side { min-height: 0; padding: 58px 30px 28px; }
+#accountDialog .login-card { width: 100%; }
+#accountDialog .login-title { font-size: 30px; }
+.account-close { position: absolute; top: 8px; right: 10px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #f0f1ee; color: #303630; font-size: 28px; cursor: pointer; }
+body:has(#accountDialog[open]) { overflow: hidden; }
+@media (max-width: 620px) {
+ .visual .header { padding-left: 16px; padding-right: 16px; gap: 10px; }
+ .brand { gap: 8px; }
+ .brand-logo { width: 38px; height: 38px; }
+ .brand-name { font-size: 19px; }
+ .account-open { padding: 10px 12px; font-size: 12px; min-height: 44px; }
+ #accountDialog .login-side { padding: 58px 22px 24px; }
+ .visual .hero { padding-bottom: 20px; }
+}
+@media (max-width: 360px) {
+ .brand-name { font-size: 16px; }
+ .brand-logo { width: 32px; height: 32px; }
+ .account-open { padding-left: 9px; padding-right: 9px; }
+}
+</style>
+
 </head>
 
 
@@ -1842,6 +1871,8 @@ PLATAFORMA INTELIGENTE
 
 </div>
 
+
+<button class="account-open" id="openAccount" type="button" aria-haspopup="dialog" aria-controls="accountDialog">Acessar minha conta</button>
 
 <div class="language" id="sabinoLanguageMount">
 
@@ -1945,11 +1976,6 @@ para orientar decisões de forma simples
 e inteligente.
 </p>
 
-
-<nav class="hero-access" aria-label="Acesso à Sabino.AI">
-<a class="primary hero-access-button" href="#acessar-conta">Acessar minha conta <span aria-hidden="true">↓</span></a>
-<a class="hero-create" href="/cadastro">Criar conta</a>
-</nav>
 
 <div class="benefits">
 
@@ -2068,6 +2094,8 @@ Ajuda
      LOGIN
      ======================================================= -->
 
+<dialog id="accountDialog" aria-labelledby="accountDialogTitle">
+<button type="button" id="closeAccount" class="account-close" aria-label="Fechar acesso à conta">×</button>
 <section class="login-side" id="acessar-conta" tabindex="-1" aria-label="Acesse sua conta">
 
 
@@ -2076,6 +2104,7 @@ Ajuda
 
 <h2
     class="login-title"
+    id="accountDialogTitle"
     data-i18n="loginTitle"
 >
 Acesse sua conta
@@ -2326,6 +2355,7 @@ com tecnologia, segurança e privacidade.
 
 
 </section>
+</dialog>
 
 
 </div>
@@ -3973,6 +4003,7 @@ function savePendingRoute(
    ========================================================= */
 
 function focusLogin() {
+    document.getElementById("openAccount").click();
 
     const field =
         document.querySelector(
@@ -4823,9 +4854,27 @@ document.addEventListener(
 <script src="/static/js/sabino-currency-core.js?v=internal12_20260917_140006" data-sabino-global-currency="v1"></script>
 <script src="/static/js/sabino-money-locale-runtime.js"></script>
 
+<script>
+(() => {
+ const dialog = document.getElementById('accountDialog');
+ const openButton = document.getElementById('openAccount');
+ openButton.addEventListener('click', () => {
+   if (!dialog.open) dialog.showModal();
+   document.getElementById('username').focus({preventScroll:true});
+ });
+ document.getElementById('closeAccount').addEventListener('click', () => dialog.close());
+ dialog.addEventListener('close', () => openButton.focus({preventScroll:true}));
+ dialog.addEventListener('click', event => {
+   if (event.target !== dialog) return;
+   const bounds = dialog.getBoundingClientRect();
+   if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+ });
+})();
+</script>
 </body>
 
 </html>
+
 
 
 
