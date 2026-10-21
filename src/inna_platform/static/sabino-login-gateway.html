@@ -1747,6 +1747,30 @@ body {
 
 </style>
 
+
+<style id="sabino-hero-access">
+html { scroll-behavior: smooth; }
+.hero-access { display: grid; gap: 8px; max-width: 340px; margin-top: 24px; }
+.hero-access-button { display: flex; align-items: center; justify-content: center; gap: 14px; text-decoration: none; min-height: 52px; height: auto; padding: 14px 18px; }
+.hero-create { display: flex; align-items: center; justify-content: center; min-height: 44px; color: #f3c85e; font-size: 14px; font-weight: 700; text-underline-offset: 4px; }
+.hero-access a:focus-visible { outline: 3px solid white; outline-offset: 4px; }
+#acessar-conta { scroll-margin-top: 16px; }
+#acessar-conta:focus { outline: none; }
+@media (max-width: 900px) {
+  .visual { display: flex; flex-direction: column; min-height: min(700px, 100svh); }
+  .header { flex-shrink: 0; }
+  .visual .hero { position: relative; left: auto !important; right: auto; top: auto !important; transform: none !important; width: auto !important; margin: auto 22px; padding: 24px 0 12px; }
+  .visual .hero h1 { font-size: clamp(26px, 5vw, 34px) !important; }
+  .visual .description { margin-top: 14px !important; }
+  .visual .eyebrow { margin-bottom: 12px !important; }
+  .visual .gold-rule { margin-top: 16px !important; }
+  .hero-access { margin-top: 20px; }
+  .visual .visual-footer { position: relative; left: auto; bottom: auto !important; margin: 8px 90px 24px 22px; min-height: 24px; flex-wrap: wrap; gap: 12px; }
+  .login-side { padding-top: 32px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+
 </head>
 
 
@@ -1901,6 +1925,11 @@ e inteligente.
 </p>
 
 
+<nav class="hero-access" aria-label="Acesso à Sabino.AI">
+<a class="primary hero-access-button" href="#acessar-conta">Acessar minha conta <span aria-hidden="true">↓</span></a>
+<a class="hero-create" href="/cadastro">Criar conta</a>
+</nav>
+
 <div class="benefits">
 
 
@@ -2018,7 +2047,7 @@ Ajuda
      LOGIN
      ======================================================= -->
 
-<section class="login-side">
+<section class="login-side" id="acessar-conta" tabindex="-1" aria-label="Acesse sua conta">
 
 
 <div class="login-card">
@@ -4776,6 +4805,7 @@ document.addEventListener(
 </body>
 
 </html>
+
 
 
 
