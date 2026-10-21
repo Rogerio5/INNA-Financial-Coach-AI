@@ -1775,7 +1775,8 @@ html { scroll-behavior: smooth; }
 <style id="sabino-mobile-photo">
 .mobile-welcome-photo { display: none; }
 @media (max-width: 620px) {
-  .visual { min-height: 0; background: #10110f; }
+  .visual { min-height: 0; background: linear-gradient(180deg, #aaa8a4 0%, #eeeae5 45%, #746d65 68%, #49443e 100%); }
+  .visual .brand-name { text-shadow: 0 1px 4px rgba(0,0,0,.4); }
   .visual .header { height: 68px; padding: 10px 22px; }
   .mobile-welcome-photo { display: block; width: 100%; height: auto; max-height: 320px; object-fit: contain; }
   .visual .hero { margin: 0 22px; padding: 20px 0 4px; }
@@ -4825,6 +4826,7 @@ document.addEventListener(
 </body>
 
 </html>
+
 
 
 
