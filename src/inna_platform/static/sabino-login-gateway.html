@@ -1773,21 +1773,19 @@ html { scroll-behavior: smooth; }
 
 
 <style id="sabino-mobile-photo">
+.mobile-welcome-photo { display: none; }
 @media (max-width: 620px) {
-  .visual {
-    min-height: min(580px, 100svh);
-    background-image:
-      linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.44) 38%, rgba(0,0,0,.12) 75%, rgba(0,0,0,.04) 100%),
-      linear-gradient(0deg, rgba(0,0,0,.38) 0%, transparent 48%),
-      url("/static/images/sabino-login-scene.png");
-    background-position: 52% center !important;
-  }
-  .visual .header { height: 76px; padding-top: 12px; padding-bottom: 12px; }
-  .visual .hero { padding-top: 16px; padding-bottom: 8px; }
-  .visual .hero h1, .visual .description, .visual .eyebrow {
-    text-shadow: 0 2px 6px rgba(0,0,0,.8);
-  }
-  .visual .hero-create { text-shadow: 0 1px 4px #000; }
+  .visual { min-height: 0; background: #10110f; }
+  .visual .header { height: 68px; padding: 10px 22px; }
+  .mobile-welcome-photo { display: block; width: 100%; height: auto; max-height: 320px; object-fit: contain; }
+  .visual .hero { margin: 0 22px; padding: 20px 0 4px; }
+  .visual .hero h1 { font-size: 26px !important; line-height: 1.12 !important; }
+  .visual .eyebrow { font-size: 9px !important; margin-bottom: 10px !important; }
+  .visual .gold-rule { margin-top: 12px !important; }
+  .visual .description { margin-top: 12px !important; font-size: 13px !important; line-height: 1.5 !important; }
+  .visual .hero-access { margin-top: 16px; max-width: none; }
+  .visual .hero h1, .visual .description, .visual .eyebrow, .visual .hero-create { text-shadow: none; }
+  .visual .visual-footer { margin-top: 8px; margin-bottom: 18px; }
 }
 </style>
 
@@ -1908,6 +1906,8 @@ English
 
 </header>
 
+
+<img class="mobile-welcome-photo" src="/static/images/sabino-login-scene.png" alt="INNA e uma cliente usando a Sabino.AI" fetchpriority="high">
 
 <div class="hero">
 
@@ -4825,6 +4825,7 @@ document.addEventListener(
 </body>
 
 </html>
+
 
 
 
