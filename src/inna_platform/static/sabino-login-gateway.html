@@ -1820,6 +1820,11 @@ body:has(#accountDialog[open]) { overflow: hidden; }
 </style>
 
 <style id="sabino-copy-beside-inna">
+.welcome-decor { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.welcome-art { position: absolute; left: 4%; top: 15%; width: min(27vw, 420px); height: auto; opacity: .85; filter: drop-shadow(4px 8px 6px #0002); }
+.welcome-plant { position: absolute; right: 0; top: 14%; height: 70%; width: auto; opacity: .9; }
+.visual .mobile-welcome-photo { z-index: 1; }
+@media (max-width: 900px) { .welcome-art { display: none; } .welcome-plant { height: 45%; top: 12%; opacity: .35; } }
 @media (min-width: 901px) {
  .visual .mobile-welcome-photo { position: absolute; grid-area: auto !important; right: 0; bottom: 0; width: 79% !important; height: calc(100svh - 8px) !important; max-height: none !important; object-fit: contain; }
 }
@@ -1865,6 +1870,44 @@ body:has(#accountDialog[open]) { overflow: hidden; }
      ======================================================= -->
 
 <section class="visual">
+
+<div class="welcome-decor" aria-hidden="true">
+ <svg class="welcome-art" viewBox="0 0 420 180" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="artMat" x2="1" y2="1"><stop stop-color="#d6cec0"/><stop offset="1" stop-color="#aaa293"/></linearGradient></defs>
+  <g stroke="#c3a36a" stroke-width="3" fill="#57534c">
+   <rect x="4" y="4" width="178" height="168" rx="2"/><rect x="211" y="22" width="145" height="150" rx="2"/>
+  </g>
+  <g fill="url(#artMat)"><rect x="15" y="15" width="156" height="146"/><rect x="222" y="33" width="123" height="128"/></g>
+  <circle cx="108" cy="65" r="33" fill="#b28d4b" opacity=".8"/>
+  <path d="M27 141 Q53 62 82 119 T160 108 L160 151 H27Z" fill="#66685e"/>
+  <path d="M35 134 Q88 90 152 142" fill="none" stroke="#e6dcc9" stroke-width="3"/>
+  <path d="M284 151 Q262 101 288 49 M280 124 Q239 117 242 87 Q270 86 280 124 M279 104 Q311 102 323 76 Q296 75 279 104 M283 80 Q256 73 260 52 Q280 57 283 80" fill="#666e5b" stroke="#646a55" stroke-width="2"/>
+ </svg>
+ <svg class="welcome-plant" viewBox="0 0 220 560" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+   <linearGradient id="leafShade"><stop stop-color="#344a35"/><stop offset=".5" stop-color="#6f8057"/><stop offset="1" stop-color="#324434"/></linearGradient>
+   <linearGradient id="potShade"><stop stop-color="#56554f"/><stop offset=".45" stop-color="#a8a08e"/><stop offset="1" stop-color="#6c665b"/></linearGradient>
+  </defs>
+  <ellipse cx="113" cy="544" rx="72" ry="11" fill="#343630" opacity=".16"/>
+  <g fill="none" stroke="#606644" stroke-width="4"><path d="M110 465 Q90 270 110 74 M111 465 Q161 320 170 175 M109 465 Q48 344 43 241"/></g>
+  <g fill="url(#leafShade)">
+   <path d="M108 125 Q66 82 109 16 Q142 72 108 125Z"/>
+   <path d="M104 184 Q35 170 28 105 Q99 119 104 184Z"/>
+   <path d="M105 219 Q171 186 169 116 Q111 145 105 219Z"/>
+   <path d="M101 280 Q34 267 19 199 Q86 211 101 280Z"/>
+   <path d="M108 326 Q170 294 185 221 Q114 245 108 326Z"/>
+   <path d="M149 316 Q145 244 199 195 Q213 267 149 316Z"/>
+   <path d="M156 264 Q116 220 137 171 Q180 205 156 264Z"/>
+   <path d="M78 384 Q14 372 7 298 Q65 316 78 384Z"/>
+   <path d="M51 315 Q57 260 19 218 Q1 280 51 315Z"/>
+   <path d="M119 401 Q183 384 213 318 Q146 322 119 401Z"/>
+  </g>
+  <path d="M63 447 H160 L149 536 Q111 550 75 536Z" fill="url(#potShade)"/>
+  <ellipse cx="111" cy="448" rx="49" ry="10" fill="#777366"/>
+  <ellipse cx="111" cy="448" rx="41" ry="6" fill="#393b30"/>
+  <path d="M68 465 H156" stroke="#c3a36a" stroke-width="3" opacity=".8"/>
+ </svg>
+</div>
 
 
 <header class="header">
