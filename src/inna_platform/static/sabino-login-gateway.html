@@ -1822,7 +1822,7 @@ body:has(#accountDialog[open]) { overflow: hidden; }
 <style id="sabino-copy-beside-inna">
 .visual { display: grid; grid-template-columns: 42% 58%; grid-template-rows: auto 1fr auto; min-height: 100svh; background: linear-gradient(100deg, #514d48 0%, #807a72 43%, #e5e1dc 100%); }
 .visual .header { grid-column: 1 / -1; }
-.visual .mobile-welcome-photo { display: block; grid-column: 2; grid-row: 2; align-self: center; width: 100%; height: auto; max-height: 75svh; object-fit: contain; }
+.visual .mobile-welcome-photo { display: block; grid-column: 2; grid-row: 2; align-self: center; justify-self: center; width: 90%; height: auto; max-height: 65svh; object-fit: contain; }
 .visual .hero { grid-column: 1; grid-row: 2; align-self: center; position: relative; left: auto !important; right: auto !important; top: auto !important; transform: none !important; width: auto !important; margin: 0; padding: 32px 12px 32px clamp(22px, 4vw, 76px); }
 .visual .visual-footer { grid-column: 1 / -1; position: relative; left: auto; bottom: auto !important; margin: 24px 90px 28px clamp(22px, 4vw, 76px); }
 @media (max-width: 620px) {
@@ -3007,7 +3007,8 @@ document.addEventListener(
 
     position: fixed;
 
-    left: calc(66% - 82px);
+    left: auto;
+    right: 22px;
     bottom: 22px;
 
     z-index: 999999;
