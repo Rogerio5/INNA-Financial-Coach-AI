@@ -1821,9 +1821,14 @@ body:has(#accountDialog[open]) { overflow: hidden; }
 
 <style id="sabino-copy-beside-inna">
 @media (min-width: 901px) {
- .visual .mobile-welcome-photo { position: absolute; grid-area: auto !important; right: 1%; bottom: 10px; width: 76% !important; height: calc(100svh - 28px) !important; max-height: none !important; object-fit: contain; }
+ .visual .mobile-welcome-photo { position: absolute; grid-area: auto !important; right: 0; bottom: 0; width: 79% !important; height: calc(100svh - 8px) !important; max-height: none !important; object-fit: contain; }
 }
-.visual { display: grid; grid-template-columns: 42% 58%; grid-template-rows: auto 1fr auto; min-height: 100svh; background: linear-gradient(100deg, #514d48 0%, #807a72 43%, #e5e1dc 100%); }
+.visual { display: grid; grid-template-columns: 42% 58%; grid-template-rows: auto 1fr auto; min-height: 100svh; background:
+ radial-gradient(ellipse at 79% 12%, rgba(255,233,178,.45), transparent 48%),
+ linear-gradient(90deg, transparent 48%, rgba(216,182,113,.55) 48%, rgba(216,182,113,.55) calc(48% + 2px), transparent calc(48% + 2px)),
+ linear-gradient(90deg, transparent 76%, rgba(216,182,113,.4) 76%, rgba(216,182,113,.4) calc(76% + 2px), transparent calc(76% + 2px)),
+ linear-gradient(0deg, rgba(174,137,66,.15), transparent 24%),
+ linear-gradient(105deg, #454340 0%, #66635e 36%, #aaa59b 70%, #d6d0c3 100%); }
 .visual .header { grid-column: 1 / -1; }
 .visual .mobile-welcome-photo { display: block; grid-column: 2; grid-row: 2; align-self: center; justify-self: center; width: 100%; height: auto; max-height: calc(100svh - 130px); object-fit: contain; }
 .visual .hero { grid-column: 1; grid-row: 2; align-self: center; position: relative; left: auto !important; right: auto !important; top: auto !important; transform: none !important; width: auto !important; margin: 0; padding: 32px 12px 32px clamp(22px, 4vw, 76px); }
