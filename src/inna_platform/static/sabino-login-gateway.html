@@ -1820,6 +1820,9 @@ body:has(#accountDialog[open]) { overflow: hidden; }
 </style>
 
 <style id="sabino-copy-beside-inna">
+@media (min-width: 901px) {
+ .visual .mobile-welcome-photo { position: absolute; right: 2%; bottom: 18px; width: 70% !important; height: calc(100svh - 95px) !important; max-height: none !important; object-fit: contain; }
+}
 .visual { display: grid; grid-template-columns: 42% 58%; grid-template-rows: auto 1fr auto; min-height: 100svh; background: linear-gradient(100deg, #514d48 0%, #807a72 43%, #e5e1dc 100%); }
 .visual .header { grid-column: 1 / -1; }
 .visual .mobile-welcome-photo { display: block; grid-column: 2; grid-row: 2; align-self: center; justify-self: center; width: 100%; height: auto; max-height: calc(100svh - 130px); object-fit: contain; }
