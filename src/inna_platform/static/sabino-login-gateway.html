@@ -1855,6 +1855,7 @@ body:has(#accountDialog[open]) { overflow: hidden; }
 .story-slide { flex: 0 0 100%; position: relative; height: 100%; overflow: hidden; background: #48453f; }
 .story-slide::before { content: ''; position: absolute; inset: -25px; background: var(--story-bg) center/cover; filter: blur(20px); opacity: .45; }
 .story-slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg,rgba(22,23,22,.88),rgba(22,23,22,.66) 27%,transparent 60%); }
+.story-slide:first-child img { width: 100%; object-fit: cover; object-position: center; }
 .story-slide img { position: absolute; right: 0; top: 0; width: 76%; height: 100%; object-fit: contain; }
 .visual .header { padding-top: 28px; height: 115px; }
 .visual .hero { position: absolute; left: 4% !important; top: 50% !important; transform: translateY(-45%) !important; width: 32% !important; padding: 0; margin: 0; }
@@ -1863,7 +1864,7 @@ body:has(#accountDialog[open]) { overflow: hidden; }
 .story-progress button { flex: 1; height: 18px; padding: 7px 0; border: 0; background: transparent; cursor: pointer; }
 .story-progress button::before { content: ''; display: block; height: 4px; border-radius: 3px; background: #ffffff55; }
 .story-progress span { display: block; height: 4px; margin-top: -4px; background: #f3c85e; border-radius: 3px; transform: scaleX(0); transform-origin: left; }
-.story-controls { position: absolute; z-index: 12; right: 105px; bottom: 24px; display: flex; align-items: center; gap: 8px; color: white; }
+.story-controls { display: none !important; position: absolute; z-index: 12; right: 105px; bottom: 24px; display: flex; align-items: center; gap: 8px; color: white; }
 .story-controls button { width: 42px; height: 42px; border: 1px solid #ffffff66; border-radius: 50%; color: #fff; background: #222b; cursor: pointer; font-size: 24px; }
 .story-controls #storyPause { font-size: 16px; }
 .story-controls span { font-size: 12px; }
