@@ -1882,6 +1882,21 @@ body:has(#accountDialog[open]) { overflow: hidden; }
 }
 @media(prefers-reduced-motion:reduce) { .story-track { transition: none; } }
 </style>
+
+<style id="sabino-mobile-framing">
+@media (max-width: 620px) {
+ .visual { display: flex; flex-direction: column; min-height: 100svh; background: #242622; }
+ .visual .header { order: 0; position: relative; height: 82px; flex-shrink: 0; padding: 24px 16px 12px; background: #242622; }
+ .welcome-stories { order: 1; position: relative; inset: auto; width: 100%; height: auto; aspect-ratio: 4 / 3; flex-shrink: 0; }
+ .story-slide:nth-child(n) img { width: 100%; height: 100%; object-fit: cover; object-position: 72% center; transform: none; }
+ .story-slide::after { background: linear-gradient(0deg, #242622 0%, transparent 18%); }
+ .visual .hero { order: 2; position: relative; top: auto !important; bottom: auto; left: auto !important; right: auto !important; width: auto !important; transform: none !important; margin: 0; padding: 20px 20px 24px; }
+ .visual .hero h1 { font-size: clamp(25px, 6.5vw, 34px) !important; line-height: 1.15 !important; }
+ .visual .eyebrow { font-size: 9px !important; }
+ .visual .description { font-size: 13px !important; line-height: 1.55 !important; max-width: 100%; }
+ .visual .visual-footer { order: 3; position: relative; left: auto; bottom: auto !important; margin: auto 90px 0 20px; padding: 12px 0 24px; }
+}
+</style>
 </head>
 
 
