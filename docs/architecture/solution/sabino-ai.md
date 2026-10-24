@@ -2,6 +2,10 @@
 
 Atualização: 23/10/2026. Escopo: plataforma multidomínio. Base examinada: branch `deploy/sabino-pix-free`.
 
+## Governança e execução
+
+[Pacote de governança arquitetural](governanca.md): requisitos não funcionais, seis ADRs, padrões de backend/APIs, rastreabilidade, revisão técnica e backlog priorizado. Metas e decisões propostas são distintas de resultados validados.
+
 ## Leitura e estado da arquitetura
 
 Esta é a arquitetura geral de referência para a evolução da Sabino.AI. O [Financeiro](financeiro.md) é o primeiro domínio detalhado. Esta documentação não implementa novos serviços nem certifica todos os módulos em produção.
