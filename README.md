@@ -1,5 +1,12 @@
 # INNA Financial Coach AI
 
+## Arquitetura de Solução — Financeiro
+
+[Acessar arquitetura de solução e diagramas Mermaid](docs/architecture/solution/financeiro.md).
+
+Visão de negócio, backend, dados, segurança, INNA, implantação, decisões técnicas e evolução. O documento distingue a implementação observada das propostas e das validações ainda pendentes.
+
+
 > ## Versão pública focada em Engenharia de IA
 >
 > Uma versão pública dedicada ao portfólio de Engenharia de IA está disponível em:
