@@ -1,5 +1,9 @@
 # Arquitetura — INNA Financial Coach AI e Sabino.AI
 
+## Arquitetura Geral de Solução — Sabino.AI
+
+[Começar pela visão geral da plataforma](architecture/solution/sabino-ai.md): catálogo de domínios, núcleo compartilhado, limites de dados, INNA multidomínio, RH, implantação e cinco diagramas Mermaid.
+
 ## Arquitetura de Solução — Financeiro
 
 [Abrir a arquitetura de solução completa do Financeiro](architecture/solution/financeiro.md)
